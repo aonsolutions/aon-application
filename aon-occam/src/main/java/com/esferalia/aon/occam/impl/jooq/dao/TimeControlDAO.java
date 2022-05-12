@@ -8,7 +8,6 @@ import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -281,39 +280,29 @@ public class TimeControlDAO {
 	private static TimeControlDetail update(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
 		
-		Boolean modified = saveLog(ctx, tcd);
-		
-		System.out.println("MODIFIED " + modified);
-		
-		if(Boolean.TRUE.equals(modified)){
-			ctx.getDslContext().update(TIMECONTROL)
-			.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
-			.set(TIMECONTROL.COMMENTS, tcd.getComments())
-			.set(TIMECONTROL.STATUS, tcd.getStatus().value())
-			.set(TIMECONTROL.LOCATION ,tcd.getLocation()!=null ? tcd.getLocation().getId() : null)
-			.set(TIMECONTROL.MODIFICATION_USER, ctx.getUser())
-			.set(TIMECONTROL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
-			.where(TIMECONTROL.ID.eq(tcd.getId()))
-			.execute();		
-			ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
-		}
+		saveLog(ctx, tcd);
 
+		ctx.getDslContext().update(TIMECONTROL)
+		.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
+		.set(TIMECONTROL.COMMENTS, tcd.getComments())
+		.set(TIMECONTROL.STATUS, tcd.getStatus().value())
+		.set(TIMECONTROL.LOCATION ,tcd.getLocation()!=null ? tcd.getLocation().getId() : null)
+		.set(TIMECONTROL.MODIFICATION_USER, ctx.getUser())
+		.set(TIMECONTROL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+		.where(TIMECONTROL.ID.eq(tcd.getId()))
+		.execute();		
+		ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
+	
 		return tcd;
 	}
 	
-	private static Boolean saveLog(AONContext ctx, TimeControlDetail tcd) {
-		Boolean modified = false;
+	private static void saveLog(AONContext ctx, TimeControlDetail tcd) {
 		try {
 			TimeControlDetail timeControl = getLastTimeControlDetail(ctx, 
 					f->f.getDomainProperty().eq(tcd.getDomain().getId()).and(f.getIdProperty().eq(tcd.getId()))
 			);
-
-			if( 
-				null != tcd.getLocation().getId() && !tcd.getLocation().getId().equals(timeControl.getLocation().getId())           
-				|| !tcd.getComments().equals(timeControl.getComments())            
-				|| !tcd.getStatus().value().equals(timeControl.getStatus().value())
-				|| Boolean.FALSE.equals( compareDate(tcd.getDate(), timeControl.getDate()) )        
-			) {
+		
+			if( timeControl.isDirty(tcd) ) {
 			
 				Integer lastMinId = -1;
 				
@@ -328,15 +317,12 @@ public class TimeControlDAO {
 	
 				timeControl.setId(lastMinId).setModificatedTimeControl(tcd.getId());
 				
+				ctx.log().debug("--------INSERT LOG----------");	
 				insert(ctx, timeControl);
-				
-				modified = true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return modified;
 	}
 	
 	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details, Date startDate, Date endDate, TimeControlGroup group) {
@@ -425,15 +411,5 @@ public class TimeControlDAO {
 					;	
 		}
 		
-	}
-	
-	private static Boolean compareDate(Date date1, Date date2) {
-		  Calendar cal1 = Calendar.getInstance();
-	      Calendar cal2 = Calendar.getInstance();
-	     
-	      cal1.setTime(date1);
-	      cal2.setTime(date2);
-
-	      return cal1.equals(cal2);
 	}
 }

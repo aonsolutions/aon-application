@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -38,7 +39,6 @@ import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
-import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -50,6 +50,7 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.booking.BookingUtils;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
+import net.aonsolutions.aon.api.servlet.task.TaskFilter;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
@@ -337,11 +338,26 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject getNotices(AonApiData api) {
 		JSONObject jsonG = AON.getRawdocUserData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()).toJSON();
-		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
-		JSONObject request = new JSONObject();
-		map.forEach((k,v) -> request.put(TaskStatus.safeValueOf(k).getName(), v));
-		jsonG.put("solicitudes",request);
+		
+		taskCount(api, jsonG);
+		
 		return jsonG;
+	}
+	
+	private void taskCount(AonApiData api, JSONObject jsonG) {
+		try {			
+		
+			Map<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
+				f -> TaskFilter.taskSenderCount(api, api.getDomain(), f, new Customer()), 
+				f -> TaskFilter.taskReceiverCount(api, api.getDomain(), f, new Customer())
+			);
+			JSONObject request = new JSONObject();
+			counts.keySet().stream().forEach(k-> request.put(k, counts.get(k)) );
+			
+			jsonG.put("solicitudes",request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private JSONObject getMedia(AonApiData api) {

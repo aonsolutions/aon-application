@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.domain.DomainName2LowerCase;
 import net.aonsolutions.db.up2date.payroll.AlterSalaryEmbargo;
 import net.aonsolutions.db.up2date.payroll.Holidays2022Update;
+import net.aonsolutions.db.up2date.tgss.Art1512022Update;
 
 public class Up2Date {
 
@@ -232,9 +233,10 @@ public class Up2Date {
 //    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
 //			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
 //    		BaseCgpMin2022FixIII.BASECGPMIN2022FIX
-    		DomainName2LowerCase.DOMAINNAME2LOWERCASE,
-    		AlterSalaryEmbargo.ALTERSALARYEMBARGO,
-    		Holidays2022Update.HOLIDAYS2022UPDATE
+//    		DomainName2LowerCase.DOMAINNAME2LOWERCASE,
+//    		AlterSalaryEmbargo.ALTERSALARYEMBARGO,
+//    		Holidays2022Update.HOLIDAYS2022UPDATE
+    		Art1512022Update.ART1512022UPDATE
     };
     
 

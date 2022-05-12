@@ -1,4 +1,4 @@
-FROM maven:3-openjdk-16
+FROM maven:3-openjdk-17
 
 RUN set -eux; \
 	microdnf install \
@@ -61,8 +61,8 @@ RUN set -x \
 #    done
 
 
-COPY tomcat:9-jdk16.tar /root
-COPY openjdk:16-slim.tar /root
+COPY tomcat:9-jdk17.tar /root
+COPY openjdk:17-slim.tar /root
 
 ENV AON_CONF=/etc/aon-aio
 

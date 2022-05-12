@@ -9,8 +9,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.pdfbox.Loader;
@@ -20,6 +25,10 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
@@ -27,8 +36,11 @@ import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationHighlight;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationPopup;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
+import org.apache.pdfbox.util.Matrix;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.watson.util.AonCharSequenceUtils;
+import com.esferalia.aon.watson.util.AonCharUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IdcHighlighter {
@@ -43,6 +55,14 @@ public class IdcHighlighter {
 		this.positions = positions;
 	}
 	
+	public void insert(String regex, String str) throws IOException {
+		if ( AonStringUtils.isBlank(regex))
+			return;
+		Pattern pattern = Pattern.compile(regex);
+		List<TextPosition> patternPositions = getPositions(pattern, positions);
+		insert(doc, page, patternPositions, str);
+	}
+
 	public void highlight(String pattern) throws IOException {
 		if ( AonStringUtils.isBlank(pattern))
 			return;
@@ -52,6 +72,18 @@ public class IdcHighlighter {
 	public void highlight(String pattern, String contents) throws IOException {
 		if ( AonStringUtils.isBlank(pattern))
 			return;
+
+		List<TextPosition> patternPositions = getPositions(pattern, positions);
+		PDRectangle rect = getRectangle(page, patternPositions);
+		highlight(doc, page, rect );
+		annotate(page, rect, contents);
+	} 
+
+	public void highlight(String pattern1, String pattern2, String contents) throws IOException {
+		String regex = AonStringUtils.join(pattern1 , " ", pattern2).replaceAll("\\s", "\\\\s*");
+		if ( AonStringUtils.isBlank(regex))
+			return;
+		Pattern pattern = Pattern.compile(regex);
 
 		List<TextPosition> patternPositions = getPositions(pattern, positions);
 		PDRectangle rect = getRectangle(page, patternPositions);
@@ -143,7 +175,7 @@ public class IdcHighlighter {
 
 				matcher = IdcParser.CONTRACT_TYPE_START_END.matcher(line);
 				if ( matcher.matches() ) {
-					listener.onContractType(group(matcher, "contractType"), null, idcHighlighter);
+					listener.onContractType(group(matcher, "contractType"), group(matcher, "contractDescription"), idcHighlighter);
 					return;
 				} 
 				
@@ -226,6 +258,17 @@ public class IdcHighlighter {
 		return linePositions.subList(fromIndex, toIndex);
 	}
 	
+	private static List<TextPosition> getPositions(Pattern pattern, List<TextPosition> linePositions) throws IOException {
+		String line = linePositions.stream().map(TextPosition::getUnicode).collect(Collectors.joining());
+		Matcher matcher = pattern.matcher(line);
+		if ( matcher.find() ) {
+			return linePositions.subList(matcher.start(), matcher.end());
+		} 
+		else {
+			return Collections.emptyList();
+		}
+	}
+
 	private static void annotate(PDPage page, PDRectangle position, String contents) throws IOException {
 		
 		List<PDAnnotation> annotations = page.getAnnotations();
@@ -315,6 +358,41 @@ public class IdcHighlighter {
 			return rect;
 		}
 	}
+
+	private static PDRectangle insert(PDDocument doc, PDPage page, List<TextPosition> positions, String text ) throws IOException {
+
+		try (PDPageContentStream contents = new PDPageContentStream(doc, page, AppendMode.APPEND, false)){
+			
+			PDRectangle rect = getRectangle(page, positions);
+			
+			contents.beginText();
+			
+			PDFont font = new PDType1Font(FontName.HELVETICA_BOLD); //get(positions, TextPosition::getFont);
+			float fontSize = get(positions, TextPosition::getFontSize);
+			contents.setFont(font, fontSize);
+			contents.setStrokingColor(Color.RED);
+			contents.setNonStrokingColor(Color.RED);
+			
+			System.out.println(font.getSpaceWidth());
+			
+			contents.setTextMatrix(Matrix.getTranslateInstance(rect.getUpperRightX() + font.getSpaceWidth() / 1000f , rect.getLowerLeftY() + 1.5f ));
+			
+			contents.showText(text);
+			
+			contents.endText();
+			
+			return rect;
+		}
+	}
+	
+	private static <R> R get(List<TextPosition> positions, Function<TextPosition, ? extends R> mapper ) {
+		return positions.stream().map(mapper).filter(Objects::nonNull)
+		.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+		.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey)
+		.orElse(null)
+		;
+	}
+	
 
 	public static void main(String[] args) throws IOException, UnknownPDFException {
 		highlight(new File(args[0]), new File(args[1]), new AllIdcHighlighter());

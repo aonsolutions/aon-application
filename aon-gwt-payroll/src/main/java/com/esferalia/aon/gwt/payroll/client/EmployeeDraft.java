@@ -1173,10 +1173,10 @@ public abstract class EmployeeDraft extends Composite {
 			null, 
 			pdfViewer.getDataURI(), 
 			dataURI -> {
-				//checkIDCLabel.setVisible(false);
-				//checkIDCButton.setVisible(false);
-				//unCheckIDCLabel.setVisible(true);
-				//unCheckIDCButton.setVisible(true);
+				checkIDCLabel.setVisible(false);
+				checkIDCButton.setVisible(false);
+				unCheckIDCLabel.setVisible(true);
+				unCheckIDCButton.setVisible(true);
 				
 				pdfViewer.open(dataURI);
 			}, 
@@ -1186,10 +1186,10 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void unCheckIdc() {
-		//unCheckIDCLabel.setVisible(false);
-		//unCheckIDCButton.setVisible(false);
-		//checkIDCLabel.setVisible(true);
-		//checkIDCButton.setVisible(true);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
+		checkIDCLabel.setVisible(true);
+		checkIDCButton.setVisible(true);
 	}
 
 	private void showIdc(Date date) {
@@ -1200,8 +1200,8 @@ public abstract class EmployeeDraft extends Composite {
 				hideMessage();
 				showPdf();
 				idcDateListBox.setVisible(true);
-				//checkIDCLabel.setVisible(true);
-				//checkIDCButton.setVisible(true);
+				checkIDCLabel.setVisible(true);
+				checkIDCButton.setVisible(true);
 				
 				idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcDateListBox.setSelected(date, true);
@@ -1355,10 +1355,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
-		//checkIDCLabel.setVisible(false);
-		//checkIDCButton.setVisible(false);
-		//unCheckIDCLabel.setVisible(false);
-		//unCheckIDCButton.setVisible(false);
+		checkIDCLabel.setVisible(false);
+		checkIDCButton.setVisible(false);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
 
 		deckPanel.showWidget(PDF_VIEWER_INDEX);		
 	}
@@ -1378,10 +1378,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
-		//checkIDCLabel.setVisible(false);
-		//checkIDCButton.setVisible(false);
-		//unCheckIDCLabel.setVisible(false);
-		//unCheckIDCButton.setVisible(false);
+		checkIDCLabel.setVisible(false);
+		checkIDCButton.setVisible(false);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
 		
 		deckPanel.showWidget(EMPLOYEE_INDEX);		
 	}

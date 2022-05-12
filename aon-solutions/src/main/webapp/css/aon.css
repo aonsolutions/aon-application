@@ -1239,8 +1239,6 @@ button:disabled, button[disabled]{
   vertical-align: middle;
 }
 
-/*NEW*/
-
 .continueLined{--height : 100%}
 .continueLined::after{
     content: "";
@@ -1248,7 +1246,7 @@ button:disabled, button[disabled]{
     border-left:  2px solid #f0f0f0;
     height: var(--height);
     left: 25px;
-    top: 0px;
+    top: 1px;
     z-index: -10;
 }
 

@@ -1,5 +1,5 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
-import {Apps, getApp} from "../../../services/app.js";
+import {Apps} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomer, getCustomers } from "../../../services/registryService.js";
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
@@ -199,7 +199,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
-        aonSelect.keyUpActive = false;
         aonSelect.clear();
         aonSelect.loading(true);
         try {
@@ -220,8 +219,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                 const value = target.value;
                 if(value.length >0){
                     getCustomers({reload:true, page:1, perPage:30, value}).then(cs=>{
-                        const tmp = cs.map( c=> ({...c, value: c.id}) ) ;
-                        aonSelect.setOptions( tmp );
+                        aonSelect.setOptionsBuild( cs.map( c=> ({...c, value: c.id}) ) );
                     });
                 }
             });
@@ -423,7 +421,7 @@ export const fillChat = (task, meId, workflows=[])=>{
     }
 }
 
-const getAppPermission = (dur, value) => {
+export const getAppPermission = (dur) => {
   let apps = [];
   if( dur.isAccounting())
     apps.push(Apps.ACCOUNTING);
@@ -446,10 +444,8 @@ const getAppPermission = (dur, value) => {
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
 
-  if(value){
-    const exist = apps.some(a => a.app === value );
-    if(!exist) apps.push(getApp(value));
-  }
+  if(dur.isSaltra() && !dur.isPayroll() && !dur.isComunica())
+   apps.push(Apps.AON_SALTRA);
 
   return apps;
 }

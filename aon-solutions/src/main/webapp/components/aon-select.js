@@ -11,7 +11,7 @@ export class AonSelect extends AonElement {
 
   valueAlias;
   nameAlias;
-  keyUpActive = true;
+  disableKeyUp = true;
   static get observedAttributes() {
     return [CONSTANT.VALUE, CONSTANT.OPTIONS, CONSTANT.DISABLED];
   }
@@ -151,12 +151,11 @@ export class AonSelect extends AonElement {
       }
  
       input.addEventListener(EVENT.KEYUP, () => {
+        if(this.disableKeyUp){
           let optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-          // if(this.keyUpActive){
-            optios = optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase()))
-          // }
-
+          optios = optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase()))
           this.buildOptions(optios);
+        }
       });
       
       input.addIconButton('arrow_drop_down', () => {
@@ -270,6 +269,12 @@ export class AonSelect extends AonElement {
 
   setOptions(options) {
     this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(options));
+  }
+
+  setOptionsBuild(options) {
+    this.disableKeyUp = false;
+    this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(options));
+    this.buildOptions(options);
   }
 
   getOptions() {
