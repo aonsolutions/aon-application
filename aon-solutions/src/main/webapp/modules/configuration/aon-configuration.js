@@ -14,7 +14,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.j
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
-import { CONFIGURATION, INVOICE, MESSENGER } from "../../services/app.js";
+import { CONFIGURATION, INVOICE, MESSENGER, AON_SALTRA, COMUNICA } from "../../services/app.js";
 import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
@@ -23,6 +23,7 @@ import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
+import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -169,7 +170,28 @@ export class AonConfiguration extends AonElement {
         });
       }
 
-
+      if( this.dur.isSaltraManager() ) {
+        appOptions.push({
+          id: AON_SALTRA.title,
+          name: AON_SALTRA.title,
+          aonIcon: {
+            icon: AON_SALTRA.icon,
+            color: AON_SALTRA.color
+          },
+          fn: () => this.buildComunicaConfiguration(),
+        });
+      } else if(this.dur.isComunicaManager()){
+        appOptions.push({
+          id:  COMUNICA.title,
+          name: COMUNICA.title,
+          aonIcon: {
+            icon: COMUNICA.icon,
+            color: COMUNICA.color
+          },
+          fn: () => this.buildComunicaConfiguration(),
+        });
+      }  
+      
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
@@ -248,6 +270,11 @@ export class AonConfiguration extends AonElement {
   buildMessengerConfiguration(){
     this.getApplication().setContent(new AonMessengerConfig());
   }
+
+  buildComunicaConfiguration(){
+    this.getApplication().setContent(new AonComunicaConfig());
+  }
+
 
   buildCompanyList() {
     let aonConfiguration = this.getApplication();

@@ -7,7 +7,8 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
+import { getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
+import { getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -696,7 +697,7 @@ export class AonMessenger extends AonElement {
 	async getAppParams(){
 		if(!this.APP_PARAMS.length){
 			try {
-				await getTaskAppParams({
+				await getApplicationParametersIsSig({
 					params:[
 						APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER, 
 						APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER, 

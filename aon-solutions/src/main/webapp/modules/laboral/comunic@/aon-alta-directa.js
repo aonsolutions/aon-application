@@ -1,8 +1,8 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
-import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
+import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
@@ -12,6 +12,7 @@ import { AonDateUtils } from '../../utils/AonDateUtils.js';
 export class AonAltaDirecta extends AonElement {
     _contract;
     ACTION;
+    APP_PARAMS;
     static get observedAttributes() {
         return [CONSTANT.DATA];
     }
@@ -50,6 +51,7 @@ export class AonAltaDirecta extends AonElement {
         this.TOOLBAR = this.id + 'Toolbar';
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
+        this.APP_PARAMS = [];
     }
 
     build() {
@@ -82,7 +84,7 @@ export class AonAltaDirecta extends AonElement {
         createEmployeeData(aonEmployeeCard.getContent(),  this.id);
  
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createContractData(aonContratoCard.getContent(), (this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager()) && !(this.data && this.data.fra));
+        createContractData(aonContratoCard.getContent(), this.isManager() && !(this.data && this.data.fra) );
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -110,7 +112,7 @@ export class AonAltaDirecta extends AonElement {
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
 
-        if(this.isAlta() && this.data.fra && (this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager())) 
+        if(this.isAlta() && this.data.fra && this.isManager()) 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
         if( this.isAlta() || !this.data )  // ALTA
@@ -125,14 +127,17 @@ export class AonAltaDirecta extends AonElement {
 
     async initGets() {
         await Promise.all([
+            this.getAppParams(),
             this.getWorkplace(),
-            this.getContractType(),
             this.getJourneyType(),
-            this.getQuoteGroup(),
             this.getOccupation(),
             this.getRlce(),
             this.getWorkersCollective()
-            // this.suggestionConvenio()
+        ]).catch(e=> console.log(e));
+
+        await Promise.all([
+            this.getContractType(),
+            this.getQuoteGroup()
         ]).catch(e=> console.log(e));
     }
 
@@ -373,22 +378,44 @@ export class AonAltaDirecta extends AonElement {
 
     async getContractType() {
         try {
-            
-            let manager = this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager();
-
             let resp = await getContractType();
-            
-            let contract = this.data && this.data.contract ? this.data.contract : "";
-            
-            if(!manager)
-                resp = resp.filter(({enable, value})=> enable || value == contract );
-            
-            let contractEl = this.querySelector('#contract');
+
+            if(!this.isManager()){
+                const { APP_COMUNICA_CONTRACTS } = this.APP_PARAMS;
+                if(APP_COMUNICA_CONTRACTS){
+                    const contract = this.data && this.data.contract ? this.data.contract : "";
+                    const enabled = APP_COMUNICA_CONTRACTS.split(',');
+                    if(enabled.length){
+                        resp = resp.filter(({value})=> enabled.some(v=> v == value) || value == contract );
+                    }
+                }
+            }
 
             let options = resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
-
-            contractEl.setOptions(options);
+            
+            this.querySelector('#contract').setOptions(options);
         } catch (error) { }
+    }
+
+    async getQuoteGroup() {
+        try {
+            let resp = await getQuoteGroup();
+
+            if(!this.isManager()){
+                const { APP_COMUNICA_QUOTE_GROUP } = this.APP_PARAMS;
+                if(APP_COMUNICA_QUOTE_GROUP){
+                    const gc = this.data && this.data.gc ? this.data.gc : "";
+                    const enabled = APP_COMUNICA_QUOTE_GROUP.split(',');
+                    if(enabled.length){
+                        resp = resp.filter(({value})=> enabled.some(v=> v == value) || value == gc  );
+                    }
+                }
+            }
+
+            let options = sortBy(resp.map(r => ({ ...r, name: `${r.name}`, value: r.value})), 'name', 'asc');
+
+            this.getElement('gc').setOptions(options);
+        } catch (error){}
     }
 
     async getJourneyType() {
@@ -401,38 +428,11 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) { }
     }
 
-    // async suggestionConvenio() {
-    //     const convenios = await getConvenios();
-
-    //     const suggestion = this.getElement(`convenio`);
-    //     suggestion.querySelector("input").autocomplete = "on";
-        
-    //     suggestion.addEventListener(EVENT.AON_KEYUP, ({ target: { value } }) => {
-    //         let newValue = value.toString().toUpperCase();
-    //         if (newValue.length > 2) {
-    //             const resp = convenios.filter(c=> (c.name && c.name.indexOf(newValue)>=0) );
-    //             suggestion.buildOptions(resp);
-    //         } else {
-    //             suggestion.closeOptions();
-    //         }
-    //     });
-    // }
-
-    async getQuoteGroup() {
-        try {
-            let resp = await getQuoteGroup();
-            resp = sortBy(resp, 'name', 'asc');
-            let quoteGroup = this.getElement('gc');
-            quoteGroup.setOptions(resp.map(r => ({ ...r, name: `${r.name}`, value: r.value})));
-        } catch (error){}
-    }
-
     async getOccupation() {
         try {
             let resp = await getOccupation();
             resp = sortBy(resp, 'value', 'asc');
-            let ocup = this.getElement('ocup');
-            ocup.setOptions(resp.map(r => ({ name: `${r.name}`, value: r.value})));
+            this.getElement('ocup').setOptions(resp.map(r => ({ name: `${r.name}`, value: r.value})));
         } catch (error){}
     }
 
@@ -719,6 +719,52 @@ export class AonAltaDirecta extends AonElement {
 
     isAlta(){
         return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0;
+    }
+
+    async getAppParams(){
+		if(!this.APP_PARAMS.length){
+			try {
+				await getApplicationParameters({
+					params:[
+                        APP_PARAMS_PAYROLL.APP_COMUNICA_CONTRACTS,
+                        APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP
+					]
+				}).then(params=>{
+					let newResp = [];
+					params
+					.filter(p => p.value)
+					.forEach(p => 
+						newResp[p.name] = p.value
+					);
+					this.APP_PARAMS = newResp;
+				});
+			} catch (e) {
+				console.log("error getAppParams", e);
+			}
+		}
+		return this.APP_PARAMS;
+	}
+
+
+    // async suggestionConvenio() {
+    //     const convenios = await getConvenios();
+
+    //     const suggestion = this.getElement(`convenio`);
+    //     suggestion.querySelector("input").autocomplete = "on";
+        
+    //     suggestion.addEventListener(EVENT.AON_KEYUP, ({ target: { value } }) => {
+    //         let newValue = value.toString().toUpperCase();
+    //         if (newValue.length > 2) {
+    //             const resp = convenios.filter(c=> (c.name && c.name.indexOf(newValue)>=0) );
+    //             suggestion.buildOptions(resp);
+    //         } else {
+    //             suggestion.closeOptions();
+    //         }
+    //     });
+    // }
+
+    isManager(){
+        return this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager();
     }
 }
 

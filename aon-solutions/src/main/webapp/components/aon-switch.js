@@ -5,6 +5,7 @@ import '../css/aon-switch.css';
 export class AonSwitch extends AonElement {
 
 	INPUT;
+  LABEL;
 	TITLE;
 
   static get observedAttributes() {
@@ -100,6 +101,7 @@ export class AonSwitch extends AonElement {
 	connectedCallback () {
     this.initialize();
     let label = this.createElement(TAG.LABEL);
+    label.id = this.LABEL;
     label.className = "aonSwitch";
     this.appendChild(label);
 
@@ -135,6 +137,7 @@ export class AonSwitch extends AonElement {
   initialize() {
     this.id = this.id || 'aonSwitch';
 		this.INPUT = this.id + CONSTANT.INPUT.initCap();
+    this.LABEL = this.id + "Label";
 		this.TITLE = this.id + CONSTANT.TITLE.initCap();
   }
 
@@ -163,6 +166,11 @@ export class AonSwitch extends AonElement {
   setMarginBottom(mb) {
     let span = this.getElement(this.TITLE);
     span.style.marginBottom = mb;
+  }
+
+  setLabelWidth(mb) {
+    let label = this.getElement(this.LABEL);
+    if(label) label.style.width = mb;
   }
 }
 if(!window.customElements.get('aon-switch')){
