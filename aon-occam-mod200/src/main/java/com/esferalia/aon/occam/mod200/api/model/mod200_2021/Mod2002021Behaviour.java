@@ -21,20 +21,20 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1501, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1502, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1503, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1515, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1515, new Boolean[]{FALSE,TRUE});
 		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1504, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1505, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1505, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1506, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1809, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1810, new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1507, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1508, new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1516, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1517, new Boolean[]{FALSE,TRUE});		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1523, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1571, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1516, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1517, new Boolean[]{FALSE,TRUE});		
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1523, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1571, new Boolean[]{FALSE,TRUE});
 		
 	}
 	
@@ -325,6 +325,10 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1041,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN592, new Boolean[]{TRUE,TRUE});
 		
+		// Total retenciones e ingresos a cuenta
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1766, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1784, new Boolean[]{FALSE,TRUE});
+		
 		// Cuota del ejercicio a ingresar o a devolver
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN599, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN600, new Boolean[]{FALSE,TRUE});
@@ -336,47 +340,47 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN611, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN612, new Boolean[]{FALSE,TRUE});
 		
-		// Liquido a ingresar o a devolver
+		// Resultado de la autoliquidación
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN616, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN642, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN618, new Boolean[]{FALSE,TRUE});
-		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1234B,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1332,new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1200,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1042,new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1042,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1333,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN621, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN622, new Boolean[]{FALSE,TRUE});
-		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1583, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1585, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1586, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1587, new Boolean[]{FALSE,TRUE});
-
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2841, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2843, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2845, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2846, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2847, new Boolean[]{FALSE,TRUE});
 		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2849, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2850, new Boolean[]{FALSE,TRUE});
+		// Liquido a ingresar o a devolver
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1583, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1585, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN621, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN622, new Boolean[]{FALSE,TRUE});		
+
+		// Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2480, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2482, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2484, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2485, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2486, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2488, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2489, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3242, new Boolean[]{FALSE,TRUE});
 		
+		// Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS)		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM150, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1043,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM506, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1044,new Boolean[]{FALSE,TRUE});
-		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1044,new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3243, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3245, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3317, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3319, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3320, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3352, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3353, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ3355, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2491, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2492, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2494, new Boolean[]{FALSE,TRUE});
 
 	}
 	
@@ -417,6 +421,8 @@ public class Mod2002021Behaviour {
 		
 		// Desglose Casilla 565
 		addBreakdown(Mod2002021BN565Key.values(), Mod2002021Key.BN565);
+		addBreakdown(Mod2002021BN565_1Key.values(), Mod2002021Key.BN1689, Mod2002021Key.BN1692, Mod2002021Key.BN1695, Mod2002021Key.BN1698);
+		addBreakdown(Mod2002021BN565_2Key.values(), Mod2002021Key.BN1701, Mod2002021Key.BN1704, Mod2002021Key.BN1729, Mod2002021Key.BN1079);
 				
 		// Desglose Casilla 1040
 		addBreakdown(Mod2002021BN1040Key.values(), Mod2002021Key.BN1040);
@@ -428,18 +434,18 @@ public class Mod2002021Behaviour {
 		addBreakdown(Mod2002021BN082Key.values(), Mod2002021Key.BN082, new byte[] {1,3});  // Dos columnas calculadas, ademas 1 de ellas no es la última
 
 		// Totales de los detalles de correcciones al resultado contable
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2305, new Boolean[]{FALSE,TRUE});  
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2306, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2301, new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2302, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2303, new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2304, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2305, new Boolean[]{FALSE,TRUE});  
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2306, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2307, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2308, new Boolean[]{FALSE,TRUE}); 
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2309, new Boolean[]{FALSE,TRUE});  
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2310, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2308, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.I0417B, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.D0418B, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2309, new Boolean[]{FALSE,TRUE});  
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.DC2310, new Boolean[]{FALSE,TRUE});
 		
 	}
 	
@@ -459,8 +465,8 @@ public class Mod2002021Behaviour {
 		// Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM1191,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM1196,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM1201,new Boolean[]{FALSE,TRUE});		
-
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM1201,new Boolean[]{FALSE,TRUE});
+		addBreakdown(Mod2002021LM1212Key.values(), Mod2002021Key.LM1212, new byte[]{});  // No lleva columnas de totales automatica (salvo las 3 primeras filas)
 		
 		// Pendiente de adición por límite beneficio operativo no aplicado
 		addBreakdown(Mod2002021LM538Key.values(), Mod2002021Key.LM538);
@@ -472,10 +478,8 @@ public class Mod2002021Behaviour {
 		// Desglose Casilla 1032 (Reserva de capitalización)
 		addBreakdown(Mod2002021LQ1032Key.values(), Mod2002021Key.LQ1032);
 
-		// Desglose Casillas 1033 y 1034 (Reserva de nivelación - Reducción en base imponible)
+		// Desglose Casillas 1033 y 1034 (Reserva de nivelación)
 		addBreakdown(Mod2002021LQ1033_1Key.values(), Mod2002021Key.LQ1033);
-		
-		// Desglose Casillas 1033 y 1034 (Reserva de nivelación - Dotación de la reserva)
 		addBreakdown(Mod2002021LQ1033_2Key.values(), Mod2002021Key.LQ1158, new byte[]{});  // No lleva columnas de totales
 		
 		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
@@ -510,7 +514,7 @@ public class Mod2002021Behaviour {
 
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM2436, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM1164, new Boolean[]{FALSE,TRUE});
 		addBreakdown(Mod2002021LM1494Key.values(), Mod2002021Key.LM1494, new byte[]{});  // No lleva columnas de totales
 		
 	}
@@ -518,16 +522,18 @@ public class Mod2002021Behaviour {
 	static { 
 		
 		// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC2437, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC093, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC048, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC527, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC925, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC996, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC2441, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC2437, new Boolean[]{FALSE,TRUE});
+////		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC093, new Boolean[]{FALSE,TRUE});
+////		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC048, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC527, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC925, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC996, new Boolean[]{FALSE,TRUE});
+//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC2441, new Boolean[]{FALSE,TRUE});
+		addBreakdown(Mod2002021RIC_1Key.values(), new Mod2002021Key[] {}); // No lleva fila de totales
 		
 		// REGIMEN DE COOPERATIVAS - Determinacion de la base imponible
-		addBreakdown(Mod2002021LQ554Key.values(), Mod2002021Key.CP0C6, Mod2002021Key.CPC12, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
+//		addBreakdown(Mod2002021LQ554Key.values(), Mod2002021Key.CP0C6, Mod2002021Key.CPC12, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
+		addBreakdown(Mod2002021LQ554Key.values(), new Mod2002021Key[] {Mod2002021Key.CP0C6, Mod2002021Key.CPC12}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
 		
 		// REGIMEN DE COOPERATIVAS - Desglose Casilla 561 - Detalle de compensación de cuotas
 		addBreakdown(Mod2002021LQ561Key.values(), Mod2002021Key.LQ561);
@@ -552,32 +558,65 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR628, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR629, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR625, new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR420, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR421, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR426, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR427, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR600, new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR602, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR604, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR606, new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR474, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR475, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR476, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR477, new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR612, new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR616, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR642, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR618, new Boolean[]{FALSE,TRUE});
 //		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR620, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1332,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1333,new Boolean[]{FALSE,TRUE});
+
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1624,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1625,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1629,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1630,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1587,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1583,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1585,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR494, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR495, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR496, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR497, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR622, new Boolean[]{FALSE,TRUE});
+		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2480,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2482,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2484,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1646,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1647,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1648,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1649,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2486,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2488,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1654,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1655,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1656,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1657,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR3242,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1043,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1044,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR3245,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR3319,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2491,new Boolean[]{FALSE,TRUE}); 
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR2494,new Boolean[]{FALSE,TRUE});
 		
 	}
 	
@@ -585,48 +624,91 @@ public class Mod2002021Behaviour {
 	// Normalmente los totales van en la última columna y en la última fila, aunque algunos desgloses no cumplen esa regla
 	// por eso se indica alguna de las casillas de la fila(s) de los totales para indicar cual es la fila de totales y
 	// la columna de total se asume que es la última salvo que venga indicado el parametro positionsColumnsTotal
-	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key totalRowKey2, byte... positionsColumnsTotal ) {
+//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key totalRowKey2, byte... positionsColumnsTotal ) {
+//		
+//		for (IMod200KeysProvider kp : keysProvider) {			
+//		
+//			IMod200Key[] keys = kp.getKeys();
+//			
+//			// Columna de totales
+//			// Normalmente la última columna es el total, salvo que venga cumplimentado positionsColumnsTotal, 
+//			// en tal caso se le pasará un array con las posiciones (base 0), que ocupan las columnas de los totales
+//			// ya que algunos desgloses llevan mas de una columna de totales, o la ultima columna no es el total, 
+//			// o no llevan columnas de totales
+//			if (positionsColumnsTotal == null) {
+//				if (keys[keys.length-1] != null)
+//					BEHAVIOUR_KEYS_MAP.put((Mod2002021Key)keys[keys.length-1], new Boolean[]{FALSE,TRUE});
+//			}
+//			else {
+//				for (byte position : positionsColumnsTotal) {
+//					if (keys[position] != null)
+//						BEHAVIOUR_KEYS_MAP.put((Mod2002021Key)keys[position], new Boolean[]{FALSE,TRUE});
+//				}
+//			}
+//				
+//			// Fila(s) de totales 
+//			if (Arrays.asList(keys).contains(totalRowKey) || (totalRowKey2 != null && Arrays.asList(keys).contains(totalRowKey2)))
+//				for (IMod200Key key : keys)
+//					if (key != null)
+//						BEHAVIOUR_KEYS_MAP.put((Mod2002021Key) key, new Boolean[]{FALSE,TRUE});
+//		}
+//				
+//	}
+//
+//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, byte... positionsColumnsTotal) {
+//		addBreakdown(keysProvider, totalRowKey, null, positionsColumnsTotal);
+//	}
+//	
+//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key totalRowKey2) {
+//		addBreakdown(keysProvider, totalRowKey, totalRowKey2, null);
+//	}
+//	
+//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey) {
+//		addBreakdown(keysProvider, totalRowKey, null, null);
+//	}
+	
+	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key[] totalRowKey, byte[] totalColumnPosition) {
 		
 		for (IMod200KeysProvider kp : keysProvider) {			
 		
+			// Claves que contiene la fila
 			IMod200Key[] keys = kp.getKeys();
 			
 			// Columna de totales
-			// Normalmente la última columna es el total, salvo que venga cumlimentado positionsColumnsTotal, 
+			// Normalmente la última columna es el total (totalColumnPosition=null), salvo que venga cumplimentado totalColumnPosition, 
 			// en tal caso se le pasará un array con las posiciones (base 0), que ocupan las columnas de los totales
 			// ya que algunos desgloses llevan mas de una columna de totales, o la ultima columna no es el total, 
-			// o no llevan columnas de totales
-			if (positionsColumnsTotal == null) {
+			// o no llevan columnas de totales (en este ultimo caso, pasar un array vacio)
+			if (totalColumnPosition == null) {
+				// Se asume que la columna del total es la ultima columna
 				if (keys[keys.length-1] != null)
 					BEHAVIOUR_KEYS_MAP.put((Mod2002021Key)keys[keys.length-1], new Boolean[]{FALSE,TRUE});
 			}
 			else {
-				for (byte position : positionsColumnsTotal) {
+				for (byte position : totalColumnPosition) {
 					if (keys[position] != null)
 						BEHAVIOUR_KEYS_MAP.put((Mod2002021Key)keys[position], new Boolean[]{FALSE,TRUE});
 				}
 			}
 				
-			// Fila(s) de totales 
-			if (Arrays.asList(keys).contains(totalRowKey) || (totalRowKey2 != null && Arrays.asList(keys).contains(totalRowKey2)))
-				for (IMod200Key key : keys)
-					if (key != null)
-						BEHAVIOUR_KEYS_MAP.put((Mod2002021Key) key, new Boolean[]{FALSE,TRUE});
+			// Fila(s) de totales
+			for (Mod2002021Key totalKey : totalRowKey) {
+				if (Arrays.asList(keys).contains(totalKey)) 
+					for (IMod200Key key : keys)
+						if (key != null)
+							BEHAVIOUR_KEYS_MAP.put((Mod2002021Key) key, new Boolean[]{FALSE,TRUE});
+			}
 		}
 				
 	}
 	
-	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, byte... positionsColumnsTotal) {
-		addBreakdown(keysProvider, totalRowKey, null, positionsColumnsTotal);
+	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key... totalRowKey) {
+		addBreakdown(keysProvider, totalRowKey, null);
 	}
 	
-	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key totalRowKey2) {
-		addBreakdown(keysProvider, totalRowKey, totalRowKey2, null);
-	}
-	
-	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey) {
-		addBreakdown(keysProvider, totalRowKey, null, null);
-	}
+	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, byte[] totalColumnPosition) {
+		addBreakdown(keysProvider, new Mod2002021Key[] {totalRowKey}, totalColumnPosition);
+	}	
 
 }
 

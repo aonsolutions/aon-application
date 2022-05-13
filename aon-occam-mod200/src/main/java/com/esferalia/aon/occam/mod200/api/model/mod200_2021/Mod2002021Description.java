@@ -22,6 +22,7 @@ public class Mod2002021Description {
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.C0001,"Entidad sin \u00E1nimo de lucro acogida r\u00E9gimen fiscal T\u00EDtulo II Ley 49/2002");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0002,"Entidad parcialmente exenta");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0080,"Uniones, federaciones y confederaciones de cooperativas");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0003,"Sociedad de inversi\u00F3n de capital variable o fondo de inversi\u00F3n de car\u00E1cter financiero");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0004,"Sociedad de inversi\u00F3n inmobiliaria o fondo de inversi\u00F3n inmobiliaria");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0005,"Comunidades titulares de montes vecinales en mano com\u00FAn");
@@ -30,7 +31,6 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.C0014,"Agrupaci\u00F3n europea de inter\u00E9s econ\u00F3mico");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0017,"Cooperativa protegida");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0018,"Cooperativa especialmente protegida");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0080,"Uniones, federaciones y confederaciones de cooperativas");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0019,"Resto cooperativas");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0021,"Establecimiento permanente"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.C0023,"Gran empresa");
@@ -39,19 +39,20 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.C0031,"Entidades de capital-riesgo");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0032,"Sociedad de desarrollo industrial regional");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0036,"Sociedad de garant\u00EDa rec\u00EDproca o de reafianzamiento.");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0048,"Fondo de pensiones R.D.L. 1/2002, 00048 de 29 de noviembre");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0048,"Fondo de pensiones R.D.Leg. 1/2002, 00048 de 29 de noviembre");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0058,"Mutua de seguros o Mutualidad de previsi\u00F3n social");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0060,"Fondos o activos de titulizaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0066,"Entidad patrimonial");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0078,"Di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica que integra entidades menores de ellas dependientes");
+		
 		DESCRIPTION_MAP.put(Mod2002021Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0079,"Entidad ZEC en consolidaci\u00F3n fiscal");		
 		DESCRIPTION_MAP.put(Mod2002021Key.C0022,"R\u00E9gimen entid. navieras en funci\u00F3n del tonelaje");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0028,"Tribut. conjunta Estado/Diput. Cdad. Forales");		
 		DESCRIPTION_MAP.put(Mod2002021Key.C0047,"Entidades sometidas a la normativa foral");		
-		DESCRIPTION_MAP.put(Mod2002021Key.C0035,"Aplicaci\u00F3n r\u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0049,"Reg\u00EDmenes especiales de normativa foral");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0035,"Aplicaci\u00F3n r\u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0029,"R\u00E9gimen especial Canarias");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0033,"R\u00E9gimen especial miner\u00EDa");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0034,"R\u00E9gimen especial hidrocarburos");		
@@ -61,12 +62,12 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.C0012R,"SOCIMIS: R\u00E9gimen fiscal de entrada-salida. Renta derivada de la transmisi\u00F3n de inmuebles pose\u00EDdos con anterioridad a la aplicaci\u00F3n de este r\u00E9gimen y otras transmisiones de participaciones y activos a las que se aplica un tipo impositivo distinto del general (Art. 12.1 c, Art. 12.1 y Art 12.2)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0064,"R\u00E9gimen fiscal entrada SOCIMI");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0057,"R\u00E9gimen fiscal salida SOCIMI");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0020,"Otros reg\u00EDmenes especiales");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0062,"R\u00E9g. fiscal de operaciones de aportaci\u00F3n de activos a sociedades para la gesti\u00F3n de activos (Ley 8/2012)");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0020,"Otros reg\u00EDmenes especiales");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.C0007,"Inclusi\u00F3n en base imp. rentas positivas art. 100.8 LIS");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0009,"Sociedad dominante de grupo fiscal");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0010,"Sociedad dependiente de grupo fiscal");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0007,"Imputaci\u00F3n en base imp. rentas positivas art. 100 LIS");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0009,"Entidad dominante de grupo fiscal");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0010,"Entidad dependiente de grupo fiscal");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0081,"Filial grupo multinacional");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0082,"Sociedad matriz \u00FAltima grupo multinacional");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0016,"Opci\u00F3n art. 46.2 LIS");
@@ -74,11 +75,11 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.C0027,"Base imponible negativa o cero");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0030,"Transmisi\u00F3n elementos patrimoniales arts. 27.2.d) y 77.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0039,"Entidad que forma parte de un grupo mercantil (art. 42 del C\u00F3d. Comercio)");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0043,"Obligaci\u00F3n informaci\u00F3n DT 5a RIS");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0043,"Obligaci\u00F3n informaci\u00F3n DT 5\u00AA RIS");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");		 
-		DESCRIPTION_MAP.put(Mod2002021Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22a LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0071,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (art. 29.1 LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0070,"Compensaci\u00F3n bases imponibles negativas para entidades de nueva creaci\u00F3n (art. 23.3 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0070,"Compensaci\u00F3n bases imponibles negativas para entidades de nueva creaci\u00F3n (art. 26.3 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0059,"Opciones arts. 39.2 y 39.3 LIS");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0065,"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0067,"Opci\u00F3n r\u00E9gimen transitorio de la reducci\u00F3n de ingresos procedentes de determinados activos intangibles (DT 20\u00AA LIS)");
@@ -86,7 +87,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.C0073,"Opci\u00F3n del 0,7% de la cuota \u00EDntegra para fines sociales (DA 103\u00AA Ley 6/2018)");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0037,"Opci\u00F3n de fraccionamiento art. 19.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0044,"Contribuyente que aplica deducciones del art. 36.1 y 3 LIS con financiaci\u00F3n realizada por otro contribuyente");
-		DESCRIPTION_MAP.put(Mod2002021Key.C0074,"Contribuyente que financia producciones cinematogr\u00E1ficas y otros con derecho a la deducci\u00F3n del art. 36.1 y 3 LIS");
+		DESCRIPTION_MAP.put(Mod2002021Key.C0074,"Contribuyente que financia producciones con derecho a la deducci\u00F3n del art. 36.1 y 3 LIS");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.C0050,"Balance. Normal");
 		DESCRIPTION_MAP.put(Mod2002021Key.C0051,"Balance. Abreviado");
@@ -106,25 +107,25 @@ public class Mod2002021Description {
 	
 	// PARTICIPACIONES
 	static {
-		DESCRIPTION_MAP.put(Mod2002021Key.P1501,"Valor de adquisici\u00F3n total de la participaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1501,"Valor nominal total de la participaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1502,"Valor en libros (en el activo de la declarante) de la participaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1503,"Ingresos por dividendos recibidos en el ejercicio declarado");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1515,"Rentas positivas o negativas derivadas de la transmisi\u00F3n de la participaci\u00F3n, (+) = Aumentos; (-) = Disminuciones");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1503,"Ingresos por dividendos recibidos en el ejercicio declarado (*)");
+//		DESCRIPTION_MAP.put(Mod2002021Key.P1515,"Rentas positivas o negativas derivadas de la transmisi\u00F3n de la participaci\u00F3n, (+) = Aumentos; (-) = Disminuciones");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.P1504,"a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1505,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16\u00AA LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1506,"c) Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1809,"d) Eliminaci\u00F3n del deterioro de valores repr. de partic. en el capital o fondos propios (art. 15 k) LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1810,"e) Ajuste por la disminuci\u00F3n de valor originada por criterio de valor razonable (art. 15 l) LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1507,"f) Efecto de la correcci\u00F3n valorativa en la BI del ejercicio");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1508,"g) Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1504,"a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo (**)");
+//		DESCRIPTION_MAP.put(Mod2002021Key.P1505,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16\u00AA LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1506,"b) Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1809,"c) Eliminaci\u00F3n del deterioro de valores repr. de partic. en el capital o fondos propios (art. 15 k) LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1810,"d) Ajuste por la disminuci\u00F3n de valor originada por criterio de valor razonable (art. 15 l) LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1507,"e) Efecto de la correcci\u00F3n valorativa en la BI del ejercicio (= a + b + c + d)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1508,"f) Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio [(+) = aumentos futuros; (-) = disminuciones futuras]");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.P1516,"Valor de adquisici\u00F3n total de la participaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1517,"Valor en libros (en el activo de la declarante) de la participaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1523,"Ingresos por dividendos recibidos en el ejercicio declarado");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1571,"Rentas positivas o negativas derivadas de la transmisi\u00F3n de la participaci\u00F3n, (+) = Aumentos; (-) = Disminuciones");
+//		DESCRIPTION_MAP.put(Mod2002021Key.P1516,"Valor de adquisici\u00F3n total de la participaci\u00F3n");
+//		DESCRIPTION_MAP.put(Mod2002021Key.P1517,"Valor en libros (en el activo de la declarante) de la participaci\u00F3n");
+//		DESCRIPTION_MAP.put(Mod2002021Key.P1523,"Ingresos por dividendos recibidos en el ejercicio declarado");
+//		DESCRIPTION_MAP.put(Mod2002021Key.P1571,"Rentas positivas o negativas derivadas de la transmisi\u00F3n de la participaci\u00F3n, (+) = Aumentos; (-) = Disminuciones");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.POR51,"Suma de  porcentajes de participaci\u00F3n de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado");
+		DESCRIPTION_MAP.put(Mod2002021Key.POR51,"Suma de porcentajes de participaci\u00F3n de personas o entidades en el capital de la declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado");
 		DESCRIPTION_MAP.put(Mod2002021Key.PORES,"Suma de porcentajes de participaciones en situaciones especiales");
 	}
 
@@ -231,7 +232,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BP195,"Resultados de ejercicios anteriores (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP196,"Remanente (N)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP197,"(Resultados negativos de ejercicios anteriores) (N)");
-		DESCRIPTION_MAP.put(Mod2002021Key.BP198,"Otras aportaciones	 de socios (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.BP198,"Otras aportaciones de socios (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP199,"Resultado del ejercicio (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP200,"(Dividendo a cuenta) (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP201,"Otros instrumentos de patrimonio neto (N, A)");
@@ -322,7 +323,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.PG275,"Retribuciones a largo plazo mediante sistemas de aportaciones o prestaci\u00F3n definida (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG276,"Retribuciones mediante instrumentos de patrimonio (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG277,"Otros gastos sociales (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG278,"Provisiones (N, A)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG278,"Provisiones (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG279,"Otros gastos de explotaci\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG280,"Servicios exteriores (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG253,"Servicios profesionales independientes (N, A, P)");
@@ -361,16 +362,16 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.PG310,"Cartera de negociaci\u00F3n y otros (N)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG311,"Imputaci\u00F3n al resultado del ejercicio por activos financieros disponibles para la venta (N)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG312,"Diferencias de cambio (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG313,"Deterioro y resultado por enajenaci\u00F3n de instrumentos financieros (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG313,"Deterioro y resultado por enajenaciones de instrumentos financieros (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG314,"Deterioros y p\u00E9rdidas (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG315,"Deterioros, empresas del grupo y asociadas a largo plazo (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG316,"Deterioros, Otras empresas (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG317,"Reversi\u00F3n de deterioros, empresas del grupo y asociadas a largo plazo (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG315,"Deterioros, empresas del grupo, asociadas y vinculadas (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG316,"Deterioros, otras empresas (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG317,"Reversi\u00F3n de deterioros, empresas del grupo, asociadas y vinculadas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG318,"Reversi\u00F3n de deterioros, otras empresas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG319,"Resultados por enajenaci\u00F3n y otras (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG320,"Beneficios, empresas del grupo y asociadas a largo plazo (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG320,"Beneficios, empresas del grupo, asociadas y vinculadas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG321,"Beneficios, otras empresas (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG322,"P\u00E9rdidas, empresas del grupo y asociadas a largo plazo (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG322,"P\u00E9rdidas, empresas del grupo, asociadas y vinculadas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG323,"P\u00E9rdidas, otras empresas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG329,"Otros ingresos y gastos de car\u00E1cter financiero (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG330,"Incorporaci\u00F3n al activo de gastos financieros (N, A, P)");
@@ -411,12 +412,12 @@ public class Mod2002021Description {
 	static {
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ500, "Resultado de la cuenta de p\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ301, "Correcciones por Impuesto sobre Sociedades.");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ302, "Correcciones por Impuesto sobre Sociedades. Disminuciones.");
+//		DESCRIPTION_MAP.put(Mod2002021Key.LQ302, "Correcciones por Impuesto sobre Sociedades. Disminuciones.");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ501, "Resultado de la cuenta de p\u00E9rdidas y ganancias antes de Impuesto sobre Sociedades");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ1231,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal");
-		DESCRIPTION_MAP.put(Mod2002021Key.I0417, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias");
-		DESCRIPTION_MAP.put(Mod2002021Key.D0418, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal (art. 62.1a) LIS) (i.e., operaciones con acciones propias a nivel de grupo fiscal, coberturas, etc.)");
+//		DESCRIPTION_MAP.put(Mod2002021Key.LQ1231,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal");
+		DESCRIPTION_MAP.put(Mod2002021Key.I0417, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluida la correcci\u00F3n por IS)");
+//		DESCRIPTION_MAP.put(Mod2002021Key.D0418, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias");
 	}
 	
 	static {
@@ -448,7 +449,7 @@ public class Mod2002021Description {
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ553, "Resultados cooperativos");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ554, "Resultados extracooperativos");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ555, "Socios residentes");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ555, "Socios residentes y no residentes con EP");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ556, "Socios no residentes");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ559, "Base imponible a tipo de gravamen especial");
@@ -456,7 +457,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ520, "Parte de la base imponible del periodo impositivo que tributa al tipos general");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ521, "Parte de la base imponible del periodo impositivo que tributa al tipo del 0%");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ545, "Rentas correspondientes a quitas por acuerdo con acreedores no vinculados (art. 26.1 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ545, "Rentas correspondientes a quitas por acuerdo con acreedores (art. 26.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ1509,"Rentas correspondientes a la reversi\u00F3n de deterioros (DT 16\u00AA.8 LIS)");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ1576,"Parte de la base imponible que proceda de la realizaci\u00F3n de actividades a las que se aplica el r\u00E9gimen especial");
@@ -465,8 +466,8 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ558, "Tipo de gravamen");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ560, "Cuota \u00EDntegra previa");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ210, "Aumentos: P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refiere el art. 11.12 LIS (convertida en cuota)");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ480, "Disminuciones: P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refiere el art. 11.12 LIS (convertida en cuota)");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ210, "Aumentos: P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS) a los que se refiere el art. 11.12 LIS (convertida en cuota)");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ480, "Disminuciones: P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS) a los que se refiere el art. 11.12 LIS (convertida en cuota)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ408, "Aumentos: Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ1037,"Disminuciones: Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ593, "Disminuciones: Rentas corresp. a quitas por acuerdo con acreedores no vinculados cooperativas (a nivel cuota) (D.A. 8\u00AA Ley 20/1990)");
@@ -493,14 +494,14 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BN572, "DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDLeg. 4/2004)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN571, "DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN573, "DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN575, "Transparencia fiscal internacional (art. 100.11 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN575, "Transparencia fiscal internacional (art. 100.10 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN577, "DI interna intersocietaria al 5/10% (cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN581, "Bonificaciones empresas navieras en Canarias (art. 76 Ley 19/1994)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN582, "Cuota \u00EDntegra ajustada positiva");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.BN583, "Apoyo fiscal a la inversi\u00F3n y otras deducciones");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN585, "Deducci\u00F3n DT 24\u00AA.7 LIS y art. 42 RDLeg 4/2004");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN584, "Deducciones DT 24\u00AA.1 LIS y DT 8\u00AA RDL 4/2004");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN584, "Deducciones DT 24\u00AA.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN588, "Deducciones para incentivar det. actividades (Cap. IV T\u00EDt. VI, DT 24\u00AA.3 LIS y art. 27.3 primero Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1039,"Deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1039M,"Importe m\u00E1ximo que desea aplicar");
@@ -510,10 +511,9 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BN565, "Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN590, "Deducciones Inversi\u00F3n Canarias");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN399, "Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN082, "Deducciones excluidas l\u00EDmite I + D + i");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1040,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.1 LIS");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN1041,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.2 LIS");
-				
-		DESCRIPTION_MAP.put(Mod2002021Key.BN082, "Deducciones sin l\u00EDmite I + D + i");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN1041,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.2 LIS");		
 		DESCRIPTION_MAP.put(Mod2002021Key.BN592, "Cuota l\u00EDquida positiva");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1785,"Retenciones por rendimientos del capital mobiliario");
@@ -524,8 +524,8 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1795,"Retenciones e ingresos a cuenta participaciones IIC");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN597, "Retenciones sobre los premios de determinadas loter\u00EDas y apuestas");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1798,"Retenciones por otros conceptos NO inclu\u00EDdos en las casillas anteriores");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN083, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 44.2 RDL 4/2004 y DT 24\u00AA.7 LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 36.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ1766,"Total retenciones e ingresos a cuenta");
+		
 		DESCRIPTION_MAP.put(Mod2002021Key.BN599, "Cuota del ejercicio a ingresar o a devolver");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN600, "Cuota del ejercicio a ingresar o a devolver");
 		
@@ -539,29 +539,29 @@ public class Mod2002021Description {
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN612, "Cuota diferencial");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN615, "Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN616, "Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN633, "Incremento por incumplimiento de requisitos SOCIMI");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN633, "Incremento por incumplimiento de requisitos SOCIMI (**)");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN642, "Incremento por incumplimiento de requisitos SOCIMI");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN617, "Intereses de demora");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN618, "Intereses de demora");
+		
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1234B,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS)");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN083, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS)");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1332,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN1200,"Abono de deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 39.3 LIS)");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS)");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1333,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ1586,"Resultado de la autoliquidaci\u00F3n");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.BN621, "Resultado de la autoliquidaci\u00F3n");
-		
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ1578, "Resultados a ingresar procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ1584, "Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ1586, "Resultado tras regularizaci\u00F3n por autoliquidaci\u00F3n complementaria"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ1578, "Complementaria: Resultados a ingresar procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ1584, "Complementaria: Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.BN621,  "L\u00EDquido a ingresar o a devolver"); 
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ1588, "Importe integrado en la base imponible");
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ2842, "Deuda tributaria resultante del fraccionamiento art. 19.1 LIS"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ2844, "1er fraccionamiento");  
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ2846, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ2848, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al periodo impositivo 2021"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ2850, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento tras autoliquidaci\u00F3n complementaria"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2481, "Deuda tributaria resultante del fraccionamiento art. 19.1 LIS"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2483, "1er fraccionamiento");  
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2485, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento del art. 19.1 LIS");		
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2487, "Complementaria: Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al periodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2489, "L\u00EDquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS"); 
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LM150, "Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1020,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
@@ -570,10 +570,10 @@ public class Mod2002021Description {
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1021,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");		
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1044,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ3243, "Devoluci\u00F3n acordada/compensada"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ3243, "Complementaria: Devoluci\u00F3n acordada/compensada"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ3317, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ3320, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ3353, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2492, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
 		
 	}
 	
@@ -586,8 +586,8 @@ public class Mod2002021Description {
 		
 		// Aplicacion de resultados - Aplicacion
 		DESCRIPTION_MAP.put(Mod2002021Key.ID654,"A reservas");
-		DESCRIPTION_MAP.put(Mod2002021Key.ID1270,"Reservas de capitalizaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod2002021Key.ID1271,"Reservas de nivelaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002021Key.ID1270,"Reserva de capitalizaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002021Key.ID1271,"Reserva de nivelaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002021Key.ID1522,"Otras reservas");		
 		DESCRIPTION_MAP.put(Mod2002021Key.ID655,"Intereses aportaciones al capital (Cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002021Key.ID656,"A dividendos");
@@ -606,7 +606,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1242,"c1) Gastos financieros del per\u00EDodo impositivo deducibles tras aplicaci\u00F3n l\u00EDmite art. 16.5 y/o 83 LIS (<= [b], [a=c1+c2], >= 0)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1243,"c2) Gastos financieros del per\u00EDodo impositivo no deducibles tras aplicaci\u00F3n l\u00EDmite art. 16.5 y/o 83 LIS (=[a- c1], >= 0)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1244,"d) Gastos financieros pendientes de deducir en periodos anteriores afectados por art. 16.5 y/o 83 LIS, deducibles tras este l\u00EDmite ([b>=c1+d], >= 0]");
-		DESCRIPTION_MAP.put(Mod2002021Key.LM1245,"e) Gastos financieros del periodo impositivo no afectados por art. 16.5, 67 b) y/o 83 LIS (sin signo)");
+		DESCRIPTION_MAP.put(Mod2002021Key.LM1245,"e) Gastos financieros del periodo impositivo no afectados por art. 16.5 y/o 83 LIS (sin signo)");
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1246,"f) Gastos financieros del per\u00EDodo impositivo (= [c1+e])");
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1247,"g) Ingresos financieros del per\u00EDodo impositivo derivados de la cesi\u00F3n a terceros de capitales propios");
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1248,"h) Gastos financieros netos del per\u00EDodo impositivo (= [f-g])");
@@ -624,8 +624,6 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1260,"Total gastos financieros del per\u00EDodo impositivo no deducibles (= [c2+k2])");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LM393,"Importe del cr\u00E9dito exigible");
-		//DESCRIPTION_MAP.put(Mod2002021Key.LM150,"Opciones: Abono.");
-		//DESCRIPTION_MAP.put(Mod2002021Key.LM506,"Opciones: Compensaci\u00F3n,");
 		
 	}
 	static {
@@ -678,21 +676,21 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.TR482 , "Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR913 , "Incremento por incumplimiento de requisitos SOCIMI");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR486	, "Intereses de demora");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1334, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1334, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 44.2 RDLeg. 4/2004 y art. 39.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1338, "Abono de deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 39.3 LIS)");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR494	, "Resultado de la autoliquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1607, "Resultados a ingresar procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1611, "Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1624, "Resultado tras regularizaci\u00F3n por autoliquidaci\u00F3n complementaria"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1624, "Resultado de la autoliquidaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1607, "Complementaria: Resultados a ingresar procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1611, "Complementaria: Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR494	, "L\u00EDquido a ingresar o a devolver");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1631, "Importe integrado en la base imponible");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1635, "Deuda tributaria resultante del fraccionamiento art. 19.1 LIS"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1642, "1er fraccionamiento");  
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1646, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1650, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al periodo impositivo 2021"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1654, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento tras autoliquidaci\u00F3n complementaria"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1650, "Complementaria: Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al periodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1654, "L\u00EDquido a ingresar incluido el 1er fraccionamiento de art. 19.1 LIS"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1300, "Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1305, "Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");		
-		DESCRIPTION_MAP.put(Mod2002021Key.TR1658, "Devoluci\u00F3n acordada/compensada"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1658, "Complementaria: Devoluci\u00F3n acordada/compensada"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1662, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1666, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.TR1670, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");

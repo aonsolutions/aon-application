@@ -66,25 +66,26 @@ public enum Mod2002021Key implements IMod200Key {
 	,P1501
 	,P1502
 	,P1503
-	,P1515
+//	,P1515
 	,P1504
-	,P1505
+//	,P1505
 	,P1506
 	,P1809
 	,P1810
 	,P1507
 	,P1508
+
+	,POR51 // Suma de porcentajes de participación de personas o entidades en el capital de la declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado
+	,PORES // Suma de porcentajes de participaciones en situaciones especiales 
 	
 // --------------- PAGINA 2 BIS --------------- //	
 	
 	// PARTICIPACIONES INDIRECTAS (Totales)
-	,P1516
-	,P1517
-	,P1523
-	,P1571
+//	,P1516
+//	,P1517
+//	,P1523
+//	,P1571
 	
-	,POR51 // Suma de porcentajes de participación de personas o entidades en el capital de la declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado
-	,PORES // Suma de porcentajes de participaciones en situaciones especiales 
 
 // --------------- PAGINA 3 --------------- //
 	
@@ -386,27 +387,27 @@ public enum Mod2002021Key implements IMod200Key {
 // --------------- PAGINAS 10 Y 11 --------------- //	
 	
 	// ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO TOTAL DE CAMBIOS EN EL PATRIMONIO NETO
-	,TC380	,TC381	,TC382	,TC383	,TC384	,TC385	,TC386	,TC387	,TC388	,TC389	,TC390	,TC391	,TC392	,TC393
-	,TC394	,TC395	,TC396	,TC397	,TC398	,TC399	,TC400	,TC401	,TC402	,TC403	,TC404	,TC405	,TC406	,TC407
-	,TC408	,TC409	,TC410	,TC411	,TC412	,TC413	,TC414	,TC415	,TC416	,TC417	,TC418	,TC419	,TC420	,TC421
-	,TC422	,TC423	,TC424	,TC425	,TC426	,TC427	,TC428	,TC429	,TC430	,TC431	,TC432	,TC433	,TC434	,TC435
-	,TC436	,TC437	,TC438	,TC439	,TC440	,TC441	,TC442	,TC443	,TC444	,TC445	,TC446			,TC448	,TC449	
-	,TC450	,TC451	,TC452	,TC453	,TC454	,TC455	,TC456	,TC457	,TC458					,TC461	,TC462	,TC463	
-	,TC464	,TC465	,TC466	,TC467	,TC468	,TC469	,TC470	,TC471	,TC472					,TC475	,TC476	,TC477	
-	,TC478	,TC479	,TC480	,TC481	,TC482	,TC483	,TC484	,TC485	,TC486					,TC489	,TC490	,TC491
-	,TC492	,TC493	,TC494	,TC495	,TC496	,TC497	,TC498	,TC499	,TC502					,TC503	,TC504	,TC505
-	,TC506	,TC507	,TC508	,TC509	,TC510	,TC511	,TC512	,TC513	,TC514	,TC515	,TC516	,TC517	,TC518	,TC519
-	,TC520	,TC521	,TC522	,TC523	,TC524	,TC525	,TC526	,TC527	,TC528	,TC529	,TC530	,TC531	,TC532	,TC533
-	,TC534	,TC535	,TC536	,TC537	,TC538	,TC539	,TC540	,TC541	,TC542	,TC543	,TC544	,TC545	,TC546	,TC547
-	,TC548	,TC549	,TC550	,TC551	,TC552	,TC553	,TC554	,TC555	,TC556	,TC557	,TC558			,TC560	,TC561
-	,TC562	,TC563	,TC564	,TC565	,TC566	,TC567	,TC568	,TC569	,TC570	,TC571	,TC572			,TC574	,TC575
-	,TC576	,TC577	,TC578	,TC579	,TC580	,TC581	,TC582	,TC583	,TC584	,TC585	,TC586			,TC588	,TC589
-	,TC590	,TC591	,TC592	,TC593	,TC594	,TC595	,TC596	,TC597	,TC598	,TC599	,TC600			,TC602	,TC603
-	,TC604	,TC605	,TC606	,TC607	,TC608	,TC609	,TC610	,TC611	,TC612	,TC613	,TC614	,TC615	,TC616	,TC617
-	,TC618	,TC619	,TC620	,TC621	,TC622	,TC623	,TC624	,TC625	,TC626	,TC627	,TC628	,TC629	,TC630	,TC631
-	,TC715	,TC716	,TC717	,TC718	,TC719	,TC720	,TC721	,TC722	,TC723	,TC724	,TC725	,TC726	,TC727	,TC728
-	,TC729	,TC730	,TC731	,TC732	,TC733	,TC734	,TC735	,TC736	,TC737	,TC738	,TC739	,TC740	,TC741	,TC742
-	,TC632	,TC633	,TC634	,TC635	,TC636	,TC637	,TC638	,TC639	,TC640	,TC641	,TC642	,TC643	,TC644	,TC645
+	,TC380	,TC381	,TC382	,TC383	,TC384	,TC385	,TC386		,TC387	,TC388	,TC389	,TC390	,TC391	,TC392	,TC393
+	,TC394	,TC395	,TC396	,TC397	,TC398	,TC399	,TC400	    ,TC401	,TC402	,TC403	,TC404	,TC405	,TC406	,TC407
+	,TC408	,TC409	,TC410	,TC411	,TC412	,TC413	,TC414	    ,TC415	,TC416	,TC417	,TC418	,TC419	,TC420	,TC421
+	,TC422	,TC423	,TC424	,TC425	,TC426	,TC427	,TC428	    ,TC429	,TC430	,TC431	,TC432	,TC433	,TC434	,TC435
+	,TC436	,TC437	,TC438	,TC439	,TC440	,TC441	,TC442	    ,TC443	,TC444	,TC445	,TC446			,TC448	,TC449	
+	,TC450	,TC451	,TC452	,TC453	,TC454	,TC455	,TC456	    ,TC457	,TC458					,TC461	,TC462	,TC463	
+	,TC464	,TC465	,TC466	,TC467	,TC468	,TC469	,TC470	    ,TC471	,TC472					,TC475	,TC476	,TC477	
+	,TC478	,TC479	,TC480	,TC481	,TC482	,TC483	,TC484	    ,TC485	,TC486					,TC489	,TC490	,TC491
+	,TC492	,TC493	,TC494	,TC495	,TC496	,TC497	,TC498	    ,TC499	,TC502					,TC503	,TC504	,TC505
+	,TC506	,TC507	,TC508	,TC509	,TC510	,TC511	,TC512	    ,TC513	,TC514	,TC515	,TC516	,TC517	,TC518	,TC519
+	,TC520	,TC521	,TC522	,TC523	,TC524	,TC525	,TC526	    ,TC527	,TC528	,TC529	,TC530	,TC531	,TC532	,TC533
+	,TC534	,TC535	,TC536	,TC537	,TC538	,TC539	,TC540	    ,TC541	,TC542	,TC543	,TC544	,TC545	,TC546	,TC547
+	,TC548	,TC549	,TC550	,TC551	,TC552	,TC553	,TC554	    ,TC555	,TC556	,TC557	,TC558			,TC560	,TC561
+	,TC562	,TC563	,TC564	,TC565	,TC566	,TC567	,TC568	    ,TC569	,TC570	,TC571	,TC572			,TC574	,TC575
+	,TC576	,TC577	,TC578	,TC579	,TC580	,TC581	,TC582	    ,TC583	,TC584	,TC585	,TC586			,TC588	,TC589
+	,TC590	,TC591	,TC592	,TC593	,TC594	,TC595	,TC596	    ,TC597	,TC598	,TC599	,TC600			,TC602	,TC603
+	,TC604	,TC605	,TC606	,TC607	,TC608	,TC609	,TC610	    ,TC611	,TC612	,TC613	,TC614	,TC615	,TC616	,TC617
+	,TC618	,TC619	,TC620	,TC621	,TC622	,TC623	,TC624	    ,TC625	,TC626	,TC627	,TC628	,TC629	,TC630	,TC631
+	,TC715	,TC716	,TC717	,TC718	,TC719	,TC720	,TC721	    ,TC722	,TC723	,TC724	,TC725	,TC726	,TC727	,TC728
+	,TC729	,TC730	,TC731	,TC732	,TC733	,TC734	,TC735	    ,TC736	,TC737	,TC738	,TC739	,TC740	,TC741	,TC742
+	,TC632	,TC633	,TC634	,TC635	,TC636	,TC637	,TC638	    ,TC639	,TC640	,TC641	,TC642	,TC643	,TC644	,TC645
 	
 // --------------- PAGINAS 12 Y 13 --------------- //	
 	
@@ -439,7 +440,7 @@ public enum Mod2002021Key implements IMod200Key {
 	,I0415	,D0211
 	,I0331	,D0332
 	,I0325	,D0326
-	,I1518	,D0394
+//	,I1518	,D0394
 	,I0327	,D0328
 	,I0416	,D0543
 	,I0335	,D0336
@@ -469,6 +470,8 @@ public enum Mod2002021Key implements IMod200Key {
 	,I1015	,D1016
 			,D0370
 			,D2181
+			,D1764
+			,D1765
 	,I2182	,D2183
 	,I2184	,D2185
 	,I2186	,D2187
@@ -513,9 +516,6 @@ public enum Mod2002021Key implements IMod200Key {
 	,I0413	,D0414
 	,I0417	,D0418
 	
-	// Detalle de las correcciones al resultado contable (todas las casillas llevan 5 casillas de detalle)
-	// SE PONEN EN OTRO ENUMERADO (Mod2002021KeyDC) PORQUE SI LOS AÑADIMOS AQUI TENEMOS ERROR DE CODE TOO LARGE
-    
 	// Entidades navieras en regimen de tributacion en funcion del tonelaje
 	,LQ578
 	,LQ579
@@ -528,6 +528,7 @@ public enum Mod2002021Key implements IMod200Key {
 	// Base imponible
 	,LQ550
 	
+	// FALTA - REVISAR SI EL FORMATO DE ESTE AÑO TAMBIEN LAS LLEVA
 	// Según el formato del fichero aqui hay dos casillas mas sin numeración (se usan en SOCIMIS)
 	,LQ550TG  // Parte de la base imponible del período impositivo que tributa al tipo general (antes de compensación de bases imponibles negativas) 
 	,LQ550T0  // Parte de la base imponible del período impositivo que tributa al tipo del 0% (antes de compensación de bases imponibles negativas)
@@ -631,7 +632,8 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN1793	,BN1794
 	,BN1795	,BN1796	
 	,BN597	,BN1797
-	,BN1798	,BN1799	
+	,BN1798	,BN1799
+	,LQ1766	,LQ1784
 	,BN599	,BN600
 	
 	// Pagos fraccionados. Cuota diferencial
@@ -644,30 +646,30 @@ public enum Mod2002021Key implements IMod200Key {
 			,BN615	,BN616
 			,BN633	,BN642
 			,BN617	,BN618			
-	,BN1234B ,BN083	,BN1332
+	,BN1234B,BN083	,BN1332
 	,BN1200 ,BN1042	,BN1333
-			,BN621	,BN622
+			,LQ1586 ,LQ1587
 			
-	// Regularización mediante autoliquidación complementaria
+	// Líquido a ingresar o a devolver
 	,LQ1578 ,LQ1583
 	,LQ1584 ,LQ1585
-	,LQ1586 ,LQ1587	
+	,BN621	,BN622		
 	
 	// Opción de fraccionamiento en supuestos de cambios de residencia
-	,LQ1588 ,LQ2841
-	,LQ2842 ,LQ2843
-	,LQ2844 ,LQ2845
-	,LQ2846 ,LQ2847
-	,LQ2848 ,LQ2849
-	,LQ2850 ,LQ3242
+	,LQ1588 ,LQ2480
+	,LQ2481 ,LQ2482
+	,LQ2483 ,LQ2484
+	,LQ2485 ,LQ2486
+	,LQ2487 ,LQ2488
+	,LQ2489 ,LQ3242	
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria		
 	,LM150	,BN1020	,BN1043
 	,LM506	,BN1021	,BN1044
 	,LQ3243 ,LQ3244 ,LQ3245
 	,LQ3317 ,LQ3318 ,LQ3319
-	,LQ3320 ,LQ3351 ,LQ3352
-	,LQ3353 ,LQ3354 ,LQ3355
+	,LQ3320 ,LQ2490 ,LQ2491
+	,LQ2492 ,LQ2493 ,LQ2494
 	
 // --------------- PAGINA 15 --------------- //
 	
@@ -807,8 +809,8 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN2335	,BN2336	,BN2337
 	,BN2338	,BN2339	,BN2340
 	,BN2341	,BN2342	,BN2343
-	,BN2344	,BN2345	,BN243
-	,BN244	,BN245	,BN879
+	,BN2344	,BN2345	,BN2346
+	,BN244	,BN245	,BN2497
 	,BN877	,BN878	
 	,BN880	,BN881	,BN882
 	,BN866	,BN867	,BN870
@@ -841,8 +843,8 @@ public enum Mod2002021Key implements IMod200Key {
 	// Deducciones inversión en Canarias con límites incrementados (continuación)	
 	,BN2287
 	,BN2288
-	,BN3356
-	,BN3357
+	,BN2495
+	,BN2496
 	
 	// Desglose BN588 - Deducciones con límite del Capítulo IV Título VI y DT 24.3 LIS		
 	,BN198	,BN896	
@@ -953,7 +955,10 @@ public enum Mod2002021Key implements IMod200Key {
 	
 // --------------- PAGINA 18 BIS --------------- //
 	
-	// Desglose BN565 - Deducción donaciones a entidades sin fines de lucro (Ley 49/2002)		
+	// Desglose BN565 - Deducción donaciones a entidades sin fines de lucro (Ley 49/2002)
+	
+	 // Donaciones de carácter general
+	
 	,BN201	,BN202	
 	,BN904	,BN905	,BN906
 	,BN990	,BN991	,BN992
@@ -971,17 +976,17 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN2227 ,BN2228 ,BN2229
 	,BN868 	,BN869 	,BN871
 	,BN2380 ,BN2381 ,BN2382
-	,BN872 	,BN873 	,BN874
-	,BN875 	,BN876 	,BN890
+	,BN872 	,BN873 	,BN2498
+	,BN2499	,BN876 	,BN890
 	,BN891 	,BN892 	,BN893
-//	XXXXX XXXXX XXXXX Subtotal donaciones 2011 a 2014 (AUN NO TIENEN CLAVES ASIGNADAS)
-//	XXXXX XXXXX XXXXX Subtotal donaciones 2015 a 2021 sin reiteración de donaciones a una misma entidad (AUN NO TIENEN CLAVES ASIGNADAS)
-//	XXXXX XXXXX XXXXX Subtotal donaciones 2015 a 2021 con reiteración de donaciones a una misma entidad (AUN NO TIENEN CLAVES ASIGNADAS)
-	,BN598 			,BN895
-
-	,BN974
+	,BN1689 ,BN1690 ,BN1691
+	,BN1692 ,BN1693 ,BN1694
+	,BN1695 ,BN1696 ,BN1697
+	,BN1698 ,BN1699 ,BN1700
 	
-	,BN897  ,BN898
+	 // Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
+	
+	,BN2471 ,BN898
 	,BN899  ,BN901  ,BN902
 	,BN903  ,BN917  ,BN929
 	,BN930  ,BN931  ,BN932
@@ -989,7 +994,7 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN943  ,BN944  ,BN948
 	,BN949  ,BN950  ,BN951
 	,BN952  ,BN953  ,BN954
-	,BN955  ,BN956  ,BN957
+	,BN2472 ,BN2473 ,BN2474
 	,BN958  ,BN959  ,BN963
 	,BN964  ,BN965  ,BN969
 	,BN970  ,BN971  ,BN972
@@ -1001,10 +1006,19 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN1025 ,BN1035 ,BN1036
 	,BN1061 ,BN1062 ,BN1072
 	,BN1073 ,BN1074 ,BN1078
-//	XXXXX XXXXX XXXXX Subtotal donaciones 2011 a 2014 (AUN NO TIENEN CLAVES ASIGNADAS)                                                  
-//	XXXXX XXXXX XXXXX Subtotal donaciones 2015 a 2021 sin reiteración de donaciones a una misma entidad (AUN NO TIENEN CLAVES ASIGNADAS)
-//	XXXXX XXXXX XXXXX Subtotal donaciones 2015 a 2021 con reiteración de donaciones a una misma entidad (AUN NO TIENEN CLAVES ASIGNADAS)
+	,BN1701 ,BN1702 ,BN1703
+	,BN1704 ,BN1705 ,BN1706
+	,BN1729 ,BN2475 ,BN2476	
 	,BN1079 ,BN1080 ,BN1081
+	
+	 // Total deducciones a entidades sin fines de lucro (Ley 49/2002)
+	
+	,BN598 			,BN895
+	
+	 // Base de la deducción por donaciones a entidades sin fines de lucro del período impositivo
+
+	,BN974
+	
 	
 // --------------- PAGINA 19 --------------- //	
 	
@@ -1231,7 +1245,7 @@ public enum Mod2002021Key implements IMod200Key {
 	
 	// Desglose I0403, D0404 - Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994) 
 	,RC089	,RC094	,RC095	,RC2437	
-	,RC097	,RC098	,RC047	,RC2438	
+	,RC097	,RC098	,RC047	,RC2438	,RC048
 	,RC524	,RC525	,RC526	,RC2439	,RC527
 	,RC922	,RC923	,RC924	,RC2440	,RC925
 	,RC1165	,RC928	,RC938	,RC2441	,RC996
@@ -1239,6 +1253,7 @@ public enum Mod2002021Key implements IMod200Key {
 			
 	,RC927
 	
+	,RC2442					,RC2443
 	,RC2444					,RC2445
 	,RC2446					,RC2447
 	,RC1176					,RC2451
@@ -1337,22 +1352,26 @@ public enum Mod2002021Key implements IMod200Key {
 	,TR486	,TR487	,TR488	,TR489	,TR618
 	,TR1334	,TR1335	,TR1336	,TR1337	,TR1332
 	,TR1338	,TR1339	,TR1340	,TR1341	,TR1333
-	,TR494	,TR495	,TR496	,TR497	,TR622
+	,TR1624 ,TR1625 ,TR1629 ,TR1630 ,TR1587
 	,TR1607 ,TR1608 ,TR1609 ,TR1610 ,TR1583
 	,TR1611 ,TR1612 ,TR1613 ,TR1623 ,TR1585
-	,TR1624 ,TR1625 ,TR1629 ,TR1630 ,TR1587
-	,TR1631 ,TR1632 ,TR1633 ,TR1634 ,TR2841
-	,TR1635 ,TR1636 ,TR1637 ,TR1641 ,TR2843
-	,TR1642 ,TR1643 ,TR1644 ,TR1645 ,TR2845
-	,TR1646 ,TR1647 ,TR1648 ,TR1649 ,TR2847
-	,TR1650 ,TR1651 ,TR1652 ,TR1653 ,TR2849
+	,TR494	,TR495	,TR496	,TR497	,TR622
+	,TR1631 ,TR1632 ,TR1633 ,TR1634 ,TR2480
+	,TR1635 ,TR1636 ,TR1637 ,TR1641 ,TR2482
+	,TR1642 ,TR1643 ,TR1644 ,TR1645 ,TR2484
+	,TR1646 ,TR1647 ,TR1648 ,TR1649 ,TR2486
+	,TR1650 ,TR1651 ,TR1652 ,TR1653 ,TR2488
 	,TR1654 ,TR1655 ,TR1656 ,TR1657 ,TR3242
 	,TR1300	,TR1301	,TR1302	,TR1303	,TR1043
 	,TR1305	,TR1306	,TR1307	,TR1308	,TR1044
 	,TR1658 ,TR1659 ,TR1660 ,TR1661 ,TR3245
 	,TR1662 ,TR1663 ,TR1664 ,TR1665 ,TR3319
-	,TR1666 ,TR1667 ,TR1668 ,TR1669 ,TR3352
-	,TR1670 ,TR1671 ,TR1672 ,TR1673 ,TR3355
+	,TR1666 ,TR1667 ,TR1668 ,TR1669 ,TR2491
+	,TR1670 ,TR1671 ,TR1672 ,TR1673 ,TR2494
+	
+	// Detalle de las correcciones al resultado contable (todas las casillas llevan 5 casillas de detalle)
+	// SE PONEN EN OTRO ENUMERADO (Mod2002021KeyDC) PORQUE SI LOS AÑADIMOS AQUI TENEMOS ERROR DE CODE TOO LARGE
+	
 	;
 	
 	public String getCode() {

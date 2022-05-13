@@ -42,8 +42,8 @@ public class Page12 extends PageAbs {
 		paintTable(AON.MSG.netQuota(), Mod2002021Constants.LIQUIDATION_V_KEYS_4, HEADERS_2);
 		paintTable("", Mod2002021Constants.LIQUIDATION_V_KEYS_5, HEADERS_3, Mod2002021Key.BN621);		
 		paintTable("Regularizaci\u00F3n mediante autoliquidaci\u00F3n complementaria", Mod2002021Constants.LIQUIDATION_V_KEYS_6, HEADERS_2, Mod2002021Key.LQ1586);
-		paintTable("Opci\u00F3n de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_7, HEADERS_2, Mod2002021Key.LQ2846);
-		paintTable("Regularizaci\u00F3n de fraccionamiento art. 19.1 LIS mediante autoliquidaci\u00F3n complementaria en plazo voluntario", Mod2002021Constants.LIQUIDATION_V_KEYS_8, HEADERS_2, Mod2002021Key.LQ2850);
+//		paintTable("Opci\u00F3n de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_7, HEADERS_2, Mod2002021Key.LQ2846);
+//		paintTable("Regularizaci\u00F3n de fraccionamiento art. 19.1 LIS mediante autoliquidaci\u00F3n complementaria en plazo voluntario", Mod2002021Constants.LIQUIDATION_V_KEYS_8, HEADERS_2, Mod2002021Key.LQ2850);
 		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_9, HEADERS_3);
 		paintTable("Regularizaci\u00F3n de conversi\u00F3n de activos por impuesto diferido mediante autoliquidaci\u00F3n complementaria", Mod2002021Constants.LIQUIDATION_V_KEYS_10, HEADERS_3);
 		

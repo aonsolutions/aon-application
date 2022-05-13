@@ -620,7 +620,7 @@ public class Mod2002021Writer {
 						addUnSignedKey(line, mod200, Mod2002021Key.P1502, DS, DD, isComplementary);
 						addUnSignedKey(line, mod200, Mod2002021Key.P1503, DS, DD, isComplementary);
 						addSignedKey(line, mod200, Mod2002021Key.P1504, isComplementary);
-						addSignedKey(line, mod200, Mod2002021Key.P1505, isComplementary);
+//						addSignedKey(line, mod200, Mod2002021Key.P1505, isComplementary);
 						addSignedKey(line, mod200, Mod2002021Key.P1506, isComplementary);
 						addSignedKey(line, mod200, Mod2002021Key.P1809, isComplementary);
 						addSignedKey(line, mod200, Mod2002021Key.P1810, isComplementary);

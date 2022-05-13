@@ -31,8 +31,8 @@ public enum Mod2002021BN590Key implements Serializable, IMod200KeysProvider {
 	 ,C14(new Mod2002021Key[]{Mod2002021Key.BN2335,Mod2002021Key.BN2336,Mod2002021Key.BN2337},"2018: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C15(new Mod2002021Key[]{Mod2002021Key.BN2338,Mod2002021Key.BN2339,Mod2002021Key.BN2340},"2019: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C16(new Mod2002021Key[]{Mod2002021Key.BN2341,Mod2002021Key.BN2342,Mod2002021Key.BN2343},"2020: Activos fijos en La Palma, La Gomera y El Hierro")
-	 ,C17(new Mod2002021Key[]{Mod2002021Key.BN2344,Mod2002021Key.BN2345,Mod2002021Key.BN243 },"2021(*): Activos fijos en La Palma, La Gomera y El Hierro")
-	 ,C18(new Mod2002021Key[]{Mod2002021Key.BN244 ,Mod2002021Key.BN245 ,Mod2002021Key.BN879 },"2021: Activos fijos en La Palma, La Gomera y El Hierro")
+	 ,C17(new Mod2002021Key[]{Mod2002021Key.BN2344,Mod2002021Key.BN2345,Mod2002021Key.BN2346},"2021(*): Activos fijos en La Palma, La Gomera y El Hierro")
+	 ,C18(new Mod2002021Key[]{Mod2002021Key.BN244 ,Mod2002021Key.BN245 ,Mod2002021Key.BN2497},"2021: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C19(new Mod2002021Key[]{Mod2002021Key.BN877 ,Mod2002021Key.BN878 ,null                },"2003: Inversiones en Canarias (Ley 20/1991)")
 	 ,C20(new Mod2002021Key[]{Mod2002021Key.BN880 ,Mod2002021Key.BN881 ,Mod2002021Key.BN882 },"2004: Inversiones en Canarias (Ley 20/1991)")
 	 ,C21(new Mod2002021Key[]{Mod2002021Key.BN866 ,Mod2002021Key.BN867 ,Mod2002021Key.BN870 },"2005: Inversiones en Canarias (Ley 20/1991)")
@@ -61,8 +61,8 @@ public enum Mod2002021BN590Key implements Serializable, IMod200KeysProvider {
 	 ,C44(new Mod2002021Key[]{Mod2002021Key.BN886 ,Mod2002021Key.BN590 ,Mod2002021Key.BN887 },"Total")
 	 ,C45(new Mod2002021Key[]{Mod2002021Key.BN2287,null                ,null                },"2021: Deducci\u00F3n por investigaci\u00F3n y desarrollo en Canarias generada en el per\u00EDodo impositivo")	 		
 	 ,C46(new Mod2002021Key[]{Mod2002021Key.BN2288,null                ,null                },"2021: Deducci\u00F3n por innovaci\u00F3n tecnol\u00F3gica en Canarias generada en el per\u00EDodo impositivo")
-	 ,C47(new Mod2002021Key[]{Mod2002021Key.BN3356,null                ,null                },"2021: Deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias generada en el per\u00EDodo impositivo")
-	 ,C48(new Mod2002021Key[]{Mod2002021Key.BN3357,null                ,null                },"2021: Deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias generada en el per\u00EDodo impositivo")
+	 ,C47(new Mod2002021Key[]{Mod2002021Key.BN2495,null                ,null                },"2021: Deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias generada en el per\u00EDodo impositivo")
+	 ,C48(new Mod2002021Key[]{Mod2002021Key.BN2496,null                ,null                },"2021: Deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias generada en el per\u00EDodo impositivo")
 	 
 	;
 	

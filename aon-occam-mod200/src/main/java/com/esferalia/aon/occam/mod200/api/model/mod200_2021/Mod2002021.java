@@ -69,18 +69,16 @@ public class Mod2002021 extends Mod200 {
 	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
-	// FALTA - C. Participaciones indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
-	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // D. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
-
-	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // E. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // B2. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
+	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();  // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
+	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>(); // UTES - Deducción para evitar la doble imposición
+	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>(); // UTES - Relación de socios
+	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();  // Grupos de Sociedades- NIF de las entidades del grupo 
+	private LinkedList<String> establishments = new LinkedList<String>();	// No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
 	
-	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();
-	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();
-	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();
-	
-	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();  // NIF de las entidades del grupo 
-	private LinkedList<String> establishments = new LinkedList<String>();	// NIF de los establecimientos permanentes, en caso de entidad titular
+	// FALTA - Información adicional producciones cinematográficas españolas y espectáculos en vivo (Página 17) con el desglose de la casilla 588, son unos NIF (en el impreso 6) 
 	
 	private String devType;
 	private String payType;
