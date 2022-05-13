@@ -82,6 +82,12 @@ public class SalesDetailDAO {
 	public static List<SalesDetail> getList(AONContext ctx, SalesDetailFilter filter){
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
+
+	public static List<SalesDetail> save(AONContext ctx, List<SalesDetail> details) {
+		LinkedList<SalesDetail> list = new LinkedList<>();
+		details.stream().forEach(salesDetail -> list.add(save(ctx, salesDetail)));
+		return list;
+	}
 	
 	public static SalesDetail save(AONContext ctx, SalesDetail salesDetail) {
 		// TODO AUTOCOMPLETE & VALIDATE
@@ -144,13 +150,6 @@ public class SalesDetailDAO {
 				.where(SALES_DETAIL.ID.eq(salesDetail.getId()))
 				.execute();
 		return salesDetail;
-	}
-	
-	public static void deleteSalesDetail(AONContext ctx, Sales sales) {
-		ctx.checkWrite();
-		ctx.getDslContext()
-				.delete(SALES_DETAIL)
-				.where(SALES_DETAIL.SALES.eq(sales.getId())).execute();
 	}
 	
 	public static void delete(AONContext ctx, Integer salesDetailId) {

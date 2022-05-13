@@ -22,9 +22,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +33,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
@@ -62,6 +61,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SalesDetailDAO.SalesDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.SalesValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -145,24 +145,90 @@ public class SalesDAO {
 			.where(SALES_PROPERTIES.getConditions(filter));
 	}
 
+	private static SelectConditionStep<Record> selectFull(AONContext ctx, SalesFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(SALES)
+			.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(SALES.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.leftOuterJoin(SELLER).on(SELLER.REGISTRY.eq(SALES.SELLER))
+			.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+			.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(SALES.CARRIER))
+			.leftOuterJoin(CARRIER_ALIAS).on(CARRIER.REGISTRY.eq(CARRIER_ALIAS.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(SALES.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(SALES_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
+			.where(SALES_PROPERTIES.getConditions(filter));
+	}
+	
+	// ----- GET
+	
 	public static Sales get(AONContext ctx, Integer salesId){
 		return get(ctx, f -> f.getIdProperty().eq(salesId));
 	}
 	
-	public static Sales get(AONContext ctx, SalesFilter filter){
+	public static Sales get(AONContext ctx, SalesFilter filter, Options... options){
+		if(options.length > 0 && options[0].isFull())
+			return getFull(ctx, filter);
 		return select(ctx, filter).limit(1).fetch().stream().map(new SalesFiller())
 			.findFirst().orElse(new Sales());
 	}
 	
-	public static Stream<Sales> getStream(AONContext ctx, SalesFilter filter){
-		return select(ctx, filter).fetch().stream().map(new SalesFiller());
+	public static Sales getFull(AONContext ctx, SalesFilter filter){
+		return getFullStream(ctx, filter).findFirst().orElse(new Sales()); 
 	}
 	
+	// ----- GET STREAM
+	
+	public static Stream<Sales> getStream(AONContext ctx, SalesFilter filter, Options... options){
+		if(options.length > 0) 
+			return getStream(ctx, filter, options[0]);
+		return select(ctx, filter).fetch().stream().map(new SalesFiller());
+	}
+
 	public static Stream<Sales> getStream(AONContext ctx, SalesFilter filter, Integer page, Integer perPage){
 		return select(ctx, filter)
 			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().map(new SalesFiller());
 	}
+	
+	private static Stream<Sales> getStream(AONContext ctx, SalesFilter filter, Options options){
+		if(options.isFull() && options.isPagination())
+			return getFullStream(ctx, filter, options.getPage(), options.getPerPage());
+		else if(options.isFull())
+			return getFullStream(ctx, filter);
+		else if(options.isPagination())
+			return getStream(ctx, filter, options.getPage(), options.getPerPage());
+		else return getStream(ctx, filter);
+	}
+
+	public static Stream<Sales> getFullStream(AONContext ctx, SalesFilter filter){
+		Map<Sales, List<SalesDetail>> map = selectFull(ctx, filter)
+			.groupBy(SALES.ID, SALES_DETAIL.ID)
+			.fetchGroups(
+				new SalesFiller()::apply,
+				new SalesDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	public static Stream<Sales> getFullStream(AONContext ctx, SalesFilter filter, Integer page, Integer perPage){
+		Map<Sales, List<SalesDetail>> map = selectFull(ctx, filter)
+			.groupBy(SALES.ID, SALES_DETAIL.ID)
+			.limit(perPage).offset(perPage * (page -1))
+			.fetchGroups(
+				new SalesFiller()::apply,
+				new SalesDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	// ----- GET LIST
 	
 	public static List<Sales> getList(AONContext ctx, SalesFilter filter){
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
@@ -172,41 +238,59 @@ public class SalesDAO {
 		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter){
-		return ctx.getDslContext().select().from(SALES)
-				.where(SALES_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new SalesFiller()).filter(distinctByKey(p -> p.getId()));
-	}
-	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-	    Map<Object,Boolean> seen = new ConcurrentHashMap<>();
-	    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-	}
-	
+	/**
+	 * @deprecated  Replaced by get
+	 */
+	@Deprecated(forRemoval = true )
 	public static Sales getSales(AONContext ctx, SalesFilter filter){
 		return ctx.getDslContext().select().from(SALES).where(SALES_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(SALES).stream().map(new SalesFiller()).findFirst().orElse(new Sales());
 	}
-	
+
+	/**
+	 * @deprecated  Replaced by get
+	 */
+	@Deprecated(forRemoval = true )
 	public static Sales getSales(AONContext ctx, Integer salesId){	
 		return getSales(ctx, o -> o.getIdProperty().eq(salesId));
 	}
 	
+	/**
+	 * @deprecated  Replaced by get
+	 */
+	@Deprecated(forRemoval = true )
 	public static Sales getSales(AONContext ctx, String series, int number) {
 		return getSales(ctx, o -> o.getSeriesProperty().eq(series).and(o.getNumberProperty().eq(number)));
 	}
 	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter){
 		return SalesDetailDAO.getStream(ctx, filter);
 	}
 	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static SalesDetail getSalesDetail(AONContext ctx, SalesDetailFilter filter){
 		return SalesDetailDAO.get(ctx, filter);
 	}
 	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.get
+	 */
+	@Deprecated(forRemoval = true )
 	public static SalesDetail getSalesDetail(AONContext ctx, Integer detailId){	
 		return getSalesDetail(ctx, o -> o.getIdProperty().eq(detailId));
 	}
-	
+
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.get
+	 */
+	@Deprecated(forRemoval = true )
 	public static SalesDetail getSalesDetail(AONContext ctx, Integer salesId, Short line){	
 		return getSalesDetail(ctx, o -> o.getSalesProperty().eq(salesId).and(o.getLineProperty().eq(line)));
 	}
@@ -271,10 +355,15 @@ public class SalesDAO {
 	// ----- INSERT & UPDATE
 	
 	public static Sales save(AONContext ctx, Sales sales) {
-		// TODO AUTOCOMPLETE & VALIDATE
-		return sales.getId() != null
+		SalesValidation.autocomplete(ctx, sales);
+		SalesValidation.validate(ctx, sales);
+		
+		sales = sales.hasId()
 			? update(ctx, sales)
 			: insert(ctx, sales);
+		
+		sales.setDetails(SalesDetailDAO.save(ctx, sales.getDetails()));
+		return sales;
 	}
 	
 	public static Sales insert(AONContext ctx, Sales sales) {
@@ -326,7 +415,10 @@ public class SalesDAO {
 		return sales.setId(id);
 	}
 	
-	@Deprecated
+	/**
+	 * @deprecated  Replaced by save
+	 */
+	@Deprecated(forRemoval = true )
 	public static int insertSales(AONContext ctx, Sales sales) {
 		return insert(ctx, sales).getId();
 	}
@@ -378,28 +470,43 @@ public class SalesDAO {
 		return sales;
 	}
 	
-	@Deprecated
+	/**
+	 * @deprecated  Replaced by save
+	 */
+	@Deprecated(forRemoval = true )
 	public static void updateSales(AONContext ctx, Sales sales) {
 		update(ctx, sales);
 	}
 	
-	@Deprecated
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.save
+	 */
+	@Deprecated(forRemoval = true )
 	public static void insertSalesDetail(AONContext ctx, SalesDetail detail) {
 		SalesDetailDAO.save(ctx, detail);
 	}
 	
-	@Deprecated
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.save
+	 */
+	@Deprecated(forRemoval = true )
 	public static void updateSalesDetail(AONContext ctx, SalesDetail detail) {
 		SalesDetailDAO.save(ctx, detail);
 	}
 	
 	// ----- DELETE
 	
-	public static void deleteSalesDetail(AONContext ctx, Sales sales) {
+	public static void delete(AONContext ctx, Integer salesId) {
+		SalesDetailDAO.delete(ctx, f -> f.getSalesProperty().eq(salesId));
+		delete(ctx, f -> f.getIdProperty().eq(salesId));
+	}
+	
+	public static void delete(AONContext ctx, SalesFilter filter) {
 		ctx.checkWrite();
 		ctx.getDslContext()
-				.delete(SALES_DETAIL)
-				.where(SALES_DETAIL.SALES.eq(sales.getId())).execute();
+			.delete(SALES)
+			.where(SALES_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	// ----- OTHER
@@ -567,5 +674,4 @@ public class SalesDAO {
 				.setModificationUser(getValue(r, SALES.MODIFICATION_USER));
 		}
 	}
-	
 }

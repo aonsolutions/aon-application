@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
@@ -15,13 +16,17 @@ import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CARRIER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,15 +34,20 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
@@ -56,10 +66,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.DeliveryValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -72,7 +82,55 @@ public class DeliveryDAO {
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 
 	private DeliveryDAO() {
+		
+	}
 	
+	protected static class DeliveryPropertiesDAO implements DeliveryProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select,DeliveryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(DeliveryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DOMAIN);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PROJECT);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CUSTOMER);}
+		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ADDRESS);}
+		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ISSUE_TIME);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PAY_METHOD);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SECURITY_LEVEL);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.STATUS);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.REMARKS);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.WORKPLACE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SCOPE);}
+		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER_OF_PYMNTS);}
+		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DAYS_TO_FIRST_PYMNT);}
+		@Override public Property<Short> getDaysBetweenPymntProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DAYS_BETWEEN_PYMNTS);}
+		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PYMNT_DAYS);}
+		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ACCOUNT);}
+		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ALIAS);}
+		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BIC);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_USER);}
+		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER_PACKING);}
+		
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+
+		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	// -------------------- DELIVERY
@@ -95,25 +153,67 @@ public class DeliveryDAO {
 		if(next < 0) next = 0;
 		return ++next;
 	}
+	
+	// ----- SELECT
 
 	private static SelectConditionStep<Record> select(AONContext ctx, DeliveryFilter filter) {
 		 return ctx.getDslContext().select()
 			.from(DELIVERY)
-			.join(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.where(DELIVERY_PROPERTIES.getConditions(filter));
+	}
+	
+	private static SelectConditionStep<Record> selectFull(AONContext ctx, DeliveryFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(DELIVERY)
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.eq(DELIVERY.ID))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(DELIVERY.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(DELIVERY.WORKPLACE))
+			.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(DELIVERY.CARRIER))
+			.leftOuterJoin(CARRIER_ALIAS).on(CARRIER.REGISTRY.eq(CARRIER_ALIAS.ID))
 			.where(DELIVERY_PROPERTIES.getConditions(filter));
 	}
 
+	// ----- GET
+	
 	public static Delivery get(AONContext ctx, Integer deliveryId){
 		return get(ctx, f -> f.getIdProperty().eq(deliveryId));
 	}
 	
-	public static Delivery get(AONContext ctx, DeliveryFilter filter){
+	public static Delivery get(AONContext ctx, DeliveryFilter filter, Options... options){
+		if(options.length > 0 && options[0].isFull())
+			return getFull(ctx, filter);
 		return select(ctx, filter).limit(1).fetch().stream().map(new DeliveryFiller())
 			.findFirst().orElse(new Delivery());
 	}
 	
-	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter){
+	public static Delivery getFull(AONContext ctx, DeliveryFilter filter){
+		return getFullStream(ctx, filter).findFirst().orElse(new Delivery()); 
+	}
+	
+	// ----- GET STREAM
+	
+	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options... options){
+		if(options.length > 0) 
+			return getStream(ctx, filter, options[0]);
 		return select(ctx, filter).fetch().stream().map(new DeliveryFiller());
+	}
+	
+	private static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options options){
+		if(options.isFull() && options.isPagination())
+			return getFullStream(ctx, filter, options.getPage(), options.getPerPage());
+		else if(options.isFull())
+			return getFullStream(ctx, filter);
+		else if(options.isPagination())
+			return getStream(ctx, filter, options.getPage(), options.getPerPage());
+		else return getStream(ctx, filter);
 	}
 	
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
@@ -121,6 +221,30 @@ public class DeliveryDAO {
 			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().map(new DeliveryFiller());
 	}
+	
+	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
+		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
+			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+			.fetchGroups(
+				new DeliveryFiller()::apply,
+				new DeliveryDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
+		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
+			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+			.fetchGroups(
+				new DeliveryFiller()::apply,
+				new DeliveryDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	// ----- GET LIST
 	
 	public static List<Delivery> getList(AONContext ctx, DeliveryFilter filter){
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
@@ -144,9 +268,14 @@ public class DeliveryDAO {
 	public static Delivery save(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
 		
-		return delivery.hasId() 
+		DeliveryValidation.autocomplete(ctx, delivery);
+		DeliveryValidation.validate(ctx, delivery);
+
+		delivery = delivery.hasId() 
 			? update(ctx, delivery)
 			: insertDelivery(ctx, delivery);
+
+		return delivery;
 	}
 	
 	/**
@@ -262,7 +391,15 @@ public class DeliveryDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		deleteDeliveryDetail(ctx, f -> f.getDelivery().eq(id));
 		deleteDelivery(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static void delete(AONContext ctx, DeliveryFilter filter) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.delete(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static void deleteDelivery(AONContext ctx, DeliveryFilter filter) {

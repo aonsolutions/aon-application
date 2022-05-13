@@ -153,7 +153,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setNombreDelTransportista(delivery.getDriver());
 		seh1c.setMatriculaDelVehiculo(delivery.getNumberPlate());
 		seh1c.setLugarDeEntrega_Codificado_8_(deliveryPointEdiCode);
-		String deliveryAddress = getDeliveryFullAddress(delivery.getAddress());
+		String deliveryAddress = getDeliveryFullAddress(delivery.getAddress().getId());
 		deliveryAddress = deliveryAddress != null
 				&& deliveryAddress.length() > 70 ? StringUtils.abbreviate(
 				deliveryAddress, 70) : deliveryAddress;
@@ -167,14 +167,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		List<SEH1D> list = new ArrayList<>();
 
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
+				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
 				customerEdiCode, delivery.getCustomer().getId(), department));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
 		// null, null));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
+				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
 				deliveryPointEdiCode, delivery.getCustomer().getId(), department));
@@ -183,7 +183,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
 				delivery.getCustomer().getId(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
-				getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
+				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
 				customerEdiCode, delivery.getCustomer().getId(), department));
 

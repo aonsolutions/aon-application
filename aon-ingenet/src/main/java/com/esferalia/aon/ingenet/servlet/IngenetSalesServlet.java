@@ -140,8 +140,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				
 				Integer[] salesIds = responseList.stream()
 						.mapToInt(DataResponse::getSourceId).boxed().toArray(Integer[]::new);
-				salesList = SalesDAO.getSalesStream(
-						ctx, f -> f.getIdProperty().in(salesIds)).collect(Collectors.toList());
+				salesList = SalesDAO.getList(ctx, f -> f.getIdProperty().in(salesIds));
 				flushSales(httpResponse, ctx, salesList);
 				
 				responseList.stream().forEach(response -> {

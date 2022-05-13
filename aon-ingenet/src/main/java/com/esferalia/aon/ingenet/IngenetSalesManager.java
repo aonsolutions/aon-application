@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -45,11 +46,9 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class IngenetSalesManager {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetSalesManager.class.getName());
-
 	private static IngenetSalesManager instance;
 	
-	
-	private IngenetSalesManager(){
+	private IngenetSalesManager() {
 		
 	}
 	
@@ -59,7 +58,6 @@ public class IngenetSalesManager {
 		}
 		return instance;
 	}
-
 	
 	public void createSales(String domainName, String user, Sales sales) {
 		int domainId = IngenetContext.getUdapaDomainId();
@@ -439,7 +437,7 @@ public class IngenetSalesManager {
 		if(salesId!=null){
 			newSales.setId(salesId);
 			SalesDAO.updateSales(ctx, newSales);
-			SalesDAO.deleteSalesDetail(ctx, newSales);
+			SalesDetailDAO.delete(ctx, f -> f.getSalesProperty().eq(newSales.getId()));
 		} else {
 			salesId = SalesDAO.insertSales(ctx, newSales);
 		}

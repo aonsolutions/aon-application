@@ -193,6 +193,7 @@ public final class IJsonNames {
 	public static final String FROM_DUE_DATE = "fromDueDate";
 	public static final String FROM_SALARY = "fromSalary";
 	public static final String FROM_NUMBER = "fromNumber";
+	public static final String FULL = "full";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	public static final String GLOBAL = "global";
 	public static final String GROUP_BY_NIF = "groupByNif";
