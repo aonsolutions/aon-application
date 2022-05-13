@@ -132,11 +132,6 @@ public class DomainData implements Serializable {
 	
 	public String getDisplay(String filter) {
 		
-		return StringEscapeUtils.escapeHtml(description);
-	}
-
-	public String __getDisplay(String filter) {
-		
 		String htmlDescription = StringEscapeUtils.escapeHtml(description);
 		
 		if ( isBlank(filter) ) 

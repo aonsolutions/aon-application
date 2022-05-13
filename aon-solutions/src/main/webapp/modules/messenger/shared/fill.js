@@ -1,12 +1,13 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
-import {Apps, getApp} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomer, getCustomers } from "../../../services/registryService.js";
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
 import { waitEl } from "../../../services/utils.js";
+import { getAppsByDur } from "../../../services/app.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { createAction, createChatMessage, createMessageOpen, createNoMessage} from "./creationUtils.js";
 import { chooseIconMessage } from "./utils.js";
+
 
 /**
  * fill typeRequest (Tipo de solicitud)
@@ -199,7 +200,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
-        aonSelect.keyUpActive = false;
         aonSelect.clear();
         aonSelect.loading(true);
         try {
@@ -220,8 +220,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                 const value = target.value;
                 if(value.length >0){
                     getCustomers({reload:true, page:1, perPage:30, value}).then(cs=>{
-                        const tmp = cs.map( c=> ({...c, value: c.id}) ) ;
-                        aonSelect.setOptions( tmp );
+                        aonSelect.setOptionsBuild( cs.map( c=> ({...c, value: c.id}) ) );
                     });
                 }
             });
@@ -401,7 +400,7 @@ export const fillChat = (task, meId, workflows=[])=>{
         aonSelect.clear();
         try {
             let prev = {};
-            const apps = getAppPermission(aonMessengerChat.getDur());
+            const apps = getAppsByDur(aonMessengerChat.getDur());
             let options = apps.map(app => ({...app, value:app.tag, name:app.title}));
     
             if(options)
@@ -421,35 +420,4 @@ export const fillChat = (task, meId, workflows=[])=>{
             console.log(error);
         }
     }
-}
-
-const getAppPermission = (dur, value) => {
-  let apps = [];
-  if( dur.isAccounting())
-    apps.push(Apps.ACCOUNTING);
-
-  if(dur.isFiscal())
-    apps.push(Apps.FISCAL);
-
-  if((dur.isComunicaManager() || dur.isComunicaPortal() ) && !dur.isPayroll())
-   apps.push(Apps.COMUNICA);
-
-  if(dur.isPayroll())
-    apps.push(Apps.PAYROLL);
-
-  if(dur.isDocumental())
-    apps.push(Apps.DOCUMENTAL);
-
-  if(dur.isTimecontrol())
-    apps.push(Apps.TIMECONTROL);
-
-  if(dur.isInvoice())
-    apps.push(Apps.INVOICE);
-
-  if(value){
-    const exist = apps.some(a => a.app === value );
-    if(!exist) apps.push(getApp(value));
-  }
-
-  return apps;
 }

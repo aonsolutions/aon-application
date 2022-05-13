@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.json.JSONObject;
 
@@ -22,11 +23,13 @@ public class Coordinates implements Serializable {
 	}
 	
 	public Coordinates(String coordinates) {
-		if(!AonStringUtils.isEmpty(coordinates)) {
-			String[] c = coordinates.split(",");
-			this.latitude = Double.parseDouble(c[0]);
-			this.longitude = Double.parseDouble(c[1]);
-		}
+		try {
+			if(!AonStringUtils.isEmpty(coordinates)) {
+				String[] c = coordinates.split(",");
+				this.latitude = Double.parseDouble(c[0]);
+				this.longitude = Double.parseDouble(c[1]);
+			}
+		} catch (Exception e) {}
 	}
 	
 	public Coordinates(Double latitude, Double longitude) {
@@ -74,4 +77,19 @@ public class Coordinates implements Serializable {
 		return getLatitude() == null && getLongitude() == null;
 	}
 	
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(latitude, longitude);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Coordinates ) )
+			return false;
+		
+		Coordinates cd = (Coordinates) obj;
+
+		return Objects.equals(latitude, cd.latitude)&& Objects.equals(longitude, cd.longitude);
+	}
 }

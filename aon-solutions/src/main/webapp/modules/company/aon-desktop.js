@@ -298,10 +298,9 @@ export class AonDesktop extends AonElement {
 				}
 			}
 			
-			appsPermission = appsPermission.filter(app=> app.app !==Apps.NOTES.app);
-
-			if(appsPermission && appsPermission.length===1){
-				let app = appsPermission[0];
+			const appsOpen = appsPermission.filter(app=> ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+			if(appsOpen && appsOpen.length===1){
+				let app = appsOpen[0];
 				this.appSelection(app.app);
 				this.appOption = false;
 			}
@@ -537,7 +536,7 @@ export class AonDesktop extends AonElement {
 			case Apps.MESSENGER.app:
 				this.rootPanel(new AonMessenger());
 				break;
-			case Apps.SALTRA.app:
+			case Apps.AON_SALTRA.app:
 				this.rootPanel(new AonSaltra());
 				break;
 			}
@@ -565,8 +564,8 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(Apps.SALTRA.app === app.app)
-			return this.getDur().isSaltra();
+		else if(Apps.AON_SALTRA.app === app.app)
+			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else return false;
 	}
 

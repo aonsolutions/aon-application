@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.json.JSONObject;
 
@@ -81,5 +82,20 @@ public class Location implements Serializable {
 			json.put("coordinates", coordinates);
 		}
 		return json;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Location ) )
+			return false;
+		
+		Location loc = (Location) obj;
+		
+		return Objects.equals(id, loc.id);
 	}
 }

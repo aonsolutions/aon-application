@@ -368,8 +368,22 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.SELFCONTA) && (isAdmin() || hasRole(AonRole.SELFCONTA));
 	}
 	
+	// SALTRA
+	
+	public boolean hasSaltra() {
+		return hasApp(AonApp.SALTRA);
+	}
+	
 	public boolean isSaltra() {
-		return hasApp(AonApp.SALTRA) && (isAdmin() || hasRole(AonRole.SALTRA));
+		return hasSaltra() && (isAdmin() || hasRole(AonRole.SALTRA));
+	}
+	
+	public boolean isSaltraPortal() {
+		return hasSaltra() && (isAdmin() || hasRole(AonRole.SALTRA_PORTAL));
+	}
+	
+	public boolean isSaltraManager() {
+		return hasSaltra() && (isAdmin() || hasRole(AonRole.SALTRA_MANAGER));
 	}
 	
 	public boolean isConfidential() {

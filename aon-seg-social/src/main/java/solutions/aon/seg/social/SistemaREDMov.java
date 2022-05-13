@@ -44,6 +44,9 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDMov {
 	
+	
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testRedMov.html");
+	
 	 private SistemaREDMov() {
 	    throw new IllegalStateException("Utility class");
 	 }
@@ -65,6 +68,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null;
@@ -81,6 +85,7 @@ class SistemaREDMov {
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -101,6 +106,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null;
@@ -122,6 +128,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null;
@@ -144,6 +151,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null;
@@ -166,6 +174,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null;
@@ -187,6 +196,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 		return null;
@@ -208,6 +218,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -253,6 +264,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -275,6 +287,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -295,6 +308,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -315,6 +329,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -328,7 +343,10 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new SegSocialException(e.getMessage());
+		}
 	}	
 	
 	private static Employee sendAltaImpl(
@@ -915,7 +933,9 @@ class SistemaREDMov {
 
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
+
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regime);
 			form.getInputByName("txt_SDFTESO62").setValueAttribute(cccArr.get(0));

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
 
@@ -72,5 +73,20 @@ public class TaskHolder extends Registry implements Serializable{
 	public boolean isEmpty() {
 		return super.isEmpty() && getType() == null
 			&& getUserId() == null && getCostProfile() == null;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(registry);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof TaskHolder ) )
+			return false;
+		
+		TaskHolder th = (TaskHolder) obj;
+		
+		return Objects.equals(registry, th.registry);
 	}
 }
