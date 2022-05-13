@@ -20,6 +20,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Certificates;
@@ -39,10 +41,10 @@ public class Certificado {
 	
 	private static DecimalFormat decimalFormat = new DecimalFormat("#00.00");
 	
-	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
+	public static byte[] getCertEnterprisePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
 			try {
-				return certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+				return getCertEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
 			} 
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -54,16 +56,28 @@ public class Certificado {
 			}
 	}
 	
-	private static byte[] certEnterprisePdfImpl(final InputStream certificateInputStream, 
+	public static byte[] sendCertEnterprise(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, Certificates certificates) throws SepeException {
+			try {
+				return sendCertEnterpriseImpl(certificateInputStream, certificatePassword, certificateType, certificates);
+			} 
+			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+			catch (MalformedURLException e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (InterruptedException e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
+	}
+	
+	private static byte[] getCertEnterprisePdfImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, String nif, Date fecha ) throws IOException, SepeException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
 	    	webClient.getOptions().setUseInsecureSSL(true);
 	    	
-			//if(fecha==null) fecha = new Date();
-			//String[] fra = Toolkit.formatDate(fecha);
-
 			HtmlPage htmlPage = firstPageSepeCert(webClient);
   
 			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/ConsultasCertificadosRTWEB/ActionEntradaConsultas.do")).orElseThrow();
@@ -73,55 +87,71 @@ public class Certificado {
 			formDatos1.getInputByName("nif").setValueAttribute(nif);
 			htmlPage = formDatos1.getInputByName("btBuscar").click();
 			handleSepeExceptions(htmlPage);
-			
-			// La fecha fin ya no importa (lo dejo comentado) y creo que se podria quitar este argumento,
-			// ya que ahora no se guarda con fecha fin de contrato si no con fecha de presentacion del Certfic@2
-			// String finicio = fra[0]+"/"+fra[1]+"/"+fra[2];
-			
-			// Ahora la tabla esta dentro de un fieldset
-			HtmlTable table = (HtmlTable) htmlPage.querySelector("#contenido > form > fieldset > table");
-			HtmlRadioButtonInput firstColumn;
-			String columnCheck = "0";
-			
-			// Creo que siempre va a ser el ultimo Certific@2 el primero de la tabla
-			// Pero para el futuro igual habria que guardar la fecha de presentacion por que cuando un trabajador tenga varios Certific@2 presentados
-			// habra que buscar la forma de filtrarlo, ahora de momento lo he dejado para que siempre coja el mas reciente
-			if(null != table) {
-				firstColumn = table.getRows().get(1).getCell(0).querySelector("input[name=documentoSeleccionado]");
-				columnCheck  = firstColumn.getValueAttribute();
-			}
-			
-			HtmlRadioButtonInput inputRadio = htmlPage.querySelector("#contenido form input[name=documentoSeleccionado][value=\""+columnCheck+"\"]");
-	        htmlPage = (HtmlPage) inputRadio.click();
 
-	        Page page = htmlPage.getElementByName("btMostrar").click();
-			if(page.isHtmlPage()) {
-				htmlPage = (HtmlPage) page;
-				handleSepeExceptions(htmlPage);
-			} else {
-				try{
-					return page.getWebResponse().getContentAsStream().readAllBytes();
-				}
-				catch(Exception e){throw new InvalidDataException();}
-			}
+	        Page page = null;
+	        
+			String columnCheck = "0"; // FIRST RESULT DEFAULT
+            
+            DomNode documentSelected = htmlPage.querySelector("#contenido form input[name=documentoSeleccionado][value=\""+columnCheck+"\"]");
+            
+            if(documentSelected!=null) {
+	            page = getPageFirstPdf(htmlPage);
+            } else {
+                DomNode btnGenerarPdf = htmlPage.querySelector("[name=btGenerarPDF]");
+                
+                DomNode btMasCert = htmlPage.querySelector("[name=btMasCert]");
+
+                if(btnGenerarPdf!=null && (btMasCert==null || fecha==null)) {
+                    page = ((HtmlSubmitInput)btnGenerarPdf).click();
+                } else {
+        			htmlPage = ((HtmlSubmitInput)btMasCert).click();
+        			handleSepeExceptions(htmlPage);
+        			
+          			HtmlTable table = (HtmlTable) htmlPage.querySelector("#contenido > form table");
+          			
+          			if(null != table) {
+    	    			if(fecha!=null) {
+    	    				String[] fra = Toolkit.formatDate(fecha);
+    	        			String ffin = fra[0]+"/"+fra[1]+"/"+fra[2];
+    		    			for (final HtmlTableRow row : table.getRows()) {
+    		    				HtmlTableCell cell = row.getCell(6); 
+    		    				if(cell.getVisibleText().contains(ffin)) {
+    		    					HtmlRadioButtonInput firstColumn = row.getCell(0).querySelector("input[name=certSeleccionado]");
+    		    					columnCheck  = firstColumn.getValueAttribute();
+    		    					break;
+    		    				}
+    		    			}
+    	    			} 
+        				
+            			HtmlRadioButtonInput inputRadio = htmlPage.querySelector("#contenido form input[name=certSeleccionado][value=\""+columnCheck+"\"]");
+            	        inputRadio.click();
+            	        
+            	        page = htmlPage.getElementByName("btAceptar").click();
+            	        
+            	        page = getPageFirstPdf(page);
+        			}
+        			
+                }
+            } 
+
+            if(page!=null) {
+    			if(page.isHtmlPage()) {
+    				htmlPage = (HtmlPage) page;
+    				handleSepeExceptions(htmlPage);
+    			} else {
+    				try{
+    					return page.getWebResponse().getContentAsStream().readAllBytes();
+    				} catch(Exception e){
+    					throw new InvalidDataException();
+    				}
+    			}
+            }
 		}
 	    
 		return null; 
 	}
 	
-	public static byte[] certEnterprise(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, Certificates certificates) throws SepeException {
-			try {
-				return certEnterpriseImpl(certificateInputStream, certificatePassword, certificateType, certificates);
-			} 
-			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
-			catch (MalformedURLException e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e.getMessage());}
-	}
-	
-	private static byte[] certEnterpriseImpl(final InputStream certificateInputStream, 
+	private static byte[] sendCertEnterpriseImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, Certificates certificates ) throws IOException, SepeException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -303,8 +333,9 @@ public class Certificado {
 				} else {
 					try{
 						return page.getWebResponse().getContentAsStream().readAllBytes();
+					} catch(Exception e){
+						throw new InvalidDataException();
 					}
-					catch(Exception e){throw new InvalidDataException();}
 				}
 			}
 	        System.out.println("END");
@@ -321,7 +352,7 @@ public class Certificado {
 	      Integer i = 0;
 	      while(!(page instanceof HtmlPage) &&  i < maxAttemps) {
 	    	  System.out.println("ATTEMPT " + (i+1));
-		      try { page = pageFirstProcess(webClient); } 
+		      try { page = getPageFirstProcess(webClient); } 
 		      catch (FailingHttpStatusCodeException e) { System.out.println("I do not load the page, retrying!"); }
 	    	  i++;
 	    	  Thread.sleep(1000);
@@ -332,7 +363,7 @@ public class Certificado {
 		  return htmlPage;
 	}
 	
-	private static Page pageFirstProcess(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException{
+	private static Page getPageFirstProcess(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException{
 
 	      HtmlPage htmlPage = webClient.getPage("https://isweb.sepe.gob.es/GetAccess/Saml/SSO/Init?GAURI=https%3A%2F%2Fsede.sepe.gob.es%2FDCertificadosWeb%2FActionNavegacion.do%3FaccesoGA%3Dempresas%26accion%3Dnavegacion&GA_SAML_AC_COMPARISON=minimum&GA_SAML_IS_PASSIVE=false&GA_SAML_AC_CLASS_REF=http%3A%2F%2Feidas.europa.eu%2FLoA%2Flow&GA_SAML_PROVIDER=Q2819009H_E00142804&GA_SAML_IDP=https%3A%2F%2Fpasarela.clave.gob.es%2FProxy2");
 
@@ -347,6 +378,19 @@ public class Certificado {
 	      return button.click();
 	}
 	
+	private static Page getPageFirstPdf(Page page) throws SepeException, IOException {
+        if(page.isHtmlPage()) {
+			HtmlPage htmlPage = (HtmlPage) page;
+			handleSepeExceptions(htmlPage);
+			DomNode inputRadio2 = htmlPage.querySelector("#contenido form input[name=documentoSeleccionado][value=\"0\"]");
+	        if(inputRadio2!=null) {
+	        	((HtmlRadioButtonInput)inputRadio2).click();
+	            page = htmlPage.getElementByName("btMostrar").click();
+	        } 
+        }
+        return page;
+	}
+	
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
 		try {
 			DomNode error = htmlPage.querySelector("#contenido > form > p.formAviso");
@@ -354,5 +398,4 @@ public class Certificado {
 				throw new SepeException(error.getVisibleText());
 		} catch (NullPointerException e) {}
 	}
-	
 }

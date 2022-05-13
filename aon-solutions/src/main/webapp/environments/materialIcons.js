@@ -114,6 +114,7 @@ export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
 export const FOLDER = 'folder';
+export const FORK_LEFT = "fork_left";
 export const FORMAT_INDENT_INCREASE = "format_indent_increase";
 export const FORMAT_ITALIC = "format_italic";
 export const FORMAT_BOLD = "format_bold";

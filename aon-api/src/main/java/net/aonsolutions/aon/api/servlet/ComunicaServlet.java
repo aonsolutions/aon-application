@@ -207,10 +207,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
                 errors.add(e.getClass().getSimpleName());
             } catch(Exception e) {
                 e.printStackTrace();
+                if(e.getMessage()!=null) {
+                  	errors.add(e.getMessage());
+                }
             }
         });	
         
-        if(!errors.isEmpty()) throw new AonApiException(errors.get(0));
+        if(employees.isEmpty() && !errors.isEmpty()) {
+        	throw new AonApiException(errors.get(0));
+        }
         
 		return employees;
 	}

@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask2;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
@@ -11,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
+import com.esferalia.aon.occam.api.model.task.TaskCounts;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskAttachDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
@@ -55,13 +58,13 @@ public class Task2Impl implements ITask2 {
 	}	
 	
 	@Override
-	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter) {
-		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskStatusCount(ctx, filter));
+	public Map<String, Integer> getTaskCount(AONContext ctx,TaskFilter sender, TaskFilter receiver) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskCount(ctx, sender, receiver));
 	}	
 	
 	@Override
-	public HashMap<String, Integer> getTaskCount(AONContext ctx,TaskFilter sender, TaskFilter receiver) {
-		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskCount(ctx, sender, receiver));
+	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskGeneralCount(ctx, status, workgroup, tags));
 	}	
 	
 	@Override

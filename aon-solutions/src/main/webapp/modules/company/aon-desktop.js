@@ -18,6 +18,7 @@ import * as GWT from "../../gwt/gwt.js";
 import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 import { AonFiscal } from '../fiscal/aon-fiscal.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
+import { AonSaltra } from '../laboral/aon-saltra.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../marketplace/aon-marketplace.js';
@@ -274,10 +275,18 @@ export class AonDesktop extends AonElement {
 		let ul = this.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP);
+
+
 		if(company.parentId || company.type !== 'CONSULTANCY'){
+
+			let appsPermission =[];
+
 			for (let key in Apps){
 				const app = Apps[key];
 				if(this.isApp(app)) {
+					
+					appsPermission.push(app);
+
 					if(Apps.MESSENGER.app === app.app){
 						getTaskHolder({reload:true}).then(({id})=>{
 							if(id) 
@@ -288,6 +297,14 @@ export class AonDesktop extends AonElement {
 					}
 				}
 			}
+			
+			const appsOpen = appsPermission.filter(app=> ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+			if(appsOpen && appsOpen.length===1){
+				let app = appsOpen[0];
+				this.appSelection(app.app);
+				this.appOption = false;
+			}
+
   		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
@@ -519,6 +536,9 @@ export class AonDesktop extends AonElement {
 			case Apps.MESSENGER.app:
 				this.rootPanel(new AonMessenger());
 				break;
+			case Apps.AON_SALTRA.app:
+				this.rootPanel(new AonSaltra());
+				break;
 			}
 	}
 
@@ -544,6 +564,8 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else if(Apps.AON_SALTRA.app === app.app)
+			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else return false;
 	}
 

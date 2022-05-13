@@ -99,6 +99,7 @@ export class AonModule extends AonElement {
 
 		getUser().then(user => {
 			LS.setDomainLogin(user.login);
+			
 			this.rootPanelHtml(this.isMobile()
 				? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 				: '<aon-desktop id="aonDesktop"></aon-desktop>');

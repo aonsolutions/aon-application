@@ -6,6 +6,7 @@ import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { CSS, MSG, TAG } from '../environments/environments.js';
 import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from './documental/aon-documental.js';
+import { AonSaltra } from'./laboral/aon-saltra.js';
 import '../components/aon-icon.js';
 import '../components/aon-application.js';
 import './marketplace/aon-marketplace.js';
@@ -57,29 +58,35 @@ export class AonApps extends AonElement {
 		ul.classList.add(CSS.AON_LIST_GROUP);
 
 		for (let key in Apps){
-			if(this.isApp(Apps[key])) {
+			let app = Apps[key];
+			if(this.isApp(app)) {
+
 				let li = this.createElement(TAG.LI);
 				li.classList.add(CSS.AON_LIST_GROUP_ITEM);
 				li.classList.add(CSS.AON_APP_LI);
 				li.style.borderRight = '0px';
 				li.style.borderLeft = '0px';
 				li.style.cursor = 'pointer';
+				
 				li.addEventListener('click', () => {
-					this.appSelection(Apps[key].app);
+					this.appSelection(app.app);
 				});
+
 				let span = this.createElement(TAG.SPAN);
+
 				span.style.margin = '20px';
-				if(Apps[key].icon) {
-					span.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="30px"></aon-icon>`;
+
+				if(app.icon) {
+					span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
 				} else {
 					let img = this.createElement(TAG.IMG);
 					img.style.width = '30px';
-					img.src = Apps[key].logo;
+					img.src = app.logo;
 					span.appendChild(img);
 				}
 				let span2 = this.createElement(TAG.SPAN);
 				span2.className = 'aonAppTitle';
-				span2.innerHTML = Apps[key].title;
+				span2.innerHTML = app.title;
 				span.appendChild(span2);
 
 				let buttons = this.createElement(TAG.SPAN);
@@ -135,6 +142,9 @@ export class AonApps extends AonElement {
 			case Apps.MESSENGER.app:
 				this.rootPanelHtml('<aon-messenger></aon-messenger>');
 				break;
+			case Apps.AON_SALTRA.app:
+				this.rootPanel(new AonSaltra());
+				break;
 		}
 	}
 
@@ -159,7 +169,10 @@ export class AonApps extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else return false;
+		else if(Apps.AON_SALTRA.app === app.app)
+			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
+		else 
+			return false;
 	}
 }
 

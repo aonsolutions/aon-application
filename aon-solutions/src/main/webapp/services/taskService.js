@@ -9,7 +9,7 @@ export const saveTask = (data) =>  isSigPost("task",data);
 export const getTaskAppParams = (data) => isSigPost(`task/get-app-params`, data);
 export const saveTaskAppParams = (data) => post(`${API_URL}/task/app-params`, data);
 export const deleteTask = (data) => isSigRemove("task",data); 
-export const getTaskStatusCount = (data) => isSigGet("task/status/count",data);
+export const getTaskGeneralCount = (data) => isSigGet("task/general/count",data);
 export const getTaskCount = (data) => isSigGet("task/count",data);
 export const getTaskNotice = (data) => isSigGet("task/notice",data);
 export const sendTaskHistoric = (data) => isSigPost(`task/historic`,data);

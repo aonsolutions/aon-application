@@ -1,13 +1,13 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
-import Apps from '../../services/app.js';
+import {Apps, getAppsByDur} from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from './MessengerEnums.js';
+import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
+import { getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -109,14 +109,23 @@ export class AonMessenger extends AonElement {
 				} else {
 					this.buildToolbar();
 
+					let promisesLoad = [];
+
+					promisesLoad.push(this.loadTag());
+
                     if(!this.cau){
-                        this.loadWorkgroup();
+						promisesLoad.push(this.loadWorkgroup());
                     } else {
                         this._filter.email = email;
                         this.addListFilter(this._filter);
                     }
-                    
+
                     this.init();	
+
+					Promise.all(promisesLoad).then(()=>{
+						this.updateCount();
+					});
+
 				}
 			}
 		});		
@@ -145,8 +154,6 @@ export class AonMessenger extends AonElement {
 		}
 		
 		this.addBackgroundSidenav(this._filter);
-
-		this.updateCount();
 	}
 
 
@@ -179,8 +186,9 @@ export class AonMessenger extends AonElement {
 		
 		if(!this.cau){
 			this.groupNavBar();
-			this.tagNavBar();
 		}
+
+		this.tagNavBar();
 	}
 
 
@@ -322,6 +330,15 @@ export class AonMessenger extends AonElement {
 				}
 			},
 			{
+				...MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS,
+				fn: () =>{
+					this._filter.status = TASK_STATUS.IN_PROGRESS;
+					this._filter.workgroups = this.getWorkgroupsStr();
+					this.addListFilter(this._filter);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+				}
+			},
+			{
 				...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.FINISHED;
@@ -352,10 +369,21 @@ export class AonMessenger extends AonElement {
 		}, []);
 	}
 
-	loadWorkgroup() {
+    tagNavBar() {
+		let application = this.applicationEl;
+		
+		const fnTag = this.getDur().isMessengerManager() && !this.cau ? () => this.dialogTag() : null; 
+		
+		application.addSidenavOptions2({
+			id: 'Tag',
+			name: this.cau ? MSG.APPLICATION : MSG.TAG
+		}, [], fnTag);
+	}
+
+	async loadWorkgroup() {
 		let application = this.applicationEl;
 
-		this.getMyWorkgroups().then( workgroups => {
+		await this.getMyWorkgroups().then( workgroups => {
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  let options = [];
 
@@ -381,10 +409,19 @@ export class AonMessenger extends AonElement {
 				name: item.description,
 				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
-					this._filter.workgroups = undefined;
-					this._filter.workgroup = this._filter.workgroup == item.id ? undefined : item.id;
-					this.addListFilter({...this._filter});
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+					let filter = {};
+					if(this._filter.workgroup == item.id){
+						this._filter.workgroup  = undefined;
+						this.addListFilter({...this._filter});
+						filter = {...this.getListFilter()};
+					} else {
+						this._filter.workgroup  = item.id;
+						this.addListFilter({...this._filter});
+						filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
+					}
+
+					this.addBackgroundSidenav(filter);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 				}
 			})
 		  );
@@ -396,25 +433,22 @@ export class AonMessenger extends AonElement {
 		});
 	}
 
-
-    tagNavBar() {
+	async loadTag() {
 		let application = this.applicationEl;
-		
-		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
-		
-		application.addSidenavOptions2({
-			id: 'Tag',
-			name: MSG.TAG
-		}, [], fnTag);
-		this.loadTag();
-	}
 
-	loadTag() {
-		let application = this.applicationEl;
-		const manager =  this.getDur().isMessengerManager();
-		getTaskTags({type:TAG_TYPE.TASK_LABEL}).then(tags => {
+		let params = {type:TAG_TYPE.TASK_LABEL};
+
+		if(this.cau){
+			let tags = getAppsByDur(this.getDur()).map(app => app.tag);
+			if(tags.length){
+				params.tag = tags.join(",");
+			}
+		}
+
+		await getTaskTags(params).then(tags => {
 		  this._tags = sortBy(tags, "name", "asc").map(t => ({...t, value: t.id, description: t.name, name:t.name}));
 		  this.clearElementById(application.SIDENAV+'TagList');
+
 		  this._tags.forEach(item => {
 			let option = {
 				id:item.id,
@@ -429,7 +463,7 @@ export class AonMessenger extends AonElement {
 				}
 			};
 
-			if(manager){
+			if(this.getDur().isMessengerManager() && !this.cau){
 				option.actions.push(
 					{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
 					{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }
@@ -454,8 +488,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	getListFilter() {
-		let filter =  this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
-		return filter;
+		return this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
 
 	addBackgroundSidenav(filter){
@@ -473,6 +506,9 @@ export class AonMessenger extends AonElement {
 			}
 
 			switch (filter.status){
+				case TASK_STATUS.IN_PROGRESS:
+					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
+					break;
 				case TASK_STATUS.FINISHED:
 					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name);
 					break;
@@ -543,7 +579,6 @@ export class AonMessenger extends AonElement {
 		let filterCount= {};
 		if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email){
 			filterCount.email = this.cauInfo.auth.email;
-
 		}
 
 		if(this.cau){
@@ -563,44 +598,68 @@ export class AonMessenger extends AonElement {
 		
 		if(!this.cau){
 			getTaskCount(filterCount).then(count=>{
-				let sender =  count.sender || 0;
 				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount(MSG.SENT, sender);
-				application.updateSidenavCount("Recibidas", task_holder);
+				let sender =  count.sender || 0;
+				application.updateSidenavCount(MATERIAL_ICONS.MOVE_TO_INBOX, task_holder);
+				application.updateSidenavCount(MATERIAL_ICONS.OUTBOX, sender);
 			});	
 		}
 
 		let filter = {};
 
-		if(this._filter.source) 
+		if(this._filter.source) {
 			filter.source = this._filter.source;
+		}
 
-		if(filterCount.workgroups)
-			filter.email = filterCount.workgroups;
+		if(filterCount.workgroups){
+			filter.workgroups = filterCount.workgroups;
+		}
 
-		if(filterCount.email)
+		if(filterCount.email){
 			filter.email = filterCount.email;
+		}
 
-		if(filterCount.task_holder && !this.getDur().isMessengerManager())
+		if(filterCount.task_holder && !this.getDur().isMessengerManager()){
 			filter.task_holder = filterCount.task_holder;
+		}
+		
+		if(this._tags.length){
+			filter.tag = this._tags.map(t=> t.id).join(',');
+		}
 
-		getTaskStatusCount(filter).then(resp=>{
-			let openCount = resp[TASK_STATUS.PENDING];
-			let archiveCount = resp[TASK_STATUS.DELETED];
-			let closeCount = resp[TASK_STATUS.FINISHED];
-			
-			if(resp[TASK_STATUS.IN_PROGRESS]) 
-				openCount = openCount + resp[TASK_STATUS.IN_PROGRESS];
+		getTaskGeneralCount(filter).then(({status, workgroups, tag})=>{
+			try {
+				if(status){
+					//----------------------- UPDATE COUNT---------------
+					let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
+					application.updateSidenavCount(listOpen.id, status[TASK_STATUS.PENDING]);
 	
-			//----------------------- UPDATE COUNT---------------
-			let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
-			application.updateSidenavCount(listOpen.id, openCount);
+					let listInProgress = MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS;
+					application.updateSidenavCount(listInProgress.id, status[TASK_STATUS.IN_PROGRESS]);
+		
+					let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
+					application.updateSidenavCount(listClose.id, status[TASK_STATUS.DELETED]);
+					
+					let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
+					application.updateSidenavCount(listTrash.id, status[TASK_STATUS.FINISHED]);
+				}
+	
+				if(workgroups){
+					for(const key in workgroups){
+						application.updateSidenavCount(key,  workgroups[key]);
+					}
+				}
 
-			let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
-			application.updateSidenavCount(listClose.id, closeCount);
-			
-			let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
-			application.updateSidenavCount(listTrash.id, archiveCount);
+				if(this.cau){
+					if(tag){
+						for(const key in tag){
+							application.updateSidenavCount(key, tag[key]);
+						}
+					}
+				}
+			} catch (error) {
+				console.error(error);
+			}
 		});
 	}
 

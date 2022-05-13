@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -49,6 +53,7 @@ import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
+import com.esferalia.aon.occam.api.model.task.TaskCounts;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
@@ -759,33 +764,17 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<Byte, Integer> getTaskStatusCount(Domain domain, User user, TaskFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskStatusCount(ctx, filter);
-		}
-	}
-	
-	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter sender, TaskFilter receiver) {
+	public static Map<String, Integer> getTaskCount(Domain domain, User user, TaskFilter sender, TaskFilter receiver) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskCount(ctx, sender, receiver);
 		}
 	}
 	
-//	public static HashMap<String, Integer> getTaskCountSchemas(AonToken aonToken, TaskFilter filter) {
-//		List<String> schemas = AONContext.getSchemas();
-//		Integer total = 0;
-//		for(String schema: schemas) {
-//			String domain = AONContext.getSchemaFirstDomain(schema);
-//			if(!AonStringUtils.isBlank(domain)) {
-//				try(AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-//					 TaskHolder taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
-//					 if(taskHolder!=null) {
-//						 getTask2().getTaskCount(ctx, filter, taskHolder.getId());
-//					 }
-//				} 
-//			}
-//		}
-//	}
+	public static TaskCounts getTaskGeneralCount(Domain domain, User user, Optional<TaskFilter> status, Optional<TaskFilter> workgroup,  Optional<TaskFilter> tags) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskGeneralCount(ctx, status, workgroup, tags);
+		}
+	}
 	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
@@ -858,7 +847,6 @@ public class AON_SOLUTIONS {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTaskWorkflow(ctx, workflow);
 		}
-		
 	}
 	
 	public static void deleteTaskWorkflow(Domain domain, User user, Integer id) {

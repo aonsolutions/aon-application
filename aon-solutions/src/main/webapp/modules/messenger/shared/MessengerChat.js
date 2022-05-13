@@ -1,10 +1,10 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT, TAG} from "../../../environments/environments.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT, TAG, AON_ICONS} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openDialogBranch} from "./creationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import * as ACTIONS from "../../actions.js";
@@ -13,6 +13,7 @@ import { AonTab } from "../../../components/aon-tab.js";
 import { getTaskOne } from "../../../services/taskService.js";
 import { Task } from "../../../models/task/Task.js";
 import { sortBy } from "../../../services/utils.js";
+import { AonIcon } from "../../../components/aon-icon.js";
 
 /**
  * 
@@ -70,7 +71,7 @@ const buildToolbar = (aonMessengerChat) => {
           toolbar.addButton2({
             id:"createBranch",
             name: "Crear Rama",
-            aonIcon:"aon_branch" 
+            aonIcon: AON_ICONS.AON_BRANCH,
           }, (e) =>openDialogBranch(e));
         }
 
@@ -145,7 +146,7 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
     buildChat(task, wrapper);
 
     tab.addOption({ 
-      title: MSG.HISTORIC, 
+      title: MSG.CONVERSATION, 
       fn: () => {
         buildChat(task, wrapper);
         aonMessengerChat.getTaskWorkflow(task);
@@ -156,9 +157,10 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
       await getTaskOne({id:task.getParent()}).then(t => {
 
         const tk = new Task(t);
-        
+        let title = getTitleHtml(tk, true);
+
         tab.addOption({
-          title: "Padre #"+(tk.number || "0").toString().padStart(5, 0),
+          title,
           fn: ()=>{
             buildChat(tk, wrapper);
             aonMessengerChat.getTaskWorkflow(tk);
@@ -169,33 +171,9 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
     }
 
     sortBy(task.getChilds(), 'number').forEach(t=>{
+
       const tk = new Task(t);
-
-      const status = tk.getStatus();
-
-      let title = "#"+(tk.number || "0").toString().padStart(5, 0);
-
-      if([TASK_STATUS.FINISHED, TASK_STATUS.DELETED].includes(status)){
-        const isFinished = TASK_STATUS.FINISHED.includes(status);
-        const color = isFinished ? CSS.variable(COLORS.MATERIAL_RED) : CSS.variable(COLORS.GRAYSON);
-        const icon  = isFinished ? MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE : MATERIAL_ICONS.ARCHIVE;
-
-        let span = document.createElement(TAG.SPAN);
-        span.innerHTML = title;
-       
-        let i = document.createElement(TAG.I);
-        i.style.position = "relative";
-        i.style.fontSize = "1.4em";
-        i.style.top = "3px";
-        i.style.marginLeft = "1px";
-        i.style.color = color;
-        i.innerText = icon;
-        i.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
-        span.appendChild(i);
-
-        title = span.outerHTML;
-
-      }
+      let title = getTitleHtml(tk, false);
 
       tab.addOption({
         title,
@@ -216,13 +194,12 @@ const buildWrapper = (secondDiv) => {
       type: MESSENGER_COMPONENTS.WRAPPER,
       classes: [CSS.FLEX_COLUMN],
       styles: {
-          width:'92%',
-          height: '100%',
+        width:'94%',
+        height: '100%',
       }
     }).element;
     secondDiv.appendChild(wrapper);
 
-    
     /**
      * The chat itself
      */
@@ -314,7 +291,7 @@ const createFirstDiv = (mainView) => {
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.NO_SCROLLBAR],
     id: MESSENGER_IDS.FIRST_DIV,
     styles: {
-      width: "50%",
+      width: "40%",
       minWidth: "400px",
       paddingTop: "15px",// "20px",
       paddingRight: "20px",
@@ -334,7 +311,7 @@ const createSecondDiv = (mainView) => {
     classes: [CSS.FLEX_ROW],
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
-      width: "50%",
+      width: "60%",
       // paddingTop: "4px",
       paddingBottom: "30px",
       paddingRight: "10px"
@@ -354,7 +331,7 @@ const addChatButtonsUpDown = (secondDiv) => {
   const transparent = "transparent";
   const leftButtonBar = newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-    styles: { width: "8%" }
+    styles: { width: "6%" }
   });
   leftButtonBar.appendTo(secondDiv);
 
@@ -374,3 +351,40 @@ const addChatButtonsUpDown = (secondDiv) => {
   downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
   leftButtonBar.appendChild(downIcon);
 }
+
+
+const getTitleHtml = (task, isParent) => {
+
+  let span = document.createElement(TAG.SPAN);
+
+  const { icon_color} = getIconJson(task);
+
+  let icon = document.createElement(TAG.I);
+
+  if(isParent){
+    setStyles(icon,{
+      position: "relative",
+      fontSize: "1.4em",
+      top: "3px",
+      marginLeft: "1px" 
+    });
+
+    icon.title = MSG.PARENT;
+    icon.innerText = MATERIAL_ICONS.FORK_LEFT;
+    icon.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
+  } else {
+    icon = new AonIcon();
+    icon.icon = AON_ICONS.AON_BRANCH;
+    icon.title = "Branch";
+  }
+
+  icon.color = icon_color;
+ 
+  span.appendChild(icon);
+
+  let spanTwo = document.createElement(TAG.SPAN);
+  spanTwo.innerHTML = "#"+(task.number || "0").toString().padStart(5, 0);
+  span.appendChild(spanTwo);
+
+  return span.outerHTML;
+};

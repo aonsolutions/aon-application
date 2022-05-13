@@ -21,6 +21,7 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -699,7 +700,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 	
 	private void showHideContractOtherData(Integer contractType) {
-		getTabLayoutPanel().getTabWidget(1).setVisible(-1 != contractType);
+		if((-1 != contractType))
+			getTabLayoutPanel().getTabWidget(1).getElement().getStyle().clearDisplay();
+		else
+			getTabLayoutPanel().getTabWidget(1).getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	public Map<String, String> checkSaveAndGetErrors() {
