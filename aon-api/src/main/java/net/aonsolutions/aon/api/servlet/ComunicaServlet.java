@@ -31,11 +31,11 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -308,8 +308,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    for (Employee employee : list) {
 				JSONObject json = new JSONObject();
 				json.put("ipf", employee.getIpf());
-				employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 				json.put("nss", nss);
+				employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 				arr.put(json);
 			}
 		    return arr;
@@ -706,6 +706,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private static JSONObject updateContracts(AonApiData api){
 		Domain domain = api.getDomain();
     	try {
+    		JSONObject params = api.getData();
     	    Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 			HashSet<Employee> employees = new HashSet<>();
 			List<CCCInfo> cccs = getCcs(api);
@@ -713,10 +714,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			ApplicationParameter appParams = appParamsExists(api);
 			
 			//------------MOVEMENTS OLD
-			if(api.getData().optBoolean("employeesOld")) {
+			if(params.optBoolean("employeesOld")) {
 				Date startIni = AonDateUtils.getYearFirstDay( AonDateUtils.addMonths(new Date(), -6) ); 
-				if(!api.getData().optString("startDate").isEmpty()) {
-					startIni = AonDateUtils.parse(api.getData().optString("startDate"), FORMAT_DATE);
+				if(!params.optString("startDate").isEmpty()) {
+					startIni = AonDateUtils.parse(params.optString("startDate"), FORMAT_DATE);
 				} else if(appParams.getId()!=null && appParams.getValue()!=null) 
 					startIni = AonDateUtils.addDays(new Date( Long.parseLong( appParams.getValue() ) ), -15) ;
 
@@ -770,8 +771,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 				} catch (SegSocialException e) {e.printStackTrace();}	
 			});
+			
 			if(!employees.isEmpty()) {
-				saveAppParams(api, appParams); //SAVE APP PARAMS
+				saveAppParams(domain, api.getUser(), appParams); //SAVE APP PARAMS
 			} 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -782,8 +784,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	/*
 	 * SAVE OR UPDATE APP PARAMS
 	 */
-	private static void saveAppParams(AonApiData api, ApplicationParameter exists) {
-		Domain domain = api.getDomain();
+	private static void saveAppParams(Domain domain, User user, ApplicationParameter exists) {
 		ApplicationParameter appParams = new ApplicationParameter()
 				.setDomain(domain.getId())
 				.setValue(new Date().getTime()+"")
@@ -791,12 +792,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				;
 		if(exists.getId()!=null) {
 			LOGGER.info("--------UPDATE APP PARAMS-------------");
-			AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams, 
+			AON.updateApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParams, 
 					f->f.getDomainProperty().eq(appParams.getDomain()).and(f.getNameProperty().eq(appParams.getName()))
 				);
 		} else {
 			LOGGER.info("--------SAVE APP PARAMS-------------");
-			AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams);
+			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParams);
 		}
 	}
 	
