@@ -439,10 +439,6 @@ export class DomainUserRoles {
 		return this.hasSaltra() && (this.isAdmin() || this.hasRole(Role.SALTRA_MANAGER));
 	}
 
-
-  
-  
-
   isConfidential() {
     return this.hasRole(Role.CONFIDENTIALITY);
   }
@@ -462,8 +458,7 @@ export class DomainUserRoles {
   isEnterprise() {
     return this.hasRole(Role.ENTERPRISE);
   }
-
-
+  
   hasCustomView() {
     return this.hasApp(App.CUSTOM_VIEW);
   }

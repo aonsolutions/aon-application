@@ -212,6 +212,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONArray getTaskTags(AonApiData api) {
 
 		Domain domain = api.getDomain();
+		
 		return TagJSON.toJSON( 
 			AON.getTagList(
 				domain.getName(), 

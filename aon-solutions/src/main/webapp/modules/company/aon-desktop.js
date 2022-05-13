@@ -536,7 +536,7 @@ export class AonDesktop extends AonElement {
 			case Apps.MESSENGER.app:
 				this.rootPanel(new AonMessenger());
 				break;
-			case Apps.SALTRA.app:
+			case Apps.AON_SALTRA.app:
 				this.rootPanel(new AonSaltra());
 				break;
 			}
@@ -564,7 +564,7 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(Apps.SALTRA.app === app.app)
+		else if(Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else return false;
 	}

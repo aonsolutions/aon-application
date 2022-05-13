@@ -43,8 +43,8 @@ public class InvalidDataException extends SegSocialException{
 				if (msg.toUpperCase().contains("SERVICIO") || msg.toUpperCase().contains("NO SE ENCUENTRA DISPONIBLE")) {
 					throw new OutOfServiceException("Out of service");
 				}
+				throw new InvalidDataException(msg);
 			} 
-			throw new InvalidDataException(msg);
 		}
 	}
 }

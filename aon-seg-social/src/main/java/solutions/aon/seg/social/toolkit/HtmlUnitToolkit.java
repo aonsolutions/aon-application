@@ -37,6 +37,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.parser.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
+
 import solutions.aon.seg.social.exception.CSSParseException;
 import solutions.aon.seg.social.exception.InternalException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -185,7 +186,7 @@ public class HtmlUnitToolkit {
 		try {
 			String msg = HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
 			if(msg==null) {
-				msg = getTrimmedBySelector(htmlPage, "#content p");
+				msg = getTrimmedBySelector(htmlPage, ".cuerpo_noautorizado p, #content p");
 			}
 			return msg;
 		} catch (ElementNotFoundException e) {
