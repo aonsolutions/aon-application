@@ -479,6 +479,7 @@ export const TRAY = "Bandeja";//TODO
 export const TYPE_HERE = "Escriba aquí"; //TODO
 export const TYPE_REQUEST = "Tipo solicitud";//TODO
 export const TYPE_INCIDENT = "Tipo incidencia";//TODO
+export const TYPE_CONTRACT = "Tipos de contrato";//TODO
 export const TO_SHOW = "Mostrar";//TODO
 
 

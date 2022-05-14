@@ -43,7 +43,7 @@ export const contractType = [
     },
     {
       "enable": 0,
-      "name": "ndefinido, TP/Transf. CT Fomento Contr.",
+      "name": "Indefinido, TP/Transf. CT Fomento Contr.",
       "value": "209",
       "tipo_jornada": "1"
     },

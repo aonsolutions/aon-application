@@ -948,8 +948,7 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
     const divTypeIncident = createDivGrid(divStatic, selectTypeIncident, {classes:[CSS.AON_COL_XS_6]})
     fillTypeRequestCau(aonMessengerChat);
     
-
-    if(!task.id){
+    if(!task.id && aonMessengerChat.isCau()){
         const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP,  MSG.APPLICATION);
         createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
         fillSelectAppCau(aonMessengerChat);
