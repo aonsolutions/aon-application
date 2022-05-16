@@ -10,6 +10,7 @@ import org.junit.Ignore;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -23,7 +24,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AccountEntryTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "inelco-mac.ecastellano.dev";
 	private static int DOMAIN_ID = 400;
 	private static String USER = "jgarcia";
@@ -190,7 +191,7 @@ public class AccountEntryTest {
 
 //	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 
 	private static AccountEntryDetail getAccountEntryDetail(Integer account, String accountCode,

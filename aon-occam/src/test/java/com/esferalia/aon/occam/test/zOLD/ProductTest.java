@@ -10,6 +10,7 @@ import org.junit.Ignore;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -22,7 +23,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class ProductTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "garajeolabe.aibanez.net";
 	private static int DOMAIN_ID = 596;
 	private static String LOGIN = "contacto";
@@ -221,7 +222,7 @@ public class ProductTest {
 	
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 }

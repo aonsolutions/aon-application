@@ -4,10 +4,10 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.util.LinkedList;
 import java.util.Optional;
@@ -18,11 +18,11 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 
 public class ImportFixer {
@@ -168,7 +168,7 @@ public class ImportFixer {
 	}
 	
 	private static void updateAccount(Domain domain, String login, Integer account, LinkedList<Integer> accounts) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.update(ACCOUNT_ENTRY_DETAIL)
 				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, account)
@@ -184,7 +184,7 @@ public class ImportFixer {
 	}
 	
 	private static void updateCustomerAccount(Domain domain, String login, Integer customerId, Integer account) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.update(CUSTOMER)
 				.set(CUSTOMER.ACCOUNT, account)
@@ -194,7 +194,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteCustomers(Domain domain, String login, LinkedList<Integer> customers) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.delete(CUSTOMER)
 				.where(CUSTOMER.REGISTRY.in(customers))
@@ -204,7 +204,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteRaddress(Domain domain, String login, LinkedList<Integer> customers) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.delete(RADDRESS)
 				.where(RADDRESS.REGISTRY.in(customers))
@@ -213,7 +213,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteRmedia(Domain domain, String login, LinkedList<Integer> customers) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.delete(RMEDIA)
 				.where(RMEDIA.REGISTRY.in(customers))
@@ -222,7 +222,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteRegistries(Domain domain, String login, LinkedList<Integer> customers) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.delete(REGISTRY)
 				.where(REGISTRY.ID.in(customers))
@@ -231,7 +231,7 @@ public class ImportFixer {
 	}
 	
 	private static void updateSupplierAccount(Domain domain, String login, Integer supplierId, Integer account) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.update(SUPPLIER)
 				.set(SUPPLIER.ACCOUNT, account)
@@ -241,7 +241,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteSuppliers(Domain domain, String login, LinkedList<Integer> suppliers) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.delete(SUPPLIER)
 				.where(SUPPLIER.REGISTRY.in(suppliers))
@@ -251,7 +251,7 @@ public class ImportFixer {
 	}
 	
 	private static void updateCreditorAccount(Domain domain, String login, Integer creditorId, Integer account) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.update(CREDITOR)
 				.set(CREDITOR.ACCOUNT, account)
@@ -261,7 +261,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteCreditors(Domain domain, String login, LinkedList<Integer> creditors) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			ctx.getDslContext()
 				.delete(CREDITOR)
 				.where(CREDITOR.REGISTRY.in(creditors))
@@ -271,7 +271,7 @@ public class ImportFixer {
 	}
 	
 	private static Integer getAccountEntryDetail(Domain domain, String login, Integer account) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
 			return ctx.getDslContext()
 				.select()
 				.from(ACCOUNT_ENTRY_DETAIL)
@@ -282,7 +282,7 @@ public class ImportFixer {
 	}
 	
 	private static void deleteAccount(Domain domain, String login, Integer account) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			ctx.getDslContext()
 				.delete(ACCOUNT)
 				.where(ACCOUNT.ID.eq(account))

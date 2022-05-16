@@ -30,6 +30,7 @@ import org.jooq.tools.json.JSONParser;
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -50,7 +51,7 @@ public class OperationReportExcelBook extends HttpServlet {
 	
 	private OperationParams params;
 	
-	private AONContext ctx = null;
+	private CloseableAONContext ctx = null;
 	ExcelAction action = new ExcelAction( );
 	
 	// Esta variable se utiliza para poder sacar los cobros/pagos en Facturas RECC, 

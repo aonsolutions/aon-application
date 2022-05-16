@@ -22,6 +22,7 @@ import org.jooq.Result;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -57,7 +58,7 @@ public class DBConsults {
 	// Devuelve el xml file d2
 	public static File getXmlFile(String domain, Integer domainId)
 			throws IOException {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		File parent = null;
 
 		try {
@@ -129,7 +130,7 @@ public class DBConsults {
 
 	public static File getXmlFile(String domain, Integer domainId, Integer year)
 			throws IOException {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		File parent = null;
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
@@ -232,7 +233,7 @@ public class DBConsults {
 	}
 
 	public static String getCIF(String domain, Integer domainId) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
@@ -251,7 +252,7 @@ public class DBConsults {
 
 	}
 
-	public static Integer insertDeposit(AONContext ctx, String domain,
+	public static Integer insertDeposit(CloseableAONContext ctx, String domain,
 			byte[] b, Integer domainId, String name, String document,
 			Integer registry, Integer year, String login) {
 
@@ -274,7 +275,7 @@ public class DBConsults {
 	}
 
 	public static Integer insertDeposit(String domain, byte[] b, Integer domainId, Integer year, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
@@ -320,7 +321,7 @@ public class DBConsults {
 	public static void insertDeposit(String domain, byte[] b, Integer domainId,
 			String idstr, String login) {
 		Integer id = Integer.parseInt(idstr);
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
@@ -337,7 +338,7 @@ public class DBConsults {
 	}
 	
 	public static void deleteDeposit(String domain, Integer domainId, Integer year){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 		
@@ -351,7 +352,7 @@ public class DBConsults {
 	}	
 
 	public static void deleteText(String domain,Integer domainId, Integer rattachId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 		
@@ -365,7 +366,7 @@ public class DBConsults {
 	
 	public static Integer insertDepositText(String domain, String name,
 			byte[] b, Integer domainId, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
@@ -405,7 +406,7 @@ public class DBConsults {
 	}
 	
 	public static Vector<Integer> getMemoryFile(String domain, Integer domainId, String name){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -433,7 +434,7 @@ public class DBConsults {
 	}
 	
 	public static File getFileDocuments2Zip(String domain, Integer domainId, String name, File parent, Integer year) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -474,7 +475,7 @@ public class DBConsults {
 
 	
 	public static byte[] getMemoryFile(String domain, Integer domainId, Integer id, String name){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -499,7 +500,7 @@ public class DBConsults {
 	}
 
 	public static Byte getMimeType(String domain, Integer domainId, Integer id){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -525,7 +526,7 @@ public class DBConsults {
 	
 	
 	public static void deleteMemoryFile(String domain,Integer domainId, Integer rattachId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 		
@@ -537,7 +538,7 @@ public class DBConsults {
 		}
 	}	
 	public static void deleteMemoryFile(String domain,Integer domainId, String name){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 		
@@ -552,7 +553,7 @@ public class DBConsults {
 	}
 	
 	public static Integer insertMemoryFile(String domain, Integer domainId, byte mimetype, byte[] data, String name, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
@@ -585,7 +586,7 @@ public class DBConsults {
 	
 	public static void updateMemoryFile(String domain, Integer domainId, byte mimetype, byte[] data, Integer id){
 	
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
@@ -607,7 +608,7 @@ public class DBConsults {
 	}
 	
 	public static String[] getDepositExercises(String domainName, Integer domainId, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Object[] array =  ctx.getDslContext().select(RATTACH.ATTACH_DATE)

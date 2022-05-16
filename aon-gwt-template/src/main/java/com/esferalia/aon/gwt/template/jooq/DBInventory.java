@@ -15,12 +15,13 @@ import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.InventoryInfo;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 
 public class DBInventory {
 	
 	public static Vector<InventoryInfo> getInventory(Domain domain, Integer inventoryId, Boolean close, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -75,7 +76,7 @@ public class DBInventory {
 
 	public static String getInventoryName(Domain domain, Integer inventoryId, String login){
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			

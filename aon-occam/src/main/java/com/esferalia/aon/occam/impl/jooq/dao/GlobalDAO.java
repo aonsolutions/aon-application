@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -18,7 +19,7 @@ public class GlobalDAO {
 	private static final String GLOBAL_DOMAIN_NAME = "global.aonsolutions.net";
 	private static final int FAKE_GLOBAL_DOMAIN_ID = -1;
 
-	protected static AONContext getGlobalAONContext(String user) {
+	protected static CloseableAONContext getGlobalAONContext(String user) {
 		return AONContext.getAONContext(GLOBAL_DOMAIN_NAME, FAKE_GLOBAL_DOMAIN_ID , user); 
 	}
 	
@@ -35,7 +36,7 @@ public class GlobalDAO {
 	}
 	
 	public static Registry getRegistry( String user, String document ) {
-		try ( AONContext ctx =  getGlobalAONContext(user) ) {
+		try ( CloseableAONContext ctx =  getGlobalAONContext(user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			return RegistryDAO.getStream(ctx, f -> 
 						f.getDomainProperty().eq(globalDomain)
@@ -50,7 +51,7 @@ public class GlobalDAO {
 	}
 	
 	public static Registry getRegistry( String user, Integer id ) {
-		try ( AONContext ctx =  getGlobalAONContext(user) ) {
+		try ( CloseableAONContext ctx =  getGlobalAONContext(user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			return RegistryDAO.getStream(ctx, f -> 
 						f.getDomainProperty().eq(globalDomain)
@@ -65,7 +66,7 @@ public class GlobalDAO {
 	}
 	
 	public static Stream<RegistryMedia> getRegistryMediaStream( String user, Integer id ) {
-		try ( AONContext ctx =  getGlobalAONContext(user) ) {
+		try ( CloseableAONContext ctx =  getGlobalAONContext(user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			return RegistryMediaDAO.getStream(ctx, f -> 
 						f.getDomainProperty().eq(globalDomain)
@@ -77,7 +78,7 @@ public class GlobalDAO {
 	}
 	
 	public static Stream<RegistryAddress> getRegistryAddressStream( String user, Integer id ) {
-		try ( AONContext ctx =  getGlobalAONContext(user) ) {
+		try ( CloseableAONContext ctx =  getGlobalAONContext(user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			return RegistryAddressDAO.getStream(ctx, f -> 
 						f.getDomainProperty().eq(globalDomain)

@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
@@ -190,7 +191,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 	}
 	
 	public Double getItemStock(String domainName, Integer domainId, String login, Integer itemId) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Result<Record1<Double>> result = ctx.getDslContext().select(STOCK.QUANTITY).from(STOCK).where(STOCK.ITEM.eq(itemId)).fetch();

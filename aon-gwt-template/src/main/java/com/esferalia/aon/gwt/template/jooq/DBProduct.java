@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
@@ -140,7 +141,7 @@ public class DBProduct {
 		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -305,7 +306,7 @@ public class DBProduct {
 		return AON.getProductCategory(domainName, domainId, login, id);
 	}
 	public static ProductCategory getCategory(String domain,Integer domainId, String name, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
@@ -326,7 +327,7 @@ public class DBProduct {
 	}
 	
 	public static  LinkedList<ProductCategory> getCategories(String domain, Integer domainId, String login)  {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
@@ -379,7 +380,7 @@ public class DBProduct {
 	}
 	
 	public static  LinkedList<com.esferalia.aon.gwt.template.shared.ProductCategory> getCategoriesShared(String domain, Integer domainId, String login)  {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME)
@@ -422,7 +423,7 @@ public class DBProduct {
 	}
 		
 	public static LinkedList<ProductInfo> getProducts(String domain,Integer domainId, Condition condition, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
@@ -518,7 +519,7 @@ public class DBProduct {
 	}
 	
 	public static LinkedList<ProductInfo> getProducts222(String domain,Integer domainId, Condition condition, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
@@ -610,7 +611,7 @@ public class DBProduct {
 	}
 	
 	public static  LinkedList<ProductTag> getTags(String domain, Integer domainId, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
@@ -661,7 +662,7 @@ public class DBProduct {
 	}
 	
 	public static  LinkedList<Brand> getBrands(String domain, Integer domainId, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
@@ -723,7 +724,7 @@ public class DBProduct {
 	
 	public static LinkedList<Tax> getRetentions(String domainName, Integer domainId, String login)  {
 		LinkedList<Tax> v = new LinkedList<Tax>();
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			
@@ -770,7 +771,7 @@ public class DBProduct {
 	
 	public static LinkedList<Tax> getIVA(String domain, Integer domainId, String login) {
 		LinkedList<Tax> v = new LinkedList<Tax>();
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			

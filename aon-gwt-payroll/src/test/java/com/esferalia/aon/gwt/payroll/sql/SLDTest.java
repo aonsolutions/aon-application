@@ -25,7 +25,7 @@ public class SLDTest {
 	public void testGetSLDCosts() throws FileNotFoundException, SegSocialException, SQLException {
 //		try (Connection connection = DriverManager
 //				.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-//		AONContext aonContext = new AONContext(connection)) {
+//		CloseableAONContext aonContext = new AONContext(connection)) {
 //			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 //					"ayudat.aonsolutions.net");
 //			Calendar c = Calendar.getInstance();
@@ -47,8 +47,8 @@ public class SLDTest {
 //		}
 				
 		try (Connection connection = DriverManager
-				.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-		AONContext aonContext = new AONContext(connection)) {
+				.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")){
+		AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			Calendar c = Calendar.getInstance();
@@ -76,8 +76,8 @@ public class SLDTest {
 	@Test
 	public void testGetSLDCostsByNAFS() throws FileNotFoundException, SegSocialException, SQLException {
 		try (Connection connection = DriverManager
-				.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-		AONContext aonContext = new AONContext(connection)) {
+				.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")){
+		AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			Calendar c = Calendar.getInstance();

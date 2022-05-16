@@ -55,6 +55,7 @@ import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -84,7 +85,7 @@ public class DBStock {
 		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			 
@@ -244,7 +245,7 @@ public class DBStock {
 		verror.add("");
 		error.setTextError(verror);
 		LinkedList<String> v = new LinkedList<String>();
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			System.out.println("GWT TEMPLATES - (Solicitud de compra) - dentro de la funcion de insertar!!");
 
@@ -447,7 +448,7 @@ public class DBStock {
 		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
@@ -689,7 +690,7 @@ public class DBStock {
 	}
 
 	public LinkedList<StockInfo> getStocks(Domain domain,Integer wid, Condition c, boolean onlyNonCero, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -735,7 +736,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<StockInfo> getInventoryClosed(Domain domain, Integer inventoryId, Condition c, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -792,7 +793,7 @@ public class DBStock {
 	}
 
 	public Boolean checkSeries(Domain domain, Series s, Warehouse w, Warehouse w2, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<Record1< Integer>> data = null; 
@@ -819,7 +820,7 @@ public class DBStock {
 	}
 	
 	public Series getSeries(Domain domain, String serie, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -844,7 +845,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<Series> getSeries(Domain domain, Warehouse warehouse, Workplace workplace, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -872,7 +873,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<Series> getSeries(Domain domain, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(),  login);
 			
@@ -900,7 +901,7 @@ public class DBStock {
 	}
 	
 	public Warehouse getWarehouse(Domain domain, User user, String warehouse){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
@@ -936,7 +937,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<Warehouse> getWarehouse(Domain domain, User user){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record3< Integer, String,Integer>> data ;
@@ -970,7 +971,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<Warehouse> getWarehouse(Domain domain, User user, Integer workplaceId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record3< Integer, String,Integer>> data ;
@@ -1008,7 +1009,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<StockInfo> getProposal(Domain domain, Integer proposalId, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -1051,7 +1052,7 @@ public class DBStock {
 	}
 	
 	public LinkedList<StockInfo> getIncome(Domain domain, Integer incomeId, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			

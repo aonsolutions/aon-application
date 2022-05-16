@@ -735,24 +735,29 @@ export class AonUser extends AonElement {
 	}
 
 	updateRole(role) {
-		let bool = true;
-		this.user.roles.forEach((item, i) => {
-			if(role === Role.EMPLOYEE && (item.includes('PORTAL') || item.includes('MANAGER'))){
-				this.user.roles.splice(i, 1);
-			} 
-			if(role === Role.ENTERPRISE && item.includes('MANAGER')){
-				this.user.roles.splice(i, 1);				
-			}
- 			if(item === role.role) {
-				bool = false;
-				if(!role.active) 
-					this.user.roles.splice(i, 1);
-			}
-		});
-		if(bool && role.active) {
-			this.user.roles.push(role.role);
+        let bool = true;
+		if(role === Role.EMPLOYEE) {
+			this.user.roles = this.user.roles
+				.filter(r => !r.includes('PORTAL') 
+					&& !r.includes('MANAGER'));
+		} else if(role === Role.ENTERPRISE) {
+			this.user.roles = this.user.roles
+				.filter(r => !r.includes('MANAGER'));
 		}
-	}
+
+        this.user.roles.forEach((item, i) => {
+            if(item === role.role) {
+                bool = false;
+                if(!role.active){
+                    this.user.roles = this.user.roles.filter(r => !r.includes(role.role));
+                }
+            }
+        });
+
+        if(bool && role.active) {
+            this.user.roles.push(role.role);
+        }
+    }
 
 	setUser(user) {
 		this.user = user;

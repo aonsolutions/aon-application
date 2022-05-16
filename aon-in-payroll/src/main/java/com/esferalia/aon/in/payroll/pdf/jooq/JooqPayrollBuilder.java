@@ -52,11 +52,11 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams.PartTimeEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
-import com.esferalia.aon.jooq.tables.ContractData;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
@@ -89,7 +89,7 @@ public class JooqPayrollBuilder {
 	 */
 	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			byte[] logo = getLogo(aonContext);
 			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
 			printAon(outputStream, payrolls, logo);
@@ -97,7 +97,7 @@ public class JooqPayrollBuilder {
 	}
 	public static void generateClassicPayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			byte[] logo = getLogo(aonContext);
 			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
 			printClassic(outputStream, payrolls, logo);

@@ -32,8 +32,8 @@ public class JooqPdfTest {
 	public void testOmega() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("omega/COVAIN.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parseOmega(is, builder);
@@ -44,8 +44,8 @@ public class JooqPdfTest {
 	public void testConflict() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_conflict.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -56,8 +56,8 @@ public class JooqPdfTest {
 	public void testConflictOmega() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_conflict.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parseOmega(is, builder);
@@ -70,8 +70,8 @@ public class JooqPdfTest {
 	public void testA3() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("year_payrolls_lorena.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/test-aonsolutions-org", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/test-aonsolutions-org", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"payroll-test.aonsolutions.org");
 			SalaryPDFParser.parse(is, builder);
@@ -598,8 +598,8 @@ public class JooqPdfTest {
 	public void testDsiAt() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_at.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/test-aonsolutions-org", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/test-aonsolutions-org", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"payroll-test.aonsolutions.org");
 			SalaryPDFParser.parse(is, builder);
@@ -1197,8 +1197,8 @@ public class JooqPdfTest {
 	public void testA3Finiquito() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("nominaA3Finiquito.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"grupoayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1212,8 +1212,8 @@ public class JooqPdfTest {
 	public void testA3ALot() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("learning2020.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"grupoayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1743,8 +1743,8 @@ public class JooqPdfTest {
 	public void testA3_344() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("NOMINAS UN LUGAR 2020.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1756,8 +1756,8 @@ public class JooqPdfTest {
 	public void testA3_260() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("nomina260.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1770,8 +1770,8 @@ public class JooqPdfTest {
 	public void testA3_Massive() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("NOMINAS ATSP 2020.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1784,8 +1784,8 @@ public class JooqPdfTest {
 	public void testA3_MassiveOnlyPage1() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("pagina1.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1799,8 +1799,8 @@ public class JooqPdfTest {
 	public void testAplifisaMassive() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominas 2020.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1919,8 +1919,8 @@ public class JooqPdfTest {
 	public void testAplifisa584() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina584.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1933,8 +1933,8 @@ public class JooqPdfTest {
 	public void testAplifisa1424() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/1424.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
@@ -1947,8 +1947,8 @@ public class JooqPdfTest {
 	public void testAplifisaIRPF() throws IOException, UnknownPDFException, SQLException {
 		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina_testeo.pdf");
 				Connection connection = DriverManager
-						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
-				AONContext aonContext = new AONContext(connection)) {
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+			AONContext aonContext = new AONContext(connection);
 			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
 					"ayudat.aonsolutions.net");
 			SalaryPDFParser.parse(is, builder);
