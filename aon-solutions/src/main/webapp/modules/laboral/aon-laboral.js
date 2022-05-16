@@ -67,7 +67,7 @@ export class AonLaboral extends AonElement {
       this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
     } else if(this.isComunicaNotPayroll() ){
       this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
-    } else if(this.isPayroll()) {
+    } else if(this.isPayroll() && !this.isEmployee()) {
       this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
     }
   }
@@ -78,8 +78,9 @@ export class AonLaboral extends AonElement {
   }
 
   buildToolbar(){
-    if(this.isMobile())
+    if(this.isMobile()){
 			this.applicationEl.addMobileSidenavHeader(Apps.PAYROLL);
+    }
 
     let laboralOptions = [];
     let conf = [];
@@ -272,7 +273,7 @@ export class AonLaboral extends AonElement {
   async updateContracts(){
     this.applicationEl.startLoader();
     //SINCRONIZED INIT YEAR
-    await updateContracts({employeesOld:true}).catch(e=>console.log("erros",e));
+    await updateContracts({employeesOld:true, employeePrev:true}).catch(e=>console.log("erros",e));
     console.log("----------UPDATE CONTRACTS------");
     this.applicationEl.stopLoader();
   }

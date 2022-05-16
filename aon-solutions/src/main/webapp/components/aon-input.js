@@ -485,6 +485,10 @@ export class AonInput extends AonElement {
     this.setAttribute(CONSTANT.FILLED, filled);
   }
 
+  clear(){
+    this.getElement(this.INPUT).value = "";
+  }
+
   loading(valor) {
     let label = this.getElement(this.LABEL);
     let id = this.LOADING;

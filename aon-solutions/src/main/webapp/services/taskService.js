@@ -6,9 +6,13 @@ import { isSigGet, isSigPost, isSigRemove } from "./sigService.js";
 export const getTasks = (data) =>  isSigGet("task", data);
 export const getTaskOne = (data) => isSigGet("task/one",data);
 export const saveTask = (data) =>  isSigPost("task",data); 
-export const deleteTask = (data) => isSigRemove("task",data); 
-export const getTaskGeneralCount = (data) => isSigGet("task/general/count",data);
+export const deleteTask = (data) => isSigRemove("task",data);
+
+//COUNT
 export const getTaskCount = (data) => isSigGet("task/count",data);
+export const getTaskStatusCount = (data) => isSigGet("task/status/count",data);
+export const getTaskGeneralCount = (data) => isSigGet("task/general/count",data);
+
 export const getTaskNotice = (data) => isSigGet("task/notice",data);
 export const sendTaskHistoric = (data) => isSigPost(`task/historic`,data);
 export const sendTaskHistoricEmail = (data) => isSigPost(`task/historic-email`,data);
