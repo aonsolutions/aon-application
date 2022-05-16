@@ -8,8 +8,6 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,7 +26,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.jooq.Condition;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +59,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -206,118 +202,41 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	public DataModel getModel() {
-		
-		if(filter == null) {
-			getDbModel("");
+
+		if (model == null) {
+			initializeModel();
 		}
-		
-		if(filter.equals(modelFilter)) {
+		if (StringUtils.isBlank(getFilter())) {
 			return model;
-		}
-		
-		Instant before = Instant.now();
-		
-		getDbModel(filter);
-		modelFilter = filter;
-		
-		Instant after = Instant.now();
-		long delta = Duration.between(before, after).toMillis();
-		System.out.println("Domains loaded in: " + delta + "ms");
-		
-		return model;
-	}
-	
-	private void getDbModel(String filter) {
-			
-		if(filter == null) {
-			filter = "";
-		}
-		
-		if (getParentDomain() != null) {
-			
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
-			LinkedList<DomainData> domains = new LinkedList<DomainData>();
-			 SelectConditionStep<org.jooq.Record> query = ctx
-			.getDslContext()
-			.select()
-			.from(DOMAIN)
-			.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
-			.leftOuterJoin(REGISTRY).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
-			.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
-			.where(getDomainCondition());
-	
-			// Like joining for word checking
-			Condition joinSequence = null;
-			
-			List<List<String>> combinations = AonArrayUtils.allNoRepeatCombinations(filter.split("\\s"));
-			for (List<String> comb : combinations) {
 
-				StringBuilder processed = new StringBuilder("%");
-				for (String word : comb) {
-					processed.append(word).append("%");
-				}			
-				
-				if(joinSequence == null) {
-					joinSequence = REGISTRY.NAME.like(processed.toString());
-				} else {
-					joinSequence = joinSequence.or(REGISTRY.NAME.like(processed.toString()));		
-				}
-			}	
-			
-			if(joinSequence != null) {
-				query.and(joinSequence);
-			}
-			
-			// or ccc contains filter 
-			query.or(ENTERPRISE_CCC.CCC.like("%" + filter + "%"));
-			
-			// or description contains filter
-			query.or(DOMAIN.DESCRIPTION.like("%" + filter + "%"));
-			
-			// or document contains filter
-			query.or(REGISTRY.DOCUMENT.like("%" + filter + "%"));
-			
-			query.orderBy(DOMAIN.DESCRIPTION)
-			.offset(page)
-			.fetchStream()
-			.forEach( r -> {
-				DomainData last = domains.peekLast();
-				if ( last != null && last.getId().equals(r.get(DOMAIN.ID)) ) {
-					String ccc = r.get(ENTERPRISE_CCC.CCC);
-					if ( StringUtils.isNotBlank(ccc) ) 
-						last.addCCC(ccc);
-					return;
-				}
-				DomainData domainData = 
-						new DomainData(
-						r.get(DOMAIN.ID), 
-						r.get(DOMAIN.NAME), 
-						r.get(DOMAIN.DESCRIPTION), 
-						r.get(DOMAIN.EXPIRATIONDATE), 
-						r.get(DOMAIN.ACTIVE) == 1, 
-						r.get(DOMAIN.ENABLEHEREDITY) == 1,
-						getSafeDomainType(r.get(DOMAIN.TYPE)));
-				
-				String ccc = r.get(ENTERPRISE_CCC.CCC);
-				if ( StringUtils.isNotBlank(ccc) ) 
-					domainData.addCCC(ccc);
-				
-				domainData.setDocument(r.get(REGISTRY.DOCUMENT));
-				
-				
-				domainData.setLogo(TOOLBAR_LOGO_DEFAULT);				
-				domains.add(domainData);
-				
-			})				
-			;
-
-			ctx.finalize();
-			setModel(new SerializableListDataModel(domains));
 		} else {
-			setModel(new SerializableListDataModel(Collections.emptyList()));
+			if (!StringUtils.equals(modelFilter, filter)
+					|| filteredModel == null) {
+				setPage(1);
+				List<DomainData> filteredList = new LinkedList<DomainData>();
+				@SuppressWarnings("unchecked")
+				List<DomainData> list = (List<DomainData>) model
+						.getWrappedData();
+				for (DomainData d : list) {
+					if (AonStringUtils.containsMatching(d.getName(), getFilter())
+							|| AonStringUtils.containsMatching(
+									d.getDescription(), getFilter())
+							|| StringUtils.containsIgnoreCase(
+									d.getDocument(), getFilter())
+							|| StringUtils.containsIgnoreCase(
+									d.getCccs(), getFilter())
+							) {
+						filteredList.add(d);
+						if ( filteredList.size() == pageLimit )
+							break;
+					}
+				}
+				setFilteredModel(new SerializableListDataModel(filteredList));
+				modelFilter = filter;
+			}
+			return filteredModel;
 		}
 	}
-
 
 	private List<Integer> getUserScopes() {
 		List<Integer> scopes = null;
