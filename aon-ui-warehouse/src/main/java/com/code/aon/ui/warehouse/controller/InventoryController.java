@@ -2,8 +2,8 @@ package com.code.aon.ui.warehouse.controller;
 
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +55,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
@@ -392,7 +393,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 	
 	
 	private void activeProduct(String domainName, Integer domainId, String login, Integer productId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			ctx.getDslContext()
@@ -414,7 +415,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String user = AonUtil.getRemoteUser();
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domainId, user);
 				
@@ -504,7 +505,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			}
 		});
 		if(updateID != null) {
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domainId, user);
 				ctx.getDslContext().update(INVENTORY_DETAIL).set(INVENTORY_DETAIL.COST, updateID.otherwise(0.0))

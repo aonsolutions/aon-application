@@ -207,104 +207,96 @@ public class AgrarianAFI {
 		// Create JSONObject Agrarian JSON
 		JSONObject agrarianJSON = new JSONObject();
 		
-		try {
-			
-			// GET AuthKey from DB
-			String authKey = getAuthKeyFromDomain(dslContext, cccList.get(0));
-			String enterpriseName = getEnterpriseName(dslContext, cccList.get(0));
-			
-			//ETI
-			JSONObject eti = new JSONObject();
-			eti.put("authkey", authKey);			
-			eti.put("payrollProvider", "498");		//Proveedor de nominas ESFERALIA NETWORKS, S.A.
-			eti.put("fileName", null);
-			eti.put("prorityCode", "N");
-			agrarianJSON.put("ETI", eti);
-			
-			JSONArray enterprises = new JSONArray();
-			Integer cccUsed = 0;
-			
-			for(String ccc: cccList) {
-				
-				Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(findingDate, ccc, dslContext);
-				
-				// Check if selected contracts are in the contractsJourney of ccc finding
-				if(checkContractinJourney(selectedContracts, contractsJourney)) {
-					
-					// The ccc we have contracts on
-					cccUsed ++;
-					
-					JSONObject enterprise = new JSONObject();
-					
-					//EMP
-					JSONObject emp = new JSONObject();
-					emp.put("cccProvince", ccc.substring(0, 2));
-					emp.put("ccc", ccc.substring(2, ccc.length()));
-					emp.put("cccRegimePrincipal", "");
-					emp.put("cccProvincePrincipal", "00"/*_ccc.substring(0, 2)*/);
-					emp.put("cccPrincipal", "0000000000000" /* _ccc.substring(2, _ccc.length())*/);
-					enterprise.put("EMP", emp);
-					
-					//RZS
-					JSONObject rzsData = new JSONObject();
-					rzsData.put("businessmanType", "2");
-					rzsData.put("rzsName", removeAccents(enterpriseName));
-					enterprise.put("RZS", rzsData);
-					
-					
-					
-					//EMPLOYEES
-					JSONArray emps = new JSONArray();
-					
-					for(Integer contractId : selectedContracts) {
-						List<AgrarianJourney> journeis = contractsJourney.get(contractId);
-						if(null != journeis) {
-							JSONObject empl = new JSONObject();
-							JSONObject tra = getTRA(contractId, dslContext);
-							empl.put("TRA", tra);
-							JSONObject ayn = getAYN(contractId, dslContext);
-							empl.put("AYN", ayn);
-							//Para el caso de las jornadas agrarias esto es constante
-							final String fab = "FABMJR000000000000 00000  000000 0000000000000000 0000   N 00000000   ";
-							empl.put("FAB", fab);
-							JSONObject dra = getDRA(startDateSQL, journeis);
-							empl.put("DRA", dra);
-							emps.add(empl);
-						}
-					}
-					
-					enterprise.put("EMPS", emps);
-					
-					enterprises.add(enterprise);
-				}
-			
-			}
-			
-			//ENTERPRISES
-			agrarianJSON.put("ACTIVITIES", enterprises);
-			
-			//ETF
-			JSONObject etf = new JSONObject();
-			etf.put("authkey", authKey);
-			etf.put("payrollProvider", "498");
-			etf.put("fileName", null);
-			etf.put("priorityCode", "N");
-			agrarianJSON.put("ETF", etf);
-			
-			//CONFIG
-			JSONObject conf = new JSONObject();
-			conf.put("staticLines", "2");
-			conf.put("activityLines", "2");
-			conf.put("employeeLines", "4");
-			conf.put("numEmployees", selectedContracts.size()+"");
-			conf.put("numCCCs", cccUsed+"");
-			agrarianJSON.put("CONF", conf);
-			
+		// GET AuthKey from DB
+		String authKey = getAuthKeyFromDomain(dslContext, cccList.get(0));
+		String enterpriseName = getEnterpriseName(dslContext, cccList.get(0));
 		
-		} finally {
-			if (dslContext != null)
-				dslContext.close();
+		//ETI
+		JSONObject eti = new JSONObject();
+		eti.put("authkey", authKey);			
+		eti.put("payrollProvider", "498");		//Proveedor de nominas ESFERALIA NETWORKS, S.A.
+		eti.put("fileName", null);
+		eti.put("prorityCode", "N");
+		agrarianJSON.put("ETI", eti);
+		
+		JSONArray enterprises = new JSONArray();
+		Integer cccUsed = 0;
+		
+		for(String ccc: cccList) {
+			
+			Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(findingDate, ccc, dslContext);
+			
+			// Check if selected contracts are in the contractsJourney of ccc finding
+			if(checkContractinJourney(selectedContracts, contractsJourney)) {
+				
+				// The ccc we have contracts on
+				cccUsed ++;
+				
+				JSONObject enterprise = new JSONObject();
+				
+				//EMP
+				JSONObject emp = new JSONObject();
+				emp.put("cccProvince", ccc.substring(0, 2));
+				emp.put("ccc", ccc.substring(2, ccc.length()));
+				emp.put("cccRegimePrincipal", "");
+				emp.put("cccProvincePrincipal", "00"/*_ccc.substring(0, 2)*/);
+				emp.put("cccPrincipal", "0000000000000" /* _ccc.substring(2, _ccc.length())*/);
+				enterprise.put("EMP", emp);
+				
+				//RZS
+				JSONObject rzsData = new JSONObject();
+				rzsData.put("businessmanType", "2");
+				rzsData.put("rzsName", removeAccents(enterpriseName));
+				enterprise.put("RZS", rzsData);
+				
+				
+				
+				//EMPLOYEES
+				JSONArray emps = new JSONArray();
+				
+				for(Integer contractId : selectedContracts) {
+					List<AgrarianJourney> journeis = contractsJourney.get(contractId);
+					if(null != journeis) {
+						JSONObject empl = new JSONObject();
+						JSONObject tra = getTRA(contractId, dslContext);
+						empl.put("TRA", tra);
+						JSONObject ayn = getAYN(contractId, dslContext);
+						empl.put("AYN", ayn);
+						//Para el caso de las jornadas agrarias esto es constante
+						final String fab = "FABMJR000000000000 00000  000000 0000000000000000 0000   N 00000000   ";
+						empl.put("FAB", fab);
+						JSONObject dra = getDRA(startDateSQL, journeis);
+						empl.put("DRA", dra);
+						emps.add(empl);
+					}
+				}
+				
+				enterprise.put("EMPS", emps);
+				
+				enterprises.add(enterprise);
+			}
+		
 		}
+		
+		//ENTERPRISES
+		agrarianJSON.put("ACTIVITIES", enterprises);
+		
+		//ETF
+		JSONObject etf = new JSONObject();
+		etf.put("authkey", authKey);
+		etf.put("payrollProvider", "498");
+		etf.put("fileName", null);
+		etf.put("priorityCode", "N");
+		agrarianJSON.put("ETF", etf);
+		
+		//CONFIG
+		JSONObject conf = new JSONObject();
+		conf.put("staticLines", "2");
+		conf.put("activityLines", "2");
+		conf.put("employeeLines", "4");
+		conf.put("numEmployees", selectedContracts.size()+"");
+		conf.put("numCCCs", cccUsed+"");
+		agrarianJSON.put("CONF", conf);
 
 		System.out.println(agrarianJSON);
 		return agrarianJSON;

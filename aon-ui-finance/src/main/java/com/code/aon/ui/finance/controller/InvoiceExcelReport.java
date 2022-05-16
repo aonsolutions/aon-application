@@ -51,6 +51,7 @@ import com.code.aon.ql.ast.IdentExpression;
 import com.code.aon.ql.ast.impl.IdentExpressionImpl;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -125,7 +126,7 @@ public class InvoiceExcelReport {
 			}
 		}
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser() );
 			ExcelAction action = new ExcelAction();

@@ -132,10 +132,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(month).getTime() );
 		
 		try ( Connection connection = getConnection(req);
-			AONContext aonContext = new AONContext(connection);
 			OutputStream os = resp.getOutputStream();
 			Writer writer = new OutputStreamWriter(os)){
-								
+				AONContext aonContext = new AONContext(connection);								
 				Integer domainId = AonServletUtils.getDomainID(domainName);
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);

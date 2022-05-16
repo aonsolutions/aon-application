@@ -56,6 +56,7 @@ import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -239,7 +240,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private List<Integer> getUserScopes() {
 		List<Integer> scopes = null;
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId, getCurrentUser());
+		CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId, getCurrentUser());
 		try {
 			scopes = ctx
 					.getDslContext()
@@ -249,7 +250,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}						
 		return scopes;
 	}
@@ -297,7 +298,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		
 		if (getParentDomain() != null) {
 			
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
+			CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
 			LinkedList<DomainData> domains = new LinkedList<DomainData>();
 			ctx
 			.getDslContext()
@@ -358,7 +359,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			})				
 			;
 
-			ctx.finalize();
+			ctx.close();
 			setModel(new SerializableListDataModel(domains));
 		} else {
 			setModel(new SerializableListDataModel(Collections.emptyList()));
@@ -372,10 +373,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	public int getDomainCount() {
 		if (getParentDomain() != null) {
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
+			CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
 			int count = ctx.getDslContext().selectCount().from(DOMAIN)
 					.where(getDomainCondition()).fetchOne(0, int.class);
-			ctx.finalize();
+			ctx.close();
 			return count;
 		}
 		return 0;

@@ -33,6 +33,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -70,7 +71,7 @@ public class AccountingFinanceChecker implements Serializable {
 
 	public static Collection<AccountingFinanceCheck> getChecks(String domainName,int domainId
 			,String user,AccountingFinanceCheckerParams params) throws AonException {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -198,7 +199,7 @@ public class AccountingFinanceChecker implements Serializable {
 
 	public static List<StrippedStatement> getStrippedStatement(String domainName, int domainId
 			,String user, AccountingFinanceCheckerParams params ) throws AonException {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
 			ctx = AONContext.getAONContext(domainName, domainId,user);
@@ -232,7 +233,7 @@ public class AccountingFinanceChecker implements Serializable {
 	
 	public static List<AccountingFinanceCheck> getFinances(String domainName, int domainId
 			,String user, AccountingFinanceCheckerParams params ) throws AonException {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
 			ctx = AONContext.getAONContext(domainName, domainId,user);

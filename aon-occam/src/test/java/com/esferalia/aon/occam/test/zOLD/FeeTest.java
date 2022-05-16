@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -14,7 +15,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class FeeTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "garajeolabe.aibanez.net";
 	private static int DOMAIN_ID = 596;
 	private static String USER = "mac";
@@ -31,7 +32,7 @@ public class FeeTest {
 	
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 }

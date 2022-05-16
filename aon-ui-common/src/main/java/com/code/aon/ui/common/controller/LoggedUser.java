@@ -25,6 +25,7 @@ import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 /**
  * The Class LoggedUser.
@@ -114,8 +115,7 @@ public class LoggedUser implements Serializable {
     private Timestamp getUserLastAccess() {
     	Timestamp ts = null;
     	AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
-		try {
+		try(CloseableAONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId())) {
 			ts = ctx.getDslContext()
 					.select(USER.LASTACCESS)
 					.from(USER)
@@ -123,14 +123,12 @@ public class LoggedUser implements Serializable {
 					.fetchOne(0, Timestamp.class);
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
-		} finally {
-			ctx.finalize();	
-		}				    	
+		}
 		return ts;
     }
 
 	private void updateLastAccess( AuthPrincipal principal ) {
-		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
+		CloseableAONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
 		try {
 			// Truncate timestamp due to Mysql round issue.
 			// http://bugs.mysql.com/bug.php?id=68760
@@ -148,7 +146,7 @@ public class LoggedUser implements Serializable {
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}				
 	}
     
@@ -209,8 +207,7 @@ public class LoggedUser implements Serializable {
 	private boolean isAllowDomainConcurrent( String domain ) {
 		boolean allow = false;
 		Integer domainId = DomainManager.getCurrentDomain();
-		AONContext ctx = AONContext.getAONContext(domain, domainId);
-		try {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, domainId)){
 			String value = ctx.getDslContext() 
 					.select(APP_PARAM.VALUE)
 					.from(APP_PARAM)
@@ -220,25 +217,20 @@ public class LoggedUser implements Serializable {
 			allow = Boolean.valueOf(value);
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
-		} finally {
-			ctx.finalize();	
 		}				    	
 		return allow;
 	}	
 
 	private boolean isAllowUserConcurrent( AuthPrincipal principal ) {
 		boolean allow = false;
-		AONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId());
-		try {
+		try(CloseableAONContext ctx = AONContext.getAONContext(principal.getDomain(), principal.getDomainId())) {
 			allow = ctx.getDslContext() 
 				.select(USER.ALLOWCONCURRENT)
 				.from(USER)
 				.where(USER.ID.eq(principal.getUserId())).fetchOne(0, Boolean.class);	
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
-		} finally {
-			ctx.finalize();	
-		}				    	
+		} 			    	
 		return allow;
 	}	
 	

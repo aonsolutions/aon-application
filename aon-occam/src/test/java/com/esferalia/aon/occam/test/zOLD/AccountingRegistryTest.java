@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mysql.jdbc.Driver;
@@ -21,7 +22,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AccountingRegistryTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "mac.ecastellano.dev";
 	private static int DOMAIN_ID = 400;
 	private static String USER = "mac";
@@ -53,7 +54,7 @@ public class AccountingRegistryTest {
 
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 }

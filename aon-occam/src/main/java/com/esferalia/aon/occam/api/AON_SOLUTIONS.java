@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -122,26 +123,26 @@ public class AON_SOLUTIONS {
 
 	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
 		String domainName = AONContext.getSchemaFirstDomain(auth.getSchema());
-		try (AONContext ctx = AONContext.getAONContext(domainName, 0, "")){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, 0, "")){
 			return getAttachment().getAuthAttach(ctx, filter, true);
 		}
 	}
 	
 	public static AuthAttach saveAuthAttach(Auth auth, AuthAttach attach) { 
 		String domainName = AONContext.getSchemaFirstDomain(auth.getSchema());
-		try (AONContext ctx = AONContext.getAONContext(domainName, 0, "")){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, 0, "")){
 			return getAttachment().saveAuthAttach(ctx, attach);
 		}
 	}
 	
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuth(ctx, email);
 		}
 	}
 	
 	public static Auth getAuth(String domainName, Integer domainId, byte[] auth) { 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, "");
 			return getSecurity().getAuth(ctx, auth);
@@ -153,7 +154,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Auth getAuth(String schema, String email) { 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(schema);
 			return getSecurity().getAuth(ctx, email);
@@ -178,7 +179,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Auth getAuthByDocument(String domainName, Integer domainId, String document) { 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, "");
 			return getSecurity().getAuthByDocument(ctx, document);
@@ -202,7 +203,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Stream<Auth> getAuthStream(String domainName, Integer domainId, AuthFilter filter) { 
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuthStream(ctx, filter);
 		}
 	}
@@ -239,20 +240,20 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Auth updateAuth(String domainName, Integer domainId, Auth auth) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getSecurity().updateAuth(ctx, auth);
 		}
 	}
 	
 	public static Auth updateAuthPassword(Auth auth) {
 		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
-		try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")){		
 			return getSecurity().updateAuthPassword(ctx, auth);
 		}
 	}
 	
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getSecurity().insertAuth(ctx, auth);
 		}
 	}
@@ -293,88 +294,88 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Domain insertDomain(String domainName, Integer domainId, String login, Domain domain, Registry registry) throws Exception{ 
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getCommon().insertDomain(ctx, domain, registry);
 		}
 	}
 	
 	public static void assignAuthToUser(String domainName, Integer domainId, User user, String uuid) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			byte[] auth = getSecurity().unHexUuid(ctx, uuid);
 			getSecurity().assignAuthToUser(ctx, user, auth);
 		}
 	}
 	
 	public static void assignAuthToUser(String domainName, Integer domainId, User user, byte[] auth) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			getSecurity().assignAuthToUser(ctx, user, auth);
 		}
 	}
 	
 	public static Stream<DomainApp> getDomainApp(String domainName, Integer domainId, String login, DomainAppFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().getDomainAppStream(ctx, filter);
 		}
 	}
 	
 	public static boolean isOCRActive(String domainName, Integer domainId, String login) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSecurity().isOCRActive(ctx,domainId);
 		}
 	}
 
 	public static DomainApp saveDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp, boolean old) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().saveDomainApp(ctx, domainApp, old);
 		}
 	}
 
 	public static Stream<UserAppRole> getUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().getUserAppRoleStream(ctx, filter);
 		}
 	}
 	
 	public static UserAppRole insertUserAppRole(String domainName, Integer domainId, String login, UserAppRole userAppRole) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().insertUserAppRole(ctx, userAppRole);
 		}
 	}
 	
 	public static UserAppRole updateUserAppRole(String domainName, Integer domainId, String login, UserAppRole userAppRole) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().updateUserAppRole(ctx, userAppRole);
 		}
 	}
 	
 	public static UserAppRole deleteUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().deleteUserAppRole(ctx, filter);
 		}
 	}
 	
 	public static User getUser(Domain domain, String token) {
 		AonToken aonToken = SECURITY.getAonToken(token);
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
 			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
 	}
 	
 	public static LinkedList<User> getUsersByEmail(String domainName, Integer domainId, String email) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getSecurity().getUsersByEmail(ctx, email);
 		}
 	}
 	
 	public static String getUserPassword(String domainName, Integer domainId, Integer user) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getUserPassword(ctx, user);
 		}
 	}
 	
 	public static User getUserUuid(Domain domain, String uuid) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
 			byte[] auth = getSecurity().unHexUuid(ctx, uuid);
 			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(auth)));
 		}
@@ -385,7 +386,7 @@ public class AON_SOLUTIONS {
 		Stream<AonCompany> stream = new LinkedList<AonCompany>().stream();
 		String domain = AONContext.getSchemaFirstDomain(schema);
 		if(!AonStringUtils.isBlank(domain)) {
-			try (AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
 				Stream<AonCompany> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
 				stream = Stream.concat(stream, s);
 			}
@@ -394,13 +395,13 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Domain getDomain(String token, Integer domainId) {
-		try (AONContext ctx = AONContext.getAONContext(token)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(token)){
 			return getCommon().getDomain(ctx, domainId);
 		}
 	}
 	
 	public static void saveDomainMaxDefinedUser(String domainName, Integer domainId, String login, Integer maxDefinedUser) {
-		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getSecurity().saveDomainMaxDefinedUser(ctx, maxDefinedUser);
 		}
 	}
@@ -408,20 +409,20 @@ public class AON_SOLUTIONS {
 	// INVOICE
 	
 	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoices(ctx, filter);
 		} 
 	}
 	
 	public static List<Invoice> getTbaiDeletedInvoices(String domainName, Integer domainId, String login) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getTbaiDeletedInvoices(ctx);
 		} 
 	}
 
 	public static TaskHolder getTaskHolder(AonToken aonToken) {
 		TaskHolder taskHolder = null;
-		try (AONContext ctx = AONContext.getAONContext(aonToken.getSchemaFirstDomain(),0, "")){
+		try (CloseableAONContext ctx = AONContext.getAONContext(aonToken.getSchemaFirstDomain(),0, "")){
 			taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
 		}
 		if(taskHolder == null) {
@@ -429,7 +430,7 @@ public class AON_SOLUTIONS {
 			for(String schema: schemas) {
 				if(taskHolder == null) {
 					String domain = AONContext.getSchemaFirstDomain(schema);
-					try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){
+					try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")){
 						taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
 					}catch (Exception e) {
 						e.printStackTrace();
@@ -446,7 +447,7 @@ public class AON_SOLUTIONS {
 		for(String schema: schemas) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {
-				try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){
+				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")){
 					getTask().getTaskHolderStream(ctx, aonToken.getAuth())
 					.forEach(r -> {
 						list.add(r);
@@ -460,77 +461,77 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Stream<TimeControl> getTimeControlStream(Domain domain, String login, Date startDate, Date endDate) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlStream(ctx, startDate, endDate);
 		}
 	}
 	
 	public static Stream<TimeControlDetail> getTimeControlHistoric(Domain domain, String login, TimeControlFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlHistoric(ctx, filter);
 		}
 	}
 	
 	public static Stream<TimeControl> getTaskHolderTimeControlStream(Domain domain, String login, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTaskHolderTimeControlStream(ctx, taskHolderId, startDate, endDate, group);
 		}
 	}
 	
 	public static TimeControl getTaskHolderTimeControl(Domain domain, String login, Integer taskHolderId, Date startDate, Date endDate) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTaskHolderTimeControl(ctx, taskHolderId, startDate, endDate);
 		}
 	}
 	
 	public static Stream<TimeControlDetail> getTimeControlDetailStream(Domain domain, String login, TimeControlFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlDetailStream(ctx, filter);
 		}
 	}
 	
 	public static LinkedList<TimeControlDetail> getTimeControlDetailList(Domain domain, String login, TimeControlFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlDetailList(ctx, filter);
 		}
 	}
 	
 	public static TimeControlDetail saveTimeControlDetail(Domain domain, String login, TimeControlDetail tcd) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().saveTimeControlDetail(ctx, tcd);
 		}
 	}
 	public static void deleteTimeControlDetail(Domain domain, String login, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getTimeControl().deleteTimeControlDetail(ctx, id);
 		}
 	}
 	
 	public static Location saveLocation(Domain domain, String login, Location lc) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().saveLocation(ctx, lc);
 		}
 	}
 	
 	public static Location getLocation(Domain domain, String login, LocationFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getLocation(ctx, filter);
 		}
 	}
 	public static Location getLocationByCoordinates(Domain domain, String login, Coordinates c) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getLocationByCoordinates(ctx, c);
 		}
 	}
 	
 	public static Stream<Location> getLocationStream(Domain domain, String login, LocationFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getLocationStream(ctx, filter);
 		}
 	}
 	
 	public static void deleteLocation(Domain domain, String login, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getTimeControl().deleteLocation(ctx, id);
 		}
 	}
@@ -539,31 +540,31 @@ public class AON_SOLUTIONS {
 	//----------------NOTE
 	
 	public static Note getNote(Domain domain, String login, NoteFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNote().getNote(ctx, filter);
 		}
 	}
 	
 	public static Stream<Note> getNoteStream(Domain domain, String login, NoteFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNote().getNoteStream(ctx, filter);
 		}
 	}
 	
 	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNote().getNoteCountForDate(ctx, filter, date);
 		}
 	}
 	
 	public static Note saveNote(Domain domain, String login, Note note) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNote().saveNote(ctx, note);
 		}
 	}
 	
 	public static void deleteNote(Domain domain, String login, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getNote().deleteNote(ctx, id);
 		}
 	}
@@ -572,13 +573,13 @@ public class AON_SOLUTIONS {
 	
 	@Deprecated
 	public static void saveUserFinancePortal(Domain domain, String login, Integer userId) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getSecurity().saveUserFinancePortal(ctx, userId);
 		}
 	}
 	
 	public static Stream<Registry> getSuggestionRegistries(Domain domain, String login, LinkedList<RegistryType> list, RegistryFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getRegistry().getSuggestionRegistries(ctx, list, filter);
 		}
 	}
@@ -588,7 +589,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Notification getNotification(Domain domain, String login, NotificationFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNotification().getNotification(ctx, filter);
 		}
 	}
@@ -615,25 +616,25 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Stream<Notification> getNotificationStream(String domainName, Integer domainId, String login, NotificationFilter filter, Integer page, Integer peerPage) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getNotification().getNotificationStream(ctx, filter, page, peerPage);
 		}
 	}
 	
 	public static Notification saveNotification(Domain domain, String login, Notification nt) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNotification().saveNotification(ctx, nt);
 		}
 	}
 	
 	public static void deleteNotification(Domain domain, String login, Notification nt) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getNotification().deleteNotification(ctx, nt);
 		}
 	}
 	
 	public static void markReadNotification(Domain domain, String login, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getNotification().markReadNotification(ctx, id);
 		}
 	}
@@ -644,7 +645,7 @@ public class AON_SOLUTIONS {
 		for(String schema: schemas) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {
-				try(AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				try(CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
 					total += getNotification().getTotalNotification(ctx, filter);
 				} 
 			}
@@ -669,7 +670,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
 			return invoice;
 		}
@@ -684,7 +685,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static JSONObject acceptInvoice(String domainName, Integer domainId, String login, JSONObject json) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = InvoiceJSON.fromJSON(json);
 			invoice = getFinance().acceptInvoice(ctx, invoice, invoice.getId());
 			return InvoiceJSON.toJSON(invoice);
@@ -700,7 +701,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().acceptInvoice(ctx, invoice, invoice.getId());
 		}
 	}
@@ -716,7 +717,7 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static JSONArray getProducts(String domainName, Integer domainId, String login, ProductFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Stream<Product> products = getProduct().getProductStream(ctx, filter);
 			return ProductJSON.toJSON(products);
 		}
@@ -733,155 +734,155 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static JSONArray getItems(String domainName, Integer domainId, String login, ItemFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Stream<Item> items = getProduct().getItemStream(ctx, filter);
 			return ItemJSON.toJSON(items);
 		}
 	}
 	
 	public static PrintInvoiceConfiguration getPrintInvoiceConfiguration(Domain domain, User user, Boolean withData) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getFinance().getPrintInvoiceConfiguration(ctx, withData);
 		}
 	}
 	
 	public static PrintInvoiceConfiguration getPrintInvoiceConfiguration(String domainName, Integer domainId, String login, Boolean withData) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getPrintInvoiceConfiguration(ctx, withData);
 		}
 	}
 	
 	public static PrintInvoiceConfiguration savePrintInvoiceConfiguration(Domain domain, User user, PrintInvoiceConfiguration pic) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getFinance().savePrintInvoiceConfiguration(ctx, pic);
 		}
 	}
 
 	// TASK
 	public static Task getTask(Domain domain, User user, TaskFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTask(ctx, filter);
 		}
 	}
 	
 	public static Map<String, Integer> getTaskCount(Domain domain, User user, TaskFilter sender, TaskFilter receiver) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskCount(ctx, sender, receiver);
 		}
 	}
 	
 	public static TaskCounts getTaskGeneralCount(Domain domain, User user, Optional<TaskFilter> status, Optional<TaskFilter> workgroup,  Optional<TaskFilter> tags) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskGeneralCount(ctx, status, workgroup, tags);
 		}
 	}
 	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter);
 		}
 	}
 	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter, page, perPage);
 		}
 	}
 	
 	public static LinkedList<Task> getTaskList(Domain domain, User user, TaskFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskList(ctx, filter);
 		}
 	}
 	
 	public static LinkedList<Task> getTaskList(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskList(ctx, filter, page, perPage);
 		}
 	}
 	
 	public static Task saveTask(Domain domain, User user, Task task) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTask(ctx, task);
 		}
 	}
 	
 	public static void deleteTask(Domain domain, User user, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			getTask2().deleteTask(ctx, id);
 		}
 	}
 	
 	//----------------------- TASKWORKFLOW
 	public static TaskWorkflow getTaskWorkflow(Domain domain, User user, TaskWorkflowFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflow(ctx, filter);
 		}
 	}
 	
 	public static Stream<TaskWorkflow> getTaskWorkflowStream(Domain domain, User user, TaskWorkflowFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowStream(ctx, filter);
 		}
 	}
 	
 	public static void updateTaskWorkflowBetween(Domain domain, User user, TaskWorkflowFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			getTask2().updateTaskWorkflowBetween(ctx, filter);
 		}
 	}
 
 	public static List<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowList(ctx, filter);
 		}
 	}
 	
 	public static List<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter, Integer page, Integer perPage) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowList(ctx, filter, page, perPage);
 		}
 	}
 	
 	public static TaskWorkflow saveTaskWorkflow(Domain domain, User user, TaskWorkflow workflow) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTaskWorkflow(ctx, workflow);
 		}
 	}
 	
 	public static void deleteTaskWorkflow(Domain domain, User user, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			getTask2().deleteTaskWorkflow(ctx, id);
 		}
 	}
 	
 	//-------------------- TASKATTACH
 	public static TaskAttach getTaskAttach(Domain domain, User user, TaskAttachFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskAttach(ctx, filter);
 		}
 	}
 	
 	public static Stream<TaskAttach> getTaskAttachStream(Domain domain, User user, TaskAttachFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskAttachStream(ctx, filter);
 		}
 	}
 
 	public static LinkedList<TaskAttach> getTaskAttachList(Domain domain, User user, TaskAttachFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskAttachList(ctx, filter);
 		}
 	}
 	
 	public static TaskAttach saveTaskAttach(Domain domain, User user, TaskAttach task) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTaskAttach(ctx, task);
 		}
 	}
 	
 	public static void deleteTaskAttach(Domain domain, User user, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			getTask2().deleteTaskAttach(ctx, id);
 		}
 	}

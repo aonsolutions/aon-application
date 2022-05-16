@@ -20,6 +20,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.timecontrol.TimeControlTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.timecontrol.bean.EmployeeData;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 public class JooqTimeControlTemplate {
 //	public static void main(String[] args) throws CanNotCreatePdfException, FileNotFoundException {
@@ -36,7 +37,7 @@ public class JooqTimeControlTemplate {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		java.sql.Date sqlDate = new java.sql.Date(cal.getTimeInMillis());
-		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
 			Registry ent = REGISTRY.as("ent");
 			Registry worker = REGISTRY.as("worker");

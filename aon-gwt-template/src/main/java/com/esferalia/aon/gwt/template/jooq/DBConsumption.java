@@ -11,11 +11,11 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -34,6 +34,7 @@ import com.esferalia.aon.jooq.tables.records.InventoryRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -43,7 +44,7 @@ public class DBConsumption {
 	public static Map<Integer, ConsumptionItem> getConsumption(Domain domain, String login
 			, Integer initialId, Integer finalId, Integer warehouseId, Date initialDate, 
 			Date finalDate, String warehouseName, Integer categoryId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -327,7 +328,7 @@ public class DBConsumption {
 	
 	public static Map<Integer, ConsumptionItem> getConsumptionWithoutInventory(Domain domain, String login
 			, Integer initialId, Integer finalId, Integer warehouseId, String warehouseName, Integer categoryId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -648,7 +649,7 @@ public class DBConsumption {
 
 
 	public static ConsumptionItem getConsumptionItem(Domain domain, String login, Integer itemId, String warehouseName, String hotel){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			ConsumptionItem ci = new ConsumptionItem();
@@ -700,7 +701,7 @@ public class DBConsumption {
 	
 	public static String getWarehouseName(Domain domain, Integer warehouseId, String login){
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -717,7 +718,7 @@ public class DBConsumption {
 	
 	public static String getInventoryName(Domain domain, Integer inventoryId, String login){
 		if(inventoryId == null) return "";
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -733,7 +734,7 @@ public class DBConsumption {
 	}
 	
 	public static ConsumptionItem getTwoLastInventory(Domain domain, Integer warehouseId, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -761,7 +762,7 @@ public class DBConsumption {
 	}
 	
 	public static Inventory getInitialInventory(Domain domain, String login, Integer warehouseId, Date startDate, Date endDate){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 		
@@ -788,7 +789,7 @@ public class DBConsumption {
 	}
 	
 	public static Inventory getFinalInventory(Domain domain, String login, Integer warehouseId, Date startDate, Date endDate){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 		
@@ -805,7 +806,7 @@ public class DBConsumption {
 	}
 	
 	public static String getHotelName(String domainName, Integer domainId, String login, Integer warehouseId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			

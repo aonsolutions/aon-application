@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -439,7 +440,7 @@ public class BidoqRequest {
 		Integer activity = (ea==null?null:ea.getId());
 		Integer periodId = null;
 		if (ai.getInvoice().getIssueDate() != null) {
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 				AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, ai.getInvoice().getIssueDate());

@@ -39,6 +39,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Deduction;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -109,9 +110,9 @@ public class JooqPDFSettlementBuilder {
 	}
 	
 	private SettlementBuilder buildSettle(Condition condition) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, login);
-			 DSLContext ctx = aonContext.getDslContext();
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, login);
 		) {
+			 DSLContext ctx = aonContext.getDslContext();
 			SettlementBuilder builder = new SettlementBuilder();
 			Record settlementRecord = ctx.select()
 			.from(SALARY)
@@ -207,7 +208,7 @@ public class JooqPDFSettlementBuilder {
 	}
 	
 	public static byte[] getSignature(String domainName, Integer domainId, String login) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, login)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, login)) {
 			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
 					f -> f.getTypeProperty().eq(RegistryAttachmentType.SIGNATURE.value())
 							.and(f.getDomainProperty().eq(domainId)),

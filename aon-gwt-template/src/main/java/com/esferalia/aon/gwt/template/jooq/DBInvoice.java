@@ -28,6 +28,7 @@ import com.esferalia.aon.jooq.tables.Geotree;
 import com.esferalia.aon.jooq.tables.Geozone;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -92,7 +93,7 @@ public class DBInvoice {
 	}
 	
 	public static List<Invoice> getInvoices(Domain domain, User user, InvoiceFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			Result<Record> a = getSaleInvoices(ctx, filter);
 			HashMap<Integer, Invoice> invoiceMap = new HashMap<>();
 			for (Record r : a) {

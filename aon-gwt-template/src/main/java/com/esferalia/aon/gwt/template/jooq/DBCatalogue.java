@@ -19,6 +19,7 @@ import org.jooq.Result;
 import com.esferalia.aon.gwt.template.server.CatalogueInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -30,7 +31,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Department;
 public class DBCatalogue {
 	
 	public static LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record2<Integer, String>> record;
@@ -92,7 +93,7 @@ public class DBCatalogue {
 	}
 	
 	public static LinkedList<CatalogueInfo> getCatalogues(Domain domain, Workplace wp, Department dt, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Date today = new Date(new java.util.Date().getTime());

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.fiscal;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -17,114 +18,114 @@ public class MODEL303 {
 	}
 
 	public static LinkedList<Mod303> getMod303s(Occam occam) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getMod303s(ctx, occam.getDomain());
 		}
 	}
 
 	public static Mod303 get(Occam occam, int id) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().get(ctx, id);
 		}
 	}
 
 	public static Mod303 calculate(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().calculate(ctx, mod303);
 		}
 	}
 
 	public static Mod303 calculateProrrate(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().calculateProrrate(ctx, mod303);
 		}
 	}
 
 	public static Mod303 save(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().save(ctx, mod303);
 		}
 	}
 
 	public static Mod303 saveComments(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().saveComments(ctx, mod303);
 		}
 	}
 	
 	public static Mod303 initializeForFinish(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initializeForFinish(ctx, mod303);
 		}
 	}
 
 	public static Mod303 markAsFinished(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsFinished(ctx, mod303);
 		}
 	}
 
 	public static Mod303 markAsPending(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsPending(ctx, mod303);
 		}
 	}
 	
 	public static Mod303 markAsSent(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsSent(ctx, mod303);
 		}
 	}
 	public static Mod303 markAsCustomerCheck(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsCustomerCheck(ctx, mod303);
 		}
 	}
 	public static Mod303 markAsCustomerAccepted(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsCustomerAccepted(ctx, mod303);
 		}
 	}
 	public static Mod303 markAsCustomerRejected(Occam occam, Mod303 mod303, String reason) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsCustomerRejected(ctx, mod303, reason);
 		}
 	}
 	
 	
 	public static void delete(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod303);
 		}
 	}
 
 	public static Mod303 initialize(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, mod303);
 		}
 	}
 
 	public static Mod303 create(Occam occam,Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod303);
 		}
 	}
 
 	public static String getInfo(Occam occam, Mod303 mod303
 			,IModelScript<Mod303Key> script,FiscalModelKeyInfo infoKey) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod303, script, infoKey);
 		}
 	}
 	
 	public static Mod303 aeatPresentation(Occam occam, Mod303 mod303, String aeatResponse) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().aeatPresentation(ctx, mod303, aeatResponse);
 		}
 	}
 
 	public static Mod303 reset(Occam occam, Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().reset(ctx, mod303);
 		}
 	}

@@ -28,6 +28,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -349,7 +350,7 @@ public class SettleBuilder {
 	 */
 	public static void printSettles(String domainName, int enterprise, Integer[] ids, OutputStream out, Locale locale)
 			throws CanNotCreatePdfException {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, ""))
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, ""))
 		{
 			List<Settle>		  settleList = getSettlesFromDatabase(aonContext, ids);
 			Optional<InputStream> optLogo	 = getLogoFromDatabase(aonContext);

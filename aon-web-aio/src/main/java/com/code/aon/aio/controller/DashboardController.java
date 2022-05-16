@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Vector;
 
 import javax.faces.context.ExternalContext;
@@ -87,6 +86,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -973,7 +973,7 @@ public class DashboardController implements Serializable {
 	public static Result<Record3<Integer, String, String>> getCategoryAux(
 			String domainName, Integer domainId) {
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Result<Record3<Integer, String, String>> category = ctx.getDslContext()
@@ -1031,7 +1031,7 @@ public class DashboardController implements Serializable {
 		Domain domain = getDomain();
 		com.esferalia.aon.occam.api.model.security.User user = getUser();
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 
@@ -1081,7 +1081,7 @@ public class DashboardController implements Serializable {
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Result<Record3<Integer, Integer, String>> data ;
@@ -1128,7 +1128,7 @@ public class DashboardController implements Serializable {
 		Domain domain = getDomain();
 		com.esferalia.aon.occam.api.model.security.User user = getUser();
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 			
@@ -1175,7 +1175,7 @@ public class DashboardController implements Serializable {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		List<Integer> scopes = null;
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user.getLogin());
 			scopes = ctx.getDslContext().select(USER_SCOPE.SCOPE).from(USER_SCOPE)
@@ -1240,7 +1240,7 @@ public class DashboardController implements Serializable {
 			DomainGserviceaccount g = DBConsults.getServiceAccount(domain, user);
 			Drive drive = null;
 			if (g.getClientId()!= null) drive = DriveUtils.serviceInitialize(g);
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 
@@ -1317,7 +1317,7 @@ public class DashboardController implements Serializable {
 	public Integer getFileSize(String domainName, Integer id){
 		Domain domain = getDomain(domainName);
 		com.esferalia.aon.occam.api.model.security.User user = getUser();
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 			Result<Record1<Integer>> data ;
@@ -1571,7 +1571,7 @@ public class DashboardController implements Serializable {
 		Locale locale = AonUtil.getCurrentLocale();
 		Domain domain = getDomain();
 		com.esferalia.aon.occam.api.model.security.User user = getUser();
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());			
 			//Result<Record6<java.sql.Date, Double, Double, Double, Double, Double>> data ;

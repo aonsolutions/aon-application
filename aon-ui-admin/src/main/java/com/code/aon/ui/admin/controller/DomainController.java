@@ -93,6 +93,7 @@ import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.sun.faces.util.MessageFactory;
 
 public class DomainController extends BasicController {
@@ -797,7 +798,7 @@ public class DomainController extends BasicController {
 		if ( type == RegistryAttachmentType.DOMAIN_BOOK_HISTORY ) {
 			description = DomainInfo.DATE_FORMAT.format(now);	
 		}
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), company.getDomain());
+		CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), company.getDomain());
 		try {
 			ctx.getDslContext().insertInto(RATTACH)
 			.set(RATTACH.DOMAIN, company.getDomain())
@@ -813,7 +814,7 @@ public class DomainController extends BasicController {
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}		
 	}
 	

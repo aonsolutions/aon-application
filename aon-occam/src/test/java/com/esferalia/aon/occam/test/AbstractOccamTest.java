@@ -17,6 +17,7 @@ import org.junit.Rule;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -26,7 +27,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public abstract class AbstractOccamTest {
 
-	protected static AONContext ctx;
+	protected static CloseableAONContext ctx;
 	private static AonConfiguration config;
 	protected static Integer DOMAIN_ID;
 
@@ -61,10 +62,9 @@ public abstract class AbstractOccamTest {
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		shutUp();
 		if ( DOMAIN_ID == null) {
-			try (AONContext context = new AONContext(connect())) {
-				Domain domain = DomainProviderForTests.getOrCreateDomain(context, DOMAIN_NAME, USER);
-				DOMAIN_ID = domain.getId();
-			}
+			AONContext context = new AONContext(connect());
+			Domain domain = DomainProviderForTests.getOrCreateDomain(context, DOMAIN_NAME, USER);
+			DOMAIN_ID = domain.getId();
 		}
 		ctx = AONContext.getAONContext(getOccam());
 		System.setOut(System.out);
@@ -73,7 +73,7 @@ public abstract class AbstractOccamTest {
 
 	@AfterClass
 	public static void afterClass() {
-		if (ctx != null) ctx.finalize();
+		if (ctx != null) ctx.close();
 	}
 	
 	@Before
