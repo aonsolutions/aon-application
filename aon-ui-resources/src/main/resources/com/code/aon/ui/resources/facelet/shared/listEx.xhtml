@@ -125,8 +125,8 @@
 				<aon:outputText styleClass="aon-paginator-icon" style="background: url(#{aonResource.resolve['/images/n.svg']})" ></aon:outputText>
 				<aon:outputText styleClass="aon-paginator-number" value="&gt;"> </aon:outputText>
 			</div>	
-			
-			<aon:outputText styleClass="aon-paginator-number" style="position: absolute; right: 2rem;  align-self: center;" value="Página #{controller.page}"> </aon:outputText>
+					
+			<aon:outputText styleClass="aon-paginator-number" style="position: absolute; right: 2rem;  align-self: center;" value="Página #{controller.page} - #{dataModel.rowCount} Resultados"> </aon:outputText>
 			
 		</aon:div>
 	</aon:if>	
