@@ -89,6 +89,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/count":
 					response(req, resp, getTaskCount(api));
 					break;
+				case "/status/count":
+					response(req, resp, getTaskStatusCount(api));
+					break;
 				case "/general/count":
 					response(req, resp, getTaskGeneralCount(api));
 					break;
@@ -128,12 +131,6 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/tag":
 					response(req, resp, saveTaskTag(api));
 					break;
-//				case "/app-params":
-//					response(req, resp, saveAppParams(api));
-//					break;
-//				case "/get-app-params":
-//					response(req, resp, getAppParams(api));
-//					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -341,9 +338,19 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskGeneralCount(AonApiData api) {
 		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
-			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
+			Optional.empty(),
 			Optional.of( f-> TaskFilter.taskWorkgroupCount(f, api, api.getDomain()) ),
 			Optional.of( f-> TaskFilter.taskTagCount(f, api, api.getDomain()) )
+		);
+		
+		return taskCounts.toJSON();
+	}
+	
+	private JSONObject getTaskStatusCount(AonApiData api) {
+		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
+			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
+			Optional.empty(),
+			Optional.empty()
 		);
 		
 		return taskCounts.toJSON();

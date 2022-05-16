@@ -92,7 +92,7 @@
         <tr>
           <td>
             <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
-              <img alt="icon" src="$task.getLogo()" style="cursor: pointer;" width="300px">
+              <img alt="" src="$task.getLogo()" style="cursor: pointer;" width="300px">
             </a>
           </td>
           <td></td>
