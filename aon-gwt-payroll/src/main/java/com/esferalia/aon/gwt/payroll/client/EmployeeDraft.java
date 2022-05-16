@@ -770,6 +770,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
+		employee.addressInfo.setValue(employeeData.getAddressInfo());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
 		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
