@@ -223,7 +223,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> getMovementsCcc(AonApiData api) {
 		ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> employees = new ArrayList<>();
 		Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		List<String> errors = new ArrayList<>();
 		
@@ -335,7 +335,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		ComunicaUtils.validateAlta(api);
 		JSONObject data = api.getData(); 
 	    Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
 		String regime = data.optString(IJsonNames.REGIME);
@@ -393,7 +393,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONObject sendBaja(AonApiData api) throws Exception{
 		JSONObject data = api.getData(); 
 	    Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
 		String regime = data.optString(IJsonNames.REGIME);
@@ -425,7 +425,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONObject movDelete(AonApiData api) throws Exception {
 		JSONObject data = api.getData(); 
 		Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		
 		//first screen
@@ -595,7 +595,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 
 				//SEND EMAIL
 				Domain domain = api.getDomain();
-				User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+				User user = api.getUser();
 				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 				String regime = employee.getRegime();
 				String ccc = employee.getCtaCti().get();
@@ -656,7 +656,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Thread newThread = new Thread(() -> {
 			
 			Domain domain = api.getDomain();
-			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+			User user = api.getUser();
 			LinkedList<Auth> auths = new LinkedList<>();
 			
 			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
@@ -685,7 +685,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private void sendEmail(AonApiData api, String subject, String body, LinkedList<File> files) {
 		Thread newThread = new Thread(() -> {
 			try {
-				User user = AON_SOLUTIONS.getUser(api.getDomain(), api.getToken());
+				User user = api.getUser();
 				SESMessage msg = new SESMessage()
 						.setAlias("AON | COMUNIC@")
 						.setSubject(subject)
@@ -713,28 +713,32 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			
 			ApplicationParameter appParams = appParamsExists(api);
 			
-			//------------MOVEMENTS OLD
-			if(params.optBoolean("employeesOld")) {
+			
+			if(params.optBoolean("employeesOld")) {//------------MOVEMENTS OLD
+				
 				Date startIni = AonDateUtils.getYearFirstDay( AonDateUtils.addMonths(new Date(), -6) ); 
+				
 				if(!params.optString("startDate").isEmpty()) {
 					startIni = AonDateUtils.parse(params.optString("startDate"), FORMAT_DATE);
-				} else if(appParams.getId()!=null && appParams.getValue()!=null) 
+				} else if(appParams.getId()!=null && appParams.getValue()!=null) {
 					startIni = AonDateUtils.addDays(new Date( Long.parseLong( appParams.getValue() ) ), -15) ;
+				}
 
 				employees.addAll(ComunicaUtils.getEmployeesOld(startIni, certificate, cccs));
 			}
-
-			//------------MOVEMENTS Prev(ACTUAL)
-			employees.addAll(ComunicaUtils.getEmployeesPrev(certificate, cccs));
+			
+			if(params.optBoolean("employeesPrev")) {		//------------MOVEMENTS PREV
+				employees.addAll(ComunicaUtils.getEmployeesPrev(certificate, cccs));
+			}
 			
 			//------------CONTRACT
 			employees.forEach(data ->{
 				try {
-				    String nss = data.getNss();
-					//----GET PERSON
 					java.sql.Date fraSql = new java.sql.Date(data.getFra().getTime());      
+				    String nss = data.getNss();
 					Optional<Date> frb = data.getFrb();
 					Optional<Contract> contract = Optional.empty();
+					//----GET PERSON
 					Person person = AON.getPerson(domain, "", f->f.getDomainProperty().eq(domain.getId()).and(f.getSocialSecurityNumProperty().eq(nss)));
 					
 					////--GET CONTRACT ACTIVE
