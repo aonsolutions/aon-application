@@ -202,14 +202,14 @@ public class TaskUtils {
 			}
 		}
 		//SEND TASKHOLDER ASSIGNED
-		if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
-			
-			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
-			
-			if(usr!=null) list.add(usr.getAuth());
-			
-			System.out.println("TASKHOLDER SEND NOTIFICATION ID:"+ task.getTaskHolder().getId());
-			
+		if(task.getTaskHolder().getId()!=null) {
+			if(!task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId())) {
+				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
+				
+				if(usr!=null) list.add(usr.getAuth());
+				
+				System.out.println("TASKHOLDER SEND NOTIFICATION ID:"+ task.getTaskHolder().getId());
+			}		
 		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ // SEND WORKGROUP ASSIGNED
 			AON.getTaskHolderWorkgroupStream(
 					domain, api.getUser(), 
