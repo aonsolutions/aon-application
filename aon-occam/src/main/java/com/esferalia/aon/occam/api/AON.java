@@ -4926,29 +4926,85 @@ public class AON {
 	}
 	
 	// ------------------------------------- RNOTE
+
+	// ----- RNOTE GET
 	
-	public static Stream<RegistryNote> getRNoteStream(String domainName, Integer domainId, String login,
-			RegistryNoteFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRNoteStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static RegistryNote getRegistryNote(Domain domain, User user, RegistryNoteFilter filter) {
+		return getRegistryNote(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static RegistryNote getRegistryNote(Domain domain, String login, RegistryNoteFilter filter) {
+		return getRegistryNote(domain.getName(),  domain.getId(), login, filter);
+	}
+
+	public static RegistryNote getRegistryNote(String domainName, Integer domainId, String login, RegistryNoteFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryNote(ctx, filter);
 		}
 	}
-		
-	public static RegistryNote getRNote(String domainName, Integer domainId, String login,
-			RegistryNoteFilter filter) {
-		return getRNoteStream(domainName, domainId, login, filter)
-			.findFirst().orElse(new RegistryNote());
+
+	// ----- RNOTE GET STREAM
+
+	public static Stream<RegistryNote> getRegistryNoteStream(Domain domain, User user, RegistryNoteFilter filter) {
+		return getRegistryNoteStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
-		
-	public static LinkedList<RegistryNote> getRNoteList(String domainName, Integer domainId, String login,
-			RegistryNoteFilter filter) {
-		return getRNoteStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
+	
+	public static Stream<RegistryNote> getRegistryNoteStream(Domain domain, String login, RegistryNoteFilter filter) {
+		return getRegistryNoteStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Stream<RegistryNote> getRegistryNoteStream(String domainName, Integer domainId, String login, RegistryNoteFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryNoteStream(ctx, filter);
+		}
+	}
+
+	// ----- RNOTE GET LIST
+
+	public static List<RegistryNote> getRegistryNoteList(Domain domain, User user, RegistryNoteFilter filter) {
+		return getRegistryNoteList(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static List<RegistryNote> getRegistryNoteList(Domain domain, String login, RegistryNoteFilter filter) {
+		return getRegistryNoteList(domain.getName(),  domain.getId(), login, filter);
+	}
+
+	public static List<RegistryNote> getRegistryNoteList(String domainName, Integer domainId, String login, RegistryNoteFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryNoteList(ctx, filter);
+		}
+	}
+	
+	// ----- RNOTE SAVE
+	
+	public static RegistryNote saveRegistryNote(Domain domain, User user, RegistryNote rnote) {
+		return saveRegistryNote(domain.getName(), domain.getId(), user.getLogin(), rnote);
+	}
+	
+	public static RegistryNote saveRegistryNote(Domain domain, String login, RegistryNote rnote) {
+		return saveRegistryNote(domain.getName(),  domain.getId(),  login, rnote);
+	}
+
+	public static RegistryNote saveRegistryNote(String domainName, Integer domainId, String login, RegistryNote rnote) {
+		try (AONContext	ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().saveRegistryNote(ctx, rnote);
+		}
+	}
+
+	// ----- RNOTE DELETE
+	
+	public static void deleteRegistryNote(Domain domain, User user, Integer id) {
+		deleteRegistryNote(domain.getName(), domain.getId(), user.getLogin(), id);
+	}
+	
+	public static void deleteRegistryNote(Domain domain, String login, Integer id) {
+		deleteRegistryNote(domain.getName(), domain.getId(), login, id);
+	}
+	
+	public static void deleteRegistryNote(String domainName, Integer domainId, String login, Integer id) {
+		try (AONContext	ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getRegistry().deleteRegistryNote(ctx, id);
+		}
 	}
 	
 	// ------------------------------------- RITEM

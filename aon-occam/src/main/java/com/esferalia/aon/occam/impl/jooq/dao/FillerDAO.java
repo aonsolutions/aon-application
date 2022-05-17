@@ -35,7 +35,6 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -300,22 +299,6 @@ public class FillerDAO {
 					.setGender(Gender.safeValueOf(r.getValue(PERSON.GENDER)))
 					.setMaritalStatus(MaritalStatus.safeValueOf(r.getValue(PERSON.MARITAL_STATUS)))
 					.setSocialSecurityNum(r.getValue(PERSON.SOCIAL_SECURITY_NUM));				
-		}
-	}
-	
-	public static class RNoteFiller  implements Function<Record,RegistryNote> {
-
-		@Override
-		public RegistryNote apply(Record r) {
-			return new RegistryNote()
-					.setId(r.getValue(RNOTE.ID))
-					.setDomain(r.getValue(RNOTE.DOMAIN))
-					.setComments(r.getValue(RNOTE.COMMENTS))
-					.setDescription(r.getValue(RNOTE.DESCRIPTION))
-					.setNoteDate(r.getValue(RNOTE.NOTE_DATE))
-					.setNoteType(r.getValue(RNOTE.NOTE_TYPE))
-					.setRegistry(r.getValue(RNOTE.REGISTRY))
-					.setSecurityLevel(r.getValue(RNOTE.SECURITY_LEVEL));
 		}
 	}
 	

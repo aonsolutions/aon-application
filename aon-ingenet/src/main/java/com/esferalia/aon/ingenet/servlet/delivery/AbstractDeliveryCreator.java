@@ -43,10 +43,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -77,15 +75,12 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
-import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 @Deprecated
@@ -692,16 +687,6 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 	 * 
 	 */
 	protected OldItem obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
-		Product p = ProductDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getCodeProperty().eq(productoelaborado.getCODIGO())));
-		Item i = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getProductProperty().eq(p.getId())
-						.and(StringUtils.isNotBlank(productoelaborado.getNUMEROLOTESERIE())
-								? f.getSerialNumberProperty().eq(productoelaborado.getNUMEROLOTESERIE())
-								: f.getSerialNumberProperty().isNull())));
-		if(i.isEmpty()) {
-			createItem(ctx, p, productoelaborado);
-		}
 		OldProduct product = ProductOldDAO
 				.getProductStream(
 						ctx,
@@ -748,41 +733,6 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 					.getFirst();
 		}
 		return item;
-	}
-	
-	// NEW 
-	protected Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado) {
-		Product product = ProductDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getCodeProperty().eq(productoelaborado.getCODIGO())));
-		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getProductProperty().eq(product.getId())
-						.and(StringUtils.isNotBlank(productoelaborado.getNUMEROLOTESERIE())
-								? f.getSerialNumberProperty().eq(productoelaborado.getNUMEROLOTESERIE())
-								: f.getSerialNumberProperty().isNull())));
-		
-		return item.isEmpty() ? createItem(ctx, product, productoelaborado) : item;
-	}
-
-	// NEW
-	protected Item createItem(AONContext ctx, Product product, PRODUCTOTYPE productType) {
-		Item item = ItemDAO.get(ctx, f -> 
-				f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getProductProperty().eq(product.getId()))
-				.and(f.getSerialDateProperty().isNull())
-				.and(f.getSerialNumberProperty().isNull()))
-			.setId(null)
-			.setDomain(product.getDomain())
-			.setProduct(product)
-			.setStatus(ProductStatus.DISCONTINUED)
-			.setDescription(productType.getDESCRIPCION())
-			.setDetail(productType.getDETALLE())
-			.setDetail2(productType.getDETALLE2())
-			.setDetail3(productType.getDETALLE3())
-			.setSerialDate(AonDateUtils.parse(productType.getFECHALOTESERIE(), "yyyyMMdd"))
-			.setSerialNumber(productType.getNUMEROLOTESERIE() != null
-				? productType.getNUMEROLOTESERIE() : null);
-		
-		return ItemDAO.save(ctx, item);
 	}
 	
 	protected void createItem(AONContext ctx, OldProduct product, PRODUCTOTYPE producttype) throws AonException {
@@ -1216,7 +1166,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 				.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
 		List<Integer> ids = customerList.stream().map(Customer::getId)
 				.map(i -> Integer.valueOf(i)).collect(Collectors.toList());
-		List<RegistryNote> ediRNotes = AON.getRNoteList(
+		List<RegistryNote> ediRNotes = AON.getRegistryNoteList(
 				ctx.getDomainName(),
 				ctx.getDomainId(),
 				ctx.getUser(),

@@ -1168,7 +1168,7 @@ public class DeliveryCreator implements Serializable {
 				.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
 		List<Integer> ids = customerList.stream().map(Customer::getId)
 				.map(i -> Integer.valueOf(i)).collect(Collectors.toList());
-		List<RegistryNote> ediRNotes = AON.getRNoteList(
+		List<RegistryNote> ediRNotes = AON.getRegistryNoteList(
 				ctx.getDomainName(),
 				ctx.getDomainId(),
 				ctx.getUser(),

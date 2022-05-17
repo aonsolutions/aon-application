@@ -16,7 +16,6 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
@@ -55,7 +54,6 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
@@ -75,7 +73,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
-import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -89,14 +86,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PersonFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryAddInfoPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryPropertiesDAO;
@@ -515,16 +510,6 @@ public class RegistryOldDAO {
 					.setRaddress(r.getValue(RMEDIA.RADDRESS))
 					.setValue(r.getValue(RMEDIA.VALUE));
 		}
-	}
-	
-	// ------------------------------------- RNOTE
-	
-	private static final RNotePropertiesDAO RNOTE_PROPERTIES = new RNotePropertiesDAO();
-	
-	public static Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter){
-		ctx.checkRead();
-		return ctx.getDslContext().select().from(RNOTE).where(RNOTE_PROPERTIES.getConditions(filter))
-				.fetchInto(RNOTE).stream().map(new RNoteFiller());
 	}
 	
 	// ------------------------------------- RITEM

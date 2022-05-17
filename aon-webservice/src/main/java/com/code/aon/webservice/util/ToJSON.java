@@ -188,8 +188,8 @@ public class ToJSON {
 		json.put(MSG.DESCRIPTION, rnote.getDescription());
 		json.put("note_date", AonDateUtils.simpleFormat(rnote.getNoteDate()));
 		json.put("comments", rnote.getComments());
-		json.put("note_type", rnote.getNoteType());
-		json.put("confidential", rnote.getSecurityLevel() == 1);
+		json.put("note_type", rnote.getNoteType().value());
+		json.put("confidential", rnote.isConfidential());
 		return json;
 	}
 	

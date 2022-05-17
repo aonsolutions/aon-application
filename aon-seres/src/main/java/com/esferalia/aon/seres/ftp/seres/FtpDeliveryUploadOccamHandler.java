@@ -255,7 +255,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	}
 	
 	private String getRegistryNoteComments(String key, Integer registryId) {
-		return AON.getRNoteStream( domainName, domainId, login,
+		return AON.getRegistryNoteStream( domainName, domainId, login,
 				f -> f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
 						.and(f.getRegistryProperty().eq(registryId))
 						.and(f.getDescriptionProperty().eq(key)))

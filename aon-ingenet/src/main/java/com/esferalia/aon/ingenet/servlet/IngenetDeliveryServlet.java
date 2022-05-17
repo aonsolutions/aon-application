@@ -265,7 +265,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	private RegistryNote searchCustomerNote(AONContext ctx, Integer customerId,
 			String customerCode, String key) {
-		List<RegistryNote> rNotes = AON.getRNoteList(
+		List<RegistryNote> rNotes = AON.getRegistryNoteList(
 				ctx.getDomainName(),
 				ctx.getDomainId(),
 				ctx.getUser(),
