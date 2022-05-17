@@ -419,28 +419,47 @@ export class AonMessenger extends AonElement {
 			});
 		  }
 
-		  workgroups.forEach(item => 
-			options.push({
-				id:item.id,
-				name: item.description,
-				icon: MATERIAL_ICONS.PEOPLE_ALT,
-				fn: () => {
-					let filter = {};
-					if(this._filter.workgroup == item.id){
-						this._filter.workgroup  = undefined;
-						this.addListFilter({...this._filter});
-						filter = {...this.getListFilter()};
-					} else {
-						this._filter.workgroup  = item.id;
-						this.addListFilter({...this._filter});
-						filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
+			workgroups.forEach(item => {
+				options.push({
+					id:item.id,
+					name: item.description,
+					icon: MATERIAL_ICONS.PEOPLE_ALT,
+					fn: () => {
+						let filter = {};
+						if(this._filter.workgroup == item.id){
+							this._filter.workgroup  = undefined;
+							this.addListFilter({...this._filter});
+							filter = {...this.getListFilter()};
+						} else {
+							this._filter.workgroups = undefined;
+							this._filter.workgroup  = item.id;
+							this.addListFilter({...this._filter});
+							filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
+						}
+						this.updateStatusCount();
+						this.addBackgroundSidenav(filter);
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 					}
-					this.updateStatusCount();
-					this.addBackgroundSidenav(filter);
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
-				}
-			})
-		  );
+				})
+			});
+
+			if(workgroups.length>1){
+				options.push({
+					id:MATERIAL_ICONS.GROUPS,
+					name: "Todos",
+					icon: MATERIAL_ICONS.GROUPS,
+					fn: () => {
+						this._filter.task_holder = undefined;
+						this._filter.sender = undefined;
+						this._filter.workgroup = undefined;
+						this._filter.workgroups = this.getWorkgroupsStr(true);
+						this.addListFilter({...this._filter});
+						this.updateStatusCount();
+						this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.GROUPS);
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+					}
+				});
+			}
 
 			application.addSidenavOptionsList({
 				id: 'Workgroup',
@@ -721,11 +740,16 @@ export class AonMessenger extends AonElement {
 		return this.dur;
 	}
 	
-	getWorkgroupsStr(){
-		let isManager = this.getDur().isMessengerManager();
-		if(isManager || this.cau) return undefined;
-		const wps = this._workgroups.map(({id})=> id)
-		return wps.length ? wps.join(",") : 0;
+	getWorkgroupsStr(all=false){
+		// let isManager = this.getDur().isMessengerManager();
+		// if(isManager || this.cau) return undefined;
+		if(this.cau) return undefined;
+		const wps = this._workgroups.map(({id})=> id);
+		if(wps.length){
+			let join = wps.join(",");
+			return all ? join+",all" : join;
+		}
+		return 0;
 	}
 
 	//MY WORKGROUPRS

@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { checkFilesAddEventClick, downChat } from "./utils.js";
+import { checkFilesAddEventClick, downChat, setContentMessageChat } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { sendTaskHistoricEmail, getTaskOne } from "../../../services/taskService.js";
 import { AonMessengerChat } from "../aon-messeger-chat.js";
@@ -201,6 +201,7 @@ const createMessageAuthor = (properties) =>{
 
 const createCommentContent = (properties) => newComponent({
   text: properties.comment,
+  classes : [CSS.MESSAGE_CONTENT],
   styles: {
     fontSize: "1em",
     textAlign : "left",
@@ -487,48 +488,17 @@ const iconComment = (icon_name) => {
 export const createChatMessage = (properties, chat) => {
     properties = checkProperties(properties);
 
+    const message = createMessageBox(properties);
+    chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
+
     let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
 
     let messageSend = properties.notification_user; // si el mensaje fue enviado
 
-    const message = createMessageBox(properties);
-    chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
-
-    if(messageSend || me){
-      const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
-      iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
-      let color = COLORS.AON_BLUE;
-
-      if(messageSend){
-        color = me ? COLORS.ONLINE_GREEN : COLORS.AON_BLACK;
-        message.classList.add(CSS.MESSAGE_AFTER, me ? "colorMe" : "colorOther");
-      } 
-      
-      setStyles(iconSendWorkflow, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 });
-
-      if(me){
-        setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> {
-          const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-          if(aonMessengerChat) 
-            aonMessengerChat.sendMessageHistoric(parseInt(message.dataset.id), true);
-        });
-
-        //-------------------icon share
-        // const textShare = "Compartir entre ramas (En desarrollo)";
-        // const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
-        // iconShare.title = textShare;
-        // setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
-        // iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
-        // message.appendChild(iconShare);
-
-         //-------------------icon delete
-      } else {
-        properties.marginLeft = "20px";
-      }
-      
-      message.appendChild(iconSendWorkflow);
+    createIconMessage(message, messageSend, me, true, properties.notification_date, properties.date);
+ 
+    if(!me){
+      properties.marginLeft = "20px";
     }
 
     const name = createMessageAuthor(properties);
@@ -554,6 +524,62 @@ export const createChatMessage = (properties, chat) => {
 
 
 /**
+ * 
+ * @param {HTMLElement} message  
+ * @param {Boolean} messageSend 
+ * @param {Boolean} me 
+ * @param {Boolean} iconSendMail
+ * @param {Date} notification_date 
+ * @param {Date} date creation date 
+ */
+const createIconMessage = (message, messageSend, me, iconSendMail, notification_date, date) => {
+
+  const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
+  if(messageSend || me){
+    let color = COLORS.AON_BLUE;
+
+    let iconSend = undefined;
+    
+    if(iconSendMail){
+      iconSend = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
+      message.appendChild(iconSend);
+  
+      iconSend.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
+      iconSend.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
+
+      if(messageSend){
+        color = me ? COLORS.ONLINE_GREEN : COLORS.AON_BLACK;
+        message.classList.add(CSS.MESSAGE_AFTER, me ? "colorMe" : "colorOther");
+      } 
+
+      setStyles(iconSend, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 });
+
+      if(me){
+        setStyles(iconSend, { right: "17px", cursor: "pointer" });
+        iconSend.addEventListener(EVENT.CLICK, async()=> {
+          if(aonMessengerChat) 
+            aonMessengerChat.sendMessageHistoric(parseInt(message.dataset.id), true);
+        });
+      } 
+    }
+
+    //-------------------icon edit
+    if(!messageSend && me && date){
+      const iconEdit = createOutlinedMaterialIcon({name:MATERIAL_ICONS.EDIT}).element;
+      iconEdit.id = MESSENGER_IDS.ICON_EDIT_WORKFLOW;
+      message.appendChild(iconEdit);
+      iconEdit.title = MSG.EDIT;
+      setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 , right: "17px", cursor: "pointer" });
+      iconEdit.addEventListener(EVENT.CLICK, ()=> setContentMessageChat(parseInt(message.dataset.id)));
+
+      if(iconSend) iconSend.style.right = "41px";
+    }
+    //-------------------icon edit
+  }
+}
+
+/**
  * Create a new message
  * @param {*} properties 
  * @returns 
@@ -566,6 +592,9 @@ export const createChatMessage = (properties, chat) => {
   message.style.background = "#f5f5f5";
 
   chat.appendChild(message); //ADD MESSAGE IN DIV CHA
+
+  createIconMessage(message, false, properties.me, false, properties.notification_date, properties.date);
+ 
 
   const description = createCommentContent(properties);
   description.appendTo(message);

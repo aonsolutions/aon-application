@@ -21,6 +21,7 @@ export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
 //----------------TASK WORKFLOW
 export const getTaskWorkflow = (data) => isSigGet("task/workflow", data);
 export const saveTaskWorkflow = (data) => isSigPost("task/workflow", data); 
+export const updateTaskWorkflow = (data) => isSigPost("task/workflow/update", data); 
 export const deleteTaskWorkflow = (data) => isSigRemove("task/workflow", data); 
 
 //----------------TASK ATTACH

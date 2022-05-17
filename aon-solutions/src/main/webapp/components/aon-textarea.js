@@ -257,46 +257,7 @@ export class AonTextArea extends AonElement {
 				},
 				
 				paste: (ev)=>{
-					// preventDefault(ev);
-					// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
-
-					// let items = clipboardData.items;
-					// let files = [];
-					// if(items && items.length){
-					// 	for (let index in items) {
-					// 		let item = items[index];
-					// 		if(item.kind){
-					// 			if (item.kind == "file") {
-					// 				console.log("FILE");
-					// 				files.push(item.getAsFile());
-					// 			} else {
-					// 				console.log("HTML");
-					// 				item.getAsString( (html)=>{
-					// 					const element = document.createElement(TAG.DIV);
-					// 					element.innerHTML = html;
-					// 					setTimeout(()=>{
-					// 						[...element.querySelectorAll(TAG.IMG)]
-					// 						.filter(elem=> elem&&elem.getAttribute(CONSTANT.TYPE)!=CONSTANT.AON_FILE)
-					// 						.forEach(elem=> {
-					// 							elem.remove();
-					// 						});
-					// 						[...element.querySelectorAll(TAG.A)].forEach(elem=> {
-					// 							elem.target = "_blank";
-					// 							elem.className = CSS.AON_LINK;
-					// 						});
-					// 						[...element.querySelectorAll("script")].forEach(elem=> elem.remove());
-					// 						[...element.querySelectorAll("link")].forEach(elem=> elem.remove());
-											
-					// 						const div = this.getSelectionForAdd();
-					// 						div.appendChild(element)
-					// 					}, 50);
-					// 				});
-					// 				return false;
-					// 			}
-					// 		}
-					// 	}
-					// }
-					// this.addFiles(files);
+					// this.interceptorPaste(ev);
 				}
 			},
 			styles : {
@@ -325,6 +286,13 @@ export class AonTextArea extends AonElement {
 		let toolbar = this.getElement(this.TOOLBAR);
 		if(toolbar) toolbar.remove();
 	}
+
+	// getValueHtml(html) {
+	// 	const textarea = this.getTextArea();
+	// 	if(textarea) 
+	// 		return textarea.innerHTML;
+	// 		textarea.innerHTML = html;
+	// }
 
 	setValueHtml(html) {
 		const textarea = this.getTextArea();
@@ -500,6 +468,71 @@ export class AonTextArea extends AonElement {
 		this.getTextArea().classList.remove(CSS.FOCUS_COLOR_MINUS);
 	}
 
+	interceptorPaste(ev){
+			// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
+		// const html  = clipboardData.getData('text/html');
+		// console.log(html);
+		// setTimeout(()=>{
+		// 	this.setValueHtml(html);
+		// 	console.log(html);
+		// }, 5000);
+
+
+		// let items = Object.values(clipboardData.items || []).filter(item => item && item.kind);
+
+		// const existFile = items.some(item => item.kind === 'file');
+
+		// if(!existFile){
+		// 	preventDefault(ev);
+		// 	items =  items.filter(item => item.kind !== 'file');
+		// 	if(items && items.length){
+		// 		for (let index in items) {
+		// 			let item = items[index];
+		// 			console.log("HTML");
+		// 			item.getAsString( (html)=>{
+		// 			});
+		// 		}
+		// 	}
+		// }
+		// let newHtml = html || this.value || '';
+		// let newValue = newHtml.replace(/src=\"([^\"]*)\"/g, (match, url) =>{ // eslint-disable-line
+		// 	let newUrl = url.replaceAll("&amp;", "&");
+
+			// console.log(match);
+			// console.log(url);
+			// this.getBase64FromUrl(url).then(base64=>{
+			// 	console.log(base64);
+			// })
+		// 	let codec, extension;
+		// 	if (url.indexOf('data:image/png;base64,') == 0) {
+		// 		codec = 'png';
+		// 		extension = '.png';
+		// 	} else if (url.indexOf('data:image/jpeg;base64,') == 0) {
+		// 		codec = 'jpeg';
+		// 		extension = '.jpg';
+		// 	}
+		// 	if (codec) {
+		// 		let name = 'image' + images.length + extension,
+		// 		base64 = url.replace('data:image/' + codec + ';base64,', ''),
+		// 		buffer = new Buffer(base64, 'base64');
+		// 		images.push(new mailgun_client.Attachment({
+		// 		contentType: 'image/' + codec,
+		// 		filename: name,
+		// 		data: buffer,
+		// 		knownLength: buffer.length,
+		// 		}));
+		// 		return match.replace(url, 'cid:' + name);
+		// 	}
+		// 	return match.replace(url, `${newUrl}" onerror="this.remove()" referrerpolicy="no-referrer`);
+		// });
+
+		// if(newValue && newValue.trim()) {
+		// 	newHtml = newValue;
+		// }
+
+		// this.setValueHtml(newValue)
+	}
+
 	/**
 	 * 
 	 * @param {String} base64Str base64 file
@@ -512,6 +545,19 @@ export class AonTextArea extends AonElement {
 		for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
 		let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
 		return URL.createObjectURL(file);
+	}
+
+	async getBase64FromUrl(url){
+		const data = await fetch(url);
+		const blob = await data.blob();
+		return new Promise((resolve) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(blob); 
+		  reader.onloadend = () => {
+			const base64data = reader.result;   
+			resolve(base64data);
+		  }
+		});
 	}
 }
 if(!window.customElements.get('aon-textarea')){

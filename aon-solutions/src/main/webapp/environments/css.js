@@ -289,6 +289,7 @@ export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
 export const PULSE = "pulse";
 export const PULSE_INFINITE = "pulseInfinite";
+export const MESSAGE_CONTENT = "messageContent";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 
