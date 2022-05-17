@@ -309,6 +309,7 @@ export const fillChat = (task, meId, workflows=[])=>{
                     id: "noIdDescription",
                     type:WORKFLOW_TYPES.OPEN,
                     comment: observation,
+                    me:true,
                     direction: MESSENGER_DIRECTION.RIGHT,
                     creation_user: task.getCreationUser(),
                     date: date,
@@ -334,6 +335,7 @@ export const fillChat = (task, meId, workflows=[])=>{
                     id,
                     type,
                     comment,
+                    me,
                     direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT,
                     date: creation_date,
                     notification_date,
@@ -350,8 +352,9 @@ export const fillChat = (task, meId, workflows=[])=>{
                     const action = createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
 
-                    if(WORKFLOW_TYPES.OPEN.includes(type) && message.comment)
-                        createMessageOpen({comment: message.comment, id:message.id }, action.element);
+                    if(WORKFLOW_TYPES.OPEN.includes(type) && message.comment){
+                        createMessageOpen({comment: message.comment, id:message.id, me, date: creation_date }, action.element);
+                    }
                 }
             });
         }

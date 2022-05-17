@@ -109,7 +109,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	
 	private Filter workgroupFilter(AonApiData api, WorkgroupProperties f) {
 		Domain domain = api.getDomain();
-		String status  = api.getData().optString("status");
+		String status  = api.getData().optString(IJsonNames.STATUS);
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		if(!status.isEmpty()) 
 			filter = filter.and( f.getStatusProperty().eq( WorkgroupStatus.safeValueOf(status).value() ) );

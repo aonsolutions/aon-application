@@ -177,37 +177,52 @@ const appendChatMessage = (properties) => {
 /**
  * @param {String} text Optional
  * @param {HTMLElement} aon-messenger-chat 
- * @returns {Array} [value, messageEl] message element html
+ * @returns {Obkect} {value, messageEl, workflowId} message element html
  */
 export const sendMessage = async (text, task) => {
+    let workflowId = undefined;
+    let messageEl = undefined;
     let value = text;
+
+    let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
+
     if(!text){
-        let aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
-        await checkFilesAndSend(aonTextArea, task); //CHECK FILES COMMENT AND SEND
-        value = aonTextArea.value;
-        aonTextArea.clear();
+        await checkFilesAndSend(textArea, task); //CHECK FILES COMMENT AND SEND
+        value = textArea.value;
+        textArea.clear();
     }
+
+    if(textArea.hasAttribute("data-workflow-id")){
+        workflowId = parseInt(textArea.getAttribute("data-workflow-id"));
+        textArea.removeAttribute("data-workflow-id");
+    } 
     
-    if(!value || (value && !value.trim().length)) return ;
+    if(!value || (value && !value.trim().length)) return {};
 
-    const message = {
-        type: WORKFLOW_TYPES.COMMENT,
-        sender: "",
-        comment: value,
-        creation_date: new Date()
+    if(!workflowId){ //append HTML
+        const message = {
+            type: WORKFLOW_TYPES.COMMENT,
+            sender: "",
+            comment: value,
+            creation_date: new Date()
+        }
+    
+        task.workflow.push(message);
+    
+        messageEl = appendChatMessage({
+            id: "id",
+            name: message.sender,
+            comment:message.comment,
+            date: message.creation_date,
+            direction : MESSENGER_DIRECTION.RIGHT
+        });
     }
 
-    task.workflow.push(message);
-
-    const messageEl = appendChatMessage({
-        id: "id",
-        name: message.sender,
-        comment:message.comment,
-        date: message.creation_date,
-        direction : MESSENGER_DIRECTION.RIGHT
-    });
-
-    return [value, messageEl];
+    return{
+        comment:value, 
+        messageEl,
+        workflowId
+    } 
 }
 
 /**
@@ -994,12 +1009,30 @@ export const setStyleMessageHistoric = async (workflows) => {
         if(message){  //CHANGE STYLE IF SEND MESSAGE
           message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
           const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
+
           if(iconSendWorkflow){
             iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
             iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
             iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
+            
+            const iconEdit = message.querySelector(`#${MESSENGER_IDS.ICON_EDIT_WORKFLOW}`);
+            if(iconEdit){
+                iconEdit.remove();
+                iconSendWorkflow.style.right = "17px";
+            }
           }
         }
       }
+    }
+}
+
+export const setContentMessageChat =(workflowId)=>{
+
+    let content = document.querySelector(`${MESSENGER_COMPONENTS.MESSAGE}[data-id="${workflowId}"] > .${CSS.MESSAGE_CONTENT}`);
+    let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
+
+    if(content && textArea){
+        textArea.dataset.workflowId = workflowId;
+        textArea.setValueHtml(content.innerHTML)
     }
 }

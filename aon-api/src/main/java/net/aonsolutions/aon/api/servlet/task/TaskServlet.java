@@ -128,6 +128,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/workflow":
 					response(req, resp, saveWorkflow(api, Optional.empty()));
 					break;
+				case "/workflow/update":
+					response(req, resp, updateWorkflow(api));
+					break;
 				case "/tag":
 					response(req, resp, saveTaskTag(api));
 					break;
@@ -271,6 +274,27 @@ public class TaskServlet extends AonApiHttpServlet{
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
 		TaskUtils.onSaveWorkflow(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
+	}
+	
+	
+	private JSONObject updateWorkflow(AonApiData api) {
+		JSONObject params = api.getData();
+		Integer taskId = params.optInt(IJsonNames.TASK);
+		Integer workflow = params.getInt(IJsonNames.WORKFLOW);
+		String comment = params.optString(IJsonNames.COMMENT);
+		
+		if(!comment.isEmpty()) {
+			TaskWorkflow data = AON_SOLUTIONS.getTaskWorkflow(
+				api.getDomain(), new User(), 
+				f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getTaskProperty().eq(taskId)).and(f.getIdProperty().eq(workflow))
+			);
+			data.setComment(comment);
+			
+			return TaskWorkflowJSON.toJSON(AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), data));
+		}
+		
+		return new JSONObject();
+
 	}
 
 	private JSONObject saveTaskTag(AonApiData api) {

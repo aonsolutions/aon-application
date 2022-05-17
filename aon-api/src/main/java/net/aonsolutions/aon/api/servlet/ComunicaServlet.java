@@ -767,10 +767,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 							LOGGER.info(data.toString());			
 							EmployeeParse.toEmployeeOccam(data);
 							PAYROLL.addEmployee(domain.getName(), domain.getId(), "", EmployeeParse.toEmployeeOccam(data));
+							LOGGER.info("------------------------------------");
 						}
 					} else {
 						LOGGER.info("--------YA EXISTE EL CONTRATO-------------");
 						LOGGER.info(data.toString());
+						LOGGER.info("------------------------------------");
 					}
 		
 				} catch (SegSocialException e) {e.printStackTrace();}	
