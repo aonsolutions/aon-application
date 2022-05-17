@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -608,7 +609,7 @@ public class Utils {
 		
 		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO. */
 
-		AONContext ctx2 = null;
+		CloseableAONContext ctx2 = null;
 		try {
 			ctx2 = AONContext.getAONContext( domain ,enterprise.getDomain());
 			

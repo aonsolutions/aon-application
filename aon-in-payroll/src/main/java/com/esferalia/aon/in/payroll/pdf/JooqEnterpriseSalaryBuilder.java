@@ -45,11 +45,11 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -58,7 +58,6 @@ import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEnterpriseSalaryBuilder {
 	
@@ -130,7 +129,7 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		condition = condition.and(SALARY.TYPE.in(typeInts));
 		
-		try (AONContext aonContext = AONContext.getAONContext(domain, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
 			DSLContext ctx = aonContext.getDslContext();
 			
 			
@@ -229,7 +228,7 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		condition = condition.and(SALARY.TYPE.in(typeInts));
 		
-		try (AONContext aonContext = AONContext.getAONContext(domain, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
 			DSLContext ctx = aonContext.getDslContext();
 			
 			
@@ -342,7 +341,7 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param workplaceId
 	 */
 	private static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Condition condition, Date month, Integer enterpriseId, Integer workplaceId) {
-		try (AONContext aonContext = AONContext.getAONContext(domain, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
 			DSLContext ctx = aonContext.getDslContext();
 			
 			Calendar calendar = Calendar.getInstance();

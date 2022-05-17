@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.customer.IEdiSupport;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
-import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.ingenet.servlet.delivery.AbstractDeliveryCreator;
@@ -26,6 +25,7 @@ import com.esferalia.aon.ingenet.servlet.delivery.DeliveryCreator;
 import com.esferalia.aon.ingenet.servlet.delivery.DeliveryCreatorSales;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -129,7 +129,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			httpResponse.setStatus(HttpServletResponse.SC_OK);
 			boolean isTest = "S".equals(albaranes.getPRUEBA());
 			if (!isTest) {
-				AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+				CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 				try {
 					if(deliveryList!=null && deliveryList.size()>0){
 						subject = "Recepción automática de albaranes";

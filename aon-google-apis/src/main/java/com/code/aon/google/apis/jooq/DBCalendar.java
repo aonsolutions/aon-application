@@ -19,6 +19,7 @@ import org.jooq.Result;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -33,9 +34,7 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 public class DBCalendar {
 	
 	public static Vector<String> getCommercial(Domain domain,User user, Integer id){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
 			
 			Result<Record1<String>> data = ctx.getDslContext()
 					.select(REGISTRY.NAME)
@@ -47,17 +46,11 @@ public class DBCalendar {
 				vector.add(record1.value1());
 			}
 			return vector;
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
 	public static Vector<String> getSellerEmails(Domain domain, User user, CommercialTracking ct ){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){			
 			Result<Record1<String>> data = ctx.getDslContext()
 					.select(RMEDIA.VALUE)
 					.from(RMEDIA).join(COMMERCIAL_TRACKING).on(COMMERCIAL_TRACKING.SELLER.eq(RMEDIA.REGISTRY))
@@ -71,17 +64,11 @@ public class DBCalendar {
 				vector.add(record1.value1());
 			}
 			return vector;
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
 	public static String getSellerEmail(Domain domain, User user, CommercialTracking ct){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			Result<Record1<String>> data = ctx.getDslContext()
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){			Result<Record1<String>> data = ctx.getDslContext()
 					.select(RADDINFO.VALUE)
 					.from(RADDINFO)
 					.where(RADDINFO.REGISTRY.eq(ct.getSeller()))
@@ -92,23 +79,14 @@ public class DBCalendar {
 				email = record1.value1();
 			}
 			return email;
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
 	public static void setSellerEmail(Domain domain, User user, CommercialTracking ct, String email){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
 			ctx.getDslContext().insertInto(RADDINFO, RADDINFO.DOMAIN, RADDINFO.REGISTRY, RADDINFO.ATTRIBUTE, RADDINFO.VALUE, RADDINFO.VALUE_DATE)
 					.values(ct.getDomain(),ct.getSeller(),"GOOGLEMAIL",email,new Date(new java.util.Date().getTime())).execute();
 			
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -131,33 +109,23 @@ public class DBCalendar {
 	
 	//getEnterpriseEmail
 	public static String getEnterpriseEmail(Domain domain, User user){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){			
 			return ctx.getDslContext().select(RMEDIA.VALUE)
 				.from(ENTERPRISE).join(RMEDIA).on(RMEDIA.REGISTRY.eq(ENTERPRISE.REGISTRY))
 				.where(RMEDIA.MEDIA.eq((byte)4))
 				.and(ENTERPRISE.DOMAIN.eq(domain.getId()))
 				.limit(1).fetchOne(RMEDIA.VALUE);
-		} finally {
-			if(ctx != null) ctx.close();
 		}
 	}
 
 	//getSellerEmail
 	public static String getSellerEmail(Domain domain, User user, Integer ctId){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){			
 			return ctx.getDslContext().select(RMEDIA.VALUE)
 				.from(COMMERCIAL_TRACKING).join(RMEDIA).on(RMEDIA.REGISTRY.eq(COMMERCIAL_TRACKING.SELLER))
 				.where(RMEDIA.MEDIA.eq((byte)4))
 				.and(COMMERCIAL_TRACKING.DOMAIN.eq(ctId))
 				.limit(1).fetchOne(RMEDIA.VALUE);
-		} finally {
-			if(ctx != null) ctx.close();
 		}
 	}
 	
@@ -192,10 +160,7 @@ public class DBCalendar {
 
 	//getPotencialClient
 	public static Registry getPotencialClient(Domain domain, User user, CommercialTracking commercialTracking){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			
+		try (CloseableAONContext  ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){			
 			RegistryRecord rr = ctx.getDslContext().select()
 					.from(REGISTRY).join(PROJECT_COMMERCIAL).on(REGISTRY.ID.eq(PROJECT_COMMERCIAL.TARGET))
 					.where(PROJECT_COMMERCIAL.PROJECT.eq(commercialTracking.getProjectCommercial()))
@@ -212,9 +177,6 @@ public class DBCalendar {
 					.setNationality(Country.safeValueOf(rr.getNationality()))
 					.setSecurityLevel(SecurityLevel.safeValueOf( rr.getSecurityLevel()))
 					.setLegalPerson( AonEnumUtils.getBoolean( rr.getType() ));
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}	
 }

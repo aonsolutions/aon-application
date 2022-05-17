@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -22,7 +23,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class InvoiceReportTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "sig.sig.ecastellano.dev";
 	private static Integer DOMAIN_ID = 5;
 	private static String LOGIN = "jgarcia";
@@ -73,7 +74,7 @@ public class InvoiceReportTest {
 		
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 }

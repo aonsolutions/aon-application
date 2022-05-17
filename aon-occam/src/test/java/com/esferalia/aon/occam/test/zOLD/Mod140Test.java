@@ -11,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Params;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod140DAO;
@@ -22,7 +23,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class Mod140Test {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "mac.ecastellano.dev";
 	private static int DOMAIN_ID = 476;
 	private static String USER = "mac";
@@ -53,7 +54,7 @@ public class Mod140Test {
 		
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 }

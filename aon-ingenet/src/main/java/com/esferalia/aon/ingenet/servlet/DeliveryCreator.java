@@ -33,6 +33,7 @@ import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -215,7 +216,7 @@ public class DeliveryCreator implements Serializable {
 	
 	private void processDelivery(List<ALBARANTYPE> list, List<Delivery> deliveryList, boolean test){
 		deliveryList.clear();
-		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+		CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		try {
 			ctx.getDslContext().transaction(configuration -> {
 				list.forEach(albaran -> {
@@ -234,7 +235,7 @@ public class DeliveryCreator implements Serializable {
 		if(!test){
 			manageSalesDetail(deliveryList);
 			
-			AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+			CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 			try {
 				ctx.getDslContext().transaction(configuration -> {
 					list.forEach(albaran -> {

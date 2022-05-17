@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
@@ -23,7 +24,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class OperationReportTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "localhost";
 	private static Integer DOMAIN_ID = 9253;
 	private static String LOGIN = "admin";
@@ -36,7 +37,7 @@ public class OperationReportTest {
 	
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 	private void print(String s, int len) {

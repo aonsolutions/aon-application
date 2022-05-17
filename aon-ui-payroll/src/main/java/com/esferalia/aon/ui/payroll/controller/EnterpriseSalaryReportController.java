@@ -34,6 +34,7 @@ import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.ibm.icu.util.Calendar;
 
@@ -126,7 +127,7 @@ public class EnterpriseSalaryReportController implements Serializable {
 		HttpServletResponse response = DownloadUtil.getResponse();
 		
 		try (OutputStream out = DownloadUtil.initDownload(response, "Costes", MimeType.MIME_PDF);
-				AONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
+				CloseableAONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
 			
 			SalaryType[] salaryEnumTypes = new SalaryType[salaryTypes.length];
 			
@@ -159,7 +160,7 @@ public class EnterpriseSalaryReportController implements Serializable {
 		HttpServletResponse response = DownloadUtil.getResponse();
 		
 		try (OutputStream out = DownloadUtil.initDownload(response, "Costes", MimeType.MIME_MS_EXCEL_2007);
-				AONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
+				CloseableAONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
 			
 			
 			SalaryType[] salaryEnumTypes;
@@ -204,7 +205,7 @@ public class EnterpriseSalaryReportController implements Serializable {
 		HttpServletResponse response = DownloadUtil.getResponse();
 		
 		try (	OutputStream out = DownloadUtil.initDownload(response, "Costes", MimeType.MIME_MS_EXCEL_2007);
-				AONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
+				CloseableAONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
 			
 			
 			Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
@@ -259,7 +260,7 @@ public class EnterpriseSalaryReportController implements Serializable {
 		HttpServletResponse response = DownloadUtil.getResponse();
 		
 		try (	OutputStream out = DownloadUtil.initDownload(response, "Costes", MimeType.MIME_MS_EXCEL_2007);
-				AONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
+				CloseableAONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login)) {
 			
 			SalaryType[] salaryEnumTypes;
 			
@@ -301,8 +302,8 @@ public class EnterpriseSalaryReportController implements Serializable {
 		String connectionDomainName = AonUtil.getDomainName();
 		String login = getLogin();
 		
-		try (AONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login);
-				DSLContext ctx = aonContext.getDslContext()) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(connectionDomainName, domain, login) ){
+				DSLContext ctx = aonContext.getDslContext();
 			//select distinct(extract( year from issue_date )) as year from salary where domain = 7138 order by start_date;
 			Field<Integer> yearField = DSL.extract(SALARY.END_DATE, DatePart.YEAR).as("year");
 			

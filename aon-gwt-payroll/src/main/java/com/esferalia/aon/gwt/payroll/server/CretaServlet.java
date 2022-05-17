@@ -70,6 +70,7 @@ import com.esferalia.aon.in.payroll.tgss.idc.TrabajadoresTramosCallback;
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -658,7 +659,7 @@ public class CretaServlet extends HttpServlet
 
 	private static List<InputStream> generateIDCTrabajadoresYTramos(HttpServletRequest req, Part part ) throws JAXBException, IOException {
 		
-		try ( AONContext ctx = getAONAonContext(req) ) {
+		try ( CloseableAONContext ctx = getAONAonContext(req) ) {
 
 			Certificate certificate = getCertificate(ctx);
 			
@@ -692,7 +693,7 @@ public class CretaServlet extends HttpServlet
 	
 	private static List<InputStream> generateIDCTrabajadoresYTramos(HttpServletRequest req ) throws JAXBException, IOException {
 		
-		try ( AONContext ctx = getAONAonContext(req) ) {
+		try ( CloseableAONContext ctx = getAONAonContext(req) ) {
 
 			Certificate certificate = getCertificate(ctx);
 			
@@ -2204,7 +2205,7 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
-	private static AONContext getAONAonContext(HttpServletRequest req) {
+	private static CloseableAONContext getAONAonContext(HttpServletRequest req) {
 		String user = req.getParameter(CretaService.Parameter.USER.name());
 		String domain = req.getParameter(CretaService.Parameter.DOMAIN.name());
 		return AONContext.getAONContext(domain, user);
@@ -2609,8 +2610,8 @@ public class CretaServlet extends HttpServlet
 		settings.setRenderSchema(false);
 		try ( 
 				Connection connection = AonServletUtils.getConnection(domain) ;
-				DSLContext dslContect = DSL.using(connection, settings );
 			){
+			DSLContext dslContect = DSL.using(connection, settings );
 			java.sql.Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(month);
 			java.sql.Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(month);
 			

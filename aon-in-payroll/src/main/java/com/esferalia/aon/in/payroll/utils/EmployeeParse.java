@@ -132,6 +132,8 @@ public class EmployeeParse {
 	}
 	
 	public static solutions.aon.seg.social.object.Employee toEmployeeSS(Employee employee) {
+		LocalDate start = convertToLocalDate(employee.getStartDate());
+		
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(employee.getRegime())
 		.setCtaCti(employee.getCcc())
@@ -139,12 +141,9 @@ public class EmployeeParse {
 		.setIpf(employee.getDni())
 		.setFra(employee.getStartDate())
 		;
-	
+		
 		employee.getName().ifPresent(builder::setName);	
 		employee.getEndDate().ifPresent(builder::setFrb);
-		
-		LocalDate start = convertToLocalDate(employee.getStartDate());
-		
 		employee.getOccupation(start).ifPresent(builder::setOcup);
 		employee.getQuoteGroup(start).ifPresent(builder::setGc);
 		employee.getContractType(start).ifPresent(builder::setContract);

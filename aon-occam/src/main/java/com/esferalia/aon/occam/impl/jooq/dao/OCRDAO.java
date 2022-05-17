@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.registry.Raddinfo;
 
 public class OCRDAO extends GlobalDAO {
@@ -21,7 +22,7 @@ public class OCRDAO extends GlobalDAO {
 	private static final String REGISTRY_ALIAS_MARK = "OCR AUTOML";
  
 	public static String[] getReferencePatterns( String user, String document ) {
-		try ( AONContext ctx =  getGlobalAONContext( user) ) {
+		try ( CloseableAONContext ctx =  getGlobalAONContext( user) ) {
 			return ctx.getDslContext()
 				.select( RADDINFO.VALUE )
 				.from(RADDINFO)
@@ -44,7 +45,7 @@ public class OCRDAO extends GlobalDAO {
 		teachReferenceCode(user, document, reference, new Date());
 	}
 	public static void teachReferenceCode(String user, String document, String reference, Date date) {
-		try ( AONContext ctx =  getGlobalAONContext( user) ) {
+		try ( CloseableAONContext ctx =  getGlobalAONContext( user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			Integer registry = ensureRegistry(ctx, globalDomain, document );
 			LinkedList<Raddinfo> patterns = ctx.getDslContext()

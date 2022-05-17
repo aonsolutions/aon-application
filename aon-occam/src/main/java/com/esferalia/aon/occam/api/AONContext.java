@@ -33,7 +33,30 @@ import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
 import net.aonsolutions.core.pool.ConnectionInfo;
 
-public class AONContext implements AutoCloseable{
+public class AONContext {
+	
+	public static class CloseableAONContext extends AONContext implements AutoCloseable{
+
+		private CloseableAONContext(Connection connection, String schema) {
+			super(connection, schema);
+		}
+		
+		private CloseableAONContext(Connection connection, String domainName, String user) {
+			super(connection, domainName, user);
+		}
+		
+		protected CloseableAONContext(Connection connection, String domainName, int domainId, String user) {
+			super(connection, domainName, domainId, user);
+		}
+
+		@Override
+		public void close() {
+			AonDatabaseUtil.closeQuietly(super.connection);
+		}
+		
+		
+	}
+	
 	
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
@@ -64,7 +87,7 @@ public class AONContext implements AutoCloseable{
 	 *  <code>AonServletUtils.getLoggedUser()<code>
 	 */
 	@Deprecated
-	public static AONContext getAONContext(String domainName, int domainId) {
+	public static CloseableAONContext getAONContext(String domainName, int domainId) {
 		try {
 			// ----------------------
 			// ----------------------
@@ -81,53 +104,53 @@ public class AONContext implements AutoCloseable{
 //			}
 			// ----------------------
 			// ----------------------
-			return new AONContext(AonDataSource.getInstance().getConnection(
+			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId, null);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public static AONContext getAONContext(String schema) {
+	public static CloseableAONContext getAONContext(String schema) {
 		try {
-			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(schema), schema );
+			return new CloseableAONContext(AonDataSource.getInstance().getDatabaseConnection(schema), schema );
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public static AONContext getAONContext(String domainName,String user) {
+	public static CloseableAONContext getAONContext(String domainName,String user) {
 		try {
-			return new AONContext(AonDataSource.getInstance().getConnection(
+			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, user);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public static AONContext getAONContext(Occam occam) {
+	public static CloseableAONContext getAONContext(Occam occam) {
 		return getAONContext(occam.getDomainName(),occam.getDomain(),occam.getUser());
 	}
 	
-	public static AONContext getAONContext(String domainName, int domainId, String user) {
+	public static CloseableAONContext getAONContext(String domainName, int domainId, String user) {
 		try {
-			return new AONContext(AonDataSource.getInstance().getConnection(
+			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId,user);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public static AONContext getAONContext(Domain domain, String user) {
+	public static CloseableAONContext getAONContext(Domain domain, String user) {
 		try {
-			return new AONContext(AonDataSource.getInstance().getConnection(
+			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domain.getName()), domain.getName(), domain.getId(),user);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
 	
-	public static AONContext getAONContext(Domain domain, User user) {
+	public static CloseableAONContext getAONContext(Domain domain, User user) {
 		return getAONContext(domain, user.getLogin());
 	}
 	
@@ -224,14 +247,6 @@ public class AONContext implements AutoCloseable{
 		} 
 	}
 	
-	@Override
-	public void finalize() {
-		close();
-	}
-	
-	public void close() {
-		AonDatabaseUtil.closeQuietly(connection);
-	}
 
 	public boolean canWrite() {
 		return true;

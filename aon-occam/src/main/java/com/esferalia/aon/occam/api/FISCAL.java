@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
@@ -31,7 +32,7 @@ public class FISCAL {
 	// -------------------------- FISCAL PANEL
 	public static LinkedList<IFiscalModel> getFiscalPanel(String domainName,
 			int domain, FiscalMatrixParams params, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, login);
 			User user = AON.getUser(domainName, domain, login);
@@ -45,7 +46,7 @@ public class FISCAL {
 	// --------------------------------------------------------------------
 
 	public static Stream<VatSummaryContext> getVatSummaryContext(String domainName, int domainId, String user, AccountingReportParams params) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getVatSummaryContext(ctx, params);
@@ -55,7 +56,7 @@ public class FISCAL {
 		}
 	}
 	public static Stream<VatContext> getVatContext(String domainName, int domainId, String user, AccountingReportParams params) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getVatContext(ctx, params);
@@ -66,7 +67,7 @@ public class FISCAL {
 	}
 	
 	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, AccountingReportParams params, String sii) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFiscal().getSiiVatContext(ctx, params, sii);
@@ -78,7 +79,7 @@ public class FISCAL {
 	
 		
 		public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,IRPFParams params) {
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domain, user);
 				return getFiscal().getIrpfBreakdownSummary(ctx, params);
@@ -89,7 +90,7 @@ public class FISCAL {
 		}
 
 		public static Stream<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain,IRPFParams params) {
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domain, user);
 				return getFiscal().getIrpfBreakdown(ctx, params);
@@ -101,7 +102,7 @@ public class FISCAL {
 		
 		@Deprecated
 		public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, OperationParams params) {
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domain, user);
 				return getFiscal().getOperationBreakdown(ctx, domain, params);
@@ -112,7 +113,7 @@ public class FISCAL {
 		}
 
 		public static LinkedList<InvoiceFiscalModels> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
-			try (AONContext ctx = AONContext.getAONContext(occam)) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				return getFiscal().getInvoicesModels(ctx, params);
 			}
 		}

@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.TagJSON;
@@ -90,6 +89,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/count":
 					response(req, resp, getTaskCount(api));
 					break;
+				case "/status/count":
+					response(req, resp, getTaskStatusCount(api));
+					break;
 				case "/general/count":
 					response(req, resp, getTaskGeneralCount(api));
 					break;
@@ -128,12 +130,6 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/tag":
 					response(req, resp, saveTaskTag(api));
-					break;
-				case "/app-params":
-					response(req, resp, saveAppParams(api));
-					break;
-				case "/get-app-params":
-					response(req, resp, getAppParams(api));
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -342,9 +338,19 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskGeneralCount(AonApiData api) {
 		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
-			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
+			Optional.empty(),
 			Optional.of( f-> TaskFilter.taskWorkgroupCount(f, api, api.getDomain()) ),
 			Optional.of( f-> TaskFilter.taskTagCount(f, api, api.getDomain()) )
+		);
+		
+		return taskCounts.toJSON();
+	}
+	
+	private JSONObject getTaskStatusCount(AonApiData api) {
+		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
+			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
+			Optional.empty(),
+			Optional.empty()
 		);
 		
 		return taskCounts.toJSON();
@@ -513,58 +519,6 @@ public class TaskServlet extends AonApiHttpServlet{
 //			}
 		}
 		return arr;
-	}
-	
-	private JSONArray saveAppParams(AonApiData api) {
-		JSONArray arr = new JSONArray();
-		Domain domain = api.getDomain();
-		String login = api.getUser().getLogin();
-		
-		LinkedList<ApplicationParameter> appParams = AppParamJSON.fromJSON(api.getData().optJSONArray("appParams"));
-		for (ApplicationParameter param : appParams) {
-
-			 ApplicationParameter exists = AON.getApplicationParameter(domain.getName(), domain.getId(), login, param.getName());
-			 if(exists.getId()!=null) {
-				 if(param.getValue()!=null) {
-					 
-					 exists.setValue(param.getValue());
-					 System.out.println("--------UPDATE APP PARAMS "+param.getName()+"-------------");
-
-					 AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), exists, 
-								f->f.getDomainProperty().eq(exists.getDomain()).and(f.getNameProperty().eq(exists.getName()))
-					);
-				 } else {
-					 System.out.println("--------DELETE APP PARAMS "+param.getName()+"-------------");
-
-					 AON.deleteApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(),
-							 f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(param.getName()))
-					 );
-				 }
-			 } else if(param.getValue()!=null) {
-				 System.out.println("--------SAVE APP PARAMS "+param.getName()+"-------------");
-
-				 AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), param);
-			 }
-		}
-		return arr;
-	}
-	
-	private JSONArray getAppParams(AonApiData api) {
-		JSONArray jsonArray = api.getData().optJSONArray(IJsonNames.PARAMS);
-		if(jsonArray!=null && !jsonArray.isEmpty()) {
-			 List<String> listNames = new ArrayList<>();
-			 
-			 for (int i = 0; i < jsonArray.length(); i++) {
-				 listNames.add(jsonArray.optString(i));
-			 }
-			 
-			 List<ApplicationParameter> appParams = getAppParamsList(api, listNames);
-		     if(!appParams.isEmpty()) {
-		    	return AppParamJSON.toJSON(appParams);
-		     }
-		}
-
-		return new JSONArray();
 	}
 	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {

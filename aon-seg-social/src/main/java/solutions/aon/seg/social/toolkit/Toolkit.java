@@ -1045,9 +1045,9 @@ public class Toolkit {
 	}
 	
 	/**
-	 * 
+	 * getIdentityType DEFAULT 2 PASSPORT
 	 * @param ipf
-	 * @return 1 (nif, dni), 6 nie
+	 * @return 1 (nif, dni), 6 nie, 2 pasaporte
 	 */
 	public static String getIdentityType(String ipf) {
 		Pattern nif  = Pattern.compile(
@@ -1089,7 +1089,7 @@ public class Toolkit {
 		patterns.put(dni, 1);
 		patterns.put(nie, 6);
 		
-		String identity = "";
+		String identity = "2"; // passport
 		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
 			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
 		}

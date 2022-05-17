@@ -7,7 +7,8 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
+import { getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -134,6 +135,7 @@ export class AonMessenger extends AonElement {
 			this.getAppParams(); 
 		}
 	}
+	
 	init(){
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
@@ -181,7 +183,7 @@ export class AonMessenger extends AonElement {
 
 		this.buildToolbarSearch();
 			
-		this.taskNavBar();
+		this.inboxNavBar();
 		this.statusNavBar();
 		
 		if(!this.cau){
@@ -194,30 +196,41 @@ export class AonMessenger extends AonElement {
 
 	buildToolbarSearch(){
 		let btnSearch = this.applicationEl.addSearchOption();
-		btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-		  this._filter.search = detail;
-		  this.setListFilter({...this.getListFilter(), page:0, perPage:30, search:detail});
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
+		  this._filter.search = detail.search;
+		  this.setListFilter({
+			  ...this.getListFilter(), 
+			  page:0, 
+			  perPage:30, 
+			  search: detail.search,
+			  registry: detail.registry,
+			  startDate: detail.startDate,
+			  searchtask_holder:detail.searchtask_holder, 
+			  searchsender:detail.searchsender
+			});
 		  this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 		});
 	
-		if(!this.cau){
-		  btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-			if(detail) {
-			  this.setListFilter({...this.getListFilter(), 
-				page:0, perPage:30, 
-				task_holder:detail.task_holder, 
-				registry: detail.registry,
-				startDate: detail.startDate,
-				sender:detail.sender, 
-				// workgroup:detail.workgroup
-			});
-			  this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
-			} 
-		  });
-		  btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
-		  this.searchValueDefault();
-		} else {
+		if(this.cau){
 			btnSearch.removeButtonAvanced();
+		} else {
+			btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+			if(detail) {
+				this.setListFilter({
+					...this.getListFilter(), 
+					page:0, 
+					perPage:30, 
+					registry: detail.registry,
+					startDate: detail.startDate,
+					searchtask_holder:detail.searchtask_holder, 
+					searchsender:detail.searchsender, 
+					// workgroup:detail.workgroup
+				});
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+			} 
+			});
+			btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
+			this.searchValueDefault();
 		}
 	}
 
@@ -252,7 +265,7 @@ export class AonMessenger extends AonElement {
 		// statusEl.setOptions(TASK_STATUS_VALUE);
 	}
 
-	taskNavBar(){
+	inboxNavBar(){
 		let messengerOpts = [];
 		
 		if(!this.cau){
@@ -271,6 +284,7 @@ export class AonMessenger extends AonElement {
 		
 					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
+					this.updateStatusCount();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -289,6 +303,7 @@ export class AonMessenger extends AonElement {
 
 					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
+					this.updateStatusCount();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			});
@@ -310,7 +325,7 @@ export class AonMessenger extends AonElement {
 				}
 
 				this.addListFilter(this._filter);
-				
+				this.updateStatusCount();
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 			}
 		});
@@ -398,6 +413,7 @@ export class AonMessenger extends AonElement {
 					this._filter.sender = undefined;
 					this._filter.workgroup = this._filter.workgroup === true ? undefined : true;
 					this.addListFilter({...this._filter});
+					this.updateStatusCount();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 				}
 			});
@@ -419,7 +435,7 @@ export class AonMessenger extends AonElement {
 						this.addListFilter({...this._filter});
 						filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
 					}
-
+					this.updateStatusCount();
 					this.addBackgroundSidenav(filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 				}
@@ -627,23 +643,8 @@ export class AonMessenger extends AonElement {
 			filter.tag = this._tags.map(t=> t.id).join(',');
 		}
 
-		getTaskGeneralCount(filter).then(({status, workgroups, tag})=>{
+		getTaskGeneralCount(filter).then(({workgroups, tag})=>{
 			try {
-				if(status){
-					//----------------------- UPDATE COUNT---------------
-					let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
-					application.updateSidenavCount(listOpen.id, status[TASK_STATUS.PENDING]);
-	
-					let listInProgress = MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS;
-					application.updateSidenavCount(listInProgress.id, status[TASK_STATUS.IN_PROGRESS]);
-		
-					let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
-					application.updateSidenavCount(listClose.id, status[TASK_STATUS.DELETED]);
-					
-					let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
-					application.updateSidenavCount(listTrash.id, status[TASK_STATUS.FINISHED]);
-				}
-	
 				if(workgroups){
 					for(const key in workgroups){
 						application.updateSidenavCount(key,  workgroups[key]);
@@ -661,6 +662,59 @@ export class AonMessenger extends AonElement {
 				console.error(error);
 			}
 		});
+
+		this.updateStatusCount();
+	}
+
+	updateStatusCount(){
+		if(!this.cau){
+			const application = this.applicationEl;
+
+			const workgroupStr = this.getWorkgroupsStr();
+
+			let filter = {};
+
+			let filters = this.getListFilter();
+
+			if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email){
+				filter.email = this.cauInfo.auth.email;
+			}
+	
+			if(filters.task_holder){
+				filter.task_holder = filters.task_holder;
+			}
+
+			if(filters.sender){
+				filter.sender = filters.sender;
+			}
+
+			if(filters.workgroup){
+				filter.workgroup = filters.workgroup;
+			} else if(workgroupStr){
+				filter.workgroups = workgroupStr;
+			}
+		
+			getTaskStatusCount(filter).then(({status})=>{
+				try {
+					if(status){
+						//----------------------- UPDATE COUNT---------------
+						let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
+						application.updateSidenavCount(listOpen.id, status[TASK_STATUS.PENDING]);
+		
+						let listInProgress = MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS;
+						application.updateSidenavCount(listInProgress.id, status[TASK_STATUS.IN_PROGRESS]);
+			
+						let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
+						application.updateSidenavCount(listClose.id, status[TASK_STATUS.FINISHED]);
+						
+						let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
+						application.updateSidenavCount(listTrash.id, status[TASK_STATUS.DELETED]);
+					}
+				} catch (error) {
+					console.error(error);
+				}
+			});
+		}
 	}
 
 	getDur(){
@@ -696,7 +750,7 @@ export class AonMessenger extends AonElement {
 	async getAppParams(){
 		if(!this.APP_PARAMS.length){
 			try {
-				await getTaskAppParams({
+				await getApplicationParametersIsSig({
 					params:[
 						APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER, 
 						APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER, 

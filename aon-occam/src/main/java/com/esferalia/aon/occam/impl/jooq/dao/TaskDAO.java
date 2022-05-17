@@ -6,8 +6,8 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
-import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -410,7 +410,6 @@ public class TaskDAO {
 			.where(TASK_PROPERTIES.getConditions(filter))
 			.groupBy(TASK.ID)
 			.fetch().stream().forEach(r->  {
-				System.out.println(r);
 				if(r.get(TAG.ID)!=null) {
 					taskCounts.addTag(r.get(TAG.ID).toString(), (Integer) r.get(DSL.name(count)));
 				}

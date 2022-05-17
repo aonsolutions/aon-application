@@ -10,7 +10,7 @@ import { ToolbarType } from '../../models/enums.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { getTastHoldersWorkGroup } from '../../services/taskHolderService.js';
 import { serializeForm } from '../../services/utils.js';
-import { getTaskAppParams, saveTaskAppParams } from '../../services/taskService.js';
+import { saveApplicationParameter, getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
 import * as LS from '../../services/localStorageService.js';
 import { APP_PARAMS_REQUEST } from './MessengerEnums.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
@@ -70,7 +70,7 @@ export class AonMessengerConfig extends AonElement {
 
   buildToolbar() {
     let toolbar = new AonToolbar();
-    toolbar.id = "we23";
+    toolbar.id = Math.random().toString(36).substring(7);
     toolbar.type = ToolbarType.SECONDARY;
     toolbar.title = "Parametros Generales";
     this.appendChild(toolbar);
@@ -248,7 +248,7 @@ export class AonMessengerConfig extends AonElement {
       for (let name in APP_PARAMS_REQUEST) 
         arr.push({name, value: json[name], domain: domainId});
       
-      await saveTaskAppParams({appParams:arr});
+      await saveApplicationParameter({params:arr});
       this.showMessage();
     } catch (error) {
       this.showError(error);
@@ -286,7 +286,7 @@ export class AonMessengerConfig extends AonElement {
     for (let name in APP_PARAMS_REQUEST) 
       params.push(name);
 
-    let resp = await getTaskAppParams({params});
+    let resp = await getApplicationParametersIsSig({params});
     resp.map(param => {
       newResp[param.name] = param.value;
     });

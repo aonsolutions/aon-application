@@ -38,6 +38,7 @@ import com.esferalia.aon.jooq.tables.records.RattachTagRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -92,7 +93,7 @@ public class DBMarketplace {
 	}
 
 	public static LinkedList<Order> getOrderList(Domain domain, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Field<Object> customerName = ctx.getDslContext().select(REGISTRY.NAME)
@@ -120,7 +121,7 @@ public class DBMarketplace {
 	}
 	
 	public static List<Order> getOrderDeliveryList(Domain domain, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<Record9<Integer, String, Integer, String, Double, Timestamp, String, Integer, Integer>> result = 
@@ -174,7 +175,7 @@ public class DBMarketplace {
 	
 	
 	public static String getCustomer(Domain domain, String login, Integer customerId){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Record1<String> record = ctx.getDslContext().select(REGISTRY.NAME)
@@ -222,7 +223,7 @@ public class DBMarketplace {
 	}
 
 	public static List<OldProduct> getProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales, Boolean serializable){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<ProductRecord> result = ctx.getDslContext().select()
@@ -252,7 +253,7 @@ public class DBMarketplace {
 	}
 	
 	public static List<OldItem> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			List<OldItem> list = new ArrayList<>();
@@ -296,7 +297,7 @@ public class DBMarketplace {
 	}
 
 	public static List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<RattachTagRecord> result = ctx.getDslContext().select()
@@ -321,7 +322,7 @@ public class DBMarketplace {
 	}
 	
 	public static Attach getItemTemplateAttach(Domain domain, String login, String templateName, OldItem item) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<IattachRecord> result = ctx.getDslContext().select()
@@ -346,7 +347,7 @@ public class DBMarketplace {
 	
 	public static Integer getBaseItemId(Domain domain, String login, Integer productId){
 		Integer itemId = null;
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<ItemRecord> result = ctx.getDslContext()
@@ -368,7 +369,7 @@ public class DBMarketplace {
 	}
 	
 	public static Double getItemStock(Domain domain, String login, Integer itemId) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<Record1<Double>> result = ctx.getDslContext().select(STOCK.QUANTITY).from(STOCK).where(STOCK.ITEM.eq(itemId)).fetch();

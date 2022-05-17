@@ -86,6 +86,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommercialStatEngineController implements Serializable {
@@ -1167,7 +1168,7 @@ public class CommercialStatEngineController implements Serializable {
 		String domainName = ds.getDomainNameURL();
 		Integer domainId = ds.getDomainId();
 		String user = "";
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			Result<Record1<Integer>> a = ctx.getDslContext().selectCount()
