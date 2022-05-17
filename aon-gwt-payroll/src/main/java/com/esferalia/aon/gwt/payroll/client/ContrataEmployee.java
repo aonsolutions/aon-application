@@ -157,6 +157,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showSuccessMessage(String title, String message) {
 			showSuccess(title, message);
 		}
+		
+		@Override
+		protected void showLoadingMessage(String message) {
+			showLoading(message);
+		}
 	}
 
 	// ------------------------------------------------- ContractAttachUIImpl
@@ -1852,6 +1857,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		newClause.addClickHandler(e -> contractClauseUI.newClause());
 		hPanel.add(newClause);
 
+		AonToolbarButton importClause = new AonToolbarButton("Importar Clausula", AON.CSS.aonIconDownload());
+		importClause.addClickHandler(e -> contractClauseUI.importClause());
+		hPanel.add(importClause);
+		
 		return hPanel;
 	}
 

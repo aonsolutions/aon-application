@@ -13,6 +13,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.jooq.tables.records.ContractClauseRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContractClauses {
@@ -86,10 +87,6 @@ public class JooqContractClauses {
 					.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
 					.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
 					.execute();
-			else if(contractClause.getId() < 0)
-				dslContext.delete(CONTRACT_CLAUSE)
-					.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId() * -1))
-					.execute();
 			else
 				dslContext.update(CONTRACT_CLAUSE)
 					.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
@@ -101,4 +98,67 @@ public class JooqContractClauses {
 		}
 	}
 	
+	public static void deleteContractClause(Connection conn, Integer clauseId) {
+		deleteContractClauseDB(DSL.using(conn, getDefaultSettings()), clauseId);
+	}
+	
+	private static void deleteContractClauseDB(DSLContext dslContext, Integer clauseId) {
+		dslContext.delete(CONTRACT_CLAUSE)
+		.where(CONTRACT_CLAUSE.ID.eq(clauseId))
+		.execute();
+	}
+
+	public static List<ContractClause> getDomainClauses(Connection conn, Integer domainId, Integer parentDomainId) {
+		return getDomainClausesDB(DSL.using(conn, getDefaultSettings()), domainId, parentDomainId);
+	}
+
+	private static List<ContractClause> getDomainClausesDB(DSLContext dslContext, Integer domainId, Integer parentDomainId) {
+		List<ContractClause> contractClauses = new ArrayList<>();
+		
+		// Contract Clauses
+		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
+			.where(CONTRACT_CLAUSE.CONTRACT.isNull())
+			.and(CONTRACT_CLAUSE.DOMAIN.eq(domainId)
+				.or(CONTRACT_CLAUSE.DOMAIN.eq(parentDomainId))
+			).fetch();
+		
+		for(Record clauseRecord : clauseRecords) {
+			
+			ContractClause contractClause =  new ContractClause();
+			contractClause.setId(clauseRecord.get(CONTRACT_CLAUSE.ID));
+			contractClause.setDomain(clauseRecord.get(CONTRACT_CLAUSE.DOMAIN));
+			contractClause.setContract(clauseRecord.get(CONTRACT_CLAUSE.CONTRACT));
+			contractClause.setLineNumber(clauseRecord.get(CONTRACT_CLAUSE.LINE));
+			contractClause.setName(clauseRecord.get(CONTRACT_CLAUSE.NAME));
+			contractClause.setDescription(clauseRecord.get(CONTRACT_CLAUSE.DESCRIPTION));
+			contractClause.setGeneral(clauseRecord.get(CONTRACT_CLAUSE.GENERAL));
+			
+			contractClauses.add(contractClause);
+		}
+		
+		contractClauses.sort((o1, o2) -> o1.getLineNumber().compareTo(o2.getLineNumber()));
+		
+		return contractClauses;
+	}
+
+	public static void importContractClauses(Connection conn, List<Integer> clausesIds, Integer domainId, Integer contractId) throws IllegalArgumentException {
+		importContractClausesDB(DSL.using(conn, getDefaultSettings()), clausesIds, domainId, contractId);
+	}
+
+	private static void importContractClausesDB(DSLContext dslContext, List<Integer> clausesIds, Integer domainId, Integer contractId) throws IllegalArgumentException {
+		// Contract Clauses
+		Result<ContractClauseRecord> clauseRecords = dslContext.selectFrom(CONTRACT_CLAUSE).where(CONTRACT_CLAUSE.ID.in(clausesIds)).fetch();
+		
+		clauseRecords.forEach(clause -> {
+			dslContext.insertInto(CONTRACT_CLAUSE)
+				.set(CONTRACT_CLAUSE.DOMAIN, domainId)
+				.set(CONTRACT_CLAUSE.CONTRACT, contractId)
+				.set(CONTRACT_CLAUSE.LINE, clause.getLine())
+				.set(CONTRACT_CLAUSE.NAME, clause.getName())
+				.set(CONTRACT_CLAUSE.DESCRIPTION, clause.getDescription())
+				.set(CONTRACT_CLAUSE.GENERAL, (byte)0)
+				.execute();
+		});
+	}
+
 }

@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.google.gwt.core.client.GWT;
@@ -17,6 +19,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -82,6 +85,10 @@ public abstract class ContractClauseUI extends ResizeComposite {
 		this.employeeContractInfo = employeeContractInfoIn;
 		this.contractId = this.employeeContractInfo.getContractInfo().getContractId();
 		
+		reloadCaluses();
+	}
+	
+	private void reloadCaluses() {
 		initializeView();
 		
 		getContractClauses(s -> {
@@ -91,7 +98,7 @@ public abstract class ContractClauseUI extends ResizeComposite {
 				loadClauses();
 		}, f -> showErrorMessage("Error obtenci\u00f3n Clausulas", f.getMessage()));
 	}
-	
+
 	private void loadClauses() {
 		resetClauseDataTableStructure();
 		showMainTable();
@@ -204,13 +211,32 @@ public abstract class ContractClauseUI extends ResizeComposite {
 		// Delete Button
 		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
 		deleteBTN.addClickHandler(e -> {
-			if(contractClause.getId() == null)
+			if(contractClause.getId() == null) {
 				employeeContractInfo.getContractClauses().remove(contractClause);
-			else
-				contractClause.setId(contractClause.getId() * -1);
+				resetClauseDataTableStructure();
+				loadClauses();
+			} else {
+				AonDialog deleteDialog = new AonDialog("Eliminar clasula", new HTML("\u00BFDesea eliminar esta clausula\u003F"));
+				deleteDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						// Nothing to do here
+					}
+					
+					@Override
+					public void onAccept() {
+				    	deleteContractClause(
+				    			contractClause.getId(), 
+				    			s -> {
+				    				showSuccessMessage("Borrado Clausula", "La clausula ha sido eliminada correctamente");
+				    				reloadCaluses();
+				    			}, 
+				    			f -> showErrorMessage("Borrado Clausula", f.getMessage()));
+					}
+				});
+			}
 			
-			resetClauseDataTableStructure();
-			loadClauses();
 		});
 		
 		// Add Styles
@@ -252,6 +278,22 @@ public abstract class ContractClauseUI extends ResizeComposite {
 		loadClauses();
 	}
 	
+	public void importClause() {
+		new ImportClauseDialog(employeeContractInfo.getContractClauses()) {
+			
+			@Override
+			protected void onClausesImport(List<Integer> clausesIds) {
+				this.hide();
+				importContractClauses(
+						clausesIds, 
+						s -> {
+							showSuccessMessage("Importaci\u00f3n Clausulas", "Clausulas importadas correctamente");
+							reloadCaluses();
+						}, f -> showErrorMessage("Importaci\u00f3n Clausulas", f.getMessage()));
+			}
+		};
+	}
+	
 	public void saveClauses() {
 		saveContractClause(s -> {
 			showSuccessMessage("Clausulas", "Clausulas guardadas correctamente");
@@ -269,6 +311,8 @@ public abstract class ContractClauseUI extends ResizeComposite {
 	protected abstract void showErrorMessage(String title, String message);
 
 	protected abstract void showSuccessMessage(String title, String message);
+	
+	protected abstract void showLoadingMessage(String message);
 	
 	// ------------------------------------------------------ Refresh table
 
@@ -306,6 +350,38 @@ public abstract class ContractClauseUI extends ResizeComposite {
 			public void onSuccess(List<ContractClause> contractClauses) {
 				employeeContractInfo.setContractClauses(contractClauses);
 				success.accept(contractClauses);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
+	public void deleteContractClause(Integer clauseId, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.deleteContractClause(clauseId, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
+	public void importContractClauses(List<Integer> clausesIds, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.importContractClauses(clausesIds, this.contractId, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
 			}
 
 			@Override

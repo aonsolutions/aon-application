@@ -223,6 +223,12 @@ public interface EnterprisesService extends RemoteService {
 
 	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException ;
 	
+	void deleteContractClause(String currentDomainName, Integer clauseId) throws IllegalArgumentException;
+
+	void importContractClauses(String currentDomainName, List<Integer> clausesIds, Integer contractId) throws IllegalArgumentException;
+
+	List<ContractClause> getDomainClauses(String currentDomainName) throws IllegalArgumentException;
+	
 	Map<String, String> getContractOtherInfo(String currentDomainName, Integer contractId, String contractType);
 	
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
