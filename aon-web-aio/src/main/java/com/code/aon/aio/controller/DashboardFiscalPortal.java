@@ -26,17 +26,19 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class DashboardFiscalPortal implements Serializable {
 	
@@ -222,7 +224,7 @@ public class DashboardFiscalPortal implements Serializable {
 	public DashboardEntry[] getExpensesEntries() {
 		if (expensesEntries == null) {
 			List<DashboardEntry> list = new LinkedList<DashboardEntry>();
-			AONContext aonctx = null;
+			CloseableAONContext aonctx = null;
 			try {
 				aonctx = AONContext.getAONContext(getDomainName(), getDomainId());  
 				AccMiningMVELContext ctx = getAccMiningContext();

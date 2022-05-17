@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import org.json.JSONObject;
 
@@ -201,4 +202,20 @@ public class TimeControlDetail implements Serializable {
 		return json;
 	}
 	
+	public boolean isDirty(Object obj) {
+		if (!(obj instanceof TimeControlDetail ) )
+			return false;
+		
+		TimeControlDetail tm = (TimeControlDetail) obj;
+		
+		return 
+			!(
+				Objects.equals(status, tm.status)
+				&& Objects.equals(cause, tm.cause)
+				&& Objects.equals(taskHolder, tm.taskHolder)
+				&& (date!=null && tm.date!=null && date.compareTo(tm.date) ==0 )
+				&& Objects.equals(location, tm.location)
+				&& Objects.equals(coordinates, tm.coordinates)
+			);
+	}
 }

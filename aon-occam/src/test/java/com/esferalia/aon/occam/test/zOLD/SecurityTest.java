@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -18,7 +19,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class SecurityTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "mac.ecastellano.dev";
 	private static int DOMAIN_ID = 553;
 	private static String USER = "mac";
@@ -88,7 +89,7 @@ public class SecurityTest {
 
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 	
 }

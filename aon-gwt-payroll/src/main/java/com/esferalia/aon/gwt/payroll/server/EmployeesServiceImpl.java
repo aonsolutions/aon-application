@@ -6672,8 +6672,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String ide = Sepe.sendContract(certificateIS, certificate.getPassword(), certificate.getType(), cto);
 
 			// Set Sepe Ide
-			if (AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeId()))
+			if (AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeId()) && 
+					AonStringUtils.isNotBlank(ide)) {
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
+				employeeContractInfo.getContractInfo().setSepeId(ide);
+			}
 
 		} catch (SQLException | SepeException | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());

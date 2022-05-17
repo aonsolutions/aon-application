@@ -40,6 +40,7 @@ import com.esferalia.aon.ingenet.api.respuestaElaboraciones.RESPUESTAELABORACION
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.GeoZone;
@@ -135,7 +136,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			}
 		}
 		
-		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+		CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		List<Elaboration> elaborationList = null;
 		try {
 			if(ACCIONTYPE.RECUPERAR==params.getACCION()) {

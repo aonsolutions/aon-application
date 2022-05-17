@@ -35,6 +35,7 @@ import com.code.aon.google.apis.FileInfo;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -69,7 +70,7 @@ public class DBDrive {
 	
 	public static Vector<FileInfo> getRegistryAttachLimit(Domain domain, User user, Vector<RegistryAttachmentType> rats,Integer firstId ){
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Condition condition = RATTACH.TYPE.isNull().or(RATTACH.TYPE.isNotNull());
@@ -150,7 +151,7 @@ public class DBDrive {
 		domainName = d.get(0);
 		domainId = domains.get(domainName);
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, "");
 			
@@ -258,7 +259,7 @@ public class DBDrive {
 		}
 	
 		public static void insertBlobRAttach(byte[] bs,Domain domain,String driveId, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -272,7 +273,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileRAttach(Domain domain, String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -285,7 +286,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteRAttachTags(Domain domain,String drive_id, Integer id)  {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -298,7 +299,7 @@ public class DBDrive {
 		}
 		
 		public static String getRAttachDriveID(Domain domain, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -315,7 +316,7 @@ public class DBDrive {
 		}
 		
 		public static Integer getRAttachDomainID(Domain domain, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -332,7 +333,7 @@ public class DBDrive {
 		}
 
 		public static FileInfo getEmailsRegistryAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 
@@ -359,7 +360,7 @@ public class DBDrive {
 	//CONTRACT ATTACH
 
 		public static FileInfo getEmailsContractAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -388,7 +389,7 @@ public class DBDrive {
 		}
 		
 		public static void setDriveIdContractAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 							
@@ -402,7 +403,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdContractAttach(Domain domain,String id, Integer fileId){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				String sql = "UPDATE contract_attach SET driveId = NULL WHERE id = "+fileId+";";
@@ -414,7 +415,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobContractAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -429,7 +430,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobContractAttach(byte[] bs,Domain domain,String driveId, Integer  id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -443,7 +444,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileContractAttach(Domain domain, String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -456,7 +457,7 @@ public class DBDrive {
 		}
 		
 		public static String getContractAttachDriveID(Domain domain, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -475,7 +476,7 @@ public class DBDrive {
 	//ITEM ATTACH
 		
 		public static void setDriveIdIattach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 							
@@ -489,7 +490,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdIattach(Domain domain,String id, Integer fileId) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				String sql = "UPDATE iattach SET driveId = NULL WHERE id = "+fileId+";";
@@ -501,7 +502,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobIattach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -516,7 +517,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobIAttach(byte[] bs,Domain domain,String driveId, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -530,7 +531,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileIAttach(Domain domain, String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");	
 	
@@ -543,7 +544,7 @@ public class DBDrive {
 		}
 		
 		public static String getIAttachDriveID(Domain domain, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				Result<Record1<String>> data =ctx.getDslContext().select(IATTACH.DRIVEID)
@@ -561,7 +562,7 @@ public class DBDrive {
 	//INVOICE ATTACH
 		
 		public static FileInfo getEmailsInvoiceAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				int num= 4;
@@ -589,7 +590,7 @@ public class DBDrive {
 		}	
 
 		public static void setDriveIdInvoiceAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 							
@@ -603,7 +604,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdInvoiceAttach(Domain domain,String id, Integer fileId) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				String sql = "UPDATE invoice_attach SET driveId = NULL WHERE id = "+fileId+";";
@@ -615,7 +616,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobInvoiceAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -630,7 +631,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobInvoiceAttach(byte[] bs,Domain domain,String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -644,7 +645,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileInvoiceAttach(Domain domain, String driveId, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -657,7 +658,7 @@ public class DBDrive {
 		}
 		
 		public static String getInvoiceAttachDriveID(Domain domain, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -676,7 +677,7 @@ public class DBDrive {
 	//OFFER ATTACH
 		
 		public static void setDriveIdOfferAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 							
@@ -690,7 +691,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdOfferAttach(Domain domain,String id, Integer fileId){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				String sql = "UPDATE offer_attach SET driveId = NULL WHERE id = "+fileId+";";
@@ -702,7 +703,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobOfferAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -717,7 +718,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobOfferAttach(byte[] bs,Domain domain,String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -731,7 +732,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileOfferAttach(Domain domain, String driveId, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -744,7 +745,7 @@ public class DBDrive {
 		}
 		
 		public static String getOfferAttachDriveID(Domain domain, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -763,7 +764,7 @@ public class DBDrive {
 	//PAYROLL BATCH ATTACH
 		
 		public static void setDriveIdPayrollAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 							
@@ -777,7 +778,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdPayrollAttach(Domain domain,String id, Integer fileId){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -791,7 +792,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobPayrollAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				byte[] aux =null;
@@ -805,7 +806,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobPayrollAttach(byte[] bs,Domain domain,String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -819,7 +820,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFilePayrollAttach(Domain domain,String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -832,7 +833,7 @@ public class DBDrive {
 		}
 		
 		public static String getPayrollAttachDriveID(Domain domain, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -851,7 +852,7 @@ public class DBDrive {
 	//PROJECT ATTACH
 		
 		public static FileInfo getEmailsProjectAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				int num= 4;
@@ -879,7 +880,7 @@ public class DBDrive {
 		}	
 		
 		public static void setDriveIdProjectAttach(Domain domain,FileInfo fileInfo){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				ctx.getDslContext().update(PROJECT_ATTACH)
@@ -892,7 +893,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdProjectAttach(Domain domain,String id, Integer fileId){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				String sql = "UPDATE project_attach SET driveId = NULL WHERE id = "+fileId+";";
@@ -904,7 +905,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobProjectAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -919,7 +920,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobProjectAttach(byte[] bs,Domain domain,String driveId, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -933,7 +934,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileProjectAttach(Domain domain, String driveId, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -946,7 +947,7 @@ public class DBDrive {
 		}
 		
 		public static String getProjectAttachDriveID(Domain domain, Integer id){
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -965,7 +966,7 @@ public class DBDrive {
 		//SEPE BATCH ATTACH
 
 		public static void setDriveIdSepeAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 							
@@ -979,7 +980,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteDriveIdSepeAttach(Domain domain,String id, Integer fileId) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				String sql = "UPDATE sepe_batch_attach SET driveId = NULL WHERE id = "+fileId+";";
@@ -991,7 +992,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteBlobSepeAttach(Domain domain,FileInfo fileInfo) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				byte[] aux =null;
@@ -1005,7 +1006,7 @@ public class DBDrive {
 		}
 		
 		public static void insertBlobSepeAttach(byte[] bs,Domain domain,String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				ctx.getDslContext().update(SEPE_BATCH_ATTACH)
@@ -1018,7 +1019,7 @@ public class DBDrive {
 		}
 		
 		public static void deleteFileSepeAttach(Domain domain, String driveId, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -1031,7 +1032,7 @@ public class DBDrive {
 		}
 		
 		public static String getSepeAttachDriveID(Domain domain, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				
@@ -1049,7 +1050,7 @@ public class DBDrive {
 	
 		
 		public static Vector<FileInfo> getServiConvenios(Domain domain) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				Vector<FileInfo> vector = new Vector<FileInfo>();
@@ -1092,7 +1093,7 @@ public class DBDrive {
 		}
 		
 		public static FileInfo getServiConvenio(Domain domain, User user, Integer id) {
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 
@@ -1143,7 +1144,7 @@ public class DBDrive {
 		
 		public static void updateSCModificationDate(Domain domain, User user, FileInfo fileInfo, java.util.Date date){
 			
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 				ctx.getDslContext().update(RATTACH)
@@ -1158,7 +1159,7 @@ public class DBDrive {
 		
 		public static Integer getSCLastId(Domain domain) {
 			
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 				Record1<Integer> lastId = ctx.getDslContext().select(RATTACH.ID)
@@ -1179,7 +1180,7 @@ public class DBDrive {
 		
 		public static void setSCTag(Domain domain, User user, FileInfo fileInfo, String tag){
 			
-			AONContext ctx = null;
+			CloseableAONContext ctx =null;
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 				

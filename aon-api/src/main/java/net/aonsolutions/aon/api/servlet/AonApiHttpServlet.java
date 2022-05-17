@@ -73,10 +73,10 @@ public class AonApiHttpServlet extends HttpServlet{
 	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		response(req, resp);
 	}
-	
-	protected AonApiData initialize(HttpServletRequest req, boolean check) {
+
+	protected AonApiData initialize(HttpServletRequest req, boolean check, String...method) {
 		AonApiData api = new AonApiData();
-		api.setMethod(req.getMethod());
+		api.setMethod(method.length > 0 ? method[0] : req.getMethod());
 		api.setData(api.isGet() ? getParamsJSON(req) : getRequestJSON(req));
 		
 		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 

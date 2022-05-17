@@ -56,6 +56,7 @@ export const AMOUNT = MSG.AMOUNT;
 export const AON_BLUE = 'Azul Aon';
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const APPLICATIONS = MSG.APPLICATIONS;
+export const APPLICATION = "Aplicación";//TODO
 export const ASESOR = MSG.ASESOR;
 export const ATTACH_FILES_DRAGGING_DROPPING = MSG.ATTACH_FILES_DRAGGING_DROPPING;
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND;
@@ -135,6 +136,8 @@ export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
+export const CONVERSATION = 'Conversación'; // TODO
+
 
 // ----- D
 
@@ -354,6 +357,7 @@ export const PROJECT = "Proyecto"; //TODO
 export const PROJECTS = "Proyectos"; //TODO
 export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PROTOCOL = "Protocolo";
+export const PARENT = "Padre"; // TODO
 
 // ----- Q
 
@@ -475,6 +479,7 @@ export const TRAY = "Bandeja";//TODO
 export const TYPE_HERE = "Escriba aquí"; //TODO
 export const TYPE_REQUEST = "Tipo solicitud";//TODO
 export const TYPE_INCIDENT = "Tipo incidencia";//TODO
+export const TYPE_CONTRACT = "Tipos de contrato";//TODO
 export const TO_SHOW = "Mostrar";//TODO
 
 

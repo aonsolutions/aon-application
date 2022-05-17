@@ -40,7 +40,6 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.faces.controller.IRichConstants;
 import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.groupware.Note;
@@ -49,7 +48,6 @@ import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.PortalInfo;
 import com.code.aon.ui.admin.controller.MarketplaceController;
@@ -83,6 +81,10 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class DesktopState implements Serializable {
 
@@ -672,7 +674,7 @@ public class DesktopState implements Serializable {
 	private void updateLastAccess( User user, DomainSwitcher ds ) {
 		boolean adminDomainUser = DomainSwitcher.getDomainType(user.getDomain()) == DomainType.ADMIN;
 		if ( this.adminDomain || !adminDomainUser ) {
-			AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), ds.getDomainId(), user.getLogin());
+			CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), ds.getDomainId(), user.getLogin());
 			Timestamp now = new java.sql.Timestamp(new Date().getTime());
 			try {
 				ctx.getDslContext().update(DOMAIN)
@@ -683,7 +685,7 @@ public class DesktopState implements Serializable {
 			} catch ( Throwable th ) {
 				LOGGER.error(th.getMessage(), th);
 			} finally {
-				ctx.finalize();	
+				ctx.close();	
 			}							
 		}
 	}

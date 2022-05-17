@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -213,7 +214,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 	}
 	
 	private Integer searchDomainId(String _domainName) {
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try {
 			ctx = AONContext.getAONContext(getDomain(), -1, getUser());
 			Domain domain = DomainDAO.getDomain(ctx, p -> {

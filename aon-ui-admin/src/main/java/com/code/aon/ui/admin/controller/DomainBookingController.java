@@ -39,6 +39,7 @@ import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 public class DomainBookingController extends DataScrollerState {
 
@@ -215,7 +216,7 @@ public class DomainBookingController extends DataScrollerState {
 		this.totalOCRs = 0;
 		
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
+		CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive(), isShowExpired());
 		domains = getDomainBookingDatas(ctx, condition);
 		LinkedList<DomainBookingData> domainList = new LinkedList<DomainBookingData>();
@@ -239,7 +240,7 @@ public class DomainBookingController extends DataScrollerState {
 				domainList.add(data);
 			}
 		}
-		ctx.finalize();
+		ctx.close();
 		setModel(new SerializableListDataModel(isShowSMB() || isShowAio() ? domainList : domains));
 	}
 

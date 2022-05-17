@@ -140,15 +140,20 @@ export class AonCard extends AonElement {
 	}
 
 	setContent(el) {
-		this.getElement(this.CONTENT).appendChild(el);
+		this.addContent(el);
+		// this.getContent().appendChild(el);
+	}
+
+	clear(){
+		this.getContent().innerHTML = "";
 	}
 
 	addContent(el) {
-		this.getElement(this.CONTENT).appendChild(el);
+		this.getContent().appendChild(el);
 	}
 
 	setContentHTML(html) {
-		this.getElement(this.CONTENT).innerHTML = html;
+		this.getContent().innerHTML = html;
 	}
 	
 	getContent(){

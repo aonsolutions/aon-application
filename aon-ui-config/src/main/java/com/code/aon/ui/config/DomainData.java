@@ -179,7 +179,10 @@ public class DomainData implements Serializable {
 	
 	public static String replace(final String text, final String searchString,
 			UnaryOperator<String> replace) {
-
+		
+		if ( isBlank(text) || isBlank(searchString))
+			return text;
+		
 		int start = 0;
 		int end = indexOfIgnoreCase(text, searchString, start);
 		if (end == INDEX_NOT_FOUND) {
@@ -201,6 +204,5 @@ public class DomainData implements Serializable {
 		buf.append(text.substring(start));
 		return buf.toString();
 	}
-
-
+	
 }

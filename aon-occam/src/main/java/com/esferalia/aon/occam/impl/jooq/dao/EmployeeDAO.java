@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.Keys.FK_PERSON_DOMAIN;
+import static com.esferalia.aon.jooq.Keys.FK_PERSON_REGISTRY;
+import static com.esferalia.aon.jooq.Keys.FK_REGISTRY_DOMAIN;
 import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
@@ -50,6 +53,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractCostRecord;
@@ -480,11 +484,10 @@ public class EmployeeDAO {
 	private static RegistryRecord getPerson(DSLContext dslContext, Integer domainId, Employee employee) {
 		return dslContext
 		.select()
-		.from(DOMAIN)
-		.innerJoin(PERSON).onKey()
+		.from(PERSON)
 		.innerJoin(REGISTRY).onKey()
 		.where(PERSON.SOCIAL_SECURITY_NUM.eq(employee.getNaf()))
-		.and(DOMAIN.ID.eq(domainId))
+		.and(PERSON.DOMAIN.eq(domainId))
 		.fetchOptionalInto(REGISTRY)
 		.orElseGet( () -> {
 		

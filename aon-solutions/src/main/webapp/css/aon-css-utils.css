@@ -136,8 +136,8 @@
   color: #fff;
 }
 
-.task-messages img {
-  max-width: 100%;
+.imgMaxWidth img {
+  max-width: 100% !important;
 }
 
 .noteBoxShadow {

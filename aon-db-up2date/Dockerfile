@@ -1,4 +1,4 @@
-FROM openjdk:16-slim
+FROM openjdk:17-slim
 
 ARG AON_VERSION=9.23-SNAPSHOT
 

@@ -8,6 +8,14 @@ const AON_MESSENGER_LIST_OPEN = {
     icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
+const AON_MESSENGER_LIST_IN_PROGRESS = {
+    name: 'Derivadas',
+    id:'Derivadas',
+    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
+    icon_color: CSS.variable(COLORS.MATERIAL_BLUE),
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
+};
+
 const AON_MESSENGER_LIST_CLOSE = {
     name: 'Cerradas',
     id:'Cerradas',
@@ -26,6 +34,7 @@ const AON_MESSENGER_LIST_ARCHIVE = {
 
 export const MessengerOptions = {
     AON_MESSENGER_LIST_OPEN,
+    AON_MESSENGER_LIST_IN_PROGRESS,
     AON_MESSENGER_LIST_CLOSE,
     AON_MESSENGER_LIST_ARCHIVE
 };
@@ -166,7 +175,7 @@ export const TASK_FILTER = [
     {
         type: "select",
         id: "senderFilter",
-        name: "sender",
+        name: "searchsender",
         title: "Creador",
         autocomplete: true,
         default:true,
@@ -175,7 +184,7 @@ export const TASK_FILTER = [
     {
         type: "select",
         id: "task_holder",
-        name: "task_holder",
+        name: "searchtask_holder",
         title: "Asignado",
         autocomplete: true,
         default:true,

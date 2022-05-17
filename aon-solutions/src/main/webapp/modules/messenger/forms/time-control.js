@@ -129,9 +129,13 @@ const processAccept = async (tm,{date, time},aonMessengerChat) => {
             let data = {
                 ...tm, 
                 task_holder:tm.task_holder.id,
-                coordinates: tm.coordinates.latitude + "," + tm.coordinates.longitude,
                 date: new Date( AonDateUtils.formatDateOrigin(date) + " " + time ).getTime()
             }
+            
+            if(tm.coordinates && tm.coordinates.latitude && tm.coordinates.longitude) {
+                data.coordinates = tm.coordinates.latitude + "," + tm.coordinates.longitude;
+            }
+
             await saveTimeControlDetail(data);
             await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
         } else {

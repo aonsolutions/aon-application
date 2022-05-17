@@ -149,7 +149,7 @@ export const createReceiverDiv = () => newComponent({
 const createMessageBox = (properties) =>{
   let component =  newComponent({
     type: MESSENGER_COMPONENTS.MESSAGE,
-    classes : [CSS.FLEX_COLUMN, CSS.TASK_MESSAGES],
+    classes : [CSS.FLEX_COLUMN, CSS.IMG_MAX_WIDTH],
     styles: {
         margin:"5px",
         padding: '15px',
@@ -787,7 +787,7 @@ export const openDialogBranch = ()=> {
   const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
   div.appendChild(taskHolder);
 
-  const myTaskHolder =  aonMessengerChat.getData().myTaskHolder;
+  const myTaskHolder =  aonMessengerChat.MY_TASKHOLDER;
 
   aonMessengerChat.getTaskHolderByWorkgroup(myTaskHolder, {})
   .then(options=>{
@@ -822,9 +822,8 @@ export const openDialogBranch = ()=> {
           type: WORKFLOW_TYPES.CONNECTED, 
           workgroup:workgroup.getDetail(), 
           task_holder_receiver:taskHolder.getDetail(), 
-          note: note.value
+          comment: note.value
         };
-        console.log(params);
 
         await sendTaskHistoricEmail(params);
         aonMessengerChat.showMessage(`Rama creada!`);
@@ -836,6 +835,8 @@ export const openDialogBranch = ()=> {
     		application.setContent(element);
 
         dialog.close();
+
+        aonMessengerChat.applicationParentEl.updateCount();
 
       } catch (error) {
         console.log(error);

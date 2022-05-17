@@ -41,6 +41,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.jooq.tables.records.ActionRecord;
 import com.esferalia.aon.jooq.tables.records.SessionRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 public class AuditManager implements IAuditConstants {
 	
@@ -59,7 +60,7 @@ public class AuditManager implements IAuditConstants {
 	}
 	
 	private static void insertSession( HttpSession httpSession, SessionRecord session, AuditLevel level ) {
-		AONContext ctx = getContext(httpSession, session.getDomain());
+		CloseableAONContext ctx = getContext(httpSession, session.getDomain());
 		try {
 			SessionRecord _session = ctx.getDslContext()
 					.insertInto(SESSION).set(session).returning(SESSION.ID).fetchOne();
@@ -71,7 +72,7 @@ public class AuditManager implements IAuditConstants {
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();
+			ctx.close();
 		}
 	}
 
@@ -79,7 +80,7 @@ public class AuditManager implements IAuditConstants {
 		Integer sessionId = AuditManager.getSessionId(httpSession);
 		if ( sessionId != null ) {
 			LOGGER.info( "Session finished {}", sessionId );
-			AONContext ctx = getContext(httpSession, getDomainId(httpSession));
+			CloseableAONContext ctx = getContext(httpSession, getDomainId(httpSession));
 			try {
 				ctx.getDslContext().update(SESSION)
 				.set(SESSION.ENDDATE, new java.sql.Timestamp(new Date().getTime()) )
@@ -88,7 +89,7 @@ public class AuditManager implements IAuditConstants {
 			} catch ( Throwable th ) {
 				LOGGER.error(th.getMessage(), th);
 			} finally {
-				ctx.finalize();
+				ctx.close();
 			}
 		}
 		httpSession.removeAttribute( AuditManager.AUDIT_LEVEL_PROPERTY );
@@ -124,7 +125,7 @@ public class AuditManager implements IAuditConstants {
 	
 	public  static Integer getActionId( String name, Integer domainId, Integer applicationId ) {
 		Integer actionId = null;
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domainId);
+		CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domainId);
 		try {
 			actionId = ctx.getDslContext()
 					.select(ACTION.ID)
@@ -143,13 +144,13 @@ public class AuditManager implements IAuditConstants {
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}				
 		return actionId;
 	}	
 	
 	public static void createActionEntry( Integer sessionId, Integer domainId, Integer actionId ) {
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domainId);
+		CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domainId);
 		try {
 			ctx.getDslContext().insertInto(ACTION_ENTRY)
 				.set(ACTION_ENTRY.SESSION_ID, sessionId)
@@ -160,13 +161,13 @@ public class AuditManager implements IAuditConstants {
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}				
 	}
 
 	private static AuditLevel getAuditLevel( Integer applicationId, int domain ) {
 		AuditLevel level = AuditLevel.NONE;
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domain);
+		CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), domain);
 		try { 
 			Record1<Byte> value = ctx.getDslContext()
 				.select(DOMAIN_APPLICATION.AUDIT_LEVEL)
@@ -183,7 +184,7 @@ public class AuditManager implements IAuditConstants {
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}				
 		return level;
 	}	
@@ -261,8 +262,8 @@ public class AuditManager implements IAuditConstants {
 		return principal;
 	}
 	
-	private static AONContext getContext( HttpSession httpSession, Integer domainId ) {
-		AONContext ctx = null;
+	private static CloseableAONContext getContext( HttpSession httpSession, Integer domainId ) {
+		CloseableAONContext ctx = null;
 		AuthPrincipal principal = getAuthPrincipal(httpSession);
 		if ( principal != null ) {
 			ctx = AONContext.getAONContext(principal.getDomain(), domainId,principal.getShortName());

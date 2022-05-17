@@ -6,8 +6,8 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
-import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
+import com.esferalia.aon.occam.api.model.task.TaskCounts;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
@@ -352,18 +353,7 @@ public class TaskDAO {
 			.execute();
 	}
 	
-	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){
-		HashMap<Byte, Integer> map = new HashMap<>();
-		ctx.getDslContext()
-		.select(DSL.count(TASK.STATUS).as(DSL.name("count")), TASK.STATUS)
-		.from(TASK)
-		.where(TASK_PROPERTIES.getConditions(filter))
-		.groupBy(TASK.STATUS)
-		.fetch().stream().forEach(r-> map.put(r.get(TASK.STATUS), (Integer) r.get(DSL.name("count"))));
-		return map;
-	}
-	
-	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver){
+	public static Map<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver){
 		Integer sd = 0;
 		Integer rv = 0;
 	
@@ -382,6 +372,51 @@ public class TaskDAO {
 		map.put("task_holder", rv);
 		
 		return map;
+	}
+	
+	public static TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags){
+		TaskCounts taskCounts = new TaskCounts();
+		String count = "count";
+		
+		status.ifPresent(filter->{
+			ctx.getDslContext()
+			.select(DSL.count(TASK.ID).as(DSL.name(count)), TASK.STATUS)
+			.from(TASK)
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.groupBy(TASK.STATUS)
+			.fetch().stream().forEach(r->{
+				taskCounts.addStatus(TaskStatus.safeValueOf(r.get(TASK.STATUS)), (Integer) r.get(DSL.name(count)));
+			});
+		});
+		
+		workgroup.ifPresent(filter->{
+			ctx.getDslContext()
+			.select(DSL.count(TASK.ID).as(DSL.name(count)), TASK.WORKGROUP)
+			.from(TASK)
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.groupBy(TASK.WORKGROUP)
+			.fetch().stream().forEach(r->  {
+				String wg = r.get(TASK.WORKGROUP)!= null ? r.get(TASK.WORKGROUP).toString() : "true";
+				taskCounts.addWorkgroup(wg, (Integer) r.get(DSL.name(count)));
+			});
+		});
+		
+		tags.ifPresent(filter->{
+			ctx.getDslContext()
+			.select(DSL.count(TASK.ID).as(DSL.name(count)), TAG.ID)
+			.from(TASK)
+			.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+			.join(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.groupBy(TASK.ID)
+			.fetch().stream().forEach(r->  {
+				if(r.get(TAG.ID)!=null) {
+					taskCounts.addTag(r.get(TAG.ID).toString(), (Integer) r.get(DSL.name(count)));
+				}
+			});
+		});
+		
+		return taskCounts;
 	}
 	
 	private static SelectConditionStep<Record1<Integer>> selectCount(AONContext ctx, TaskFilter filter) {

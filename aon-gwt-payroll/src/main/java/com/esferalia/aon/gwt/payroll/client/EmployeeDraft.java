@@ -15,6 +15,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -38,15 +40,17 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -364,6 +368,54 @@ public abstract class EmployeeDraft extends Composite {
 		}
 	}
 	
+	class MovPrevDeleteCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AonDialog dialog = new AonDialog("Movimiento Previo", new HTML("\u00bfDesea realmente eliminar el movimiento previo\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					movPrevDelete();
+				}
+			});
+		}
+	}
+
+	class AltaConsolidadaDeleteCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AonDialog dialog = new AonDialog("Alta Consolidada", new HTML("\u00bfDesea realmente eliminar el alta consolidada\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					altaConsolidadaDelete();
+				}
+			});
+		}
+	}
+
+	class ComunicateAFICommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onComunicateAFI();
+		}
+	}
+	
 	class BonificationsCommand implements ScheduledCommand {
 
 		@Override
@@ -381,6 +433,11 @@ public abstract class EmployeeDraft extends Composite {
 		private MenuItem idcPlNss;		
 		private MenuItem pecs = null;
 		private MenuItem pecsSS = null;
+
+//		private MenuItem movPrevDelete = null;
+		MenuItemSeparator separator;
+		private MenuItem altaConsolidadaDelete = null;
+		private MenuItem comunicateAFI = null;
 		
 		public NewContextMenu() {
 			
@@ -414,6 +471,20 @@ public abstract class EmployeeDraft extends Composite {
 					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
+			addSeparator();
+
+//			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
+//					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+//			movPrevDelete.ensureDebugId("movPrevDelete");
+			
+			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(),
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			altaConsolidadaDelete.ensureDebugId("altaConsolidadaDelete");
+
+			comunicateAFI = addItem("Notificaci\u00f3n AFI (TGSS)", new ComunicateAFICommand(), AON.CSS.aonIconSend(),
+					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			comunicateAFI.ensureDebugId("comunicateAFI");
+			
 		}
 
 		public MenuItem getTa() {
@@ -442,6 +513,18 @@ public abstract class EmployeeDraft extends Composite {
 
 		public MenuItem getSSPeculiarities() {
 			return pecsSS;
+		}
+		
+//		public MenuItem getMovPrevDelete() {
+//			return movPrevDelete;
+//		}
+		
+		public MenuItem getAltaConsolidadaDelete() {
+			return altaConsolidadaDelete;
+		}
+
+		public MenuItem getComunicateAFI() {
+			return comunicateAFI;
 		}
 		
 	}
@@ -549,6 +632,8 @@ public abstract class EmployeeDraft extends Composite {
 					Byte ssRegime = employeeDraftObject.getContractData().getSsRegimen();
 					if (null == ssRegime || ssRegime != 3) 
 						onCheckStatus(getEmployeeDraftObject());
+					
+					checkTGSSStatus();
 			}, t -> {}
 		);
 	
@@ -685,6 +770,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
+		employee.addressInfo.setValue(employeeData.getAddressInfo());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
 		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
@@ -1088,10 +1174,10 @@ public abstract class EmployeeDraft extends Composite {
 			null, 
 			pdfViewer.getDataURI(), 
 			dataURI -> {
-				//checkIDCLabel.setVisible(false);
-				//checkIDCButton.setVisible(false);
-				//unCheckIDCLabel.setVisible(true);
-				//unCheckIDCButton.setVisible(true);
+				checkIDCLabel.setVisible(false);
+				checkIDCButton.setVisible(false);
+				unCheckIDCLabel.setVisible(true);
+				unCheckIDCButton.setVisible(true);
 				
 				pdfViewer.open(dataURI);
 			}, 
@@ -1101,10 +1187,10 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void unCheckIdc() {
-		//unCheckIDCLabel.setVisible(false);
-		//unCheckIDCButton.setVisible(false);
-		//checkIDCLabel.setVisible(true);
-		//checkIDCButton.setVisible(true);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
+		checkIDCLabel.setVisible(true);
+		checkIDCButton.setVisible(true);
 	}
 
 	private void showIdc(Date date) {
@@ -1115,8 +1201,8 @@ public abstract class EmployeeDraft extends Composite {
 				hideMessage();
 				showPdf();
 				idcDateListBox.setVisible(true);
-				//checkIDCLabel.setVisible(true);
-				//checkIDCButton.setVisible(true);
+				checkIDCLabel.setVisible(true);
+				checkIDCButton.setVisible(true);
 				
 				idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcDateListBox.setSelected(date, true);
@@ -1128,7 +1214,123 @@ public abstract class EmployeeDraft extends Composite {
 				showIdc();
 		});
 	}
+	
+	private void movPrevDelete() {
+		showLoading("Borrando movimiento previo...");
+		employeeDraftObject.movPrevDelete(s -> {
+			hideMessage();
+			setEmployeeDraftObject(getEmployeeDraftObject());
+		}, f -> showError("Error borrado movimiento previo", f.getMessage()));
+	}
 
+	private void altaConsolidadaDelete() {
+		showLoading("Borrando alta consolidad...");
+		employeeDraftObject.altaConsolidadaDelete(s -> {
+			hideMessage();
+			setEmployeeDraftObject(getEmployeeDraftObject());
+		}, f -> showError("Error borrado alta consolidada", f.getMessage()));
+	}
+
+	private void onComunicateAFI() {
+		new EmployeeAFIDialog(employee.startDate.getValue(), employee.contractTypeLB.getSelectedValue(),
+				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
+				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
+				this.employeeDraftObject.getEmployeeData().getDomain(),
+				this.employeeDraftObject.getContractData().getWorkplaceId(), true) {
+
+			@Override
+			protected void onAcceptCB() {
+				// Nothing to do here
+			}
+
+			@Override
+			protected void onPartialityCoefContract(String partialityCoef, Date date) {
+				showLoading("Comunicando coeficiente parcialidad (TGSS) ...");
+				employeeDraftObject.cambioCoef(partialityCoef, date,
+						s -> showSuccess("AVISO: Parcialidad",
+								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+
+			@Override
+			protected void onOcupationContract(String ocupation, Date date) {
+				showLoading("Comunicando ocupaci\u00f3n (TGSS) ...");
+				employeeDraftObject.cambioOcupacion(ocupation, date,
+						s -> showSuccess("AVISO: Ocupaci\u00F3n",
+								"El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+
+			@Override
+			protected void onQuoteContract(String quoteGroup, Date date) {
+				showLoading("Comunicando grupo cotizaci\u00f3n (TGSS) ...");
+				employeeDraftObject.cambioGrupCtz(quoteGroup, date,
+						s -> showSuccess("AVISO: Grupo cotizaci\u00F3n",
+								"El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+
+			@Override
+			protected void onChangeContract(String contract, Date date) {
+				showLoading("Comunicando cambio TC2 (TGSS) ...");
+				employeeDraftObject.cambioContrato(contract, date,
+						s -> showSuccess("AVISO: Tipo contrato",
+								"El cambio de tipo de contrato ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+
+			@Override
+			protected void onEndContract(String settleReason) {
+				showLoading("Comunicando baja (TGSS) ...");
+				employeeDraftObject.sendEmployeeBaja(settleReason, s -> {
+					showSuccess("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
+					downloadTAEnd();
+				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+
+			@Override
+			protected void onStartContract() {
+				showLoading("Comunicando alta (TGSS) ...");
+				employeeDraftObject.sendEmployeeAlta(s -> {
+					showSuccess("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
+					downloadStartDocuments();
+				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+		};
+	}
+	
+	private void downloadStartDocuments() {
+		showLoading("Descargando TA (Alta) ....");
+		employeeDraftObject.downloadTa(s -> {
+			showSuccess("TA (Alta)",
+					"Se ha descargado el TA (Alta) del trabajador. El documento se encuentran en el apartado de Documentos");
+			downloadStartIdc();
+		}, f -> {
+			showError("Error obtenci\u00F3n TA (Alta)", f.getMessage());
+			downloadStartIdc();
+		}, "ALTA");
+	}
+
+	private void downloadStartIdc() {
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				showLoading("Descargando IDC....");
+				employeeDraftObject.downloadIdc(null, s -> showSuccess("IDC",
+						"Se ha descargado el IDC del trabajador. El documento se encuentran en el apartado de Documentos"),
+						f -> showError("Error obtenci\u00F3n IDC", f.getMessage()));
+			}
+		};
+		timer.schedule(2500);
+	}
+	
+	private void downloadTAEnd() {
+		showLoading("Descargando TA...");
+		employeeDraftObject.downloadTa(s -> showSuccess("TA (Baja)",
+				"Se han descargado el TA (Baja) del trabajador. El documento se encuentran en el apartado de Documentos"),
+				f -> showError("Error obtenci\u00F3n TA (Baja)", f.getMessage()), "BAJA");
+	}
+	
 	private void onClosePDF() {
 		showEmployee();
 	}
@@ -1154,10 +1356,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
-		//checkIDCLabel.setVisible(false);
-		//checkIDCButton.setVisible(false);
-		//unCheckIDCLabel.setVisible(false);
-		//unCheckIDCButton.setVisible(false);
+		checkIDCLabel.setVisible(false);
+		checkIDCButton.setVisible(false);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
 
 		deckPanel.showWidget(PDF_VIEWER_INDEX);		
 	}
@@ -1177,10 +1379,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
-		//checkIDCLabel.setVisible(false);
-		//checkIDCButton.setVisible(false);
-		//unCheckIDCLabel.setVisible(false);
-		//unCheckIDCButton.setVisible(false);
+		checkIDCLabel.setVisible(false);
+		checkIDCButton.setVisible(false);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
 		
 		deckPanel.showWidget(EMPLOYEE_INDEX);		
 	}
@@ -1243,17 +1445,23 @@ public abstract class EmployeeDraft extends Composite {
 	
 	public void disableSistemaRED() {
 		contextMenu.getTa().setEnabled(false);
+		contextMenu.getTaEnd().setEnabled(false);
 		contextMenu.getIdc().setEnabled(false);
 		contextMenu.getIdcPlNss().setEnabled(false);
 		contextMenu.getSSPeculiarities().setEnabled(false);
+		contextMenu.getAltaConsolidadaDelete().setEnabled(false);
+		contextMenu.getComunicateAFI().setEnabled(false);
 	}
 
 	public void enableSistemaRED() {
 		initializeIdcDateListBox();
 		contextMenu.getTa().setEnabled(true);
+		contextMenu.getTaEnd().setEnabled(true);
 		contextMenu.getIdc().setEnabled(true);
 		contextMenu.getIdcPlNss().setEnabled(true);
 		contextMenu.getSSPeculiarities().setEnabled(true);
+		contextMenu.getAltaConsolidadaDelete().setEnabled(true);
+		contextMenu.getComunicateAFI().setEnabled(true);
 	}
 
 	private static <T> List<T> filterEven( List<T> list ){
@@ -1262,6 +1470,18 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private static <T> List<T> filter( List<T> list , Function<Integer, Boolean> filter){
 		return IntStream.range(0, list.size()).filter( i -> filter.apply(i)).mapToObj(i -> list.get(i) ).collect(Collectors.toList());
+	}
+	
+	// ------------------------------------------------- TGSS status
+
+	private void checkTGSSStatus() {
+		Date startDate = employeeDraftObject.getContractData().getStartDate();
+		Date endDate = employeeDraftObject.getContractData().getEndDate();
+
+		setVisible(contextMenu.getTaEnd().getElement(), null != endDate);
+		setVisible(contextMenu.getAltaConsolidadaDelete().getElement(),
+				DateUtils.isAfterOrEquals(new Date(), startDate));
+		setVisible(contextMenu.getComunicateAFI().getElement(), employeeDraftObject.isComunica());
 	}
 	
 	// ------------------------------------------------- Aon Messages panel

@@ -134,6 +134,7 @@ export class AonUser extends AonElement {
 		if(this.isPersonalizado()) {
 			this.buildAppSelect(undefined);
 		}
+		this.buildDevSelect();
 		this.apps.forEach((app, i) => {
 			let application = getApp(app);
 			if(application){
@@ -449,7 +450,58 @@ export class AonUser extends AonElement {
 		});
 		d.open();
 	}
+	
+	buildDevSelect() {
+		if(this.isBeta()) {
+			let table = this.getElement('aonUserRoleTable');
 
+			let tr = document.createElement('tr');
+			table.appendChild(tr);
+			let td1 = document.createElement('td');
+			td1.style.width = '30px';
+			td1.style.height = '40px';
+			tr.appendChild(td1);	
+
+			let icon = document.createElement('i');
+			icon.className = 'material-icons';
+			icon.innerHTML = 'code';
+			td1.appendChild(icon);
+
+			let td2 = document.createElement('td');
+			td2.style.height = '40px';
+			tr.appendChild(td2)
+
+			let span2 = document.createElement('span');
+			span2.style.padding = '10px';
+			span2.style.fontWeight = 'bold';
+			span2.style.color = '#5f6368';
+			span2.innerHTML = 'Desarrollador';
+			td2.appendChild(span2);
+
+			let td3 = document.createElement('td');
+			td3.style.height = '40px';
+			tr.appendChild(td3);
+			let id = this.SWITCH + 'DEV';
+			td3.innerHTML = `<aon-switch id="${id}"> </aon-switch>`;
+			let aonSwitch = this.getElement(id);
+			let active = this.isDev();
+			aonSwitch.checked = active;
+			
+			let td4 = document.createElement('td');
+			tr.appendChild(td4);
+
+			aonSwitch.addEventListener('change', () => {
+				this.updateRoles([{
+					app: 'DEV',
+					role: 'DEV',
+					user: this.user.id,
+					active: aonSwitch.isChecked()
+				}]);
+			});
+
+		}
+	}
+	
 	buildAppSelect(app) {
 		if((this.isEmployee() && EmployeeApps.includes(app.app))
 	 			|| (this.isEnterprise() && EnterpriseApps.includes(app.app))
@@ -462,7 +514,7 @@ export class AonUser extends AonElement {
 			td1.style.width = '30px';
 			td1.style.height = '40px';
 			tr.appendChild(td1);
-
+			
 			if(!app) {
 				let icon = document.createElement('i');
 				icon.className = 'material-icons';
@@ -633,6 +685,10 @@ export class AonUser extends AonElement {
 		return this.user.roles && this.user.roles.includes('ADMIN');
 	}
 
+	isDev() {
+		return this.user.roles && this.user.roles.includes('DEV');
+	}
+
 	isEmployee() {
 		return this.user.roles && this.user.roles.includes('EMPLOYEE') && !this.isEnterprise();
 	}
@@ -679,24 +735,29 @@ export class AonUser extends AonElement {
 	}
 
 	updateRole(role) {
-		let bool = true;
-		this.user.roles.forEach((item, i) => {
-			if(role === Role.EMPLOYEE && (item.includes('PORTAL') || item.includes('MANAGER'))){
-				this.user.roles.splice(i, 1);
-			} 
-			if(role === Role.ENTERPRISE && item.includes('MANAGER')){
-				this.user.roles.splice(i, 1);				
-			}
- 			if(item === role.role) {
-				bool = false;
-				if(!role.active) 
-					this.user.roles.splice(i, 1);
-			}
-		});
-		if(bool && role.active) {
-			this.user.roles.push(role.role);
+        let bool = true;
+		if(role === Role.EMPLOYEE) {
+			this.user.roles = this.user.roles
+				.filter(r => !r.includes('PORTAL') 
+					&& !r.includes('MANAGER'));
+		} else if(role === Role.ENTERPRISE) {
+			this.user.roles = this.user.roles
+				.filter(r => !r.includes('MANAGER'));
 		}
-	}
+
+        this.user.roles.forEach((item, i) => {
+            if(item === role.role) {
+                bool = false;
+                if(!role.active){
+                    this.user.roles = this.user.roles.filter(r => !r.includes(role.role));
+                }
+            }
+        });
+
+        if(bool && role.active) {
+            this.user.roles.push(role.role);
+        }
+    }
 
 	setUser(user) {
 		this.user = user;

@@ -983,8 +983,9 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 					, Pattern.CASE_INSENSITIVE);	
 	
 	//Formación Profesional............................    0,60%    9,86
+	//recaudación conjunta     Formación Profesional.......    0,60%    7,16
 	private static final Pattern  FP_E = 
-			Pattern.compile("^\\s*Formaci.n\\s*Profesional\\.{2,}\\s*(?<percent>\\d{1,2},\\d{2})?%?\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?\\s*$"
+			Pattern.compile("^(\\s*recaudaci.n\\s*conjunta)?\\s*Formaci.n\\s*Profesional\\.{2,}\\s*(?<percent>\\d{1,2},\\d{2})?%?\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 	
 	//recaudación conjunta 

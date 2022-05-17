@@ -60,12 +60,12 @@ public class Sepe {
 
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String nif, Date fecha) throws SepeException {
-			return Certificado.certEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+			return Certificado.getCertEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);
 	}
 
 	public static byte[] certEnterprise(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Certificates certificates) throws SepeException {
-			return Certificado.certEnterprise(certificateInputStream, certificatePassword, certificateType, certificates);
+			return Certificado.sendCertEnterprise(certificateInputStream, certificatePassword, certificateType, certificates);
 	}
 	
 	public static String sendContract(final InputStream certificateInputStream, final String certificatePassword,

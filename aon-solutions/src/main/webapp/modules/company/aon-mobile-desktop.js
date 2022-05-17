@@ -1,11 +1,13 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
-import { CSS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import {AonElement} from '../../components/AonElement';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import '../invoice/aon-invoice-panel.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
+import { Apps, getAppsByDur } from '../../services/app.js';
+import { AonSaltra } from '../laboral/aon-saltra.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -44,7 +46,9 @@ export class AonMobileDesktop extends AonElement {
 		this.initialize();
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
-			this.build();
+			if(!this.openFirstApp(this.dur)){
+				this.build();
+			}
 		});
 	}
 
@@ -90,16 +94,26 @@ export class AonMobileDesktop extends AonElement {
 					notice = await getUserNotice();
 				}
 			}
-			
-			if(notice){
-				this.buildNotifications(notice);
-			}
+
+			this.buildNotifications(notice);
 
 			await this.buildTimeControl();
 		} catch (error) {
 			console.log(error);
 		}
+	}
 
+	openFirstApp(dur){
+		const appsOpen = getAppsByDur(dur).filter(app=>  ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+
+		if(appsOpen && appsOpen.length===1){
+			let app = appsOpen[0];
+			if( app.app === Apps.AON_SALTRA.app ){
+				this.rootPanel(new AonSaltra())
+				return true;
+			}
+		}
+		return false;
 	}
 
 	async buildCompany() {
@@ -155,41 +169,65 @@ export class AonMobileDesktop extends AonElement {
 		this.getElement(this.DIV_PARENT).appendChild(div);
 		this.clearElement(div);
 
-		let titleA = this.createElement(TAG.DIV);
-		titleA.className = 'aonSidenavTitle';
-		titleA.innerHTML = 'TAREAS PENDIENTES';
-		div.appendChild(titleA);
+		if(notice){		
+			let isRemoved = true;
 
-		let ul = this.createElement(TAG.UL);
-		ul.classList.add(CSS.AON_UL);
-		ul.classList.add(CSS.AON_CLIP);
-		div.appendChild(ul);
+			let titleA = this.createElement(TAG.DIV);
+			titleA.className = 'aonSidenavTitle';
+			titleA.innerHTML = 'TAREAS PENDIENTES';
+			div.appendChild(titleA);
 
-		if(this.getDur().isInvoice()){			
-			let inboxCount = 0;
-			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
-				inboxCount = notice.invoice.inbox.count;
+			let ul = this.createElement(TAG.UL);
+			ul.classList.add(CSS.AON_UL);
+			ul.classList.add(CSS.AON_CLIP);
+			div.appendChild(ul);
+	
+			if(this.getDur().isInvoice()){
+				let inboxCount = 0;
+				if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+					inboxCount = notice.invoice.inbox.count;
+				}
+	
+				let rejectedCount = 0;
+				if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+					rejectedCount = notice.invoice.rejected.count;
+				}
+			
+				ul.appendChild(this.buildNotificationsLi(MSG.PENDING_INVOICES, MATERIAL_ICONS.INBOX, inboxCount, () => {
+					if(inboxCount > 0) {
+						this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
+					}
+				}));
+				
+				ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, MATERIAL_ICONS.REPORT, rejectedCount, () => {
+					if(rejectedCount > 0) {
+						this.rootPanelHtml('<aon-invoice-panel status="rejected"></aon-invoice-panel>');
+					}
+				}));
+				isRemoved = false;
+			}	
+
+			if( this.getDur().isMessenger()){
+				
+				let requestCount = 0;
+
+				if(notice.solicitudes && notice.solicitudes.task_holder) {
+					requestCount = notice.solicitudes.task_holder;
+				}
+				if(requestCount>0){
+					ul.appendChild(
+						this.buildNotificationsLi(MSG.REQUESTS_RECEIVED, MATERIAL_ICONS.ASSIGNMENT, requestCount, () =>  this.rootPanel(new AonMessenger()) )
+					);
+					isRemoved = false;
+				}
 			}
 
-			let rejectedCount = 0;
-			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
-				rejectedCount = notice.invoice.rejected.count;
+			if(isRemoved){
+				try {
+					div.remove();
+				} catch(e){}
 			}
-		
-			ul.appendChild(this.buildNotificationsLi(MSG.PENDING_INVOICES, 'inbox', inboxCount, () => {
-				if(inboxCount > 0) {
-					this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
-				}
-			}));
-			ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, 'report', rejectedCount, () => {
-				if(rejectedCount > 0) {
-					this.rootPanelHtml('<aon-invoice-panel status="rejected"></aon-invoice-panel>');
-				}
-			}));
 		}
-		ul.appendChild(
-			this.buildNotificationsLi('Solicitudes', 'assignment', 0, () =>  this.rootPanel(new AonMessenger()) )
-		);
 	}
 
 	async buildTimeControl() {
@@ -241,7 +279,7 @@ export class AonMobileDesktop extends AonElement {
 		li.style.lineHeight = '40px';
 		// li.style.borderBottom = '1px solid #ddd';
 
-		let i = this.createElement('i');
+		let i = this.createElement(TAG.I);
 		i.className = 'material-icons aonVerticalMiddle';
 		i.innerHTML = icon;
 		li.appendChild(i);
@@ -258,13 +296,13 @@ export class AonMobileDesktop extends AonElement {
 		let sp = this.createElement(TAG.SPAN);
 		sp.style.float = 'right';
 
-		let i2 = this.createElement('i');
+		let i2 = this.createElement(TAG.I);
 		i2.className = 'material-icons aonAvatar';
-		i2.innerHTML = 'keyboard_arrow_right';
+		i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
 		sp.appendChild(i2);
 		li.appendChild(sp);
 
-		li.addEventListener('click', () => fn());
+		li.addEventListener(EVENT.CLICK, () => fn());
 		return li;
 	}
 

@@ -51,7 +51,7 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response){
 		// Request Type		
 		// super.doGet(request, response);
-		AonApiData api = initialize(request, false); // Provisional: false para que no compruebe el token
+		AonApiData api = initialize(request, false, "GET"); // Provisional: false para que no compruebe el token
 
 		String type = api.getData().getString("type");
 		Integer typeIdx = Integer.parseInt(type);
@@ -63,9 +63,10 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		Connection connection = null;
 		
 		try {
+			JSONObject params = api.getData();
 			// Domian and User
-			String userLogin = api.getData().getString("login");
-			String domainName = api.getData().getString("domain");
+			String userLogin =  !params.optString("login").isEmpty() ? params.getString("login") : params.getString("userLogin");
+			String domainName = !params.optString("domain").isEmpty() ? params.getString("domain") : params.getString("domainName"); 
 			
 			connection = AonServletUtils.getConnection(domainName);
 			

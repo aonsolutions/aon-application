@@ -9,6 +9,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -27,7 +28,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AccountingInvoiceTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "sig.aonsolutions.es";
 	private static Integer DOMAIN_ID = 5;
 	private static String LOGIN = "jgarcia";
@@ -170,7 +171,7 @@ public class AccountingInvoiceTest {
 		
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 
 	

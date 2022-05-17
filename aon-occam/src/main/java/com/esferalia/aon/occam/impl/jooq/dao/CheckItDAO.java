@@ -21,6 +21,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
@@ -48,14 +49,14 @@ public class CheckItDAO {
 	}
 	
 	public static com.esferalia.aon.occam.api.model.Enterprise getEnterprise(Integer domainId, String domainName, String user) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
 			Integer enterpriseId = getEnterpriseId(aonContext, domainId);
 			return AON.getEnterprise(domainName, domainId, user, enterpriseId);
 		}
 	}
 	
 	public static Integer getParentDomain(String domainName, Integer domainId, String user) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
 			return aonContext.getDslContext()
 			.select(DOMAIN.PARENT)
 			.from(DOMAIN)
@@ -70,8 +71,8 @@ public class CheckItDAO {
 		if (checkItEnterpriseid == null || checkItEnterpriseid == 0)
 			return false;
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
-			return aonContext.getDslContext().transactionResult(confi ->
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			return aonContext.getDslContext().transactionResult(config ->
 				aonContext.getDslContext()
 				.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
 				.values(domainId

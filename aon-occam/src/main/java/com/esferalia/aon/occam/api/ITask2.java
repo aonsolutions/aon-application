@@ -1,14 +1,17 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
+
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
+import com.esferalia.aon.occam.api.model.task.TaskCounts;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 
 public interface ITask2 {
@@ -20,8 +23,8 @@ public interface ITask2 {
 	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Task saveTask(AONContext ctx, Task task);
 	public void deleteTask(AONContext ctx, Integer id);
-	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter);
-	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver);
+	public Map<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver);
+	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);

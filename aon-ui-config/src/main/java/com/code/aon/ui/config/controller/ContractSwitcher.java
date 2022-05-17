@@ -3,8 +3,6 @@ package com.code.aon.ui.config.controller;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
@@ -13,7 +11,6 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,13 +27,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.ContractData;
-import com.code.aon.ui.config.DomainData;
 import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractSwitcher implements
@@ -144,7 +138,7 @@ public class ContractSwitcher implements
 	private List<Integer> getUserScopes() throws ManagerBeanException {
 		List<Integer> scopes = null;
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		AONContext ctx = AONContext.getAONContext(getDomainNameURL(), getDomainId(), getCurrentUser());
+		CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(), getDomainId(), getCurrentUser());
 		try {
 			scopes = ctx
 					.getDslContext()
@@ -154,7 +148,7 @@ public class ContractSwitcher implements
 		} catch ( Throwable th ) {
 			LOGGER.error(th.getMessage(), th);
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}						
 		return scopes;
 	}
@@ -180,7 +174,7 @@ public class ContractSwitcher implements
 
 	private void initializeModel() throws ManagerBeanException {
 		
-		AONContext ctx = AONContext.getAONContext(getDomainNameURL(),getDomainId(),getCurrentUser());
+		CloseableAONContext ctx = AONContext.getAONContext(getDomainNameURL(),getDomainId(),getCurrentUser());
 		LinkedList<ContractData> contracts = new LinkedList<ContractData>();
 		ctx
 		.getDslContext()
@@ -209,7 +203,7 @@ public class ContractSwitcher implements
 		})				
 		;
 
-		ctx.finalize();
+		ctx.close();
 		setModel(new SerializableListDataModel(contracts));
 	}
 

@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.mysql.jdbc.Driver;
@@ -19,7 +20,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class FiscalMatrixTest {
 
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	private static String DOMAIN_NAME = "romero.ecastellano.euk";
 	private static Integer DOMAIN_ID = 15625;
 	private static String USER = "noemi";
@@ -32,7 +33,7 @@ public class FiscalMatrixTest {
 	
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 
 	@Test
