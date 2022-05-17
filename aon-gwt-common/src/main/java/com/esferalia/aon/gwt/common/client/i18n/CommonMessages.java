@@ -1664,7 +1664,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Participaciones directas de la declarante en otras sociedades y de otras personas o entidades en la declarante a la fecha de cierre del per\u00EDodo declarado")
 	String participationsTitle();
 
-	@DefaultMessage("Participaciones de la declarante en otras sociedades")
+	@DefaultMessage("Participaciones de la declarante en otras entidades")
 	String participationsOut();
 
 	@DefaultMessage("Participaciones de personas o entidades en la declarante")

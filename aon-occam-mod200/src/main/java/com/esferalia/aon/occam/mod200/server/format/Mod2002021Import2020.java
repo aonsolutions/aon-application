@@ -209,20 +209,21 @@ public class Mod2002021Import2020 {
 		,PAG2  ( new IPropertyFiller[] {
 				
 			 (mod200old,mod200new) -> mod200new.getAdministrators().addAll(mod200old.getAdministrators())       // A. Relación de administradores
-			,(mod200old,mod200new) -> mod200new.getParticipationsOut().addAll(mod200old.getParticipationsOut()) // B. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado
+			 // FALTA - CONFIRMAR QUE DESAPARECE LA CASILLA b) Y SE DESPLAZAN EL RESTO PARA ARRIBA, DEPENDE COMO LO DEJE AL FINAL, HABRA QUE RETOCAR LOS IMPORTES QUE SE TRASPASEN AHORA
+			,(mod200old,mod200new) -> mod200new.getParticipationsOut().addAll(mod200old.getParticipationsOut()) // B1. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado
 			
 		})
 		
 		,PAG2B  ( new IPropertyFiller[] {
 				
-			(mod200old,mod200new) -> mod200new.getParticipationsIn().addAll(mod200old.getParticipationsIn())   // D. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
+			(mod200old,mod200new) -> mod200new.getParticipationsIn().addAll(mod200old.getParticipationsIn())   // B2. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
 				                                      
 		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002021Key.POR51, mod200old.getDoubleValue(Mod2002020Key.POR51))  // B2. Suma de porcentajes de participación de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado 
 		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002021Key.PORES, mod200old.getDoubleValue(Mod2002020Key.PORES))  // B2. Suma de porcentajes de participaciones en situaciones especiales
 		    
-		    ,(mod200old,mod200new) -> mod200new.getMinorEntities().addAll(mod200old.getMinorEntities())   // E. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+		    ,(mod200old,mod200new) -> mod200new.getMinorEntities().addAll(mod200old.getMinorEntities())   // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 		    
-		    ,(mod200old,mod200new) -> mod200new.getUteForeign().addAll(mod200old.getUteForeign())         // F. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
+		    ,(mod200old,mod200new) -> mod200new.getUteForeign().addAll(mod200old.getUteForeign())         // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
 		    
 		})
 		
@@ -717,6 +718,7 @@ public class Mod2002021Import2020 {
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.RC1165, mod200old.getDoubleValue(Mod2002020Key.RC996)) // 2020
             
             // Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994) - Inversiones anticipadas
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.RC2442, mod200old.getDoubleValue(Mod2002020Key.RC2443)) // 2017
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.RC2444, mod200old.getDoubleValue(Mod2002020Key.RC2445)) // 2018
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.RC2446, mod200old.getDoubleValue(Mod2002020Key.RC2447)) // 2019
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.RC1176, mod200old.getDoubleValue(Mod2002020Key.RC2451)) // 2020
@@ -802,7 +804,7 @@ public class Mod2002021Import2020 {
     		  (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2684, mod200old.getDoubleValue(Mod2002020KeyDC.DC2685))
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2689, mod200old.getDoubleValue(Mod2002020KeyDC.DC2690))
 //    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2694, mod200old.getDoubleValue(Mod2002020KeyDC.DC2695))
-    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2699, mod200old.getDoubleValue(Mod2002020KeyDC.DC2700))
+//    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2699, mod200old.getDoubleValue(Mod2002020KeyDC.DC2700))
 //    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2704, mod200old.getDoubleValue(Mod2002020KeyDC.DC2705))
 //    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2709, mod200old.getDoubleValue(Mod2002020KeyDC.DC2710))
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2714, mod200old.getDoubleValue(Mod2002020KeyDC.DC2715))
@@ -819,17 +821,18 @@ public class Mod2002021Import2020 {
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2754, mod200old.getDoubleValue(Mod2002020KeyDC.DC2755))	
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2854, mod200old.getDoubleValue(Mod2002020KeyDC.DC2855))
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2859, mod200old.getDoubleValue(Mod2002020KeyDC.DC2860))
+  		    , (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2864, mod200old.getDoubleValue(Mod2002020KeyDC.DC2865))
+  		    , (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2869, mod200old.getDoubleValue(Mod2002020KeyDC.DC2870))
+  		    , (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2874, mod200old.getDoubleValue(Mod2002020KeyDC.DC2875))
+  		    , (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2879, mod200old.getDoubleValue(Mod2002020KeyDC.DC2880))
+    		
         		
         })
         
         ,PAG26QUA ( new IPropertyFiller[] {
         		
         	// Detalle de las correcciones al resultado de la cuenta de pérdidas y ganancias (cont.)        		
-    		  (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2864, mod200old.getDoubleValue(Mod2002020KeyDC.DC2865))
-    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2869, mod200old.getDoubleValue(Mod2002020KeyDC.DC2870))
-    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2874, mod200old.getDoubleValue(Mod2002020KeyDC.DC2875))
-    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2879, mod200old.getDoubleValue(Mod2002020KeyDC.DC2880))
-    		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2884, mod200old.getDoubleValue(Mod2002020KeyDC.DC2885))
+    		  (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2884, mod200old.getDoubleValue(Mod2002020KeyDC.DC2885))
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2889, mod200old.getDoubleValue(Mod2002020KeyDC.DC2890))
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2894, mod200old.getDoubleValue(Mod2002020KeyDC.DC2895))
     		, (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021KeyDC.DC2899, mod200old.getDoubleValue(Mod2002020KeyDC.DC2900))

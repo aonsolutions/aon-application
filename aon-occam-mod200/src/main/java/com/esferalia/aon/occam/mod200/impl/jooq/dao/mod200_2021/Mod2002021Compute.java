@@ -36,6 +36,8 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021LQ561Key;
 
 public class Mod2002021Compute {
 	
+	// FALTA - REVISAR CALCULOS CON DOCUMENTO PADIS
+	
 	public static EnumMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new EnumMap<Mod2002021Key,String>(Mod2002021Key.class);
 		
 	static {
@@ -450,6 +452,7 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1830,"(BN103B==0||BN1829==0||LQ562==0)?(BN1828):(round(BN1828*BN103B/BN1829))");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2198,"(BN103B==0||BN2197==0||LQ562==0)?(BN2196):(round(BN2196*BN103B/BN2197))");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2321,"(BN103B==0||BN2320==0||LQ562==0)?(BN2319):(round(BN2319*BN103B/BN2320))");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN204 ,"(BN103B==0||BN203==0 ||LQ562==0)?(BN199 ):(round(BN199 *BN103B/BN203 ))");
 		addBreakdown(Mod2002021BN1344Key.values(), Mod2002021Key.BN1344);
 		
 		// DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
@@ -475,6 +478,7 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1835,"(BN103D==0||BN1834==0||LQ562==0)?(BN1833):round(BN1833*BN103D/BN1834)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2203,"(BN103D==0||BN2202==0||LQ562==0)?(BN2201):round(BN2201*BN103D/BN2202)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2326,"(BN103D==0||BN2325==0||LQ562==0)?(BN2324):round(BN2324*BN103D/BN2325)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN209 ,"(BN103D==0||BN208==0 ||LQ562==0)?(BN207) :round(BN207 *BN103D/BN208 )");
 		addBreakdown(Mod2002021BN571Key.values(),Mod2002021Key.BN571);
 
 		// Casilla 573: DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)
@@ -495,7 +499,8 @@ public class Mod2002021Compute {
 		
 	    // Casilla 588: Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI, DT 24ª.3 LIS y art. 27.3 primero Ley 49/2002)
 		// Lleva 2 totales, la fila de las casillas 634, 635 y 636 y la fila de las casillas 831, 588, 832
-		addBreakdown(Mod2002021BN588Key.values(), Mod2002021Key.BN635, true, Mod2002021Key.BN1087, Mod2002021Key.BN1683);
+		// FALTA - REVISAR TOTALES CON EL DOCUMENTO PADIS
+		addBreakdown(Mod2002021BN588Key.values(), Mod2002021Key.BN635, true, Mod2002021Key.BN1626, Mod2002021Key.BN1683);
 		addBreakdown(Mod2002021BN588Key.values(), Mod2002021Key.BN588, true, null, Mod2002021Key.BN1683);
 
 		// Casilla 565: Deducción donaciones a entidades sin fines de lucro (Ley 49/2002)		
@@ -505,6 +510,7 @@ public class Mod2002021Compute {
 		addBreakdown(Mod2002021BN590Key.values(), Mod2002021Key.BN590);
 		
 		// Casilla 082: Deducciones sin límite I + D + i
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN919 ,"round(BN918 *0.8)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN976 ,"round(BN589 *0.8)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN823 ,"round(BN822 *0.8)");
@@ -520,7 +526,9 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2246,"round(BN2245*0.8)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2250,"round(BN2249*0.8)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2392,"round(BN2391*0.8)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2396,"round(BN2395*0.8)");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2396,"round(BN2395*0.8)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1091,"round(BN1090*0.8)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1095,"round(BN1094*0.8)");		
 		addBreakdown(Mod2002021BN082Key.values(),Mod2002021Key.BN082,true);
 		
 		// Casilla 1040: Deducción por reversión de medidas temporales DT 37ª.1 LIS
@@ -536,7 +544,7 @@ public class Mod2002021Compute {
 	
 	// LIQUIDACION V
 	
-	static { 
+	static {
 		
 		// Cuota del ejercicio a ingresar o a devolver (Estado)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN599,"computeBN599()");

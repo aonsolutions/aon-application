@@ -79,16 +79,14 @@ public class Page02 extends PageAbs {
 	
 	private void paint() {
 		
-		// FALTA - EN EL PROYECTO DE ORDEN EL APARTADO PARTICIPACIONES DE LA DECLARANTE EN OTRAS SOCIEDADES, AHORA SE DEGLOSA EN DOS:
-		// - PARTICIPACIONES DIRECTAS DE LA DECLARANTE EN OTRAS SOCIEDADES A LA FECHA DE CIERRE DEL PERIODO DECLARADO
-		// - PARTICIPACIONES INDIRECTAS DE LA DECLARANTE EN OTRAS SOCIEDADES A LA FECHA DE CIERRE DEL PERIODO DECLARADO
-		// ADEMAS AÑADEN VARIOS CAMPOS EN LOS 2 APARTADOS Y VARIAS CASILLAS DE TOTALES		
-		// COMPROBAR CUANDO SALGA LA ORDEN DEFINITIVA, SI AL FINAL SE QUEDA COMO ESTÁ EN EL PROYECTO DE ORDEN O NO 
-		
-		// PARTICIPACIONES DE LA DECLARANTE EN OTRAS SOCIEDADES
 		basePanel.clear();
 		
+		// PARTICIPACIONES DE LA DECLARANTE EN OTRAS ENTIDADES		
+		
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
+		
+		addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
+		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -163,7 +161,7 @@ public class Page02 extends PageAbs {
 			}
 		}
 		
-		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE A LA FECHA DE CIERRE DEL PERIODO DECLARADO
+		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
 		

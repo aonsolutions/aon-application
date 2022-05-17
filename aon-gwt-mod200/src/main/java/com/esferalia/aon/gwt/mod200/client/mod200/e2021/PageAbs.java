@@ -464,4 +464,20 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	}
 	
+	protected void addLabel(String text) {
+		addLabel(text, false);		
+	}	
+	protected void addLabel(String text, boolean isBold) {
+		
+		Label label = new Label(text);
+		label.setStyleName(AON.CSS.aonMargin());
+		label.addStyleName(AON.CSS.aonWidthAlmostAll());
+		label.addStyleName(AON.CSS.aonBlockCenter());
+		if (isBold) 
+			label.addStyleName(AON.CSS.aonBold());
+		
+		basePanel.add(label);
+		
+	}
+	
 }
