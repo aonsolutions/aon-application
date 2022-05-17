@@ -2329,6 +2329,38 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public void deleteContractClause(String domainName, Integer clauseId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContractClauses.deleteContractClause(connection, clauseId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void importContractClauses(String domainName, List<Integer> clausesIds, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			JooqContractClauses.importContractClauses(connection, clausesIds, domainId, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public List<ContractClause> getDomainClauses(String domainName) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			
+			return JooqContractClauses.getDomainClauses(connection, domainId, parentDomainId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	@Override
 	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, String contractType) {

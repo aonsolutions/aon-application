@@ -2,8 +2,12 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+import com.google.gwt.view.client.ProvidesKey;
+
 public class ContractClause implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private Integer domain;
 	private Integer contract;
@@ -11,6 +15,11 @@ public class ContractClause implements Serializable {
 	private String name;
 	private String description;
 	private Byte general;
+	
+	/**
+     * The key provider that provides the unique ID of a contract clause.
+     */
+    public static final ProvidesKey<ContractClause> KEY_PROVIDER = item -> item == null ? null : item.getId();
 	
 	public ContractClause() {
 		super();

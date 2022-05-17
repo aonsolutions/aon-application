@@ -565,7 +565,8 @@ public class JooqEmployee {
 				.where(CONTRACT_CLAUSE.CONTRACT.isNull())
 				.and(CONTRACT_CLAUSE.DOMAIN.eq(domainId)
 					.or(CONTRACT_CLAUSE.DOMAIN.eq(parentDomainId))
-				).fetch();
+				).and(CONTRACT_CLAUSE.GENERAL.eq((byte)1))
+				.fetch();
 		
 		for(Record clauseRecord : clauseRecords) {
 			dslContext.insertInto(CONTRACT_CLAUSE)
