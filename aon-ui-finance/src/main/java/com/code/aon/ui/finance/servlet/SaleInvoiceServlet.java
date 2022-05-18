@@ -71,6 +71,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -527,7 +528,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 		HashMap<String, Object> map = new HashMap<>();
 		JasperPrint jasperPrint = null;
 		Connection connection = null;
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		String domainName = "ibaigane.esferalia.net";
 		int domainId = 2013;
 		String login = "admin";

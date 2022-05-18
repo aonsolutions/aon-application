@@ -51,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,6 +126,7 @@ public class InvoiceTemplate {
 	float entriesStart;
 	float bottomExtra;
 	int predictedPages;
+	int currentInvoiceFirstPage;
 	PDFont regularFont;
 	PDFont boldFont;
 	
@@ -141,6 +143,70 @@ public class InvoiceTemplate {
 	PrintInvoiceConfiguration config;
 	byte[] logo;
 	List<String> legalLines;
+	
+	public InvoiceTemplate(CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
+		
+		if (invoices == null || invoices.isEmpty() || invoices.stream().allMatch(Objects::isNull))
+			throw new CanNotCreatePdfException("No invoice found.");
+		
+		this.document = new PDDocument();
+		this.company = company;
+		this.regularFont = PdfFonts.HELVETICA;
+		this.boldFont = PdfFonts.HELVETICA_BOLD;
+		
+		this.legalLines = Collections.emptyList();
+		this.pageNumber = 0;
+		this.msg = new InvoiceTemplateMsg(config.getLanguage());
+		this.config = config;
+		this.logo = logo;
+		
+		try {
+			for (Invoice invoice : invoices) {
+				
+				if (invoice == null)
+					continue;
+				
+				this.bottomExtra = 0;
+				String clientZip = invoice.getAddress() != null ? invoice.getAddress().getZip() : "";
+				
+				this.addressLanguage = determineStreetTypeLanguage(clientZip, config.getLanguage());
+
+				this.adapt	= config.getAdjustImage();
+				
+				if ((this.logo != null || (company != null && config.isCompany())) && (config.getHeader() != null && config.getHeader() < MIN_HEADER_FOR_LOGO))
+					this.top = MIN_HEADER_FOR_LOGO;
+				else
+					this.top	= config.getHeader();
+				
+				if (config.getFooter() == null || (config.getFooter() != null && config.getFooter() < MIN_FOOTER))
+					this.bottom	= MIN_FOOTER;
+				else
+					this.bottom = config.getFooter();
+
+				if (config.getBackground() != null)
+					this.background = config.getBackground().getData();
+
+				this.contents = this.drawFirstPage(document, company, invoice, config);
+				
+				this.y -= 10;
+				
+				
+				if (config.isDetailed())
+					this.drawDetailedEntries(document, company, invoice);
+				else
+					this.drawSimplifiedEntries(document, company, invoice, config);
+
+				this.drawBottomInfo(document, invoice, qrUrl, config.getTheme(), tbaiId);
+				this.drawJail(this.limit);
+				
+				this.contents.close();
+				this.drawFooter(document, company, config.getTheme());
+			
+			}
+		} catch (Exception e) {
+			throw new CanNotCreatePdfException(e);
+		}
+	}
 	
 	public InvoiceTemplate(CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
 		try {
@@ -344,7 +410,7 @@ public class InvoiceTemplate {
 				mediaStr = webStr + "    " + phoneStr + "    " + emailStr;
 			}	
 		
-			for (int i=0; i<this.pageNumber; i++) {
+			for (int i=currentInvoiceFirstPage; i<this.pageNumber; i++) {
 				contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
 				
 				if (company.getMedias() != null && !company.getMedias().isEmpty()) {
@@ -364,7 +430,7 @@ public class InvoiceTemplate {
 			
 				PDFToolkit.drawBox(contents, 20, 25, 555, 1, PdfColors.GRAY);
 			
-				String page = "Pag. " + (i+1) + " de " + pageNumber;
+				String page = "Pag. " + (i+1 - currentInvoiceFirstPage) + " de " + (pageNumber - currentInvoiceFirstPage);
 				
 				drawTextRight(contents
 					, new PDRectangle(560, 15, 15, 15)
@@ -426,6 +492,7 @@ public class InvoiceTemplate {
 	private PDPageContentStream drawFirstPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
 		PDPage page = createVerticalPage();
 		doc.addPage(page);
+		this.currentInvoiceFirstPage = this.pageNumber;
 		this.pageNumber++;
 		contents = new PDPageContentStream(doc, page);
 		height = page.getMediaBox().getHeight();
@@ -1250,8 +1317,8 @@ public class InvoiceTemplate {
 		
 		if (theme.getBoxBodyBackgroundColor() != null) {
 			
-			float startPoint = pageNumber < predictedPages ? bottom - BOTTOM_TOLERANCE : limit - BOTTOM_TOLERANCE;
-			float boxHeight = pageNumber < predictedPages ? y - bottom + BOTTOM_TOLERANCE : y - limit + BOTTOM_TOLERANCE;
+			float startPoint = pageNumber - currentInvoiceFirstPage < predictedPages ? bottom - BOTTOM_TOLERANCE : limit - BOTTOM_TOLERANCE;
+			float boxHeight = pageNumber - currentInvoiceFirstPage < predictedPages ? y - bottom + BOTTOM_TOLERANCE : y - limit + BOTTOM_TOLERANCE;
 			
 			drawBox(contents, 50, startPoint, 250 - BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
 			drawBox(contents, 300, startPoint, 70 - BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
@@ -1285,8 +1352,8 @@ public class InvoiceTemplate {
 		
 		if (theme.getBoxBodyBackgroundColor() != null) {
 			
-			float startPoint = pageNumber < predictedPages ? bottom - BOTTOM_TOLERANCE : limit - BOTTOM_TOLERANCE;
-			float boxHeight = pageNumber < predictedPages ? y - bottom + BOTTOM_TOLERANCE : y - limit + BOTTOM_TOLERANCE;
+			float startPoint = pageNumber - currentInvoiceFirstPage < predictedPages ? bottom - BOTTOM_TOLERANCE : limit - BOTTOM_TOLERANCE;
+			float boxHeight = pageNumber - currentInvoiceFirstPage < predictedPages ? y - bottom + BOTTOM_TOLERANCE : y - limit + BOTTOM_TOLERANCE;
 			
 			drawBox(contents, 50, startPoint, 429 + BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
 			drawBox(contents, 480, startPoint, 70, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);

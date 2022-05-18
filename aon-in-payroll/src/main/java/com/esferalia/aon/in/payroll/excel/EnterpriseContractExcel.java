@@ -38,6 +38,7 @@ import org.jooq.Result;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EnterpriseContractExcel {
@@ -66,7 +67,7 @@ public class EnterpriseContractExcel {
 	
 	public static void simpleEnterpriseContractGenerator (String domainName, String user, Integer domainId, OutputStream outputStream) {
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
 			List<EnterpriseContract> contracts = getEnterpriseContracts(aonContext, domainId);
 			contracts.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));

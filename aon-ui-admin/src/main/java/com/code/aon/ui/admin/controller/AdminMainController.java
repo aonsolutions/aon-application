@@ -1,9 +1,9 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.io.Serializable;
 
@@ -30,6 +30,7 @@ import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 public class AdminMainController implements IAdminConstants, Serializable {
 	
@@ -83,7 +84,7 @@ public class AdminMainController implements IAdminConstants, Serializable {
 	
 	private UserRecord getAdminDomainUser() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		AONContext ctx = AONContext.getAONContext(ds.getDomainNameURL(), ds.getDomainId());
+		CloseableAONContext ctx = AONContext.getAONContext(ds.getDomainNameURL(), ds.getDomainId());
 		Condition expirationCondition = USER.PASSWORDEXPIRATION.isNull()
 				.or(USER.PASSWORDEXPIRATION.gt(DSL.currentDate()));		
 		UserRecord user = null;
@@ -98,7 +99,7 @@ public class AdminMainController implements IAdminConstants, Serializable {
 		} catch ( Throwable th ) {
 			LOGGER.debug( th.getMessage(), th );
 		} finally {
-			ctx.finalize();	
+			ctx.close();	
 		}
 		return user;
 	}

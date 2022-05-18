@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -35,6 +36,15 @@ public class PdfMaker {
 	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
 			InvoiceTemplate template = new InvoiceTemplate(company, invoice, config, qrUrl, logo, tbaiId);
+			template.print(out);
+		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public static void printInvoice(OutputStream out, CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
+		try {
+			InvoiceTemplate template = new InvoiceTemplate(company, invoices, config, qrUrl, logo, tbaiId);
 			template.print(out);
 		} catch (CanNotCreatePdfException e) {
 			e.printStackTrace();

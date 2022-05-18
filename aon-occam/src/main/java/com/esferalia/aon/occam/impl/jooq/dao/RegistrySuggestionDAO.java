@@ -16,6 +16,7 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
@@ -89,7 +90,7 @@ public class RegistrySuggestionDAO {
 	}
 	
 	public static Stream<Registry> getGlobalSuggestionRegistries(RegistryFilter filter) {
-		try(AONContext ctx = GlobalDAO.getGlobalAONContext("")){
+		try(CloseableAONContext ctx = GlobalDAO.getGlobalAONContext("")){
 			return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE)
 					.from(REGISTRY)
 					.where(REGISTRY_PROPERTIES.getConditions(filter))

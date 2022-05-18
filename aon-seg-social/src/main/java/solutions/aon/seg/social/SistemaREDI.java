@@ -3,20 +3,9 @@ package solutions.aon.seg.social;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.clickAndCheckCode;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndCheckCode;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -56,17 +45,17 @@ import solutions.aon.seg.social.exception.OutOfServiceMotivation;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Liquidation;
-import solutions.aon.seg.social.object.SituacionEmpresa;
-import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
+import solutions.aon.seg.social.object.SituacionEmpresa;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -577,7 +566,10 @@ class SistemaREDI {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA.html");
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
+			
 			htmlPage = clickAndCheckCode(htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");

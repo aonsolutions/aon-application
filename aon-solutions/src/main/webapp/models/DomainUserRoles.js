@@ -290,7 +290,8 @@ export class DomainUserRoles {
   }
 
 	isComunica() {
-		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA));
+		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA)) 
+      || this.isComunicaPortal() || this.isComunicaManager();
 	}
 
 	isComunicaPortal() {
@@ -417,8 +418,25 @@ export class DomainUserRoles {
 		return this.hasApp(App.SELFCONTA) && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
 	}
 
+  hasSaltra() {
+		return this.hasApp(App.SALTRA);
+	}
+  
+  hasParentSaltra() {
+    return this.hasParentApp(App.SALTRA);
+  }
+
   isSaltra() {
-		return this.hasApp(App.SALTRA) && (this.isAdmin() || this.hasRole(Role.SALTRA));
+		return this.hasApp(App.SALTRA) && (this.isAdmin() || this.hasRole(Role.SALTRA))
+    || this.isSaltraPortal() || this.isSaltraManager();
+	}
+
+	isSaltraPortal() {
+		return this.hasSaltra() && (this.isAdmin() || this.hasRole(Role.SALTRA_PORTAL));
+	}
+
+	isSaltraManager() {
+		return this.hasSaltra() && (this.isAdmin() || this.hasRole(Role.SALTRA_MANAGER));
 	}
 
   isConfidential() {
@@ -440,8 +458,7 @@ export class DomainUserRoles {
   isEnterprise() {
     return this.hasRole(Role.ENTERPRISE);
   }
-
-
+  
   hasCustomView() {
     return this.hasApp(App.CUSTOM_VIEW);
   }

@@ -48,6 +48,7 @@ import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.payroll.EmployeeNotFoundexception;
 import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.payroll.TooManyITsException;
@@ -79,7 +80,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
 				
 		try (OutputStream os = resp.getOutputStream(); 
-			AONContext ctx = AONContext.getAONContext(domainName,userLogin)
+			CloseableAONContext ctx = AONContext.getAONContext(domainName,userLogin)
 			) {
 			
 			List<Integer> itIds = new ArrayList<Integer>();
@@ -421,7 +422,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	}
 
 	public static void addIT(String domainName, Integer domainId, String userLogin, IT it) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, userLogin)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, userLogin)) {
 			addIT(aonContext.getDslContext(), domainId, it);
 		}
 	}

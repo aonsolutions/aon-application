@@ -29,6 +29,7 @@ import com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV;
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @SuppressWarnings("serial")
@@ -79,7 +80,7 @@ public class CostCSVServlet extends HttpServlet {
 		
 		
 		try (ServletOutputStream sos = resp.getOutputStream();
-				AONContext aonContext = AONContext.getAONContext(domainName, user) ) {
+				CloseableAONContext aonContext = AONContext.getAONContext(domainName, user) ) {
 
 				if (enterpriseId == null || enterpriseId == 0)
 					enterpriseId = AON.getWorkplace(aonContext.getDomainName()

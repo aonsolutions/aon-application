@@ -1,6 +1,7 @@
 import { MSG, CONSTANT, AON_ICONS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
+
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
@@ -283,18 +284,25 @@ export const SELFCONTA = {
 export const AON_SALTRA = {
   app: CONSTANT.SALTRA,
   title: MSG.SALTRA,
+  tag: MSG.SALTRA,
   description: MSG.SALTRA,
+  access: [
+    {
+      value: "Asesor",
+      name: "Asesor",
+    },
+    {
+      value: "Empresa",
+      name: "Empresa",
+    },
+    {
+      value: "Empleado",
+      name: "Empleado",
+    },
+  ],
   icon: AON_ICONS.AON_SALTRA,
   color: "#002469",
   price: " ", // '-'
-};
-
-export const SALTRA = {
-  app: "saltra",
-  title: "Saltra",
-  description: "Saltra",
-  logo: "../assets/apps/saltra.png",
-  price: " ",
 };
 
 export const ALMA = {
@@ -412,9 +420,10 @@ export const Apps = {
   INVOICE,
   MESSENGER,
   NOTES,
+  AON_SALTRA,
 };
 export const AuxApps = { TOOLS };
-export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, SALTRA };
+export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
 export const Services = { OCR, CONVENIOS, BANK, AULA, CUSTOM_VIEW };
 
 export const AllApps = {
@@ -432,7 +441,7 @@ export const AllApps = {
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  SALTRA,
+  AON_SALTRA
 };
 
 export const getApp = (name) => {
@@ -454,6 +463,36 @@ export const getApp = (name) => {
     }
   }
   return undefined;
+};
+
+export const getAppsByDur = (dur) => {
+  let apps = [];
+  if( dur.isAccounting())
+    apps.push(Apps.ACCOUNTING);
+
+  if(dur.isFiscal())
+    apps.push(Apps.FISCAL);
+
+  if((dur.isComunicaManager() || dur.isComunicaPortal() ) && !dur.isPayroll())
+   apps.push(Apps.COMUNICA);
+
+  if(dur.isPayroll())
+    apps.push(Apps.PAYROLL);
+
+  if(dur.isDocumental())
+    apps.push(Apps.DOCUMENTAL);
+
+  if(dur.isTimecontrol())
+    apps.push(Apps.TIMECONTROL);
+
+  if(dur.isInvoice())
+    apps.push(Apps.INVOICE);
+
+  if(dur.isSaltra() && !dur.isPayroll() && !dur.isComunica()){
+    apps.push(Apps.AON_SALTRA);
+  }
+
+  return apps;
 };
 
 export const AccountingMenu = [

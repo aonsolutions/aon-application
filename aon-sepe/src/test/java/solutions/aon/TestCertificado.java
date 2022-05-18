@@ -26,7 +26,7 @@ public class TestCertificado {
 			String nif = "72740703Y";
 			@SuppressWarnings("deprecation")
 			Date fecha =  new Date("2016/05/06");
-			byte[] pdf = Certificado.certEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+			byte[] pdf = Certificado.getCertEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public class TestCertificado {
 			bd.setQuoteData(quoteDatas);
 		
 			
-			Certificado.certEnterprise(certificateInputStream, certificatePassword, certificateType,  bd.build());
+			Certificado.sendCertEnterprise(certificateInputStream, certificatePassword, certificateType,  bd.build());
 		} catch (SepeException e) {
 			e.printStackTrace();
 		} catch (IOException e1) {

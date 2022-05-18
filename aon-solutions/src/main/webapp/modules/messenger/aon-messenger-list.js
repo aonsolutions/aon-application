@@ -1,7 +1,7 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG, MATERIAL_ICONS } from "../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG, MATERIAL_ICONS, AON_ICONS } from "../../environments/environments.js";
 import { getTaskOne, getTasks } from "../../services/taskService.js";
 import { sortBy } from "../../services/utils.js";
 import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
@@ -14,6 +14,7 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { firstLetters, StringTwoLetters } from "../timecontrol/time-control/utils.js";
 import { createTagHtml } from "./shared/creationUtils.js";
+import { AonIcon } from "../../components/aon-icon.js";
 
 export class AonMessengerList extends AonElement {
   MORE;
@@ -450,17 +451,25 @@ export class AonMessengerList extends AonElement {
     icon_title:source,
   })
 
-  getIcon({source,status}){
-    let icon = getIconJson({source,status});
+  getIcon({source,status, parent}){
+    let iconJson = getIconJson({source,status});
 
     let span = this.createElement(TAG.SPAN);
-    span.style.color = icon.icon_color;
+    span.style.color = iconJson.icon_color;
     span.title = source;
 
-    let iOne = this.createElement(TAG.I);
-    iOne.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
-    iOne.textContent = icon.icon;
-    span.appendChild(iOne);
+    let icon = this.createElement(TAG.I);
+
+    if(parent) {
+      icon = new AonIcon();
+      icon.icon = AON_ICONS.AON_BRANCH;
+      icon.color = iconJson.icon_color;
+    } else {
+      icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
+      icon.textContent = iconJson.icon;
+    }
+
+    span.appendChild(icon);
 
     return span.outerHTML;
   }

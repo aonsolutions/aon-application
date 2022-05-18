@@ -109,6 +109,17 @@ export const createEnterpriseData = (parent) => {
 
 export const createContractData = (parent, isManager) => {
     let divC;
+     
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
+    divC.appendTo(parent);
+    const dateContract = createDate({
+        attributes:{
+            name:"fecha", 
+            id:"fecha", 
+            title:"Fecha"
+        }
+    }, divC.element)
+
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
@@ -119,16 +130,6 @@ export const createContractData = (parent, isManager) => {
             autocomplete: CONSTANT.OFF
         }
     }, divC.element);
- 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
-    divC.appendTo(parent);
-    const dateContract = createDate({
-        attributes:{
-            name:"fecha", 
-            id:"fecha", 
-            title:"Fecha"
-        }
-    }, divC.element)
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);

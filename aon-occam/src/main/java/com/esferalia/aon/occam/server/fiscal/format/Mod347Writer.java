@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -280,7 +281,7 @@ public class Mod347Writer {
 	// Obtiene el código de provincia de la dirección principal del declarante (se utiliza solo en Gipuzkoa)
 	private static Integer getRegistryMainAddressProvince(Mod347 mod347) {
 	
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(mod347.getDomainName(), mod347.getDomain(), null);
 			

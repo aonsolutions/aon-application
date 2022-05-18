@@ -2,9 +2,9 @@ package com.esferalia.aon.occam.impl.jooq.dao.api;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.LinkedList;
@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -151,7 +152,7 @@ public class InvoiceApiDAO {
 				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER))
 				.setInvoiceInfo(InvoiceInfoFiller.build(r));
 
-			try (AONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
+			try (CloseableAONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
 
 				invoice.setDetails(getInvoiceDetails(ctx, invoice.getId())
 					.collect(Collectors.toCollection(LinkedList::new)));
@@ -194,7 +195,7 @@ public class InvoiceApiDAO {
 				.setAccountCode(record.getValue(ACCOUNT.CODE))
 				.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION));
 		
-			try (AONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
+			try (CloseableAONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
 
 				invoiceDetail.setInvoiceTaxes(getInvoiceDetailTaxStream(ctx, invoiceDetail.getId())
 					.collect(Collectors.toCollection(LinkedList::new)));

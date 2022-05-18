@@ -14,6 +14,7 @@ import org.junit.Test;
 import com.esferalia.aon.jooq.tables.records.AccountRecord;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Repeat;
@@ -70,7 +71,7 @@ public class CRUDETest extends AbstractOccamTest {
 	}
 	
 	private static Set<String> getAllCodes() {
-		try (AONContext ctx = AONContext.getAONContext(getOccam())) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(getOccam())) {
 			return ctx.getDslContext()
 			.select(ACCOUNT.CODE)
 			.from(ACCOUNT)

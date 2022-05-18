@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.Optional;
 
 import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Raddress;
 import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.Workplace;
@@ -18,6 +17,7 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -87,7 +87,7 @@ public class Utilities {
 		
 		Optional<InputStream> optLogo = Optional.empty();
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, "")) {
 			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
 					f -> f.getTypeProperty().eq(RegistryAttachmentType.SIGNATURE.value())
 							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
@@ -106,7 +106,7 @@ public class Utilities {
 	public static Optional<InputStream> getLogo(String domainName) {
 		Optional<InputStream> optLogo = Optional.empty();
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, "")) {
 			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
 					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
 							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
@@ -118,7 +118,7 @@ public class Utilities {
 	}
 	
 	public static String getFullAddress (String domain, Integer salaryId) {
-		try (AONContext aonContext = AONContext.getAONContext(domain, "")) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, "")) {
 			RaddressRecord raddressReg = aonContext.getDslContext().select()
 			.from(Salary.SALARY)
 			.innerJoin(Contract.CONTRACT).onKey()
@@ -301,7 +301,7 @@ public class Utilities {
 	
 	public static String getDomainNameByEnterpriseId(String domain, Integer enterpriseId) {
 		try {
-			AONContext aonContext = AONContext.getAONContext(domain, "");
+			CloseableAONContext aonContext = AONContext.getAONContext(domain, "");
 			Integer dom = AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), "", enterpriseId).getDomain();
 			DomainRecord domainRecord = aonContext.getDslContext().select().from(DOMAIN).where(DOMAIN.ID.eq(dom)).fetchAnyInto(DOMAIN);
 			return domainRecord.getName();

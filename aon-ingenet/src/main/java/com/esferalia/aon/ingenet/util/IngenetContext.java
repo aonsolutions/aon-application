@@ -11,10 +11,11 @@ import org.jooq.impl.DSL;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDatabaseUtil;
 
-public class IngenetContext extends AONContext {
+public class IngenetContext extends CloseableAONContext{
 
 	private static Settings SETTINGS = null;
 	
@@ -43,18 +44,8 @@ public class IngenetContext extends AONContext {
 	private int domainId;
 	private String user;
 
-	public IngenetContext(DSLContext dslContext) {
-		super(dslContext);
-	}
-
-
-	public IngenetContext(Connection connection) {
-		super(DSL.using(connection,getDefaultSettings()));
-		
-	}
-
 	private IngenetContext(Connection connection, String domainName, int domainId, String user) {
-		super(connection);
+		super(connection, domainName, domainId, user);
 		
 		this.domainName = domainName;
 		this.domainId = domainId;

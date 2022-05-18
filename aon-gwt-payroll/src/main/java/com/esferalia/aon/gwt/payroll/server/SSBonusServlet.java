@@ -1,20 +1,11 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,31 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.jooq.DSLContext;
-import org.jooq.Record;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
-import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
-import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
-import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
-import com.esferalia.aon.gwt.payroll.shared.CCC;
-import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusService;
-import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.Parameter;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.google.gson.GsonBuilder;
-
-import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exception.SegSocialException;
 
 
 @MultipartConfig
@@ -92,7 +64,7 @@ public class SSBonusServlet extends HttpServlet implements SSBonusService {
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
 				
 		try (OutputStream os = resp.getOutputStream(); 
-			AONContext ctx = AONContext.getAONContext(domainName,userLogin)
+			CloseableAONContext ctx = AONContext.getAONContext(domainName,userLogin)
 			) {
 
 			List<SSBonusData> ssBonusDatas = new ArrayList<SSBonusData>();

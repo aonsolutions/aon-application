@@ -107,15 +107,14 @@
         <tr>
           <td>
             <div class="marginDocument grey">
-             #if( $task.getNote() )
-               <div>
-                <strong>Texto: </strong> $task.getNote()
-              </div>
-             #end
               <div>
                 <strong>Asunto: </strong> $task.getTitle()
               </div>
-
+             #if( $task.getNote() )
+               <div>
+                <strong>Nota: </strong> $task.getNote()
+              </div>
+             #end
               <div>
                 <strong>Fecha: </strong> $task.getDate()
               </div>

@@ -151,3 +151,9 @@ export const EXCEPTION_MESSAGE = {
   "CertificateNotFoundException":"Agregue un certificado para conectarse a la Seguridad social",
   "RevokedCertificateException":"El certificado que ésta usted utilizando está revocado"
 }
+
+
+export const APP_PARAMS_PAYROLL = {
+  APP_COMUNICA_CONTRACTS: "APP_COMUNICA_CONTRACTS",
+  APP_COMUNICA_QUOTE_GROUP: "APP_COMUNICA_QUOTE_GROUP"
+}

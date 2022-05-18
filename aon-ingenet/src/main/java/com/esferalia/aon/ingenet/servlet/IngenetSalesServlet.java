@@ -43,6 +43,7 @@ import com.esferalia.aon.ingenet.api.respuestaPedidos.RESPUESTAPEDIDOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
@@ -132,7 +133,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 			}
 		}
 		
-		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+		CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		List<Sales> salesList = null;
 		try {
 			if(ACCIONTYPE.RECUPERAR==params.getACCION()) {

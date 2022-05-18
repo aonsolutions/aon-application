@@ -30,6 +30,7 @@ import com.esferalia.aon.jooq.tables.IncomeDetail;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -114,7 +115,7 @@ public class QualityServlet extends HttpServlet{
 
 	
 	private JSONArray getDataResponseList(Domain domain, String login, Map<String, String[]> map) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx =AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			SelectConditionStep<Record> a = ctx.getDslContext().select()

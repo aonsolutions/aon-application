@@ -16,6 +16,7 @@ import org.jooq.Record1;
 import org.jooq.Result;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -65,7 +66,7 @@ public class GmailServlet extends HttpServlet {
 	}
 	
 	public static void updateRAddInfo(Domain domain, User user, Integer registry, String email){
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			Result<Record1<Integer>> data = ctx.getDslContext().select(RADDINFO.DOMAIN).from(RADDINFO).where(RADDINFO.REGISTRY.eq(registry)).and(RADDINFO.ATTRIBUTE.eq("GOOGLEMAIL")).fetch();
@@ -86,7 +87,7 @@ public class GmailServlet extends HttpServlet {
 	}
 	
 	public static void updateRmedia(Domain domain, User user, Integer registry, String email){
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			ctx.getDslContext().update(RMEDIA)

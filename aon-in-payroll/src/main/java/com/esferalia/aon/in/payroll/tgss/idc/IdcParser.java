@@ -299,7 +299,7 @@ public class IdcParser {
 	//TIPO CONTRATO: 289 INDEFINIDO.TIEMPO PARCIAL.TRANSFORMACION ALTA: 01-05-2018 BAJA:  
 	protected static final Pattern CONTRACT_TYPE_START_END = 
 	Pattern.compile(
-	"^TIPO\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]*).*ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
+	"^TIPO\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]*)(?<contractDescription>.*)ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//COEF.TIEMPO PARCIAL: 500 REDUCCIÓN JORNADA/COEFIC:  FECHA: 01-11-2019 EDAD: 55
