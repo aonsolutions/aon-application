@@ -1335,6 +1335,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		academicTitulationLB.clear();
 		
 		signBasicCopyLB.clear();
+		signBasicCopyLB.addItem("-","");
 		signBasicCopyLB.addItem("FIRMADAS POR LOS REPRESENTANTES LEGALES", "1");
 		signBasicCopyLB.addItem("NO EXISTE REPRESENTACION LEGAL", "2");
 		signBasicCopyLB.addItem("NO SE HA FACILITADO COPIA", "3");

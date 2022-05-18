@@ -6684,7 +6684,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void sendContractoCBSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+	public void sendContractoCBSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6699,6 +6699,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Date startDate = employeeContractInfo.getContractInfo().getStartDate();
 			Date endDate = employeeContractInfo.getContractInfo().getEndDate();
 			String signBasicCopy = employeeContractInfo.getContractSpecificData().getSignBasicCopy();
+			if(AonStringUtils.isBlank(signBasicCopy))
+				throw new IllegalArgumentException("El tipo de firma de copia basica es obligatorio");
 			Integer signType = Integer.parseInt(AonStringUtils.isBlank(signBasicCopy) ? "1" : signBasicCopy);
 			String workplaceAddress = employeeContractInfo.getContractInfo().getWorkplaceFullAddress();
 			String restContract = employeeContractInfo.getContractSpecificData().getBasicCopy();
