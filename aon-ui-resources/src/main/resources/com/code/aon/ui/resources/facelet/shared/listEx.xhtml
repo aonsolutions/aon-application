@@ -84,51 +84,17 @@
 	<ui:insert name="additionalDataTableContent"/>
 
 	<aon:if test="#{showDataScroller}">
-		<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
+		<!--<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
 			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
-	</aon:if>	
+	-->
+		<aon:aonScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
+			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
+	
+	</aon:if>
+	 
 	
 	<aon:if test="#{showAonPaginator}">
 	
-		<aon:div style="display:flex; margin: 1rem .5rem; align-items:flex-end;">
-									
-			<div class="aon-paginator-item">
-				<aon:outputText styleClass="aon-paginator-icon" style="background: url(#{aonResource.resolve['/images/a.svg']})" ></aon:outputText>	
-				<aon:outputText styleClass="aon-paginator-number" value="&lt;"> </aon:outputText>
-			</div>	
-
-			
-			<c:forEach  items="#{dataModel.wrappedData}" var="page" begin="#{controller.page &gt; 5 ? controller.page - 4 : 1}" end="#{controller.page &gt; 5 ? controller.page + 4 : 10}" step="1" varStatus="loop">
-				<aon:if test="#{loop.index == controller.page}">
-				
-					<aon:commandLink styleClass="aon-paginator-item selected" reRender="aonContent" id="button#{loop.index}">
-						<aon:outputText styleClass="aon-paginator-icon o" style="background: url(#{aonResource.resolve['/images/o.svg']})" ></aon:outputText>
-						<aon:outputText styleClass="aon-paginator-number" value="${controller.page}"></aon:outputText>
-						<f:setPropertyActionListener target="#{controller.page}" value="${loop.index}" />		
-					</aon:commandLink>			
-				
-				</aon:if>
-				
-				 <aon:if test="#{loop.index != controller.page}" id="button#{loop.index}"> 
-				
-					<aon:commandLink styleClass="aon-paginator-item" reRender="aonContent">
-						<aon:outputText styleClass="aon-paginator-icon o" style="background: url(#{aonResource.resolve['/images/o.svg']})" ></aon:outputText>
-						<aon:outputText  styleClass="aon-paginator-number" value="${loop.index}"></aon:outputText>
-						<f:setPropertyActionListener target="#{controller.page}" value="${loop.index}" />
-					</aon:commandLink>		
-				
-				</aon:if>
-			
-			</c:forEach>
-			
-			<div class="aon-paginator-item">
-				<aon:outputText styleClass="aon-paginator-icon" style="background: url(#{aonResource.resolve['/images/n.svg']})" ></aon:outputText>
-				<aon:outputText styleClass="aon-paginator-number" value="&gt;"> </aon:outputText>
-			</div>	
-					
-			<aon:outputText styleClass="aon-paginator-number" style="position: absolute; right: 2rem;  align-self: center;" value="Página #{controller.page} - #{dataModel.rowCount} Resultados"> </aon:outputText>
-			
-		</aon:div>
 	</aon:if>	
 
 </ui:composition>

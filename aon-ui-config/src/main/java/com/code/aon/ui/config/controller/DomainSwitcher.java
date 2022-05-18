@@ -92,7 +92,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public DomainSwitcher() {
 		try {
-			setPageLimit(100);
+			//setPageLimit(100);
 			setShowActive(true);
 			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
@@ -231,6 +231,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 							break;
 					}
 				}
+				
+				
 				setFilteredModel(new SerializableListDataModel(filteredList));
 				modelFilter = filter;
 			}
@@ -661,6 +663,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	@Override
 	public void setPage(int page) {
 		this.page = page;
+		System.out.println("Setting page to: " + page);
 	}
 	
 	public String getToken() {
