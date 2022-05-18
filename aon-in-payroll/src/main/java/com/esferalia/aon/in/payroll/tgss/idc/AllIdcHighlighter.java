@@ -100,11 +100,14 @@ public class AllIdcHighlighter implements IdcHighlighterListener {
 	@Override
 	public void onPEC(String code, String description, String tipo, String quota, String start, String end,
 			IdcHighlighter idcHighlighter) throws IOException {
-		idcHighlighter.highlight(code);
-		idcHighlighter.highlight(description);
-		idcHighlighter.highlight(tipo);
-		idcHighlighter.highlight(quota);
-		idcHighlighter.highlight(start);
+		idcHighlighter.highlightAll();
+		//idcHighlighter.highlight(code, description, tipo, quota, start, end, "", "");
+
+		//idcHighlighter.highlight(description);
+		//idcHighlighter.highlight(tipo);
+		//idcHighlighter.highlight(quota);
+		//idcHighlighter.highlight(start);
+		
 		// TODO Auto-generated method stub
 		
 	}

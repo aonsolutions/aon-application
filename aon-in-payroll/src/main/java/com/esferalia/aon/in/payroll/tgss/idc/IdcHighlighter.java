@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
@@ -39,8 +39,6 @@ import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.watson.util.AonCharSequenceUtils;
-import com.esferalia.aon.watson.util.AonCharUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IdcHighlighter {
@@ -61,12 +59,43 @@ public class IdcHighlighter {
 		Pattern pattern = Pattern.compile(regex);
 		List<TextPosition> patternPositions = getPositions(pattern, positions);
 		insert(doc, page, patternPositions, str);
+		addMetaData(patternPositions, str);
 	}
 
 	public void highlight(String pattern) throws IOException {
 		if ( AonStringUtils.isBlank(pattern))
 			return;
-		highlight(doc, page, getPositions(pattern, positions));
+		
+		List<TextPosition> patternPositions = getPositions(pattern, positions);
+		PDRectangle rect = getRectangle(page, patternPositions);
+		highlight(doc, page, rect);
+		
+	}
+
+	public void highlightAll() throws IOException {
+		highlightAll("");
+
+	}
+
+	public void highlightAll(String contents) throws IOException {
+		PDRectangle rect = getRectangle(page, positions);
+		highlight(doc, page, rect );
+		
+		if ( AonStringUtils.isNotBlank(contents)) {
+			annotate(page, rect, contents);
+		}
+
+		addMetaData(positions, contents);
+	}
+
+	public void annotateAll(String contents) throws IOException {
+		
+		if ( AonStringUtils.isNotBlank(contents)) {
+			PDRectangle rect = getRectangle(page, positions);
+			annotate(page, rect, contents);
+		}
+
+		addMetaData(positions, contents);
 	}
 
 	public void highlight(String pattern, String contents) throws IOException {
@@ -77,10 +106,12 @@ public class IdcHighlighter {
 		PDRectangle rect = getRectangle(page, patternPositions);
 		highlight(doc, page, rect );
 		annotate(page, rect, contents);
+
+		addMetaData(patternPositions, contents);
 	} 
 
-	public void highlight(String pattern1, String pattern2, String contents) throws IOException {
-		String regex = AonStringUtils.join(pattern1 , " ", pattern2).replaceAll("\\s", "\\\\s*");
+	public void highlight(String ...strings) throws IOException {
+		String regex = Arrays.stream(strings, 0, strings.length-1).collect(Collectors.joining(".*")).replaceAll("\\s", "\\\\s*");
 		if ( AonStringUtils.isBlank(regex))
 			return;
 		Pattern pattern = Pattern.compile(regex);
@@ -88,8 +119,51 @@ public class IdcHighlighter {
 		List<TextPosition> patternPositions = getPositions(pattern, positions);
 		PDRectangle rect = getRectangle(page, patternPositions);
 		highlight(doc, page, rect );
-		annotate(page, rect, contents);
+		
+		String contents = strings[strings.length-1];
+		if ( AonStringUtils.isNotBlank(contents)) {
+			annotate(page, rect, contents);
+		}
+		
+		addMetaData(patternPositions, contents);
 	}
+
+	public void annotate(String ...strings) throws IOException {
+		String regex = Arrays.stream(strings, 0, strings.length-1).collect(Collectors.joining(".*")).replaceAll("\\s", "\\\\s*");
+		if ( AonStringUtils.isBlank(regex))
+			return;
+		Pattern pattern = Pattern.compile(regex);
+
+		List<TextPosition> patternPositions = getPositions(pattern, positions);
+		PDRectangle rect = getRectangle(page, patternPositions);
+		
+		String contents = strings[strings.length-1];
+		if ( AonStringUtils.isNotBlank(contents)) {
+			annotate(page, rect, contents);
+		}
+		
+		addMetaData(patternPositions, contents);
+	}
+
+	private void addMetaData(List<TextPosition> positions, String highlight) {
+		String text = positions.stream().map(TextPosition::getUnicode).collect(Collectors.joining());
+		text = AonStringUtils.remove(text, ' ');
+		text = AonStringUtils.substring(text, 0, 15);
+		text = AonStringUtils.join("AON", "_", text );
+		doc.getDocumentInformation().setCustomMetadataValue(AonStringUtils.upperCase(text), highlight);
+	}
+
+//	public void highlight(String pattern1, String pattern2, String contents) throws IOException {
+//		String regex = AonStringUtils.join(pattern1 , " ", pattern2).replaceAll("\\s", "\\\\s*");
+//		if ( AonStringUtils.isBlank(regex))
+//			return;
+//		Pattern pattern = Pattern.compile(regex);
+//
+//		List<TextPosition> patternPositions = getPositions(pattern, positions);
+//		PDRectangle rect = getRectangle(page, patternPositions);
+//		highlight(doc, page, rect );
+//		annotate(page, rect, contents);
+//	}
 
 	public static void highlight( File file , File out,  IdcHighlighterListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = Loader.loadPDF(file)){
@@ -218,8 +292,10 @@ public class IdcHighlighter {
 			}
 			
 			private String group(Matcher matcher, String group) {
-				return AonStringUtils.trim(matcher.group(group));
+				return AonStringUtils.defaultString(AonStringUtils.trim(matcher.group(group)), "");
 			}
+			
+			
 		};
 		
 		
@@ -341,11 +417,7 @@ public class IdcHighlighter {
 		
 	}
 	
-	private static void highlight(PDDocument doc, PDPage page, List<TextPosition> positions) throws IOException {
-		PDRectangle rect = getRectangle(page, positions);
-		highlight(doc, page, rect);
-	}
-
+	
 	private static PDRectangle highlight(PDDocument doc, PDPage page, PDRectangle rect) throws IOException {
 
 		try (PDPageContentStream contents = new PDPageContentStream(doc, page, AppendMode.APPEND, false)){
@@ -393,7 +465,7 @@ public class IdcHighlighter {
 		;
 	}
 	
-
+	
 	public static void main(String[] args) throws IOException, UnknownPDFException {
 		highlight(new File(args[0]), new File(args[1]), new AllIdcHighlighter());
 		
