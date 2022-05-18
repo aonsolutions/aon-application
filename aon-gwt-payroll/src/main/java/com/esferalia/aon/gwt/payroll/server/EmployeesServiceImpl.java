@@ -6706,7 +6706,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String restContract = employeeContractInfo.getContractSpecificData().getBasicCopy();
 
 			Sepe.sendContratoCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), ipf, startDate,
-					endDate, CopyBasic.FirmType.values()[signType], workplaceAddress, restContract);
+					endDate, CopyBasic.FirmType.values()[signType-1], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getMessage());
