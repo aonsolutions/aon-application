@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 	<aon:valueParam name="skipEditSelectedTo" default="#{false}" />
-	<aon:valueParam name="showAonPaginator" default="#{false}" />
+	<aon:valueParam name="showAonPaginator" default="#{true}" />
 
 	<aon:dataTable id="#{dataTableId}" var="to" rowKeyVar="toIndex" sortMode="#{sortMode}"
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
@@ -92,9 +92,5 @@
 	
 	</aon:if>
 	 
-	
-	<aon:if test="#{showAonPaginator}">
-	
-	</aon:if>	
 
 </ui:composition>

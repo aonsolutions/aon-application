@@ -2233,6 +2233,7 @@ color:#000;
 
 .aonDataScroller {
 	padding: 0;
+	padding-left: 3rem;
 }
 
 .aonDataScroller .aon-dataScroller-buttons tr {
