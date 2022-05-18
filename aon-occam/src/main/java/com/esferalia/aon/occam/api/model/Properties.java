@@ -824,7 +824,8 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 	}
 	
-	public interface CarrierProperties extends RegistryProperties{
+	public interface CarrierProperties extends RegistryProperties {
+		Property<Integer> getRegistryProperty();
 		Property<Integer> getScopeProperty();
 	}
 	

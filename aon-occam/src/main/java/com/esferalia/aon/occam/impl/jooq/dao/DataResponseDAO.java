@@ -91,17 +91,19 @@ public class DataResponseDAO {
 	}
 	
 	public static DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse){	
-		return ctx.getDslContext().insertInto(DATA_RESPONSE, DATA_RESPONSE.DOMAIN,
-				DATA_RESPONSE.CODE, DATA_RESPONSE.RESPONSE_DATE, 
-				DATA_RESPONSE.SOURCE, DATA_RESPONSE.SOURCE_ID,
-				DATA_RESPONSE.CREATION_DATE, DATA_RESPONSE.CREATION_USER,
-				DATA_RESPONSE.MODIFICATION_DATE, DATA_RESPONSE.MODIFICATION_USER,
-				DATA_RESPONSE.DATA_REQUEST)
-		.values(dataResponse.getDomain(), dataResponse.getCode(), AonDateUtils.toSql(dataResponse.getResponseDate()),
-				dataResponse.getSource().value(), dataResponse.getSourceId(),
-				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser(),
-				dataResponse.getDataRequest())
-		.returning().fetch().stream().map(new DataResponseFiller()).findFirst().orElse(dataResponse);
+		Integer id = ctx.getDslContext().insertInto(DATA_RESPONSE)
+				.set(DATA_RESPONSE.DOMAIN, dataResponse.getDomain())
+				.set(DATA_RESPONSE.CODE, dataResponse.getCode())
+				.set(DATA_RESPONSE.RESPONSE_DATE, AonDateUtils.toSql(dataResponse.getResponseDate()))
+				.set(DATA_RESPONSE.SOURCE, dataResponse.getSource().value())
+				.set(DATA_RESPONSE.SOURCE_ID, dataResponse.getSourceId())
+				.set(DATA_RESPONSE.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(DATA_RESPONSE.CREATION_USER, ctx.getUser())
+				.set(DATA_RESPONSE.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(DATA_RESPONSE.MODIFICATION_USER, ctx.getUser())
+				.set(DATA_RESPONSE.DATA_REQUEST, dataResponse.getDataRequest())
+				.returning(DATA_RESPONSE.ID).fetchOne().getId();
+		return dataResponse.setId(id);
 	}
 	
 	public static Integer updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter){

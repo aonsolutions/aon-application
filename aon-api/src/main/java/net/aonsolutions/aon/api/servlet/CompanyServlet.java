@@ -163,7 +163,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 			
 			RegistryAddress address = AON.getMain(domain, user, c.getId());
 			Workplace workplace = new Workplace()
-					.setActive((byte) 1)
+					.setActive(true)
 					.setAddress(address.getId())
 					.setDescription("PRINCIPAL")
 					.setDomain(domain.getId())

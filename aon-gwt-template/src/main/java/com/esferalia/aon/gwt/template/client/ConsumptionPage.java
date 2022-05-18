@@ -350,7 +350,7 @@ public class ConsumptionPage extends Composite{
 	//------------------------------ Actions
 	ProgressBarDialog pbd;
 	public void download(String type){
-		LinkedList<Warehouse> warehouses = new LinkedList<Warehouse>();
+		LinkedList<Warehouse> warehouses = new LinkedList<>();
 		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
 			Warehouse warehouse = new Warehouse();
 			warehouse.setId(Integer.parseInt(selectedBox.getValue(index)));

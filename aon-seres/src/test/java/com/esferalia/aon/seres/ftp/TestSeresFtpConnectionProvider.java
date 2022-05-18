@@ -2,14 +2,20 @@ package com.esferalia.aon.seres.ftp;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
+
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TestSeresFtpConnectionProvider {
 	
@@ -96,13 +102,21 @@ public class TestSeresFtpConnectionProvider {
 				}
 				
 				System.out.println(ftp.printWorkingDirectory());
-				printFileTree(ftp, "/", "", 0);
+
+				Date start = AonDateUtils.getDate(2016, 0, 1);
+				Date end = AonDateUtils.getDate(2019, 11, 31);
+				try {
+					moveFiles(ftp, "/recepcion/orders_d96a", "prueba", start, end);
+				} catch (FtpException e) {
+					e.printStackTrace();
+				}
+//				printFileTree(ftp, "/", "", 0);
 				
-				if (success) {
-					success = ftp.changeWorkingDirectory(remotePath);
-					if(success){
-						System.out.print("WorkingDirectory changed to ");
-						System.out.println("'"+ftp.printWorkingDirectory()+"'");
+//				if (success) {
+//					success = ftp.changeWorkingDirectory(remotePath);
+//					if(success){
+//						System.out.print("WorkingDirectory changed to ");
+//						System.out.println("'"+ftp.printWorkingDirectory()+"'");
 //						FTPFile[] listFiles = ftp.listFiles();
 //						printFiles(listFiles);
 //						printFileDetails(listFiles);
@@ -122,11 +136,12 @@ public class TestSeresFtpConnectionProvider {
 //								}
 //							}
 //						}
-					} else {
-						System.out.println("Could not change directory!");
-					}
-				}
+//					} else {
+//						System.out.println("Could not change directory!");
+//					}
+//				}
 			} catch (IOException ex) {
+				main(args);
 	            System.out.println("Error: " + ex.getMessage());
 	            ex.printStackTrace();
 	        } finally {
@@ -148,18 +163,18 @@ public class TestSeresFtpConnectionProvider {
 //		fileList.forEach(System.out::println);
 		
 		
-		try {
+//		try {
 			// SHOW FILES
-			System.out.println("# ACTION: show files");
-			remotePath = orderPath;
+//			System.out.println("# ACTION: show files");
+//			remotePath = orderPath;
 //			SeresFtpConnectionProvider.retrieveFileList(remotePath, null, null, ftpServer,
 //					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
 			
 			// SHOW DIRECTRY TREE
-			System.out.println("# ACTION: show directory tree");
-			remotePath = "/";
-			SeresFtpConnectionProvider.retrieveDirectoryList(remotePath, ftpServer,
-					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
+//			System.out.println("# ACTION: show directory tree");
+//			remotePath = "/";
+//			SeresFtpConnectionProvider.retrieveDirectoryList(remotePath, ftpServer,
+//					ftpPort, ftpUser, ftpPassword).forEach(System.out::println);
 			
 			// RETRIEVE FILE
 //			System.out.println("# ACTIOB: retrieve file");
@@ -168,14 +183,14 @@ public class TestSeresFtpConnectionProvider {
 //				ftpPort, ftpUser, ftpPassword);
 			
 			// STORE FILE
-			System.out.println("# ACTION: store file");
-			remotePath = deliveryPath;
+//			System.out.println("# ACTION: store file");
+//			remotePath = deliveryPath;
 //			SeresFtpConnectionProvider.storeFile(null, null, null);
-		} catch (FtpLoginException e) {
-			e.printStackTrace();
-		} catch (FtpException e) {
-			e.printStackTrace();
-		}
+//		} catch (FtpLoginException e) {
+//			e.printStackTrace();
+//		} catch (FtpException e) {
+//			e.printStackTrace();
+//		}
 		
 		System.out.println("## FINISH!!!");
 		
@@ -189,6 +204,119 @@ public class TestSeresFtpConnectionProvider {
     		}
     	});
     	return arguments;
+	}
+	
+	protected static void fillFileList( FTPClient ftp, String directoryPath, Date start, Date end,
+			List<FtpFile> list) throws IOException, FtpException {
+		if (list == null) {
+			list = new LinkedList<>();
+		}
+		FTPFile[] subFiles = null;
+		try {
+			FTPFileFilter filter = null;
+			if (start != null || end != null) {
+				filter = new FTPFileFilter() {
+					@Override
+					public boolean accept(FTPFile arg0) {
+						return (start == null ? true : DateUtils.ceiling(
+								arg0.getTimestamp().getTime(),
+								Calendar.DAY_OF_MONTH)
+								.compareTo(
+										DateUtils.ceiling(start,
+												Calendar.DAY_OF_MONTH)) >= 0)
+								&& (end == null ? true : DateUtils.ceiling(
+										arg0.getTimestamp().getTime(),
+										Calendar.DAY_OF_MONTH).compareTo(
+										DateUtils.ceiling(end,
+												Calendar.DAY_OF_MONTH)) <= 0);
+					}
+				};
+			}
+			if (directoryPath != null && filter != null) {
+				subFiles = ftp.listFiles(directoryPath, filter);
+			} else if (directoryPath != null) {
+				subFiles = ftp.listFiles(directoryPath);
+			} else {
+				subFiles = ftp.listFiles();
+			}
+		} catch (IOException e) {
+			throw new FtpException(e);
+		}
+
+		if (subFiles != null && subFiles.length > 0) {
+			for (FTPFile f : subFiles) {
+				String currentFileName = f.getName();
+				System.out.println(currentFileName + " " + f.getTimestamp());
+				if (currentFileName.equals(".") || currentFileName.equals("..")) {
+					continue;
+				}
+				if (f.isFile()) {
+					list.add(new FtpFile(f));
+				}
+			}
+		}
+	}
+
+	protected static void moveFiles(FTPClient ftp, String directoryPathFrom, String directoryPathTo, Date start, Date end) throws IOException, FtpException {
+		FTPFile[] subFiles = null;
+		try {
+			FTPFileFilter filter = null;
+			if (start != null || end != null) {
+				filter = new FTPFileFilter() {
+					@Override
+					public boolean accept(FTPFile arg0) {
+						return (start == null ? true : DateUtils.ceiling(
+								arg0.getTimestamp().getTime(),
+								Calendar.DAY_OF_MONTH)
+								.compareTo(
+										DateUtils.ceiling(start,
+												Calendar.DAY_OF_MONTH)) >= 0)
+								&& (end == null ? true : DateUtils.ceiling(
+										arg0.getTimestamp().getTime(),
+										Calendar.DAY_OF_MONTH).compareTo(
+										DateUtils.ceiling(end,
+												Calendar.DAY_OF_MONTH)) <= 0);
+					}
+				};
+			}
+			if (directoryPathFrom != null && filter != null) {
+				subFiles = ftp.listFiles(directoryPathFrom, filter);
+			} else if (directoryPathFrom != null) {
+				subFiles = ftp.listFiles(directoryPathFrom);
+			} else {
+				subFiles = ftp.listFiles();
+			}
+		} catch (IOException e) {
+			throw new FtpException(e);
+		}
+		System.out.println(subFiles.length);
+		if (subFiles != null && subFiles.length > 0) {
+			for (FTPFile f : subFiles) {
+				String currentFileName = f.getName();
+				System.out.println(currentFileName + " " + f.getTimestamp().getTime());
+				
+//				ftp.changeWorkingDirectory(directoryPathFrom);
+//				InputStream is = ftp.retrieveFileStream(f.getName());
+//				
+//				File file = new File("/home/anderibz/seres/"+ currentFileName);
+//
+//				try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
+//		            int read;
+//		            byte[] bytes = new byte[8192];
+//		            while ((read = is.read(bytes)) != -1) {
+//		                outputStream.write(bytes, 0, read);
+//		            }
+//		        } catch (Exception e) {
+//
+//		        }
+				
+//				ftp.changeWorkingDirectory(directoryPathTo);
+//				ftp.appendFile(f.getName(), is);
+//				ftp.changeWorkingDirectory(directoryPathFrom);
+//				ftp.deleteFile(directoryPathFrom + "/" + f.getName());
+				
+			}
+		}
 	}
 	
 	
@@ -211,30 +339,45 @@ public class TestSeresFtpConnectionProvider {
 		if (!currentDir.equals("")) {
 			dirToList += "/" + currentDir;
 		}
-		
-		FTPFile[] subFiles = ftp.listFiles(dirToList);
-		if (subFiles != null && subFiles.length > 0) {
-			for (FTPFile aFile : subFiles) {
-				String currentFileName = aFile.getName();
-				if (currentFileName.equals(".")
-						|| currentFileName.equals("..")) {
-					continue;
-				}
-				if (aFile.isDirectory()) {
-					fileTree.add(String.format("%0" + (level + 1) + "d", 0)
-							.replace("0", "\t")
-							+ "[" + currentFileName + "]");
-					buildFileTree(ftp, dirToList, currentFileName, level + 1);
-				} else {
-//					fileTree.add(String.format("%0" + (level + 1) + "d", 0)
-//							.replace("0", "\t") + currentFileName);
-					if(!fileTree.get(fileTree.size()-1).contains("...")){
-						fileTree.add(String.format("%0" + (level + 1) + "d", 0)
-								.replace("0", "\t") + "...");
-					}
-				}
-			}
+		dirToList = "/recepcion/orders_d96a";
+		Date date = AonDateUtils.getDate(2022, 4, 5);
+		List<FtpFile> list = new  LinkedList<FtpFile>();
+		try {
+			Date start = AonDateUtils.getDate(2016, 0, 1);
+			Date end = AonDateUtils.getDate(2016, 10, 24);
+			String directoryFrom = "/recepcion/orders_d96a";
+			String directoryTo = "/recepcion/processed/orders_d96a";
+			moveFiles(ftp, directoryFrom, directoryTo, start, end);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (FtpException e) {
+			e.printStackTrace();
 		}
+//		FTPFile[] subFiles = ftp.listFiles(dirToList);
+//		System.out.println(subFiles.length);
+//		if (subFiles != null && subFiles.length > 0) {
+//			for (FTPFile aFile : subFiles) {
+//				String currentFileName = aFile.getName();
+//				if (currentFileName.equals(".")
+//						|| currentFileName.equals("..")) {
+//					continue;
+//				}
+//				if (aFile.isDirectory()) {
+//					fileTree.add(String.format("%0" + (level + 1) + "d", 0)
+//							.replace("0", "\t")
+//							+ "[" + currentFileName + "]");
+////					buildFileTree(ftp, dirToList, currentFileName, level + 1);
+//				} else {
+////					fileTree.add(String.format("%0" + (level + 1) + "d", 0)
+////							.replace("0", "\t") + currentFileName);
+//					if(!fileTree.get(fileTree.size()-1).contains("...")){
+//						fileTree.add(String.format("%0" + (level + 1) + "d", 0)
+//								.replace("0", "\t") + "...");
+//					}
+//				}
+//			}
+//		}
 	}
 
 

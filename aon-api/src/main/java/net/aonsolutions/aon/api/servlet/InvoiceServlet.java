@@ -498,6 +498,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			invoice.setIssueDate(new Date());
+			invoice.setTaxDate(invoice.getTaxDate().before(new Date())
+				? invoice.getTaxDate() : new Date());
 			tbaiConfiguration.setCertificate(checkCertificate(api));
 		}
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);

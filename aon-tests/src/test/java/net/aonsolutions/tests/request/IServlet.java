@@ -1,9 +1,9 @@
-package net.aonsolutions.aon.api.test.request;
+package net.aonsolutions.tests.request;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface ServletVisitor {
+public interface IServlet {
 	void get(HttpServletRequest request, HttpServletResponse response);
 	void post(HttpServletRequest request, HttpServletResponse response);
 	void put(HttpServletRequest request, HttpServletResponse response);

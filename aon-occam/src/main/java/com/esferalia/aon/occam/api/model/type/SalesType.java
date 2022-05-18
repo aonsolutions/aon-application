@@ -17,4 +17,23 @@ public enum SalesType implements Serializable {
 		return this.toString();
     }
     
+    public static SalesType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static SalesType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= SalesType.values().length) return null;
+		return SalesType.values()[i];
+	}
+	
+	public static SalesType safeValueOf( String i ) {
+		for (SalesType rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
+    
 }

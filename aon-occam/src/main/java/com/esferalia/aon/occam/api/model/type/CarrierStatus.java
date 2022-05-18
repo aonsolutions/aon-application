@@ -32,4 +32,12 @@ public enum CarrierStatus implements Serializable {
 		if (i < 0 || i >= CarrierStatus.values().length) return null;
 		return CarrierStatus.values()[i];
 	}
+	
+	public static CarrierStatus safeValueOf( String i ) {
+		for (CarrierStatus rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
 }
