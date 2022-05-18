@@ -20,12 +20,15 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.GroupField;
+import org.jooq.Record1;
 import org.jooq.Record14;
 import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
 import com.esferalia.aon.jooq.tables.InvoiceTax;
+import com.esferalia.aon.jooq.tables.InvoiceTaxAccount;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
@@ -61,6 +64,10 @@ public class AccountingOperationDAO {
 	private static final Field<String> OP_DETAIL_ACC_CODE = ACCOUNT.CODE.as("accountCode");
 	private static final Field<String> OP_DETAIL_ACC_DESCRIPTION = ACCOUNT.DESCRIPTION.as("accountDescription");
 	
+	private static InvoiceTaxAccount invoiceTaxAccount  = INVOICE_TAX_ACCOUNT.as("invoiceTaxAccount"); // Para la cuota de retención IRPF
+//	private static final Field<Integer> INVOICE_TAX_ID = invoiceTaxAccount.ID.as("invoiceTaxID");
+//	private static final Field<Integer> INVOICE_TAX_ACCOUNT_ID = invoiceTaxAccount.ACCOUNT.as("invoiceTaxAccountID");
+	
 	private static InvoiceTax vatInvoiceTax = INVOICE_TAX.as("vatInvoiceTax"); // Para la cuota de IVA y REQ
 	private static InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para la cuota de retención IRPF		
 	private static Field<BigDecimal> sumBase = DSL.sum(vatInvoiceTax.BASE);
@@ -95,10 +102,7 @@ public class AccountingOperationDAO {
 		}
 		return Stream.empty();
 	}
-	// ******************************************************
-	// ******************************************************
-	// ******************************************************
-	// ******************************************************
+
 	public static Stream<OperationBreakdown> getOperationBreakdown(final AONContext ctx, int domain, OperationParams params) {
 		if ( !isActivityEnabledForReport(ctx,params)) {
 			return Stream.empty();
@@ -185,9 +189,84 @@ public class AccountingOperationDAO {
 				.groupBy(OP_ID,OP_DETAIL_ACC_ID)
 				.asTable("accounting");
 		
+		Table<Record1<Integer>> INVOICE_TAX_ACCOUNT_TABLE =		
+			DSL.select(invoiceTaxAccount.ID)
+				.from(invoiceTaxAccount)
+				.limit(1)
+				.asTable("invoiceTaxAccount");
+		
+		System.out.println( 
+				
+				ctx.getDslContext()
+	    		.select(ACCOUNTING.fields())
+	    		.select(INVOICE_TAX_ACCOUNT_TABLE.fields())
+				.select(
+					  INVOICE.ID
+	                , INVOICE.TAX_DATE
+					, INVOICE.REFERENCE_CODE 
+					, INVOICE.RDOCUMENT
+					, INVOICE.RNAME												                
+					, sumBase
+					, sumQuota
+					, sumDeductibleQuota
+					, sumSurchargeQuota
+					, activityCount
+					, vatInvoiceTax.PERCENTAGE
+					, vatInvoiceTax.SURCHARGE
+					
+					// Campos para los Libros Registro AEAT
+					, IAE.SECTION
+					, IAE.EPIGRAPH
+					, INVOICE.TYPE
+					, INVOICE.SERIES
+					, INVOICE.NUMBER
+					, INVOICE.RDOCUMENT_TYPE
+					, INVOICE.RDOCUMENT_COUNTRY
+					, INVOICE.VAT_ACCRUAL_PAYMENT
+					, INVOICE.WITHHOLDING_FARMER						
+					, INVOICE.RECTIFICATION_TYPE
+					, retInvoiceTax.PERCENTAGE
+					, sumRetentionQuota
+					, INVOICE.TRANSACTION
+					, conceptType
+					, INVOICE_DUA.ID
+	                )				
+	                .from(ACCOUNTING)
+	                .leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(OP_ID))		                
+	                .leftOuterJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) 
+	                .leftOuterJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+	                
+	                .leftOuterJoin(vatInvoiceTax)	// Importes IVA y REq
+	                	.on(	 vatInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID)
+	                		.and(vatInvoiceTax.TAX_TYPE.equal((byte)1)))  
+	                	
+	            	.leftOuterJoin(INVOICE_TAX_ACCOUNT_TABLE).on(invoiceTaxAccount.ID.equal(vatInvoiceTax.ID))
+	                .leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal((byte)2)))  // Retención IRPF
+	                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
+	                .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+	                .leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
+	                
+	                .where(OP_DOMAIN.equal(domain))		
+	                .and(INVOICE.ID.equal(21398926))
+	                .and(condition)
+	                .and(conditionIDA)
+	                .and(
+		                params.getActivity() == null 
+		                	? DSL.trueCondition()
+	            			: OP_ACTIVITY.equal(params.getActivity()).or(OP_ACTIVITY.isNull())
+	            		)  // Actividad null, quiere decir que el apunte o factura, se reparte entre todas las actividades		                
+	                .groupBy(groupBy)
+	                .orderBy(orderBy)
+	                .getSQL(ParamType.INLINED)
+				
+				);
+		
+		
+		
 		// Obtenemos los datos
         return ctx.getDslContext()
     		.select(ACCOUNTING.fields())
+    		.select(INVOICE_TAX_ACCOUNT_TABLE.fields())
 			.select(
 				  INVOICE.ID
                 , INVOICE.TAX_DATE
@@ -218,7 +297,6 @@ public class AccountingOperationDAO {
 				, INVOICE.TRANSACTION
 				, conceptType
 				, INVOICE_DUA.ID
-				, INVOICE_TAX_ACCOUNT.ACCOUNT
                 )				
                 .from(ACCOUNTING)
                 .leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(OP_ID))		                
@@ -229,13 +307,14 @@ public class AccountingOperationDAO {
                 	.on(	 vatInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID)
                 		.and(vatInvoiceTax.TAX_TYPE.equal((byte)1)))  
                 	
-                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(vatInvoiceTax.ID))
+            	.leftOuterJoin(INVOICE_TAX_ACCOUNT_TABLE).on(invoiceTaxAccount.ID.equal(vatInvoiceTax.ID))
                 .leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal((byte)2)))  // Retención IRPF
                 .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
                 .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
                 .leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
                 
-                .where(OP_DOMAIN.equal(domain))		                
+                .where(OP_DOMAIN.equal(domain))		
+                .and(INVOICE.ID.equal(21398926))
                 .and(condition)
                 .and(conditionIDA)
                 .and(
@@ -280,7 +359,7 @@ public class AccountingOperationDAO {
 							// de IVA, asi que se hace por ahora que si no hay cuenta de IVA o si la cuenta de IVA es la misma que la de gasto
 							// se asume que el IVA no es deducible
 							if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() || rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
-								Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
+								Integer idTaxAccount = rec.getValue(invoiceTaxAccount.ACCOUNT);
 								if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
 									deductibleQuota = 0;
 								}									
