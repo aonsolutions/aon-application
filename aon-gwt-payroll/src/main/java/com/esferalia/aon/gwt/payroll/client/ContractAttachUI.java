@@ -168,19 +168,19 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 	private void setColumnsWidth() {
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(270, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(190, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(240, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(85, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_CENTER);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(95, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(150, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(100, Unit.PX);
 
 		attachmentsDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(270, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(190, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(240, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(85, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(95, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(150, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(100, Unit.PX);
 	}
 
 	private void showLoadingPanel() {
@@ -247,6 +247,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		ListBox typeLB = initTypeListBox();
 		setSelectedValueLB(typeLB, attach.getType() + "");
 		typeLB.addChangeHandler(e -> typeHidden.setValue(typeLB.getSelectedValue()));
+		typeLB.setEnabled(null == attach.getType() || !isComunicationCreated(attach.getType()));
 		
 		// Confidential CheckBox
 		String securityTitle = attach.isConfidential() ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
@@ -399,8 +400,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("-", "-1");
 		typeLB.addItem("Borrador del contrato", "0");
 		typeLB.addItem("Copia Contrato laboral", "1");
-		typeLB.addItem("Borrador de copia basica", "2");
-		typeLB.addItem("Copia basica", "3");
+//		typeLB.addItem("Borrador de copia basica", "2");
+//		typeLB.addItem("Copia basica", "3");
 		typeLB.addItem("Domiciliacion bancaria", "7");
 		typeLB.addItem("Anexo I", "8");
 		typeLB.addItem("Anexo II", "9");
@@ -409,11 +410,17 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("Borrador del certificado de empresa", "22");
 		typeLB.addItem("TA (Alta)", "98");
 		typeLB.addItem("TA (Baja)", "99");
-		typeLB.addItem("IDC", "101");
-		typeLB.addItem("IDCPlNss", "102");
-		typeLB.addItem("Certifica2 (Pdf)", "103");
+//		typeLB.addItem("IDC", "101");
+//		typeLB.addItem("IDCPlNss", "102");
+		typeLB.addItem("Contrato (Comunicaci\u00f3n SEPE)", "101");
+		typeLB.addItem("Copia basica (Comunicaci\u00f3n SEPE)", "102");
+		typeLB.addItem("Certific\u00402 (Pdf)", "103");
 		typeLB.addItem("Otros", "104");
 		return typeLB;
+	}
+	
+	private boolean isComunicationCreated(byte attachType) {
+		return attachType == ((byte)98) || attachType == ((byte)99) || attachType == ((byte)101) || attachType == ((byte)102) || attachType == ((byte)103);
 	}
 
 	private void initScopeListBox(ListBox scopeLB) {
