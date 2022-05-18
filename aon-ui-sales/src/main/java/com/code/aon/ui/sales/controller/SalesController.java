@@ -4,6 +4,11 @@ import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_REQUIRED_
 import static com.code.aon.ui.common.ICommonMessages.SALES_RETURNED_IN_MSG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,6 +18,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,6 +38,8 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -62,7 +70,6 @@ import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -87,6 +94,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
 	
@@ -1071,5 +1079,36 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		Integer domainId = DomainManager.getCurrentDomain();
 		String login = ""; // UserUtils.getInstance().getLoggedUser().getLogin();
 		return AON.getTbaiConfiguration(domainName, domainId, login);
+	}
+	
+	public void onExportEdiFile(ActionEvent event) {
+		FileOutput output = null;
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			Sales sales = (Sales) this.getTo();
+			output = getFtpEdiDownloader().exportEdiFile(sales);
+			
+			// download file
+			String fileName = "sales_" + sales.getSeries() + "_" + sales.getNumber();
+			String fileExt = output.getErrors().size()>0?"err":"edi";
+			byte[] data = output.getContent();
+			int size = data.length;
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, fileName + "." + fileExt,
+					null, size);
+			InputStream fileIn = new BufferedInputStream(
+					new ByteArrayInputStream(data));
+			AonIOUtils.copy(fileIn, out);
+			AonIOUtils.closeQuietly(fileIn);
+		} catch (IOException e) {
+        	AonUtil.addErrorMessage(e.getMessage());
+        	throw new AbortProcessingException(e.getMessage(), e);
+        } catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
 	}
 }
