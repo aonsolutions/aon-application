@@ -146,6 +146,31 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- ContractClausesUIImpl
 
+	public class ContractOtherDataImpl extends ContractOtherData {
+
+		@Override
+		protected void showErrorMessage(String title, String message) {
+			showError(title, message);
+		}
+
+		@Override
+		protected void showSuccessMessage(String title, String message) {
+			showSuccess(title, message);
+		}
+		
+		@Override
+		protected void showLoadingMessage(String message) {
+			showLoading(message);
+		}
+		
+		@Override
+		protected void onContractPDF() {
+			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> {});
+		}
+	}
+	
+	// ------------------------------------------------- ContractClausesUIImpl
+
 	public class ContractClauseUIImpl extends ContractClauseUI {
 
 		@Override
@@ -802,7 +827,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton deleteContract;
 	private AonExpandButton tgss;
 	private AonExpandButton sepe;
-	private AonToolbarButton pdfExportBtn;
 	private AonToolbarButton closePDF;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
@@ -810,6 +834,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private NewTGSSContextMenu tgssContextMenu;
 	private NewSEPEContextMenu sepeContextMenu;
 
+	// ContractOtherData
+	private HTMLPanel employeeOtherDataButtons;
+	
 	// EmployeeClause
 	private HTMLPanel employeeClauseButtons;
 
@@ -842,7 +869,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		// Init Tabs Elements
 		contractEmployeeUI = new ContractEmployeeUIImpl();
 		contractSpecificData = new ContractSpecificDataImpl();
-		contractOtherData = new ContractOtherData();
+		contractOtherData = new ContractOtherDataImpl();
 		contractClauseUI = new ContractClauseUIImpl();
 		contractAttachUI = new ContractAttachUIImpl();
 
@@ -948,12 +975,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							s -> {
 							}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
 				break;
-			case 2:
-				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-				contrataEmployeeObject.setContractOtherInfo(s -> {
-				}, f -> {
-				});
-				break;
 			default:
 				break;
 			}
@@ -1012,19 +1033,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
 			break;
 		case 2:
-			contrataEmployeeObject.getContractOtherInfo(s -> {
-				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
-					contrataEmployeeObject.getContractSpecificData(su -> {
-						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-						finish.accept(null);
-					}, f -> {
-					});
-				else {
-					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-					finish.accept(null);
-				}
-			}, f -> {
-			});
+			contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+			finish.accept(null);
 			break;
 		case 3:
 			contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
@@ -1067,7 +1077,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showContractButtons();
 			break;
 		case 2:
-			showContractButtons();
+			showContractOtherDataButtons();
 			break;
 		case 3:
 			showContractClauseButtons();
@@ -1098,7 +1108,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			checkContractExtension();
 			checkContractTransform();
 			showTgssOption();
-			hidePDFExportBtnOption();
 			hideSepeOption();
 			showContractButtons();
 			if (AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
@@ -1111,14 +1120,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			checkContractExtension();
 			checkContractTransform();
 			hideTgssOption();
-			hidePDFExportBtnOption();
 			showSepeOption();
 			break;
-		case 2:
-			hideTgssOption();
-			hideSepeOption();
-			showPDFExportBtnOption();
-		case 3:
 		case 4:
 			hideComunicaOpts();
 			break;
@@ -1145,8 +1148,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			tgss.setVisible(true);
 		else if (tabLayOutPanel.getSelectedIndex() == 1)
 			sepe.setVisible(true);
-		else if (tabLayOutPanel.getSelectedIndex() == 2)
-			pdfExportBtn.setVisible(true);
 
 		closePDF.setVisible(false);
 		idcDateListBox.setVisible(false);
@@ -1159,7 +1160,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showPdf() {
 		tgss.setVisible(false);
 		sepe.setVisible(false);
-		pdfExportBtn.setVisible(false);
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
@@ -1211,6 +1211,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 		employeeClauseButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
 	}
 
 	private void showContractButtons() {
@@ -1220,6 +1221,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 		employeeClauseButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
 	}
 
 	private void showCalendarButtons() {
@@ -1229,6 +1231,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 		employeeClauseButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
 	}
 
 	private void showContractIrpfButtons() {
@@ -1238,6 +1241,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeClauseButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
 	}
 
 	private void showContractAttachButtons() {
@@ -1247,6 +1251,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 		employeeClauseButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
+	}
+	
+	private void showContractOtherDataButtons() {
+		employeeOtherDataButtons.setVisible(true);
+		employeeClauseButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
 	}
 
 	private void showContractClauseButtons() {
@@ -1256,6 +1271,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
 	}
 
 	// ------------------------------------------------- Abstract methods
@@ -1282,6 +1298,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		employeeContractButtons = initEmployeeContractButtons();
 		toolbar.add(employeeContractButtons);
+		
+		// EmployeeClause
+
+		employeeOtherDataButtons = initEmployeeOtherDataButtons();
+		toolbar.add(employeeOtherDataButtons);
 
 		// EmployeeClause
 
@@ -1387,10 +1408,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconClose());
 		closePDF.addClickHandler(e -> onClosePDF());
 		hPanel.add(closePDF);
-		
-		pdfExportBtn = new AonToolbarButton("Generar Borrador Contrato", AON.CSS.aonIconPdf());
-		pdfExportBtn.addClickHandler(e -> onExportContractPDF());
-		hPanel.add(pdfExportBtn);
 
 		return hPanel;
 	}
@@ -1440,12 +1457,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData()),
 							fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
 				}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
-			break;
-		case 2:
-			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-			contrataEmployeeObject.setContractOtherInfo(s -> {
-			}, f -> {
-			});
 			break;
 		default:
 			break;
@@ -1736,14 +1747,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveContractExport(
-							a -> showSuccess("Borrador Contrato", "El borrador de contrato se ha generado correctamente. Se encuentra en la pestaña Documentos."),
+							a -> showSuccess("Borrador Contrato", "El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
 							e -> showError("Borrador Contrato", e.getMessage()));
 				}, f -> showError("Borrador Contrato", f.getMessage()));
 			else {
 				contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 				contrataEmployeeObject.saveContractExport(
-						a -> showSuccess("Borrador Contrato", "El borrador de contrato se ha generado correctamente. Se encuentra en la pestaña Documentos."),
+						a -> showSuccess("Borrador Contrato", "El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
 						e -> showError("Borrador Contrato", e.getMessage()));
 			}
 		}, f -> showError("Borrador Contrato", f.getMessage()));
@@ -1876,8 +1887,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, f -> {
 		});
 	}
+	
+	// ------------------------------------------------- EmployeeOtherDataButtons
 
-	// ------------------------------------------------- EmployeeAttachButtons
+	private HTMLPanel initEmployeeOtherDataButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+
+		AonToolbarButton saveClauses = new AonToolbarButton(AON.MSG.saveAction() + " Otros Datos", AON.CSS.aonIconSave());
+		saveClauses.addClickHandler(e -> contractOtherData.saveOhterData());
+		hPanel.add(saveClauses);
+
+		AonToolbarButton exportContractPDF = new AonToolbarButton("Borrador Contrato", AON.CSS.aonIconPdf());
+		exportContractPDF.addClickHandler(e -> contractOtherData.onContractPDF());
+		hPanel.add(exportContractPDF);
+		
+		return hPanel;
+	}
+
+	// ------------------------------------------------- EmployeeClausesButtons
 
 	private HTMLPanel initEmployeeClauseButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
@@ -2176,14 +2204,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showSepeOption() {
 		setVisible(sepe.getElement(), true);
-	}
-	
-	private void hidePDFExportBtnOption() {
-		setVisible(pdfExportBtn.getElement(), false);
-	}
-
-	private void showPDFExportBtnOption() {
-		setVisible(pdfExportBtn.getElement(), true);
 	}
 
 	private void hideTgssOption() {
