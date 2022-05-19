@@ -2263,8 +2263,8 @@ color:#000;
 .aonDataScroller .aon-dataScroller-buttons tr td::before {
 	content : '';
 	display: block;
-	width: 1rem;
-	height: 1rem;
+	width: 1.2rem;
+	height: 1.2rem;
 	margin: 0 auto;
 }
 
@@ -2282,8 +2282,13 @@ color:#000;
 }
 
 .aonDataScroller .aon-dataScroller-buttons tr td {
-	padding: .1rem;
-	width: fit-content;
+  padding: .1rem;
+  width: fit-content;
+  height: 2.5rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .aonDataScroller .aon-dataScroller-button-next , .aonDataScroller .aon-dataScroller-button-previous {

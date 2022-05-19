@@ -1069,19 +1069,35 @@
 	.aon-menu-popup
 	 {
 		opacity:0.94;	 
-	 	color: #FFF !important;
-	 	box-shadow: 0px 6px 6px #2152A5;
-    	background-color: #2152A5 !important;
+	 	color: #404040 !important;
+	 	box-shadow: 0px 6px 6px rgba(0,0,0,.15);
+    	background-color: #fafafa !important;
     }
     
-
+    
+	.aon-menu-popup.old {
+		opacity:0.94;	
+		color: #FFF !important;
+	 	box-shadow: 0px 6px 6px #2152A5;
+    	background-color: #2152A5 !important;
+	}
+	
     .aon-menu-popup * ,
     .aon-menu-popup a {
+    	color: #404040;
+    	font-size:13px;
+    	white-space: nowrap;
+    	
+	}   
+	
+	.aon-menu-popup.old * ,
+    .aon-menu-popup.old a {
     	color: #FFF;
     	font-size:13px;
     	white-space: nowrap;
     	
 	}   
+	
     .aon-menu-popup .aon-icon-new-text,
     .aon-menu-popup .aon-icon-beta-text{
     	background: none;
@@ -1090,6 +1106,16 @@
      }
 
     .aon-menu-popup .aon-direct-access-panel {
+    	color: #404040;
+    	height: 24px;
+    	border-bottom: 1px solid #FFF;
+    	background-color: #f1f1f1 !important;
+    	border-radius: .35rem;
+    	padding-left: 12px;
+    	background-image: none;
+	}   
+
+    .aon-menu-popup.old .aon-direct-access-panel {
     	color: #FFF;
     	height: 24px;
     	border-bottom: 1px solid #FFF;
@@ -1098,20 +1124,22 @@
     	background-image: none;
 	}   
 
+
     .aon-menu-popup .aon-menu-icon-aeat,
     .aon-menu-popup .aon-menu-icon-araba,
     .aon-menu-popup .aon-menu-icon-bizkaia,
     .aon-menu-popup .aon-menu-icon-gipuzkoa,
     .aon-menu-popup .aon-menu-icon-navarra
      {
-    	border-color: #2152A5;
+    	background: #f1f1f1;
+    	border-color: transparent;
     }
     
     .aon-menu-popup .aon-menu-fiscal-label {
     	background-image: none;
     }
 	.aon-menu-popup .aon-menu-fiscal{
-		border-bottom: 1px solid #2152A5;
+		border-bottom: 1px solid transparent;
 	}
     
     .aon-menu-popup .aon-direct-access-list-element {
@@ -1122,15 +1150,20 @@
     	padding: 5px 0 8px 12px;
     }
 
-    .aon-menu-popup .aon-direct-access-list-element:hover {
+    .aon-menu-popup.old .aon-direct-access-list-element:hover {
     	color: #FFF;
     	background-color: #2152A5 !important;
+	}
+	
+	.aon-menu-popup .aon-direct-access-list-element:hover {
+    	border-color: transparent  !important;
+    	background: transparent !important;
 	}
 
     .aon-menu-popup .aon-direct-access-list-element *:hover {
     	/*font-weight: bold;*/
     	color: #2152A5 !important;
-    	background-color: #FFF !important;
+    	/*background-color: #FFF !important;*/
 		border-top-right-radius: 50px 50px;
     	border-bottom-right-radius: 50px 50px;
 	}
@@ -1138,8 +1171,9 @@
 	/*.aon-top-menu-item:hover ,*/
 	.aon-top-menu-item-selected {
     	opacity: 95%;
-    	color: #FFF !important;
-    	background-color: #2152A5 !important;
+    	color: #404040 !important;
+    	background-color: #f1f1f1 !important;
+    	border-radius: .35rem;
 	}
 
 	div[id$='aonContentPopup']{
