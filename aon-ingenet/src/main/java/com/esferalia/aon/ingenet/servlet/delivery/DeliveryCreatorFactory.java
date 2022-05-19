@@ -33,6 +33,7 @@ import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -57,6 +58,7 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
@@ -215,7 +217,7 @@ public class DeliveryCreatorFactory implements Serializable {
 	
 	private void processDelivery(List<ALBARANTYPE> list, List<Delivery> deliveryList, boolean test){
 		deliveryList.clear();
-		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+		CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		try {
 			ctx.getDslContext().transaction(configuration -> {
 				list.forEach(albaran -> {
@@ -234,7 +236,7 @@ public class DeliveryCreatorFactory implements Serializable {
 		if(!test){
 			manageSalesDetail(deliveryList);
 			
-			AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
+			CloseableAONContext ctx =AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 			try {
 				ctx.getDslContext().transaction(configuration -> {
 					list.forEach(albaran -> {
@@ -417,7 +419,7 @@ public class DeliveryCreatorFactory implements Serializable {
 					+ albaran.getDATOSCLIENTE().getDATOSREGISTRO()
 							.getDATOSDOCUMENTO().getDOCUMENTO());
 		}
-		delivery.setAddress(obtainAddress(ctx, customer, albaran.getDATOSDIRECCIONENTREGA()).getId());
+		delivery.setAddress(new RegistryAddress().setId(obtainAddress(ctx, customer, albaran.getDATOSDIRECCIONENTREGA()).getId()));
 		
 		try {
 			delivery.setIssueTime(getDateFormatter().parse(albaran.getFECHAEMISION()));
@@ -425,19 +427,19 @@ public class DeliveryCreatorFactory implements Serializable {
 			System.err.println("Cannot parse date value. Reason: "+ e.getMessage());
 			delivery.setIssueTime(new Date());
 		}
-		delivery.setSecurityLevel((byte) 0);
+		delivery.setSecurityLevel(SecurityLevel.OFFICIAL);
 		delivery.setStatus(DeliveryStatus.PENDING);
 		delivery.setComments(null);
 		delivery.setRemarks("Creado por '"+ctx.getUser()+"' el "
 				+ new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()) + "."
 				+ "\n" + "La unidad de la cantidad es KILOS." );
 		try {
-			delivery.setWorkplace(wp.getId());
+			delivery.setWorkplace(wp);
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());
 		}
 		try {
-			delivery.setScope(scopes.get(0).getId());
+			delivery.setScope(scopes.get(0));
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());
 		}
@@ -475,7 +477,7 @@ public class DeliveryCreatorFactory implements Serializable {
 				.eq(ctx.getDomainId())
 				.and(f.getActiveProperty().eq((byte) 1))
 				.and(f.getWorkplaceProperty().eq(
-						delivery.getWorkplace())));
+						delivery.getWorkplace().getId())));
 		
 		if (lineasAlbaran != null && lineasAlbaran.size() > 0) {
 			lineasAlbaran.stream()
@@ -1015,7 +1017,7 @@ public class DeliveryCreatorFactory implements Serializable {
 				DATOSAGENCIATRANSPORTETYPE at = albaran.getDATOSHOJARUTA().getDATOSAGENCIATRANSPORTE();
 				carrier = new Carrier();
 				carrier.setDomain(new Domain().setId(ctx.getDomainId()));
-				carrier.setScope(scopes.get(0).getId());
+				carrier.setScope(new Scope().setId(scopes.get(0).getId()));
 				carrier.setName(at.getDATOSREGISTRO().getNOMBRE());
 				carrier.setAlias(at.getDATOSREGISTRO().getALIAS());
 				carrier.setDocument(at.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
@@ -1167,7 +1169,7 @@ public class DeliveryCreatorFactory implements Serializable {
 				.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
 		List<Integer> ids = customerList.stream().map(Customer::getId)
 				.map(i -> Integer.valueOf(i)).collect(Collectors.toList());
-		List<RegistryNote> ediRNotes = AON.getRNoteList(
+		List<RegistryNote> ediRNotes = AON.getRegistryNoteList(
 				ctx.getDomainName(),
 				ctx.getDomainId(),
 				ctx.getUser(),

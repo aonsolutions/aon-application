@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -23,13 +24,13 @@ public class SECURITY {
 	}
 	
 	public static DomainUserRoles getDomainUserRoles(Domain domain, String login, Integer userId) {
-		try(AONContext ctx = AONContext.getAONContext(domain, login)){
+		try(CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
 			return getSecurity().getDomainUserRoles(ctx, userId);
 		}
 	}
 	
 	public static DomainUserRoles getDomainUserRoles(String domainName, Integer domainId, String login, Integer userId) {
-		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSecurity().getDomainUserRoles(ctx, userId);
 		}
 	}
@@ -37,7 +38,7 @@ public class SECURITY {
 	public static AonToken getAonToken(String token) {
 		JSONObject json = SECURITY.decodeJWT(token);
 		AonToken aonToken = AonToken.parse(json);
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 //			ctx = AONContext.getAONContext(aonToken.getSchema());
 			ctx = AONContext.getAONContext(aonToken.getSchemaFirstDomain(), 0, "");
@@ -55,7 +56,7 @@ public class SECURITY {
 	}
 	
 	public static String getUserPassword(String domainName, int domainId, String login, Integer userId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSecurity().getUserPassword(ctx, userId);
 		}
 	}
@@ -68,31 +69,31 @@ public class SECURITY {
 	}
 	
 	public static AuthDevice saveAuthDevice(Domain domain, String login, AuthDevice ad) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().saveAuthDevice(ctx, ad);
 		}
 	}
 	
 	public static void deleteAuthDevice(Domain domain, String login, AuthDeviceFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getSecurity().deleteAuthDevice(ctx, filter);
 		}
 	}
 	
 	public static AuthDevice getAuthDevice(Domain domain, String login, AuthDeviceFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().getAuthDevice(ctx, filter);
 		}
 	}
 	
 	public static LinkedList<AuthDevice> getAuthDevices(Domain domain, String login, AuthDeviceFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().getAuthDevices(ctx, filter);
 		}
 	}
 	
 	public static User delete(Domain domain, String login, User user) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().delete(ctx, user);
 		}
 	}

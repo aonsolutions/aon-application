@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
@@ -1113,7 +1114,7 @@ public class CheckItAPI implements IParamNames{
 		String iban = params.getIban();
 		Integer empresaId = params.getCheckitEmpresaId();
 		List<CheckItBankStatement> bankStatements = getNewMovements(domainName, domainId, user, empresaId, iban);
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
 					return 	aonContext.getDslContext().transactionResult( 
 						confi -> CheckItDAO.insertStatements(aonContext, bankStatements)
 					);		
@@ -1149,7 +1150,7 @@ public class CheckItAPI implements IParamNames{
 	}
 	
 	public static List<CheckItBankStatement> getAllMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
 //			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			List<CheckItBankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
 //			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
@@ -1158,7 +1159,7 @@ public class CheckItAPI implements IParamNames{
 	}
 	
 	public static List<CheckItBankStatement> getNewMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
 			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
 			Pair<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
@@ -1170,7 +1171,7 @@ public class CheckItAPI implements IParamNames{
 	}
 	
 	public static List<CheckItBankStatement> getMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban, Date startDate, Date endDate) throws CheckItException {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
 //			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			List<CheckItBankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
 //			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);

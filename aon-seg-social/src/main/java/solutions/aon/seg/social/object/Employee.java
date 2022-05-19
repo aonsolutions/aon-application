@@ -73,6 +73,7 @@ public class Employee {
 		if(reducingCoefic != null)	visitor.visitReducingcoefic(reducingCoefic);
 		if(collective != null)	visitor.visitCollective(collective);
 		if(frv != null)	visitor.visitFrv(frv);
+		if(mdCtz != null)	visitor.visitMdCtz(mdCtz);
 	}
 	
 	public String getIpf() {return ipf;}
@@ -171,6 +172,8 @@ public class Employee {
 			public void visitReducingcoefic(String reducingCoefic) {stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));}
 			@Override
 			public void visitCollective(String collective) {stringBuffer.append(String.format(" collective : \"%s\" ", collective));}
+			@Override
+			public void visitMdCtz(String mdCtz) {stringBuffer.append(String.format(" mdCtz : \"%s\" ", mdCtz));}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -483,6 +486,7 @@ public class Employee {
 		void visitProfesCat(String profesCat);
 		void visitReducingcoefic(String reducingCoefic);	
 		void visitCollective(String collective);	
+		void visitMdCtz(String mdCtz);	
 	}
 	
 	public static abstract class AbstractVisitor implements Visitor {
@@ -546,6 +550,8 @@ public class Employee {
 		public void visitReducingcoefic(String reducingCoefic) {}
 		@Override
 		public void visitCollective(String collective) {}
+		@Override
+		public void visitMdCtz(String mdCtz) {}
 	}
 
 	@Override

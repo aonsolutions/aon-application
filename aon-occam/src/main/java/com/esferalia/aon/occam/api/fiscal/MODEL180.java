@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.fiscal;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -19,55 +20,55 @@ public class MODEL180 {
 	}
 
 	public static LinkedList<Mod180> getMod180s(Occam occam) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getMod180s(ctx, occam.getDomain());
 		}
 	}
 
 	public static Mod180 get(Occam occam,Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().get(ctx, id);
 		}
 	}
 
 	public static Mod180 initialize(Occam occam, Integer year) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, year);
 		}
 	}
 
 	public static Mod180 save(Occam occam, Mod180 mod180) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().save(ctx, mod180);
 		}
 	}
 
 	public static void delete(Occam occam, Mod180 mod180) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod180);
 		}
 	}
 
 	public static Mod180Detail getDetail(Occam occam, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getDetail(ctx, id);
 		}
 	}
 	
 	public static Mod180 saveComments(Occam occam, Mod180 mod180) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().saveComments(ctx, mod180);
 		}
 	}
 
 	public static Mod180 changeStatus(Occam occam, Mod180 mod180, FiscalStatus newStatus) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().changeStatus(ctx, mod180, newStatus);
 		}
 	}
 	
 	public static Mod180 duplicate(Occam occam, Mod180 mod180) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().duplicate(ctx, mod180);
 		}
 	}

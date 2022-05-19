@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
@@ -36,7 +35,6 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -44,7 +42,6 @@ import java.util.function.Function;
 
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -75,7 +72,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -102,7 +98,6 @@ import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -113,7 +108,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
-import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -169,18 +163,6 @@ public class FillerDAO {
 		}
 	}
 	
-	public static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {
-		@Override
-		public Warehouse apply(WarehouseRecord r) {
-			return new Warehouse()
-					.setActive(r.getActive())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setDepartment(r.getDepartment())
-					.setName(r.getName())
-					.setWorkplace(r.getWorkplace());
-		}
-	}
 	
 	public static class CarrierPackingFiller implements Function<Record, CarrierPacking> {
 		@Override
@@ -232,25 +214,6 @@ public class FillerDAO {
 					.setNationality(null) // TODO
 					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)))
 					.setLegalPerson(AonEnumUtils.getBoolean( r.getValue(REGISTRY.TYPE)));			
-		}
-	}
-	
-	public static class CarrierFiller implements Function<Record, Carrier> {
-		@Override
-		public Carrier apply(Record r) {
-			Carrier carrier = new Carrier();
-			carrier.setAlias(r.getValue(REGISTRY.ALIAS));
-			carrier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			carrier.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			carrier.setDocumentCountry(null); // TODO
-			carrier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			carrier.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
-			carrier.setId(r.getValue(REGISTRY.ID));
-			carrier.setName(r.getValue(REGISTRY.NAME));
-			carrier.setNationality(null); // TODO
-			carrier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			carrier.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
-			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
 		}
 	}
 	
@@ -336,22 +299,6 @@ public class FillerDAO {
 					.setGender(Gender.safeValueOf(r.getValue(PERSON.GENDER)))
 					.setMaritalStatus(MaritalStatus.safeValueOf(r.getValue(PERSON.MARITAL_STATUS)))
 					.setSocialSecurityNum(r.getValue(PERSON.SOCIAL_SECURITY_NUM));				
-		}
-	}
-	
-	public static class RNoteFiller  implements Function<Record,RegistryNote> {
-
-		@Override
-		public RegistryNote apply(Record r) {
-			return new RegistryNote()
-					.setId(r.getValue(RNOTE.ID))
-					.setDomain(r.getValue(RNOTE.DOMAIN))
-					.setComments(r.getValue(RNOTE.COMMENTS))
-					.setDescription(r.getValue(RNOTE.DESCRIPTION))
-					.setNoteDate(r.getValue(RNOTE.NOTE_DATE))
-					.setNoteType(r.getValue(RNOTE.NOTE_TYPE))
-					.setRegistry(r.getValue(RNOTE.REGISTRY))
-					.setSecurityLevel(r.getValue(RNOTE.SECURITY_LEVEL));
 		}
 	}
 	

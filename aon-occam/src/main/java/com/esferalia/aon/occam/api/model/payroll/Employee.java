@@ -27,6 +27,7 @@ public class Employee implements Serializable{
 	public static final String GRUPO_COTIZACION = "GRUPO_COTIZACION";
 	public static final String COEFICIENTE_PARCIALIDAD = "COEFICIENTE_PARCIALIDAD";
 	public static final String COLECTIVO_TRABAJADORES = "COLECTIVO_TRABAJADORES";
+	public static final String MODELO_COTIZACION_AGRARIO = "MODELO_COTIZACION_AGRARIO";
 
 	public static class Data<T> {
 		private T value;
@@ -334,7 +335,7 @@ public class Employee implements Serializable{
 		return getQuoteGroup(toLocalDate(startDate));
 	}
 	
-	public Employee setQuoteGroup(String quoteGroup ) {
+	public Employee setQuoteGroup(String quoteGroup) {
 		return setString(GRUPO_COTIZACION, quoteGroup);
 	}
 
@@ -362,7 +363,7 @@ public class Employee implements Serializable{
 		return getFactor(toLocalDate(startDate));
 	}
 
-	public Employee setFactor(Double factor ) {
+	public Employee setFactor(Double factor) {
 		return setNumber(COEFICIENTE_PARCIALIDAD, factor);
 	}
 
@@ -376,6 +377,15 @@ public class Employee implements Serializable{
 	
 	public Employee addFactor(Double factor, Date startDate, Date endDate) {
 		return addNumber(COEFICIENTE_PARCIALIDAD, factor, toLocalDate(startDate), toLocalDate(endDate));
+	}
+	
+	public Optional<String> getMdCtz(LocalDate date) {
+		return getData(MODELO_COTIZACION_AGRARIO, date, String.class );
+	}
+	
+	public Employee setMdCtz(String modelCtz) {
+		addData(MODELO_COTIZACION_AGRARIO, modelCtz, this.startDate, this.endDate);
+		return this;
 	}
 
 	public Map<String, Collection<ExpressionData>> getDatas() {

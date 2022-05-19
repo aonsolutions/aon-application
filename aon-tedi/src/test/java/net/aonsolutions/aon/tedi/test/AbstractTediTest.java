@@ -9,12 +9,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AbstractTediTest {
 
-	protected static AONContext ctx;
+	protected static CloseableAONContext ctx;
 	protected static String DOMAIN_NAME = "occamtest.aonsolutions.test";
 	protected static Integer DOMAIN_ID = 1;
 	protected static String USER = "admin";
@@ -29,7 +30,7 @@ public class AbstractTediTest {
 
 	@AfterClass
 	public static void afterClass() {
-		if (ctx != null) ctx.finalize();
+		if (ctx != null) ctx.close();
 	}
 
 	private static void shutUp() {

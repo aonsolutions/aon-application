@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.mod200.api;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.impl.jooq.MODEL200Impl;
@@ -18,13 +19,13 @@ public class MODEL200 {
 	}
 
 	public static LinkedList<Mod200> getMod200s(Occam occam) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getMod200s(ctx, occam.getDomain());
 		}
 	}
 
 	public static Mod200 getMod200(Occam occam, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getMod200(ctx, id);
 		}
 	}

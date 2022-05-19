@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Date;
@@ -25,6 +24,7 @@ import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -48,7 +48,7 @@ public class DBFee {
 		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -146,7 +146,7 @@ public class DBFee {
 	}
 	
 	public Customer getCustomer(Domain domain, String login, String client, Boolean ignoreInactiveClient){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<Record5<Integer, String, String, String, Byte>> result = null;
@@ -216,7 +216,7 @@ public class DBFee {
 	}
 	
 	public LinkedList<Customer> getCustomers(Domain domain, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 

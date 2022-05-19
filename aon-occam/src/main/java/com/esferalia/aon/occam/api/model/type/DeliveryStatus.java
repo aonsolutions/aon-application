@@ -24,4 +24,12 @@ public enum DeliveryStatus implements Serializable {
 		if (i < 0 || i >= DeliveryStatus.values().length) return null;
 		return DeliveryStatus.values()[i];
 	}
+
+	public static DeliveryStatus safeValueOf( String i ) {
+		for (DeliveryStatus rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
 }

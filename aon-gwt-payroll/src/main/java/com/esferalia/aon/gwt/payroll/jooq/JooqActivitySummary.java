@@ -27,6 +27,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
@@ -41,7 +42,7 @@ public class JooqActivitySummary {
 
 		if (domainName != null && domainId != null && startDate != null
 				&& endDate != null) {
-			AONContext ctx = null;
+			CloseableAONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domainId,
 						AonServletUtils.getLoggedUser());
@@ -171,7 +172,7 @@ public class JooqActivitySummary {
 			Integer domainId, String domainName, Date startDate, Date endDate,
 			Boolean starts, Boolean ends) {
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,
 					AonServletUtils.getLoggedUser());
@@ -220,7 +221,7 @@ public class JooqActivitySummary {
 			Integer[] childDomainIds, Integer domainId, String domainName,
 			Date startDate, Date endDate, Boolean starts, Boolean ends) {
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,
 					AonServletUtils.getLoggedUser());
@@ -276,7 +277,7 @@ public class JooqActivitySummary {
 			boolean salary, boolean salaryExtra, boolean salarySettle,
 			boolean salaryOther) {
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,
 					AonServletUtils.getLoggedUser());
@@ -339,7 +340,7 @@ public class JooqActivitySummary {
 			Date startDate, Date endDate, boolean salary, boolean salaryExtra,
 			boolean salarySettle, boolean salaryOther) {
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,
 					AonServletUtils.getLoggedUser());
@@ -398,7 +399,7 @@ public class JooqActivitySummary {
 			boolean itCommonDisease, boolean itOccupationalDisease,
 			boolean itMaternity, boolean itOther) {
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,
 					AonServletUtils.getLoggedUser());
@@ -480,7 +481,7 @@ public class JooqActivitySummary {
 			Date startDate, Date endDate, boolean itCommonDisease,
 			boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
 
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId,
 					AonServletUtils.getLoggedUser());

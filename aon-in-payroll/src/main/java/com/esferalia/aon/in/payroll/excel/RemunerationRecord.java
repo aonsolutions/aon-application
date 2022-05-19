@@ -65,12 +65,12 @@ import org.jooq.impl.DSL;
 import com.code.aon.person.enumeration.Gender;
 import com.esferalia.aon.in.payroll.excel.IRetributiveConcept.RetributionForm;
 import com.esferalia.aon.in.payroll.excel.IRetributiveConcept.RetributionType;
-import com.esferalia.aon.jooq.tables.ContractData;
 import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.SalaryPayment;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -1143,7 +1143,7 @@ public class RemunerationRecord {
 		RemunerationRecordData remunerationRecordData = new RemunerationRecordData();
 		remunerationRecordData.setStartDate(startDate);
 		remunerationRecordData.setEndDate(endDate);
-		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
 
 		Condition condition = SALARY.DOMAIN.eq(aonContext.getDomainId())
 				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNotNull().or(SALARY_PAYMENT.DESCRIPTION.isNotNull()))

@@ -52,9 +52,9 @@ import org.jooq.SelectConditionStep;
 
 import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
@@ -371,7 +371,7 @@ public class EnterprisePayrollExcel {
 		Integer wId = params.getWorkplaceId();
 		Integer eId = params.getEnterpriseId();
 		
-		try (AONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -436,7 +436,7 @@ public class EnterprisePayrollExcel {
 		Integer wId = params.getWorkplaceId();
 		Integer eId = params.getEnterpriseId();
 		
-		try (AONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -513,7 +513,7 @@ public class EnterprisePayrollExcel {
 		Integer wId = params.getWorkplaceId();
 		Integer eId = params.getEnterpriseId();
 		
-		try (AONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -641,7 +641,7 @@ public class EnterprisePayrollExcel {
 		Integer wId = params.getWorkplaceId();
 		Integer eId = params.getEnterpriseId();
 		
-		try (AONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -691,7 +691,7 @@ public class EnterprisePayrollExcel {
 		Integer eId = params.getEnterpriseId();
 		
 		
-		try (AONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -738,7 +738,7 @@ public class EnterprisePayrollExcel {
 		Integer eId = params.getEnterpriseId();
 		
 		
-		try (AONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)

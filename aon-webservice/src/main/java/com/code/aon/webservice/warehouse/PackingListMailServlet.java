@@ -7,10 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -22,14 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
@@ -45,12 +35,10 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 
 import solutions.aon.aws.ses.SES;
@@ -128,7 +116,7 @@ public class PackingListMailServlet extends HttpServlet{
 				AON.getDeliveryStream(domain.getName(), domain.getId(), login, 
 					f-> f.getCarrierPackingProperty().eq(carrierPacking.getId()))
 				.forEach(delivery -> {
-					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
+					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress().getId()));
 					printAddress(address);
 
 					AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login,
@@ -195,7 +183,7 @@ public class PackingListMailServlet extends HttpServlet{
 				}
 				stream.forEach(delivery -> {
 					printCarrierPacking(carrierPacking);
-					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
+					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress().getId()));
 					printAddress(address);
 
 					AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login,

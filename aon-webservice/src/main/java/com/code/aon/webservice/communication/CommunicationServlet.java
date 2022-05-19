@@ -465,8 +465,7 @@ public class CommunicationServlet extends HttpServlet {
 	}
 	
 	private Integer[] getEdiActiveRegistry(Domain domain, String login) {
-		Integer[] ids = AON
-				.getRNoteStream(domain.getName(), domain.getId(), login,
+		Integer[] ids = AON.getRegistryNoteStream(domain.getName(), domain.getId(), login,
 						f -> f.getDomainProperty().eq(domain.getId())
 								.and(f.getDescriptionProperty().eq("EDI_ACTIVE"))
 								.and(f.getCommentsProperty().eq("true")))
@@ -486,7 +485,7 @@ public class CommunicationServlet extends HttpServlet {
 			Sales sales = AON.getSales(domain.getName(),
 					domain.getId(), userName, f -> f.getIdProperty().eq(response.getSourceId()));
 			sales.setStatus(SalesStatus.PENDING);
-			AON.updateSales(domain.getName(), domain.getId(), userName, sales);
+			AON.saveSales(domain, userName, sales);
 			
 			// add new ingenet status -> REOPENED
 			DataResponseDetail lastDetail = AON.getLastDataResponseDetailStream(domain.getName(), domain.getId(), userName, f->f.getIdProperty().eq(id)).findFirst().orElse(null);

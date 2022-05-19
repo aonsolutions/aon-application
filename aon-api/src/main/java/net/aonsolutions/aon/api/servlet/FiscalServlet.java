@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -84,7 +85,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	}
 		
 	private JSONArray getFiscalMatrix(AonApiData api) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			JSONObject jsonParams = api.getData();
@@ -97,7 +98,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	}
 
 	private JSONArray getFiscalModels(AonApiData api) {
-		try ( AONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
+		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())){
 			LinkedList<FiscalModel> models = new LinkedList<>();
 			models.addAll( Mod303DAO.getMod303s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod111DAO.getMod111s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
@@ -121,7 +122,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject markAsFinished(AonApiData api) {
-		try ( final AONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+		try ( final CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 			JSONObject params = api.getData();
 			FiscalModelDeclarationType declarationType = FiscalModelDeclarationType.valueOf(JsonUtils.getString(params, IJsonNames.TYPE));
 			if (declarationType!=null) {

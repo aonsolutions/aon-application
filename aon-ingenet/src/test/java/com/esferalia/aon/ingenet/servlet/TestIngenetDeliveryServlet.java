@@ -1,8 +1,14 @@
 package com.esferalia.aon.ingenet.servlet;
 
+import static org.mockito.Mockito.when;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -10,18 +16,50 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public class TestIngenetDeliveryServlet  {
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-	private static String getValue(){
+import com.esferalia.aon.occam.test.AbstractOccamTest;
+import com.github.javafaker.Faker;
+
+import net.aonsolutions.tests.request.Method;
+import net.aonsolutions.tests.request.Request;
+
+public class TestIngenetDeliveryServlet extends AbstractOccamTest {
+
+	private static final String FILE_NAME = "delivery.xml";
+	Faker faker = new Faker();
+	
+	@Mock
+    HttpServletRequest request;
+ 
+    @Mock
+    HttpServletResponse response;
+    
+    @Mock
+    private OutputStream myOutputStream;
+ 
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
+	
+	private static String getValue() throws IOException{
 		String xml = "";
 		
-		String filePath = "/tmp/delivery.xml";
-		filePath = "/home/eagirrezabal/Descargas/delivery(5).xml";
-		
+		InputStream is = TestIngenetDeliveryServlet.class.getResourceAsStream(FILE_NAME);
+		File file = File.createTempFile("delivery", "xml");
+        FileUtils.copyInputStreamToFile(is, file);
 		
 		try (
-			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
+			BufferedReader xml_br = new BufferedReader(new FileReader(file))) {
 			String sCurrentLine;
 			while ((sCurrentLine = xml_br.readLine()) != null) {
 				xml += sCurrentLine;
@@ -30,12 +68,23 @@ public class TestIngenetDeliveryServlet  {
 			e.printStackTrace();
 		}
 
-		
 		return xml.substring(xml.indexOf("<"));
+	}
+	
+	@Test
+	@Ignore
+	public void test() throws IOException {
+		IngenetDeliveryServletTest servlet = new IngenetDeliveryServletTest();
+		when(request.getParameter(AbstractIngenetServlet.PARAM_USERNAME)).thenReturn("ingenet");
+		when(request.getParameter(AbstractIngenetServlet.PARAM_PASSWORD)).thenReturn("1ng3n3t");
+		when(request.getParameter(AbstractIngenetServlet.PARAM_VALUE)).thenReturn(getValue());
+		when(request.getServerName()).thenReturn(DOMAIN_NAME);
+
+		Request.request(Method.POST, request, response, servlet, "");
 	}
 
 	public static void main(String[] args) throws Exception {
-		String path = "";
+		String path = "http://";
 //		path += "http://udapa.esferalia.net:8080/aon-aio";
 		path += "http://udapa.aonsolutions.me:8080/aon-aio";
 //		path += "https://udapa.aonsolutions.net";

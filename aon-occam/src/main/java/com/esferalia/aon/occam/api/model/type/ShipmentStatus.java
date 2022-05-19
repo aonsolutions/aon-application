@@ -20,4 +20,22 @@ public enum ShipmentStatus implements Serializable{
 		return this.toString();
     }
 
+	public static ShipmentStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static ShipmentStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= ShipmentStatus.values().length) return null;
+		return ShipmentStatus.values()[i];
+	}
+	
+	public static ShipmentStatus safeValueOf( String i ) {
+		for (ShipmentStatus rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
 }

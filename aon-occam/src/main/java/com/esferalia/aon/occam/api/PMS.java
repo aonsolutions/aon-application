@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.pms.HotelEmailCatchment;
 import com.esferalia.aon.occam.api.model.pms.HotelGuestByCountry;
@@ -23,7 +24,7 @@ public class PMS {
 
 	public static LinkedList<HotelGuestByCountry> getHotelGuestByCountry(String domainName, Integer domainId, String login,
 			Integer hotelId, Date date) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHotelGuestByCountry(ctx, hotelId, date);
@@ -35,7 +36,7 @@ public class PMS {
 	
 	public static LinkedList<HotelEmailCatchment> getHotelEmailCatchmentList(String domainName, Integer domainId, String login,
 			Integer[] hotelArray, Integer year){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHotelEmailCatchmentList(ctx, hotelArray, year);
@@ -46,7 +47,7 @@ public class PMS {
 	}
 
 	public static ProjectReservation getHHGReservation(String domainName, Integer domainId, String login, Integer project){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHHGReservation(ctx, project);
@@ -57,7 +58,7 @@ public class PMS {
 	}
 	
 	public static LinkedList<ProjectReservation> getHHGReservations(String domainName, Integer domainId, String login, Integer[] array){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHHGReservations(ctx, array);
@@ -69,7 +70,7 @@ public class PMS {
 	
 	public static LinkedList<ProjectReservationRoom> getHHGReservationRooms(String domainName, Integer domainId, String login,
 			Integer project){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHHGReservationRooms(ctx, project);
@@ -81,7 +82,7 @@ public class PMS {
 	
 	public static LinkedList<ProjectReservationService> getHHGReservationServices(String domainName, Integer domainId, String login,
 			Integer project){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHHGReservationServices(ctx, project);
@@ -93,7 +94,7 @@ public class PMS {
 	
 	public static LinkedList<ProjectReservationServiceDetail> getHHGReservationServicesDetail(String domainName, Integer domainId, String login,
 			Integer service){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHHGReservationServicesDetail(ctx, service);
@@ -104,7 +105,7 @@ public class PMS {
 	}
 	
 	public static HashMap<Integer, Attach> getHHGProjectAttach(String domainName, Integer domainId, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getHHGProjectAttach(ctx);
@@ -115,7 +116,7 @@ public class PMS {
 	}
 	
 	public static void updateHHGProjectAttach(String domainName, Integer domainId, String login, Attach attach){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getPMS().updateHHGProjectAttach(ctx, attach);
@@ -126,7 +127,7 @@ public class PMS {
 	}
 	
 	public static Stream<Integer> getFailPreauthorizationProjectIdStream(String domainName, Integer domainId, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getPMS().getFailPreauthorizationProjectIdStream(ctx);

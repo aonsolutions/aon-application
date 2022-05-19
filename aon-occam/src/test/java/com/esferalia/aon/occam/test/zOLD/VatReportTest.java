@@ -69,7 +69,7 @@ public class VatReportTest {
 
 	@AfterClass
 	public static void afterClass() {
-		ctx.finalize();
+		ctx.close();
 	}
 */	
 	// @Test

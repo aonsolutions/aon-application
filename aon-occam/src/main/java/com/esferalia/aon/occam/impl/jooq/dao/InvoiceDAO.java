@@ -118,9 +118,13 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDAO {
+	
+	private InvoiceDAO() {
+
+	}
 	
 	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
@@ -1303,6 +1307,8 @@ public class InvoiceDAO {
 		FinanceDAO.deleteInvoiceFinances(ctx,id);
 		
 		InvoiceFiscalDAO.delete(ctx, id);
+		
+		InvoiceAddressDAO.delete(ctx, id);
 		
 		count = ctx.getDslContext()
 			.delete(INVOICE)

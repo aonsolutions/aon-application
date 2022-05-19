@@ -31,11 +31,11 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -223,7 +223,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> getMovementsCcc(AonApiData api) {
 		ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> employees = new ArrayList<>();
 		Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		List<String> errors = new ArrayList<>();
 		
@@ -308,8 +308,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    for (Employee employee : list) {
 				JSONObject json = new JSONObject();
 				json.put("ipf", employee.getIpf());
-				employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 				json.put("nss", nss);
+				employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 				arr.put(json);
 			}
 		    return arr;
@@ -335,7 +335,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		ComunicaUtils.validateAlta(api);
 		JSONObject data = api.getData(); 
 	    Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
 		String regime = data.optString(IJsonNames.REGIME);
@@ -354,10 +354,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String convenio =  data.has("convenio")  && !data.isNull("convenio") ? data.optString("convenio") : "60888888888888";
 		String rlce = data.has("rlce")  && !data.isNull("rlce") ? data.optString("rlce") : null; 
 		String collective = data.has("collective")  && !data.isNull("collective") ? data.optString("collective") : null;
-		String md_ctz = data.has("md_ctz")  && !data.isNull("md_ctz") ? data.optString("md_ctz") : null; //para regime agrario
+		
+		String modCtz = data.has("md_ctz")  && !data.isNull("md_ctz") ? data.optString("md_ctz") : null; //para regime agrario
 
-//        Ctz mensual = 1
-//        Jornadas reales = 2
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(regime)
 		.setName(name)
@@ -371,7 +370,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setContract(contract)
 		.setCollective(collective)
 		.setRlce(rlce)
-		.setMdctz(md_ctz);
+		.setMdctz(modCtz);
 		
 		if(coef!=null) {
 			Integer fact = Integer.parseInt(coef);
@@ -393,7 +392,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONObject sendBaja(AonApiData api) throws Exception{
 		JSONObject data = api.getData(); 
 	    Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
 		String regime = data.optString(IJsonNames.REGIME);
@@ -425,7 +424,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONObject movDelete(AonApiData api) throws Exception {
 		JSONObject data = api.getData(); 
 		Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		
 		//first screen
@@ -433,7 +432,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ctaCti = data.getString("ctaCti");
 		String nss = data.getString("nss");
 		String ipf = data.getString("ipf");
-		String name =  data.getString(IJsonNames.NAME);
+		String name = data.getString(IJsonNames.NAME);
 		Date date = AonDateUtils.parse(data.getString("fra"), FORMAT_DATE);
 
 		com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee()
@@ -445,9 +444,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		;
 		
 		if(!data.isNull("frb")) {
-			employee.setEndDate(AonDateUtils.parse(data.getString("frb"), FORMAT_DATE));
-			date = employee.getEndDate().get();
+			Date endDate = AonDateUtils.parse(data.getString("frb"), FORMAT_DATE);
+			employee.setEndDate(endDate);
+			date = endDate;
 		}
+		
 		AonComunica.deleteContract(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, employee , true);
 		
 		if(!data.isNull(IJsonNames.NAME)) {
@@ -595,7 +596,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 
 				//SEND EMAIL
 				Domain domain = api.getDomain();
-				User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+				User user = api.getUser();
 				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 				String regime = employee.getRegime();
 				String ccc = employee.getCtaCti().get();
@@ -656,7 +657,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Thread newThread = new Thread(() -> {
 			
 			Domain domain = api.getDomain();
-			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+			User user = api.getUser();
 			LinkedList<Auth> auths = new LinkedList<>();
 			
 			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
@@ -685,7 +686,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private void sendEmail(AonApiData api, String subject, String body, LinkedList<File> files) {
 		Thread newThread = new Thread(() -> {
 			try {
-				User user = AON_SOLUTIONS.getUser(api.getDomain(), api.getToken());
+				User user = api.getUser();
 				SESMessage msg = new SESMessage()
 						.setAlias("AON | COMUNIC@")
 						.setSubject(subject)
@@ -706,34 +707,39 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private static JSONObject updateContracts(AonApiData api){
 		Domain domain = api.getDomain();
     	try {
+    		JSONObject params = api.getData();
     	    Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 			HashSet<Employee> employees = new HashSet<>();
 			List<CCCInfo> cccs = getCcs(api);
 			
 			ApplicationParameter appParams = appParamsExists(api);
 			
-			//------------MOVEMENTS OLD
-			if(api.getData().optBoolean("employeesOld")) {
+			
+			if(params.optBoolean("employeesOld")) {//------------MOVEMENTS OLD
+				
 				Date startIni = AonDateUtils.getYearFirstDay( AonDateUtils.addMonths(new Date(), -6) ); 
-				if(!api.getData().optString("startDate").isEmpty()) {
-					startIni = AonDateUtils.parse(api.getData().optString("startDate"), FORMAT_DATE);
-				} else if(appParams.getId()!=null && appParams.getValue()!=null) 
+				
+				if(!params.optString("startDate").isEmpty()) {
+					startIni = AonDateUtils.parse(params.optString("startDate"), FORMAT_DATE);
+				} else if(appParams.getId()!=null && appParams.getValue()!=null) {
 					startIni = AonDateUtils.addDays(new Date( Long.parseLong( appParams.getValue() ) ), -15) ;
+				}
 
 				employees.addAll(ComunicaUtils.getEmployeesOld(startIni, certificate, cccs));
 			}
-
-			//------------MOVEMENTS Prev(ACTUAL)
-			employees.addAll(ComunicaUtils.getEmployeesPrev(certificate, cccs));
+			
+			if(params.optBoolean("employeesPrev")) {		//------------MOVEMENTS PREV
+				employees.addAll(ComunicaUtils.getEmployeesPrev(certificate, cccs));
+			}
 			
 			//------------CONTRACT
 			employees.forEach(data ->{
 				try {
-				    String nss = data.getNss();
-					//----GET PERSON
 					java.sql.Date fraSql = new java.sql.Date(data.getFra().getTime());      
+				    String nss = data.getNss();
 					Optional<Date> frb = data.getFrb();
 					Optional<Contract> contract = Optional.empty();
+					//----GET PERSON
 					Person person = AON.getPerson(domain, "", f->f.getDomainProperty().eq(domain.getId()).and(f.getSocialSecurityNumProperty().eq(nss)));
 					
 					////--GET CONTRACT ACTIVE
@@ -762,16 +768,19 @@ public class ComunicaServlet extends AonApiHttpServlet{
 							LOGGER.info(data.toString());			
 							EmployeeParse.toEmployeeOccam(data);
 							PAYROLL.addEmployee(domain.getName(), domain.getId(), "", EmployeeParse.toEmployeeOccam(data));
+							LOGGER.info("------------------------------------");
 						}
 					} else {
 						LOGGER.info("--------YA EXISTE EL CONTRATO-------------");
 						LOGGER.info(data.toString());
+						LOGGER.info("------------------------------------");
 					}
 		
 				} catch (SegSocialException e) {e.printStackTrace();}	
 			});
+			
 			if(!employees.isEmpty()) {
-				saveAppParams(api, appParams); //SAVE APP PARAMS
+				saveAppParams(domain, api.getUser(), appParams); //SAVE APP PARAMS
 			} 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -782,8 +791,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	/*
 	 * SAVE OR UPDATE APP PARAMS
 	 */
-	private static void saveAppParams(AonApiData api, ApplicationParameter exists) {
-		Domain domain = api.getDomain();
+	private static void saveAppParams(Domain domain, User user, ApplicationParameter exists) {
 		ApplicationParameter appParams = new ApplicationParameter()
 				.setDomain(domain.getId())
 				.setValue(new Date().getTime()+"")
@@ -791,12 +799,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				;
 		if(exists.getId()!=null) {
 			LOGGER.info("--------UPDATE APP PARAMS-------------");
-			AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams, 
+			AON.updateApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParams, 
 					f->f.getDomainProperty().eq(appParams.getDomain()).and(f.getNameProperty().eq(appParams.getName()))
 				);
 		} else {
 			LOGGER.info("--------SAVE APP PARAMS-------------");
-			AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams);
+			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParams);
 		}
 	}
 	

@@ -10,6 +10,7 @@ import org.jooq.Result;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -24,7 +25,7 @@ public class DBTask {
 
 	public static LinkedList<OldTask> getTask(Domain domain, User user){
 		
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 
@@ -64,7 +65,7 @@ public class DBTask {
 	}
 	
 	public static void addTaskId(Domain domain, User user, String taskId,Integer id){
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try{
 			ctx =AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
@@ -80,7 +81,7 @@ public class DBTask {
 	}
 
 	public static void addTaskListId(Domain domain, User user, String taskListId,Integer id){
-		AONContext ctx = null;
+		CloseableAONContext ctx =null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 

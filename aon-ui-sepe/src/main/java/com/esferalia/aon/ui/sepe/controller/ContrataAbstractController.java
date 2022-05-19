@@ -42,6 +42,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContrataBatch;
@@ -477,7 +478,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 				.orderBy(CONTRATA_BATCH.DATE.desc());
 	}
 //	private Integer obtainBatchContractCount(Contract contract){
-//		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
+//		CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
 //		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
 //		if(result.size()>0){
 //			return result.get(0).value3();
@@ -485,7 +486,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 //		return 0;
 //	}
 	private ContrataBatch obtainBatch(Contract contract){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
 			Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();

@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
@@ -48,7 +49,7 @@ public class AccountJournalReportPDF {
 		Company company = config.getCompany();
 		String companyName = company == null ? "" : company.getName();
 		
-		AONContext ctx = AONContext.getAONContext(domainName, domainId, user);
+		CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, user);
 		if (params.getPeriod() != null) {
 			params.setSelectedPeriod(AccountPeriodDAO.getPeriod(ctx, params.getPeriod()));
 		}
@@ -58,7 +59,7 @@ public class AccountJournalReportPDF {
 		if (params.getActivity() != null) {
 			params.setSelectedActivity(CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()));
 		}
-		ctx.finalize();
+		ctx.close();
 		
 		ReportMetadata metadata = params.getReportMetadata()
 				.setCompanyName(companyName)

@@ -46,7 +46,7 @@ export class AonMobileDesktop extends AonElement {
 		this.initialize();
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
-			if(!this.isOpenFirstApp(this.dur)){
+			if(!this.openFirstApp(this.dur)){
 				this.build();
 			}
 		});
@@ -103,7 +103,7 @@ export class AonMobileDesktop extends AonElement {
 		}
 	}
 
-	isOpenFirstApp(dur){
+	openFirstApp(dur){
 		const appsOpen = getAppsByDur(dur).filter(app=>  ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
 
 		if(appsOpen && appsOpen.length===1){

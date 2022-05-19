@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import { Apps} from  '../../services/app.js';
+import { Apps, getAppsByDur} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -278,15 +278,10 @@ export class AonDesktop extends AonElement {
 
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
-
-			let appsPermission =[];
-
+			
 			for (let key in Apps){
 				const app = Apps[key];
 				if(this.isApp(app)) {
-					
-					appsPermission.push(app);
-
 					if(Apps.MESSENGER.app === app.app){
 						getTaskHolder({reload:true}).then(({id})=>{
 							if(id) 
@@ -297,14 +292,8 @@ export class AonDesktop extends AonElement {
 					}
 				}
 			}
-			
-			const appsOpen = appsPermission.filter(app=> ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
-			if(appsOpen && appsOpen.length===1){
-				let app = appsOpen[0];
-				this.appSelection(app.app);
-				this.appOption = false;
-			}
-
+	
+			this.openFirstApp(this.getDur());
   		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
@@ -339,6 +328,18 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li);
 		}
 		div.appendChild(ul);
+	}
+
+	openFirstApp(dur){
+		const appsOpen = getAppsByDur(dur).filter(app=>  ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+
+		if(appsOpen && appsOpen.length===1){
+			let app = appsOpen[0];
+			if( app.app === Apps.AON_SALTRA.app ){
+				this.rootPanel(new AonSaltra())
+				this.appOption = false;
+			}
+		}
 	}
 
 	buildTitle(title) {

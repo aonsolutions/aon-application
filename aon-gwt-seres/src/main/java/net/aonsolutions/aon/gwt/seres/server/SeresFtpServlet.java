@@ -401,7 +401,7 @@ public class SeresFtpServlet extends HttpServlet {
 			return null;
 		}
 		private RegistryNote searchCustomerNote(Domain domain, String loggedUser, Integer customerId, String key) {
-			List<RegistryNote> rNotes = AON.getRNoteList(
+			List<RegistryNote> rNotes = AON.getRegistryNoteList(
 					domain.getName(),
 					domain.getId(),
 					loggedUser,

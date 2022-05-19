@@ -339,4 +339,9 @@ public class Item implements Serializable {
 		return sb.toString();
 	}
 	
+	public boolean isEmpty() {
+		return getId() == null && getDetail() == null && getDetail2() == null 
+				&& getDetail3() == null && getDescription() == null && getSerialNumber() == null
+				&& getSerialDate() == null && getBarcode() == null;
+	}
 }

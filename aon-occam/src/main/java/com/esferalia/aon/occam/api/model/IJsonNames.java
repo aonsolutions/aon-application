@@ -73,6 +73,8 @@ public final class IJsonNames {
 	public static final String BY_MONTH = "byMonth";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CALLBACK = "callback";
+	public static final String CARRIER = "carrier";
+	public static final String CARRIER_PACKING = "carrierPacking";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
@@ -85,6 +87,7 @@ public final class IJsonNames {
 	public static final String COMMENT = "comment";
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
+	public static final String COMMISSION_TYPE = "commission_type";
 	public static final String COMPANY = "company";
 	public static final String COMPLEMENTARY = "complementary";
 	public static final String COMPOSITION = "composition";
@@ -107,22 +110,27 @@ public final class IJsonNames {
 	public static final String CREATION_DATE = "creation_date";
 	public static final String CREATION_USER = "creation_user";
 	public static final String CREDIT = "credit";
+	public static final String CUSTOMER = "customer";
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
 	
 	// ---------------------------------------------------------------------------------------------	[D] 
 	public static final String DATE = "date";
 	public static final String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	public static final String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
+	public static final String DEADLINE = "deadline";
 	public static final String DEBIT = "debit";
 	public static final String DEDUCTIBLE_PERCENT = "deductiblePercent";
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
 	public static final String DEFINED_USERS = "definedUsers";
+	public static final String DELIVERY = "delivery";
+	public static final String DELIVERY_DATE = "deliveryDate";
 	public static final String DELIVERY_GROUPED = "deliveryGrouped";
 	public static final String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	public static final String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
 	public static final String DELIVERY_VALUATED = "deliveryValuated";
-	public static final String DEADLINE = "deadline";
+	public static final String DELIVERED = "delivered";
+	public static final String DEPARTMENT = "department";
 	public static final String DESCRIPTION = "description";
 	public static final String DETAIL = "detail";
 	public static final String DETAIL2 = "detail2";
@@ -144,16 +152,20 @@ public final class IJsonNames {
 	public static final String DOMAIN_TYPE = "domainType";
 	public static final String DOMAINS = "domains";
 	public static final String DRIVE_ID = "driveId";
+	public static final String DRIVER = "driver";
+	public static final String DRIVER_DOCUMENT = "driverDocument";
 	public static final String DRS = "drs";
 	public static final String DUA_LINKED = "duaLinked";
 	public static final String DUE_DATE = "due_date";
 	// ---------------------------------------------------------------------------------------------	[E] 
 	public static final String E_INVOICE = "eInvoice";
+	public static final String ECONOMIC_AGREEMENT = "economicAgreement";
 	public static final String EJER = "ejer";
 	public static final String EMAIL = "email";
 	public static final String EMPTY = "";
 	public static final String ENABLE_HEREDITY = "enableHeredity";
 	public static final String END_DATE = "end_date";
+	public static final String ENTERPRISE = "enterprise";
 	public static final String ENTRY_DATE = "entryDate";
 	public static final String ENTRY_ENABLED = "entryEnabled";
 	public static final String ENTRY_ID = "entryId";
@@ -181,6 +193,7 @@ public final class IJsonNames {
 	public static final String FROM_DUE_DATE = "fromDueDate";
 	public static final String FROM_SALARY = "fromSalary";
 	public static final String FROM_NUMBER = "fromNumber";
+	public static final String FULL = "full";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	public static final String GLOBAL = "global";
 	public static final String GROUP_BY_NIF = "groupByNif";
@@ -247,6 +260,7 @@ public final class IJsonNames {
 	public static final String LEGAL_PERSON = "legalPerson";
 	public static final String LEVEL = "level";
 	public static final String LIMIT = "limit";
+	public static final String LINE = "line";
 	public static final String LOGIN = "login";
 	public static final String LOGO = "logo";
 	public static final String LOTABLE = "lotable";
@@ -278,7 +292,9 @@ public final class IJsonNames {
 	public static final String NUMBER = "number";
 	public static final String NUMBER_OF_PYMNTS = "numberOfPymnts";
 	public static final String NUMBER_OF_USERS = "numberOfUsers";
+	public static final String NUMBER_PLATE = "numberPlate";
 	// ---------------------------------------------------------------------------------------------	[O] 
+	public static final String OFFER_DETAIL = "offerDetail";
 	public static final String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	public static final String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
 	public static final String OFFER_STATUS_INVOICED = "offerStatusInvoiced";
@@ -346,6 +362,7 @@ public final class IJsonNames {
 	public static final String PROVINCE = "province";
 	public static final String PURCHASE_ACCOUNT = "purchaseAccount";
 	public static final String PURCHASE_PRICE = "purchasePrice";
+	public static final String PURCHASE_REFERENCE = "purchaseReference";
 	public static final String PURCHASES_RATIO = "purchasesRatio";
 	public static final String PURCHASE_VALUATED = "purchaseValuated";
 	public static final String PYMNT_DAYS = "pymntDays";
@@ -354,6 +371,7 @@ public final class IJsonNames {
 	public static final String QUANTITY = "quantity";
 	public static final String QUOTA = "quota";
 	// ---------------------------------------------------------------------------------------------	[R] 
+	public static final String RATE = "rate";
 	public static final String RDOCUMENT = "rdocument";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
@@ -389,6 +407,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[S] 
 	public static final String SALES  = "sales";
 	public static final String SALES_ACCOUNT  = "salesAccount";
+	public static final String SALES_DETAIL = "salesDetail";
 	public static final String SALES_RATIO = "salesRatio";
 	public static final String SCOPE = "scope";
 	public static final String SECTION = "section";
@@ -396,6 +415,7 @@ public final class IJsonNames {
 	public static final String SELECTED_ACCOUNT = "selectedAccount";
 	public static final String SELECTED_ACTIVITY = "selectedActivity";
 	public static final String SELECTED_PERIOD = "selectedPeriod";
+	public static final String SELLER = "seller";
 	public static final String SELLER_IDS = "sellerIds";
 	public static final String SENDER = "sender";
 	public static final String SERIAL_NUMBER = "serialNumber";
@@ -410,6 +430,15 @@ public final class IJsonNames {
 	public static final String SETTLED = "settled";
 	public static final String SHARED = "shared";
 	public static final String SHEET = "sheet";
+	public static final String SHIPPING_ALTERNATIVE_ADDRESS = "shippingAlternativeAddress";
+	public static final String SHIPPING_ALTERNATIVE_ADDRESS2 = "shippingAlternativeAddress2";
+	public static final String SHIPPING_ALTERNATIVE_ZIP = "shippingAlternativeZip";
+	public static final String SHIPPING_ALTERNATIVE_CITY = "shippingAlternativeCity";
+	public static final String SHIPPING_ALTERNATIVE_PHONE = "shippingAlternativePhone";
+	public static final String SHIPPING_ALTERNATIVE_RECIPIENT = "shippingAlternativeRecipient";
+	public static final String SHIPPING_CONTACT = "shippingContact";
+	public static final String SHIPPING_PERIOD = "shippingPeriod";
+	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SIGNATURE = "signature";
@@ -420,6 +449,7 @@ public final class IJsonNames {
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";
 	public static final String STATUS = "status";
+	public static final String STATUS_MODIFICATION_DATE = "statusModificationDate";
 	public static final String STOCK_UNIT_TAG = "stockUnitTag";
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
@@ -452,6 +482,9 @@ public final class IJsonNames {
 	public static final String TO_NUMBER = "toNumber";
 	public static final String TOTAL = "total";
 	public static final String TOTAL_BALANCE = "totalBalance";
+	public static final String TOTAL_PACKAGES = "totalPackages";
+	public static final String TOTAL_WEIGHT = "totalWeight";
+	public static final String TRACKING_NUMBER = "trackingNumber";	
 	public static final String TRANSACTION = "transaction";
 	public static final String TYPE = "type";
 	// ---------------------------------------------------------------------------------------------	[U] 
@@ -473,6 +506,7 @@ public final class IJsonNames {
 	public static final String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
+	public static final String WAREHOUSE = "warehouse";
 	public static final String WEB = "web";
 	public static final String WITHHOLDING = "withholding";
 	public static final String WITHHOLDING_FARMER = "withholdingFarmer";

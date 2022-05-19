@@ -121,7 +121,6 @@
 			<scope>compile</scope>
 		</dependency>
 	    
-	    <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
 		<dependency>
     		<groupId>org.apache.velocity</groupId>
     		<artifactId>velocity</artifactId>
@@ -137,6 +136,14 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.tests</artifactId>
+			 <type>test-jar</type>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -144,6 +151,7 @@
 			<version>4.13-beta-1</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.github.javafaker</groupId>
 			<artifactId>javafaker</artifactId>

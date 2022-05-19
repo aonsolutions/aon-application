@@ -5,7 +5,11 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -201,15 +205,16 @@ public class TaskUtils {
 				System.out.println("SENDER SEND NOTIFICATION EMAIL:"+ authSender.getEmail());
 			}
 		}
+		
 		//SEND TASKHOLDER ASSIGNED
-		if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
-			
-			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
-			
-			if(usr!=null) list.add(usr.getAuth());
-			
-			System.out.println("TASKHOLDER SEND NOTIFICATION ID:"+ task.getTaskHolder().getId());
-			
+		if(task.getTaskHolder().getId()!=null) {
+			if(!task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId())) {
+				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
+				
+				if(usr!=null) list.add(usr.getAuth());
+				
+				System.out.println("TASKHOLDER SEND NOTIFICATION ID:"+ task.getTaskHolder().getId());
+			}		
 		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ // SEND WORKGROUP ASSIGNED
 			AON.getTaskHolderWorkgroupStream(
 					domain, api.getUser(), 
@@ -252,6 +257,17 @@ public class TaskUtils {
 		    	return null;
 	    }
 	    return matcher;
+	}
+	
+	/**
+	 * DISTINCT STREAM
+	 * @param <T>
+	 * @param keyExtractor
+	 * @return 
+	 */
+	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
+		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 	
 //	private static Matcher regexFileBase64(String str) {

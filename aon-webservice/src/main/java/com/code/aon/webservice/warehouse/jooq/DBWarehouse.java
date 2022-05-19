@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.WarehouseJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
@@ -26,6 +27,10 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBWarehouse {
+	
+	private DBWarehouse() {
+		
+	}
 	
 	public static JSONArray getWarehouses(Domain domain,String login, Map<String, String[]> map){
 	    JSONArray array = new JSONArray();
@@ -46,16 +51,7 @@ public class DBWarehouse {
 	}
 	
 	public static JSONObject warehouseToJSON(Warehouse warehouse){
-		JSONObject json = new JSONObject();
-		if(warehouse != null){
-			json.put(MSG.ID, warehouse.getId());
-			json.put(MSG.DOMAIN, warehouse.getDomain());
-			json.put(MSG.NAME, warehouse.getName());
-			json.put(MSG.WORKPLACE, warehouse.getWorkplace());
-			json.put(MSG.DEPARTMENT, warehouse.getDepartment());
-			json.put(MSG.ACTIVE, warehouse.isActive());
-		}
-		return json;
+		return WarehouseJSON.toJSON(warehouse);
 	}
 	
 	/*

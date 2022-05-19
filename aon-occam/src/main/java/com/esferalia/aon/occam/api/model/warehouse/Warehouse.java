@@ -3,24 +3,22 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class Warehouse implements Serializable{
+public class Warehouse implements Serializable {
 	
-	Byte active;
-	Integer department;
-	Integer domain;
 	Integer id;
+	Integer domain;
+	Integer department;
 	String name;
 	Integer workplace;
-	
-	public Byte getActive() {
-		return active;
-	}
-	public Warehouse setActive(Byte active) {
+	boolean active;
+
+	public Warehouse setActive(boolean active) {
 		this.active = active;
 		return this;
 	}
-	public Boolean isActive() {
-		return active == 1;
+	
+	public boolean isActive() {
+		return active;
 	}	
 	
 	public Integer getDepartment() {

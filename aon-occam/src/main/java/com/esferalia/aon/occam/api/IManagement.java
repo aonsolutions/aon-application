@@ -35,8 +35,10 @@ public interface IManagement {
 	OfferDetail insertOfferDetail(AONContext ctx, OfferDetail offerDetail);
 
 	// -------------------- SALES 
-	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter);
-	void updateSales(AONContext ctx, Sales sales);
+	
+	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter, Options... options);
+	Sales saveSales(AONContext ctx, Sales sales);
+	void deleteSales(AONContext ctx, Integer salesId);
 	
 	// -------------------- SALES DETAIL
 	Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter);
@@ -60,8 +62,10 @@ public interface IManagement {
 	
 	// -------------------- DELIVERY 
 	Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter);
-	Delivery insertDelivery(AONContext ctx, Delivery delivery);
-	Delivery updateDelivery(AONContext ctx, Delivery delivery, DeliveryFilter filter);
+	Delivery saveDelivery(AONContext ctx, Delivery delivery);
+	@Deprecated(forRemoval = true) Delivery insertDelivery(AONContext ctx, Delivery delivery);
+	@Deprecated(forRemoval = true) Delivery updateDelivery(AONContext ctx, Delivery delivery, DeliveryFilter filter);
+	void deleteDelivery(AONContext ctx, Integer id);
 	void deleteDelivery(AONContext ctx, DeliveryFilter filter);
 	
 	Stream<DeliveryDetail> getDeliveryDetails(AONContext ctx, DeliveryFilter filter);

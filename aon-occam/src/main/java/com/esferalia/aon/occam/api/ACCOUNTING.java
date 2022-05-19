@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -33,10 +34,10 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -67,37 +68,37 @@ public class ACCOUNTING {
 	}
 
 	public static Account getAccount(String domainName, int domainId, String login, Integer id ) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccount(ctx, id);
 		}
 	}
 
 	public static Account getAccount(String domainName, int domainId, String login, String code) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccount(ctx, code);
 		}
 	}
 	public static Stream<Account> getAccounts(AccountParams params) {
-		try (AONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
 			return getAccounting().getAccounts(ctx, params);
 		}
 	}
 
 	public static Stream<Account> getAccounts(String domainName, int domainId,
 			String login, AccountFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccounting().getAccounts(ctx, filter);
 		}
 	}
 
 	public static Stream<Account> getAccounts(String domainName, int domainId, String login, AccountFilter filter, int offset, int limit) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccounting().getAccounts(ctx, filter, offset, limit);
 		}
 	}
 
 	public static String getAccountNextCode(String domainName, int domain, String login, String prefix) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, login)) {
 			return getAccounting().getAccountNextCode(ctx, prefix);
 		}
 	}
@@ -106,14 +107,14 @@ public class ACCOUNTING {
 	// ********************************* [ACCOUNT PERIOD]
 	// **************************************************
 	public static AccountPeriod getAccountPeriod(String domainName, Integer domainId, String login, Date date) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getPeriod(ctx, date);
 		}
 	}
 	
 	public static LinkedList<AccountPeriod> getDomainPeriods(String domainName,
 			int domain, String user) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
 			return getAccounting().getDomainPeriods(ctx);
 		}
 	}
@@ -131,7 +132,7 @@ public class ACCOUNTING {
 	}
 
 	public static AccountPeriod save(String domainName, Integer domainId, String login, AccountPeriod ap) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {	
 			return save(ctx, ap);
 		}
 	}
@@ -141,7 +142,7 @@ public class ACCOUNTING {
 	}
 
 	public static void deleteAccountPeriod(String domainName, Integer domainId, String login, AccountPeriod ap) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			delete(ctx, ap);
 		}
 	}
@@ -152,27 +153,27 @@ public class ACCOUNTING {
 
 	// -------------------------------- ACCOUNTING REGISTRY -------------------------------- 
 	public static AccountingRegistry initialize(String domainName, int domain, String user, AccountingRegistry ar) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().initialize(ctx, ar);
 		}
 	}
 	public static AccountingRegistry insert(String domainName,
 			int domainId, String login, AccountingRegistry reg) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccounting().insert(ctx, reg);
 		}
 	}
 	
 	public static AccountingRegistry update(String domainName,
 			int domainId, String login, AccountingRegistry reg) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccounting().update(ctx, reg);
 		}
 	}
 
 	public static Stream<AccountingRegistry> getAccountingRegistries(String domainName,
 			int domainId, String login, AccountingRegistryFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getAccounting().getAccountingRegistries(ctx, filter);
 		}
 	}
@@ -181,7 +182,7 @@ public class ACCOUNTING {
 	public static Stream<AccountEntry> getAccountEntriesStream(String domainName,
 			int domain, String user, final AccountEntryParams params,
 			int offset, int limit) throws AonCoreException {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAccountEntries(ctx, params, offset, limit);
 		}
 	}
@@ -192,7 +193,7 @@ public class ACCOUNTING {
 	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, String user, final AccountEntryParams params,
 			int offset, int limit) throws AonCoreException {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAccountEntries(ctx, params, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		}
@@ -201,7 +202,7 @@ public class ACCOUNTING {
 	public static Stream<FlatAccountEntryDetail> getFlatAccountEntries(String domainName,
 			int domain, String user, final AccountEntryParams params, int offset,
 			int limit) throws AonCoreException {
-	 	final AONContext ctx = AONContext.getAONContext(domainName, domain, user);
+	 	final CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user);
 	 	Stream<FlatAccountEntryDetail> stream = getAccounting().getFlatAccountEntries(ctx, params, offset, limit,
 				new IDAOCallback() {			
 					@Override
@@ -218,7 +219,7 @@ public class ACCOUNTING {
 	public static Stream<FlatAccountEntryDetail> getLedgerStream(String domainName,
 			int domain, String user, final AccountingReportParams params, int offset,
 			int limit) throws AonCoreException {
-	 	final AONContext ctx = AONContext.getAONContext(domainName, domain, user);
+	 	final CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user);
 	 	return getAccounting().getLedger(ctx, params, offset, limit,
 				() -> {
 					if (ctx != null) {
@@ -230,7 +231,7 @@ public class ACCOUNTING {
 
 	public static AccountEntry save(String domainName, int domain, String user,
 			AccountEntry ae) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			Integer id = getAccounting().save(ctx, ae);
 			AccountEntry saved = getAccounting().getAccountEntry(ctx, id);
 			return saved;
@@ -238,7 +239,7 @@ public class ACCOUNTING {
 	}
 	
 	public static AccountEntry getAccountEntry(String domainName, int domain,String user, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			LinkedList<AccountEntry> list = getAccountEntries(ctx, p -> p.getIdProperty().eq(id), 0, 1)
 					.collect(Collectors.toCollection(LinkedList::new));
 			if (list == null || list.isEmpty()) {
@@ -257,7 +258,7 @@ public class ACCOUNTING {
 	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, String user, AccountEntryFilter filter, int offset,
 			int limit) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccountEntries(ctx, filter, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		}
@@ -276,7 +277,7 @@ public class ACCOUNTING {
 
 	public static void deleteAccountEntry(String domainName, int domain,
 			String user, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			getAccounting().delete(ctx, id);
 		}
 	}
@@ -331,7 +332,7 @@ public class ACCOUNTING {
 	// ------------------------------ ACCOUNT STATEMENT
 	public static AccountStatementReport getAccountStatement(String domainName,
 			int domain, String user, AccountingReportParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			AccountStatementReport report = new AccountStatementReport();
 			report.setParams(params);
 			AccountStatementDAO.ensureParamsAccount( ctx, params);
@@ -346,7 +347,7 @@ public class ACCOUNTING {
 
 	public static Stream<AccountStatement> getAccountBalance(String domainName,
 			int domain, String user, AccountingReportParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAccountBalance(ctx, params);
 		}
 	}
@@ -354,72 +355,72 @@ public class ACCOUNTING {
 
 	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user,
 			AccountingRegistry registry,Integer activity, Date issueDate) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().initializeInvoice(ctx, registry, activity, issueDate);
 		}
 	}
 	
 	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().initializeInvoice(ctx, registry, ai, preserveData);
 		}
 	}
 	
 	public static AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().removeInvoiceAttach(ctx, invoiceId);
 		}
 	}
 
 	public static AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {	
 			return getAccounting().addInvoiceAttach(ctx, ai);
 		}
 	}
 
 	public static AccountingInvoice getAccountingInvoice(String domainName, int domain, String user,
 			 Integer accountEntry) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAccountingInvoice(ctx, accountEntry);
 		}
 	}
 
 	public static AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, String user,
 			 Integer invoiceId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAccountingInvoiceFromInvoice(ctx, invoiceId);
 		}
 	}
 
 	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user,
 			String query) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getPendingImportAccountingInvoices(ctx, query);
 		}
 	}
 
 	public static AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().save(ctx, invoice);
 		}
 	}
 
 
 	public static Account save(String domainName, int domain, String user, Account account) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getAccounting().save(ctx, account);
 		}
 	}
 
 	public static Account delete(String domainName, int domain, String user, Account account) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().delete(ctx, account);
 		}
 	}
 
 	public static IAccountEntryWrapper getAccountEntryWrapper(String domainName, int domain, String user,
 			Integer accountEntry) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAccountEntryWrapper(ctx, accountEntry);
 		}
 	}
@@ -427,7 +428,7 @@ public class ACCOUNTING {
 
 	public static AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String userLogin,
 			Integer registryId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
 			return getAccounting().getRegistryLastAccountingInvoice(ctx, registryId);
 		}
 	}
@@ -435,32 +436,32 @@ public class ACCOUNTING {
 
 	public static AccountingInvoice rectifyInvoice(String domainName, int domain, String userLogin, Integer invoiceId,
 			InvoiceRectificationData data) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
 			return getAccounting().rectifyInvoice(ctx, invoiceId, data);
 		}
 	}
 
 
 	public static IAccountEntryWrapper updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {		
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().updateSpecial(ctx, operation, wrapper);
 		}
 	}
 
 	public static LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getAvailableAccountEntryUpdates(ctx, wrapper);
 		}
 	}
 
 	public static LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String userLogin, Date from, Date to) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
 			return getAccounting().getSalaryEntries(ctx, from, to);
 		}
 	}
 
 	public static String getSalaryFormatted(String domainName, int domain, String userLogin, Date from, Date to) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
 			return getAccounting().getSalaryFormatted(ctx, from, to);
 		}
 	}
@@ -468,7 +469,7 @@ public class ACCOUNTING {
 
 	public static LinkedList<Finance> getAccountFinances(String domainName, int domain, String userLogin,
 			FinanceParams params, int offset, int limit) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, userLogin)) {
 			return getAccounting().getAccountFinances(ctx,params, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		}
@@ -476,216 +477,216 @@ public class ACCOUNTING {
 
 
 	public static FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().save(ctx, financeEntry);
 		}
 	}
 
 
 	public static FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().getFinanceEntry(ctx, accountEntry);
 		}
 	}
 
 	public static AccUtilitiesResult checkParentLinker(String domainName, String user, Domain domain, Account account) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().checkParentLinker(ctx, account);
 		}
 	}
 
 	public static AccUtilitiesResult runParentLinker(String domainName, String user, Domain domain, Account account) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().runParentLinker(ctx, account);
 		}
 	}
 
 	public static AccUtilitiesResult accountIntegrity(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().accountIntegrity(ctx);
 		}
 	}
 
 	public static AccUtilitiesResult accountIntegrityFix(String domainName, String user, Integer domain, Account account) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().accountIntegrityFix(ctx,account);
 		}
 	}
 
 	public static AccUtilitiesResult domainIntegrity(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().domainIntegrity(ctx);
 		}
 	}
 
 	public static AccUtilitiesResult domainIntegrityFix(String domainName, String user, Integer domain, Account account) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().domainIntegrityFix(ctx,account);
 		}
 	}
 
 	public static AccUtilitiesResult noLowLevelAccounts(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().noLowLevelAccounts(ctx);
 		}
 	}
 	public static AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().emptyEntries(ctx);
 		}
 	}
 
 	public static AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().removeEntries(ctx,params);
 		}
 	}
 	
 	public static AccUtilitiesResult invoiceIntegrity(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().invoiceIntegrity(ctx);
 		}
 	}
 	public static AccUtilitiesResult invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().invoiceIntegrityFix(ctx,invoiceId);
 		}
 	}
 	
 
 	public static AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().unbalancedEntries(ctx);
 		}
 	}
 
 	public static AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
 			return getAccounting().wrongRecordedInvoices(ctx);
 		}
 	}
 	
 	public static AccUtilitiesResult removeWrongRecordedInvoice(String domainName, int domain, String user,
 			Integer accountEntryId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().removeWrongRecordedInvoice(ctx,accountEntryId);
 		}
 	}
 
 	// Cambio de cuentas 
 	public static AccUtilitiesResult searchAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().searchAccountChange(ctx,params);
 		}
 	}
 
 	public static AccUtilitiesResult fixAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().fixAccountChange(ctx,params,accountChange);
 		}
 	}
 
 	public static AccUtilitiesResult removeWrongCheckedInvoice(String domainName, int domain, String user,
 			Integer invoice) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().removeWrongCheckedInvoice(ctx,invoice);
 		}
 	}
 	
 	public static AccUtilitiesResult getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().getAccountLinks(ctx, params);
 		}
 	}
 
 	public static String changeAccountDescription(String domainName, String user, Integer domain, Integer accountId,
 			String newDescription) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().changeAccountDescription(ctx, accountId, newDescription);
 		}
 	}
 
 	public static Account createAndLinkAccount(String domainName, String user, Integer domain,
 			AccountingRegistryType registryType, Integer registryId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return getAccounting().createAndLinkAccount(ctx, registryType, registryId);
 		}
 	}
 
 	public static AccUtilitiesResult getJournalRegenerationInfo(String domainName, String user, Integer domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().getJournalRegenerationInfo(ctx);
 		}
 	}
 
 	public static AccUtilitiesResult regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().regenerateJournal(ctx,accuountPeriod);
 		}
 	}
 
 	public static AccUtilitiesResult getInputVatRegenerationInfo(String domainName, String user, Integer domain) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().getInputVatRegenerationInfo(ctx);
 		}
 	}
 
 	public static AccUtilitiesResult regenerateInputVat(String domainName, String user, Integer domain, Integer year) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return getAccounting().regenerateInputVat(ctx,year);
 		}
 	}
 
 	public static AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain,
 			AccountingReportParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return  getAccounting().getAccountOperatingReport(ctx, params);
 		}
 	}
 
 	public static AccountTrialBalanceReport getAccountTrialBalance(String domainName, int domain, String user,
 			AccountingReportParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return  getAccounting().getTrialBalanceReport(ctx, params);
 		}
 	}
 
 	public static AccountBalanceReport getAccountBalanceReport(String domainName, int domain, String user,
 			AccountingReportParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return  getAccounting().getBalanceReport(ctx, params);
 		}
 	}
 
 	public static AccountingAnalyticalReport getAccountAnalyticalReport(String domainName, String user, int domain,
 			AccountingReportParams params) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return  getAccounting().getAccountAnalyticalReport(ctx, params);
 		}
 	}
 
 	public static AccountingAnalyticalReport getAccountAnalyticalReport(String domainName, String user, int domain,
 			AccountingReportParams params, Analytical analytical) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			return  getAccounting().getAccountAnalyticalReport(ctx, params, analytical);
 		}
 	}
 
 	public static AccountingAnalyticalReport saveAnalyticConfiguration(String domainName, String user, int domain, AccountingReportParams params, Analytical analytical) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {			
 			analytical = getAccounting().saveAnalyticConfiguration(ctx,analytical);
 			return getAccounting().getAccountAnalyticalReport(ctx, params, analytical);
 		}
 	}
 
 	public static Stream<OperationBreakdown> getOperationBreakdown(Occam occam, OperationParams params) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().getOperationBreakdown(ctx, occam.getDomain(), params);
 		}
 	}
 	
 	public static List<Account> generateLowerLevels(Occam occam, Account account, int minLevel) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getAccounting().generateLowerLevels(ctx, account, minLevel);
 		}
 	}

@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -42,7 +43,7 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 public class DBConsults {
 	
 	public static LinkedList<TemplateInfo> getTemplates(Domain domain, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
@@ -262,7 +263,7 @@ public class DBConsults {
 	}
 
 	public static Integer insertTemplate(Domain domain, TemplateInfo ti, byte[] b, String login) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -304,7 +305,7 @@ public class DBConsults {
 	}
 	
 	public static void updateTemplate(Domain domain,TemplateInfo ti, byte[] b, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
@@ -326,7 +327,7 @@ public class DBConsults {
 	
 	
 	public static LinkedList<Hotel> getHotels(Domain domain, User user) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
@@ -352,7 +353,7 @@ public class DBConsults {
 	}
 
 	public static LinkedList<Hotel> getWorkplaces(Domain domain, User user) {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
@@ -377,7 +378,7 @@ public class DBConsults {
 	}
 	
 	public static List<AmazonDelivery> getDeliveries(Domain domain, String login){
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<DeliveryRecord> result = ctx.getDslContext().select()

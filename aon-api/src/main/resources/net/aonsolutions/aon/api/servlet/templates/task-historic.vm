@@ -92,7 +92,7 @@
         <tr>
           <td>
             <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
-              <img alt="icon" src="$task.getLogo()" style="cursor: pointer;" width="300px">
+              <img alt="" src="$task.getLogo()" style="cursor: pointer;" width="300px">
             </a>
           </td>
           <td></td>
@@ -154,9 +154,11 @@
             			<div>
             				$ws.getDate(), $ws.getName() escribió:<br>
             			</div>
-            			<div>
-            				$ws.getMessage()<br/><br/>
-            			</div>
+            			#if($ws.getMessage())
+	            			<div>
+	            				$ws.getMessage()<br/><br/>
+	            			</div>
+            			#end
             			<blockquote style="margin:0px 0px 0px 0.8ex;color:grey;border-left:1px solid rgb(204,204,204);padding-left:1ex">
             	#end
             	#foreach($workflow in $task.getWorkflows())

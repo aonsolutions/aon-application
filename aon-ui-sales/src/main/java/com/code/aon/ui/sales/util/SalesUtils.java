@@ -32,8 +32,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
@@ -53,6 +51,7 @@ import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -60,6 +59,9 @@ import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 // TODO avoid using DAO class, use AON fackade instead
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class SalesUtils {
 	
@@ -336,7 +338,7 @@ public class SalesUtils {
 	
 	@Deprecated
 	public void createManufacturingOrder(Sales sales) {
-		AONContext ctx = AONContext
+		CloseableAONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
 		
 		com.esferalia.aon.occam.api.model.management.Purchase p = new com.esferalia.aon.occam.api.model.management.Purchase();
@@ -415,7 +417,7 @@ public class SalesUtils {
 	
 	@Deprecated
 	public boolean isManufactureDone(SalesDetail detail) {
-		AONContext ctx = AONContext
+		CloseableAONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), detail.getDomain(), AonUtil.getRemoteUser());
 		try {
 			com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = PurchaseDAO.getTargetManufactureDetail(ctx, detail.getId());
@@ -427,7 +429,7 @@ public class SalesUtils {
 	}
 	
 	public Map<Integer, PurchaseDetail> getTargetPurchaseDetailMap(Sales sales) {
-		AONContext ctx = AONContext
+		CloseableAONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
 		try {
 			return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetPurchaseDetails(ctx, sales.getId()));
@@ -438,7 +440,7 @@ public class SalesUtils {
 	}
 	
 	public Map<Integer, PurchaseDetail> getTargetManufactureDetailMap(Sales sales) {
-		AONContext ctx = AONContext
+		CloseableAONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
 		try {
 			return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetManufactureDetails(ctx, sales.getId()));
@@ -465,7 +467,7 @@ public class SalesUtils {
 	}
 	
 	public Map<Integer, Integer> getTargetElaborationMap(Sales sales) {
-		AONContext ctx = AONContext
+		CloseableAONContext ctx = AONContext
 				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
 		try {
 			Integer[] ids = sales.getDetailList().stream()

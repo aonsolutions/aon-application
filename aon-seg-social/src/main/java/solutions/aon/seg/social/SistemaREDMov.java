@@ -884,10 +884,14 @@ class SistemaREDMov {
 		form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
 		form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
 		form.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
-		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.get().substring(0, 2));
-		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.get().substring(2));
+		ctaCti.ifPresent(cta->{
+			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(cta.substring(0, 2));
+			form.getInputByName("txt_SDFCTACOT").setValueAttribute(cta.substring(2));
+		});
+
 		HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
 		htmlPage = continueIn.click();
+		
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 		return htmlPage;
 	}

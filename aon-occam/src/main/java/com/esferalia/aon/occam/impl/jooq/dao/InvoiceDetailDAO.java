@@ -219,7 +219,7 @@ public class InvoiceDetailDAO {
 							? SellerFiller.build(r)
 							: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
 					.setWorkplace(checkField(r, WORKPLACE.ID) 
-							? WorkplaceFiller.buildWorkplace(r)
+							? WorkplaceFiller.build(r)
 							: new Workplace().setId(r.getValue(INVOICE_DETAIL.WORKPLACE)))
 					.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
 					.setWarehouseName(getString(r, WAREHOUSE.NAME))

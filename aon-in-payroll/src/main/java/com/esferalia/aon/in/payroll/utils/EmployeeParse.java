@@ -106,6 +106,11 @@ public class EmployeeParse {
 			public void visitCollective(String collective) {
 				employee.setCollective(collective);
 			}
+			
+			@Override
+			public void visitMdCtz(String mdCtz) {
+				employee.setMdCtz(mdCtz);
+			}
 
 			@Override public void visitGcDesc(String gcDesc) {}
 			@Override public void visitEpig(String epig) {}
@@ -120,18 +125,15 @@ public class EmployeeParse {
 			@Override public void visitSituation(String situaction) {}
 			@Override public void visitReducingcoefic(String reducingCoefic) {}
 			@Override public void visitProfesCat(String profesCat) {}
-
-			@Override
-			public void visitFrv(Date frv) {
-				// TODO Auto-generated method stub
-				
-			}
+			@Override public void visitFrv(Date frv) {}
 		});
 		
 		return employee;
 	}
 	
 	public static solutions.aon.seg.social.object.Employee toEmployeeSS(Employee employee) {
+		LocalDate start = convertToLocalDate(employee.getStartDate());
+		
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(employee.getRegime())
 		.setCtaCti(employee.getCcc())
@@ -139,18 +141,16 @@ public class EmployeeParse {
 		.setIpf(employee.getDni())
 		.setFra(employee.getStartDate())
 		;
-	
+		
 		employee.getName().ifPresent(builder::setName);	
 		employee.getEndDate().ifPresent(builder::setFrb);
-		
-		LocalDate start = convertToLocalDate(employee.getStartDate());
-		
 		employee.getOccupation(start).ifPresent(builder::setOcup);
 		employee.getQuoteGroup(start).ifPresent(builder::setGc);
 		employee.getContractType(start).ifPresent(builder::setContract);
 		employee.getRlce(start).ifPresent(builder::setRlce);
 		employee.getFactor(start).ifPresent(builder::setFactor);
 		employee.getCollective(start).ifPresent(builder::setCollective);
+		employee.getMdCtz(start).ifPresent(builder::setMdctz);
 
 		return builder.build();
 	}

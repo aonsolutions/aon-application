@@ -36,7 +36,7 @@
 				<!-- Specify the maven code generator plugin -->
 				<groupId>org.jooq</groupId>
 				<artifactId>jooq-codegen-maven</artifactId>
-				<version>3.11.9</version>
+				<version>3.16.6</version>
 
 				<!-- The plugin should hook into the generate goal -->
 				<executions>
@@ -89,7 +89,7 @@
 						</database>
 						
 						<generate>
-						
+							<javaTimeTypes>false</javaTimeTypes>						
 						</generate>
 
 						<target>
@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.11.9</version>
+			<version>3.16.6</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>

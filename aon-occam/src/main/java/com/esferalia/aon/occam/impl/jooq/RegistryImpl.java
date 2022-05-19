@@ -65,6 +65,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryNoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryPayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
@@ -197,13 +198,37 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	// ------------------------------------- RNOTE
+
+	@Override
+	public RegistryNote getRegistryNote(AONContext ctx, RegistryNoteFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryNoteDAO.get(ctx, filter));
+	}
 	
 	@Override
-	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter) {
+	public Stream<RegistryNote> getRegistryNoteStream(AONContext ctx, RegistryNoteFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getRNoteStream(ctx, filter));
+				configuration -> RegistryNoteDAO.getStream(ctx, filter));
 	}
-
+	
+	@Override
+	public List<RegistryNote> getRegistryNoteList(AONContext ctx, RegistryNoteFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryNoteDAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public RegistryNote saveRegistryNote(AONContext ctx, RegistryNote rnote) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryNoteDAO.save(ctx, rnote));
+	}
+	
+	@Override
+	public void deleteRegistryNote(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+			configuration -> RegistryNoteDAO.delete(ctx, id));
+	}
+	
 	@Override
 	public Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId) {
 		return 	ctx.getDslContext().transactionResult(

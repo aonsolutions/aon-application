@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CONSTANT, MSG } from "../../environments/environments.js";
-import {  APP_PARAMS_REQUEST, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, sendTaskHistoric, deleteTaskWorkflow} from "../../services/taskService.js";
+import { CONSTANT, CSS, MSG } from "../../environments/environments.js";
+import {  APP_PARAMS_REQUEST, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, sendTaskHistoric, deleteTaskWorkflow, updateTaskWorkflow} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
@@ -117,30 +117,70 @@ export class AonMessengerChat extends AonElement {
    * @param {Task} task Optional
    */
   async saveComment(text = undefined, task=undefined) {
+    const taskW = task ? task : this.task;
     try {
-      const taskW = task ? task : this.task;
-      const resp = await sendMessage(text, taskW); 
-      if(resp){
-        const [comment, messengeEl] = resp;
-        if(comment){
-          const workflow = await saveTaskWorkflow({
-            domain:taskW.getDomain().id,
-            task: taskW.getId(),
-            task_holder:this.MY_TASKHOLDER,
-            type: WORKFLOW_TYPES.COMMENT,
-            email: this.getAuth().email ? this.getAuth().email : undefined,
-            comment
-          });
-
-          if(workflow){
-            messengeEl.dataset["id"] = workflow.id;
-            if(this.isCau()) 
-              this.sendMessageHistoric(workflow.id);
+          const {comment, messageEl, workflowId}  = await sendMessage(text, taskW); 
+          if(comment){
+            if(workflowId){
+              this.updateComment(taskW, comment, workflowId);
+            } else {
+              this.saveCommentNew(taskW, comment, messageEl);
+            }
           }
-        }
+      } catch (error) {
+        console.error("saveComment", error);
+        this.showError(error);
       }
+  }
+
+   /**
+   * 
+   * @param {Task} task
+   * @param {String} text
+   * @param {HtmlElement} messageEl element html message
+   */
+    async saveCommentNew(task, text, messageEl) {
+      try {
+        const workflow = await saveTaskWorkflow({
+          domain:task.getDomain().id,
+          task: task.getId(),
+          task_holder:this.MY_TASKHOLDER,
+          type: WORKFLOW_TYPES.COMMENT,
+          email: this.getAuth().email ? this.getAuth().email : undefined,
+          comment:text
+        });
+
+        if(workflow){
+          messageEl.dataset["id"] = workflow.id;
+          if(this.isCau()) 
+            this.sendMessageHistoric(workflow.id);
+        }
+      } catch (error) {
+        console.error("updateComment", error);
+        this.showError(error);
+      }
+    }
+  
+
+  /**
+   * 
+   * @param {Task} task  
+   * @param {String} text
+   * @param {Number} workflow workflowId
+   */
+   async updateComment(task, text, workflow) {
+    try {
+        let messageContent = document.querySelector(`${MESSENGER_COMPONENTS.MESSAGE}[data-id="${workflow}"] > .${CSS.MESSAGE_CONTENT}`);
+        if(messageContent){
+          await updateTaskWorkflow({
+            task: task.getId(),
+            comment:text,
+            workflow
+          });
+          messageContent.innerHTML = text;
+        }
     } catch (error) {
-      console.error("saveComment", error);
+      console.error("updateComment", error);
       this.showError(error);
     }
   }

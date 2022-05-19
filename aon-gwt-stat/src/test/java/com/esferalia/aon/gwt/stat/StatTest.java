@@ -6,14 +6,14 @@ import java.sql.SQLException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
+import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class StatTest {
@@ -22,7 +22,7 @@ public class StatTest {
 	private static final String DOMAIN_NAME = "sig.aonsolutions.es";
 	private static final String USER_NAME = "jgarcia";
 	
-	private static AONContext ctx;
+	private static CloseableAONContext ctx;
 	
 	@BeforeClass
 	public static void beforeClass() {

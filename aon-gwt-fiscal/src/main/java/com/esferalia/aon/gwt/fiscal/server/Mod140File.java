@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Params;
@@ -32,7 +33,7 @@ public class Mod140File extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		AONContext ctx = null;
+		CloseableAONContext ctx = null;
 		try {
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");
@@ -81,7 +82,7 @@ public class Mod140File extends HttpServlet {
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		} finally {
-			if (ctx != null) ctx.finalize();
+			if (ctx != null) ctx.close();
 		}
 	}
 
