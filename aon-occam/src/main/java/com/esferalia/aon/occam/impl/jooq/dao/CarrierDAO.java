@@ -47,7 +47,8 @@ public class CarrierDAO {
 			}
 			return new Condition[] { filterDAO.getCondition() };
 		}
-
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CARRIER.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CARRIER.REGISTRY);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(CARRIER.REGISTRY);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CARRIER.SCOPE);}
 		
