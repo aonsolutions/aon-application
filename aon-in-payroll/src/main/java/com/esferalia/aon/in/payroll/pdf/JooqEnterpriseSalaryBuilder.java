@@ -588,6 +588,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
+		.and(SALARY.TYPE.lt((byte)7))
 		.orderBy(SALARY.EMPLOYEE_NAME)
 		.fetchStream()
 		.forEach(r -> {
