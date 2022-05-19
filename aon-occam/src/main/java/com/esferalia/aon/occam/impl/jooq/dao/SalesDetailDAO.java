@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
+import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -63,6 +65,8 @@ public class SalesDetailDAO {
 			.join(ITEM).on(SALES_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.join(SALES).on(SALES_DETAIL.SALES.eq(SALES.ID))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(SALES.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 			.where(SALES_DETAIL_PROPERTIES.getConditions(filter));
 	}
 
