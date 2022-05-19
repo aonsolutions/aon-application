@@ -55,8 +55,7 @@
 								rendered="#{!sales.nevv and salesDetail.model.rowCount > 0}"
 								title="Informacion de estado en Ingenet"
 								styleClass="aon-finding-toolbar-item aon-ingenet aon-padding-left aon-padding-right"
-								ajaxSingle="#{true}"
-								action="sales_list">
+								ajaxSingle="#{true}">
 								<f:setPropertyActionListener target="#{sales.ingenetHandler.showIngenetWindow}"
 									value="#{true}" />
 								<f:setPropertyActionListener target="#{sales.ingenetHandler.sales}"
@@ -127,6 +126,16 @@
 						</aon:menuItem>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator />
+							<aon:if test="#{domainSwitcher.alphaDomain}">
+								<aon:menuItem iconClass="aon-icon-file-download">
+									<aon:htmlCommandLink id="sales-ordrsp-edi" style="font-size:1em"
+										value="#{bundle.aon_edi} (ORDRSP)" target="_blank"
+										title="Respuesta orden de compra."
+										actionListener="#{sales.onExportEdiFile}">
+									</aon:htmlCommandLink>
+								</aon:menuItem>
+							</aon:if>
+
 							<aon:menuItem id="import-Popup"
 								value="#{bundle.aon_import} #{bundle.aon_edi}"
 								iconClass="aon-icon-file-entrance"
@@ -136,6 +145,7 @@
 								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
 									value="#{true}" />
 							</aon:menuItem >
+							
 							<aon:menuItem id="ediImport-Popup"
 								value="#{bundle.aon_import} #{bundle.aon_edi} (CONNECT)"
 								iconClass="aon-icon-new-text"

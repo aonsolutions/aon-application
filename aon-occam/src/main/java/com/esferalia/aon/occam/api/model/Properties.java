@@ -825,6 +825,7 @@ public interface Properties {
 	}
 	
 	public interface CarrierProperties extends RegistryProperties {
+		Property<Integer> getDomainProperty();
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getScopeProperty();
 	}
