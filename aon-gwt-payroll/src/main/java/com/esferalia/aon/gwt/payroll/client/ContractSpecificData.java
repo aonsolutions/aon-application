@@ -1470,6 +1470,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			case "250":
 				set230and250View();
 				break;
+			case "289":
+				set200View();
+				break;
 			case "300":
 				set300View();
 				break;
