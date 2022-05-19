@@ -354,10 +354,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String convenio =  data.has("convenio")  && !data.isNull("convenio") ? data.optString("convenio") : "60888888888888";
 		String rlce = data.has("rlce")  && !data.isNull("rlce") ? data.optString("rlce") : null; 
 		String collective = data.has("collective")  && !data.isNull("collective") ? data.optString("collective") : null;
-		String md_ctz = data.has("md_ctz")  && !data.isNull("md_ctz") ? data.optString("md_ctz") : null; //para regime agrario
+		
+		String modCtz = data.has("md_ctz")  && !data.isNull("md_ctz") ? data.optString("md_ctz") : null; //para regime agrario
 
-//        Ctz mensual = 1
-//        Jornadas reales = 2
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(regime)
 		.setName(name)
@@ -371,7 +370,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setContract(contract)
 		.setCollective(collective)
 		.setRlce(rlce)
-		.setMdctz(md_ctz);
+		.setMdctz(modCtz);
 		
 		if(coef!=null) {
 			Integer fact = Integer.parseInt(coef);
@@ -433,7 +432,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ctaCti = data.getString("ctaCti");
 		String nss = data.getString("nss");
 		String ipf = data.getString("ipf");
-		String name =  data.getString(IJsonNames.NAME);
+		String name = data.getString(IJsonNames.NAME);
 		Date date = AonDateUtils.parse(data.getString("fra"), FORMAT_DATE);
 
 		com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee()
@@ -445,9 +444,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		;
 		
 		if(!data.isNull("frb")) {
-			employee.setEndDate(AonDateUtils.parse(data.getString("frb"), FORMAT_DATE));
-			date = employee.getEndDate().get();
+			Date endDate = AonDateUtils.parse(data.getString("frb"), FORMAT_DATE);
+			employee.setEndDate(endDate);
+			date = endDate;
 		}
+		
 		AonComunica.deleteContract(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, employee , true);
 		
 		if(!data.isNull(IJsonNames.NAME)) {
