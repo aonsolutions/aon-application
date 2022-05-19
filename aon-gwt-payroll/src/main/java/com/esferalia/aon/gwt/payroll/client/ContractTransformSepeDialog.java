@@ -60,6 +60,7 @@ public abstract class ContractTransformSepeDialog extends AonCustomDialog {
 		
 		this.showCloseButton(true);
 		acceptDialog.setEnabled(false);
+		acceptDialog.setTitle("Debe rellenar los campos obligatorios (campos azules)");
 		
 		initializeView();
 		showDialog();
@@ -101,6 +102,7 @@ public abstract class ContractTransformSepeDialog extends AonCustomDialog {
 		String signBasicCopyValue = signBasicCopyLB.getSelectedValue();
 		String useEnterpriseFree = useEnterpriseFreeTB.getValue();
 		acceptDialog.setEnabled(AonStringUtils.isNotBlank(signBasicCopyValue) && AonStringUtils.isNotBlank(useEnterpriseFree));
+		acceptDialog.setTitle((AonStringUtils.isNotBlank(signBasicCopyValue) && AonStringUtils.isNotBlank(useEnterpriseFree)) ? "" : "Debe rellenar los campos obligatorios (campos azules)");
 	}
 
 	// ------------------------------------------------- ToggleButton
