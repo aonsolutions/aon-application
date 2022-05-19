@@ -27,6 +27,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -443,7 +444,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getIDCMonthListBox().setFirstMonth(firstMonth);
 		getIDCMonthListBox().setLastMonth(lastMonth);
 		int months = DateUtils.getMonths(lastMonth, firstMonth);
-		getIDCMonthListBox().setVisibleRange(0, months+1);
+		if(months >= 0)
+			getIDCMonthListBox().setVisibleRange(0, months+1);
 		getIDCMonthListBox().ensureDebugId("idcMonthListBox");
 	}
 	

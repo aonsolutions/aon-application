@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -646,6 +647,7 @@ public class ContrataEmployeeObject {
 	
 	public void downloadIdc(Date date, Consumer<String> success, Consumer<Throwable> failure) {
 		date = null == date ? new Date() : date;
+		date = checkPrevAlta() ? new Date() : date;
 		employeesService.getEmployeeIdc(contractData.getContractId(), date, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
@@ -659,6 +661,7 @@ public class ContrataEmployeeObject {
 	}
 
 	public void downloadIdcPlNss(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		date = checkPrevAlta() ? new Date() : date;
 		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), date, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
@@ -682,6 +685,12 @@ public class ContrataEmployeeObject {
 				failure.accept(caught);
 			}
 		});
+	}
+	
+	private boolean checkPrevAlta() {
+		Date currentDate = new Date();
+		Date startDate = contractData.getStartDate();
+		return DateUtils.isAfterOrEquals(startDate, currentDate) && !DateUtils.equals(startDate, currentDate);
 	}
 	
 	// ------------------------------------------------- Database Methods (Delete Extension)
