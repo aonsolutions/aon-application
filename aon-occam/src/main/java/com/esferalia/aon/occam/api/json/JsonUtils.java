@@ -78,6 +78,11 @@ public class JsonUtils {
 		return n==null?0:n.doubleValue();
 	}
 	
+	public static Short getShort(JSONObject json, String key) {
+		Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
+		return n==null?0:n.shortValue();
+	}
+	
 	public static Integer getInteger(JSONObject json, String key ) {
 		return AonNumberUtils.toInteger(json.optNumber(key, null)); 
 	}

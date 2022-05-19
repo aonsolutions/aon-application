@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
@@ -60,7 +59,6 @@ import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -70,19 +68,16 @@ import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 
 
 public class WarehouseDAO {
@@ -99,6 +94,9 @@ public class WarehouseDAO {
 	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
 	private static final CarrierPackingPropertiesDAO CARRIER_PACKING_PROPERTIES = new CarrierPackingPropertiesDAO();
 	
+	private WarehouseDAO() {
+	
+	}
 	
 	protected static class WarehousePropertiesDAO implements WarehouseProperties {
 		protected Condition[] getConditions(WarehouseFilter filter) {
@@ -169,14 +167,14 @@ public class WarehouseDAO {
 		return ctx.getDslContext().select()
 				.from(WAREHOUSE)
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
-				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller());
+				.fetch().stream().map(new WarehouseFiller());
 	}
 	
 	public static Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().select()
 				.from(WAREHOUSE)
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
-				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller())
+				.fetch().stream().map(new WarehouseFiller())
 				.findFirst().orElse(null);
 	}
 	
@@ -190,7 +188,7 @@ public class WarehouseDAO {
 	public static Warehouse update(AONContext ctx, Warehouse warehouse) {
 		ctx.getDslContext().update(WAREHOUSE)
 		.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
-		.set(WAREHOUSE.ACTIVE, warehouse.getActive())
+		.set(WAREHOUSE.ACTIVE, warehouse.isActive() ? (byte) 1 : 0)
 		.set(WAREHOUSE.DEPARTMENT, warehouse.getDepartment())
 		.set(WAREHOUSE.NAME, warehouse.getName())
 		.set(WAREHOUSE.WORKPLACE, warehouse.getWorkplace())
@@ -202,7 +200,7 @@ public class WarehouseDAO {
 	public static Warehouse insert(AONContext ctx, Warehouse warehouse) {
 		Integer id = ctx.getDslContext().insertInto(WAREHOUSE)
 				.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
-				.set(WAREHOUSE.ACTIVE, warehouse.getActive())
+				.set(WAREHOUSE.ACTIVE, warehouse.isActive() ? (byte) 1 : 0)
 				.set(WAREHOUSE.DEPARTMENT, warehouse.getDepartment())
 				.set(WAREHOUSE.NAME, warehouse.getName())
 				.set(WAREHOUSE.WORKPLACE, warehouse.getWorkplace())
@@ -284,11 +282,11 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.ID);} 
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.WAREHOUSE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.DOMAIN);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(STOCK.QUANTITY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(STOCK.ID);} 
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(STOCK.WAREHOUSE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(STOCK.DOMAIN);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(STOCK.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(STOCK.QUANTITY);}
 	}
 	
 	
@@ -327,7 +325,7 @@ public class WarehouseDAO {
 	}
 	
 	public static void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
-		LinkedList<Integer> list = new LinkedList<Integer>();
+		LinkedList<Integer> list = new LinkedList<>();
 		getWarehouseTransferStream(ctx, filter).forEach(wt -> {
 			getWarehouseTransferDetailStream(ctx, f -> f.getWarehouseTransferProperty().eq(wt.getId()))
 			.forEach(wtd -> updateStock(ctx, wt, wtd));
@@ -363,7 +361,7 @@ public class WarehouseDAO {
 	public static Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(AONContext ctx, WarehouseTransferFilter filter,
 			ProductFilter pFilter, ItemFilter iFilter) {
 		
-		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		Collection<Condition> whereConditions = new ArrayList<>();
 		whereConditions.addAll(Arrays.asList(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(pFilter)));
 		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(iFilter)));
@@ -381,7 +379,7 @@ public class WarehouseDAO {
 	}
 	
 	public static Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter){
-		Record3<Integer, String, Integer> record = ctx.getDslContext()
+		Record3<Integer, String, Integer> r = ctx.getDslContext()
 			.selectDistinct(DEPARTMENT.ID, DEPARTMENT.NAME, DEPARTMENT.DOMAIN)
 			.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
 			.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
@@ -389,11 +387,11 @@ public class WarehouseDAO {
 			.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(workplaceId))
 			.limit(1).fetchOne();
 			
-		if(record.getValue(DEPARTMENT.ID) != null){
+		if(r.getValue(DEPARTMENT.ID) != null){
 			return new Department()
-					.setDomain(record.getValue(DEPARTMENT.DOMAIN))
-					.setId(record.getValue(DEPARTMENT.ID))
-					.setName(record.getValue(DEPARTMENT.NAME))
+					.setDomain(r.getValue(DEPARTMENT.DOMAIN))
+					.setId(r.getValue(DEPARTMENT.ID))
+					.setName(r.getValue(DEPARTMENT.NAME))
 					.setEmpty(false);
 		}
 		return new Department().setEmpty(true);
@@ -406,7 +404,7 @@ public class WarehouseDAO {
 				.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(workplaceId))
 				.fetch();
 		
-		LinkedList<Department> list = new LinkedList<Department>();
+		LinkedList<Department> list = new LinkedList<>();
 		record.stream().forEach(r -> {
 			Department d = new Department()
 					.setDomain(r.getValue(DEPARTMENT.DOMAIN))
@@ -452,7 +450,7 @@ public class WarehouseDAO {
 		Result<Record1<Integer>> result = null;
 		if(serie != null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
 			.where(WAREHOUSE_TRANSFER.SERIES.eq(serie)).fetch();
-		else if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
+		if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
 			.where(WAREHOUSE_TRANSFER.SERIES.isNull()).fetch();
 		return result.isEmpty() ? 0 : result.get(0).value1()+1;
 	}
@@ -512,50 +510,12 @@ public class WarehouseDAO {
 	 * @deprecated  Replaced by DeliveryDAO.save(AONContext ctx, Delivery delivery)
 	 */
 	public static int insertDelivery(AONContext ctx, Delivery delivery) {
-		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
-		return ctx
-				.getDslContext()
-				.insertInto(DELIVERY, DELIVERY.DOMAIN, DELIVERY.PROJECT,
-						DELIVERY.SERIES, DELIVERY.NUMBER, DELIVERY.CUSTOMER,
-						DELIVERY.ADDRESS, DELIVERY.ISSUE_TIME,
-						DELIVERY.PAY_METHOD, DELIVERY.SECURITY_LEVEL,
-						DELIVERY.STATUS, DELIVERY.COMMENTS, DELIVERY.REMARKS,
-						DELIVERY.WORKPLACE, DELIVERY.SCOPE,
-						DELIVERY.NUMBER_OF_PYMNTS,
-						DELIVERY.DAYS_TO_FIRST_PYMNT,
-						DELIVERY.DAYS_BETWEEN_PYMNTS, DELIVERY.PYMNT_DAYS,
-						DELIVERY.BANK_ACCOUNT, DELIVERY.BANK_ALIAS,
-						DELIVERY.BIC, DELIVERY.CREATION_USER,
-						DELIVERY.CREATION_DATE, DELIVERY.MODIFICATION_USER,
-						DELIVERY.MODIFICATION_DATE)
-				.values(delivery.getDomain(), delivery.getProject().getId(),
-						delivery.getSeries(), delivery.getNumber(),
-						delivery.getCustomer().getId(), delivery.getAddress(),
-						delivery.getIssueTime(), delivery.getPayMethod(),
-						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
-						delivery.getComments(), delivery.getRemarks(),
-						delivery.getWorkplace(), delivery.getScope(),
-						delivery.getNumberOfPymnts(),
-						delivery.getDaysToFirstPymnt(),
-						delivery.getDaysBetweenPymnt(),
-						delivery.getPymntDays(), delivery.getBankAccount(),
-						delivery.getBankAlias(), delivery.getBic(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).returning(DELIVERY.ID).fetchOne()
-				.getId();
+		return DeliveryDAO.insertDelivery(ctx, delivery).getId();
 	}
 	
 	public static void insertDeliveryDetail(AONContext ctx,
 			DeliveryDetail detail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
 		ctx.getDslContext()
 				.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
 						DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
@@ -572,18 +532,14 @@ public class WarehouseDAO {
 						detail.getDescription(), detail.getWarehouse(),
 						detail.getQuantity(), detail.getPrice(),
 						detail.getDiscountExpression(),
-						detail.getSalesDetail(), ctx.getUser(), creationDate,
-						ctx.getUser(), modificationDate).execute();
+						detail.getSalesDetail(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
+						ctx.getUser(), AonDateUtils.toTimestamp(new Date())).execute();
 	}
 	
 	public static void insertDeliveryDetails(AONContext ctx,
 			List<DeliveryDetail> list) {
 		ctx.checkWrite();
 		list.forEach(detail -> {
-			Timestamp creationDate = null, modificationDate = null;
-			creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-			modificationDate = new java.sql.Timestamp(
-					new java.util.Date().getTime());
 			ctx.getDslContext()
 			.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
 					DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
@@ -600,8 +556,8 @@ public class WarehouseDAO {
 							detail.getDescription(), detail.getWarehouse(),
 							detail.getQuantity(), detail.getPrice(),
 							detail.getDiscountExpression(),
-							detail.getSalesDetail(), ctx.getUser(), creationDate,
-							ctx.getUser(), modificationDate).execute();
+							detail.getSalesDetail(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
+							ctx.getUser(), AonDateUtils.toTimestamp(new Date())).execute();
 		});
 	}
 	
@@ -609,42 +565,7 @@ public class WarehouseDAO {
 	 * @deprecated  Replaced by DeliveryDAO.save(AONContext ctx, Delivery delivery)
 	 */
 	public static void updateDelivery(AONContext ctx, Delivery delivery) {
-		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
-		
-		ctx.getDslContext().update(DELIVERY)
-		.set(DELIVERY.DOMAIN, delivery.getDomain())
-		.set(DELIVERY.PROJECT, delivery.getProject().getId())
-		.set(DELIVERY.SERIES, delivery.getSeries())
-		.set(DELIVERY.NUMBER, delivery.getNumber())
-		.set(DELIVERY.CUSTOMER, delivery.getCustomer().getId())
-		.set(DELIVERY.ADDRESS, delivery.getAddress())
-		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
-		.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
-		.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
-		.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
-		.set(DELIVERY.COMMENTS, delivery.getComments())
-		.set(DELIVERY.REMARKS, delivery.getRemarks())
-		.set(DELIVERY.WORKPLACE, delivery.getWorkplace())
-		.set(DELIVERY.SCOPE, delivery.getScope())
-		.set(DELIVERY.NUMBER_OF_PYMNTS, delivery.getNumberOfPymnts())
-		.set(DELIVERY.DAYS_TO_FIRST_PYMNT, delivery.getDaysToFirstPymnt())
-		.set(DELIVERY.DAYS_BETWEEN_PYMNTS, delivery.getDaysBetweenPymnt())
-		.set(DELIVERY.PYMNT_DAYS, delivery.getPymntDays())
-		.set(DELIVERY.BANK_ACCOUNT, delivery.getBankAccount())
-		.set(DELIVERY.BANK_ALIAS, delivery.getBankAlias())
-		.set(DELIVERY.BIC, delivery.getBic())
-		.set(DELIVERY.CARRIER, delivery.getCarrier())
-		.set(DELIVERY.CARRIER_PACKING, delivery.getCarrierPacking())
-		.set(DELIVERY.CREATION_USER, ctx.getUser())
-		.set(DELIVERY.CREATION_DATE, creationDate)
-		.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
-		.set(DELIVERY.MODIFICATION_DATE, modificationDate)
-		.where(DELIVERY.ID.eq(delivery.getId()))
-		.execute();
+		DeliveryDAO.update(ctx, delivery);
 	}
 	
 	/**
@@ -657,27 +578,11 @@ public class WarehouseDAO {
 	}
 	
 	// ----------------- CARRIER 
+
+	@Deprecated
 	public static int insertCarrier(AONContext ctx, Carrier carrier) {
 		ctx.checkWrite();
-		Registry registry = ctx
-				.getDslContext()
-				.insertInto(REGISTRY, REGISTRY.ALIAS, REGISTRY.DOCUMENT,
-						REGISTRY.DOMAIN, REGISTRY.NAME, REGISTRY.NATIONALITY,
-						REGISTRY.TYPE)
-				.values(carrier.getAlias(), carrier.getDocument(),
-						carrier.getDomain().getId(), carrier.getName(),
-						carrier.getDocumentCountry().getIso2(),
-						AonEnumUtils.getByte(carrier.isLegalPerson())
-						).returning().fetch().stream()
-				.map(new RegistryFiller()).findFirst().orElse(new Registry());
-
-		ctx.getDslContext()
-				.insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.SCOPE,
-						CARRIER.REGISTRY, CARRIER.STATUS)
-				.values(carrier.getDomain().getId(), carrier.getScope(),
-						registry.getId(), carrier.getStatus().value())
-				.execute();
-		return registry.getId();
+		return CarrierDAO.save(ctx, carrier).getId();
 	}
 	
 	// ----------------- CARRIER PACKING
@@ -850,6 +755,22 @@ public class WarehouseDAO {
 		}
 	}
 	
-	
+	public static class WarehouseFiller extends Filler implements Function<Record, Warehouse> {
+
+		@Override
+		public Warehouse apply(Record r) {
+			return build(r);
+		}
+		
+		public static Warehouse build(Record r) {
+			return new Warehouse()
+					.setId(getValue(r, WAREHOUSE.ID))
+					.setDomain(getValue(r, WAREHOUSE.DOMAIN))
+					.setActive(getBoolean(r, WAREHOUSE.ACTIVE))
+					.setDepartment(getValue(r, WAREHOUSE.DEPARTMENT))
+					.setName(getValue(r, WAREHOUSE.NAME))
+					.setWorkplace(getValue(r, WAREHOUSE.WORKPLACE));					
+		}
+	}
 	
 }

@@ -8,11 +8,16 @@ public class CopyBasic {
 	private String workAddress;
 	private String restContract;
 	private FirmType firmType;
-	
+
+	// SEARCH FOR SEPEID
+	private String sepeId;	
+	//--------OR---------
+	// SEARCH FOR IPF
 	private String ipf;
 	private Date fini;
 	private Date fend;
 	
+
 	public String getWorkAddress() {
 		return workAddress;
 	}
@@ -35,6 +40,10 @@ public class CopyBasic {
 	
 	public Optional<Date> getFend() {
 		return Optional.ofNullable(fend);
+	}
+	
+	public Optional<String> getSepeId() {
+		return Optional.ofNullable(sepeId);
 	}
 	
 	public CopyBasic setWorkAddress(String workAddress) {
@@ -64,6 +73,11 @@ public class CopyBasic {
 	
 	public CopyBasic setFend(Date fend) {
 		this.fend = fend;
+		return this;
+	}
+	
+	public CopyBasic setSepeId(String sepeId) {
+		this.sepeId = sepeId;
 		return this;
 	}
 	

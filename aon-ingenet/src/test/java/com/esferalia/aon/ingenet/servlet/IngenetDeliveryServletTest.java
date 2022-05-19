@@ -1,28 +1,38 @@
-package net.aonsolutions.aon.api.test.login;
+package com.esferalia.aon.ingenet.servlet;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.aonsolutions.aon.api.servlet.LoginServlet;
-import net.aonsolutions.aon.api.test.request.ServletVisitor;
+import net.aonsolutions.tests.request.IServlet;
 
-public class LoginVisit implements ServletVisitor{
+public class IngenetDeliveryServletTest implements IServlet {
 
-	LoginServlet ls = new LoginServlet();
+	IngenetDeliveryServlet servlet = new IngenetDeliveryServlet();
 	
 	@Override
 	public void get(HttpServletRequest req, HttpServletResponse resp) {
-
+		try {
+			servlet.doGet(req, resp);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void post(HttpServletRequest req, HttpServletResponse resp) {
-		ls.doPost(req, resp);
+		try {
+			servlet.doPost(req, resp);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void put(HttpServletRequest req, HttpServletResponse resp) {
-	
+
 	}
 
 	@Override

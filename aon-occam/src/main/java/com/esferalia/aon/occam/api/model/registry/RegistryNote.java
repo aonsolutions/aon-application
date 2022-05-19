@@ -3,11 +3,10 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+
 public class RegistryNote implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
@@ -16,13 +15,9 @@ public class RegistryNote implements Serializable {
 	private String description;
 	private Date noteDate;
 	private String comments;
-	private Byte noteType;
-	private Byte securityLevel;
+	private NoteType noteType;
+	private SecurityLevel securityLevel;
 	
-	public RegistryNote() {
-	
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -77,22 +72,30 @@ public class RegistryNote implements Serializable {
 		return this;
 	}
 
-	public Byte getNoteType() {
+	public NoteType getNoteType() {
 		return noteType;
 	}
 
-	public RegistryNote setNoteType(Byte noteType) {
+	public RegistryNote setNoteType(NoteType noteType) {
 		this.noteType = noteType;
 		return this;
 	}
 
-	public Byte getSecurityLevel() {
+	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
 
-	public RegistryNote setSecurityLevel(Byte securityLevel) {
+	public RegistryNote setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 		return this;
 	}
 
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL.equals(getSecurityLevel());
+	}
+	
+	public RegistryNote setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+		return this;
+	}
 }

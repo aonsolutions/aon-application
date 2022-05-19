@@ -196,7 +196,7 @@
 	
 						<!-- PDF -->
 						<aon:if test="${file.isPDF()}">
-							<a href="./html/viewer.html##{help.getFileServletUrl(file)}"
+							<a href="./html/pdfjs/viewer.html?encoded=true&amp;newtoolbar=true&amp;file=#{help.getFileServletUrl(file)}"
 								class="list-item" target="_blank"> <aon:outputText
 									value="description" styleClass="icon file material-icons" /> <aon:outputText
 									value="#{file.name}" />

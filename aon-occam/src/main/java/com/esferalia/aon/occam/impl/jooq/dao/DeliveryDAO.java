@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
@@ -14,6 +16,8 @@ import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CARRIER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,27 +34,42 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
-import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.DeliveryValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -62,7 +82,55 @@ public class DeliveryDAO {
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 
 	private DeliveryDAO() {
+		
+	}
 	
+	protected static class DeliveryPropertiesDAO implements DeliveryProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select,DeliveryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(DeliveryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DOMAIN);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PROJECT);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CUSTOMER);}
+		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ADDRESS);}
+		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ISSUE_TIME);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PAY_METHOD);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SECURITY_LEVEL);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.STATUS);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.REMARKS);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.WORKPLACE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SCOPE);}
+		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER_OF_PYMNTS);}
+		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DAYS_TO_FIRST_PYMNT);}
+		@Override public Property<Short> getDaysBetweenPymntProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DAYS_BETWEEN_PYMNTS);}
+		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PYMNT_DAYS);}
+		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ACCOUNT);}
+		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ALIAS);}
+		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BIC);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_USER);}
+		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER);}
+		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER_PACKING);}
+		
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+
+		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	// -------------------- DELIVERY
@@ -85,21 +153,67 @@ public class DeliveryDAO {
 		if(next < 0) next = 0;
 		return ++next;
 	}
+	
+	// ----- SELECT
 
 	private static SelectConditionStep<Record> select(AONContext ctx, DeliveryFilter filter) {
 		 return ctx.getDslContext().select()
 			.from(DELIVERY)
-			.join(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 			.where(DELIVERY_PROPERTIES.getConditions(filter));
 	}
 	
-	public static Delivery get(AONContext ctx, DeliveryFilter filter){
+	private static SelectConditionStep<Record> selectFull(AONContext ctx, DeliveryFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(DELIVERY)
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.eq(DELIVERY.ID))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(DELIVERY.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(DELIVERY.WORKPLACE))
+			.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(DELIVERY.CARRIER))
+			.leftOuterJoin(CARRIER_ALIAS).on(CARRIER.REGISTRY.eq(CARRIER_ALIAS.ID))
+			.where(DELIVERY_PROPERTIES.getConditions(filter));
+	}
+
+	// ----- GET
+	
+	public static Delivery get(AONContext ctx, Integer deliveryId){
+		return get(ctx, f -> f.getIdProperty().eq(deliveryId));
+	}
+	
+	public static Delivery get(AONContext ctx, DeliveryFilter filter, Options... options){
+		if(options.length > 0 && options[0].isFull())
+			return getFull(ctx, filter);
 		return select(ctx, filter).limit(1).fetch().stream().map(new DeliveryFiller())
 			.findFirst().orElse(new Delivery());
 	}
 	
-	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter){
+	public static Delivery getFull(AONContext ctx, DeliveryFilter filter){
+		return getFullStream(ctx, filter).findFirst().orElse(new Delivery()); 
+	}
+	
+	// ----- GET STREAM
+	
+	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options... options){
+		if(options.length > 0) 
+			return getStream(ctx, filter, options[0]);
 		return select(ctx, filter).fetch().stream().map(new DeliveryFiller());
+	}
+	
+	private static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Options options){
+		if(options.isFull() && options.isPagination())
+			return getFullStream(ctx, filter, options.getPage(), options.getPerPage());
+		else if(options.isFull())
+			return getFullStream(ctx, filter);
+		else if(options.isPagination())
+			return getStream(ctx, filter, options.getPage(), options.getPerPage());
+		else return getStream(ctx, filter);
 	}
 	
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
@@ -107,6 +221,30 @@ public class DeliveryDAO {
 			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().map(new DeliveryFiller());
 	}
+	
+	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
+		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
+			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+			.fetchGroups(
+				new DeliveryFiller()::apply,
+				new DeliveryDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
+		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
+			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+			.fetchGroups(
+				new DeliveryFiller()::apply,
+				new DeliveryDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	// ----- GET LIST
 	
 	public static List<Delivery> getList(AONContext ctx, DeliveryFilter filter){
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
@@ -130,9 +268,14 @@ public class DeliveryDAO {
 	public static Delivery save(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
 		
-		return delivery.hasId() 
+		DeliveryValidation.autocomplete(ctx, delivery);
+		DeliveryValidation.validate(ctx, delivery);
+
+		delivery = delivery.hasId() 
 			? update(ctx, delivery)
 			: insertDelivery(ctx, delivery);
+
+		return delivery;
 	}
 	
 	/**
@@ -168,11 +311,11 @@ public class DeliveryDAO {
 						DELIVERY.MODIFICATION_USER, DELIVERY.MODIFICATION_DATE)
 				.values(delivery.getDomain(), delivery.getProject().getId(),
 						delivery.getSeries(), delivery.getNumber(),
-						delivery.getCustomer().getId(), delivery.getAddress(),
-						delivery.getIssueTime(), delivery.getPayMethod(),
-						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
+						delivery.getCustomer().getId(), delivery.getAddress().getId(),
+						delivery.getDate(), delivery.getPayMethod().getId(),
+						delivery.getSecurityLevel().value(), delivery.getStatus().ordinal(),
 						delivery.getComments(), delivery.getRemarks(),
-						delivery.getWorkplace(), delivery.getScope(),
+						delivery.getWorkplace().getId(), delivery.getScope().getId(),
 						delivery.getNumberOfPymnts(),
 						delivery.getDaysToFirstPymnt(),
 						delivery.getDaysBetweenPymnt(),
@@ -185,8 +328,8 @@ public class DeliveryDAO {
 						delivery.getShippingAlternativeAddress2(), delivery.getShippingAlternativeZip(),
 						delivery.getShippingAlternativeCity(), delivery.getShippingAlternativePhone(),
 						delivery.getShippingAlternativeRecipient(), delivery.getShippingContact(),
-						delivery.getShippingPeriod(), delivery.getTrackingNumber(),
-						delivery.getShippingStatus(), delivery.getStatusModificationDate(),
+						delivery.getShippingPeriodValue(), delivery.getTrackingNumber(),
+						delivery.getShippingStatusValue(), delivery.getStatusModificationDate(),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
 				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
@@ -206,15 +349,15 @@ public class DeliveryDAO {
 			.set(DELIVERY.SERIES, delivery.getSeries())
 			.set(DELIVERY.NUMBER, delivery.getNumber())
 			.set(DELIVERY.CUSTOMER, delivery.getCustomer().getId())
-			.set(DELIVERY.ADDRESS, delivery.getAddress())
-			.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
-			.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
-			.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
+			.set(DELIVERY.ADDRESS, delivery.getAddress().getId())
+			.set(DELIVERY.ISSUE_TIME, AonDateUtils.toTimestamp(delivery.getDate()))
+			.set(DELIVERY.PAY_METHOD, delivery.getPayMethod().getId())
+			.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel().value())
 			.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
 			.set(DELIVERY.COMMENTS, delivery.getComments())
 			.set(DELIVERY.REMARKS, delivery.getRemarks())
-			.set(DELIVERY.WORKPLACE, delivery.getWorkplace())
-			.set(DELIVERY.SCOPE, delivery.getScope())
+			.set(DELIVERY.WORKPLACE, delivery.getWorkplace().getId())
+			.set(DELIVERY.SCOPE, delivery.getScope().getId())
 			.set(DELIVERY.NUMBER_OF_PYMNTS, delivery.getNumberOfPymnts())
 			.set(DELIVERY.DAYS_TO_FIRST_PYMNT, delivery.getDaysToFirstPymnt())
 			.set(DELIVERY.DAYS_BETWEEN_PYMNTS, delivery.getDaysBetweenPymnt())
@@ -236,9 +379,9 @@ public class DeliveryDAO {
 			.set(DELIVERY.SHIPPING_ALTERNATIVE_PHONE, delivery.getShippingAlternativePhone())
 			.set(DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT, delivery.getShippingAlternativeRecipient())
 			.set(DELIVERY.SHIPPING_CONTACT, delivery.getShippingContact())
-			.set(DELIVERY.SHIPPING_PERIOD, delivery.getShippingPeriod())
+			.set(DELIVERY.SHIPPING_PERIOD, delivery.getShippingPeriodValue())
 			.set(DELIVERY.TRACKING_NUMBER, delivery.getTrackingNumber())
-			.set(DELIVERY.SHIPPING_STATUS, delivery.getShippingStatus())
+			.set(DELIVERY.SHIPPING_STATUS, delivery.getShippingStatusValue())
 			.set(DELIVERY.STATUS_MODIFICATION_DATE, AonDateUtils.toTimestamp(delivery.getStatusModificationDate()))
 			.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
 			.set(DELIVERY.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
@@ -248,7 +391,15 @@ public class DeliveryDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		deleteDeliveryDetail(ctx, f -> f.getDelivery().eq(id));
 		deleteDelivery(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static void delete(AONContext ctx, DeliveryFilter filter) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.delete(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
@@ -355,50 +506,7 @@ public class DeliveryDAO {
 	private static Result<Record> getFullDeliveries(AONContext ctx, DeliveryFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext()
-			.select(
-				 DELIVERY.ID
-				,DELIVERY.DOMAIN
-				,DELIVERY.STATUS
-				,DELIVERY.SERIES
-				,DELIVERY.NUMBER
-				,DELIVERY.ISSUE_TIME
-				,DELIVERY.ADDRESS
-				,REGISTRY.DOCUMENT
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.NAME
-				,REGISTRY.ID
-				,RADDRESS.STREET_TYPE
-				,RADDRESS.ADDRESS
-				,RADDRESS.NUMBER
-				,RADDRESS.ADDRESS2
-				,RADDRESS.ADDRESS3
-				,RADDRESS.ZIP
-				,RADDRESS.CITY
-				,GEOZONE.CODE
-				,GEOZONE.NAME
-				,SCOPE.DESCRIPTION
-				,PROJECT.NAME
-				,DELIVERY_DETAIL.LINE
-				,DELIVERY_DETAIL.ITEM
-				,PCATEGORY.ID
-				,PCATEGORY.NAME
-				,PRODUCT.ID
-				,PRODUCT.NAME
-				,PRODUCT.CODE
-				,ITEM.ID
-				,ITEM.DETAIL
-				,ITEM.DETAIL2
-				,ITEM.DETAIL3
-				,ITEM.DESCRIPTION
-				,DELIVERY_DETAIL.DESCRIPTION
-				,DELIVERY_DETAIL.QUANTITY
-				,DELIVERY_DETAIL.PRICE
-				,DELIVERY_DETAIL.DISCOUNT_EXPR
-				,DELIVERY_DETAIL.SALES_DETAIL
-				,SALES.PURCHASE_REFERENCE
-				,WORKPLACE.DESCRIPTION
-			)
+			.select()
 			.from(DELIVERY)
 			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.equal(DELIVERY.ID))
 			.join(REGISTRY).on(REGISTRY.ID.equal(DELIVERY.CUSTOMER))
@@ -443,24 +551,24 @@ public class DeliveryDAO {
 					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, REGISTRY.ID)
 						? CustomerFiller.build(r)
 						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
-					.setAddress(getValue(r, DELIVERY.ADDRESS))
-					 
-					.setAddressStreetType( StreetType.safeValueOf(getValue(r, RADDRESS.STREET_TYPE)))
-					.setAddressName(getValue(r, RADDRESS.ADDRESS))
-					.setAddressNumber(getValue(r, RADDRESS.NUMBER))
-					.setAddressTown(getValue(r, RADDRESS.CITY))
-					.setAddressZIP(getValue(r, RADDRESS.ZIP))
-					.setAddressGeozoneCode(getValue(r, GEOZONE.CODE))
-					.setAddressGeozone(getValue(r, GEOZONE.NAME))
+					.setAddress(checkField(r, RADDRESS.ID)
+						? RegistryAddressFiller.build(r, GEOZONE, GEOZONE)
+						: new RegistryAddress().setId(getValue(r, DELIVERY.ADDRESS)))
 					
-					.setIssueTime(getValue(r, DELIVERY.ISSUE_TIME))
-					.setPayMethod(getValue(r, DELIVERY.PAY_METHOD))
-					.setSecurityLevel(getByte(r, DELIVERY.SECURITY_LEVEL))
+					.setDate(getValue(r, DELIVERY.ISSUE_TIME))
+					.setPayMethod(checkField(r, PAY_METHOD.ID)
+							? PayMethodFiller.build(r)
+							: new PayMethod().setId(getValue(r, DELIVERY.PAY_METHOD)))
+					.setSecurityLevel(SecurityLevel.safeValueOf(getByte(r, DELIVERY.SECURITY_LEVEL)))
 					.setStatus(DeliveryStatus.safeValueOf(getValue(r, DELIVERY.STATUS)))
 					.setComments(getValue(r, DELIVERY.COMMENTS))
 					.setRemarks(getValue(r, DELIVERY.REMARKS))
-					.setWorkplace(getValue(r, DELIVERY.WORKPLACE))
-					.setScope(getValue(r, DELIVERY.SCOPE))
+					.setWorkplace(checkField(r, WORKPLACE.ID)
+							? WorkplaceFiller.build(r)
+							: new Workplace().setId(getValue(r, DELIVERY.WORKPLACE)))
+					.setScope(checkField(r, SCOPE.ID)
+							? ScopeFiller.buildScope(r)
+							: new Scope().setId(getValue(r, DELIVERY.SCOPE)))
 					.setNumberOfPymnts(getShort(r, DELIVERY.NUMBER_OF_PYMNTS))
 					.setDaysToFirstPymnt(getShort(r, DELIVERY.DAYS_TO_FIRST_PYMNT))
 					.setDaysBetweenPymnt(getShort(r, DELIVERY.DAYS_BETWEEN_PYMNTS))
@@ -482,9 +590,9 @@ public class DeliveryDAO {
 					.setShippingAlternativePhone(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_PHONE))
 					.setShippingAlternativeRecipient(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT))
 					.setShippingContact(getValue(r, DELIVERY.SHIPPING_CONTACT))
-					.setShippingPeriod(getValue(r, DELIVERY.SHIPPING_PERIOD))
+					.setShippingPeriod(ShipmentPeriod.safeValueOf(getValue(r, DELIVERY.SHIPPING_PERIOD)))
 					.setTrackingNumber(getValue(r, DELIVERY.TRACKING_NUMBER))
-					.setShippingStatus(getValue(r, DELIVERY.SHIPPING_STATUS))
+					.setShippingStatus(ShipmentStatus.safeValueOf(getValue(r, DELIVERY.SHIPPING_STATUS)))
 					.setStatusModificationDate(getValue(r, DELIVERY.STATUS_MODIFICATION_DATE))
 					.setCreationDate(getValue(r, DELIVERY.CREATION_DATE))
 					.setCreationUser(getValue(r, DELIVERY.CREATION_USER))

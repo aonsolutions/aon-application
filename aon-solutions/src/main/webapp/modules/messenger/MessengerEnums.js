@@ -60,6 +60,7 @@ export const MESSENGER_DIRECTION = {
 
 export const MESSENGER_IDS = {
     ICON_SEND_WORKFLOW:'iconSendWorkflow',
+    ICON_EDIT_WORKFLOW:'iconEditWorkflow',
     MAIN_WRAPPER : "mainWrapper",
     MESSENGER_CHAT: "messengerChat",
     FORM_DINAMIC:"formDinamic",

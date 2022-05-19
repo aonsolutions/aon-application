@@ -98,8 +98,13 @@ public class Product implements Serializable{
 		return this;
 	}
 	
-	public Boolean isActive() {
+	public boolean isActive() {
 		return ProductStatus.ACTIVE.equals(getStatus());
+	}
+	
+	public Product setActive(boolean active) {
+		setStatus(active ? ProductStatus.ACTIVE : ProductStatus.DISCONTINUED);
+		return this;
 	}
 
 	public ProductStatus getStatus() {

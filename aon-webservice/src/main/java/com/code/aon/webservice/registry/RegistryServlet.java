@@ -161,7 +161,7 @@ public class RegistryServlet extends HttpServlet{
 		
 		RegistryStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();
 		String st = !RegistryStatus.ACTIVE.equals(status) ? status.getDescription() : "";
-		String observation = AON.getRNote(domain.getName(), domain.getId(), login,
+		String observation = AON.getRegistryNote(domain.getName(), domain.getId(), login,
 				f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getRegistryProperty().eq(registryId))
     			.and(f.getNoteTypeProperty().eq(NoteType.OBSERVATION.value()))).getComments();
@@ -203,7 +203,7 @@ public class RegistryServlet extends HttpServlet{
     
     private JSONArray getRnoteList(Domain domain, String login){
     	JSONArray array = new JSONArray();
-    	AON.getRNoteStream(domain.getName(), domain.getId(), login,
+    	AON.getRegistryNoteStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value())))
     		.forEach(rn -> array.put(ToJSON.rnoteToJSON(rn)));
@@ -262,7 +262,7 @@ public class RegistryServlet extends HttpServlet{
     
     private JSONArray getRnoteList(Domain domain, String login, Integer registryId){
     	JSONArray array = new JSONArray();
-      	AON.getRNoteStream(domain.getName(), domain.getId(), login,
+      	AON.getRegistryNoteStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getRegistryProperty().eq(registryId))
     			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value())))
@@ -271,7 +271,7 @@ public class RegistryServlet extends HttpServlet{
     }
     
     private JSONObject getRnote(Domain domain, String login, Integer id){
-    	return ToJSON.rnoteToJSON(AON.getRNote(domain.getName(),
+    	return ToJSON.rnoteToJSON(AON.getRegistryNote(domain.getName(),
     			domain.getId(), login,f -> f.getIdProperty().eq(id)
     			.and(f.getNoteTypeProperty().ne(NoteType.OBSERVATION.value()))));
     }

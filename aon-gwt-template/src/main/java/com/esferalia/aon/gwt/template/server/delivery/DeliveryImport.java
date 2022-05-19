@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -34,9 +35,11 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -1247,17 +1250,17 @@ public class DeliveryImport {
 					delivery = new Delivery()
 							.setDomain(domain.getId())
 							.setSeries(r.getSerie())
-							.setScope(scope)
+							.setScope(new Scope().setId(scope))
 							.setStatus(DeliveryStatus.PENDING)
 							.setNumber(r.getNumero())
 							.setCustomer(new Customer().setId(customerID))
-							.setIssueTime(r.getFecha())
-							.setWorkplace(warehouse.getWorkplace())
-							.setAddress(raddress)
+							.setDate(r.getFecha())
+							.setWorkplace(new Workplace().setId(warehouse.getWorkplace()))
+							.setAddress(new RegistryAddress().setId(raddress))
 							.setBankAccount(r.getCuentaBanco())
 							.setBic(r.getBic())
 							.setBankAlias(r.getBanco())
-							.setPayMethod(pm.getId())
+							.setPayMethod(pm)
 							.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 							.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 							.setDaysBetweenPymnt(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)

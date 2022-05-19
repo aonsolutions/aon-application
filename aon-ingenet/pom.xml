@@ -17,54 +17,63 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.carrier</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.sales</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.seres</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>    
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.watson</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.master.jooq</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>pool</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
@@ -78,22 +87,71 @@
 			<version>2.2.4</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
 			<version>9.0.14</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
     		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
     		<version>20180813</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.6</version>
 			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Test dependecies -->
+
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+		    <type>test-jar</type>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.tests</artifactId>
+		    <type>test-jar</type>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13-beta-1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>0.15</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.mockito</groupId>
+   			<artifactId>mockito-all</artifactId>
+    		<version>2.0.2-beta</version>
+    		<scope>test</scope>
+		</dependency>
+				
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.13</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

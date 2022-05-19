@@ -36,3 +36,5 @@ export const selfconta = (year) => post(`${API_URL}/invoice/selfconta_import`, {
 export const recordSelfconta = (data) => post(`${API_URL}/invoice/selfconta_record`, data);
 
 export const getPaymethods = () => get(`${API_URL}/paymethod`, {});
+
+export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});

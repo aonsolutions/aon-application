@@ -19,8 +19,8 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.aon.api.servlet.Utils;
-import net.aonsolutions.aon.api.test.request.Method;
-import net.aonsolutions.aon.api.test.request.Request;
+import net.aonsolutions.tests.request.Method;
+import net.aonsolutions.tests.request.Request;
 
 public class LoginTest extends AbstractOccamTest {
 	Faker faker = new Faker();
@@ -51,8 +51,8 @@ public class LoginTest extends AbstractOccamTest {
 	}
 	
 	private void emptyLogin() {
-		LoginVisit loginVisit = new LoginVisit();
-		JSONObject respObject = Request.request(Method.POST, request, response, loginVisit, new JSONObject());
+		LoginServletTest loginVisit = new LoginServletTest();
+		JSONObject respObject = Request.requestJSONObject(Method.POST, request, response, loginVisit, new JSONObject());
 		assertEquals("error", respObject.optString("type"));
 		assertEquals("El Usuario No existe.", respObject.optString("message"));
 	    System.out.println(respObject);
@@ -82,8 +82,8 @@ public class LoginTest extends AbstractOccamTest {
 		json.put("username", username);
 		json.put("password", password);
 		
-		LoginVisit loginVisit = new LoginVisit();
-		JSONObject respObject = Request.request(Method.POST, request, response, loginVisit, json);
+		LoginServletTest loginVisit = new LoginServletTest();
+		JSONObject respObject = Request.requestJSONObject(Method.POST, request, response, loginVisit, json);
 		return respObject;
 	}
 	

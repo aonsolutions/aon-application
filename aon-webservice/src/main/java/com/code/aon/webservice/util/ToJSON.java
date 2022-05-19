@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -187,8 +188,8 @@ public class ToJSON {
 		json.put(MSG.DESCRIPTION, rnote.getDescription());
 		json.put("note_date", AonDateUtils.simpleFormat(rnote.getNoteDate()));
 		json.put("comments", rnote.getComments());
-		json.put("note_type", rnote.getNoteType());
-		json.put("confidential", rnote.getSecurityLevel() == 1);
+		json.put("note_type", rnote.getNoteType().value());
+		json.put("confidential", rnote.isConfidential());
 		return json;
 	}
 	
@@ -322,6 +323,20 @@ public class ToJSON {
 		return json;
 	}
 
+	public static JSONObject itemToJSON2(Item item) {
+		JSONObject json = new JSONObject();
+		json.put(MSG.ID, item.getId());
+		json.put(MSG.DOMAIN, item.getDomain());
+		json.put("code", item.getProduct() != null ? item.getProduct().getCode(): "");
+		json.put(MSG.NAME, item.getProduct() != null ? item.getProduct().getName(): "");
+		json.put("product_id", item.getProduct().getId());
+		json.put("serial_number", item.getSerialNumber());
+		json.put("detail", item.getDetail());
+		json.put("detail2", item.getDetail2());
+		json.put("detail3", item.getDetail3());
+		return json;
+	}
+	
 	public static JSONObject itemToJSON(OldItem item) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, item.getId());
@@ -525,11 +540,10 @@ public class ToJSON {
 		.put(MSG.DOMAIN, sales.getDomain())
 		.put(MSG.SERIES, sales.getSeries())
 		.put(MSG.NUMBER, sales.getNumber())
-		.put(MSG.CUSTOMER, sales.getCustomer()) 
 		.put(MSG.CUSTOMER, new JSONObject()
 			.put(MSG.ID, sales.getCustomer() != null ? sales.getCustomer().getId() : "")
 			.put(MSG.NAME, sales.getCustomer() != null ? sales.getCustomer().getName(): ""))
-		.put(MSG.ISSUE_DATE, sales.getIssueDate() != null ? AonDateUtils.dateTimeFormat(sales.getIssueDate()) : "")
+		.put(MSG.ISSUE_DATE, sales.getDate() != null ? AonDateUtils.dateTimeFormat(sales.getDate()) : "")
 		.put(MSG.DELIVERY_DATE, sales.getDeliveryDate() != null ? AonDateUtils.dateTimeFormat(sales.getDeliveryDate()) : "")
 		.put("purchase_reference", sales.getPurchaseReference() != null ? sales.getPurchaseReference() : " ");
 	}
@@ -540,7 +554,7 @@ public class ToJSON {
 		.put(MSG.DOMAIN, detail.getDomain())
 		.put(MSG.SALES, salesToJSON(detail.getSales()))
 		.put(MSG.LINE, detail.getLine())
-		.put(MSG.ITEM, itemToJSON(detail.getItem()))
+		.put(MSG.ITEM, itemToJSON2(detail.getItem()))
 		.put(MSG.DESCRIPTION, detail.getDescription())
 		.put(MSG.QUANTITY, detail.getQuantity())
 		.put(MSG.PRICE, detail.getPrice())

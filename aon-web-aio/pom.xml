@@ -82,6 +82,13 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+
+	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.tests</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
     
     <dependency>
       <groupId>net.aonsolutions</groupId>

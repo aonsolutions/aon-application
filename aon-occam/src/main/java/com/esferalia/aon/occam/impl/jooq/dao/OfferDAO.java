@@ -291,7 +291,7 @@ public class OfferDAO {
 							? SupplierFiller.buildSupplier(r, SUPPLIER_ALIAS)
 							: new Supplier().setId(r.getValue(OFFER.SUPPLIER)))
 					.setWorkPlace(checkField(r, WORKPLACE.ID)
-							? WorkplaceFiller.buildWorkplace(r)
+							? WorkplaceFiller.build(r)
 							: new Workplace().setId(r.getValue(OFFER.WORKPLACE)))
 					.setScope(checkField(r, SCOPE.ID)
 							? ScopeFiller.buildScope(r)

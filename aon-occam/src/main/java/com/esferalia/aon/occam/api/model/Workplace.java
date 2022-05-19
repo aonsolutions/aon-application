@@ -9,17 +9,17 @@ public class Workplace implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private String description;
-	private Byte active;
+	private boolean active;
 	private Integer address;
 	private Integer customer;
 	private Byte economicagreement;
 	private Integer enterprise;
 	private Integer scope;
 	
-	public Byte getActive() {
+	public boolean isActive() {
 		return active;
 	}
-	public Workplace setActive(Byte active) {
+	public Workplace setActive(boolean active) {
 		this.active = active;
 		return this;
 	}

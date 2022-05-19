@@ -227,6 +227,11 @@ export class AonSuggestion extends AonElement {
     return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
       && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
+
+
+  setMaxlength(maxlength) {
+    this.getElement(this.INPUT).maxlength = maxlength;
+  }
 }
 if(!window.customElements.get('aon-suggestion')){
   window.customElements.define('aon-suggestion', AonSuggestion);

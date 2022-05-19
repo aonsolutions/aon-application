@@ -92,11 +92,26 @@ public class PdfExtractor {
 	}
 	
 	
-	public static InputStream extractPage(InputStream stream, int page) {
+	public static InputStream fromPage(InputStream stream, int page) {
 		
-		
-		
-		return stream;
+		Instant before = Instant.now();
+		PDDocument doc;
+		try {
+			doc = Loader.loadPDF(stream);
+			PDDocument region = extractPageRegion(doc.getPage(page), 0f, 400f, doc.getPage(1).getMediaBox().getWidth(), 150f);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			region.save(out);
+			
+			Instant after = Instant.now();
+			long delta = Duration.between(before, after).toMillis();
+			System.out.println("Extracted pdf page " + page  + " in: " + delta + "ms");
+			
+			return new ByteArrayInputStream(out.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		return new ByteArrayInputStream(new byte[0]);
 	}
 	
 	

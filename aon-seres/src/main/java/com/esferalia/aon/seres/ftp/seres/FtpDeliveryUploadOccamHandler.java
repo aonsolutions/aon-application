@@ -180,14 +180,14 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	public FileOutput exportEdiFile(Delivery delivery) throws AonException {
 		FileOutput output = null;
 		ConnectDeliveryWriterOccam writer = new ConnectDeliveryWriterOccam(domainName, domainId, login);
-		Map<String, String> ediCodes = obtainEdiCodes(delivery.getCustomer().getId(), delivery.getAddress());
+		Map<String, String> ediCodes = obtainEdiCodes(delivery.getCustomer().getId(), delivery.getAddress().getId());
 		try {			
 			String department = ediCodes.get(IEdiSupport.DEPARTMENT);
 			String customerEdiCode = ediCodes.get(IEdiSupport.ALBARANES);
 			String deliveryPointEdiCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
 			String customerPackage = obtainPackingTag(
 					delivery.getCustomer().getId(),
-					delivery.getAddress());
+					delivery.getAddress().getId());
 			String companyEdiCode = obtainEdiCompanyCode();
 			
 			byte[] attachData = ConnectDeliveryWriterOccam.DeliveryPackages.obtainPackageDataAttach(
@@ -255,7 +255,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	}
 	
 	private String getRegistryNoteComments(String key, Integer registryId) {
-		return AON.getRNoteStream( domainName, domainId, login,
+		return AON.getRegistryNoteStream( domainName, domainId, login,
 				f -> f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
 						.and(f.getRegistryProperty().eq(registryId))
 						.and(f.getDescriptionProperty().eq(key)))
