@@ -121,21 +121,22 @@ public class AonComunica {
 	public static void communicateAlta(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee) throws SegSocialException {
 		
-		System.out.println("--------PROCESSING ALTA--------");
-		
 		SistemaRED.sendAlta(certificateData, certificatePassword, certificateType, EmployeeParse.toEmployeeSS(employee));
 		
 		employee.setInfo("SS_ALTA", "COMUNICADO");
-		
-		System.out.println("--------ALTA PROCESSED--------");
+		System.out.println("--------SS_ALTA COMUNICADO--------");
 
 		saveContractAttach(certificateData, certificatePassword, certificateType, domain, employee);
 	}
 	
 	public static Employee addContract(Domain domain, Employee employee) {
 		System.out.println("--------PROCESSING CONTRACT--------");
+		
 		employee.addInfo("SEPE_CONTRATO", "PENDING", employee.getStartDate(), null);
+		
 		employee.addInfo("SS_ALTA", "PENDING", employee.getStartDate(), null);
+		System.out.println("--------SS_ALTA COMUNICADO--------");
+		
 		employee = PAYROLL.addEmployee(domain.getName(), domain.getId(), "", employee);
 		return employee;
 	}
