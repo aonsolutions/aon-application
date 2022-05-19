@@ -46,6 +46,11 @@
 			width: 100%;
 		}
 		
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
@@ -53,12 +58,12 @@
 		<g:HTMLPanel styleName="{style.container}">
 			
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.subTitle}">Tipo firma copia básica</g:Label>
+				<g:Label styleName="{style.subTitle} {style.requiredColor}">Tipo firma copia básica</g:Label>
 				<g:ListBox ui:field="signBasicCopyLB" />
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.subTitle}">Uso libre empresa</g:Label>
+				<g:Label styleName="{style.subTitle} {style.requiredColor}">Uso libre empresa</g:Label>
 				<g:TextBox ui:field="useEnterpriseFreeTB" styleName='aon-inputText {style.field} {style.widthAll}' />
 			</g:HTMLPanel>
 			
