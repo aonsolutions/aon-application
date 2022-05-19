@@ -79,7 +79,7 @@
 			</aon:if>
 		
 			<c:forEach items="#{help.getCurrentFaqs()}" var="file">
-				<a class="faq" href="./html/viewer.html##{help.getFileServletUrl(file)}" target="_blank"> 
+				<a class="faq" href="./html/pdfjs/viewer.html?encoded=true&amp;newtoolbar=true&amp;file=#{help.getFileServletUrl(file)}" target="_blank"> 
 					#{file.extensionlessName}	
 				</a>
 			</c:forEach>

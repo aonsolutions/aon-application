@@ -42,6 +42,7 @@
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 			<ui:param name="controller" value="#{domainSwitcher}" />
 			<ui:param name="skipFocusFirst" value="true" />
+			<ui:param name="showAonPaginator" value="true" />
 			<ui:define name="columns">
 				<aon:column styleClass="aon-width-30">
 					<c:set var="heredity" value="#{to.enableHeredity ? bundle.aon_domian_enableHeredity : bundle.aon_domian_disableHeredity}"/>

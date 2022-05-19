@@ -372,6 +372,26 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>aonPaginator</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.DataPaginator
+			</component-type>
+			<renderer-type>
+				com.code.aon.faces.DataPaginatorRenderer
+			</renderer-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorHandler
+			</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>aonScroller</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.aonScroller.AonScrollerHandler
+		</handler-class>
+	</tag>
+	<tag>
 		<tag-name>dataScroller</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler

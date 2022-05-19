@@ -5940,7 +5940,7 @@ CREATE TABLE `income_detail` (
 CREATE TABLE `inventory` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Inventario',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `inventory_date` date NOT NULL DEFAULT '0000-00-00' COMMENT 'Fecha de Inventario',
+  `inventory_date` date NOT NULL COMMENT 'Fecha de Inventario',
   `warehouse` int(4) NOT NULL DEFAULT '0' COMMENT 'Almacen Inventariado',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Inventario',
   `status` tinyint(2) DEFAULT '0' COMMENT 'Estado del Inventario',

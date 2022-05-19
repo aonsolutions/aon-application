@@ -56,8 +56,10 @@ public class IndexPDFFiles {
 			HashMap<String, PDPageDestination> namesMap = new HashMap<>();
 			List<PDPageDestination> destinations = new ArrayList<PDPageDestination>();
 			
+			
+			int last = 0;
 			for (int i = 1; i <= indexPages; i++) {
-				IndexPDFFiles.extractPage(doc, i, destinations, namesMap, index , filename);
+				last = IndexPDFFiles.extractPage(doc, i, destinations, namesMap, index , filename, last);
 			}
 
 		    // Add map to the names
@@ -88,7 +90,7 @@ public class IndexPDFFiles {
 	 * @param filename 
 	 * @throws IOException if it fails to extract
 	 */
-	private static void extractPage(PDDocument doc, int pageNumber, List<PDPageDestination> destinations, HashMap<String, PDPageDestination> namesMap, PDDocument index, String filename) throws IOException {
+	private static int extractPage(PDDocument doc, int pageNumber, List<PDPageDestination> destinations, HashMap<String, PDPageDestination> namesMap, PDDocument index, String filename, int last) throws IOException {
 		
 		// Get page
 		PDPage page = doc.getPage(pageNumber);
@@ -99,8 +101,8 @@ public class IndexPDFFiles {
 	    stripper.extractRegions(page);
 	    
 	    // Set names	    
-		IndexPDFFiles.setPageNameReferences(doc, stripper, destinations, namesMap, index, filename);
-		
+		last = IndexPDFFiles.setPageNameReferences(doc, stripper, destinations, namesMap, index, filename, last);
+		return last;
 	}
 	
 	/**
@@ -155,7 +157,9 @@ public class IndexPDFFiles {
 	}
 	
 	
-	private static void setPageNameReferences(PDDocument doc, PDFTextStripperByArea stripper, List<PDPageDestination> destinations, HashMap<String, PDPageDestination> namesMap, PDDocument index, String filename) {
+	private static int setPageNameReferences(PDDocument doc, PDFTextStripperByArea stripper, List<PDPageDestination> destinations, HashMap<String, PDPageDestination> namesMap, PDDocument index, String filename, int last) {
+		
+		int[] atomicLast = { last - 1 };
 		stripper.getRegions().forEach( r -> {
 	    	
 	    	// Dotted outline 
@@ -171,6 +175,7 @@ public class IndexPDFFiles {
 	    	boolean dotOutlineMode = dotMatcher.matches();
 	    	boolean standardOutlineMode = standardMatcher.matches();
 	    	
+	    	atomicLast[0]++;
 	    	
 	    	if(!dotOutlineMode && !standardOutlineMode) {
 	    		return;
@@ -194,26 +199,30 @@ public class IndexPDFFiles {
 	    		return;
 	    	}
 	    	
-	    	
 	    	name = name.replaceAll("(\\w+)?[\\.\\s]{3,}\\s*\\d+", "$1");
-	    	System.out.println("\nDESTINATION NAME: " + name);
-	    	
 	    	
 	    	// Create outline item, add name to names and set action
 	    	PDOutlineItem item = new PDOutlineItem();
-			item.setDestination(destinations.get(namesMap.size()));
-			item.setTitle(name);	
+			item.setDestination(destinations.get(atomicLast[0]));
+				
 			    
 			String id = String.format("aon%d", namesMap.size());
-			System.out.println("ID: " + id);
-			namesMap.put(id, destinations.get(namesMap.size()) );
+			item.setTitle(name);
 			
 			PDActionURI action = new PDActionURI();
 			action.setURI("help/" + filename + ".pdf" + "#" + id );
 			item.setAction(action);
 			
-			index.getDocumentCatalog().getDocumentOutline().getLastChild().addLast(item);
+			
+			if(name.trim().length() != 0) {
+				System.out.println("\nDESTINATION NAME: " + name);
+				index.getDocumentCatalog().getDocumentOutline().getLastChild().addLast(item);
+				namesMap.put(id, destinations.get(atomicLast[0]));
+		    }
+			
 	    });
+		
+		return atomicLast[0];
 	}
 	
 
@@ -239,18 +248,13 @@ public class IndexPDFFiles {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		
+		try {
 		
 		HashMap<String, PdfIndexProperties> files = new HashMap<>();
-		files.put("payroll", new PdfIndexProperties("LABORAL Manual de USUARIO", 3));
+		files.put("payroll", new PdfIndexProperties("LABORAL Manual de USUARIO", 4));
 		files.put("account", new PdfIndexProperties("CONTABILIDAD Manual de USUARIO", 2));
+		files.put("fiscal", new PdfIndexProperties("FISCAL Manual de USUARIO", 1));
 		
-		/**
-		files.put("comunica", new PdfIndexProperties("COMUNIC@ Manual de USUARIO", 1));
-		files.put("portal_company", new PdfIndexProperties("PORTAL ASESOR (Usuario empresa) Manual de usuario", 1));
-		files.put("portal_asesor", new PdfIndexProperties("PORTAL ASESOR (Usuario asesor) Manual de usuario", 1));
-		files.put("portal_asesor_user_config", new PdfIndexProperties("PORTAL ASESOR (Configuración usuarios) Guia rápida", 1));
-		**/
 	
 		System.out.println("-----------------------------------------------------------");
 		System.out.println(" PDF INDEX GENERATION NEW ");
@@ -297,6 +301,10 @@ public class IndexPDFFiles {
 			}
 		}
 		
+		
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

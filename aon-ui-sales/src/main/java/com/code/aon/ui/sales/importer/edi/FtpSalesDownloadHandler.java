@@ -553,4 +553,11 @@ public class FtpSalesDownloadHandler implements Serializable {
 		}
 	}
 	
+	public FileOutput exportEdiFile(com.code.aon.sales.Sales oldSales){
+		FileOutput output = null;
+		// TODO GENERAR LA RESPUESTA DE ORDEN DE COMPRAR (ORDRSP)
+		return output;
+	}
+	
+	
 }
