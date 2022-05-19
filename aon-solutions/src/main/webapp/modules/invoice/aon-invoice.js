@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries} from '../../services/service.js';
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, signInvoice} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -78,11 +78,14 @@ export class AonInvoice extends AonElement {
 		this.buildDur().then(r => {
 			this.build();
 		});
+		
 		getCompany().then(company => {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
 				: company.id;
 
+			this.getInvoice().surcharge = this.getInvoice().surcharge || company.surcharge;
+			this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || company.vatAccrualPayment;
 			if(registry) {
 				let data = {
 					id: registry,
@@ -341,6 +344,11 @@ export class AonInvoice extends AonElement {
 				changeType.fn = () => this.changeType();
 				moreActions.push(changeType);
 			}
+			if(!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()){
+				let sign = ACTION.SIGN_INVOICE;
+				sign.fn = () => this.signInvoice();
+				moreActions.push(sign);
+			}
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
 		});
@@ -562,10 +570,16 @@ export class AonInvoice extends AonElement {
 
 			// ----- SERIE
 
-			let serie = new AonInput();
-			serie.id = this.SERIE;
-			serie.description = MSG.SERIE;
+			// ----- SERIE
+			let serie = this.createAonElement(new AonSuggestion(), this.SERIE, MSG.SERIE);
 			table.addCell(serie);
+			serie.setMaxlength(5);
+			serie.addEventListener(EVENT.AON_KEYUP, (e) => {
+				serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
+					name: r.description,
+					value: r.description,
+					item: r};}));
+			});
 			serie.readonly = this.invoice.isReadonly();
 			serie.value = this.invoice.serie;
 			serie.addEventListener(EVENT.CHANGE, () => {
@@ -600,8 +614,9 @@ export class AonInvoice extends AonElement {
 					this.series = r;
 					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
 					number.readonly = !enabled;
-					number.disabled = !enabled;
+					number.disabled = !enabled;					
 				});
+
 				number.addEventListener(EVENT.CHANGE, () => {
 					this.invoice.number = number.value;
 					if(this.autosave) this.save();
@@ -1783,6 +1798,10 @@ export class AonInvoice extends AonElement {
 			sendInvoiceMail(message).then(() => {});
 		});
 		d.open();
+	}
+
+	signInvoice() {
+		signInvoice(this.invoice.id).then(r => {});
 	}
 
 	duplicateInvoice() {
