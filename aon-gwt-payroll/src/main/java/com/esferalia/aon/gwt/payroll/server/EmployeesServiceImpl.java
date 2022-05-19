@@ -5954,31 +5954,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return AonStringUtils.startsWith(p.getExpression(), "/*default*/");
 	}
 
-	private static String getCCCRegimeCode(Byte cccRegime) {
-		switch (cccRegime) {
-		case 0:
-			return "0111";
-		case 1:
-			return "0111";
-		case 2:
-			return "0111";
-		case 3:
-			return "0111";
-		case 4:
-			return "0111";
-		case 5:
-			return "0111";
-		case 6:
-			return "0138";
-		case 7:
-			return "0163";
-		case 8:
-			return "0112";
-		default:
-			return "0111";
-		}
-	}
-
 	private static void syncBonus(Connection connection, String currentDomainName, String currentUser,
 			SalaryDraft salaryDraft) throws SQLException {
 		Integer domainId = AonServletUtils.getDomainID(currentDomainName);

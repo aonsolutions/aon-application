@@ -555,7 +555,7 @@ public abstract class CCC extends ResizeComposite {
 			return false;
 	}
 	
-	private static String getCCCRegimeCode(Byte cccRegime) {
+	public static String getCCCRegimeCode(Byte cccRegime) {
 		switch (cccRegime) {
 		case 0:
 			return "0111";
