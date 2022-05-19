@@ -434,15 +434,13 @@
 	
 	.aon-input-search {
 		width: 75%;
-		padding: 4px .7rem; 
-		border: 1px solid rgba(0,0,0,.1);
-		border-radius: .35rem;
-		background: #fff;
+		padding: 4px; 
+		border: 1px solid #ddd;
 	}
 	
 	.aon-input-search:focus {
 		outline:none;
-		background: #fafafa;
+		background-color:white;
 	}
 
 	.search-results-popup {
@@ -1069,35 +1067,19 @@
 	.aon-menu-popup
 	 {
 		opacity:0.94;	 
-	 	color: #404040 !important;
-	 	box-shadow: 0px 6px 6px rgba(0,0,0,.15);
-    	background-color: #fafafa !important;
-    }
-    
-    
-	.aon-menu-popup.old {
-		opacity:0.94;	
-		color: #FFF !important;
+	 	color: #FFF !important;
 	 	box-shadow: 0px 6px 6px #2152A5;
     	background-color: #2152A5 !important;
-	}
-	
+    }
+    
+
     .aon-menu-popup * ,
     .aon-menu-popup a {
-    	color: #404040;
-    	font-size:13px;
-    	white-space: nowrap;
-    	
-	}   
-	
-	.aon-menu-popup.old * ,
-    .aon-menu-popup.old a {
     	color: #FFF;
     	font-size:13px;
     	white-space: nowrap;
     	
 	}   
-	
     .aon-menu-popup .aon-icon-new-text,
     .aon-menu-popup .aon-icon-beta-text{
     	background: none;
@@ -1106,16 +1088,6 @@
      }
 
     .aon-menu-popup .aon-direct-access-panel {
-    	color: #404040;
-    	height: 24px;
-    	border-bottom: 1px solid #FFF;
-    	background-color: #f1f1f1 !important;
-    	border-radius: .35rem;
-    	padding-left: 12px;
-    	background-image: none;
-	}   
-
-    .aon-menu-popup.old .aon-direct-access-panel {
     	color: #FFF;
     	height: 24px;
     	border-bottom: 1px solid #FFF;
@@ -1124,22 +1096,20 @@
     	background-image: none;
 	}   
 
-
     .aon-menu-popup .aon-menu-icon-aeat,
     .aon-menu-popup .aon-menu-icon-araba,
     .aon-menu-popup .aon-menu-icon-bizkaia,
     .aon-menu-popup .aon-menu-icon-gipuzkoa,
     .aon-menu-popup .aon-menu-icon-navarra
      {
-    	background: #f1f1f1;
-    	border-color: transparent;
+    	border-color: #2152A5;
     }
     
     .aon-menu-popup .aon-menu-fiscal-label {
     	background-image: none;
     }
 	.aon-menu-popup .aon-menu-fiscal{
-		border-bottom: 1px solid transparent;
+		border-bottom: 1px solid #2152A5;
 	}
     
     .aon-menu-popup .aon-direct-access-list-element {
@@ -1150,20 +1120,15 @@
     	padding: 5px 0 8px 12px;
     }
 
-    .aon-menu-popup.old .aon-direct-access-list-element:hover {
+    .aon-menu-popup .aon-direct-access-list-element:hover {
     	color: #FFF;
     	background-color: #2152A5 !important;
-	}
-	
-	.aon-menu-popup .aon-direct-access-list-element:hover {
-    	border-color: transparent  !important;
-    	background: transparent !important;
 	}
 
     .aon-menu-popup .aon-direct-access-list-element *:hover {
     	/*font-weight: bold;*/
     	color: #2152A5 !important;
-    	/*background-color: #FFF !important;*/
+    	background-color: #FFF !important;
 		border-top-right-radius: 50px 50px;
     	border-bottom-right-radius: 50px 50px;
 	}
@@ -1171,9 +1136,8 @@
 	/*.aon-top-menu-item:hover ,*/
 	.aon-top-menu-item-selected {
     	opacity: 95%;
-    	color: #404040 !important;
-    	background-color: #f1f1f1 !important;
-    	border-radius: .35rem;
+    	color: #FFF !important;
+    	background-color: #2152A5 !important;
 	}
 
 	div[id$='aonContentPopup']{
@@ -1512,10 +1476,6 @@
       				e.returnValue = false;
       				e.cancelBubble = true;
       				
-      				// Set default message to tooltip
-      				const message = document.getElementById("tooltip-key-message");
-					setTooltipFixMessage(message);      				
-
       				hideHelpTooltip(true);
       				return false;
 				}
@@ -1531,30 +1491,6 @@
       				if(searchResults.length == 0){
       					return;
       				}
-      				
-      				const resultsAreHidden = #{rich:element('smartFilterTablePanel')}.style.display == "none";
-      				if(resultsAreHidden){
-      					return;
-      				}
-      				
-      				// Set default message to tooltip
-      				const message = document.getElementById("tooltip-key-message");
-					setTooltipFixMessage(message);
-      				
-      				// Enter
-    				if(e.which === 13) {
-    					
-    					const link = searchResults[selected].querySelector("a");
-    					searchResults[selected].click();
-    					
-    					if(link) {
-    						link.click();
-    					}
-
-    					return;
-    				}
-      				
-      				hideHelpTooltip();
       				
     				// Arrow up
     				if(e.which === 38) {
@@ -1578,15 +1514,38 @@
           				
           				resetResultStates (searchResults, selected)
     				}
+    				
+    				// Enter
+    				if(e.which === 13) {
+    					
+    					const link = searchResults[selected].querySelector("a");
+    					searchResults[selected].click();
+    					
+    					if(link) {
+    						link.click();
+    					}
+    					
+    				}
       				
 				} else {
 					selected = -1;
 				}
 				
+
+				
 			}
 			
 			function resetResultStates (searchResults, selected) {
-				searchResults.forEach(p => p.style.background = "unset")
+				searchResults.forEach(p => {
+					p.style.background = "#fff";
+					
+					const mouseout = searchResults[selected].onmouseout;
+					if(mouseout){
+						mouseout({
+							target : searchResults[selected],
+						});
+					} 
+					})
 				
 				const mouseover =  searchResults[selected].onmouseover;
 				if(mouseover){
@@ -1607,7 +1566,6 @@
 					#{rich:element('smartFilter')}.focus();
 				}, 300);
 			}
-			
 
 			let helpTooltipTimeout;
 			
@@ -1618,7 +1576,6 @@
 			*/
 			function showHelpTooltip( event, url ){
 				
-					clearTimeout(helpTooltipTimeout)				
 					helpTooltipTimeout = setTimeout(function(){
 						
 						const tooltip = document.getElementById("helpTooltip");
@@ -1639,6 +1596,7 @@
 						frame.style.transition = "none";
 						frame.style.opacity = 1;
 						
+
 						// Get the right tooltip URL						
 						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
 						let name = url.substr( url.lastIndexOf('#') + 1);
@@ -1659,9 +1617,9 @@
 						
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
-						setTimeout(() => tooltip.style.opacity = "1", 350);
+						setTimeout(() => tooltip.style.opacity = "1", 250);
 												
-					}, 250);
+					}, 150);
 
 			}
 			
@@ -1692,10 +1650,14 @@
 					return;
 				}
 				
+				console.log("Hiding tooltip. FORCE = " + force);
+				
 				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
-
+				
+			
+				
 				tooltip.style.opacity = "0";
 				setTimeout(() => tooltip.style.display = "none", 20);
 			}
@@ -1708,12 +1670,15 @@
 					const tooltip = document.getElementById("helpTooltip");
 					const frame = document.querySelector("#helpTooltip iframe");
 					const message = document.getElementById("tooltip-key-message");
+					tooltip.onclick = () => tooltip.classList.remove("focus");
 					
 					if(!frame.src){
 						return;
 					}
 					
-					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";					
+					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";
+					
+					
 					
 					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
 						tooltip.classList.add("focus");
@@ -1730,57 +1695,38 @@
 							
 							 // CTRL + ENTER
 				            if (event.ctrlKey &amp;&amp; event.code === 'Enter') {
-				            	
-				            	tooltip.classList.remove("focus");				            	
-				            	hideHelpTooltip(true);
-
-								const message = document.getElementById("tooltip-key-message");
-								setTooltipFixMessage(message);
-								
+				            	tooltip.classList.remove("focus");
+				            	hideHelpTooltip(true);				            	
 				            	window.open(tooltip.dataset.url,'_blank');
 				            }
 				               
 						});
 						
 						frame.focus();
-						setTooltipUnfixMessage(message);
+												
+						const f2Icon = document.createElement("span");
+						const ctrlIcon = document.createElement("span");
+						const enterIcon = document.createElement("span");
+						
+						f2Icon.className = "keyboard-icon";
+						ctrlIcon.className = "keyboard-icon";
+						enterIcon.className = "keyboard-icon";
+						
+						f2Icon.innerHTML = "F2";
+						ctrlIcon.innerHTML = "Ctrl";
+						enterIcon.innerHTML = "Enter";
+						
+						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para soltar la ventana | " + ctrlIcon.outerHTML + " " + enterIcon.outerHTML + " para ir al pdf";
 					} else {
 						tooltip.classList.remove("focus");
-						setTooltipFixMessage(message);
+						
+						const f2Icon = document.createElement("span");
+						f2Icon.className = "keyboard-icon";
+						f2Icon.innerHTML = "F2";
+						
+						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
 					}
 				}
-			}
-			
-			/**
-			* Set fix message to provided element
-			* @param htmlElement The HTML element to set the message to 
-			*/
-			function setTooltipFixMessage(htmlElement){
-				const f2Icon = document.createElement("span");
-				f2Icon.className = "keyboard-icon";
-				f2Icon.innerHTML = "F2";
-				
-				htmlElement.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
-			}
-			
-			/**
-			* Set unfix message to provided element
-			* @param htmlElement The HTML element to set the message to 
-			*/
-			function setTooltipUnfixMessage(htmlElement){
-				const f2Icon = document.createElement("span");
-				const ctrlIcon = document.createElement("span");
-				const enterIcon = document.createElement("span");
-				
-				f2Icon.className = "keyboard-icon";
-				ctrlIcon.className = "keyboard-icon";
-				enterIcon.className = "keyboard-icon";
-				
-				f2Icon.innerHTML = "F2";
-				ctrlIcon.innerHTML = "Ctrl";
-				enterIcon.innerHTML = "Enter";
-				
-				htmlElement.innerHTML = "Pulse " + f2Icon.outerHTML + " para soltar la ventana | " + ctrlIcon.outerHTML + " " + enterIcon.outerHTML + " para ir al pdf";
 			}
 			
 			
@@ -2162,16 +2108,11 @@
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">
-								<!-- NEW HELP		
-								<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
-								</aon:htmlCommandLink>
-							    -->
 								<h:outputLink style="font-size:1em;"
 									value="#{aonConfiguration.helpURL}"
 									target="_blank" >
 									<aon:outputText value="#{bundle.aon_help}" />
 								</h:outputLink>
-								
 							</aon:menuItem>
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
