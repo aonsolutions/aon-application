@@ -170,6 +170,15 @@
     	<attribute name="selectedStyleClass" value="aon-dataScroller-selected" />
     	<attribute name="ajaxSingle" value="false" type="1" />
 	</component>
+	
+	<component localName="aonPaginator">
+    	<attribute name="paginatorMaxPages" alias="maxPages" />			
+    	<attribute name="pageCountVar" alias="pagesVar" />
+    	<attribute name="paginator" ignore="true" />
+    	<attribute name="inactiveStyleClass" value="aon-aonScroller-inactive" />
+    	<attribute name="selectedStyleClass" value="aon-aonScroller-selected" />
+    	<attribute name="ajaxSingle" value="false" type="1" />
+	</component>
 
 	<component localName="rowSelector">
     	<attribute name="multiple" ignore="true" />

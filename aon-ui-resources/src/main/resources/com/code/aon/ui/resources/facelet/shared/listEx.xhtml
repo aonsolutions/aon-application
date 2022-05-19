@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 	<aon:valueParam name="skipEditSelectedTo" default="#{false}" />
+	<aon:valueParam name="showAonPaginator" default="#{true}" />
 
 	<aon:dataTable id="#{dataTableId}" var="to" rowKeyVar="toIndex" sortMode="#{sortMode}"
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
@@ -82,9 +83,17 @@
 
 	<ui:insert name="additionalDataTableContent"/>
 
-	<aon:if test="#{showDataScroller}">
-		<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
+	<aon:if test="#{showDataScroller and userUtils.newAONTheme}">
+
+		<aon:aonScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
 			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
-	</aon:if>	
+	
+	</aon:if>
+	
+	<aon:if test="#{showDataScroller and !userUtils.newAONTheme}">
+	<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
+			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
+	</aon:if>
+	 
 
 </ui:composition>

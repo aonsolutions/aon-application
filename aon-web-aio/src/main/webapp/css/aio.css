@@ -262,3 +262,46 @@
 	display: block;
 }
 
+.aon-paginator-item  {
+	cursor: pointer;	
+}
+
+.aon-paginator-item .aon-paginator-icon {
+	--size: 1rem;
+	display: block; 
+	width: var(--size); 
+	height: var(--size);
+	margin: 0.1rem;
+	background-repeat : no-repeat;
+	background-origin : center;	
+	background-size: cover !important;
+	transition: transform .15s, filter .15s;
+	filter: brightness(4.5) grayscale(1.7);
+}
+
+
+.aon-paginator-item:hover .aon-paginator-icon, .aon-paginator-item.selected .aon-paginator-icon {
+	filter: brightness(1.5) grayscale(0) !important;
+}
+
+.aon-paginator-item:hover .aon-paginator-icon {
+		transform: translateY(-5%);
+}
+
+.aon-paginator-item:hover .aon-paginator-number, .aon-paginator-item.selected .aon-paginator-number {
+	font-weight: bold;
+}
+
+.aon-paginator-item .aon-paginator-number {
+	transition: font-weight .15s;
+	display: block;
+	padding-top: .25rem;
+	color: #707070 !important
+}
+
+
+
+.aon-paginator-icon.o {
+	--size: .95rem;
+	filter: brightness(5) grayscale(100);
+}

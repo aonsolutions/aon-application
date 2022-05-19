@@ -5,6 +5,8 @@ import static com.esferalia.aon.watson.util.AonStringUtils.containsIgnoreCase;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +41,10 @@ public class HelpSwitcher implements Serializable {
 			return new SerializableListDataModel(HELP_DATA);
 		
 		if (model == null) {
+		
+			
+			Instant before = Instant.now();
+			
 			List<HelpData> filteredList = 
 			HELP_DATA.stream()
 			.filter(d -> containsIgnoreCase(d.getTitle(), filter))
@@ -54,6 +60,10 @@ public class HelpSwitcher implements Serializable {
 					.collect(Collectors.toList())
 				);
 			}
+			
+			Instant after = Instant.now();
+			long delta = Duration.between(before, after).toMillis();
+			System.out.println("Help loaded in: " + delta + "ms");
 			
 			this.model = new SerializableListDataModel(filteredList);			
 		}
