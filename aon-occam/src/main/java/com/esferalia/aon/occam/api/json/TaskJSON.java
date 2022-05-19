@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -53,6 +54,10 @@ public class TaskJSON {
 	}
 	
 	public static JSONArray toJSON(LinkedList<Task> tasks) {
+		return toJSON(tasks.stream());
+	}
+	
+	public static JSONArray toJSON(List<Task> tasks) {
 		return toJSON(tasks.stream());
 	}
 	

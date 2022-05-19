@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -59,7 +60,7 @@ public class TaskFilter {
 		}
 			
 		if(!search.isEmpty()) {
-			filter = filter.and(getSearch(f, search));
+			filter = filter.and(getSearchCombination(f, search));
 		}
 
 		if(!source.isEmpty()) {			
@@ -379,14 +380,39 @@ public class TaskFilter {
 		return filter;
 	}
 	
+	
+	private static Filter getSearchCombination(TaskProperties f, String search) {
+
+		List<List<String>> combinations = AonArrayUtils.allNoRepeatCombinations(search.split("\\s"));
+		
+		Filter joinSequence = null;
+		
+		for (List<String> comb : combinations) {
+
+			StringBuilder processed = new StringBuilder("%");
+			for (String word : comb) {
+				processed.append(word).append("%");
+			}			
+
+			if(joinSequence == null) {
+				joinSequence = getSearch(f, processed.toString()); 
+			} else {
+				joinSequence = joinSequence.or(getSearch(f, processed.toString()));		
+			}
+		}	
+
+		return joinSequence;
+	}
+	
 	private static Filter getSearch(TaskProperties f, String search) {
+		
 		Filter filter = f.getDescriptionProperty().like("%" + search + "%")
-				.or(f.getRegistryNameProperty().like("%" + search + "%"))
-				.or(f.getCommentsProperty().like("%" + search + "%")) 
-				.or(f.getTagNameProperty().like("%" + search + "%"))
-				.or(f.getGtaskIdProperty().like("%" + search + "%"))
-				.or(f.getCommentsWorkflowProperty().like("%" + search + "%"))
-				;
+		.or(f.getRegistryNameProperty().like("%" + search + "%"))
+		.or(f.getCommentsProperty().like("%" + search + "%")) 
+		.or(f.getTagNameProperty().like("%" + search + "%"))
+		.or(f.getGtaskIdProperty().like("%" + search + "%"))
+		.or(f.getCommentsWorkflowProperty().like("%" + search + "%"))
+		;
 		Integer numberSearch = 0;
 		try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); } 
 		catch(NumberFormatException e){}
@@ -394,7 +420,7 @@ public class TaskFilter {
 			filter = filter.or(f.getNumberProperty().like(numberSearch));
 
 		return filter;
-	}
+	}	
 	
 	private static List<Integer> getWorkgroupList(String workgroupStr) {
 		List<Integer> workgroupList = new ArrayList<>();

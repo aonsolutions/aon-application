@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -54,6 +55,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.utils.ComunicaUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "TaskServlet", urlPatterns = {"/ms/api/task/*"})
@@ -167,31 +169,62 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTasks(AonApiData api) {
-		Integer page = api.getData().optInt(IJsonNames.PAGE);
-		Integer perPage = api.getData().optInt(IJsonNames.PER_PAGE);
-		if(TaskUtils.isCau(api.getData()) && api.getData().optString(IJsonNames.EMAIL).isEmpty()) {
+		JSONObject params = api.getData();
+		Integer page = params.optInt(IJsonNames.PAGE);
+		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
+		
+		List<Task> list = new ArrayList<>(); 
+		
+		if(TaskUtils.isCau(params) && params.optString(IJsonNames.EMAIL).isEmpty()) {
 			throw new AonApiException("Auth inexistente");
 		}
-		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
-				f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage));
 		
-		if(page==1)
-			getTasksOffice(api, jsonArr);
-		return jsonArr;
+		list.addAll(
+			AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
+				f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
+			)
+			.collect(Collectors.toList())
+		);
+		
+		if(page==1) {
+			List<Task> listOffice = getTasksOffice(api);
+			list.addAll(listOffice);
+		}
+		
+		list = list.stream().filter(TaskUtils.distinctByKey(Task::getId)).collect(Collectors.toList());
+		
+		return TaskJSON.toJSON(list);
+		
+//		JSONArray arr = new JSONArray();
+//		
+//		List<Task> childs = list.stream().filter(t -> t.getParent()!=null).collect(Collectors.toList());
+//		
+//		list.stream().filter(f-> f.getParent()==null).forEach(task->{
+//			JSONObject json = TaskJSON.toJSON(task);
+//			json.put("childs", TaskJSON.toJSON( childs.stream().filter(t -> t.getParent().equals(task.getId())) ));
+//			arr.put(json);
+//		});
+
+//		return arr;
 	}
 
 	private JSONObject getTask(AonApiData api) {
 		Domain domain = api.getDomain();
 		User user = api.getUser();
-		Integer taskId = api.getData().optInt(IJsonNames.ID);
-		Integer number = api.getData().optInt(IJsonNames.NUMBER);
-		
+		JSONObject params = api.getData();
+		Integer taskId = params.optInt(IJsonNames.ID);
+		Integer number = params.optInt(IJsonNames.NUMBER);
+
 		Task task = AON_SOLUTIONS.getTask(domain, user, f-> 
-			number>0 ? 
-			f.getNumberProperty().eq(number) :
-			f.getIdProperty().eq(taskId) 
+			number > 0 
+			? f.getNumberProperty().eq(number) 
+			: f.getIdProperty().eq(taskId) 
 		);
-		if(task.getId()==null) throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
+		
+		if(task.getId()==null) {
+			throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
+		}
+		
 		JSONObject json = TaskJSON.toJSON(task);
 		
 		json.put("childs", TaskJSON.toJSON( AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getParentProperty().eq(task.getId()) ) ));
@@ -524,8 +557,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	   return new JSONObject();
    }
 
-	private JSONArray getTasksOffice(AonApiData api, JSONArray arr) {
-		
+	private List<Task> getTasksOffice(AonApiData api) {
+		List<Task> list = new ArrayList<>();
 		if(!DomainType.CONSULTANCY.equals(api.getDomain().getDomainType())) {
 //			String status = api.getParams().optString("status");
 //			if(status.isEmpty() || "pending".equalsIgnoreCase(status)) {
@@ -536,13 +569,11 @@ public class TaskServlet extends AonApiHttpServlet{
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 				
 					AON_SOLUTIONS.getTaskStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
-					.forEach(t -> 
-						arr.put(TaskJSON.toJSON(t))
-					);
+					.forEach(list::add);
 				});
 //			}
 		}
-		return arr;
+		return list;
 	}
 	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {
