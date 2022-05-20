@@ -319,9 +319,10 @@ export class AonMessenger extends AonElement {
 			fn: () =>{
 				this._filter.task_holder = undefined;
 				this._filter.sender = undefined;
+				this._filter.workgroup = undefined;
 				this._filter.workgroups = this.getWorkgroupsStr();
 
-				if(!this.cau && !this.getDur().isMessengerManager()){
+				if(!this.cau){
 					let taskHolder = this.TASK_HOLDER.id ? this.TASK_HOLDER.id : undefined;
 					this._filter.sender = taskHolder;
 					this._filter.task_holder = taskHolder;
@@ -333,7 +334,7 @@ export class AonMessenger extends AonElement {
 			}
 		});
 
-		this.applicationEl.addSidenavOptions("BANDEJAS", messengerOpts);
+		this.applicationEl.addSidenavOptions("MI BANDEJA", messengerOpts);
 	}
 
 	statusNavBar(){
@@ -405,7 +406,7 @@ export class AonMessenger extends AonElement {
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  let options = [];
 
-		  if(this.getDur().isMessengerManager()){
+		//   if(this.getDur().isMessengerManager()){
 			options.push({
 				id:true,
 				name: "SIN ASIGNAR",
@@ -420,7 +421,7 @@ export class AonMessenger extends AonElement {
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 				}
 			});
-		  }
+		//   }
 
 			workgroups.forEach(item => {
 				options.push({

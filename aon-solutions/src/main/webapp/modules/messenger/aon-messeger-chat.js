@@ -234,7 +234,7 @@ export class AonMessengerChat extends AonElement {
   async save() {
     let success = false;
     this.applicationEl.startLoading();
-    this.autoComplete();
+    this.autoCompleteTask();
 
     try {
       if(this.task.source === TASK_SOURCE.REQUEST)
@@ -396,16 +396,21 @@ export class AonMessengerChat extends AonElement {
     return json;
   }
 
-  autoComplete(){
+  autoCompleteTask(){
     this.autoCompleteTaskWorkflow();
 
     if(!this.task.id){
+
       if(this.task.isOtherDomain()){ // OTHER DOMAIN
         if(!this.task.getGTaskId()){
           this.task.setGTaskId(this.task.auth.email);
         }
       }  else { 
         //TODO
+      }
+
+      if(this.task.source === TASK_SOURCE.CAU){
+        this.task.setSender({});
       }
     }
   }

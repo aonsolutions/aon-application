@@ -269,9 +269,12 @@ public class TaskNotification {
 		Domain domain = api.getDomain();
 		
 		Boolean isExternal = 
-			(domain.getDomainType().equals(DomainType.OFFICE) && task.getRegistry()!=null && task.getRegistry().getId()!=null) || 
-			(!task.getDomain().getId().equals(domain.getId()));
-
+			!task.getDomain().getId().equals(domain.getId()) ||
+			(
+				domain.getDomainType().equals(DomainType.OFFICE) && 
+				task.getRegistry()!=null && task.getRegistry().getId()!=null &&
+				!(task.getSender()!=null && task.getSender().getId()!=null)
+			);
 
 		if(Boolean.TRUE.equals(isExternal)) {
 			switch (param) {
@@ -292,6 +295,7 @@ public class TaskNotification {
 			}
 			domain = task.getDomain();
 		}
+		
 		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", param.name());
 		System.out.println("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
 		return appParam.getId() == null || (appParam.getId()!=null && appParam.getValue().equals("true"));

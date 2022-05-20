@@ -441,7 +441,7 @@ class SistemaREDMov {
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 		Optional<Date> frbOpt = employee.getFrb();
-		Optional<Date> frvOpt = employee.getFrv(); // fecha de vacaciones OCIONALES
+		Optional<Date> frvOpt = employee.getFrv(); // fecha de vacaciones OPTIONAL
 
 		WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType);
 		webClient.getOptions().setUseInsecureSSL(true);

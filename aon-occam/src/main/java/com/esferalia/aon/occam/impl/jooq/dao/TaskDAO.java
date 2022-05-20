@@ -65,7 +65,6 @@ public class TaskDAO {
 	
 	private static final Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
 	private static final com.esferalia.aon.jooq.tables.TaskHolder SENDER = TASK_HOLDER.as("sender");
-	private static final com.esferalia.aon.jooq.tables.Task TASK_CHILD = TASK.as("task_child");
 	private static final Registry SENDER_REGISTRY = REGISTRY.as("registry_sender");
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
@@ -119,7 +118,6 @@ public class TaskDAO {
 			.select()
 			.from(TASK)
 			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
-//			.leftOuterJoin(TASK_CHILD).on(TASK_CHILD.PARENT.eq(TASK.ID).and(TASK_CHILD.PARENT.isNotNull()))
 			.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 			.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
 			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
