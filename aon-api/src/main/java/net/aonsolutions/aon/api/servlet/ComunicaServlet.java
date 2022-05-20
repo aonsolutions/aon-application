@@ -390,22 +390,22 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject sendBaja(AonApiData api) throws Exception{
-		JSONObject data = api.getData(); 
+		JSONObject params = api.getData(); 
 	    Domain domain = api.getDomain();
 		User user = api.getUser();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
-		String regime = data.optString(IJsonNames.REGIME);
-		String ctaCti = data.optString("ctaCti");
-		String nss = data.optString("nss");
-		
-		String ipf = data.optString("ipf");
-		String name = data.optString(IJsonNames.NAME);
-		String situation = data.optString("situation");
-		Date frb = AonDateUtils.parse(data.optString("fechaBaja"), FORMAT_DATE);
+		String regime = params.optString(IJsonNames.REGIME);
+		String ctaCti = params.optString("ctaCti");
+		String nss = params.optString("nss");
+		String ipf = params.optString("ipf");
+		String name = params.optString(IJsonNames.NAME);
+		String situation = params.optString("situation");
+		Date frb = AonDateUtils.parse(params.optString("fechaBaja"), FORMAT_DATE);
 
 		EmployeeBuilder builder = new EmployeeBuilder();
-		Employee employee = builder
+		
+		builder
 		.setRegime(regime)
 		.setCtaCti(ctaCti)
 		.setNss(nss)
@@ -414,10 +414,20 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setFrb(frb)
 		.setName(name)
 		.setSituation(situation)
-		.build();
+		;
+		
+		if(!params.optString("frv").isEmpty()) {
+			builder.setFrv(AonDateUtils.parse(params.optString("frv"), FORMAT_DATE));
+		}
+		
+		Employee employee = builder.build();
+		
 		employee = SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
-		if(employee.getName().isPresent()) 
+		
+		if(employee.getName().isPresent()) {
 			sendMovEmailNotification(api, employee, frb, SituationType.BAJA);
+		}
+
 		return new JSONObject();
 	}
 	
@@ -642,13 +652,18 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		toList.add(auth.getEmail());
 		
-//	    Domain domain = api.getDomain();
-//		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
-//    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
-//    		if(Boolean.TRUE.equals(dur.isComunicaManager())) {
-//    			toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
-//    		}
-//    	});
+	    Domain domain = api.getDomain();
+		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), 
+				f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId())))
+		.forEach(usr -> {
+    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
+    		if(Boolean.TRUE.equals(dur.isComunicaManager()) || Boolean.TRUE.equals(dur.isSaltraManager())) {
+    			Auth authTmp = AON_SOLUTIONS.getAuth(usr.getAuth().getAuth());
+    			if(authTmp.getEmail()!=null && !authTmp.getEmail().equals("info@aonsolutions.es")) {
+        			toList.add(authTmp.getEmail());
+    			}
+    		}
+    	});
 	    
 		return toList;
 	}

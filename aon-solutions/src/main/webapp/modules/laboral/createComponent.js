@@ -2,7 +2,7 @@ import { AonNumber } from "../../components/aon-number.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
-import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { createCard, createDate, createForm, createIconButton, createInput, createNumber, createSelect } from "../notification/createComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import '../../css/aon-grid.css';
 import '../../css/aon-css-utils.css';
@@ -27,6 +27,23 @@ export const createBajaDialogContent = () =>{
         }
     }, div);
     select.style.textAlign = "left";
+ 
+    createNumber({
+        attributes:{
+            name:"dayVacation",
+            id: "dayVacation", 
+            description:"Días de vacaciones (Opcional)"
+        }
+    }, div);
+ 
+    createDate({
+        attributes:{
+            name:"frv",
+            id:"frv",
+            title:"Fecha de vacaciones",
+            disabled:true
+        }
+    }, div);
 
     const btnSubmit = document.createElement(TAG.BUTTON);
     btnSubmit.id = "btnSubmitBaja";

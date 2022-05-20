@@ -116,15 +116,18 @@ export class AonAltaDirecta extends AonElement {
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
 
-        if(this.isAlta() && this.data.fra && this.isManager()) 
+        if(this.isAlta() && this.data.fra && this.isManager()) { 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
-
-        if( this.isAlta() || !this.data )  // ALTA
+        }
+    
+        if( this.isAlta() || !this.data ){ // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
+        }
 
-        if(this.data && this.data.fra && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra))
+        if(this.data && this.data.fra && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra)){
             toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
-
+        }
+    
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
     }
 
@@ -597,7 +600,8 @@ export class AonAltaDirecta extends AonElement {
         try {
             const fechaBajaEl = this.getElement("fechaBaja");
             const codBajaEl = this.getElement("codBaja");
-            await sendBaja({...this.data, fechaBaja: fechaBajaEl.value, situation: codBajaEl.value});
+            const frv = this.getElement("frv");
+            await sendBaja({...this.data, fechaBaja: fechaBajaEl.value, situation: codBajaEl.value, frv: frv.value ? frv.value : undefined});
             this.applicationEl.getOptionDialog().close();
             this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = [];
@@ -712,8 +716,25 @@ export class AonAltaDirecta extends AonElement {
                 cods.map(r=>({value:r.value, name:r.value+" - "+r.name }))
             );
             codBajaEl.value = "93";
-        })
-                
+        });
+
+        let frv = this.getElement('frv');
+        frv.setDisabled(true);
+
+        let dayVacation = this.getElement('dayVacation');
+        dayVacation.setAlign('left');
+        dayVacation.onInput(({target}) =>{
+            let value = target.value;
+            frv.value = "";
+            if(value && !isNaN(parseInt(value)) ){
+                value = parseInt(value);
+                let fechaBaja = new Date(fechaEl.value);
+                if(fechaEl && fechaBaja.isValid()){
+                    frv.setDate( fechaBaja.addDay(value) );
+                }
+            }
+        });
+
         button.addEventListener(EVENT.CLICK, ()=>{
             this.ACTION = "BAJA";
             this.formSubmit();

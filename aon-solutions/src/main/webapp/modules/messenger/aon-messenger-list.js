@@ -80,7 +80,7 @@ export class AonMessengerList extends AonElement {
       this.AON_TABLE.removeAllLi();
     } else {
       this.AON_TABLE.removeColumns();
-      this.AON_TABLE.addColumn("", "string", "lettersHtml", "2%");
+      this.AON_TABLE.addColumn("", "html", "lettersHtml", "2%");
       this.AON_TABLE.addColumn(MSG.ISSUE, "string", "newTitle", "50%");
       this.AON_TABLE.addColumn("Asignado", "string", "assigned", "5%");
       this.AON_TABLE.addColumn(MSG.DATE, "string", "dateParse", "14%");
@@ -136,16 +136,13 @@ export class AonMessengerList extends AonElement {
 
   getDataDesktop(datos){
     try {
-      const company = LS.getCompany();
-      const domainId = parseInt(LS.getDomainId());
-      const document = company ? company.document: undefined;
-      const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
+      const documents =  this.getDocuments();
       datos.map((res, idx) => {
        const row = this.AON_TABLE.addRow({ 
           ...res, 
           dateParse: this.getNewDateParse(res),
-          newTitle: this.getTitleDesktop(res, document, documentTh),
-          assigned: this.getAssigned(res, domainId),
+          newTitle: this.getTitleDesktop(res, documents.document, documents.documentTh),
+          assigned: this.getAssigned(res, documents.domainId),
           lettersHtml: this.getIcon(res),
         }, () =>  this.goMessengerChat(res, idx));
 
@@ -205,6 +202,7 @@ export class AonMessengerList extends AonElement {
   
     let div = this.createElement(TAG.DIV);
     div.style.position = "relative";
+    div.dataset.taskId = res.id;
 
     div.appendChild(this.getTitleHtmlDesktop(res));
     
@@ -451,10 +449,14 @@ export class AonMessengerList extends AonElement {
     icon_title:source,
   })
 
-  getIcon({source,status, parent}){
+  getIcon({source,status, parent, id}, size = undefined){
+    let div = document.createElement(TAG.DIV);
+    
     let iconJson = getIconJson({source,status});
 
     let span = this.createElement(TAG.SPAN);
+    div.appendChild(span);
+
     span.style.color = iconJson.icon_color;
     span.title = source;
 
@@ -464,14 +466,110 @@ export class AonMessengerList extends AonElement {
       icon = new AonIcon();
       icon.icon = AON_ICONS.AON_BRANCH;
       icon.color = iconJson.icon_color;
+      if(size){
+        icon.size = size;
+      }
     } else {
       icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
       icon.textContent = iconJson.icon;
+      if(size){
+        icon.style.fontSize = size;
+      }
+    }
+    span.appendChild(icon);
+    
+    // && status && status === TASK_STATUS.IN_PROGRESS
+    if(!this.isCau() ){
+      div.addEventListener(EVENT.CLICK, (ev)=>{
+        ev.stopPropagation();
+        ev.preventDefault();
+        let parentEl = document.querySelector(`[data-task-id='${id}']`);
+        if(parentEl){
+          getTaskOne({id}).then(task=>{
+            try {
+              this.setRowChilds(parentEl, task);
+            } catch (error) {
+              console.log(error);
+            }
+          })
+        }
+
+      });
     }
 
-    span.appendChild(icon);
+    return div;
+  }
 
-    return span.outerHTML;
+  setRowChilds(el, task){
+    let tr = document.querySelector(`[data-task-id='${task.id}']`).parentNode.parentNode;
+
+    document.querySelectorAll(`[data-task-parent='${task.id}']`).forEach(l=> l.remove());
+
+    let paddingBottom = 20;
+  
+    const documents = this.getDocuments();
+    let top = 21;
+
+    let tasks = [];
+    if(task.childs && task.childs.length){
+      for(const t of task.childs){
+        tasks.push(t)
+      }
+    } else if(task.parentObj && typeof task.parentObj === 'object'){
+      tasks.push(task.parentObj);
+    }
+
+    for(const key in tasks){
+      const t = tasks[key];
+      let sender = this.getSender(t, documents.document, documents.documentTh);
+   
+      if(key >0){
+        top = top+15;
+        paddingBottom = paddingBottom+15;
+      } else {
+        paddingBottom = paddingBottom+5;
+      }
+
+      const div = document.createElement(TAG.DIV);
+      div.dataset.taskParent = task.id;
+      div.style.color = "grey";
+      div.style.display = "flex";
+      div.style.position ="absolute"; 
+      div.style.top = top+"px"; 
+      div.style.left ="0"; 
+      div.style.right ="0"; 
+      div.style.whiteSpace = "nowrap"; 
+      div.style.textOverflow = "ellipsis"; 
+      div.style.overflow="hidden"; 
+      div.style.gap="4px"; 
+  
+      el.appendChild(div);
+  
+      let icon = this.getIcon(t, "16px");
+      icon.style.display = "inline-block";
+      div.appendChild(icon);
+  
+      let number = "#"+(t.number ? t.number : 0).toString().padStart(5,0);
+      let span = document.createElement(TAG.SPAN);
+      span.className = CSS.AON_LINK;
+      span.innerText = number;
+      span.addEventListener(EVENT.CLICK, (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.goMessengerChat(t, 0);
+      });
+      div.appendChild(span);
+  
+      let spanTwo = document.createElement(TAG.SPAN);
+      spanTwo.innerText = sender && sender.indexOf("SIN GRUPO")>=0 ? sender : `Asignada a ${sender}`;
+      div.appendChild(spanTwo);
+  
+      let spanThree = document.createElement(TAG.SPAN);
+      spanThree.innerText = firstLetters(AonDateUtils.setFullDate(t.creation_date)) + " " + AonDateUtils.setTime(t.creation_date)
+      div.appendChild(spanThree);
+    }
+
+    tr.style.paddingBottom = paddingBottom + 'px';
   }
 
   getTagType(tags){
@@ -508,7 +606,19 @@ export class AonMessengerList extends AonElement {
       }
       this.applicationEl.stopLoading();
     }
+  }
 
+  getDocuments(){
+    const company = LS.getCompany();
+    const domainId = parseInt(LS.getDomainId());
+    const document = company ? company.document: undefined;
+    const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
+    return {
+      company,
+      domainId,
+      document,
+      documentTh
+    }
   }
 }
 window.customElements.define("aon-messenger-list", AonMessengerList);

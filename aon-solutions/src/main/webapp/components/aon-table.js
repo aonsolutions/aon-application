@@ -204,6 +204,20 @@ export class AonTable extends AonElement {
         icon.style.color = value.icon_color || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
+      } else if(item.type && item.type ==="html") {
+        td.appendChild(value[id])
+        td.addEventListener(EVENT.CLICK, fn);
+        if (contextMenu) {
+          td.addEventListener("contextmenu", () => {
+            
+            let cb = this.getElement(checkBoxId + "Input");
+            if(!cb.checked){
+              this.deselectAll();
+              cb.click();
+            } 
+          });
+          td.addEventListener("contextmenu", contextMenu);
+        }
       } else {
         td.innerHTML = value[id] !== undefined? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
