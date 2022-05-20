@@ -479,6 +479,11 @@ export class AonDate extends AonElement {
     }
   }
 
+  setDisabled(b){
+    this.disabledDate(b);
+    this.readonly = "true";
+  }
+
   // parseDateStr(dateStr) {
   //     if(dateStr.includes('/')){
   //       let dateArr = dateStr.split('/');
