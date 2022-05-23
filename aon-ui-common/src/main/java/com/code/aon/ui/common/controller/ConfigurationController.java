@@ -192,6 +192,12 @@ public class ConfigurationController implements Serializable {
     	return session.getId();
     }
     
+    public void savePageLimit( ActionEvent event ) {
+    	System.out.println("Working!");
+    	
+    	
+    }
+    
     private void onLogout( ActionEvent event ) {
     	String onLogout = (String) getProperty(ON_LOGOUT);
     	if (! StringUtils.isEmpty(onLogout) ) {
