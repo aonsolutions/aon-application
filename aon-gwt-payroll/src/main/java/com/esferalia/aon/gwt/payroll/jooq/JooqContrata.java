@@ -765,6 +765,8 @@ public class JooqContrata {
 				return factory.createCONTRATO230TYPE();
 			} else if (code.equals(ContractCode.C250.getValue())) {
 				return factory.createCONTRATO250TYPE();
+			} else if (code.equals(ContractCode.C289.getValue())) {
+				return factory.createCONTRATO200TYPE();
 			} else if (code.equals(ContractCode.C300.getValue())) {
 				return factory.createCONTRATO300TYPE();
 			} else if (code.equals(ContractCode.C330.getValue())) {
@@ -845,6 +847,8 @@ public class JooqContrata {
 				contratoType = createContract230(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C250.getValue())) {
 				contratoType = createContract250(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C289.getValue())) {
+				contratoType = createContract289(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C300.getValue())) {
 				contratoType = createContract300(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C330.getValue())) {
@@ -1356,6 +1360,18 @@ public class JooqContrata {
 		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(employeeContractInfo));
 		return c;
 	}
+	
+	private static CONTRATO200TYPE createContract289(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
+		CONTRATO200TYPE c = (CONTRATO200TYPE) contratoType;
+		c.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(employeeContractInfo));
+		c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(employeeContractInfo));
+		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
+		c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
+		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(employeeContractInfo));
+		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
+		return c;
+	}
+	
 	private static CONTRATO300TYPE createContract300(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
 		CONTRATO300TYPE c = (CONTRATO300TYPE) contratoType;
 	    c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
