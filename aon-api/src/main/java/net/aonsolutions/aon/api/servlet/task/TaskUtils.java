@@ -2,9 +2,11 @@ package net.aonsolutions.aon.api.servlet.task;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +32,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -59,6 +62,7 @@ public class TaskUtils {
 						break;
 					case CLOSE:
 						TaskNotification.onClose(api, task, workflow);
+						closeTaskChilds(api, task, workflow);
 						break;
 					default:
 						break;
@@ -257,6 +261,28 @@ public class TaskUtils {
 		    	return null;
 	    }
 	    return matcher;
+	}
+	
+	private static void closeTaskChilds(AonApiData api, Task task, TaskWorkflow workflow) {
+		if(task.getParent() == null) {
+			List<Byte> types = new ArrayList<>(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()));
+			
+			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
+					f-> f.getParentProperty().eq(task.getId())
+					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+				)
+			.forEach(t->{
+				
+				workflow.setId(null).setTask(t.getId()).setType(TaskWorkflowType.CLOSE);
+				
+				TaskWorkflow tmp = AON_SOLUTIONS.saveTaskWorkflow(t.getDomain(), new User(), workflow);
+				
+				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
+				
+				onSaveWorkflow(api, tmp);
+				
+			});
+		}
 	}
 	
 	/**

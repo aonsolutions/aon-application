@@ -42,6 +42,7 @@ public class UserJSON {
 		
 		return json
 			.put(IJsonNames.ID, user.getId())
+			.put(IJsonNames.TYPE, user.getType().name())
 			.put(IJsonNames.NAME, AonStringUtils.isBlank(user.getAuth().getName())
 					? user.getName()
 					: user.getAuth().getName())

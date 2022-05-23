@@ -391,6 +391,7 @@ public class SecurityDAO {
 	public static User insertUser(AONContext ctx, User user) {
 		Integer id = ctx.getDslContext().insertInto(USER)
 			.set(USER.NAME, user.getName())
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
 			.set(USER.DOMAIN, user.getDomain())
@@ -405,6 +406,7 @@ public class SecurityDAO {
 	
 	public static User updateUser(AONContext ctx, User user) {
 		ctx.getDslContext().update(USER)
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
@@ -550,7 +552,7 @@ public class SecurityDAO {
 	}
 	
 	private static Field<?>[] USER_FIELDS = new Field[]{
-			USER.ID, USER.DOMAIN, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
+			USER.ID, USER.DOMAIN, USER.TYPE, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
 			USER.ALLOWCONCURRENT, USER.PASSWORDEXPIRATION, USER.TOOLBAR, USER.LOCALE, USER.PAGELIMIT,
 			USER.LINESPAGELIMIT, USER.INITACTION, USER.LASTACCESS, USER.AUTH, USER.SHARED
 		}; 

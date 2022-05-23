@@ -300,11 +300,13 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveWorkflow(AonApiData api, Optional<TaskWorkflow> workflowOpt) {
 		TaskWorkflow workflowTmp = workflowOpt.isPresent() ? workflowOpt.get() : TaskWorkflowJSON.fromJSON(api.getData());
 		
-		if(TaskUtils.isCau(api.getData())) 
+		if(TaskUtils.isCau(api.getData())) {
 			TaskUtils.setCauWorkflow(api, workflowTmp);
-		
-		if(workflowTmp.getDomain()==null) 
-			workflowTmp.setDomain(api.getDomain().getId());	
+		}
+	
+		if(workflowTmp.getDomain()==null) {
+			workflowTmp.setDomain(api.getDomain().getId());		
+		}
 	
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
 		TaskUtils.onSaveWorkflow(api, workflow);
