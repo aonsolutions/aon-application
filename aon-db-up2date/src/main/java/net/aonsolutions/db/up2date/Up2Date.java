@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractAttachUpdate;
+import net.aonsolutions.db.up2date.security.UserAddTypeColumnUpdate;
 import net.aonsolutions.db.up2date.tgss.Art1512022Update;
 
 public class Up2Date {
@@ -235,7 +236,8 @@ public class Up2Date {
 //    		AlterSalaryEmbargo.ALTERSALARYEMBARGO,
 //    		Holidays2022Update.HOLIDAYS2022UPDATE
     		Art1512022Update.ART1512022UPDATE,
-    		ContractAttachUpdate.CONTRACTATTACHUPDATE
+    		ContractAttachUpdate.CONTRACTATTACHUPDATE,
+    		UserAddTypeColumnUpdate.USER_ADD_TYPE_COLUMN_UPDATE
     };
     
 

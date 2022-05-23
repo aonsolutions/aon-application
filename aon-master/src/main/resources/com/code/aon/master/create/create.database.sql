@@ -1505,6 +1505,7 @@ CREATE TABLE `auth_attach` (
 CREATE TABLE `user` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de usuario',
   `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Usuario',
   `login` varchar(16) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Login del Usuario',
   `enterprise` int(4) DEFAULT NULL COMMENT 'Identificador de la Empresa',
