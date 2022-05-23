@@ -592,22 +592,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public CalendarDraft getCalendar(String domain, int workplaceId, Integer pattern, Integer year)
-			throws IllegalArgumentException {
-
-		Connection conn = null;
-		try {
-			conn = AonServletUtils.getConnection(domain);
-			return JooqCalendar.getCalendar(conn, workplaceId, pattern, year);
-		} catch (SQLException e) {
+	public CalendarDraft getCalendar(String domain, int workplaceId, Integer pattern, Integer year)throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domain)) {
+			return JooqCalendar.getCalendar(connection, workplaceId, pattern, year);
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 

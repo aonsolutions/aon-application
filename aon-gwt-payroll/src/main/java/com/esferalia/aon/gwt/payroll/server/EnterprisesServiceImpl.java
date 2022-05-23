@@ -3282,7 +3282,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
-		} catch (SQLException | SepeException | SegSocialException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
@@ -3371,7 +3371,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 
-		} catch (SQLException | SepeException | SegSocialException e) {
+		} catch (Exception e) {
 			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "java.io.IOException: keystore password was incorrect"))
 				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
 			
