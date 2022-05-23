@@ -302,6 +302,18 @@ export class DomainUserRoles {
 		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA_MANAGER));
 	}
 
+  hasApiService() {
+    return this.hasApp(App.API_SERVICE);
+  }
+
+  hasParentApiService() {
+    return this.hasParentApp(App.API_SERVICE);
+  }
+
+	isApiService() {
+		return this.hasApiService() && (this.isAdmin() || this.isDev());
+	}
+
   hasTimeControl() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PORTAL)
       || this.hasApp(App.TIMECONTROL) || this.hasComunica();

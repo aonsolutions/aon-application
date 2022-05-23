@@ -129,6 +129,7 @@ export const CONTACTS = MSG.CONTACTS;
 export const CONTRACT = MSG.CONTRACT;
 export const COUNTRY = MSG.COUNTRY;
 export const CREATE = MSG.CREATE;
+export const CREATE_SERVICE_ACCOUNT = "Crear Cuenta de Servicio"; // TODO MSG.CREATE_SERVICE_ACCOUNT;
 export const CREATION_DATE = 'Fecha de Creación'; // TODO
 export const CREDITOR = MSG.CREDITOR;
 export const CREDITORS = MSG.CREDITORS;

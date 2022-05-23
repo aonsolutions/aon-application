@@ -33,6 +33,7 @@ import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1D;
 import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1G;
 import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1L;
 import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1P;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class UdapaDeliveryWriter {
 
@@ -61,10 +62,13 @@ public class UdapaDeliveryWriter {
 			String customerEdiCode) {
 		// TODO Auto-generated method stub
 		SEH1C seh1c = new SEH1C();
+		
+		String referenceCode = isECI(delivery.getRegistry().getDocument()) 
+				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
 
 		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351
 				.getValue());
-		seh1c.setNumeroAvisoDeExpedicion(delivery.getReferenceCode());
+		seh1c.setNumeroAvisoDeExpedicion(referenceCode);
 		seh1c.setCodigoEmisor_MS_(companyEdiCode);
 		seh1c.setCodigoReceptor_MR_(customerEdiCode);
 		seh1c.setFuncionDelMensaje(SEH1C.V1225F.ORIGINA_9.getValue());
@@ -338,6 +342,20 @@ public class UdapaDeliveryWriter {
 			LOGGER.error(e.getMessage());
 		}
 		return "";
+	}
+
+	private String referenceCodeNumber(String referenceCode) {
+		StringBuilder builder = new StringBuilder();
+		for(Integer i = 0; i < referenceCode.length(); i++) {
+			if(AonNumberUtils.isNumber("" + referenceCode.charAt(i))) {
+				builder.append(referenceCode.charAt(i));
+			}
+		}
+		return builder.toString();
+	}
+	
+	private boolean isECI(String document) {
+		return "A28017895".equalsIgnoreCase(document);
 	}
 
 }

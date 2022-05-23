@@ -17,7 +17,6 @@ import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -46,7 +45,6 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -85,7 +83,6 @@ import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
@@ -108,7 +105,6 @@ import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -136,7 +132,6 @@ import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.EnterpriseCCCProperties;
@@ -157,7 +152,6 @@ import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
@@ -1379,6 +1373,7 @@ public class PropertiesDAO {
 
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(USER.TYPE);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(USER.NAME);}
 		@Override public Property<String> getLoginProperty() {return new FilterDAO.PropertyDAO<>(USER.LOGIN);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(USER.ACTIVE);}

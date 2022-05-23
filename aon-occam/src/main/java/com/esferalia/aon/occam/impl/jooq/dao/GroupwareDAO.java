@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
-import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.function.Function;
 
@@ -11,11 +10,10 @@ import org.jooq.Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Alarm;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.Priority;
-import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 
 public class GroupwareDAO {
 
@@ -116,20 +114,6 @@ public class GroupwareDAO {
 			notice.setRecipientId(record.getValue(NOTICE.RECIPIENT));
 
 			return notice;
-		}
-	}
-	
-	private static class UserFiller implements Function<Record, User> {
-		@Override
-		public User apply(Record record) {
-			User user = new User();
-			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
-			user.setName(record.getValue(USER.NAME));
-			user.setLogin(record.getValue(USER.LOGIN));
-			user.setActive(
-					AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
-			return user;
 		}
 	}
 	
