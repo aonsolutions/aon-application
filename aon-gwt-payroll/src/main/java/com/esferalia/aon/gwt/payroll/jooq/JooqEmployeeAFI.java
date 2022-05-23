@@ -405,9 +405,18 @@ public class JooqEmployeeAFI {
 		fab.put("quoteGroup", quoteGruop);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", partiality);
+		fab.put("employeeColective", null);
 		fab.put("gender", gender+1);
 		
 		//OTD
+		String endDate = null;
+		Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
+		if(null != contractEndDate) {
+			Calendar endDateCalendar = Calendar.getInstance();
+			endDateCalendar.setTime(contractRecord.get(CONTRACT.END_DATE));
+			endDate = endDateCalendar.get(Calendar.YEAR) + (endDateCalendar.get(Calendar.MONTH) + 1) + endDateCalendar.get(Calendar.DAY_OF_MONTH) + "";
+		}
+		
 		Integer agreementLevelId = dslContext.select(CONTRACT.AGREEMENT_LEVEL).from(CONTRACT)
 				.where(CONTRACT.ID.eq(contractId))
 				.fetchOne(CONTRACT.AGREEMENT_LEVEL);
@@ -423,6 +432,8 @@ public class JooqEmployeeAFI {
 				)).fetchOne(AGREEMENT.SS_NUMBER);
 
 		otd.put("convCollective",  AonStringUtils.isBlank(agreementColective) ? "00000000000000" : agreementColective);
+		otd.put("endDate", endDate);
+		
 		
 		json.put("FAB", fab);
 		json.put("OTD", otd);
@@ -508,6 +519,7 @@ public class JooqEmployeeAFI {
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", partialityCoef == null ? "" : parseCoefLengnt(partialityCoef));
+		fab.put("employeeColective", null);
 		fab.put("gender", gender);
 		
 		//DAM -> All reserved
@@ -596,6 +608,7 @@ public class JooqEmployeeAFI {
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", null == partialityCoef ? "" : parseCoefLengnt(partialityCoef));
+		fab.put("employeeColective", null);
 		fab.put("gender", gender);
 		
 		String ocupation = parseContractData(contractDataOcupationRecord.isEmpty() ? "" : contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
