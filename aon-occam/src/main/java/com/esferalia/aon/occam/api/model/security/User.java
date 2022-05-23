@@ -15,6 +15,7 @@ public class User implements Serializable {
 	
 	private Integer id;
 	private Integer domain;
+	private UserType type;
 	private String name;
 	private String login;
 	private boolean active;
@@ -43,6 +44,25 @@ public class User implements Serializable {
 		this.domain = domain;
 		return this;
 	}
+	
+	public UserType getType() {
+		if(type == null) {
+			type = UserType.NORMAL;
+		}
+		return type;
+	}
+	
+	public byte getTypeValue() {
+		return getType() != null
+			? getType().value()
+			: UserType.NORMAL.value();
+	}
+	
+	public User setType(UserType type) {
+		this.type = type;
+		return this;
+	}
+	
 	public String getName() {
 		return name;
 	}
