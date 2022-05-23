@@ -391,6 +391,7 @@ public class SecurityDAO {
 	public static User insertUser(AONContext ctx, User user) {
 		Integer id = ctx.getDslContext().insertInto(USER)
 			.set(USER.NAME, user.getName())
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
 			.set(USER.DOMAIN, user.getDomain())
@@ -405,6 +406,7 @@ public class SecurityDAO {
 	
 	public static User updateUser(AONContext ctx, User user) {
 		ctx.getDslContext().update(USER)
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
