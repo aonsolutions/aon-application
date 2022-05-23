@@ -37,7 +37,7 @@ public class UserAddTypeColumnUpdate implements Update {
 		LOGGER.info("Alter table `user`");
 
 		try {
-			dslContext.alterTable(User.USER).addColumn("type", SQLDataType.TINYINT.notNull().defaultValue((byte) 0)).after(User.USER.DOMAIN).execute();
+			dslContext.alterTable(User.USER).addColumn("type", SQLDataType.TINYINT.length(2).notNull().defaultValue((byte) 0)).after(User.USER.DOMAIN).execute();
 			LOGGER.info("[table 'user' Update!]");
 		} catch (DataAccessException e) {
 			LOGGER.info("[table 'auth_device' NOT Update!] " + e.getMessage());
