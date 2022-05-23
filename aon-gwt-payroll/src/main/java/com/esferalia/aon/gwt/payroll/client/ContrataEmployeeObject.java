@@ -187,22 +187,6 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void setContractSpecificData(ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeeContractData.setContractSpecificData(contractSpecificData);
-		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
 	// ------------------------------------------------- Database Methods (Other Data)
 	
 	public void getContractOtherInfo(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
