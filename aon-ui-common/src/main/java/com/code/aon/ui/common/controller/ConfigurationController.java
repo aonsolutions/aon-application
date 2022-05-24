@@ -196,7 +196,7 @@ public class ConfigurationController implements Serializable {
     public void savePageLimit( ActionEvent event ) {
     	System.out.println("Working!");
     	
-    	//AON.insertUs
+    	//save configuration to db
     }
     
     private void onLogout( ActionEvent event ) {
