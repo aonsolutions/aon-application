@@ -268,16 +268,17 @@ public class TaskUtils {
 		List<Byte> types = new ArrayList<>(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()));
 		if(task.getParent() != null) {
 			List<Task> list = AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
-					f-> f.getParentProperty().eq(task.getId())
-					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
-				).collect(Collectors.toList());
+				f-> f.getParentProperty().eq(task.getParent())
+				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+			).collect(Collectors.toList());
+			
 			if(list.isEmpty()) {
 				Task tmp = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
-				AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), tmp.setStatus(TaskStatus.PENDING));
+				if(tmp.getStatus().equals(TaskStatus.IN_PROGRESS)) {
+					AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), tmp.setStatus(TaskStatus.PENDING));
+				}
 			}
 		} else {
-
-			
 			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
 					f-> f.getParentProperty().eq(task.getId())
 					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
