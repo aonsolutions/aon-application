@@ -453,11 +453,11 @@
 	}
 	
 	
-	.search-results-popup.show {
+	.search-results-popup.show , .search-results-popup:hover {
 		display: block !important;
 	}
 	
-	.search-results-popup.show > div{
+	.search-results-popup.show > div , .search-results-popup:hover  > div {
 		display: block !important;
 	}
 	
@@ -1463,8 +1463,42 @@
 	  }
 	}
 	
+	
+	#copyTooltip {
+		display: none;
+		background: #fafafa;
+		font-weight: normal;
+		position: fixed;
+		top: 0;
+		left: 0;
+		justify-content: center;
+		align-items: center;
+		padding: .75rem;
+		box-shadow: 0 .1rem .5rem rgba(0,0,0,.13);
+		border-radius: .35rem;
+		z-index: 999999;
+		transform: translateY(-90%) translateX(-50%);
+		transition: transform .15s, opacity .15s;
+		opacity: 0;
+	}
+	
+	#copyTooltip .material-icons {
+		font-size: 1rem;
+		color: forestgreen;
+		margin-right: .5rem;
+	}
+	
+	#copyTooltip.show {
+		display: flex;
+	}	
+	
+	#copyTooltip.up {
+		transform: translateY(-110%) translateX(-50%);
+		opacity: 1;
+	}	
+	
 	.search-results-popup tr .clipboard-icon {
-		font-size: 1rem; 
+		font-size: 1.2rem; 
 		color: transparent;
 		transition: color .15s;
 	}
@@ -1476,11 +1510,7 @@
 	.search-results-popup tr .clipboard-icon:hover {
 		color: #404040;
 	}
-	
-	
-
-	
-	
+		
 
 	</style>
 
@@ -1488,7 +1518,6 @@
 			function showSearchResults(){
 				if ( #{rich:element('smartFilter')}.value ) {
 					#{rich:element('smartFilterTableContainer')}.classList.add("show");
-					console.log(#{rich:element('smartFilterTablePanel')});
 				}
 			}
 			
@@ -1761,15 +1790,16 @@
 			}
 			
 			function copyToClipboard(event,text) {
-				 #{rich:element('smartFilterTableContainer')}.classList.add("show");
 				
 				 if (navigator &amp;&amp; navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
 					navigator.clipboard.writeText(text)
 				 } else {
-					 console.error("Clipboard API not available, make sure that app is running via HTTPS protocol.");
-					 console.error("Trying legacy method...");
+					 console.log("Clipboard API not available, make sure that app is running via HTTPS protocol.");
+					 console.log("Trying legacy method...");
 					 legacyCopyToCliboard(text);
 				 }
+				 
+				 showCopyTooltip(event);
 			}
 			
 			function legacyCopyToCliboard(text) {
@@ -1782,6 +1812,31 @@
 				  el.select();
 				  document.execCommand('copy');
 				  document.body.removeChild(el);
+			}
+			
+			
+			function showCopyTooltip(e){
+				
+				const tooltip = document.getElementById("copyTooltip");
+				tooltip.style.top = e.target.getBoundingClientRect().top + "px"
+				tooltip.style.left = e.target.getBoundingClientRect().left + "px"
+				tooltip.classList.add("show");
+				
+				
+				setTimeout(() => {
+					tooltip.classList.add("up");
+
+					setTimeout(() => {
+						tooltip.classList.remove("up");
+						
+						setTimeout(() => {
+							tooltip.classList.remove("show");
+						}, 100);
+						
+					}, 700);
+				}, 100);
+				
+				
 			}
 			
 			
@@ -2200,5 +2255,9 @@
 			<span id="tooltip-key-message">Pulse <span class="keyboard-icon">F2</span> para fijar la ventana</span>
 			<span class="material-icons" id="pin">push_pin</span>
 		</div>
+	</aon:div>
+	<aon:div id="copyTooltip"> 
+		<span class="material-icons" id="pin">task_alt</span>
+		<span> Copiado al portapapeles</span>
 	</aon:div>
 </ui:composition>

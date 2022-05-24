@@ -28,6 +28,7 @@ import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 
 /**
  * The Class ConfigurationController is used to set some default configurable
@@ -195,7 +196,7 @@ public class ConfigurationController implements Serializable {
     public void savePageLimit( ActionEvent event ) {
     	System.out.println("Working!");
     	
-    	
+    	//AON.insertUs
     }
     
     private void onLogout( ActionEvent event ) {
