@@ -737,7 +737,11 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				throw wrapper.getCause();
 			} catch ( DeferredExpressionException deferred){
 				try {
-					deferred.eval( getExpressionContext(), Object.class);
+					getExpressionContext()
+					.dryEval(deferred.getExpression().getExpression(), 
+					var.getPeriod().getStart(), 
+					var.getPeriod().getEnd());
+					//deferred.eval( getExpressionContext(), Object.class);
 				} catch ( UndefinedVariablesException e){
 					return true;
 				} catch (ExpressionException e) {
