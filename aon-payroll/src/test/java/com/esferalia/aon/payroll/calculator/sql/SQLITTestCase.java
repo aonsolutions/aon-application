@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
@@ -38,6 +40,7 @@ import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -48,13 +51,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.jooq.tables.ContractPayment;
+import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -69,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryPayment;
 //import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -6023,6 +6031,94 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1500.00, salary.getCommonBase());
 //		Assert.assertEquals(1250.00, salary.getProfessionalBase());
 
+	}
+
+	@Test
+	public void testBasesMinITV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+
+		Date firstDayofYear = getFirstDayOfYear(getToday());
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				firstDayofYear,
+		new HashMap<String,String>(){
+		{
+			put(MONTH_DAYS.getName(), "30.00");
+			put(PARTIAL_FACTOR.getName(), "0.75");
+		}
+		},
+		new String[] {
+		"1250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+		"IMPORTE_KM * KMS",
+		}, 
+		new String[] {
+		}, null);
+		//@formatter:on
+		
+		aonContext.getDslContext()
+		.select()
+		.from(PAYMENT_CONCEPT)
+		.innerJoin(CONTRACT_PAYMENT).onKey()
+		.where(PAYMENT_CONCEPT.EXPRESSION.eq("IMPORTE_KM * KMS"))
+		.fetchInto(PAYMENT_CONCEPT)
+		.forEach( r -> {
+			r.setType((byte) 50 );
+			r.update();
+		});
+		addData(aonContext, contract, firstDayofYear, null, "IMPORTE_KM", "0.25");
+		addData(aonContext, contract, firstDayofYear, null, "KMS", "0");
+		
+		addPrestITs(aonContext, contract);
+		
+		addSystemData(
+		aonContext, 
+		firstDayofYear, 
+		null, 
+		new HashMap<String,String>(){
+		{
+			put(CGC_BASE_MIN.getName(), "(MAX(7.03, (FALSO() ? 7.03 * HORAS_NOMINA : (MODALIDAD_MENSUAL ? 1166.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 38.89 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD))))");
+			put(CGP_BASE_MIN.getName(), "MAX(7.03, ((COEFICIENTE_PARCIALIDAD < 1.00) ? BASE_CGC_MIN : 1166.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)))");
+		}
+		});
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate,
+				null, 1750.00 /30.00);
+
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		issueDate, 
+		contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		double baseCgp = 
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().equals(CGP_BASE.getName()))
+		.peek(d -> {
+			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
+		})
+		.map(SalaryData::getExpression)
+		.collect(Collectors.summingDouble(Double::parseDouble))
+		;
+
+		assertEquals(1750.00 / 30.00 * 31.00, baseCgp, 0.05);
 	}
 
 	@Test
