@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -53,16 +54,18 @@ public class TaskUtils {
 				
 				switch (workflow.getType()) {
 					case OPEN:
-						TaskNotification.onOpen(api, task, workflow);
+						TaskNotification.onOpenNotification(api, task, workflow);
+						TaskNotification.onOpenEmail(api, task, workflow);
 						break;
 					case COMMENT:
-						TaskNotification.onComment(api, task, workflow);
+						TaskNotification.onCommentNotification(api, task, workflow);
 						break;
 					case ASSIGN:
-						TaskNotification.onAssign(api, task, workflow);
+						TaskNotification.onAssignNotification(api, task, workflow);
 						break;
 					case CLOSE:
-						TaskNotification.onClose(api, task, workflow);
+						TaskNotification.onCloseNotification(api, task, workflow);
+						TaskNotification.onCloseEmail(api, task, workflow);
 						closeTaskChildOrParent(api, task, workflow);
 						break;
 					default:
@@ -198,7 +201,7 @@ public class TaskUtils {
 		//SEND SENDER
 		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			
-			getAuthSender(api, task.getSender()).ifPresent(list::add);
+			getAuthForTaskHolder(api, task.getSender()).ifPresent(list::add);
 			System.out.println("SENDER SEND NOTIFICATION ID:"+ task.getSender().getId());
 			
 		} else if(task.getGtaskId()!=null && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
@@ -241,7 +244,7 @@ public class TaskUtils {
 		return list;
 	}
 	
-	public static Optional<Auth> getAuthSender(AonApiData api, TaskHolder th) {
+	public static Optional<Auth> getAuthForTaskHolder(AonApiData api, TaskHolder th) {
 		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 		if(auth.getEmail()!=null && !auth.getEmail().isEmpty()) {
@@ -266,15 +269,19 @@ public class TaskUtils {
 	
 	private static void closeTaskChildOrParent(AonApiData api, Task task, TaskWorkflow workflow) {
 		List<Byte> types = new ArrayList<>(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()));
-		if(task.getParent() != null) {
+		if(task.isChild()) {
 			List<Task> list = AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
 				f-> f.getParentProperty().eq(task.getParent())
+				.and(f.getIdProperty().ne(task.getId()))
 				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
 			).collect(Collectors.toList());
 			
 			if(list.isEmpty()) {
-				Task tmp = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
-				if(tmp.getStatus().equals(TaskStatus.IN_PROGRESS)) {
+				Task tmp = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), 
+					f-> f.getIdProperty().eq(task.getParent())
+					.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()))
+				);
+				if(tmp!=null && tmp.getId()!=null) {
 					AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), tmp.setStatus(TaskStatus.PENDING));
 				}
 			}
@@ -292,7 +299,6 @@ public class TaskUtils {
 				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
 				
 				onSaveWorkflow(api, tmp);
-				
 			});
 		}
 	}
@@ -306,6 +312,15 @@ public class TaskUtils {
 	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
 		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
 		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+	}
+	
+	public static boolean isExternal(Task task, Domain domain) {
+		return !task.getDomain().getId().equals(domain.getId()) ||
+		(
+			domain.getDomainType().equals(DomainType.OFFICE) && 
+			task.getRegistry()!=null && task.getRegistry().getId()!=null &&
+			!(task.getSender()!=null && task.getSender().getId()!=null)
+		);
 	}
 	
 //	private static Matcher regexFileBase64(String str) {

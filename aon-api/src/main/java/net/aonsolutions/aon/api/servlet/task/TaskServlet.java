@@ -502,11 +502,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		Workgroup workgroup = WorkgroupJSON.fromJSON(params.optJSONObject(IJsonNames.WORKGROUP));
 
 		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(taskHolderReceiver.getUserId()));
-		
-		Auth auth = AON_SOLUTIONS.getAuth(userReceiver.getAuth().getAuth());
-		
-	    String email = auth.getEmail();
-		
+	
 		Task taskParent = AON_SOLUTIONS.getTask(domain, userReceiver, f-> f.getIdProperty().eq(taskId) );
 		   
 		AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), taskParent.setStatus(TaskStatus.IN_PROGRESS));
@@ -547,17 +543,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 			saveWorkflow( api, Optional.of(wf) );
 	   });
-  
-	   newTask.setGtaskId(email);
-	   
-	   if(comment!=null && !comment.isEmpty())
-		   newTask.setGtasklistId(comment);
-	   
-	   newTask.setWorkflows(newTask.getWorkflows().stream().filter(w-> w.getType().equals(TaskWorkflowType.CLOSE)).collect(Collectors.toList()));
-	   
-	   TaskNotification.sendHistoricWorkflow(api, newTask, false);
 	
-
 	   return new JSONObject();
    }
 

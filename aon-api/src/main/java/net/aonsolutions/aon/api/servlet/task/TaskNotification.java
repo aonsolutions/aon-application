@@ -1,5 +1,16 @@
 package net.aonsolutions.aon.api.servlet.task;
 
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_ASSIGN;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_CLOSED;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_COMMENT;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_EMAIL_OPENED;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_OPENED;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_INT_ASSIGN;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_INT_CLOSED;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_INT_COMMENT;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_INT_EMAIL_OPENED;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_INT_OPENED;
+
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -17,7 +28,6 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
-import com.esferalia.aon.occam.api.model.type.DomainType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
@@ -36,16 +46,19 @@ public class TaskNotification {
 	}
 	
 	/**
-	 * SEND EMAIL, NOTIFICATION ON OPEN
+	 * SEND NOTIFICATION ON OPEN
 	 * @param api
 	 * @param task
 	 * @param workflow
 	 */
-	public static void onOpen(AonApiData api, Task task, TaskWorkflow workflow){
-		if( Boolean.TRUE.equals(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_OPENED))) {
-			if(TaskUtils.isCau(api.getData())) {
-				sendEmailWorkflow(api, task, workflow, Optional.empty(), false); // false
-			}
+	public static void onOpenNotification(AonApiData api, Task task, TaskWorkflow workflow){
+		if(
+			isAllowed(
+				api, 
+				task, 
+				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_OPENED: APP_REQUESTS_INT_OPENED
+			)
+		) {
 			
 			String body = "Solicitud Abierta";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
@@ -55,15 +68,52 @@ public class TaskNotification {
 			sendNotificationWorkflow(api, task, workflow, body);
 		}
 	}
-	
+		
 	/**
-	 * SEND EMAIL, NOTIFICATION ON COMMENT
+	 * SEND EMAIL ON OPEN
 	 * @param api
 	 * @param task
 	 * @param workflow
 	 */
-	public static void onComment(AonApiData api, Task task, TaskWorkflow workflow){
-		if(Boolean.TRUE.equals(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_COMMENT))) {
+	public static void onOpenEmail(AonApiData api, Task task, TaskWorkflow workflow){
+		if(TaskUtils.isCau(api.getData()) && TaskUtils.isExternal(task, api.getDomain()) && isAllowed(api, task, APP_REQUESTS_EXT_EMAIL_OPENED) ) {
+			sendEmailWorkflow(api, task, workflow, Optional.empty(), false); // false
+		} else if(
+			isAllowed(
+				api, 
+				task, 
+				APP_REQUESTS_INT_EMAIL_OPENED
+			)
+		) {
+			
+//			LinkedList<Auth> auths = TaskUtils.getAuthsTask(api, task, workflow, api.getUser());
+			//SEND TASKHOLDER ASSIGNED
+			if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
+				TaskUtils.getAuthForTaskHolder(api, task.getTaskHolder())
+				.ifPresent(a->{
+					task.setGtaskId(a.getEmail());
+				   	sendHistoricWorkflow(api, task, false);
+				});
+			} 
+		
+		}
+	}
+		
+	
+	/**
+	 * NOTIFICATION ON COMMENT
+	 * @param api
+	 * @param task
+	 * @param workflow
+	 */
+	public static void onCommentNotification(AonApiData api, Task task, TaskWorkflow workflow){
+		if(
+			isAllowed(
+				api, 
+				task, 
+				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_COMMENT: APP_REQUESTS_INT_COMMENT
+			)
+		) {
 			String body = "Han comentado la Solicitud";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
 			if(auth!=null && !auth.getName().isEmpty()) 
@@ -74,51 +124,79 @@ public class TaskNotification {
 	}
 	
 	/**
-	 * SEND EMAIL, NOTIFICATION ON ASSIGN
+	 * SEND NOTIFICATION ON ASSIGN
 	 * @param api
 	 * @param task
 	 * @param workflow
 	 */
-	public static void onAssign(AonApiData api, Task task, TaskWorkflow workflow){
-		if(Boolean.TRUE.equals(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_ASSIGN))) {
+	public static void onAssignNotification(AonApiData api, Task task, TaskWorkflow workflow){
+		if(
+			isAllowed(
+				api, 
+				task, 
+				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_ASSIGN: APP_REQUESTS_INT_ASSIGN
+			)
+		) {
 			String body = "Solicitud Reasignada a <b>" + workflow.getComment()+ "</b>.";
 			sendNotificationWorkflow(api, task, workflow, body);
 		}
 	}
 	
 	/**
-	 * SEND EMAIL, NOTIFICATION ON CLOSE
+	 * SEND NOTIFICATION ON CLOSE
 	 * @param api
 	 * @param task
 	 * @param workflow
 	 */
-	public static void onClose(AonApiData api, Task task, TaskWorkflow workflow){
-		if( Boolean.TRUE.equals(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_CLOSED)) ) {
+	public static void onCloseNotification(AonApiData api, Task task, TaskWorkflow workflow){
+		if( 
+			isAllowed(
+				api, 
+				task, 
+				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_CLOSED: APP_REQUESTS_INT_CLOSED
+			)
+		) {
 			
 			String body = workflow.getComment()!=null &&  Boolean.FALSE.equals(workflow.getComment().isEmpty()) 
 					? workflow.getComment() :"Solicitud Cerrada." ;
 					
 				sendNotificationWorkflow(api, task, workflow, body);
 		}
+	}
+	
+	/**
+	 * SEND EMAIL
+	 * @param api
+	 * @param task
+	 * @param workflow
+	 */
+	public static void onCloseEmail(AonApiData api, Task task, TaskWorkflow workflow){		
 		
-		if(task.getGtaskId()!=null && task.getGtaskId().indexOf("@")>=0 && workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())) {
-			
-			ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParamsRequest.APP_REQUESTS_EMAIL_RATING.name());
-			
-			if(exists.getId()!=null && exists.getValue().equals("true")) {
-				Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
+		if(	TaskUtils.isExternal(task, api.getDomain()) ) {
+			if(
+				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) &&
+				task.getGtaskId()!=null && task.getGtaskId().indexOf("@")>=0 && workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())
+			) {
+				ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParamsRequest.APP_REQUESTS_EMAIL_RATING.name());
 				
-				if(!auth.getEmail().isEmpty()) 
-					sendEmailWorkflow(api, task, workflow, Optional.of(auth), true); // true
+				if(exists.getId()!=null && exists.getValue().equals("true")) {
+					Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
+					
+					if(!auth.getEmail().isEmpty()) 
+						sendEmailWorkflow(api, task, workflow, Optional.of(auth), true); // true
+				}
 			}
-		}
-		
-		if(task.getParent()!=null && task.getParent()>0 && task.getSender()!=null && task.getSender().getUserId()!=null) {
-			TaskUtils.getAuthSender(api, task.getSender())
-			.ifPresent(a->
-				sendEmailWorkflow(api, task, workflow, Optional.of(a), false)
-			);
-		}
+		} else {
+			if(
+				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_EMAIL_CLOSED ) &&
+				task.getParent()!=null && task.getParent()>0 && task.getSender()!=null && task.getSender().getUserId()!=null
+			) {
+				TaskUtils.getAuthForTaskHolder(api, task.getSender())
+				.ifPresent(a->
+					sendEmailWorkflow(api, task, workflow, Optional.of(a), false)
+				);
+			}
+		}	
 	}
 	
 	
@@ -177,7 +255,7 @@ public class TaskNotification {
 					msg.setBcc(EMAIL_SUPPORT);
 
 			    SES.sendEmail(msg);
-			    System.out.println("SEND EMAIL CHANGE_WORKFLOW: "+ to);
+			    System.out.println("SEND EMAIL TO: "+ to);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -190,7 +268,7 @@ public class TaskNotification {
 	 */
 	private static void sendNotificationWorkflow(AonApiData api, Task task, TaskWorkflow workflow, String body) {
 		Domain domain = api.getDomain();
-		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		User user = api.getUser(); // AON_SOLUTIONS.getUser(domain, api.getToken());
 		
 		LinkedList<Auth> auths = TaskUtils.getAuthsTask(api, task, workflow, user);
 		
@@ -239,10 +317,8 @@ public class TaskNotification {
 					.setUrl(url)
 					.setLogo(logo);
 					
-					if(task.getGtasklistId()!=null) {
-						tm.setNote(task.getGtasklistId());
-					}
-					
+					task.getTmp().ifPresent(tm::setNote);
+				
 					String body = TaskMailTemplate.taskWorkflowContent(tm);
 					
 					SESMessage msg = new SESMessage()
@@ -264,38 +340,12 @@ public class TaskNotification {
 		newThread.start();
 	}
 
-	private static Boolean isAllowed(AonApiData api, Task task, AppParamsRequest param) {
+	private static boolean isAllowed(AonApiData api, Task task, AppParamsRequest param) {
 
-		Domain domain = api.getDomain();
+		boolean isExternal = TaskUtils.isExternal(task, api.getDomain());
 		
-		Boolean isExternal = 
-			!task.getDomain().getId().equals(domain.getId()) ||
-			(
-				domain.getDomainType().equals(DomainType.OFFICE) && 
-				task.getRegistry()!=null && task.getRegistry().getId()!=null &&
-				!(task.getSender()!=null && task.getSender().getId()!=null)
-			);
+		Domain domain = isExternal ? task.getDomain() : api.getDomain();
 
-		if(Boolean.TRUE.equals(isExternal)) {
-			switch (param) {
-				case APP_REQUESTS_INT_OPENED:
-					param = AppParamsRequest.APP_REQUESTS_EXT_OPENED;
-				break;
-				case APP_REQUESTS_INT_CLOSED:
-					param = AppParamsRequest.APP_REQUESTS_EXT_CLOSED;
-				break;
-				case APP_REQUESTS_INT_ASSIGN:
-					param = AppParamsRequest.APP_REQUESTS_EXT_ASSIGN;
-				break;
-				case APP_REQUESTS_INT_COMMENT:
-					param = AppParamsRequest.APP_REQUESTS_EXT_COMMENT;
-				break;
-				default:
-					break;
-			}
-			domain = task.getDomain();
-		}
-		
 		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", param.name());
 		System.out.println("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
 		return appParam.getId() == null || (appParam.getId()!=null && appParam.getValue().equals("true"));
