@@ -4,8 +4,10 @@ import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,33 +16,157 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.mvel2.MVEL;
 
+import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
+import com.esferalia.aon.gwt.payroll.server.SalaryDraftBuilder;
+import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
-import com.esferalia.aon.jooq.tables.Salary;
-import com.esferalia.aon.jooq.tables.SalaryEmbargo;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryEmbargoRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.google.gwt.user.datepicker.client.CalendarModel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dev.util.collect.HashMap;
 import com.ibm.icu.util.Calendar;
 
 import junit.framework.Assert;
 
 public class SQLSalaryDraftTestCase extends AbstractSQLTestCase {
+
+	@Test
+	public void testMonthDays() throws SQLException, ExpressionException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		addSystemData(
+		aonContext, 
+		AonDateUtils.getFirstDayOfYear(getToday()), 
+		null, 
+		Collections.singletonMap(MONTH_DAYS.getName(), "[ \"01\":30, \"02\":30, \"03\":30, \"04\":30, \"05\":30, \"06\":30, \"07\":30, \"08\": DIAS_NATURALES_MES, \"09\": DIAS_NATURALES_MES, \"10\": DIAS_NATURALES_MES, \"11\": DIAS_NATURALES_MES][GRUPO_COTIZACION]"));
+		
+		
+		ContractRecord contract = newContract(aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday())
+				,new HashMap<String, String>(){
+					{
+						put(ContextVariable.QUOTE_GROUP.getName(),"\"10\"");
+					}
+				}
+				,new String [] {
+						"DIAS_MES",
+//						"TRACE('GRUPO_COTIZACION =  %s  \r\n', GRUPO_COTIZACION ); 0.00",
+//						"TRACE('M=%s\r\n',[\"10\":DIAS_NATURALES_MES][\"10\"]); 0.00",
+//						"1000.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}
+				,new String [] {}
+				, null
+				);
+		
+		Employee employee = new Employee();
+		employee.setId(contract.getId());
+		
+		Date startDate = AonDateUtils.getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SalaryDraft salaryDraft = new SalaryDraft()
+		.setEmployee(employee)
+		.setStartDate(startDate)
+		.setEndDate(endDate)
+		.setIssueDate(endDate);
+		
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(salaryDraft);
+		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(salaryDraftBuilder,
+				EmployeesServiceHelper.round(2));
+		try {
+			EmployeesServiceHelper.calculate(connection, salaryDraft, roundSalaryBuilder, salaryDraftBuilder, new SmartContractSalaryCalculator<ISalary>() {
+				@Override
+				protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
+					super.fillData(ctx);
+					fillData(ctx, new ContextVariable[] { ContextVariable.SENIORITY });
+					ctx.getExpressionContext().getVariables("DIAS_MES").forEach(v -> System.out.println("DIAS_MES:" + v.getValue(v.getPeriod()) ));
+				}
+				
+
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		salaryDraft.getContext()
+		.stream()
+		//.peek( v -> System.out.println(v.getName() + " = " + v.getValue()))
+		.filter(v -> AonStringUtils.equals(MONTH_DAYS.getName(), v.getName()))
+		//.peek( v -> System.out.println("*" + v.getName() + " = " + v.getValue()))
+		.map ( v -> AonNumberUtils.todouble(v.getValue()))
+		.forEach( monthDays -> assertEquals(31.00, monthDays, 0.00) );
+		;
+
+		StringVariable monthDaysVar = new StringVariable();
+		monthDaysVar.setImplicit(true);
+		monthDaysVar.setStartDate(startDate);
+		monthDaysVar.setEndDate(endDate);
+		monthDaysVar.setExpression("30.00");
+		monthDaysVar.setScope(Scope.SALARY);
+		monthDaysVar.setName(MONTH_DAYS.getName());
+		salaryDraft.addDraftVariable(monthDaysVar);
+		
+
+		salaryDraftBuilder = new SalaryDraftBuilder(salaryDraft);
+		roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(salaryDraftBuilder,
+				EmployeesServiceHelper.round(2));
+		try {
+			EmployeesServiceHelper.calculate(connection, salaryDraft, roundSalaryBuilder, salaryDraftBuilder, new SmartContractSalaryCalculator<ISalary>() {
+				@Override
+				protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
+					super.fillData(ctx);
+					fillData(ctx, new ContextVariable[] { ContextVariable.SENIORITY });
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		salaryDraft.getDraftContext()
+		.stream()
+		.filter(v -> AonStringUtils.equals(MONTH_DAYS.getName(), v.getName()))
+		.findAny()
+		.ifPresentOrElse(monthDays -> assertEquals("30.00", monthDays.getExpression()), org.junit.Assert::fail);
+		;
+
+		salaryDraft.getContext()
+		.stream()
+		.filter(v -> AonStringUtils.equals(MONTH_DAYS.getName(), v.getName()))
+		.peek( v -> System.out.println("*" + v.getName() + " = " + v.getValue()))
+		.map ( v -> AonNumberUtils.todouble(v.getValue()))
+		.forEach( monthDays -> assertEquals(30.00, monthDays, 0.00) );
+		;
+		
+	}
+	
 
 	@Test
 	public void testSaveI() throws SQLException {
