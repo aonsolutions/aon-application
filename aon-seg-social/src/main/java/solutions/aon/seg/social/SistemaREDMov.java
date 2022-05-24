@@ -646,10 +646,11 @@ class SistemaREDMov {
 	}
 
 	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, String apellido1, String apellido2) throws Exception {
+			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			String message = null;
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -678,25 +679,36 @@ class SistemaREDMov {
 			if (pageAux instanceof XmlPage) {
 				XmlPage xmlPage = (XmlPage) pageAux;
 				DomNode employeeHtml = xmlPage.querySelector("usuario_red");
-				String nss = employeeHtml.querySelector("na5numsegsocialcompleto").getTextContent().trim();
 
-				if (!nss.isEmpty()) {
-					String ipf1 = employeeHtml.querySelector("ip6numero_documento").getTextContent();
-					String name = employeeHtml.querySelector("nombre_completo").getTextContent().trim();
-					String ident1 = employeeHtml.querySelector("codigo_tipo").getTextContent().trim();
-					builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
-				} else {
-					String messageError = "Sin datos para la consulta";
-					DomNode textEl = xmlPage.querySelector("texto");
-					if (textEl != null && textEl.getTextContent() != null) {
-						messageError = textEl.getTextContent().trim();
+				if(employeeHtml!=null) {
+					String nss      = getStringNode(employeeHtml.querySelector("na5numsegsocialcompleto"));
+					String doc      = getStringNode(employeeHtml.querySelector("ip6numero_documento"));
+					String name     = getStringNode(employeeHtml.querySelector("nombre_completo"));
+					String identNew = getStringNode(employeeHtml.querySelector("codigo_tipo"));
+
+					if (nss!=null && doc!=null && name!=null && identNew!=null) {
+						builder
+						.setNss(nss)						
+						.setName(name)
+						.setIpf(doc)
+						.setIdent(Integer.parseInt(identNew));
+					} else {
+						message = "Sin datos para la consulta";
+						String text = getStringNode(xmlPage.querySelector("texto"));
+						if (text != null) {
+							message = text;
+						}
 					}
-					throw new Exception(messageError);
+				} else {
+					message = "Sin datos para la consulta";
 				}
-
 			} else {
 				htmlPage = (HtmlPage) pageAux;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			}
+			
+			if(message!=null) {
+				throw new SegSocialException(message);
 			}
 
 			return builder.build();
@@ -868,6 +880,13 @@ class SistemaREDMov {
 				throw new InvalidDataException(error.getVisibleText());
 		} catch (NullPointerException e) {
 		}
+	}
+	
+	private static String getStringNode(DomNode el) {
+		if(el!=null && !el.getTextContent().trim().isEmpty()) {
+			return el.getTextContent().trim();
+		}
+		return null;
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
