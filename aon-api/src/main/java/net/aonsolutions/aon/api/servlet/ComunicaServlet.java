@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -79,6 +80,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private static final Logger LOGGER  = Logger.getLogger(ComunicaServlet.class.getName());
 	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
 	private static final String APP_PARAMS_NAME = "APP_COMUNICA_SINCRONIZED"; 
+	private static final String APP_COMUNICA_EMAILS = "APP_COMUNICA_EMAILS"; 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON COMUNICA SERVLET");
@@ -326,8 +328,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Employee employee = SistemaRED.nafxipf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
 		json.put("ident", employee.getIdent());
 		json.put("ipf", employee.getIpf());
-		employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 		json.put("nss", employee.getNss());
+		employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 		return json;
 	}
 	
@@ -646,25 +648,24 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private List<String> getEmails(AonApiData api, User user) {
 
 	    List<String> toList = new LinkedList<>();
+
+	    
 	    String alternative = JsonUtils.optString(api.getData(), "alternative");
-	    if(alternative!=null && !alternative.isEmpty()) toList.add(alternative);
-		User newUser = user; //.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
-		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
+	 
+	    if(alternative!=null && !alternative.isEmpty()) {
+	    	toList.add(alternative);
+	    }
+	 
+	    // ------------------------ MY USER -------------------
+		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 		toList.add(auth.getEmail());
 		
-	    Domain domain = api.getDomain();
-		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), 
-				f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId())))
-		.forEach(usr -> {
-    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
-    		if(Boolean.TRUE.equals(dur.isComunicaManager()) || Boolean.TRUE.equals(dur.isSaltraManager())) {
-    			Auth authTmp = AON_SOLUTIONS.getAuth(usr.getAuth().getAuth());
-    			if(authTmp.getEmail()!=null && !authTmp.getEmail().equals("info@aonsolutions.es")) {
-        			toList.add(authTmp.getEmail());
-    			}
-    		}
-    	});
-	    
+		//---------------USER CONFIG--------------
+		List<String> list = getEmailsAppParams(api);
+		if(!list.isEmpty()) {
+			toList.addAll(list);
+		}
+    
 		return toList;
 	}
 	
@@ -835,6 +836,27 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private static ApplicationParameter appParamsExists(AonApiData api) {
 		return AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), APP_PARAMS_NAME);
+	}
+	
+	private static List<String> getEmailsAppParams(AonApiData api) {
+		Domain domain = api.getDomain();
+		List<String> list = new ArrayList<>();
+
+		try {
+			ApplicationParameter child = AON.getApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), APP_COMUNICA_EMAILS);
+			if(child!=null && child.getValue()!=null && !child.getValue().isEmpty()) {
+				list.addAll( Arrays.asList(child.getValue().split(",")) );
+			} else if(domain.isChild()) {
+				ApplicationParameter parent = AON.getApplicationParameter(domain.getName(), domain.getParentId(), api.getUser().getLogin(), APP_COMUNICA_EMAILS);
+				if(parent!=null && parent.getValue()!=null && !parent.getValue().isEmpty()) {
+					list.addAll( Arrays.asList(parent.getValue().split(",")) );
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
 	}
 	
 	private static List<CCCInfo> getCcs(AonApiData api) {

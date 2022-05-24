@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.jooq.tools.StringUtils;
 import org.json.JSONArray;
@@ -62,7 +63,7 @@ public class TaskUtils {
 						break;
 					case CLOSE:
 						TaskNotification.onClose(api, task, workflow);
-						closeTaskChilds(api, task, workflow);
+						closeTaskChildOrParent(api, task, workflow);
 						break;
 					default:
 						break;
@@ -263,9 +264,19 @@ public class TaskUtils {
 	    return matcher;
 	}
 	
-	private static void closeTaskChilds(AonApiData api, Task task, TaskWorkflow workflow) {
-		if(task.getParent() == null) {
-			List<Byte> types = new ArrayList<>(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()));
+	private static void closeTaskChildOrParent(AonApiData api, Task task, TaskWorkflow workflow) {
+		List<Byte> types = new ArrayList<>(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()));
+		if(task.getParent() != null) {
+			List<Task> list = AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
+					f-> f.getParentProperty().eq(task.getId())
+					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+				).collect(Collectors.toList());
+			if(list.isEmpty()) {
+				Task tmp = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+				AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), tmp.setStatus(TaskStatus.PENDING));
+			}
+		} else {
+
 			
 			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
 					f-> f.getParentProperty().eq(task.getId())

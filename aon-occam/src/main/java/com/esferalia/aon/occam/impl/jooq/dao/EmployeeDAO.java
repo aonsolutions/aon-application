@@ -570,9 +570,9 @@ public class EmployeeDAO {
 		String dni = trim(employee.getDni());
 		Optional<String> nameOpt = employee.getName();
 		
-		if(r1.getType()!=null) {
+		if(r1.getType()!=null && r2.getType()==null) {
 			return 1;
-		} else if(r2.getType()!=null) {
+		} else if(r2.getType()!=null && r1.getType()==null) {
 			return -1;
 		} else if(AonStringUtils.equals(dni, r1.getDocument()) && !AonStringUtils.equals(dni, r2.getDocument())) {
 			return 1;
