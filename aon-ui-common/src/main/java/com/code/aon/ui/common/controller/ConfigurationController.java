@@ -267,7 +267,7 @@ public class ConfigurationController implements Serializable {
 	 * @return the help url
 	 */
 	public String getHelpURL() {
-		return "http://faqs.aonsolutions.es";//getURL(this.currentAction);
+		return "http://faqs.aonsolutions.es"; //getURL(this.currentAction);
 	}
 	
 	public LocaleElement[] getLocales() {

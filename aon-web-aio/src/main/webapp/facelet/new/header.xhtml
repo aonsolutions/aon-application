@@ -445,7 +445,20 @@
 	}
 
 	.search-results-popup {
-		
+		display: none !important;
+	}
+	
+	.search-results-popup > div{
+		display: none !important;
+	}
+	
+	
+	.search-results-popup.show {
+		display: block !important;
+	}
+	
+	.search-results-popup.show > div{
+		display: block !important;
 	}
 	
 	.search-results-popup td,
@@ -1450,20 +1463,39 @@
 	  }
 	}
 	
+	.search-results-popup tr .clipboard-icon {
+		font-size: 1rem; 
+		color: transparent;
+		transition: color .15s;
+	}
+	
+	.search-results-popup tr:hover .clipboard-icon {
+		color: #ccc;
+	}
+	
+	.search-results-popup tr .clipboard-icon:hover {
+		color: #404040;
+	}
+	
+	
+
+	
+	
 
 	</style>
 
 	<script type="text/javascript">
 			function showSearchResults(){
 				if ( #{rich:element('smartFilter')}.value ) {
-					#{rich:element('smartFilterTablePanel')}.style.display='block';
+					#{rich:element('smartFilterTableContainer')}.classList.add("show");
+					console.log(#{rich:element('smartFilterTablePanel')});
 				}
 			}
 			
 			function hideSearchResults(){
 				setTimeout(function() {
 					if ( document.activeElement != #{rich:element('smartFilterTablePanel')} )
-						#{rich:element('smartFilterTablePanel')}.style.display='none';
+						#{rich:element('smartFilterTableContainer')}.classList.remove("show");
 				}, 200);
 			}
 			
@@ -1471,7 +1503,7 @@
 			
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
-					#{rich:element('smartFilterTablePanel')}.style.display='none';
+					#{rich:element('smartFilterTableContainer')}.classList.remove("show");
 					e.stopPropagation();
       				e.preventDefault();  
       				e.returnValue = false;
@@ -1562,7 +1594,7 @@
 			function focusSearchResults(){
 				setTimeout(function() {
 					if ( #{rich:element('smartFilterTablePanel')} ) {
-						#{rich:element('smartFilterTablePanel')}.style.display='block';
+						#{rich:element('smartFilterTablePanel')}.classList.add("show");
 					}
 					#{rich:element('smartFilter')}.focus();
 				}, 300);
@@ -1651,8 +1683,6 @@
 					return;
 				}
 				
-				console.log("Hiding tooltip. FORCE = " + force);
-				
 				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
@@ -1728,6 +1758,30 @@
 						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
 					}
 				}
+			}
+			
+			function copyToClipboard(event,text) {
+				 #{rich:element('smartFilterTableContainer')}.classList.add("show");
+				
+				 if (navigator &amp;&amp; navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(text)
+				 } else {
+					 console.error("Clipboard API not available, make sure that app is running via HTTPS protocol.");
+					 console.error("Trying legacy method...");
+					 legacyCopyToCliboard(text);
+				 }
+			}
+			
+			function legacyCopyToCliboard(text) {
+				  const el = document.createElement('textarea');
+				  el.value = text;
+				  el.setAttribute('readonly', '');
+				  el.style.position = 'absolute';
+				  el.style.left = '-9999px';
+				  document.body.appendChild(el);
+				  el.select();
+				  document.execCommand('copy');
+				  document.body.removeChild(el);
 			}
 			
 			
@@ -1824,7 +1878,10 @@
 						
 					</aon:inputText>
 					
-					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" >
+					<aon:div id="smartFilterTableContainer" 
+							styleClass="search-results-popup" 
+							style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" 
+							>
 						
 						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" style="display:none;" >
 
@@ -1920,13 +1977,11 @@
 									</aon:column>
 									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="text-align: right;">
 										<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
-											onmouseout="enableRowSelector();" layout="inline" >										
-										<h:outputLink 
-										value="https://#{domainSwitcher.currentDomainURL}" target="_blank"
-										title="https://#{to.name}"
-										styleClass="aon-icon"
-										style="background: url(#{aonResource.resolve['/images/aon-right-arrow.png']}) no-repeat scroll left center transparent; display: inline-block; height: 21px;vertical-align: middle;}" >
-										</h:outputLink>
+											onmouseout="enableRowSelector();" layout="inline" >				
+																	
+											<aon:div styleClass="material-icons clipboard-icon" onclick="copyToClipboard(event,'https://#{domainSwitcher.currentDomainURL}')">
+												content_copy
+											</aon:div>
 										</aon:div>
 									</aon:column>
 									</ui:define>

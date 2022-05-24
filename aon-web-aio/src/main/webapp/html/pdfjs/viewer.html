@@ -489,32 +489,29 @@ See https://github.com/adobe-type-tools/cmap-resources
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
     }
+    
+    try {
 
-    const params = getParams();
-    document.documentElement.dataset.theme="no-toolbar";
-
-    if(params.encoded) {
-      params.file = b64DecodeUnicode(params.file)
-    }
-
-    if(params.toolbar){
-      activateToolbar();
-    }
-
-    if(params.newtoolbar){
-      activateNewToolbar();
-
-      if(params.file){
-        setDownloadURL(params.file);
-      }
-    }
-
-    if(params.zoom){
-      
-    }
-
-    console.log("PARAMETERS: ");
-    console.table(params);
+	    const params = getParams();
+	    document.documentElement.dataset.theme="no-toolbar";
+	
+	    if(params.encoded) {
+	      params.file = b64DecodeUnicode(params.file)
+	    }
+	
+	    if(params.toolbar){
+	      activateToolbar();
+	    }
+	
+	    if(params.newtoolbar){
+	      activateNewToolbar();
+	
+	      if(params.file){
+	        setDownloadURL(params.file);
+	      }
+	    }
+	
+    } catch(error) {}
 
   </script>
 </html>
