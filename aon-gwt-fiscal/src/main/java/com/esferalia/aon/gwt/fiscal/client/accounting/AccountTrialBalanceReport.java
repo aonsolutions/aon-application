@@ -76,7 +76,7 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		TrialBalancePanelReport panel = new TrialBalancePanelReport(options);
 
-		if (!options.isGuest()) {
+		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				
 				@Override

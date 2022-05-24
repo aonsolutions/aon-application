@@ -76,7 +76,7 @@ public class AccountConsolidatedBalanceReport extends MainEntryPoint {
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		ConsolidatedBalancePanelReport panel = new ConsolidatedBalancePanelReport(options);
 		
-		if (!options.isGuest()) {
+		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				
 				@Override

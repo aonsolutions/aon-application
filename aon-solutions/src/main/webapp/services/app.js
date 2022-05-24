@@ -588,6 +588,40 @@ export const AccountingMenu = [
   },
 ];
 
+export const AccountingPortalMenu = [
+  {
+    title: "Extracto de cuenta.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "StatementReportModule",
+  },
+  {
+    title: "Cuenta de Explotación (P Y G).",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountOperatingReport",
+  },
+  {
+    title: "Balance de Sumas y Saldos.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountTrialBalanceReport",
+  },
+  {
+    title: "Listado Diario de Movimientos.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "JournalReportModule",
+  },
+  {
+    title: "Listado Mayor de Cuentas.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "LedgerReportModule",
+  },
+  {
+    title: "Balances de Cuentas.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountBalanceReport",
+  }
+];
+
+
 export const PayrollMenu = [
   GWT.EMPLOYEES,
   GWT.CONVENIOS,
