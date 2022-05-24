@@ -66,7 +66,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
 
-	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
+	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {
+	}
 
 	// ------------------------------------------------- ContractEmployeeUIImpl
 
@@ -137,6 +138,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
 		}
+		
+		@Override
+		protected void hideMessagePanel() {
+			hideMessage();
+		}
 
 		@Override
 		protected void downloadCtoDocument() {
@@ -157,18 +163,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showSuccessMessage(String title, String message) {
 			showSuccess(title, message);
 		}
-		
+
 		@Override
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
 		}
-		
+
 		@Override
 		protected void onContractPDF() {
-			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> {});
+			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> {
+			});
 		}
 	}
-	
+
 	// ------------------------------------------------- ContractClausesUIImpl
 
 	public class ContractClauseUIImpl extends ContractClauseUI {
@@ -182,7 +189,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showSuccessMessage(String title, String message) {
 			showSuccess(title, message);
 		}
-		
+
 		@Override
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
@@ -283,7 +290,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(), contrataEmployeeObject.getContractStartDate());
+			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(),
+					contrataEmployeeObject.getContractStartDate());
 		}
 	}
 
@@ -291,14 +299,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Movimiento Previo", new HTML("\u00bfDesea realmente eliminar el movimiento previo\u003f"));
+			AonDialog dialog = new AonDialog("Movimiento Previo",
+					new HTML("\u00bfDesea realmente eliminar el movimiento previo\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					movPrevDelete();
@@ -311,14 +320,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Alta Consolidada", new HTML("\u00bfDesea realmente eliminar el alta consolidada\u003f"));
+			AonDialog dialog = new AonDialog("Alta Consolidada",
+					new HTML("\u00bfDesea realmente eliminar el alta consolidada\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					altaConsolidadaDelete();
@@ -469,14 +479,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Notificar copia basica", new HTML("\u00bfDesea realmente notificar la copia basica\u003f"));
+			AonDialog dialog = new AonDialog("Notificar copia basica",
+					new HTML("\u00bfDesea realmente notificar la copia basica\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					sendBasicCopy();
@@ -489,14 +500,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Notificar contrato", new HTML("\u00bfDesea realmente notificar el contrato\u003f"));
+			AonDialog dialog = new AonDialog("Notificar contrato",
+					new HTML("\u00bfDesea realmente notificar el contrato\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					sendContract();
@@ -526,14 +538,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Pr\u00F3rroga contrato", new HTML("\u00bfDesea realmente eliminar la pr\u00f3 del contrato\u003f"));
+			AonDialog dialog = new AonDialog("Pr\u00F3rroga contrato",
+					new HTML("\u00bfDesea realmente eliminar la pr\u00f3 del contrato\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					deleteContractExtension();
@@ -556,14 +569,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Notifici\u00f3n transformaci\u00F3n contrato", new HTML("\u00bfDesea realmente notificar la transformaci\u00f3n del contrato\u003f"));
+			AonDialog dialog = new AonDialog("Notifici\u00f3n transformaci\u00F3n contrato",
+					new HTML("\u00bfDesea realmente notificar la transformaci\u00f3n del contrato\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					sendContractTransform();
@@ -577,14 +591,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Notifici\u00f3n contrato", new HTML("\u00bfDesea realmente eliminar el contrato del SEPE\u003f"));
+			AonDialog dialog = new AonDialog("Notifici\u00f3n contrato",
+					new HTML("\u00bfDesea realmente eliminar el contrato del SEPE\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
-				
+
 				@Override
 				public void onCancel() {
 					// Nothing to do here
 				}
-				
+
 				@Override
 				public void onAccept() {
 					removeContract();
@@ -835,8 +850,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private NewSEPEContextMenu sepeContextMenu;
 
 	// ContractOtherData
+	private HTMLPanel employeeSepeButtons;
+
+	// ContractOtherData
 	private HTMLPanel employeeOtherDataButtons;
-	
+
 	// EmployeeClause
 	private HTMLPanel employeeClauseButtons;
 
@@ -955,38 +973,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tabLayOutPanel.selectTab(0, false);
 		tabLayOutPanel.addStyleName(style.container());
 
-		addBeforeSelectionHandler();
 		addSelectionHandler();
 	}
 
-	private void addBeforeSelectionHandler() {
-		tabLayOutPanel.addBeforeSelectionHandler(e -> {
-			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
-			switch (itemIdx) {
-			case 0:
-				Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
-				if (messageMap.isEmpty())
-					contrataEmployeeObject.setEmployeeContract(s -> checkTGSSStatus(), f -> {
-					});
-				break;
-			case 1:
-				if (isNotTransformation())
-					contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(),
-							s -> {
-							}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
-				break;
-			default:
-				break;
-			}
-		});
-	}
-
-	private boolean isNotTransformation() {
-		return Boolean.FALSE.equals(this.contrataEmployeeObject.getContractData().isHasTransformation());
-	}
-
 	private void addSelectionHandler() {
-		tabLayOutPanel.addSelectionHandler(e -> loadWindow(s -> {}));
+		tabLayOutPanel.addSelectionHandler(e -> loadWindow(s -> {
+		}));
 	}
 
 	private void loadWindow(Consumer<Void> finish) {
@@ -996,42 +988,44 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			checkButtonsToolbar();
 			hideMessage();
 			finish.accept(null);
-		});	
+		});
 	}
 
 	private void loadData(Consumer<Void> finish) {
 		Integer tabIdx = tabLayOutPanel.getSelectedIndex();
 		switch (tabIdx) {
 		case 0:
-			contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject,
-					this.contractId, success -> {
-						// Check SS only if not RETA
-						Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-						if (null == ssRegime || ssRegime != 3)
-							checkStatus(this.contrataEmployeeObject);
+			contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
+				// Check SS only if not RETA
+				Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+				if (null == ssRegime || ssRegime != 3)
+					checkStatus(this.contrataEmployeeObject);
 
-						if (AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
-							sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
-						else
-							sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
-
-						finish.accept(null);
-					});
-			break;
-		case 1:
-			contrataEmployeeObject.getContractSpecificData(s -> {
-				contractSpecificData.setEmployeeContractInfo(
-						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(),
-						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
-						hasCertificateSEPE,
-						contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDocument(),
-						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getStartDate(),
-						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId(),
-						contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
+				if (AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
+					sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
+				else
+					sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
 
 				finish.accept(null);
-			}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
+			});
 			break;
+		case 1:
+			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), hasCertificateSEPE);
+			finish.accept(null);
+			break;
+//			contrataEmployeeObject.getContractSpecificData(s -> {
+//				contractSpecificData.setEmployeeContractInfo(
+//						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(),
+//						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
+//						hasCertificateSEPE,
+//						contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDocument(),
+//						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getStartDate(),
+//						contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId(),
+//						contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
+//
+//				finish.accept(null);
+//			}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
+//			break;
 		case 2:
 			contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 			finish.accept(null);
@@ -1074,7 +1068,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showContractButtons();
 			break;
 		case 1:
-			showContractButtons();
+			showSepeButtons();
 			break;
 		case 2:
 			showContractOtherDataButtons();
@@ -1107,8 +1101,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			checkTGSSStatus();
 			checkContractExtension();
 			checkContractTransform();
-			showTgssOption();
-			hideSepeOption();
 			showContractButtons();
 			if (AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
 				sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
@@ -1119,20 +1111,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			checkCertificateSEPE();
 			checkContractExtension();
 			checkContractTransform();
-			hideTgssOption();
-			showSepeOption();
-			break;
-		case 4:
-			hideComunicaOpts();
 			break;
 		default:
 			break;
 		}
-	}
-
-	private void hideComunicaOpts() {
-		hideTgssOption();
-		hideSepeOption();
 	}
 
 	// ------------------------------------------------- Show/Hide Employee/PDF
@@ -1172,6 +1154,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
 		pdfViewer.getElement().getStyle().clearDisplay();
 	}
+	
+	private void onClosePDF() {
+		showEmployee();
+	}
 
 	// ------------------------------------------------- setContrataEmployeeObject
 
@@ -1181,7 +1167,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
-		
+
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 			success.accept("");
@@ -1194,7 +1180,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
-		
+
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 			tabLayOutPanel.selectTab(selectedTab, true);
@@ -1204,74 +1190,92 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- Show/Hide Toolbar methods
 
-	private void showSalariesButtons() {
-		employeeSalaryButtons.setVisible(true);
-		employeeContractButtons.setVisible(false);
-		employeeAttachButtons.setVisible(false);
-		employeeCalendarButtons.setVisible(false);
-		employeeContractIrpfButtons.setVisible(false);
-		employeeClauseButtons.setVisible(false);
-		employeeOtherDataButtons.setVisible(false);
-	}
-
 	private void showContractButtons() {
 		employeeContractButtons.setVisible(true);
+		employeeSepeButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
-		employeeClauseButtons.setVisible(false);
-		employeeOtherDataButtons.setVisible(false);
 	}
 
-	private void showCalendarButtons() {
-		employeeCalendarButtons.setVisible(true);
+	private void showSepeButtons() {
 		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(true);
+		employeeOtherDataButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
-		employeeClauseButtons.setVisible(false);
-		employeeOtherDataButtons.setVisible(false);
 	}
 
-	private void showContractIrpfButtons() {
-		employeeContractIrpfButtons.setVisible(true);
-		employeeCalendarButtons.setVisible(false);
-		employeeContractButtons.setVisible(false);
-		employeeAttachButtons.setVisible(false);
-		employeeSalaryButtons.setVisible(false);
-		employeeClauseButtons.setVisible(false);
-		employeeOtherDataButtons.setVisible(false);
-	}
-
-	private void showContractAttachButtons() {
-		employeeAttachButtons.setVisible(true);
-		employeeCalendarButtons.setVisible(false);
-		employeeContractButtons.setVisible(false);
-		employeeSalaryButtons.setVisible(false);
-		employeeContractIrpfButtons.setVisible(false);
-		employeeClauseButtons.setVisible(false);
-		employeeOtherDataButtons.setVisible(false);
-	}
-	
 	private void showContractOtherDataButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(false);
 		employeeOtherDataButtons.setVisible(true);
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
-		employeeCalendarButtons.setVisible(false);
-		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 	}
 
 	private void showContractClauseButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
 		employeeClauseButtons.setVisible(true);
 		employeeAttachButtons.setVisible(false);
-		employeeCalendarButtons.setVisible(false);
-		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
+	}
+
+	private void showContractAttachButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(false);
 		employeeOtherDataButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
+		employeeAttachButtons.setVisible(true);
+		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
+	}
+
+	private void showSalariesButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(true);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
+	}
+
+	private void showCalendarButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(true);
+		employeeContractIrpfButtons.setVisible(false);
+	}
+
+	private void showContractIrpfButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSepeButtons.setVisible(false);
+		employeeOtherDataButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(true);
 	}
 
 	// ------------------------------------------------- Abstract methods
@@ -1298,8 +1302,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		employeeContractButtons = initEmployeeContractButtons();
 		toolbar.add(employeeContractButtons);
-		
-		// EmployeeClause
+
+		// EmployeeSepeButtons
+
+		employeeSepeButtons = initEmployeeSepeButtons();
+		toolbar.add(employeeSepeButtons);
+
+		// EmployeeOtherData
 
 		employeeOtherDataButtons = initEmployeeOtherDataButtons();
 		toolbar.add(employeeOtherDataButtons);
@@ -1381,22 +1390,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		};
 		hPanel.add(tgss);
 
-		sepe = new AonExpandButton("SEPE", AON.CSS.aonIconSepe()) {
-
-			@Override
-			public void onExpandClick(ClickEvent event) {
-				NativeEvent nativeEvent = event.getNativeEvent();
-				sepeContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-				sepeContextMenu.show();
-			}
-
-			@Override
-			public void onDefaultClick(ClickEvent evet) {
-				onCTO();
-			}
-		};
-		hPanel.add(sepe);
-
 		idcMonthListBox = new MonthListBox();
 		idcMonthListBox.addChangeHandler(e -> showIdcPlNss(idcMonthListBox.getSelectedMonth()));
 		hPanel.add(idcMonthListBox);
@@ -1426,79 +1419,31 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void onSaveContract() {
 		setChanges(true);
 
-		Integer tabIdx = tabLayOutPanel.getSelectedIndex();
-
-		switch (tabIdx) {
-		case 0:
-			Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
-			if (messageMap.isEmpty())
-				contrataEmployeeObject.setEmployeeContract(s -> {
-					showSuccess("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName()
-							+ " ha sido actualizado correctamente");
-					checkStatus(contrataEmployeeObject);
-					checkTGSSStatus();
-				}, f -> {
-				});
-			else
-				AonMessagePanel.showError(messageContainer, messageMap);
-			break;
-		case 1:
-			if (isNotTransformation())
-				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {
-					showSuccess("Guardado", "Los datos SEPE han sido actualizados correctamente");
-
-					contrataEmployeeObject.getContractSpecificData(su -> contractSpecificData.setEmployeeContractInfo(
-							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(),
-							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
-							hasCertificateSEPE,
-							contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDocument(),
-							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getStartDate(),
-							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId(),
-							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData()),
-							fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
-				}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void onDeleteContract() {
-		AonDialog dialog = new AonDialog("BORRADO", getDeleteMessageWidget());
-		dialog.confirm(new AonAcceptDialogCallback() {
-
-			@Override
-			public void onCancel() {
-				// Nothing to do here, only hide dialog
-			}
-
-			@Override
-			public void onAccept() {
-				contrataEmployeeObject.delete4EverContract(s -> {
-					setChanges(true);
-					onListEmployees();
-				}, f -> {
-				});
-			}
-		});
-	}
-
-	private void movPrevDelete() {
-		showLoading("Borrando movimiento previo...");
-		contrataEmployeeObject.movPrevDelete(s -> {
-			hideMessage();
-			loadWindow(su -> {
+		Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
+		if (messageMap.isEmpty())
+			contrataEmployeeObject.setEmployeeContract(s -> {
+				showSuccess("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName()
+						+ " ha sido actualizado correctamente");
+				checkStatus(contrataEmployeeObject);
+				checkTGSSStatus();
+			}, f -> {
 			});
-		}, f -> showError("Error borrado movimiento previo", f.getMessage()));
-	}
+		else
+			AonMessagePanel.showError(messageContainer, messageMap);
 
-	private void altaConsolidadaDelete() {
-		showLoading("Borrando alta consolidad...");
-		contrataEmployeeObject.altaConsolidadaDelete(s -> {
-			hideMessage();
-			loadWindow(su -> {
-			});
-		}, f -> showError("Error borrado alta consolidada", f.getMessage()));
+//		contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {
+//			showSuccess("Guardado", "Los datos SEPE han sido actualizados correctamente");
+//
+//			contrataEmployeeObject.getContractSpecificData(su -> contractSpecificData.setEmployeeContractInfo(
+//					contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(),
+//					contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
+//					hasCertificateSEPE,
+//					contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDocument(),
+//					contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getStartDate(),
+//					contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId(),
+//					contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData()),
+//					fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
+//		}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
 	}
 
 	private void onAFIChanges() {
@@ -1510,7 +1455,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 			@Override
 			protected void onAcceptCB() {
-				loadWindow(su -> {});
+				loadWindow(su -> {
+				});
 			}
 
 			@Override
@@ -1676,10 +1622,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		idcDateListBox.setSelected(date, true);
 		contrataEmployeeObject.downloadIdc(date, dataURI -> {
 			hideMessage();
-//			showPdf();
-//			idcDateListBox.setVisible(true);
-//			idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
-//			idcDateListBox.setSelected(date, true);
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC", f.getMessage()));
 	}
@@ -1698,6 +1640,77 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC PL NSS", f.getMessage()));
+	}
+
+	private void onDeleteContract() {
+		AonDialog dialog = new AonDialog("BORRADO", getDeleteMessageWidget());
+		dialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {
+				// Nothing to do here, only hide dialog
+			}
+
+			@Override
+			public void onAccept() {
+				contrataEmployeeObject.delete4EverContract(s -> {
+					setChanges(true);
+					onListEmployees();
+				}, f -> {
+				});
+			}
+		});
+	}
+
+	private void movPrevDelete() {
+		showLoading("Borrando movimiento previo...");
+		contrataEmployeeObject.movPrevDelete(s -> {
+			hideMessage();
+			loadWindow(su -> {
+			});
+		}, f -> showError("Error borrado movimiento previo", f.getMessage()));
+	}
+
+	private void altaConsolidadaDelete() {
+		showLoading("Borrando alta consolidad...");
+		contrataEmployeeObject.altaConsolidadaDelete(s -> {
+			hideMessage();
+			loadWindow(su -> {
+			});
+		}, f -> showError("Error borrado alta consolidada", f.getMessage()));
+	}
+
+	// ------------------------------------------------- EmployeeSepeButtons
+
+	private HTMLPanel initEmployeeSepeButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+
+		AonToolbarButton saveSepe = new AonToolbarButton(AON.MSG.saveAction() + " Datos Sepe", AON.CSS.aonIconSave());
+		saveSepe.addClickHandler(e -> contractSpecificData.saveSepe());
+		hPanel.add(saveSepe);
+
+		hPanel.add(deleteContract);
+
+		sepe = new AonExpandButton("SEPE", AON.CSS.aonIconSepe()) {
+
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				sepeContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				sepeContextMenu.show();
+			}
+
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				onCTO();
+			}
+		};
+		hPanel.add(sepe);
+
+		hPanel.add(closePDF);
+
+		return hPanel;
 	}
 
 	private void onCTO() {
@@ -1733,31 +1746,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showPdf();
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error Certific@2", f.getMessage()));
-	}
-
-	private void onClosePDF() {
-		showEmployee();
-	}
-	
-	private void onExportContractPDF() {
-		showLoading("Generando borrador de contrato");
-		contrataEmployeeObject.getContractOtherInfo(s -> {
-			if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
-				contrataEmployeeObject.getContractSpecificData(su -> {
-					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-					contrataEmployeeObject.saveContractExport(
-							a -> showSuccess("Borrador Contrato", "El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
-							e -> showError("Borrador Contrato", e.getMessage()));
-				}, f -> showError("Borrador Contrato", f.getMessage()));
-			else {
-				contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-				contrataEmployeeObject.saveContractExport(
-						a -> showSuccess("Borrador Contrato", "El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
-						e -> showError("Borrador Contrato", e.getMessage()));
-			}
-		}, f -> showError("Borrador Contrato", f.getMessage()));
 	}
 
 	private void sendBasicCopy() {
@@ -1887,22 +1875,44 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, f -> {
 		});
 	}
-	
+
 	// ------------------------------------------------- EmployeeOtherDataButtons
 
 	private HTMLPanel initEmployeeOtherDataButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
 
-		AonToolbarButton saveClauses = new AonToolbarButton(AON.MSG.saveAction() + " Otros Datos", AON.CSS.aonIconSave());
+		AonToolbarButton saveClauses = new AonToolbarButton(AON.MSG.saveAction() + " Otros Datos",
+				AON.CSS.aonIconSave());
 		saveClauses.addClickHandler(e -> contractOtherData.saveOhterData());
 		hPanel.add(saveClauses);
 
 		AonToolbarButton exportContractPDF = new AonToolbarButton("Borrador Contrato", AON.CSS.aonIconPdf());
 		exportContractPDF.addClickHandler(e -> contractOtherData.onContractPDF());
 		hPanel.add(exportContractPDF);
-		
+
 		return hPanel;
+	}
+
+	private void onExportContractPDF() {
+		showLoading("Generando borrador de contrato");
+		contrataEmployeeObject.getContractOtherInfo(s -> {
+			if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+				contrataEmployeeObject.getContractSpecificData(su -> {
+					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+					contrataEmployeeObject.saveContractExport(a -> showSuccess("Borrador Contrato",
+							"El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
+							e -> showError("Borrador Contrato", e.getMessage()));
+				}, f -> showError("Borrador Contrato", f.getMessage()));
+			else {
+				contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+				contrataEmployeeObject.saveContractExport(a -> showSuccess("Borrador Contrato",
+						"El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
+						e -> showError("Borrador Contrato", e.getMessage()));
+			}
+		}, f -> showError("Borrador Contrato", f.getMessage()));
 	}
 
 	// ------------------------------------------------- EmployeeClausesButtons
@@ -1922,7 +1932,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		AonToolbarButton importClause = new AonToolbarButton("Importar Clausula", AON.CSS.aonIconDownload());
 		importClause.addClickHandler(e -> contractClauseUI.importClause());
 		hPanel.add(importClause);
-		
+
 		return hPanel;
 	}
 
@@ -2197,22 +2207,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	// ------------------------------------------------- SEPE status
-
-	private void hideSepeOption() {
-		setVisible(sepe.getElement(), false);
-	}
-
-	private void showSepeOption() {
-		setVisible(sepe.getElement(), true);
-	}
-
-	private void hideTgssOption() {
-		setVisible(tgss.getElement(), false);
-	}
-
-	private void showTgssOption() {
-		setVisible(tgss.getElement(), true);
-	}
 
 	public void setHasCertificateSEPE(boolean hasCertificateSEPE) {
 		this.hasCertificateSEPE = hasCertificateSEPE;

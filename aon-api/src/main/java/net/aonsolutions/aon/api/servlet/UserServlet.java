@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -126,6 +127,9 @@ public class UserServlet extends AonApiHttpServlet {
 			case "/workgroup":
 				response(req, resp, insertUserWorkgroup(api));
 				break;
+			case "/service":
+				response(req, resp, saveServiceAccount(api));
+				break;		
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -153,6 +157,21 @@ public class UserServlet extends AonApiHttpServlet {
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
+	}
+	
+
+	private JSONObject saveServiceAccount(AonApiData api) {
+		String name = JsonUtils.getString(api.getData(), IJsonNames.NAME);
+		User user = new User()
+				.setActive(true)
+				.setType(UserType.SERVICE)
+				.setDomain(api.getDomain().getId())
+				.setLogin(name)
+				.setName(name)
+				.setToolbar(UserToolbar.AON_SOLUTIONS);
+		AON.insertUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
+		
+		return new JSONObject();
 	}
 	
 	// USER WORKGROUP
@@ -241,6 +260,10 @@ public class UserServlet extends AonApiHttpServlet {
 					.or(f.getAuthNameProperty().like("%" + value + "%"))
 					.or(f.getAuthDocumentProperty().like("%" + value + "%"));
 			filter = filter.and(valueFilter);
+		}
+		
+		if(api.getData().opt(IJsonNames.TYPE) != null) {
+			filter = filter.and(f.getTypeProperty().eq(UserType.safeValueOf(api.getData().getString(IJsonNames.TYPE)).value()));
 		}
 		
 		if(api.getData().opt(IJsonNames.WORKGROUP) != null) {

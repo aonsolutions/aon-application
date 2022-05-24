@@ -460,7 +460,7 @@ public class CheckItModule extends MainEntryPoint {
 			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
 			
 			
-			if (checkItBankAccount.getAtDate() != null && CalendarUtil.getDaysBetween(checkItBankAccount.getAtDate(), new Date()) >= 3) {
+			if (checkItBankAccount.getAtDate() != null && CalendarUtil.getDaysBetween(checkItBankAccount.getAtDate(), new Date()) >= 4) {
 				atDateBox.addStyleName(AON.CSS.aonColorRed());
 				updateError = true;
 				int noUpDays = CalendarUtil.getDaysBetween(checkItBankAccount.getAtDate(), new Date());

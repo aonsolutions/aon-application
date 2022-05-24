@@ -340,6 +340,15 @@ export const BANK = {
   price: " ", // 'Desde 45€/mes'
 };
 
+export const API_SERVICE = {
+  app: "api_service",
+  title: "Servicio API",
+  description: "Servicio API.",
+  icon: AON_ICONS.AON_APP,
+  color: "#EA6D41",
+  price: " ", // 'Desde 45€/mes'
+};
+
 export const AULA = {
   app: "aula",
   title: "Aula",
@@ -424,7 +433,7 @@ export const Apps = {
 };
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,

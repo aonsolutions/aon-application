@@ -1378,6 +1378,7 @@ public interface Properties {
 	public interface UserProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<Byte> getTypeProperty();
 		Property<String> getNameProperty();
 		Property<String> getLoginProperty();
 		Property<Byte> getActiveProperty();

@@ -561,8 +561,7 @@ public class SaleInvoiceController extends InvoiceController {
 				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
 				invoice.setNumber(number);
 				invoice.setReferenceCode(null);
-				if(!isBizkaia()) 
-					invoice.setIssueDate(new Date());
+				invoice.setIssueDate(new Date());
 				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			}
 
