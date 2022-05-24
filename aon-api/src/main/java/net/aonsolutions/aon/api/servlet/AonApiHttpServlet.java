@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -183,16 +185,25 @@ public class AonApiHttpServlet extends HttpServlet{
 		responseFile(resp, filename, is, mimetype);
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype, String contentDisposition) throws IOException {
+		ByteArrayInputStream is =  new ByteArrayInputStream(file);
+		responseFile(resp, filename, is, mimetype, contentDisposition);
+	}
+
+	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype) throws IOException {
+		responseFile(resp, filename, is, mimetype, "inline");
+	}
+	
+	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype, String contentDisposition) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
-		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
+		resp.setHeader(IConstants.CONTENT_DISPOSITION, contentDisposition + "; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
 		AonIOUtils.copy(is, resp.getOutputStream());
 		resp.flushBuffer();
 		is.close();
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, MimeType mimetype) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
@@ -270,5 +281,15 @@ public class AonApiHttpServlet extends HttpServlet{
 				throw new AonApiException(AonApiError.EXPIRED_TOKEN.getMessage());
 			}
 		}
+	}
+	
+	public String decode(byte[] value){
+		String decode = "";
+		try{
+			decode = new String(Base64.getDecoder().decode(value), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return decode;
 	}
 }

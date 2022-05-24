@@ -342,8 +342,8 @@ export const BANK = {
 
 export const API_SERVICE = {
   app: "api_service",
-  title: "Servicio API",
-  description: "Servicio API.",
+  title: "Cuentas de Servicio | Acceso API",
+  description: "Cuentas de Servicio | Acceso API.",
   icon: AON_ICONS.AON_APP,
   color: "#EA6D41",
   price: " ", // 'Desde 45€/mes'

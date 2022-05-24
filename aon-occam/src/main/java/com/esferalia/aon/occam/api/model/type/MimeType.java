@@ -44,7 +44,7 @@ public enum MimeType implements Serializable {
     OCTECT_STREAM ("application/octet-stream",""),
     XSIG ("text/xml", "xsig"),
     SIGNED_FACTURAE ("text/xml", "xml"),
-    JSON("application/json","js"),
+    JSON("application/json","json"),
     PKCS12("application/x-pkcs12","p12"),
     JKS("application/x-java-keystore","jks"),
     SVG ("image/svg+xml", "svg")

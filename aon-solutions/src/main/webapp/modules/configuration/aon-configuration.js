@@ -26,6 +26,7 @@ import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
 import { AonInput } from "../../components/aon-input.js";
+import { AonDate } from "../../components/aon-date.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -136,6 +137,14 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildGroups(),
         });
 
+        if(this.dur.isApiService()){
+          companyOptions.push({
+            name: MSG.SERVICE_ACCOUNTS,
+            icon: MATERIAL_ICONS.API,
+            fn: () => this.buildServiceAccount(),
+          });
+        }
+
         if (!this.isMobile()) {
           companyOptions.push({
             name: MSG.HIRING,
@@ -192,19 +201,8 @@ export class AonConfiguration extends AonElement {
           },
           fn: () => this.buildComunicaConfiguration(),
         });
-      } else if(this.dur.isApiService() && this.isBeta()){
-        appOptions.push({
-          id:  API_SERVICE.title,
-          name: API_SERVICE.title,
-          aonIcon: {
-            icon: API_SERVICE.icon,
-            color: API_SERVICE.color
-          },
-          fn: () => this.buildServiceAccount(),
-        });
-      }    
+      } 
 
-      
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
@@ -295,19 +293,26 @@ export class AonConfiguration extends AonElement {
   createServiceAccount() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     let d = document.getElementById(aonConfiguration.DIALOG);
+
+    let div = this.createElement(TAG.DIV);
     
     let input =  this.createAonElement(new AonInput(), CONSTANT.NAME, MSG.NAME);
     input.description = MSG.NAME;
+    div.appendChild(input);
+
+    // let expireDate =  this.createAonElement(new AonDate(), CONSTANT.DATE, MSG.EXPIRATION_DATE);
+    // div.appendChild(expireDate);
 
     d.clear();
     if(!this.isMobile()) d.width = '400px';
     d.setTitle(MSG.CREATE_SERVICE_ACCOUNT);
-    d.setContent(input);
+    d.setContent(div);
     d.addAcceptAction(() => {
-      saveServiceAccount({name:input.value});
-      alert("guardar cuenta de servicio " + input.value + " !!");
+      saveServiceAccount({name:input.value}).then(() => {
+        this.getElement(CONSTANT.AON_SERVICE_ACCOUNT_LIST).reload();
       });
-      d.open();
+    });
+    d.open();
   }
 
 	buildInvoiceConfiguration() {
