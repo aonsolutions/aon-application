@@ -342,6 +342,7 @@ public class Contrata {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/TransformacionServlet?pagina=inicio").click();
 	        handleSepeExceptions(htmlPage);
 	      
+	      
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 			
 			{//DATA ENTERPRISE
@@ -407,7 +408,7 @@ public class Contrata {
 					DomNode tipoJornada = form.querySelector("select[name=tipoJornada]");
 					if(tipoJornada!=null &&cto.getJndType()!=null && cto.getDurationTypeJndHour()!=null && cto.getDurationTypeJndMin()!=null) {
 						((HtmlSelect)tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
-						String hours = "00"+cto.getDurationTypeJndHour();
+						String hours = Toolkit.fillStringLeft(cto.getDurationTypeJndHour(), "0", 4);
 						String min = cto.getDurationTypeJndMin();
 						form.getInputByName("horas").setValueAttribute(hours);
 						form.getInputByName("minutos").setValueAttribute(min);
