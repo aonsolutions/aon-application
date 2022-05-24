@@ -206,7 +206,7 @@ public class HtmlUnitToolkit {
 	// MANAGES THE EXCEPTIONS OF NEW UI
 	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
 		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");
-		if (errors.size() == 0)
+		if (errors.isEmpty())
 			return;
 
 		StringBuilder errorList = new StringBuilder();

@@ -29,7 +29,7 @@ export class AonBasicTable extends AonElement {
 
   initialize() {
     this.TABLE = this.id + CONSTANT.TABLE.initCap();
-    this.TABLE_ROW = this.TABLE + CONSTANT.ROW.initCap();
+    this.TABLE_ROW = this.id + CONSTANT.ROW.initCap();
     this.rows = 0;
   }
 
@@ -51,6 +51,18 @@ export class AonBasicTable extends AonElement {
     return td;
   }
 
+  getCell(row, idx) {
+    let tr =  this.getElement(this.TABLE_ROW + row);
+    if(tr){
+      let tds = [...tr.querySelectorAll("td")];
+      if(tds && tds.length){
+        return tds.find((x,i)=> i===idx);
+      }
+    }
+
+    return null;
+  }
+
   addRow() {
     this.rows = this.rows + 1;
     let tr = this.createElement(TAG.TR);
@@ -64,7 +76,7 @@ export class AonBasicTable extends AonElement {
   }
 
   getRowsCount(){
-    return this.querySelectorAll(`[id*=${this.TABLE_ROW}]`).length;
+    return this.querySelectorAll(`[id*='${this.TABLE_ROW}']`).length;
   }
 
   removeRow(row){

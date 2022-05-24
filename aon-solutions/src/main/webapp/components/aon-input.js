@@ -447,6 +447,10 @@ export class AonInput extends AonElement {
     this.getElement(this.INPUT).addEventListener(EVENT.CHANGE, fn);
   }
 
+  onInput(fn) {
+    this.getElement(this.INPUT).addEventListener(EVENT.INPUT, fn);
+  }
+  
   isTypeList() {
     return this.hasAttribute(CONSTANT.TYPE) && this.getAttribute(CONSTANT.TYPE) === "list";
   }
