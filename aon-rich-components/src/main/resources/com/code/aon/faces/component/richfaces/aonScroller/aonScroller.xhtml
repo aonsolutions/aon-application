@@ -30,7 +30,21 @@
 					boundaryControls="#{'hide'}"
 					styleClass="aon-dataScroller-buttons"
 					reRender="#{dataTable}PaginatorInfo" />
-			</aon:panelGroup>			    					    	
+			</aon:panelGroup>			    			    	
+			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
+				<aon:outputText styleClass="aon-margin-right"
+					value="#{bundle.aon_row_number}"
+					/>
+				<aon:selectOneMenu value="#{aonConfiguration.pageLimit}" 
+				>
+					<f:selectItems value="#{commonCollections.pageLimits}"/>
+					<a4j:support event="onchange" ajaxSingle="true" 
+						reRender="#{dataTable},#{dataTable}MessageDataScroller">
+						<f:setPropertyActionListener target="#{page}" value="#{1}" />
+						<aon:actionListener method="#{aonConfiguration.savePageLimit}" />
+					</a4j:support>				
+				</aon:selectOneMenu>
+			</aon:panelGroup>		    	
 		</aon:panelGrid>			
 	</aon:div>
 </ui:composition>
