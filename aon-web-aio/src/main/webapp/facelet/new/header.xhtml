@@ -1736,10 +1736,8 @@
 						return;
 					}
 					
-					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";
-					
-					
-					
+					const isSearch = #{rich:element('smartFilterTableContainer')}.classList.contains("show");
+	
 					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
 						tooltip.classList.add("focus");
 						
