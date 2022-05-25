@@ -846,7 +846,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			ApplicationParameter child = AON.getApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), APP_COMUNICA_EMAILS);
 			if(child!=null && child.getValue()!=null && !child.getValue().isEmpty()) {
 				list.addAll( Arrays.asList(child.getValue().split(",")) );
-			} else if(domain.isChild()) {
+			}  
+			
+			if(domain.isChild()) {
 				ApplicationParameter parent = AON.getApplicationParameter(domain.getName(), domain.getParentId(), api.getUser().getLogin(), APP_COMUNICA_EMAILS);
 				if(parent!=null && parent.getValue()!=null && !parent.getValue().isEmpty()) {
 					list.addAll( Arrays.asList(parent.getValue().split(",")) );
@@ -855,7 +857,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		return list;
 	}
 	

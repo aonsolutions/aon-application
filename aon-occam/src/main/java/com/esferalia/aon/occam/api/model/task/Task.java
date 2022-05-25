@@ -48,7 +48,7 @@ public class Task  implements Serializable{
 	private List<TaskWorkflow> workflows; 
 	
 	private List<Tag> tags;
-	
+
 	// GOOGLE TASK IDS
 	
 	private String gtaskId; 
@@ -248,7 +248,7 @@ public class Task  implements Serializable{
 	public void addWorkflow(TaskWorkflow w) {
 		this.workflows.add(w);
 	}
-	
+
 	public TaskPeriod getRepeatPeriod() {
 		return repeatPeriod;
 	}
@@ -342,7 +342,7 @@ public class Task  implements Serializable{
 		this.tmp = tmp;
 		return this;
 	}
-	
+
 	public List<Tag> getTags() {
 		return tags;
 	}
@@ -355,7 +355,7 @@ public class Task  implements Serializable{
 	public void addTag(Tag tag) {
 		this.tags.add(tag);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(id);
