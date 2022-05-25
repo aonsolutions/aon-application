@@ -146,6 +146,7 @@ public interface EnterprisesServiceAsync {
 	void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void getAttachData(String currentDomainName, String currentUser, Integer attachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------ Contract Caluses
 	

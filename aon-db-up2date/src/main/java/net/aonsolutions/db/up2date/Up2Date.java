@@ -19,7 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.ContractAttachUpdate;
+import net.aonsolutions.db.up2date.payroll.ContractAttachUpdateII;
 import net.aonsolutions.db.up2date.security.UserAddTypeColumnUpdate;
 import net.aonsolutions.db.up2date.tgss.Art1512022Update;
 
@@ -213,31 +213,32 @@ public class Up2Date {
 //    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
 //    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
 //    		AgreementClean.AGREEMENTCLEAN,
-//    		CertificatesClean.CERTIFICATESCLEAN
+//    		CertificatesClean.CERTIFICATESCLEAN,
 //    		Bases2022UpdateII.BASES2022UPDATEIII,
 //    		HomeBases2022Update.HOMEBASES2022UPDATE,
 //    		TrainningBases2022Update.TRAINNINGBASES2022UPDATE,
 //    		TrainingPercentages2022Update.TRAINNINGPERCENTAGES2022UPDATE,
 //    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
-//    		Artist2022Update.ARTIST2022UPDATE
+//    		Artist2022Update.ARTIST2022UPDATE,
 //    		RefreshMod303Result.REFRESH_MOD303_RESULT,
-//    		Artist2022Fix.ARTIST2022FIX
+//    		Artist2022Fix.ARTIST2022FIX,
 //    		Bases2022Fix.BASES2022FIX,
 //    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
-//    		UdapaSalesFix.UDAPA_SALES_FIX
-//   		SalaryHours2022Fix.SALARYHOURS2022FIX,
+//    		UdapaSalesFix.UDAPA_SALES_FIX,
+//    		SalaryHours2022Fix.SALARYHOURS2022FIX,
 //    		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
-//    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII
+//    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII,
 //    		TaskEvent2TaskWorkfow.TASK_COMMENT_2_TASK_WORKFLOW,
-//    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
+//    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW,
 //			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
-//    		BaseCgpMin2022FixIII.BASECGPMIN2022FIX
+//    		BaseCgpMin2022FixIII.BASECGPMIN2022FIX,
 //    		DomainName2LowerCase.DOMAINNAME2LOWERCASE,
 //    		AlterSalaryEmbargo.ALTERSALARYEMBARGO,
-//    		Holidays2022Update.HOLIDAYS2022UPDATE
+//    		Holidays2022Update.HOLIDAYS2022UPDATE,
     		Art1512022Update.ART1512022UPDATE,
-    		ContractAttachUpdate.CONTRACTATTACHUPDATE,
-    		UserAddTypeColumnUpdate.USER_ADD_TYPE_COLUMN_UPDATE
+//    		ContractAttachUpdate.CONTRACTATTACHUPDATE,
+    		UserAddTypeColumnUpdate.USER_ADD_TYPE_COLUMN_UPDATE,
+    		ContractAttachUpdateII.CONTRACTATTACHUPDATEII
     };
     
 

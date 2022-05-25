@@ -217,6 +217,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId) throws IllegalArgumentException;
 
+	String getAttachData(String currentDomainName, String currentUser, Integer attachId) throws IllegalArgumentException;
+
 	// ------------------------------------------------ Contract Clauses
 	
 	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId) throws IllegalArgumentException ;

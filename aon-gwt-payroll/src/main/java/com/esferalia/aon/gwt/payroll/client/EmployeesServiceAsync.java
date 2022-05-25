@@ -323,8 +323,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData,
-			ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void removeContractTransform(String currentDomainName, String currentUser, String ide, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
