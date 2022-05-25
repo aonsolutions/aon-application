@@ -1599,15 +1599,10 @@
 			
 			function resetResultStates (searchResults, selected) {
 				searchResults.forEach(p => {
-					p.style.background = "#fff";
-					
-					const mouseout = searchResults[selected].onmouseout;
-					if(mouseout){
-						mouseout({
-							target : searchResults[selected],
-						});
-					} 
-					})
+					p.style.background = "transparent";
+				})
+				
+				hideHelpTooltip();
 				
 				const mouseover =  searchResults[selected].onmouseover;
 				if(mouseover){
@@ -2032,7 +2027,7 @@
 										<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
 											onmouseout="enableRowSelector();" layout="inline" >				
 																	
-											<aon:div styleClass="material-icons clipboard-icon" onclick="copyToClipboard(event,'https://#{domainSwitcher.currentDomainURL}')">
+											<aon:div styleClass="material-icons clipboard-icon" onclick="copyToClipboard(event,'#{domainSwitcher.currentDomainURL}')">
 												content_copy
 											</aon:div>
 										</aon:div>
