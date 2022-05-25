@@ -610,9 +610,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, certifica2Info, callback);
 	}
 	
-	public void sendContractTransform(EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
-			AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, contractTransform, callback);
+	public void sendContractTransform(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
 
 	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
