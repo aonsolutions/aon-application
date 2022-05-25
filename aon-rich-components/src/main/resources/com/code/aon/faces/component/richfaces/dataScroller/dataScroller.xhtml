@@ -48,7 +48,7 @@
 			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
 				<aon:outputText styleClass="aon-margin-right"
 					value="#{bundle.aon_row_number}"/>
-				<aon:selectOneMenu value="#{domainUser.to.pageLimit}" >
+				<aon:selectOneMenu value="#{pageSize}" >
 					<f:selectItems value="#{commonCollections.pageLimits}" />
 					<a4j:support event="onchange" ajaxSingle="true" 
 						reRender="#{dataTable},#{dataTable}MessageDataScroller">
