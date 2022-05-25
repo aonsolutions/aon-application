@@ -97,4 +97,11 @@ public class CopyBasic {
 			return value;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "CopyBasic [workAddress=" + workAddress + ", restContract=" + restContract + ", firmType=" + firmType
+				+ ", sepeId=" + sepeId + ", ipf=" + ipf + ", fini=" + fini + ", fend=" + fend + "]";
+	}
+	
 }
