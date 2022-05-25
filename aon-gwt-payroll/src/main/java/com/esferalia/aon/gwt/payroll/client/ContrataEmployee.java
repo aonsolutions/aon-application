@@ -231,6 +231,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showSuccessMessage(String title, String message) {
 			showSuccess(title, message);
 		}
+		
+		@Override
+		protected void showLoadingMessage(String message) {
+			showLoading(message);
+		}
+
+		@Override
+		protected void showAttachPDf(String dataURI) {
+			showPdf();
+			hideMessage();
+			pdfViewer.open(dataURI);
+			idcDateListBox.setVisible(false);
+			idcMonthListBox.setVisible(false);
+		}
 	}
 
 	// ------------------------------------------------- EmployeeIrpfImpl
