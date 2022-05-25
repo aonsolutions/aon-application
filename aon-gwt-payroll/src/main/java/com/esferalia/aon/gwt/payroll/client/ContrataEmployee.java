@@ -740,7 +740,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	AonToolbar toolbarPDFViewer;
 
 	@UiField
-	DeckPanel deckPanel;
+	DeckPanel mainDeckPanel;
 	
 	@UiField
 	HTMLPanel messageContainer;
@@ -1061,12 +1061,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showEmployee() {
 		toolbarDeckPanel.showWidget(0);
-		deckPanel.showWidget(0);
+		mainDeckPanel.showWidget(0);
 	}
 
 	private void showPdf() {
 		toolbarDeckPanel.showWidget(1);
-		deckPanel.showWidget(1);
+		mainDeckPanel.showWidget(1);
 	}
 	
 	private void onClosePDF() {

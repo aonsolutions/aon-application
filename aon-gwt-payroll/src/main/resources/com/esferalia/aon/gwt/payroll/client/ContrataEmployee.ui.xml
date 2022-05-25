@@ -151,7 +151,7 @@
 			<g:center>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 					<g:center>
-						<g:DeckPanel ui:field="deckPanel">
+						<g:DeckPanel ui:field="mainDeckPanel">
 							<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
 								<g:HTMLPanel ui:field="messageContainer" />
 								<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
