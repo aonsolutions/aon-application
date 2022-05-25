@@ -113,8 +113,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			String customerEdiCode, String deliveryPointEdiCode) {
 		SEH1C seh1c = new SEH1C();
 	
-		String referenceCode = isECI(delivery.getCustomer().getDocument())
-				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
+//		String referenceCode = isECI(delivery.getCustomer().getDocument())
+//				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
+		
+		String referenceCode = delivery.getReferenceCode();
 		
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
 				.getValue());

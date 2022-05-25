@@ -63,8 +63,10 @@ public class UdapaDeliveryWriter {
 		// TODO Auto-generated method stub
 		SEH1C seh1c = new SEH1C();
 		
-		String referenceCode = isECI(delivery.getRegistry().getDocument()) 
-				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
+//		String referenceCode = isECI(delivery.getRegistry().getDocument()) 
+//				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
+				
+		String referenceCode = delivery.getReferenceCode();
 
 		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351
 				.getValue());
