@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -83,6 +84,7 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
@@ -1163,10 +1165,14 @@ public class DeliveryCreator implements Serializable {
 		return raddress;
 	}
 	
-	private Customer obtainCustomer(AONContext ctx,
-			DATOSCLIENTETYPE datoscliente) {
-		List<Customer> customerList = SalesDAO.getCustomerList(ctx, datoscliente
-				.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());
+	private Customer obtainCustomer(AONContext ctx, DATOSCLIENTETYPE datoscliente) {
+		String document = datoscliente.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO();
+		
+		List<Customer> customerList = CustomerDAO.getList(ctx, f-> 
+				f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getDocumentProperty().eq(document))
+				.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value())));
+		
 		List<Integer> ids = customerList.stream().map(Customer::getId)
 				.map(i -> Integer.valueOf(i)).collect(Collectors.toList());
 		List<RegistryNote> ediRNotes = AON.getRegistryNoteList(
