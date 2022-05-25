@@ -27,10 +27,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -750,7 +748,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract TabLayoutPanel getFootTabPanel();
 	protected abstract SplitLayoutPanel getSplitLayoutPanel();
 	protected abstract AonToolbar getToolbar();
-	protected abstract MenuItem getTaEnd();
 	protected abstract MinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
