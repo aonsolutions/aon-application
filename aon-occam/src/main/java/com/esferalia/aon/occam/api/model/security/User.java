@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class User implements Serializable {
 	private Integer registry;
 	private Integer enterprise;
 	private AonRole[] userRoles;
+	private Date expirationDate;
 	UserToolbar toolbar;
 	
 	private List<Workgroup> workgroups;
@@ -164,6 +166,15 @@ public class User implements Serializable {
 	
 	public User setTaskHolders(List<TaskHolder> taskHolders) {
 		this.taskHolders = taskHolders;
+		return this;
+	}
+	
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+	
+	public User setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 		return this;
 	}
 	

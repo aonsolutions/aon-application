@@ -67,6 +67,7 @@ public class ConfigurationDAO {
 				f -> f.getDomainProperty().eq(conf.getDomain().getId())
 				.and(f.getUserIdProperty().eq(conf.getUser().getId()))).getId();
 
+		conf.setDur(SecurityDAO.getDomainUserRoles(ctx, conf.getUser().getId()));
 		
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
 		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);

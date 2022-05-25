@@ -178,7 +178,6 @@ export const DUPLICATE = MSG.DUPLICATE;
 export const DUPLICATE_INVOICE = MSG.DUPLICATE_INVOICE;
 export const DURATION = "Duración";
 
-
 // ----- E
 
 export const EDIT = MSG.EDIT;
@@ -198,9 +197,8 @@ export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;
 export const EXIT = MSG.EXIT;
 export const EXPENSE = MSG.EXPENSE;
 export const EXPENSES = MSG.EXPENSES; 
+export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
-
-
 
 // ----- F
 
@@ -424,6 +422,8 @@ export const SEND_INVOICES = MSG.SEND_INVOICES;
 export const SEPA_FILES = MSG.SEPA_FILES;
 export const SERIE = MSG.SERIE;
 export const SERVICE = MSG.SERVICE;
+export const SERVICE_ACCOUNT = 'Cuenta de Servicio'// TODO MSG.SERVICE_ACCOUNT;
+export const SERVICE_ACCOUNTS = 'Cuentas de Servicio'// TODO MSG.SERVICE_ACCOUNT;
 export const SERVICES = MSG.SERVICES;
 export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;

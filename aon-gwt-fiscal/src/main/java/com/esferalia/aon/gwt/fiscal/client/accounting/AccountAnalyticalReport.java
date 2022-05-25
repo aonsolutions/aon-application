@@ -74,7 +74,7 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		AnalyticalPanelReport panel = new AnalyticalPanelReport(options);
-		if (!options.isGuest()) {
+		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				@Override
 				public void onSelection(AccountEntrySelectionEvent event) {
