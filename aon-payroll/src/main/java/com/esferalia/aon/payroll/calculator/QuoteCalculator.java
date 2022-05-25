@@ -45,6 +45,7 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -901,20 +902,20 @@ public abstract class QuoteCalculator {
 				try {
 					throw e.getExpressionException();
 				} catch ( DeferredExpressionException de){
-					limits.addAll(expressionContext.eval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+					limits.addAll(expressionContext.dryEval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 				} catch ( Throwable t ){
-					limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+					limits.addAll(expressionContext.dryEval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 				}
 			} catch ( DeferredExpressionException de){
-				limits.addAll(expressionContext.eval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+				limits.addAll(expressionContext.dryEval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 			} catch ( Throwable t ){
-				limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+				limits.addAll(expressionContext.dryEval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 			}
 		}
 		
 		return limits;
 	}
-
+	
 	private static void add(String name, Double value, ExpressionContext ctx,
 			Date start, Date end) {
 

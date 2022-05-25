@@ -152,8 +152,8 @@ export const EXCEPTION_MESSAGE = {
   "RevokedCertificateException":"El certificado que ésta usted utilizando está revocado"
 }
 
-
 export const APP_PARAMS_PAYROLL = {
   APP_COMUNICA_CONTRACTS: "APP_COMUNICA_CONTRACTS",
-  APP_COMUNICA_QUOTE_GROUP: "APP_COMUNICA_QUOTE_GROUP"
+  APP_COMUNICA_QUOTE_GROUP: "APP_COMUNICA_QUOTE_GROUP",
+  APP_COMUNICA_EMAILS: "APP_COMUNICA_EMAILS"
 }

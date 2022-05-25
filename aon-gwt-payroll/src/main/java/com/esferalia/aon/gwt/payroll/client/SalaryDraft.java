@@ -936,21 +936,26 @@ public class SalaryDraft extends ResizeComposite
 
 			};
 
-			textListBox.addItem(variable.getValue().toString(), variable.getValue().toString());
+			//textListBox.addItem(variable.getValue().toString(), variable.getValue().toString());
 
 			textListBox.addItem("COTIZACI\u00D3N MENSUAL", "30");
 
 			textListBox.addItem("COTIZACI\u00D3N DIARIA", "DIAS_NATURALES_MES");
 
-			if (variable.getExpression() != null) {
-				String expression = variable.getExpression();
-				if (expression.matches("30(\\.0+)?")) {
-					textListBox.selectValue("30");
-					return textListBox;
-				} else if (expression.matches("DIAS_NATURALES_MES")) {
-					textListBox.selectValue("DIAS_NATURALES_MES");
-					return textListBox;
-				}
+			//if (variable.getExpression() != null) {
+			//	String expression = variable.getExpression();
+			//	if (expression.matches("30(\\.0+)?")) {
+			//		textListBox.selectValue("30");
+			//		return textListBox;
+			//	} else if (expression.matches("DIAS_NATURALES_MES")) {
+			//	}
+			//}
+			
+			double monthDays = AonNumberUtils.todouble(variable.getExpression());
+			if ( monthDays == 30.00 ) {
+				textListBox.selectValue("30");
+			} else {
+				textListBox.selectValue("DIAS_NATURALES_MES");
 			}
 
 			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
