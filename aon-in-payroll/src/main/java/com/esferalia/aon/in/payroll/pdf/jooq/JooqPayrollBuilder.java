@@ -310,9 +310,9 @@ public class JooqPayrollBuilder {
 				.filter(JooqPayrollBuilder::filter)
 				.sorted(Comparator.comparing(p -> {return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription(): "zzzzzz";}))
 				.forEach(p -> {
-
-					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
-					if (description.length() > 50) {
+					
+					String description = AonStringUtils.isNotBlank(p.getDescription()) ? p.getDescription().replaceAll("\\[\\d*\\]", "") : p.getDescription();
+					if (AonStringUtils.isNotBlank(description) && description.length() > 50) {
 						try {
 							description = croppedString(description, 260, HELVETICA, 9f);
 						} catch (IOException ignored) {}
