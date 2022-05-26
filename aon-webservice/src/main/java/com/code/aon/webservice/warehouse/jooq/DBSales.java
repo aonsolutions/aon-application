@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
@@ -19,8 +20,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class DBSales {
 		
 	public static JSONObject getSales(Domain domain, String login, Integer id) {
-		return ToJSON.salesToJSON(AON.getSales(domain.getName(),
-				domain.getId(), login, f -> f.getIdProperty().eq(id)));
+		return ToJSON.salesToJSON(AON.getSales(domain.getName(), domain.getId(), login,
+				f -> f.getIdProperty().eq(id), new Options().setFull(true)));
 	}
 
 	public static JSONArray getSalesDetails(Domain domain, String login,
