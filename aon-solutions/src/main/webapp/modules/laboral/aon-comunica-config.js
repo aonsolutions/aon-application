@@ -139,7 +139,6 @@ export class AonComunicaConfig extends AonElement {
   buildCard(){
     let div = setStyles(this.createElement(TAG.DIV),{display: "flex", flexWrap:"wrap", width:"100%" });
     this.appendChild(div);
- 
 
     let formOne = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_CONTRACT_TYPES});
     formOne.style.width = "50%";
@@ -213,12 +212,13 @@ export class AonComunicaConfig extends AonElement {
     div.className = CSS.FLEX_COLUMN;
     aonCard.addContent(div);
 
-    let titleOne = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
-    titleOne.innerText = "Correos del entorno";
-    div.appendChild(titleOne);
 
     let emailsParent = this.getEmailsParent();
     if(emailsParent.length){
+      let titleOne = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
+      titleOne.innerText = "Correos del entorno";
+      div.appendChild(titleOne);
+  
       const child = document.createElement(TAG.DIV);
       child.innerText = emailsParent.join(", ");
       child.style.marginBottom = "15px";
@@ -410,10 +410,6 @@ export class AonComunicaConfig extends AonElement {
       return [];
     });
     this.QUOTE_GROUP = sortBy(resp.filter(q => q.value>0), 'name', 'asc');
-  }
-
-  async setEmails(){
-
   }
 
   getContractTypes(){
