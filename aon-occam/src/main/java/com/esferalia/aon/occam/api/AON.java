@@ -2202,7 +2202,7 @@ public class AON {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getManagement().getSalesStream(ctx, filter);
+			return getManagement().getSalesStream(ctx, filter, options);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2210,8 +2210,8 @@ public class AON {
 	}
 	
 	public static Sales getSales(String domainName, Integer domainId,
-			String login, SalesFilter filter) {
-		Sales sales = getSalesStream(domainName, domainId, login, filter)
+			String login, SalesFilter filter, Options... options) {
+		Sales sales = getSalesStream(domainName, domainId, login, filter, options)
 				.findFirst().orElse(new Sales());
 		sales.setCustomer(getCustomer(domainName, domainId, login, sales
 				.getCustomer().getId()));
