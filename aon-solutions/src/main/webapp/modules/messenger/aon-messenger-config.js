@@ -126,17 +126,10 @@ export class AonMessengerConfig extends AonElement {
     });
 
 
-    let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: 8, marginTop:19 });
+    let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: "8px", marginTop:"19px" });
     textC.className = CSS.AON_CARD_TITLE;
     textC.innerText = "Comunicación";
     divContent.appendChild(textC);
-
-    // let divTwo = setStyles(this.createElement(TAG.DIV),{margin:"0 0 7"});
-    // divContent.appendChild(divTwo);
-
-    // let rating = setAttributes(new AonSwitch(),{id:"rating", name:APP_REQUESTS_EMAIL_RATING, title: "Enviar calificación al cerrar", checked:params[APP_REQUESTS_EMAIL_RATING]});
-    // rating.style.margin ="10 0 0";
-    // divTwo.appendChild(rating);
 
     let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
     text.innerText = "Enviar Notificación al:";
@@ -159,7 +152,7 @@ export class AonMessengerConfig extends AonElement {
 
 
     // --------------------PARAMS SEND EMAIL--------------------------------
-    let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4, marginTop:13});
+    let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
     textEmail.innerText = "Enviar Correo al:";
     divContent.appendChild(textEmail);
     
@@ -195,17 +188,18 @@ export class AonMessengerConfig extends AonElement {
     this.fillTaskHolder(taskHolder, params[APP_REQUESTS_EXT_WORKGROUP], params[APP_REQUESTS_EXT_TASK_HOLDER]);
 
     workgroup.addEventListener(EVENT.CHANGE, ({detail})=>{
-        if(detail && detail.id)
-            this.fillTaskHolder(taskHolder, detail.id);
+        if(detail && detail.id){
+          this.fillTaskHolder(taskHolder, detail.id);
+        }
     });
 
 
-    let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: 8, marginTop:19 });
+    let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: "8px", marginTop:"19px" });
     textC.className = CSS.AON_CARD_TITLE;
     textC.innerText = "Comunicación";
     divContent.appendChild(textC);
 
-    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
+    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
     text.innerText = "Enviar Notificación al:";
     divContent.appendChild(text);
     
@@ -226,7 +220,7 @@ export class AonMessengerConfig extends AonElement {
 
 
     // --------------------PARAMS SEND EMAIL--------------------------------
-    let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4, marginTop:13});
+    let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
     textEmail.innerText = "Enviar Correo al:";
     divContent.appendChild(textEmail);
     

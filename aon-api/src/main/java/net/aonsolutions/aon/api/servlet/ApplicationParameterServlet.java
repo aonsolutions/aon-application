@@ -1,11 +1,9 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -118,7 +116,9 @@ public class ApplicationParameterServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getApplicationParameters(AonApiData api) {
-		JSONArray jsonArray = api.getData().optJSONArray(IJsonNames.PARAMS);
+		JSONObject params = api.getData();
+		JSONArray jsonArray = params.optJSONArray(IJsonNames.PARAMS);
+
 		if(jsonArray!=null && !jsonArray.isEmpty()) {
 			 List<String> listNames = new ArrayList<>();
 			 
@@ -147,12 +147,19 @@ public class ApplicationParameterServlet extends AonApiHttpServlet{
 	
 	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {
+		Domain domain = api.getDomain();
+		JSONObject params = api.getData();
+		boolean parent = params.optBoolean(IJsonNames.PARENT);
+		List<ApplicationParameter> list = new ArrayList<>();
 		if(!listNames.isEmpty()) {
 		    String[] names = listNames.toArray(String[]::new);
 			
-			return AON.getApplicationParameterStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().in(names))).collect(Collectors.toList());
+			AON.getApplicationParameterStream(
+				api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f-> f.getDomainProperty().eq(parent ? domain.getParentId() : domain.getId()).and(f.getNameProperty().in(names))
+			)
+			.forEach(list::add);
 		}
-		return Collections.emptyList();
+		return list;
 	}
 }

@@ -12,7 +12,7 @@ import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import * as LS from '../../services/localStorageService.js';
 import { getContractType, getQuoteGroup } from '../../services/comunicaService.js';
-import { getApplicationParameters, saveApplicationParameter } from '../../services/applicationParameterService.js';
+import { getApplicationParameters, saveApplicationParameter, } from '../../services/applicationParameterService.js';
 import { APP_PARAMS_PAYROLL } from './PayrollEnums.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -25,11 +25,11 @@ export class AonComunicaConfig extends AonElement {
   CARD_THREE;
   CONTRACT_TYPES;
   APP_PARAMS;
+  APP_PARAMS_PARENT;
   QUOTE_GROUP;
   PARAMS_CONTRACT;
   PARAMS_QUOTE_GROUP;
   dur;
-  EMAILS;
   EMAIL_MAX_LENGTH;
   get id() {
     return this.getAttribute('id');
@@ -62,8 +62,8 @@ export class AonComunicaConfig extends AonElement {
     this.FORM_EMAILS = this.id+"formEmails";
     this.CONTRACT_TYPES =[];
     this.QUOTE_GROUP =[];
-    this.EMAILS = [];
     this.APP_PARAMS =[];
+    this.APP_PARAMS_PARENT = [];
     this.EMAIL_MAX_LENGTH = 96;
   }
 
@@ -72,12 +72,17 @@ export class AonComunicaConfig extends AonElement {
     this.buildTabs();
     this.buildCard();
 
-    Promise.all([
+    let promises = [
       this.getAppParams(),
       this.setContractTypes(),
-      this.setQuoteGroup(),
-    ]).then(()=>{
-      this.setEmails();
+      this.setQuoteGroup()
+    ];
+
+    if(this.isChild()){
+      promises.push( this.getAppParamsParent());
+    }
+
+    Promise.all(promises).then(()=>{
       this.buildContractType();
       this.buildQuoteGroup();
       this.buildEmails();
@@ -134,7 +139,6 @@ export class AonComunicaConfig extends AonElement {
   buildCard(){
     let div = setStyles(this.createElement(TAG.DIV),{display: "flex", flexWrap:"wrap", width:"100%" });
     this.appendChild(div);
- 
 
     let formOne = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_CONTRACT_TYPES});
     formOne.style.width = "50%";
@@ -167,7 +171,7 @@ export class AonComunicaConfig extends AonElement {
     div.className = CSS.FLEX_COLUMN;
     aonCard.addContent(div);
 
-    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
+    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
     text.innerText = "Contratos activos";
     div.appendChild(text);
 
@@ -187,7 +191,7 @@ export class AonComunicaConfig extends AonElement {
     div.className = CSS.FLEX_COLUMN;
     aonCard.addContent(div);
 
-    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
+    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
     text.innerText = "Grupos de cotización activos";
     div.appendChild(text);
 
@@ -208,6 +212,24 @@ export class AonComunicaConfig extends AonElement {
     div.className = CSS.FLEX_COLUMN;
     aonCard.addContent(div);
 
+
+    let emailsParent = this.getEmailsParent();
+    if(emailsParent.length){
+      let titleOne = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
+      titleOne.innerText = "Correos del entorno";
+      div.appendChild(titleOne);
+  
+      const child = document.createElement(TAG.DIV);
+      child.innerText = emailsParent.join(", ");
+      child.style.marginBottom = "15px";
+
+      div.appendChild(child);
+    }
+  
+    let titleTwo = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
+    titleTwo.innerText = "Correos Alternativos";
+    div.appendChild(titleTwo);
+
     let table = new AonBasicTable();
     table.id = this.getIdRand();
     div.appendChild(table);
@@ -219,18 +241,6 @@ export class AonComunicaConfig extends AonElement {
     } else {
       this.buildEmail(table, undefined, 0);
     }
-
-    // let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
-    // text.innerText = "Grupos de cotización activos";
-    // div.appendChild(text);
-
-    // const width = "100%";
-    // this.getQuoteGroup().forEach(({name, value})=>{
-    //   let aonSwitch = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:value, title: name, checked:this.isCheckedQuoteGroup(value)});
-    //   aonSwitch.style.margin = "7px 0";
-    //   div.appendChild(aonSwitch);
-    //   aonSwitch.setLabelWidth(width);
-    // }); 
   }
 
   isCheckedContract(value){
@@ -402,11 +412,6 @@ export class AonComunicaConfig extends AonElement {
     this.QUOTE_GROUP = sortBy(resp.filter(q => q.value>0), 'name', 'asc');
   }
 
-  async setEmails(){
-    const { APP_COMUNICA_EMAILS } = this.APP_PARAMS;
-    this.EMAILS = APP_COMUNICA_EMAILS ? APP_COMUNICA_EMAILS.split(',') : [];
-  }
-
   getContractTypes(){
     return this.CONTRACT_TYPES;
   }
@@ -416,7 +421,13 @@ export class AonComunicaConfig extends AonElement {
   }
 
   getEmails(){
-    return this.EMAILS;
+    const { APP_COMUNICA_EMAILS } = this.APP_PARAMS;
+    return APP_COMUNICA_EMAILS ? APP_COMUNICA_EMAILS.split(',') : [];
+  }
+
+  getEmailsParent(){
+    const { APP_COMUNICA_EMAILS } = this.APP_PARAMS_PARENT;
+    return APP_COMUNICA_EMAILS ? APP_COMUNICA_EMAILS.split(',') : [];
   }
 
 	async getAppParams(){
@@ -442,6 +453,32 @@ export class AonComunicaConfig extends AonElement {
 			}
 		}
 		return this.APP_PARAMS;
+	}
+
+  async getAppParamsParent(){
+		if(!this.APP_PARAMS_PARENT.length){
+			try {
+				await getApplicationParameters({
+					params:[
+            // APP_PARAMS_PAYROLL.APP_COMUNICA_CONTRACTS,
+            // APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP,
+            APP_PARAMS_PAYROLL.APP_COMUNICA_EMAILS
+					],
+          parent:true
+				}).then(params=>{
+					let newResp = [];
+					params
+					.filter(p => p.value)
+					.forEach(p => 
+						newResp[p.name] = p.value
+					);
+					this.APP_PARAMS_PARENT = newResp;
+				});
+			} catch (e) {
+				console.log("error getAppParams", e);
+			}
+		}
+		return this.APP_PARAMS_PARENT;
 	}
 
   isChild(){

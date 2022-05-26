@@ -140,7 +140,8 @@ public class UserDAO {
 						: new Auth().setAuth(r.getValue(USER.AUTH)))
 				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))
 				.setToolbar(UserToolbar.safeValueOf(r.getValue(USER.TOOLBAR)))
-				.setEnterprise(r.getValue(USER.ENTERPRISE));
+				.setEnterprise(r.getValue(USER.ENTERPRISE))
+				.setExpirationDate(getValue(r, USER.PASSWORDEXPIRATION));
 		}		
 	}
 

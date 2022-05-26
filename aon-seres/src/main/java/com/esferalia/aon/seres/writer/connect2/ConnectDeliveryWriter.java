@@ -97,10 +97,11 @@ public class ConnectDeliveryWriter {
 			String customerEdiCode, String deliveryPointEdiCode) {
 		SEH1C seh1c = new SEH1C();
 		
+//		String referenceCode = isECI(delivery.getRegistry().getDocument())
+//				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
 		
-		String referenceCode = isECI(delivery.getRegistry().getDocument())
-				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
-		
+		String referenceCode = delivery.getReferenceCode();
+
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
 				.getValue());
 		seh1c.setNumeroDelDocumento(referenceCode);

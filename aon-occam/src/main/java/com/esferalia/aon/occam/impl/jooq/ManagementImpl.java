@@ -74,6 +74,12 @@ public class ManagementImpl implements IManagement {
 	}
 	
 	@Override
+	public Sales getSales(AONContext ctx, SalesFilter filter, Options... options) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SalesDAO.get(ctx, filter, options));
+	}
+	
+	@Override
 	public Sales saveSales(AONContext ctx, Sales sales) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> SalesDAO.save(ctx, sales));
@@ -168,9 +174,15 @@ public class ManagementImpl implements IManagement {
 	// ------------------ DELIVERY
 	
 	@Override
-	public Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter) {
+	public Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> DeliveryDAO.getDeliveryStream(ctx, filter));
+			configuration -> DeliveryDAO.getStream(ctx, filter, options));
+	}
+	
+	@Override
+	public Delivery getDelivery(AONContext ctx, DeliveryFilter filter, Options...options) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.get(ctx, filter, options));
 	}
 
 	@Override

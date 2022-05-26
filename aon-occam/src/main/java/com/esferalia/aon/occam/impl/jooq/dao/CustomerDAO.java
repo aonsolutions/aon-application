@@ -130,11 +130,14 @@ public class CustomerDAO {
 		return select(ctx,filter)
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
-				.limit(limit)
-				
+				.limit(limit)				
 				.fetch()
 				.stream()
 				.map(new CustomerFiller());
+	}
+	
+	public static List<Customer> getList(AONContext ctx, CustomerFilter filter) {
+		return getStream(ctx, filter).collect(Collectors.toList());
 	}
 
 	public static Customer get(AONContext ctx, Integer id){
@@ -155,12 +158,9 @@ public class CustomerDAO {
 		CustomerValidation.validate(ctx, customer);
 		boolean nullId = (customer.getId() == null); 
 		customer = RegistryDAO.save(ctx, customer);
-		if (nullId || get(ctx, customer.getId()) == null ) {
-			customer = insert(ctx, customer);
-		} else {
-			customer = update(ctx, customer);			
-		}
-		return customer;
+		return (nullId || get(ctx, customer.getId()) == null )
+			? insert(ctx, customer)
+			: update(ctx, customer);			
 	}
 	
 	private static Customer insert(AONContext ctx, Customer customer){

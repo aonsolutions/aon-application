@@ -2201,7 +2201,7 @@ public class EmployeesServiceHelper {
 	}
 	
 
-	static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
+	public static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
 	
 		calculator.setSalaryBuilder(salaryBuilder);

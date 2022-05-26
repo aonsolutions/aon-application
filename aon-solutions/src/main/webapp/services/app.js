@@ -342,8 +342,8 @@ export const BANK = {
 
 export const API_SERVICE = {
   app: "api_service",
-  title: "Servicio API",
-  description: "Servicio API.",
+  title: "Cuentas de Servicio | Acceso API",
+  description: "Cuentas de Servicio | Acceso API.",
   icon: AON_ICONS.AON_APP,
   color: "#EA6D41",
   price: " ", // 'Desde 45€/mes'
@@ -587,6 +587,40 @@ export const AccountingMenu = [
     initAction: "bankStatement_search",
   },
 ];
+
+export const AccountingPortalMenu = [
+  {
+    title: "Extracto de cuenta.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "StatementReportModule",
+  },
+  {
+    title: "Cuenta de Explotación (P Y G).",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountOperatingReport",
+  },
+  {
+    title: "Balance de Sumas y Saldos.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountTrialBalanceReport",
+  },
+  {
+    title: "Listado Diario de Movimientos.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "JournalReportModule",
+  },
+  {
+    title: "Listado Mayor de Cuentas.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "LedgerReportModule",
+  },
+  {
+    title: "Balances de Cuentas.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountBalanceReport",
+  }
+];
+
 
 export const PayrollMenu = [
   GWT.EMPLOYEES,

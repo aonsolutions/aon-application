@@ -26,6 +26,7 @@ public enum DeliveryStatus implements Serializable {
 	}
 
 	public static DeliveryStatus safeValueOf( String i ) {
+		if(i == null) return null;
 		for (DeliveryStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

@@ -54,6 +54,7 @@ import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
@@ -86,7 +87,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class SalaryDraftBuilder
-		implements ISalaryBuilder<ISalary>, ContractSalaryCalculator.IListener,
+		implements ISalaryBuilder<ISalary>, 
+		GenericContractSalaryCalculator.IListener,
 		IContractSalaryCalculatorContext.IListener {
 
 	private SalaryDraft salaryDraft;
@@ -1153,6 +1155,18 @@ public class SalaryDraftBuilder
 					, name ));
 		}
 			
+	}
+	
+	@Override
+	public void onInvalidLeave(Date startDate, Date endDate) {
+		salaryDraft.addWarning(
+				String.format(
+				"Incapacidad Temporal <span style=\"color:darkred;\">%1$td/%1$tm/%1$tY - %2$td/%2$tm/%2$tY </span> err\u00f3nea. Por favor, rev\u00edsela.</div>"
+				+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>"
+				,startDate
+				,endDate
+				)
+				);
 	}
 	
 	@Override

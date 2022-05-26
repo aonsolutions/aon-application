@@ -145,7 +145,7 @@ export class DomainUserRoles {
 	}
 
 	isAdmin() {
-		return this.hasRole(Role.ADMIN);
+		return this.hasRole(Role.ADMIN) || this.hasOldRole(Role.ADMIN);
 	}
 
   isDev() {

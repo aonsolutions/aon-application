@@ -21,11 +21,11 @@ public interface IContractSalaryCalculatorContext extends
 		void onIrpf(IrpfOutcome irpfOutcome);
 
 		default void onLiquid(ISalary salary) {
-		};
+		}
 
 		default void onUndefinedData(IExpression expression,
 				String variableName, String message, Date start, Date end) {
-		};
+		}
 
 		default void onRedefinedImplicit(String name,
 				ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
@@ -35,8 +35,12 @@ public interface IContractSalaryCalculatorContext extends
 			return constant;
 		}
 
+		default void onInvalidLeave(Date startDate, Date endDate) {
+		}
+
 		default void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
 		}
+
 	}
 
 	public IListener getListener();

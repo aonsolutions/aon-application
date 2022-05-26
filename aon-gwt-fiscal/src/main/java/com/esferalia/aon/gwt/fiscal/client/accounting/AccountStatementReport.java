@@ -108,7 +108,7 @@ public class AccountStatementReport extends MainEntryPoint {
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );
 		
-		if (!options.isGuest()) {
+		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				
 				@Override

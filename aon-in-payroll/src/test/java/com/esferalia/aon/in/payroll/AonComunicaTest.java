@@ -50,7 +50,9 @@ public class AonComunicaTest {
 			
 				Domain domain = new Domain().setName("w3319674b-ayudat.rvasquez.net").setId(9122);
 
-			    AonComunica.addContract(is.readAllBytes(), "jg@FNMT", "pkcs12", domain, employee, true);
+//			    AonComunica.communicateAlta(employee, certificate);
+//				
+//			    AonComunica.addContract(is.readAllBytes(), "jg@FNMT", "pkcs12", domain, employee, true);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
