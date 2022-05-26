@@ -5,14 +5,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
-import com.esferalia.aon.in.payroll.utils.EmployeeParse;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -25,33 +24,20 @@ public class AonComunica {
 	    throw new IllegalStateException("Utility class");
 	}
 	
-	// ADD CONTRACT AND SEND TGSS
-	public static Employee addContract(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, Domain domain, Employee employee, Boolean communicateTGSS) throws SegSocialException {
+	// ADD CONTRACT AND SEARCH (IDC, TA AND SAVE)
+	public static void addContract(Domain domain, Employee employee, Certificate certificate) {
+		Optional<Employee> exist = contractExist(domain, employee.getCcc(), employee.getNaf(), employee.getStartDate(), employee.getEndDate());
 		
-		if(Boolean.TRUE.equals(communicateTGSS)) {		
-			communicateAlta(certificateData, certificatePassword, certificateType, employee);
-		}
-		
-		try {
-			Optional<Employee> exist = contractExist(domain, employee.getCcc(), employee.getNaf(), employee.getStartDate(), employee.getEndDate());
-			
-			if(exist.isEmpty()) {
-				addContract(domain, employee); 
-			} else {
-				employee.setEmployeeId(exist.get().getEmployeeId());
-			}
-				   
-			if(Boolean.TRUE.equals(communicateTGSS)) {
-				employee.setInfo("SS_ALTA", "COMUNICADO");
-				System.out.println("--------SS_ALTA COMUNICADO--------");
-				saveContractAttach(certificateData, certificatePassword, certificateType, domain, employee);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(exist.isEmpty()) {
+			addContract(domain, employee); 
+		} else {
+			employee.setEmployeeId(exist.get().getEmployeeId());
 		}
 
-		return employee;
+		employee.setInfo("SS_ALTA", "COMUNICADO");
+		System.out.println("--------SS_ALTA COMUNICADO--------");
+		
+		saveContractAttach(certificate, domain, employee);
 	}
 	
 	/**
@@ -133,11 +119,8 @@ public class AonComunica {
 	 * @throws SegSocialException
 	 * @throws Exception
 	 */
-	public static void communicateAlta(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException {
-		
-		SistemaRED.sendAlta(certificateData, certificatePassword, certificateType, EmployeeParse.toEmployeeSS(employee));
-
+	public static void communicateAlta(solutions.aon.seg.social.object.Employee employee, Certificate certificate) throws SegSocialException {
+		SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
 	}
 	
 	public static Employee addContract(Domain domain, Employee employee) {
@@ -152,13 +135,11 @@ public class AonComunica {
 		return employee;
 	}
 	
-	private static void saveContractAttach(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, Domain domain, Employee emp) {
-			new Thread(() -> {
-				saveTA(certificateData, certificatePassword, certificateType, domain, emp);
-				saveIDC(certificateData, certificatePassword, certificateType, domain, emp);
-			})
-			.start();
+	private static void saveContractAttach(Certificate certificate, Domain domain, Employee emp) {
+		new Thread(() -> {
+			saveTA(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, emp);
+			saveIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, emp);
+		}).start();
 	}
 	
 	// employee.getEmployeeId(), employee.getCcc(), employee.getRegime(), employee.getNaf(), employee.getStartDate(), employee.getEndDate() (Optional) 
@@ -186,26 +167,23 @@ public class AonComunica {
 	
 	private static void saveIDC(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee) {
-		
-		if(parseDate(employee.getStartDate()).compareTo(parseDate(new Date())) <= 0 ) {
-			try {
-				System.out.println("--------PROCESSING IDC--------");
-				byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
-						employee.getNaf(), employee.getRegime(), employee.getCcc(), employee.getStartDate());
-				ContractAttach attach = new ContractAttach()
-				.setDomain(domain.getId())
-				.setContract(employee.getEmployeeId())
-				.setMimeType(MimeType.PDF)
-				.setDescription("TGSS - IDC")
-				.setData(fileByte)
-				.setAttachDate(employee.getStartDate())
-				.setType(ContractAttachType.IDC);
-				PAYROLL.saveContractAttach(domain.getName(), domain.getId(), "", attach);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("--------IDC NOT PROCESSED DATE > NOW--------");
+		System.out.println("--------PROCESSING IDC--------");
+		try {
+			Date startDate = parseDate(employee.getStartDate()).compareTo(parseDate(new Date())) <= 0 ? employee.getStartDate() : new Date();
+			
+			byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
+					employee.getNaf(), employee.getRegime(), employee.getCcc(), startDate);
+			ContractAttach attach = new ContractAttach()
+			.setDomain(domain.getId())
+			.setContract(employee.getEmployeeId())
+			.setMimeType(MimeType.PDF)
+			.setDescription("TGSS - IDC")
+			.setData(fileByte)
+			.setAttachDate(employee.getStartDate())
+			.setType(ContractAttachType.IDC);
+			PAYROLL.saveContractAttach(domain.getName(), domain.getId(), "", attach);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

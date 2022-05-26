@@ -177,12 +177,12 @@ export class AonLaboral extends AonElement {
       ...CONTRACT_OPTIONS.TA,
       fn: () => this.getTa(res)
     });
-    if(!res.prev){
+    // if(!res.prev){
       option.push({
 				...CONTRACT_OPTIONS.IDC,
 				fn: () => this.getIdc(res)
 		  });
-    }
+    // }
 		if (this.anularCondition(res.situation, res.fra)) {
 			option.push({
 				...CONTRACT_OPTIONS.DELETE,
@@ -208,8 +208,11 @@ export class AonLaboral extends AonElement {
 		this.applicationEl.startLoading();
 		try {
       let fecha = feb || fea;
-      if(!fecha) 
+      if(!fecha) {
         fecha = frb || fra;
+        fecha = (new Date().getTime() > new Date(fecha).getTime()) ? fecha : AonDateUtils.formatDateOrigin(new Date());
+      }
+      
 			await getIDC({ regime, ctaCti, nss, fra:fecha }); // open pdf
 		} catch (error) {
       this.showToast(error);

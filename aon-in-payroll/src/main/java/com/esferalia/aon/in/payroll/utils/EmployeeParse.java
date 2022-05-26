@@ -126,6 +126,7 @@ public class EmployeeParse {
 			@Override public void visitReducingcoefic(String reducingCoefic) {}
 			@Override public void visitProfesCat(String profesCat) {}
 			@Override public void visitFrv(Date frv) {}
+			@Override public void visitQuoteMonth(Boolean quoteMonth) {	}
 		});
 		
 		return employee;

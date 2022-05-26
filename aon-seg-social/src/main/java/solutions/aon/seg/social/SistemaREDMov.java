@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
@@ -415,7 +416,14 @@ class SistemaREDMov {
 				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 			}
 		}
-
+		
+		employee.getQuoteMonth().ifPresent(quote->{
+			DomNode quoteMonthNode = form.querySelector("#SDFINDGCMENSUAL"); 
+			if(quoteMonthNode!=null && Boolean.TRUE.equals(quote) ) {
+				((HtmlCheckBoxInput)quoteMonthNode).setChecked(true);
+			}
+		});
+		
 		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 

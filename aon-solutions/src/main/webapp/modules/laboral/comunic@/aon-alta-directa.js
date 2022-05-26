@@ -4,7 +4,7 @@ import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendB
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
-import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData, createContractDataMdCtz } from '../createComponent.js';
+import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData, createContractDataMdCtz, createQuoteMonthly } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
 // import * as LS from '../../../services/localStorageService.js';
@@ -189,6 +189,12 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('apellido2IconLabel').addEventListener(EVENT.CLICK, () => this.getNaf());
 
         this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.disabledCardTrabajor(false));
+
+        if(!this.isEdit()){
+            this.getElement(`gc`).addEventListener(EVENT.CHANGE, ({target}) =>{
+                createQuoteMonthly(target.getDetail(), this.isManager());
+            });
+        }
     }
 
     getContract() {
@@ -343,19 +349,20 @@ export class AonAltaDirecta extends AonElement {
     selectTypeCto(type) {
         const contract = this.querySelector('#contract > aon-input');
         getQuoteType(type).then(({name})=>{
-            if (contract && !contract.value && name)
+            if (contract && !contract.value && name){
                 contract.value = name;
+            }
         });
     }
 
     selectTypeContract({ detail }) {
         if (detail) {
-            let tipo_jornada = parseInt(detail.tipo_jornada);
+            let partial = detail.partial;
             let divParcial = this.getElement('div_parcial');
             let hourEl = this.getElement('horas_convenio');
             this.getElement('coef').value = "";
-            // this.btnBajaShow(tipo_jornada);//baja display none
-            if (tipo_jornada){ //si es parcial
+    
+            if (partial){ //si es parcial
                 divParcial.hidden = false;
                 hourEl.value = 40;
             }  else {
@@ -583,9 +590,7 @@ export class AonAltaDirecta extends AonElement {
     async alta() {
         this.applicationEl.startLoading();
         try {
-            let contract = this.getContract();
-            await sendAlta(contract);
-
+            await sendAlta(this.getContract());
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = [];
             this.back();
