@@ -97,7 +97,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
     
       async isFromNotification(aonTable, divNotification){
         divNotification.appendChild(aonTable);
-            const th = await getTaskHolder({reload:false}).catch(()=>null);
+        const th = await getTaskHolder({reload:false}).catch(()=>null);
         if(th){
           this.TASK_HOLDER = th;
           let filter = this.getFilter();    
@@ -268,15 +268,15 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
       
         //----------- DESCRIPTION
         let description = res.description;
-        try { description = JSON.parse(res.description).observation;  } catch (e) {}
+        try { description = JSON.parse(res.description).observation; } catch (e) {}
     
         let div = this.createElement(TAG.DIV);
         div.style = "position:absolute; top:6px; left:0; right:0;white-space:nowrap; text-overflow:ellipsis; overflow: hidden;";
     
         let spanOne = this.createElement(TAG.SPAN);
-        const subTitle = type+" "+ res.newNumber+" "+ sender;
-        spanOne.title = subTitle;
-        spanOne.textContent = subTitle;
+        const subTitle = `${type} ${res.newNumber}`;
+        spanOne.title = `${subTitle} ${sender}`;
+        spanOne.innerHTML = `${subTitle} <b>${sender}</b>`;
         div.appendChild(spanOne);
     
         if(description){
@@ -459,7 +459,6 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
           person = res.task_holder.alias || res.task_holder.name; 
         }                                            
         
-    
         if(workgroup&&workgroup.description) 
           workgroupDescription = workgroup.description;
     
@@ -486,6 +485,8 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
     
         span.style.color = iconJson.icon_color;
         span.title = source;
+
+        span.dataset.taskParent = id;
     
         let icon = this.createElement(TAG.I);
     
@@ -503,6 +504,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
             icon.style.fontSize = size;
           }
         }
+
         span.appendChild(icon);
         
         // && status && status === TASK_STATUS.IN_PROGRESS
@@ -523,7 +525,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
         try {
           let row = this.ROWS.find(t=> t.id === task.id);
 
-          document.querySelectorAll(`[data-task-parent='${task.id}']`).forEach(l=>l.remove());
+          document.querySelectorAll(`div[data-task-parent='${task.id}']`).forEach(l=>l.remove());
     
           if(row && row.parent){
             const parent = row.parent;
@@ -539,7 +541,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
             } else if(task.parentObj && typeof task.parentObj === 'object'){
               tasks.push(task.parentObj);
             }
-    
+
             tasks.forEach((t,idx)=>{
           
               let {person, workgroupDescription} = this.getAssined(t, documents.domainId);
@@ -602,6 +604,20 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
             if(parent.parentNode && parent.parentNode.parentNode){
               let tr = parent.parentNode.parentNode;
               tr.style.paddingBottom = paddingBottom + 'px';
+            }
+
+            const length = tasks.length;
+            if(length>0) {
+              let tasksClosed = tasks.filter(({status}) => status === TASK_STATUS.FINISHED);
+              if(tasksClosed.length === length) {
+                let iconParent = document.querySelector(`span[data-task-parent='${task.id}']`);
+                if(iconParent){
+                  iconParent.style.color = "#a371f7";
+                  // "#a371f7"; // morado
+                  //"#f48fb1";// ROSAAA
+                  //#e91e63  // pink
+                }
+              }
             }
           }
         } catch (err) {

@@ -276,9 +276,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONArray getWorkflows(AonApiData api) {
 		Domain domain = new Domain().setId(api.getData().optInt(IJsonNames.DOMAIN_ID)).setName(api.getData().optString(IJsonNames.DOMAIN_NAME));
 		return TaskWorkflowJSON.toJSON(
-				AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
-						f-> TaskFilter.workflow(api, f)
-				) 
+			AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
+				f-> TaskFilter.workflow(api, f)
+			) 
 		);
 	}
 	
