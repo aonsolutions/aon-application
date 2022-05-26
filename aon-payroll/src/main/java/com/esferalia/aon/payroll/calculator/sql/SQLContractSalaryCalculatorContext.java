@@ -5483,8 +5483,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ctx.setVariable(GUARANTEE, new MethodStub(guarantee), start, end);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
+		} catch ( IllegalArgumentException e ) {
+			if (listener == null)
+				return;
+			listener.onInvalidLeave(start, end);
 		}
-
 	}
 
 	protected void loadLeaveContractFactor(ResultSet rs, ExpressionContext ctx)
