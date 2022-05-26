@@ -337,6 +337,13 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				return constant;
 			return listener.onConstantParameter(func, constant, ctx);
 		}
+		
+		@Override
+		public void onInvalidLeave(Date startDate, Date endDate) {
+			if ( listener == null )
+				return ;
+			listener.onInvalidLeave(startDate, endDate);
+		}
 
 		@Override
 		public void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
