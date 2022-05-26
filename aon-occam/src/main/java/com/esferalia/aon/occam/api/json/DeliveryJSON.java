@@ -98,7 +98,8 @@ public class DeliveryJSON {
 			.put(IJsonNames.DATE, AonDateUtils.format(object.getDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.put(IJsonNames.PAY_METHOD, PayMethodJSON.toJSON(object.getPayMethod()))
 			.put(IJsonNames.CONFIDENTIAL, object.isConfidential())
-			.put(IJsonNames.STATUS, object.getStatus().getName())
+			.put(IJsonNames.STATUS, object.getStatus() != null
+				? object.getStatus().getName() : DeliveryStatus.PENDING.getName())
 			.put(IJsonNames.COMMENTS, object.getComments())
 			.put(IJsonNames.REMARKS, object.getRemarks())
 			.put(IJsonNames.WORKPLACE, WorkplaceJSON.toJSON(object.getWorkplace()))

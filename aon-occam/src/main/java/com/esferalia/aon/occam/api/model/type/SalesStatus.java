@@ -28,6 +28,7 @@ public enum SalesStatus {
 	}
 
 	public static SalesStatus safeValueOf( String i ) {
+		if(i == null) return null;
 		for (SalesStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
