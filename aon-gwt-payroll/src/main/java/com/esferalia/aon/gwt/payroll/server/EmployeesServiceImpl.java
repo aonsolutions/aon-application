@@ -197,6 +197,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -5513,11 +5515,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String userLogin, Integer employeeContract,
-			Workplace workplace) throws IllegalArgumentException {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String login, Integer employeeContract, Workplace workplace) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get EmployeeContractInfo
-			return JooqEmployee.getEmployeeInfo(connection, employeeContract);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
+			Attach cto = AON.getAttach(domainName, domainId, login, f -> f.getTypeProperty().eq(ContractAttachType.COPYCONTRACT.getValue().byteValue()), AttachType.CONTRACT);
+			employeeContractInfo.getContractInfo().setHasCto(null != cto && cto.getId() != null);
+			Attach cbc = AON.getAttach(domainName, domainId, login, f -> f.getTypeProperty().eq(ContractAttachType.COPYBASIC.getValue().byteValue()), AttachType.CONTRACT);
+			employeeContractInfo.getContractInfo().setHasCbc(null != cbc && cbc.getId() != null);
+			return employeeContractInfo;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

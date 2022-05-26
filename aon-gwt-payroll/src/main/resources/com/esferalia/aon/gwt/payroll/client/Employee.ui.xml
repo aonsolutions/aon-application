@@ -391,13 +391,22 @@
 						<!-- LINEA 13 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
+								<g:Label styleName="{style.firstColumnTextStyle}">I. cotización mensual</g:Label>
+							</td>
+							<td colspan="6">
+								<g:Button ui:field="quoteGroupCotizB"></g:Button>
+							</td>
+						</tr>
+						<!-- LINEA 14 -->
+						<tr>
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Ocupación</g:Label>
 							</td>
 							<td colspan="6">
 								<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
-						<!-- LINEA 14 -->
+						<!-- LINEA 15 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">RLCE</g:Label>
@@ -406,7 +415,7 @@
 								<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
-						<!-- LINEA 15 -->
+						<!-- LINEA 16 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Colectivo Trabajadores</g:Label>
@@ -415,7 +424,7 @@
 								<g:ListBox ui:field="employeesColective" debugId="employeesColective" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
-						<!-- LINEA 16 -->
+						<!-- LINEA 17 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Tipo de jornada</g:Label>
@@ -424,7 +433,7 @@
 								<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
-						<!-- LINEA 17 -->
+						<!-- LINEA 18 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Duración de lo jornada</g:Label>
