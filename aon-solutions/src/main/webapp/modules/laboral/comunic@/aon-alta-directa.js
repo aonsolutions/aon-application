@@ -116,7 +116,7 @@ export class AonAltaDirecta extends AonElement {
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
 
-        if(this.isAlta() && this.data.fra && this.isManager()) { 
+        if(this.isEdit() && this.isAlta() && this.isManager()) { 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
         }
     
@@ -820,6 +820,14 @@ export class AonAltaDirecta extends AonElement {
 		return this.APP_PARAMS;
 	}
 
+    isEdit(){
+        return this.data && this.data.fra;
+    }
+
+    isManager(){
+        let dur = this.applicationParentEl.getDur();
+        return dur.isComunicaManager() || dur.isSaltraManager();
+    }
 
     // async suggestionConvenio() {
     //     const convenios = await getConvenios();
@@ -837,14 +845,6 @@ export class AonAltaDirecta extends AonElement {
     //         }
     //     });
     // }
-
-    isEdit(){
-        return this.data && this.data.fra;
-    }
-
-    isManager(){
-        return this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager();
-    }
 }
 
 window.customElements.define('aon-alta-directa', AonAltaDirecta);
