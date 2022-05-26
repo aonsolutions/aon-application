@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -552,6 +553,19 @@ public class Sales implements Serializable {
 	
 	public boolean isEmpty() {
 		return getId() == null && getSeries() == null;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Sales ) )
+			return false;
+		Sales sales = (Sales) obj;
+		return Objects.equals(id, sales.id);
 	}
 	
 }
