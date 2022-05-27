@@ -479,15 +479,6 @@ public class SalesDAO {
 	}
 	
 	// ----- OTHER
-	
-	@Deprecated
-	public static List<Customer> getCustomerList(AONContext ctx, String document) {
-		return ctx.getDslContext().select().from(CUSTOMER).join(REGISTRY)
-				.on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-				.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
-				.and(REGISTRY.DOCUMENT.eq(document)).fetch().stream()
-				.map(new CustomerFiller()).collect(Collectors.toList());
-	}
 
 	@Deprecated
 	public static void createCustomer(AONContext ctx, int domain,

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.config.AccountingConfig;
 import com.esferalia.aon.occam.api.model.config.FiscalConfig;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -25,7 +26,8 @@ public class AonConfiguration implements Serializable {
 	private boolean aonSolutions;
 	private AccountingConfig accounting = new AccountingConfig();
 	private FiscalConfig fiscal = new FiscalConfig();
-	
+	private DomainUserRoles dur;
+
 	// 	------------------- Revisar	
 	private User user;
 	private LinkedList<String> invoiceSalesSeries;
@@ -51,6 +53,15 @@ public class AonConfiguration implements Serializable {
 	private AccountingRegistry defaultCreditor;
 	private LinkedList<Domain> childDomains;
 	// 	------------------- Revisar
+	
+	public DomainUserRoles getDur() {
+		return dur;
+	}
+	
+	public AonConfiguration setDur(DomainUserRoles dur) {
+		this.dur = dur;
+		return this;
+	}
 	
 	public Company getCompany() {
 		return company;

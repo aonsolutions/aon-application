@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class RegistryNoteDAO {
@@ -56,12 +57,14 @@ public class RegistryNoteDAO {
 		
 		public static RegistryNote build(Record r) {
 			return new RegistryNote()
-					.setId(getValue(r, RNOTE.ID))
-					.setDomain(getValue(r, RNOTE.DOMAIN))
-					.setComments(getValue(r, RNOTE.COMMENTS))
-					.setDescription(getValue(r, RNOTE.DESCRIPTION))
-					.setNoteDate(getValue(r, RNOTE.NOTE_DATE))
-					.setNoteType(NoteType.safeValueOf(getValue(r, RNOTE.NOTE_TYPE)));
+				.setId(getValue(r, RNOTE.ID))
+				.setDomain(getValue(r, RNOTE.DOMAIN))
+				.setRegistry(getValue(r, RNOTE.REGISTRY))
+				.setComments(getValue(r, RNOTE.COMMENTS))
+				.setDescription(getValue(r, RNOTE.DESCRIPTION))
+				.setNoteDate(getValue(r, RNOTE.NOTE_DATE))
+				.setNoteType(NoteType.safeValueOf(getValue(r, RNOTE.NOTE_TYPE)))
+				.setSecurityLevel(SecurityLevel.safeValueOf(getValue(r, RNOTE.SECURITY_LEVEL)));
 		}
 	}
 	

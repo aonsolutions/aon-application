@@ -1003,7 +1003,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void sendContractTransform(String currentDomainName, String currentUser,
-			EmployeeContractInfo employeeContractData, ContractTransform contractTransform)
+			EmployeeContractInfo employeeContractData)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		

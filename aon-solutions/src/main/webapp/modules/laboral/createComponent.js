@@ -168,6 +168,13 @@ export const createContractData = (parent, isManager) => {
         }
     }, divC.element);
 
+    let divQuoteMonth = createDiv({
+        attributes:{
+            id:"divQuoteMonth"
+        }
+    })
+    divQuoteMonth.appendTo(parent);
+
     let divH = createDiv({
         attributes:{
             id:"div_parcial",
@@ -176,7 +183,7 @@ export const createContractData = (parent, isManager) => {
     })
     divH.appendTo(parent);
 
-    partTime(divH.element)
+    partTime(divH.element);
 
     createInput({
         attributes:{
@@ -360,7 +367,6 @@ const addIconSurname = () => {
     }
 }
 
-
 /**
  * 
  * @param {HTMLElement} divH parent 
@@ -408,6 +414,29 @@ const partTime = (divH) => {
     divC.appendChild(numberC);
     addSpanDecimal(numberC);
     return divC;
+}
+
+
+export const createQuoteMonthly = (detail, isManager) => {
+    
+    let show = detail && detail.quoteMonth;
+
+    let parent = document.getElementById("divQuoteMonth");
+
+    if(parent) {
+        parent.innerHTML = "";
+
+        if(show){
+            let divC = createDiv({classes:[CSS.AON_COL_XS_12]})
+            divC.appendTo(parent);
+    
+            const id = "quoteMonth";
+    
+            const aonSwitch = setAttributes(new AonSwitch(),{id, name:id, title: `Cotización mensual`, checked:false});
+        
+            divC.appendChild(aonSwitch);
+        }
+    }
 }
 
 export const addSpanDecimal = (input) =>  {

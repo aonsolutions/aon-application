@@ -378,8 +378,16 @@ const getTitleHtml = (task, isParent) => {
 
   span.appendChild(icon);
 
+  let assigned = "";   
+  if(task.task_holder&&task.task_holder.id)    {
+    assigned = task.task_holder.alias || task.task_holder.name; 
+  } else if(task.workgroup&&task.workgroup.description) {
+    assigned = task.workgroup.description;
+  }                                       
+   
   let spanTwo = document.createElement(TAG.SPAN);
   spanTwo.innerHTML = "#"+(task.number || "0").toString().padStart(5, 0);
+  spanTwo.title = assigned;
   span.appendChild(spanTwo);
 
   return span.outerHTML;

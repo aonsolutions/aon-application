@@ -412,7 +412,7 @@ public class WarehouseServlet extends HttpServlet{
 	
 	
 	private JSONObject updateDelivery(Domain domain, String login, Integer id, JSONObject json) {
-		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, id);
+		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
 		if(json.opt(MSG.CARRIER_PACKING) != null){
 			delivery.setCarrierPacking(getOrderCarrierPacking(json));
 		}
@@ -566,7 +566,8 @@ public class WarehouseServlet extends HttpServlet{
     }
     
     private JSONObject getDelivery(Domain domain,String login, Integer id){
-    	return ToJSON.deliveryToJSON(AON.getDelivery(domain.getName(), domain.getId(), login, id));
+    	return ToJSON.deliveryToJSON(AON.getDelivery(domain.getName(), domain.getId(), login,
+    			f -> f.getIdProperty().eq(id)));
     }
     
     private JSONArray getDeliveryDetailList(Domain domain,String login, Integer id){

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import { MSG, TAG, CSS, COLORS, CONSTANT } from "../../environments/environments.js";
+import { MSG, TAG, CSS, COLORS, CONSTANT, MATERIAL_ICONS, EVENT } from "../../environments/environments.js";
 import * as ACTION from '../actions.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonTab } from '../../components/aon-tab.js';
@@ -12,19 +12,25 @@ import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import * as LS from '../../services/localStorageService.js';
 import { getContractType, getQuoteGroup } from '../../services/comunicaService.js';
-import { getApplicationParameters, saveApplicationParameter } from '../../services/applicationParameterService.js';
+import { getApplicationParameters, saveApplicationParameter, } from '../../services/applicationParameterService.js';
 import { APP_PARAMS_PAYROLL } from './PayrollEnums.js';
+import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonInput } from '../../components/aon-input.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
 
 export class AonComunicaConfig extends AonElement {
   FORM;
   CARD;
   CARD_TWO;
+  CARD_THREE;
   CONTRACT_TYPES;
   APP_PARAMS;
+  APP_PARAMS_PARENT;
   QUOTE_GROUP;
   PARAMS_CONTRACT;
   PARAMS_QUOTE_GROUP;
   dur;
+  EMAIL_MAX_LENGTH;
   get id() {
     return this.getAttribute('id');
   }
@@ -50,11 +56,15 @@ export class AonComunicaConfig extends AonElement {
     this.id = this.id || 'AonComunicaConfig';
     this.CARD = this.id+"card";
     this.CARD_TWO = this.id+"cardTwo";
+    this.CARD_THREE = this.id+"cardThree";
     this.FORM_CONTRACT_TYPES = this.id+"formContractType";
     this.FORM_QUOTE_GROUP = this.id+"formQuoteGroup";
+    this.FORM_EMAILS = this.id+"formEmails";
     this.CONTRACT_TYPES =[];
     this.QUOTE_GROUP =[];
     this.APP_PARAMS =[];
+    this.APP_PARAMS_PARENT = [];
+    this.EMAIL_MAX_LENGTH = 96;
   }
 
   build(){
@@ -62,14 +72,25 @@ export class AonComunicaConfig extends AonElement {
     this.buildTabs();
     this.buildCard();
 
-    Promise.all([
+    let promises = [
       this.getAppParams(),
       this.setContractTypes(),
       this.setQuoteGroup()
-    ]).then(()=>{
+    ];
+
+    if(this.isChild()){
+      promises.push( this.getAppParamsParent());
+    }
+
+    Promise.all(promises).then(()=>{
       this.buildContractType();
       this.buildQuoteGroup();
-      this.showContractType();
+      this.buildEmails();
+      if(this.isChild()){
+        this.showForm(this.FORM_CONTRACT_TYPES);
+      } else {
+        this.showForm(this.FORM_EMAILS);
+      }
     });
   }
 
@@ -86,20 +107,29 @@ export class AonComunicaConfig extends AonElement {
   buildTabs(){
     let tab = new AonTab();
     tab.id = this.getIdRand();
-    const options = [
-      { 
+    let options = [];
+
+    if(this.isChild()){
+      options.push({ 
         title: MSG.TYPE_CONTRACT, 
         fn: () => {
-          this.showContractType();
+          this.showForm(this.FORM_CONTRACT_TYPES);
         }
       },
       { 
         title: MSG.QUOTE_GROUP, 
         fn: () => {
-          this.showQuoteGroup();
+          this.showForm(this.FORM_QUOTE_GROUP);
         }
+      });
+    } 
+    
+    options.push({ 
+      title: MSG.EMAIL, 
+      fn: () => {
+        this.showForm(this.FORM_EMAILS);
       }
-    ];
+    });
 
     tab.setOptions(options);
 
@@ -109,7 +139,6 @@ export class AonComunicaConfig extends AonElement {
   buildCard(){
     let div = setStyles(this.createElement(TAG.DIV),{display: "flex", flexWrap:"wrap", width:"100%" });
     this.appendChild(div);
- 
 
     let formOne = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_CONTRACT_TYPES});
     formOne.style.width = "50%";
@@ -125,6 +154,14 @@ export class AonComunicaConfig extends AonElement {
 
     let cardTwo = setAttributes(new AonCard(), { id:this.CARD_TWO });
     formTwo.appendChild(cardTwo);
+
+
+    let formThree = setAttributes(this.createElement(TAG.FORM), {id:this.FORM_EMAILS});
+    formThree.style.width = "50%";
+    div.appendChild(formThree);
+
+    let cardThree = setAttributes(new AonCard(), { id:this.CARD_THREE });
+    formThree.appendChild(cardThree);
   }
 
   buildContractType(){
@@ -134,7 +171,7 @@ export class AonComunicaConfig extends AonElement {
     div.className = CSS.FLEX_COLUMN;
     aonCard.addContent(div);
 
-    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
+    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
     text.innerText = "Contratos activos";
     div.appendChild(text);
 
@@ -154,7 +191,7 @@ export class AonComunicaConfig extends AonElement {
     div.className = CSS.FLEX_COLUMN;
     aonCard.addContent(div);
 
-    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
+    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
     text.innerText = "Grupos de cotización activos";
     div.appendChild(text);
 
@@ -167,6 +204,45 @@ export class AonComunicaConfig extends AonElement {
     }); 
   }
 
+  buildEmails(){
+    let aonCard = this.getElement(this.CARD_THREE);
+    aonCard.setTitleSection1(MSG.EMAIL);
+
+    let div = this.createElement(TAG.DIV);
+    div.className = CSS.FLEX_COLUMN;
+    aonCard.addContent(div);
+
+
+    let emailsParent = this.getEmailsParent();
+    if(emailsParent.length){
+      let titleOne = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
+      titleOne.innerText = "Correos del entorno";
+      div.appendChild(titleOne);
+  
+      const child = document.createElement(TAG.DIV);
+      child.innerText = emailsParent.join(", ");
+      child.style.marginBottom = "15px";
+
+      div.appendChild(child);
+    }
+  
+    let titleTwo = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
+    titleTwo.innerText = "Correos Alternativos";
+    div.appendChild(titleTwo);
+
+    let table = new AonBasicTable();
+    table.id = this.getIdRand();
+    div.appendChild(table);
+    
+    if(this.getEmails().length){
+      this.getEmails().forEach((email,idx)=>{
+        this.buildEmail(table, email, idx);
+      });
+    } else {
+      this.buildEmail(table, undefined, 0);
+    }
+  }
+
   isCheckedContract(value){
     const { APP_COMUNICA_CONTRACTS } = this.APP_PARAMS;
     return APP_COMUNICA_CONTRACTS ? APP_COMUNICA_CONTRACTS.split(',').some(v => v==value) : false;
@@ -176,15 +252,77 @@ export class AonComunicaConfig extends AonElement {
     const { APP_COMUNICA_QUOTE_GROUP } = this.APP_PARAMS;
     return APP_COMUNICA_QUOTE_GROUP ? APP_COMUNICA_QUOTE_GROUP.split(',').some(v => v==value) : false;
   }
-
-  showContractType(){
-    this.getElement(this.FORM_CONTRACT_TYPES).style.display = "block";
-    this.getElement(this.FORM_QUOTE_GROUP).style.display = "none";
-  }
   
-  showQuoteGroup(){
-    this.getElement(this.FORM_CONTRACT_TYPES).style.display = "none";
-    this.getElement(this.FORM_QUOTE_GROUP).style.display = "block";
+  buildEmail(table, email, i) {
+		let rowNum = table.addRow();
+
+    let rowCount = table.getRowsCount();
+
+    let aonInput = new AonInput();
+    aonInput.id = this.getIdRand() + i;
+    aonInput.name = aonInput.id;
+    aonInput.description = MSG.EMAIL + ' ' + (rowCount > 1 ? i + 1 : '');
+    aonInput.value = email || "";
+
+    this.querySelectorAll(`[id*='addEmail']`).forEach(el=>{
+      el.visible = false;
+    });
+
+    let addEmailId = "addEmail"+this.getIdRand();
+    let addEmail = new AonIconButton();
+    addEmail.id = addEmailId + i;
+    addEmail.title = MSG.ADD;
+    addEmail.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+    addEmail.visible = rowCount === i+1;
+
+    addEmail.addEventListener(EVENT.CLICK, (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      addEmail.visible = false;
+      if(table.getRowsCount() <3){
+        this.buildEmail(table, undefined, rowCount);
+      }
+    });
+    let td = table.addCell(aonInput);
+    td.style.width = '100%';
+    table.addCell(addEmail);
+
+    aonInput.onInput((ev)=>{
+      const length = ev.target.value.length;
+      const other = this.getEmailsLength(aonInput.name);
+      const total = length + other;
+      if(total > this.EMAIL_MAX_LENGTH){
+        console.log("stop", "rpevent");
+        ev.stopPropagation();
+        ev.preventDefault();
+        return false;
+      }
+    });
+
+    aonInput.addIconWithRemove(MATERIAL_ICONS.MAIL, undefined, (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      let count = table.getRowsCount();
+      let childVisible = 1;
+      if(count === 1 ) {
+        aonInput.value = '';
+      } else {
+        table.removeRow(rowNum);
+        childVisible = count-1;
+      }
+
+      let cell = table.getCell(childVisible, 1);
+      if(cell && cell.firstChild){
+        cell.firstChild.visible = true;
+      }
+    });
+	}
+
+  showForm(id){
+    this.querySelectorAll("form[id]").forEach(el=>{
+      let display = id && el.id === id ? "block" : "none";
+      el.style.display = display;
+    });
   }
 
   getIdRand(){
@@ -195,9 +333,11 @@ export class AonComunicaConfig extends AonElement {
 
     let contractType = [];
     let quoteGroup = [];
+    let emails = [];
 
     const formContractType = serializeForm(this.getElement(this.FORM_CONTRACT_TYPES));
     const formQuoteGroup = serializeForm(this.getElement(this.FORM_QUOTE_GROUP));
+    const formEmail = serializeForm(this.getElement(this.FORM_EMAILS));
 
     for(const key in formContractType){
       if(formContractType[key] === CONSTANT.TRUE){
@@ -211,10 +351,29 @@ export class AonComunicaConfig extends AonElement {
       }
     }
 
+    for(const key in formEmail){
+      emails.push(formEmail[key]);
+    }
+
     return {
       [APP_PARAMS_PAYROLL.APP_COMUNICA_CONTRACTS] : contractType.join(','),
-      [APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP]: quoteGroup.join(',')
+      [APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP]: quoteGroup.join(','),
+      [APP_PARAMS_PAYROLL.APP_COMUNICA_EMAILS]: emails.join(',').substring(0,96)
     };
+  }
+
+  getEmailsLength(nameExclude){
+    const formEmail = serializeForm(this.getElement(this.FORM_EMAILS));
+    let emails = [];
+    for(const key in formEmail){
+      if(key != nameExclude){
+        emails.push(formEmail[key]);
+      }
+    }
+
+    let values = emails.join(",");
+
+    return values.length;
   }
 
   async save(){
@@ -261,13 +420,24 @@ export class AonComunicaConfig extends AonElement {
     return this.QUOTE_GROUP;
   }
 
+  getEmails(){
+    const { APP_COMUNICA_EMAILS } = this.APP_PARAMS;
+    return APP_COMUNICA_EMAILS ? APP_COMUNICA_EMAILS.split(',') : [];
+  }
+
+  getEmailsParent(){
+    const { APP_COMUNICA_EMAILS } = this.APP_PARAMS_PARENT;
+    return APP_COMUNICA_EMAILS ? APP_COMUNICA_EMAILS.split(',') : [];
+  }
+
 	async getAppParams(){
 		if(!this.APP_PARAMS.length){
 			try {
 				await getApplicationParameters({
 					params:[
             APP_PARAMS_PAYROLL.APP_COMUNICA_CONTRACTS,
-            APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP
+            APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP,
+            APP_PARAMS_PAYROLL.APP_COMUNICA_EMAILS
 					]
 				}).then(params=>{
 					let newResp = [];
@@ -284,6 +454,36 @@ export class AonComunicaConfig extends AonElement {
 		}
 		return this.APP_PARAMS;
 	}
+
+  async getAppParamsParent(){
+		if(!this.APP_PARAMS_PARENT.length){
+			try {
+				await getApplicationParameters({
+					params:[
+            // APP_PARAMS_PAYROLL.APP_COMUNICA_CONTRACTS,
+            // APP_PARAMS_PAYROLL.APP_COMUNICA_QUOTE_GROUP,
+            APP_PARAMS_PAYROLL.APP_COMUNICA_EMAILS
+					],
+          parent:true
+				}).then(params=>{
+					let newResp = [];
+					params
+					.filter(p => p.value)
+					.forEach(p => 
+						newResp[p.name] = p.value
+					);
+					this.APP_PARAMS_PARENT = newResp;
+				});
+			} catch (e) {
+				console.log("error getAppParams", e);
+			}
+		}
+		return this.APP_PARAMS_PARENT;
+	}
+
+  isChild(){
+    return this.dur && this.dur.domain && this.dur.domain.parentId;
+  }
 }
 
 window.customElements.define('aon-comunica-config',  AonComunicaConfig);

@@ -155,7 +155,7 @@ public class JooqCertifica2 {
 		Integer contractId = contractRecord.get(CONTRACT.ID);
 		Integer personId = contractRecord.get(CONTRACT.PERSON);
 
-		Date startDate = contractRecord.get(CONTRACT.START_DATE);
+		Date startDate = null != contractRecord.get(CONTRACT.SENIORITY_DATE) ? contractRecord.get(CONTRACT.SENIORITY_DATE) : contractRecord.get(CONTRACT.START_DATE);
 		Date endDate = contractRecord.get(CONTRACT.END_DATE);
 
 		if (null == endDate)

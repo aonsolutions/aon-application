@@ -54,6 +54,12 @@ const OptionKind = {
   WORKER: 0x08,
   PREFERENCE: 0x80
 };
+
+// COMMENT THIS ON DEBUG
+console.error = () => {};
+console.log = () => {}
+console.warn = () => {}
+
 exports.OptionKind = OptionKind;
 const defaultOptions = {
   annotationMode: {

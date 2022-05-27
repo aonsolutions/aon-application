@@ -11,12 +11,14 @@
     html {
       position: absolute;
       width: 100%;
+      height: 100%;
     }
 
     body {
       height: 100%;
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
 
     .div-horizontal-center {
@@ -32,16 +34,14 @@
       width: 100%;
     }
 
-    video {
+    iframe {
       user-select: none;
       -moz-user-select: none;
       -webkit-user-select: none;
       -ms-user-select: none;
-      border-radius: 0.35rem;
-      box-shadow: 0px 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
-      width: 80%;
-      max-width: 60rem;
-      margin: 4rem 0;
+      border: none;
+      width: 100%;
+      height: 100%;
     }
 
     * {
@@ -49,20 +49,7 @@
     }
   </style>
   <body>
-    <div class="div-horizontal-center box-column">
-      <video
-        width="100%"
-        controls
-        controlsList="nodownload"
-        id="video-player"
-        oncontextmenu="return false;"
-      >
-        <source src="" type="video/mp4" />
-
-        <p id="loadStatus">Cargando video...</p>
-      </video>
-    </div>
-
+ 		<iframe src=""></iframe>
     <script>
       function b64DecodeUnicode(str) {
         // Going backwards: from bytestream, to percent-encoding, to original string.
@@ -81,46 +68,18 @@
 
       async function showVideo() {
         // Get the video from the url
-        const source = document.querySelector('#video-player > source')
-        const player = document.querySelector('#video-player')
+        const source = document.querySelector('iframe')
+       
         let video = window.location.hash.substr(1)
         video = b64DecodeUnicode(video)
 
-        if (!player || !source) return
+        if (!source) return
 
-        // Get the name of the video
-        const getPossibleName = (url) => {
-          let name = url.substring(
-            url.lastIndexOf('name=') + 5,
-            url.indexOf('.mp4'),
-          )
-          return name
-        }
-
-        const title = getPossibleName(video)
+        const title = "Aon solutions"
         document.title = title
         window.title = title
 
         source.src = video
-
-        /* Strean the video
-        const media = new MediaSource()
-        const urlObject = URL.createObjectURL(media)
-       
-
-        const buffer = media.addSourceBuffer(`video/mp4; codecs="avc1.64001e"`)
-        
-        // the same for the video SourceBuffer
-        fetch(video)
-          .then(function (response) {
-            // The data has to be a JavaScript ArrayBuffer
-            console.log(response)
-            return response.arrayBuffer()
-          })
-          .then(function (videoData) {
-            buffer.appendBuffer(videoData)
-          })
-*/
         player.load()
         player.play()
       }

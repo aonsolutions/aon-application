@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -18,6 +19,9 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.type.ContractAttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 public class JooqContractAttach {
 	
@@ -224,46 +228,6 @@ public class JooqContractAttach {
 				.execute();
 	}
 	
-	// ------------------------------------------ CopyBasic
-
-	public static byte[] getCopyBasic(Connection connection, Integer contractId) {
-		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		
-		Result<Record> copyBasicRecords = dslContext.select().from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
-				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
-				.fetch();
-		
-		return copyBasicRecords.isEmpty() ? null : copyBasicRecords.get(0).get(CONTRACT_ATTACH.DATA);
-	}
-	
-	public static void setCopyBasic(Connection connection, Integer domainId, Integer contractId, byte[] data) {
-		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		
-		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
-				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
-				.fetchOne(CONTRACT_ATTACH.ID);
-		
-		if(null != contractAttachId)
-			dslContext.update(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DATA, data)
-				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
-				.where(CONTRACT_ATTACH.ID.eq(contractAttachId))
-				.execute();
-		else
-			dslContext.insertInto(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DOMAIN, domainId)
-				.set(CONTRACT_ATTACH.CONTRACT, contractId)
-				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
-				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Basica (SEPE)")
-				.set(CONTRACT_ATTACH.DATA, data)
-				.set(CONTRACT_ATTACH.TYPE, (byte)102)
-//				.set(CONTRACT_ATTACH.TYPE, (byte)3)
-				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
-				.execute();
-	}
-	
 	// ------------------------------------------ CopyContract
 	
 	public static byte[] getCopyContract(Connection connection, Integer contractId) {
@@ -299,6 +263,45 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Contrato (SEPE)")
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.TYPE, (byte)101)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+	}
+	
+	// ------------------------------------------ CopyBasic
+
+	public static byte[] getCopyBasic(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> copyBasicRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetch();
+		
+		return copyBasicRecords.isEmpty() ? null : copyBasicRecords.get(0).get(CONTRACT_ATTACH.DATA);
+	}
+	
+	public static void setCopyBasic(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetchOne(CONTRACT_ATTACH.ID);
+		
+		if(null != contractAttachId)
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachId))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Basica (SEPE)")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)102)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
 	}
@@ -340,6 +343,23 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.TYPE, (byte)103)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
+	}
+	
+	// ------------------------------------------ SaveAttach
+
+	private void saveAttach(String domainName, Integer domainId, String login, Integer contractId, String description, ContractAttachType type, byte[] data) {
+		com.esferalia.aon.occam.api.model.payroll.ContractAttach contractAttach = new com.esferalia.aon.occam.api.model.payroll.ContractAttach();
+		
+		contractAttach
+			.setDomain(domainId)
+			.setContract(contractId)
+			.setMimeType(MimeType.PDF)
+			.setDescription(description)
+			.setData(data)
+			.setType(type)
+			.setAttachDate(new Date());
+
+		PAYROLL.saveContractAttach(domainName, domainId, login, contractAttach);
 	}
 	
 }

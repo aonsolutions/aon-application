@@ -607,6 +607,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteContractAttach(currentDomainName, login, attachId, new AsyncCallbackWrapper<Void>(callback));
 	}
+
+	@Override
+	public void getAttachData(String currentDomainName, String login, Integer attachId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAttachData(currentDomainName, login, attachId, new AsyncCallbackWrapper<String>(callback));
+	}
 	
 	// ------------------------------------------------ Contract Clauses
 	

@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -649,4 +651,17 @@ public class Delivery implements Serializable {
 		}
     	return referenceCode;
     }
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Sales ))
+			return false;
+		Delivery delivery = (Delivery) obj;
+		return Objects.equals(id, delivery.id);
+	}
 }

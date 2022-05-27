@@ -35,22 +35,22 @@ public class SalesServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(SalesServlet.class.getName());
 	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		get(req, resp);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		get(req, resp);
 	}
 	
 	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		put(req, resp);
 	}
 	
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+	public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		delete(req, resp);
 	}
 	

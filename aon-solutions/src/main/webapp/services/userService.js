@@ -16,5 +16,7 @@ export const deleteUser = (data) => remove(`${API_URL}/user`, data);
 
 export const sendUserInfoEmail = (data) => post(`${API_URL}/user/email`, data);
 
-export const assignUserWorkgroup = (data) => put(`${API_URL}/user/workgroup`, data)
-export const removeUserWorkgroup = (data) => remove(`${API_URL}/user/workgroup`, data)
+export const assignUserWorkgroup = (data) => put(`${API_URL}/user/workgroup`, data);
+export const removeUserWorkgroup = (data) => remove(`${API_URL}/user/workgroup`, data);
+
+export const generateToken = (data) => open(`${API_URL}/generate_token?json=${data}`);

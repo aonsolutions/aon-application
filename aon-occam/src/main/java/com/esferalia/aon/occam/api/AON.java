@@ -2190,6 +2190,8 @@ public class AON {
 	
 	// ------------------ SALES
 
+	// ----- GET SALES STREAM
+	
 	public static Stream<Sales> getSalesStream(Domain domain, User user, SalesFilter filter, Options... options) {
 		return getSalesStream(domain.getName(), domain.getId(),  user.getLogin(), filter, options);
 	}
@@ -2199,25 +2201,29 @@ public class AON {
 	}
 	
 	public static Stream<Sales> getSalesStream(String domainName, Integer domainId, String login, SalesFilter filter, Options... options) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getManagement().getSalesStream(ctx, filter, options);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
-	public static Sales getSales(String domainName, Integer domainId,
-			String login, SalesFilter filter, Options... options) {
-		Sales sales = getSalesStream(domainName, domainId, login, filter, options)
-				.findFirst().orElse(new Sales());
-		sales.setCustomer(getCustomer(domainName, domainId, login, sales
-				.getCustomer().getId()));
-		return sales;
+	// ----- GET SALES
+	
+	public static Sales getSales(Domain domain, User user, SalesFilter filter, Options... options) {
+		return getSales(domain.getName(), domain.getId(),  user.getLogin(), filter, options);
+	}
+	
+	public static Sales getSales(Domain domain, String login, SalesFilter filter, Options... options) {
+		return getSales(domain.getName(), domain.getId(),  login, filter, options);
+	}
+	
+	public static Sales getSales(String domainName, Integer domainId, String login, SalesFilter filter, Options... options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getManagement().getSales(ctx, filter, options);
+		}
 	}
 
+	// ----- SAVE SALES
+	
 	public static Sales saveSales(Domain domain, User user, Sales sales) {
 		return saveSales(domain.getName(), domain.getId(), user.getLogin(), sales);
 	}
@@ -2231,6 +2237,8 @@ public class AON {
 			return getManagement().saveSales(ctx, sales);
 		} 
 	}
+	
+	// ----- DELETE SALES
 	
 	public static void deleteSales(Domain domain, User user, Integer salesId) {
 		deleteSales(domain.getName(), domain.getId(), user.getLogin(), salesId);
@@ -2411,53 +2419,41 @@ public class AON {
 	}
 	
 	// ------------------ DELIVERY
-	
-	public static Stream<DeliveryDetail> getDeliveryDetails(String domainName,
-			Integer domainId, String login, DeliveryFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getManagement().getDeliveryDetails(ctx, filter);
-		} 
-	}
 
-	public static Stream<Delivery> getDeliveryStream(Domain domain, User user, DeliveryFilter filter) {
-		return getDeliveryStream(domain.getName(),  domain.getId(), user.getLogin(), filter);
+	// ----- GET DELIVERY STREAM
+	
+	public static Stream<Delivery> getDeliveryStream(Domain domain, User user, DeliveryFilter filter, Options... options) {
+		return getDeliveryStream(domain.getName(),  domain.getId(), user.getLogin(), filter, options);
 	}
 	
-	public static Stream<Delivery> getDeliveryStream(Domain domain, String login, DeliveryFilter filter) {
-		return getDeliveryStream(domain.getName(),  domain.getId(),  login, filter);
+	public static Stream<Delivery> getDeliveryStream(Domain domain, String login, DeliveryFilter filter, Options... options) {
+		return getDeliveryStream(domain.getName(),  domain.getId(),  login, filter, options);
 	}
-
-	public static Stream<Delivery> getDeliveryStream(String domainName, Integer domainId, String login, DeliveryFilter filter) {
+	
+	public static Stream<Delivery> getDeliveryStream(String domainName, Integer domainId, String login, DeliveryFilter filter, Options... options) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getManagement().getDeliveryStream(ctx, filter);
+			return getManagement().getDeliveryStream(ctx, filter, options);
 		}
 	}
+
+	// ----- GET DELIVERY
 	
-	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName, Integer domainId, String login,
-			DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter, ItemFilter itemFilter){
+	public static Delivery getDelivery(Domain domain, User user, DeliveryFilter filter, Options...options) {
+		return getDelivery(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+	
+	public static Delivery getDelivery(Domain domain, String login, DeliveryFilter filter, Options...options) {
+		return getDelivery(domain.getName(), domain.getId(), login, filter, options);
+	}
+	
+	public static Delivery getDelivery(String domainName, Integer domainId, String login, DeliveryFilter filter, Options...options) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter, itemFilter);
-		}	
-	}
-	
-	public static LinkedList<Delivery> getDeliveryList(String domainName,
-			Integer domainId, String login, DeliveryFilter filter) {
-		return getDeliveryStream(domainName, domainId, login, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static Delivery getDelivery(String domainName,
-			Integer domainId, String login, DeliveryFilter filter) {
-		return getDeliveryStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Delivery());
-	}
-	
-	public static Delivery getDelivery(String domainName,
-			Integer domainId, String login, Integer id) {
-		return getDelivery(domainName, domainId, login,
-				f -> f.getIdProperty().eq(id).perPage(1));	
+			return getManagement().getDelivery(ctx, filter, options);
+		}
 	}
 
+	// ----- SAVE DELIVERY
+	
 	public static Delivery saveDelivery(Domain domain, User user, Delivery delivery) {
 		return saveDelivery(domain.getName(), domain.getId(),  user.getLogin(), delivery);
 	}
@@ -2500,6 +2496,8 @@ public class AON {
 		return updateDelivery(domainName, domainId, login, delivery, f -> f.getIdProperty().eq(delivery.getId()));
 	}
 	
+	// ----- DELETE DELIVERY
+	
 	public static void deleteDelivery(String domainName, Integer domainId, String login, DeliveryFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getManagement().deleteDelivery(ctx, filter);
@@ -2513,6 +2511,19 @@ public class AON {
 	}
 	
 	// -------------------- DELIVERY DETAILS
+	
+	public static Stream<DeliveryDetail> getDeliveryDetails(String domainName, Integer domainId, String login, DeliveryFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getManagement().getDeliveryDetails(ctx, filter);
+		} 
+	}
+	
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName, Integer domainId, String login,
+			DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter, ItemFilter itemFilter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter, itemFilter);
+		}	
+	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName,
 			Integer domainId, String login, DeliveryDetailFilter filter) {

@@ -81,6 +81,12 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 			&& !getConfiguration().getUser().hasAdminRole();
 	}
 	
+	public boolean isAccountingGuest() {
+		return isGuest() || 
+			(getConfiguration().getDur().isAccounting() 
+				&& !getConfiguration().getDur().isAccountingManager());
+	}
+	
 	public boolean hasConfidentialityRole() {
 		return getConfiguration() != null
 			&& getConfiguration().getUser() != null 

@@ -175,6 +175,7 @@ public final class IJsonNames {
 	public static final String EXPENSES_FIXED = "expensesFixed";
 	public static final String EXPENSES_PERCENT = "expensesPercent";
 	public static final String EXPENSES_RATIO = "expensesRatio";
+	public static final String EXPIRATION_DATE = "expirationDate";
 	public static final String EXPRESSION = "expression";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FARMER_REGIME = "farmerRegime";

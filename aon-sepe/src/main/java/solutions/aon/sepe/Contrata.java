@@ -342,6 +342,7 @@ public class Contrata {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/TransformacionServlet?pagina=inicio").click();
 	        handleSepeExceptions(htmlPage);
 	      
+	      
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 			
 			{//DATA ENTERPRISE
@@ -407,7 +408,7 @@ public class Contrata {
 					DomNode tipoJornada = form.querySelector("select[name=tipoJornada]");
 					if(tipoJornada!=null &&cto.getJndType()!=null && cto.getDurationTypeJndHour()!=null && cto.getDurationTypeJndMin()!=null) {
 						((HtmlSelect)tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
-						String hours = "00"+cto.getDurationTypeJndHour();
+						String hours = Toolkit.fillStringLeft(cto.getDurationTypeJndHour(), "0", 4);
 						String min = cto.getDurationTypeJndMin();
 						form.getInputByName("horas").setValueAttribute(hours);
 						form.getInputByName("minutos").setValueAttribute(min);
@@ -543,6 +544,7 @@ public class Contrata {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 		webClient.getOptions().setUseInsecureSSL(true);
 			
+		
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click(); 
@@ -550,8 +552,9 @@ public class Contrata {
 	        
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_comunica_copiaBasicaContrato.jsp?origen=copiabasica").click();
 		    handleSepeExceptions(htmlPage);
-
+		    
 		    Optional<String> sepeId = copyBasic.getSepeId();
+		    
 		    if(sepeId.isPresent()) {
 		    	htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaEmpresa?pagina=idcomunicacion&origen=copiabasica").click(); 
 			    handleSepeExceptions(htmlPage);
@@ -591,23 +594,34 @@ public class Contrata {
 	        }
 	        
 	        DomNode areadeDomicilio = form.querySelector("[name=areadeDomicilio]");
-	        if(areadeDomicilio!=null) {
+	        if(areadeDomicilio!=null && copyBasic.getWorkAddress()!=null) {
 		        ((HtmlTextArea)areadeDomicilio).setText(copyBasic.getWorkAddress());
 	        }
 	        
 	        DomNode areadeTexto = form.querySelector("[name=areadeTexto]");
-	        if(areadeTexto!=null) {
+	        if(areadeTexto!=null && copyBasic.getRestContract()!=null) {
 		        ((HtmlTextArea)areadeTexto).setText(copyBasic.getRestContract());
 	        }
-	        
-	        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
-	        handleSepeExceptions(htmlPage);
-	        
-	        String message = getSuccessMessage(htmlPage);
-			if(message!=null && message.contains("se ha realizado correctamente"))
-			     return message;
-			else 
-				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
+
+	    	Optional<String> exist = htmlPage.querySelectorAll("form[name=\"datos\"] fieldset div[class*=titulo]")
+	    	.stream()
+	    	.filter(e-> !e.getTextContent().isEmpty() && e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
+	    	.map(e -> e.getTextContent().trim()).findFirst();
+	    	
+	    	String messageError = "Error no aceptada la comunicaci\u00f3n";
+	    	
+	    	if(exist.isEmpty()) {
+		        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
+		        handleSepeExceptions(htmlPage);
+		        
+		        String message = getSuccessMessage(htmlPage);
+				if(message!=null && message.contains("se ha realizado correctamente"))
+				     return message;
+	    	} else {
+	    		messageError = exist.get();
+	    	}
+	    	
+	    	throw new SepeException(messageError);
 		} 
 	}
 	

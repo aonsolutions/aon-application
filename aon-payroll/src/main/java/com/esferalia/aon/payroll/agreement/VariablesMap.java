@@ -45,6 +45,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AD_PERSONAM_ANUAL","AD_PERSONAM");
 		variablesMap.put("AD_PERSONAM_MENSUAL","AD_PERSONAM");
 		
+		variablesMap.put("ANTICIPO_HORAS","ANTICIPO_H");
+		
 		variablesMap.put("ANTIGUEDAD_1_BIENIO_MENSUAL","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_2_BIENIOS_MENSUAL","ANTIGUEDAD_2");
 		variablesMap.put("ANTIGUEDAD_3_BIENIOS_MENSUAL","ANTIGUEDAD_3");
@@ -406,6 +408,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COORDINACION_MENSUAL", "COORDINACION");
 		variablesMap.put("COOPERATIVAS_DE_CONSUMO_MENSUAL", "COOPERATIVAS_CONSUMO");
 		variablesMap.put("COR_MENSUAL", "COR");
+		variablesMap.put("COTIZACION_EN_ESPECIE_MENSUAL", "C_EN_ESPECIE");
 		variablesMap.put("C_P_P__MENSUAL", "C_P_P");
 		variablesMap.put("C_P_P__CARGO_MENSUAL", "C_P_P_CARGO");
 		variablesMap.put("C_TEMP_CARGO_MENSUAL", "C_TEMP_CARGO");
@@ -857,6 +860,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DEDICACION_ANUAL", "PLUS_DEDICACION");
 		variablesMap.put("PLUS_DEDICACION_MENSUAL", "PLUS_DEDICACION");
 		variablesMap.put("PLUS_DEDICACION_DIARIO", "PLUS_DEDICACION");
+		variablesMap.put("PLUS_DEGUSTACION_MENSUAL", "DEGUSTACION");
 		variablesMap.put("PLUS_DESCANSO_ANUAL", "PLUS_DESCANSO");
 		variablesMap.put("PLUS_DESCANSO_DIARIO", "PLUS_DESCANSO");
 		variablesMap.put("PLUS_DESCANSO_HORAS", "PLUS_DESCANSO");
@@ -1043,7 +1047,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_PENOSIDAD_MEDIA_JORNADA_MENSUAL", "PLUS_PENOSIDAD_MJ");
 		variablesMap.put("PLUS_PENOSIDAD_MENSUAL", "PLUS_PENOSIDAD");
 		variablesMap.put("PLUS_PENOSIDAD_RUIDO_HORAS", "PLUS_PENOSIDAD_RUIDO");
-		variablesMap.put("PLUS_PERMANENCIA_ANUAL", "PLUS_PERMANENCIA");
+		variablesMap.put("PLUS_PERMANENCIA_ANUAL", "PERMANENCIA_A");
+		variablesMap.put("PLUS_PERMANENCIA_DIARIO", "PERMANENCIA_D");
 		variablesMap.put("PLUS_PRESENCIA_MENSUAL", "PLUS_PRESENCIA");
 		variablesMap.put("PLUS_PRESENCIA_E_IMAGEN_MENSUAL", "PRESENCIA_E_IMAGEN_M");
 		variablesMap.put("PLUS_PROLONGACION_DE_JORNADA_ANUAL", "P_PROLONG_JORNANA");

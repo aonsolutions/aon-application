@@ -41,6 +41,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -51,6 +52,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -178,6 +180,9 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	ListBox quoteGroup;
+	
+	@UiField
+	Button quoteGroupCotizB;
 
 	@UiField
 	ListBox occupation;
@@ -558,10 +563,22 @@ public abstract class Employee extends ResizeComposite {
 	@UiHandler("quoteGroup")
 	void onQuoteGroupChangeValue(ChangeEvent event) {
 		String quoteGroupStr = String.valueOf(this.quoteGroup.getSelectedValue());
+		quoteGroupStr = AonStringUtils.equalsIgnoreCase(quoteGroupStr, "-1") ? null : quoteGroupStr; 
+		
 		if(AonStringUtils.equalsIgnoreCase(quoteGroupStr, "-1"))
 			onContractQuoteGroupChange(null);
 		else
 			onContractQuoteGroupChange(quoteGroupStr);
+		
+		showHideQuoteIdx(null == quoteGroupStr ? null : Integer.parseInt(quoteGroupStr));
+	}
+	
+	@UiHandler("quoteGroupCotizB")
+	void onQuoteGroupCotizBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(quoteGroupCotizB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(quoteGroupCotizB, value);
+		onContractQuoteGroupIdx(value);
 	}
 
 	@UiHandler("occupation")
@@ -760,6 +777,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractAgreementLevelChange(Integer levelId);
 	public abstract void onContractCategoryChange(String category);
 	public abstract void onContractQuoteGroupChange(String quoteGroup);
+	public abstract void onContractQuoteGroupIdx(boolean quoteGroupMonth);
 	public abstract void onContractOccupationChange(String occupation);
 	public abstract void onContractRLCEChange(String rlce);
 	public abstract void onContractEmployeesColectiveChange(String employeesColective);
@@ -822,6 +840,7 @@ public abstract class Employee extends ResizeComposite {
 		this.level.clear();
 		this.category.setValue("");
 		this.quoteGroup.clear();
+		getEnableDisableButton(this.quoteGroupCotizB, false);
 		this.occupation.clear();
 		this.rlce.clear();
 		this.employeesColective.clear();
@@ -921,12 +940,12 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.contractDataTable.getRows().getItem(8).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
 		
 		hideEmployeesColective();
 		
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Fill default fields
@@ -1094,11 +1113,11 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.contractDataTable.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();
 
-		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -1111,21 +1130,22 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.contractDataTable.getRows().getItem(8).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showElementsFullTimeJourneyTypeContract() {
-		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showPartialTimeContract() {
@@ -1143,7 +1163,7 @@ public abstract class Employee extends ResizeComposite {
 	
 	private void showElementsPartialTimeContract() {
 		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();	
-		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();	
+		this.contractDataTable.getRows().getItem(18).getStyle().clearDisplay();	
 	}
 	
 	// ------------------------------------------------- Show/hide mdCtz methods
@@ -1162,11 +1182,23 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Show/hide EmployeeColective methods
 	
 	public void showEmployeesColective() {
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
+		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();	
 	}
 	
 	public void hideEmployeesColective() {
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+	}
+	
+	// ------------------------------------------------- Show/hide Quote Idx
+	
+	public void showHideQuoteIdx(Integer quoteGroup) {
+		if(AonNumberUtils.equals(quoteGroup, 8) || AonNumberUtils.equals(quoteGroup, 9) || AonNumberUtils.equals(quoteGroup, 10) || AonNumberUtils.equals(quoteGroup, 11))
+			this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();	
+		else {
+			this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+			getEnableDisableButton(quoteGroupCotizB, false);
+			onContractQuoteGroupIdx(false);
+		}
 	}
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
@@ -1318,6 +1350,20 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	// ------------------------------------------------- Auxiliar methods
+	
+	public void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
+	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
