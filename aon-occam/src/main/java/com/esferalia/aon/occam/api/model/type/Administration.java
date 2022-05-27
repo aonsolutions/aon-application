@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Administration implements Serializable {
 	
@@ -37,6 +38,7 @@ public enum Administration implements Serializable {
 	
 
 	public static Administration safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (Administration rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()))
 				return rs;

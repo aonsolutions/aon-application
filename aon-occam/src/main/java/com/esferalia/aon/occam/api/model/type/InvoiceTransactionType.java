@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceTransactionType implements Serializable {
 
@@ -49,6 +50,7 @@ public enum InvoiceTransactionType implements Serializable {
 	}
 
 	public static InvoiceTransactionType safeValueOf( String str) {
+		if(AonStringUtils.isBlank(str)) return NATIONAL;
 		for (InvoiceTransactionType rs : values()) {
 			if(rs.name().equalsIgnoreCase(str) || rs.getTediName().equalsIgnoreCase(str) || rs.getDescription().equalsIgnoreCase(str))
 				return rs;

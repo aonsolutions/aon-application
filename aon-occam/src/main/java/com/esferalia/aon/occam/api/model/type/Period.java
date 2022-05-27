@@ -144,7 +144,7 @@ public enum Period implements Serializable {
 	}
 
 	public static Period safeValueOf(String name) {
-		if (name == null) return null;
+		if(AonStringUtils.isBlank(name)) return null;
 		for (Period t : Period.values()) {
 			if (AonStringUtils.equals(name, t.getName())) return t;
 		}

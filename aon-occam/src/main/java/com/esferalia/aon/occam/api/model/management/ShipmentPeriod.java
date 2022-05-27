@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.management;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ShipmentPeriod implements Serializable{
 	
 	IN_COMMENTS,
@@ -34,6 +36,7 @@ public enum ShipmentPeriod implements Serializable{
 	}
 	
 	public static ShipmentPeriod safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (ShipmentPeriod rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

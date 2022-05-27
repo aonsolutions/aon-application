@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ContractLeaveDischargeCause {
 	
 	CURACION, 
@@ -40,11 +42,12 @@ public enum ContractLeaveDischargeCause {
 	}
 	
 	public static ContractLeaveDischargeCause safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return CURACION;
 		for (ContractLeaveDischargeCause rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
 		}
-		return ContractLeaveDischargeCause.CURACION;
+		return CURACION;
 	}
 
 }

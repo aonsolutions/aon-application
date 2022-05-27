@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TagType implements Serializable{
 
 	RATTACH,
@@ -64,6 +66,7 @@ public enum TagType implements Serializable{
 	}
 	
 	public static TagType valueNameOf(String name) {
+		if(AonStringUtils.isBlank(name)) return TASK_LABEL;
 		for(TagType p :TagType.values())
 			if(name.equalsIgnoreCase(p.getName()) || name.equalsIgnoreCase(p.name()))
 				return p;

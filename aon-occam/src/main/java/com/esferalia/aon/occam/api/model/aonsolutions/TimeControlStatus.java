@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TimeControlStatus {
 	IN,
 	OUT,
@@ -25,6 +27,7 @@ public enum TimeControlStatus {
 	}
 	
 	public static TimeControlStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (TimeControlStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

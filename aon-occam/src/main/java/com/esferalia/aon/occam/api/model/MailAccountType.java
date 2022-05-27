@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum MailAccountType {
 
 	USER,
@@ -21,6 +23,7 @@ public enum MailAccountType {
 	}
 	
 	public static MailAccountType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (MailAccountType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
