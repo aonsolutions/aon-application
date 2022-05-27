@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IRegistryStatusVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public enum RegistryStatus implements Serializable {
@@ -45,6 +46,7 @@ public enum RegistryStatus implements Serializable {
 	}
 	
 	public static RegistryStatus safeValueOf( String str) {
+		if(AonStringUtils.isBlank(str)) return ACTIVE;
 		for (RegistryStatus rs : values()) {
 			if(rs.name().equalsIgnoreCase(str) || rs.getDescription().equalsIgnoreCase(str))
 				return rs;

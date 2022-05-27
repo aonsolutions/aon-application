@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TaskHolderType  {
 
 	INTERNAL,
@@ -43,6 +45,7 @@ public enum TaskHolderType  {
 	}
 	
 	public static TaskHolderType safeValueOf(String value) {
+		if(AonStringUtils.isBlank(value)) return TaskHolderType.INTERNAL;
 		for (TaskHolderType tht : TaskHolderType.values()) {
 			if(tht.name().equalsIgnoreCase(value)) {
 				return tht;

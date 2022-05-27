@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum FiscalModelDeclarationType {
 
 	//-------------------------------------------------- FINANCE    -ASK BANK		
@@ -41,7 +43,7 @@ public enum FiscalModelDeclarationType {
 	}
 	
 	public static FiscalModelDeclarationType safeValueOf( String value ) {
-		if (value == null) return null;
+		if(AonStringUtils.isBlank(value)) return null;
 		for (FiscalModelDeclarationType t : FiscalModelDeclarationType.values()) {
 			if (t.getValue().equals(value)) return t;
 		}

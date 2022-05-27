@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum AonRole  implements Serializable {
 	
 	ADMIN, 
@@ -70,6 +72,7 @@ public enum AonRole  implements Serializable {
 	}
 	
 	public static AonRole safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (AonRole rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

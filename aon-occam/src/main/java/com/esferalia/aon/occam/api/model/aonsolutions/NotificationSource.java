@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum NotificationSource {
 	DOCUMENTAL,
 	MESSENGER
@@ -29,6 +31,7 @@ public enum NotificationSource {
 	}
 	
 	public static NotificationSource safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (NotificationSource rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

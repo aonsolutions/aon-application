@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum DocumentType implements Serializable {
 	
 	NIF("DNI")
@@ -40,6 +42,7 @@ public enum DocumentType implements Serializable {
 	}
 	
 	public static DocumentType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (DocumentType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
