@@ -41,8 +41,8 @@ public class NotificationImpl implements INotification {
 	}
 	
 	@Override
-	public void markReadNotification(AONContext ctx, Integer id) {
-		ctx.getDslContext().transaction(configuration ->  NotificationDAO.markReadNotification(ctx, id));
+	public void markReadNotification(AONContext ctx, NotificationFilter filter) {
+		ctx.getDslContext().transaction(configuration ->  NotificationDAO.markReadNotification(ctx, filter));
 	}
 	
 	@Override
@@ -50,7 +50,4 @@ public class NotificationImpl implements INotification {
 		return ctx.getDslContext().transactionResult(
 				configuration -> NotificationDAO.getTotalNotification(ctx, filter));
 	}
-	
-	
-	
 }

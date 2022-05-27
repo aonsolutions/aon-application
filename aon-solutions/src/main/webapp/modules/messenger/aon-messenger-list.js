@@ -474,7 +474,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
         icon_title:source,
       })
     
-      getIcon(task, size = undefined){
+      getIcon(task, size = undefined, isChild= undefined) {
         const {source,status, parent, id} = task;
         let div = document.createElement(TAG.DIV);
         
@@ -485,8 +485,25 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
     
         span.style.color = iconJson.icon_color;
         span.title = source;
-
+        span.style.position = "relative";
         span.dataset.taskParent = id;
+        if(isChild){
+          span.dataset.isChild = isChild;
+        } else {
+          try {
+              let arr = [];
+              if(task.parent){
+                arr.push(task.parent);
+              }
+              if(task.childs && task.childs.length){
+                task.childs.forEach(k=>arr.push(k.id));
+              }
+              if(arr.length){
+                span.dataset.taskChild = arr.join(','); 
+              }
+
+          } catch(e){}
+        }
     
         let icon = this.createElement(TAG.I);
     
@@ -530,7 +547,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
           if(row && row.parent){
             const parent = row.parent;
             
-            let paddingBottom = 20;
+            let paddingBottom = 25;
           
             const documents = this.getDocuments();
             let top = 21;
@@ -557,6 +574,8 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
     
               const div = document.createElement(TAG.DIV);
               div.dataset.taskParent = task.id;
+
+              div.dataset.taskChild = t.id;
     
               div.style =`
                 top         : ${top}px; 
@@ -574,7 +593,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
               `;
               parent.appendChild(div);
           
-              let icon = this.getIcon(t, "16px");
+              let icon = this.getIcon(t, "16px", true);
               icon.style.display = "inline-block";
               div.appendChild(icon);
           
@@ -606,6 +625,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
               tr.style.paddingBottom = paddingBottom + 'px';
             }
 
+            // CHANGE COLORS ALL BRANCH CLOSES
             const length = tasks.length;
             if(length>0) {
               let tasksClosed = tasks.filter(({status}) => status === TASK_STATUS.FINISHED);
@@ -613,9 +633,6 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
                 let iconParent = document.querySelector(`span[data-task-parent='${task.id}']`);
                 if(iconParent){
                   iconParent.style.color = "#a371f7";
-                  // "#a371f7"; // morado
-                  //"#f48fb1";// ROSAAA
-                  //#e91e63  // pink
                 }
               }
             }

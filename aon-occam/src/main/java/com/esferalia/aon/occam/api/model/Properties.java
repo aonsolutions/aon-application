@@ -1472,6 +1472,7 @@ public interface Properties {
 		Property<Timestamp> getDateProperty();
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getStatusProperty();
+		Property<Integer> getReceiverIdProperty();
 	}
 	
 	public interface RawdocProperties{
