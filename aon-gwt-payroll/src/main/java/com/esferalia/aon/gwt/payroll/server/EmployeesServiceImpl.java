@@ -5520,9 +5520,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get EmployeeContractInfo
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
-			Attach cto = AON.getAttach(domainName, domainId, login, f -> f.getTypeProperty().eq(ContractAttachType.COPYCONTRACT.getValue().byteValue()), AttachType.CONTRACT);
+			Attach cto = AON.getAttach(domainName, domainId, login, f -> f.getTypeProperty().eq(ContractAttachType.COPYCONTRACT.getValue().byteValue()).and(f.getContractProperty().eq(employeeContract)), AttachType.CONTRACT);
 			employeeContractInfo.getContractInfo().setHasCto(null != cto && cto.getId() != null);
-			Attach cbc = AON.getAttach(domainName, domainId, login, f -> f.getTypeProperty().eq(ContractAttachType.COPYBASIC.getValue().byteValue()), AttachType.CONTRACT);
+			Attach cbc = AON.getAttach(domainName, domainId, login, f -> f.getTypeProperty().eq(ContractAttachType.COPYBASIC.getValue().byteValue()).and(f.getContractProperty().eq(employeeContract)), AttachType.CONTRACT);
 			employeeContractInfo.getContractInfo().setHasCbc(null != cbc && cbc.getId() != null);
 			return employeeContractInfo;
 		} catch (SQLException e) {
