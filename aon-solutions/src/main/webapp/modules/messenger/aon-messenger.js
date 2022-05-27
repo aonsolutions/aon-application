@@ -14,11 +14,13 @@ import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { getCustomers } from '../../services/registryService.js';
-import { sortBy } from '../../services/utils.js';
+import { sortBy, waitEl } from '../../services/utils.js';
+import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
 	APP_PARAMS=[];
+	TIMEOUT;
 	_workgroups;
 	_tags;
 	_filter={};
@@ -28,7 +30,6 @@ export class AonMessenger extends AonElement {
 	cau; //BOOLEAN
 	cauInfo;
 	dur;
-
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -740,6 +741,7 @@ export class AonMessenger extends AonElement {
 				}
 			});
 		}
+		this.getNotifications();
 	}
 
 	getDur(){
@@ -823,6 +825,46 @@ export class AonMessenger extends AonElement {
 			resolve(aonView);
 		});
     }
+
+	async getNotifications(){
+		try {
+			clearTimeout(this.TIMEOUT);
+			this.TIMEOUT = setTimeout(() =>{
+				getNotificationByDomain({read:false, source: "MESSENGER"})
+				.then(notifications=>{
+					notifications.forEach(({source_id:taskId})=>{
+						let selectors = `span[data-task-parent*='${taskId}'], span[data-task-child*='${taskId}']`;
+						waitEl(selectors).then(()=>{
+							document.querySelectorAll(selectors)
+							.forEach(icon=>{
+								const isChild = icon.hasAttribute('data-is-child');
+								let span = document.createElement("span");
+								span.style = `
+									position: absolute; 
+									right: -4px; 
+									top: 4px; 
+									padding: ${isChild ? "3": "4"}px; 
+									border-radius: 50%; 
+									background: rgb(220, 77, 48); 
+									color: white; 
+									font-size: 10px; 
+									font-weight: 800;
+								`
+								icon.appendChild(span);
+								// console.log(icon);
+							});
+						});
+					});
+				});
+			}, 300);
+		} catch (err){
+			console.log(err);
+		}
+	}
+
+	markReadNotification(taskId){
+		markReadNotification({source:"MESSENGER",source_id:taskId});
+	}
 
 	async getTaskHoldersEnterprise(){
 		if(this.TASK_HOLDER_ENTERPRISE.length<=0){

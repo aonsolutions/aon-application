@@ -1531,17 +1531,18 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.DOMAIN);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(NOTIFICATION.DATE);}
-		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.TITLE);}
-		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.BODY);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.SOURCE_ID);}
-		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION.SENDER);}
-		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.PRIORITY);}
-		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION_RECEIVER.AUTH);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION_RECEIVER.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.DOMAIN);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.DATE);}
+		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.TITLE);}
+		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.BODY);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SOURCE_ID);}
+		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SENDER);}
+		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.PRIORITY);}
+		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.AUTH);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.STATUS);}
+		@Override public Property<Integer> getReceiverIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.ID);}
 	}
 	
 	

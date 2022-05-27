@@ -59,11 +59,15 @@ public class NotificationDAO {
 		return notification;
 	}
 	
-	public static void markReadNotification(AONContext ctx, Integer id){
-		ctx.getDslContext().update(NOTIFICATION_RECEIVER)
+	public static void markReadNotification(AONContext ctx, NotificationFilter filter){
+		ctx.getDslContext().update(
+				NOTIFICATION_RECEIVER
+				.join(NOTIFICATION).on(NOTIFICATION.ID.eq(NOTIFICATION_RECEIVER.NOTIFICATION))
+				.join(DOMAIN).on(DOMAIN.ID.eq(NOTIFICATION.DOMAIN))
+			)
 			.set(NOTIFICATION_RECEIVER.STATUS, NotificationStatus.READ.value())
-			.where(NOTIFICATION_RECEIVER.ID.eq(id))
-			.execute();
+			.where(NOTIFICATION_PROPERTIES.getConditions(filter))
+			.execute();		
 	}
 	
 	public static Integer getTotalNotification(AONContext ctx, NotificationFilter filter){
