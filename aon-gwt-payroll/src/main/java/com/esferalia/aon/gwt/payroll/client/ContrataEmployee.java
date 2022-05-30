@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEnabled;
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
 import java.util.Collections;
@@ -983,12 +982,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void loadWindow(Consumer<Void> finish) {
 		showLoadingPanel();
-		loadData(s -> {
-			loadToolbar();
-			checkButtonsToolbar();
-			hideMessage();
-			finish.accept(null);
-		});
+		loadData(s ->
+			initializeIdcDateListBox(accept -> {
+				loadToolbar();
+				checkButtonsToolbar();
+				hideMessage();
+				finish.accept(null);
+			}, error -> {
+				loadToolbar();
+				checkButtonsToolbar();
+				finish.accept(null);
+			})
+		);
 	}
 
 	private void loadData(Consumer<Void> finish) {
@@ -1994,14 +1999,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						employeeStatus.visit(this);
 						selectResultsPanel();
 						showFootPanel();
-						ifSistemaREDEnabled(employeeStatus, () -> {
-							ContrataEmployee.this.setTaVisible(true);
-							ContrataEmployee.this.setIdcVisible(true);
-						}, () -> {
-							ContrataEmployee.this.setTaVisible(false);
-							ContrataEmployee.this.setIdcVisible(false);
-
-						});
+//						ifSistemaREDEnabled(employeeStatus, () -> {
+//							ContrataEmployee.this.setTaVisible(true);
+//							ContrataEmployee.this.setIdcVisible(true);
+//						}, () -> {
+//							ContrataEmployee.this.setTaVisible(false);
+//							ContrataEmployee.this.setIdcVisible(false);
+//
+//						});
 						ifSistemaREDError(employeeStatus, ContrataEmployee.this::showFootPanel,
 								ContrataEmployee.this::closeFootPanel);
 
@@ -2065,14 +2070,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			resultsPanel.setWidget(sistemaREDResults);
 			selectResultsPanel();
 
-			ifSistemaREDEnabled(employeeStatus, () -> {
-				ContrataEmployee.this.setTaVisible(true);
-				ContrataEmployee.this.setIdcVisible(true);
-			}, () -> {
-				ContrataEmployee.this.setTaVisible(false);
-				ContrataEmployee.this.setTaEndVisible(false);
-				ContrataEmployee.this.setIdcVisible(false);
-			});
+//			ifSistemaREDEnabled(employeeStatus, () -> {
+//				ContrataEmployee.this.setTaVisible(true);
+//				ContrataEmployee.this.setIdcVisible(true);
+//			}, () -> {
+//				ContrataEmployee.this.setTaVisible(false);
+//				ContrataEmployee.this.setTaEndVisible(false);
+//				ContrataEmployee.this.setIdcVisible(false);
+//			});
 
 			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
 
@@ -2120,11 +2125,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	public void setIdcVisible(boolean visible) {
-		initializeIdcDateListBox();
 		tgssContextMenu.getIdcPlNss().setVisible(visible);
 	}
 
-	private void initializeIdcDateListBox() {
+	private void initializeIdcDateListBox(Consumer<Void> acceptC, Consumer<Void> errorC) {
 		contrataEmployeeObject.getIdcDates(dates -> {
 			Collections.reverse(dates);
 			int count = dates.size();
@@ -2133,7 +2137,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.setVisibleRange(0, count + 1);
 			idcDateListBox.setSelected(0, true);
 			idcDateListBox.onResizeDropDownPopup();
+			acceptC.accept(null);
 		}, error -> {
+			showWarning("Fechas Idc", error.getMessage());
+			errorC.accept(null);
 		});
 	}
 
@@ -2230,6 +2237,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+	
+	private void showWarning(String title, String message) {
+		Map<String, String> warningMap = new HashMap<>();
+		warningMap.put(title, message);
+		AonMessagePanel.showWarning(messageContainer, warningMap);
 	}
 
 	private void showLoading(String message) {
