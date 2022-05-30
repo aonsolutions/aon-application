@@ -2,6 +2,7 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.MinorEntity;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
+import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -86,7 +88,6 @@ public class Page02 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
 		
 		addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
-		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -164,6 +165,9 @@ public class Page02 extends PageAbs {
 		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
+		
+		addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
+		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
 		AonDisplayTable tab2 = new AonDisplayTable();
 		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -356,12 +360,102 @@ public class Page02 extends PageAbs {
 		});
 		basePanel.add(addButton4);
 		
-		// FALTA - AHORA EN LA PAGINA 2 BIS TAMBIEN ESTA EL APARTADO DE LAS UTE
-		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración
-		// análoga a UTE
-		// VER CUANDO SE DEBE CUMPLIMENTAR ESE APARTADO PARA VER SI SE TRAE A ESTA PAGINA O SE DEJA EN 
-		// PAGINA DE LAS UTES COMO ESTÁ AHORA, SI ES UN APARTADO A CUMPLIMENTAR POR CUALQUIER ENTIDAD
-		// SE TRAERA A ESTA PAGINA PARA QUE SE QUEDE ABIERTO PARA SU CUMPLIMENTACION
+		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
+		
+		basePanel.add(getTitle(AON.MSG.utefor()));
+		
+		AonDisplayTable tabForeign = new AonDisplayTable();
+		tabForeign.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tabForeign.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tabForeign);
+		
+		tabForeign.addRow()
+			.addCell( new Label(AON.MSG.identification()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+			.addCell( new Label(AON.MSG.utefor1()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label(AON.MSG.utefor2()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label(AON.MSG.utefor3()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label(AON.MSG.utefor4()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label(AON.MSG.utefor5()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		
+		for (int i = 0; i < callback.getMod200Object().getMod200().getUteForeign().size(); i++) {
+			final int idx = i;
+			
+			AonTextBox identification = new AonTextBox();
+			identification.setMaxLength(30);
+			identification.setVisibleLength(30);
+			identification.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getIdentification());
+			identification.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteForeign().get(idx).setIdentification(identification.getValue());
+				callback.markAsDirty();
+			});			
+			
+			CountryListBox country = new CountryListBox();
+			country.setWidth("140px");
+			country.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getUteForeign().get(idx).getCountry()));
+			country.addChangeHandler(new ChangeHandler() {			
+				@Override
+				public void onChange(ChangeEvent event) {
+					callback.getMod200Object().getMod200().getUteForeign().get(idx).setCountry(Country.safeIso2(country.getValue()));
+					callback.markAsDirty();
+				}
+			});
+			
+			AonDoubleBox volume = new AonDoubleBox();
+			volume.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getVolume());
+			volume.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteForeign().get(idx).setVolume(volume.getValue());
+				callback.markAsDirty();
+			});
+			
+			AonDoubleBox pyg = new AonDoubleBox();
+			pyg.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getPyg());
+			pyg.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteForeign().get(idx).setPyg(pyg.getValue());
+				callback.markAsDirty();
+			});
+			
+			AonDoubleBox adjust = new AonDoubleBox();
+			adjust.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getAdjust());
+			adjust.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteForeign().get(idx).setAdjust(adjust.getValue());
+				callback.markAsDirty();
+			});
+			
+			AonDoubleBox deduction = new AonDoubleBox();
+			deduction.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getDeduction());
+			deduction.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteForeign().get(idx).setDeduction(deduction.getValue());
+				callback.markAsDirty();
+			});
+			
+			// Boton borrar linea
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(event -> {
+				callback.getMod200Object().getMod200().getUteForeign().remove(idx);
+				paint();
+				callback.markAsDirty();
+			});
+	
+			tabForeign.addRow()
+				.addCell(identification)
+				.addCell(country)				
+				.addCell(volume)
+				.addCell(pyg)
+				.addCell(adjust)
+				.addCell(deduction)				
+				.addCell(deleteButton);
+		}
+		
+		// Botón añadir 
+		AonTableButton addButtonForeign = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+		addButtonForeign.addStyleName(AON.CSS.aonMarginTop());
+		addButtonForeign.addStyleName(AON.CSS.aonMarginLeft());
+		addButtonForeign.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().getUteForeign().add(new UteForeign());
+			paint();
+		});		
+		basePanel.add(addButtonForeign);
 		
 	}
 

@@ -2,7 +2,6 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
@@ -14,7 +13,6 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200Pag
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.UteBase;
-import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
@@ -287,104 +285,7 @@ public class Page18 extends PageAbs {
 		table1.setWidget(row, 0, panelB11);
 		
 		paintFooterNote(basePanel, FOOTER);
-	
-		// FALTA - ESTE APARTADO ESTA AHORA EN LA PAGINA 2BIS, COMPROBAR SI AL FINAL SE QUEDA ASÍ O SE PUEDE CUMPLIMENTAR AUNQUE NO SEA UNA UTE
-		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
-		
-		basePanel.add(getTitle(AON.MSG.utefor()));
-		
-		AonDisplayTable tabForeign = new AonDisplayTable();
-		tabForeign.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tabForeign.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tabForeign);
-		
-		tabForeign.addRow()
-			.addCell( new Label(AON.MSG.identification()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
-			.addCell( new Label(AON.MSG.utefor1()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor2()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor3()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor4()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor5()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
-		
-		for (int i = 0; i < callback.getMod200Object().getMod200().getUteForeign().size(); i++) {
-			final int idx = i;
-			
-			AonTextBox identification = new AonTextBox();
-			identification.setMaxLength(30);
-			identification.setVisibleLength(30);
-			identification.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getIdentification());
-			identification.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteForeign().get(idx).setIdentification(identification.getValue());
-				callback.markAsDirty();
-			});			
-			
-			CountryListBox country = new CountryListBox();
-			country.setWidth("140px");
-			country.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getUteForeign().get(idx).getCountry()));
-			country.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					callback.getMod200Object().getMod200().getUteForeign().get(idx).setCountry(Country.safeIso2(country.getValue()));
-					callback.markAsDirty();
-				}
-			});
-			
-			AonDoubleBox volume = new AonDoubleBox();
-			volume.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getVolume());
-			volume.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteForeign().get(idx).setVolume(volume.getValue());
-				callback.markAsDirty();
-			});
-			
-			AonDoubleBox pyg = new AonDoubleBox();
-			pyg.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getPyg());
-			pyg.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteForeign().get(idx).setPyg(pyg.getValue());
-				callback.markAsDirty();
-			});
-			
-			AonDoubleBox adjust = new AonDoubleBox();
-			adjust.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getAdjust());
-			adjust.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteForeign().get(idx).setAdjust(adjust.getValue());
-				callback.markAsDirty();
-			});
-			
-			AonDoubleBox deduction = new AonDoubleBox();
-			deduction.setValue(callback.getMod200Object().getMod200().getUteForeign().get(idx).getDeduction());
-			deduction.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteForeign().get(idx).setDeduction(deduction.getValue());
-				callback.markAsDirty();
-			});
-			
-			// Boton borrar linea
-			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-			deleteButton.addClickHandler(event -> {
-				callback.getMod200Object().getMod200().getUteForeign().remove(idx);
-				paint();
-				callback.markAsDirty();
-			});
-	
-			tabForeign.addRow()
-				.addCell(identification)
-				.addCell(country)				
-				.addCell(volume)
-				.addCell(pyg)
-				.addCell(adjust)
-				.addCell(deduction)				
-				.addCell(deleteButton);
-		}
-		
-		// Botón añadir 
-		AonTableButton addButtonForeign = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
-		addButtonForeign.addStyleName(AON.CSS.aonMarginTop());
-		addButtonForeign.addStyleName(AON.CSS.aonMarginLeft());
-		addButtonForeign.addClickHandler(event -> {
-			callback.getMod200Object().getMod200().getUteForeign().add(new UteForeign());
-			paint();
-		});		
-		basePanel.add(addButtonForeign);
+
 		
 	}
 	

@@ -144,7 +144,6 @@ public class ParticipationPanel extends AonCustomDialog {
 	
 	private void paint() {
 		
-		//FlowPanel rootPanel = new FlowPanel();
 		rootPanel.clear();
 		
 		Label label = new Label(AON.MSG.partMsg1_2018());

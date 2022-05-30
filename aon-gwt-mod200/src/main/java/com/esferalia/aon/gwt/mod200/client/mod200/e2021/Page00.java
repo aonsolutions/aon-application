@@ -148,7 +148,6 @@ public class Page00 extends PageAbs {
 	private ListBox profitAndLossType = new ListBox();
 	private AonDoubleBox c041 = new AonDoubleBox();
 	private AonDoubleBox c042 = new AonDoubleBox();	
-//	private CheckBox c061 = new CheckBox(); // Esta casilla no se utiliza en el Modelo 200 de AON
 	
 	public Page00( Model200PageCallback callback ) {
 		super(callback);
@@ -246,10 +245,6 @@ public class Page00 extends PageAbs {
 			callback.getMod200Object().getMod200().addVariable(bv);
 		}
 		
-//		bv = new DoubleVariableEx( Mod2002021Key.C0061 );
-//		bv.setValue( c061.getValue() );
-//		callback.getMod200Object().getMod200().addVariable(bv);
-		
 		bv = new DoubleVariableEx( Mod2002021Key.C0050 );
 		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL));
 		callback.getMod200Object().getMod200().addVariable(bv);
@@ -298,9 +293,6 @@ public class Page00 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-//		c061.setText(Mod2002021Key.C0061.getDescription());
-//		inputs.put(Mod2002021Key.C0061, c061);
-		
 		paint();
 	}
 
@@ -334,8 +326,7 @@ public class Page00 extends PageAbs {
 		profitAndLossType.setEnabled(enabled);
 		for (CheckBox check : inputs.values()) {
 			check.setEnabled(enabled);
-		}
-//		c061.setEnabled(enabled);
+		}		
 		for (Mod2002021Key key : CHARACTERS_KEYS) {
 			if (inputs.containsKey( key ) && inputs.get( key ).getValue()) {
 				changeAvailability(key);
@@ -459,7 +450,7 @@ public class Page00 extends PageAbs {
 		complementaryPanel.add(complementaryReceipt);
 		
 		tab.addLabelWidgetRow(AON.MSG.document(), nif)
-		   .addLabelWidgetRow(AON.MSG.name(), companyName)
+		   .addLabelWidgetRow("Apellidos y nombre o raz\u00F3n social", companyName)
 		   .addLabelWidgetRow(AON.MSG.phone(), phones)
 		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE(), cnaePanel)
 		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)

@@ -2366,7 +2366,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("I.B.A.N.")
 	String iban();
 
-	@DefaultMessage("Fecha I.R.N.R.")
+	@DefaultMessage("Fecha (s\u00F3lo declaraciones del IRNR)")
 	String irnrDate();
 
 	@DefaultMessage("Importe total de las operaciones")
@@ -4069,7 +4069,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Nombre o raz\u00F3n social")
 	String ultimateName();
 	
-	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Pa\u00EDs o jurisdicci\u00F3n")
+	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Pa\u00EDs o jurisdicci\u00F3n de residencia fiscal")
 	String ultimateCountry();
 
     @DefaultMessage("Participaciones y Entidades Menores")

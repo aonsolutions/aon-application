@@ -1,4 +1,4 @@
-// SECRETARIO, GRUPOS FISCALES, REPRESENTANTES, ADMINISTRADORES.
+// SECRETARIO, GRUPO FISCAL O MERCANTIL, REPRESENTANTES, ADMINISTRADORES.
 package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -139,13 +139,10 @@ public class Page01 extends PageAbs {
 					
 			fiscalGroup.setVisibleLength(7);
 			fiscalGroup.setMaxLength(7);
-//			fiscalGroup.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || 
-//					               callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010));
 			fiscalGroup.addValueChangeHandler(event -> {
 				callback.markAsDirty();
 			});
 			
-//			dominantDocument.setEnabled(fiscalGroup.isEnabled());
 			dominantDocument.setMaxLength(9);
 			dominantDocument.addValueChangeHandler(event -> {
 				callback.markAsDirty();
@@ -183,13 +180,11 @@ public class Page01 extends PageAbs {
 			tab3.addStyleName(AON.CSS.aonBlockCenter());
 			basePanel.add(tab3);
 			
-//			ultimateDocument.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
 			ultimateDocument.addValueChangeHandler(event -> {
 				callback.markAsDirty();
 			});
 			
 			ultimateDocumentCountry.setWidth("240px");
-//			ultimateDocumentCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
 			ultimateDocumentCountry.addChangeHandler(new ChangeHandler() {			
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -198,7 +193,6 @@ public class Page01 extends PageAbs {
 				}
 			});
 			
-//			ultimateName.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
 			ultimateName.setVisibleLength(40); 
 			ultimateName.setMaxLength(40);
 			ultimateName.addValueChangeHandler(event -> {
@@ -206,7 +200,6 @@ public class Page01 extends PageAbs {
 			});
 			
 			ultimateCountry.setWidth("240px");
-//			ultimateCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
 			ultimateCountry.addChangeHandler(new ChangeHandler() {			
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -303,7 +296,7 @@ public class Page01 extends PageAbs {
 		addButton1.addClickHandler(event -> {
 			// No puede haber mas de 3 representantes legales
 			if (callback.getMod200Object().getMod200().getRepresentatives().size() == 3) {
-				AonMessageDialog.warning("No se pueden poner en el modelo mas de tres representantes legales.");
+				AonMessageDialog.warning("No puede haber en el modelo mas de tres representantes legales.");
 			} else {		
 				callback.getMod200Object().getMod200().getRepresentatives().add(new LegalRepresentative());
 				paint();
@@ -323,7 +316,7 @@ public class Page01 extends PageAbs {
 		tab5.addRow()
 			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
 			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())			
-			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
+			.addCell( new Label("Apellidos y nombre o raz\u00F3n social"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
 			.addCell( new Label(AON.MSG.fiscalAddress()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
 			.addCell( new Label(AON.MSG.province()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());

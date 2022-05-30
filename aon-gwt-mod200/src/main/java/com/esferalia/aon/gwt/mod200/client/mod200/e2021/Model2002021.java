@@ -580,8 +580,8 @@ public class Model2002021 extends DockLayoutPanel {
 		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
 		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Caracteres de la declaraci\u00F3n"	 ));
-		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	 ));
-		linkContainer.add(new WestFocusPanel( 3,AON.MSG.participations2019() ));
+		linkContainer.add(new WestFocusPanel( 2,"Secretario, Grupo Fiscal o Mercantil, Representantes y Administradores"));
+		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP y UTE" ));
 		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()		 ));
 		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()	 ));
 		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				 ));
