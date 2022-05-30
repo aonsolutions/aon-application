@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum InvoiceStatus implements Serializable {
 	 PENDING("Pendiente")
 	,SCORED("Contabilizada")
@@ -28,6 +30,7 @@ public enum InvoiceStatus implements Serializable {
 	}
 	
 	public static InvoiceStatus safeValueOf( String str) {
+		if(AonStringUtils.isBlank(str)) return PENDING;
 		for (InvoiceStatus rs : values()) {
 			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
 				return rs;

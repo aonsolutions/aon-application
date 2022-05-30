@@ -261,7 +261,8 @@ public class DeliveryDAO {
 		return DELIVERY_PROPERTIES.build(ctx.getDslContext()
 				.select()
 				.from(DELIVERY)
-				.join(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 			,filter).fetch().stream().map(new DeliveryFiller());
 	}
 	
@@ -404,7 +405,7 @@ public class DeliveryDAO {
 	}
 	
 	public static void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
-		Integer[] ids = getDeliveryStream(ctx, filter)
+		Integer[] ids = getStream(ctx, filter)
 				.map(Delivery::getId)
 				.toArray(Integer[]::new);
 		deleteDeliveryDetail(ctx, f -> f.getDelivery().in(ids));
@@ -471,7 +472,8 @@ public class DeliveryDAO {
 			.select()
 			.from(DELIVERY)
 			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.equal(DELIVERY.ID))
-			.join(REGISTRY).on(REGISTRY.ID.equal(DELIVERY.CUSTOMER))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
@@ -510,7 +512,8 @@ public class DeliveryDAO {
 			.select()
 			.from(DELIVERY)
 			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.equal(DELIVERY.ID))
-			.join(REGISTRY).on(REGISTRY.ID.equal(DELIVERY.CUSTOMER))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 			.join(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
 			.leftOuterJoin(RADDRESS).on(DELIVERY.ADDRESS.equal(RADDRESS.ID))
 			.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
@@ -549,8 +552,8 @@ public class DeliveryDAO {
 							.setId(getValue(r, DELIVERY.PROJECT)))
 					.setSeries(getValue(r, DELIVERY.SERIES))
 					.setNumber(getInteger(r, DELIVERY.NUMBER))
-					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, REGISTRY.ID)
-						? CustomerFiller.build(r)
+					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, CUSTOMER_ALIAS.ID)
+						? CustomerFiller.buildCustomer(r, CUSTOMER_ALIAS)
 						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
 					.setAddress(checkField(r, RADDRESS.ID)
 						? RegistryAddressFiller.build(r, GEOZONE, GEOZONE)

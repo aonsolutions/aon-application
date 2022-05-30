@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum InvestAssetRegime implements Serializable{
 
 	PROPERTY,
@@ -29,6 +31,7 @@ public enum InvestAssetRegime implements Serializable{
 	}
 	
 	public static InvestAssetRegime safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (InvestAssetRegime rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

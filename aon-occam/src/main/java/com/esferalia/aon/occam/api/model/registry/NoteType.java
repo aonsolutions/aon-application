@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum NoteType implements Serializable {
 	
 
@@ -32,6 +34,7 @@ public enum NoteType implements Serializable {
 	}
 	
 	public static NoteType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (NoteType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

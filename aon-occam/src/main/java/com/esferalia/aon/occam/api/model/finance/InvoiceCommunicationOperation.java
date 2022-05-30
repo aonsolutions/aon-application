@@ -2,11 +2,15 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum InvoiceCommunicationOperation implements Serializable{
 
 	REGISTER,
 	MODIFICATION,
-	ANNULMENT;
+	ANNULMENT,
+	CONSULTATION
+	;
 	
 	
 	private InvoiceCommunicationOperation() {
@@ -29,6 +33,7 @@ public enum InvoiceCommunicationOperation implements Serializable{
 	}
 	
 	public static InvoiceCommunicationOperation safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (InvoiceCommunicationOperation rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
