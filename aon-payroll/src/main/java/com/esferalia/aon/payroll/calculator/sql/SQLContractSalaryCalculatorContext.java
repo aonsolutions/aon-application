@@ -409,8 +409,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " LEFT JOIN contract_data ON ( "
 				+ " contract_leave.contract = contract_data.contract "
 				+ " AND contract_data.name IN ('" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" +DIRECT_PAY_START + "')"
-				+ " AND ( contract_leave.end_date  IS NULL OR contract_data.start_date <= contract_leave.end_date )"
-				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= contract_leave.start_date ) "
+				+ " AND ( contract_data.start_date <= ? )"
+				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= ? ) "
 				+ ")"
 			+ " LEFT JOIN contract ON ( contract_leave.contract = contract.id ) "
 			+ " WHERE"
@@ -419,6 +419,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )"
 			+ " AND contract_leave.id >= 0 "
 			+ " ORDER BY FIELD(contract_leave.type,0,1,6,7,8,2,3,4,5)"
+			+ ", FIELD(contract_data.name, '" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" + DIRECT_PAY_START + "')"
 			;
 
 	private static final int CACHE_SIZE = 25;
@@ -2398,8 +2399,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private void initLeaveStmt() throws SQLException {
 		this.cleaveStmt = this.connection.prepareStatement(CLEAVE_SQL);
-		this.cleaveStmt.setDate(2, toSqlDate(this.getEnd()));
-		this.cleaveStmt.setDate(3, toSqlDate(this.startDate));
+		this.cleaveStmt.setDate(1, toSqlDate(this.getEnd()));
+		this.cleaveStmt.setDate(2, toSqlDate(this.startDate));
+		this.cleaveStmt.setDate(4, toSqlDate(this.getEnd()));
+		this.cleaveStmt.setDate(5, toSqlDate(this.startDate));
 	}
 
 	private Integer getDomain() {
@@ -5559,9 +5562,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected  void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
 		ResultSet rs = null;
 		try {
-			cleaveStmt.setInt(1, getId());
-			this.cleaveStmt.setDate(2, toSqlDate(this.getEnd()));
-			this.cleaveStmt.setDate(3, toSqlDate(this.contractStartDate));
+			this.cleaveStmt.setDate(1, toSqlDate(this.getEnd()));
+			this.cleaveStmt.setDate(2, toSqlDate(this.startDate));
+			this.cleaveStmt.setInt(3, getId());
+			this.cleaveStmt.setDate(4, toSqlDate(this.getEnd()));
+			this.cleaveStmt.setDate(5, toSqlDate(this.startDate));
 			rs = cleaveStmt.executeQuery();
 			leaveLoader.clear();
 			while (rs.next()) {
