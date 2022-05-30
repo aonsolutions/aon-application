@@ -69,6 +69,8 @@ public class ConnectSalesResponse extends AbstractFileFiller{
 		DiskRegisterLoader.load(input, manager);
 		input = ConnectSalesResponse.class.getResourceAsStream("/com/esferalia/aon/file/seres/connect2/income/v2/xml/ORSPE.xml");
 		DiskRegisterLoader.load(input, manager);
+		input = ConnectSalesResponse.class.getResourceAsStream("/com/esferalia/aon/file/seres/connect2/income/v2/xml/ORSPP.xml");
+		DiskRegisterLoader.load(input, manager);
 	}
 	
 	@Override
@@ -87,12 +89,14 @@ public class ConnectSalesResponse extends AbstractFileFiller{
 				createLine(ORSPC, properties);
 			}
 			
-			for (ORSPT value: rectl.orsptList) {
-				properties.put(ORSPT, value);
-				createLine(ORSPT, properties);
+			if (rectl.orsptList != null) {				
+				for (ORSPT value: rectl.orsptList) {
+					properties.put(ORSPT, value);
+					createLine(ORSPT, properties);
+				}
 			}
 				
-			if(rectl.orsppList==null || rectl.orsppList.isEmpty()) {
+			if (rectl.orsppList==null || rectl.orsppList.isEmpty()) {
 				Fd0Exception e = new Fd0Exception( "ORSPP", "Información de partes. La entidad 'ORSPP' es obligatoria");
 				exceptions.add (e);
 			} else {
@@ -102,19 +106,25 @@ public class ConnectSalesResponse extends AbstractFileFiller{
 				}
 			}
 			
-			for (ORSPI value: rectl.orspiList) {
-				properties.put(ORSPI, value);
-				createLine(ORSPI, properties);
+			if (rectl.orspiList != null) {				
+				for (ORSPI value: rectl.orspiList) {
+					properties.put(ORSPI, value);
+					createLine(ORSPI, properties);
+				}
 			}
 			
-			for (ORSPV value: rectl.orspvList) {
-				properties.put(ORSPV, value);
-				createLine(ORSPV, properties);
+			if (rectl.orspvList != null) {				
+				for (ORSPV value: rectl.orspvList) {
+					properties.put(ORSPV, value);
+					createLine(ORSPV, properties);
+				}
 			}
 
-			for (ORSPD value: rectl.orspdList) {
-				properties.put(ORSPD, value);
-				createLine(ORSPD, properties);
+			if (rectl.orspdList != null) {				
+				for (ORSPD value: rectl.orspdList) {
+					properties.put(ORSPD, value);
+					createLine(ORSPD, properties);
+				}
 			}
 			
 			if(rectl.orsplList==null || rectl.orsplList.isEmpty()) {
@@ -127,19 +137,25 @@ public class ConnectSalesResponse extends AbstractFileFiller{
 				}
 			}
 
-			for (ORSPU value: rectl.orspuList) {
-				properties.put(ORSPU, value);
-				createLine(ORSPU, properties);
+			if (rectl.orspuList != null) {				
+				for (ORSPU value: rectl.orspuList) {
+					properties.put(ORSPU, value);
+					createLine(ORSPU, properties);
+				}
 			}
 			
-			for (ORSPG value: rectl.orspgList) {
-				properties.put(ORSPG, value);
-				createLine(ORSPG, properties);
+			if (rectl.orspgList != null) {				
+				for (ORSPG value: rectl.orspgList) {
+					properties.put(ORSPG, value);
+					createLine(ORSPG, properties);
+				}
 			}
 			
-			for (ORSPE value: rectl.orspeList) {
-				properties.put(ORSPE, value);
-				createLine(ORSPE, properties);
+			if (rectl.orspeList != null) {				
+				for (ORSPE value: rectl.orspeList) {
+					properties.put(ORSPE, value);
+					createLine(ORSPE, properties);
+				}
 			}
 			
 		} catch (Exception ex) {
