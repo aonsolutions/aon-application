@@ -2139,7 +2139,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.onResizeDropDownPopup();
 			acceptC.accept(null);
 		}, error -> {
-			showWarning("Fechas Idc", error.getMessage());
+//			showWarning("Fechas Idc", error.getMessage());
 			errorC.accept(null);
 		});
 	}
