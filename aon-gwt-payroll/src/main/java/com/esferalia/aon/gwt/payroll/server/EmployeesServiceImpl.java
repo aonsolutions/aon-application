@@ -197,9 +197,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -5791,9 +5791,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			String base64Pdf = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId,
-						contractId, date);
-
+			// Get certificate
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			com.esferalia.aon.occam.api.model.payroll.Contract contract = 
+					PAYROLL.
+					getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+					.orElseThrow(() -> new IOException() );
+					String ccc = contract.getEnterpriseCCC();
+					String naf = contract.getPersonSsNumber();
+					String regime = contract.getEnterpriseCCCRegime().getCode();	
+					
+			byte[] data = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), naf, regime, ccc, date);
+			String base64Pdf = Base64.getEncoder().encodeToString(data);
+					
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
 
@@ -5803,7 +5814,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 
-		} catch (SQLException | IOException | SegSocialException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
