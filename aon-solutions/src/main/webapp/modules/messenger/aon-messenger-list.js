@@ -167,12 +167,13 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
           const document = company ? company.document: undefined;
           const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
           datos.map((res, idx) => {
-           this.AON_TABLE.addLi({
-              title: this.getTitleMobile(res, document, documentTh), //`${res.newNumber} ${res.title}`,
-              subtitle: this.getSubtitleMobileOne(res),//AonDateUtils.getDayMonth(res.date),
-              subtitleTwo: this.getSubtitleMobile(res),//AonDateUtils.getDayMonth(res.date),
+           const li = this.AON_TABLE.addLi({
+              title: this.getTitleMobile(res, document, documentTh), 
+              subtitle: this.getSubtitleMobileOne(res),
+              subtitleTwo: this.getSubtitleMobile(res),
               ...this.getIconList(res)
             }, idx, () => this.goMessengerChat(res, idx));
+            li.dataset.taskId = res.id;
           });
         } catch (e) {
           console.log(e);
@@ -468,17 +469,25 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
         };
       }
     
-      getIconList = ({source,status}) => ({      
-        ...getIconJson({source,status}),
-        icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
-        icon_title:source,
-      })
-    
+      getIconList({source,status, parent}){
+        let json =  {      
+          ...getIconJson({source,status}),
+          icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
+          icon_title:source,
+        };
+  
+        if(parent) {
+          json.aonIcon = AON_ICONS.AON_BRANCH;
+        } 
+
+        return json;
+      }
+
       getIcon(task, size = undefined, isChild= undefined) {
         const {source,status, parent, id} = task;
         let div = document.createElement(TAG.DIV);
         
-        let iconJson = getIconJson({source,status});
+        let iconJson = this.getIconList({source, status, parent});
     
         let span = this.createElement(TAG.SPAN);
         div.appendChild(span);
@@ -486,7 +495,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
         span.style.color = iconJson.icon_color;
         span.title = source;
         span.style.position = "relative";
-        span.dataset.taskParent = id;
+        span.dataset.taskId = id;
         if(isChild){
           span.dataset.isChild = isChild;
         } else {
@@ -501,15 +510,14 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
               if(arr.length){
                 span.dataset.taskChild = arr.join(','); 
               }
-
           } catch(e){}
         }
     
         let icon = this.createElement(TAG.I);
     
-        if(parent) {
+        if(iconJson.aonIcon) {
           icon = new AonIcon();
-          icon.icon = AON_ICONS.AON_BRANCH;
+          icon.icon = iconJson.aonIcon;
           icon.color = iconJson.icon_color;
           if(size){
             icon.size = size;
@@ -542,7 +550,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
         try {
           let row = this.ROWS.find(t=> t.id === task.id);
 
-          document.querySelectorAll(`div[data-task-parent='${task.id}']`).forEach(l=>l.remove());
+          document.querySelectorAll(`div[data-task-id='${task.id}']`).forEach(l=>l.remove());
     
           if(row && row.parent){
             const parent = row.parent;
@@ -573,7 +581,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
               }
     
               const div = document.createElement(TAG.DIV);
-              div.dataset.taskParent = task.id;
+              div.dataset.taskId = task.id;
 
               div.dataset.taskChild = t.id;
     
@@ -630,7 +638,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
             if(length>0) {
               let tasksClosed = tasks.filter(({status}) => status === TASK_STATUS.FINISHED);
               if(tasksClosed.length === length) {
-                let iconParent = document.querySelector(`span[data-task-parent='${task.id}']`);
+                let iconParent = document.querySelector(`span[data-task-id='${task.id}']`);
                 if(iconParent){
                   iconParent.style.color = "#a371f7";
                 }
