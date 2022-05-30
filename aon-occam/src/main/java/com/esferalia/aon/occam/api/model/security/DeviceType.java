@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum DeviceType {
 	WEB,
 	ANDROID, 
@@ -27,6 +29,7 @@ public enum DeviceType {
 	}
 	
 	public static DeviceType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return WEB;
 		for (DeviceType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

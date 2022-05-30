@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum Advertising implements Serializable{
 
 	ALLOWED,
@@ -29,6 +31,7 @@ public enum Advertising implements Serializable{
 	}
 	
 	public static Advertising safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (Advertising rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

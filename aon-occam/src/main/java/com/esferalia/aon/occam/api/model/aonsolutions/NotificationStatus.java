@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum NotificationStatus {
 	UNREAD,
 	READ
@@ -27,6 +29,7 @@ public enum NotificationStatus {
 	}
 	
 	public static NotificationStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return UNREAD;
 		for (NotificationStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

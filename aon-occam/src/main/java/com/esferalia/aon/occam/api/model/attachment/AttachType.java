@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.attachment;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum AttachType  implements Serializable {
 	
 	REGISTRY("registry")
@@ -46,6 +48,7 @@ public enum AttachType  implements Serializable {
 	}
 
 	public static AttachType safeValueOf( String str) {
+		if(AonStringUtils.isBlank(str)) return REGISTRY;
 		for (AttachType rs : values()) {
 			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
 				return rs;

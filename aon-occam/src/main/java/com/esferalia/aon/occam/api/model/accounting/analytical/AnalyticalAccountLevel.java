@@ -21,6 +21,7 @@ public enum AnalyticalAccountLevel  {
 	}
 	
 	public static AnalyticalAccountLevel safeValueOf( String accountCode) {
+		if(AonStringUtils.isBlank(accountCode)) return COST_CENTER;
 		int length = AonStringUtils.length(accountCode);
 		for (AnalyticalAccountLevel l : AnalyticalAccountLevel.values()) {
 			if (length == l.getAccountCodeLength()) return l;

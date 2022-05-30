@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TaxType implements Serializable {
 
 	  UNKNOWN (" ---- ", "")
@@ -44,6 +46,7 @@ public enum TaxType implements Serializable {
 	}
 	
 	public static TaxType safeValueOf( String str ) {
+		if(AonStringUtils.isBlank(str)) return UNKNOWN;
 		for (TaxType rs : values()) {
 			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str) || rs.getName2().equalsIgnoreCase(str))
 				return rs;

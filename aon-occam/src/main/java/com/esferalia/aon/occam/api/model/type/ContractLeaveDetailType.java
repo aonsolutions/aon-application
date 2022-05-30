@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ContractLeaveDetailType {
 	
 	BAJA, 
@@ -28,11 +30,12 @@ public enum ContractLeaveDetailType {
 	}
 	
 	public static ContractLeaveDetailType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return BAJA;
 		for (ContractLeaveDetailType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
 		}
-		return ContractLeaveDetailType.BAJA;
+		return BAJA;
 	}
 
 }

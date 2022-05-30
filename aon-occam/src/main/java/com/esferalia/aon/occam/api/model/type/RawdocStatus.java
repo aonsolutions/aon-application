@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum RawdocStatus implements Serializable {
 	
 	 INBOX("Inbox", "inbox")
@@ -44,6 +46,7 @@ public enum RawdocStatus implements Serializable {
 	}
 	
 	public static RawdocStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (RawdocStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()) || rs.getTediName().equalsIgnoreCase(i))
 				return rs;

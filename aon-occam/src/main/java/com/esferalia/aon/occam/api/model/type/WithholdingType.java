@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum WithholdingType implements Serializable {
 
@@ -50,6 +51,7 @@ public enum WithholdingType implements Serializable {
 	}
 	
 	public static WithholdingType safeValueOf(String str) {
+		if(AonStringUtils.isBlank(str)) return PROFESSIONAL;
 		if("IRPF_PROF".equalsIgnoreCase(str)) {
 			return PROFESSIONAL;
 		}

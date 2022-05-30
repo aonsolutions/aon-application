@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum SalesDetailStatus implements Serializable {
 
 	PENDING,
@@ -24,6 +26,7 @@ public enum SalesDetailStatus implements Serializable {
 	}
 	
 	public static SalesDetailStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (SalesDetailStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ContractLeaveType {
 	
 	ENFERMEDAD_COMUN(1, "Enfermedad Com\u00fan"), 
@@ -61,11 +63,12 @@ public enum ContractLeaveType {
 	}
 	
 	public static ContractLeaveType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return ENFERMEDAD_COMUN;
 		for (ContractLeaveType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
 		}
-		return ContractLeaveType.ENFERMEDAD_COMUN;
+		return ENFERMEDAD_COMUN;
 	}
 
 }

@@ -91,8 +91,10 @@ export class AonMessengerChat extends AonElement {
 
   build() {
     this.paintView();
-    if(this.task.id)  //FILL CHATS WORKFLOW
+    if(this.task && this.task.id){
+      //FILL CHATS WORKFLOW
       this.getTaskWorkflow(this.task);
+    }  
   }
 
   paintView() {
@@ -216,7 +218,8 @@ export class AonMessengerChat extends AonElement {
 
   async getTaskWorkflow(task) {
     try {
-      let params = { task:task.id, domainId:task.domain.id, domainName:task.domain.name };
+      const taskId = task.id;
+      let params = { task:taskId, domainId:task.domain.id, domainName:task.domain.name };
       if(this.isCau() && this.getAuth().email){
         params.email =  this.getAuth().email;
       }
@@ -225,7 +228,8 @@ export class AonMessengerChat extends AonElement {
       const taskHolderId = this.MY_TASKHOLDER ? this.MY_TASKHOLDER.id : null;
 
       fillChat(task, taskHolderId, workflows);
-
+      
+      this.applicationParentEl.markReadNotification(taskId);
     } catch (error) {
       console.error("getTaskWorkflow", error);
     }
@@ -553,9 +557,11 @@ export class AonMessengerChat extends AonElement {
 
     return options;
   }
-  
+
   back(){
-    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._listFilter);
+    let parent = this.applicationParentEl;
+    parent.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._listFilter);
+    parent.getNotifications();
   }
 }
 

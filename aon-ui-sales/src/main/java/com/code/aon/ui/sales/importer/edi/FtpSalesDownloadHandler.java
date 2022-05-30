@@ -10,6 +10,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -27,22 +29,39 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.finance.Invoice;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
+import com.esferalia.aon.file.seres.connect2.salesresponse.v2.data.ORSPC;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.Options;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.seres.ftp.FtpException;
 import com.esferalia.aon.seres.ftp.FtpFile;
 import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.reader.connect.ConnectSalesReader;
+import com.esferalia.aon.seres.writer.connect.ConnectSaleInvoiceWriter;
+import com.esferalia.aon.seres.writer.connect2.ConnectSalesResponseOccam;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class FtpSalesDownloadHandler implements Serializable {
 	
@@ -556,8 +575,83 @@ public class FtpSalesDownloadHandler implements Serializable {
 	public FileOutput exportEdiFile(com.code.aon.sales.Sales oldSales){
 		FileOutput output = null;
 		// TODO GENERAR LA RESPUESTA DE ORDEN DE COMPRAR (ORDRSP)
-		return output;
+		try {
+			
+			String domainName = AonUtil.getDomainName();
+			int domainId = oldSales.getDomain();
+			String login = AonUtil.getRemoteUser();
+			
+			Sales sales = AON.getSales(domainName, domainId, login, f -> f.getIdProperty().eq(oldSales.getId()), new Options().setFull(true));
+						
+			if (sales.getShippingAddress() != null
+					&& sales.getShippingAddress().getId() != null) {
+				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
+						.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+				boolean isInvoicingMainAddress = false;
+				try {
+					Customer customer = (Customer) BeanManager.getManagerBean(Customer.class).get(sales.getCustomer().getId());
+					ediSupport.onRecover(customer);
+					if(!ediSupport.isEnabled()){
+						AonUtil.addErrorMessage("El cliente no tiene EDI habilitado");
+						throw new AbortProcessingException("El cliente no tiene EDI habilitado");
+					}
+					isInvoicingMainAddress = ediSupport.isSeresInvoicingMainAddress();
+				} catch (ManagerBeanException e) {
+					AonUtil.addErrorMessage(e.getMessage());
+					throw new AbortProcessingException(e.getMessage());
+				}
+				
+				Map<String, String> ediCodes =  ediSupport.getEdiCodes(
+						oldSales.getCustomer().getRegistry(), oldSales.getShippingAddress());
+				
+				String customerEdiCabeceraCode = ediCodes.get(IEdiSupport.CABECERA);
+				String customerEdiPtoEntregaCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
+				String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
+
+				Tag packingTag = ediSupport.obtainPackingTagInvoice(
+						oldSales.getCustomer().getRegistry(),
+						oldSales.getShippingAddress());
+				if(packingTag==null || packingTag.getId()==null){
+					AonUtil.addErrorMessage("No se ha definido el envase para 'mensajería EDI'");
+					throw new AbortProcessingException("No se ha definido el envase para 'mensajería EDI'");
+				}
+				
+				String customerPackage = packingTag.getName();
+
+				CompanyController company = (CompanyController) AonUtil
+						.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+				
+				com.code.aon.company.Company oldCompany = (com.code.aon.company.Company) company.getTo();
+				
+				String companyEdiCode = company.getEdiCompanyCode();
+
+				com.esferalia.aon.occam.api.model.Company occamCompany = AON.getCompany(domainName, domainId, login, f -> f.getIdProperty().eq(oldCompany.getId()));
+				
+				// writer file
+				ConnectSalesResponseOccam writer = new ConnectSalesResponseOccam(
+						AonUtil.getDomainName(),
+						oldSales.getDomain(),
+						AonUtil.getRemoteUser()
+				);
+				output = writer.createFile(sales,
+						occamCompany,
+						ORSPC.ORSPC_4.ACEPTADO_SIN_CORRECCION,
+						companyEdiCode,
+						customerEdiCabeceraCode,
+						customerEdiPtoEntregaCode,
+						customerEdiFacturaCode,
+						isInvoicingMainAddress,
+						customerPackage
+				);
+				
+				return output;
+			} else {
+				throw new AonCoreException("La factura no tiene direccion.");
+			}			
+		} catch (IOException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+        	throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
-	
 	
 }

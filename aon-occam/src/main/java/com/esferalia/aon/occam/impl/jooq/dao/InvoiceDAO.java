@@ -109,6 +109,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
@@ -1309,6 +1311,8 @@ public class InvoiceDAO {
 		InvoiceFiscalDAO.delete(ctx, id);
 		
 		InvoiceAddressDAO.delete(ctx, id);
+		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		
 		count = ctx.getDslContext()
 			.delete(INVOICE)

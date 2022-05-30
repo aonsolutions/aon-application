@@ -216,7 +216,7 @@ export class AonComunicaConfig extends AonElement {
     let emailsParent = this.getEmailsParent();
     if(emailsParent.length){
       let titleOne = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
-      titleOne.innerText = "Correos del entorno";
+      titleOne.innerText = "Correos predefinidos";
       div.appendChild(titleOne);
   
       const child = document.createElement(TAG.DIV);
@@ -224,11 +224,12 @@ export class AonComunicaConfig extends AonElement {
       child.style.marginBottom = "15px";
 
       div.appendChild(child);
+        
+      let titleTwo = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
+      titleTwo.innerText = "Correos adicionales";
+      div.appendChild(titleTwo);
+
     }
-  
-    let titleTwo = setStyles(this.createElement(TAG.DIV),{ fontWeight:"500", color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
-    titleTwo.innerText = "Correos Alternativos";
-    div.appendChild(titleTwo);
 
     let table = new AonBasicTable();
     table.id = this.getIdRand();
