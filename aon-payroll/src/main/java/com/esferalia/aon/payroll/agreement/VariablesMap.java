@@ -45,6 +45,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AD_PERSONAM_ANUAL","AD_PERSONAM");
 		variablesMap.put("AD_PERSONAM_MENSUAL","AD_PERSONAM");
 		
+		variablesMap.put("ANTICIPO_HORAS","ANTICIPO_H");
+		
 		variablesMap.put("ANTIGUEDAD_1_BIENIO_MENSUAL","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_2_BIENIOS_MENSUAL","ANTIGUEDAD_2");
 		variablesMap.put("ANTIGUEDAD_3_BIENIOS_MENSUAL","ANTIGUEDAD_3");
@@ -406,6 +408,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COORDINACION_MENSUAL", "COORDINACION");
 		variablesMap.put("COOPERATIVAS_DE_CONSUMO_MENSUAL", "COOPERATIVAS_CONSUMO");
 		variablesMap.put("COR_MENSUAL", "COR");
+		variablesMap.put("COTIZACION_EN_ESPECIE_MENSUAL", "C_EN_ESPECIE");
 		variablesMap.put("C_P_P__MENSUAL", "C_P_P");
 		variablesMap.put("C_P_P__CARGO_MENSUAL", "C_P_P_CARGO");
 		variablesMap.put("C_TEMP_CARGO_MENSUAL", "C_TEMP_CARGO");
@@ -857,6 +860,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DEDICACION_ANUAL", "PLUS_DEDICACION");
 		variablesMap.put("PLUS_DEDICACION_MENSUAL", "PLUS_DEDICACION");
 		variablesMap.put("PLUS_DEDICACION_DIARIO", "PLUS_DEDICACION");
+		variablesMap.put("PLUS_DEGUSTACION_MENSUAL", "DEGUSTACION");
 		variablesMap.put("PLUS_DESCANSO_ANUAL", "PLUS_DESCANSO");
 		variablesMap.put("PLUS_DESCANSO_DIARIO", "PLUS_DESCANSO");
 		variablesMap.put("PLUS_DESCANSO_HORAS", "PLUS_DESCANSO");
@@ -1043,7 +1047,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_PENOSIDAD_MEDIA_JORNADA_MENSUAL", "PLUS_PENOSIDAD_MJ");
 		variablesMap.put("PLUS_PENOSIDAD_MENSUAL", "PLUS_PENOSIDAD");
 		variablesMap.put("PLUS_PENOSIDAD_RUIDO_HORAS", "PLUS_PENOSIDAD_RUIDO");
-		variablesMap.put("PLUS_PERMANENCIA_ANUAL", "PLUS_PERMANENCIA");
+		variablesMap.put("PLUS_PERMANENCIA_ANUAL", "PERMANENCIA_A");
+		variablesMap.put("PLUS_PERMANENCIA_DIARIO", "PERMANENCIA_D");
 		variablesMap.put("PLUS_PRESENCIA_MENSUAL", "PLUS_PRESENCIA");
 		variablesMap.put("PLUS_PRESENCIA_E_IMAGEN_MENSUAL", "PRESENCIA_E_IMAGEN_M");
 		variablesMap.put("PLUS_PROLONGACION_DE_JORNADA_ANUAL", "P_PROLONG_JORNANA");
@@ -1052,7 +1057,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_PROLONGACION_DE_JORNADA_TECNICOS_DE_JUEGO_DIARIO", "P_PROLONG_TECNICO_JUEGO");
 		variablesMap.put("PLUS_PROLONGACION_DE_JORNADA_TECNICOS_DE_SALA_DIARIO", "P_PROLONG_TECNICO_SALA");
 		variablesMap.put("PLUS_PUNTUALIDAD_MENSUAL", "PLUS_PUNTUALIDAD_M");
-		variablesMap.put("PLUS_RECEPCIONISTA_ANUAL", "PLUS_RECEPCIONISTA");
+		variablesMap.put("PLUS_RECEPCIONISTA_ANUAL", "RECEPCIONISTA_A");
+		variablesMap.put("PLUS_RECEPCIONISTA_MENSUAL", "RECEPCIONISTA_M");
 		variablesMap.put("PLUS_REDUCCION_ABSENTISMO_DIARIO", "PLUS_REDUC_ABSENTISMO");
 		variablesMap.put("PLUS_REDUCCION_ABSENTISMO_MENSUAL", "PLUS_REDUC_ABSENTISMO");
 		variablesMap.put("PLUS_RESPONSABLE_OFICINA_MENSUAL", "P_RESPONSABLE_OFICINA");
@@ -1079,7 +1085,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_SEMANA_SANTA_MENSUAL", "P_SEMANA_SANTA_M");
 		variablesMap.put("PLUS_SEGUNDO_IDIOMA_MENSUAL", "SEGUNDO_IDIOMA");
 		variablesMap.put("PLUS_SERVICIO_EXTRA_DIARIO", "PLUS_SERVICIO_EXTRA");
-		variablesMap.put("PLUS_SUSTITUCION_MENSUAL", "P_SUSTIT_MENSUAL");
+		variablesMap.put("PLUS_SUSTITUCION_MENSUAL", "SUSTITUCION_M");
+		variablesMap.put("PLUS_SUSTITUCION_DIARIO", "SUSTITUCION_D");
 		variablesMap.put("PLUS_SUSTITUCION_T_PARCIAL_MENSUAL", "P_SUSTIT_TP_MENSUAL");
 		variablesMap.put("PLUS_TALLERES_DIARIO", "PLUS_TALLERES");
 		variablesMap.put("PLUS_TITULADOS_ANUAL", "PLUS_TITULADOS");

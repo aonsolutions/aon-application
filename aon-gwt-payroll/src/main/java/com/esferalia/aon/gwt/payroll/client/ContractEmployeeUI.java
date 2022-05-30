@@ -176,6 +176,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void onContractQuoteGroupChange(String quoteGroup) {
 			contrataEmployeeObject.setContractQuoteGroup(quoteGroup);
 		}
+		
+		@Override
+		public void onContractQuoteGroupIdx(boolean quoteGroupMonth) {
+			contrataEmployeeObject.setContractQuoteIdxMonth(quoteGroupMonth);
+		}
 
 		@Override
 		public void onContractOccupationChange(String occupation) {
@@ -608,6 +613,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 		
 		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
+		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		

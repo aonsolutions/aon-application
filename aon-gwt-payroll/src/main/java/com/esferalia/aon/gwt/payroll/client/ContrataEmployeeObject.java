@@ -883,6 +883,10 @@ public class ContrataEmployeeObject {
 		contractData.setQuoteGroup(quoteGroup);		
 	}
 	
+	public void setContractQuoteIdxMonth(boolean quoteGroupMonth) {
+		contractData.setQuoteGroupIdxMonth(quoteGroupMonth);
+	}
+	
 	public void setContractOccupation(String occupation) {
 		contractData.setOcupation(occupation);		
 	}

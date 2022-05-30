@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEnabled;
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -407,6 +408,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		public void setStartDate(Date startDate) {
 			altaConsolidadaDelete.setVisible(DateUtils.isAfterOrEquals(new Date(), startDate));
 		}
+		
+		public void setPrevAlta(boolean prevAlta) {
+			idcPlNss.setVisible(!prevAlta);
+		}
 
 		public MenuItem getTa() {
 			return ta;
@@ -715,6 +720,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			cetifica2.setVisible(endDate != null);
 			cetifica2PDF.setVisible(endDate != null);
 		}
+		
+		public void setHasCTO(boolean hasCTO) {
+			sendContract.setVisible(!hasCTO);
+			removeContract.setVisible(hasCTO);
+		}
+		
+		public void setHasCBC(boolean hasCBC) {
+			sendBasicCopy.setVisible(!hasCBC);
+		}
+		
+		public MenuItemSeparator getSeparatorAdds() {
+			return separatorAdds;
+		}
 
 	}
 
@@ -744,6 +762,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField
 	HTMLPanel messageContainer;
+	
+	@UiField
+	HTMLPanel messagePDFContainer;
 
 	@UiField(provided = true)
 	ContractEmployeeUI contractEmployeeUI;
@@ -930,7 +951,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	// ------------------------------------------------- Initialize View
-
+	
 	private void setScrollPanelsHeight() {
 		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
 		scrolledPanelContractOtherData.getElement().getStyle().setHeight(Window.getClientHeight() - 250.00, Unit.PX);
@@ -1062,15 +1083,30 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showEmployee() {
 		toolbarDeckPanel.showWidget(0);
 		mainDeckPanel.showWidget(0);
+		showMessageContainer();
 	}
 
 	private void showPdf() {
 		toolbarDeckPanel.showWidget(1);
 		mainDeckPanel.showWidget(1);
+		idcDateListBox.setVisible(false);
+		idcMonthListBox.setVisible(false);
+		pdfViewer.open(null);
+		showMessagePDFContainer();
 	}
 	
 	private void onClosePDF() {
 		showEmployee();
+	}
+	
+	private void showMessageContainer() {
+		messageContainer.setVisible(true);
+		messagePDFContainer.setVisible(false);
+	}
+
+	private void showMessagePDFContainer() {
+		messagePDFContainer.setVisible(true);
+		messageContainer.setVisible(false);
 	}
 
 	// ------------------------------------------------- setContrataEmployeeObject
@@ -1524,15 +1560,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void showIdc(Date date) {
-		showLoading("Obteniendo IDC...");
 		showPdf();
+		showLoadingPDF("Obteniendo IDC...");
 		idcDateListBox.setVisible(true);
+		idcMonthListBox.setVisible(false);
 		idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 		idcDateListBox.setSelected(date, true);
 		contrataEmployeeObject.downloadIdc(date, dataURI -> {
-			hideMessage();
+			hideMessagePDF();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error IDC", f.getMessage()));
+		}, f -> showErrorPDF("Error IDC", f.getMessage()));
 	}
 
 	private void showIdcPlNss() {
@@ -1540,15 +1577,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void showIdcPlNss(Date month) {
-		showLoading("Obteniendo IDC PL NSS...");
 		showPdf();
+		showLoadingPDF("Obteniendo IDC PL NSS...");
 		idcMonthListBox.setVisible(true);
+		idcDateListBox.setVisible(false);
 		idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 		idcMonthListBox.setSelected(month, true);
 		contrataEmployeeObject.downloadIdcPlNss(month, dataURI -> {
-			hideMessage();
+			hideMessagePDF();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error IDC PL NSS", f.getMessage()));
+		}, f -> showErrorPDF("Error IDC PL NSS", f.getMessage()));
 	}
 
 	private void onDeleteContract() {
@@ -1585,6 +1623,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			loadWindow(su -> {});
 		}, f -> showError("Error borrado alta consolidada", f.getMessage()));
 	}
+	
+	private boolean checkPrevAlta() {
+		Date currentDate = new Date();
+		Date startDate = contrataEmployeeObject.getContractStartDate();
+		return DateUtils.isAfterOrEquals(startDate, currentDate) && !DateUtils.equals(startDate, currentDate);
+	}
 
 	// ------------------------------------------------- EmployeeSepeButtons
 
@@ -1596,7 +1640,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveSepe.addClickHandler(e -> contractSpecificData.saveSepe());
 		hPanel.add(saveSepe);
 
-		hPanel.add(deleteContract);
+//		hPanel.add(deleteContract);
 
 		sepe = new AonExpandButton("SEPE", AON.CSS.aonIconSepe()) {
 
@@ -2081,17 +2125,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void initializeIdcDateListBox() {
-		tgssContextMenu.getIdc().setEnabled(false);
-		tgssContextMenu.getIdc().setVisible(false);
 		contrataEmployeeObject.getIdcDates(dates -> {
+			Collections.reverse(dates);
 			int count = dates.size();
 			idcDateListBox.setRowCount(count, true);
 			idcDateListBox.setRowData(0, dates);
 			idcDateListBox.setVisibleRange(0, count + 1);
-			idcDateListBox.setSelected(count - 1, true);
+			idcDateListBox.setSelected(0, true);
 			idcDateListBox.onResizeDropDownPopup();
-			tgssContextMenu.getIdc().setEnabled(true);
-			tgssContextMenu.getIdc().setVisible(true);
 		}, error -> {
 		});
 	}
@@ -2126,7 +2167,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		boolean hasTransform = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation();
 		if(Boolean.TRUE.equals(hasTransform)) sepeContextMenu.setIsTransform();
 		
+		if(Boolean.TRUE.equals(hasExtension) && Boolean.TRUE.equals(hasTransform)) sepeContextMenu.getSeparatorAdds().setVisible(false);
+		
 		sepeContextMenu.setEndDate(endDate);
+		sepeContextMenu.setHasCTO(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCto());
+		sepeContextMenu.setHasCBC(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCbc());
 	}
 
 	// ------------------------------------------------- TGSS status
@@ -2138,6 +2183,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tgssContextMenu.setIsComunica(this.isComunica);
 		tgssContextMenu.setStartDate(startDate);
 		tgssContextMenu.setEndDate(endDate);
+		tgssContextMenu.setPrevAlta(checkPrevAlta());
 	}
 
 	public void setIsComunica(boolean isComunica) {
@@ -2192,6 +2238,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void hideMessage() {
 		AonMessagePanel.hideMessage(messageContainer);
+	}
+	
+	private void showSuccessPDF(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messagePDFContainer, successMap);
+	}
+
+	private void showErrorPDF(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messagePDFContainer, errorMap);
+	}
+
+	private void showLoadingPDF(String message) {
+		AonMessagePanel.showLoading(messagePDFContainer, message);
+	}
+
+	private void hideMessagePDF() {
+		AonMessagePanel.hideMessage(messagePDFContainer);
 	}
 
 }

@@ -101,6 +101,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showDeliveryFilterWindow;
 	private boolean showTbaiWindow;
 	private boolean showCertTbaiWindow;
+	private boolean showCertTbaiAnularWindow;
 	private boolean showFacturaeInfoWindow;
 	
 	private EdiInvoiceImporterHandler ediImporter;
@@ -170,6 +171,14 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowCertTbaiWindow(boolean showCertTbaiWindow) {
 		this.showCertTbaiWindow = showCertTbaiWindow;
+	}
+	
+	public boolean isShowCertTbaiAnularWindow() {
+		return showCertTbaiAnularWindow;
+	}
+
+	public void setShowCertTbaiAnularWindow(boolean showCertTbaiAnularWindow) {
+		this.showCertTbaiAnularWindow = showCertTbaiAnularWindow;
 	}
 	
 	public boolean isShowFacturaeInfoWindow() {
@@ -717,25 +726,37 @@ public class SaleInvoiceController extends InvoiceController {
 		anular = true;
 	}
 	
-	public void anularInvoice() throws Exception {
-		if(isTbaiInvoice()) {
-			checkCertificate();
-			Invoice inv = (Invoice) getTo();
-			String domainName = AonUtil.getDomainName();
-			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-			tbaiConfiguration.setCertificate(getCertData());
-			TbaiMain tbai = new TbaiMain();
-			tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+	public void onAnular(ActionEvent event) {
+		anularInvoice();
+		initializeModel();
+		resetTo();
+	}
+	
+	public void anularInvoice() {
+		try {
+			if(isTbaiInvoice()) {
+				checkCertificate();
+				Invoice inv = (Invoice) getTo();
+				String domainName = AonUtil.getDomainName();
+				String login = UserUtils.getInstance().getLoggedUser().getLogin();
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+				tbaiConfiguration.setCertificate(getCertData());
+				TbaiMain tbai = new TbaiMain();
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+				AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
 	@Override
 	public void onRemove(ActionEvent event) {
 		try {
-			anularInvoice();
-			super.onRemove(event);
+			if(!isTbaiInvoice()) 
+				super.onRemove(event);
 		} catch (Exception e) {
 			e.printStackTrace();
 			AonUtil.addErrorMessage(e.getMessage());

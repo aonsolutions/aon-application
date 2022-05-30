@@ -138,6 +138,12 @@
 			margin: 0 10px;
 		}
 		
+		.toolbar {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
+		
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
@@ -233,13 +239,14 @@
 							</g:HTMLPanel>
 							
 							<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+								<g:HTMLPanel ui:field="messagePDFContainer" />
 								<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">
 									<g:HTMLPanel styleName="{style.mt10} {style.center}">
 								 		<p:FullViewer styleName="reset" ui:field='pdfViewer' />
 							 		</g:HTMLPanel>
 								</g:SimpleLayoutPanel> 
 							 </g:HTMLPanel>
-						</g:DeckPanel>		
+						</g:DeckPanel>
 					</g:center>
 					<g:south size="20">
 						<c:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >

@@ -724,6 +724,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		contractData.setQuoteGroup(quoteGroup);		
 	}
+	
+	public void setContractQuoteIdxMonth(boolean quoteGroupMonth) {
+		add(contractData::setQuoteGroupIdxMonth, 
+				contractData.getQuoteGroupIdxMonth(), 
+				quoteGroupMonth );
+		
+		contractData.setQuoteGroupIdxMonth(quoteGroupMonth);
+	}
 
 	public void setContractOccupation(String occupation) {
 		add(contractData::setOcupation, 

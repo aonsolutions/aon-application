@@ -3134,7 +3134,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private void closeFootPanel() {
 		footPanel.addButtonLess();
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
 	private void showResultsPanel() {
