@@ -143,9 +143,9 @@ public class TaskDAO {
 			new TagFiller()::apply
 		);
 		
-		 taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
+		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
 		 
-		 return taskMaps.keySet().stream();
+		return taskMaps.keySet().stream();
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
@@ -305,7 +305,7 @@ public class TaskDAO {
 			Optional<TagRecord> tagExist = dslContext.select()
 			.from(TAG)
 			.where(TAG.DOMAIN.eq(task.getDomain().getId()))
-			.and(TAG.NAME.upper().eq(name))
+			.and(DSL.upper(TAG.NAME).eq(name))
 			.and(TAG.TYPE.eq(tag.getTagType().value()))
 			.fetchStreamInto(TAG)
 			.findFirst();

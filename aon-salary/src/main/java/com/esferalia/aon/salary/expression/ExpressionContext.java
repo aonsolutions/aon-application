@@ -803,9 +803,44 @@ public class ExpressionContext {
 		} catch (CompileException e) {
 			throw e;
 		}
-
 	}
 	
+	public List<ITimedResult<Object>> dryEval(String script, Date start, Date end)
+			throws ExpressionException, UndefinedVariablesException {
+		return dryEval(script, start, end, Object.class);
+	}
+
+	public <T> List<ITimedResult<T>> dryEval(String script, Date start, Date end, Class<T> toType)
+			throws ExpressionException, UndefinedVariablesException {
+		if (script == null) {
+			ITimedResult<T> result = (new TimedResult<T>((T) null, new Period(start, end),
+					Collections.<String, ITimedVariable<?>> emptyMap()));
+			return Collections.singletonList(result);
+		}
+		Set<String> inputs = getVarNames(script);
+		List<PeriodMap> bindingsList = variables.getBindings(inputs, start, end);
+		try {
+
+			do {
+				try {
+					return eval(script, bindingsList, toType);
+				} catch (MacroException e) {
+					script = e.doMacro(script);
+					inputs.addAll(getVarNames(script));
+					bindingsList = variables.getBindings(inputs, start, end);
+				}
+			} while (true);
+
+		} catch (DeferredException e) {
+			ExpressionContext dryCtx = new ExpressionContext(this);
+			e.eval(dryCtx, toType);
+			return dryCtx.dryEval(script, start, end, toType);
+		} catch (UnknownUndefVarException e) {
+			return evalUnknowUndefVariable(script, inputs, start, end, toType);
+		} catch (CompileException e) {
+			throw e;
+		}
+	}
 	
 
 

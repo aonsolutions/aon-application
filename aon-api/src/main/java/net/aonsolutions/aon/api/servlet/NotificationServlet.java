@@ -14,7 +14,11 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.NotificationProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -40,6 +44,9 @@ public class NotificationServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getNotification(api));
+				break;
+			case "/domain":
+				response(req, resp, getNotificationByDomain(api));
 				break;
 			case "/total-notification":
 				response(req, resp, getTotalNotification(api));
@@ -75,8 +82,6 @@ public class NotificationServlet extends AonApiHttpServlet{
 		}
 	}
 	
-
-
 	private JSONObject sendNotification(AonApiData api) {
 		Domain domain = api.getDomain();
 		String login = api.getUser().getLogin();
@@ -116,7 +121,6 @@ public class NotificationServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 
-	
 	private JSONArray getNotification(AonApiData api) {
 		JSONArray array = new JSONArray();
 		AonToken at = SECURITY.getAonToken(api.getToken());
@@ -125,6 +129,18 @@ public class NotificationServlet extends AonApiHttpServlet{
 		AON_SOLUTIONS.getNotificationStream(f -> 
 			f.getStatusProperty().eq(NotificationStatus.UNREAD.value())
 			.and(f.getAuthProperty().eq(at.getAuth())), page, perPage)
+		.forEach(nt -> array.put(nt.toJSON()));
+		return array;
+	}
+	
+	private JSONArray getNotificationByDomain(AonApiData api) {
+		JSONArray array = new JSONArray();
+		Domain domain = api.getDomain();
+		User user = api.getUser();
+		
+		AON_SOLUTIONS.getNotificationStream(domain.getId(), domain.getName(), user.getLogin(),
+			f -> getFilter(api, f)
+		)
 		.forEach(nt -> array.put(nt.toJSON()));
 		return array;
 	}
@@ -144,10 +160,13 @@ public class NotificationServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject markReadNotification(AonApiData api) {
-		AON_SOLUTIONS.markReadNotification(api.getDomain(), api.getUser().getLogin(), api.getData().optInt("id"));
+		AON_SOLUTIONS.markReadNotification(api.getDomain(), api.getUser().getLogin(),
+				f->  getFilterMark(api, f)
+		);
+
 		return new JSONObject().put("success", true);
 	}
-	
+		
 	private JSONObject getTotalNotification(AonApiData api) {
 		AonToken at = SECURITY.getAonToken(api.getToken());
 		Integer totalNotification = AON_SOLUTIONS.getTotalNotification(
@@ -159,4 +178,47 @@ public class NotificationServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
+	private Filter getFilter(AonApiData api, NotificationProperties f) {
+		JSONObject params = api.getData();
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAuthProperty().eq(aonToken.getAuth()));
+		
+		NotificationStatus status = params.optBoolean("read") ? NotificationStatus.READ : NotificationStatus.UNREAD;
+		filter = filter.and(f.getStatusProperty().eq(status.value()));
+	
+		NotificationSource source = NotificationSource.safeValueOf(params.getString(IJsonNames.SOURCE));
+		filter = filter.and(f.getSourceProperty().eq(source.value()));
+
+		return filter;
+	}
+	
+	private Filter getFilterMark(AonApiData api, NotificationProperties f) {
+		JSONObject params = api.getData();
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		
+		if(params.optInt(IJsonNames.ID)!=0) {
+			return f.getReceiverIdProperty().eq(params.optInt(IJsonNames.ID));
+		} else {
+			
+			Filter filter = f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAuthProperty().eq(aonToken.getAuth()));
+			
+			Boolean read = params.optBoolean("read");
+			
+			Integer sourceId = params.optInt(IJsonNames.SOURCE_ID);
+			
+			NotificationStatus status = Boolean.TRUE.equals(read) ? NotificationStatus.READ : NotificationStatus.UNREAD;
+			filter = filter.and(f.getStatusProperty().eq(status.value()));
+		
+			if(sourceId!=0) {
+				filter = filter.and(f.getSourceIdProperty().eq(sourceId));
+				
+				String source = params.optString(IJsonNames.SOURCE);
+				if(!source.isEmpty()) {
+					filter = filter.and(f.getSourceProperty().eq(NotificationSource.safeValueOf(source).value()));
+				}
+			}
+
+			return filter;
+		}
+	}
 }

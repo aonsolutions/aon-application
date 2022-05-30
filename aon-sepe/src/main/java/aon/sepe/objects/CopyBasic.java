@@ -8,11 +8,16 @@ public class CopyBasic {
 	private String workAddress;
 	private String restContract;
 	private FirmType firmType;
-	
+
+	// SEARCH FOR SEPEID
+	private String sepeId;	
+	//--------OR---------
+	// SEARCH FOR IPF
 	private String ipf;
 	private Date fini;
 	private Date fend;
 	
+
 	public String getWorkAddress() {
 		return workAddress;
 	}
@@ -35,6 +40,10 @@ public class CopyBasic {
 	
 	public Optional<Date> getFend() {
 		return Optional.ofNullable(fend);
+	}
+	
+	public Optional<String> getSepeId() {
+		return Optional.ofNullable(sepeId);
 	}
 	
 	public CopyBasic setWorkAddress(String workAddress) {
@@ -67,6 +76,11 @@ public class CopyBasic {
 		return this;
 	}
 	
+	public CopyBasic setSepeId(String sepeId) {
+		this.sepeId = sepeId;
+		return this;
+	}
+	
 	public enum FirmType {
 		FIRMADA_REPRESENTANTES_LEGALES(1), 
 		NO_EXISTE_REPRESENTACION(2),
@@ -83,4 +97,11 @@ public class CopyBasic {
 			return value;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "CopyBasic [workAddress=" + workAddress + ", restContract=" + restContract + ", firmType=" + firmType
+				+ ", sepeId=" + sepeId + ", ipf=" + ipf + ", fini=" + fini + ", fend=" + fend + "]";
+	}
+	
 }

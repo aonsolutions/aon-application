@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -144,8 +145,9 @@ public class ElaborationDownload extends HttpServlet {
 						.findFirst().orElse(null);
 				if(salesDetail!=null && salesDetail.getSales().getId()>0){
 					int salesId = salesDetail.getSales().getId(); 
+					Options options = new Options().setFull(true);
 					sales = AON.getSales(domain.getName(), domain.getId(), login, 
-							f -> f.getIdProperty().eq(salesId));
+							f -> f.getIdProperty().eq(salesId), options);
 					if(sales!=null && sales.getId()!=null){
 						customer = sales.getCustomer();
 					}

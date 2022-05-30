@@ -379,6 +379,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deleteContractAttach(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
 	
+	public void getAttachData(Integer attachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getAttachData(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
+	}
+	
 	// ------------------------------------------------ Contract Clauses
 	
 	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException  {
@@ -389,6 +393,18 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setContractClauses(getCurrentDomainName(), contractId, contractClauses, asyncCallback);
 	}
 	
+	public void deleteContractClause(Integer clauseId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deleteContractClause(getCurrentDomainName(), clauseId, asyncCallback);
+	}
+	
+	public void importContractClauses(List<Integer> clausesIds, Integer contractId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.importContractClauses(getCurrentDomainName(), clausesIds, contractId, asyncCallback);
+	}
+	
+	public void getDomainClauses(AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getDomainClauses(getCurrentDomainName(), asyncCallback);
+	}
+
 	public void getContractOtherInfo(Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback) {
 		enterprisesServiceAsync.getContractOtherInfo(getCurrentDomainName(), contractId, contractType, asyncCallback);
 	}

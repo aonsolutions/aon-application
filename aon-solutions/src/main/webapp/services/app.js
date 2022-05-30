@@ -340,6 +340,15 @@ export const BANK = {
   price: " ", // 'Desde 45€/mes'
 };
 
+export const API_SERVICE = {
+  app: "api_service",
+  title: "Cuentas de Servicio | Acceso API",
+  description: "Cuentas de Servicio | Acceso API.",
+  icon: AON_ICONS.AON_APP,
+  color: "#EA6D41",
+  price: " ", // 'Desde 45€/mes'
+};
+
 export const AULA = {
   app: "aula",
   title: "Aula",
@@ -424,7 +433,7 @@ export const Apps = {
 };
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
-export const Services = { OCR, CONVENIOS, BANK, AULA, CUSTOM_VIEW };
+export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
 
 export const AllApps = {
   ACCOUNTING,
@@ -578,6 +587,40 @@ export const AccountingMenu = [
     initAction: "bankStatement_search",
   },
 ];
+
+export const AccountingPortalMenu = [
+  {
+    title: "Extracto de cuenta.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "StatementReportModule",
+  },
+  {
+    title: "Cuenta de Explotación (P Y G).",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountOperatingReport",
+  },
+  {
+    title: "Balance de Sumas y Saldos.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountTrialBalanceReport",
+  },
+  {
+    title: "Listado Diario de Movimientos.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "JournalReportModule",
+  },
+  {
+    title: "Listado Mayor de Cuentas.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "LedgerReportModule",
+  },
+  {
+    title: "Balances de Cuentas.",
+    module: "aon_gwt_fiscal",
+    entryPoint: "AccountBalanceReport",
+  }
+];
+
 
 export const PayrollMenu = [
   GWT.EMPLOYEES,

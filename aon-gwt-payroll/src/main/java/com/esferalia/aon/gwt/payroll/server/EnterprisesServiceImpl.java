@@ -8,7 +8,10 @@ import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -17,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -2313,6 +2317,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public String getAttachData(String domainName, String login, Integer attachId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Attach attach = AON.getAttach(domainName, domainId, login,  f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
+			String base64Pdf = Base64.getEncoder().encodeToString(attach.getData());
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (SQLException | IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public List<ContractClause> getContractClauses(String domainName, Integer contractId) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractClauses.getContractClauses(connection, contractId);
@@ -2325,6 +2349,38 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void setContractClauses(String domainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqContractClauses.setContractClauses(connection, contractClauses);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void deleteContractClause(String domainName, Integer clauseId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContractClauses.deleteContractClause(connection, clauseId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void importContractClauses(String domainName, List<Integer> clausesIds, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			JooqContractClauses.importContractClauses(connection, clausesIds, domainId, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public List<ContractClause> getDomainClauses(String domainName) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			
+			return JooqContractClauses.getDomainClauses(connection, domainId, parentDomainId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -3250,7 +3306,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
-		} catch (SQLException | SepeException | SegSocialException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
@@ -3339,7 +3395,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 
-		} catch (SQLException | SepeException | SegSocialException e) {
+		} catch (Exception e) {
 			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "java.io.IOException: keystore password was incorrect"))
 				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
 			

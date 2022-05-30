@@ -109,6 +109,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
@@ -118,9 +120,13 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDAO {
+	
+	private InvoiceDAO() {
+
+	}
 	
 	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
@@ -1303,6 +1309,10 @@ public class InvoiceDAO {
 		FinanceDAO.deleteInvoiceFinances(ctx,id);
 		
 		InvoiceFiscalDAO.delete(ctx, id);
+		
+		InvoiceAddressDAO.delete(ctx, id);
+		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceInfoDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
 		
 		count = ctx.getDslContext()
 			.delete(INVOICE)

@@ -170,11 +170,10 @@ export class Invoice {
       this.tbai = false;
       this.tbaiUrl = '';
     }
-
-    getCompany().then(company => {
-      this.surcharge = this.surcharge || company.surcharge;
-      this.vatAccrualPayment = this.vatAccrualPayment || company.vatAccrualPayment;
-    });
+    // getCompany().then(company => {
+    //   this.surcharge = this.surcharge || company.surcharge;
+    //   this.vatAccrualPayment = this.vatAccrualPayment || company.vatAccrualPayment;
+    // });
   }
 
   getType() {

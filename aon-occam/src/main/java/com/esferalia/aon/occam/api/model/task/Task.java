@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -47,7 +48,7 @@ public class Task  implements Serializable{
 	private List<TaskWorkflow> workflows; 
 	
 	private List<Tag> tags;
-	
+
 	// GOOGLE TASK IDS
 	
 	private String gtaskId; 
@@ -59,6 +60,10 @@ public class Task  implements Serializable{
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	
+	
+	//TMP
+	private String tmp;
 	
 	public Task() { 
 		this.tags = new ArrayList<>();
@@ -243,7 +248,7 @@ public class Task  implements Serializable{
 	public void addWorkflow(TaskWorkflow w) {
 		this.workflows.add(w);
 	}
-	
+
 	public TaskPeriod getRepeatPeriod() {
 		return repeatPeriod;
 	}
@@ -324,7 +329,20 @@ public class Task  implements Serializable{
 		this.parent = parent;
 		return this;
 	}
+
+	public boolean isChild() {
+		return parent!=null && parent>0;
+	}
 	
+	public Optional<String> getTmp() {
+		return Optional.ofNullable(tmp);
+	}
+
+	public Task setTmp(String tmp) {
+		this.tmp = tmp;
+		return this;
+	}
+
 	public List<Tag> getTags() {
 		return tags;
 	}
@@ -337,7 +355,7 @@ public class Task  implements Serializable{
 	public void addTag(Tag tag) {
 		this.tags.add(tag);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(id);

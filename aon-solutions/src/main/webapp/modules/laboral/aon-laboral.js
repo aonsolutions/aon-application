@@ -14,6 +14,7 @@ import { MSG, CONSTANT } from "../../environments/environments.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 import Apps from "../../services/app.js";
 
 export class AonLaboral extends AonElement {
@@ -176,12 +177,12 @@ export class AonLaboral extends AonElement {
       ...CONTRACT_OPTIONS.TA,
       fn: () => this.getTa(res)
     });
-    if(!res.prev){
+    // if(!res.prev){
       option.push({
 				...CONTRACT_OPTIONS.IDC,
 				fn: () => this.getIdc(res)
 		  });
-    }
+    // }
 		if (this.anularCondition(res.situation, res.fra)) {
 			option.push({
 				...CONTRACT_OPTIONS.DELETE,
@@ -207,8 +208,11 @@ export class AonLaboral extends AonElement {
 		this.applicationEl.startLoading();
 		try {
       let fecha = feb || fea;
-      if(!fecha) 
+      if(!fecha) {
         fecha = frb || fra;
+        fecha = (new Date().getTime() > new Date(fecha).getTime()) ? fecha : AonDateUtils.formatDateOrigin(new Date());
+      }
+      
 			await getIDC({ regime, ctaCti, nss, fra:fecha }); // open pdf
 		} catch (error) {
       this.showToast(error);
@@ -273,7 +277,7 @@ export class AonLaboral extends AonElement {
   async updateContracts(){
     this.applicationEl.startLoader();
     //SINCRONIZED INIT YEAR
-    await updateContracts({employeesOld:true, employeePrev:true}).catch(e=>console.log("erros",e));
+    await updateContracts({employeesOld:true, employeesPrev:true, startDate: AonDateUtils.formatDateOrigin( new Date().addMonth(-3)) }).catch(e=>console.log("erros",e));
     console.log("----------UPDATE CONTRACTS------");
     this.applicationEl.stopLoader();
   }

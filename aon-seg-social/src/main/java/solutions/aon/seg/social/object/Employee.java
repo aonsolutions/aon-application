@@ -38,6 +38,7 @@ public class Employee {
 	private String mdCtz;
 	private String rlce;
 	private String collective; // COLECTIVO DEL TRABAJADOR
+	public Boolean quoteMonth;
 
 	private Employee() {}
 	
@@ -73,6 +74,8 @@ public class Employee {
 		if(reducingCoefic != null)	visitor.visitReducingcoefic(reducingCoefic);
 		if(collective != null)	visitor.visitCollective(collective);
 		if(frv != null)	visitor.visitFrv(frv);
+		if(mdCtz != null)	visitor.visitMdCtz(mdCtz);
+		if(quoteMonth != null) visitor.visitQuoteMonth(quoteMonth);
 	}
 	
 	public String getIpf() {return ipf;}
@@ -104,6 +107,7 @@ public class Employee {
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}
 	public Optional<String> getCollective() {return Optional.ofNullable(collective);}
+	public Optional<Boolean> getQuoteMonth() {return Optional.ofNullable(quoteMonth);}
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -171,6 +175,10 @@ public class Employee {
 			public void visitReducingcoefic(String reducingCoefic) {stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));}
 			@Override
 			public void visitCollective(String collective) {stringBuffer.append(String.format(" collective : \"%s\" ", collective));}
+			@Override
+			public void visitMdCtz(String mdCtz) {stringBuffer.append(String.format(" mdCtz : \"%s\" ", mdCtz));}
+			@Override
+			public void visitQuoteMonth(Boolean quoteMonth) {stringBuffer.append(String.format(" quoteMonth : \"%s\" ", quoteMonth));}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -211,6 +219,7 @@ public class Employee {
 		private String mdCtz;
 		private String rlce;
 		private String collective;
+		private Boolean quoteMonth;
 
 		public EmployeeBuilder(){}		
 		
@@ -405,6 +414,11 @@ public class Employee {
 			return this;
 		}
 		
+		public EmployeeBuilder setQuoteMonth(Boolean quoteMonth) {
+			this.quoteMonth = quoteMonth;
+			return this;
+		}
+		
 		public EmployeeBuilder setCollective(String collective) {
 			this.collective = collective;
 			return this;
@@ -446,6 +460,7 @@ public class Employee {
 			employee.mdCtz = this.mdCtz;
 			employee.rlce = this.rlce;
 			employee.collective = this.collective;
+			employee.quoteMonth = this.quoteMonth;
 			return employee;
 		}
 
@@ -453,6 +468,7 @@ public class Employee {
 	
 	public static interface Visitor{
 		void visitrFra(Date fra);
+		void visitQuoteMonth(Boolean quoteMonth);
 		void visitFrv(Date frv);
 		void visitrFea(Date fea);
 		void visitrFrb(Date frb);
@@ -483,6 +499,7 @@ public class Employee {
 		void visitProfesCat(String profesCat);
 		void visitReducingcoefic(String reducingCoefic);	
 		void visitCollective(String collective);	
+		void visitMdCtz(String mdCtz);	
 	}
 	
 	public static abstract class AbstractVisitor implements Visitor {
@@ -546,6 +563,10 @@ public class Employee {
 		public void visitReducingcoefic(String reducingCoefic) {}
 		@Override
 		public void visitCollective(String collective) {}
+		@Override
+		public void visitMdCtz(String mdCtz) {}
+		@Override
+		public void visitQuoteMonth(Boolean quoteMonth) {}
 	}
 
 	@Override

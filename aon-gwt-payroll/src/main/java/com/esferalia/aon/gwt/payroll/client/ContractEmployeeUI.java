@@ -29,7 +29,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -176,6 +175,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		@Override
 		public void onContractQuoteGroupChange(String quoteGroup) {
 			contrataEmployeeObject.setContractQuoteGroup(quoteGroup);
+		}
+		
+		@Override
+		public void onContractQuoteGroupIdx(boolean quoteGroupMonth) {
+			contrataEmployeeObject.setContractQuoteIdxMonth(quoteGroupMonth);
 		}
 
 		@Override
@@ -443,7 +447,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getIDCMonthListBox().setFirstMonth(firstMonth);
 		getIDCMonthListBox().setLastMonth(lastMonth);
 		int months = DateUtils.getMonths(lastMonth, firstMonth);
-		getIDCMonthListBox().setVisibleRange(0, months+1);
+		if(months >= 0)
+			getIDCMonthListBox().setVisibleRange(0, months+1);
 		getIDCMonthListBox().ensureDebugId("idcMonthListBox");
 	}
 	
@@ -608,6 +613,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 		
 		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
+		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
@@ -748,7 +755,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract TabLayoutPanel getFootTabPanel();
 	protected abstract SplitLayoutPanel getSplitLayoutPanel();
 	protected abstract AonToolbar getToolbar();
-	protected abstract MenuItem getTaEnd();
 	protected abstract MinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);

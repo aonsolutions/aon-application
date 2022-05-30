@@ -77,9 +77,9 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.jooq</groupId>
-			<artifactId>jooq</artifactId>
-			<version>3.16.5</version>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+		    <version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

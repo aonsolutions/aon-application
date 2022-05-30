@@ -1,10 +1,25 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.in.payroll.tgss.idc.Idc.isBonus;
+import static com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.ERROR;
+import static com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.WARN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_366;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS_366;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
+import static com.esferalia.aon.watson.util.AonDateUtils.add;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,11 +30,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ChoiceFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -31,11 +49,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -73,6 +93,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.Enterprise
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.tgss.idc.AllIdcHighlighter;
 import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter;
+import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.Setup;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -82,6 +103,9 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.Occupation;
+import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -91,6 +115,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
@@ -109,6 +134,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -121,13 +147,16 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
-import com.google.api.client.util.Objects;
+//import com.google.api.client.util.Objects;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
@@ -210,14 +239,26 @@ public class EmployeesServiceHelper {
 
 	public static String checkIDCNSS(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date, String idcBase64 ) throws SQLException, IOException, SegSocialException, UnknownPDFException{
 		
-//		Contract contract = 
-//		PAYROLL.
-//		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
-//		.orElseThrow(() -> new IOException() );
-//		
-//		String ccc = contract.getEnterpriseCCC();
-//		String naf = contract.getPersonSsNumber();
-//		String regime = contract.getSsRegime().getCode();
+		class SalaryItemResult extends TimedResult<Double> {
+			
+			private String expression;
+			private String description;
+			
+			public SalaryItemResult(Double value, Period period, Map<String, ITimedVariable<?>> context, String description, String expression) {
+				super(value, period, context);
+				this.expression = expression;
+				this.description = description;
+			}
+			
+			public String getDescription() {
+				return description;
+			}
+
+			public String getExpression() {
+				return AonStringUtils.defaultString(expression, "").replaceAll("/\\*.*\\*/", "");
+			}
+			
+		}
 		
 		byte [] idcData = Base64.getDecoder().decode(idcBase64);
 		
@@ -225,7 +266,12 @@ public class EmployeesServiceHelper {
 			
 			private List<ThrowableRunnable<IOException>> delayed = new LinkedList<>();
 
+			private java.sql.Date idcEndDate;
+			private java.sql.Date idcStartDate;
+			
 			private SQLContractSalaryCalculatorContext ctx = null;
+			private com.esferalia.aon.payroll.Salary salary = null;
+			private List<SalaryItemResult> salaryBonus = new ArrayList<>();
 			
 			private Number parseNumber(String str) {
 				return AonNumberUtils.todouble(str.replace(',', '.'));
@@ -240,6 +286,17 @@ public class EmployeesServiceHelper {
 				} catch (ParseException e) {
 					throw new IOException(e);
 				}		
+			}
+			
+			private String formatDate(Date date){
+					return new SimpleDateFormat("dd-MM-yyyy").format(date);
+			}
+
+			private String formatPeriod(Period period){
+				 MessageFormat periodForm = new MessageFormat("{0}..{1} ( {2} )");
+				 ChoiceFormat daysForm = new ChoiceFormat(new double[]{1,2}, new String[]{"1 día","{2,number} días"});
+				 periodForm.setFormatByArgumentIndex(2, daysForm);
+				 return periodForm.format(new Object[] {formatDate(period.getStart()), formatDate(period.getEnd()), period.getDays()});
 			}
 			
 			// ------------------------------------------------------- Disabled
@@ -265,15 +322,27 @@ public class EmployeesServiceHelper {
 			public void onEnterpriseIpf(String type, String ipf, IdcHighlighter idcHighlighter) throws IOException {
 				delayed.add ( () -> {
 					if ( !AonStringUtils.equalsIgnoreCase(ctx.getEnterpriseDocument(), ipf) )
-						idcHighlighter.highlight(ipf);
+						idcHighlighter.highlight(ipf, ERROR);
 				});
 			}
 			
 			@Override
 			public void onEnterpriseCCC(String ccc, IdcHighlighter idcHighlighter) throws IOException {
 				delayed.add ( () -> {
-					if ( !AonStringUtils.equalsIgnoreCase(ctx.getCcc(), ccc) )
-						idcHighlighter.highlight(ccc);
+					
+					String ctxCcc = ctx.getCcc();
+
+					String province =AonStringUtils.substring(ccc, 0, 2);  
+					String ctxProvince =AonStringUtils.substring(ctxCcc, 0, 2);  
+
+					if (!AonStringUtils.equalsIgnoreCase(ctxProvince, province) ) 
+						idcHighlighter.highlight(province, ctxProvince, ERROR );
+					
+					String num =AonStringUtils.substring(ccc, 2);  
+					String ctxNum =AonStringUtils.substring(ctxCcc, 2);  
+
+					if (!AonStringUtils.equalsIgnoreCase(ctxNum, num) ) 
+						idcHighlighter.highlight(num, ctxNum, ERROR );
 				});
 			}
 			
@@ -283,7 +352,17 @@ public class EmployeesServiceHelper {
 				delayed.add ( () -> {
 					Integer cnae2009 = AonNumberUtils.toInteger(code);
 					if ( !AonNumberUtils.equals(ctx.getCnae2009(), cnae2009 ) ) {
-						idcHighlighter.highlight(code, description, AonStringUtils.defaultIfBlank(AonNumberUtils.toString(ctx.getCnae2009()) , "Empresa sin actividad economica"));
+						idcHighlighter.highlight(code, description, AonStringUtils.defaultIfBlank(AonNumberUtils.toString(ctx.getCnae2009()) , "EMPRESA SIN ACTIVIDAD ECONÓMICA"), ERROR);
+					}
+				});
+			}
+			
+			@Override
+			public void onEnterpriseRegime(String regime, IdcHighlighter idcHighlighter) throws IOException {
+				delayed.add ( () -> {
+					String regex =	getRegimeRegex(ctx.getCCCType());  
+					if ( !AonStringUtils.containsMatching(regime, regex) ) {
+						idcHighlighter.highlight(escapeLiteral(regime), ctx.getCCCType().getName(new Locale("es_ES")), ERROR);
 					}
 				});
 			}
@@ -291,11 +370,12 @@ public class EmployeesServiceHelper {
 			@Override
 			public void onEmployeeIpf(String type, String ipf, IdcHighlighter idcHighlighter) throws IOException {
 				delayed.add ( () -> {
-					if ( !AonStringUtils.equalsIgnoreCase(ctx.getEmployeeDocument(), ipf) )
-						idcHighlighter.highlight(ipf, AonStringUtils.defaultIfBlank(ctx.getEmployeeDocument() , "Trabajador sin documento de identidad"));
+					if ( !documentsEquals(ctx.getEmployeeDocument(), ipf) )
+						idcHighlighter.highlight(ipf, AonStringUtils.defaultIfBlank(ctx.getEmployeeDocument() , "TRABAJADOR SIN DOCUMENTO DE IDENTIDAD"), ERROR);
 				});
 			}
 			
+
 			@Override
 			public void onEmployeeNaf(String province, String num, IdcHighlighter idcHighlighter) throws IOException {
 				delayed.add ( () -> {
@@ -303,9 +383,9 @@ public class EmployeesServiceHelper {
 					String employeeProvince = employeeSSNumber.substring(0,2);
 					String employeeNum = employeeSSNumber.substring(2);
 					if ( !AonStringUtils.equalsIgnoreCase(employeeProvince, province) )
-						idcHighlighter.highlight(province);
+						idcHighlighter.highlight(province, ERROR);
 					if ( !AonStringUtils.equalsIgnoreCase(employeeNum, num) )
-						idcHighlighter.highlight(num);
+						idcHighlighter.highlight(num, ERROR);
 				});
 			}
 			
@@ -313,11 +393,12 @@ public class EmployeesServiceHelper {
 			
 			@Override
 			public void onIdcPeriod(String start, String end, IdcHighlighter idcHighlighter) throws IOException {
-				java.sql.Date startDate = parseDate(start);
-				java.sql.Date endDate = parseDate(end);
+				this.idcStartDate = parseDate(start);
+				this.idcEndDate = parseDate(end);
 				
 				 try {
-					this.ctx = getContractSalaryCalculatorContext(connection, contractId, startDate, endDate, endDate);
+					this.ctx = getContractSalaryCalculatorContext(connection, contractId, idcStartDate, idcEndDate, idcEndDate);
+					
 					for( ThrowableRunnable<IOException> t : delayed) {
 						t.apply();
 					}
@@ -328,13 +409,61 @@ public class EmployeesServiceHelper {
 			}
 			
 			@Override
-			public void onContractStart(String date, IdcHighlighter idcHighlighter) throws IOException {
-				checkDate(ContextVariable.CONTRACT_START, date, idcHighlighter );
+			public void onContractCCC(String ccc, IdcHighlighter idcHighlighter) throws IOException {
+				String ctxCcc = ctx.getCcc();
+				if ( AonStringUtils.isBlank(ccc)) { 
+					idcHighlighter.insert("C.C.C.:", ctxCcc, ERROR);
+				} else {
+					String regime =AonStringUtils.substring(ccc, 0, 4);  
+					String ctxRegime =	getCCCRegimeCode(ctx.getCCCType());  
+
+					if (!AonStringUtils.equalsIgnoreCase(ctxRegime, regime) ) 
+						idcHighlighter.highlight(regime, ctxRegime, ERROR );
+
+					String province =AonStringUtils.substring(ccc, 4, 6);  
+					String ctxProvince =AonStringUtils.substring(ctxCcc, 0, 2);  
+
+					if (!AonStringUtils.equalsIgnoreCase(ctxProvince, province) ) 
+						idcHighlighter.highlight(province, ctxProvince, ERROR );
+					
+					String num =AonStringUtils.substring(ccc, 6);  
+					String ctxNum =AonStringUtils.substring(ctxCcc, 2);  
+
+					if (!AonStringUtils.equalsIgnoreCase(ctxNum, num) ) 
+						idcHighlighter.highlight(num, ctxNum, ERROR );
+				}
 			}
 			
 			@Override
-			public void onQuoteGroup(String group, Boolean monthly, IdcHighlighter idcHighlighter) throws IOException {
-				checkString(ContextVariable.QUOTE_GROUP, group, idcHighlighter);
+			public void onStart(String date, IdcHighlighter idcHighlighter) throws IOException {
+				checkDate(ContextVariable.CONTRACT_START, date, idcHighlighter, WARN );
+			}
+
+			@Override
+			public void onContractStart(String date, IdcHighlighter idcHighlighter) throws IOException {
+				checkDate(ContextVariable.CONTRACT_START, date, idcHighlighter, WARN );
+			}
+			
+			@Override
+			public void onQuoteGroup(String group, String monthly, IdcHighlighter idcHighlighter) throws IOException {
+				checkString(ContextVariable.QUOTE_GROUP, group, idcHighlighter, isSubmitted(idcEndDate) ? WARN : ERROR);
+				
+				if ( AonStringUtils.equalsIgnoreCase("s", monthly) ) {
+					
+					List<ITimedVariable<Number>> monthDaysList = getVars(ContextVariable.MONTH_DAYS);
+					Collections.reverse(monthDaysList);
+					for (ITimedVariable<Number> monthDays : monthDaysList) {
+						int ctxMonthDays = monthDays.getValue(monthDays.getPeriod()).intValue();
+						if ( ctxMonthDays !=  30 ) {
+							Date endDate = monthDays.getPeriod().getEnd();
+							idcHighlighter.highlight(
+							monthly, 
+							"REVISE "+ new SimpleDateFormat("MMMM' de 'yyyy").format(endDate).toUpperCase() + ", TIENE COTIZACIÓN DIARIA",
+							isSubmitted(endDate) ? WARN : ERROR);
+						}
+					}
+					
+				}
 			}
 			
 			@Override
@@ -345,34 +474,56 @@ public class EmployeesServiceHelper {
 					tc2 = getValue(ContextVariable.TC2, String.class );
 					if ( !AonStringUtils.equalsIgnoreCase(tc2, code) ) {
 						String tc2Description = getContractDescription(tc2);
-						idcHighlighter.highlight(code, description, AonStringUtils.defaultIfBlank(tc2 + " " + tc2Description, "Trabajador sin contrato"));
+						idcHighlighter.highlight(code, description, AonStringUtils.defaultIfBlank(tc2 + " " + tc2Description, "TRABAJADOR SIN CONTRATO"), isSubmitted(idcEndDate) ? WARN : ERROR);
 					}
 				} catch (TooManyValuesException e) {
-					idcHighlighter.highlight(code, description);
+					idcHighlighter.highlight(code, description, isSubmitted(idcEndDate) ? WARN : ERROR);
 				}
 			}
 			
 			@Override
+			public void onOccupation(String occupation, String description, IdcHighlighter idcHighlighter)
+					throws IOException {
+				String ctxOccupation = null;
+				try {
+					ctxOccupation = getValue(ContextVariable.OCCUPATION, String.class );
+					ctxOccupation = AonStringUtils.defaultIfBlank(ctxOccupation);
+					if ( !AonStringUtils.equalsIgnoreCase(occupation, ctxOccupation) ) {
+						String ctxDescription = getOccupationDescription(ctxOccupation);
+						if ( AonStringUtils.isBlank(occupation))
+							idcHighlighter.insert("OCUPACION\\*:", ctxDescription, isSubmitted(idcEndDate) ? WARN : ERROR);
+						else 
+							idcHighlighter.highlight(occupation+"\\s+"+description, AonStringUtils.defaultIfBlank(ctxDescription, "TRABAJADOR SIN OCUPACIÓN"), isSubmitted(idcEndDate) ? WARN : ERROR);
+					}
+				} catch (TooManyValuesException e) {
+					idcHighlighter.highlight(occupation, description, isSubmitted(idcEndDate) ? WARN : ERROR);
+				}
+			}
+
+			@Override
 			public void onQuotes(String it, String ims, String unemployment, IdcHighlighter idcHighlighter)
 					throws IOException {
-				checkNumber(ContextVariable.IT_RATE, it, idcHighlighter);
-				checkNumber(ContextVariable.IMS_RATE, ims, idcHighlighter);
-				checkNumber(String.format("%s + %s", ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT ), unemployment, idcHighlighter);
+				checkNumber(ContextVariable.IT_RATE, it, idcHighlighter, isSubmitted(idcEndDate) ? WARN : ERROR);
+				checkNumber(ContextVariable.IMS_RATE, ims, idcHighlighter, isSubmitted(idcEndDate) ? WARN : ERROR);
+				checkNumber(String.format("%s + %s", ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT ), unemployment, idcHighlighter, isSubmitted(idcEndDate) ? WARN : ERROR);
 			}
 			
 			@Override
 			public void onCoefficient(String partial, String reduction, IdcHighlighter idcHighlighter)
 					throws IOException {
-				if ( AonStringUtils.isBlank(partial)) {
-					try {
-						Double partialFactor = getValue(ContextVariable.PARTIAL_FACTOR, Double.class);
-						idcHighlighter.insert("COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:", Integer.toString((int) (partialFactor * 100.00)));
-					} catch (TooManyValuesException e) {
-					}
-				}
-				else { 	
-					checkNumber(ContextVariable.PARTIAL_FACTOR, partial, idcHighlighter);
-				}
+				try {
+					BigDecimal partialFactor = BigDecimal.valueOf(AonNumberUtils.toDouble(AonStringUtils.defaultIfBlank(partial, "1000")));
+					BigDecimal ctxPartialFactor = BigDecimal.valueOf(getValue(ContextVariable.PARTIAL_FACTOR, Double.class)).multiply(BigDecimal.valueOf(1000L));
+					if ( AonNumberUtils.equals(partialFactor, ctxPartialFactor) )
+						return ; // Nothing
+					else if (AonStringUtils.isBlank(partial) )
+						idcHighlighter.insert("COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:", new DecimalFormat("###.##").format(ctxPartialFactor), isSubmitted(idcEndDate) ? WARN : ERROR);
+					else 
+						idcHighlighter.highlight(partial, new DecimalFormat("###.##").format(ctxPartialFactor), isSubmitted(idcEndDate) ? WARN : ERROR);
+				} catch (TooManyValuesException e) {
+					idcHighlighter.insert("COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:", "", isSubmitted(idcEndDate) ? WARN : ERROR);
+				} 
+
 			}
 			
 			// ----------------------------------------------------------- PECs
@@ -380,40 +531,152 @@ public class EmployeesServiceHelper {
 			@Override
 			public void onPEC(String code, String description, String tipo, String quota, String start, String end,
 					IdcHighlighter idcHighlighter) throws IOException {
-				super.onPEC(code, description, tipo, quota, start, end, idcHighlighter);
-				switch (code) {
-				case "18": // ERTE PARCIAL (PEC 18) 
-					break;
-				default:
-					break;
-				}
+				
+				if ( isBonus(code, quota) )
+					checkBonus(code, description, tipo, quota, start, end, idcHighlighter);
+				
+				if ( isIT(code, quota) )
+					checkIT(code, description, start, end, idcHighlighter);
+				
 			}
+
 			
 			// -------------------------------------------------------- Private
 			
-			private void checkDate(ContextVariable var, String string, IdcHighlighter idcHighlighter ) throws IOException {
-				check(var.getName(), string, parseDate(string), Date.class, (d1,d2) -> Objects.equal(d1, d2), idcHighlighter);
-			}
+			private boolean isIT(String code, String quota) {
+				switch (code) {
+				case "21":
+				case "22":
+				case "23":
+				case "24":
+				
+				case "29":
 
-			private void checkString(ContextVariable var, String string, IdcHighlighter idcHighlighter ) throws IOException {
-				check(var.getName(), string, string, String.class, AonStringUtils::equalsIgnoreCase, idcHighlighter);
-			}
-
-			private void checkNumber(ContextVariable var, String string, IdcHighlighter idcHighlighter ) throws IOException {
-				check(var.getName(), string, parseNumber(string), Number.class, AonNumberUtils::equals, idcHighlighter);
+				case "31":
+					return true;
+				default:
+					return false;
+				}
 			}
 			
-			private void checkNumber(String expression, String string, IdcHighlighter idcHighlighter ) throws IOException {
-				check(expression, string, parseNumber(string), Number.class, AonNumberUtils::equals, idcHighlighter);
+			private void calculate() throws SalaryException {
+				if ( salary == null ) {
+					salary = new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>(new SalaryBuilder() {
+						public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, java.util.Map<String,ITimedVariable<?>> context) {
+							salaryBonus.add(new SalaryItemResult(amount, new Period(startDate, endDate), context, description, bonus.getExpression()));
+						}
+					}).calculate(ctx);
+				}
+			}
+			
+			public List<SalaryItemResult> getSalaryBonus() throws SalaryException {
+				calculate();
+				return salaryBonus;
+			}
+			
+			private List<ITimedResult<Double>> getPECBonus(String code, String description, String tipo, String quota, String start, String end) 
+			throws ParseException, ExpressionException, IOException  {
+				String expression;
+				expression = com.esferalia.aon.in.payroll.tgss.idc.Idc.getBonusExpression(code, tipo, quota);
+				return ctx.getExpressionContext().eval(expression, parseDate(start), parseDate(end), Double.class );
 			}
 
-			private <T> void check(String expression, String string, T t, Class<T> clazz, BiFunction<T, T, Boolean> equals,  IdcHighlighter idcHighlighter ) throws IOException {
+			private void checkIT(String code, String description, String start, String end, IdcHighlighter idcHighlighter)
+					throws IOException {
+				ITimedVariable<?> itDays = null; 
+				// ITs 
+				Date startDate = parseDate(start);
+				Date endDate = parseDate(end);
+				Period period = new Period(startDate, endDate);
+				
+				if (AonStringUtils.equalsIgnoreCase(code, "29")) { // IT.CC.COLAB.EXCL.15D
+					 itDays = getDays(startDate, endDate, COMMON_DISEASE_DAYS_1_3, COMMON_DISEASE_DAYS_4_15);
+				} else if (AonStringUtils.equalsIgnoreCase(code, "21")) {  // IT.CC.PAGO DELEGADO
+					 itDays = getDays(startDate, endDate, COMMON_DISEASE_DAYS_16_20, COMMON_DISEASE_DAYS_21 );
+				} else if (AonStringUtils.equalsIgnoreCase(code, "22")) {  // IT.CC.PAGO DIRECTO
+					 itDays = getDays(startDate, endDate, COMMON_DISEASE_DAYS_366);
+				} 
+				
+				else if (AonStringUtils.equalsIgnoreCase(code, "23")) { // IT.AT.PAGO DELEGADO
+					 itDays = getDays(startDate, endDate, ContextVariable.OCCUPATIONAL_DISEASE_DAYS );
+				} else if (AonStringUtils.equalsIgnoreCase(code, "24")) { // IT.AT.PAGO DIRECTO
+					 itDays = getDays(startDate, endDate, OCCUPATIONAL_DISEASE_DAYS_366 );
+				} 
+				
+				else if (AonStringUtils.equalsIgnoreCase(code, "31")) { // MATERNIDAD/PATERNIDAD TIEMPO COMPLETO
+					itDays = getDays(startDate, endDate, MATERNITY_DAYS, PATERNITY_DAYS );
+				} else if (AonStringUtils.equalsIgnoreCase(code, "34")) { // RIESGO DURANTE EL EMBARAZO
+					itDays = getDays(startDate, endDate, MATERNITY_DAYS );
+				}
+				
+				if ( itDays == null ) {
+					 idcHighlighter.highlightAll(String.format("%s NO ENCONTRADA." , description), isSubmitted(end) ? WARN : ERROR);
+				} else if( itDays.getPeriod().compareTo(period) != 0 ) {
+					 idcHighlighter.highlightAll(String.format("%s ERRÓNEA. %s" , description, formatPeriod(itDays.getPeriod())), isSubmitted(end) ? WARN : ERROR);
+				} else {
+					 idcHighlighter.annotateAll(String.format("%s . %s", description, formatPeriod(itDays.getPeriod())));
+				}
+			}
+
+			private void checkBonus(String code, String description, String tipo, String quota, String start, String end,
+					IdcHighlighter idcHighlighter) throws IOException {
+				
+				List<SalaryItemResult> salaryBonus = null;
+				try {
+					salaryBonus = getSalaryBonus();
+				} catch (SalaryException e) {
+					idcHighlighter.highlightAll("NO SE HAN PODIDO CALCULAR LAS BONIFICACIONES. REVISE EL BORRADOR.", isSubmitted(end) ? WARN : ERROR );
+				}
+				
+				List<ITimedResult<Double>> pecBonus = null;
+				try {
+					pecBonus = getPECBonus(code, description, tipo, quota, start, end);
+				} catch (ExpressionException | ParseException | IOException e1) {
+					idcHighlighter.highlightAll("LO SENTIMOS. BONIFICACIÓN NO SOPORTADA. CONTACTE CON AON.", isSubmitted(end) ? WARN : ERROR);
+					return;
+				}
+				
+				for ( SalaryItemResult bonus: salaryBonus ) {
+					if ( pecBonus.removeIf(ifEqualsTo(bonus)) ) {
+						idcHighlighter.annotateAll("BONIFICACIÓN ENCONTRADA," + AonStringUtils.upperCase(bonus.getDescription()) + "'" + bonus.getExpression() + "'" );
+					}
+				}
+				
+				if ( !pecBonus.isEmpty() ) {
+					idcHighlighter.highlightAll("BONIFICACIÓN NO ENCONTRADA. REVISE LAS BONIFICACIONES Y/O PECULIARIDADES", isSubmitted(end) ? WARN : ERROR);
+				} else {
+				}
+				
+				
+			}
+			
+			private Predicate<ITimedResult<Double>> ifEqualsTo (ITimedResult<Double> result ) {
+				return r -> AonNumberUtils.compare(r.getValue(), result.getValue(), 1) == 0;
+			}
+
+			private void checkDate(ContextVariable var, String string, IdcHighlighter idcHighlighter, Setup setup ) throws IOException {
+				check(var.getName(), string, parseDate(string), Date.class, (d1,d2) -> Objects.equals(d1, d2), idcHighlighter, setup);
+			}
+
+			private void checkString(ContextVariable var, String string, IdcHighlighter idcHighlighter, Setup setup) throws IOException {
+				check(var.getName(), string, string, String.class, AonStringUtils::equalsIgnoreCase, idcHighlighter, setup);
+			}
+
+			private void checkNumber(ContextVariable var, String string, IdcHighlighter idcHighlighter, Setup setup ) throws IOException {
+				check(var.getName(), string, parseNumber(string), Number.class, AonNumberUtils::equals, idcHighlighter, setup);
+			}
+			
+			private void checkNumber(String expression, String string, IdcHighlighter idcHighlighter, Setup setup ) throws IOException {
+				check(expression, string, parseNumber(string), Number.class, AonNumberUtils::equals, idcHighlighter, setup);
+			}
+
+			private <T> void check(String expression, String string, T t, Class<T> clazz, BiFunction<T, T, Boolean> equals,  IdcHighlighter idcHighlighter, Setup setup ) throws IOException {
 				try {
 					T value = getValue(expression, clazz);
 					if ( !equals.apply(value, t))
-						idcHighlighter.highlight(string, toString(value, "Trabajador sin " + expression ));
+						idcHighlighter.highlight(string, toString(value, "TRABAJADOR SIN " + AonStringUtils.upperCase(expression)), setup);
 				} catch ( TooManyValuesException e) {
-					idcHighlighter.highlight(string);
+					idcHighlighter.highlight(string, "", setup);
 				}
 			}
 			
@@ -447,6 +710,16 @@ public class EmployeesServiceHelper {
 				}
 			}
 			
+			private String getOccupationDescription(String occupation) {
+				if ( AonStringUtils.isBlank(occupation)) 
+					return "";
+				try {
+					return Occupation.getOccupation().getOrDefault(occupation.toLowerCase(), ( occupation + ". OCUPACIÓN DESCONOCIDA").toUpperCase() );
+				} catch ( Exception  e) {
+					return occupation + ". OCUPACIÓN DESCONOCIDA";
+				}
+			}
+
 			private <T> String toString(T t, String nullDefault) {
 				if ( t instanceof Date ) {
 					return new SimpleDateFormat("dd-MM-yyyy").format((Date)t);
@@ -457,6 +730,67 @@ public class EmployeesServiceHelper {
 					return java.util.Objects.toString(t, nullDefault);
 				}
 			}
+			
+			private boolean documentsEquals(String doc1, String doc2) {
+				if ( Objects.equals(doc1, doc2) ) 
+					return true;
+				else if ( doc1 == null ) 
+					return false;
+				else if ( doc2 == null)
+					return false; 
+
+				return doc1.trim().replaceFirst("^0+", "").equalsIgnoreCase( doc2.trim().replaceFirst("^0+", ""));
+			}
+			
+			
+			private ITimedVariable<?> getDays(Date startDate, Date endDate, ContextVariable ...vars) {
+				Date prevDate = add(startDate, DAY_OF_MONTH,-1);
+				ITimedVariable<?> days =  
+				Arrays.stream(vars)
+				.map(ContextVariable::getName)
+				.map(name -> ctx.getExpressionContext().getVariables(name, startDate, endDate))
+				.filter(Objects::nonNull)
+				.flatMap(List::stream)
+				.sorted((r1,r2) -> r1.getPeriod().compareTo(r2.getPeriod()))
+				.reduce(new TimedObject<>(0.00, prevDate, prevDate), 
+						(r1,r2) -> {
+							Period p1 = r1.getPeriod();
+							if ( p1.getEnd() == null )
+								return r1; 
+								
+							Period p2 = r2.getPeriod();
+							Date nextDate = add(p1.getEnd(), DAY_OF_MONTH,1);
+							if ( nextDate.before(p2.getStart()) )
+								return r1; 
+							
+							Number v1 = (Number) r1.getValue(r1.getPeriod());
+							Number v2 = (Number) r2.getValue(r2.getPeriod());
+							
+							return new TimedObject<>(v1.doubleValue()+v2.doubleValue(), Period.max(startDate, p1.getStart()), Period.min( endDate, p2.getEnd()));
+						} 
+				);
+				
+				return days.getPeriod().intersects(new Period(startDate, endDate)) ? days : null;
+			}
+			
+			private <T>  List<ITimedVariable<T>> getVars(ContextVariable var) {
+				List<ITimedVariable<T>> vars = ctx.getExpressionContext().getVariables(var);
+				Collections.sort(vars, (v1,v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
+				return vars;
+			}
+
+
+			private boolean isSubmitted(String endDate) throws IOException {
+				return isSubmitted(parseDate(endDate));
+			}
+
+			private boolean isSubmitted(Date endDate) {
+				Date today = new Date();
+				Date firstDayOfCurrentMonth =  AonDateUtils.getFirstDayOfMonth(today);
+				Date firstDayOfPreviousMonth = AonDateUtils.add(firstDayOfCurrentMonth, Calendar.MONTH, -1);
+				return endDate.before(firstDayOfPreviousMonth);
+			}
+			
 			
 		});
 		
@@ -1867,7 +2201,7 @@ public class EmployeesServiceHelper {
 	}
 	
 
-	static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
+	public static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
 	
 		calculator.setSalaryBuilder(salaryBuilder);
@@ -1924,5 +2258,46 @@ public class EmployeesServiceHelper {
 		
 		return ctx;
 	}
+
+
+
+	protected static String getCCCRegimeCode(CCCType cccType) {
+		switch (cccType) {
+		case PRINCIPAL:
+		case FELLOWS:
+		case LEARNING:
+		case TRAINING:
+		case ASSIMILATEDS:
+		case TRADE_REPRESENTATIVE:
+			return "0111";
+		case HOME_EMPLOYEES:
+			return "0138";
+		case AGRICULTURAL:
+			return "0163";
+		case ARTIST:
+			return "0112";
+		default:
+			return "0111";
+		}
+	}
 	
+	protected static String getRegimeRegex(CCCType cccType) {
+		switch (cccType) {
+		case PRINCIPAL:
+		case FELLOWS:
+		case LEARNING:
+		case TRAINING:
+		case ASSIMILATEDS:
+		case TRADE_REPRESENTATIVE:
+			return "GENERAL";
+		case HOME_EMPLOYEES:
+			return "HOGAR";
+		case AGRICULTURAL:
+			return "AGARARIO";
+		case ARTIST:
+			return "ARTISTA";
+		default:
+			return "GENERAL";
+		}
+	}
 }

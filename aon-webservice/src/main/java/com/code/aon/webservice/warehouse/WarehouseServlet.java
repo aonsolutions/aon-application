@@ -301,7 +301,7 @@ public class WarehouseServlet extends HttpServlet{
 				Scope scope = opt.isPresent() ? opt.get() : 
 					AON.insertScope(domain.getName(), domain.getId(), login, new Scope().setDomain(domain.getId()).setDescription("TRANSPORTE"));
 
-				carrier = new Carrier().setScope(scope.getId()).setStatus(CarrierStatus.ACTIVE);
+				carrier = new Carrier().setScope(scope).setStatus(CarrierStatus.ACTIVE);
 				carrier.setDomain(domain);
 				carrier.setName("TRANSPORTE");
 				
@@ -412,7 +412,7 @@ public class WarehouseServlet extends HttpServlet{
 	
 	
 	private JSONObject updateDelivery(Domain domain, String login, Integer id, JSONObject json) {
-		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, id);
+		Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
 		if(json.opt(MSG.CARRIER_PACKING) != null){
 			delivery.setCarrierPacking(getOrderCarrierPacking(json));
 		}
@@ -566,7 +566,8 @@ public class WarehouseServlet extends HttpServlet{
     }
     
     private JSONObject getDelivery(Domain domain,String login, Integer id){
-    	return ToJSON.deliveryToJSON(AON.getDelivery(domain.getName(), domain.getId(), login, id));
+    	return ToJSON.deliveryToJSON(AON.getDelivery(domain.getName(), domain.getId(), login,
+    			f -> f.getIdProperty().eq(id)));
     }
     
     private JSONArray getDeliveryDetailList(Domain domain,String login, Integer id){

@@ -155,7 +155,7 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 	public void accept(SalesDetail detail) {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		alignCenter(addCell(SalesType.values()[detail.getSales().getDocumentType()].getName()));
+		alignCenter(addCell(detail.getSales().getDocumentType().getName()));
 		alignCenter(addCell(detail.getSales().getStatus().getName()));
 		addCell(detail.getSales().getIssueDate());
 		addCell((detail.getSales().getSeries() != null  ?  detail.getSales().getSeries() + "/" : "")
@@ -171,7 +171,7 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell( detail.getSales().getCustomer().getName());
 		
 		RAddress ra = detail.getSales().getShippingAddress() != null ?
-				AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSales().getShippingAddress())) :
+				AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSales().getShippingAddress().getId())) :
 				AON.getRAddres(getDomainName(), detail.getDomain(), "", detail.getSales().getCustomer().getId());
 		
 		addCell(ra.getFullAddress() + " " 
@@ -183,8 +183,8 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell( detail.getOffer().getRegistryZIP() );
 		addCell( detail.getOffer().getRegistryProvince() );
 	*/	 
-		addCell(detail.getItem()!= null ? detail.getItem().getCode() : null);
-		addCell(detail.getItem()!= null ? detail.getItem().getCategory() : null);
+		addCell(detail.getItem()!= null ? detail.getItem().getProduct().getCode() : null);
+		addCell(detail.getItem()!= null ? detail.getItem().getProduct().getCategory().getName() : null);
 		addCell(AonStringUtils.abbreviate(detail.getDescription(), 60)) ;
 		addCell(detail.getQuantity());
 		addCell(detail.getPrice());
@@ -194,7 +194,7 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell(detail.getSales().getProjectName());
 		//addCell(detail.getPurchase().getSeller()!=null?detail.getPurchase().getSeller().getRegistryName():null );
 
-		Integer productId = detail.getItem().getProductId();
+		Integer productId = detail.getItem().getProduct().getId();
 		if (tags != null && productTags != null && productId != null)  {
 			String[] tagArray = productTags.get(productId);
 			for (String tag : tags) {

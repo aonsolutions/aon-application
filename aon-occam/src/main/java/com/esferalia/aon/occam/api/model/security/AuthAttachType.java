@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum AuthAttachType {
 
 	AVATAR;
@@ -24,6 +26,7 @@ public enum AuthAttachType {
 	}
 	
 	public static AuthAttachType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return AVATAR;
 		for (AuthAttachType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

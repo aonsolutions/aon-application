@@ -824,7 +824,9 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 	}
 	
-	public interface CarrierProperties extends RegistryProperties{
+	public interface CarrierProperties extends RegistryProperties {
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
 		Property<Integer> getScopeProperty();
 	}
 	
@@ -1376,6 +1378,7 @@ public interface Properties {
 	public interface UserProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<Byte> getTypeProperty();
 		Property<String> getNameProperty();
 		Property<String> getLoginProperty();
 		Property<Byte> getActiveProperty();
@@ -1469,6 +1472,7 @@ public interface Properties {
 		Property<Timestamp> getDateProperty();
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getStatusProperty();
+		Property<Integer> getReceiverIdProperty();
 	}
 	
 	public interface RawdocProperties{

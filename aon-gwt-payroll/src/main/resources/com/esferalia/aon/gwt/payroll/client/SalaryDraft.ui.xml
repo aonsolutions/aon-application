@@ -18,10 +18,16 @@
 			border:none !important;
 			vertical-align: middle !important;
 		}
-	
+		
+		
+		
 		.editor {
 			
 		}
+		
+		.no-display {
+			display:none;
+		}	
 
 		.disabled {
 			opacity: 0.5;		
@@ -270,6 +276,10 @@
 		  display: initial !important;
 		  visibility: initial !important;
 		}		
+		
+		.aon-content-scroll-panel{
+			padding-right: 30px
+		}
 
 		@external gwt-ListBox;
 		@external gwt-TextBox;
@@ -395,7 +405,7 @@
 							<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
 							<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->
 							
-							<g:Grid styleName="aon-dataTable">
+							<g:Grid styleName="aon-dataTable" ui:field="headerGrid" >
 								<g:row styleName="aon-dataTable-row-even">
 									<g:customCell  styleName="{style.span-cell}" >
 										<g:Grid styleName="{style.span-cell-table}">
@@ -516,23 +526,25 @@
 									</g:customCell>
 								</g:row>
 							</g:Grid>
-
-							<g:HTML styleName="{style.vertical-space}" />
-							<g:FlexTable ui:field="contextTable"
-								styleName="aon-dataTable {style.edit-cells}" />
-							
-							<g:HTML styleName="{style.vertical-space}" />
-
-							<g:FlexTable debugId="eventsTable" ui:field="eventsTable" styleName="aon-dataTable {style.eventsTable}" />
-							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}"
-								visible="false" />
-
-							<g:FlexTable debugId="paymentsTable" ui:field="paymentsTable"
-								styleName="aon-dataTable {style.edit-rows}" />
-
-							<g:HTML styleName="{style.vertical-space}" />
-
-							<g:HorizontalPanel styleName="aon-width-all">
+							<g:ScrollPanel ui:field="contentScrollPanel" styleName="aon-width-all {style.aon-content-scroll-panel}" >
+								<g:VerticalPanel styleName="aon-width-all" >
+									<g:HTML styleName="{style.vertical-space}" />
+									<g:FlexTable ui:field="contextTable"
+										styleName="aon-dataTable {style.edit-cells}" />
+									
+									<g:HTML styleName="{style.vertical-space}" />
+		
+									<g:FlexTable debugId="eventsTable" ui:field="eventsTable" styleName="aon-dataTable {style.eventsTable}" />
+									<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}"
+										visible="false" />
+		
+									<g:FlexTable debugId="paymentsTable" ui:field="paymentsTable"
+										styleName="aon-dataTable {style.edit-rows}" />
+		
+									<g:HTML styleName="{style.vertical-space}" />
+								</g:VerticalPanel>
+							</g:ScrollPanel>
+							<g:HorizontalPanel styleName="aon-width-all" ui:field="footerHorizontalPanel">
 
 								<g:Grid ui:field="basesTable" styleName="aon-dataTable">
 									<g:row styleName="aon-dataTable-row-odd">
@@ -613,14 +625,14 @@
 											</g:HTMLPanel>
 										</g:customCell>
 									</g:row>
-									<g:row styleName="aon-dataTable-row-odd">
+									<g:row styleName="aon-dataTable-row-odd {style.no-display}" >
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label></g:Label>
 												<g:Label></g:Label>
 											</g:HTMLPanel>
 										</g:customCell>
-										<g:customCell>
+										<g:customCell >
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE H.E. NO
 													AUTORIZ.</g:Label>

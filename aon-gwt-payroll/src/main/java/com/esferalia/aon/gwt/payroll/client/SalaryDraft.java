@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.client.CalendarDraft.AddEventCommand;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.Calculate;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -67,7 +68,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -132,6 +132,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -936,21 +937,26 @@ public class SalaryDraft extends ResizeComposite
 
 			};
 
-			textListBox.addItem(variable.getValue().toString(), variable.getValue().toString());
+			//textListBox.addItem(variable.getValue().toString(), variable.getValue().toString());
 
 			textListBox.addItem("COTIZACI\u00D3N MENSUAL", "30");
 
 			textListBox.addItem("COTIZACI\u00D3N DIARIA", "DIAS_NATURALES_MES");
 
-			if (variable.getExpression() != null) {
-				String expression = variable.getExpression();
-				if (expression.matches("30(\\.0+)?")) {
-					textListBox.selectValue("30");
-					return textListBox;
-				} else if (expression.matches("DIAS_NATURALES_MES")) {
-					textListBox.selectValue("DIAS_NATURALES_MES");
-					return textListBox;
-				}
+			//if (variable.getExpression() != null) {
+			//	String expression = variable.getExpression();
+			//	if (expression.matches("30(\\.0+)?")) {
+			//		textListBox.selectValue("30");
+			//		return textListBox;
+			//	} else if (expression.matches("DIAS_NATURALES_MES")) {
+			//	}
+			//}
+			
+			double monthDays = AonNumberUtils.todouble(variable.getExpression());
+			if ( monthDays == 30.00 ) {
+				textListBox.selectValue("30");
+			} else {
+				textListBox.selectValue("DIAS_NATURALES_MES");
 			}
 
 			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
@@ -1893,9 +1899,9 @@ public class SalaryDraft extends ResizeComposite
 
 				@Override
 				public void onCalculateSucces(SalaryDraftObject object) {
-					info("onCalculateSucces (" + item.getDescription() +", " + item.getId() +")");
+					//info("onCalculateSucces (" + item.getDescription() +", " + item.getId() +")");
 					PaymentChangeHandler<?> handler = getPaymentChangeHandlerFor(item.getId());
-					info("onCalculateSucces (" + handler + ")");
+					//info("onCalculateSucces (" + handler + ")");
 					if ( handler != null ) {
 						handler.expand();
 					}
@@ -2913,6 +2919,16 @@ public class SalaryDraft extends ResizeComposite
 	
 	@UiField
 	InlineLabel toolbarTitleLabel;
+	
+	
+	@UiField
+	Grid headerGrid;
+	@UiField
+	ScrollPanel contentScrollPanel;
+	@UiField
+	HorizontalPanel footerHorizontalPanel;
+	
+	
 
 	private int zoom;
 	private Scope scope;
@@ -2975,6 +2991,8 @@ public class SalaryDraft extends ResizeComposite
 		export2JS(this);
 		employeePartialFactorWidget = new Label();
 		cgcBaseLabel.setText(IJsonNames.PRODUCT);
+		
+		Window.addResizeHandler(e -> resizeContentPanel());
 	}
 	
 	public void setToolbarTitle(String title) {
@@ -2995,7 +3013,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
-		info("setSalaryDraftObject");
+		//info("setSalaryDraftObject");
 		showDraft();
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
@@ -3614,7 +3632,7 @@ public class SalaryDraft extends ResizeComposite
 			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " A\u00D1OS )");
 		}
 			
-		salaryDraftObject.getContext().forEach( v -> info(v.getName() + " = " + v.getValue()));
+		//salaryDraftObject.getContext().forEach( v -> info(v.getName() + " = " + v.getValue()));
 
 		clearDbWidgets();
 		clearSsWidgets();
@@ -3687,7 +3705,9 @@ public class SalaryDraft extends ResizeComposite
 		eventsTable.setVisible(eventsCheck.isVisible() && eventsCheck.getValue());
 		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
 		showPaymentsEvents(eventsTable.isVisible());
-
+		
+		
+		resizeContentPanel();
 	}
 
 	public Stream<String> getValuesOf(String name) {
@@ -4530,7 +4550,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	private void dumpBonus(int row, Bonus bonus, Button expandButton) {
 		String description = bonus.getDescription();
-		info("Dump Bonus '"+ description + "' " + DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(bonus.getStartDate()));
+		//info("Dump Bonus '"+ description + "' " + DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(bonus.getStartDate()));
 		dumpItem(bonus, row, description, getIconRowStyle(bonus), new BonusChangeHandler<TextBox>(bonus), true, null, expandButton, true);
 	}
 
@@ -4782,7 +4802,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		else if ( isExtra() 
 				&& itemScope.compareTo(Scope.SALARY) < 0 ) {
-			info("SETREMOVEEXTRABUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope() );
+			//info("SETREMOVEEXTRABUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope() );
 			Button deleteButton = getEnableButton();
 			deleteButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(deleteButton);
@@ -4792,7 +4812,7 @@ public class SalaryDraft extends ResizeComposite
 		else if (itemScope.compareTo(Scope.AGREEMENT) > 0 
 			&& item.isDefinedAt(Scope.AGREEMENT)
 			&& isRemove(item) ) {
-			info("SETDISABLEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
+			//info("SETDISABLEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4802,7 +4822,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		else if (itemScope.compareTo(Scope.AGREEMENT) == 0 
 				&& isDisabled(item) ) {
-			info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
+			//info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4812,7 +4832,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		else if (item.isDefinedAt(Scope.AGREEMENT) &&
 			itemScope.compareTo(Scope.AGREEMENT) > 0) {
-			info("SETENABLEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope() );
+			//info("SETENABLEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope() );
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4822,7 +4842,7 @@ public class SalaryDraft extends ResizeComposite
 
 		} else if (item.isDefinedAt(Scope.AGREEMENT) ||
 			itemScope.compareTo(Scope.AGREEMENT) == 0) {
-			info("SETENABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
+			//info("SETENABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4830,7 +4850,7 @@ public class SalaryDraft extends ResizeComposite
 			agreementButton.ensureDebugId("agreement-button-" + row );
 		} 
 		else if (isHideable(item) ) {
-			info("SETHIDEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
+			//info("SETHIDEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button hideButton = getEnableButton();
 			hideButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(hideButton);
@@ -5814,7 +5834,7 @@ public class SalaryDraft extends ResizeComposite
 		.collect(Collectors.summingInt(c ->  1 + ((c instanceof CompositeDeduction) ? ((CompositeDeduction)c).getChilds().size() : 0)));
 
 		if (show) {
-			info("showCosts(" + show +")" );
+			//info("showCosts(" + show +")" );
 			dumpCosts(costsBeforeRow);
 			dumpBonuses(costsBeforeRow + costsCount);
 		} else {
@@ -6788,6 +6808,19 @@ public class SalaryDraft extends ResizeComposite
 		variableChangeHandlers.add(handler);
 		
 		return quotePanel;
+	}
+	
+	private void resizeContentPanel() {
+		
+		int height = Window.getClientHeight() 
+				- contentScrollPanel.getAbsoluteTop()
+				- footerHorizontalPanel.getOffsetHeight()
+				;
+		
+		height -= 25 ;
+		
+		contentScrollPanel.setHeight(Integer.toString(height)+"px");
+		//LOGGER.info("contentScrollPanel : " + height );
 	}
 
 	// ------------------------------------------------------- Static 'Library'

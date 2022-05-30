@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -25,9 +27,9 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -56,9 +58,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	interface MyStyle extends CssResource {
 		String maxWidthTB();
 	}
-
-	@UiField
-	DeckPanel deckPanel;
 	
 	@UiField
 	SuggestBox cnoSB;
@@ -345,8 +344,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	private DomainEmployeesServiceAsync implEmployee = DomainEmployeesServiceAsync.newInstance();
 	private com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificData;
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyyMMdd");
+	private EmployeeContractInfo contractEmployeeInfo;
 	private Map<String, CNO> cnoMap;
 	private TextBox ideTB;
+	private boolean isComunica;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
@@ -355,21 +356,26 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		cnoMap = new HashMap<>();
 		initializeView();
 	}
-
-	public void setEmployeeContractInfo(String contractType, boolean isTransformation, boolean isComunica, String document, Date fini, Integer contractId, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
-		this.contractSpecificData = contractSpecificDataIn;
-//		if(Boolean.TRUE.equals(isTransformation))
-//			showSepeMessage();
-//		else {
-//			showSepeData();
-//			setDefaultView(contractType);
-//			createUpdateSepeInfo(isComunica, document, fini, contractId);
-//			fillSpecificData();
-//		}
-		showSepeData();
-		setDefaultView(contractType);
-		createUpdateSepeInfo(isComunica, document, fini, contractId);
-		fillSpecificData();
+	
+	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo, boolean isComunica) {
+		this.contractEmployeeInfo = contractEmployeeInfo;
+		this.isComunica = isComunica;
+		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
+		reloadSepeData();
+	}
+	
+	private void reloadSepeData() {
+		showLoadingMessage("Cargando datos Sepe del contrato...");
+		getContractSpecificData(contractSpecificDataIn -> {
+			contractSpecificData = contractSpecificDataIn;
+			createUpdateSepeInfo(
+					isComunica, 
+					contractEmployeeInfo.getEmployeeInfo().getDocument(),
+					contractEmployeeInfo.getContractInfo().getStartDate(),
+					contractEmployeeInfo.getContractInfo().getContractId());
+			fillSpecificData();
+			hideMessagePanel();
+		}, f -> showErrorMessage("Datos Sepe", f.getMessage()));
 	}
 
 	private void createUpdateSepeInfo(boolean isComunica, String document, Date fini, Integer contractId) {
@@ -415,6 +421,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	protected abstract void showErrorMessage(String title, String message);
 	protected abstract void showSuccessMessage(String title, String message);
 	protected abstract void showLoadingMessage(String message);
+	protected abstract void hideMessagePanel();
 	protected abstract void downloadCtoDocument();
 	
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
@@ -1335,6 +1342,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		academicTitulationLB.clear();
 		
 		signBasicCopyLB.clear();
+		signBasicCopyLB.addItem("-","");
 		signBasicCopyLB.addItem("FIRMADAS POR LOS REPRESENTANTES LEGALES", "1");
 		signBasicCopyLB.addItem("NO EXISTE REPRESENTACION LEGAL", "2");
 		signBasicCopyLB.addItem("NO SE HA FACILITADO COPIA", "3");
@@ -1468,6 +1476,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 				break;
 			case "250":
 				set230and250View();
+				break;
+			case "289":
+				set200View();
 				break;
 			case "300":
 				set300View();
@@ -2246,12 +2257,53 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		return this.contractSpecificData;
 	}
 	
-	private void showSepeData() {
-		deckPanel.showWidget(0);
+	// ------------------------------------------------- Database Methods (Specific Data)
+	
+	public void getContractSpecificData(Consumer<com.esferalia.aon.gwt.payroll.shared.ContractSpecificData> success, Consumer<Throwable> failure) {
+		Integer contractId = contractEmployeeInfo.getContractInfo().getContractId();
+		impl.getContractSpecificData(contractId, new AsyncCallback<com.esferalia.aon.gwt.payroll.shared.ContractSpecificData>() {
+			
+			@Override
+			public void onSuccess(com.esferalia.aon.gwt.payroll.shared.ContractSpecificData result) {
+				contractEmployeeInfo.setContractSpecificData(result);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 	
-	private void showSepeMessage() {
-		deckPanel.showWidget(1);
+	public void saveSepe() {
+		showLoadingMessage("Guardando datos Sepe del contrato...");
+		setContractSpecificData(contractSpecificData, s -> {
+				showSuccessMessage("Datos Sepe", "Datos Sepe del contrato guardados correctamente");
+				Timer timer = new Timer() {
+					@Override
+					public void run() {
+						reloadSepeData();
+					}
+				};
+				timer.schedule(2500);
+			}, f -> showErrorMessage("Error obtenci\u00f3n Datos Sepe contrato", f.getMessage()));
+	}
+	
+	public void setContractSpecificData(com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
+		contractEmployeeInfo.setContractSpecificData(contractSpecificData);
+		impl.setContractSpecificData(contractEmployeeInfo, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 
 }

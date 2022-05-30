@@ -113,23 +113,18 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			String customerEdiCode, String deliveryPointEdiCode) {
 		SEH1C seh1c = new SEH1C();
 	
+//		String referenceCode = isECI(delivery.getCustomer().getDocument())
+//			? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
+
 		String referenceCode = delivery.getReferenceCode();
-		if(isECI(delivery.getCustomerDocument())) {
-			referenceCode = "";
-			for(Integer i = 0; i < delivery.getReferenceCode().length(); i++) {
-				if(AonNumberUtils.isNumber("" + delivery.getReferenceCode().charAt(i))) {
-					referenceCode.concat(delivery.getReferenceCode().charAt(i)+ "");
-				}
-			}
-		}
-		
+
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
 				.getValue());
-		seh1c.setNumeroDelDocumento(delivery.getReferenceCode());
+		seh1c.setNumeroDelDocumento(referenceCode);
 		seh1c.setFuncionDelMensaje(SEH1C.SEH1C_4.ORIGINAL___EL_ENVIO_DE_UN_AVISO_DE_EXPEDICION_ORIGINAL_9
 				.getValue());
-		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery.getIssueTime()));
-		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getIssueTime()));
+		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
+		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
 		seh1c.setCalificadorFecha_Hora1_2_11_64_(null);
 		seh1c.setFecha_hora1(null);
 		seh1c.setCalificadorFecha_Hora2_2_11_63_(null);
@@ -153,7 +148,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setNombreDelTransportista(delivery.getDriver());
 		seh1c.setMatriculaDelVehiculo(delivery.getNumberPlate());
 		seh1c.setLugarDeEntrega_Codificado_8_(deliveryPointEdiCode);
-		String deliveryAddress = getDeliveryFullAddress(delivery.getAddress());
+		String deliveryAddress = getDeliveryFullAddress(delivery.getAddress().getId());
 		deliveryAddress = deliveryAddress != null
 				&& deliveryAddress.length() > 70 ? StringUtils.abbreviate(
 				deliveryAddress, 70) : deliveryAddress;
@@ -167,14 +162,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		List<SEH1D> list = new ArrayList<>();
 
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
+				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
 				customerEdiCode, delivery.getCustomer().getId(), department));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
 		// null, null));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
+				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
 				deliveryPointEdiCode, delivery.getCustomer().getId(), department));
@@ -183,7 +178,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
 				delivery.getCustomer().getId(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
-				getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
+				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
 				customerEdiCode, delivery.getCustomer().getId(), department));
 
@@ -881,11 +876,19 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 									}, LinkedHashMap::new));
 			return map;
 		}
-		
 	}
 	
+	private String referenceCodeNumber(String referenceCode) {
+		StringBuilder builder = new StringBuilder();
+		for(Integer i = 0; i < referenceCode.length(); i++) {
+			if(AonNumberUtils.isNumber("" + referenceCode.charAt(i))) {
+				builder.append(referenceCode.charAt(i));
+			}
+		}
+		return builder.toString();
+	}
 
-	private Boolean isECI(String document) {
+	private boolean isECI(String document) {
 		return "A28017895".equalsIgnoreCase(document);
 	}
 

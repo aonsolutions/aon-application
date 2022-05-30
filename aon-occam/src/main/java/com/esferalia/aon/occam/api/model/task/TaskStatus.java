@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TaskStatus {
 
 	DELETED(),
@@ -42,6 +44,7 @@ public enum TaskStatus {
 	}
 	
 	public static TaskStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return PENDING;
 		for (TaskStatus rs : TaskStatus.values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

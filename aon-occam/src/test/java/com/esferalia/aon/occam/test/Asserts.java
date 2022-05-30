@@ -39,6 +39,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -882,6 +884,24 @@ public class Asserts {
 			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
 		}
 	}
-		
 	
+	public static void assertEqualsSales(Sales expected, Sales actual) {
+		// TODO Completar...
+		assertEqualsNulls( "Sales", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
+		}
+	}
+	
+	public static void assertEqualsSalesDetail(SalesDetail expected, SalesDetail actual) {
+		// TODO Completar...
+		assertEqualsNulls("SalesDetail", expected, actual);
+		if (expected != null) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
+		}
+	}
 }

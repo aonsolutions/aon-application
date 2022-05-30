@@ -12,11 +12,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.ui.help.pdf.PdfExtractor;
 import com.code.aon.ui.help.pdf.PdfImageExtractor;
 import com.code.aon.ui.help.pdf.PdfSearcher;
 
 
-@WebServlet("/ssssssssip/*")
+@WebServlet("/Tooltip/*")
 public class HelpTooltipServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -49,7 +50,7 @@ public class HelpTooltipServlet extends HttpServlet {
         }
         
         
-        response.setContentType("image/jpg");
+        response.setContentType("application/pdf");
 		response.addHeader("Content-Disposition", "inline; filename=tooltip-" + name + ".jpg" );
         ServletOutputStream output = response.getOutputStream();
 
@@ -59,9 +60,9 @@ public class HelpTooltipServlet extends HttpServlet {
         	InputStream image;
         	
         	if(request.getParameter("page") != null) {
-        		image = PdfImageExtractor.imageFromPdfPage(input, 0 , 300, 150);
-        	} else { 
-            	image = PdfImageExtractor.imageFromPdfDestinationName(input, name); 		
+        		image = PdfExtractor.fromPage(input, 0); 		
+        	} else {
+            	image = PdfExtractor.fromDestinationName(input, name); 		
         	}
         	
  	        if(image == null) {

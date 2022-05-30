@@ -19,7 +19,7 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonPaymethodServlet", urlPatterns = {"/ms/api/paymethod/*"})
-public class PaymethodServlet extends AonApiHttpServlet{
+public class PaymethodServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
 
@@ -56,8 +56,7 @@ public class PaymethodServlet extends AonApiHttpServlet{
 	}
 		
 	private JSONArray getPaymethods(AonApiData api) {
-		LinkedList<PayMethod> list = AON.getPayMethods(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		return PayMethodJSON.toJSON(list);
+		return PayMethodJSON.toJSON(AON.getPayMethods(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()));
 	}
 
 }

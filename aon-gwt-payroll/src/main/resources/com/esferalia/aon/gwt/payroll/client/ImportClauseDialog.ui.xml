@@ -1,0 +1,31 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
+ 
+	<ui:style>
+	
+		.form {
+			display: flex;
+			flex-direction: column;
+			width: 700px;
+			margin: .5rem 1rem;
+			gap: .5rem;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			gap: 5px;
+			width: 100%;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+		<g:HTMLPanel ui:field="messagePanel" />
+		<c:DataGrid ui:field="clausesDG" />
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel} "/>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

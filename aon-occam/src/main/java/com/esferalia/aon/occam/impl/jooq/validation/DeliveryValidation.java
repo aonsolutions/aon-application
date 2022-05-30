@@ -25,7 +25,7 @@ public class DeliveryValidation {
 	};
 	
 	public static final BiConsumer<AONContext, Delivery> EMPTY_DATE = (ctx, delivery) -> {
-		if(delivery.getIssueTime() == null) 
+		if(delivery.getDate() == null) 
 			throw new AonCoreException(AonError.EMPTY_DATA.format("date"));
 	};
 
@@ -39,8 +39,8 @@ public class DeliveryValidation {
 	}
 
 	public static final BiConsumer<AONContext, Delivery> COMPLETE_DATE = (ctx, delivery) -> {
-		if(delivery.getIssueTime() == null) {
-			delivery.setIssueTime(new Date());
+		if(delivery.getDate() == null) {
+			delivery.setDate(new Date());
 		}
 	};
 	

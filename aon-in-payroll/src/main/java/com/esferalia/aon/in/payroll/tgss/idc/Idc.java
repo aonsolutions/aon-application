@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,8 +13,43 @@ import java.util.Objects;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
+
 public class Idc {
 	
+	private static final class IdcCretaListener extends CretaListener {
+//		@Override
+//		protected String getIpf(String naf) {
+//			return cb.getIpf(naf);
+//		}
+//
+//		@Override
+//		protected TipoIpf getTipoIpf(String naf) {
+//			return cb.getTipoIpf(naf);
+//		}
+//
+//		@Override
+//		protected boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+//			return cb.isPartTimeEmployee(ssNum, ccc, start, end);
+//		}
+//
+//		@Override
+//		protected boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+//			return cb.isScholarEmployee(ssNum, ccc, start, end);
+//		}
+//
+//		@Override
+//		protected boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+//			return cb.isTraining421Employee(ssNum, ccc, start, end);
+//		}
+	
+		// -------------------------------------------------- IdcParserListener
+		
+		@Override
+		public void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {
+		}
+	}
+
 	public static interface IdcListener{
 		void onSSPECs(Collection<PEC> SSPecs);
 		void onContractData( Date startDate, Date endDate, Map<ContextVariable,Object> contractData);
@@ -120,5 +156,36 @@ public class Idc {
 		IdcParser.parse(is, ssBonusListener );
 		return ssBonusListener.getSSBonuses();
 	}
+	
+	public static TrabajadoresTramos getTrabajadoresTramos (InputStream is, Date startDate, Date endDate) throws IOException, UnknownPDFException {	
+		CretaListener  cretaListener = new IdcCretaListener();
+		IdcParser.parse(is, cretaListener );
+		return cretaListener.getTrabajadoresTramos();
+		
+	}
+
+	public static TrabajadoresTramos getTrabajadoresTramos (byte idcplnss [], Date startDate, Date endDate) throws IOException, UnknownPDFException {
+		try ( ByteArrayInputStream is = new ByteArrayInputStream(idcplnss) ) {
+			return getTrabajadoresTramos(is, startDate , endDate);
+		}  
+	}
+	
+	public static boolean isBonus(String code, String quota) {
+		return PECListener.PEC_BONUS_MAP.containsKey(code) && PECListener.BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota); 
+	}
+
+	public static boolean isDeduction(String code, String quota) {
+		return ( PECListener.PEC_BONUS_MAP.containsKey(code) && PECListener.DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota))
+				|| (PECListener.PEC_DEDUCTION_MAP.containsKey(code) && PECListener.DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota)); 
+	}
+
+	public static String getBonusExpression(String code, String tipo, String quota) throws ParseException {
+		return PECListener.getBonusFormula(code, tipo, quota, null, null);
+	}
+	
+	public static String getDeductionExpression(String code, String tipo, String quota) throws ParseException {
+		return PECListener.getDeductionFormula(code, tipo, quota, null, null);
+	}
+	
 	
 }

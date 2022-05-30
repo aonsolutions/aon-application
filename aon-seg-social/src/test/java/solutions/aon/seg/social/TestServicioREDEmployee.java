@@ -4,17 +4,23 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.junit.Test;
 
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.exception.invalid.SyntaxException;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.InvalidCccException;
+import solutions.aon.seg.social.object.Employee;
 
 //@Ignore
 public class TestServicioREDEmployee extends SegSocialTest {
@@ -31,6 +37,31 @@ public class TestServicioREDEmployee extends SegSocialTest {
 					"pkcs12",
 					"0111",
 					"01105360062");
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.severe(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testTotalEmployeesPOSTMultiCCC() throws IOException {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("AyudaTFNMT.p12")) {
+			
+			Map<String, Set<String>> cccMap = new LinkedHashMap<>();
+			Set<String> cccSet = new LinkedHashSet<>();
+			cccSet.add(null);
+			cccSet.add("11122534303");
+			cccSet.add("11122534302");
+			cccMap.put("0111", cccSet);
+			
+			ServicioREDEmployee.getTotalEmployees(certificateInputStream,
+					"123456",
+					"pkcs12",
+					cccMap);
+			
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
 			LOG.severe(e.getMessage());

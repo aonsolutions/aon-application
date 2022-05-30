@@ -304,8 +304,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info)  throws IllegalArgumentException;
 
-	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData,
-			ContractTransform contractTransform) throws IllegalArgumentException;
+	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 
 	void removeContractTransform(String currentDomainName, String currentUser, String ide) throws IllegalArgumentException;
 

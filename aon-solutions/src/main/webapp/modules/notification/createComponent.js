@@ -2,6 +2,7 @@ import { AonCard } from "../../components/aon-card.js";
 import { AonDate } from "../../components/aon-date.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { AonInput } from "../../components/aon-input.js";
+import { AonNumber } from "../../components/aon-number.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { CSS, TAG } from "../../environments/environments.js";
@@ -88,7 +89,7 @@ export const createSpanFloat = () => createSpan({
   }
 });
 
-export const createForm  = (id="form") => newComponent({
+export const createForm = (id="form") => newComponent({
   type:TAG.FORM,
   id,
   attributes:{
@@ -121,11 +122,19 @@ export const createBadge = (id) => createSpan({
  * @returns 
  */
 export const createSelect = ({attributes, events}, parent) => {
-  if(attributes.options && typeof attributes.options !== "string") attributes.options=JSON.stringify(attributes.options);
+  
+  if(attributes.options && typeof attributes.options !== "string") {
+    attributes.options = JSON.stringify(attributes.options);
+  }
+
   let select = setAttributes(new AonSelect(), attributes);
+
   setClasses(select,[CSS.TRANSITION_CASCADE]);
+
   if(events) setEvents(select, events);
+  
   parent.appendChild(select);
+
   return select;
 }
 
@@ -137,6 +146,19 @@ export const createSelect = ({attributes, events}, parent) => {
  */
 export const createInput = ({attributes, events}, parent) => {
   let input = setAttributes(new AonInput(), attributes);
+  if(events) setEvents(input, events);
+  parent.appendChild(input);
+  return input;
+}
+
+/**
+ * 
+ * @param {obj, parent} attributes, events. parent for appendChild  
+ * @param {*} parent 
+ * @returns 
+ */
+ export const createNumber = ({attributes, events}, parent) => {
+  let input = setAttributes(new AonNumber(), attributes);
   if(events) setEvents(input, events);
   parent.appendChild(input);
   return input;

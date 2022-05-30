@@ -141,8 +141,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				
 				Integer[] salesIds = responseList.stream()
 						.mapToInt(DataResponse::getSourceId).boxed().toArray(Integer[]::new);
-				salesList = SalesDAO.getSalesStream(
-						ctx, f -> f.getIdProperty().in(salesIds)).collect(Collectors.toList());
+				salesList = SalesDAO.getList(ctx, f -> f.getIdProperty().in(salesIds));
 				flushSales(httpResponse, ctx, salesList);
 				
 				responseList.stream().forEach(response -> {
@@ -417,7 +416,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	
 	private DATOSCENTROTRABAJOTYPE obtainDATOSCENTROTRABAJO(AONContext ctx,
 			Sales sales) {
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace()));
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace().getId()));
 		if(workplace!=null){
 			RAddress address = RegistryOldDAO
 					.getRAddressStream(ctx,
@@ -461,7 +460,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 			datos.setCODIGOPOSTAL(sales.getShippingAlternativeZip());
 			datos.setPROVINCIA(null);
 		} else {
-			RAddress address = obtainAddress(ctx, sales.getShippingAddress());
+			RAddress address = obtainAddress(ctx, sales.getShippingAddress().getId());
 			if(address!=null){
 				GeoZone gz = obtainGeozone(ctx, address.getGeozone());
 				datos.setDIRECCION(address.getAddress());

@@ -63,7 +63,7 @@ import com.code.aon.webmail.db.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserController extends BasicController {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserController.class);

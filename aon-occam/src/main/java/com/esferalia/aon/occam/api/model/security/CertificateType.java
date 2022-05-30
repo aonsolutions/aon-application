@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum CertificateType {
 	TGSS,
 	SEPE,
@@ -25,6 +27,7 @@ public enum CertificateType {
 	}
 	
 	public static CertificateType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (CertificateType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

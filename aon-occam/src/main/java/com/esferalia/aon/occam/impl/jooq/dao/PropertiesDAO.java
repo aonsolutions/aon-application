@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEV
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
-import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
@@ -18,8 +17,6 @@ import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
-import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
@@ -29,6 +26,7 @@ import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
@@ -46,7 +44,6 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -58,7 +55,6 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
-import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -72,7 +68,6 @@ import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
-import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
@@ -86,8 +81,6 @@ import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
-import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
@@ -110,7 +103,6 @@ import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -125,7 +117,6 @@ import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProper
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
-import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
@@ -138,8 +129,6 @@ import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.EnterpriseCCCProperties;
@@ -160,7 +149,6 @@ import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
@@ -547,44 +535,6 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
 	}
 	
-	public static class CarrierPropertiesDAO extends RegistryPropertiesDAO implements CarrierProperties  {
-		protected Select<Record> build(SelectJoinStep<Record> select, CarrierFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(CarrierFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) {
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CARRIER.SCOPE);}
-	}
-	
-	public static class RNotePropertiesDAO implements RegistryNoteProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select, RegistryNoteFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(RegistryNoteFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.REGISTRY);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RNOTE.DESCRIPTION);}
-		@Override public Property<Date> getNoteDateProperty() {return new FilterDAO.PropertyDAO<Date>(RNOTE.NOTE_DATE);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(RNOTE.COMMENTS);}
-		@Override public Property<Byte> getNoteTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.NOTE_TYPE);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.SECURITY_LEVEL);}
-	}
-	
 	public static class RItemPropertiesDAO implements RegistryItemProperties{
 		protected Select<Record> build(SelectJoinStep<Record> select, RegistryItemFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -714,85 +664,6 @@ public class PropertiesDAO {
 		@Override public Property<Date> getStartIssueDateProperty() {return null;}
 		@Override public Property<Date> getEndIssueDateProperty() {return null;}
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
-	}
-	
-	protected static class DeliveryPropertiesDAO implements DeliveryProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select,DeliveryFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(DeliveryFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DOMAIN);}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PROJECT);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SERIES);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CUSTOMER);}
-		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ADDRESS);}
-		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ISSUE_TIME);}
-		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PAY_METHOD);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SECURITY_LEVEL);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.STATUS);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.COMMENTS);}
-		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.REMARKS);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.WORKPLACE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SCOPE);}
-		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER_OF_PYMNTS);}
-		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DAYS_TO_FIRST_PYMNT);}
-		@Override public Property<Short> getDaysBetweenPymntProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.DAYS_BETWEEN_PYMNTS);}
-		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PYMNT_DAYS);}
-		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ACCOUNT);}
-		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ALIAS);}
-		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BIC);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_USER);}
-		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER);}
-		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER_PACKING);}
-		
-		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
-		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
-
-		@Override
-		public Property<Byte> getConfidentialProperty() {return null;}
-	}
-	
-	protected static class DeliveryDetailPropertiesDAO implements DeliveryDetailProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select,DeliveryDetailFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(DeliveryDetailFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getDelivery() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.DELIVERY);}
-		@Override public Property<Short> getLine() {return new FilterDAO.PropertyDAO<Short>(DELIVERY_DETAIL.LINE);}
-		@Override public Property<Integer> getItem() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.ITEM);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.DESCRIPTION);}
-		@Override public Property<Integer> getWarehouse() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.WAREHOUSE);}
-		@Override public Property<Double> getQuantity() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.QUANTITY);}
-		@Override public Property<Double> getPrice() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.PRICE);}
-		@Override public Property<String> getDiscountExpressionProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.DISCOUNT_EXPR);}
-		@Override public Property<Integer> getSalesDetail() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.SALES_DETAIL);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_USER);}
 	}
 	
 	protected static class IncomePropertiesDAO implements IncomeProperties {
@@ -1469,6 +1340,7 @@ public class PropertiesDAO {
 
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(USER.TYPE);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(USER.NAME);}
 		@Override public Property<String> getLoginProperty() {return new FilterDAO.PropertyDAO<>(USER.LOGIN);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(USER.ACTIVE);}
@@ -1626,17 +1498,18 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.DOMAIN);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(NOTIFICATION.DATE);}
-		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.TITLE);}
-		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.BODY);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.SOURCE_ID);}
-		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION.SENDER);}
-		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.PRIORITY);}
-		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION_RECEIVER.AUTH);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION_RECEIVER.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.DOMAIN);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.DATE);}
+		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.TITLE);}
+		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.BODY);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SOURCE_ID);}
+		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SENDER);}
+		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.PRIORITY);}
+		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.AUTH);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.STATUS);}
+		@Override public Property<Integer> getReceiverIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.ID);}
 	}
 	
 	

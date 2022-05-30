@@ -1524,7 +1524,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	protected double getCgcBaseMin(ExpressionContext expressionContext, Period period) throws ExpressionException {
-		double cgcBaseMin = expressionContext.eval(ContextVariable.CGC_BASE_MIN.getName(), period.getStart(), period.getEnd()).stream()
+		double cgcBaseMin = expressionContext.dryEval(ContextVariable.CGC_BASE_MIN.getName(), period.getStart(), period.getEnd()).stream()
 		.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
 		.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
 		return cgcBaseMin;
@@ -1550,7 +1550,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		ExpressionException expressionException = null;
 		for (int i = 0; i < names.length; i++) {
 			try {
-				double value = expressionContext.eval(String.valueOf(names[i]), period.getStart(), period.getEnd()).stream()
+				double value = expressionContext.dryEval(String.valueOf(names[i]), period.getStart(), period.getEnd()).stream()
 				.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
 				.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
 				min =  Math.min(value, min);

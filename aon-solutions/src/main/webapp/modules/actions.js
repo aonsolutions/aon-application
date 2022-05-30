@@ -36,6 +36,12 @@ export const CHANGE_TYPE = {
     icon: MATERIAL_ICONS.EDIT
 };
 
+export const SIGN_INVOICE = {
+    id: 'SignInvoice',
+    name: 'Firmar Factura' ,
+    icon: 'draw'
+};
+
 export const REMARKS = {
     id: CONSTANT.REMARKS.initCap(),
     name: MSG.ADD_REMARKS,

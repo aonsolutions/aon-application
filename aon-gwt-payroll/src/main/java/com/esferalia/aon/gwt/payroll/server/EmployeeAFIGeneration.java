@@ -444,7 +444,7 @@ public final class EmployeeAFIGeneration {
 		String reserved1;
 		String subWomen;
 		String partialityCoef;
-		String reserved3;
+		String employeeColective;
 		String printInd;
 		String reserved15;
 		String gender;
@@ -456,7 +456,7 @@ public final class EmployeeAFIGeneration {
 		String rent;
 		String worker;
 		
-		public FAB(String action, String situation, String day, String month, String year, String quoteGroup, String tc2, String partialityCoef, String gender ) {
+		public FAB(String action, String situation, String day, String month, String year, String quoteGroup, String tc2, String partialityCoef, String employeeColective, String gender ) {
 			super();
 			this.fabHeader = "FAB";
 			this.action = AonStringUtils.rightPad(action, 3, ' ');
@@ -468,13 +468,13 @@ public final class EmployeeAFIGeneration {
 			
 			this.quoteGroup = AonStringUtils.leftPad(quoteGroup, 2, '0');
 			this.daylyQG = "N";
-			this.disability = AonStringUtils.leftPad("", 2, ' ');
+			this.disability = AonStringUtils.leftPad("", 2, '0');
 			this.tc2 = AonStringUtils.leftPad(tc2, 3, '0');
 			
 			this.reserved1 = StringUtils.leftPad("", 1, ' ');
 			this.subWomen = "N";
 			this.partialityCoef = AonStringUtils.leftPad(partialityCoef, 3, '0');
-			this.reserved3 = AonStringUtils.leftPad("", 3, ' ');
+			this.employeeColective = AonStringUtils.leftPad(employeeColective, 3, '0');
 			this.printInd = " ";
 
 			this.reserved15 = AonStringUtils.leftPad("", 15, '0');
@@ -528,8 +528,8 @@ public final class EmployeeAFIGeneration {
 		public String getPartialityCoef() {
 			return partialityCoef;
 		}
-		public String getReserved3() {
-			return reserved3;
+		public String getEmployeeColective() {
+			return employeeColective;
 		}
 		public String getPrintInd() {
 			return printInd;
@@ -571,16 +571,18 @@ public final class EmployeeAFIGeneration {
 		String reserved15;
 		String reserved8;
 		String readmited;
-		String reserved21;
+		String endDate;
+		String reserved13;
 		
-		public OTD( String convCollective ) {
+		public OTD( String convCollective, String endDate ) {
 			this.otdHeader = "OTD";
 			this.convCollective = AonStringUtils.leftPad(convCollective, 14, '0');
-			this.excedencia = AonStringUtils.rightPad("", 8, ' ');
-			this.reserved15 = AonStringUtils.rightPad("", 15, ' ');
-			this.reserved8 = AonStringUtils.rightPad("", 8, ' ');
+			this.excedencia = AonStringUtils.rightPad("", 8, '0');
+			this.reserved15 = AonStringUtils.rightPad("", 15, '0');
+			this.reserved8 = AonStringUtils.rightPad("", 8, '0');
 			this.readmited = "N";
-			this.reserved21 = AonStringUtils.rightPad("", 21, ' ');
+			this.endDate = AonStringUtils.rightPad(endDate, 8, '0');
+			this.reserved13 = AonStringUtils.rightPad("", 13, ' ');
 		}
 		
 		public String getOtdHeader() {
@@ -601,8 +603,11 @@ public final class EmployeeAFIGeneration {
 		public String getReadmited() {
 			return readmited;
 		}
-		public String getReserved21() {
-			return reserved21;
+		public String getEndDate() {
+			return endDate;
+		}
+		public String getReserved13() {
+			return reserved13;
 		}
 		
 	}
@@ -862,11 +867,13 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
 					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
+					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject otdJson = (JSONObject) sdcJson.get("OTD");
 			OTD otd = new OTD(
-					otdJson.get("convCollective").toString());
+					otdJson.get("convCollective").toString(),
+					otdJson.get("endDate") == null ? "" : otdJson.get("endDate").toString());
 			
 			ma = new MA(fab, otd);
 		}
@@ -885,6 +892,7 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
 					fabJson.get("partialityCoef").toString(),
+					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
 					fabJson.get("gender").toString());
 			
 			DAM dam = new DAM("", ""); // 	JSONObject damJson = (JSONObject) edcJson.get("DAM");
@@ -915,6 +923,7 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
 					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
+					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject damJson = (JSONObject) chcJson.get("DAM");
@@ -1032,7 +1041,7 @@ public final class EmployeeAFIGeneration {
 					ma.getFab().getReserved1() +
 					ma.getFab().getSubWomen() +
 					ma.getFab().getPartialityCoef() +
-					ma.getFab().getReserved3() +
+					ma.getFab().getEmployeeColective() +
 					ma.getFab().getPrintInd() +
 					ma.getFab().getReserved15() +
 					ma.getFab().getGender() +
@@ -1052,7 +1061,8 @@ public final class EmployeeAFIGeneration {
 					ma.getOtd().getReserved15() +
 					ma.getOtd().getReserved8() +
 					ma.getOtd().getReadmited() +
-					ma.getOtd().getReserved21() +
+					ma.getOtd().getEndDate() +
+					ma.getOtd().getReserved13() +
 					"\r\n";
 		}
 			
@@ -1092,7 +1102,7 @@ public final class EmployeeAFIGeneration {
 					mb.getFab().getReserved1() +
 					mb.getFab().getSubWomen() +
 					mb.getFab().getPartialityCoef() +
-					mb.getFab().getReserved3() +
+					mb.getFab().getEmployeeColective() +
 					mb.getFab().getPrintInd() +
 					mb.getFab().getReserved15() +
 					mb.getFab().getGender() +
@@ -1162,7 +1172,7 @@ public final class EmployeeAFIGeneration {
 					mc.getFab().getReserved1() +
 					mc.getFab().getSubWomen() +
 					mc.getFab().getPartialityCoef() +
-					mc.getFab().getReserved3() +
+					mc.getFab().getEmployeeColective() +
 					mc.getFab().getPrintInd() +
 					mc.getFab().getReserved15() +
 					mc.getFab().getGender() +

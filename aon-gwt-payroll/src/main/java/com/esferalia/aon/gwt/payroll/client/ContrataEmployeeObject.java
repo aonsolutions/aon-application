@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
-import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -176,22 +176,6 @@ public class ContrataEmployeeObject {
 			@Override
 			public void onSuccess(ContractSpecificData result) {
 				employeeContractData.setContractSpecificData(result);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void setContractSpecificData(ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeeContractData.setContractSpecificData(contractSpecificData);
-		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 
@@ -419,8 +403,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void sendContractTransform(ContractTransform contractTransform, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.sendContractTransform(employeeContractData, contractTransform, new AsyncCallback<Void>() {
+	public void sendContractTransform(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendContractTransform(employeeContractData, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -646,6 +630,7 @@ public class ContrataEmployeeObject {
 	
 	public void downloadIdc(Date date, Consumer<String> success, Consumer<Throwable> failure) {
 		date = null == date ? new Date() : date;
+		date = checkPrevAlta() ? new Date() : date;
 		employeesService.getEmployeeIdc(contractData.getContractId(), date, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
@@ -659,6 +644,7 @@ public class ContrataEmployeeObject {
 	}
 
 	public void downloadIdcPlNss(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		date = checkPrevAlta() ? new Date() : date;
 		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), date, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
@@ -682,6 +668,12 @@ public class ContrataEmployeeObject {
 				failure.accept(caught);
 			}
 		});
+	}
+	
+	private boolean checkPrevAlta() {
+		Date currentDate = new Date();
+		Date startDate = contractData.getStartDate();
+		return DateUtils.isAfterOrEquals(startDate, currentDate) && !DateUtils.equals(startDate, currentDate);
 	}
 	
 	// ------------------------------------------------- Database Methods (Delete Extension)
@@ -889,6 +881,10 @@ public class ContrataEmployeeObject {
 	
 	public void setContractQuoteGroup(String quoteGroup) {
 		contractData.setQuoteGroup(quoteGroup);		
+	}
+	
+	public void setContractQuoteIdxMonth(boolean quoteGroupMonth) {
+		contractData.setQuoteGroupIdxMonth(quoteGroupMonth);
 	}
 	
 	public void setContractOccupation(String occupation) {

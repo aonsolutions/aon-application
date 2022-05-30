@@ -68,6 +68,7 @@ public class CustomerJSON {
 			.put(IJsonNames.SCOPE, customer.getScope())
 			.put(IJsonNames.TARIFF, customer.getTariff())
 			.put(IJsonNames.TRANSACTION, customer.getTransaction().getTediName())
-			.put(IJsonNames.STATUS, customer.getStatus().name());
+			.put(IJsonNames.STATUS, customer.getStatus() != null 
+				? customer.getStatus().name() : RegistryStatus.ACTIVE.name());
 	}
 }

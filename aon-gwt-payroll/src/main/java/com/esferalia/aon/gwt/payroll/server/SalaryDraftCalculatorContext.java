@@ -337,6 +337,13 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				return constant;
 			return listener.onConstantParameter(func, constant, ctx);
 		}
+		
+		@Override
+		public void onInvalidLeave(Date startDate, Date endDate) {
+			if ( listener == null )
+				return ;
+			listener.onInvalidLeave(startDate, endDate);
+		}
 
 		@Override
 		public void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
@@ -737,7 +744,11 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				throw wrapper.getCause();
 			} catch ( DeferredExpressionException deferred){
 				try {
-					deferred.eval( getExpressionContext(), Object.class);
+					getExpressionContext()
+					.dryEval(deferred.getExpression().getExpression(), 
+					var.getPeriod().getStart(), 
+					var.getPeriod().getEnd());
+					//deferred.eval( getExpressionContext(), Object.class);
 				} catch ( UndefinedVariablesException e){
 					return true;
 				} catch (ExpressionException e) {

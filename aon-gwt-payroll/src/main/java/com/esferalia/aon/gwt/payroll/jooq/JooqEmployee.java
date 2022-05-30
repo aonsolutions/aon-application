@@ -68,6 +68,7 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployee {
@@ -400,6 +401,16 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.START_DATE, contractStartDate)
 					.set(CONTRACT_DATA.END_DATE, contractEndDate)
 					.execute();
+			
+			if(contractData.getQuoteGroupIdxMonth())
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "DIAS_MES")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, "30")
+					.set(CONTRACT_DATA.START_DATE, contractStartDate)
+					.set(CONTRACT_DATA.END_DATE, contractEndDate)
+					.execute();
 		
 			if(null != contractData.getOcupation())
 				dslContext.insertInto(CONTRACT_DATA)
@@ -444,6 +455,16 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
 					.set(CONTRACT_DATA.CONTRACT, contractId)
 					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getQuoteGroup()))
+					.set(CONTRACT_DATA.START_DATE, contractStartDate)
+					.set(CONTRACT_DATA.END_DATE, contractEndDate)
+					.execute();
+			
+			if(contractData.getQuoteGroupIdxMonth())
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "DIAS_MES")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, "30")
 					.set(CONTRACT_DATA.START_DATE, contractStartDate)
 					.set(CONTRACT_DATA.END_DATE, contractEndDate)
 					.execute();
@@ -565,7 +586,8 @@ public class JooqEmployee {
 				.where(CONTRACT_CLAUSE.CONTRACT.isNull())
 				.and(CONTRACT_CLAUSE.DOMAIN.eq(domainId)
 					.or(CONTRACT_CLAUSE.DOMAIN.eq(parentDomainId))
-				).fetch();
+				).and(CONTRACT_CLAUSE.GENERAL.eq((byte)1))
+				.fetch();
 		
 		for(Record clauseRecord : clauseRecords) {
 			dslContext.insertInto(CONTRACT_CLAUSE)
@@ -923,6 +945,12 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "GRUPO_COTIZACION")) {
 				contractData.setQuotegroupId(r.get(CONTRACT_DATA.ID));
 				contractData.setQuoteGroup(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "DIAS_MES")) {
+				if(AonDateUtils.isSameDay(contractData.getStartDate(), r.get(CONTRACT_DATA.START_DATE)) &&
+						AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.EXPRESSION), "30")) {
+					contractData.setQuoteGroupIdxMonth(true);
+					contractData.setQuoteGroupIdxMonthId(r.get(CONTRACT_DATA.ID));
+				}
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "OCUPACION")) {
 				contractData.setOcupationId(r.get(CONTRACT_DATA.ID));
 				contractData.setOcupation(r.get(CONTRACT_DATA.EXPRESSION));
@@ -1559,6 +1587,26 @@ public class JooqEmployee {
 						.set(CONTRACT_DATA.END_DATE, endDate)
 						.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
 						.execute();
+					}
+				}
+				
+				if(null == contractData.getQuoteGroupIdxMonthId()){
+					if(contractData.getQuoteGroupIdxMonth()){
+						ContractDataRecord contizacionRecord = null;
+						
+						contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(contractData.getQuoteGroupIdxMonthId(), domain, "DIAS_MES", contractData.getContractId(), "30", startDate, endDate)
+							.returning(CONTRACT_DATA.ID)
+							.fetchOne();
+						
+						contractData.setQuoteGroupIdxMonthId(contizacionRecord.getId());
+					}
+				}else{
+					if(!contractData.getQuoteGroupIdxMonth()){
+						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuoteGroupIdxMonthId())).execute();
+						contractData.setQuoteGroupIdxMonthId(null);
+						contractData.setQuoteGroupIdxMonth(false);
 					}
 				}
 				

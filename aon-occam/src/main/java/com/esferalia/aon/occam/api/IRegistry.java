@@ -72,7 +72,13 @@ public interface IRegistry {
 	public Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter);
 	public Stream<Registry> getAonRegistryStream(AONContext ctx, RegistryFilter filter);
 	
-	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter);
+	// ----- RNOTE
+
+	public Stream<RegistryNote> getRegistryNoteStream(AONContext ctx, RegistryNoteFilter filter);
+	public List<RegistryNote> getRegistryNoteList(AONContext ctx, RegistryNoteFilter filter);
+	public RegistryNote getRegistryNote(AONContext ctx, RegistryNoteFilter filter);
+	public RegistryNote saveRegistryNote(AONContext ctx, RegistryNote rnote);
+	public void deleteRegistryNote(AONContext ctx, Integer id);
 
 	public Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId);
 	public Integer[] getRSegmentStream(AONContext ctx, RegistrySegmentFilter filter);

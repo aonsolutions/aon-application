@@ -351,13 +351,11 @@ public class SeresServlet extends HttpServlet {
 	}
 	
 	private Integer[] getEdiActiveRegistry(Domain domain, String login) {
-		Integer[] ids = AON
-				.getRNoteStream(domain.getName(), domain.getId(), login,
+		return AON.getRegistryNoteStream(domain.getName(), domain.getId(), login,
 						f -> f.getDomainProperty().eq(domain.getId())
 								.and(f.getDescriptionProperty().eq("EDI_ACTIVE"))
 								.and(f.getCommentsProperty().eq("true")))
 				.map(m -> m.getRegistry()).toArray(Integer[]::new);
-		return ids;
 	}
 	
 	/**

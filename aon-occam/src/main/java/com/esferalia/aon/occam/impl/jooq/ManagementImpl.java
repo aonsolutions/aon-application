@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IManagement;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
@@ -67,15 +68,27 @@ public class ManagementImpl implements IManagement {
 
 	// ------------------ SALES
 	@Override
-	public Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter) {
+	public Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter, Options... options) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> SalesDAO.getSalesStream(ctx, filter));
+				configuration -> SalesDAO.getStream(ctx, filter, options));
 	}
 	
 	@Override
-	public void updateSales(AONContext ctx, Sales sales) {
+	public Sales getSales(AONContext ctx, SalesFilter filter, Options... options) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SalesDAO.get(ctx, filter, options));
+	}
+	
+	@Override
+	public Sales saveSales(AONContext ctx, Sales sales) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> SalesDAO.save(ctx, sales));
+	}
+	
+	@Override
+	public void deleteSales(AONContext ctx, Integer salesId) {
 		ctx.getDslContext().transaction(
-				configuration -> SalesDAO.updateSales(ctx, sales));
+			configuration -> SalesDAO.delete(ctx, salesId));
 	}
 	
 	// ------------------ SALES DETAIL
@@ -161,23 +174,43 @@ public class ManagementImpl implements IManagement {
 	// ------------------ DELIVERY
 	
 	@Override
-	public Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter) {
+	public Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter, Options...options) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> DeliveryDAO.getDeliveryStream(ctx, filter));
+			configuration -> DeliveryDAO.getStream(ctx, filter, options));
+	}
+	
+	@Override
+	public Delivery getDelivery(AONContext ctx, DeliveryFilter filter, Options...options) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.get(ctx, filter, options));
 	}
 
 	@Override
+	public Delivery saveDelivery(AONContext ctx, Delivery delivery) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.save(ctx, delivery));
+	}
+	
+	@Override
+	@Deprecated(forRemoval = true)
 	public Delivery insertDelivery(AONContext ctx, Delivery delivery) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> DeliveryDAO.insertDelivery(ctx, delivery));
 	}
 
 	@Override
+	@Deprecated(forRemoval = true)
 	public Delivery updateDelivery(AONContext ctx, Delivery delivery, DeliveryFilter filter) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> DeliveryDAO.updateDelivery(ctx, delivery, filter));
 	}
 
+	@Override
+	public void deleteDelivery(AONContext ctx, Integer id) {
+		 ctx.getDslContext().transaction(
+			configuration -> DeliveryDAO.delete(ctx, id));		
+	}
+	
 	@Override
 	public void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
 		 ctx.getDslContext().transaction(

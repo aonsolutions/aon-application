@@ -93,7 +93,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public DomainSwitcher() {
 		try {
-			setPageLimit(10);
+			//setPageLimit(100);
 			setShowActive(true);
 			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
@@ -203,11 +203,13 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	public DataModel getModel() {
+
 		if (model == null) {
 			initializeModel();
 		}
 		if (StringUtils.isBlank(getFilter())) {
 			return model;
+
 		} else {
 			if (!StringUtils.equals(modelFilter, filter)
 					|| filteredModel == null) {
@@ -230,6 +232,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 							break;
 					}
 				}
+				
+				
 				setFilteredModel(new SerializableListDataModel(filteredList));
 				modelFilter = filter;
 			}

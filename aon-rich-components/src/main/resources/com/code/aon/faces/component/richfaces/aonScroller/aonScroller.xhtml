@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	>
+
+	<aon:div styleClass="aon-note-new" rendered="#{rowCount == 0 and showNote}">
+		<aon:div styleClass="aon-note-internal-new">
+			<aon:panelGroup>
+				<aon:outputText value="#{bundle.aon_search_no_results}" />
+			</aon:panelGroup>
+		</aon:div>
+	</aon:div>
+
+	<aon:div styleClass="aon-dataScroller aonDataScroller" rendered="#{rowCount>0}">					
+	    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
+	    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
+	    	<aon:panelGroup>
+				<aon:aonPaginator for="#{dataTable}" fastStep="5" paginator="true"
+					paginatorMaxPages="11"
+					rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
+					ajaxSingle="true"
+					oncomplete="#{oncomplete}" 
+					page="#{page}"
+					fastControls="#{'hide'}"
+					boundaryControls="#{'hide'}"
+					styleClass="aon-dataScroller-buttons"
+					reRender="#{dataTable}PaginatorInfo" />
+			</aon:panelGroup>			    			    	
+			<aon:panelGroup rendered="#{!hidePageSizeSelector}" styleClass="text-right">
+				<aon:outputText styleClass="aon-margin-right"
+					value="#{bundle.aon_row_number}"
+					/>
+				<aon:selectOneMenu value="#{aonConfiguration.pageLimit}" 
+				>
+					<f:selectItems value="#{commonCollections.pageLimits}"/>
+					<a4j:support event="onchange" ajaxSingle="true" 
+						reRender="#{dataTable},#{dataTable}MessageDataScroller">
+						<f:setPropertyActionListener target="#{page}" value="#{1}" />
+						<aon:actionListener method="#{aonConfiguration.savePageLimit}" />
+					</a4j:support>				
+				</aon:selectOneMenu>
+			</aon:panelGroup>		    	
+		</aon:panelGrid>			
+	</aon:div>
+</ui:composition>

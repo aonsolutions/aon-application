@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TaskSource {
 
 	MANUAL,
@@ -48,6 +50,7 @@ public enum TaskSource {
 	}
 	
 	public static TaskSource valueNameOf(String name) {
+		if(AonStringUtils.isBlank(name)) return MANUAL;
 		for(TaskSource p :TaskSource.values())
 			if(name.equalsIgnoreCase(p.getName()) || name.equalsIgnoreCase(p.name()))
 				return p;

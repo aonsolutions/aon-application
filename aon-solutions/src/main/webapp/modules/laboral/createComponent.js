@@ -2,7 +2,7 @@ import { AonNumber } from "../../components/aon-number.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
-import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { createCard, createDate, createForm, createIconButton, createInput, createNumber, createSelect } from "../notification/createComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import '../../css/aon-grid.css';
 import '../../css/aon-css-utils.css';
@@ -27,6 +27,23 @@ export const createBajaDialogContent = () =>{
         }
     }, div);
     select.style.textAlign = "left";
+ 
+    createNumber({
+        attributes:{
+            name:"dayVacation",
+            id: "dayVacation", 
+            description:"Días de vacaciones (Opcional)"
+        }
+    }, div);
+ 
+    createDate({
+        attributes:{
+            name:"frv",
+            id:"frv",
+            title:"Fecha de vacaciones",
+            disabled:true
+        }
+    }, div);
 
     const btnSubmit = document.createElement(TAG.BUTTON);
     btnSubmit.id = "btnSubmitBaja";
@@ -151,6 +168,13 @@ export const createContractData = (parent, isManager) => {
         }
     }, divC.element);
 
+    let divQuoteMonth = createDiv({
+        attributes:{
+            id:"divQuoteMonth"
+        }
+    })
+    divQuoteMonth.appendTo(parent);
+
     let divH = createDiv({
         attributes:{
             id:"div_parcial",
@@ -159,7 +183,7 @@ export const createContractData = (parent, isManager) => {
     })
     divH.appendTo(parent);
 
-    partTime(divH.element)
+    partTime(divH.element);
 
     createInput({
         attributes:{
@@ -198,7 +222,40 @@ export const createContractData = (parent, isManager) => {
     }, divC.element);
 
     dateContract.value = AonDateUtils.formatDateOrigin(new Date());
+}
 
+
+export const createContractDataMdCtz = (parent) => {
+    let div_parcial = document.getElementById("div_parcial");
+ 
+    let divC = createDiv({classes:[CSS.AON_COL_XS_12]}).element;
+
+    parent.insertBefore(divC, div_parcial);
+
+    let select = createSelect({
+        attributes:{
+            name:"md_ctz",
+            id:"md_ctz",
+            title:"Modalidad Cotización",
+        }
+    }, divC);
+
+    select.setOptions([
+        {
+            value:"0",
+            name:"-"
+        },
+        {
+            value:"1",
+            name:"1 - Cotización mensual"
+        },
+        {
+            value:"2",
+            name:"2 - Cotización por jornadas reales"
+        },
+    ]);
+
+    select.setIndexOf(0);
 }
 
 export const createEmployeeData = (parent, id) => {
@@ -244,7 +301,6 @@ export const createEmployeeData = (parent, id) => {
             autocomplete:"on"
         }
     }, divNss.element);
-
 
     divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4] })
     divT.appendTo(parent);
@@ -311,7 +367,6 @@ const addIconSurname = () => {
     }
 }
 
-
 /**
  * 
  * @param {HTMLElement} divH parent 
@@ -359,6 +414,29 @@ const partTime = (divH) => {
     divC.appendChild(numberC);
     addSpanDecimal(numberC);
     return divC;
+}
+
+
+export const createQuoteMonthly = (detail, isManager) => {
+    
+    let show = detail && detail.quoteMonth;
+
+    let parent = document.getElementById("divQuoteMonth");
+
+    if(parent) {
+        parent.innerHTML = "";
+
+        if(show){
+            let divC = createDiv({classes:[CSS.AON_COL_XS_12]})
+            divC.appendTo(parent);
+    
+            const id = "quoteMonth";
+    
+            const aonSwitch = setAttributes(new AonSwitch(),{id, name:id, title: `Cotización mensual`, checked:false});
+        
+            divC.appendChild(aonSwitch);
+        }
+    }
 }
 
 export const addSpanDecimal = (input) =>  {

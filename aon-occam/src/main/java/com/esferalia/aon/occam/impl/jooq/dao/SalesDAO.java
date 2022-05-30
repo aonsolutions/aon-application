@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
@@ -13,45 +14,65 @@ import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CARRIER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
-import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
-import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.SalesType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CarrierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
-import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDetailDAO.SalesDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.SalesValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalesDAO {
 	
 	private static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
-	private static final SalesDetailPropertiesDAO SALES_DETAIL_PROPERTIES = new SalesDetailPropertiesDAO();
 
+	private SalesDAO() {
+	
+	}
+	
 	protected static class SalesPropertiesDAO implements SalesProperties {
 		protected Condition[] getConditions(SalesFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -97,27 +118,6 @@ public class SalesDAO {
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
-	protected static class SalesDetailPropertiesDAO implements SalesDetailProperties {
-		protected Condition[] getConditions(SalesDetailFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getSalesProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.SALES);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.ITEM);}
-		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.LINE);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DESCRIPTION);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.QUANTITY);}
-		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.PRICE);}
-		@Override public Property<String> getdiscountExpressionProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DISCOUNT_EXPR);}
-		@Override public Property<Double> getTaxesProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.TAXES);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.STATUS);}
-		@Override public Property<Integer> getOfferDetailProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.OFFER_DETAIL);}
-		@Override public Property<Double> getDeliveredProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.DELIVERED);}
-	}
-	
 	public static int getNextNumber(AONContext ctx, String series ) {
 		Integer next = ctx.getDslContext()
 			.select( DSL.max(SALES.NUMBER))
@@ -137,96 +137,236 @@ public class SalesDAO {
 		return ++next;
 	}
 	
-	public static int insertSales(AONContext ctx, Sales sales) {
-		ctx.checkWrite();
-		
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		
-		return ctx
-				.getDslContext()
-				.insertInto(SALES, SALES.DOMAIN, SALES.PROJECT, SALES.CUSTOMER,
-						SALES.SERIES, SALES.NUMBER, SALES.PURCHASE_REFERENCE,
-						SALES.SHIPPING_ADDRESS, SALES.SELLER,
-						SALES.DISCOUNT_EXPR, SALES.ISSUE_DATE,
-						SALES.PAY_METHOD, SALES.DOCUMENT_TYPE,
-						SALES.SECURITY_LEVEL, SALES.STATUS, SALES.COMMENTS,
-						SALES.REMARKS, SALES.WORKPLACE, SALES.SCOPE,
-						SALES.NUMBER_OF_PYMNTS, SALES.DAYS_TO_FIRST_PYMNT,
-						SALES.DAYS_BETWEEN_PYMNTS, SALES.PYMNT_DAYS,
-						SALES.BANK_ACCOUNT, SALES.BANK_ALIAS, SALES.BIC,
-						SALES.PURCHASE_GENERATED, SALES.CARRIER,
-						SALES.SHIPPING_ALTERNATIVE_ADDRESS,
-						SALES.SHIPPING_ALTERNATIVE_ADDRESS2,
-						SALES.SHIPPING_ALTERNATIVE_ZIP,
-						SALES.SHIPPING_ALTERNATIVE_CITY,
-						SALES.SHIPPING_ALTERNATIVE_PHONE,
-						SALES.SHIPPING_ALTERNATIVE_RECIPIENT,
-						SALES.SHIPPING_CONTACT, SALES.SHIPPING_PERIOD,
-						SALES.CREATION_USER, SALES.CREATION_DATE,
-						SALES.MODIFICATION_USER, SALES.MODIFICATION_DATE)
-				.values(sales.getDomain(), sales.getProject(),
-						sales.getCustomer().getId(), sales.getSeries(),
-						sales.getNumber(), sales.getPurchaseReference(),
-						sales.getShippingAddress(), sales.getSeller(),
-						sales.getDiscountExpr(),
-						new java.sql.Date(sales.getIssueDate().getTime()),
-						sales.getPayMethod(), sales.getDocumentType(),
-						sales.getSecurityLevel(), (byte)sales.getStatus().ordinal(),
-						sales.getComments(), sales.getRemarks(),
-						sales.getWorkplace(), sales.getScope(),
-						sales.getNumberOfPymnts(), sales.getDaysToFirstPymnt(),
-						sales.getDaysBetweenPymnts(), sales.getPymntDays(),
-						sales.getBankAccount(), sales.getBankAlias(),
-						sales.getBic(), sales.isPurchaseGenerated(),
-						sales.getCarrier(),
-						sales.getShippingAlternativeAddress(),
-						sales.getShippingAlternativeAddress2(),
-						sales.getShippingAlternativeZip(),
-						sales.getShippingAlternativeCity(),
-						sales.getShippingAlternativePhone(),
-						sales.getShippingAlternativeRecipient(),
-						sales.getShippingContact(), sales.getShippingPeriod(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).returning(SALES.ID).fetchOne()
-				.getId();
+	// ----- SELECT
+	
+	private static SelectConditionStep<Record> select(AONContext ctx, SalesFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(SALES)
+			.where(SALES_PROPERTIES.getConditions(filter));
+	}
+
+	private static SelectConditionStep<Record> selectFull(AONContext ctx, SalesFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(SALES)
+			.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(SALES.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.leftOuterJoin(SELLER).on(SELLER.REGISTRY.eq(SALES.SELLER))
+			.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+			.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(SALES.CARRIER))
+			.leftOuterJoin(CARRIER_ALIAS).on(CARRIER.REGISTRY.eq(CARRIER_ALIAS.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(SALES.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(SALES_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
+			.where(SALES_PROPERTIES.getConditions(filter));
 	}
 	
+	// ----- GET
+	
+	public static Sales get(AONContext ctx, Integer salesId){
+		return get(ctx, f -> f.getIdProperty().eq(salesId));
+	}
+	
+	public static Sales get(AONContext ctx, SalesFilter filter, Options... options){
+		if(options.length > 0 && options[0].isFull())
+			return getFull(ctx, filter);
+		return select(ctx, filter).limit(1).fetch().stream().map(new SalesFiller())
+			.findFirst().orElse(new Sales());
+	}
+	
+	public static Sales getFull(AONContext ctx, SalesFilter filter){
+		return getFullStream(ctx, filter).findFirst().orElse(new Sales()); 
+	}
+	
+	// ----- GET STREAM
+	
+	public static Stream<Sales> getStream(AONContext ctx, SalesFilter filter, Options... options){
+		if(options.length > 0) 
+			return getStream(ctx, filter, options[0]);
+		return select(ctx, filter).fetch().stream().map(new SalesFiller());
+	}
 
-	public static void updateSales(AONContext ctx, Sales sales) {
-		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+	public static Stream<Sales> getStream(AONContext ctx, SalesFilter filter, Integer page, Integer perPage){
+		return select(ctx, filter)
+			.limit(perPage).offset(perPage * (page -1))
+			.fetch().stream().map(new SalesFiller());
+	}
+	
+	private static Stream<Sales> getStream(AONContext ctx, SalesFilter filter, Options options){
+		if(options.isFull() && options.isPagination())
+			return getFullStream(ctx, filter, options.getPage(), options.getPerPage());
+		else if(options.isFull())
+			return getFullStream(ctx, filter);
+		else if(options.isPagination())
+			return getStream(ctx, filter, options.getPage(), options.getPerPage());
+		else return getStream(ctx, filter);
+	}
+
+	public static Stream<Sales> getFullStream(AONContext ctx, SalesFilter filter){
+		Map<Sales, List<SalesDetail>> map = selectFull(ctx, filter)
+			.groupBy(SALES.ID, SALES_DETAIL.ID)
+			.fetchGroups(
+				new SalesFiller()::apply,
+				new SalesDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	public static Stream<Sales> getFullStream(AONContext ctx, SalesFilter filter, Integer page, Integer perPage){
+		Map<Sales, List<SalesDetail>> map = selectFull(ctx, filter)
+			.groupBy(SALES.ID, SALES_DETAIL.ID)
+			.limit(perPage).offset(perPage * (page -1))
+			.fetchGroups(
+				new SalesFiller()::apply,
+				new SalesDetailFiller()::apply
+			);
+		map.forEach((object, details) -> details.forEach(object::addDetail));
+		return map.keySet().stream(); 
+	}
+	
+	// ----- GET LIST
+	
+	public static List<Sales> getList(AONContext ctx, SalesFilter filter){
+		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Sales> getList(AONContext ctx, SalesFilter filter, Integer page, Integer perPage){
+		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	/**
+	 * @deprecated  Replaced by get
+	 */
+	@Deprecated(forRemoval = true )
+	public static Sales getSales(AONContext ctx, SalesFilter filter){
+		return ctx.getDslContext().select().from(SALES).where(SALES_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(SALES).stream().map(new SalesFiller()).findFirst().orElse(new Sales());
+	}
+
+	/**
+	 * @deprecated  Replaced by get
+	 */
+	@Deprecated(forRemoval = true )
+	public static Sales getSales(AONContext ctx, Integer salesId){	
+		return getSales(ctx, o -> o.getIdProperty().eq(salesId));
+	}
+	
+	/**
+	 * @deprecated  Replaced by get
+	 */
+	@Deprecated(forRemoval = true )
+	public static Sales getSales(AONContext ctx, String series, int number) {
+		return getSales(ctx, o -> o.getSeriesProperty().eq(series).and(o.getNumberProperty().eq(number)));
+	}
+	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
+	public static Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter){
+		return SalesDetailDAO.getStream(ctx, filter);
+	}
+	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
+	public static SalesDetail getSalesDetail(AONContext ctx, SalesDetailFilter filter){
+		return SalesDetailDAO.get(ctx, filter);
+	}
+	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.get
+	 */
+	@Deprecated(forRemoval = true )
+	public static SalesDetail getSalesDetail(AONContext ctx, Integer detailId){	
+		return getSalesDetail(ctx, o -> o.getIdProperty().eq(detailId));
+	}
+
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.get
+	 */
+	@Deprecated(forRemoval = true )
+	public static SalesDetail getSalesDetail(AONContext ctx, Integer salesId, Short line){	
+		return getSalesDetail(ctx, o -> o.getSalesProperty().eq(salesId).and(o.getLineProperty().eq(line)));
+	}
+	
+	private static Result<Record> getFullSales(AONContext ctx, SalesFilter filter) {
+		ctx.checkRead();
+
+		return ctx.getDslContext()
+			.select()
+			.from(SALES)
+			.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(SALES.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(SALES.PROJECT))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(SALES_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
+			.where(SALES_PROPERTIES.getConditions(filter))
+			.orderBy(SALES.ISSUE_DATE,SALES.SERIES,SALES.NUMBER,SALES_DETAIL.LINE)
+			.fetch();
+	}
+	
+	public static Stream<SalesDetail> getSalesDetails(AONContext ctx, SalesFilter filter) {
+		return getFullSales(ctx, filter)
+			.stream()
+			.map(new SalesDetailFiller());
+	}
+	
+	// ----- INSERT & UPDATE
+	
+	public static Sales save(AONContext ctx, Sales sales) {
+		SalesValidation.autocomplete(ctx, sales);
+		SalesValidation.validate(ctx, sales);
 		
-		ctx.getDslContext()
-				.update(SALES)
+		sales = sales.hasId()
+			? update(ctx, sales)
+			: insert(ctx, sales);
+		
+		sales.setDetails(SalesDetailDAO.save(ctx, sales.getDetails()));
+		return sales;
+	}
+	
+	public static Sales insert(AONContext ctx, Sales sales) {
+		ctx.checkWrite();
+
+		Integer id = ctx.getDslContext()
+				.insertInto(SALES)
 				.set(SALES.DOMAIN, sales.getDomain())
-				.set(SALES.PROJECT, sales.getProject())
+				.set(SALES.PROJECT, sales.getProject().getId())
 				.set(SALES.CUSTOMER, sales.getCustomer().getId())
 				.set(SALES.SERIES, sales.getSeries())
 				.set(SALES.NUMBER, sales.getNumber())
 				.set(SALES.PURCHASE_REFERENCE, sales.getPurchaseReference())
-				.set(SALES.SHIPPING_ADDRESS, sales.getShippingAddress())
-				.set(SALES.SELLER, sales.getSeller())
+				.set(SALES.SHIPPING_ADDRESS, sales.getShippingAddress().getId())
+				.set(SALES.SELLER, sales.getSeller().getId())
 				.set(SALES.DISCOUNT_EXPR, sales.getDiscountExpr())
-				.set(SALES.ISSUE_DATE, new java.sql.Date(sales.getIssueDate().getTime()))
-				.set(SALES.PAY_METHOD, sales.getPayMethod())
-				.set(SALES.DOCUMENT_TYPE, (byte)sales.getDocumentType())
-				.set(SALES.SECURITY_LEVEL, (byte)sales.getSecurityLevel())
+				.set(SALES.ISSUE_DATE, AonDateUtils.toSql(sales.getDate()))
+				.set(SALES.PAY_METHOD, sales.getPayMethod().getId())
+				.set(SALES.DOCUMENT_TYPE,  sales.getDocumentType().value())
+				.set(SALES.SECURITY_LEVEL, sales.getSecurityLevel().value())
 				.set(SALES.STATUS, sales.getStatus().value())
 				.set(SALES.COMMENTS, sales.getComments())
 				.set(SALES.REMARKS, sales.getRemarks())
-				.set(SALES.WORKPLACE, sales.getWorkplace())
-				.set(SALES.SCOPE, sales.getScope())
-				.set(SALES.NUMBER_OF_PYMNTS, (short)sales.getNumberOfPymnts())
-				.set(SALES.DAYS_TO_FIRST_PYMNT, (short)sales.getDaysToFirstPymnt())
-				.set(SALES.DAYS_BETWEEN_PYMNTS, (short)sales.getDaysBetweenPymnts())
+				.set(SALES.WORKPLACE, sales.getWorkplace().getId())
+				.set(SALES.SCOPE, sales.getScope().getId())
+				.set(SALES.NUMBER_OF_PYMNTS, sales.getNumberOfPymnts())
+				.set(SALES.DAYS_TO_FIRST_PYMNT, sales.getDaysToFirstPymnt())
+				.set(SALES.DAYS_BETWEEN_PYMNTS, sales.getDaysBetweenPymnts())
 				.set(SALES.PYMNT_DAYS, sales.getPymntDays())
 				.set(SALES.BANK_ACCOUNT, sales.getBankAccount())
 				.set(SALES.BANK_ALIAS, sales.getBankAlias())
 				.set(SALES.BIC, sales.getBic())
 				.set(SALES.PURCHASE_GENERATED, (byte) (sales.isPurchaseGenerated() ? 1 : 0 ))
-				.set(SALES.CARRIER, sales.getCarrier())
+				.set(SALES.CARRIER, sales.getCarrier().getId())
 				.set(SALES.SHIPPING_ALTERNATIVE_ADDRESS, sales.getShippingAlternativeAddress())
 				.set(SALES.SHIPPING_ALTERNATIVE_ADDRESS2, sales.getShippingAlternativeAddress2())
 				.set(SALES.SHIPPING_ALTERNATIVE_ZIP, sales.getShippingAlternativeZip())
@@ -234,122 +374,113 @@ public class SalesDAO {
 				.set(SALES.SHIPPING_ALTERNATIVE_PHONE, sales.getShippingAlternativePhone())
 				.set(SALES.SHIPPING_ALTERNATIVE_RECIPIENT, sales.getShippingAlternativeRecipient())
 				.set(SALES.SHIPPING_CONTACT, sales.getShippingContact())
-				.set(SALES.SHIPPING_PERIOD, sales.getShippingPeriod()!=null?sales.getShippingPeriod().byteValue():null)
+				.set(SALES.SHIPPING_PERIOD, sales.getShippingPeriodValue())
+				.set(SALES.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(SALES.CREATION_USER, ctx.getUser())
+				.set(SALES.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.set(SALES.MODIFICATION_USER, ctx.getUser())
-				.set(SALES.MODIFICATION_DATE, modificationDate)
+				.returning(SALES.ID).fetchOne().getId();
+			
+		return sales.setId(id);
+	}
+	
+	/**
+	 * @deprecated  Replaced by save
+	 */
+	@Deprecated(forRemoval = true )
+	public static int insertSales(AONContext ctx, Sales sales) {
+		return insert(ctx, sales).getId();
+	}
+
+	public static Sales update(AONContext ctx, Sales sales) {
+		ctx.checkWrite();
+		
+		ctx.getDslContext()
+				.update(SALES)
+				.set(SALES.DOMAIN, sales.getDomain())
+				.set(SALES.PROJECT, sales.getProject().getId())
+				.set(SALES.CUSTOMER, sales.getCustomer().getId())
+				.set(SALES.SERIES, sales.getSeries())
+				.set(SALES.NUMBER, sales.getNumber())
+				.set(SALES.PURCHASE_REFERENCE, sales.getPurchaseReference())
+				.set(SALES.SHIPPING_ADDRESS, sales.getShippingAddress().getId())
+				.set(SALES.SELLER, sales.getSeller().getId())
+				.set(SALES.DISCOUNT_EXPR, sales.getDiscountExpr())
+				.set(SALES.ISSUE_DATE, AonDateUtils.toSql(sales.getDate()))
+				.set(SALES.PAY_METHOD, sales.getPayMethod().getId())
+				.set(SALES.DOCUMENT_TYPE, sales.getDocumentType().value())
+				.set(SALES.SECURITY_LEVEL, sales.getSecurityLevel().value())
+				.set(SALES.STATUS, sales.getStatus().value())
+				.set(SALES.COMMENTS, sales.getComments())
+				.set(SALES.REMARKS, sales.getRemarks())
+				.set(SALES.WORKPLACE, sales.getWorkplace().getId())
+				.set(SALES.SCOPE, sales.getScope().getId())
+				.set(SALES.NUMBER_OF_PYMNTS, sales.getNumberOfPymnts())
+				.set(SALES.DAYS_TO_FIRST_PYMNT, sales.getDaysToFirstPymnt())
+				.set(SALES.DAYS_BETWEEN_PYMNTS, sales.getDaysBetweenPymnts())
+				.set(SALES.PYMNT_DAYS, sales.getPymntDays())
+				.set(SALES.BANK_ACCOUNT, sales.getBankAccount())
+				.set(SALES.BANK_ALIAS, sales.getBankAlias())
+				.set(SALES.BIC, sales.getBic())
+				.set(SALES.PURCHASE_GENERATED, (byte) (sales.isPurchaseGenerated() ? 1 : 0 ))
+				.set(SALES.CARRIER, sales.getCarrier().getId())
+				.set(SALES.SHIPPING_ALTERNATIVE_ADDRESS, sales.getShippingAlternativeAddress())
+				.set(SALES.SHIPPING_ALTERNATIVE_ADDRESS2, sales.getShippingAlternativeAddress2())
+				.set(SALES.SHIPPING_ALTERNATIVE_ZIP, sales.getShippingAlternativeZip())
+				.set(SALES.SHIPPING_ALTERNATIVE_CITY, sales.getShippingAlternativeCity())
+				.set(SALES.SHIPPING_ALTERNATIVE_PHONE, sales.getShippingAlternativePhone())
+				.set(SALES.SHIPPING_ALTERNATIVE_RECIPIENT, sales.getShippingAlternativeRecipient())
+				.set(SALES.SHIPPING_CONTACT, sales.getShippingContact())
+				.set(SALES.SHIPPING_PERIOD, sales.getShippingPeriodValue())
+				.set(SALES.MODIFICATION_USER, ctx.getUser())
+				.set(SALES.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.where(SALES.ID.eq(sales.getId()))
 				.execute();
+		return sales;
 	}
 	
+	/**
+	 * @deprecated  Replaced by save
+	 */
+	@Deprecated(forRemoval = true )
+	public static void updateSales(AONContext ctx, Sales sales) {
+		update(ctx, sales);
+	}
+	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.save
+	 */
+	@Deprecated(forRemoval = true )
 	public static void insertSalesDetail(AONContext ctx, SalesDetail detail) {
-		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-
-		ctx.getDslContext()
-				.insertInto(SALES_DETAIL, SALES_DETAIL.DOMAIN,
-						SALES_DETAIL.SALES, SALES_DETAIL.LINE,
-						SALES_DETAIL.ITEM, SALES_DETAIL.DESCRIPTION,
-						SALES_DETAIL.QUANTITY, SALES_DETAIL.PRICE,
-						SALES_DETAIL.DISCOUNT_EXPR, SALES_DETAIL.TAXES,
-						SALES_DETAIL.STATUS, SALES_DETAIL.OFFER_DETAIL,
-						SALES_DETAIL.DELIVERED, SALES_DETAIL.CREATION_USER,
-						SALES_DETAIL.CREATION_DATE,
-						SALES_DETAIL.MODIFICATION_USER,
-						SALES_DETAIL.MODIFICATION_DATE)
-				.values(detail.getDomain(), detail.getSales().getId(),
-						detail.getLine(), detail.getItem().getId(),
-						detail.getDescription(), detail.getQuantity(),
-						detail.getPrice(), detail.getDiscountExpression(),
-						detail.getTaxes(), (byte) detail.getStatus().ordinal(),
-						detail.getOfferDetail(), detail.getDelivered(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).execute();
+		SalesDetailDAO.save(ctx, detail);
 	}
 	
+	/**
+	 * @deprecated  Replaced by SalesDetailDAO.save
+	 */
+	@Deprecated(forRemoval = true )
 	public static void updateSalesDetail(AONContext ctx, SalesDetail detail) {
+		SalesDetailDAO.save(ctx, detail);
+	}
+	
+	// ----- DELETE
+	
+	public static void delete(AONContext ctx, Integer salesId) {
+		SalesDetailDAO.delete(ctx, f -> f.getSalesProperty().eq(salesId));
+		delete(ctx, f -> f.getIdProperty().eq(salesId));
+	}
+	
+	public static void delete(AONContext ctx, SalesFilter filter) {
 		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		ctx.getDslContext()
+			.delete(SALES)
+			.where(SALES_PROPERTIES.getConditions(filter))
+			.execute();
+	}
+	
+	// ----- OTHER
 
-		ctx.getDslContext()
-				.update(SALES_DETAIL)
-				.set(SALES_DETAIL.LINE, detail.getLine())
-				.set(SALES_DETAIL.ITEM, detail.getItem().getId())
-				.set(SALES_DETAIL.DESCRIPTION, detail.getDescription())
-				.set(SALES_DETAIL.QUANTITY, detail.getQuantity())
-				.set(SALES_DETAIL.PRICE, detail.getPrice())
-				.set(SALES_DETAIL.DISCOUNT_EXPR, detail.getDiscountExpression())
-				.set(SALES_DETAIL.TAXES, detail.getTaxes())
-				.set(SALES_DETAIL.STATUS, (byte) detail.getStatus().ordinal())
-				.set(SALES_DETAIL.OFFER_DETAIL, detail.getOfferDetail())
-				.set(SALES_DETAIL.DELIVERED, detail.getDelivered())
-				.set(SALES_DETAIL.MODIFICATION_USER, ctx.getUser())
-				.set(SALES_DETAIL.MODIFICATION_DATE, modificationDate)
-				.where(SALES_DETAIL.ID.eq(detail.getId())).execute();
-	}
-	
-	public static void deleteSalesDetail(AONContext ctx, Sales sales) {
-		ctx.checkWrite();
-		ctx.getDslContext()
-				.delete(SALES_DETAIL)
-				.where(SALES_DETAIL.SALES.eq(sales.getId())).execute();
-	}
-	
-	public static Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter){
-		return ctx.getDslContext().select().from(SALES)
-				.where(SALES_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new SalesFiller()).filter(distinctByKey(p -> p.getId()));
-	}
-	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-	    Map<Object,Boolean> seen = new ConcurrentHashMap<>();
-	    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-	}
-	
-	public static Sales getSales(AONContext ctx, SalesFilter filter){
-		return ctx.getDslContext().select().from(SALES).where(SALES_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(SALES).stream().map(new SalesFiller()).findFirst().orElse(new Sales());
-	}
-	
-	public static Sales getSales(AONContext ctx, Integer salesId){	
-		return getSales(ctx, o -> o.getIdProperty().eq(salesId));
-	}
-	
-	public static Sales getSales(AONContext ctx, String series, int number) {
-		return getSales(ctx, o -> o.getSeriesProperty().eq(series).and(o.getNumberProperty().eq(number)));
-	}
-	
-	public static Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter){
-		return ctx.getDslContext().select().from(SALES_DETAIL)
-				.join(ITEM).on(SALES_DETAIL.ITEM.eq(ITEM.ID))
-				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-				.join(SALES).on(SALES_DETAIL.SALES.eq(SALES.ID))
-			.where(SALES_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new SalesDetailFiller());
-	}
-	
-	public static SalesDetail getSalesDetail(AONContext ctx, SalesDetailFilter filter){
-		return ctx.getDslContext().select().from(SALES_DETAIL).where(SALES_DETAIL_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(SALES_DETAIL).stream().map(new SalesDetailFiller()).findFirst().orElse(new SalesDetail());
-	}
-	
-	public static SalesDetail getSalesDetail(AONContext ctx, Integer detailId){	
-		return getSalesDetail(ctx, o -> o.getIdProperty().eq(detailId));
-	}
-	
-	public static SalesDetail getSalesDetail(AONContext ctx, Integer salesId, Short line){	
-		return getSalesDetail(ctx, o -> o.getSalesProperty().eq(salesId).and(o.getLineProperty().eq(line)));
-	}
-	
-	public static List<Customer> getCustomerList(AONContext ctx, String document) {
-		return ctx.getDslContext().select().from(CUSTOMER).join(REGISTRY)
-				.on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-				.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
-				.and(REGISTRY.DOCUMENT.eq(document)).fetch().stream()
-				.map(new CustomerFiller()).collect(Collectors.toList());
-	}
-	
+	@Deprecated
 	public static void createCustomer(AONContext ctx, int domain,
 			int registry, int scope) {
 		ctx.checkWrite();
@@ -365,6 +496,7 @@ public class SalesDAO {
 						ctx.getUser()).execute();
 	}
 	
+	@Deprecated
 	public static void createSeller(AONContext ctx, int domain, int registry,
 			int scope) {
 		ctx.checkWrite();
@@ -373,7 +505,8 @@ public class SalesDAO {
 						SELLER.SCOPE, SELLER.STATUS)
 				.values(domain, registry, scope, (byte) 0).execute();
 	}
-	
+
+	@Deprecated
 	public static void createCarrier(AONContext ctx, int domain, int registry,
 			int scope) {
 		ctx.checkWrite();
@@ -383,6 +516,7 @@ public class SalesDAO {
 				.execute();
 	}
 	
+	@Deprecated
 	public static void createRegistry(AONContext ctx, int domain, int id,
 			Byte type, String name, String alias, String nationality,
 			Byte documentType, String documentCountry, String document) {
@@ -396,6 +530,7 @@ public class SalesDAO {
 						documentType, documentCountry, document).execute();
 	}
 
+	@Deprecated
 	public static void createRegistryAddress(AONContext ctx, int domain,
 			int id, int registry, String alias, byte type, String recipient,
 			String streetType, String address, String address2,
@@ -414,6 +549,7 @@ public class SalesDAO {
 						city, geozone, municipalityCode).execute();
 	}
 	
+	@Deprecated
 	public static void createWorkplace(AONContext ctx, int domain, int id,
 			int enterprise, byte active, int address, Integer customer,
 			String description, Byte economicAgreement, int scope) {
@@ -428,115 +564,9 @@ public class SalesDAO {
 						description, economicAgreement, scope).execute();
 	}
 	
+	// ----- FILLER
 	
-	private static Result<Record> getFullSales(AONContext ctx, SalesFilter filter) {
-		ctx.checkRead();
-
-		return ctx.getDslContext()
-			.select(
-				 SALES.ID
-				,SALES.DOMAIN
-				,SALES.STATUS
-				,SALES.SERIES
-				,SALES.NUMBER
-				,SALES.DOCUMENT_TYPE
-				,SALES.ISSUE_DATE
-				,SALES.PURCHASE_REFERENCE
-				,SALES.SHIPPING_ADDRESS
-				,REGISTRY.ID
-				,REGISTRY.DOCUMENT
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.NAME
-				,SCOPE.DESCRIPTION
-				,PROJECT.NAME
-				,SALES_DETAIL.LINE
-				,SALES_DETAIL.ITEM
-				,PCATEGORY.NAME
-				,PRODUCT.ID
-				,PRODUCT.NAME
-				,PRODUCT.CODE
-				,ITEM.DETAIL
-				,ITEM.DETAIL2
-				,ITEM.DETAIL3
-				,ITEM.DESCRIPTION
-				,SALES_DETAIL.DESCRIPTION
-				,SALES_DETAIL.QUANTITY
-				,SALES_DETAIL.PRICE
-				,SALES_DETAIL.DISCOUNT_EXPR
-				,WORKPLACE.DESCRIPTION
-			)
-			.from(SALES)
-			.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
-			.join(REGISTRY).on(REGISTRY.ID.equal(SALES.CUSTOMER))
-			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))
-			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(SALES.PROJECT))
-			.leftOuterJoin(ITEM).on(ITEM.ID.equal(SALES_DETAIL.ITEM))
-			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
-			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
-			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
-			.where(SALES_PROPERTIES.getConditions(filter))
-			.orderBy(SALES.ISSUE_DATE,SALES.SERIES,SALES.NUMBER,SALES_DETAIL.LINE)
-			.fetch();
-	}
-	
-	public static Stream<SalesDetail> getSalesDetails(AONContext ctx, SalesFilter filter) {
-		return getFullSales(ctx, filter)
-			.stream()
-			.map(new FullSaleDetailFiller2());
-	}
-	
-	private static class FullSaleDetailFiller2  implements Function<Record,SalesDetail> {
-
-		@Override
-		public SalesDetail apply(Record record) {
-			Customer customer = new Customer();
-			customer.setId(record.getValue(REGISTRY.ID));
-			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
-			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
-									record.getValue(REGISTRY.DOCUMENT_TYPE)));
-			customer.setDocumentCountry(Country.safeValueOf(record
-									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
-			customer.setName(record.getValue(REGISTRY.NAME));
-			
-			return new SalesDetail()
-				.setSales(new Sales()
-					.setId(record.getValue(SALES.ID))
-					.setDomain(record.getValue(SALES.DOMAIN))
-					.setDocumentType(record.getValue(SALES.DOCUMENT_TYPE))
-					.setStatus(AonEnumUtils.enumValue(SalesStatus.class,
-									record.getValue(SALES.STATUS)))
-					.setSeries(record.getValue(SALES.SERIES))
-					.setNumber(record.getValue(SALES.NUMBER))
-					.setIssueDate(record.getValue(SALES.ISSUE_DATE))
-					.setCustomer(customer)
-					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
-					.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
-					.setProjectName(record.getValue(PROJECT.NAME))
-					.setShippingAddress(record.getValue(SALES.SHIPPING_ADDRESS))
-					)
-				
-				.setLine(record.getValue(SALES_DETAIL.LINE))
-				.setDescription(record.getValue(SALES_DETAIL.DESCRIPTION))
-				.setQuantity(record.getValue(SALES_DETAIL.QUANTITY))
-				.setPrice(record.getValue(SALES_DETAIL.PRICE))
-				.setDiscountExpression(record.getValue(SALES_DETAIL.DISCOUNT_EXPR))
-				.setItem((record.getValue(SALES_DETAIL.ITEM) == null)
-					? null
-					: new OldItem()
-						.setId(record.getValue(SALES_DETAIL.ITEM))
-						.setCategory(record.getValue(PCATEGORY.NAME))
-						.setProductId(record.getValue(PRODUCT.ID))
-						.setName(record.getValue(PRODUCT.NAME))
-						.setCode(record.getValue(PRODUCT.CODE))
-						.setDetail(record.getValue(ITEM.DETAIL))
-						.setDetail2(record.getValue(ITEM.DETAIL2))
-						.setDetail3(record.getValue(ITEM.DETAIL3))
-						.setDescription(record.getValue(ITEM.DESCRIPTION)));
-		}
-	}
-	
-	private static class SalesFiller extends Filler implements Function<Record, Sales> {
+	public static class SalesFiller extends Filler implements Function<Record, Sales> {
 		
 		@Override
 		public Sales apply(Record r) {
@@ -546,72 +576,62 @@ public class SalesDAO {
 		public static Sales build(Record r) {
 			return new Sales()
 				.setId(getValue(r, SALES.ID))
-				.setDomain(r.getValue(SALES.DOMAIN))
-				.setProject(r.getValue(SALES.PROJECT))
-				.setCustomer(new Customer().setId(r.getValue(SALES.CUSTOMER)))
-				.setSeries(r.getValue(SALES.SERIES))
-				.setNumber(r.getValue(SALES.NUMBER))
-				.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE))
-				.setShippingAddress(r.getValue(SALES.SHIPPING_ADDRESS))
-				.setSeller(r.getValue(SALES.SELLER))
+				.setDomain(getValue(r, SALES.DOMAIN))
+				.setProject(checkField(r, PROJECT.ID)
+						? ProjectFiller.build(r)
+						: new Project().setId(getValue(r, SALES.PROJECT)))
+				.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, CUSTOMER_ALIAS.ID)
+						? CustomerFiller.buildCustomer(r, CUSTOMER_ALIAS)
+						: new Customer().setId(getValue(r, SALES.CUSTOMER)))
+				.setSeries(getValue(r, SALES.SERIES))
+				.setNumber(getValue(r, SALES.NUMBER))
+				.setPurchaseReference(getValue(r, SALES.PURCHASE_REFERENCE))
+				.setShippingAddress(checkField(r, RADDRESS.ID)
+					? RegistryAddressFiller.build(r)
+					: new RegistryAddress().setId(getValue(r, SALES.SHIPPING_ADDRESS)))
+				.setSeller(checkField(r, SELLER.REGISTRY) || checkField(r, SELLER_ALIAS.ID)
+					? SellerFiller.build(r) 	
+					: new Seller().setId(getValue(r, SALES.SELLER)))
 				.setDiscountExpr(r.getValue(SALES.DISCOUNT_EXPR))
-				.setIssueDate(r.getValue(SALES.ISSUE_DATE))
+				.setDate(r.getValue(SALES.ISSUE_DATE))
 				.setDeliveryDate(r.getValue(SALES.DELIVERY_DATE))
-				.setPayMethod(r.getValue(SALES.PAY_METHOD))
-				.setDocumentType((int) r.getValue(SALES.DOCUMENT_TYPE))
-				.setSecurityLevel((int) r.getValue(SALES.SECURITY_LEVEL))
+				.setPayMethod(checkField(r, PAY_METHOD.ID)
+					? PayMethodFiller.build(r)
+					: new PayMethod().setId(r.getValue(SALES.PAY_METHOD)))
+				.setDocumentType(SalesType.safeValueOf(r.getValue(SALES.DOCUMENT_TYPE)))
+				.setSecurityLevel(SecurityLevel.safeValueOf(getValue(r, SALES.SECURITY_LEVEL)))
 				.setStatus(SalesStatus.values()[r.getValue(SALES.STATUS)])
 				.setComments(r.getValue(SALES.COMMENTS))
 				.setRemarks(r.getValue(SALES.REMARKS))
-				.setWorkplace(r.getValue(SALES.WORKPLACE))
-				.setScope(r.getValue(SALES.SCOPE))
-				.setNumberOfPymnts((int) r.getValue(SALES.NUMBER_OF_PYMNTS))
-				.setDaysToFirstPymnt((int) r.getValue(SALES.DAYS_TO_FIRST_PYMNT))
-				.setDaysBetweenPymnts((int) r.getValue(SALES.DAYS_BETWEEN_PYMNTS))
-				.setPymntDays(r.getValue(SALES.PYMNT_DAYS))
-				.setBankAccount(r.getValue(SALES.BANK_ACCOUNT))
-				.setBankAlias(r.getValue(SALES.BANK_ALIAS))
-				.setBic(r.getValue(SALES.BIC))
-				.setPurchaseGenerated(r.getValue(SALES.PURCHASE_GENERATED)==1)
-				.setCarrier(r.getValue(SALES.CARRIER))
-				.setShippingAlternativeAddress(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS))
-				.setShippingAlternativeAddress2(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS2))
-				.setShippingAlternativeZip(r.getValue(SALES.SHIPPING_ALTERNATIVE_ZIP))
-				.setShippingAlternativeCity(r.getValue(SALES.SHIPPING_ALTERNATIVE_CITY))
-				.setShippingAlternativePhone(r.getValue(SALES.SHIPPING_ALTERNATIVE_PHONE))
-				.setShippingAlternativeRecipient(r.getValue(SALES.SHIPPING_ALTERNATIVE_RECIPIENT))
-				.setShippingContact(r.getValue(SALES.SHIPPING_CONTACT))
-				.setShippingPeriod(r.getValue(SALES.SHIPPING_PERIOD)!=null?r.getValue(SALES.SHIPPING_PERIOD).intValue():null);
-				
+				.setWorkplace(checkField(r, WORKPLACE.ID)
+					? WorkplaceFiller.build(r)
+					: new Workplace().setId(r.getValue(SALES.WORKPLACE)))
+				.setScope(checkField(r, SCOPE.ID)
+					? ScopeFiller.buildScope(r)
+					: new Scope().setId(getValue(r, SALES.SCOPE)))
+				.setNumberOfPymnts(getShort(r, SALES.NUMBER_OF_PYMNTS))
+				.setDaysToFirstPymnt(getShort(r, SALES.DAYS_TO_FIRST_PYMNT))
+				.setDaysBetweenPymnts(getShort(r, SALES.DAYS_BETWEEN_PYMNTS))
+				.setPymntDays(getValue(r, SALES.PYMNT_DAYS))
+				.setBankAccount(getValue(r, SALES.BANK_ACCOUNT))
+				.setBankAlias(getValue(r, SALES.BANK_ALIAS))
+				.setBic(getValue(r, SALES.BIC))
+				.setPurchaseGenerated(getBoolean(r, SALES.PURCHASE_GENERATED))
+				.setCarrier(checkField(r, CARRIER.REGISTRY) || checkField(r, CARRIER_ALIAS.ID)
+						? CarrierFiller.build(r)
+						: new Carrier().setId(getValue(r, SALES.CARRIER)))
+				.setShippingAlternativeAddress(getValue(r, SALES.SHIPPING_ALTERNATIVE_ADDRESS))
+				.setShippingAlternativeAddress2(getValue(r, SALES.SHIPPING_ALTERNATIVE_ADDRESS2))
+				.setShippingAlternativeZip(getValue(r, SALES.SHIPPING_ALTERNATIVE_ZIP))
+				.setShippingAlternativeCity(getValue(r, SALES.SHIPPING_ALTERNATIVE_CITY))
+				.setShippingAlternativePhone(getValue(r, SALES.SHIPPING_ALTERNATIVE_PHONE))
+				.setShippingAlternativeRecipient(getValue(r, SALES.SHIPPING_ALTERNATIVE_RECIPIENT))
+				.setShippingContact(getValue(r, SALES.SHIPPING_CONTACT))
+				.setShippingPeriod(ShipmentPeriod.safeValueOf(getValue(r, SALES.SHIPPING_PERIOD)))
+				.setCreationDate(getValue(r, SALES.CREATION_DATE))
+				.setCreationUser(getValue(r, SALES.CREATION_USER))
+				.setModificationDate(getValue(r, SALES.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, SALES.MODIFICATION_USER));
 		}
-	}
-
-	
-	private static class SalesDetailFiller extends Filler implements Function<Record, SalesDetail> {
-
-		@Override
-		public SalesDetail apply(Record r) {
-			return build(r);
-		}
-	
-		public static SalesDetail build(Record r) {
-			return new SalesDetail()
-				.setId(r.getValue(SALES_DETAIL.ID))
-				.setDomain(r.getValue(SALES_DETAIL.DOMAIN))
-				.setSales(checkField(r, SALES.ID) 
-					? SalesFiller.build(r) 
-					: new Sales().setId(r.getValue(SALES_DETAIL.SALES)))
-				.setItem(new OldItem().setId(r.getValue(SALES_DETAIL.ITEM)))
-				.setLine(r.getValue(SALES_DETAIL.LINE))
-				.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION))
-				.setQuantity(r.getValue(SALES_DETAIL.QUANTITY))
-				.setPrice(r.getValue(SALES_DETAIL.PRICE))
-				.setDiscountExpression(r.getValue(SALES_DETAIL.DISCOUNT_EXPR))
-				.setTaxes(r.getValue(SALES_DETAIL.TAXES))
-				.setStatus(SalesDetailStatus.values()[r.getValue(SALES_DETAIL.STATUS)])
-				.setOfferDetail(r.getValue(SALES_DETAIL.OFFER_DETAIL))
-				.setDelivered(r.getValue(SALES_DETAIL.DELIVERED));
-		}
-	
 	}
 }

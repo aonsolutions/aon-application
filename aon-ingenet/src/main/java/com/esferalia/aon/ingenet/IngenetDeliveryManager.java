@@ -13,14 +13,18 @@ import org.jooq.TransactionalRunnable;
 import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -146,11 +150,11 @@ public class IngenetDeliveryManager {
 				ctx.getUser(), deliveryId);
 		delivery.setDomain(ctx.getDomainId());
 		delivery.setStatus(DeliveryStatus.PENDING);
-		delivery.setScope(scopes[0]);
+		delivery.setScope(new Scope().setId(scopes[0]));
 		delivery.setIssueTime(new Date());
 		delivery.setPayMethod(null);
-		delivery.setWorkplace(workplaceId);
-		delivery.setAddress(aonSales.getShippingAddress());
+		delivery.setWorkplace(new Workplace().setId(workplaceId));
+		delivery.setAddress(new RegistryAddress().setId(aonSales.getShippingAddress().getId()));
 		delivery.setComments("Fecha de carga: "
 				+ dateFormat.format(aonSales.getIssueDate()));
 		delivery.setId(WarehouseDAO.insertDelivery(ctx, delivery));
@@ -318,11 +322,11 @@ public class IngenetDeliveryManager {
 		int domainId = IngenetContext.getUdapaDomainId();
 		AONContext ctx = IngenetContext.getAONContext(domainName, domainId,
 				user);
-		Delivery delivery = WarehouseDAO.getDelivery(ctx, deliveryId);
+		Delivery delivery = DeliveryDAO.get(ctx, deliveryId);
 		delivery.setStatus(DeliveryStatus.INVOICED);
 		delivery.setModificationUser(user);
 		delivery.setModificationDate(new Date());
-		WarehouseDAO.updateDelivery(ctx, delivery);
+		DeliveryDAO.save(ctx, delivery);
 	}
 	
 	

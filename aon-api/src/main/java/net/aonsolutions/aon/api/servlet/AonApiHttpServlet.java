@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,27 +86,9 @@ public class AonApiHttpServlet extends HttpServlet{
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
 		Domain domain = getDomain(req, api);
-		
 		api.setDomain(domain);
 		
-		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
-		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
-			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
-		} else if(AonStringUtils.isBlank(domainLogin) && api.getData().opt("userLogin") != null) {
-			domainLogin = api.getData().getString("userLogin");
-		}
-		User user = new User().setLogin("");
-		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
-			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-					.and(f.getDomainProperty().eq(api.getDomain().getId())));
-			if(user == null || user.getId() == null) {
-				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
-			}
-		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
-			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
-		}
+		User user = getUser(req, api, domain);
 		api.setUser(user);
 		
 		api.setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
@@ -135,6 +119,29 @@ public class AonApiHttpServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 		return domain;
+	}
+	
+	private User getUser(HttpServletRequest req, AonApiData api, Domain domain) {
+		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
+		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
+			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
+		} else if(AonStringUtils.isBlank(domainLogin) && api.getData().opt("userLogin") != null) {
+			domainLogin = api.getData().getString("userLogin");
+		}
+		User user = new User().setLogin("");
+		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+					.and(f.getDomainProperty().eq(api.getDomain().getId())));
+			if(user == null || user.getId() == null) {
+				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
+			}
+		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
+		}
+		if(user.getLogin() == null) user.setLogin("");
+		return user;
 	}
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
@@ -178,16 +185,25 @@ public class AonApiHttpServlet extends HttpServlet{
 		responseFile(resp, filename, is, mimetype);
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype, String contentDisposition) throws IOException {
+		ByteArrayInputStream is =  new ByteArrayInputStream(file);
+		responseFile(resp, filename, is, mimetype, contentDisposition);
+	}
+
+	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype) throws IOException {
+		responseFile(resp, filename, is, mimetype, "inline");
+	}
+	
+	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype, String contentDisposition) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
-		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
+		resp.setHeader(IConstants.CONTENT_DISPOSITION, contentDisposition + "; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
 		AonIOUtils.copy(is, resp.getOutputStream());
 		resp.flushBuffer();
 		is.close();
 	}
 	
-	public void responseFile(HttpServletResponse resp, String filename, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, MimeType mimetype) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
@@ -265,5 +281,15 @@ public class AonApiHttpServlet extends HttpServlet{
 				throw new AonApiException(AonApiError.EXPIRED_TOKEN.getMessage());
 			}
 		}
+	}
+	
+	public String decode(byte[] value){
+		String decode = "";
+		try{
+			decode = new String(Base64.getDecoder().decode(value), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return decode;
 	}
 }

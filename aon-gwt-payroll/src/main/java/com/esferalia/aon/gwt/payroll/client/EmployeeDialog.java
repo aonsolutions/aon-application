@@ -189,6 +189,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		public void onContractQuoteGroupChange(String quoteGroup) {
 			employeeDialogObject.setContractQuoteGroup(quoteGroup);
 		}
+		
+		@Override
+		public void onContractQuoteGroupIdx(boolean quoteGroupMonth) {
+			employeeDialogObject.setContractQuoteIdxMonth(quoteGroupMonth);
+		}
 
 		@Override
 		public void onContractOccupationChange(String occupation) {
@@ -587,6 +592,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 		
 		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
+		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		employee.partialityCoef.setValue(contractData.getPartialityCoef());

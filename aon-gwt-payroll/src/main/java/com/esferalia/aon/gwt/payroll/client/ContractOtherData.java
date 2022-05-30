@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -14,6 +15,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -21,7 +23,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ContractOtherData extends ResizeComposite {
+public abstract class ContractOtherData extends ResizeComposite {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -515,11 +517,13 @@ public class ContractOtherData extends ResizeComposite {
 	@UiField
 	ListBox employerPracLB;
 	
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	private EmployeeContractInfo contractEmployeeInfo;
+	private Integer contractType;
 	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
-	public ContractOtherData() {
+	protected ContractOtherData() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initializeView();
 	}
@@ -1872,8 +1876,12 @@ public class ContractOtherData extends ResizeComposite {
 
 	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo) {
 		this.contractEmployeeInfo = contractEmployeeInfo;
-		Integer contractType = getContractType(contractEmployeeInfo.getContractInfo().getContractType());
-		fillContractOtherData(contractType);
+		this.contractType = getContractType(contractEmployeeInfo.getContractInfo().getContractType());
+		reloadOtherData();
+	}
+	
+	private void reloadOtherData() {
+		getContractOtherDataDB(s -> fillContractOtherData(this.contractType), f -> showErrorMessage("Error obtenci\u00f3n Otros Datos", f.getMessage()));
 	}
 	
 	public Integer getContractType(String contractTypeStr) {
@@ -2101,5 +2109,65 @@ public class ContractOtherData extends ResizeComposite {
 	public  Map<String, String> getContractInfo() {
 		return this.contractEmployeeInfo.getContractOtherData();
 	}
+	
+	// ------------------------------------------------------ Abstract Methods
 
+	protected abstract void showErrorMessage(String title, String message);
+
+	protected abstract void showSuccessMessage(String title, String message);
+	
+	protected abstract void showLoadingMessage(String message);
+	
+	protected abstract void onContractPDF();
+	
+	// ------------------------------------------------------ Toolbar Methods
+
+	public void saveOhterData() {
+		showLoadingMessage("Guardando otros datos de contrato...");
+		saveOhterDataDB(s -> {
+				showSuccessMessage("Otros Datos", "Otros datos de contrato guardados correctamente");
+				reloadOtherData();
+			}, f -> showErrorMessage("Error obtenci\u00f3n Otro Datos contrato", f.getMessage()));
+	}
+	
+	private void saveOhterDataDB(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
+		Integer contractId = contractEmployeeInfo.getContractInfo().getContractId();
+		String contractType = contractEmployeeInfo.getContractInfo().getContractType();
+		Map<String, String> contractOtherData = contractEmployeeInfo.getContractOtherData();
+		
+		enterprisesService.setContractOtherInfo(contractId, contractType, contractOtherData, new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> contractOtherData) {
+				success.accept(contractOtherData);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
+	public void getContractOtherDataDB(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
+		Integer contractId = contractEmployeeInfo.getContractInfo().getContractId();
+		String contractType = contractEmployeeInfo.getContractInfo().getContractType();
+		
+		enterprisesService.getContractOtherInfo(contractId, contractType, new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> contractOtherData) {
+				contractEmployeeInfo.setContractOtherData(contractOtherData);
+				success.accept(contractOtherData);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
 }

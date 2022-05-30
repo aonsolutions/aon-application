@@ -85,6 +85,7 @@ public interface IRequestParamsNames {
 	String MOD = "mod";
 	String NAME = "name";
 	String NEARBY_NUMBERS = "nearbyNumbers";
+	String NEW_DOMAIN_NAME = "newDomainName";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded";
 	String NRC = "nrc";

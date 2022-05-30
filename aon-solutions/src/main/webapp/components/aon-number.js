@@ -258,18 +258,27 @@ export class AonNumber extends AonElement {
 
     addIconButton(icon, fn) {
         this.addIcon(icon);
-        this.getElement(this.ICON_LABEL).addEventListener('click', (event) => {
+        this.getElement(this.ICON_LABEL).addEventListener(EVENT.CLICK, (event) => {
             event.preventDefault();
             fn();
         });
     }
 
-
     onChange(fn) {
         let input = this.getElement(this.getAttribute('id') + 'Input');
-        input.addEventListener('change', fn);
+        input.addEventListener(EVENT.CHANGE, fn);
     }
 
+    onInput(fn) {
+        let input = this.getElement(this.getAttribute('id') + 'Input');
+        input.addEventListener(EVENT.INPUT, fn);
+    }
+
+    setAlign(align){
+        let input = this.getElement(this.getAttribute('id') + 'Input');
+        input.style.textAlign = align;
+    }
+    
     onBlur(value) {
         let newValue = value;
         let decimals = this.decimals || 0;

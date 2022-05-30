@@ -104,7 +104,7 @@ public class ContractFill {
 					
 					if(null != renderFieldName) {
 						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
-						newValue = newValue.toUpperCase();
+						newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
 						setField(field, newValue);
 					} else {
 					
@@ -116,7 +116,7 @@ public class ContractFill {
 							} else {
 								if(!StringUtils.contains(valueStr, " ")){
 									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
-									newValue = newValue.toUpperCase();
+									newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
 									setField(field, newValue);
 								} else {
 									String newValue = "";
@@ -125,7 +125,7 @@ public class ContractFill {
 										if(splits[i].contains("_"))
 											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
 									}
-									newValue = newValue.toUpperCase();
+									newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
 									setField(field, newValue);
 								}
 							}
@@ -136,7 +136,7 @@ public class ContractFill {
 							
 							if(!StringUtils.contains(valueStr, " ")){
 								String newValue = contractFillInfo.getOrDefault(valueStr, "");
-								newValue = newValue.toUpperCase();
+								newValue = AonStringUtils.isBlank(newValue) ? newValue : newValue.toUpperCase();
 								setField(field, newValue);
 							}
 						}

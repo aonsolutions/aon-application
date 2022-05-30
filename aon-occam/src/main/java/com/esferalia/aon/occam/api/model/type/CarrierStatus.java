@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum CarrierStatus implements Serializable {
 
@@ -31,5 +32,14 @@ public enum CarrierStatus implements Serializable {
 		if (i == null) return null;
 		if (i < 0 || i >= CarrierStatus.values().length) return null;
 		return CarrierStatus.values()[i];
+	}
+	
+	public static CarrierStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (CarrierStatus rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
 	}
 }

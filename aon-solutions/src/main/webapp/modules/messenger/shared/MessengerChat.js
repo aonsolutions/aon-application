@@ -10,7 +10,6 @@ import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import * as ACTIONS from "../../actions.js";
 import { SigninSidenav } from "../../timecontrol/signinEnums.js";
 import { AonTab } from "../../../components/aon-tab.js";
-import { getTaskOne } from "../../../services/taskService.js";
 import { Task } from "../../../models/task/Task.js";
 import { sortBy } from "../../../services/utils.js";
 import { AonIcon } from "../../../components/aon-icon.js";
@@ -153,21 +152,18 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
       }
     });
 
-    if(task.getParent()){
-      await getTaskOne({id:task.getParent()}).then(t => {
+    let parentObj = task.getParentObj();
+    if(parentObj){
+      const tk = new Task(parentObj);
+      let title = getTitleHtml(tk, true);
 
-        const tk = new Task(t);
-        let title = getTitleHtml(tk, true);
-
-        tab.addOption({
-          title,
-          fn: ()=>{
-            buildChat(tk, wrapper);
-            aonMessengerChat.getTaskWorkflow(tk);
-          }
-        });
-
-      })
+      tab.addOption({
+        title,
+        fn: ()=>{
+          buildChat(tk, wrapper);
+          aonMessengerChat.getTaskWorkflow(tk);
+        }
+      });
     }
 
     sortBy(task.getChilds(), 'number').forEach(t=>{
@@ -366,7 +362,8 @@ const getTitleHtml = (task, isParent) => {
       position: "relative",
       fontSize: "1.4em",
       top: "3px",
-      marginLeft: "1px" 
+      marginLeft: "1px",
+      color:icon_color
     });
 
     icon.title = MSG.PARENT;
@@ -376,14 +373,21 @@ const getTitleHtml = (task, isParent) => {
     icon = new AonIcon();
     icon.icon = AON_ICONS.AON_BRANCH;
     icon.title = "Branch";
+    icon.color = icon_color;
   }
 
-  icon.color = icon_color;
- 
   span.appendChild(icon);
 
+  let assigned = "";   
+  if(task.task_holder&&task.task_holder.id)    {
+    assigned = task.task_holder.alias || task.task_holder.name; 
+  } else if(task.workgroup&&task.workgroup.description) {
+    assigned = task.workgroup.description;
+  }                                       
+   
   let spanTwo = document.createElement(TAG.SPAN);
   spanTwo.innerHTML = "#"+(task.number || "0").toString().padStart(5, 0);
+  spanTwo.title = assigned;
   span.appendChild(spanTwo);
 
   return span.outerHTML;

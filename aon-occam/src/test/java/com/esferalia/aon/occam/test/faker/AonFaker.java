@@ -33,10 +33,10 @@ import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -68,6 +68,8 @@ import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.SalesType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
@@ -600,7 +602,7 @@ public class AonFaker {
 			.setDomain(ctx.getDomainId())	
 			.setWorkplace(workplace.getId())
 			.setName(faker.beer().name())
-			.setActive((byte) 1);
+			.setActive(true);
 	}
 
 	public static Delivery getDelivery(AONContext ctx) {
@@ -616,13 +618,13 @@ public class AonFaker {
 		return new Delivery()
 				.setDomain(ctx.getDomainId())
 				.setProject(new Project())
-				.setIssueTime(new Date())
+				.setDate(new Date())
 				.setSeries(series)
 				.setNumber(number)
 				.setCustomer(customer)
-				.setWorkplace(workplace.getId())
+				.setWorkplace(workplace)
 				.setStatus(DeliveryStatus.PENDING)
-				.setScope(customer.getScope());		
+				.setScope(new Scope().setId(customer.getScope()));		
 	}
 	
 	public static DeliveryDetail getDeliveryDetail(AONContext ctx, Delivery delivery) {
@@ -655,24 +657,34 @@ public class AonFaker {
 		int number = SalesDAO.getNextNumber(ctx, series);
 		return new Sales()
 				.setDomain(ctx.getDomainId())
-				.setIssueDate(new Date())
+				.setDocumentType(SalesType.NORMAL)
+				.setSecurityLevel(SecurityLevel.OFFICIAL)
+				.setDate(new Date())
 				.setSeries(series)
 				.setNumber(number)
 				.setCustomer(customer)
-				.setWorkplace(workplace.getId())
+				.setWorkplace(workplace)
 				.setStatus(SalesStatus.PENDING)
-				.setScope(customer.getScope());		
+				.setShippingPeriod(ShipmentPeriod.NOON)
+				.setScope(new Scope().setId(customer.getScope()));		
+	}
+	
+	public static SalesDetail getSalesDetail(AONContext ctx) {
+		return getSalesDetail(ctx, null);
 	}
 	
 	public static SalesDetail getSalesDetail(AONContext ctx, Sales sales) {
-		
+		if(sales == null || sales.isEmpty()) {
+			sales = SalesDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+			if(sales == null || sales.getId() == null) sales = SalesDAO.save(ctx, getSales(ctx));
+		}
 		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(item == null || item.getId() == null) item = ItemDAO.save(ctx, getItem(ctx));
 		return new SalesDetail()
 				.setSales(sales)
 				.setDomain(ctx.getDomainId())
 				.setLine((short) 1)
-				.setItem(new OldItem().setId(item.getId()))
+				.setItem(new Item().setId(item.getId()))
 				.setDescription(faker.beer().name())
 				.setQuantity(1.0)
 				.setPrice(1.0)

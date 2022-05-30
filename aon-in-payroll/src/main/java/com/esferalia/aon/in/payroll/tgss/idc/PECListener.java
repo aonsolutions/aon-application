@@ -214,6 +214,18 @@ class PECListener  implements IdcParserListener {
 	
 	
 	// ------------------------------------------------------------------------
+	static String getBonusFormula(String code, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		return getFormula(BONUS_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+		
+	}
+	
+	static String getDeductionFormula(String code, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		return getFormula(DEDUCTION_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	private static PEC newBonus(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
@@ -250,17 +262,6 @@ class PECListener  implements IdcParserListener {
 		return ssDeduction;
 	}
 
-	private static String getBonusFormula(String code, String portTipo,
-			String quota, Date start, Date end) throws ParseException {
-		return getFormula(BONUS_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
-		
-	}
-	
-	private static String getDeductionFormula(String code, String portTipo,
-			String quota, Date start, Date end) throws ParseException {
-		return getFormula(DEDUCTION_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
-	}
-	
 	private static String getFormula(String expression, String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 

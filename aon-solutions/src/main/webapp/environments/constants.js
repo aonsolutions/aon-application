@@ -26,6 +26,7 @@ export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AON_USER_LIST = 'aonUserList';
+export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';

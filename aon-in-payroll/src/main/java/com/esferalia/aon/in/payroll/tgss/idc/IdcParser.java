@@ -122,7 +122,7 @@ public class IdcParser {
 				listener.onContractPartialCoeficient(matcher.group("partialCoef"));
 			}
 			
-			matcher = find(reader, CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC);
+			matcher = find(reader, CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC);
 			if ( hasData(matcher.group("quoteGroup"))) {
 				listener.onContractQuoteGroup(matcher.group("quoteGroup"));
 			}
@@ -309,9 +309,9 @@ public class IdcParser {
 	, Pattern.CASE_INSENSITIVE);
 	
 	//GC/M*: 08 RELEVO:  TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300 C.C.C.: 0111 11 112501771
-	protected static final Pattern CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC =
+	protected static final Pattern CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC =
 	Pattern.compile(
-	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   

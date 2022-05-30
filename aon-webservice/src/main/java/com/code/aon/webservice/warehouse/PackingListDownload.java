@@ -134,7 +134,7 @@ public class PackingListDownload extends HttpServlet{
 						|| delivery.getShippingAlternativePhone() != null
 						|| delivery.getShippingAlternativeRecipient() != null;	
 				
-				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
+				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress().getId()));
 				JSONObject addressJSON3= ToJSON.raddressToJSON(ra);
 
 				if(shippingAlternativeAddressDefined) {

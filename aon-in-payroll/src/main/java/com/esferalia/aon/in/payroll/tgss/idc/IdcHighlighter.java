@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,24 +27,128 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColorSpace;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationHighlight;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationPopup;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.watson.util.AonCharSequenceUtils;
-import com.esferalia.aon.watson.util.AonCharUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IdcHighlighter {
+	
+	public static interface Config {
+
+		default void setRectColor(Color color) throws IOException {};
+		
+		default void setRectLineWidth(float lineWidth) throws IOException{};
+		
+		default void setPopupTitle(String title) throws IOException {};
+		
+		default void setPopupColor(Color color) throws IOException {};
+	}
+
+	public static class ContentsConfig implements Config {
+		
+		private PDPageContentStream contents;
+		
+		private ContentsConfig(PDPageContentStream contents) {
+			this.contents = contents;
+		}
+		
+		@Override
+		public void setRectColor(Color color) throws IOException {
+			contents.setStrokingColor(color);
+			contents.setNonStrokingColor(color);
+		}
+		
+		@Override
+		public void setRectLineWidth(float lineWidth) throws IOException {
+			contents.setLineWidth(lineWidth);
+		}
+		
+	}
+	
+	public static class AnnotationConfig implements Config {
+		
+		private PDAnnotationHighlight annotation;
+		
+		private AnnotationConfig(PDAnnotationHighlight annotation) {
+			this.annotation = annotation;
+		}
+		
+		@Override
+		public void setPopupTitle(String title) throws IOException {
+			annotation.setTitlePopup(title);
+		}
+		
+		@Override
+		public void setPopupColor(Color color) throws IOException {
+			annotation.setColor(new PDColor(color.getRGBColorComponents(new float[3]), PDDeviceRGB.INSTANCE));
+		}
+		
+	}
+
+	@FunctionalInterface
+	public static interface Setup {
+		void setup(Config config) throws IOException;
+	}
+	
+	private abstract static class AbstractSetup implements Setup{
+		@Override
+		public void setup(Config config) throws IOException {
+			config.setRectLineWidth(1.0f);
+		}
+	}
+
+	private static class ErrorSetup extends AbstractSetup{
+		
+		@Override
+		public void setup(Config config) throws IOException {
+			super.setup(config);
+			config.setRectColor(Color.RED);
+			config.setPopupColor(Color.RED);
+			config.setPopupTitle("ERROR :(");
+		}
+		
+	}
+	
+	private static class WarnSetup extends AbstractSetup{
+		
+		@Override
+		public void setup(Config config) throws IOException {
+			super.setup(config);
+			config.setRectColor(Color.ORANGE);
+			config.setPopupColor(Color.ORANGE);
+			config.setPopupTitle("AVISO :|");
+		}
+		
+		
+		
+	}
+
+	private static class InfoSetup extends AbstractSetup{
+		
+		@Override
+		public void setup(Config config) throws IOException {
+			super.setup(config);
+			config.setRectColor(Color.BLUE);
+			config.setPopupColor(Color.BLUE);
+			config.setPopupTitle("INFORMACIÓN :)");
+			
+		}
+		
+	}
+
+	public static Setup WARN = new WarnSetup(); 
+	public static Setup INFO = new InfoSetup(); 
+	public static Setup ERROR = new ErrorSetup(); 
 	
 	private PDPage page; 
 	private PDDocument doc;
@@ -55,40 +160,91 @@ public class IdcHighlighter {
 		this.positions = positions;
 	}
 	
-	public void insert(String regex, String str) throws IOException {
+	public void insert(String regex, String str, Setup setup) throws IOException {
 		if ( AonStringUtils.isBlank(regex))
 			return;
 		Pattern pattern = Pattern.compile(regex);
 		List<TextPosition> patternPositions = getPositions(pattern, positions);
-		insert(doc, page, patternPositions, str);
+		insert(doc, page, patternPositions, str, setup);
+		addMetaData(patternPositions, str);
 	}
 
-	public void highlight(String pattern) throws IOException {
-		if ( AonStringUtils.isBlank(pattern))
-			return;
-		highlight(doc, page, getPositions(pattern, positions));
+	public void highlightAll(Setup setup) throws IOException {
+		highlightAll("", setup);
 	}
 
-	public void highlight(String pattern, String contents) throws IOException {
-		if ( AonStringUtils.isBlank(pattern))
-			return;
+	public void highlightAll(String contents, Setup setup) throws IOException {
+		PDRectangle rect = getRectangle(page, positions);
+		highlight(doc, page, rect, setup);
+		
+		if ( AonStringUtils.isNotBlank(contents)) {
+			annotate(page, rect, contents, setup);
+		}
 
-		List<TextPosition> patternPositions = getPositions(pattern, positions);
-		PDRectangle rect = getRectangle(page, patternPositions);
-		highlight(doc, page, rect );
-		annotate(page, rect, contents);
-	} 
+		addMetaData(positions, contents);
+	}
 
-	public void highlight(String pattern1, String pattern2, String contents) throws IOException {
-		String regex = AonStringUtils.join(pattern1 , " ", pattern2).replaceAll("\\s", "\\\\s*");
+	public void annotateAll(String contents) throws IOException {
+		
+		if ( AonStringUtils.isNotBlank(contents)) {
+			PDRectangle rect = getRectangle(page, positions);
+			annotate(page, rect, contents, INFO);
+		}
+
+		addMetaData(positions, contents);
+	}
+
+	public void highlight(String string, Setup setup) throws IOException {
+		highlight(new String[]{string}, "", setup);
+	}
+
+	public void highlight(String string, String contents, Setup setup) throws IOException {
+		highlight(new String[]{string}, contents, setup);
+	}
+
+	public void highlight(String string1, String string2, String contents, Setup setup) throws IOException {
+		highlight(new String[]{string1, string2}, contents, setup);
+	}
+
+	public void highlight(String [] strings, String contents, Setup setup) throws IOException {
+		String regex = Arrays.stream(strings).collect(Collectors.joining(".*")).replaceAll("\\s", "\\\\s*");
 		if ( AonStringUtils.isBlank(regex))
 			return;
 		Pattern pattern = Pattern.compile(regex);
 
 		List<TextPosition> patternPositions = getPositions(pattern, positions);
 		PDRectangle rect = getRectangle(page, patternPositions);
-		highlight(doc, page, rect );
-		annotate(page, rect, contents);
+		highlight(doc, page, rect, setup);
+		
+		if ( AonStringUtils.isNotBlank(contents)) {
+			annotate(page, rect, contents, setup);
+		}
+		
+		addMetaData(patternPositions, contents);
+	}
+
+	public void annotate(String [] strings, String contents, Setup setup) throws IOException {
+		String regex = Arrays.stream(strings).collect(Collectors.joining(".*")).replaceAll("\\s", "\\\\s*");
+		if ( AonStringUtils.isBlank(regex))
+			return;
+		Pattern pattern = Pattern.compile(regex);
+
+		List<TextPosition> patternPositions = getPositions(pattern, positions);
+		PDRectangle rect = getRectangle(page, patternPositions);
+		
+		if ( AonStringUtils.isNotBlank(contents)) {
+			annotate(page, rect, contents, setup);
+		}
+		
+		addMetaData(patternPositions, contents);
+	}
+
+	private void addMetaData(List<TextPosition> positions, String highlight) {
+		String text = positions.stream().map(TextPosition::getUnicode).collect(Collectors.joining());
+		text = AonStringUtils.remove(text, ' ');
+		text = AonStringUtils.substring(text, 0, 15);
+		text = AonStringUtils.join("AON", "_", text );
+		doc.getDocumentInformation().setCustomMetadataValue(AonStringUtils.upperCase(text), highlight);
 	}
 
 	public static void highlight( File file , File out,  IdcHighlighterListener listener) throws IOException, UnknownPDFException {
@@ -164,34 +320,14 @@ public class IdcHighlighter {
 				matcher = IdcParser.ENTERPRISE_NAME_CCC_CIF.matcher(line);
 				if ( matcher.matches() ) {
 					listener.onEnterpriseName(group(matcher, "name"), idcHighlighter );
+					listener.onEnterpriseCCC(group(matcher, "province") + group(matcher, "ccc"), idcHighlighter );
 					return;
 				} 
 				
 				matcher = IdcParser.ENTERPRISE_ACTIVITY_REGIME.matcher(line);
 				if ( matcher.matches() ) {
 					listener.onEnterpriseActivity(group(matcher, "code"), group( matcher, "description"), idcHighlighter);
-					return;
-				} 
-
-				matcher = IdcParser.CONTRACT_TYPE_START_END.matcher(line);
-				if ( matcher.matches() ) {
-					listener.onContractType(group(matcher, "contractType"), group(matcher, "contractDescription"), idcHighlighter);
-					return;
-				} 
-				
-				matcher = IdcParser.CONTRACT_PARTIALCOEF_DATE_AGE.matcher(line);
-				if ( matcher.matches() ) {
-					listener.onContractStart(group(matcher, "date"), idcHighlighter);
-					listener.onCoefficient(group(matcher, "partialCoef"), null, idcHighlighter);
-					return;
-				} 
-				
-				matcher = IdcParser.CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC.matcher(line);
-				if ( matcher.matches() ) {
-					listener.onQuoteGroup(group(matcher, "quoteGroup"), null, idcHighlighter);
-					String completeCCC = group(matcher, "completeCCC").replaceAll("\\s+", "");
-					listener.onEnterpriseCCC(completeCCC, idcHighlighter);
-					
+					listener.onEnterpriseRegime(group(matcher, "regime"), idcHighlighter);
 					return;
 				} 
 
@@ -202,6 +338,38 @@ public class IdcHighlighter {
 				} 
 				
 				
+				matcher = IdcParser.CONTRACT_TYPE_START_END.matcher(line);
+				if ( matcher.matches() ) {
+					listener.onContractType(group(matcher, "contractType"), group(matcher, "contractDescription"), idcHighlighter);
+					listener.onStart(group(matcher, "start"), idcHighlighter);
+					listener.onEnd(group(matcher, "end"), idcHighlighter);
+					return;
+				} 
+				
+				matcher = IdcParser.CONTRACT_PARTIALCOEF_DATE_AGE.matcher(line);
+				if ( matcher.matches() ) {
+					listener.onContractStart(group(matcher, "date"), idcHighlighter);
+					listener.onCoefficient(group(matcher, "partialCoef"), null, idcHighlighter);
+					return;
+				} 
+				
+				matcher = IdcParser.CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC.matcher(line);
+				if ( matcher.matches() ) {
+					listener.onQuoteGroup(group(matcher, "quoteGroup"),group(matcher, "monthly") , idcHighlighter);
+					String completeCCC = group(matcher, "completeCCC").replaceAll("\\s+", "");
+					listener.onContractCCC(completeCCC, idcHighlighter);
+					
+					return;
+				} 
+				
+				matcher = CONTRACT_OCUPATION_DESCRIPTION.matcher(line);
+				if ( matcher.matches() ) {
+					listener.onOccupation(group(matcher, "ocupation"), group(matcher, "description"), idcHighlighter);
+					
+					return;
+				} 
+				
+
 				matcher = IdcParser.EMPLOYEE_QUOTE_PEC.matcher(line);
 				if ( matcher.matches() ) {
 					listener.onPEC(group(matcher, "code"), group(matcher, "description"), group(matcher, "tipo"), group(matcher, "quota"), group(matcher, "start"), group(matcher, "end"), idcHighlighter);
@@ -218,8 +386,10 @@ public class IdcHighlighter {
 			}
 			
 			private String group(Matcher matcher, String group) {
-				return AonStringUtils.trim(matcher.group(group));
+				return AonStringUtils.defaultString(AonStringUtils.trim(matcher.group(group)), "");
 			}
+			
+			
 		};
 		
 		
@@ -251,13 +421,6 @@ public class IdcHighlighter {
     	return overlap(textPosition1.getY(), textPosition1.getHeight(), textPosition2.getY(), textPosition2.getHeight());
     }
 
-	private static List<TextPosition> getPositions(String string, List<TextPosition> linePositions) throws IOException {
-		String line = linePositions.stream().map(TextPosition::getUnicode).collect(Collectors.joining());
-		int fromIndex = AonStringUtils.indexOf(line,string);
-		int toIndex = fromIndex + string.length();
-		return linePositions.subList(fromIndex, toIndex);
-	}
-	
 	private static List<TextPosition> getPositions(Pattern pattern, List<TextPosition> linePositions) throws IOException {
 		String line = linePositions.stream().map(TextPosition::getUnicode).collect(Collectors.joining());
 		Matcher matcher = pattern.matcher(line);
@@ -269,32 +432,22 @@ public class IdcHighlighter {
 		}
 	}
 
-	private static void annotate(PDPage page, PDRectangle position, String contents) throws IOException {
+	private static void annotate(PDPage page, PDRectangle position, String contents, Setup setup) throws IOException {
 		
 		List<PDAnnotation> annotations = page.getAnnotations();
 		
         // Now add the markup annotation, a highlight to PDRectangle
         PDAnnotationHighlight txtHighlight = getAnnotationHighlight(position);
+        setup.setup(new AnnotationConfig(txtHighlight));
         
         txtHighlight.setContents(contents);
         annotations.add(txtHighlight);
 	}
 	
-	private static void annotate(PDPage page, PDRectangle position, PDAnnotationPopup popup) throws IOException {
-		
-		List<PDAnnotation> annotations = page.getAnnotations();
-		
-        // Now add the markup annotation, a highlight to PDRectangle
-        PDAnnotationHighlight txtHighlight = getAnnotationHighlight(position);
-        
-        txtHighlight.setPopup(popup);
-        annotations.add(txtHighlight);
-	}
-
 	private static PDAnnotationHighlight getAnnotationHighlight(PDRectangle position) {
         // Now add the markup annotation, a highlight to PDFBox text
         PDAnnotationHighlight txtHighlight = new PDAnnotationHighlight();
-        txtHighlight.setColor(new PDColor(new float[] { 1, 0, 0 }, PDDeviceRGB.INSTANCE));
+        //txtHighlight.setColor(new PDColor(new float[] { 1, 0, 0 }, PDDeviceRGB.INSTANCE));
 
         txtHighlight.setConstantOpacity(0.0f);
 
@@ -341,16 +494,11 @@ public class IdcHighlighter {
 		
 	}
 	
-	private static void highlight(PDDocument doc, PDPage page, List<TextPosition> positions) throws IOException {
-		PDRectangle rect = getRectangle(page, positions);
-		highlight(doc, page, rect);
-	}
-
-	private static PDRectangle highlight(PDDocument doc, PDPage page, PDRectangle rect) throws IOException {
+	
+	private static PDRectangle highlight(PDDocument doc, PDPage page, PDRectangle rect, Setup setup) throws IOException {
 
 		try (PDPageContentStream contents = new PDPageContentStream(doc, page, AppendMode.APPEND, false)){
-			contents.setStrokingColor(Color.RED);
-			contents.setLineWidth(1.0f);
+			setup.setup(new ContentsConfig(contents));
 			
 			contents.addRect(rect.getLowerLeftX(), rect.getLowerLeftY(), rect.getWidth(), rect.getHeight());
 			contents.stroke();
@@ -359,7 +507,7 @@ public class IdcHighlighter {
 		}
 	}
 
-	private static PDRectangle insert(PDDocument doc, PDPage page, List<TextPosition> positions, String text ) throws IOException {
+	private static PDRectangle insert(PDDocument doc, PDPage page, List<TextPosition> positions, String text, Setup setup) throws IOException {
 
 		try (PDPageContentStream contents = new PDPageContentStream(doc, page, AppendMode.APPEND, false)){
 			
@@ -370,10 +518,8 @@ public class IdcHighlighter {
 			PDFont font = new PDType1Font(FontName.HELVETICA_BOLD); //get(positions, TextPosition::getFont);
 			float fontSize = get(positions, TextPosition::getFontSize);
 			contents.setFont(font, fontSize);
-			contents.setStrokingColor(Color.RED);
-			contents.setNonStrokingColor(Color.RED);
 			
-			System.out.println(font.getSpaceWidth());
+			setup.setup(new ContentsConfig(contents));
 			
 			contents.setTextMatrix(Matrix.getTranslateInstance(rect.getUpperRightX() + font.getSpaceWidth() / 1000f , rect.getLowerLeftY() + 1.5f ));
 			
@@ -393,10 +539,15 @@ public class IdcHighlighter {
 		;
 	}
 	
-
+	
 	public static void main(String[] args) throws IOException, UnknownPDFException {
 		highlight(new File(args[0]), new File(args[1]), new AllIdcHighlighter());
 		
 	}
 
+	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   
+	protected static final Pattern CONTRACT_OCUPATION_DESCRIPTION =
+	Pattern.compile(
+	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*((?<ocupation>[a-z])(?<description>.*?(?=N\\.TRAB)))?.*$"
+	, Pattern.CASE_INSENSITIVE);
 }
