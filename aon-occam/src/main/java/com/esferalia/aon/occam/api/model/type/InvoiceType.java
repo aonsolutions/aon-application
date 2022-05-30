@@ -122,7 +122,8 @@ public enum InvoiceType implements Serializable  {
 	public static InvoiceType safeValueOf( String i ) {
 		if(AonStringUtils.isBlank(i)) return null;
 		for (InvoiceType rs : values()) {
-			if(rs.name().equalsIgnoreCase(i) || rs.getDescription().equalsIgnoreCase(i))
+			if(rs.name().equalsIgnoreCase(i) || rs.getDescription().equalsIgnoreCase(i) 
+					|| rs.getTediName().equalsIgnoreCase(i))
 				return rs;
 		}
 		return null;
