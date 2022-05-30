@@ -29,9 +29,7 @@ import org.apache.http.ssl.SSLContexts;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
-import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -145,6 +143,8 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 		String link = "";
 		String sessionId = "";
 		
+		List<String> errors = new ArrayList<>();
+		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			List<Employee> employees = new LinkedList<>();
 			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
@@ -233,11 +233,17 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 							
 						}
 					} catch (InvalidDataException e) {
+		                if(e.getMessage()!=null) {
+		                  	errors.add(e.getMessage());
+		                }
 						continue;
 					}
 				}
 			}
 			
+			if(employees.isEmpty() && !errors.isEmpty()) {
+	        	throw new SegSocialException(errors.get(0));
+	        }
 			
 			return employees;
 		} catch (IOException e) {
