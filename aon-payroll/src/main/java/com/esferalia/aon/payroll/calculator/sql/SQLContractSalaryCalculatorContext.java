@@ -419,6 +419,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )"
 			+ " AND contract_leave.id >= 0 "
 			+ " ORDER BY FIELD(contract_leave.type,0,1,6,7,8,2,3,4,5)"
+			+ ", FIELD(contract_data.name, '" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" + DIRECT_PAY_START + "')"
 			;
 
 	private static final int CACHE_SIZE = 25;

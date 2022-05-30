@@ -108,7 +108,7 @@ import junit.framework.Assert;
 
 public class SQLITTestCase extends AbstractSQLTestCase {
 
-	protected static final double DELTA = 0.004;
+	protected static final double DELTA = 0.009;
 	
 	@Test
 	public void testInicioIT() throws ExpressionException, SQLException,
@@ -3720,7 +3720,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				});
 		;
 	}
-
+	
 	@Test
 	public void testPaternityIT30() throws ExpressionException, SQLException,
 			SalaryException {
@@ -4068,6 +4068,78 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testPaternityITPartial() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+		getFirstDayOfMonth(getToday()),
+		Collections.emptyMap(),
+		new String[] {
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+		}, 
+		new String[] {						
+		"BASE_CGC * 0.10", 
+		"BASE_CGP * 0.05",
+		"BASE_IRPF * PORCENTAJE_IRPF/100" 
+		}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0", "DIAS_PATERNIDAD * BASE_REGULADORA");
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date startITDate = getToday() ;
+		Date endITDate = add(startDate, Calendar.DAY_OF_MONTH, 5);
+		
+		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,endITDate, 1750.00/30);
+		addData(aonContext, contract, startITDate, endITDate, ContextVariable.DIRECT_PAY_START, "FECHA("+ (get(startITDate, Calendar.YEAR)+2) +",01,01)");
+
+		addData(aonContext, contract, startITDate, endITDate, ContextVariable.PATERNITY_FACTOR, 0.50);
+	
+
+		addData(aonContext, contract, startDate, endITDate, ContextVariable.PATERNITY_FACTOR, 0.50);
+		addData(aonContext, contract, startDate, endITDate, ContextVariable.DIRECT_PAY_START, "FECHA("+ (get(startITDate, Calendar.YEAR)+2) +",01,01)");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println(description + "[" + startDate + ", " + endDate +"]: " + amount );
+			}
+		});
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH );
+		int paternityDays = get(endITDate, Calendar.DAY_OF_MONTH);
+		org.junit.Assert.assertEquals(
+				1750.00 * paternityDays / monthDays * 0.5 + 
+				1750.00 * ( monthDays - paternityDays ) / monthDays , salary.getTotalPayment(), DELTA);
+		
+		
+	}
+
+	
 	@Test
 	public void testRedefinedIRPFIT() throws ExpressionException, SQLException,
 			SalaryException {
