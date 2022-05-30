@@ -119,17 +119,12 @@ public enum InvoiceType implements Serializable  {
 		return InvoiceType.values()[i];
 	}
 	
-	public static InvoiceType safeValueOf( String value ) {
-		if(value == null) return null;
-		if(SALES.getDescription().equalsIgnoreCase(value) || SALES.name().equalsIgnoreCase(value)) {
-			return SALES;
-		} else if(PURCHASE.getDescription().equalsIgnoreCase(value) || PURCHASE.name().equalsIgnoreCase(value)) {
-			return PURCHASE;
-		} else if(EXPENSES.getDescription().equalsIgnoreCase(value) || EXPENSES.name().equalsIgnoreCase(value)) {
-			return EXPENSES;
-		} else if(UNDEDUCTIBLE.getDescription().equalsIgnoreCase(value) || UNDEDUCTIBLE.name().equalsIgnoreCase(value) ||"ticket".equalsIgnoreCase(value)) {
-			return UNDEDUCTIBLE;
-		}		
-		return valueOf(value); 
+	public static InvoiceType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (InvoiceType rs : values()) {
+			if(rs.name().equalsIgnoreCase(i) || rs.getDescription().equalsIgnoreCase(i))
+				return rs;
+		}
+		return null;
 	}
 }
