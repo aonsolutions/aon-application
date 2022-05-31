@@ -156,7 +156,6 @@ import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.mvel2.ast.IsDef;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -3487,7 +3486,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private double getActualDays(Date startDate, Date endDate) {
 		long days = 0;
-
+		
+		boolean  hasDaysHours = hasDefinedDaysHours();
+		
 		ICalendar calendar = getCalendar();
 		Calendar end = Calendar.getInstance();
 		end.setTime(endDate);
@@ -3495,12 +3496,34 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		day.setTime(startDate);
 		while (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if (isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
+			
+			Double dayHours = getDayHours(day);
+			if ( dayHours != null && dayHours > 0.00) {
+				days++;
+			} else if (!hasDaysHours && isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
 				days++;
 			}
 			day.add(Calendar.DATE, 1);
 		}
 		return days;
+	}
+	
+	private boolean hasDefinedDaysHours() {
+		return WEEK_HOURS_VARIABLES.values().stream()
+			.anyMatch(this::containsVariable);
+	}
+	
+	private Double getDayHours( Calendar day ) {
+		try {
+			ContextVariable dayHoursVar = getDayHoursVar(day);
+			return  
+			this.contractExpressionContext.eval(dayHoursVar.getName(), day.getTime(), day.getTime(), Number.class)
+			.stream()
+			.map(ITimedResult::getValue)
+			.collect(Collectors.summingDouble(Number::doubleValue));
+		} catch (ExpressionException e) {
+			return null;
+		}
 	}
 
 	protected Long getLeaveDays(Period p) {
@@ -3952,13 +3975,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private double getWorkedHours(Period p) {
 
 		p.daysStream().filter(
-				day -> !contractExpressionContext.containsVariable(getDayHours(day), day.getTime(), day.getTime()))
+				day -> !contractExpressionContext.containsVariable(getDayHoursVar(day), day.getTime(), day.getTime()))
 				.forEach(day -> onUndefinedData(
-						new ExpressionImpl().setName(getDayHours(day).getName()).setScope(ExpressionScope.SYSTEM), null,
-						day.getTime(), day.getTime(), getDayHours(day).getName()));
+						new ExpressionImpl().setName(getDayHoursVar(day).getName()).setScope(ExpressionScope.SYSTEM), null,
+						day.getTime(), day.getTime(), getDayHoursVar(day).getName()));
 
 		double workedHours =  p.daysStream()
-				.map(day -> contractExpressionContext.getVariable(getDayHours(day), day.getTime(), day.getTime(), Number.class))
+				.map(day -> contractExpressionContext.getVariable(getDayHoursVar(day), day.getTime(), day.getTime(), Number.class))
 				.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
 				.collect(Collectors.summingDouble(hours -> hours.doubleValue()))
 				;
@@ -6344,7 +6367,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return calendar.getTime();
 	}
 
-	protected static ContextVariable getDayHours(Calendar calendar) {
+	protected static ContextVariable getDayHoursVar(Calendar calendar) {
 		return getDayOfWeekHours(calendar.get(Calendar.DAY_OF_WEEK));
 	}
 
