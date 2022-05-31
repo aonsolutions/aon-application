@@ -982,31 +982,36 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void loadWindow(Consumer<Void> finish) {
 		showLoadingPanel();
-		loadData(s ->
-			initializeIdcDateListBox(accept -> {
-				loadToolbar();
-				checkButtonsToolbar();
-				hideMessage();
-				finish.accept(null);
-			}, error -> {
-				loadToolbar();
-				checkButtonsToolbar();
-				finish.accept(null);
-			})
-		);
+		loadData(s -> {
+			loadToolbar();
+			checkButtonsToolbar();
+			hideMessage();
+			finish.accept(null);
+		});
 	}
 
 	private void loadData(Consumer<Void> finish) {
 		Integer tabIdx = tabLayOutPanel.getSelectedIndex();
 		switch (tabIdx) {
 		case 0:
-			contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
-				// Check SS only if not RETA
-				Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-				if (null == ssRegime || ssRegime != 3)
-					checkStatus(this.contrataEmployeeObject);
+			initializeIdcDateListBox(accept -> {
+				contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
+					// Check SS only if not RETA
+					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+					if (null == ssRegime || ssRegime != 3)
+						checkStatus(this.contrataEmployeeObject);
 
-				finish.accept(null);
+					finish.accept(null);
+				});
+			}, error -> {
+				contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
+					// Check SS only if not RETA
+					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+					if (null == ssRegime || ssRegime != 3)
+						checkStatus(this.contrataEmployeeObject);
+
+					finish.accept(null);
+				});
 			});
 			break;
 		case 1:
