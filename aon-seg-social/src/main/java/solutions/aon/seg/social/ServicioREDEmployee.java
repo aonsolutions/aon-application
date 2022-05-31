@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,6 +120,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 			throw new InvalidCertificateException();
 		}
 	}
+	
 	/**
 	 * 
 	 * @param certificateInputStream
@@ -128,14 +130,21 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	 * @return Map<CCC, List<Employee>>
 	 * @throws SegSocialException
 	 */
-	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
+	public static Collection<Employee> getTotalEmployees(byte[] certificateData,
+			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
+			throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
+		return getTotalEmployees(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, cccs);
+	}
+	
+	private static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
 			throws SegSocialException {
 		if (cccs == null) {
 			return Collections.emptyList();
 		}
 		SSLContext sslContext = null;
-		try {				
+		try {		
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
 		} catch (Exception e1) {
 			throw new InvalidCertificateException();

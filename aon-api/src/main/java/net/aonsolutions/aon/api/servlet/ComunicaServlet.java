@@ -243,7 +243,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			map.put(regime, defaultSet);
         });	
 			    
-	    return ServicioREDEmployee.getTotalEmployees( new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), map);
+	    return ServicioREDEmployee.getTotalEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), map);
 	}
 	
 	

@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.clickAndCheckCode;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndCheckCode;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -617,6 +618,13 @@ class SistemaREDI {
 		}
 		return null;
 	}
+	
+	public static Collection<Idc> getIDCDates(byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String ccc) throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
+		return getIDCDates(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, affiliationNumber, regime, ccc);
+	}
 
 	// RETURNS A COLLECTION OF OBJECTS WITH THE DATE AND THE DESCRIPTION OF ALL TA
 	// CERTIFICATES
@@ -630,7 +638,7 @@ class SistemaREDI {
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
-			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
+			Toolkit.checkCertificateRevoked(htmlPage.asXml());
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
