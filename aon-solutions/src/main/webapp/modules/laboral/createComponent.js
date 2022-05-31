@@ -422,18 +422,22 @@ export const createQuoteMonthly = (detail, isManager) => {
     let show = detail && detail.quoteMonth;
 
     let parent = document.getElementById("divQuoteMonth");
-
     if(parent) {
         parent.innerHTML = "";
-
         if(show){
-            let divC = createDiv({classes:[CSS.AON_COL_XS_12]})
+            let divC = createDiv({
+                classes:[CSS.AON_COL_XS_12], 
+                styles:{
+                    paddingBottom:"12px"
+                }
+            });
+            
             divC.appendTo(parent);
-    
+
             const id = "quoteMonth";
     
             const aonSwitch = setAttributes(new AonSwitch(),{id, name:id, title: `Cotización mensual`, checked:false});
-        
+    
             divC.appendChild(aonSwitch);
         }
     }

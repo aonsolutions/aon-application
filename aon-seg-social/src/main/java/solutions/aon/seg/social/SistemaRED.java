@@ -327,18 +327,22 @@ public class SistemaRED {
 
 	public static Collection<Idc> getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return SistemaREDI.getIDCDates(certificateInputStream, certificatePassword, certificateType,
-				nss, regimen, ccc);
+		try {
+			return getIDCDates(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen, ccc, nss);
+//			return SistemaREDI.getIDCDates(certificateInputStream, certificatePassword, certificateType, nss, regimen, ccc);
+		} catch (Exception e) {
+			if(e.getMessage()!=null) {
+				throw new SegSocialException(e.getMessage());
+			} else {
+				throw new SegSocialException(e);
+			}
+		}
 	}
 
-	public static Collection<Idc> getIDCDates(final byte certificateData[], final String certificatePassword,
+	public static Collection<Idc> getIDCDates(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDI.getIDCDates(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType,
 					nss, regimen, ccc);
-		} catch (IOException e) {
-			throw new SegSocialException(e);
-		} 
 	}
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,

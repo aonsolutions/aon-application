@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { getContracts, getContratoPdf } from "../../../services/service.js";
+import { getContracts, getContractSepe } from "../../../services/service.js";
 import { isEmptyObject, sortBy } from "../../../services/utils.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
@@ -204,7 +204,7 @@ export class AonContractList extends AonElement {
     this.applicationEl.startLoading();
     try {
       const { ipf, startDate } = data;
-      await getContratoPdf({ ipf, startDate });
+      await getContractSepe({ ipf, startDate });
     } catch (error) {
       this.showToast(error);
 		}

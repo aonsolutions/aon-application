@@ -11,12 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.ServicioREDEmployee;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
@@ -31,7 +32,7 @@ public class ComunicaUtils {
 	 * GET EMPLOYEES REAL DATA  SEG SOCIAL
 	 * @return ArrayList<Employee>
 	 */
-	public static ArrayList<Employee> getEmployeesPrev(Certificate certificate, List<CCCInfo> cccs) {
+	public static List<Employee> getEmployeesPrev(Certificate certificate, List<CCCInfo> cccs) {
 		 ArrayList<Employee> employees = new ArrayList<>();
 		 for (CCCInfo ccc : cccs) {
 			    String regimen = ccc.getCccRegimeCode();
@@ -50,7 +51,7 @@ public class ComunicaUtils {
 	 * @param cccs
 	 * @return ArrayList<Employee>
 	 */
-	public static ArrayList<Employee> getEmployeesOld(Date startDateIni, Certificate certificate, List<CCCInfo> cccs) {
+	public static List<Employee> getEmployeesOld(Date startDateIni, Certificate certificate, List<CCCInfo> cccs) {
 		 ArrayList<Employee> employees = new ArrayList<>();
 	     List<Date> startDates = ComunicaUtils.getStartDates(startDateIni);
 	     
@@ -135,22 +136,24 @@ public class ComunicaUtils {
 	 * @param validate data required
 	 * @throws Exception
 	 */
-	public static void validateAlta(AonApiData api) throws Exception {
-		if(api.getData().isNull("ctaCti")) 
-			throw new Exception("Cuenta de cotización requerida");
-		else if(api.getData().isNull("nss")) 
-			throw new Exception("Número de afiliación requerido");
-	    else if(api.getData().isNull("ipf")) 
-			throw new Exception("DNI/NIE requerido");
-		else if(api.getData().isNull("fecha")) 
-			throw new Exception("Fecha requerida");
-		else if(api.getData().isNull("gc")) 
-			throw new Exception("Grupo de cotización requerido");
-		else if(api.getData().isNull("contract")) 
-			throw new Exception("Tipo de contrato requerido");
-		else if( "501".equals(api.getData().getString("contract")) || "502".equals(api.getData().getString("contract")) ) 
-			if(api.getData().optString("coef") == null || "".equals(api.getData().optString("coef")) ) {
-				throw new Exception("Coeficiente parcial requerido");
-			}
+	public static void validateAlta(JSONObject params) throws Exception {
+		String error = null;
+		if(params.isNull("ctaCti")) {
+			error = "Cuenta de cotización requerida";
+		} else if(params.isNull("nss")) {
+			error = "Número de afiliación requerido";
+		} else if(params.isNull("ipf")) {
+	    	error = "DNI/NIE requerido";	
+	    } else if(params.isNull("fecha")) {
+			error = "Fecha requerida";
+		} else if(params.isNull("gc")) {			
+			error = "Grupo de cotización requerido";
+		} else if(params.isNull("contract")) {
+			error = "Tipo de contrato requerido";
+		} 
+		
+		if(error!=null) {
+			throw new Exception(error);
+		}
 	}
 }
