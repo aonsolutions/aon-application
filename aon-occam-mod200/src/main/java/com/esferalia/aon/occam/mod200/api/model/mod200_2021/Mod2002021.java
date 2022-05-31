@@ -29,18 +29,6 @@ public class Mod2002021 extends Mod200 {
 	
 	private static final long serialVersionUID = -5669862778411873677L;
 
-//	public static enum BalanceType implements Serializable {
-//		NORMAL,
-//		ABREVIADO,
-//		PYMES;
-//	}
-//	public static enum EcpnType implements Serializable {
-//		NORMAL,
-//		ABREVIADO,
-//		PYMES,
-//		NO_CONSTA;
-//	}	
-	
 	private boolean initializedFromLastYear;
 	
 	private String cnae;

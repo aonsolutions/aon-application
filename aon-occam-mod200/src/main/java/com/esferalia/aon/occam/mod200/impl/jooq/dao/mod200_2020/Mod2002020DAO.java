@@ -87,17 +87,17 @@ public class Mod2002020DAO  {
 				.setNominalValue(reg.getNominalValue())
 				.setBookValue(reg.getBookValue())
 				.setIncomes(reg.getIncomes())
-				.setaValue(reg.getAValue())
-				.setbValue(reg.getBValue())
-				.setccValue(reg.getCcValue())
-				.setcValue(reg.getCValue())
-				.setdValue(reg.getDValue())
+				.setValueCorrection(reg.getAValue())
+				.setLossReversion(reg.getBValue())
+				.setAccountingElimination(reg.getCcValue())
+				.setCorrectionEffect(reg.getCValue())
+				.setCorrectionsBalance(reg.getDValue())
 				.setCapital(reg.getCapital())
 				.setReserve(reg.getReserve())
 				.setOtherAmounts(reg.getOtherAmounts())
 				.setResult(reg.getResult())
-				.setddValue(reg.getDdValue())
-				.seteValue(reg.getEValue())				
+				.setValuesElimination(reg.getDdValue())
+				.setAdjustmentDecrease(reg.getEValue())				
 				))
 		        
 		,PARTICPATION_IN( 
@@ -334,17 +334,17 @@ public class Mod2002020DAO  {
 				detail.setNominalValue(cp.getNominalValue());
 				detail.setBookValue(cp.getBookValue());
 				detail.setIncomes(cp.getIncomes());
-				detail.setAValue(cp.getaValue());
-				detail.setBValue(cp.getbValue());
-				detail.setCcValue(cp.getccValue());
-				detail.setCValue(cp.getcValue());
-				detail.setDValue(cp.getdValue());
+				detail.setAValue(cp.getValueCorrection());
+				detail.setBValue(cp.getLossReversion());
+				detail.setCcValue(cp.getAccountingElimination());
+				detail.setCValue(cp.getCorrectionEffect());
+				detail.setDValue(cp.getCorrectionsBalance());
 				detail.setCapital(cp.getCapital());
 				detail.setReserve(cp.getReserve());
 				detail.setOtherAmounts(cp.getOtherAmounts());
 				detail.setResult(cp.getResult());
-				detail.setDdValue(cp.getddValue());
-				detail.setEValue(cp.geteValue());
+				detail.setDdValue(cp.getValuesElimination());
+				detail.setEValue(cp.getAdjustmentDecrease());
 				list.add(detail);
 			}
 		}

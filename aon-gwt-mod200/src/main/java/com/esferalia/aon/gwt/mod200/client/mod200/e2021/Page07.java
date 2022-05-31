@@ -130,7 +130,7 @@ public class Page07 extends PageAbs {
 	protected void initializeTable() {
 		
 		basePanel.clear();
-		basePanel.add(getTitle(AON.MSG.patrimonioCambios()));
+		basePanel.add(getTitle(AON.MSG.patrimonioCambios() + " (*)"));
 		
 		FlexTable table = new FlexTable();
 		table = new FlexTable();
@@ -138,7 +138,8 @@ public class Page07 extends PageAbs {
 		
 		FlowPanel tableContainer = new FlowPanel();
 		tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
-		tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
+		tableContainer.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());		
 		tableContainer.add(table);
 		
 		basePanel.add(tableContainer);
@@ -221,6 +222,9 @@ public class Page07 extends PageAbs {
 				}
 			}
 		}
+		
+		paintFooterNote(basePanel,"(*) El estado de cambios en el patrimonio neto ser\u00E1 de cumplimentaci\u00F3n voluntaria si se utiliza el modelo abreviado o PYMES del PGC.");
+		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 	
 	@Override

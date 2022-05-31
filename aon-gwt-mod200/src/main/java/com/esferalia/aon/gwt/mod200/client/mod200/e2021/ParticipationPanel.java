@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -35,18 +37,17 @@ public class ParticipationPanel extends AonCustomDialog {
 	private AonDoubleBox nominalValue = new AonDoubleBox();
 	private AonDoubleBox bookValue = new AonDoubleBox();
 	private AonDoubleBox incomes = new AonDoubleBox();
-	private AonDoubleBox aValue = new AonDoubleBox();
-	private AonDoubleBox bValue = new AonDoubleBox();
-	private AonDoubleBox cValue = new AonDoubleBox();
-	private AonDoubleBox dValue = new AonDoubleBox();
-	private AonDoubleBox eValue = new AonDoubleBox();
-	private AonDoubleBox fValue = new AonDoubleBox();
-//	private AonDoubleBox gValue = new AonDoubleBox();
+	private AonDoubleBox aValue = new AonDoubleBox(); // a) Corrección de valor incluida en pérdidas y ganancias del período                        
+	private AonDoubleBox bValue = new AonDoubleBox(); // b) Eliminación del deterioro contable incluido en P y G                                
+	private AonDoubleBox cValue = new AonDoubleBox(); // c) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
+	private AonDoubleBox dValue = new AonDoubleBox(); // d) Ajuste por la disminución de valor originada por criterio de valor razonable        
+	private AonDoubleBox eValue = new AonDoubleBox(); // e) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d)         
+	private AonDoubleBox fValue = new AonDoubleBox(); // f) Saldo de correcciones fiscales                                                      
 	private AonDoubleBox capital = new AonDoubleBox();
 	private AonDoubleBox reserve = new AonDoubleBox();
 	private AonDoubleBox otherAmounts = new AonDoubleBox();
 	private AonDoubleBox result = new AonDoubleBox();
-
+	
 	private ParticipationPanelCallback callback;
 	private int index;
 	
@@ -80,13 +81,12 @@ public class ParticipationPanel extends AonCustomDialog {
 		this.nominalValue.setValue(companyParticipation.getNominalValue());
 		this.bookValue.setValue(companyParticipation.getBookValue());
 		this.incomes.setValue(companyParticipation.getIncomes());
-		this.aValue.setValue(companyParticipation.getaValue());
-		this.bValue.setValue(companyParticipation.getbValue());
-		this.cValue.setValue(companyParticipation.getccValue());
-		this.dValue.setValue(companyParticipation.getddValue());
-		this.eValue.setValue(companyParticipation.geteValue());
-		this.fValue.setValue(companyParticipation.getcValue());
-//		this.gValue.setValue(companyParticipation.getdValue());
+		this.aValue.setValue(companyParticipation.getValueCorrection());
+		this.bValue.setValue(companyParticipation.getAccountingElimination());
+		this.cValue.setValue(companyParticipation.getValuesElimination());
+		this.dValue.setValue(companyParticipation.getAdjustmentDecrease());
+		this.eValue.setValue(companyParticipation.getCorrectionEffect());
+		this.fValue.setValue(companyParticipation.getCorrectionsBalance());
 		this.capital.setValue(companyParticipation.getCapital());
 		this.reserve.setValue(companyParticipation.getReserve());
 		this.otherAmounts.setValue(companyParticipation.getOtherAmounts());
@@ -127,13 +127,15 @@ public class ParticipationPanel extends AonCustomDialog {
 		companyParticipation.setNominalValue(this.nominalValue.getValue());
 		companyParticipation.setBookValue(this.bookValue.getValue());
 		companyParticipation.setIncomes(this.incomes.getValue());
-		companyParticipation.setaValue(this.aValue.getValue());
-		companyParticipation.setbValue(this.bValue.getValue());
-		companyParticipation.setccValue(this.cValue.getValue());
-		companyParticipation.setcValue(this.fValue.getValue());
-//		companyParticipation.setdValue(this.gValue.getValue());
-		companyParticipation.setddValue(this.dValue.getValue());
-		companyParticipation.seteValue(this.eValue.getValue());
+		
+		companyParticipation.setValueCorrection(this.aValue.getValue());
+		companyParticipation.setAccountingElimination(this.bValue.getValue());
+		companyParticipation.setValuesElimination(this.cValue.getValue());
+		companyParticipation.setAdjustmentDecrease(this.dValue.getValue());
+		//companyParticipation.setCorrectionEffect(this.eValue.getValue());
+		companyParticipation.setCorrectionEffect(this.aValue.getValue()+this.bValue.getValue()+this.cValue.getValue()+this.dValue.getValue());
+		companyParticipation.setCorrectionsBalance(this.fValue.getValue());
+		
 		companyParticipation.setCapital(this.capital.getValue());
 		companyParticipation.setReserve(this.reserve.getValue());
 		companyParticipation.setOtherAmounts(this.otherAmounts.getValue());
@@ -179,10 +181,12 @@ public class ParticipationPanel extends AonCustomDialog {
 		tab2.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab2);
 		
+		percent.setMaxLength(6);
+		
 		addRow(tab2, AON.MSG.partMsg4(), percent);
-		addRow(tab2, AON.MSG.partMsg5(), nominalValue);
-		addRow(tab2, AON.MSG.partMsg6(), bookValue);
-		addRow(tab2, AON.MSG.partMsg7()+" (*)", incomes);
+		addRow(tab2, Mod2002021Key.P1501.getDescription(), nominalValue);
+		addRow(tab2, Mod2002021Key.P1502.getDescription(), bookValue);
+		addRow(tab2, Mod2002021Key.P1503.getDescription()+" (*)", incomes);
 		
 		String text = "(*) Deben incluirse tambi\u00E9n los datos correspondientes a los dividendos de sociedades que a fin de per\u00EDodo no cumplan el m\u00EDnimo de participaci\u00F3n (5% \u00F3 1% si cotizan), pero que s\u00ED lo alcanzaban cuando se percibi\u00F3 el dividendo.";
 		addSmallLabel(text);
@@ -199,7 +203,38 @@ public class ParticipationPanel extends AonCustomDialog {
 		tab3.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab3);
 		
-		addRow(tab3, Mod2002021Key.P1504.getDescription(), aValue);
+		aValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
+			}
+		});
+		bValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
+			}
+		});
+		cValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
+			}
+		});
+		dValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
+			}
+		});		
+		
+		eValue.setEnabled(false); // e = a + b + c + d
+		
+		addRow(tab3, Mod2002021Key.P1504.getDescription()+" (**)", aValue);
 		addRow(tab3, Mod2002021Key.P1506.getDescription(), bValue);
 		addRow(tab3, Mod2002021Key.P1809.getDescription(), cValue);
 		addRow(tab3, Mod2002021Key.P1810.getDescription(), dValue);

@@ -87,17 +87,16 @@ public class Mod2002021DAO  {
 				.setNominalValue(reg.getNominalValue())
 				.setBookValue(reg.getBookValue())
 				.setIncomes(reg.getIncomes())
-				.setaValue(reg.getAValue())
-				.setbValue(reg.getBValue())
-				.setccValue(reg.getCcValue())
-				.setcValue(reg.getCValue())
-				.setdValue(reg.getDValue())
+				.setValueCorrection(reg.getAValue())				
+				.setAccountingElimination(reg.getCcValue())
+				.setValuesElimination(reg.getDdValue())
+				.setAdjustmentDecrease(reg.getEValue())
+				.setCorrectionEffect(reg.getCValue())
+				.setCorrectionsBalance(reg.getDValue())
 				.setCapital(reg.getCapital())
 				.setReserve(reg.getReserve())
 				.setOtherAmounts(reg.getOtherAmounts())
 				.setResult(reg.getResult())
-				.setddValue(reg.getDdValue())
-				.seteValue(reg.getEValue())				
 				))
 		        
 		,PARTICPATION_IN( 
@@ -319,7 +318,7 @@ public class Mod2002021DAO  {
 			}
 		}
 		
-		// B. Participaciones directas de la declarante en otras sociedades
+		// B1. Participaciones directas de la declarante en otras sociedades
 		if (mod200.getParticipationsOut() != null) {
 			for ( Mod200CompanyParticipation cp : mod200.getParticipationsOut() ) {
 				detail = new FsModel200RegistryRecord();
@@ -334,24 +333,21 @@ public class Mod2002021DAO  {
 				detail.setNominalValue(cp.getNominalValue());
 				detail.setBookValue(cp.getBookValue());
 				detail.setIncomes(cp.getIncomes());
-				detail.setAValue(cp.getaValue());
-				detail.setBValue(cp.getbValue());
-				detail.setCcValue(cp.getccValue());
-				detail.setCValue(cp.getcValue());
-				detail.setDValue(cp.getdValue());
+				detail.setAValue(cp.getValueCorrection());				
+				detail.setCcValue(cp.getAccountingElimination());
+				detail.setCValue(cp.getCorrectionEffect());
+				detail.setDValue(cp.getCorrectionsBalance());
 				detail.setCapital(cp.getCapital());
 				detail.setReserve(cp.getReserve());
 				detail.setOtherAmounts(cp.getOtherAmounts());
 				detail.setResult(cp.getResult());
-				detail.setDdValue(cp.getddValue());
-				detail.setEValue(cp.geteValue());
+				detail.setDdValue(cp.getValuesElimination());
+				detail.setEValue(cp.getAdjustmentDecrease());
 				list.add(detail);
 			}
 		}
 		
-		// FALTA - C. Participaciones indirectas de la declarante en otras sociedades
-		
-		// D. Participaciones de personas o entidades en la declarante
+		// B2. Participaciones de personas o entidades en la declarante
 		if (mod200.getParticipationsIn() != null) {
 			for ( Mod200CompanyParticipation cp : mod200.getParticipationsIn() ) {
 				detail = new FsModel200RegistryRecord();
@@ -370,7 +366,7 @@ public class Mod2002021DAO  {
 			}
 		}
 		
-		// E. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+		// C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 		if (mod200.getMinorEntities() != null) {
 			for ( MinorEntity me : mod200.getMinorEntities() ) {
 				detail = new FsModel200RegistryRecord();
@@ -381,7 +377,24 @@ public class Mod2002021DAO  {
 				detail.setDocument(AonStringUtils.substring(me.getDocument(),0,9));
 				list.add(detail);
 			}
-		}	
+		}
+		
+		// D. Informacion de detalle de EP o UTE que operen en el extranjero ...
+		if (mod200.getUteForeign() != null) {
+			for ( UteForeign ute : mod200.getUteForeign() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setType(Mod2002021RegistryType.UTE_FOREIGN.byteValue());
+				detail.setName(AonStringUtils.substring(ute.getIdentification(),0,45));
+				detail.setCountry( ute.getCountry() );
+				detail.setAValue(ute.getVolume());
+				detail.setBValue(ute.getPyg());
+				detail.setCValue(ute.getAdjust());
+				detail.setDValue(ute.getDeduction());
+				list.add(detail);
+			}
+		}
 		
 		// Representantes legales de la entidad
 		if (mod200.getRepresentatives() != null) {
@@ -416,22 +429,6 @@ public class Mod2002021DAO  {
 			}
 		}
 		
-		// Informacion de detalle de EP o UTE que operen en el extranjero ...
-		if (mod200.getUteForeign() != null) {
-			for ( UteForeign ute : mod200.getUteForeign() ) {
-				detail = new FsModel200RegistryRecord();
-				detail.setFsModel200(mod200.getId());
-				detail.setDomain(mod200.getDomain());
-				detail.setType(Mod2002021RegistryType.UTE_FOREIGN.byteValue());
-				detail.setName(AonStringUtils.substring(ute.getIdentification(),0,45));
-				detail.setCountry( ute.getCountry() );
-				detail.setAValue(ute.getVolume());
-				detail.setBValue(ute.getPyg());
-				detail.setCValue(ute.getAdjust());
-				detail.setDValue(ute.getDeduction());
-				list.add(detail);
-			}
-		}
 		
 		// Agrupaciones de interes economico y UTES. Deducción para evitar la doble imposicion 
 		if (mod200.getUteBases() != null) {

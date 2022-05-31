@@ -210,7 +210,13 @@ public class Mod2002021Import2020 {
 				
 			 (mod200old,mod200new) -> mod200new.getAdministrators().addAll(mod200old.getAdministrators())       // A. Relación de administradores
 			 // FALTA - CONFIRMAR QUE DESAPARECE LA CASILLA b) Y SE DESPLAZAN EL RESTO PARA ARRIBA, DEPENDE COMO LO DEJE AL FINAL, HABRA QUE RETOCAR LOS IMPORTES QUE SE TRASPASEN AHORA
-			,(mod200old,mod200new) -> mod200new.getParticipationsOut().addAll(mod200old.getParticipationsOut()) // B1. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado
+			,(mod200old,mod200new) -> {
+				mod200new.getParticipationsOut().addAll(mod200old.getParticipationsOut()); // B1. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado
+				// La casilla "b) Reversión de pérdidas por deterioro de valores", se elimina para el 2021, por lo tanto se quita cualquier importe que pudiera tener en el 2020
+				for (Mod200CompanyParticipation cp : mod200new.getParticipationsOut()) {
+					cp.setLossReversion(0.0);
+				}				
+			}
 			
 		})
 		
@@ -1074,13 +1080,13 @@ public class Mod2002021Import2020 {
 													,AonStringUtils.SPACE
 													,cp.getIncomes()
 													,AonStringUtils.SPACE
-													,cp.getaValue()
+													,cp.getValueCorrection()
 													,AonStringUtils.SPACE
-													,cp.getbValue()
+													,cp.getLossReversion()
 													,AonStringUtils.SPACE
-													,cp.getcValue()
+													,cp.getCorrectionEffect()
 													,AonStringUtils.SPACE
-													,cp.getdValue()
+													,cp.getCorrectionsBalance()
 													,AonStringUtils.SPACE
 													,cp.getCapital()
 													,AonStringUtils.SPACE

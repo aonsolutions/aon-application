@@ -19,7 +19,8 @@ public class Page03 extends PageAbs {
 	@Override
 	protected void initializeTable() {		
 		basePanel.clear();		
-		addTable(AON.MSG.balanceActivo(), Mod2002021Constants.BALANCE_ACTIVE_KEYS);		
+		addTable(AON.MSG.balanceActivo(), Mod2002021Constants.BALANCE_ACTIVE_KEYS);
+		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 
 	@Override
@@ -36,5 +37,7 @@ public class Page03 extends PageAbs {
 			}
 		}
 		return super.isDisabled(key);
-	}
+	}	
+	
+	
 }

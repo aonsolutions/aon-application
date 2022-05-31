@@ -187,10 +187,10 @@ public class Page02 extends PageAbs {
 		for (int i = 0; i < callback.getMod200Object().getMod200().getParticipationsIn().size(); i++) {
 			final int idx = i;
 			
-			AonDocumentTextBox document = new AonDocumentTextBox();			
+			AonDocumentTextBox document = new AonDocumentTextBox();
 			document.setValue(callback.getMod200Object().getMod200().getParticipationsIn().get(idx).getDocument());
-			document.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setDocument(document.getValue());
+			document.addValueChangeHandler(event -> {				
+				callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setDocument(document.getValue());				
 				callback.markAsDirty();
 			});
 			
@@ -360,7 +360,7 @@ public class Page02 extends PageAbs {
 		});
 		basePanel.add(addButton4);
 		
-		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
+		// INFORMACIÓN DE DETALLE DE EP O UTE QUE OPEREN EN EL EXTRANJERO Y POR PARTICIPACIÓN EN FÓRMULA DE COLABORACIÓN ANÁLOGA A UTE
 		
 		basePanel.add(getTitle(AON.MSG.utefor()));
 		

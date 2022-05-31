@@ -187,10 +187,10 @@ public class Mod2002014Writer {
             nominalValue = mod200.getParticipationsOut().get(index).getNominalValue();  
             bookValue    = mod200.getParticipationsOut().get(index).getBookValue();  	
             incomes 	 = mod200.getParticipationsOut().get(index).getIncomes();       
-            aValue       = mod200.getParticipationsOut().get(index).getaValue();        
-            bValue       = mod200.getParticipationsOut().get(index).getbValue();        
-            cValue       = mod200.getParticipationsOut().get(index).getcValue();        
-            dValue       = mod200.getParticipationsOut().get(index).getdValue();        
+            aValue       = mod200.getParticipationsOut().get(index).getValueCorrection();        
+            bValue       = mod200.getParticipationsOut().get(index).getLossReversion();        
+            cValue       = mod200.getParticipationsOut().get(index).getCorrectionEffect();        
+            dValue       = mod200.getParticipationsOut().get(index).getCorrectionsBalance();        
             capital      = mod200.getParticipationsOut().get(index).getCapital();       
             reserve      = mod200.getParticipationsOut().get(index).getReserve();       
             otherAmounts = mod200.getParticipationsOut().get(index).getOtherAmounts();  

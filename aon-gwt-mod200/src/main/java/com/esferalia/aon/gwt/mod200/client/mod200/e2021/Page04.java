@@ -19,7 +19,8 @@ public class Page04 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		basePanel.clear();	
-		addTable(AON.MSG.balancePasivo(), Mod2002021Constants.BALANCE_PASIVE_KEYS);		
+		addTable(AON.MSG.balancePasivo(), Mod2002021Constants.BALANCE_PASIVE_KEYS);
+		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 
 	@Override

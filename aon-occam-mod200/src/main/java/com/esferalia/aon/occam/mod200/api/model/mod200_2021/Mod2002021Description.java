@@ -109,10 +109,10 @@ public class Mod2002021Description {
 	static {
 		DESCRIPTION_MAP.put(Mod2002021Key.P1501,"Valor nominal total de la participaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1502,"Valor en libros (en el activo de la declarante) de la participaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1503,"Ingresos por dividendos recibidos en el ejercicio declarado (*)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1503,"Ingresos por dividendos recibidos en el ejercicio declarado");
 //		DESCRIPTION_MAP.put(Mod2002021Key.P1515,"Rentas positivas o negativas derivadas de la transmisi\u00F3n de la participaci\u00F3n, (+) = Aumentos; (-) = Disminuciones");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.P1504,"a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo (**)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1504,"a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo");
 //		DESCRIPTION_MAP.put(Mod2002021Key.P1505,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1506,"b) Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1809,"c) Eliminaci\u00F3n del deterioro de valores repr. de partic. en el capital o fondos propios (art. 15 k) LIS)");

@@ -32,6 +32,8 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class PageAbs extends ResizeComposite {
+	
+	protected final String ACCOUNTING_STATEMENTS_FOOTER = "(N) Modelo normal de dep\u00F3sito de cuentas en el Registro Mercantil; (A) Modelo abreviado de dep\u00F3sito de cuentas en el Registro Mercantil; (P) Modelo PYMES de dep\u00F3sito de cuentas en el Registro Mercantil.";
 
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override

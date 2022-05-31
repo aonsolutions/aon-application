@@ -18,7 +18,9 @@ public class Page06 extends PageAbs {
 	
 	@Override
 	protected void initializeTable() {
-		addTable(AON.MSG.patrimonioIngresos(), Mod2002021Constants.ECPN_INCOME_KEYS);		
+		addTable(AON.MSG.patrimonioIngresos() + " (*)", Mod2002021Constants.ECPN_INCOME_KEYS);
+		paintFooterNote(basePanel,"(*) El estado de cambios en el patrimonio neto ser\u00E1 de cumplimentaci\u00F3n voluntaria si se utiliza el modelo abreviado o PYMES del PGC.");
+		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 	
 	@Override

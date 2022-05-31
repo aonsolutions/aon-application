@@ -15,12 +15,14 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class Page08 extends PageAbs {
 	
-	private static final String[] HEADERS = new String[]{"Detalle de las Correcciones"
+	private static final String[] HEADERS = new String[] {
+			 "Detalle de las Correcciones"
 			,"Aumentos"
 		 	,"Disminuciones"		 	
 	};
 	
-	private static final String[] HEADERS2 = new String[]{"Detalle de las Correcciones"
+	private static final String[] HEADERS2 = new String[] {
+			 "Detalle de las Correcciones"
 			,"Aumentos futuros"
 		 	,"Disminuciones futuras"		 	
 	};
@@ -105,7 +107,8 @@ public class Page08 extends PageAbs {
 			addHeaderCell(tab1, row, 2, HEADERS[2]);
 			paintEmptyCell(tab1, row, 3);
 			++row;
-			paintKeyDescription(tab1, Mod2002021Key.LQ1230, row, 0);
+			//paintKeyDescription(tab1, Mod2002021Key.LQ1230, row, 0);
+			paintDescription(tab1, Mod2002021Key.LQ1230.getDescription(), row, 0, false, 137);
 			paintKeyField(tab1, Mod2002021Key.LQ1230, row, 1);
 			paintKeyField(tab1, Mod2002021Key.LQ1231, row, 2);
 			paintEmptyCell(tab1, row, 3);

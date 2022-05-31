@@ -18,6 +18,7 @@ public class Page05 extends PageAbs {
 	
 	protected void initializeTable() {
 		addTable(AON.MSG.pyg(), Mod2002021Constants.PYG_KEYS);
+		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 	
 	@Override
