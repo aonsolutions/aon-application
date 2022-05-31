@@ -1657,13 +1657,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Type type,
+	public String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, List<Variable> context, int levelId, Type type,
 			String mime) throws IllegalArgumentException {
 
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(domain, agreementDraft, levelId);
+			ISalary salary = getSalary(domain, agreementDraft, context, levelId);
 
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
@@ -2332,7 +2332,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 				@Override
 				public Collection<?> getCollection(boolean arg0) throws ManagerBeanException {
-					return Collections.singletonList(getSalary(domain, draft, levelId));
+					return Collections.singletonList(getSalary(domain, draft, Collections.emptyList(), levelId));
 				}
 
 			};
@@ -4641,7 +4641,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return settle;
 	}
 
-	private static com.esferalia.aon.payroll.Salary getSalary(String domain, AgreementDraft draft, int levelId) {
+	private static com.esferalia.aon.payroll.Salary getSalary(String domain, AgreementDraft draft, List<Variable> context, int levelId) {
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder() {
 			@Override
@@ -4690,7 +4690,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		ISQLContractSalaryCalculatorContext ctx;
 		try {
 			conn = getConnection(domain);
-			ctx = getSalaryCalculatorContext(conn, draft, levelId);
+			ctx = getSalaryCalculatorContext(conn, draft, context, levelId);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator.calculate(ctx);
 
 			Payments payments = new Payments();
@@ -4940,6 +4940,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(ContextVariable.QUOTE_GROUP.getName(), "01");
 		data.put(ContextVariable.TC2.getName(), ContractCode.C100.getValue());
+
+		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
+	}
+
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(final Connection conn,
+			final AgreementDraft draft, List<Variable> vars, int levelId) throws ExpressionException, SQLException {
+		
+		HashMap<String, Object> data = new HashMap<>();
+		vars.forEach( var -> data.put(var.getName(), var.getValue()));
+		
+		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
+	}
+
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(final Connection conn,
+			final AgreementDraft draft, Map<String, Object> data, int levelId) throws ExpressionException, SQLException {
 
 		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
 	}

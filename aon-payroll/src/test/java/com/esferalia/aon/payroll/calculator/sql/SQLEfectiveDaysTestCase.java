@@ -481,7 +481,7 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 		ctxActualDays = 0;
 		for ( ITimedResult<Double> result: results )
 			ctxActualDays += result.getValue();
-		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), 1.0, ctxActualDays);
 
 	}
 

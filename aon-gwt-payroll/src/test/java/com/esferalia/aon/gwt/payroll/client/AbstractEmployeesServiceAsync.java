@@ -323,7 +323,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Type type, String mime,
+	public void getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, List<Variable> context, int levelId, Type type, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);
 	}

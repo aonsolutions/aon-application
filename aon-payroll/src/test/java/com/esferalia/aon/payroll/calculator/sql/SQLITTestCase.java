@@ -6256,7 +6256,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.collect(Collectors.summingDouble(Double::parseDouble))
 		;
 
-		assertEquals(1750.00 / 30.00 * 31.00, baseCgp, 0.05);
+		assertEquals(1750.00 / 30.00 * get(endDate, Calendar.DAY_OF_MONTH), baseCgp, 0.05);
 	}
 
 	@Test
