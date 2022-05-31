@@ -3,7 +3,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 	<style>
-#faqs {
+#aonContent\:faqs {
 	padding: 0rem 1rem;
 	width: 20rem;
 	border-left: 1px solid #f1f1f1;
@@ -15,19 +15,19 @@
 	display: flex;
 }
 
-#faqs #title-row {
+#aonContent\:faqs #aonContent\:title-row {
 	align-items: center;
 }
 
-#faqs #title-row .material-icons {
+#aonContent\:faqs #aonContent\:title-row .material-icons {
 	margin-right: .5rem;
 }
 
-#faqs #title-row h1 {
+#aonContent\:faqs #aonContent\:title-row h1 {
 	font-weight: normal;
 }
 
-#faqs .faq {
+#aonContent\:faqs .faq {
 	padding: .5rem 1rem;
 	border-radius: .25rem;
 	cursor: pointer;
@@ -36,37 +36,12 @@
 	display: block;
 }
 
-#faqs .faq:hover {
+#aonContent\:faqs .faq:hover {
 	color: #163776;
 }
 
 </style>
 
-	<script>
-		function togglePanel(id) {
-
-			console.log("toggle pressed");
-
-			const panel = document.querySelector(".menu-panel#" + id + "");
-			const icon = document.querySelector(".menu-panel#" + id
-					+ " .menu-panel-title .material-icons");
-			const content = document.querySelector(".menu-panel#" + id
-					+ " .menu-panel-options");
-
-			if (panel.dataset.opened === "true") {
-				icon.style.transform = "rotate(0deg)";
-				content.style.display = "block";
-				panel.dataset.opened = false;
-				console.log("closing")
-			} else {
-				icon.style.transform = "rotate(180deg)";
-				content.style.display = "none";
-				panel.dataset.opened = true;
-				console.log("opening")
-			}
-
-		}
-	</script>
 	<aon:div id="faqs">
 		<aon:div styleClass="box-row" id="title-row">
 			<aon:outputText value="quiz" styleClass="material-icons" />

@@ -2,7 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	<style>
-#sidemenu {
+
+#aonContent\:sidemenu {
 	padding: 0rem 1rem;
 }
 
@@ -51,24 +52,18 @@
 	<script>
 		function togglePanel(id) {
 
-			console.log("toggle pressed");
-
-			const panel = document.querySelector(".menu-panel#" + id + "");
-			const icon = document.querySelector(".menu-panel#" + id
-					+ " .menu-panel-title .material-icons");
-			const content = document.querySelector(".menu-panel#" + id
-					+ " .menu-panel-options");
+			const panel = document.querySelector(".menu-panel." + id + "");
+			const icon = document.querySelector(".menu-panel." + id	+ " .menu-panel-title .material-icons");
+			const content = document.querySelector(".menu-panel." + id	+ " .menu-panel-options");
 
 			if (panel.dataset.opened === "true") {
 				icon.style.transform = "rotate(0deg)";
 				content.style.display = "block";
 				panel.dataset.opened = false;
-				console.log("closing")
 			} else {
 				icon.style.transform = "rotate(180deg)";
 				content.style.display = "none";
 				panel.dataset.opened = true;
-				console.log("opening")
 			}
 
 		}
@@ -76,7 +71,7 @@
 	<aon:div id="sidemenu">
 
 		<!-- HELP / CONTENT -->
-		<aon:div styleClass="menu-panel" id="info">
+		<aon:div styleClass="menu-panel info">
 			<aon:div styleClass="menu-panel-title" onclick="togglePanel('info')">
 				<aon:outputText value="expand_more" styleClass="material-icons" />
 				<aon:outputText value="Ayuda/Contenidos" />
@@ -87,7 +82,7 @@
 					<aon:outputText value="school" styleClass="material-icons" />
 					<aon:outputText value="Índice contenidos" />
 				</aon:div>
-			
+
 				<aon:div styleClass="menu-panel-option">
 					<aon:outputText value="link" styleClass="material-icons" />
 					<aon:outputText value="Links de interes" />
@@ -100,16 +95,16 @@
 
 			</aon:div>
 		</aon:div>
-		
-	
+
+
 		<!-- SUPPORT / CAU -->
-		<aon:div styleClass="menu-panel" id="support">
+		<aon:div styleClass="menu-panel support">
 			<aon:div styleClass="menu-panel-title"
 				onclick="togglePanel('support')">
 				<aon:outputText value="expand_more" styleClass="material-icons" />
 				<aon:outputText value="Soporte / CAU" />
 			</aon:div>
-	
+
 			<aon:div styleClass="menu-panel-options">
 				<aon:div styleClass="menu-panel-option">
 					<aon:outputText value="support_agent" styleClass="material-icons" />
@@ -118,28 +113,28 @@
 
 			</aon:div>
 		</aon:div>
-	
-	
+
+
 		<!-- INFORMATION -->
-		<aon:div styleClass="menu-panel" id="contact">
+		<aon:div styleClass="menu-panel contact">
 			<aon:div styleClass="menu-panel-title"
 				onclick="togglePanel('contact')">
 				<aon:outputText value="expand_more" styleClass="material-icons" />
 				<aon:outputText value="INFORMACIÓN" />
 			</aon:div>
-	
+
 			<aon:div styleClass="menu-panel-options">
 				<a class="menu-panel-option" href="tel:945121010"> <aon:outputText
 						value="phone" styleClass="material-icons" /> <aon:outputText
 						value="Atención telefónica" />
 				</a>
-	
+
 				<a class="menu-panel-option" href="mailto:soporte@aonsolutions.es"
 					target="_blank"> <aon:outputText value="email"
 						styleClass="material-icons" /> <aon:outputText
 						value="Contacto vía email" />
 				</a>
-	
+
 				<aon:div styleClass="menu-panel-option">
 					<aon:outputText value="info" styleClass="material-icons" />
 					<aon:outputText value="Acerca de ..." />

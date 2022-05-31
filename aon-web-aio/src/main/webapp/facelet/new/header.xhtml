@@ -1478,7 +1478,7 @@
 		border-radius: .35rem;
 		z-index: 999999;
 		transform: translateY(-90%) translateX(-50%);
-		transition: transform .15s, opacity .15s;
+		transition: transform .15s ease, opacity .15s ease;
 		opacity: 0;
 	}
 	
@@ -2212,11 +2212,18 @@
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">
-								<h:outputLink style="font-size:1em;"
-									value="#{aonConfiguration.helpURL}"
-									target="_blank" >
-									<aon:outputText value="#{bundle.aon_help}" />
-								</h:outputLink>
+										
+								
+								<!-- NEW HELP -->
+								<aon:commandLink 
+									id="help" 
+									value="#{bundle.aon_help}" 
+									action="main_help"
+									style="#{customize.fontStyle}" 
+									>
+								</aon:commandLink>
+								
+
 							</aon:menuItem>
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
