@@ -138,7 +138,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			invoice.setSeries( series==null?null:series.getCode() );
 			invoice.setNumber( loaded.getNumero() );
 		} else {
-			invoice.setReferenceCode(StringUtils.abbreviate(loaded.getReferencia(),16));
+			invoice.setReferenceCode(StringUtils.abbreviate(loaded.getReferencia(),32));
 		}
 		invoice.setType(type);
 		Registry registry = obtainRegistry(params, type , loaded);

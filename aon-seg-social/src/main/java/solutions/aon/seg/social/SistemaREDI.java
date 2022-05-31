@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.clickAndCheckCode;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndCheckCode;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -325,6 +326,7 @@ class SistemaREDI {
 			}
 			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
 			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
+
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
@@ -335,6 +337,7 @@ class SistemaREDI {
 				}
 			}
 			Page page = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
+			
 			if ( !page.isHtmlPage() ) {
 				WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
 				InputStream is = response.getContentAsStream();
@@ -345,19 +348,32 @@ class SistemaREDI {
 			
 			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+
 			// Obtaining the first table registry's label to double-click on it so that it
 			// loads the pdf
 			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
 			page = doubleClickAndCheckCode(labels.get(0));
-			WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
-			InputStream is = response.getContentAsStream();
-			byte[] ret = is.readAllBytes();
-			is.close();
-			return ret;
+
+			if ( page.isHtmlPage() ) {
+				htmlPage = (HtmlPage) page;
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+				
+				// --------------------Enterprise with loss of benefits-------
+				DomElement next = htmlPage.querySelector("[value=\"Continuar\"]"); 
+				if(next!=null) {
+					page = clickAndCheckCode(next);
+				}
+			}  
+			
+			if ( !page.isHtmlPage() ){
+				WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
+				InputStream is = response.getContentAsStream();
+				byte[] ret = is.readAllBytes();
+				is.close();
+				return ret;
+			}
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (StringIndexOutOfBoundsException e) {
@@ -602,6 +618,13 @@ class SistemaREDI {
 		}
 		return null;
 	}
+	
+	public static Collection<Idc> getIDCDates(byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String ccc) throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
+		return getIDCDates(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, affiliationNumber, regime, ccc);
+	}
 
 	// RETURNS A COLLECTION OF OBJECTS WITH THE DATE AND THE DESCRIPTION OF ALL TA
 	// CERTIFICATES
@@ -615,7 +638,7 @@ class SistemaREDI {
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
-			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
+			Toolkit.checkCertificateRevoked(htmlPage.asXml());
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields

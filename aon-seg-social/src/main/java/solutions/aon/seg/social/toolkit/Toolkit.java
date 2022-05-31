@@ -27,8 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,11 +59,11 @@ import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
@@ -808,8 +808,9 @@ public class Toolkit {
 	public static void checkCertificateRevoked(String body) throws SegSocialException {
 		if(body!=null) {
 			String element = getElementByAttribute(body, "src", "revokedError.jpg");
-			if(element!=null)
+			if(element!=null) {
 				throw new RevokedCertificateException("Certificado revocado");
+			}
 		}
 	}
 	
@@ -1012,20 +1013,6 @@ public class Toolkit {
 			return Toolkit.removeWeirdCharacters(raw);
 	}
 	
-	public static void validateCert(HtmlPage htmlPage) throws SegSocialException {
-		if (htmlPage.getUrl().toString().contains("revokedError"))
-			throw new RevokedCertificateException("Certificado revocado");
-
-		DomNode section = htmlPage.querySelector("#segsocial section");
-		if (section != null && section.getVisibleText().toLowerCase().indexOf("no autorizado") >= 0) {
-			DomNode error = section.querySelector("p");
-			if (error != null && !error.getVisibleText().isEmpty())
-				throw new SegSocialException(error.getVisibleText());
-		}
-	}
-	
-	
-
 	public static String goBackPdf(CloseableHttpClient httpClient, String link, String sessionId)
 			throws UnsupportedEncodingException, SegSocialException, IOException {
 		HttpPost httpPost;

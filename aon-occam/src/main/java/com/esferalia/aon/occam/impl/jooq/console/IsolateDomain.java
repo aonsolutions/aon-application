@@ -129,10 +129,15 @@ public class IsolateDomain {
 				params.getDslContext().transaction(conf -> {
 					createTempTable(params);
 					createDomain(params);
+					if (params.isInhertitanceEnabled()) {
+						passHeritableTables( params );
+					}
 					params.getScript()
 						.values()
 						.stream()
 						.filter(t -> !DOMAIN_LABEL.equals(t.getTable().getName()))
+						.filter(t -> !"session".equals(t.getTable().getName()))
+						.filter(t -> !"action_entry".equals(t.getTable().getName()))
 						.forEach(t -> duplicateTable(params, t));
 					
 					loopRefInvoice(params,params.getScript().get("invoice"));
@@ -162,6 +167,32 @@ public class IsolateDomain {
 		} else
 			log(params,"Schema not present -> database : " + params.getDatabase() + ", domainName : "
 					+ params.getNewDomainName());
+	}
+
+	private static void passHeritableTables(ConsoleParams params) {
+		ScriptTable[] tables  = new ScriptTable[] {
+				params.getScript().get("account"),
+				params.getScript().get("geozone"),
+				params.getScript().get("geotree"),
+				params.getScript().get("tax"),
+				params.getScript().get("series"),
+				params.getScript().get("pay_method"),
+		};
+		Arrays.stream(tables)
+			.forEach( t -> {
+				SelectConditionStep<Record> select = params.getDslContext()
+						.select()
+						.from(t.getTable().asTable())
+						.where(getDomainField(t.getTable()).equal(params.getParent()));
+				t.setRows(  params.getDslContext().fetchCount(select) );
+				t.setCurrentRow(0);
+				t.setPercent(0);
+				log(params,MessageFormat.format(" **** Parent {0} table:", t.getTableName()));
+				select
+				.fetch()
+				.stream()
+				.forEach( rec -> duplicateRow(params, t, rec));
+			});
 	}
 
 	private static void createTempTable(ConsoleParams params) {
