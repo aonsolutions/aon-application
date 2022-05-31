@@ -276,7 +276,7 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 			Date startDate = add(firstDayOfYear, Calendar.MONTH, i);
 			Date endDate = getLastDayOfMonth(startDate);
 			
-			Date startIT = add( startDate, Calendar.DAY_OF_MONTH, (int)(Math.random() * 15));
+			Date startIT = add( startDate, Calendar.DAY_OF_MONTH, (int)(Math.random() * 15) + 1);
 			Date endIT = add( startIT, Calendar.DAY_OF_MONTH, (int)(Math.random() * 10));
 			addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, endIT, null);
 			
@@ -292,7 +292,7 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 			.collect(Collectors.summingLong(Number::longValue));
 			
 			
-			long expectedActualDays = getSumExpectedActualDays(startDate, startIT.equals(startDate) ? startDate : add(startIT, Calendar.DAY_OF_MONTH,-1), Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
+			long expectedActualDays = getSumExpectedActualDays(startDate, add(startIT, Calendar.DAY_OF_MONTH,-1), Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			expectedActualDays += getSumExpectedActualDays(add(endIT, Calendar.DAY_OF_MONTH,1), endDate, Calendar.WEDNESDAY, Calendar.SATURDAY, Calendar.SUNDAY );
 			
 			org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);

@@ -140,6 +140,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
@@ -1952,6 +1953,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return getVariable(var.getName(), toType);
 	}
 
+	public <T> List<T> getValues(ContextVariable var, Class<T> toType) {
+		List<ITimedVariable<T>> variables = this.contractExpressionContext.getVariables(var.getName(), this.contractStartDate, this.contractEndDate);
+		return variables.stream().map(v -> v.getValue(v.getPeriod())).collect(Collectors.toList());
+	}
+
 	public <T> T getVariable(ContextVariable var, Period p, Class<T> toType) {
 		return this.contractExpressionContext.getVariable(var.getName(), p.getStart(), p.getEnd(), toType);
 	}
@@ -3485,6 +3491,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private double getActualDays(Date startDate, Date endDate) {
+		
 		long days = 0;
 		
 		boolean  hasDaysHours = hasDefinedDaysHours();
@@ -3509,8 +3516,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 	
 	private boolean hasDefinedDaysHours() {
-		return WEEK_HOURS_VARIABLES.values().stream()
-			.anyMatch(this::containsVariable);
+		for ( ContextVariable variable : WEEK_HOURS_VARIABLES.values()) {
+			boolean effectiveDefined = 
+			getValues(variable, Object.class).stream()
+			.filter(Objects::nonNull)
+			.filter(Number.class::isInstance)
+			.map(v -> ((Number)v).doubleValue())
+			.filter( v -> v > 0.00)
+			.count() > 0 ;
+			
+			if ( effectiveDefined )
+				return true;
+			
+		}
+		return false;
 	}
 	
 	private Double getDayHours( Calendar day ) {
@@ -3520,6 +3539,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			this.contractExpressionContext.eval(dayHoursVar.getName(), day.getTime(), day.getTime(), Number.class)
 			.stream()
 			.map(ITimedResult::getValue)
+			.filter(Objects::nonNull)
 			.collect(Collectors.summingDouble(Number::doubleValue));
 		} catch (ExpressionException e) {
 			return null;
