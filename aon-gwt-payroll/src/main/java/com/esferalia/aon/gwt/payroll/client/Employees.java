@@ -1391,12 +1391,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		loadWorkplaceStats(workplaceItem, workplace);
 		
-		if (workplaceItem.getChildCount() > getEmployeesOffset(workplaceItem)) {
-			callback.run();
-			return;
-		} // end-if: Employees of this workplace already loaded .
-
-		getServiceWorkplaceEmployees(workplace, 0, limit, employees -> {
+		//if (workplaceItem.getChildCount() > getEmployeesOffset(workplaceItem)) {
+		//	callback.run();
+		//	return;
+		//} 
+		// end-if: Employees of this workplace already loaded .
+		
+		int workplaceChilds = workplaceItem.getChildCount();
+		int employeesOffset = getEmployeesOffset(workplaceItem);
+		
+		int start = Math.max(workplaceChilds - employeesOffset + 1,0);
+		
+		getServiceWorkplaceEmployees(workplace, start, limit, employees -> {
 			loadEmployess(workplaceItem, employees, limit);
 			callback.run();
 		});
@@ -2523,7 +2529,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			TreeItem workplaceItem = tree.getItem(i);	
 
 			workplaceItem.setVisible(false);	// hides
-			workplaceItem.setState(false, false);		// close
+			workplaceItem.setState(false, false);// close
 
 			loadAndfilterWorkplace( pattern, workplaceItem, employeeItem -> {
 				workplaceItem.setVisible(true);	// display

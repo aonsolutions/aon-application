@@ -80,14 +80,19 @@ export class AonMobileList extends AonElement {
     if (data.aonIcon) {
       icon = new AonIcon();
       icon.className = "aonAvatar";
-      icon.icon      = data.aonIcon
-      icon.size      = "24";
+      icon.icon      = data.aonIcon;
+      icon.size      = data.size || "24";
+      if(data.icon_color){
+        icon.color = data.icon_color;
+      }
       spanHtml = icon.outerHTML;
     } else if (data.icon) {
       icon = this.createElement("i");
       icon.classList.add(data.icon_class||"material-icons","aonAvatar");
       icon.textContent = data.icon;
-      if(data.icon_color) icon.style.color = data.icon_color;
+      if(data.icon_color){
+        icon.style.color = data.icon_color;
+      }
       spanHtml = icon.outerHTML;
     } else if (data.iconHtmlCustom) {
       spanHtml = `${data.iconHtmlCustom}`;

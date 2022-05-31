@@ -6,13 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
@@ -1037,33 +1034,13 @@ class SistemaREDMov {
 		byte[] certByte = certificateInputStream.readAllBytes();
 		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte),
 				certificatePassword, certificateType)) {
-			validateCertExpired(new ByteArrayInputStream(certByte), certificatePassword);
+			InvalidCertificateException.checkCertificate(certByte, certificatePassword);
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 
-			Toolkit.validateCert(htmlPage);
+			Toolkit.checkCertificateRevoked(htmlPage.asXml());
 		} catch (Exception e) {
 			throw new SegSocialException(e.getMessage());
-		}
-	}
-
-	private static void validateCertExpired(InputStream certificateInputStream, String certificatePassword)
-			throws Exception {
-		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-		keystore.load(certificateInputStream, certificatePassword.toCharArray());
-		Enumeration<?> aliases = keystore.aliases();
-		Date expiryDate = null;
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		for (; aliases.hasMoreElements();) {
-			String alias = (String) aliases.nextElement();
-			expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
-			if (expiryDate.compareTo(cal.getTime()) < 0)
-				throw new Exception("El certificado ha expirado");
 		}
 	}
 

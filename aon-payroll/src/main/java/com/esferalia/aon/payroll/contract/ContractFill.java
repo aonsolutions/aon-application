@@ -542,6 +542,7 @@ public class ContractFill {
 	public static void setField(PDField field, String value) throws IOException {
 	    if (field instanceof PDCheckBox) {
 	        field.setValue("No");
+	        ((PDCheckBox) field).unCheck();
 	    } else if (field instanceof PDTextField) {
 	    	try{
 		    	field.getCOSObject().removeItem(COSName.AP);

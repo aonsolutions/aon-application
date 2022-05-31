@@ -422,6 +422,7 @@ button:disabled, button[disabled]{
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 100%;
+  position: relative;
 }
 
 .aonLiSpanSubtitle {

@@ -372,28 +372,31 @@ public class JooqCertifica2 {
 				}
 			} else
 				salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
-
-			List<String> baseCGCRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salaryId)).and(SALARY_DATA.NAME.eq("BASE_CGC"))
-					.fetch(SALARY_DATA.EXPRESSION);
-
-			Double baseCGC = 0.00;
-
-			// Using for, cause can be periods in the same Salary
-			for (String baseCGCStr : baseCGCRecords) {
-				baseCGC += Double.parseDouble(baseCGCStr);
-			}
-
-			List<String> baseCGPRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salaryId)).and(SALARY_DATA.NAME.eq("BASE_CGP"))
-					.fetch(SALARY_DATA.EXPRESSION);
-
-			Double baseCGP = 0.00;
-
-			// Using for, cause can be periods in the same Salary
-			for (String baseCGPStr : baseCGPRecords) {
-				baseCGP += Double.parseDouble(baseCGPStr);
-			}
+			
+			Double baseCGC = salary.get(SALARY.CGC_BASE);
+			Double baseCGP = salary.get(SALARY.CGP_BASE);
+			
+//			List<String> baseCGCRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+//					.where(SALARY_DATA.SALARY.eq(salaryId)).and(SALARY_DATA.NAME.eq("BASE_CGC"))
+//					.fetch(SALARY_DATA.EXPRESSION);
+//
+//			Double baseCGC = 0.00;
+//
+//			// Using for, cause can be periods in the same Salary
+//			for (String baseCGCStr : baseCGCRecords) {
+//				baseCGC += Double.parseDouble(baseCGCStr);
+//			}
+//
+//			List<String> baseCGPRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+//					.where(SALARY_DATA.SALARY.eq(salaryId)).and(SALARY_DATA.NAME.eq("BASE_CGP"))
+//					.fetch(SALARY_DATA.EXPRESSION);
+//
+//			Double baseCGP = 0.00;
+//
+//			// Using for, cause can be periods in the same Salary
+//			for (String baseCGPStr : baseCGPRecords) {
+//				baseCGP += Double.parseDouble(baseCGPStr);
+//			}
 
 			// Initialize Certifica2Info
 			Certifica2Period certifica2Period = null;
@@ -472,8 +475,10 @@ public class JooqCertifica2 {
 			Double baseCGP = 0.00;
 
 			if (null != holidaysRecord) {
-				baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+				baseCGC = settlementRecords.get(0).get(SALARY.CGC_BASE);
+				baseCGP = settlementRecords.get(0).get(SALARY.CGP_BASE);
+//				baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
+//				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
 			}
 
 			settlementCertifica2Info = new Certifica2Period(null, null, holidayDays, baseCGC, baseCGP);

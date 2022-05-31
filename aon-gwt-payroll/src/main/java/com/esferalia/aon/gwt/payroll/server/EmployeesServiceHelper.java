@@ -811,7 +811,7 @@ public class EmployeesServiceHelper {
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
 		List<Date> dates = new ArrayList<Date>();
-		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 		idcs.forEach( idc -> dates.add(idc.getFecha() ));
 		return dates;
 	}

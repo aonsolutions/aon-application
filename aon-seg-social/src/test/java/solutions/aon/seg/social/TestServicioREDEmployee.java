@@ -57,7 +57,7 @@ public class TestServicioREDEmployee extends SegSocialTest {
 			cccSet.add("11122534302");
 			cccMap.put("0111", cccSet);
 			
-			ServicioREDEmployee.getTotalEmployees(certificateInputStream,
+			ServicioREDEmployee.getTotalEmployees(certificateInputStream.readAllBytes(),
 					"123456",
 					"pkcs12",
 					cccMap);

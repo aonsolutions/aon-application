@@ -392,7 +392,8 @@ public class OperationReportExcelBook extends HttpServlet {
 				// Si Tipo NIF = 02 NIF-IVA, comprobar que el documento lleva en sus dos primeras letras el pais
 				if (op.getRegistryDocumentType().equals("02")) {
 					String doc = op.getRegistryDocument();
-					if(!doc.substring(0,2).equalsIgnoreCase(op.getRegistryDocumentCountry())) {
+					if(!AonStringUtils.equalsIgnoreCase(AonStringUtils.substring(doc, 0, 2), op.getRegistryDocumentCountry())) {
+//					if(!doc.substring(0,2).equalsIgnoreCase(op.getRegistryDocumentCountry())) {
 						doc = op.getRegistryDocumentCountry() + doc;
 						op.setRegistryDocument(doc);
 					}					
