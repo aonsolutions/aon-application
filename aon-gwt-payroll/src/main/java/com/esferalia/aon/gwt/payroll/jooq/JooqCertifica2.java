@@ -38,8 +38,10 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info.Certifica2Period;
 import com.esferalia.aon.jooq.tables.records.Certifica2BatchRecord;
+import com.esferalia.aon.payroll.sepe.certifica.CertificaFill;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONREATYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONTYPE;
@@ -83,7 +85,7 @@ public class JooqCertifica2 {
 	private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
 	private static SimpleDateFormat monthDateFormat = new SimpleDateFormat("MM");
 
-	private static DecimalFormat decimalFormat = new DecimalFormat("######0.00");
+	private static DecimalFormat decimalFormat = new DecimalFormat("0000000.00");
 
 	// -----------------------------------------------------
 	// createCertifica2DB@2Info
@@ -103,6 +105,31 @@ public class JooqCertifica2 {
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, contractId,
 				suspensionCode);
 		saveCertifica2Info(dslContext, domainId, contractId, certifica2Info.getSuspensionCode());
+	}
+	
+	public static byte[] createCertEnterprisePDF(String domainName, Integer contractId, String suspensionReasonCode) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			if (AonStringUtils.isBlank(suspensionReasonCode))
+				suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
+
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, contractId, suspensionReasonCode);
+			
+			Map<String, String> fieldsMap = createCertifica2PDFFieldsMap(certifica2Info);
+			
+			return CertificaFill.exportCertEnterprisePDF(fieldsMap);
+		} catch (Exception e) {
+			return new byte[0];
+		}
+	}
+	
+	private static Map<String, String> createCertifica2PDFFieldsMap(Certifica2Info certifica2Info) {
+		Map<String, String> fieldMap = new HashMap<>();
+		
+		
+		
+		return fieldMap;
 	}
 
 	// ----------------------------------------------------- getCertific@2Info
@@ -607,8 +634,7 @@ public class JooqCertifica2 {
 			getDatosCotizacion(trabajadorType, certifica2Info);
 
 		DatosVacacionesCotizadas datosVacacionesCotizadas = new DatosVacacionesCotizadas();
-		datosVacacionesCotizadas
-				.setNumDiasCotizados(StringUtils.leftPad(certifica2Info.getSettleQuoteDays().toString(), 3, '0'));
+		datosVacacionesCotizadas.setNumDiasCotizados(StringUtils.leftPad(certifica2Info.getSettleQuoteDays().toString(), 3, '0'));
 		datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(
 				StringUtils.leftPad(format(certifica2Info.getBaseCgc()), 9, '0'));
 		datosVacacionesCotizadas
@@ -644,9 +670,10 @@ public class JooqCertifica2 {
 
 			if (AonStringUtils.isBlank(certifica2Map.get("bcd")))
 				cotizacionType.setBaseCotizacionDesempleo("000000000");
-			else
-				cotizacionType
-						.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Map.get("bcd")), 9, '0'));
+			else{
+				Double bcd = Double.parseDouble(certifica2Map.get("bcd"));
+				cotizacionType.setBaseCotizacionDesempleo(format(bcd));
+			}
 
 			trabajadorType.getDatosCotizacionREA().add(cotizacionType);
 		}
@@ -667,15 +694,17 @@ public class JooqCertifica2 {
 
 			if (AonStringUtils.isBlank(certifica2Map.get("bccc")))
 				cotizacionType.setBaseCotizacionContingenciasComunes("000000000");
-			else
-				cotizacionType.setBaseCotizacionContingenciasComunes(
-						StringUtils.leftPad(format(certifica2Map.get("bccc")), 9, '0'));
+			else {
+				Double bccc = Double.parseDouble(certifica2Map.get("bccc"));
+				cotizacionType.setBaseCotizacionContingenciasComunes(format(bccc));
+			}
 
 			if (AonStringUtils.isBlank(certifica2Map.get("bcd")))
 				cotizacionType.setBaseCotizacionDesempleo("000000000");
-			else
-				cotizacionType
-						.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Map.get("bcd")), 9, '0'));
+			else {
+				Double bcd = Double.parseDouble(certifica2Map.get("bcd"));
+				cotizacionType.setBaseCotizacionDesempleo(format(bcd));
+			}
 
 			trabajadorType.getDatosCotizacion().add(cotizacionType);
 		}
@@ -825,10 +854,6 @@ public class JooqCertifica2 {
 
 	private static String format(Double value) {
 		return decimalFormat.format(value).replace(",", "").replace("\\.", "");
-	}
-
-	private static String format(String value) {
-		return value.replaceAll("[,.]", "");
 	}
 
 	private static String getSuspensionReasonCode(String compensationReason) {

@@ -91,6 +91,11 @@ public class Certifica2Servlet extends HttpServlet {
 				Date endDate = formatEndDate(endDateStr);
 				
 				data = getCertEnterprisePDF(domainName, userLogin, contractId, document, endDate);
+			} else if(AonStringUtils.equalsIgnoreCase(type, "MANUAL")) {
+				res.setContentType(MimeType.MIME_PDF.getName());
+				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
+				
+				data = JooqCertifica2.createCertEnterprisePDF(domainName, contractId, null);
 			}
 			
 			res.setStatus(HttpServletResponse.SC_OK);
