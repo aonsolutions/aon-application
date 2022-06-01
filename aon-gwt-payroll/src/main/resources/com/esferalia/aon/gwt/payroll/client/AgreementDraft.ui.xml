@@ -487,7 +487,32 @@
 										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 										
 									<g:ListBox debugId='levelListBox' ui:field='levelListBox' />
+									
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<span class="aon-outputText aon-black aon-bold">Coef. Parcialidad: </span>
+									<g:TextBox debugId='partialTextBox' ui:field='partialTextBox' text="1.00" textAlignment="right" maxLength="5" visibleLength="6"/>
+									
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<span class="aon-outputText aon-black aon-bold">Grupo Cotiz.: </span>
+									<g:ListBox debugId='groupListBox' ui:field='groupListBox' >
+										<g:item value='01'>1</g:item>
+										<g:item value='02'>2</g:item>
+										<g:item value='03'>3</g:item>
+										<g:item value='04'>4</g:item>
+										<g:item value='05'>5</g:item>
+										<g:item value='06'>6</g:item>
+										<g:item value='07'>7</g:item>
 
+										<g:item value='08'>8</g:item>
+										<g:item value='09'>9</g:item>
+										<g:item value='10'>10</g:item>
+										<g:item value='11'>11</g:item>
+									</g:ListBox>
+
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
 									<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 										styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
 

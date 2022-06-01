@@ -1400,7 +1400,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int workplaceChilds = workplaceItem.getChildCount();
 		int employeesOffset = getEmployeesOffset(workplaceItem);
 		
-		int start = Math.max(workplaceChilds - employeesOffset + 1,0);
+		int start = Math.max(workplaceChilds - employeesOffset ,0);
 		
 		getServiceWorkplaceEmployees(workplace, start, limit, employees -> {
 			loadEmployess(workplaceItem, employees, limit);
