@@ -70,71 +70,88 @@ public class Page09 extends PageAbs {
 		
 		FlexTable table = addTable();
 
+		boolean paintSocimi = true;
 		int row = 0;
 		boolean margin = false;
 		for (Mod2002021Key key : Mod2002021Constants.LIQUIDATION_II_KEYS) {
-			if (callback.getMod200Object().isVisible(key)) {				
+			if (callback.getMod200Object().isVisible(key)) {			
 				if (key == Mod2002021Key.LQ578) {
 					paintDescription(table, "Entidades navieras en r\u00E9gimen de tributaci\u00F3n en funci\u00F3n del tonelaje", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());					
 					row++;
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ1029) {
 					paintDescription(table, "Entidades que forman parte de grupos de consolidaci\u00F3n fiscal", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
+					margin = true;
+				}
+				if (key == Mod2002021Key.LQ550TG || key == Mod2002021Key.LQ550T0 ) {
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ1033) {
 					paintDescription(table, "S\u00F3lo entidades de reducida dimensi\u00F3n", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ553) {
 					paintDescription(table, "S\u00F3lo sociedades cooperativas", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ555) {
 					paintDescription(table, "S\u00F3lo agrupaciones espa\u00F1olas de inter\u00E9s econ\u00F3mico y UTES", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ559) {
 					paintDescription(table, "S\u00F3lo entidades ZEC", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
 				}
-				if (key == Mod2002021Key.LQ520) {
-					paintDescription(table, "S\u00F3lo SOCIMIS", row,0, true);
-					row++;
+				if (key == Mod2002021Key.LQ520 || key == Mod2002021Key.LQ521) {
+					if (paintSocimi) {
+						paintDescription(table, "S\u00F3lo SOCIMIS", row,0, true);
+						table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
+						row++;
+						paintSocimi = false;
+					}					
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ545) {
-					paintDescription(table, "Rentas que no limitan la compensaci\u00F3n de bases imponibles y cuotas negativas", row,0, true);
+					paintDescription(table, "Rentas que no limitan la compensaci\u00F3n de bases imponibles", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
+					row++;
+					margin = true;
+				}
+				if (key == Mod2002021Key.LQ1576) {
+					paintDescription(table, "R\u00E9gimen especial de entidades navieras en Canarias", row, 0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
 				}
 				if (key == Mod2002021Key.LQ560) {
 					paintDescription(table, "S\u00F3lo sociedades cooperativas", row,0, true);
+					table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					row++;
 					margin = true;
 				}				
-				if (key == Mod2002021Key.LQ550TG || key == Mod2002021Key.LQ550T0 ) {
-					margin = true;
-				}				
-				if (key == Mod2002021Key.LQ550 || key == Mod2002021Key.LQ558 || key == Mod2002021Key.LQ562 || key == Mod2002021Key.LQ1032) {
+				if (key == Mod2002021Key.LQ550 || key == Mod2002021Key.LQ558 || key == Mod2002021Key.LQ562 || key == Mod2002021Key.LQ1032 || key == Mod2002021Key.LQ1330) {
 					margin = false;
-				}
-				if (key == Mod2002021Key.LQ1576) {
-					paintDescription(table, "R\u00E9gimen especial de entidades navieras en Canarias", row, 0, true);
-					row++;
-					margin = true;
 				}
 								
 				row = paintKey(table,key,row);
 				
 				if (margin) {
-					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
+					//table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
+					//table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
+					//table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonFiscalPaddingLeft());
+					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft20());
 				}
 				
      			if (key == Mod2002021Key.LQ554) {

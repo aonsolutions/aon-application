@@ -119,7 +119,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean bold) {
-		paintDescription(tab, description, row,col, bold, 0);
+		paintDescription(tab, description, row, col, bold, 0);
 	}
 	
 	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean bold, int size) {

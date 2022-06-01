@@ -294,11 +294,14 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ552, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1033,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1034,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1330,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ553, new Boolean[]{TRUE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ554, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1330,new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ553, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ554, new Boolean[]{FALSE,TRUE});
 		
-		// Tipo de Gravamen - Sociedades cooperativas
+		// Tipo de Gravamen
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ558,new Boolean[]{TRUE,FALSE});
+		
+		// Sociedades cooperativas
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ561,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1331,new Boolean[]{FALSE,TRUE});
 		

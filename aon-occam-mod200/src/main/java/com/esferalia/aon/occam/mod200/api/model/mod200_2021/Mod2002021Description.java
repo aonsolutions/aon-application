@@ -454,7 +454,7 @@ public class Mod2002021Description {
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ559, "Base imponible a tipo de gravamen especial");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ520, "Parte de la base imponible del periodo impositivo que tributa al tipos general");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ520, "Parte de la base imponible del periodo impositivo que tributa al tipo general");
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ521, "Parte de la base imponible del periodo impositivo que tributa al tipo del 0%");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ545, "Rentas correspondientes a quitas por acuerdo con acreedores (art. 26.1 LIS)");
