@@ -16,15 +16,19 @@ export const buildMobile = (aonMessengerChat)=> {
     aonMessengerChat.appendChild(mainView);
 
     const wrapper = createFirstDiv(mainView);
-    if(task.id)
+
+    if(task.id){
         buildSectionHistoric(aonMessengerChat, wrapper);
+    }
 
     const secondDiv = createSecondDiv(mainView);
 
     buildForm(secondDiv, aonMessengerChat);
 
-    if(!task.id)
+    if(!task.id){
         showForm(true);
+    }
+
 }
 
 

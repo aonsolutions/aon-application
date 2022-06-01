@@ -49,9 +49,9 @@ public class ITPart {
 	private String  gpCtz;
 	private String  catProf;
 	private String  typeCto;
-	private Integer  lack;
+	private Integer lack;
 
-	public ITPart() {}
+	public ITPart() { /* TODO document why this constructor is empty */ }
 	
 	public ITPart setBaseCtz(Float baseCtz) {
 		this.baseCtz = baseCtz;
@@ -390,8 +390,8 @@ public class ITPart {
 		return Optional.ofNullable(baseCtz);
 	}
 	
-	public Integer getDaysCtz() {
-		return daysCtz;
+	public Optional<Integer> getDaysCtz() {
+		return Optional.ofNullable(daysCtz);
 	}
 	
 	public Optional<Float> getHoursCtzExtr() {
@@ -527,6 +527,8 @@ public class ITPart {
 		getBaseCtz().ifPresent(base->  stringBuffer.append(String.format(" baseCtz : \"%s\" ",base)) );
 		
 		getSumBCtz().ifPresent(base->  stringBuffer.append(String.format(" sumaBCtz : \"%s\" ",base)) );
+		
+		getDaysCtz().ifPresent(day->  stringBuffer.append(String.format(" daysCtz : \"%s\" ",day)) );
 
 		stringBuffer.append('}');
 		return stringBuffer.toString();
