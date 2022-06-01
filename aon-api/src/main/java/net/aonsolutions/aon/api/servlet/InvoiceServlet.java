@@ -566,7 +566,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private static Certificate checkCertificate(AonApiData api) {
 		Certificate cert = new Certificate();
 		try {
-			cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());
+			if(api.getData().opt("cert") != null) {
+				Integer id = JsonUtils.getInteger(api.getData(), "cert");
+				cert = AON.getCertificates(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(id))
+						.findFirst().orElse(new Certificate());
+			} else {
+				cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());				
+			}
+
 		} catch (Exception e) {
 			throw new AonApiException("Error al obtener el certificado.");
 		}
