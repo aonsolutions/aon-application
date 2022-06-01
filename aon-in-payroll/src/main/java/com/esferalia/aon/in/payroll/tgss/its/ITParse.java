@@ -33,17 +33,24 @@ public class ITParse {
 		
 		Date startDateIT = startIT.getWorkLeaveDate().get();
 		Optional<Date> endDateIT = endIT.getWorkRestartDate();
+		
+		Optional<Float> dailyBase = startIT.getDailyBaseCgc();
+		Optional<Integer> daysCtz = startIT.getDaysCtz();
 
 		EmployeeIT employeeIT = new EmployeeIT()
-				.setCcc(startIT.getCcc())
-				.setType(ContractLeaveType.valueOfTGSS(startIT.getCauseNumber()))
-				.setStartDate(startDateIT);
+		.setCcc(startIT.getCcc())
+		.setType(ContractLeaveType.valueOfTGSS(startIT.getCauseNumber()))
+		.setStartDate(startDateIT);
 		
 		startIT.getIpf().ifPresent(employeeIT::setDni);
 		startIT.getNaf().ifPresent(employeeIT::setNss);
 		startIT.getNameEmployee().ifPresent(employeeIT::setName);
-		startIT.getDailyBaseCgc().ifPresent(d-> employeeIT.setDailyCgcBase(d.doubleValue()));
-
+		
+		if(dailyBase.isPresent() && daysCtz.isPresent()) {
+			double base = dailyBase.get().doubleValue() / daysCtz.get();
+			employeeIT.setDailyCgcBase(base);
+		}
+		
 		ContractLeaveDetailStatus status = PROCESSED;
 
 		endDateIT.ifPresent(employeeIT::setEndDate);
@@ -55,15 +62,14 @@ public class ITParse {
 			);
 			// --------ADD ALTA
 			Optional<Date> endD = employeeIT.getEndDate();
-			if (!endD.isEmpty())
-				employeeIT.addITPart(
-					buildPartIt(ALTA, status, endD.get(), endIT.getCollegiateNumber(), endIT.getCias())
-				);
+			if (!endD.isEmpty()) {
+				employeeIT.addITPart( buildPartIt(ALTA, status, endD.get(), endIT.getCollegiateNumber(), endIT.getCias())	);
+			}
 		}
 
-		if (!endIT.getCauseRestart().isEmpty())
-			employeeIT.setDischargeCause(
-					ContractLeaveDischargeCause.safeValueOf(endIT.getCauseNumber() - 1));
+		if (!endIT.getCauseRestart().isEmpty()) {
+			employeeIT.setDischargeCause(ContractLeaveDischargeCause.safeValueOf(endIT.getCauseNumber() - 1));
+		}
 
 		it.getConfirmations().forEach(c -> {
 			EmployeeITPart itPart = new EmployeeITPart()
@@ -129,8 +135,9 @@ public class ITParse {
 		
 //		employeeIT.setDirectPay(getExpressionDirectPay(paternity.getStartDate()));
 //		
-		if(!paternity.getPaternityDetail().isEmpty()) 
-			employeeIT.setRegulationBase(paternity.getPaternityDetail().get(0).getBaseCC().doubleValue());
+//		if(!paternity.getPaternityDetail().isEmpty()) {
+//			employeeIT.setRegulationBase(paternity.getPaternityDetail().get(0).getBaseCC().doubleValue());
+//		}
 
 		//-------------END CONTRACT DATA-----------
 

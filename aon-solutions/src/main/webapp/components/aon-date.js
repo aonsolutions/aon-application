@@ -484,6 +484,14 @@ export class AonDate extends AonElement {
     this.readonly = "true";
   }
 
+  setVisible(visible){
+    if(visible){
+      this.setAttribute(CONSTANT.HIDDEN, visible);
+    } else {
+      this.removeAttribute(CONSTANT.HIDDEN);
+    }
+  }
+
   // parseDateStr(dateStr) {
   //     if(dateStr.includes('/')){
   //       let dateArr = dateStr.split('/');

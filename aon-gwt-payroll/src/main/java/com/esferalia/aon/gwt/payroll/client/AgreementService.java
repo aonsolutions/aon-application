@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -34,7 +35,7 @@ public interface AgreementService extends RemoteService{
 
 	ContextDescriptor getContext(String domain, AgreementDraft agreementDraft, int levelId) throws IllegalArgumentException;
 
-	String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Salary.Type type, String mime)
+	String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, List<Variable> context, int levelId, Salary.Type type, String mime)
 			throws IllegalArgumentException;
 
 	String getAgreementDraftReceiptHTML(String domain, AgreementDraft agreementDraft, int levelId, Salary.Type type, int zoom)

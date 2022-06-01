@@ -7,6 +7,7 @@ import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -1348,6 +1350,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	ListBox levelListBox;
 	@UiField
+	ListBox groupListBox;
+	@UiField
+	TextBox partialTextBox;
+	@UiField
 	MonthListBox previewMonthListBox;
 
 	// Stuff for a properly built salary table.
@@ -2266,7 +2272,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		calculate();
 	}
 
-	@UiHandler({ "typeListBox", "levelListBox", })
+	@UiHandler({ "typeListBox", "levelListBox", "partialTextBox", "groupListBox" })
 	void onChangePreview(ChangeEvent event) {
 		printPreview();
 	}
@@ -4454,6 +4460,23 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	}
 
+	private String getGroup() {
+		return groupListBox.getSelectedValue();
+	}
+	
+	private void setPartial(double partial) {
+		partialTextBox.setValue(Double.toString(partial), false);
+	}
+	
+	private double getPartial() {
+		String text =  partialTextBox.getText();
+		try {
+			return Double.parseDouble(text);
+		} catch ( Exception e ) {
+			return 1.0;
+		}
+	}
+
 	private void initLevelListBox() {
 		levelListBox.clear();
 		for (Level level : agreementDraftObject.getLevels()) {
@@ -4515,11 +4538,21 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private void printPreview() {
 		Type type = getType();
 		int levelId = getLevelId();
-
-		agreementDraftObject.preview(levelId, type, 0, new AsyncCallback<String>() {
+		String group = getGroup();
+		double partial = getPartial();
+		
+		
+		List<Variable> context = new ArrayList<>();
+		StringVariable groupVariable = new StringVariable();
+		context.add(new StringVariable.Builder().setName("TC2").setValue("100").create());
+		context.add(new StringVariable.Builder().setName("GRUPO_COTIZACION").setValue(group).create());
+		context.add(new NumberVariable.Builder().setName("COEFICIENTE_PARCIALIDAD").setValue(partial).create());
+		
+		agreementDraftObject.preview(context, levelId, type, 0, new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String html) {
+				setPartial(partial);
 				printPreviewViewer.open(html);
 			}
 

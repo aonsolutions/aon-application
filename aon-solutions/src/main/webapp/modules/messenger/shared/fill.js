@@ -98,22 +98,23 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             
             let display = "block";
 
-            if(project && project.id)
+            if(project && project.id){
                 aonSelect.value = project.id; 
-            else if(1===projects.length && !task.id){
+            } else if(1===projects.length && !task.id){
                 aonSelect.setIndexOf(0);
                 display = "none";
-            } else if(!projects.length)
-               display = "none";
+            } else if(!projects.length){
+                display = "none";
+            }
 
             aonSelectParet.style.display = display;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-                console.log("setProject");
-                if(detail && detail.id)
+                if(detail && detail.id){
                     task.setProject(detail);
-                else 
+                } else { 
                     task.setProject({});
+                }
             });
         } catch (error) {
             console.log(error);
@@ -142,8 +143,10 @@ export const fillWorkGroup = async (aonMessengerChat) => {
             aonSelect.value = workgroup.id;
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail)
+            if(detail){
                 task.setWorkgroup(detail);
+            }
+           
             fillTaskHolder(aonMessengerChat);
         });
 
