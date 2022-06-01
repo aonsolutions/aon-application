@@ -4,7 +4,7 @@ import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendB
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
-import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData, createContractDataMdCtz, createQuoteMonthly } from '../createComponent.js';
+import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData, createContractDataMdCtz, createQuoteMonthly, createAsociativeSA } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
 // import * as LS from '../../../services/localStorageService.js';
@@ -606,7 +606,14 @@ export class AonAltaDirecta extends AonElement {
             const fechaBajaEl = this.getElement("fechaBaja");
             const codBajaEl = this.getElement("codBaja");
             const frv = this.getElement("frv");
-            await sendBaja({...this.data, fechaBaja: fechaBajaEl.value, situation: codBajaEl.value, frv: frv.value ? frv.value : undefined});
+            const asociativeSA = this.getElement("asociativeSA");
+            await sendBaja({
+                ...this.data, 
+                fechaBaja: fechaBajaEl.value, 
+                situation: codBajaEl.value, 
+                frv: frv.value ? frv.value : undefined, 
+                asociativeSA: asociativeSA && asociativeSA.value ? asociativeSA.value : undefined
+            });
             this.applicationEl.getOptionDialog().close();
             this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = [];
@@ -710,8 +717,7 @@ export class AonAltaDirecta extends AonElement {
         const fechaEl = this.getElement("fechaBaja");
         fechaEl.value = AonDateUtils.formatDateOrigin(new Date());
         fechaEl.addEventListener(EVENT.CHANGE, ()=>{
-            if(new Date(fechaEl.value).isValid()) button.disabled = false;
-            else button.disabled = true;
+            button.disabled = new Date(fechaEl.value).isValid() ? false : true;
         })
 
         //list cod de baja
@@ -724,19 +730,22 @@ export class AonAltaDirecta extends AonElement {
         });
 
         let frv = this.getElement('frv');
-        frv.setDisabled(true);
 
         let dayVacation = this.getElement('dayVacation');
         dayVacation.setAlign('left');
         dayVacation.onInput(({target}) =>{
             let value = target.value;
-            frv.value = "";
+            
             if(value && !isNaN(parseInt(value)) ){
                 value = parseInt(value);
                 let fechaBaja = new Date(fechaEl.value);
                 if(fechaEl && fechaBaja.isValid()){
                     frv.setDate( fechaBaja.addDay(value) );
+                    createAsociativeSA(true);
                 }
+            } else {
+                frv.value = "";
+                createAsociativeSA();
             }
         });
 

@@ -528,11 +528,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setFra(frb)
 		.setFrb(frb)
 		.setName(name)
-		.setSituation(situation)
-		;
+		.setSituation(situation);
 		
 		if(!params.optString("frv").isEmpty()) {
 			builder.setFrv(AonDateUtils.parse(params.optString("frv"), FORMAT_DATE));
+			if(!params.optString("asociativeSA").isEmpty()) {
+				builder.setAsociativeSA(params.optString("asociativeSA"));
+			}
 		}
 		
 		Employee employee = builder.build();
@@ -542,7 +544,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		if(employee.getName().isPresent()) {
 			sendMovEmailNotification(api, employee, frb, SituationType.BAJA);
 		}
-
+		
 		return new JSONObject();
 	}
 	
@@ -605,9 +607,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		JSONObject json = new JSONObject();
 		JSONArray errors = new JSONArray();
-		if(api.getData().isNull("fecha")) 
+		if(api.getData().isNull("fecha")) {
 			throw new Exception("Fecha requerida");
-
+		}
+	
 		json.put("contract_edit", false);
 		
 		updateOccupation(api, certificate, json, errors);
