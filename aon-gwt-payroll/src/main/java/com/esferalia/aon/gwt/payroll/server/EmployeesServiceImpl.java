@@ -29,6 +29,9 @@ import static java.util.stream.Collectors.summingDouble;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -195,6 +198,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
@@ -839,6 +843,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					cost.getEnterpriseId(), cost.getWorkplaceId(), occamTypes);
 
 			byte bytes[] = oos.toByteArray();
+			
+			
+			
+			FileOutputStream is = new FileOutputStream("/tmp/x.pdf");
+			is.write(bytes);
+			is.close();
+			
 			InputStream data = new ByteArrayInputStream(bytes);
 
 			StringWriter writer = new StringWriter();
@@ -4591,18 +4602,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		settle.setCause("");
 
-		AONContext ctx = AONContext.getAONContext(domain, "");
+		try ( CloseableAONContext ctx = AONContext.getAONContext(domain, "") ) {
+			// LinkedList<CompanyAdministrator> dirStaff = CompanyDAO.getDirStaff(ctx,
+			// ctx.getDomainId());
+			LinkedList<RDirStaff> dirStaff = RDirStaffDAO.getRepresentativeLabor(ctx, ctx.getDomainId());
+			if (dirStaff != null && !dirStaff.isEmpty()) {
+				String staffDocument = dirStaff.get(0).getDocument();
+				String staffName = dirStaff.get(0).getName();
 
-		// LinkedList<CompanyAdministrator> dirStaff = CompanyDAO.getDirStaff(ctx,
-		// ctx.getDomainId());
-		LinkedList<RDirStaff> dirStaff = RDirStaffDAO.getRepresentativeLabor(ctx, ctx.getDomainId());
-		if (dirStaff != null && !dirStaff.isEmpty()) {
-			String staffDocument = dirStaff.get(0).getDocument();
-			String staffName = dirStaff.get(0).getName();
-
-			settle.setRepresentativeDocument(staffDocument);
-			settle.setRepresentativeName(staffName);
+				settle.setRepresentativeDocument(staffDocument);
+				settle.setRepresentativeName(staffName);
+			}
 		}
+
 
 		try {
 			for (IDeduction deduction : salary.getDeductionS()) {
