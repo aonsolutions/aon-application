@@ -37,9 +37,18 @@
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="certTbaiAccept"	
+											rendered="#{!saleInvoice.invoiceTbaiAccepted}"
 											value="Enviar"
 											action="#{saleInvoice.issueInvoice}"
-											styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
 									</aon:div>
 									
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">

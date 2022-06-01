@@ -140,6 +140,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
@@ -156,7 +157,6 @@ import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.mvel2.ast.IsDef;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -409,8 +409,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " LEFT JOIN contract_data ON ( "
 				+ " contract_leave.contract = contract_data.contract "
 				+ " AND contract_data.name IN ('" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" +DIRECT_PAY_START + "')"
-				+ " AND ( contract_leave.end_date  IS NULL OR contract_data.start_date <= contract_leave.end_date )"
-				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= contract_leave.start_date ) "
+				+ " AND ( contract_data.start_date <= ? )"
+				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= ? ) "
 				+ ")"
 			+ " LEFT JOIN contract ON ( contract_leave.contract = contract.id ) "
 			+ " WHERE"
@@ -419,6 +419,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )"
 			+ " AND contract_leave.id >= 0 "
 			+ " ORDER BY FIELD(contract_leave.type,0,1,6,7,8,2,3,4,5)"
+			+ ", FIELD(contract_data.name, '" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" + DIRECT_PAY_START + "')"
 			;
 
 	private static final int CACHE_SIZE = 25;
@@ -1952,6 +1953,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return getVariable(var.getName(), toType);
 	}
 
+	public <T> List<T> getValues(ContextVariable var, Class<T> toType) {
+		List<ITimedVariable<T>> variables = this.contractExpressionContext.getVariables(var.getName(), this.contractStartDate, this.contractEndDate);
+		return variables.stream().map(v -> v.getValue(v.getPeriod())).collect(Collectors.toList());
+	}
+
 	public <T> T getVariable(ContextVariable var, Period p, Class<T> toType) {
 		return this.contractExpressionContext.getVariable(var.getName(), p.getStart(), p.getEnd(), toType);
 	}
@@ -2398,8 +2404,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private void initLeaveStmt() throws SQLException {
 		this.cleaveStmt = this.connection.prepareStatement(CLEAVE_SQL);
-		this.cleaveStmt.setDate(2, toSqlDate(this.getEnd()));
-		this.cleaveStmt.setDate(3, toSqlDate(this.startDate));
+		this.cleaveStmt.setDate(1, toSqlDate(this.getEnd()));
+		this.cleaveStmt.setDate(2, toSqlDate(this.startDate));
+		this.cleaveStmt.setDate(4, toSqlDate(this.getEnd()));
+		this.cleaveStmt.setDate(5, toSqlDate(this.startDate));
 	}
 
 	private Integer getDomain() {
@@ -3483,8 +3491,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private double getActualDays(Date startDate, Date endDate) {
+		
 		long days = 0;
-
+		
+		boolean  hasDaysHours = hasDefinedDaysHours();
+		
 		ICalendar calendar = getCalendar();
 		Calendar end = Calendar.getInstance();
 		end.setTime(endDate);
@@ -3492,12 +3503,47 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		day.setTime(startDate);
 		while (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if (isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
+			
+			Double dayHours = getDayHours(day);
+			if ( dayHours != null && dayHours > 0.00) {
+				days++;
+			} else if (!hasDaysHours && isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
 				days++;
 			}
 			day.add(Calendar.DATE, 1);
 		}
 		return days;
+	}
+	
+	private boolean hasDefinedDaysHours() {
+		for ( ContextVariable variable : WEEK_HOURS_VARIABLES.values()) {
+			boolean effectiveDefined = 
+			getValues(variable, Object.class).stream()
+			.filter(Objects::nonNull)
+			.filter(Number.class::isInstance)
+			.map(v -> ((Number)v).doubleValue())
+			.filter( v -> v > 0.00)
+			.count() > 0 ;
+			
+			if ( effectiveDefined )
+				return true;
+			
+		}
+		return false;
+	}
+	
+	private Double getDayHours( Calendar day ) {
+		try {
+			ContextVariable dayHoursVar = getDayHoursVar(day);
+			return  
+			this.contractExpressionContext.eval(dayHoursVar.getName(), day.getTime(), day.getTime(), Number.class)
+			.stream()
+			.map(ITimedResult::getValue)
+			.filter(Objects::nonNull)
+			.collect(Collectors.summingDouble(Number::doubleValue));
+		} catch (ExpressionException e) {
+			return null;
+		}
 	}
 
 	protected Long getLeaveDays(Period p) {
@@ -3949,13 +3995,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private double getWorkedHours(Period p) {
 
 		p.daysStream().filter(
-				day -> !contractExpressionContext.containsVariable(getDayHours(day), day.getTime(), day.getTime()))
+				day -> !contractExpressionContext.containsVariable(getDayHoursVar(day), day.getTime(), day.getTime()))
 				.forEach(day -> onUndefinedData(
-						new ExpressionImpl().setName(getDayHours(day).getName()).setScope(ExpressionScope.SYSTEM), null,
-						day.getTime(), day.getTime(), getDayHours(day).getName()));
+						new ExpressionImpl().setName(getDayHoursVar(day).getName()).setScope(ExpressionScope.SYSTEM), null,
+						day.getTime(), day.getTime(), getDayHoursVar(day).getName()));
 
 		double workedHours =  p.daysStream()
-				.map(day -> contractExpressionContext.getVariable(getDayHours(day), day.getTime(), day.getTime(), Number.class))
+				.map(day -> contractExpressionContext.getVariable(getDayHoursVar(day), day.getTime(), day.getTime(), Number.class))
 				.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
 				.collect(Collectors.summingDouble(hours -> hours.doubleValue()))
 				;
@@ -5559,9 +5605,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected  void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
 		ResultSet rs = null;
 		try {
-			cleaveStmt.setInt(1, getId());
-			this.cleaveStmt.setDate(2, toSqlDate(this.getEnd()));
-			this.cleaveStmt.setDate(3, toSqlDate(this.contractStartDate));
+			this.cleaveStmt.setDate(1, toSqlDate(this.getEnd()));
+			this.cleaveStmt.setDate(2, toSqlDate(this.startDate));
+			this.cleaveStmt.setInt(3, getId());
+			this.cleaveStmt.setDate(4, toSqlDate(this.getEnd()));
+			this.cleaveStmt.setDate(5, toSqlDate(this.startDate));
 			rs = cleaveStmt.executeQuery();
 			leaveLoader.clear();
 			while (rs.next()) {
@@ -6339,7 +6387,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return calendar.getTime();
 	}
 
-	protected static ContextVariable getDayHours(Calendar calendar) {
+	protected static ContextVariable getDayHoursVar(Calendar calendar) {
 		return getDayOfWeekHours(calendar.get(Calendar.DAY_OF_WEEK));
 	}
 
