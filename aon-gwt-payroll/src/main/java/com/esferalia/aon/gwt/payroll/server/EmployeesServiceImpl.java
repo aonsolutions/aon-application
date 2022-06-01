@@ -7172,31 +7172,46 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		List<Certifica2Info> certs = new ArrayList<>();
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4,
-					itEmployee.getContractInfo().getCompleteCCC().length());
+			String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
 			String naf = itEmployee.getEmployeeInfo().getSsNumber();
 
-			AON.getSalaries(new Domain().setId(domainId).setName(domainName), login,
+			AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
+				f -> f.getCCCProperty().eq(ccc)
+					.and(f.getSSProperty().eq(naf))
+					.and(f.getStartDateProperty().ge(startDate))
+					.and(f.getEndDateProperty().le(endDate))
+					.and(
+						f.getIsSalaryProperty().eq(true)
+						.or(f.getIsDelayProperty().eq(true))
+						.or(f.getIsSettlementProperty().eq(true))
+					)
+			).sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
+			.forEach(salary -> {				
+						salary.getContextData()
+						.entrySet()
+						.stream()
+						.filter(d-> d.getKey().equals("DIAS_COTIZADOS"))
+						.map(d-> d.getValue())
+						.flatMap(Collection::stream)
+						.distinct()
+						.forEach(dt->{
+							Date start = dt.getStartDate();
+							Date end = dt.getEndDate();
+							System.out.println("startDate:"+dt.getStartDate()+" endDate:"+dt.getEndDate()+" value:"+dt.getExpression());
+							
+							Double baseCgc   = salary.getContextData("BASE_CGC", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+							Double baseCgp   = salary.getContextData("BASE_CGP", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+							Double quoteDays = salary.getContextData("DIAS_COTIZADOS", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
 
-					f -> f.getCCCProperty().eq(ccc).and(f.getSSProperty().eq(naf))
-							.and(f.getStartDateProperty().ge(startDate)).and(f.getEndDateProperty().le(endDate))
-
-			).sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate())).filter(
-					s -> s.getSalaryType() != null && Arrays.asList(0, 2, 3).contains(s.getSalaryType().ordinal()))
-					.forEach(salary -> {
-
-						Double baseCgc = salary.getContextData("BASE_CGC", summingDouble(Double::parseDouble));
-						Double baseCgp = salary.getContextData("BASE_CGP", summingDouble(Double::parseDouble));
-						Double quoteDays = salary.getContextData("DIAS_COTIZADOS", summingDouble(Double::parseDouble)); // DIAS_NOMINA
-
-						if (quoteDays != null && quoteDays > 0) {
-							Certifica2Info cert = new Certifica2Info();
-							cert.setStartDate(salary.getStartDate());
-							cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
-							cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
-							cert.setSettleQuoteDays(quoteDays.intValue());
-							certs.add(cert);
-						}
+							if (quoteDays != null && quoteDays > 0) {
+								Certifica2Info cert = new Certifica2Info();
+								cert.setStartDate(salary.getStartDate());
+								cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
+								cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
+								cert.setSettleQuoteDays(quoteDays.intValue());
+								certs.add(cert);
+							}
+						});
 					});
 		} catch (SQLException e) {
 			e.printStackTrace();
