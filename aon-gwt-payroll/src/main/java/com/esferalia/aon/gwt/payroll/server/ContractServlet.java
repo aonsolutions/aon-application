@@ -40,6 +40,7 @@ import com.esferalia.aon.in.payroll.tgss.report.Employee;
 import com.esferalia.aon.in.payroll.tgss.report.Employee.EmployeeBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -230,63 +231,66 @@ public class ContractServlet extends AonApiHttpServlet {
 
 		JSONArray arr = new JSONArray();
 		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
-		AONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), "");
-		Date endDate = new Date();
-		Date startDate = new Date();
-		Integer workplaceId = 0;
 		
-		if(!api.getData().optString("workplace").isEmpty()) {
-			workplaceId = api.getData().optInt("workplace");
-		}
+		try ( CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), "") ) {
+		
+			Date endDate = new Date();
+			Date startDate = new Date();
+			Integer workplaceId = 0;
 			
-		if(api.getData().optString("endDate").isEmpty()) {
-			endDate = getEndDateSalary(api, Optional.ofNullable(company.getId()));
-			startDate = AonDateUtils.getMonthFirstDay(endDate);
-			endDate = AonDateUtils.getMonthLastDay(endDate);
-		} else {
-		    startDate = Toolkit.parseDate(api.getData().optString("startDate"), "yyyy-MM-dd");
-			endDate  = Toolkit.parseDate(api.getData().optString("endDate"), "yyyy-MM-dd");
-		}
-		String [] startDateArray = Toolkit.dateString(startDate);
-		String startDateStr =  startDateArray[2]+"-"+startDateArray[1]+"-"+startDateArray[0];
-		String [] endDateArray = Toolkit.dateString(endDate);
-		String endDateStr =  endDateArray[2]+"-"+endDateArray[1]+"-"+endDateArray[0];
+			if(!api.getData().optString("workplace").isEmpty()) {
+				workplaceId = api.getData().optInt("workplace");
+			}
+				
+			if(api.getData().optString("endDate").isEmpty()) {
+				endDate = getEndDateSalary(api, Optional.ofNullable(company.getId()));
+				startDate = AonDateUtils.getMonthFirstDay(endDate);
+				endDate = AonDateUtils.getMonthLastDay(endDate);
+			} else {
+			    startDate = Toolkit.parseDate(api.getData().optString("startDate"), "yyyy-MM-dd");
+				endDate  = Toolkit.parseDate(api.getData().optString("endDate"), "yyyy-MM-dd");
+			}
+			String [] startDateArray = Toolkit.dateString(startDate);
+			String startDateStr =  startDateArray[2]+"-"+startDateArray[1]+"-"+startDateArray[0];
+			String [] endDateArray = Toolkit.dateString(endDate);
+			String endDateStr =  endDateArray[2]+"-"+endDateArray[1]+"-"+endDateArray[0];
+			
+			EnterprisePayrollExcel.getEnterprisePayrolls(ctx, startDate, endDate, company.getId(), workplaceId).forEach(cost->{
+				JSONObject json = new JSONObject();
+				json.put("startDate", startDateStr);
+				json.put("endDate", endDateStr);
+				json.put("advancedPayment", cost.getAdvancedPayment());
+				json.put("bonuses", cost.getBonuses());
+				json.put("cgc", cost.getCgc());
+				json.put("cgcBase", cost.getCgcBase());
+				json.put("cgp", cost.getCgp());
+				json.put("cgpEnterprise", cost.getCgpEnterprise());
+				json.put("embargos", cost.getEmbargos());
+				json.put("employee", cost.getEmployee());
+				json.put("employeeSS", cost.getEmployeeSS());
+				json.put("enterpriseSS", cost.getEnterpriseSS());
+				json.put("estruc", cost.getEstruc());
+				json.put("estrucEnterprise", cost.getEstrucEnterprise());
+				json.put("fogasaEnterprise", cost.getFogasaEnterprise());
+				json.put("irpf", cost.getIrpf());
+				json.put("irpfBase", cost.getIrpfBase());
+				json.put("jobTraining", cost.getJobTraining());
+				json.put("jobTrainingEnterprise", cost.getJobTrainingEnterprise());
+				json.put("liquid", cost.getLiquid());
+				json.put("noEstruct", cost.getNoEstruct());
+				json.put("noEstructEnterprise", cost.getNoEstructEnterprise());
+				json.put("otherDeductions", cost.getOtherDeductions());
+				json.put("raw", cost.getRaw());
+				json.put("salaryType", cost.getSalaryType());
+				json.put("totalCost", cost.getTotalCost());
+				json.put("unemployment", cost.getUnemployment());
+				json.put("unemploymentEnterprise", cost.getUnemploymentEnterprise());
+				json.put("workplace", cost.getWorkplace());
+				arr.put(json);
+			});
 		
-		EnterprisePayrollExcel.getEnterprisePayrolls(ctx, startDate, endDate, company.getId(), workplaceId).forEach(cost->{
-			JSONObject json = new JSONObject();
-			json.put("startDate", startDateStr);
-			json.put("endDate", endDateStr);
-			json.put("advancedPayment", cost.getAdvancedPayment());
-			json.put("bonuses", cost.getBonuses());
-			json.put("cgc", cost.getCgc());
-			json.put("cgcBase", cost.getCgcBase());
-			json.put("cgp", cost.getCgp());
-			json.put("cgpEnterprise", cost.getCgpEnterprise());
-			json.put("embargos", cost.getEmbargos());
-			json.put("employee", cost.getEmployee());
-			json.put("employeeSS", cost.getEmployeeSS());
-			json.put("enterpriseSS", cost.getEnterpriseSS());
-			json.put("estruc", cost.getEstruc());
-			json.put("estrucEnterprise", cost.getEstrucEnterprise());
-			json.put("fogasaEnterprise", cost.getFogasaEnterprise());
-			json.put("irpf", cost.getIrpf());
-			json.put("irpfBase", cost.getIrpfBase());
-			json.put("jobTraining", cost.getJobTraining());
-			json.put("jobTrainingEnterprise", cost.getJobTrainingEnterprise());
-			json.put("liquid", cost.getLiquid());
-			json.put("noEstruct", cost.getNoEstruct());
-			json.put("noEstructEnterprise", cost.getNoEstructEnterprise());
-			json.put("otherDeductions", cost.getOtherDeductions());
-			json.put("raw", cost.getRaw());
-			json.put("salaryType", cost.getSalaryType());
-			json.put("totalCost", cost.getTotalCost());
-			json.put("unemployment", cost.getUnemployment());
-			json.put("unemploymentEnterprise", cost.getUnemploymentEnterprise());
-			json.put("workplace", cost.getWorkplace());
-			arr.put(json);
-		});
-	
-		return arr;
+			return arr;
+		}
 	}
 	
 	private List<SalaryInfo> getSalaries(AonApiData api, Connection conn, Optional<Integer> companyId) {

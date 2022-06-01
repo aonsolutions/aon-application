@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -84,8 +85,7 @@ public class FinanceUtilitiesServiceImpl extends AonStatelessRemoteServiceServle
 			throw new AonCoreException( "El dominio no es el 7138");
 		}
 		InputStream fis = null;
-		try {
-			AONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+		try ( CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user) ){
 			fis = FinanceUtilitiesServiceImpl.class.getResourceAsStream("/com/esferalia/aon/gwt/fiscal/ayudat/AyudaTFixFinances.xls");
 			LinkedList<String> ret = read(ctx, fis);
 			
