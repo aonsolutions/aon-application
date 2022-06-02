@@ -37,6 +37,7 @@
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="certTbaiAnularAccept"	
+											rendered="#{!saleInvoice.especial}"
 											value="Anular"
 											actionListener="#{saleInvoice.onAnular}"
 											action="#{saleInvoice.backAction}"
@@ -46,7 +47,20 @@
 												<f:setPropertyActionListener
 													target="#{saleInvoice.showCertTbaiAnularWindow}"
 													value="#{false}" />
-										</aon:commandButton>	
+										</aon:commandButton>
+										
+										<aon:commandButton id="certTbaiAnularEspecialAccept"	
+											rendered="#{saleInvoice.especial}"
+											value="Anular"
+											actionListener="#{saleInvoice.onAnularEspecial}"
+											styleClass="aon-finding-toolbar-item aon-icon-delete">											
+												<rich:componentControl for="fiscalCertTbaiAnularModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiAnularWindow}"
+													value="#{false}" />
+										</aon:commandButton>
+											
 									</aon:div>
 									
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">

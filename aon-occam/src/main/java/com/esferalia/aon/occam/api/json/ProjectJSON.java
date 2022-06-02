@@ -50,6 +50,7 @@ public class ProjectJSON {
 	}
 	
 	public static JSONObject toJSON(Project project) {
+		if(project == null || project.isEmpty()) return new JSONObject();
 		return new JSONObject()
 				.put(IJsonNames.ID, project.getId())
 				.put(IJsonNames.DOMAIN, DomainJSON.toJSON(project.getDomain()))

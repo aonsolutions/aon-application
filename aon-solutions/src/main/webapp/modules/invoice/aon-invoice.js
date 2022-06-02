@@ -359,12 +359,15 @@ export class AonInvoice extends AonElement {
 			d.open();
 		});
 
-		if((this.getInvoice().isInbox() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()) {
+		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		}
-
+		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
+			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+		}
+		
 		if(this.getInvoice().isRejected()) {
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
@@ -1873,10 +1876,39 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashPendingInvoice() {
-		deleteInvoice(this.getInvoice().id).then(() => {
-			this.showMessage(MSG.DELETED_DATA);
-			this.reload();
-		}).catch(e => this.showError(e));
+		let data = {id: this.getInvoice().id};
+		if(this.getInvoice().isTbai()) {
+			let d = this.getApplication().getDialog();
+			d.clear();
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle("Anular");
+			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+					  value: s.id,
+					  name: s.name
+					}
+				  }));
+			}); 
+			d.setContent(certSelect);
+			d.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				deleteInvoice(data).then(() => {
+					this.getApplication().stopLoader(); 
+					this.showMessage(MSG.DELETED_DATA);
+					this.back();
+				}).catch(e => this.showError(e));
+			});			
+			d.open();
+		} else {
+			deleteInvoice(data).then(() => {
+				this.showMessage(MSG.DELETED_DATA);
+				this.back();
+			}).catch(e => this.showError(e));
+		}
 	}
 
 	restoreInvoice() {
