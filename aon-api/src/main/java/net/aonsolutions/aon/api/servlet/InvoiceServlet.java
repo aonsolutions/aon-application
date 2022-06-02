@@ -308,6 +308,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
 		
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		if(invoice.isSales() && tbaiConfiguration.isActive()) {
+			tbaiConfiguration.setCertificate(checkCertificate(api));
+			TbaiMain tbai = new TbaiMain();
+			try {
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new AonApiException(e.getMessage());
+			}
+		}
+		
 		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 			f.getAttachModuleProperty().eq(invoiceId)
 			.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
