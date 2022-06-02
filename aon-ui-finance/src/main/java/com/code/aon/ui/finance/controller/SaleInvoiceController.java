@@ -740,6 +740,37 @@ public class SaleInvoiceController extends InvoiceController {
 		resetTo();
 	}
 	
+	public void onAnularEspecial(ActionEvent event) {
+		anularInvoiceEspecial();
+	}
+
+	public boolean isEspecial() {
+		Invoice inv = (Invoice) getTo();
+		return inv.getDomain() == 20414
+			&& inv.getSeries().equalsIgnoreCase("2022") 
+			&& inv.getNumber() == 5;
+	}
+	
+	public void anularInvoiceEspecial() {
+		try {
+			if(isTbaiInvoice() && isEspecial()) {
+				checkCertificate();
+				Invoice inv = (Invoice) getTo();
+				String domainName = AonUtil.getDomainName();
+				String login = UserUtils.getInstance().getLoggedUser().getLogin();
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+				tbaiConfiguration.setCertificate(getCertData());
+				TbaiMain tbai = new TbaiMain();
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
 	public void anularInvoice() {
 		try {
 			if(isTbaiInvoice()) {
