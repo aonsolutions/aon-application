@@ -982,18 +982,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void loadWindow(Consumer<Void> finish) {
 		showLoadingPanel();
-		loadData(s ->
-			initializeIdcDateListBox(accept -> {
-				loadToolbar();
-				checkButtonsToolbar();
-				hideMessage();
-				finish.accept(null);
-			}, error -> {
-				loadToolbar();
-				checkButtonsToolbar();
-				finish.accept(null);
-			})
-		);
+		loadData(s -> {
+			loadToolbar();
+			checkButtonsToolbar();
+			hideMessage();
+			finish.accept(null);
+		});
 	}
 
 	private void loadData(Consumer<Void> finish) {
@@ -1008,6 +1002,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 				finish.accept(null);
 			});
+			initializeIdcDateListBox();
 			break;
 		case 1:
 			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), hasCertificateSEPE);
@@ -2128,7 +2123,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tgssContextMenu.getIdcPlNss().setVisible(visible);
 	}
 
-	private void initializeIdcDateListBox(Consumer<Void> acceptC, Consumer<Void> errorC) {
+	private void initializeIdcDateListBox() {
 		contrataEmployeeObject.getIdcDates(dates -> {
 			Collections.reverse(dates);
 			int count = dates.size();
@@ -2137,10 +2132,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.setVisibleRange(0, count + 1);
 			idcDateListBox.setSelected(0, true);
 			idcDateListBox.onResizeDropDownPopup();
-			acceptC.accept(null);
 		}, error -> {
 //			showWarning("Fechas Idc", error.getMessage());
-			errorC.accept(null);
 		});
 	}
 

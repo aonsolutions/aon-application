@@ -491,11 +491,11 @@ public class DomainEmployeesServiceAsync {
 	}
 
 	public void generateCertifaca2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, callback);
+		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
 	public void generateCertifaca2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, certifica2Info, callback);
+		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), getCurrentUser(), contractId, certifica2Info, callback);
 	}
 	
 	// ------------------------------------------------- TGSS Files
@@ -625,7 +625,7 @@ public class DomainEmployeesServiceAsync {
 	// ------------------------------------------------- SEPE Methods
 	
 	public void getCertifica2Info(Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getCertifica2Info(getCurrentDomainName(), contractId, callback);
+		employeesServiceAsync.getCertifica2Info(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
 	// ------------------------------------------------- EmployeeContractPayments

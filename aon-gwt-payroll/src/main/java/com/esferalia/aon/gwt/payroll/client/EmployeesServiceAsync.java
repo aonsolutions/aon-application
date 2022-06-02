@@ -249,9 +249,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees,
 			AsyncCallback<ArrayList<EventEmployee>> callback);
 
-	void generateCertifaca2(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	void generateCertifaca2(String currentDomainName, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
-	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info,
+	void generateCertifaca2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info,
 			AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------- TGSS Files
@@ -332,7 +332,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	// ------------------------------------------------- SEPE Methods
 	
-	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
+	void getCertifica2Info(String currentDomainName, String user, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------- EmployeeContractPayments
 	
