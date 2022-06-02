@@ -994,25 +994,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Integer tabIdx = tabLayOutPanel.getSelectedIndex();
 		switch (tabIdx) {
 		case 0:
-			initializeIdcDateListBox(accept -> {
-				contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
-					// Check SS only if not RETA
-					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-					if (null == ssRegime || ssRegime != 3)
-						checkStatus(this.contrataEmployeeObject);
+			contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
+				// Check SS only if not RETA
+				Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+				if (null == ssRegime || ssRegime != 3)
+					checkStatus(this.contrataEmployeeObject);
 
-					finish.accept(null);
-				});
-			}, error -> {
-				contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contractId, success -> {
-					// Check SS only if not RETA
-					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-					if (null == ssRegime || ssRegime != 3)
-						checkStatus(this.contrataEmployeeObject);
-
-					finish.accept(null);
-				});
+				finish.accept(null);
 			});
+			initializeIdcDateListBox();
 			break;
 		case 1:
 			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), hasCertificateSEPE);
@@ -2133,7 +2123,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tgssContextMenu.getIdcPlNss().setVisible(visible);
 	}
 
-	private void initializeIdcDateListBox(Consumer<Void> acceptC, Consumer<Void> errorC) {
+	private void initializeIdcDateListBox() {
 		contrataEmployeeObject.getIdcDates(dates -> {
 			Collections.reverse(dates);
 			int count = dates.size();
@@ -2142,10 +2132,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.setVisibleRange(0, count + 1);
 			idcDateListBox.setSelected(0, true);
 			idcDateListBox.onResizeDropDownPopup();
-			acceptC.accept(null);
 		}, error -> {
 //			showWarning("Fechas Idc", error.getMessage());
-			errorC.accept(null);
 		});
 	}
 
