@@ -270,6 +270,8 @@ public class ContractLeaveLoader {
 		if ( leaveDays == 0 )
 			return;
 		
+		if ( Period.compare(start, end) > 0 ) 
+			return;
 
 		exprCtx.setVariable(ContextVariable.IT_START, itStart, start, end);
 		exprCtx.setVariable(ContextVariable.IT_LENGTH, new Period(itStart, leave4Length).daysStream().count(), start, end);
