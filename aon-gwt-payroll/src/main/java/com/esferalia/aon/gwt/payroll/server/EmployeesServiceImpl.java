@@ -5842,6 +5842,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return dataUri;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -5914,6 +5915,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					date);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
