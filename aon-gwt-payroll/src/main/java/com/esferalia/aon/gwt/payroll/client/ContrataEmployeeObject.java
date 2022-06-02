@@ -657,8 +657,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void getIdcDates(Consumer<List<Date>> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIdcDates(contractData.getContractId(), null, new AsyncCallback<List<Date>>() {
+	public void getIdcDates(Integer contractId, Consumer<List<Date>> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcDates(contractId, null, new AsyncCallback<List<Date>>() {
 			@Override
 			public void onSuccess(List<Date> result) {
 				success.accept(result);

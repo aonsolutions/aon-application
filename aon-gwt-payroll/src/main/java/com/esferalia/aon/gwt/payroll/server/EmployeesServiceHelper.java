@@ -797,7 +797,7 @@ public class EmployeesServiceHelper {
 		return Base64.getEncoder().encodeToString(idcHighlightData);
 	}
 
-	public static List<Date> getIDCDates(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws SQLException, IOException, SegSocialException{
+	public static List<Date> getIDCDates(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws IOException, SegSocialException{
 		
 		Contract contract = 
 		PAYROLL.
