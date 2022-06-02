@@ -68,6 +68,7 @@ public class SalesJSON {
 			.setShippingAlternativePhone(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_PHONE))
 			.setShippingAlternativeRecipient(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_RECIPIENT))
 			.setShippingContact(JsonUtils.getString(json, IJsonNames.SHIPPING_CONTACT))
+			.setDetails(SalesDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 			;
 	}
 	
@@ -121,6 +122,8 @@ public class SalesJSON {
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_RECIPIENT, object.getShippingAlternativeRecipient())
 			.put(IJsonNames.SHIPPING_CONTACT, object.getShippingContact())
 			.put(IJsonNames.SHIPPING_PERIOD, object.getShippingPeriod() != null 
-										? object.getShippingPeriod().name() : null);
+										? object.getShippingPeriod().name() : null)
+			.put(IJsonNames.DETAILS, SalesDetailJSON.toJSON(object.getDetails()));
+			
 	}
 }

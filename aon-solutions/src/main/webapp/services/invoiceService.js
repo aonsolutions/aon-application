@@ -28,7 +28,7 @@ export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_downl
 export const downloadInvoiceExcel = (data) => openFileUrl(`${API_URL}/downloadInvoiceExcel?json=${data}`);
 
 export const deleteRawdocInvoices = (invoiceIds) => remove(`${API_URL}/invoice/rawdoc`, { id: invoiceIds });
-export const deleteInvoice = (invoiceId) => remove(`${API_URL}/invoice`, { id: invoiceId });
+export const deleteInvoice = (data) => remove(`${API_URL}/invoice`, data);
 
 export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, data);
 
