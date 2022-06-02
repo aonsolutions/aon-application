@@ -528,11 +528,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setFra(frb)
 		.setFrb(frb)
 		.setName(name)
-		.setSituation(situation)
-		;
+		.setSituation(situation);
 		
 		if(!params.optString("frv").isEmpty()) {
 			builder.setFrv(AonDateUtils.parse(params.optString("frv"), FORMAT_DATE));
+			if(!params.optString("asociativeSA").isEmpty()) {
+				builder.setAsociativeSA(params.optString("asociativeSA"));
+			}
 		}
 		
 		Employee employee = builder.build();
@@ -542,7 +544,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		if(employee.getName().isPresent()) {
 			sendMovEmailNotification(api, employee, frb, SituationType.BAJA);
 		}
-
+		
 		return new JSONObject();
 	}
 	
@@ -605,9 +607,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		JSONObject json = new JSONObject();
 		JSONArray errors = new JSONArray();
-		if(api.getData().isNull("fecha")) 
+		if(api.getData().isNull("fecha")) {
 			throw new Exception("Fecha requerida");
-
+		}
+	
 		json.put("contract_edit", false);
 		
 		updateOccupation(api, certificate, json, errors);
@@ -741,7 +744,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}
 				
 				try {
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
+					Date now = new Date();
+					Date newDate = date.compareTo(now) > 0 ? now : date;
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, newDate);
 					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -762,7 +767,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 
 	    List<String> toList = new LinkedList<>();
 
-	    
 	    String alternative = JsonUtils.optString(api.getData(), "alternative");
 	 
 	    if(alternative!=null && !alternative.isEmpty()) {
@@ -770,9 +774,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	    }
 	 
 	    // ------------------------ MY USER -------------------
-		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-		toList.add(auth.getEmail());
+		User newUser = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), f -> f.getIdProperty().eq(user.getId()));
+		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		
+		if(auth.getEmail()!=null) {
+			toList.add(auth.getEmail());
+		}
+
 		//---------------USER CONFIG--------------
 		List<String> list = getEmailsAppParams(api);
 		if(!list.isEmpty()) {
@@ -789,11 +797,14 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			User user = api.getUser();
 			LinkedList<Auth> auths = new LinkedList<>();
 			
-			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
+			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId()))
+			.forEach(usr -> {
 				DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());
 				if(Boolean.TRUE.equals(dur.isComunicaManager())) {
 					Auth auth = new Auth().setAuth(usr.getAuth().getAuth());
-					if(auth.getAuth()!=null) auths.add(auth);
+					if(auth.getAuth()!=null) {
+						auths.add(auth);
+					}
 	    		}
 			});
 		
@@ -816,16 +827,21 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Thread newThread = new Thread(() -> {
 			try {
 				User user = api.getUser();
-				SESMessage msg = new SESMessage()
-						.setAlias("AON | COMUNIC@")
-						.setSubject(subject)
-						.setBody(body)
-						.setTo(getEmails(api, user));
+				List<String> emails = getEmails(api, user);
 				
-				if(!files.isEmpty()) 
-					msg.setFiles(files);
-				
-				SES.sendEmail(msg);
+				if(!emails.isEmpty()) {
+					SESMessage msg = new SESMessage()
+							.setAlias("AON | COMUNIC@")
+							.setSubject(subject)
+							.setBody(body)
+							.setTo(emails);
+					
+					if(!files.isEmpty()) {
+						msg.setFiles(files);
+					}
+					SES.sendEmail(msg);
+				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

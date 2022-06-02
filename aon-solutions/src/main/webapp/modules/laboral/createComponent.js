@@ -1,6 +1,6 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { createCard, createDate, createForm, createIconButton, createInput, createNumber, createSelect } from "../notification/createComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
@@ -41,20 +41,50 @@ export const createBajaDialogContent = () =>{
             name:"frv",
             id:"frv",
             title:"Fecha de vacaciones",
-            disabled:true
+            hidden:true
         }
     }, div);
+
+    let divAsociative = document.createElement(TAG.DIV);
+    divAsociative.id = "divAsociative";
+    div.appendChild(divAsociative);
 
     const btnSubmit = document.createElement(TAG.BUTTON);
     btnSubmit.id = "btnSubmitBaja";
     btnSubmit.className =  CSS.AON_BUTTON;
-    btnSubmit.textContent = "Aceptar";
+    btnSubmit.textContent = MSG.ACCEPT;
     btnSubmit.style.padding ="0.5rem 1rem";
     btnSubmit.style.marginBottom ="5px";
-    // btnSubmit.disabled = true;
     div.appendChild(btnSubmit);
 
     return div;
+}
+
+export const createAsociativeSA = (create)=>{
+    const divAsociative = document.getElementById("divAsociative");
+    const frv = document.getElementById("frv");
+    const id = "asociativeSA";
+    let select = document.getElementById(id);
+    if(!create) {
+        frv.setVisible(true);
+        divAsociative.innerHTML = "";
+    } else if(!select){
+        frv.setVisible(false);
+        select = createSelect({
+            attributes:{
+                id,
+                name:id,
+                title:"Situación"
+            }
+        }, divAsociative);
+        let options = [
+            {value:"001", name:"Retribuidas y no disfrutadas"},
+            {value:"015", name:"No disfrutadas, retribuidas y cotizadas"}
+        ];
+        select.style.textAlign = "left";
+        select.setOptions(options);
+        select.setIndexOf(0);
+    }
 }
 
 export const createFormComunica = (id, parent) => {

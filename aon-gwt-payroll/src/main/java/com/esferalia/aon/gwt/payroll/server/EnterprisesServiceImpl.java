@@ -3541,7 +3541,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	
 	@Override
 	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part)  throws IllegalArgumentException {
 		
@@ -3557,7 +3556,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			String regime = contractInfo.getCompleteCCC().substring(0, 4);
 			String ccc = contractInfo.getCompleteCCC().substring(4, contractInfo.getCompleteCCC().length());
 			
-			
 			//PAMETERS REQUIRED
 			EmployeeIT employeeIT =  new EmployeeIT()
 			.setDomain(domainId)
@@ -3570,8 +3568,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
 			;
 			
-			if(it.getEndDate()!=null) 
+			if(it.getEndDate()!=null) {				
 				employeeIT.setEndDate(it.getEndDate());
+			}
 			
 			//EXAMPLE IT BAJA
 			EmployeeITPart newPart = parseITPart(part);
@@ -3592,11 +3591,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			System.out.println(employeeIT);
 			
 			List<String> messages = ITComunica.communicateITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
-
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
-				if(!msg.isEmpty())
+				if(!msg.isEmpty()) {
 					throw new IllegalArgumentException(msg);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3625,9 +3624,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				
 				if(type.equals(ContractLeaveDetailType.BAJA)) {
 					employeeIT.setEndDate(null).setDischargeCause(null);
-				} else if(baja.isPresent()) 
+				} else if(baja.isPresent()) {
 					parts.add(baja.get());
-				
+				}
+
 				employeeIT.setITParts(parts);
 				
 				employeeITs.add(employeeIT);
@@ -3672,8 +3672,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			 
 	    	if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
-				if(!msg.isEmpty())
+				if(!msg.isEmpty()) {
 					throw new IllegalArgumentException(msg);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3693,26 +3694,31 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	
 	private static void parseITData(EmployeeIT employeeIT, IT it) {
 		
-		if(it.getQuoteDays()!=null)
+		if(it.getQuoteDays()!=null) {
 			employeeIT.setQuoteDays(it.getQuoteDays());
+		}
 
-		if(it.getMaternityType()!=null) 
+		if(it.getMaternityType()!=null) {
 			employeeIT.setPaternityType(it.getMaternityType()+"");
-		
-		if(it.getMaternityReason()!=null) 
+		}
+			
+		if(it.getMaternityReason()!=null) {
 			employeeIT.setPaternityReason(it.getMaternityReason()+"");
-		
-		if(it.getRegulationBase()!=null)
-			employeeIT.setDailyCgcBase(it.getRegulationBase());
-		
-		if(it.getDailyCGPBase()!=null)
+		}
+
+		if(it.getDailyCGCBase()!=null) {
+			employeeIT.setDailyCgcBase(it.getDailyCGCBase());
+		}
+
+		if(it.getDailyCGPBase()!=null) {
 			employeeIT.setDailyCgpBase(it.getDailyCGPBase());
+		}
 	
-		if(it.getDailyCGCBase()!=null) 
-			employeeIT.setRegulationBase(it.getDailyCGCBase());
+//		if(it.getDailyCGCBase()!=null) {
+//			employeeIT.setRegulationBase(it.getDailyCGCBase());
+//		}
 	}
 	
 	private static EmployeeITPart parseITPart(ITPart part) {

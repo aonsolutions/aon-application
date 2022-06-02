@@ -54,6 +54,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class InvoiceAutoComplete {
 	
 	private InvoiceAutoComplete() {
+		
 	}
 	
 	private static class AonConfigurationContext {
@@ -318,8 +319,15 @@ public class InvoiceAutoComplete {
 		}	
 	};
 	
-	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS_DOMAIN = (inv,ctx) -> {
-		if(inv.getAddress() != null && inv.getAddress().getDomain() == null) {
+	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS = (inv,ctx) -> {
+		if(inv.getAddress() == null || inv.getAddress().isEmpty()) {
+			RegistryAddressFilter filter = f -> f.getDomainProperty().eq(inv.getDomain())
+					.and(f.getRegistryProperty().eq(inv.getRegistry()).and(f.getTypeProperty().eq((byte) 0)));
+			RegistryAddress raddress = RegistryAddressDAO.get(ctx.getContext(), filter);
+			inv.setAddress(raddress);
+		}
+		
+		if(inv.getAddress() != null && inv.getAddress().getDomain() == null && !inv.getAddress().isEmpty()) {
 			inv.getAddress().setDomain(inv.getDomain());
 		}
 	};
@@ -536,7 +544,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
 		.andThen(ENSURE_REGISTRY_DATA)
-		.andThen(COMPLETE_REGISTRY_ADDRESS_DOMAIN)
+		.andThen(COMPLETE_REGISTRY_ADDRESS)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_SECURITY_LEVEL)
 		.andThen(COMPLETE_FIRST_FINANCE)
@@ -555,14 +563,13 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_REGISTRY_DATA)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_REGISTRY_ADDRESS_DATA)
-		.andThen(COMPLETE_REGISTRY_ADDRESS_DOMAIN)
+		.andThen(COMPLETE_REGISTRY_ADDRESS)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.andThen(COMPLETE_DETAILS)
 		.andThen(COMPLETE_FINANCES)
 		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
-
 	}
 
 }

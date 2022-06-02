@@ -32,6 +32,11 @@ export const deleteCategory = (data) => {
 
 export const getScopes = (data) => get(`${API_URL}/scope`, data);
 
+export const getAeatCertificates = () => {
+  const data = {type: 'AEAT'}
+  return get(`${API_URL}/cert`, data);
+}
+
 export const getCertificates = (data) => {
   let domainName = localStorage.getItem("aon_domain_name");
   let user = localStorage.getItem('aon_domain_login');

@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -82,12 +83,12 @@ public class AgreementServiceAsyncDecorator implements AgreementServiceAsync {
 	}
 
 	@Override
-	public void getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft,
+	public void getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, List<Variable> context,
 			int levelId, Salary.Type type, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		agreementServiceAsync
-				.getAgreementDraftReceipt(domain, agreementDraft, levelId, type,
+				.getAgreementDraftReceipt(domain, agreementDraft, context, levelId, type,
 						mime, new AsyncCallbackWrapper<String>(callback));
 	}
 
