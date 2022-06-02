@@ -3,23 +3,12 @@
  */
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
+import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
+import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C109;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C130;
@@ -56,18 +45,9 @@ import static com.esferalia.aon.payroll.enumeration.ContractCode.C540;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C541;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C550;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C552;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
-import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
-import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
-import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.DAY_OF_WEEK;
-import static java.util.Calendar.DAY_OF_YEAR;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -77,32 +57,25 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.PayrollWorkplace;
+import com.esferalia.aon.jooq.tables.Workplace;
+import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
-import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.esferalia.aon.jooq.tables.records.ScopeRecord;
-import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.jooq.tables.records.HolidayRecord;
+import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedResult;
-import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-
-import junit.framework.Assert;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
@@ -250,6 +223,61 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testPartialTimeActualDaysCalendarI() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(
+		aonContext, 
+		firstDayOfYear,
+		new HashMap<String, String>() {
+			{
+				put(TC2.getName(),
+						format("\"%s\"", SQLWorkedDaysTestCase.random(PARTIAL_TIME).getValue()));
+				put(ContextVariable.WEDNESDAY_HOURS.getName(), "4.00");
+				put(ContextVariable.SATURDAY_HOURS.getName(), "4.00");
+				put(ContextVariable.SUNDAY_HOURS.getName(), "4.00");
+			}
+		});
+		
+		Date startDate = firstDayOfYear;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date [] holidays = 
+		new Period(startDate, endDate).daysStream()
+		.filter( d -> d.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY )
+		.map(Calendar::getTimeInMillis)
+		.map( java.sql.Date::new)
+		.peek( h -> System.out.println("HOLIDAY : " + h))
+		.toArray(Date[]::new);
+		
+		CalendarRecord calendar = newCalendar(aonContext, contract.getDomain(), holidays);
+		setCalendar(aonContext, contract, calendar);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		List<ITimedResult<Number>> actualDays = 
+		ctx.getExpressionContext().eval(ContextVariable.ACTUAL_DAYS.getName(), startDate, endDate, Number.class);
+		
+		long calculatedActualDays = 
+		actualDays.stream()
+		.peek(SQLActualDaysTestCase::trace)
+		.map(ITimedResult::getValue)
+		.collect(Collectors.summingLong(Number::longValue));
+		
+		
+		long expectedActualDays = getSumExpectedActualDays(startDate, endDate, Calendar.SATURDAY, Calendar.SUNDAY );
+		
+		org.junit.Assert.assertEquals(expectedActualDays, calculatedActualDays);
+
+	}
+
+	@Test
 	public void testPartialTimeActualDaysITI() throws ExpressionException,
 			SQLException {
 
@@ -350,5 +378,48 @@ public class SQLActualDaysTestCase extends AbstractSQLTestCase {
 	
 	private static boolean contains(int [] weekDays, int weekDay) {
 		return Arrays.stream(weekDays).anyMatch( d -> d == weekDay);
+	}
+	
+
+	private static CalendarRecord newCalendar(AONContext ctx, Integer domainId, Date [] holidays) {
+		HolidayRecord holiday = 
+		ctx.getDslContext()
+		.insertInto(HOLIDAY)
+		.set(HOLIDAY.DOMAIN, domainId)
+		.returning()
+		.fetchOneInto(HOLIDAY);
+		
+		for ( Date date : holidays ) {
+			ctx.getDslContext()
+			.insertInto(HOLIDAY_DETAIL)
+			.set(HOLIDAY_DETAIL.DOMAIN, domainId)
+			.set(HOLIDAY_DETAIL.HOLIDAY, holiday.getId())
+			.set(HOLIDAY_DETAIL.DATE, date )
+			.execute();
+		}
+
+		CalendarRecord calendar = 
+		ctx.getDslContext()
+		.insertInto(CALENDAR)
+		.set(CALENDAR.DOMAIN, domainId)
+		.set(CALENDAR.HOLIDAY, holiday.getId())
+		.returning()
+		.fetchOneInto(CALENDAR);
+		
+		return calendar;
+	}
+	
+	private static void setCalendar(AONContext aonContext, ContractRecord contract, CalendarRecord calendar) {
+		PayrollWorkplaceRecord workplace = 
+		aonContext.getDslContext()
+		.select()
+		.from(PAYROLL_WORKPLACE)
+		.innerJoin(WORKPLACE).on(PAYROLL_WORKPLACE.WORKPLACE.eq(WORKPLACE.ID))
+		.where(WORKPLACE.ID.eq(contract.getWorkplace()))
+		.fetchOneInto(PAYROLL_WORKPLACE);
+		
+		workplace.setCalendar(calendar.getId());
+		workplace.update();
+		
 	}
 }
