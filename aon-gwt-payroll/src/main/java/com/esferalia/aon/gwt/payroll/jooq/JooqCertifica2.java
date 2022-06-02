@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
+import static com.esferalia.aon.jooq.tables.Cno.CNO;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
@@ -41,6 +43,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info.Certifica2Period;
 import com.esferalia.aon.jooq.tables.records.Certifica2BatchRecord;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.payroll.sepe.certifica.CertificaFill;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONREATYPE;
@@ -80,41 +85,48 @@ public class JooqCertifica2 {
 	}
 
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	private static SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
 	private static SimpleDateFormat monthDateFormat = new SimpleDateFormat("MM");
+	private static SimpleDateFormat monthStrDateFormat = new SimpleDateFormat("MMMM");
+	private static SimpleDateFormat dayDateFormat = new SimpleDateFormat("dd");
 
 	private static DecimalFormat decimalFormat = new DecimalFormat("0000000.00");
 
 	// -----------------------------------------------------
 	// createCertifica2DB@2Info
 
-	public static void createCertifica2DBServlet(String domainName, Integer contractId) {
+	public static void createCertifica2DBServlet(String domainName, String user, Integer contractId) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			createCertifica2DB(connection, domainId, contractId, null);
+			createCertifica2DB(connection, domainName, user, domainId, contractId, null);
 		} catch (Exception e) {
 			// Not use here
 		}
 	}
 
-	public static void createCertifica2DB(Connection connection, Integer domainId, Integer contractId,
+	public static void createCertifica2DB(Connection connection, String domainName, String user, Integer domainId, Integer contractId,
 			String suspensionCode) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, contractId,
+		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
 				suspensionCode);
-		saveCertifica2Info(dslContext, domainId, contractId, certifica2Info.getSuspensionCode());
+		saveCertifica2Info(dslContext, domainName, user, domainId, contractId, certifica2Info.getSuspensionCode());
 	}
 	
-	public static byte[] createCertEnterprisePDF(String domainName, Integer contractId, String suspensionReasonCode) {
+	public static byte[] createCertEnterprisePDF(String domainName, String user, Integer contractId, String suspensionReasonCode, String suspensionReason) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
 			if (AonStringUtils.isBlank(suspensionReasonCode))
 				suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
 
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, contractId, suspensionReasonCode);
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode);
+			
+			// Set suspensionCode and reason
+			certifica2Info.setSuspensionCode(suspensionReasonCode);
+			certifica2Info.setSuspension(suspensionReason);
 			
 			Map<String, String> fieldsMap = createCertifica2PDFFieldsMap(certifica2Info);
 			
@@ -127,21 +139,97 @@ public class JooqCertifica2 {
 	private static Map<String, String> createCertifica2PDFFieldsMap(Certifica2Info certifica2Info) {
 		Map<String, String> fieldMap = new HashMap<>();
 		
+		fieldMap.put("01", certifica2Info.getRepresentativeName() + " " + certifica2Info.getRepresentativeSurname() + " con DNI o NIE " + certifica2Info.getRepresentativeDocument());
+		fieldMap.put("02", certifica2Info.getRepresentativeWork());
+		fieldMap.put("03", certifica2Info.getEnterpriseName());
+		fieldMap.put("04", certifica2Info.getRegime());
+		fieldMap.put("05", "REGIMEN GENERAL");
+		fieldMap.put("06", certifica2Info.getCompleteCCC());
+		fieldMap.put("07", certifica2Info.getAddress());
+		fieldMap.put("08", certifica2Info.getCity());
+		fieldMap.put("09", certifica2Info.getZip());
+		fieldMap.put("010", certifica2Info.getGeozone());
+		fieldMap.put("011", certifica2Info.getCnaeCode());
+		fieldMap.put("012", certifica2Info.getCnae());
+		fieldMap.put("014", certifica2Info.getName() + " " + certifica2Info.getSurname());
+		fieldMap.put("015", certifica2Info.getDocument());
+		fieldMap.put("016", certifica2Info.getSSNumber());
+		fieldMap.put("017", certifica2Info.getQuoteGroup());
+		fieldMap.put("018", certifica2Info.getContractType());
+		fieldMap.put("019", certifica2Info.getContractDuration() + " dias");
+		fieldMap.put("051", certifica2Info.getCnoCode());
+		fieldMap.put("052", certifica2Info.getCno());
+		fieldMap.put("055", dateFormat.format(certifica2Info.getStartDate()));
+		fieldMap.put("056", certifica2Info.getSuspensionCode());
+		fieldMap.put("057", certifica2Info.getSuspension());
+		fieldMap.put("058", dayDateFormat.format(certifica2Info.getEndDate()));
+		fieldMap.put("059", monthDateFormat.format(certifica2Info.getEndDate()));
+		fieldMap.put("060", yearDateFormat.format(certifica2Info.getEndDate()));
 		
+		Double totalDays = 0.00;
+		Double totalCgc = 0.00;
+		Double totalCgp = 0.00;
+		
+		Integer idx = 73;
+		for(Map<String, String> quoteData : certifica2Info.getQuoteDataList()) {
+			fieldMap.put(checkIdx(idx), quoteData.get("anioCtz"));
+			idx++;
+			fieldMap.put(checkIdx(idx), quoteData.get("monthCtz"));
+			idx++;
+			Double days = Double.parseDouble(quoteData.get("daysCtz"));
+			totalDays += days;
+			fieldMap.put(checkIdx(idx), quoteData.get("daysCtz"));
+			idx++;
+			Double bccc = Double.parseDouble(quoteData.get("bccc"));
+			totalCgc += bccc;
+			fieldMap.put(checkIdx(idx), quoteData.get("bccc"));
+			idx++;
+			Double bcd = Double.parseDouble(quoteData.get("bcd"));
+			totalCgp += bcd;
+			fieldMap.put(checkIdx(idx), quoteData.get("bcd"));
+			idx++;
+			idx++;
+			
+		}
+		
+		fieldMap.put("0109", certifica2Info.getSettleQuoteDays().toString());
+		fieldMap.put("01010", certifica2Info.getBaseCgc().toString());
+		fieldMap.put("01011", certifica2Info.getBaseUnemployment().toString());
+		
+
+		totalDays += certifica2Info.getSettleQuoteDays();
+		totalCgc += certifica2Info.getBaseCgc();
+		totalCgp += certifica2Info.getBaseUnemployment();
+		
+		fieldMap.put("01017", totalDays.toString());
+		fieldMap.put("01018", totalCgc.toString());
+		fieldMap.put("01019", totalCgp.toString());
+		
+		fieldMap.put("01021", certifica2Info.getGeozone());
+		
+		java.util.Date date = new java.util.Date();
+		fieldMap.put("01022", dayDateFormat.format(date));
+		fieldMap.put("01023", monthStrDateFormat.format(date));
+		fieldMap.put("01024", yearDateFormat.format(date).substring(2, 4));
 		
 		return fieldMap;
+	}
+
+	private static String checkIdx(Integer idx) {
+		String idxStr = idx.toString();
+		return idxStr.length() == 3 ? AonStringUtils.leftPad(idxStr, 4, '0') : AonStringUtils.leftPad(idxStr, 3, '0');
 	}
 
 	// ----------------------------------------------------- getCertific@2Info
 
 	public static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(Connection connection,
-			Integer contractId, String suspensionReasonCode) {
+			String domainName, String user, Integer contractId, String suspensionReasonCode) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		return getCertifica2Info(dslContext, contractId, suspensionReasonCode);
+		return getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode);
 	}
 
 	private static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(DSLContext dslContext,
-			Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+			String domainName, String user, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
 
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = new com.esferalia.aon.gwt.payroll.shared.Certifica2Info();
 
@@ -161,7 +249,12 @@ public class JooqCertifica2 {
 
 		// Enterprise Data
 
-		getEnterpriseData(dslContext, certifica2Info, enterpriseCCCId, enterpriseActivityId, contractId);
+		Integer registryId = getEnterpriseData(dslContext, certifica2Info, enterpriseCCCId, enterpriseActivityId, contractId);
+		RegistryAddress address = AON.get(domainName, domainId, user, ((RegistryAddressFilter) f -> f.getRegistryProperty().eq(registryId)));
+		certifica2Info.setAddress(address.getAddress());
+		certifica2Info.setCity(address.getCity());
+		certifica2Info.setZip(address.getZip());
+		certifica2Info.setGeozone(address.getGeozoneName());
 
 		// Certifica2 Periods
 
@@ -230,10 +323,13 @@ public class JooqCertifica2 {
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("CNO"))
 				.orderBy(CONTRACT_DATA.ID.desc()).fetch(CONTRACT_DATA.EXPRESSION);
 
+		String cnoCode = null;
 		String cno = null;
 
-		if (!cnoTypeList.isEmpty())
-			cno = normalizeString(cnoTypeList.get(0));
+		if (!cnoTypeList.isEmpty()) {
+			cnoCode = normalizeString(cnoTypeList.get(0));
+			cno = dslContext.select(CNO.TITLE).from(CNO).where(CNO.CODE.eq(cnoCode)).fetchOne(CNO.TITLE);
+		}
 
 		certifica2Info.setDocument(dni);
 		certifica2Info.setSSNumber(ssNum);
@@ -243,13 +339,15 @@ public class JooqCertifica2 {
 		certifica2Info.setContractType(tc2);
 		certifica2Info.setQuoteGroup(quoteGroup);
 		certifica2Info.setContractDuration(contractDuration.intValue());
-		certifica2Info.setProfesionalCategory(cno);
+		certifica2Info.setProfesionalCategory(cnoCode);
+		certifica2Info.setCnoCode(cnoCode);
+		certifica2Info.setCno(cno);
 		certifica2Info.setSuspensionCode(suspensionReasonCode);
 		certifica2Info.setStartDate(startDate);
 		certifica2Info.setEndDate(endDate);
 	}
 
-	private static void getEnterpriseData(DSLContext dslContext,
+	private static Integer getEnterpriseData(DSLContext dslContext,
 			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Integer enterpriseCCCId,
 			Integer enterpriseActivityId, Integer contractId) {
 
@@ -266,7 +364,9 @@ public class JooqCertifica2 {
 						.fetchOne(ENTERPRISE_ACTIVITY.ENTERPRISE)))
 				.fetchOne();
 
+		Integer registryId = enterpriseRegistryRecord.get(REGISTRY.ID);
 		String enterpriseCIF = enterpriseRegistryRecord.get(REGISTRY.DOCUMENT);
+		String enterpriseName = enterpriseRegistryRecord.get(REGISTRY.NAME);
 		
 		certifica2Info.setRegime(regime);
 		
@@ -278,11 +378,29 @@ public class JooqCertifica2 {
 			if(mdCtzRecords.isNotEmpty())
 				certifica2Info.setMdCtz(mdCtzRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
 		}
+		
+		Integer cnaeCodeInt = dslContext.select(ENTERPRISE_ACTIVITY.CNAE2009).from(ENTERPRISE_ACTIVITY)
+			.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivityId))
+			.fetchOne(ENTERPRISE_ACTIVITY.CNAE2009);
+		
+		String cnaeCode = null;
+		String cnae = null;
+		
+		if(null != cnaeCodeInt) {
+			cnaeCode = cnaeCodeInt.toString();
+			cnae = dslContext.select(CNAE2009.TITLE).from(CNAE2009).where(CNAE2009.CODE.eq(cnaeCode)).fetchOne(CNAE2009.TITLE);
+		}
 			
 		
 		certifica2Info.setCcc(ccc);
 		certifica2Info.setCompleteCCC(completeCCC);
 		certifica2Info.setEnterpriseDocument(enterpriseCIF);
+		certifica2Info.setEnterpriseName(enterpriseName);
+		
+		certifica2Info.setCnae(cnae);
+		certifica2Info.setCnaeCode(cnaeCode);
+		
+		return registryId;
 
 	}
 
@@ -302,6 +420,7 @@ public class JooqCertifica2 {
 		String representativeDocument = "";
 		String representativeName = "";
 		String representativeSurname = "";
+		String representativeCharge = "";
 
 		if (AonStringUtils.isNotBlank(staffFullname)) {
 			if (staffFullname.contains(",")) {
@@ -321,6 +440,7 @@ public class JooqCertifica2 {
 				// Cogemos el primer representate
 				Record staffRecord = staffRecords.get(0);
 				representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
+				representativeCharge = staffRecord.get(RDIR_STAFF.CHARGE_DESCRIPTION);
 				String fullName = staffRecord.get(RDIR_STAFF.NAME);
 
 				if (fullName.contains(",")) {
@@ -349,10 +469,22 @@ public class JooqCertifica2 {
 
 		if (AonStringUtils.isNotBlank(staffDocument))
 			representativeDocument = staffDocument;
+		
+		String staffCharge = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_CHARGE")
+						.or(CONTRACT_INFO.NAME.eq("T_ENTERPRISE_DIR_STAFF_CHARGE"))
+						.or(CONTRACT_INFO.NAME.eq("L_ENTERPRISE_DIR_STAFF_CHARGE"))
+						.or(CONTRACT_INFO.NAME.eq("P_ENTERPRISE_DIR_STAFF_CHARGE")))
+				.fetchOne(CONTRACT_INFO.EXPRESSION);
+
+		if (AonStringUtils.isNotBlank(staffCharge))
+			representativeCharge = staffCharge;
 
 		certifica2Info.setRepresentativeDocument(representativeDocument);
 		certifica2Info.setRepresentativeName(representativeName);
 		certifica2Info.setRepresentativeSurname(representativeSurname);
+		certifica2Info.setRepresentativeWork(representativeCharge);
 
 	}
 
@@ -520,12 +652,12 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- saveCertific@2Info to
 	// DB
 
-	private static void saveCertifica2Info(DSLContext dslContext, Integer domainId, Integer contractId,
+	private static void saveCertifica2Info(DSLContext dslContext, String domainName, String user, Integer domainId, Integer contractId,
 			String suspensionReasonCode) throws IllegalArgumentException {
 		if (AonStringUtils.isBlank(suspensionReasonCode))
 			suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
 
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, contractId,
+		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
 				suspensionReasonCode);
 
 		// ByteArrayOutputStream
@@ -600,8 +732,8 @@ public class JooqCertifica2 {
 
 		REPRESENTANTETYPE representanteType = new REPRESENTANTETYPE();
 		representanteType.setCIFNIF(certifica2Info.getRepresentativeDocument());
-		representanteType.setNombre(certifica2Info.getRepresentativeName());
-		representanteType.setApellido1(certifica2Info.getRepresentativeSurname());
+		representanteType.setNombre(removeAccents(certifica2Info.getRepresentativeName()));
+		representanteType.setApellido1(removeAccents(certifica2Info.getRepresentativeSurname()));
 
 		EMPRESATYPE empresaType = new EMPRESATYPE();
 		empresaType.setCIFNIF(certifica2Info.getEnterpriseDocument());
@@ -609,13 +741,12 @@ public class JooqCertifica2 {
 
 		TRABAJADORTYPE trabajadorType = new TRABAJADORTYPE();
 		trabajadorType.setDNINIE(certifica2Info.getDocument());
-		trabajadorType.setNombre(certifica2Info.getName());
-		trabajadorType.setApellido1(certifica2Info.getSurname());
+		trabajadorType.setNombre(removeAccents(certifica2Info.getName()));
+		trabajadorType.setApellido1(removeAccents(certifica2Info.getSurname()));
 		trabajadorType.setNumSS(certifica2Info.getSSNumber());
 		trabajadorType.setGrupoCotizacion(certifica2Info.getQuoteGroup());
 		trabajadorType.setTipoContrato(certifica2Info.getContractType());
-		trabajadorType
-				.setDuracionContrato(StringUtils.leftPad(certifica2Info.getContractDuration().toString(), 5, '0'));
+		trabajadorType.setDuracionContrato(StringUtils.leftPad(certifica2Info.getContractDuration().toString(), 5, '0'));
 
 		if (!StringUtils.isBlank(certifica2Info.getProfesionalCategory()))
 			trabajadorType.setCodProfesion(StringUtils.rightPad(certifica2Info.getProfesionalCategory(), 7, '0'));
@@ -713,9 +844,9 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- createCertificates
 	// (Comunic@)
 
-	public static Certificates createCertificates(Connection connection, Integer contractId, String suspensionCode) {
+	public static Certificates createCertificates(Connection connection, String domainName, String user, Integer contractId, String suspensionCode) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, contractId,
+		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
 				suspensionCode);
 		return createCertificates(certifica2Info);
 	}
@@ -921,6 +1052,19 @@ public class JooqCertifica2 {
 		value = value * factor;
 		long tmp = Math.round(value);
 		return (double) tmp / factor;
+	}
+	
+	private static String removeAccents(String cadena) {
+	    return cadena.replace("Á", "A")
+	            .replace("É", "E")
+	            .replace("Í", "I")
+	            .replace("Ó", "O")
+	            .replace("Ú", "U")
+	            .replace("á", "a")
+	            .replace("é", "e")
+	            .replace("í", "i")
+	            .replace("ó", "o")
+	            .replace("ú", "u");
 	}
 
 }

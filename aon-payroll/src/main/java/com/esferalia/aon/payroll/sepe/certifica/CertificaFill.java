@@ -30,7 +30,7 @@ public class CertificaFill {
 	}
 	
 	private static byte[] fillCertEnterprisePDF(Map<String, String> fieldsMap) {
-		InputStream is = CertificaFill.class.getResourceAsStream("certifica.pdf");
+		InputStream is = CertificaFill.class.getResourceAsStream("certificados.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
 		try (PDDocument pdfDocument = Loader.loadPDF(is)){
@@ -47,9 +47,9 @@ public class CertificaFill {
 				
 				for(PDField field : acroForm.getFields()) {
 					defaultCheckBox(field);
-					String valueStr = field.getValueAsString();
+//					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
-					System.out.println(valueStr + "  --  " + fieldName);
+//					System.out.println(valueStr + "  --  " + fieldName);
 					
 					String value = fieldsMap.get(fieldName);
 					setField(field, value);						
@@ -79,17 +79,26 @@ public class CertificaFill {
 	}
 
 	private static void setField(PDField field, String value) throws IOException {
-	    if (field instanceof PDTextField) {
+		if (field instanceof PDTextField) {
 	    	try{
+	    		String fieldIdxStr = field.getPartialName();
 		    	field.getCOSObject().removeItem(COSName.AP);
-		        field.setValue(value);
+		    	((PDTextField) field).setDefaultAppearance(getOwnAppearance(Integer.parseInt(fieldIdxStr)));
+		    	field.setValue(value);
 		        ((PDTextField) field).setDefaultValue(value);
 	    	} catch (Exception e) {
-				System.out.println("ERR : " + field.getValueAsString());
+//				System.out.println("ERR : " + field.getValueAsString());
 			}
 	    } else {
 	        System.out.println("Tipo no identificado");
 	    }
+	}
+
+	private static String getOwnAppearance(int idx) {
+		if(idx <= 72) return "/MinionPro-Regular 8 Tf 0 g";
+		if(idx <= 1020) return "/MinionPro-Regular 6 Tf 0 g";
+		if(idx <= 1025) return "/MinionPro-Regular 5 Tf 0 g";
+		return "/MinionPro-Regular 8 Tf 0 g";
 	}
 
 }
