@@ -267,9 +267,6 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		// Notas al pie
 		paintFooterNote(container, footernotes);
-//		for (String s : footernotes) {
-//			paintFooterNote(container, s);
-//		}
 		
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
@@ -461,6 +458,7 @@ public abstract class PageAbs extends ResizeComposite {
 			footernote.setWidth("95%");
 			footernote.addStyleName(AON.CSS.aonFontSmaller());
 			footernote.addStyleName(AON.CSS.aonBlockCenter());
+			footernote.addStyleName(AON.CSS.aonPaddingBottom());
 			container.add(footernote);
 		}
 	

@@ -3,21 +3,32 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200PageCallback;
+import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN082Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1040Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1041Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_1Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_2Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_3Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN584Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN585Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN588Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN590Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
 public class Page11 extends PageAbs {
 
-	private static final String[] HEADERS_1 = new String[] {
+	//private static final String[] HEADERS_1 = new String[] {
+	private static String[] HEADERS_1 = new String[] {
 			null,
 			AON.MSG.pendingDeduction(),
 			AON.MSG.current(),
@@ -55,7 +66,7 @@ public class Page11 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		
-		basePanel.clear();
+		basePanel.clear();	
 		
 		basePanel.add(getTitle(AON.MSG.otherDeductions()));
 		
@@ -81,9 +92,11 @@ public class Page11 extends PageAbs {
 				// FALTA - ESTE DESGLOSE ESTE AÑO TIENE DOS APARTADOS, VER SI AL FINAL DEJAN LOS DOS APARTADOS PARA 
 				// VER COMO SE PONE
 				if (key == Mod2002021Key.BN565) {
-					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN565,Mod2002021BN565Key.values(),HEADERS_1, FOOTER_1);
+					//row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN565,Mod2002021BN565Key.values(),HEADERS_1, FOOTER_1);
+					row = paintKeyBreakdownLinkBN565(table, row, HEADERS_1, FOOTER_1);
 				}
 				//----------
+				
 				
 				if (key == Mod2002021Key.BN590) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN590,Mod2002021BN590Key.values(),HEADERS_1, FOOTER_1);
@@ -121,6 +134,95 @@ public class Page11 extends PageAbs {
 				
 			}
 		}
+	}
+	
+	private int paintKeyBreakdownLinkBN565(final FlexTable tab, int row, String[] headers, String footernote) {
+		
+		final int boxRow = row-1;
+		final int boxCell = 1;
+		
+		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
+		panel.addStyleName(AON.AON_CSS.aonNowrap());
+		
+		Button breakdown = new Button();		
+		breakdown.setStyleName(AON.AON_CSS.aonIconModel());
+		breakdown.addStyleName(AON.AON_CSS.aonBorderNone());
+		breakdown.addStyleName(AON.AON_CSS.aonCursorPointer());
+		breakdown.addStyleName(AON.AON_CSS.aonMarginRight());
+		breakdown.setTitle(AON.MSG.breakdown());		 
+		panel.insert(breakdown,0);
+		
+		final FlowPanel container = new FlowPanel();		
+		container.addStyleName(AON.CSS.aonPaddingBottom());
+		container.setVisible(false);
+		final String backgroundColor = "#E0FFFF";
+		
+	//----------------------	
+		HEADERS_1[0] = "DONACIONES DE CARACTER GENERAL";
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_1Key.values(), headers, footernote);
+		HEADERS_1[0] = "DONACIONES PARA ACTIVIDADES PRIORITARIAS DE MECENAZGO Y OTRAS CON DERECHO A DEDUCCION INCREMENTADA";
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_2Key.values(), headers, footernote);
+		HEADERS_1[0] = "TOTAL DEDUCCIONES A ENTIDADES SIN FINES DE LUCRO (LEY 49/2002)";	                   	
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565Key.values(), headers, null);
+		HEADERS_1[0] = "BASE DE LA DEDUCCION POR DONACIONES A ENTIDADES SIN FINES DE LUCRO DEL PERIODO IMPOSITIVO";	                   	
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_3Key.values(), null, null);
+		HEADERS_1[0] = null;
+	//------------------
+		
+		tab.setWidget(row, 0, container);
+		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
+		
+		breakdown.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				container.setVisible( !container.isVisible() );
+				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
+							container.isVisible()?backgroundColor:"#FFFFFF");	
+				}
+				container.getElement().getStyle().setBackgroundColor(
+						container.isVisible()?backgroundColor:"#FFFFFF");
+			}
+			
+		});
+		
+		return ++row;
+	}
+	
+	private void paintKeyBreakdownLinkContainer(FlowPanel container, Mod2002021Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers, String footernote) {
+		
+		FlexTable tableDetail = getFlexTable(container, 0, headers);		
+		
+		int r = 1;
+		int col = 0;		
+		for (IMod200KeysProvider key : keysProvider) {
+			boolean paintDesc = true;
+			col = 1;
+			for (final IMod200Key k : key.getKeys() ) {
+				// La casilla del desglose no la pintamos porque sino se duplicarian
+				// las casillas en la pantalla y tal y como está montado ahora el 
+				// repintado de todas las casillas, al recalcular solo se pinta una de las 
+				// casillas, si ambas casillas son la misma
+				if (k != null && k != breakdownKey) {
+					if (paintDesc) {
+						Label desc = new Label(key.getDescription());			
+						tableDetail.setWidget(r, 0, desc);
+						desc.setStyleName(AON.AON_CSS.aonMarginLeft());
+						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
+						paintDesc = false;
+					}
+					paintKeyField(tableDetail, k, r, col, 9, false);					
+				}
+				++col;
+			}
+			if (!paintDesc)
+				++r;
+		}
+		
+		// Notas al pie
+		paintFooterNote(container, footernote);
+		
 	}
 	
 	@Override

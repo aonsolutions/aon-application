@@ -5,8 +5,8 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
 // Deducción donativos a entidades sin fines de lucro. Ley 49/2002
-// Fila Totales [00598] [00565] [00895] 
-public enum Mod2002021BN565Key implements Serializable, IMod200KeysProvider {
+// Fila casilla [00974])
+public enum Mod2002021BN565_3Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -16,15 +16,15 @@ public enum Mod2002021BN565Key implements Serializable, IMod200KeysProvider {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
-	// Total deducciones a entidades sin fines de lucro (Ley 49/2002) 
-	
-    C01(new Mod2002021Key[]{Mod2002021Key.BN598 ,Mod2002021Key.BN565 ,Mod2002021Key.BN895 },"Total")
+	// Base de la deducción por donaciones a entidades sin fines de lucro del período impositivo
+	 
+	C01(new Mod2002021Key[]{Mod2002021Key.BN974 ,null ,null },"Donaciones del per\u00EDodo impositivo efectuadas a entidades sin fines de lucro (Ley 49/2002)")
 	;	
 	 
     private String description;
     private Mod2002021Key[] keys;
     
-	private Mod2002021BN565Key(Mod2002021Key[] keys, String description) {
+	private Mod2002021BN565_3Key(Mod2002021Key[] keys, String description) {
 	    this.keys = keys;
 		this.description = description;
 	}

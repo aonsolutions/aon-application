@@ -148,9 +148,6 @@ public class Page09 extends PageAbs {
 				row = paintKey(table,key,row);
 				
 				if (margin) {
-					//table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
-					//table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
-					//table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonFiscalPaddingLeft());
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft20());
 				}
 				
