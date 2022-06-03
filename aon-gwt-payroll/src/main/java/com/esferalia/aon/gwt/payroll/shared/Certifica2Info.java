@@ -79,6 +79,7 @@ public class Certifica2Info implements Serializable {
 	private String representativeDocument;
 	private String representativeName;
 	private String representativeSurname;
+	private String representativeWork;
 	private String regime;
 	private String mdCtz;
 	private String ccc;
@@ -89,6 +90,7 @@ public class Certifica2Info implements Serializable {
 	private String surname;
 	private String secondSurname;
 	private String enterpriseDocument;
+	private String enterpriseName;
 	private String contractType;
 	private String quoteGroup;
 	private Integer contractDuration;
@@ -100,6 +102,17 @@ public class Certifica2Info implements Serializable {
 	private Integer settleQuoteDays;
 	private Double baseCgc;
 	private Double baseUnemployment;
+	
+	private String address;
+	private String city;
+	private String zip;
+	private String geozone;
+	
+	private String cnaeCode;
+	private String cnae;
+	
+	private String cnoCode;
+	private String cno;
 	
 	private List<Map<String, String>> quoteDataList;
 	
@@ -141,6 +154,14 @@ public class Certifica2Info implements Serializable {
 
 	public void setRepresentativeSurname(String representativeSurname) {
 		this.representativeSurname = representativeSurname;
+	}
+
+	public String getRepresentativeWork() {
+		return representativeWork;
+	}
+
+	public void setRepresentativeWork(String representativeWork) {
+		this.representativeWork = representativeWork;
 	}
 
 	public void setRegime(String regime) {
@@ -217,6 +238,14 @@ public class Certifica2Info implements Serializable {
 
 	public void setEnterpriseDocument(String enterpriseDocument) {
 		this.enterpriseDocument = enterpriseDocument;
+	}
+
+	public String getEnterpriseName() {
+		return enterpriseName;
+	}
+
+	public void setEnterpriseName(String enterpriseName) {
+		this.enterpriseName = enterpriseName;
 	}
 
 	public String getContractType() {
@@ -315,6 +344,70 @@ public class Certifica2Info implements Serializable {
 		this.quoteDataList = quoteDataList;
 	}
 	
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+
+	public String getGeozone() {
+		return geozone;
+	}
+
+	public void setGeozone(String geozone) {
+		this.geozone = geozone;
+	}
+
+	public String getCnaeCode() {
+		return cnaeCode;
+	}
+
+	public void setCnaeCode(String cnaeCode) {
+		this.cnaeCode = cnaeCode;
+	}
+
+	public String getCnae() {
+		return cnae;
+	}
+
+	public void setCnae(String cnae) {
+		this.cnae = cnae;
+	}
+
+	public String getCnoCode() {
+		return cnoCode;
+	}
+
+	public void setCnoCode(String cnoCode) {
+		this.cnoCode = cnoCode;
+	}
+
+	public String getCno() {
+		return cno;
+	}
+
+	public void setCno(String cno) {
+		this.cno = cno;
+	}
+
 	@Override
 	public String toString() {
 		String toString = "Certific@2 Info \n { \n";

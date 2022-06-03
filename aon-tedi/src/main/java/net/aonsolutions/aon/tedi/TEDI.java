@@ -27,6 +27,7 @@ public class TEDI {
 	
 	public static TediResult validateInvoice(TediContext tctx, TediResult result) throws TediException {
 		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
 			result.clearMessages();
@@ -39,20 +40,22 @@ public class TEDI {
 			TediValidator.validateInvoice(ctx,result);
 		} catch (Throwable t) {
 			throw new TediException(t.getMessage());
-		} 
+		} finally {
+			if (ctx != null && mustCloseCtx )
+				(( CloseableAONContext )ctx).close();
+		}
 		return result;
 	}
 
 	public static TediResult parse(TediContext tctx, InputStream input, MimeType mimeType) throws TediException {
-		CloseableAONContext aonContext = null;
 		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		try {
 			if (tctx.getAONContext() == null) {
 				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
 				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
 				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
-				aonContext = AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser());
-				tctx.setAONContext(aonContext);
+				tctx.setAONContext(AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser()));
 			}
 			if (tctx.getAonConfiguration() == null) {
 				tctx.setAonConfiguration( ConfigurationDAO.getConfiguration(tctx.getAONContext()) );
@@ -79,8 +82,9 @@ public class TEDI {
 			e.printStackTrace();
 			throw new TediException(e.getMessage());
 		} finally {
-			if (aonContext != null) {
-				aonContext.close();
+			if (tctx.getAONContext() != null && mustCloseCtx ) {
+				(( CloseableAONContext ) tctx.getAONContext()).close();
+				tctx.setAONContext(null);
 			}
 		}
 	}
@@ -128,7 +132,7 @@ public class TEDI {
 			throw new TediException(e.getMessage());
 		} finally {
 			if (ctx != null && mustCloseCtx)
-				((CloseableAONContext)ctx).close();
+				(( CloseableAONContext)ctx).close();
 		}
 	}
 }

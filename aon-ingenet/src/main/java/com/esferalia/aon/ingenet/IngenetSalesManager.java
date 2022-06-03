@@ -64,66 +64,67 @@ public class IngenetSalesManager {
 		int scopeId = IngenetContext.getUdapaMainScopeId();
 		List<ITransferObject> salesDetailList = sales.getDetailList();
 
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				domainId, user);
+		try ( IngenetContext ctx = IngenetContext.getAONContext(domainName,
+				domainId, user) ) {
 		
-		ctx.getDslContext().transaction(
-				configuration -> {
-					Integer customerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCustomer().getId())).getId();
-					if (sales.getCustomer() != null
-							&& customerId==null) {
-						createRegistry(ctx, domainId, sales.getCustomer()
-								.getRegistry());
-						SalesDAO.createCustomer(ctx, domainId, sales
-								.getCustomer().getId(), scopeId);
-					}
-					Integer sellerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getSeller().getId())).getId();
-					if (sales.getSeller() != null
-							&& sales.getSeller().getId() != null
-							&& sellerId==null) {
-						createRegistry(ctx, domainId, sales.getSeller()
-								.getRegistry());
-						SalesDAO.createSeller(ctx, domainId, sales.getSeller()
-								.getId(), scopeId);
-					}
-					Integer carrierId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCarrier().getId())).getId();
-					if (sales.getCarrier() != null
-							&& sales.getCarrier().getId() != null
-							&& carrierId==null) {
-						createRegistry(ctx, domainId, sales.getCarrier()
-								.getRegistry());
-						SalesDAO.createCarrier(ctx, domainId, sales
-								.getCarrier().getId(), scopeId);
-					}
-					long shippingCount = RegistryOldDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(sales.getShippingAddress().getId())).count();
-					if (sales.getShippingAddress() != null
-							&& sales.getShippingAddress().getId() != null
-							&& shippingCount<=0) {
-						createRegistryAddress(ctx, domainId,
-								sales.getShippingAddress());
-					}
-					Workplace wp = WorkplaceDAO.getWorkplace(
-							ctx,
-							f -> f.getDomainProperty()
-									.eq(ctx.getDomainId())
-									.and(f.getIdProperty().eq(
-											sales
-							.getWorkPlace().getId())));
-					if (sales.getWorkPlace() != null
-							&& sales.getWorkPlace().getId() != null
-							&& wp==null) {
-						createWorkplace(ctx, domainId, sales.getWorkPlace());
-					}
-					
-					createSalesLinesItems(ctx, salesDetailList);
-					
-				});
-		
-		Integer salesId = createSales(ctx, domainId, scopeId, sales);
-
-		ctx.getDslContext().transaction(configuration -> {
-			createSalesLines(ctx, salesId, salesDetailList);
-		});
+			ctx.getDslContext().transaction(
+					configuration -> {
+						Integer customerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCustomer().getId())).getId();
+						if (sales.getCustomer() != null
+								&& customerId==null) {
+							createRegistry(ctx, domainId, sales.getCustomer()
+									.getRegistry());
+							SalesDAO.createCustomer(ctx, domainId, sales
+									.getCustomer().getId(), scopeId);
+						}
+						Integer sellerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getSeller().getId())).getId();
+						if (sales.getSeller() != null
+								&& sales.getSeller().getId() != null
+								&& sellerId==null) {
+							createRegistry(ctx, domainId, sales.getSeller()
+									.getRegistry());
+							SalesDAO.createSeller(ctx, domainId, sales.getSeller()
+									.getId(), scopeId);
+						}
+						Integer carrierId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCarrier().getId())).getId();
+						if (sales.getCarrier() != null
+								&& sales.getCarrier().getId() != null
+								&& carrierId==null) {
+							createRegistry(ctx, domainId, sales.getCarrier()
+									.getRegistry());
+							SalesDAO.createCarrier(ctx, domainId, sales
+									.getCarrier().getId(), scopeId);
+						}
+						long shippingCount = RegistryOldDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(sales.getShippingAddress().getId())).count();
+						if (sales.getShippingAddress() != null
+								&& sales.getShippingAddress().getId() != null
+								&& shippingCount<=0) {
+							createRegistryAddress(ctx, domainId,
+									sales.getShippingAddress());
+						}
+						Workplace wp = WorkplaceDAO.getWorkplace(
+								ctx,
+								f -> f.getDomainProperty()
+										.eq(ctx.getDomainId())
+										.and(f.getIdProperty().eq(
+												sales
+								.getWorkPlace().getId())));
+						if (sales.getWorkPlace() != null
+								&& sales.getWorkPlace().getId() != null
+								&& wp==null) {
+							createWorkplace(ctx, domainId, sales.getWorkPlace());
+						}
+						
+						createSalesLinesItems(ctx, salesDetailList);
+						
+					});
+			
+			Integer salesId = createSales(ctx, domainId, scopeId, sales);
+	
+			ctx.getDslContext().transaction(configuration -> {
+				createSalesLines(ctx, salesId, salesDetailList);
+			});
+		}
 	}
 
 	private void createSalesLinesItems(AONContext ctx, List<ITransferObject> list) {

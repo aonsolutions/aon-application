@@ -215,8 +215,9 @@ public class EmployeeITDAO {
 				
 				employeeIt.getDailyCgcBase().ifPresent(d-> sets.set(CONTRACT_LEAVE.DAILY_CGC_BASE, d) );
 				
-				 if(null!=employeeIt.getDischargeCause()) 
+				 if(null!=employeeIt.getDischargeCause()) {					 
 					 sets.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, employeeIt.getDischargeCause().value());
+				 }
 		
 				contractLeaveRecord = sets.returning().fetchOne();
 			}		 

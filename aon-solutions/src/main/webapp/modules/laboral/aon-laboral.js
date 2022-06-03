@@ -204,10 +204,14 @@ export class AonLaboral extends AonElement {
 		this.applicationEl.stopLoading();
 	}
 
-  async getIdc({ regime, ctaCti, nss, fea, feb, fra, frb }) {
+  async getIdc({ regime, ctaCti, nss, fea, feb, fra, frb, situation }) {
 		this.applicationEl.startLoading();
 		try {
       let fecha = feb || fea;
+      let isBaja = situation && (situation.toLowerCase().includes("baja") || situation.toLowerCase().includes("bj"));
+      if(isBaja){
+        fecha = fea;
+      }
       if(!fecha) {
         fecha = frb || fra;
         fecha = (new Date().getTime() > new Date(fecha).getTime()) ? fecha : AonDateUtils.formatDateOrigin(new Date());

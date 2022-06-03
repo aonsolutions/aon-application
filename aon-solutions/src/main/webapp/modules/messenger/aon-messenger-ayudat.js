@@ -14,7 +14,9 @@ export class AonMessengerAyudat extends AonElement {
     build() {
         let aonMessenger = document.getElementById('aonMessenger');
 
-        aonMessenger.addToolbarOption('Add', 'add', () => {this.loadCreate()});
+        aonMessenger.addToolbarOption('Add', 'add', () => {
+            this.loadCreate();
+        });
 
         let options = [
             {

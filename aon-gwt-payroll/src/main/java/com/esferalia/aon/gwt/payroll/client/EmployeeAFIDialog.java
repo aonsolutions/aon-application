@@ -736,7 +736,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 							+ (isStartContract() ? 1 : 0) + "&isEndContract=" + (isEndContract() ? 1 : 0)
 							+ "&isChangeContract=" + (isChangeContract() ? 1 : 0) + "&isQuoteContract="
 							+ (isQuoteContract() ? 1 : 0) + "&isOcupationContract=" + (isOcupationContract() ? 1 : 0)
-							+ "&isPartialityCoefContract=" + (isPartialityCoefContract() ? 1 : 0);
+							+ "&isPartialityCoefContract=" + (isPartialityCoefContract() ? 1 : 0
+							+ "&settleReason=" + settleReasonLB.getSelectedValue());
 	
 					Window.open(fileDownloadURL, "_blank", null);
 				}

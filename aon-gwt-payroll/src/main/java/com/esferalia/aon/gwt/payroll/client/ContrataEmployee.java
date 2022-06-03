@@ -982,18 +982,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void loadWindow(Consumer<Void> finish) {
 		showLoadingPanel();
-		loadData(s ->
-			initializeIdcDateListBox(accept -> {
-				loadToolbar();
-				checkButtonsToolbar();
-				hideMessage();
-				finish.accept(null);
-			}, error -> {
-				loadToolbar();
-				checkButtonsToolbar();
-				finish.accept(null);
-			})
-		);
+		loadData(s -> {
+			loadToolbar();
+			checkButtonsToolbar();
+			hideMessage();
+			finish.accept(null);
+		});
 	}
 
 	private void loadData(Consumer<Void> finish) {
@@ -1122,6 +1116,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
+		
+		// Get Idc Dates
+		initializeIdcDateListBox();
 
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
@@ -1135,6 +1132,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
+		
+		// Get Idc Dates
+		initializeIdcDateListBox();
 
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
@@ -2128,8 +2128,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tgssContextMenu.getIdcPlNss().setVisible(visible);
 	}
 
-	private void initializeIdcDateListBox(Consumer<Void> acceptC, Consumer<Void> errorC) {
-		contrataEmployeeObject.getIdcDates(dates -> {
+	private void initializeIdcDateListBox() {
+		tgssContextMenu.getIdc().setVisible(false);
+		contrataEmployeeObject.getIdcDates(contractId, dates -> {
 			Collections.reverse(dates);
 			int count = dates.size();
 			idcDateListBox.setRowCount(count, true);
@@ -2137,10 +2138,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.setVisibleRange(0, count + 1);
 			idcDateListBox.setSelected(0, true);
 			idcDateListBox.onResizeDropDownPopup();
-			acceptC.accept(null);
+			tgssContextMenu.getIdc().setVisible(true);
 		}, error -> {
+			tgssContextMenu.getIdc().setVisible(false);
 //			showWarning("Fechas Idc", error.getMessage());
-			errorC.accept(null);
 		});
 	}
 

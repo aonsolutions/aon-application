@@ -227,9 +227,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees);
 
-	void generateCertifaca2(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+	void generateCertifaca2(String currentDomainName, String user, Integer contractId) throws IllegalArgumentException;
 	
-	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException;
+	void generateCertifaca2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException;
 
 	// Sistema RED w2.seg-social.es
 	
@@ -313,7 +313,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	// ------------------------------------------------- SEPE Methods
 	
-	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+	Certifica2Info getCertifica2Info(String currentDomainName, String user, Integer contractId);
 
 	// ------------------------------------------------- EmployeeContractPayments
 

@@ -3505,7 +3505,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			DayType type = calendar.getDayType(day);
 			
 			Double dayHours = getDayHours(day);
-			if ( dayHours != null && dayHours > 0.00) {
+
+			if ( DayType.HOLIDAY != type && dayHours != null && dayHours > 0.00 ) {
 				days++;
 			} else if (!hasDaysHours && isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
 				days++;

@@ -2024,8 +2024,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			Boolean cgp = this.it.getTypeLowPart()!=null && this.it.getTypeLowPart()==(byte)1 ? true : false; // si es accidente laboral
 			Integer quoteDay = 0;
 			
-			for (int i = 0; i < datas.size(); i++) {
-				Certifica2Info data = datas.get(i);
+			for (Certifica2Info data: datas) {
 				
                 HTMLPanel row = new HTMLPanel("");
 				row.setStyleName(style.flexCustom());
@@ -2069,18 +2068,21 @@ public abstract class ITDialog extends AonCustomDialog {
 				baseCp+= data.getBaseUnemployment();
 				quoteDay+=data.getSettleQuoteDays();
 				
-				if((isPartial && quoteDay>=84) || (!isPartial && quoteDay>=28)) 
+				if((isPartial && quoteDay>=84) || (!isPartial && quoteDay>=28)) {
 					break; 
+				}
 			}
-            
-            Double tmp = Math.round(base*100.0)/100.0;
-            baseCC.setValue(tmp);
-            Double tmp1 = Math.round(baseCp*100.0)/100.0;
-            baseCP.setValue(tmp1);
+
+            Double baseCcRound = Math.round(base*100.0)/100.0;
+            baseCC.setValue(baseCcRound);
             quoteDayInput.setValue(quoteDay.doubleValue());
-        	it.setRegulationBase(tmp);
-        	it.setDailyCGPBase(tmp1);
     		it.setQuoteDays(quoteDay);
+    		
+            Double baseCpRound = Math.round(baseCp*100.0)/100.0;
+            baseCP.setValue(baseCpRound);
+            
+        	it.setDailyCGCBase(baseCcRound/quoteDay);
+        	it.setDailyCGPBase(baseCpRound/quoteDay);
         }
 	}
 	

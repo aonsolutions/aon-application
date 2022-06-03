@@ -739,15 +739,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void generateCertifaca2(String domainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void generateCertifaca2(String domainName, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.generateCertifaca2(domainName, contractId, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.generateCertifaca2(domainName, user, contractId, new AsyncCallbackWrapper<Void>(callback));
 	} 
 	
 	@Override
-	public void generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void generateCertifaca2(String domainName, String user, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.generateCertifaca2(domainName, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.generateCertifaca2(domainName, user, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	// ------------------------------------------------- TGSS Files
@@ -943,9 +943,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- SEPE Methods
 
 	@Override
-	public void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
+	public void getCertifica2Info(String currentDomainName, String user, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getCertifica2Info(currentDomainName, contractId, new AsyncCallbackWrapper<Certifica2Info>(callback));
+		employeesServiceAsync.getCertifica2Info(currentDomainName, user, contractId, new AsyncCallbackWrapper<Certifica2Info>(callback));
 	}
 	
 	// ------------------------------------------------- EmployeeContractPayments
