@@ -199,6 +199,11 @@ class SistemaREDEmployee {
 	}
 
 	// RETURN ALL THE EMPLOYEES
+	/**
+	 * Use  solutions.aon.seg.social.ServicioREDEmployee.getTotalEmployees
+	 * in order to use in client and server side.
+	 */
+	@Deprecated
 	private static Collection<Employee> getEmployeesImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ccc)
 			throws ElementNotFoundException, IOException, InterruptedException, SegSocialException {
@@ -211,7 +216,7 @@ class SistemaREDEmployee {
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 			
-			Toolkit.validateCert(htmlPage);
+			Toolkit.checkCertificateRevoked(htmlPage.asXml());
 			
 			manageStatusCode(htmlPage);
 

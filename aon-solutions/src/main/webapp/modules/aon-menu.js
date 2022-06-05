@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
+import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, AccountingPortalMenu} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
 import {getNotes} from  '../services/noteService.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
@@ -131,9 +131,7 @@ export class AonMenu extends AonElement {
 				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 				break;
 			case Apps.ACCOUNTING.app:
-					if(this.getDur().isAccountingManager()) {
-					this.buildAppMenu(Apps.ACCOUNTING);
-				} else this.rootPanel( new AonAccounting());
+				this.buildAppMenu(Apps.ACCOUNTING);
 				break;
 			case Apps.FISCAL.app:
 				if(this.getDur().isFiscalManager()) {
@@ -492,7 +490,7 @@ export class AonMenu extends AonElement {
 	getSubApps(app){
 		switch(app){
 			case Apps.ACCOUNTING.app:
-			 	return AccountingMenu;
+			 	return this.getDur().isAccountingManager() ? AccountingMenu : AccountingPortalMenu;
 			case Apps.FISCAL.app:
 				return AeatFiscalMenu;
 			case Apps.PAYROLL.app:

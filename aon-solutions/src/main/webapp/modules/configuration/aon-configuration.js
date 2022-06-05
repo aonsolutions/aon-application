@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getCompany, getDomainUserRoles, getRegistry } from "../../services/service.js";
+import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -10,11 +10,11 @@ import "../company/aon-company-list.js";
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
-import { CONFIGURATION, INVOICE, MESSENGER, AON_SALTRA, COMUNICA } from "../../services/app.js";
+import { CONFIGURATION, INVOICE, MESSENGER, AON_SALTRA, COMUNICA, API_SERVICE } from "../../services/app.js";
 import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
@@ -24,6 +24,9 @@ import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
+import { AonServiceAccountList } from "../user/aon-service-account-list.js";
+import { AonInput } from "../../components/aon-input.js";
+import { AonDate } from "../../components/aon-date.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -134,6 +137,14 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildGroups(),
         });
 
+        if(this.dur.isApiService()){
+          companyOptions.push({
+            name: MSG.SERVICE_ACCOUNTS,
+            icon: MATERIAL_ICONS.API,
+            fn: () => this.buildServiceAccount(),
+          });
+        }
+
         if (!this.isMobile()) {
           companyOptions.push({
             name: MSG.HIRING,
@@ -190,8 +201,8 @@ export class AonConfiguration extends AonElement {
           },
           fn: () => this.buildComunicaConfiguration(),
         });
-      }  
-      
+      } 
+
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
@@ -259,7 +270,49 @@ export class AonConfiguration extends AonElement {
     // btnSearch.addEventListener(EVENT.SEARCH, (event) => {
     //   userList.setValue(event.detail);
     // });
+  }
 
+  buildServiceAccount() {
+    let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+    aonConfiguration.removeToolbarOptions();
+
+    if(this.isMobile()) {
+			aonConfiguration.addFloatOption(ACTION.ADD, () => this.createServiceAccount());
+		} else {
+      aonConfiguration.addToolbarOption("ServiceAccountAdd", "add", () =>
+        this.createServiceAccount()
+      );
+    }
+
+    let serviceAccountList = this.isMobile() 
+      ? new AonMobileUserList() 
+      : new AonServiceAccountList();
+    aonConfiguration.setContent(serviceAccountList);
+  }
+
+  createServiceAccount() {
+    let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+    let d = document.getElementById(aonConfiguration.DIALOG);
+
+    let div = this.createElement(TAG.DIV);
+    
+    let input =  this.createAonElement(new AonInput(), CONSTANT.NAME, MSG.NAME);
+    input.description = MSG.NAME;
+    div.appendChild(input);
+
+    // let expireDate =  this.createAonElement(new AonDate(), CONSTANT.DATE, MSG.EXPIRATION_DATE);
+    // div.appendChild(expireDate);
+
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle(MSG.CREATE_SERVICE_ACCOUNT);
+    d.setContent(div);
+    d.addAcceptAction(() => {
+      saveServiceAccount({name:input.value}).then(() => {
+        this.getElement(CONSTANT.AON_SERVICE_ACCOUNT_LIST).reload();
+      });
+    });
+    d.open();
   }
 
 	buildInvoiceConfiguration() {

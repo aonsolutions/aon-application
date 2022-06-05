@@ -69,8 +69,6 @@ public class SerializableListDataModel extends DataModel implements Serializable
         	throw new IllegalArgumentException("Illegal row index for " + getClass() + ": " + rowIndex);
         }
         
-        System.out.println("Index: " + rowIndex);
-        
         int old = index;
         index = rowIndex;
         if (list == null) {

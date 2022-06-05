@@ -136,6 +136,29 @@ public class ServicioRED extends ServicioREDRegeXML {
 				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
+				
+				String cont = Toolkit.getElementByAttributeFirstTag(body, "value", "Continuar");
+				if (cont != null) {
+					link = Toolkit.getLink(body);
+					
+					httpPost = new HttpPost(link);
+					
+					params = new ArrayList<>();
+					params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, "SGIRED"));
+					params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATTMBPER"));
+					params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+					params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, "Archivo_SalirALTF4_101"));
+					params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
+					params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, "0"));
+					params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "Atr37"));
+					params.add(new BasicNameValuePair("btn_Sub2203901009", "Continuar"));
+					
+					httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+					
+					body = Toolkit.getBodyPOST(httpClient, httpPost);
+					
+				}
+				
 				httpPost = Toolkit.reportGenerationForm(body);
 				
 				try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {

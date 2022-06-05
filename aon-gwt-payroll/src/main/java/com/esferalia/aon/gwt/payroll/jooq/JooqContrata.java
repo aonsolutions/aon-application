@@ -755,22 +755,34 @@ public class JooqContrata {
 			com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory factory = new com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory();
 			if (code.equals(ContractCode.C100.getValue())) {
 				return factory.createCONTRATO100TYPE();
+			} else if (code.equals(ContractCode.C109.getValue())) {
+				return factory.createCONTRATO100TYPE();
 			} else if (code.equals(ContractCode.C130.getValue())) {
+				return factory.createCONTRATO130TYPE();
+			} else if (code.equals(ContractCode.C139.getValue())) {
 				return factory.createCONTRATO130TYPE();
 			} else if (code.equals(ContractCode.C150.getValue())) {
 				return factory.createCONTRATO150TYPE();
+			} else if (code.equals(ContractCode.C189.getValue())) {
+				return factory.createCONTRATO100TYPE();
 			} else if (code.equals(ContractCode.C200.getValue())) {
 				return factory.createCONTRATO200TYPE();
 			} else if (code.equals(ContractCode.C230.getValue())) {
 				return factory.createCONTRATO230TYPE();
 			} else if (code.equals(ContractCode.C250.getValue())) {
 				return factory.createCONTRATO250TYPE();
+			} else if (code.equals(ContractCode.C289.getValue())) {
+				return factory.createCONTRATO200TYPE();
 			} else if (code.equals(ContractCode.C300.getValue())) {
 				return factory.createCONTRATO300TYPE();
 			} else if (code.equals(ContractCode.C330.getValue())) {
 				return factory.createCONTRATO330TYPE();
+			} else if (code.equals(ContractCode.C339.getValue())) {
+				return factory.createCONTRATO330TYPE();
 			} else if (code.equals(ContractCode.C350.getValue())) {
 				return factory.createCONTRATO350TYPE();
+			} else if (code.equals(ContractCode.C389.getValue())) {
+				return factory.createCONTRATO300TYPE();
 			} else if (code.equals(ContractCode.C401.getValue())) {
 				return factory.createCONTRATO401TYPE();
 			} else if (code.equals(ContractCode.C402.getValue())) {
@@ -835,22 +847,40 @@ public class JooqContrata {
 			
 			if (tc2.equals(ContractCode.C100.getValue())) {
 				contratoType = createContract100(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C109.getValue())) {
+				contratoType = createContract100(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C130.getValue())) {
+				contratoType = createContract130(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C139.getValue())) {
 				contratoType = createContract130(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C150.getValue())) {
 				contratoType = createContract150(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C189.getValue())) {
+				contratoType = createContract189(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C200.getValue())) {
+				contratoType = createContract200(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C209.getValue())) {
 				contratoType = createContract200(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C230.getValue())) {
 				contratoType = createContract230(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C239.getValue())) {
+				contratoType = createContract230(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C250.getValue())) {
 				contratoType = createContract250(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C289.getValue())) {
+				contratoType = createContract289(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C300.getValue())) {
+				contratoType = createContract300(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C309.getValue())) {
 				contratoType = createContract300(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C330.getValue())) {
 				contratoType = createContract330(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C339.getValue())) {
+				contratoType = createContract330(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C350.getValue())) {
 				contratoType = createContract350(contratoType, employeeContractInfo);
+			} else if (tc2.equals(ContractCode.C389.getValue())) {
+				contratoType = createContract300(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C401.getValue())) {
 				contratoType = createContract401(contratoType, employeeContractInfo);
 			} else if (tc2.equals(ContractCode.C402.getValue())) {
@@ -1236,6 +1266,7 @@ public class JooqContrata {
 		}
 		return null;
 	}
+	
 	private static CONTRATO150TYPE createContract150(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
 		CONTRATO150TYPE c = (CONTRATO150TYPE) contratoType;
 		c.setDATOSBONIFICACION(createDatosBonificacion(employeeContractInfo));
@@ -1243,6 +1274,19 @@ public class JooqContrata {
 		c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(employeeContractInfo));
 		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
 		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(employeeContractInfo));
+		return c;
+	}
+	
+	private static CONTRATO100TYPE createContract189(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
+		CONTRATO100TYPE c = (CONTRATO100TYPE) contratoType;
+		c.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(employeeContractInfo));
+		if(employeeContractInfo.getContractSpecificData().getAnnexedB()){
+			c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(employeeContractInfo));
+		}
+		if(employeeContractInfo.getContractSpecificData().getWorkshopSchoolB()){
+			c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
+		}
+		c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
 		return c;
 	}
 	
@@ -1356,6 +1400,18 @@ public class JooqContrata {
 		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(employeeContractInfo));
 		return c;
 	}
+	
+	private static CONTRATO200TYPE createContract289(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
+		CONTRATO200TYPE c = (CONTRATO200TYPE) contratoType;
+		c.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(employeeContractInfo));
+		c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(employeeContractInfo));
+		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
+		c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
+		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(employeeContractInfo));
+		c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));
+		return c;
+	}
+	
 	private static CONTRATO300TYPE createContract300(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
 		CONTRATO300TYPE c = (CONTRATO300TYPE) contratoType;
 	    c.setDATOSCONTRATOTIEMPOPARCIAL(createDatosContratoTiempoParcial(employeeContractInfo));

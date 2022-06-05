@@ -7698,19 +7698,4 @@ public class AonStringUtils {
 		throw new IllegalArgumentException("unexpected roman numerals");
 	}	
 	
-	
-	/**
-	 * --------------------------------------------------------
-	 *  MAIN 4 TESTING (DELETE)
-	 * --------------------------------------------------------
-	**/
-	public static void main(String[] args) {
-		
-		String original = "AYUDAT SOLUCIONES PROFESIONALES S.L";
-		String searcher = "SOLICIONES AYIDAT S.L";
-		
-		System.out.println(containsMatching(original, searcher, DEFAULT_TOLERANCE));
-		System.out.println(getMatching(original, searcher));		
-	}
-	
 }

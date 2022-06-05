@@ -1,8 +1,8 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
-import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { createCard, createDate, createForm, createIconButton, createInput, createNumber, createSelect } from "../notification/createComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import '../../css/aon-grid.css';
 import '../../css/aon-css-utils.css';
@@ -27,17 +27,64 @@ export const createBajaDialogContent = () =>{
         }
     }, div);
     select.style.textAlign = "left";
+ 
+    createNumber({
+        attributes:{
+            name:"dayVacation",
+            id: "dayVacation", 
+            description:"Días de vacaciones (Opcional)"
+        }
+    }, div);
+ 
+    createDate({
+        attributes:{
+            name:"frv",
+            id:"frv",
+            title:"Fecha de vacaciones",
+            hidden:true
+        }
+    }, div);
+
+    let divAsociative = document.createElement(TAG.DIV);
+    divAsociative.id = "divAsociative";
+    div.appendChild(divAsociative);
 
     const btnSubmit = document.createElement(TAG.BUTTON);
     btnSubmit.id = "btnSubmitBaja";
     btnSubmit.className =  CSS.AON_BUTTON;
-    btnSubmit.textContent = "Aceptar";
+    btnSubmit.textContent = MSG.ACCEPT;
     btnSubmit.style.padding ="0.5rem 1rem";
     btnSubmit.style.marginBottom ="5px";
-    // btnSubmit.disabled = true;
     div.appendChild(btnSubmit);
 
     return div;
+}
+
+export const createAsociativeSA = (create)=>{
+    const divAsociative = document.getElementById("divAsociative");
+    const frv = document.getElementById("frv");
+    const id = "asociativeSA";
+    let select = document.getElementById(id);
+    if(!create) {
+        frv.setVisible(true);
+        divAsociative.innerHTML = "";
+    } else if(!select){
+        frv.setVisible(false);
+        select = createSelect({
+            attributes:{
+                id,
+                name:id,
+                title:"Situación"
+            }
+        }, divAsociative);
+        let options = [
+            {value:"001", name:"Retribuidas y no disfrutadas"},
+            {value:"015", name:"No disfrutadas, retribuidas y cotizadas"}
+        ];
+        select.style.textAlign = "left";
+        select.setOptions(options);
+        select.setIndexOf(0);
+    }
 }
 
 export const createFormComunica = (id, parent) => {
@@ -151,6 +198,13 @@ export const createContractData = (parent, isManager) => {
         }
     }, divC.element);
 
+    let divQuoteMonth = createDiv({
+        attributes:{
+            id:"divQuoteMonth"
+        }
+    })
+    divQuoteMonth.appendTo(parent);
+
     let divH = createDiv({
         attributes:{
             id:"div_parcial",
@@ -159,7 +213,7 @@ export const createContractData = (parent, isManager) => {
     })
     divH.appendTo(parent);
 
-    partTime(divH.element)
+    partTime(divH.element);
 
     createInput({
         attributes:{
@@ -343,7 +397,6 @@ const addIconSurname = () => {
     }
 }
 
-
 /**
  * 
  * @param {HTMLElement} divH parent 
@@ -391,6 +444,33 @@ const partTime = (divH) => {
     divC.appendChild(numberC);
     addSpanDecimal(numberC);
     return divC;
+}
+
+
+export const createQuoteMonthly = (detail, isManager) => {
+    
+    let show = detail && detail.quoteMonth;
+
+    let parent = document.getElementById("divQuoteMonth");
+    if(parent) {
+        parent.innerHTML = "";
+        if(show){
+            let divC = createDiv({
+                classes:[CSS.AON_COL_XS_12], 
+                styles:{
+                    paddingBottom:"12px"
+                }
+            });
+            
+            divC.appendTo(parent);
+
+            const id = "quoteMonth";
+    
+            const aonSwitch = setAttributes(new AonSwitch(),{id, name:id, title: `Cotización mensual`, checked:false});
+    
+            divC.appendChild(aonSwitch);
+        }
+    }
 }
 
 export const addSpanDecimal = (input) =>  {

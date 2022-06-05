@@ -479,8 +479,7 @@ public class EmployeeDAO {
 			)
 		);
 	}
-
-
+	
 	private static RegistryRecord getPerson(DSLContext dslContext, Integer domainId, Employee employee) {
 		return dslContext
 		.select()
@@ -488,23 +487,28 @@ public class EmployeeDAO {
 		.innerJoin(REGISTRY).onKey()
 		.where(PERSON.SOCIAL_SECURITY_NUM.eq(employee.getNaf()))
 		.and(PERSON.DOMAIN.eq(domainId))
-		.fetchOptionalInto(REGISTRY)
+//		.fetchOptionalInto(REGISTRY)
+		.fetchStreamInto(REGISTRY)
+		.sorted((r1,r2)-> comparePerson(r1, r2, employee))
+		.findFirst()
 		.orElseGet( () -> {
-		
+			
+			String dni = trim(employee.getDni());
+			
 			InsertSetMoreStep<RegistryRecord> insertRegistry = 
 			dslContext
 			.insertInto(REGISTRY)
 			.set(REGISTRY.TYPE,  (byte) 0 )
 			.set(REGISTRY.DOMAIN, domainId)
-			.set(REGISTRY.DOCUMENT, trim(employee.getDni()))
-			.set(REGISTRY.DOCUMENT_TYPE, getDniType(trim(employee.getDni())))
-			.set(REGISTRY.DOCUMENT_COUNTRY, getDniCountry(trim(employee.getDni())))
-			.set(REGISTRY.NATIONALITY,  getDniCountry(trim(employee.getDni())));
+			.set(REGISTRY.DOCUMENT, dni)
+			.set(REGISTRY.DOCUMENT_TYPE, getDniType(dni))
+			.set(REGISTRY.DOCUMENT_COUNTRY, getDniCountry(dni))
+			.set(REGISTRY.NATIONALITY,  getDniCountry(dni));
 			employee.getName().ifPresent(name -> insertRegistry.set(REGISTRY.NAME, name));
 		
 			RegistryRecord registryRecord = insertRegistry.returning().fetchOne();
 			
-			Integer geozoneId = getGeozone(dslContext, domainId, employee.getCcc()).map( g->g.getId()).orElse(null);
+			Integer geozoneId = getGeozone(dslContext, domainId, employee.getCcc()).map(GeozoneRecord::getId).orElse(null);
 			
 //			SelectConditionStep<Record1<Integer>> geozoneId = 
 //			DSL
@@ -562,6 +566,29 @@ public class EmployeeDAO {
 		});
 	}
 	
+	private static int comparePerson(RegistryRecord r1, RegistryRecord r2, Employee employee) {
+		String dni = trim(employee.getDni());
+		Optional<String> nameOpt = employee.getName();
+		
+		if(r1.getType()!=null && r2.getType()==null) {
+			return 1;
+		} else if(r2.getType()!=null && r1.getType()==null) {
+			return -1;
+		} else if(AonStringUtils.equals(dni, r1.getDocument()) && !AonStringUtils.equals(dni, r2.getDocument())) {
+			return 1;
+		} else if(AonStringUtils.equals(dni, r2.getDocument()) && !AonStringUtils.equals(dni, r1.getDocument())) {
+			return -1;
+		} else if(nameOpt.isPresent()) {
+			if(AonStringUtils.getLevenshteinDistance(nameOpt.get(), r1.getName()) < AonStringUtils.getLevenshteinDistance(nameOpt.get(), r2.getName())) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+		
+		return 0;
+	}
+
 	private static Result<ContractRecord> getContracts(DSLContext dslContext, String domainName, String ccc, String naf,
 			java.sql.Date startDate, java.sql.Date endDate) {
 		return dslContext

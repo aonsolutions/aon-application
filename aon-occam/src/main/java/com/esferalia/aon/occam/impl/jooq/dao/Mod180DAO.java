@@ -33,12 +33,14 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod180DAO {
 	
-	private static byte ZERO_BYTE = 0;
+	private Mod180DAO() {
+	}
+	
+	private static final byte ZERO_BYTE = 0;
 
 	public static Stream<Mod180> getHeaders(AONContext ctx, int domain) {
 		return getHeaders(ctx, domain, null);
@@ -75,7 +77,7 @@ public class Mod180DAO {
 			.fetch()
 			.stream()
 			.map(new Mod180Filler())
-			.peek( mod180 -> mod180.setDetails( getDetails(ctx, mod180.getId()) ))
+			.map( mod180 -> mod180.setDetails( getDetails(ctx, mod180.getId()) ))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -91,7 +93,7 @@ public class Mod180DAO {
 			.fetch()
 			.stream()
 			.map(new Mod180Filler())
-			.peek( mod180 -> mod180.setDetails( getDetails(ctx, mod180.getId()) ))
+			.map( mod180 -> mod180.setDetails( getDetails(ctx, mod180.getId()) ))
 			.findFirst()
 			.orElse(null);
 	}
@@ -108,7 +110,7 @@ public class Mod180DAO {
 			return fm;
 		} catch (DataAccessException t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
@@ -117,7 +119,6 @@ public class Mod180DAO {
 		ctx.checkWrite();
 		if (mod180.getId() == null) {
 			mod180 = insert(ctx, mod180); 
-			 
 		} else {
 			mod180 = update(ctx, mod180);
 		}
@@ -132,7 +133,7 @@ public class Mod180DAO {
 
 	private static Mod180 insert(AONContext ctx, Mod180 mod180, boolean generateDetails) {
 		validate(ctx,mod180);
-		FsModel180Record record = ctx.getDslContext().insertInto(FS_MODEL180)
+		FsModel180Record rec = ctx.getDslContext().insertInto(FS_MODEL180)
 			.set(FS_MODEL180.DOMAIN,mod180.getDomain())
 			.set(FS_MODEL180.ENTERPRISE,mod180.getEnterprise())
 			.set(FS_MODEL180.YEAR,mod180.getYear())
@@ -156,7 +157,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 		.returning(FS_MODEL180.ID)
 		.fetchOne();
-		mod180.setId(record.getId());
+		mod180.setId(rec.getId());
 		if (generateDetails) {
 			insertDetailsFromInvoice(ctx, mod180);
 		}
@@ -356,7 +357,7 @@ public class Mod180DAO {
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
 		Field<Double> invoiceTaxSum = DSL.round( (INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100) ,2);
-		Field<String> maxPercent = DSL.groupConcat(INVOICE_TAX.PERCENTAGE, AonStringUtils.COMMA);
+		Field<Double> maxPercent = DSL.max(INVOICE_TAX.PERCENTAGE);
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
@@ -374,9 +375,6 @@ public class Mod180DAO {
 		.fetch()
 		.stream()
 		.map(rec -> {
-			String percents = rec.getValue(maxPercent);
-			int last = AonStringUtils.lastIndexOf(percents, AonStringUtils.COMMA);
-			String percent = AonStringUtils.substring(percents, last+1);
 			return new Mod180Detail()
 				.setDomain(mod180.getDomain())
 				.setMod180(mod180.getId())
@@ -385,7 +383,7 @@ public class Mod180DAO {
 				.setInKind(false)
 				.setPerception(rec.getValue(sumBase).doubleValue())
 				.setRetention(rec.getValue(quotaOp).doubleValue())
-				.setPercent(AonNumberUtils.toDouble(percent))
+				.setPercent(rec.getValue(maxPercent))
 				.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
 			})
 		.forEach(detail -> insertDetail(ctx,detail));
@@ -409,39 +407,39 @@ public class Mod180DAO {
 				FS_MODEL180.CONTACT_MAIL.getDataType().length()));
 		mod180.setReceipt("1800000000001");
 		mod180.setStatus(FiscalStatus.PENDING);
-		mod180.setDetails(new LinkedList<Mod180Detail>());
+		mod180.setDetails(new LinkedList<>());
 		return mod180;
 	}
 	
 	private static class Mod180Filler implements Function<Record, Mod180> {
 
 		@Override
-		public Mod180 apply(Record record) {
+		public Mod180 apply(Record rec) {
 			return new Mod180() 
-				.setId(record.getValue(FS_MODEL180.ID))
-				.setDomain(record.getValue(FS_MODEL180.DOMAIN))
-				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-				.setEnterprise(record.getValue(FS_MODEL180.ENTERPRISE))
-				.setYear(record.getValue(FS_MODEL180.YEAR))
-				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL180.ADMINISTRATION)))
-				.setReplacement( record.getValue(FS_MODEL180.REPLACEMENT)==1 )
-				.setComplementary(record.getValue(FS_MODEL180.COMPLEMENTARY)==1 )
-				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL180.STATUS)))
-				.setDocument(record.getValue(FS_MODEL180.DOCUMENT))
-				.setName(record.getValue(FS_MODEL180.NAME))
-				.setContactPerson(record.getValue(FS_MODEL180.CONTACT_PERSON))
-				.setContactPhone(record.getValue(FS_MODEL180.CONTACT_PHONE))
-				.setContactMail(record.getValue(FS_MODEL180.CONTACT_MAIL))				
-				.setReceipt(record.getValue(FS_MODEL180.RECEIPT))
-				.setReplacedReceipt(record.getValue(FS_MODEL180.REPLACED_RECEIPT))
-				.setReceiverCountTotal( record.getValue(FS_MODEL180.RECEIVER_COUNT_TOTAL))
-				.setReceiptTotal(record.getValue(FS_MODEL180.RECEIPT_TOTAL))
-				.setRetentionTotal(record.getValue(FS_MODEL180.RETENTION_TOTAL))
-				.setComments(record.getValue(FS_MODEL180.COMMENTS))
-				.setCreationUser(record.getValue(FS_MODEL180.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MODEL180.CREATION_DATE))
-				.setModificationUser(record.getValue(FS_MODEL180.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL180.MODIFICATION_DATE))
+				.setId(rec.getValue(FS_MODEL180.ID))
+				.setDomain(rec.getValue(FS_MODEL180.DOMAIN))
+				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+				.setEnterprise(rec.getValue(FS_MODEL180.ENTERPRISE))
+				.setYear(rec.getValue(FS_MODEL180.YEAR))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,rec.getValue(FS_MODEL180.ADMINISTRATION)))
+				.setReplacement( rec.getValue(FS_MODEL180.REPLACEMENT)==1 )
+				.setComplementary(rec.getValue(FS_MODEL180.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,rec.getValue(FS_MODEL180.STATUS)))
+				.setDocument(rec.getValue(FS_MODEL180.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL180.NAME))
+				.setContactPerson(rec.getValue(FS_MODEL180.CONTACT_PERSON))
+				.setContactPhone(rec.getValue(FS_MODEL180.CONTACT_PHONE))
+				.setContactMail(rec.getValue(FS_MODEL180.CONTACT_MAIL))				
+				.setReceipt(rec.getValue(FS_MODEL180.RECEIPT))
+				.setReplacedReceipt(rec.getValue(FS_MODEL180.REPLACED_RECEIPT))
+				.setReceiverCountTotal( rec.getValue(FS_MODEL180.RECEIVER_COUNT_TOTAL))
+				.setReceiptTotal(rec.getValue(FS_MODEL180.RECEIPT_TOTAL))
+				.setRetentionTotal(rec.getValue(FS_MODEL180.RETENTION_TOTAL))
+				.setComments(rec.getValue(FS_MODEL180.COMMENTS))
+				.setCreationUser(rec.getValue(FS_MODEL180.CREATION_USER))
+				.setCreationDate(rec.getValue(FS_MODEL180.CREATION_DATE))
+				.setModificationUser(rec.getValue(FS_MODEL180.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(FS_MODEL180.MODIFICATION_DATE))
 				;
 		}
 	}
@@ -449,36 +447,36 @@ public class Mod180DAO {
 	private static class Mod180DetailFiller implements Function<Record, Mod180Detail> {
 
 		@Override
-		public Mod180Detail apply(Record record) {
+		public Mod180Detail apply(Record rec) {
 			return new Mod180Detail()
-				.setId(record.getValue(FS_MODEL180_DETAIL.ID))
-				.setDocument(record.getValue(FS_MODEL180_DETAIL.DOCUMENT))
-				.setName(record.getValue(FS_MODEL180_DETAIL.NAME))
-				.setRepresentativeDocument(record.getValue(FS_MODEL180_DETAIL.REPRESENTATIVE_DOCUMENT))
-				.setProvince(record.getValue(FS_MODEL180_DETAIL.PROVINCE))
-				.setInKind(record.getValue(FS_MODEL180_DETAIL.INKIND)==1)
-				.setPerception(record.getValue(FS_MODEL180_DETAIL.PERCEPTION))
-				.setRetention(record.getValue(FS_MODEL180_DETAIL.RETENTION))
-				.setPercent(record.getValue(FS_MODEL180_DETAIL.PERCENTAGE))
-				.setAccrualYear(record.getValue(FS_MODEL180_DETAIL.ACCRUAL_YEAR))
-				.setLocation(record.getValue(FS_MODEL180_DETAIL.LOCATION))
-				.setCadasdralReference(record.getValue(FS_MODEL180_DETAIL.CADASDRAL_REFERENCE))
-				.setStreetType(record.getValue(FS_MODEL180_DETAIL.STREET_TYPE))
-				.setStreetName(record.getValue(FS_MODEL180_DETAIL.STREET_NAME))
-				.setNumberType(record.getValue(FS_MODEL180_DETAIL.NUMBER_TYPE))
-				.setNumber(record.getValue(FS_MODEL180_DETAIL.NUMBER))
-				.setNumberSuffix(record.getValue(FS_MODEL180_DETAIL.NUMBER_SUFFIX))
-				.setBlock(record.getValue(FS_MODEL180_DETAIL.BLOCK))
-				.setHall(record.getValue(FS_MODEL180_DETAIL.HALL))
-				.setStair(record.getValue(FS_MODEL180_DETAIL.STAIR))
-				.setFloor(record.getValue(FS_MODEL180_DETAIL.FLOOR))
-				.setDoor(record.getValue(FS_MODEL180_DETAIL.DOOR))
-				.setComplement(record.getValue(FS_MODEL180_DETAIL.COMPLEMENT))
-				.setCity(record.getValue(FS_MODEL180_DETAIL.CITY))
-				.setTown(record.getValue(FS_MODEL180_DETAIL.TOWN))
-				.setTownCode(record.getValue(FS_MODEL180_DETAIL.TOWN_CODE))
-				.setProvinceCode(record.getValue(FS_MODEL180_DETAIL.PROVINCE_CODE))
-				.setZip(record.getValue(FS_MODEL180_DETAIL.ZIP));
+				.setId(rec.getValue(FS_MODEL180_DETAIL.ID))
+				.setDocument(rec.getValue(FS_MODEL180_DETAIL.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL180_DETAIL.NAME))
+				.setRepresentativeDocument(rec.getValue(FS_MODEL180_DETAIL.REPRESENTATIVE_DOCUMENT))
+				.setProvince(rec.getValue(FS_MODEL180_DETAIL.PROVINCE))
+				.setInKind(rec.getValue(FS_MODEL180_DETAIL.INKIND)==1)
+				.setPerception(rec.getValue(FS_MODEL180_DETAIL.PERCEPTION))
+				.setRetention(rec.getValue(FS_MODEL180_DETAIL.RETENTION))
+				.setPercent(rec.getValue(FS_MODEL180_DETAIL.PERCENTAGE))
+				.setAccrualYear(rec.getValue(FS_MODEL180_DETAIL.ACCRUAL_YEAR))
+				.setLocation(rec.getValue(FS_MODEL180_DETAIL.LOCATION))
+				.setCadasdralReference(rec.getValue(FS_MODEL180_DETAIL.CADASDRAL_REFERENCE))
+				.setStreetType(rec.getValue(FS_MODEL180_DETAIL.STREET_TYPE))
+				.setStreetName(rec.getValue(FS_MODEL180_DETAIL.STREET_NAME))
+				.setNumberType(rec.getValue(FS_MODEL180_DETAIL.NUMBER_TYPE))
+				.setNumber(rec.getValue(FS_MODEL180_DETAIL.NUMBER))
+				.setNumberSuffix(rec.getValue(FS_MODEL180_DETAIL.NUMBER_SUFFIX))
+				.setBlock(rec.getValue(FS_MODEL180_DETAIL.BLOCK))
+				.setHall(rec.getValue(FS_MODEL180_DETAIL.HALL))
+				.setStair(rec.getValue(FS_MODEL180_DETAIL.STAIR))
+				.setFloor(rec.getValue(FS_MODEL180_DETAIL.FLOOR))
+				.setDoor(rec.getValue(FS_MODEL180_DETAIL.DOOR))
+				.setComplement(rec.getValue(FS_MODEL180_DETAIL.COMPLEMENT))
+				.setCity(rec.getValue(FS_MODEL180_DETAIL.CITY))
+				.setTown(rec.getValue(FS_MODEL180_DETAIL.TOWN))
+				.setTownCode(rec.getValue(FS_MODEL180_DETAIL.TOWN_CODE))
+				.setProvinceCode(rec.getValue(FS_MODEL180_DETAIL.PROVINCE_CODE))
+				.setZip(rec.getValue(FS_MODEL180_DETAIL.ZIP));
 		}
 	}
 
@@ -495,25 +493,11 @@ public class Mod180DAO {
 			return mod180;
 		} catch (DataAccessException t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
 
-//	public static Mod180 duplicateNextYear(AONContext ctx, int id) {
-//		Mod180 mod180 = getById(ctx, id);
-//		mod180.setYear( mod180.getYear() + 1 );
-//		mod180.setId(null);
-//		mod180 = insert(ctx, mod180, false);
-//		Mod180 original = getById(ctx, id);
-//		for (Mod180Detail detail : original.getDetails()) {
-//			detail.setId(null);
-//			detail.setMod180(mod180.getId());
-//			saveDetail(ctx,mod180,detail);
-//		}
-//		return getById(ctx, mod180 .getId());
-//	}
-	
 	public static Mod180 duplicate(AONContext ctx, Mod180 mod180) {		
 		int id = mod180.getId();
 		mod180.setId(null);
@@ -522,10 +506,12 @@ public class Mod180DAO {
 		// Si la nueva es complementaria, no se duplican las lineas
 		if (!mod180.isComplementary()) {
 			Mod180 original = getById(ctx, id);
-			for (Mod180Detail detail : original.getDetails()) {
-				detail.setId(null);
-				detail.setMod180(mod180.getId());
-				saveDetail(ctx,mod180,detail);
+			if (original != null && original.getDetails() != null) {
+				for (Mod180Detail detail : original.getDetails()) {
+					detail.setId(null);
+					detail.setMod180(mod180.getId());
+					saveDetail(ctx,mod180,detail);
+				}
 			}
 		}
 		

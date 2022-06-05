@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.task.TagColor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Priority implements Serializable {
 	NONE("NINGUNA", TagColor.BLUE3),
@@ -39,6 +40,7 @@ public enum Priority implements Serializable {
 	}
 	
 	public static Priority valueNameOf(String name) {
+		if(AonStringUtils.isBlank(name)) return NONE;
 		for(Priority p :Priority.values())
 			if(name.equalsIgnoreCase(p.getName()) || name.equalsIgnoreCase(p.name()))
 				return p;

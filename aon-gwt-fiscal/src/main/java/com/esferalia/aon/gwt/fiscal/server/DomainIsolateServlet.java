@@ -45,7 +45,8 @@ public class DomainIsolateServlet extends HttpServlet {
 //			e.printStackTrace();
 			try {
 				if(out != null) {
-					out.print(e.getMessage());
+					out.println(e.getMessage());
+					out.println();
 					resp.flushBuffer();
 				}
 			} catch (IOException ioe) {

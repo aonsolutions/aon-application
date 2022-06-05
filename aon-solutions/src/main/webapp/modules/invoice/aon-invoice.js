@@ -1,6 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, signInvoice} from '../../services/service.js';
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, 
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -44,6 +45,7 @@ export class AonInvoice extends AonElement {
 
 	rbanks;
 	series;
+	configuration;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -99,6 +101,10 @@ export class AonInvoice extends AonElement {
 				});
 			}
 		});
+
+		getInvoiceConfiguration().then(r => {
+            this.configuration = r;
+        });
 	}
 
 	initialize(){
@@ -353,12 +359,15 @@ export class AonInvoice extends AonElement {
 			d.open();
 		});
 
-		if((this.getInvoice().isInbox() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()) {
+		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		}
-
+		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()){
+			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+		}
+		
 		if(this.getInvoice().isRejected()) {
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
@@ -1568,7 +1577,38 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if(this.accept) {
+		if(this.configuration.tbai.active) {
+			let d = this.getApplication().getDialog();
+			d.clear();
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.ACCEPT);
+			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+					  value: s.id,
+					  name: s.name
+					}
+				  }));
+			}); 
+			d.setContent(certSelect);
+			d.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				this.accept = false;
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				acceptInvoice(data).then(r => {
+					this.invoice = new Invoice(r);
+					this.getApplication().stopLoader(); 
+					this.reload();
+				}).catch(e => {
+					this.accept = true;
+					this.getApplication().stopLoader(); 
+					this.showError(e)
+				});
+			});			
+			d.open();
+		} else if(this.accept) {
 			this.getApplication().startLoader();
 			this.accept = false;
 			acceptInvoice(this.getInvoice()).then(r => {
@@ -1836,10 +1876,39 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashPendingInvoice() {
-		deleteInvoice(this.getInvoice().id).then(() => {
-			this.showMessage(MSG.DELETED_DATA);
-			this.reload();
-		}).catch(e => this.showError(e));
+		let data = {id: this.getInvoice().id};
+		if(this.getInvoice().isTbai()) {
+			let d = this.getApplication().getDialog();
+			d.clear();
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle("Anular");
+			let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+			getAeatCertificates().then(certs => {
+				certSelect.setOptions(certs.map(s => {
+					return {
+					  value: s.id,
+					  name: s.name
+					}
+				  }));
+			}); 
+			d.setContent(certSelect);
+			d.addAcceptAction(() => {
+				this.getApplication().startLoader();
+				let data = this.getInvoice();
+				data.cert = certSelect.value;
+				deleteInvoice(data).then(() => {
+					this.getApplication().stopLoader(); 
+					this.showMessage(MSG.DELETED_DATA);
+					this.back();
+				}).catch(e => this.showError(e));
+			});			
+			d.open();
+		} else {
+			deleteInvoice(data).then(() => {
+				this.showMessage(MSG.DELETED_DATA);
+				this.back();
+			}).catch(e => this.showError(e));
+		}
 	}
 
 	restoreInvoice() {

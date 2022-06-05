@@ -115,7 +115,10 @@ public class TaskFilter {
 			List<Integer> list = getWorkgroupList(params.optString(IJsonNames.WORKGROUPS));
 		
 			if(!list.isEmpty()) {
-				filter = filter.and(f.getWorkgroupProperty().in(list.toArray(Integer[]::new)));
+				filter = filter.and(
+					f.getWorkgroupProperty().in(list.toArray(Integer[]::new))
+					.or(f.getWorkgroupProperty().isNull().and(f.getTaskHolderProperty().isNull()) )
+				);
 			} 
 		}
 
@@ -379,7 +382,6 @@ public class TaskFilter {
 		 
 		return filter;
 	}
-	
 	
 	private static Filter getSearchCombination(TaskProperties f, String search) {
 

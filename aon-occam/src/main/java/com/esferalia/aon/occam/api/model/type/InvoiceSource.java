@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceSource implements Serializable {
 	
@@ -68,6 +69,7 @@ public enum InvoiceSource implements Serializable {
 	}
 	
 	public static InvoiceSource safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (InvoiceSource rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

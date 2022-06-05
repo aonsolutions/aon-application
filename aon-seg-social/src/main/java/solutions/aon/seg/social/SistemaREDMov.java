@@ -6,13 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
@@ -23,6 +20,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
@@ -415,7 +413,14 @@ class SistemaREDMov {
 				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 			}
 		}
-
+		
+		employee.getQuoteMonth().ifPresent(quote->{
+			DomNode quoteMonthNode = form.querySelector("#SDFINDGCMENSUAL"); 
+			if(quoteMonthNode!=null && Boolean.TRUE.equals(quote) ) {
+				((HtmlCheckBoxInput)quoteMonthNode).setChecked(true);
+			}
+		});
+		
 		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 
@@ -441,7 +446,7 @@ class SistemaREDMov {
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 		Optional<Date> frbOpt = employee.getFrb();
-		Optional<Date> frvOpt = employee.getFrv(); // fecha de vacaciones OCIONALES
+		Optional<Date> frvOpt = employee.getFrv(); // fecha de vacaciones OPTIONAL
 
 		WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType);
 		webClient.getOptions().setUseInsecureSSL(true);
@@ -461,11 +466,14 @@ class SistemaREDMov {
 			jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(frb[2]);
 		}
 
-		if (!frvOpt.isEmpty()) {
+		if (!frvOpt.isEmpty()) { // FECHA DE VACACIONES
 			String[] fvac = formatDate(frvOpt.get()); 
 			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
 			jacadaForm1.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
 			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);
+			
+			//------------- Indicativo SAA       
+			employee.getAsociativeSA().ifPresent(jacadaForm1.getInputByName("txt_SDFINDSAA")::setValueAttribute); 
 		}
 
 		HtmlInput btnSubmit1 = htmlPage.querySelector("#Sub2207401004");
@@ -483,10 +491,9 @@ class SistemaREDMov {
 			webClient.getOptions().setUseInsecureSSL(true);
 			Integer mov = SituationType.ALTA.equals(situation) ? 0 : 1;
 			// Date
-			String[] fr = formatDate(fecha); // fecha [dia,mes,año]
+			String[] fr = formatDate(fecha); // date [day,month,year]
 
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR42&E=I&AP=AFIR");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR42&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			HtmlForm jacadaForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
@@ -538,8 +545,7 @@ class SistemaREDMov {
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
 			handleSegSocialExceptions(htmlPage);
 
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
@@ -570,7 +576,7 @@ class SistemaREDMov {
 
 			String ident = Toolkit.getIdentityType(ipf);
 			String dni = Toolkit.fillStringLeft(ipf, "0", 10);
-			String[] fra = formatDate(date); // fecha [dia,mes,año]
+			String[] fra = formatDate(date); // date [day,month,year]
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFIDPRONAF").setValueAttribute(nss.substring(0, 2));
@@ -597,8 +603,9 @@ class SistemaREDMov {
 			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
 			throws Exception {
 
-		if (nssList.size() >= 7)
+		if (nssList.size() >= 7) {			
 			throw new Exception("nss max 7");
+		}
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -646,10 +653,11 @@ class SistemaREDMov {
 	}
 
 	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, String apellido1, String apellido2) throws Exception {
+			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			String message = null;
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -657,9 +665,10 @@ class SistemaREDMov {
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
 			Integer ident = 1; // NIF DEFAULT
-			if (Toolkit.getIdentityType(ipf).equals("6"))
+			if (Toolkit.getIdentityType(ipf).equals("6")) {
 				ident = 3; // NIE
-
+			}
+	
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
 
 			((HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident)).click();
@@ -678,25 +687,36 @@ class SistemaREDMov {
 			if (pageAux instanceof XmlPage) {
 				XmlPage xmlPage = (XmlPage) pageAux;
 				DomNode employeeHtml = xmlPage.querySelector("usuario_red");
-				String nss = employeeHtml.querySelector("na5numsegsocialcompleto").getTextContent().trim();
 
-				if (!nss.isEmpty()) {
-					String ipf1 = employeeHtml.querySelector("ip6numero_documento").getTextContent();
-					String name = employeeHtml.querySelector("nombre_completo").getTextContent().trim();
-					String ident1 = employeeHtml.querySelector("codigo_tipo").getTextContent().trim();
-					builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
-				} else {
-					String messageError = "Sin datos para la consulta";
-					DomNode textEl = xmlPage.querySelector("texto");
-					if (textEl != null && textEl.getTextContent() != null) {
-						messageError = textEl.getTextContent().trim();
+				if(employeeHtml!=null) {
+					String nss      = getStringNode(employeeHtml.querySelector("na5numsegsocialcompleto"));
+					String doc      = getStringNode(employeeHtml.querySelector("ip6numero_documento"));
+					String name     = getStringNode(employeeHtml.querySelector("nombre_completo"));
+					String identNew = getStringNode(employeeHtml.querySelector("codigo_tipo"));
+
+					if (nss!=null && doc!=null && name!=null && identNew!=null) {
+						builder
+						.setNss(nss)						
+						.setName(name)
+						.setIpf(doc)
+						.setIdent(Integer.parseInt(identNew));
+					} else {
+						message = "Sin datos para la consulta";
+						String text = getStringNode(xmlPage.querySelector("texto"));
+						if (text != null) {
+							message = text;
+						}
 					}
-					throw new Exception(messageError);
+				} else {
+					message = "Sin datos para la consulta";
 				}
-
 			} else {
 				htmlPage = (HtmlPage) pageAux;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			}
+			
+			if(message!=null) {
+				throw new SegSocialException(message);
 			}
 
 			return builder.build();
@@ -745,10 +765,12 @@ class SistemaREDMov {
 				certificateType)) {
 
 			Integer ident = 1;
-			if (Toolkit.getIdentityType(ipf).equals("6"))
+			if (Toolkit.getIdentityType(ipf).equals("6")) {
 				ident = 3; // NIE
+			}
+
 			// Date
-			String[] fr = formatDate(fecha); // fecha [dia,mes,año]
+			String[] fr = formatDate(fecha); // date [day,month,year]
 
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
@@ -810,10 +832,11 @@ class SistemaREDMov {
 			HtmlPage htmlPage = webClient.getPage(url);
 
 			Integer ident = 1;
-			if (Toolkit.getIdentityType(ipf).equals("6"))
+			if (Toolkit.getIdentityType(ipf).equals("6")) {				
 				ident = 3; // NIE
+			}
 
-			String[] fr = formatDate(fecha); // fecha [dia,mes,año]
+			String[] fr = formatDate(fecha); // date [day,month,year]
 
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_6"))
 					.orElseThrow();
@@ -837,8 +860,9 @@ class SistemaREDMov {
 			handleNewSegSocialExceptions(htmlPage);
 
 			DomNode message = htmlPage.querySelector(".INFO.mensaje");
-			if (message != null && !message.getVisibleText().isEmpty())
+			if (message != null && !message.getVisibleText().isEmpty()) {				
 				System.out.println(message.getVisibleText());
+			}
 		}
 	}
 
@@ -854,20 +878,23 @@ class SistemaREDMov {
 	private static void handleSegSocialExceptions(XmlPage xmlPage) throws InvalidDataException {
 		try {
 			DomNode error = xmlPage.querySelector("#MESSAGES");
-			if (error != null && !error.getVisibleText().isEmpty()
-					&& error.getVisibleText().indexOf("realizada correctamente") < 0)
+			if (error != null && !error.getVisibleText().isEmpty() && error.getVisibleText().indexOf("realizada correctamente") < 0) {				
 				throw new InvalidDataException(error.getVisibleText());
-		} catch (NullPointerException e) {
-		}
+			}
+		} catch (NullPointerException e) {}
 	}
 
 	private static void handleNewSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException {
 		try {
 			DomNode error = htmlPage.querySelector(".ERROR.mensaje");
-			if (error != null && !error.getVisibleText().isEmpty())
+			if (error != null && !error.getVisibleText().isEmpty()) {				
 				throw new InvalidDataException(error.getVisibleText());
-		} catch (NullPointerException e) {
-		}
+			}
+		} catch (NullPointerException e) {}
+	}
+	
+	private static String getStringNode(DomNode el) {
+		return el!=null && !el.getTextContent().trim().isEmpty() ? el.getTextContent().trim() : null;
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
@@ -1010,33 +1037,13 @@ class SistemaREDMov {
 		byte[] certByte = certificateInputStream.readAllBytes();
 		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte),
 				certificatePassword, certificateType)) {
-			validateCertExpired(new ByteArrayInputStream(certByte), certificatePassword);
+			InvalidCertificateException.checkCertificate(certByte, certificatePassword);
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 
-			Toolkit.validateCert(htmlPage);
+			Toolkit.checkCertificateRevoked(htmlPage.asXml());
 		} catch (Exception e) {
 			throw new SegSocialException(e.getMessage());
-		}
-	}
-
-	private static void validateCertExpired(InputStream certificateInputStream, String certificatePassword)
-			throws Exception {
-		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-		keystore.load(certificateInputStream, certificatePassword.toCharArray());
-		Enumeration<?> aliases = keystore.aliases();
-		Date expiryDate = null;
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		for (; aliases.hasMoreElements();) {
-			String alias = (String) aliases.nextElement();
-			expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
-			if (expiryDate.compareTo(cal.getTime()) < 0)
-				throw new Exception("El certificado ha expirado");
 		}
 	}
 

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
@@ -60,6 +61,7 @@ public class UserDAO {
 	
 	public static User insert(AONContext ctx, User user) {
 		Integer id = ctx.getDslContext().insertInto(USER)
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
@@ -75,6 +77,7 @@ public class UserDAO {
 	
 	public static User update(AONContext ctx, User user) {
 		ctx.getDslContext().update(USER)
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
@@ -127,6 +130,7 @@ public class UserDAO {
 			return new User()
 				.setId(r.getValue(USER.ID))
 				.setDomain(r.getValue(USER.DOMAIN))
+				.setType(UserType.safeValueOf(getValue(r, USER.TYPE)))
 				.setName(r.getValue(USER.NAME))
 				.setLogin(r.getValue(USER.LOGIN))
 				.setActive(AonEnumUtils.getBoolean(r.getValue(USER.ACTIVE)))
@@ -136,7 +140,8 @@ public class UserDAO {
 						: new Auth().setAuth(r.getValue(USER.AUTH)))
 				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))
 				.setToolbar(UserToolbar.safeValueOf(r.getValue(USER.TOOLBAR)))
-				.setEnterprise(r.getValue(USER.ENTERPRISE));
+				.setEnterprise(r.getValue(USER.ENTERPRISE))
+				.setExpirationDate(getValue(r, USER.PASSWORDEXPIRATION));
 		}		
 	}
 

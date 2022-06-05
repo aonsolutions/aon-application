@@ -116,6 +116,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -391,6 +392,7 @@ public class SecurityDAO {
 	public static User insertUser(AONContext ctx, User user) {
 		Integer id = ctx.getDslContext().insertInto(USER)
 			.set(USER.NAME, user.getName())
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
 			.set(USER.DOMAIN, user.getDomain())
@@ -398,6 +400,7 @@ public class SecurityDAO {
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
+			.set(USER.PASSWORDEXPIRATION, AonDateUtils.toSql(user.getExpirationDate()))
 			.returning(USER.ID).fetchOne().getId();
 		
 		return user.setId(id);
@@ -405,6 +408,7 @@ public class SecurityDAO {
 	
 	public static User updateUser(AONContext ctx, User user) {
 		ctx.getDslContext().update(USER)
+			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
@@ -550,7 +554,7 @@ public class SecurityDAO {
 	}
 	
 	private static Field<?>[] USER_FIELDS = new Field[]{
-			USER.ID, USER.DOMAIN, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
+			USER.ID, USER.DOMAIN, USER.TYPE, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
 			USER.ALLOWCONCURRENT, USER.PASSWORDEXPIRATION, USER.TOOLBAR, USER.LOCALE, USER.PAGELIMIT,
 			USER.LINESPAGELIMIT, USER.INITACTION, USER.LASTACCESS, USER.AUTH, USER.SHARED
 		}; 

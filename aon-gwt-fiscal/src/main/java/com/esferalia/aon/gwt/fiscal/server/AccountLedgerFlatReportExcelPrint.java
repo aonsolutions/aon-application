@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,6 +50,7 @@ public class AccountLedgerFlatReportExcelPrint extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
+		Stream<FlatAccountEntryDetail> stream = null;
 		try {
 			String accountReportParams = req.getParameter( IRequestParamsNames.ACCOUNT_REPORT_PARAMS );
 			String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
@@ -58,14 +60,16 @@ public class AccountLedgerFlatReportExcelPrint extends HttpServlet {
 
 			ExcelAction action = new ExcelAction( );
 			action.initialize("Listado mayor de cuentas");
-			ACCOUNTING.getLedgerStream(domainName, domainId, user, params, 0, Integer.MAX_VALUE)
-					.forEach(action);
+			stream = ACCOUNTING.getLedgerStream(domainName, domainId, user, params, 0, Integer.MAX_VALUE);
+			stream.forEach(action);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"Mayor_cuentas."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {
 			throw new ServletException(e);
+		} finally {
+			if (stream !=null) stream.close();
 		}
 
 	}

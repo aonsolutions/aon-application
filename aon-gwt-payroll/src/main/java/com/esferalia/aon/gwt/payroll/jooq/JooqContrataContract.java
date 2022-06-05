@@ -1424,7 +1424,7 @@ public class JooqContrataContract {
 		return getCNOsDB(DSL.using(conn, getDefaultSettings()));
 	}
 
-	private static Map<String, CNO> getCNOsDB(DSLContext dslContext) {
+	public static Map<String, CNO> getCNOsDB(DSLContext dslContext) {
 		Map<String, CNO> cnoMap = new HashMap<>();
 		Result<Record> cnoRecords = dslContext.select().from(CNO).fetch();
 		for(Record cnoRecord : cnoRecords) {

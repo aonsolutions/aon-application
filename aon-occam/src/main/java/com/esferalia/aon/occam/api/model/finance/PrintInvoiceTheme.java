@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum PrintInvoiceTheme {
 
 	BLACK_AND_WHITE,
@@ -27,6 +29,7 @@ public enum PrintInvoiceTheme {
 	}
 	
 	public static PrintInvoiceTheme safeValueOf( String str) {
+		if(AonStringUtils.isBlank(str)) return BLACK_AND_WHITE;
 		for (PrintInvoiceTheme rs : values()) {
 			if(rs.name().equalsIgnoreCase(str))
 				return rs;

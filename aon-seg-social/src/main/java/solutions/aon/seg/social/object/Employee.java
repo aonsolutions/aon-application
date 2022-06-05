@@ -38,6 +38,11 @@ public class Employee {
 	private String mdCtz;
 	private String rlce;
 	private String collective; // COLECTIVO DEL TRABAJADOR
+	
+	public Boolean quoteMonth;
+	
+	private String asociativeSA; //INDICATIVO (Situaciones adicionales de afiliacion) solo cuando tenga vacaciones
+	//POSIBLES VALORES 001 – VACACIONES RETRIBUIDAS Y NO DISFRUTADAS, 015 – VACACIONES NO DISFRUTADAS, RETRIBUIDAS Y COTIZADAS DURANTE LA RELACION LABORAL
 
 	private Employee() {}
 	
@@ -74,6 +79,8 @@ public class Employee {
 		if(collective != null)	visitor.visitCollective(collective);
 		if(frv != null)	visitor.visitFrv(frv);
 		if(mdCtz != null)	visitor.visitMdCtz(mdCtz);
+		if(quoteMonth != null) visitor.visitQuoteMonth(quoteMonth);
+		if(asociativeSA != null) visitor.visitAsociativeSA(asociativeSA);
 	}
 	
 	public String getIpf() {return ipf;}
@@ -81,6 +88,8 @@ public class Employee {
 	public Date getFra() {return fra;}
 	public String getSituacion() {return situation;}
 	public String getRegime() {return regime;}
+	public Integer getIdent() {return ident;}
+	public String getOcup() {return ocup;}
 	public Optional<String> getName() {return Optional.ofNullable(name);}
 	public Optional<String> getGc() {return Optional.ofNullable(gc);}
 	public Optional<Date> getFrb() {return Optional.ofNullable(frb);}
@@ -99,12 +108,13 @@ public class Employee {
 	
 	public Optional<Double> getFactor(){return Optional.ofNullable(factor);}
 	public Optional<String> getSex() {return Optional.ofNullable(sex);}
-	public Integer getIdent() {return ident;}
 	public Optional<String> getColec() {return Optional.ofNullable(colec);}
-	public String getOcup() {return ocup;}
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}
 	public Optional<String> getCollective() {return Optional.ofNullable(collective);}
+	public Optional<Boolean> getQuoteMonth() {return Optional.ofNullable(quoteMonth);}
+	public Optional<String> getAsociativeSA() {return Optional.ofNullable(asociativeSA);}
+	
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -174,6 +184,10 @@ public class Employee {
 			public void visitCollective(String collective) {stringBuffer.append(String.format(" collective : \"%s\" ", collective));}
 			@Override
 			public void visitMdCtz(String mdCtz) {stringBuffer.append(String.format(" mdCtz : \"%s\" ", mdCtz));}
+			@Override
+			public void visitQuoteMonth(Boolean quoteMonth) {stringBuffer.append(String.format(" quoteMonth : \"%s\" ", quoteMonth));}
+			@Override
+			public void visitAsociativeSA(String asociativeSA) {stringBuffer.append(String.format(" asociativeSA : \"%s\" ", asociativeSA));}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -214,6 +228,8 @@ public class Employee {
 		private String mdCtz;
 		private String rlce;
 		private String collective;
+		private Boolean quoteMonth;
+		private String asociativeSA;
 
 		public EmployeeBuilder(){}		
 		
@@ -408,10 +424,21 @@ public class Employee {
 			return this;
 		}
 		
+		public EmployeeBuilder setQuoteMonth(Boolean quoteMonth) {
+			this.quoteMonth = quoteMonth;
+			return this;
+		}
+		
 		public EmployeeBuilder setCollective(String collective) {
 			this.collective = collective;
 			return this;
 		}
+		
+		public EmployeeBuilder setAsociativeSA(String asociativeSA) {
+			this.asociativeSA = asociativeSA;
+			return this;
+		}
+		
 		
 		public Employee build(){
 			Employee employee = new Employee();
@@ -449,6 +476,8 @@ public class Employee {
 			employee.mdCtz = this.mdCtz;
 			employee.rlce = this.rlce;
 			employee.collective = this.collective;
+			employee.quoteMonth = this.quoteMonth;
+			employee.asociativeSA = this.asociativeSA;
 			return employee;
 		}
 
@@ -456,6 +485,7 @@ public class Employee {
 	
 	public static interface Visitor{
 		void visitrFra(Date fra);
+		void visitQuoteMonth(Boolean quoteMonth);
 		void visitFrv(Date frv);
 		void visitrFea(Date fea);
 		void visitrFrb(Date frb);
@@ -486,7 +516,8 @@ public class Employee {
 		void visitProfesCat(String profesCat);
 		void visitReducingcoefic(String reducingCoefic);	
 		void visitCollective(String collective);	
-		void visitMdCtz(String mdCtz);	
+		void visitMdCtz(String mdCtz);
+		void visitAsociativeSA(String asociativeSA);
 	}
 	
 	public static abstract class AbstractVisitor implements Visitor {
@@ -552,6 +583,8 @@ public class Employee {
 		public void visitCollective(String collective) {}
 		@Override
 		public void visitMdCtz(String mdCtz) {}
+		@Override
+		public void visitQuoteMonth(Boolean quoteMonth) {}
 	}
 
 	@Override

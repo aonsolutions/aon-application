@@ -189,6 +189,11 @@ public abstract class EmployeeDraft extends Composite {
 		public void onContractQuoteGroupChange(String quoteGroup) {
 			employeeDraftObject.setContractQuoteGroup(quoteGroup);
 		}
+		
+		@Override
+		public void onContractQuoteGroupIdx(boolean quoteGroupMonth) {
+			employeeDraftObject.setContractQuoteIdxMonth(quoteGroupMonth);
+		}
 
 		@Override
 		public void onContractOccupationChange(String occupation) {
@@ -790,7 +795,7 @@ public abstract class EmployeeDraft extends Composite {
 	private void fillExistingContract() {
 		ContractInfo contractData = employeeDraftObject.getContractData();
 		
-		//RETA, hab√≠a algo mas que determinaba si era o no RETA
+		//RETA, habi≠a algo mas que determinaba si era o no RETA
 		if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { 
 			employee.showElementsFreelancerTable();
 			contextMenu.getAfi().setVisible(false);
@@ -898,6 +903,8 @@ public abstract class EmployeeDraft extends Composite {
 		}
 		
 		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
+		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		setSelectedValueLB(employee.journeyType, null != contractData.getJourneyType() && contractData.getJourneyType() == (byte)1 ? "true" : "false");

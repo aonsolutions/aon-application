@@ -7,6 +7,8 @@ export const getTotalNotification = (data) => get(`${API_URL}/notification/total
 
 export const getNotification = (data) =>  get(`${API_URL}/notification`, data); 
 
+export const getNotificationByDomain = (data) =>  get(`${API_URL}/notification/domain`, data); 
+
 export const markReadNotification = (data) => post(`${API_URL}/notification/mark-read-notification`, data);
 
 //remove test sendNotificationTest

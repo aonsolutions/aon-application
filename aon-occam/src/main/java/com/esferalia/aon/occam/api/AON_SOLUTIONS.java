@@ -621,6 +621,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<Notification> getNotificationStream(Integer domainId, String domainName, String login, NotificationFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getNotification().getNotificationStream(ctx, filter);
+		}
+	}
+	
 	public static Notification saveNotification(Domain domain, String login, Notification nt) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNotification().saveNotification(ctx, nt);
@@ -633,9 +639,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void markReadNotification(Domain domain, String login, Integer id) {
+	public static void markReadNotification(Domain domain, String login, NotificationFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			getNotification().markReadNotification(ctx, id);
+			getNotification().markReadNotification(ctx, filter);
 		}
 	}
 	

@@ -10,8 +10,8 @@ import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 import Apps from "../../services/app.js";
-
 import '../../css/aon.css';
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export class AonSaltra extends AonElement {
 
@@ -132,12 +132,12 @@ export class AonSaltra extends AonElement {
       ...CONTRACT_OPTIONS.TA,
       fn: (el) => this.getTa(res, el)
     });
-    if(!res.prev){
+    // if(!res.prev){
       option.push({
 				...CONTRACT_OPTIONS.IDC,
 				fn: (el) => this.getIdc(res, el)
 		  });
-    }
+    // }
 		if (this.anularCondition(res.situation, res.fra)) {
 			option.push({
 				...CONTRACT_OPTIONS.DELETE,
@@ -160,10 +160,19 @@ export class AonSaltra extends AonElement {
 		this.applicationEl.stopLoading();
 	}
 
-  async getIdc({ regime, ctaCti, nss, fra, frb }) {
+  async getIdc({ regime, ctaCti, nss, fea, feb, fra, frb, situation }) {
 		this.applicationEl.startLoading();
 		try {
-      const fecha = frb || fra;
+      let fecha = feb || fea;
+      let isBaja = situation && (situation.toLowerCase().includes("baja") || situation.toLowerCase().includes("bj"));
+      if(isBaja){
+        fecha = fea;
+      }
+      if(!fecha) {
+        fecha = frb || fra;
+        fecha = (new Date().getTime() > new Date(fecha).getTime()) ? fecha : AonDateUtils.formatDateOrigin(new Date());
+      }
+  
 			await getIDC({ regime, ctaCti, nss, fra:fecha }); // open pdf
 		} catch (error) {
       this.showToast(error);

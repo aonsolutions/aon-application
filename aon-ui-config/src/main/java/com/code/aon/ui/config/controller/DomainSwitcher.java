@@ -668,7 +668,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	@Override
 	public void setPage(int page) {
 		this.page = page;
-		System.out.println("Setting page to: " + page);
 	}
 	
 	public String getToken() {

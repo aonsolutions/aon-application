@@ -854,7 +854,7 @@ const addCustomerAndContact = (task, aonMessengerChat, divDinamic) => {
     //-----------------CONTACT
     const contact = createInputContact();
     contact.addEventListener(EVENT.INPUT, ({target})=>{
-        if(target.value) task.setGTaskId(target.value)
+        task.setGTaskId(target.value)
     });
     createDivGrid(divDinamic, contact, {classes:[CSS.AON_COL_XS_12]});
     if(task.gtask_id) contact.value  = task.gtask_id;
@@ -935,11 +935,14 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                 const cauInfo =  task.getDescriptionJson().cauInfo;
                 const company = cauInfo.company;
                 const auth = cauInfo.auth;
-                if(company && company.domain)
-                   createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                
+                if(company && company.domain){
+                    createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                }
     
-                if(auth && auth.email)
+                if(auth && auth.email){
                     createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+                }
 
             } catch (error) {}
         } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
@@ -947,11 +950,14 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                 const cauInfo = aonMessengerChat.getCauInfo();
                 const auth = cauInfo.auth;
                 const company = cauInfo.company;
-                if(company && company.name)
-                   createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+
+                if(company && company.name){
+                    createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                }
                     
-                if(auth && auth.email)
+                if(auth && auth.email){
                     createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+                }
  
             } catch (error) {}
         }

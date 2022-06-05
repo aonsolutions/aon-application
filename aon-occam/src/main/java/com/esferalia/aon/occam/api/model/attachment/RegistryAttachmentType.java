@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.attachment;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum RegistryAttachmentType {
 
 	LOGO,
@@ -50,6 +52,7 @@ public enum RegistryAttachmentType {
 	}
 
 	public static RegistryAttachmentType safeValueOf( String str) {
+		if(AonStringUtils.isBlank(str)) return null;
 		for (RegistryAttachmentType rs : values()) {
 			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
 				return rs;

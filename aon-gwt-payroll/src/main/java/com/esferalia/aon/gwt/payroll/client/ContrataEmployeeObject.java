@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
-import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -177,22 +176,6 @@ public class ContrataEmployeeObject {
 			@Override
 			public void onSuccess(ContractSpecificData result) {
 				employeeContractData.setContractSpecificData(result);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void setContractSpecificData(ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeeContractData.setContractSpecificData(contractSpecificData);
-		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 
@@ -420,8 +403,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void sendContractTransform(ContractTransform contractTransform, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.sendContractTransform(employeeContractData, contractTransform, new AsyncCallback<Void>() {
+	public void sendContractTransform(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendContractTransform(employeeContractData, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -674,8 +657,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void getIdcDates(Consumer<List<Date>> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIdcDates(contractData.getContractId(), null, new AsyncCallback<List<Date>>() {
+	public void getIdcDates(Integer contractId, Consumer<List<Date>> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcDates(contractId, null, new AsyncCallback<List<Date>>() {
 			@Override
 			public void onSuccess(List<Date> result) {
 				success.accept(result);
@@ -898,6 +881,10 @@ public class ContrataEmployeeObject {
 	
 	public void setContractQuoteGroup(String quoteGroup) {
 		contractData.setQuoteGroup(quoteGroup);		
+	}
+	
+	public void setContractQuoteIdxMonth(boolean quoteGroupMonth) {
+		contractData.setQuoteGroupIdxMonth(quoteGroupMonth);
 	}
 	
 	public void setContractOccupation(String occupation) {

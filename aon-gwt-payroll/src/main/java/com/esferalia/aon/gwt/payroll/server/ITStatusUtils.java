@@ -47,7 +47,7 @@ public class ITStatusUtils {
 	public static EnterpriseITStatus getEnterpriseITStatus(Domain domain, User user) {
 		logger.info("getEnterpriseITStatus");
 		
-		Date startDate = getFirstDateOfMonth(AonDateUtils.addMonths(new Date(), -1));
+		Date startDate = getFirstDateOfMonth(AonDateUtils.addMonths(new Date(), -7));
 		Date endDate = new Date();
 		try {
 			AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
@@ -57,6 +57,7 @@ public class ITStatusUtils {
 			  
 			for ( CCCInfo ccc: cccs ) {
 				try {
+					
 					Thread threadOne = new Thread(() -> {
 						employeeITStatus.and( compareComun(domain, certificate, startDate, endDate, ccc) );
 					});
@@ -151,8 +152,13 @@ public class ITStatusUtils {
 	private static List<EmployeeIT> getITFromTGSS(Certificate certificate, Date startDate, Date endDate, CCCInfo ccc) throws SegSocialException {
 		List<EmployeeIT> ssIts = new ArrayList<>();
 
-		SistemaRED.getIts(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-				ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, Optional.empty()).forEach(it-> ssIts.add(ITParse.parseTGSSToAon(it)));
+		SistemaRED.getIts(
+			new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+			ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, Optional.empty()
+		)
+		.forEach(it->{
+			ssIts.add(ITParse.parseTGSSToAon(it));
+		});
 
 		return ssIts;
 	} 
@@ -216,7 +222,8 @@ public class ITStatusUtils {
 					.filter(Optional::isPresent)
 					.map(Optional::get)
 					.filter(e->e.getDate().equals(ssITAlta.get().getDate()))
-					.findFirst().ifPresentOrElse(e->{
+					.findFirst()
+					.ifPresentOrElse(e->{
 						if(ssITAlta.get().getId()!=null && !ssITAlta.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
 							ssITAlta.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
 							change.getAndSet(true);

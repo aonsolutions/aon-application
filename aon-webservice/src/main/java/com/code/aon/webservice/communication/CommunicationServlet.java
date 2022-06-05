@@ -27,6 +27,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -482,8 +483,9 @@ public class CommunicationServlet extends HttpServlet {
 			DataResponse response = AON.getDataResponse(domain.getName(),
 					domain.getId(), userName, DataResponseSource.INGENET_SALES,
 					f -> f.getIdProperty().eq(id));
-			Sales sales = AON.getSales(domain.getName(),
-					domain.getId(), userName, f -> f.getIdProperty().eq(response.getSourceId()));
+			Options options = new Options().setFull(true);
+			Sales sales = AON.getSales(domain.getName(), domain.getId(), userName,
+					f -> f.getIdProperty().eq(response.getSourceId()), options);
 			sales.setStatus(SalesStatus.PENDING);
 			AON.saveSales(domain, userName, sales);
 			

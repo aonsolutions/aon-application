@@ -26,6 +26,7 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -47,6 +48,7 @@ public class ContractFill {
 			return null;
 		
 		initializeFieldNames();
+		checkContractOtherInfo(contractOtherInfo);
 		
 		if(contractType >= 100 && contractType <= 400) 
 			return fillIndefiniteContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
@@ -59,6 +61,33 @@ public class ContractFill {
 		
 	}
 	
+	private static void checkContractOtherInfo(Map<String, String> contractOtherInfo) {
+		if(contractOtherInfo.get("I_TRIAL_DURATION") == null) contractOtherInfo.put("I_TRIAL_DURATION", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("P_TRIAL_DURATION") == null) contractOtherInfo.put("P_TRIAL_DURATION", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("T_TRIAL_DURATION") == null) contractOtherInfo.put("T_TRIAL_DURATION", "SEGUN CONVENIO COLECTIVO");
+		
+		if(contractOtherInfo.get("I_SALARY_AMOUNT") == null) contractOtherInfo.put("I_SALARY_AMOUNT", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("P_SALARY_AMOUNT") == null) contractOtherInfo.put("P_SALARY_AMOUNT", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("T_SALARY_AMOUNT") == null) contractOtherInfo.put("T_SALARY_AMOUNT", "SEGUN CONVENIO COLECTIVO");
+		
+		if(contractOtherInfo.get("I_SALARY_PERIOD") == null) contractOtherInfo.put("I_SALARY_PERIOD", "MENSUALES");
+		if(contractOtherInfo.get("P_SALARY_PERIOD") == null) contractOtherInfo.put("P_SALARY_PERIOD", "MENSUALES");
+		if(contractOtherInfo.get("T_SALARY_PERIOD") == null) contractOtherInfo.put("T_SALARY_PERIOD", "MENSUALES");
+		
+		if(contractOtherInfo.get("I_SALARY_CONCEPT") == null) contractOtherInfo.put("I_SALARY_CONCEPT", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("P_SALARY_CONCEPT") == null) contractOtherInfo.put("P_SALARY_CONCEPT", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("T_SALARY_CONCEPT") == null) contractOtherInfo.put("T_SALARY_CONCEPT", "SEGUN CONVENIO COLECTIVO");
+		
+		if(contractOtherInfo.get("I_HOLIDAYS") == null) contractOtherInfo.put("I_HOLIDAYS", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("P_HOLIDAYS") == null) contractOtherInfo.put("P_HOLIDAYS", "SEGUN CONVENIO COLECTIVO");
+		if(contractOtherInfo.get("T_HOLIDAYS") == null) contractOtherInfo.put("T_HOLIDAYS", "SEGUN CONVENIO COLECTIVO");
+		
+		if(contractOtherInfo.get("I_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("I_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
+		if(contractOtherInfo.get("P_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("P_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
+		if(contractOtherInfo.get("T_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("T_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
+		
+	}
+
 	private static void initializeFieldNames() {
 		FIELDNAMESTOMAP.clear();
 		FIELDNAMESTOMAP.put("Texto10", "ENTERPRISE_COUNTRY_CODE");
@@ -79,6 +108,7 @@ public class ContractFill {
 		FIELDNAMESTOMAP.put("DC_NASS", "E_SS3");
 		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
 		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
+		FIELDNAMESTOMAP.put("HOR_JOR_HH", "I_PARTIALLY_TIME_HOURS");
 	}
 
 	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
@@ -100,6 +130,7 @@ public class ContractFill {
 				for(PDField field : acroForm.getFields()) {
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
+					System.out.println(valueStr + "  --  " + fieldName);
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
 					
 					if(null != renderFieldName) {
@@ -196,8 +227,10 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
 		} else if(contractType.equals(130) || contractType.equals(230) || contractType.equals(330)) {
 			pdfDocument.removePage(3);
+			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
@@ -213,6 +246,7 @@ public class ContractFill {
 		} else if(contractType.equals(109) || contractType.equals(139) || contractType.equals(189) || 
 				contractType.equals(209) || contractType.equals(239) || contractType.equals(289) || 
 				contractType.equals(309) || contractType.equals(339) || contractType.equals(389)) {
+			pdfDocument.removePage(3);
 			pdfDocument.removePage(3);
 			pdfDocument.removePage(3);
 			pdfDocument.removePage(3);
@@ -422,6 +456,8 @@ public class ContractFill {
 				acroForm.setDefaultResources(resources);
 				
 				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
@@ -538,11 +574,22 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 		}
 	}
-
-	public static void setField(PDField field, String value) throws IOException {
+	
+	public static void defaultCheckBox(PDField field) throws IOException {
 	    if (field instanceof PDCheckBox) {
 	        field.setValue("No");
-	    } else if (field instanceof PDTextField) {
+	        ((PDCheckBox) field).setDefaultValue("No");
+	        ((PDCheckBox) field).unCheck();
+	    }
+	}
+
+	public static void setField(PDField field, String value) throws IOException {
+//	    if (field instanceof PDCheckBox) {
+//	        field.setValue("No");
+//	        ((PDCheckBox) field).setDefaultValue("No");
+//	        ((PDCheckBox) field).unCheck();
+//	    } else 
+	    if (field instanceof PDTextField) {
 	    	try{
 		    	field.getCOSObject().removeItem(COSName.AP);
 //		        System.out.println("Original value: " + field.getValueAsString());

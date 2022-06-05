@@ -6,10 +6,12 @@ public enum ContractAttachType implements Serializable {
 	
 	 TA(98)
 	,TABAJA(99)
-	,CERTIFICA2(100)
-	,IDC(101)
-	,IDCPLNSS(102)
-	,CERTIFICA(103)
+	,COPYCONTRACT(101)
+	,COPYBASIC(102)
+	,CERTIFICA2(103)
+	,IDC(104)
+	,IDCPLNSS(105)
+	,OTHER(106)
 	;
 
 	private Integer value;
@@ -30,10 +32,21 @@ public enum ContractAttachType implements Serializable {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
+	
 	public static ContractAttachType safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= ContractAttachType.values().length) return null;
 		return ContractAttachType.values()[i];
+	}
+	
+	public static ContractAttachType getContractAttachType ( Integer type ) {
+		if (type == null) return null;
+		for(int i=0; i<ContractAttachType.values().length; i++) {
+			ContractAttachType contractAttachType = ContractAttachType.values()[i];
+			if(contractAttachType.getValue().equals(type))
+				return contractAttachType;
+		}
+		return null;
 	}
 	
 }

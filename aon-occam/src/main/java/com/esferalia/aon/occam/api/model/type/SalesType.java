@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum SalesType implements Serializable {
 
 	NORMAL,
@@ -29,6 +31,7 @@ public enum SalesType implements Serializable {
 	}
 	
 	public static SalesType safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (SalesType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

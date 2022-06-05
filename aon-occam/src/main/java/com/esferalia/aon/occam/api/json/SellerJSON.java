@@ -45,6 +45,7 @@ public class SellerJSON {
 	}
 	
 	public static JSONObject toJSON(Seller object) {
+		if(object == null || object.isEmpty()) return new JSONObject();
 		return RegistryJSON.toJSON(object)
 			.put(IJsonNames.COMMISSION_TYPE, CommissionTypeJSON.toJSON(object.getCommissionType()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(object.getScope()))

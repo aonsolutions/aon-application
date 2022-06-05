@@ -19,11 +19,22 @@
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
 					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly or saleInvoice.tbaiInvoice}" />
-					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
+					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending or saleInvoice.tbaiInvoice}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
 					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
 					<ui:define name="beforeSpinToolbarContent">
+						<aon:if test="#{saleInvoice.tbaiInvoice}"> 
+							<aon:commandButton id="tbaiInvoiceRemove"	
+								value="Borrar"
+								action="#{saleInvoice.tbai}"
+								onclick="#{saveOnClick}" 
+								styleClass="aon-finding-toolbar-item aon-icon-delete"
+								reRender="showCertTbaiAnularWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiAnularWindow}"
+										value="#{true}" />
+							</aon:commandButton>
+						</aon:if>
 						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
 							<aon:commandButton id="accept"	
 								value="Emitir"
@@ -489,6 +500,9 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbai.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+				<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbaiAnular.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalFacturae.xhtml">

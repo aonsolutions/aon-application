@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TimeControlCause {
 	DEFAULT,
 	REST, //DESCANSO PERSONAL
@@ -28,6 +30,7 @@ public enum TimeControlCause {
 	}
 	
 	public static TimeControlCause safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return DEFAULT;
 		for (TimeControlCause rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

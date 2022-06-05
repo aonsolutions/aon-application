@@ -8,6 +8,7 @@ import java.util.List;
 //import org.json.JSONArray;
 
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum AonApp implements Serializable{
 	
@@ -40,7 +41,8 @@ public enum AonApp implements Serializable{
 	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules(), "Gestión Profesional"),
 	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),
 	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
-	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP")
+	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
+	API_SERVICE(getEmptyModules(), "Servicio API")
 	;
 	
 	LinkedList<Module> modules;
@@ -75,6 +77,7 @@ public enum AonApp implements Serializable{
 	}
 	
 	public static AonApp safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (AonApp rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

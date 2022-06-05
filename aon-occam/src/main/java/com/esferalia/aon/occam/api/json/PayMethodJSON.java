@@ -48,7 +48,8 @@ public class PayMethodJSON {
 		return new JSONObject()
 				.put(IJsonNames.ID, paymethod.getId())
 				.put(IJsonNames.DOMAIN, paymethod.getDomain())
-				.put(IJsonNames.TYPE, paymethod.getType().name())
+				.put(IJsonNames.TYPE, paymethod.getType() != null 
+					? paymethod.getType().name() : PayMethodType.OTHER.name())
 				.put(IJsonNames.NAME, paymethod.getName());
 
 	}

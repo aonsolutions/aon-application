@@ -126,6 +126,13 @@ public class EmployeeParse {
 			@Override public void visitReducingcoefic(String reducingCoefic) {}
 			@Override public void visitProfesCat(String profesCat) {}
 			@Override public void visitFrv(Date frv) {}
+			@Override public void visitQuoteMonth(Boolean quoteMonth) {	}
+
+			@Override
+			public void visitAsociativeSA(String asociativeSA) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		return employee;

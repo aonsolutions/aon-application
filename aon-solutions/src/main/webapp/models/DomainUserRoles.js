@@ -145,7 +145,7 @@ export class DomainUserRoles {
 	}
 
 	isAdmin() {
-		return this.hasRole(Role.ADMIN);
+		return this.hasRole(Role.ADMIN) || this.hasOldRole(Role.ADMIN);
 	}
 
   isDev() {
@@ -300,6 +300,18 @@ export class DomainUserRoles {
 
 	isComunicaManager() {
 		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA_MANAGER));
+	}
+
+  hasApiService() {
+    return this.hasApp(App.API_SERVICE);
+  }
+
+  hasParentApiService() {
+    return this.hasParentApp(App.API_SERVICE);
+  }
+
+	isApiService() {
+		return this.hasApiService() && (this.isAdmin() || this.isDev());
 	}
 
   hasTimeControl() {

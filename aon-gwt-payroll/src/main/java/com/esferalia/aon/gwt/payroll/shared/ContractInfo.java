@@ -43,6 +43,8 @@ public class ContractInfo implements Serializable{
 	private String contractType;
 	private Integer quotegroupId;
 	private String quoteGroup;
+	private Integer quoteGroupIdxMonthId;
+	private boolean quoteGroupIdxMonth;
 	private Integer ocupationId;
 	private String ocupation;
 	private Integer rlceId;
@@ -88,6 +90,9 @@ public class ContractInfo implements Serializable{
 	private boolean hasExtension;
 	private boolean hasTransformation;
 	
+	private boolean hasCto;
+	private boolean hasCbc;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -112,6 +117,8 @@ public class ContractInfo implements Serializable{
 		this.contractType = null;
 		this.quotegroupId = null;
 		this.quoteGroup = null;
+		this.quoteGroupIdxMonthId = null;
+		this.quoteGroupIdxMonth = false;
 		this.ocupationId = null;
 		this.ocupation = null;
 		this.rlceId = null;
@@ -137,6 +144,9 @@ public class ContractInfo implements Serializable{
 		
 		this.hasExtension = false;
 		this.hasTransformation = false;
+		
+		this.hasCto = false;
+		this.hasCbc = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -309,6 +319,22 @@ public class ContractInfo implements Serializable{
 			}	
 		else
 			this.quoteGroup = quoteGroup;
+	}
+	
+	public void setQuoteGroupIdxMonthId(Integer quoteGroupIdxMonthId) {
+		this.quoteGroupIdxMonthId = quoteGroupIdxMonthId;
+	}
+	
+	public Integer getQuoteGroupIdxMonthId() {
+		return this.quoteGroupIdxMonthId;
+	}
+	
+	public void setQuoteGroupIdxMonth(boolean quoteGroupIdxMonth) {
+		this.quoteGroupIdxMonth = quoteGroupIdxMonth;
+	}
+	
+	public boolean getQuoteGroupIdxMonth() {
+		return this.quoteGroupIdxMonth;
 	}
 
 	public String getOcupation() {
@@ -582,6 +608,22 @@ public class ContractInfo implements Serializable{
 
 	public void setHasTransformation(boolean hasTransformation) {
 		this.hasTransformation = hasTransformation;
+	}
+	
+	public boolean hasCto() {
+		return hasCto;
+	}
+
+	public void setHasCto(boolean hasCto) {
+		this.hasCto = hasCto;
+	}
+	
+	public boolean hasCbc() {
+		return hasCbc;
+	}
+
+	public void setHasCbc(boolean hasCbc) {
+		this.hasCbc = hasCbc;
 	}
 	
 	public boolean isPartial() {

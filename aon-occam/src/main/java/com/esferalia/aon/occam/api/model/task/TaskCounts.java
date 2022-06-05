@@ -76,27 +76,32 @@ public class TaskCounts  implements Serializable{
 	}
 
 	public JSONObject toJSON() {
-
-		JSONObject jsonStatus = new JSONObject();
-		status.forEach(d->
-			jsonStatus.put(d.getField(), d.getCount())
-		);
-		
-		JSONObject jsonWorkgroup = new JSONObject();
-		workgroup.forEach(d->
-			jsonWorkgroup.put(d.getField(), d.getCount())
-		);
-		
-		JSONObject jsonTags = new JSONObject();
-		tags.forEach(d->
-			jsonTags.put(d.getField(), d.getCount())
-		);
-		
 		JSONObject json = new JSONObject();
-		json.put(IJsonNames.STATUS, jsonStatus);
-		json.put(IJsonNames.WORKGROUPS, jsonWorkgroup);
-		json.put(IJsonNames.TAG, jsonTags);
-	
+		
+		if(!status.isEmpty()) {
+			JSONObject jsonStatus = new JSONObject();
+			status.forEach(d->
+				jsonStatus.put(d.getField(), d.getCount())
+			);
+			json.put(IJsonNames.STATUS, jsonStatus);
+		}
+		
+		if(!workgroup.isEmpty()) {
+			JSONObject jsonWorkgroup = new JSONObject();
+			workgroup.forEach(d->
+				jsonWorkgroup.put(d.getField(), d.getCount())
+			);
+			json.put(IJsonNames.WORKGROUPS, jsonWorkgroup);
+		}
+		
+		if(!tags.isEmpty()) {
+			JSONObject jsonTags = new JSONObject();
+			tags.forEach(d->
+				jsonTags.put(d.getField(), d.getCount())
+			);
+			json.put(IJsonNames.TAG, jsonTags);
+			
+		}
 		return json;
 	}
 }

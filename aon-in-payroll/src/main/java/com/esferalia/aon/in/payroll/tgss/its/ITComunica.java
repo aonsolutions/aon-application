@@ -59,8 +59,8 @@ public class ITComunica {
 				
 				List<EmployeeIT> employeeITs = new ArrayList<>();
 				
-				SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime,
-						ccc, startDate, endDate, nss).stream()
+				SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime, ccc, startDate, endDate, nss)
+				.stream()
 				.forEach(it -> employeeITs.add(ITParse.parseTGSSToAon(it)));
 
 				saveITs(domain, employeeITs);
@@ -75,9 +75,9 @@ public class ITComunica {
 	public static void saveITs(Domain domain, List<EmployeeIT> employeeITs) throws IllegalArgumentException {
 		
 		employeeITs.stream().filter(e->e.getContract()==null)
-		.forEach(employeeIT->
-			employeeIT.setDomain(domain.getId())
-		);
+		.forEach(employeeIT->{
+			employeeIT.setDomain(domain.getId());	
+		});
 
 		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
@@ -94,16 +94,18 @@ public class ITComunica {
 			 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
 			 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
 
-			 if(!baja.isEmpty()) 
+			 if(!baja.isEmpty()) {				 
 				 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
+			 }
 			 
 			 if(!confirmations.isEmpty()) {
 				 confirmations.forEach(itPart-> 
 					registerITConfirmation(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
 				 );
 			 }
-			 if(!alta.isEmpty()) 
+			 if(!alta.isEmpty()) {				 
 				 registerITAlta(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
+			 }
 		 }
 		 
 		 return messages;
@@ -130,20 +132,21 @@ public class ITComunica {
 			
 			ReasonType reason = ReasonType.safeValueOf( Integer.parseInt(reasonOpt.get()) );
 			
-			float baseCC = baseCgcOpt.get().floatValue();
+			float baseCtiCC = baseCgcOpt.get().floatValue() * days;
 	
-			float baseCP = baseCgpOpt.get().floatValue();
+			float baseCtiCP = baseCgpOpt.get().floatValue() * days;
 			
 			Date dateTo = endDate.isPresent() ? endDate.get() : AonDateUtils.addDays(dateFrom, (16*7));
-			if(applicantType.equals(ApplicantType.OTRO_PROGENITOR))
+			if(applicantType.equals(ApplicantType.OTRO_PROGENITOR)) {
 				dateTo = endDate.isPresent() ? endDate.get() : AonDateUtils.addDays(dateFrom, (12*7));
-				
+			}
+			
 			dateTo = AonDateUtils.addDays(dateTo, -1);
 	
-			System.out.println(nss+", "+regime+", "+ccc+", "+dni.get()+", "+applicantType+", "+reason+", "+dateFrom+", "+dateTo+", "+baseCC+", "+baseCP+", "+days);
+			System.out.println(nss+", "+regime+", "+ccc+", "+dni.get()+", "+applicantType+", "+reason+", "+dateFrom+", "+dateTo+", "+baseCtiCC+", "+baseCtiCP+", "+days);
 			
 			SistemaRED.sendPaternity(certificateData, certificatePassword, certificateType, 
-						nss, regime, ccc, dni.get(), applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+						nss, regime, ccc, dni.get(), applicantType, reason, dateFrom, dateTo, baseCtiCC, baseCtiCP, days);
 			
 			messages.add(SUCCESS);
 		} catch (Exception e) {
@@ -188,8 +191,8 @@ public class ITComunica {
 				});    
 	
 				Double base = baseOptional.get();
-				float baseCgc   = base.floatValue();
 				int quoteDays = employeeIt.getQuoteDays();
+				float baseCtiCgc  = base.floatValue() * quoteDays;
 				String regime = employeeIt.getRegime();
 				String ccc = employeeIt.getCcc();
 				String nss = employeeIt.getNss();
@@ -199,7 +202,6 @@ public class ITComunica {
 				Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
 		
 				SituationEmployee situation = SituationEmployee.ACTIVO;
-		
 				
 				Optional<AccidentType> accidentType = Optional.empty();
 				Optional<String> occupation = Optional.empty();
@@ -212,7 +214,7 @@ public class ITComunica {
 						regime, ccc, nss, 
 						contingencie, situation,  
 						date, ContractType.safeValueOf(employeeIt.getContractType().value()),
-						baseCgc, quoteDays, 
+						baseCtiCgc, quoteDays, 
 						fATEP, accidentType,
 						collegeNumber, cias, occupation
 				);

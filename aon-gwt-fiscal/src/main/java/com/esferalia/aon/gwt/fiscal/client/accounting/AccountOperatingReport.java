@@ -74,7 +74,7 @@ public class AccountOperatingReport extends MainEntryPoint {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		OperatingPanelReport panel = new OperatingPanelReport(options);
-		if (!options.isGuest()) {
+		if (!options.isAccountingGuest()) {
 			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				
 				@Override
