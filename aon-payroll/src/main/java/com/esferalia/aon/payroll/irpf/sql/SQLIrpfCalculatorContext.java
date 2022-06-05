@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -65,8 +66,10 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -114,6 +117,35 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static final String ASCENDANTS_SQL = "SELECT * " + " FROM  "
 			+ SQLConstants.IRPF_DATA_ASCENDANTS + " WHERE "
 			+ IrpfDataAscendantsColumns.IRPF_DATA + " = ? ";
+	
+	
+	private static class IrpfSalaryBuilder extends SalaryBuilder {
+		
+		Double monthlyAmount = 0.00 ;
+		
+		@Override
+		public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			
+			if ( isMonthly(payment))
+				monthlyAmount += tax;
+		}
+		
+		public Double getMonthlyAmount() {
+			return monthlyAmount;
+		}
+		
+		
+		private static boolean isMonthly(IPayment payment) {
+			if ( !(payment instanceof IContractPayment) )
+				return false;
+			IContractPayment contractPayment = (IContractPayment) payment;
+			
+			return contractPayment.getEndDate() != null
+			&& AonDateUtils.getMonth(contractPayment.getStartDate()) == AonDateUtils.getMonth(contractPayment.getEndDate());
+		}
+	}
 
 	public static class IrpfSQLContractExtraCalculatorContext extends
 			SQLContractExtraCalculatorContext {
@@ -1163,7 +1195,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			}
 		};
 
-		SalaryBuilder builder = new SalaryBuilder();
+		IrpfSalaryBuilder builder = new IrpfSalaryBuilder();
 		calculator.setSalaryBuilder(builder);
 
 
@@ -1214,12 +1246,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 			if ( irpfCtx.isFullStandard() ) {
 				
-				
-				
 				nextIrpfBase = (
 						( irpfBase )
 						+ ( proration ) 
-						) * size;
+						) * size ;
+				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
+				
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
 				
 				
@@ -1237,6 +1269,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						( irpfBase )
 						+ ( proration ) 
 						) * size;
+				
+				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
 				double socialSecurityContributions = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
 				

@@ -65,6 +65,7 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -488,11 +489,21 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillSalaryData(contractSalaryCalculatorContext);
 		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
 		sectionByBonus(contractSalaryCalculatorContext);
-		Double totalDeduction = fillDeductions(contractSalaryCalculatorContext);
+		Double totalSS = fillSSDeductions(contractSalaryCalculatorContext);
+		Double totalIrpf = fillIrpf(contractSalaryCalculatorContext);
+		Double totalOthers = fillOtherDeductions(contractSalaryCalculatorContext);
 
+		salaryBuilder.setTotalSS(totalSS);
+		salaryBuilder.setTotalIrpf(totalIrpf);
+		
+		Double totalDeduction = totalSS + totalIrpf + totalOthers;
+		
 		expressionContext.setVariable(TOTAL_LIQUID, totalPayment - totalDeduction, start, end);
 		Double totalEmbargos = fillEmbargos(contractSalaryCalculatorContext);
-
+		
+		Double totalAdvance  = fillAdvances(contractSalaryCalculatorContext);
+		totalDeduction += totalAdvance;
+		
 		salaryBuilder.setTotalDeduction(totalDeduction + totalEmbargos);
 
 		Double totalCost = fillCosts(contractSalaryCalculatorContext);
@@ -502,7 +513,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		Double totalEnterprise = totalCost - totalBonus;
 		salaryBuilder.setTotalEnterprise(totalEnterprise);
 
-		salaryBuilder.setTotalLiquid(totalPayment - totalDeduction - totalEmbargos);
+		salaryBuilder.setTotalLiquid(totalPayment - totalDeduction - totalEmbargos );
 
 		fillTimeUnits(contractSalaryCalculatorContext);
 
@@ -852,7 +863,25 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return TaxCalculator.getTaxCalculator(ctx);
 	}
 
-	protected Double fillDeductions(IContractSalaryCalculatorContext ctx) throws SalaryException {
+	protected Double fillIrpf(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillDeductions(ctx, d -> d.getType().isTaxDeduction() );
+	}
+
+	protected Double fillAdvances(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillDeductions(ctx, GenericContractSalaryCalculator::isAdvance );
+	}
+
+	protected Double fillSSDeductions(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillDeductions(ctx, d -> d.getType().isSsDeduction() );
+	}
+
+	protected Double fillOtherDeductions(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillDeductions(ctx,  d -> !d.getType().isTaxDeduction() 
+										&& !d.getType().isSsDeduction()   
+										&& !GenericContractSalaryCalculator.isAdvance(d));
+	}
+
+	protected Double fillDeductions(IContractSalaryCalculatorContext ctx, Predicate<IContractDeduction> predicate) throws SalaryException {
 		try {
 			double totalIrpf = 0;
 			double totalDeduction = 0;
@@ -866,6 +895,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Collection<IContractDeduction> contractDeductions = ctx.getContractDeductions();
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 			for (IContractDeduction contractDeduction : contractDeductions) {
+				
+				if ( !predicate.test(contractDeduction) )
+					continue;
+				
 				DeductionType type = contractDeduction.getType();
 
 				Date deductionStart = null;
@@ -950,9 +983,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} // compilation error 
 			}
 			
-
-			salaryBuilder.setTotalIrpf(totalIrpf);
-			salaryBuilder.setTotalSS(ssContributions);
+			//salaryBuilder.setTotalIrpf(totalIrpf);
+			//salaryBuilder.setTotalSS(ssContributions);
 
 			return totalDeduction;
 		} catch (ExpressionException e) {
@@ -2279,6 +2311,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return EXPRESSION_SYNTAX_ERROR + " '" + (matcher.find() ? matcher.group(3) : str) +"'";
 	}
 	
+	private static boolean isAdvance(IContractDeduction d) {
+		return DeductionType.ADVANCE_PAYMENT == d.getType()
+			//|| AonStringUtils.equalsIgnoreCase(d.getName(), "ANTICIPO")
+			; 
+	}
+
+	private static boolean isNotAdvance(IContractDeduction d) {
+		return ! isAdvance(d); 
+	}
 
 }
 
