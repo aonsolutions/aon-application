@@ -854,7 +854,7 @@ const addCustomerAndContact = (task, aonMessengerChat, divDinamic) => {
     //-----------------CONTACT
     const contact = createInputContact();
     contact.addEventListener(EVENT.INPUT, ({target})=>{
-        if(target.value) task.setGTaskId(target.value)
+        task.setGTaskId(target.value)
     });
     createDivGrid(divDinamic, contact, {classes:[CSS.AON_COL_XS_12]});
     if(task.gtask_id) contact.value  = task.gtask_id;

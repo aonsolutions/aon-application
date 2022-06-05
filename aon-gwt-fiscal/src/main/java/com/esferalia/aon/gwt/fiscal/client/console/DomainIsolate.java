@@ -270,9 +270,7 @@ public class DomainIsolate extends MainEntryPoint {
 		}
 		
 		String msg = "Se va a traspasar el dominio ["+domainName+"] a el dominio ["+newDomainName+"]. Continuar?";
-		// return Window.confirm(msg);
-		Window.alert("No operativo");
-		return false;
+		return Window.confirm(msg);
 	}
 
 	

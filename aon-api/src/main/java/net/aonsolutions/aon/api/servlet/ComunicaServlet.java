@@ -94,7 +94,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					? req.getPathInfo() : IConstants.ROOT_BAR;
 			switch (path) {
 				case "/app-param":
-					LOGGER.info("APP-PARAM SERVLET - POST METHOD");
+					LOGGER.info("APP-PARAM SERVLET - GET METHOD");
 					response(req, resp,	getAppParam(initialize(req)));
 				break;
 				case "/rlce":
@@ -150,7 +150,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					responseFile(resp, "AFILIADO_MOV_PREV", getReportAffiliateInMovPrev(initialize(req)), MimeType.PDF);
 					break;
 				case "/get-contract-sepe":
-					LOGGER.info("GET-CONTRATO");
+					LOGGER.info("GET-CONTRACT-SEPE");
 					responseFile(resp, "CONTRACT", getContractSepe(initialize(req)), MimeType.PDF);
 					break;
 				case "/get-copy-basic":
@@ -245,7 +245,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			    
 	    return ServicioREDEmployee.getTotalEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), map);
 	}
-	
 	
 	private ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> getMovementsCcc(AonApiData api) {
 		ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> employees = new ArrayList<>();
@@ -973,6 +972,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 
 		try {
 			ApplicationParameter child = AON.getApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), APP_COMUNICA_EMAILS);
+			
 			if(child!=null && child.getValue()!=null && !child.getValue().isEmpty()) {
 				list.addAll( Arrays.asList(child.getValue().split(",")) );
 			}  
