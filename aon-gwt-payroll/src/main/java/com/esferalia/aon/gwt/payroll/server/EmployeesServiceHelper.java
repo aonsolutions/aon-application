@@ -812,7 +812,7 @@ public class EmployeesServiceHelper {
 
 		List<Date> dates = new ArrayList<Date>();
 		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
-		idcs.forEach( idc -> dates.add(idc.getFecha() ));
+		idcs.stream().filter(idc -> AonStringUtils.equalsIgnoreCase(idc.getDescripcion(), "ALTA")).forEach( idc -> dates.add(idc.getFecha() ));
 		return dates;
 	}
 

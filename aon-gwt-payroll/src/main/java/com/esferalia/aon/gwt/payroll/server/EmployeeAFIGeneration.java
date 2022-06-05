@@ -9,6 +9,13 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public final class EmployeeAFIGeneration {
 	
+	private static Calendar actualCalendar = Calendar.getInstance();
+	private static String year = AonStringUtils.leftPad(actualCalendar.get(Calendar.YEAR)+"", 4, '0');
+	private static String month = AonStringUtils.leftPad((actualCalendar.get(Calendar.MONTH)+1)+"", 2, '0');
+	private static String day = AonStringUtils.leftPad(actualCalendar.get(Calendar.DAY_OF_MONTH)+"", 2, '0');
+	private static String hour = AonStringUtils.leftPad(actualCalendar.get(Calendar.HOUR)+"", 2, '0');
+	private static String minute = AonStringUtils.leftPad(actualCalendar.get(Calendar.MINUTE)+"", 2, '0');
+	
 	protected EmployeeAFIGeneration() {
 		super();
 	}
@@ -20,11 +27,6 @@ public final class EmployeeAFIGeneration {
 		String authKey;
 		String payrollProvider;
 		String reserved5;
-		String year;
-		String month;
-		String day;
-		String hour;
-		String minute;
 		String fileName; //Length 8
 		String sufixAFI;
 		String priorityCode;
@@ -41,14 +43,7 @@ public final class EmployeeAFIGeneration {
 			this.payrollProvider = AonStringUtils.leftPad(payrollProvider, 3, '0');
 			this.reserved5 = AonStringUtils.leftPad("", 5, '0');
 			
-			Calendar actualCalendar = Calendar.getInstance();
-			this.year = actualCalendar.get(Calendar.YEAR) + "";
-			this.month =  AonStringUtils.leftPad((actualCalendar.get(Calendar.MONTH) + 1) + "", 2, '0');
-			this.day = AonStringUtils.leftPad((actualCalendar.get(Calendar.DAY_OF_MONTH) + 1) + "", 2, '0');
-			this.hour = AonStringUtils.leftPad((actualCalendar.get(Calendar.HOUR) + 1) + "", 2, '0');
-			this.minute = AonStringUtils.leftPad((actualCalendar.get(Calendar.MINUTE) + 1) + "", 2, '0');
-			
-			this.fileName = AonStringUtils.isBlank(fileName) ? this.day + this.month + this.hour + this.minute : fileName;
+			this.fileName = AonStringUtils.isBlank(fileName) ? day + month + hour + minute : fileName;
 			
 			this.sufixAFI = "AFI";
 			this.priorityCode = priorityCode;
@@ -707,11 +702,6 @@ public final class EmployeeAFIGeneration {
 		String authKey;
 		String payrollProvider;
 		String reserved5;
-		String year;
-		String month;
-		String day;
-		String hour;
-		String minute;
 		String fileName; //Length 8
 		String sufixAFI;
 		String priorityCode;
@@ -728,14 +718,7 @@ public final class EmployeeAFIGeneration {
 			this.payrollProvider = payrollProvider;
 			this.reserved5 = StringUtils.leftPad("", 5, '9');
 			
-			Calendar currentDate = Calendar.getInstance();
-			this.year = AonStringUtils.leftPad(currentDate.get(Calendar.YEAR)+"", 4, '0');
-			this.month = AonStringUtils.leftPad((currentDate.get(Calendar.MONTH)+1)+"", 2, '0');
-			this.day = AonStringUtils.leftPad(currentDate.get(Calendar.DAY_OF_MONTH)+"", 2, '0');
-			this.hour = AonStringUtils.leftPad(currentDate.get(Calendar.HOUR)+"", 2, '0');
-			this.minute = AonStringUtils.leftPad(currentDate.get(Calendar.MINUTE)+"", 2, '0');
-			
-			this.fileName = (null == fileName) ? this.day + this.month + this.hour + this.minute : fileName;
+			this.fileName = (null == fileName) ? day + month + hour + minute : fileName;
 			
 			this.sufixAFI = "AFI";
 			this.priorityCode = priorityCode;
