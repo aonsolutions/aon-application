@@ -38,7 +38,7 @@ import solutions.aon.aws.ses.SESMessage;
 
 public class TaskNotification {
 	
-	private static final String EMAIL_SUPPORT = "soporte@aonsolutions.es";
+	private static final String EMAIL_SUPPORT = "rayvasquezbeaperthuy@gmail.com";
 	private static final String URL_BASE = "https://aon.solutions";
 
 	private TaskNotification() {
@@ -76,7 +76,7 @@ public class TaskNotification {
 	 * @param workflow
 	 */
 	public static void onOpenEmail(AonApiData api, Task task, TaskWorkflow workflow){
-		if(TaskUtils.isCau(api.getData()) && TaskUtils.isExternal(task, api.getDomain()) && isAllowed(api, task, APP_REQUESTS_EXT_EMAIL_OPENED) ) {
+		if((TaskUtils.isCau(api.getData()) || TaskUtils.isExternal(task, api.getDomain())) && isAllowed(api, task, APP_REQUESTS_EXT_EMAIL_OPENED) ) {
 			sendEmailWorkflow(api, task, workflow, Optional.empty(), false); // false
 		} else if(
 			isAllowed(
