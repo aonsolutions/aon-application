@@ -1050,4 +1050,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void sendContractoCBTransformSEPE(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
 }

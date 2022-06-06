@@ -6720,6 +6720,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void sendContractoCBTransformSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+
+			// Data
+			String ipf = employeeContractInfo.getEmployeeInfo().getDocument();
+			Date startDate = employeeContractInfo.getContractInfo().getStartDate();
+			
+			aon.sepe.objects.CopyBasic copyBasic = createCopyBasic(employeeContractInfo);
+			
+			Sepe.sendTransformationCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), copyBasic, ipf, startDate);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void removeContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo)throws IllegalArgumentException {
@@ -7054,7 +7079,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return builder.build();
 	}
 
-	private CopyBasic createCopyBasic(EmployeeContractInfo employeeContractInfo) {
+	private CopyBasic createCopyBasic(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		CopyBasic copyBasic = new CopyBasic();
 		copyBasic.setFini(employeeContractInfo.getContractInfo().getStartDate());
 		copyBasic.setFend(employeeContractInfo.getContractInfo().getEndDate());
@@ -7065,6 +7090,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Integer signType = Integer.parseInt(AonStringUtils.isBlank(signBasicCopy) ? "1" : signBasicCopy);
 		copyBasic.setFirmType(CopyBasic.FirmType.values()[signType]);
 
+		if(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getBasicCopy()))
+			throw new IllegalArgumentException("El campo \"Texto copia basica\" es obligatorio");
+		
 		copyBasic.setRestContract(employeeContractInfo.getContractSpecificData().getBasicCopy());
 
 		return copyBasic;
