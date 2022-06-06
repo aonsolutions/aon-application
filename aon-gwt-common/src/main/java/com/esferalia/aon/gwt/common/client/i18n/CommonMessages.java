@@ -2120,7 +2120,7 @@ public interface CommonMessages extends Messages {
 	String dot34();
 	@DefaultMessage("Sin prestaci\u00F3n patrimonial. Minoraci\u00F3n prestaci\u00F3n por exceso cuota otros per\u00EDodos iniciados a partir de 2016 (DT 33\u00AA.4 y 6 d) LIS)")
 	String dot35();
-	@DefaultMessage("Importe total AID pendientes (DT 33\u00AA.1 y 6 a) LIS)(*)")
+	@DefaultMessage("Importe total AID pendientes (DT 33\u00AA.1 y 6 a) LIS)")
 	String dot36();
 	
 	@DefaultMessage("AID pendientes de aplicaci\u00F3n a principio del per\u00EDodo/generados en el propio per\u00EDodo")
@@ -2304,7 +2304,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Resultados extracooperativos")
 	String extraCooperativeResult();
 
-	@DefaultMessage("Bases de reparto")
+	@DefaultMessage("Base de reparto")
 	String distributionBases();
 	
 	@DefaultMessage("Aplicaci\u00F3n")

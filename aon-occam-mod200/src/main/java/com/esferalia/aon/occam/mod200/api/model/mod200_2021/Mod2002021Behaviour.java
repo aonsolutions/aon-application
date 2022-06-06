@@ -511,9 +511,9 @@ public class Mod2002021Behaviour {
 		
 		// APLICACIÓN DE RESULTADOS
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.ID650, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.ID653, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.ID653, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.ID654, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.ID666, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.ID666, new Boolean[]{TRUE,TRUE});
 
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible

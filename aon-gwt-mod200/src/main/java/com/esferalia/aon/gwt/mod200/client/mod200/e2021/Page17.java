@@ -54,27 +54,6 @@ public class Page17 extends PageAbs {
 		
 		paintFooterNote(basePanel, FOOTER_1494_1, FOOTER_1494_2);
 				
-		// Reversión de las pérdidas ... (SE ELIMINA ESTA TABLA PARA 2021)
-		
-//		FlexTable table1 = addTable(AON.MSG.damageAmount3(), 4);
-//		
-//		row = 0;
-//		addHeaderCell(table1,row, 2,AON.MSG.dot22());
-//		table1.getFlexCellFormatter().setColSpan(row, 2, 2);
-//		row++;
-//		addHeaderCell(table1,row, 0,AON.MSG.numPer());
-//		addHeaderCell(table1,row, 1,AON.MSG.dot3());
-//		addHeaderCell(table1,row, 2,"DT 16.1 y 2 LIS");
-//		addHeaderCell(table1,row, 3,"DT 16.3 LIS");
-//		addHeaderCell(table1,row, 4,AON.MSG.dot2());
-//		++row;
-//		for (int i = 0; i < Mod2002021Constants.DOTACION_KEYS_2.length; i++) {
-//			Mod2002021Key key = Mod2002021Constants.DOTACION_KEYS_2[i]; 
-//			if (key != null && callback.getMod200Object().isVisible(key)) {
-//				paintKeyField(table1,key,row,i,10);
-//			}
-//		}
-		
 		// Activos por impuesto diferido DT 33 ...
 		
 		basePanel.add(getTitle(AON.MSG.damageAmount4()));
@@ -88,14 +67,14 @@ public class Page17 extends PageAbs {
 		row++;
 		paintKeysProvider(Mod2002021LM1535Key.values(), table2, row, false, new String[] {
 				AON.MSG.liquiMsg1(),  
-				AON.MSG.dot30(),
+				AON.MSG.dot30() + " (*)",
 				AON.MSG.dot41(),
 				AON.MSG.dot31(),
 				AON.MSG.dot32(),
 				AON.MSG.dot33(),
 				AON.MSG.dot34(),
 				AON.MSG.dot35(),
-				AON.MSG.dot36()
+				AON.MSG.dot36() + " (*)"
 			});
 		
 		paintFooterNote(basePanel, FOOTER_1535);
@@ -133,7 +112,6 @@ public class Page17 extends PageAbs {
 		
 		FlexTable table4 = addTable("", 3);
 		paintAmountLabel(table4);
-//		table4.getFlexCellFormatter().setColSpan(0, 0, 4);
 		
 		row = 1;
 		addHeaderCell(table4, row, 0, "");

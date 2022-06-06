@@ -36,20 +36,23 @@ public class Page12 extends PageAbs {
 		
 		basePanel.clear();
 		
-		paintTable(AON.MSG.yearQuota(), Mod2002021Constants.LIQUIDATION_V_KEYS_1, HEADERS_1);
+		paintTable(AON.MSG.yearQuota(), Mod2002021Constants.LIQUIDATION_V_KEYS_1, HEADERS_1, Mod2002021Key.LQ1766);
 		paintTable("", Mod2002021Constants.LIQUIDATION_V_KEYS_2, HEADERS_2, Mod2002021Key.BN599);
 		paintTable(AON.MSG.splittedPayments(), Mod2002021Constants.LIQUIDATION_V_KEYS_3, HEADERS_2, Mod2002021Key.BN611);
-		paintTable(AON.MSG.netQuota(), Mod2002021Constants.LIQUIDATION_V_KEYS_4, HEADERS_2);
-		paintTable("", Mod2002021Constants.LIQUIDATION_V_KEYS_5, HEADERS_3, Mod2002021Key.BN621);		
-		paintTable("Regularizaci\u00F3n mediante autoliquidaci\u00F3n complementaria", Mod2002021Constants.LIQUIDATION_V_KEYS_6, HEADERS_2, Mod2002021Key.LQ1586);
-//		paintTable("Opci\u00F3n de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_7, HEADERS_2, Mod2002021Key.LQ2846);
-//		paintTable("Regularizaci\u00F3n de fraccionamiento art. 19.1 LIS mediante autoliquidaci\u00F3n complementaria en plazo voluntario", Mod2002021Constants.LIQUIDATION_V_KEYS_8, HEADERS_2, Mod2002021Key.LQ2850);
-		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_9, HEADERS_3);
-		paintTable("Regularizaci\u00F3n de conversi\u00F3n de activos por impuesto diferido mediante autoliquidaci\u00F3n complementaria", Mod2002021Constants.LIQUIDATION_V_KEYS_10, HEADERS_3);
+		paintTable("Resultado de la autoliquidaci\u00F3n", Mod2002021Constants.LIQUIDATION_V_KEYS_4, HEADERS_2, null);
+		paintTable("", Mod2002021Constants.LIQUIDATION_V_KEYS_5, HEADERS_3, Mod2002021Key.LQ1586);
+		paintFooterNote(basePanel, "(**) Incumplimiento de requisitos o tributaci\u00F3n por otro r\u00E9gimen antes del plazo de 3 a\u00F1os de permanencia (art. 9.1 Ley 11/2009)");
+		paintTable(AON.MSG.netQuota(), Mod2002021Constants.LIQUIDATION_V_KEYS_6, HEADERS_2, Mod2002021Key.BN621);
+		paintTable("Opci\u00F3n de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_7, HEADERS_2, Mod2002021Key.LQ2485);
+		basePanel.add(getSubtitle("L\u00EDquido a ingresar"));
+		paintTable("", Mod2002021Constants.LIQUIDATION_V_KEYS_8, HEADERS_2, Mod2002021Key.LQ2489);
+		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002021Constants.LIQUIDATION_V_KEYS_9, HEADERS_3, null);
+		basePanel.add(getSubtitle(AON.MSG.netQuota()));
+		paintTable("", Mod2002021Constants.LIQUIDATION_V_KEYS_10, HEADERS_3, null);
 		
 	}
 	
-	private void paintTable(String title, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys) {
+	private void paintTable(String title, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key boldKey) {
 		
 		FlexTable table = addTable(title, headers.length);
 	
@@ -70,18 +73,17 @@ public class Page12 extends PageAbs {
 				if (keys[i] != null) {
 					if (paintDescription) {
 						boolean bold = false;
-						for (Mod2002021Key key : boldKeys) {
-							if (keys[i] == key)
-								bold = true;
-						}
+						if (boldKey != null && keys[i] == boldKey)
+							bold = true;
 						paintDescription(table, keys[i].getDescription(), row, 0, bold, 0);
 						paintDescription = false;
 					}
-					paintKeyField(table,keys[i], row, i+1);
+					paintKeyField(table,keys[i], row, i+1);					
 				}
 			}
 			row++;
 		}
+		
 	}
 
 	@Override

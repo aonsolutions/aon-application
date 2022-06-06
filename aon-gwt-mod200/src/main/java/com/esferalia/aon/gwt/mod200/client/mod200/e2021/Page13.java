@@ -31,7 +31,7 @@ public class Page13 extends PageAbs {
 		addTable(AON.MSG.combinedTaxation1(), Mod2002021Constants.COMBINED_TAXATION_1);
 		addTable(AON.MSG.combinedTaxation2(), Mod2002021Constants.COMBINED_TAXATION_2);
 		
-		paintTable("Determinaci\u00F3n del resultado de la autoliquidaci\u00F3n en cada una de las Administraciones", Mod2002021Constants.COMBINED_TAXATION_3, HEADERS, Mod2002021Key.TR420, Mod2002021Key.TR474, Mod2002021Key.TR494, Mod2002021Key.TR1624);
+		paintTable("Determinaci\u00F3n del l\u00EDquido a ingresar o a devolver a cada una de las Administraciones", Mod2002021Constants.COMBINED_TAXATION_3, HEADERS, Mod2002021Key.TR420, Mod2002021Key.TR474, Mod2002021Key.TR494, Mod2002021Key.TR1624);
 		paintTable("Opci\u00F3n de fraccionamiento art. 19.1 LIS", Mod2002021Constants.COMBINED_TAXATION_4, HEADERS, Mod2002021Key.TR1646, Mod2002021Key.TR1654);
 		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002021Constants.COMBINED_TAXATION_5, HEADERS);
 		

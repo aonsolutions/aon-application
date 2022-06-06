@@ -234,9 +234,9 @@ public class Page18 extends PageAbs {
 			nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
 			nominal.addStyleName(AON.CSS.aonMarginRight());
 			
-			AonDoubleBox percent = new AonDoubleBox();
-			percent.setMaxLength(6);
-			percent.setVisibleLength(6);
+			AonDoubleBox percent = new AonDoubleBox(8,4);
+			percent.setMaxLength(8);
+			percent.setVisibleLength(8);
 			percent.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getPercent());
 			percent.addValueChangeHandler(event -> {
 				double per = AonNumberUtils.todouble(percent.getValue());
@@ -285,7 +285,6 @@ public class Page18 extends PageAbs {
 		table1.setWidget(row, 0, panelB11);
 		
 		paintFooterNote(basePanel, FOOTER);
-
 		
 	}
 	

@@ -302,7 +302,8 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 				
 		for (IMod200KeysProvider kp : keysProvider) {
-			paintDescription(tab, kp.getDescription(), row, 0, false);
+			//paintDescription(tab, kp.getDescription(), row, 0, false);
+			paintDescription(tab, kp.getDescription(), row, 0, "Total".equals(kp.getDescription()));
 			int col = 1;
 			for (IMod200Key key : kp.getKeys()) {				 
 				if (key != null && callback.getMod200Object().isVisible((Mod2002021Key) key)) {
@@ -458,7 +459,7 @@ public abstract class PageAbs extends ResizeComposite {
 			footernote.setWidth("95%");
 			footernote.addStyleName(AON.CSS.aonFontSmaller());
 			footernote.addStyleName(AON.CSS.aonBlockCenter());
-			footernote.addStyleName(AON.CSS.aonPaddingBottom());
+			//footernote.addStyleName(AON.CSS.aonPaddingBottom());
 			container.add(footernote);
 		}
 	

@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1041Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_2Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_3Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN584Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN585Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN588Key;
@@ -27,8 +26,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page11 extends PageAbs {
 
-	//private static final String[] HEADERS_1 = new String[] {
-	private static String[] HEADERS_1 = new String[] {
+	private static final String[] HEADERS_1 = new String[] {	
 			null,
 			AON.MSG.pendingDeduction(),
 			AON.MSG.current(),
@@ -88,16 +86,9 @@ public class Page11 extends PageAbs {
 				if (key == Mod2002021Key.BN082) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN082,Mod2002021BN082Key.values(),HEADERS_2, FOOTER_082_1, FOOTER_1);
 				}
-				
-				// FALTA - ESTE DESGLOSE ESTE AÑO TIENE DOS APARTADOS, VER SI AL FINAL DEJAN LOS DOS APARTADOS PARA 
-				// VER COMO SE PONE
 				if (key == Mod2002021Key.BN565) {
-					//row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN565,Mod2002021BN565Key.values(),HEADERS_1, FOOTER_1);
-					row = paintKeyBreakdownLinkBN565(table, row, HEADERS_1, FOOTER_1);
+					row = paintKeyBreakdownLinkBN565(table, row);
 				}
-				//----------
-				
-				
 				if (key == Mod2002021Key.BN590) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN590,Mod2002021BN590Key.values(),HEADERS_1, FOOTER_1);
 				}
@@ -106,10 +97,7 @@ public class Page11 extends PageAbs {
 				}
 				if (key == Mod2002021Key.BN1041) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN1041,Mod2002021BN1041Key.values(),HEADERS_3, FOOTER_1);
-				}
-				
-				// FALTA - COMPROBAR QUE ESTAS DOS CASILLAS ADICIONALES SIGUEN APARECIENDO EN EL DISEÑO DEL REGISTRO
-				// PUES EN EL MODELO NO ESTAN
+				}				
 				if (key == Mod2002021Key.BN1039) {
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
@@ -130,13 +118,12 @@ public class Page11 extends PageAbs {
 					table.setWidget(row, 0, table2);
 					row++;
 				}
-				//----------
 				
 			}
 		}
 	}
 	
-	private int paintKeyBreakdownLinkBN565(final FlexTable tab, int row, String[] headers, String footernote) {
+	private int paintKeyBreakdownLinkBN565(final FlexTable tab, int row) {
 		
 		final int boxRow = row-1;
 		final int boxCell = 1;
@@ -157,18 +144,28 @@ public class Page11 extends PageAbs {
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
 		
-	//----------------------	
-		HEADERS_1[0] = "DONACIONES DE CARACTER GENERAL";
-		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_1Key.values(), headers, footernote);
-		HEADERS_1[0] = "DONACIONES PARA ACTIVIDADES PRIORITARIAS DE MECENAZGO Y OTRAS CON DERECHO A DEDUCCION INCREMENTADA";
-		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_2Key.values(), headers, footernote);
-		HEADERS_1[0] = "TOTAL DEDUCCIONES A ENTIDADES SIN FINES DE LUCRO (LEY 49/2002)";	                   	
-		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565Key.values(), headers, null);
-		HEADERS_1[0] = "BASE DE LA DEDUCCION POR DONACIONES A ENTIDADES SIN FINES DE LUCRO DEL PERIODO IMPOSITIVO";	                   	
-		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_3Key.values(), null, null);
-		HEADERS_1[0] = null;
-	//------------------
+		String[] headers = new String[] {
+				null,
+				AON.MSG.pendingDeduction(),
+				AON.MSG.current(),
+				AON.MSG.futurePending()
+		};
 		
+		headers[0] = "DONACIONES DE CARACTER GENERAL";
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_1Key.values(), headers, FOOTER_1);
+		headers[0] = "DONACIONES PARA ACTIVIDADES PRIORITARIAS DE MECENAZGO Y OTRAS CON DERECHO A DEDUCCION INCREMENTADA";
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565_2Key.values(), headers, FOOTER_1);
+		headers[0] = "TOTAL DEDUCCIONES A ENTIDADES SIN FINES DE LUCRO (LEY 49/2002)";
+		headers[2] = "";
+		paintKeyBreakdownLinkContainer(container, Mod2002021Key.BN565, Mod2002021BN565Key.values(), headers, null);
+		
+		FlexTable table = new FlexTable();
+		table.addStyleName(AON.CSS.aonPaddingTop());
+		addHeaderCell(table, 0, 0, "BASE DE LA DEDUCCION POR DONACIONES A ENTIDADES SIN FINES DE LUCRO DEL PERIODO IMPOSITIVO");
+		table.getFlexCellFormatter().setColSpan(0, 0, 2);
+		paintKey(table, Mod2002021Key.BN974, 1);		
+		container.add(table);
+				
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
 		
@@ -192,7 +189,8 @@ public class Page11 extends PageAbs {
 	
 	private void paintKeyBreakdownLinkContainer(FlowPanel container, Mod2002021Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers, String footernote) {
 		
-		FlexTable tableDetail = getFlexTable(container, 0, headers);		
+		FlexTable tableDetail = getFlexTable(container, 0, headers);
+		tableDetail.addStyleName(AON.CSS.aonPaddingTop());
 		
 		int r = 1;
 		int col = 0;		
@@ -221,7 +219,8 @@ public class Page11 extends PageAbs {
 		}
 		
 		// Notas al pie
-		paintFooterNote(container, footernote);
+		if (footernote != null)
+			paintFooterNote(container, footernote);
 		
 	}
 	

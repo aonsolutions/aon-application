@@ -22,7 +22,7 @@ public class Page16 extends PageAbs {
 		
 		basePanel.clear();
 		
-		// RIC
+		// RIC 
 		
 		FlexTable table1 = addTable(AON.MSG.canariasRegime(), 5, "150px");
 		

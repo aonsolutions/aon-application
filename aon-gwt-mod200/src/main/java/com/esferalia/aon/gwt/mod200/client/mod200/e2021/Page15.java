@@ -29,7 +29,6 @@ public class Page15 extends PageAbs {
 		
 		// Limitación en la deducibilidad de gastos financieros. Art. 16 LIS (excluidos aquellos a que se refieren los arts. 15 g), h) y 15 bis LIS)
 		
-		//FlexTable table = addTable(AON.MSG.deducibleLimitation(), 2);
 		FlexTable table = addTable("Limitaci\u00F3n en la deducibilidad de gastos financieros. Art. 16 LIS (excluidos aquellos a que se refieren los arts. 15 g), h) y 15 bis LIS)", 2, "150px");
 		
 		int row = 0;
@@ -45,9 +44,8 @@ public class Page15 extends PageAbs {
 			} else {
 				for (int x = 0; x < keys.length; x++) {
 					Mod2002021Key key = keys[x]; 
-					if (key != null && callback.getMod200Object().isVisible(key)) {
-						//paintDescription(table, key.getDescription(), row, 0, false, 95);
-						paintDescription(table, key.getDescription(), row, 0, false);
+					if (key != null && callback.getMod200Object().isVisible(key)) {						
+						paintDescription(table, key.getDescription(), row, 0, key == Mod2002021Key.LM1260);
 						if (key == Mod2002021Key.LM1250 || key == Mod2002021Key.LM1251
 						 || key == Mod2002021Key.LM1252 || key == Mod2002021Key.LM1253
 						 || key == Mod2002021Key.LM1254) {

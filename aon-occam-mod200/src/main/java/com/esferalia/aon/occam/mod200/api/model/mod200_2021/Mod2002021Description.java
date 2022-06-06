@@ -578,6 +578,9 @@ public class Mod2002021Description {
 	}
 	
 	static {
+		// Base de la deducción por donaciones a entidades sin fines de lucro del período impositivo
+		DESCRIPTION_MAP.put(Mod2002021Key.BN974,"Donaciones del per\u00EDodo impositivo efectuadas a entidades sin fines de lucro (Ley 49/2002)");
+		
 		// Aplicacion de resultados - Base de reparto 
 		DESCRIPTION_MAP.put(Mod2002021Key.ID650,"P\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP.put(Mod2002021Key.ID651,"Remanente");
@@ -658,15 +661,15 @@ public class Mod2002021Description {
 		// Tributación Conjunta
 		DESCRIPTION_MAP.put(Mod2002021Key.TR050 ,"Volumen total de las operaciones realizadas por la entidad en el ejercicio (incluidas las operaciones realizadas en el extranjero)");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR051 ,"Volumen de las operaciones realizadas en el extranjero durante el ejercicio");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR052 ,"ARABA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR053 ,"GIPUZKOA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR054 ,"BIZKAIA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR055 ,"NAVARRA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR056 ,"Territorio com\u00FAn");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR052 ,"Volumen de las operaciones realizadas en ARABA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR053 ,"Volumen de las operaciones realizadas en GIPUZKOA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR054 ,"Volumen de las operaciones realizadas en BIZKAIA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR055 ,"Volumen de las operaciones realizadas en NAVARRA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR056 ,"Volumen de las operaciones realizadas en Territorio com\u00FAn");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR626 ,"Diputaci\u00F3n Foral de ARABA: 052 / ( 050 - 051 ) x 100");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR627 ,"Diputaci\u00F3n Foral de GIPUZKOA: 053 / ( 050 - 051 ) x 100");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR628 ,"Diputaci\u00F3n Foral de BIZKAIA: 054 / ( 050 - 051 ) x 100");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR629 ,"Diputaci\u00F3n Foral de NAVARRA: 055 / ( 050 - 051 ) x 100");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR629 ,"Comunidad Foral de NAVARRA: 055 / ( 050 - 051 ) x 100");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR625 ,"Administraci\u00F3n del Estado: 056 / ( 050 - 051 ) x 100");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR420 , "Cuota del ejercicio a ingresar o a devolver");
 		DESCRIPTION_MAP.put(Mod2002021Key.TR402 , "Pago fraccionado 1\u00BA");

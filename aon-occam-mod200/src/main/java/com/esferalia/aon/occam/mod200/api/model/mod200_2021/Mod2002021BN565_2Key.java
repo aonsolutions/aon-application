@@ -38,8 +38,8 @@ public enum Mod2002021BN565_2Key implements Serializable, IMod200KeysProvider {
 	,C19(new Mod2002021Key[]{Mod2002021Key.BN1061,Mod2002021Key.BN1062,Mod2002021Key.BN1072},"2021 Sin reiteraci\u00F3n de donaciones a una misma entidad")   
 	,C20(new Mod2002021Key[]{Mod2002021Key.BN1073,Mod2002021Key.BN1074,Mod2002021Key.BN1078},"2021 Con reiteraci\u00F3n de donaciones a una misma entidad")   
 	,C21(new Mod2002021Key[]{Mod2002021Key.BN1701,Mod2002021Key.BN1702,Mod2002021Key.BN1703},"Subtotal donaciones 2011 a 2014")                 
-	,C22(new Mod2002021Key[]{Mod2002021Key.BN1704,Mod2002021Key.BN1705,Mod2002021Key.BN1706},"Subtotal donaciones 2015 a 2021 sin reiteración de donaciones a una misma entidad")
-	,C23(new Mod2002021Key[]{Mod2002021Key.BN1729,Mod2002021Key.BN2475,Mod2002021Key.BN2476},"Subtotal donaciones 2015 a 2021 con reiteración de donaciones a una misma entidad")
+	,C22(new Mod2002021Key[]{Mod2002021Key.BN1704,Mod2002021Key.BN1705,Mod2002021Key.BN1706},"Subtotal donaciones 2015 a 2021 sin reiteraci\u00F3n de donaciones a una misma entidad")
+	,C23(new Mod2002021Key[]{Mod2002021Key.BN1729,Mod2002021Key.BN2475,Mod2002021Key.BN2476},"Subtotal donaciones 2015 a 2021 con reiteraci\u00F3n de donaciones a una misma entidad")
 	,C24(new Mod2002021Key[]{Mod2002021Key.BN1079,Mod2002021Key.BN1080,Mod2002021Key.BN1081},"Total")
 	;
 	 
