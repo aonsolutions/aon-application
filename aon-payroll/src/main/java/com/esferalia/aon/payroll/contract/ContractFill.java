@@ -12,9 +12,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -26,7 +26,6 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
-import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -577,9 +576,15 @@ public class ContractFill {
 	
 	public static void defaultCheckBox(PDField field) throws IOException {
 	    if (field instanceof PDCheckBox) {
-	        field.setValue("No");
-	        ((PDCheckBox) field).setDefaultValue("No");
-	        ((PDCheckBox) field).unCheck();
+	    	try {
+//				System.out.println("START " + field.getPartialName() + " --> " + field.getValueAsString() + " (isChecked: " + ((PDCheckBox) field).isChecked() + ")");
+//		        field.setValue("No");
+//		        ((PDCheckBox) field).setDefaultValue("No");
+		        ((PDCheckBox) field).unCheck();
+//		        System.out.println("END " + field.getPartialName() + " --> " + field.getValueAsString() + " (isChecked: " + ((PDCheckBox) field).isChecked() + ")");
+	    	} catch (Exception e) {
+				System.out.println("Error default PDFCheckBox -> " + field.getPartialName());
+			}
 	    }
 	}
 
