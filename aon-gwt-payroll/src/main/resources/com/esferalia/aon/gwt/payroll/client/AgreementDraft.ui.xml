@@ -481,7 +481,7 @@
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 
-									<g:ListBox debugId='typeListBox' ui:field='typeListBox' />
+									<g:ListBox debugId='typeListBox' ui:field='typeListBox' visible="false" />
 									<aon:MonthListBox debugId='previewMonthListBox' ui:field='previewMonthListBox'
 										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
 										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
@@ -510,6 +510,10 @@
 										<g:item value='10'>10</g:item>
 										<g:item value='11'>11</g:item>
 									</g:ListBox>
+
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<g:ListBox debugId='tc2ListBox' ui:field='tc2ListBox' />
 
 									<span>&nbsp;</span>
 									<span>&nbsp;</span>
