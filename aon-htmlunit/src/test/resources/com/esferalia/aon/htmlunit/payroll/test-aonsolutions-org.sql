@@ -52498,7 +52498,7 @@ CREATE TABLE `salary_deduction` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de deducción Salarial',
-  `deduction_concept` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
+  `deduction_concept` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Fórmula',
   `amount` double(15,3) DEFAULT 0.000 COMMENT 'Importe',
@@ -57296,6 +57296,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `type` tinyint(4) NOT NULL DEFAULT 0,
   `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del Usuario',
   `login` varchar(16) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Login del Usuario',
   `enterprise` int(4) DEFAULT NULL COMMENT 'Identificador de la Empresa',
@@ -57330,9 +57331,9 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
-(2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),
-(10248,8776,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-05-09 22:48:51',NULL,0),
-(10249,8790,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
+(2862,0,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),
+(10248,8776,0,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-05-09 22:48:51',NULL,0),
+(10249,8790,0,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58029,4 +58030,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-03 10:35:32
+-- Dump completed on 2022-06-06  8:28:55
