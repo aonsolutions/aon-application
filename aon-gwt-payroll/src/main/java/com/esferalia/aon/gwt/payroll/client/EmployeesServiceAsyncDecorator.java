@@ -908,6 +908,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void sendContractoCBTransformSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.sendContractoCBTransformSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
 	public void removeContractoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.removeContractoSEPE(currentDomainName, user, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
