@@ -79,5 +79,11 @@ public class CheckItServiceAsyncDecorator implements CheckItServiceAsync {
 		AON.start();
 		fsa.getMovements(domainName, domain, user, empresaId, checkItBankAccount, startDate, endDate, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void addExtraField(Integer enterpriseId, String iban, String extraField, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.addExtraField(enterpriseId, iban, extraField, new AsyncCallbackWrapper<>(callback));
+	}
 	
 }
