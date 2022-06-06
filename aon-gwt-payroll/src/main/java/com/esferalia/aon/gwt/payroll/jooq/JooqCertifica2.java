@@ -744,7 +744,8 @@ public class JooqCertifica2 {
 		trabajadorType.setNombre(removeAccents(certifica2Info.getName()));
 		trabajadorType.setApellido1(removeAccents(certifica2Info.getSurname()));
 		trabajadorType.setNumSS(certifica2Info.getSSNumber());
-		trabajadorType.setGrupoCotizacion(certifica2Info.getQuoteGroup());
+		if(AonStringUtils.isNotBlank(certifica2Info.getRegime()) && !AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+			trabajadorType.setGrupoCotizacion(certifica2Info.getQuoteGroup());
 		trabajadorType.setTipoContrato(certifica2Info.getContractType());
 		trabajadorType.setDuracionContrato(StringUtils.leftPad(certifica2Info.getContractDuration().toString(), 5, '0'));
 

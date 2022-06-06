@@ -60,15 +60,13 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		// Enterprise CCC
 		String regime = api.getData().getString("regime");
 		String ccc = api.getData().getString("ccc");
-		Connection connection = null;
 		
-		try {
-			JSONObject params = api.getData();
-			// Domian and User
-			String userLogin =  !params.optString("login").isEmpty() ? params.getString("login") : params.getString("userLogin");
-			String domainName = !params.optString("domain").isEmpty() ? params.getString("domain") : params.getString("domainName"); 
-			
-			connection = AonServletUtils.getConnection(domainName);
+		JSONObject params = api.getData();
+		// Domian and User
+		String userLogin =  !params.optString("login").isEmpty() ? params.getString("login") : params.getString("userLogin");
+		String domainName = !params.optString("domain").isEmpty() ? params.getString("domain") : params.getString("domainName"); 
+
+		try (Connection connection = AonServletUtils.getConnection(domainName)){
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 

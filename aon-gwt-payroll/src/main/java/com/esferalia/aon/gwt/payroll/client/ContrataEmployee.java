@@ -139,7 +139,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		protected void downloadCtoDocument() {
-			downloadCto(s -> {});
+			downloadCto(s -> {}, f -> {});
 		}
 	}
 
@@ -1701,15 +1701,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, f -> showError("Error Certific@2", f.getMessage()));
 	}
 	
-	private void sendBasicCopyTimer(Consumer<Void> finish) {
+	private void sendBasicCopyTimer(Consumer<Void> success, Consumer<Void> failure) {
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
 				showLoading("Notificando copia basica...");
 				contrataEmployeeObject.sendBasicCopy(s -> {
 					showSuccess("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
-					downloadCbc(su -> loadWindow(suc -> {}));
-				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+					success.accept(null);
+				}, f -> {
+					showError("Error comunicaci\u00F3n", f.getMessage());
+					failure.accept(null);
+				});
 			}
 		};
 		timer.schedule(2500);
@@ -1733,7 +1736,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							showSuccess("CBC","Se ha descargado el CBC del trabajador. El documento se encuentran en el apartado de Documentos");
 							finish.accept(null);
 						},
-						f -> showError("Error obtenci\u00F3n CBC", f.getMessage()));
+						f -> {
+							showError("Error obtenci\u00F3n CBC", f.getMessage());
+							finish.accept(null);
+						});
 			}
 		};
 		timer.schedule(2500);
@@ -1743,11 +1749,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		showLoading("Notificando contrato...");
 		contrataEmployeeObject.sendContract(s -> {
 			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-			sendBasicCopyTimer(su -> downloadCto(suc -> downloadCbc(succ -> loadWindow(succe -> {}))));
+			downloadCto(
+				su -> sendBasicCopyTimer(
+						success -> downloadCbc(suc -> loadWindow(succe -> {})),
+						failure -> loadWindow(succe -> {})), 
+				fa -> loadWindow(succe -> {}));
 		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+		
+//		contrataEmployeeObject.sendContract(s -> {
+//			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+//			sendBasicCopyTimer(su -> downloadCto(suc -> downloadCbc(succ -> loadWindow(succe -> {}))));
+//		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 
-	private void downloadCto(Consumer<Void> finish) {
+	private void downloadCto(Consumer<Void> succes, Consumer<Void> failure) {
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
@@ -1755,9 +1770,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.downloadCto(
 						s -> {
 							showSuccess("CTO", "Se ha descargado el CTO del trabajador. El documento se encuentran en el apartado de Documentos");
-							finish.accept(null);
+							succes.accept(null);
 						},
-						f -> showError("Error obtenci\u00F3n CTO", f.getMessage()));
+						f -> {
+							showError("Error obtenci\u00F3n CTO", f.getMessage());
+							failure.accept(null);
+						});
 			}
 		};
 		timer.schedule(2500);

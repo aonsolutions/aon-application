@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -23,6 +24,7 @@ import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 
@@ -308,6 +310,136 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(jooqSalaryBuilder);
 		calculator.calculate(ctx);
 		jooqSalaryBuilder.execute();
+	}
+
+	@Test
+	public void testSalaryEmbargoAdvance()
+			throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		addEmbargarFunction(aonContext);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+					"1550.00 * DIAS_TRABAJADOS / DIAS_MES"						
+				},
+				new String[] {}
+		);
+		
+		addEmbargo(aonContext, contract, "TRACE('%f\r\n', (EMBARGADO));EMBARGAR(IMPORTE_EMBARGO)");
+		
+		
+		
+		addData(aonContext, contract, 
+				getFirstDayOfYear(getToday()), 
+				null,
+				new HashMap<String, String>() {
+					{
+						put("TC2", "'100'");
+						put("IMPORTE_EMBARGO", "300.00");
+						put("GRUPO_COTIZACION", "\"01\"");
+					}
+				});
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ContractDeductionRecord anticipo = 
+		addDeduction(aonContext, contract, start, end, "750.00", "ANTICIPO...", "ANTICIPO");
+		
+		anticipo.setType((byte)DeductionType.ADVANCE_PAYMENT.ordinal());
+		anticipo.update();
+		
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
+					Map<String, ITimedVariable<?>> context) {
+				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				super.addEmbargo(id, amount, description, embargo, context);
+			}
+		};
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		start = add(start, Calendar.MONTH,1);
+		end = getLastDayOfMonth(start);
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
+					Map<String, ITimedVariable<?>> context) {
+				org.junit.Assert.assertEquals(300.00 - 600.00*0.30, amount,DELTA);
+				super.addEmbargo(id, amount, description, embargo, context);
+			}
+		};
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		start = add(start, Calendar.MONTH,1);
+		end = getLastDayOfMonth(start);
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
+					Map<String, ITimedVariable<?>> context) {
+				org.junit.Assert.fail();;
+				super.addEmbargo(id, amount, description, embargo, context);
+			}
+		};
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		start = add(start, Calendar.MONTH,1);
+		end = getLastDayOfMonth(start);
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
+					Map<String, ITimedVariable<?>> context) {
+				org.junit.Assert.fail();;
+				super.addEmbargo(id, amount, description, embargo, context);
+			}
+		};
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		start = getFirstDayOfMonth(getToday());
+		end = getLastDayOfMonth(start);
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
+					Map<String, ITimedVariable<?>> context) {
+				org.junit.Assert.assertEquals(600.00*0.30,amount,0.01);
+				super.addEmbargo(id, amount, description, embargo, context);
+			}
+		};
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
 	}
 
 	private void addEmbargarFunction(AONContext aonContext) {

@@ -547,6 +547,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void sendContractoCBTransformSEPE(String currentDomainName, String currentUser,
+				EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback)
+				throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
 		}		
 	}
 
@@ -1079,6 +1087,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document,
 							Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void sendContractoCBTransformSEPE(String currentDomainName, String currentUser,
+							EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback)
 							throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						

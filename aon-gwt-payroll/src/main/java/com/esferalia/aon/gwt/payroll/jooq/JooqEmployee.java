@@ -1112,6 +1112,11 @@ public class JooqEmployee {
 		
 		contractData.setHasExtension(hasExtension);
 		
+		// ---------------------------------------------- Contract Transform
+		
+		List<Integer> transformDocs = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)19)).fetch(CONTRACT_ATTACH.ID);
+		if(!transformDocs.isEmpty()) contractData.setHasTransformation(true);
+		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);
 		
