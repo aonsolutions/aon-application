@@ -148,9 +148,10 @@ public abstract class TaxCalculator {
 				throw new NotNowException();
 			}
 			
+			final double  tax  = getTax(contractPayment, start, end, amount);
+
 			DefaultTaxCalculator.this.totalPayment += amount;
 			
-			final double  tax  = getTax(contractPayment, start, end, amount);
 			
 			
 			PaymentType paymentType = contractPayment.getType();
