@@ -190,8 +190,8 @@ input:required {
 	width: 100%;
 }
 
-.aonInputListOptionsItem:hover {
-	 background-color: #f1f1f1;
+.aonInputListOptionsItem.is-selected, .aonInputListOptionsItem:hover {
+	background-color: #f1f1f1;
 }
 
 .aonInputIconLabel {
