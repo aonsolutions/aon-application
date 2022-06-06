@@ -38,7 +38,7 @@ import solutions.aon.aws.ses.SESMessage;
 
 public class TaskNotification {
 	
-	private static final String EMAIL_SUPPORT = "rayvasquezbeaperthuy@gmail.com";
+	private static final String EMAIL_SUPPORT = "soporte@aonsolutions.es";
 	private static final String URL_BASE = "https://aon.solutions";
 
 	private TaskNotification() {

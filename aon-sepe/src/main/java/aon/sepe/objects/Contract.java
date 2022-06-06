@@ -34,6 +34,8 @@ public class Contract {
 	private String durationTypeCvnMin;
 	private String interinidad;
 	
+	private DiscontinuoReason discontinuoReason; // solo para transformaciones
+	
 	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
 	private Date oldDateIniContract; // Para las transformaciones
@@ -138,6 +140,10 @@ public class Contract {
 		return jndType;
 	}
 
+	public DiscontinuoReason getDiscontinuoReason() {
+		return discontinuoReason;
+	}
+
 	public String getDurationTypeJndHour() {
 		return durationTypeJndHour;
 	}
@@ -198,6 +204,7 @@ public class Contract {
 		private Date dateComContract;
 		private OfferType offer;
 		private JndType jndType;
+		private DiscontinuoReason discontinuoReason;
 		private String durationTypeJndHour;
 		private String durationTypeJndMin;
 		private String durationTypeCvnHour;
@@ -334,6 +341,11 @@ public class Contract {
 			return this;
 		}
 
+		public ContractBuilder setDiscontinuoReason(DiscontinuoReason discontinuoReason) {
+			this.discontinuoReason = discontinuoReason;
+			return this;
+		}
+
 		public ContractBuilder setDurationTypeJndHour(String durationTypeJndHour) {
 			this.durationTypeJndHour = durationTypeJndHour;
 			return this;
@@ -399,6 +411,7 @@ public class Contract {
 			contract.codContract = this.codContract;
 			contract.offer = this.offer;
 			contract.jndType = this.jndType;
+			contract.discontinuoReason = this.discontinuoReason;
 			contract.durationTypeJndHour = this.durationTypeJndHour;
 			contract.durationTypeJndMin = this.durationTypeJndMin;
 			contract.durationTypeCvnHour = this.durationTypeCvnHour;
@@ -480,6 +493,19 @@ public class Contract {
 			return value;
 		}
 	}
+	
+	public enum DiscontinuoReason{
+		INCAPACIDAD_TRANSITORIA("I"), 
+		PRORROGA_TACITA("P");
+		private String value;
+		private DiscontinuoReason(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+
 
 	@Override
 	public String toString() {
@@ -489,7 +515,7 @@ public class Contract {
 				+ ", codMunDom=" + codMunDom + ", codFormativo=" + codFormativo + ", codOccupation=" + codOccupation
 				+ ", codPaisWork=" + codPaisWork + ", codMunWork=" + codMunWork + ", codContract=" + codContract
 				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", oldDateIniContract=" + oldDateIniContract + ", dateBirth="
-				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType
+				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType + ", discontinuoReason=" + discontinuoReason
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
 				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+"]";
 	}
