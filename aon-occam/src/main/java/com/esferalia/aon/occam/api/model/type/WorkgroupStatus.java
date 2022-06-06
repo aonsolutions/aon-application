@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum WorkgroupStatus {
 	
     ACTIVE,
@@ -25,6 +27,7 @@ public enum WorkgroupStatus {
 	}
 	
 	public static WorkgroupStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
 		for (WorkgroupStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

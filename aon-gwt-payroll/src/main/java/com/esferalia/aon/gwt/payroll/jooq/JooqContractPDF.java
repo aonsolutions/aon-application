@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -29,6 +31,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -48,6 +51,10 @@ public class JooqContractPDF {
 
 	private static Settings settings = null;
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	private static SimpleDateFormat fullDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+	private static SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM");
+	private static SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 	
 	protected static Settings getDefaultSettings() {
 		if (settings == null) {
@@ -240,18 +247,22 @@ public class JooqContractPDF {
 							)).fetchOne(WORKPLACE.ADDRESS)
 				)).fetchOne();
 		
+		String workplaceAddress = "";
 		if(null != raddressRecord) {
+			workplaceAddress = raddressRecord.get(RADDRESS.STREET_TYPE) + " " + raddressRecord.get(RADDRESS.ADDRESS) + ", " + raddressRecord.get(RADDRESS.NUMBER) + "(" + raddressRecord.get(RADDRESS.ZIP) + ")";
 			String municipalityCode = raddressRecord.get(RADDRESS.MUNICIPALITY_CODE);
 			if(null != municipalityCode) {
 				String municipality = municipalities.getMunicipalityByZip(municipalityCode);
 				
 				contractFillData.put("WORKPLC_MUNICIPALITY", municipality);
 				contractFillData.put("WORKPLC_MUNICIPALITY_CODE", municipalityCode);
+				contractFillData.put("WORKPLC_CITY", raddressRecord.get(RADDRESS.CITY));
 			}
 		}
 		
 		contractFillData.put("WORKPLC_COUNTRY", "ESPA\u00D1A");
 		contractFillData.put("WORKPLC_COUNTRY_CODE", "724");
+		contractFillData.put("E_WORKPLACE_ADDR", workplaceAddress);
 		
 		// Employee
 		
@@ -301,10 +312,60 @@ public class JooqContractPDF {
 			
 		}
 		
+		// Employee (Contract)
+		
+		Record contractRecord = dslContext.select().from(CONTRACT)
+				.leftJoin(AGREEMENT_LEVEL)
+				.on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+				.leftJoin(AGREEMENT)
+				.on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
+				.where(CONTRACT.ID.eq(contractId))		
+				.fetchOne();
+		
+		String agreementLevelDescription = contractRecord.get(AGREEMENT_LEVEL.DESCRIPTION);
+		String agreementLevelCatDescription = contractRecord.get(CONTRACT.CATEGORY_DESCRIPTION);
+		
+		contractFillData.put("E_AGREEMENT_LEVEL", agreementLevelDescription);
+		contractFillData.put("E_AGREEMENT_CAT", agreementLevelCatDescription);
+		
+		contractFillData.put("C_START", fullDateFormat.format(contractRecord.get(CONTRACT.START_DATE)));
+		
+		contractFillData.put("DAY", dayFormat.format(contractRecord.get(CONTRACT.START_DATE)));
+		contractFillData.put("MONTH", monthFormat.format(contractRecord.get(CONTRACT.START_DATE)));
+		contractFillData.put("YEAR", yearFormat.format(contractRecord.get(CONTRACT.START_DATE)).substring(2, 4));
+		
+		contractFillData.put("C_AGREEMENT_COLECTIVE", contractRecord.get(AGREEMENT.DESCRIPTION));
+		
+		Result<Record> cnoRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("CNO"))
+				.fetch();
+		
+		if(!cnoRecords.isEmpty()) {
+			Map<String, CNO> cnoMap = JooqContrataContract.getCNOsDB(dslContext);
+			String cnoCode = parseContractData(cnoRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+			CNO cno = cnoMap.get(cnoCode);
+			contractFillData.put("E_CNO", cnoCode + " " + (null == cno ? "" : cno.getTitle()));
+		}
+		
 		return contractFillData;
 	}
 	
 	// ---------------------------------------------------- Auxiliar methods
+	
+	private static String parseContractData(String value) {
+		String parsedValue = null;
+		if(AonStringUtils.isNotBlank(value) && value.contains("\""))
+			try {
+				parsedValue = value.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				parsedValue = value;
+			}
+		else
+			parsedValue = value;
+		
+		return parsedValue;
+	}
 	
 	private static String getCCCRegimeCode(Byte cccRegime) {
 		switch (cccRegime) {

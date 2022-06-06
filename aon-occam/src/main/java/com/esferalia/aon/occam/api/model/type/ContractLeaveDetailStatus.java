@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ContractLeaveDetailStatus {
 	
 	PENDING,
@@ -29,11 +31,12 @@ public enum ContractLeaveDetailStatus {
 	}
 	
 	public static ContractLeaveDetailStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return PENDING;
 		for (ContractLeaveDetailStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
 		}
-		return ContractLeaveDetailStatus.PENDING;
+		return PENDING;
 	}
 
 }

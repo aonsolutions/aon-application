@@ -797,7 +797,7 @@ public class EmployeesServiceHelper {
 		return Base64.getEncoder().encodeToString(idcHighlightData);
 	}
 
-	public static List<Date> getIDCDates(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws SQLException, IOException, SegSocialException{
+	public static List<Date> getIDCDates(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws IOException, SegSocialException{
 		
 		Contract contract = 
 		PAYROLL.
@@ -811,8 +811,8 @@ public class EmployeesServiceHelper {
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
 		List<Date> dates = new ArrayList<Date>();
-		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
-		idcs.forEach( idc -> dates.add(idc.getFecha() ));
+		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+		idcs.stream().filter(idc -> AonStringUtils.equalsIgnoreCase(idc.getDescripcion(), "ALTA")).forEach( idc -> dates.add(idc.getFecha() ));
 		return dates;
 	}
 

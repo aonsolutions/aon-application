@@ -19,7 +19,7 @@ public enum CCCType {
 	
 	AGRICULTURAL(SSRegimeType.AGRICULTURAL),
 	
-	ARTIST(SSRegimeType.GENERAL);
+	ARTIST(SSRegimeType.ARTIST);
 	
 	private SSRegimeType ssRegimeType;
 	

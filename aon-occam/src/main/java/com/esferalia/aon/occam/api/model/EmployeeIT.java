@@ -22,11 +22,11 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 public class EmployeeIT implements Serializable {
 	
 	private static final String INICIO_PAGO_DIRECTO = "INICIO_PAGO_DIRECTO";
-	private static final String BASE_REGULADORA = "BASE_REGULADORA";
 	private static final String TIPO_SOLICITANTE_MAT_PAT = "TIPO_SOLICITANTE_MAT_PAT";
 	private static final String MOTIVO_MAT_PAT = "MOTIVO_MAT_PAT";
 	private static final String COEFICIENTE_MATERNIDAD = "COEFICIENTE_MATERNIDAD";
 	private static final String COEFICIENTE_PATERNIDAD = "COEFICIENTE_PATERNIDAD";
+//	private static final String BASE_REGULADORA = "BASE_REGULADORA";
 	
 	/**
 	 * 
@@ -280,18 +280,20 @@ public class EmployeeIT implements Serializable {
 	public Optional<String> getDirectPay() {
 		return getContractDataValue(INICIO_PAGO_DIRECTO);
 	}
+	
 	public EmployeeIT setDirectPay(String expression) {
 		addContractData(INICIO_PAGO_DIRECTO, expression, this.startDate, this.endDate);
 		return this;
 	}
 	
-	public Optional<String> getRegulationBase() {
-		return getContractDataValue(BASE_REGULADORA);
-	}
-	public EmployeeIT setRegulationBase(Double baseReg) {
-		addContractData(BASE_REGULADORA, baseReg.toString(), this.startDate, this.endDate);
-		return this;
-	}
+//	public Optional<String> getRegulationBase() {
+//		return getContractDataValue(BASE_REGULADORA);
+//	}
+//	
+//	public EmployeeIT setRegulationBase(Double baseReg) {
+//		addContractData(BASE_REGULADORA, baseReg.toString(), this.startDate, this.endDate);
+//		return this;
+//	}
 	
 	public EmployeeIT setPaternityParciality(Double parciality) {
 		String tmp = getType()!=null && getType().equals(ContractLeaveType.PATERNIDAD) ? COEFICIENTE_PATERNIDAD : COEFICIENTE_MATERNIDAD;

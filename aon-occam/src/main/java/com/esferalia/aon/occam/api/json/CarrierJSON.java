@@ -45,8 +45,11 @@ public class CarrierJSON {
 	}
 	
 	public static JSONObject toJSON(Carrier object) {
+		if(object == null || object.isEmpty()) return new JSONObject();
 		return RegistryJSON.toJSON(object)
 			.put(IJsonNames.SCOPE, object.getScope())
-			.put(IJsonNames.STATUS, object.getStatus().name());
+			.put(IJsonNames.STATUS, object.getStatus() != null
+				? object.getStatus().name()
+				: null);
 	}
 }

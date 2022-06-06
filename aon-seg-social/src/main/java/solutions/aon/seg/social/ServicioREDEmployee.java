@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +30,7 @@ import org.apache.http.ssl.SSLContexts;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
-import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -121,6 +120,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 			throw new InvalidCertificateException();
 		}
 	}
+	
 	/**
 	 * 
 	 * @param certificateInputStream
@@ -130,20 +130,29 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	 * @return Map<CCC, List<Employee>>
 	 * @throws SegSocialException
 	 */
-	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
+	public static Collection<Employee> getTotalEmployees(byte[] certificateData,
+			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
+			throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
+		return getTotalEmployees(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, cccs);
+	}
+	
+	private static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
 			throws SegSocialException {
 		if (cccs == null) {
 			return Collections.emptyList();
 		}
 		SSLContext sslContext = null;
-		try {				
+		try {		
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
 		} catch (Exception e1) {
 			throw new InvalidCertificateException();
 		}
 		String link = "";
 		String sessionId = "";
+		
+		List<String> errors = new ArrayList<>();
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			List<Employee> employees = new LinkedList<>();
@@ -233,11 +242,17 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 							
 						}
 					} catch (InvalidDataException e) {
+		                if(e.getMessage()!=null) {
+		                  	errors.add(e.getMessage());
+		                }
 						continue;
 					}
 				}
 			}
 			
+			if(employees.isEmpty() && !errors.isEmpty()) {
+	        	throw new SegSocialException(errors.get(0));
+	        }
 			
 			return employees;
 		} catch (IOException e) {

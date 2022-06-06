@@ -414,7 +414,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Type type,
+	public String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, List<Variable> context, int levelId, Type type,
 			String mime) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -727,7 +727,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void generateCertifaca2(String currentDomainName, Integer contractId) {
+	public void generateCertifaca2(String currentDomainName, String user, Integer contractId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 	}
@@ -866,7 +866,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId)
+	public Certifica2Info getCertifica2Info(String currentDomainName, String user, Integer contractId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
@@ -880,7 +880,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
+	public void generateCertifaca2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info) {
 		// TODO Auto-generated method stub
 	}
 

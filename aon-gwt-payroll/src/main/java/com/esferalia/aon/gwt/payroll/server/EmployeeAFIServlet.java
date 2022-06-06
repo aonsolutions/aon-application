@@ -37,6 +37,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 		Boolean isQuoteContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isQuoteContract"), "1");
 		Boolean isOcupationContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isOcupationContract"), "1");
 		Boolean isPartialityCoefContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isPartialityCoefContract"), "1");
+		String settleReason = request.getParameter("settleReason");
 		
 		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
 		JSONObject employeeJSON = null;
@@ -61,7 +62,8 @@ public class EmployeeAFIServlet extends HttpServlet {
 					isChangeContract, 
 					isQuoteContract, 
 					isOcupationContract, 
-					isPartialityCoefContract);
+					isPartialityCoefContract,
+					settleReason);
 			
 			
 			String employeeAFI = EmployeeAFIGeneration.generateEmployeeAFI(employeeJSON);

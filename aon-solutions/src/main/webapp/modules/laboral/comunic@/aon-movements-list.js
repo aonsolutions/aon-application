@@ -312,13 +312,17 @@ export class AonMovementsList extends AonElement {
         if(this.searchFilter) data = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], data);
       }
     } catch (error) {
-      if(typeof error === "string") error = JSON.parse(error);
+      if(typeof error === "string") {
+        error = JSON.parse(error);
+      }
       
-      if(error && EXCEPTION_MESSAGE[error.message])
+      if(error && EXCEPTION_MESSAGE[error.message]){
         error.message =  EXCEPTION_MESSAGE[error.message];
-
-      if(!this.isMobile())
+      }
+ 
+      if(!this.isMobile()){
         this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
+      }
  
       this.showToast(error);
     }

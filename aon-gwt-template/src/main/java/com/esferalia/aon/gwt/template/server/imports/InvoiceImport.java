@@ -106,7 +106,7 @@ public class InvoiceImport {
 						check(title, cell);			
 					}
 				});
-				if(ant != null && isSameReference(ant.getRef(), ant.getSerie(), ant.getNumber(), inv)) {
+				if(ant != null && isSameReference(ant, inv)) {
 					list.getLast().getLines().add(inv);
 				} else if(row.getRowNum() != 0 && !inv.isEmpty()) {
 					inv.getLines().add(inv);
@@ -151,7 +151,7 @@ public class InvoiceImport {
 					}
 				});
 				
-				if(ant != null && isSameReference(ant.getRef(), ant.getSerie(), ant.getNumber(), inv)) {
+				if(ant != null && isSameReference(ant, inv)) {
 					list.getLast().getLines().add(inv);
 				} else if(row.getRowNum() != 0 && !inv.isEmpty()) {
 					inv.getLines().add(inv);
@@ -605,7 +605,7 @@ public class InvoiceImport {
 			Double retQuota = 0.0;
 			Double retPercentage = 0.0;
 			Integer j = i;
-			while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
+			while(ivs.size() > j && isSameReference(ivs.get(i), ivs.get(j))) {
 				if(ivs.get(j).getRetentionQuota() != null) {
 					retBase = retBase + ivs.get(j).getBase();
 					retPercentage = ivs.get(j).getRetentionPercentage();
@@ -1386,7 +1386,13 @@ public class InvoiceImport {
 		return accountEntry;
 	}
 
-	private static Boolean isSameReference(String reference, String serie, Integer number, InvoiceImportClass iic) {
+	private static Boolean isSameReference(InvoiceImportClass ant, InvoiceImportClass iic) {
+		if(!isSales(ant, iic) && !isSameRegistry(ant, iic)) return false;
+		
+		String reference = ant.getRef();
+		String serie = ant.getSerie();
+		Integer number = ant.getNumber();
+
 		Boolean snBool = false;
 		if(serie != null && number != null) {
 			snBool = serie.equals(iic.getSerie()) && number.equals(iic.getNumber());
@@ -1394,5 +1400,17 @@ public class InvoiceImport {
 			snBool = number.equals(iic.getNumber());
 		}
 		return snBool || (reference != null && reference.equals(iic.getRef()));
+	}
+
+	public static boolean isSales(InvoiceImportClass ant, InvoiceImportClass act) {
+		if(ant.getInvoiceType() == null) ant.setInvoiceType(getInvoiceType(ant.getAccount()));
+		if(act.getInvoiceType() == null) act.setInvoiceType(getInvoiceType(ant.getAccount()));
+		return (ant.getInvoiceType() != null && InvoiceType.SALES.equals(ant.getInvoiceType()))
+			|| (act.getInvoiceType() != null && InvoiceType.SALES.equals(act.getInvoiceType()));
+	}
+	
+	public static boolean isSameRegistry(InvoiceImportClass ant, InvoiceImportClass act) {
+		return AonStringUtils.isNotBlank(ant.getNif()) && AonStringUtils.isNotBlank(act.getNif())
+			&& ant.getNif().equalsIgnoreCase(act.getNif());
 	}
 }

@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator;
 
+import java.util.function.Predicate;
+
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 
@@ -19,9 +21,27 @@ public class OnlyPaymentContractSalaryCalculator<T extends ISalary> extends
 	}
 	
 	@Override
-	protected Double fillDeductions(IContractSalaryCalculatorContext ctx)
+	protected Double fillIrpf(IContractSalaryCalculatorContext ctx) 
 			throws SalaryException {
-		return 0.00;
+		return 0.0;
+	}
+	
+	@Override
+	protected Double fillSSDeductions(IContractSalaryCalculatorContext ctx) 
+			throws SalaryException {
+		return 0.0;
+	}
+	
+	@Override
+	protected Double fillOtherDeductions(IContractSalaryCalculatorContext ctx) 
+			throws SalaryException {
+		return 0.0;
+	}
+	
+	@Override
+	protected Double fillAdvances(IContractSalaryCalculatorContext ctx) 
+			throws SalaryException {
+		return 0.0;
 	}
 	
 	@Override

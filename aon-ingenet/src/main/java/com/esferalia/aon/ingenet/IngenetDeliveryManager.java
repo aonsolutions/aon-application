@@ -13,6 +13,7 @@ import org.jooq.TransactionalRunnable;
 import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
@@ -54,61 +55,59 @@ public class IngenetDeliveryManager {
 			String user) {
 		int domainId = IngenetContext.getUdapaDomainId();
 
-		AONContext ctx = IngenetContext.getAONContext(domainName, domainId,
-				user);
+		try ( CloseableAONContext ctx = IngenetContext.getAONContext(domainName, domainId, user) ) {
 
-		Map<Integer, String> map = new HashMap<Integer, String>();
-		LinkedList<Delivery> list = WarehouseDAO.getDeliveryList(ctx, f -> f
-				.getStatusProperty()
-				.eq((byte) DeliveryStatus.PENDING.ordinal()));
-		list.forEach(delivery -> {
-			String description = "Albaran "
-					+ (delivery.getSeries() != null ? delivery.getSeries() : "")
-					+ "/"
-					+ delivery.getNumber()
-					+ " con fecha del "
-					+ (delivery.getIssueTime() != null ? dateFormat
-							.format(delivery.getIssueTime()) : "-");
-			map.put(delivery.getId(), description);
-		});
-
-		return map;
+			Map<Integer, String> map = new HashMap<Integer, String>();
+			LinkedList<Delivery> list = WarehouseDAO.getDeliveryList(ctx, f -> f
+					.getStatusProperty()
+					.eq((byte) DeliveryStatus.PENDING.ordinal()));
+			list.forEach(delivery -> {
+				String description = "Albaran "
+						+ (delivery.getSeries() != null ? delivery.getSeries() : "")
+						+ "/"
+						+ delivery.getNumber()
+						+ " con fecha del "
+						+ (delivery.getIssueTime() != null ? dateFormat
+								.format(delivery.getIssueTime()) : "-");
+				map.put(delivery.getId(), description);
+			});
+	
+			return map;
+		}
 	}
 	
 	public Delivery createAonDelivery(String domainName, String user,
 			Integer currentDomainId, Integer ingenetDeliveryId,
 			Integer workplaceId, Integer warehouseId) throws SourceSalesNotFoundException {
 		
-		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
-				user);
+		try (  CloseableAONContext ctx = IngenetContext.getAONContext(domainName, currentDomainId, user) ) {
 
-		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(
-				domainName, user, ingenetDeliveryId);
-		
-		Integer ingenetSalesDetailId = detailList.stream()
-				.filter(d -> d.getSalesDetail() != null).findFirst()
-				.orElse(new DeliveryDetail()).getSalesDetail();
-		SalesDetail ingenetSalesDetail = obtainIngenetSalesDetail(domainName,
-				user, ingenetSalesDetailId);
-		Sales ingenetSales = obtainIngenetSales(domainName, user,
-				ingenetSalesDetail.getSales().getId());
-		
-		String ingenetSalesSeries = ingenetSales.getSeries();
-		Integer ingenetSalesNumber = ingenetSales.getNumber();
-		Sales aonSales = SalesDAO.getSales(
-				ctx,
-				f -> (ingenetSalesSeries != null ? f.getSeriesProperty().eq(
-						ingenetSalesSeries) : f.getSeriesProperty().isNull())
-						.and(f.getNumberProperty().eq(ingenetSalesNumber))
-						.and(f.getDomainProperty().eq(ctx.getDomainId())));
-		
-		if (aonSales == null | aonSales.getId() == null) {
-			throw new SourceSalesNotFoundException(
-					"Imposible realizar el traspaso. No existe el pedido "
-							+ ingenetSalesSeries + "/" + ingenetSalesNumber);
-		}
-		
-		try {
+			List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(
+					domainName, user, ingenetDeliveryId);
+			
+			Integer ingenetSalesDetailId = detailList.stream()
+					.filter(d -> d.getSalesDetail() != null).findFirst()
+					.orElse(new DeliveryDetail()).getSalesDetail();
+			SalesDetail ingenetSalesDetail = obtainIngenetSalesDetail(domainName,
+					user, ingenetSalesDetailId);
+			Sales ingenetSales = obtainIngenetSales(domainName, user,
+					ingenetSalesDetail.getSales().getId());
+			
+			String ingenetSalesSeries = ingenetSales.getSeries();
+			Integer ingenetSalesNumber = ingenetSales.getNumber();
+			Sales aonSales = SalesDAO.getSales(
+					ctx,
+					f -> (ingenetSalesSeries != null ? f.getSeriesProperty().eq(
+							ingenetSalesSeries) : f.getSeriesProperty().isNull())
+							.and(f.getNumberProperty().eq(ingenetSalesNumber))
+							.and(f.getDomainProperty().eq(ctx.getDomainId())));
+			
+			if (aonSales == null | aonSales.getId() == null) {
+				throw new SourceSalesNotFoundException(
+						"Imposible realizar el traspaso. No existe el pedido "
+								+ ingenetSalesSeries + "/" + ingenetSalesNumber);
+			}
+			
 			ctx.transaction(new TransactionalRunnable() {
 				@Override
 				public void run(Configuration arg0) throws Exception {
@@ -122,15 +121,16 @@ public class IngenetDeliveryManager {
 					closeIngenetDelivery(domainName, user, ingenetDeliveryId);
 				}
 			});
-		} catch (RuntimeException e) {
+			
+			return aonDelivery;
+		}
+		catch (RuntimeException e) {
 			try {
 				throw e.getCause();
 			} catch (Throwable throwable) {
 				throw e;
 			}
 		}
-		
-		return aonDelivery;
 	}
 	
 	private void createAonDeliveryDetails(AONContext ctx,
@@ -251,56 +251,61 @@ public class IngenetDeliveryManager {
 
 	private Delivery obtainIngenetDelivery(String domainName, String user,
 			Integer deliveryId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return WarehouseDAO.getDelivery(ctx, deliveryId);
+		try ( CloseableAONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user) ) {
+			return WarehouseDAO.getDelivery(ctx, deliveryId);
+		}
 	}
 
 	private List<DeliveryDetail> obtainIngenetDeliveryDetailList(
 			String domainName, String user, Integer deliveryId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return WarehouseDAO.getDeliveryDetailList(ctx, deliveryId);
+		try (  CloseableAONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user) ) {
+			return WarehouseDAO.getDeliveryDetailList(ctx, deliveryId);
+		}
 	}
 
 	private SalesDetail obtainIngenetSalesDetail(String domainName,
 			String user, Integer salesDetailId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return SalesDAO.getSalesDetail(ctx, salesDetailId);
+		try (  CloseableAONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user) ) {
+			return SalesDAO.getSalesDetail(ctx, salesDetailId);
+		}
 	}
 
 	private Sales obtainIngenetSales(String domainName, String user,
 			Integer salesId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return SalesDAO.getSales(ctx, salesId);
+		try (  CloseableAONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user) ) {
+			return SalesDAO.getSales(ctx, salesId);
+		}
 	}
 
 	private OldItem obtainIngenetItem(String domainName, String user,
 			Integer itemId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+		try (  CloseableAONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user) ) {
+			return AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				o -> o.getIdProperty().eq(itemId));
+		}
 	}
 
 	private OldItem obtainAonItem(String domainName, String user,
 			Integer currentDomainId, String productCode) {
-		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
-				user);
-		OldProduct product = ProductOldDAO
-				.getProductStream(
-						ctx,
-						o -> o.getCodeProperty().eq(productCode)
-								.and(o.getDomainProperty().eq(currentDomainId)))
-				.findFirst().orElse(null);
-		if(product!=null && product.getId()!=null){
-			return AON.getItem(domainName, currentDomainId, user,
-					o -> o.getProductProperty().eq(product.getId())
-					.and(o.getDomainProperty().eq(currentDomainId)));
+		try (  CloseableAONContext ctx = AONContext.getAONContext(domainName, currentDomainId,user) ) {
+			OldProduct product = ProductOldDAO
+					.getProductStream(
+							ctx,
+							o -> o.getCodeProperty().eq(productCode)
+									.and(o.getDomainProperty().eq(currentDomainId)))
+					.findFirst().orElse(null);
+			if(product!=null && product.getId()!=null){
+				return AON.getItem(domainName, currentDomainId, user,
+						o -> o.getProductProperty().eq(product.getId())
+						.and(o.getDomainProperty().eq(currentDomainId)));
+			}
+			return null;
 		}
-		return null;
 	}
 
 	private SalesDetail obtainAonSalesDetail(String domainName, String user,
@@ -308,25 +313,25 @@ public class IngenetDeliveryManager {
 			Sales aonSales) {
 		SalesDetail salesDetail = obtainIngenetSalesDetail(domainName, user,
 				deliveryDetail.getSalesDetail());
-		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
-				user);
-		if (aonSales != null && salesDetail != null) {
-			return SalesDAO.getSalesDetail(ctx, aonSales.getId(),
-					salesDetail.getLine());
+		try (  CloseableAONContext ctx = AONContext.getAONContext(domainName, currentDomainId, user)){
+			if (aonSales != null && salesDetail != null) {
+				return SalesDAO.getSalesDetail(ctx, aonSales.getId(),
+						salesDetail.getLine());
+			}
+			return null;
 		}
-		return null;
 	}
 
 	public void closeIngenetDelivery(String domainName, String user,
 			Integer deliveryId) {
 		int domainId = IngenetContext.getUdapaDomainId();
-		AONContext ctx = IngenetContext.getAONContext(domainName, domainId,
-				user);
-		Delivery delivery = DeliveryDAO.get(ctx, deliveryId);
-		delivery.setStatus(DeliveryStatus.INVOICED);
-		delivery.setModificationUser(user);
-		delivery.setModificationDate(new Date());
-		DeliveryDAO.save(ctx, delivery);
+		try ( CloseableAONContext ctx = IngenetContext.getAONContext(domainName, domainId,user)){
+			Delivery delivery = DeliveryDAO.get(ctx, deliveryId);
+			delivery.setStatus(DeliveryStatus.INVOICED);
+			delivery.setModificationUser(user);
+			delivery.setModificationDate(new Date());
+			DeliveryDAO.save(ctx, delivery);
+		}
 	}
 	
 	

@@ -281,7 +281,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void generateCertifaca2(String currentDomainName, Integer contractId,
+			public void generateCertifaca2(String currentDomainName, String user, Integer contractId,
 					AsyncCallback<Void> callback) {
 				// TODO Auto-generated method stub
 				
@@ -397,7 +397,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getCertifica2Info(String currentDomainName, Integer contractId,
+			public void getCertifica2Info(String currentDomainName, String user, Integer contractId,
 					AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
@@ -415,7 +415,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info,
+			public void generateCertifaca2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info,
 					AsyncCallback<Void> callback) {
 				// TODO Auto-generated method stub
 				

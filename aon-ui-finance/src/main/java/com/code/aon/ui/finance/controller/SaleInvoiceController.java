@@ -82,6 +82,8 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -103,6 +105,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showCertTbaiWindow;
 	private boolean showCertTbaiAnularWindow;
 	private boolean showFacturaeInfoWindow;
+	private boolean showTbaiAccept;
 	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
@@ -171,6 +174,8 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowCertTbaiWindow(boolean showCertTbaiWindow) {
 		this.showCertTbaiWindow = showCertTbaiWindow;
+		if(showCertTbaiWindow)
+			setShowTbaiAccept(showCertTbaiWindow);
 	}
 	
 	public boolean isShowCertTbaiAnularWindow() {
@@ -571,6 +576,9 @@ public class SaleInvoiceController extends InvoiceController {
 				invoice.setNumber(number);
 				invoice.setReferenceCode(null);
 				invoice.setIssueDate(new Date());
+				invoice.setTaxDate(new Date());
+				inv.setIssueDate(new Date());
+				inv.setTaxDate(new Date());
 				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			}
 
@@ -589,7 +597,9 @@ public class SaleInvoiceController extends InvoiceController {
 		
 	@Transient
 	public synchronized void issueInvoice() {
+		if(!isShowTbaiAccept()) return;
 		try {
+			setShowTbaiAccept(false);
 			if(lroe) {
 				issueInvoiceLroe();
 			} else if(anular) {
@@ -608,12 +618,10 @@ public class SaleInvoiceController extends InvoiceController {
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
 					inv.setNumber(number);
-					if(!isBizkaia()) {
-						invoice.setIssueDate(new Date());
-						invoice.setTaxDate(new Date());
-						inv.setIssueDate(new Date());
-						inv.setTaxDate(new Date());
-					}
+					invoice.setIssueDate(new Date());
+					invoice.setTaxDate(new Date());
+					inv.setIssueDate(new Date());
+					inv.setTaxDate(new Date());
 				}
 			
 				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
@@ -732,6 +740,37 @@ public class SaleInvoiceController extends InvoiceController {
 		resetTo();
 	}
 	
+	public void onAnularEspecial(ActionEvent event) {
+		anularInvoiceEspecial();
+	}
+
+	public boolean isEspecial() {
+		Invoice inv = (Invoice) getTo();
+		return inv.getDomain() == 20414
+			&& inv.getSeries().equalsIgnoreCase("2022") 
+			&& inv.getNumber() == 5;
+	}
+	
+	public void anularInvoiceEspecial() {
+		try {
+			if(isTbaiInvoice() && isEspecial()) {
+				checkCertificate();
+				Invoice inv = (Invoice) getTo();
+				String domainName = AonUtil.getDomainName();
+				String login = UserUtils.getInstance().getLoggedUser().getLogin();
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+				tbaiConfiguration.setCertificate(getCertData());
+				TbaiMain tbai = new TbaiMain();
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
 	public void anularInvoice() {
 		try {
 			if(isTbaiInvoice()) {
@@ -808,6 +847,21 @@ public class SaleInvoiceController extends InvoiceController {
 		return certificates.stream().filter(f -> f.getId().equals(certificate)).findFirst().orElse(new Certificate());	
 	}
 	
+	
+	public boolean isShowTbaiAccept() {
+		return showTbaiAccept;
+	}
+	
+	public void setShowTbaiAccept(boolean showTbaiAccept) {
+		this.showTbaiAccept = showTbaiAccept;
+	}
+	
+	public boolean isInvoiceTbaiAccepted() {
+		Invoice inv = (Invoice) getTo();
+		InvoiceInfo info = AON.getInvoiceInfo(getDomain(), getUser(), f -> f.getInvoiceProperty().eq(inv.getId())
+				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE_1_1.value())));
+		return info.getStatus().isAccepted();
+	}
 	
 	public boolean isPass() {	
 		return getCert().hasPassword();

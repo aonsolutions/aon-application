@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum TaskWorkflowType  {
 
 	OPEN("opened"),
@@ -43,6 +45,7 @@ public enum TaskWorkflowType  {
 	}
 	
 	public static TaskWorkflowType safeValueOf(String value) {
+		if(AonStringUtils.isBlank(value)) return null;
 		for (TaskWorkflowType tht : TaskWorkflowType.values()) {
 			if(tht.name().equalsIgnoreCase(value) || tht.getEvent().equalsIgnoreCase(value)) {
 				return tht;

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEnabled;
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
 import java.util.Collections;
@@ -140,7 +139,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		protected void downloadCtoDocument() {
-			downloadCto(s -> {});
+			downloadCto(s -> {}, f -> {});
 		}
 	}
 
@@ -1117,6 +1116,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
+		
+		// Get Idc Dates
+		initializeIdcDateListBox();
 
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
@@ -1130,6 +1132,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
+		
+		// Get Idc Dates
+		initializeIdcDateListBox();
 
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
@@ -1696,15 +1701,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, f -> showError("Error Certific@2", f.getMessage()));
 	}
 	
-	private void sendBasicCopyTimer(Consumer<Void> finish) {
+	private void sendBasicCopyTimer(Consumer<Void> success, Consumer<Void> failure) {
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
 				showLoading("Notificando copia basica...");
 				contrataEmployeeObject.sendBasicCopy(s -> {
 					showSuccess("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
-					downloadCbc(su -> loadWindow(suc -> {}));
-				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+					success.accept(null);
+				}, f -> {
+					showError("Error comunicaci\u00F3n", f.getMessage());
+					failure.accept(null);
+				});
 			}
 		};
 		timer.schedule(2500);
@@ -1728,7 +1736,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							showSuccess("CBC","Se ha descargado el CBC del trabajador. El documento se encuentran en el apartado de Documentos");
 							finish.accept(null);
 						},
-						f -> showError("Error obtenci\u00F3n CBC", f.getMessage()));
+						f -> {
+							showError("Error obtenci\u00F3n CBC", f.getMessage());
+							finish.accept(null);
+						});
 			}
 		};
 		timer.schedule(2500);
@@ -1738,11 +1749,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		showLoading("Notificando contrato...");
 		contrataEmployeeObject.sendContract(s -> {
 			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-			sendBasicCopyTimer(su -> downloadCto(suc -> downloadCbc(succ -> loadWindow(succe -> {}))));
+			downloadCto(
+				su -> sendBasicCopyTimer(
+						success -> downloadCbc(suc -> loadWindow(succe -> {})),
+						failure -> loadWindow(succe -> {})), 
+				fa -> loadWindow(succe -> {}));
 		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+		
+//		contrataEmployeeObject.sendContract(s -> {
+//			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+//			sendBasicCopyTimer(su -> downloadCto(suc -> downloadCbc(succ -> loadWindow(succe -> {}))));
+//		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 
-	private void downloadCto(Consumer<Void> finish) {
+	private void downloadCto(Consumer<Void> succes, Consumer<Void> failure) {
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
@@ -1750,9 +1770,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.downloadCto(
 						s -> {
 							showSuccess("CTO", "Se ha descargado el CTO del trabajador. El documento se encuentran en el apartado de Documentos");
-							finish.accept(null);
+							succes.accept(null);
 						},
-						f -> showError("Error obtenci\u00F3n CTO", f.getMessage()));
+						f -> {
+							showError("Error obtenci\u00F3n CTO", f.getMessage());
+							failure.accept(null);
+						});
 			}
 		};
 		timer.schedule(2500);
@@ -1994,14 +2017,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						employeeStatus.visit(this);
 						selectResultsPanel();
 						showFootPanel();
-						ifSistemaREDEnabled(employeeStatus, () -> {
-							ContrataEmployee.this.setTaVisible(true);
-							ContrataEmployee.this.setIdcVisible(true);
-						}, () -> {
-							ContrataEmployee.this.setTaVisible(false);
-							ContrataEmployee.this.setIdcVisible(false);
-
-						});
+//						ifSistemaREDEnabled(employeeStatus, () -> {
+//							ContrataEmployee.this.setTaVisible(true);
+//							ContrataEmployee.this.setIdcVisible(true);
+//						}, () -> {
+//							ContrataEmployee.this.setTaVisible(false);
+//							ContrataEmployee.this.setIdcVisible(false);
+//
+//						});
 						ifSistemaREDError(employeeStatus, ContrataEmployee.this::showFootPanel,
 								ContrataEmployee.this::closeFootPanel);
 
@@ -2065,14 +2088,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			resultsPanel.setWidget(sistemaREDResults);
 			selectResultsPanel();
 
-			ifSistemaREDEnabled(employeeStatus, () -> {
-				ContrataEmployee.this.setTaVisible(true);
-				ContrataEmployee.this.setIdcVisible(true);
-			}, () -> {
-				ContrataEmployee.this.setTaVisible(false);
-				ContrataEmployee.this.setTaEndVisible(false);
-				ContrataEmployee.this.setIdcVisible(false);
-			});
+//			ifSistemaREDEnabled(employeeStatus, () -> {
+//				ContrataEmployee.this.setTaVisible(true);
+//				ContrataEmployee.this.setIdcVisible(true);
+//			}, () -> {
+//				ContrataEmployee.this.setTaVisible(false);
+//				ContrataEmployee.this.setTaEndVisible(false);
+//				ContrataEmployee.this.setIdcVisible(false);
+//			});
 
 			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
 
@@ -2120,12 +2143,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	public void setIdcVisible(boolean visible) {
-		initializeIdcDateListBox();
 		tgssContextMenu.getIdcPlNss().setVisible(visible);
 	}
 
 	private void initializeIdcDateListBox() {
-		contrataEmployeeObject.getIdcDates(dates -> {
+		tgssContextMenu.getIdc().setVisible(false);
+		contrataEmployeeObject.getIdcDates(contractId, dates -> {
 			Collections.reverse(dates);
 			int count = dates.size();
 			idcDateListBox.setRowCount(count, true);
@@ -2133,7 +2156,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.setVisibleRange(0, count + 1);
 			idcDateListBox.setSelected(0, true);
 			idcDateListBox.onResizeDropDownPopup();
+			tgssContextMenu.getIdc().setVisible(true);
 		}, error -> {
+			tgssContextMenu.getIdc().setVisible(false);
+//			showWarning("Fechas Idc", error.getMessage());
 		});
 	}
 
@@ -2230,6 +2256,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+	
+	private void showWarning(String title, String message) {
+		Map<String, String> warningMap = new HashMap<>();
+		warningMap.put(title, message);
+		AonMessagePanel.showWarning(messageContainer, warningMap);
 	}
 
 	private void showLoading(String message) {

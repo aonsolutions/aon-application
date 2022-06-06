@@ -45,6 +45,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractInfo;
@@ -593,17 +594,17 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 				.orderBy(CONTRATA_BATCH.DATE.desc());
 	}
 	private Integer obtainBatchContractCount(Contract contract){
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
-		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
-		if(result.size()>0){
-			return result.get(0).value3();
+		try ( CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser()) ) {
+			Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
+			if(result.size()>0){
+				return result.get(0).value3();
+			}
+			return 0;
 		}
-		return 0;
 	}
 	private ContrataBatch obtainBatch(Contract contract){
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
-		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
-		try {
+		try (CloseableAONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser())){
+			Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
 			if(result.size()>0){
 				IManagerBean bean = BeanManager.getManagerBean(ContrataBatch.class);
 				return (ContrataBatch) bean.get(result.get(0).value1());

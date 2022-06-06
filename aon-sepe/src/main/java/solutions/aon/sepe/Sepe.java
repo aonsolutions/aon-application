@@ -86,7 +86,7 @@ public class Sepe {
 	}
 	
 	public static String sendCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType,  CopyBasic copyBasic) throws SepeException  {
+			final String certificateType, CopyBasic copyBasic) throws SepeException  {
 		return Contrata.sendCopyBasic(certificateInputStream, certificatePassword, certificateType, copyBasic);
 	}
 	
@@ -95,8 +95,25 @@ public class Sepe {
 		Contrata.sendTransformation(certificateInputStream, certificatePassword, certificateType, cto, copyBasic);
 	}
 	
+	public static String sendTransformationCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini, Date fend, CopyBasic.FirmType firmType, String workAddress, String restContract, String cif, Date startDateContract) throws SepeException  {
+		CopyBasic copyBasic = new CopyBasic()
+		.setIpf(ipf)
+		.setFini(fini)
+		.setFend(fend)
+		.setFirmType(firmType)
+		.setWorkAddress(workAddress)
+		.setRestContract(restContract);
+		return sendTransformationCopyBasic(certificateInputStream, certificatePassword, certificateType, copyBasic, cif, startDateContract);
+	}
+	
+	public static String sendTransformationCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, CopyBasic copyBasic, String cif, Date startDateContract) throws SepeException  {
+		return Contrata.sendTransformationCopyBasic(certificateInputStream, certificatePassword, certificateType, copyBasic, cif, startDateContract);
+	}
+	
 	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType,  String ide) throws SepeException  {
+			final String certificateType, String ide) throws SepeException  {
 		Contrata.removeContrato(certificateInputStream, certificatePassword, certificateType, ide);
 	}
 	

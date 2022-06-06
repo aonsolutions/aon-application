@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ProductType implements Serializable {
 	
 	LABOUR("Mano de Obra"),
@@ -38,7 +40,7 @@ public enum ProductType implements Serializable {
 	}
 	
 	public static ProductType safeValueOf( String i ) {
-		if(i == null) return null;
+		if(AonStringUtils.isBlank(i)) return null;
 		for (ProductType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getName()))
 				return rs;

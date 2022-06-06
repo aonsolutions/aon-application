@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum SellerStatus {
 	
     ACTIVE,
@@ -25,6 +27,7 @@ public enum SellerStatus {
 	}
 	
 	public static SellerStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return ACTIVE;
 		for (SellerStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

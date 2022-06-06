@@ -94,7 +94,8 @@ public class JooqEmployeeAFI {
 			Boolean isChangeContract, 
 			Boolean isQuoteContract, 
 			Boolean isOcupationContract, 
-			Boolean isPartialityCoefContract) {
+			Boolean isPartialityCoefContract,
+			String settleReason) {
 		
 		JSONObject employeeAFIJSON = new JSONObject();
 		
@@ -204,7 +205,7 @@ public class JooqEmployeeAFI {
 			// Baja Contrato
 			if(Boolean.TRUE.equals(isEndContract)) {
 				contSeg++;
-				employeeAFIJSON.put("MB", getEDC(contractId, dslContext));
+				employeeAFIJSON.put("MB", getEDC(contractId, dslContext, settleReason));
 			}
 			
 			// Movimientos Contrato
@@ -444,7 +445,7 @@ public class JooqEmployeeAFI {
 	// -------------------------------------------- getEmployeeAFIInfo. EDC
 	
 	@SuppressWarnings("unchecked")
-	private static JSONObject getEDC(int contractId, DSLContext dslContext) {
+	private static JSONObject getEDC(int contractId, DSLContext dslContext, String settleReason) {
 		JSONObject json = new JSONObject();
 		JSONObject fab = new JSONObject();
 		JSONObject dam = new JSONObject();
@@ -512,7 +513,7 @@ public class JooqEmployeeAFI {
 		fab.put("action", "MB");
 		
 		//AVERIGUAR A TRAVES DEL FINIQUITO
-		fab.put("situation", getCausaDespido(salaryDataRecords));
+		fab.put("situation", getCausaDespido(salaryDataRecords, settleReason));
 		fab.put("day", endDateCalendar.get(Calendar.DAY_OF_MONTH));
 		fab.put("month", endDateCalendar.get(Calendar.MONTH) + 1);
 		fab.put("year", endDateCalendar.get(Calendar.YEAR));
@@ -680,10 +681,10 @@ public class JooqEmployeeAFI {
 		}
 	}
 
-	private static String getCausaDespido(Result<Record> records) {
+	private static String getCausaDespido(Result<Record> records, String settleReason) {
 
 		if(records.isEmpty())
-			return "99";
+			return settleReason;
 		
 		switch (records.get(0).get(SALARY_DATA.EXPRESSION)) {
 		case "UNFAIR":
@@ -697,7 +698,7 @@ public class JooqEmployeeAFI {
 		case "OBJECTIVE":
 			return "91";
 		default: //"CONDITIONS_CHANGE":
-			return "99";
+			return settleReason;
 		}
 	}
 	
