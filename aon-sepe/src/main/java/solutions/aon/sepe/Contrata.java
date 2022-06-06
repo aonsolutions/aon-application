@@ -179,14 +179,21 @@ public class Contrata {
 	        
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 	        handleSepeExceptions(htmlPage);
+	        
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/atraves_comunicacion.jsp").click();
 	        handleSepeExceptions(htmlPage);
 	        
-	        htmlPage = contractPage(htmlPage, cto.getCodContract());
+	        String contract = cto.getCodContract();
+	        
+	        htmlPage = contractPage(htmlPage, contract);
 	        handleSepeExceptions(htmlPage);
 
-	        
-			((HtmlSelect)htmlPage.querySelector("select[name=codcontrato]")).setSelectedAttribute(cto.getCodContract(), true);
+			try {
+				HtmlSelect codContract = ((HtmlSelect)htmlPage.querySelector("select[name=codcontrato]"));
+				codContract.getOptionByValue(contract).setSelected(true);
+			} catch (ElementNotFoundException e) {
+				throw new SepeException("Contrato "+contract+" no soportado");
+			}
 
 			HtmlSubmitInput sb = htmlPage.querySelector("#enviar");
 			htmlPage = sb.click();
@@ -362,8 +369,10 @@ public class Contrata {
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        handleSepeExceptions(htmlPage);
+	        
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 	        handleSepeExceptions(htmlPage);
+	        
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/TransformacionServlet?pagina=inicio").click();
 	        handleSepeExceptions(htmlPage);
 	      
@@ -401,7 +410,15 @@ public class Contrata {
 				form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
 				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
 				form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
-				((HtmlSelect)form.querySelector("select[name=codtransformacion]")).setSelectedAttribute( cto.getCodContract(), true);
+				
+				String contract = cto.getCodContract();
+				
+				try {
+					HtmlSelect codtransformacion = ((HtmlSelect)form.querySelector("select[name=codtransformacion]"));
+					codtransformacion.getOptionByValue(contract).setSelected(true);
+				} catch (ElementNotFoundException e) {
+					throw new SepeException("Contrato "+contract+" no soportado");
+				}
 				
 				//FECHA DE COMUNICACION
 				String[] dateComContract = Toolkit.dateString(cto.getDateComContract());
@@ -426,8 +443,14 @@ public class Contrata {
 				form.getInputByName("municipioCT").setValueAttribute(municipio);// repeat cod contract
 				
 				DomNode fijoDiscontinuo = form.querySelector("[name=fijoDiscontinuo]");
-				if(fijoDiscontinuo!=null)
+				if(fijoDiscontinuo!=null) {
 					((HtmlSelect)fijoDiscontinuo).setSelectedAttribute(cto.getDiscontinuo() ? "003" : "004", true);
+				}
+				
+				DomNode discontinuoReason = form.querySelector("[name=discontinuidad]");
+				if(discontinuoReason!=null && cto.getDiscontinuoReason()!=null) {
+					((HtmlSelect)discontinuoReason).setSelectedAttribute(cto.getDiscontinuoReason().getValue(), true);
+				}
 
 				{//DATA JORNADA
 					DomNode tipoJornada = form.querySelector("select[name=tipoJornada]");
@@ -452,16 +475,17 @@ public class Contrata {
 				      ((HtmlTextArea)areadeTexto).setText(copyBasic.getRestContract());
 				}
 			}
-			
+
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
 	        String message = getSuccessMessage(htmlPage);
-			if(message!=null && message.contains("se ha realizado correctamente"))
+			if(message!=null && message.contains("se ha realizado correctamente")) {				
 				System.out.println(message);
-			else 
+			} else {
 				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
+			}
 		} 
 	}
 	
