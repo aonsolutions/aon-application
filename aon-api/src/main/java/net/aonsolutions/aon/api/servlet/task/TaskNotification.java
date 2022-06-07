@@ -13,6 +13,7 @@ import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUEST
 
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
@@ -37,7 +38,7 @@ import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
 public class TaskNotification {
-	
+	private static final Logger LOGGER  = Logger.getLogger(TaskNotification.class.getName());
 	private static final String EMAIL_SUPPORT = "soporte@aonsolutions.es";
 	private static final String URL_BASE = "https://aon.solutions";
 
@@ -59,12 +60,13 @@ public class TaskNotification {
 				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_OPENED: APP_REQUESTS_INT_OPENED
 			)
 		) {
-			
+			LOGGER.info("onOpenNotification");
 			String body = "Solicitud Abierta";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
-			if(auth!=null && !auth.getName().isEmpty()) 
+			if(auth!=null && !auth.getName().isEmpty()) {
 				body += " por <b>" +auth.getName()+"</b>.";
-			
+			}
+
 			sendNotificationWorkflow(api, task, workflow, body);
 		}
 	}
@@ -77,6 +79,7 @@ public class TaskNotification {
 	 */
 	public static void onOpenEmail(AonApiData api, Task task, TaskWorkflow workflow){
 		if((TaskUtils.isCau(api.getData()) || TaskUtils.isExternal(task, api.getDomain())) && isAllowed(api, task, APP_REQUESTS_EXT_EMAIL_OPENED) ) {
+			LOGGER.info("onOpenEmail External");
 			sendEmailWorkflow(api, task, workflow, Optional.empty(), false); // false
 		} else if(
 			isAllowed(
@@ -89,6 +92,7 @@ public class TaskNotification {
 //			LinkedList<Auth> auths = TaskUtils.getAuthsTask(api, task, workflow, api.getUser());
 			//SEND TASKHOLDER ASSIGNED
 			if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
+				LOGGER.info("onOpenEmail Internal");
 				TaskUtils.getAuthForTaskHolder(api, task.getTaskHolder())
 				.ifPresent(a->{
 					task.setGtaskId(a.getEmail());
@@ -114,6 +118,7 @@ public class TaskNotification {
 				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_COMMENT: APP_REQUESTS_INT_COMMENT
 			)
 		) {
+			LOGGER.info("onCommentNotification");
 			String body = "Han comentado la Solicitud";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
 			if(auth!=null && !auth.getName().isEmpty()) 
@@ -137,6 +142,7 @@ public class TaskNotification {
 				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_ASSIGN: APP_REQUESTS_INT_ASSIGN
 			)
 		) {
+			LOGGER.info("onAssignNotification");
 			String body = "Solicitud Reasignada a <b>" + workflow.getComment()+ "</b>.";
 			sendNotificationWorkflow(api, task, workflow, body);
 		}
@@ -156,7 +162,7 @@ public class TaskNotification {
 				TaskUtils.isExternal(task, api.getDomain()) ? APP_REQUESTS_EXT_CLOSED: APP_REQUESTS_INT_CLOSED
 			)
 		) {
-			
+			LOGGER.info("onCloseNotification");
 			String body = workflow.getComment()!=null &&  Boolean.FALSE.equals(workflow.getComment().isEmpty()) 
 					? workflow.getComment() :"Solicitud Cerrada." ;
 					
@@ -177,13 +183,15 @@ public class TaskNotification {
 				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) &&
 				task.getGtaskId()!=null && task.getGtaskId().indexOf("@")>=0 && workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())
 			) {
+				LOGGER.info("onCloseEmail Enternal");
 				ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParamsRequest.APP_REQUESTS_EMAIL_RATING.name());
 				
 				if(exists.getId()!=null && exists.getValue().equals("true")) {
 					Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
 					
-					if(!auth.getEmail().isEmpty()) 
+					if(!auth.getEmail().isEmpty()) {						
 						sendEmailWorkflow(api, task, workflow, Optional.of(auth), true); // true
+					}
 				}
 			}
 		} else {
@@ -191,6 +199,7 @@ public class TaskNotification {
 				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_EMAIL_CLOSED ) &&
 				task.getParent()!=null && task.getParent()>0 && task.getSender()!=null && task.getSender().getUserId()!=null
 			) {
+				LOGGER.info("onCloseEmail Internal");
 				TaskUtils.getAuthForTaskHolder(api, task.getSender())
 				.ifPresent(a->
 					sendEmailWorkflow(api, task, workflow, Optional.of(a), false)
