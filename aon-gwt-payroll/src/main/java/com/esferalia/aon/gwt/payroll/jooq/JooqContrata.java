@@ -767,6 +767,8 @@ public class JooqContrata {
 				return factory.createCONTRATO100TYPE();
 			} else if (code.equals(ContractCode.C200.getValue())) {
 				return factory.createCONTRATO200TYPE();
+			} else if (code.equals(ContractCode.C209.getValue())) {
+				return factory.createCONTRATO200TYPE();
 			} else if (code.equals(ContractCode.C230.getValue())) {
 				return factory.createCONTRATO230TYPE();
 			} else if (code.equals(ContractCode.C250.getValue())) {

@@ -225,7 +225,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Collection<Employee> getMovements(AonApiData api) throws SegSocialException {
-
 		Domain domain = api.getDomain();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 
@@ -494,8 +493,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		AonComunica.communicateAlta(employee, certificate);
 		
-		AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);
-		
+		try {AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);} 
+		catch (Exception e) {}
+
 		if(employee.getName().isPresent()) {			
 			sendMovEmailNotification(api, employee, fra, SituationType.ALTA);
 		}

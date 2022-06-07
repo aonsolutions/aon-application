@@ -129,6 +129,12 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	TextBox retirementPercentTB;
 	
 	@UiField
+	CheckBox discCB;
+	
+	@UiField
+	ListBox discReasonLB;
+	
+	@UiField
 	HTMLPanel workProgramDataCBPanel;
 	
 	@UiField
@@ -360,7 +366,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo, boolean isComunica) {
 		this.contractEmployeeInfo = contractEmployeeInfo;
 		this.isComunica = isComunica;
-		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
+		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType(), contractEmployeeInfo.getContractInfo().isHasTransformation());
 		reloadSepeData();
 	}
 	
@@ -544,6 +550,16 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	@UiHandler("retirementPercentTB")
 	void onRetirementPercentTBChange(ValueChangeEvent<String> event) {
 		this.contractSpecificData.setRetirementPercent(event.getValue());
+	}
+	
+	@UiHandler("discCB")
+	void onDiscCBChange(ValueChangeEvent<Boolean> event) {
+		this.contractSpecificData.setDisc(event.getValue());
+	}
+	
+	@UiHandler("discReasonLB")
+	void onDiscReasonLBChange(ChangeEvent event) {
+		this.contractSpecificData.setDiscReason(discReasonLB.getSelectedValue());
 	}
 	
 	@UiHandler("workProgramDataCB")
@@ -1354,9 +1370,15 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		journeyTypeLB.addItem("JORNADA DIARIA","D");
 		journeyTypeLB.addItem("JORNADA MENSUAL","M");
 		journeyTypeLB.addItem("JORNADA SEMANAL","S");
+		
+		discReasonLB.clear();
+		discReasonLB.addItem("-", "");
+		discReasonLB.addItem("INCAPACIDAD TRANSITORIA", "I");
+		discReasonLB.addItem("PRORROGA TACITA", "P");
 
 		
 		// CheckBox
+		discCB.setValue(false);
 		profesionalityCB.setValue(false);
 		repeatFDCB.setValue(false);
 		workProgramDataCB.setValue(false);
@@ -1453,7 +1475,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	private void setDefaultView(String contractType) {
+	private void setDefaultView(String contractType, boolean isTransform) {
 		this.cnoSB.setValue("");
 		this.comunicationDateBx.setValue(null);
 		this.formativeLevelLB.setSelectedIndex(0);
@@ -1565,6 +1587,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		
 		// Set journeyType for contracts 300
 		createJourneyType(contractType);
+		
+		// Transform
+		showHideTransformRows(isTransform);
 	}
 
 	private void createJourneyType(String contractType) {
@@ -2111,6 +2136,16 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		older52CBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
+	private void showHideTransformRows(boolean isTransform) {
+		if(isTransform) {
+			otherDataTableElement.getRows().getItem(15).getStyle().clearDisplay();
+			otherDataTableElement.getRows().getItem(16).getStyle().clearDisplay();
+		} else {
+			otherDataTableElement.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+			otherDataTableElement.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		}
+	}
+	
 	private void fillSpecificData() {
 		String codeCNO = this.contractSpecificData.getCno();
 		CNO cnoObj = cnoMap.get(codeCNO);
@@ -2140,6 +2175,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		formationHoursTB.setText(this.contractSpecificData.getFormationHours());
 		formationMinutesTB.setText(this.contractSpecificData.getFormationMinutes());
 		retirementPercentTB.setText(this.contractSpecificData.getRetirementPercent());
+		discCB.setValue(this.contractSpecificData.getDisc());
+		setSelectedValueLB(discReasonLB, this.contractSpecificData.getDiscReason());
 		
 		//WorkProgramDataTable
 		if(Boolean.TRUE.equals(this.contractSpecificData.getWorkProgramData())) {

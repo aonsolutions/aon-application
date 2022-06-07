@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -425,15 +426,28 @@ class SistemaREDMov {
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 		DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-		if (msg1 != null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >= 0) {
+		if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
 			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		}
 
 		DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-		if (msg2 != null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
+		if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
 			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		}
+		
+		DomNode msg3 = htmlPage.querySelector("#Frame");
+		if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		}
+		
+		DomNode message = htmlPage.querySelector("#DIL"); 
+		if(message!=null && Arrays.stream(new String[]{"3408", "9125", "9086", "0350"}).anyMatch(message.getTextContent().trim()::contains) ) {
+			System.out.println(message.getTextContent().trim());
+		} else {
+			throw new Exception("Error no aceptada la comunicaci\u00f3n");
 		}
 
 		return employee;

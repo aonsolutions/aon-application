@@ -178,6 +178,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			throw new AonApiException("Auth inexistente");
 		}
 		
+		//GET TASK DOMAIN
 		tasks.addAll(
 			AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
 				f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
@@ -185,7 +186,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			.collect(Collectors.toList())
 		);
 		
-		if(page==1) {
+		if(page==1) {	//GET TASK ALL DOMAIN
 			List<Task> listOffice = getTasksOffice(api);
 			tasks.addAll(listOffice);
 		}

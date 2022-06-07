@@ -660,6 +660,16 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void sendContractoCBTransformSEPE(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback)
+					throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		};
 

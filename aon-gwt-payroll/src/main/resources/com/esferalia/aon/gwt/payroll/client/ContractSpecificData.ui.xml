@@ -329,6 +329,24 @@
 									</g:HorizontalPanel>    
 								</td>
 							</tr>
+							<!-- LINEA 15 -->
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Indicador discontinuidad</g:Label>
+								</td>
+								<td>
+									<g:CheckBox ui:field="discCB"/>
+								</td>
+							</tr>
+							<!-- LINEA 16 -->
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Tipo discontinuidad</g:Label>
+								</td>
+								<td>
+									<g:ListBox ui:field="discReasonLB" styleName='{style.maxWidthLB}'></g:ListBox>  
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</g:HTMLPanel>

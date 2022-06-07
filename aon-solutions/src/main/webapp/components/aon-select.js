@@ -149,15 +149,7 @@ export class AonSelect extends AonElement {
       if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {     
         input.setAttribute(CONSTANT.READONLY, true);
       }
- 
-      input.addEventListener(EVENT.KEYUP, () => {
-        if(this.disableKeyUp){
-          let optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-          optios = optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase()))
-          this.buildOptions(optios);
-        }
-      });
-      
+
       input.addIconButton('arrow_drop_down', () => {
         if(!this.isReadonly() && !this.isDisabled()) {
           const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
@@ -184,7 +176,7 @@ export class AonSelect extends AonElement {
         } else if(!value && emptyclear){
           this.clear();
         }
-      })
+      });
 
       if(this.disabled)
         input.disabled = true;
@@ -208,6 +200,24 @@ export class AonSelect extends AonElement {
           this.getElement(this.INPUT).value = item[this.nameAlias];
         }
       });
+       
+      input.onInput(({target})=>{
+        if(this.disableKeyUp) {
+          let optios = this.getOptions().filter(opt => opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()))
+          this.buildOptions(optios);
+        }
+      });
+            
+      let keys = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft", "Enter"];
+      input.addEventListener(EVENT.KEYDOWN, (ev) => {
+        let key = ev.key;
+        if(keys.includes(key)){
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.keyboardSelected(ev);
+        } 
+      });
+
     }
   }
 
@@ -258,6 +268,59 @@ export class AonSelect extends AonElement {
         }
       }
     });
+  }
+
+  keyboardSelected(ev){
+    let options = this.getElement(this.OPTIONS);
+    let items = options.querySelectorAll('li');
+    let isVisible = options.classList.contains('is-visible');
+    if (ev.key === "ArrowDown") {//down.
+      if(isVisible){
+        let index = -1;
+        for(let i = 0; i < items.length; i++){
+          if(items[i].classList.contains('is-selected')){
+            index = i;
+            break;
+          }
+        }
+        if(index < items.length - 1){
+          if(index >= 0){
+            items[index].classList.remove('is-selected');
+          }
+          let selected = items[index + 1];
+          selected.classList.add('is-selected');
+          // scroll center smooth
+          selected.scrollIntoView({block: "center", behavior: "smooth"});
+        }
+      }
+    } else if (ev.key === "ArrowUp") {
+      if(isVisible){
+        let index = 0;
+        for(let i = 0; i < items.length; i++){
+          if(items[i].classList.contains('is-selected')){
+            index = i;
+            break;
+          }
+        }
+        if(index > 0){
+          items[index].classList.remove('is-selected');
+          let selected = items[index - 1];
+          selected.classList.add('is-selected');
+          // scroll center smooth
+          selected.scrollIntoView({block: "center", behavior: "smooth"});
+        }
+      }
+    } else if (ev.key === "Enter"){
+      if(isVisible){
+        options.classList.remove('is-visible');
+        for(let i = 0; i < items.length; i++){
+          if(items[i].classList.contains('is-selected')){
+            this.setIndexOf(i);
+            break;
+          }
+        }
+      }
+    }
   }
 
   closeOptions() {
