@@ -47,6 +47,8 @@ public class VariablesMap implements Serializable {
 		
 		variablesMap.put("ANTICIPO_HORAS","ANTICIPO_H");
 		
+		variablesMap.put("ANTIGUEDAD_2_BIENIOS_DIARIO","ANTIGUEDAD_2");
+		
 		variablesMap.put("ANTIGUEDAD_1_BIENIO_MENSUAL","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_2_BIENIOS_MENSUAL","ANTIGUEDAD_2");
 		variablesMap.put("ANTIGUEDAD_3_BIENIOS_MENSUAL","ANTIGUEDAD_3");
@@ -287,6 +289,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("CAMPING_CAT_1_MENSUAL", "C_CAT_1_MENSUAL");
 		variablesMap.put("CAMPING_CAT_2_MENSUAL", "C_CAT_2_MENSUAL");
 		variablesMap.put("CAMPING_LUJO_MENSUAL", "C_LUJO_MENSUAL");
+		variablesMap.put("CARENCIA_CONVENIO_ANUAL", "CARENCIA_A");
 		variablesMap.put("CARNE_DE_CONDUCIR_ANUAL", "CARNE_DE_CONDUCIR");
 		variablesMap.put("CARRERA_PROFESIONAL_NIVEL_1_ANUAL", "CARRERA_PROF_NVL_1");
 		variablesMap.put("CARRERA_PROFESIONAL_NIVEL_2_ANUAL", "CARRERA_PROF_NVL_2");
@@ -984,6 +987,10 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_MANUTENCION_NO_OBLIGATORIA_MENSUAL", "MANUTENCION_NO_OBL_M");
 		variablesMap.put("PLUS_MAQUINARIA_DIARIO", "PLUS_MAQUINARIA");
 		variablesMap.put("PLUS_MAQUINAS_HASTA_50_TMS_MENSUAL", "PLUS_MAQUINAS_50TMS");
+		variablesMap.put("PLUS_MECANIZACION_DIARIO", "MECANIZACION_D");
+		variablesMap.put("PLUS_MECANIZACION_MENSUAL", "MECANIZACION_M");
+		variablesMap.put("PLUS_SEMI_MECANIZACION_DIARIO", "SEMI_MECANIZACION_D");
+		variablesMap.put("PLUS_SEMI_MECANIZACION_MENSUAL", "SEMI_MECANIZACION_M");
 		variablesMap.put("PLUS_NOCTURNIDAD_ANUAL", "P_NOCTURNIDAD_A");
 		variablesMap.put("PLUS_NOCTURNIDAD_CON_ANTIGUEDAD_MENSUAL", "P_NOCTURNIDAD_ANTIG");
 		variablesMap.put("PLUS_NOCTURNIDAD_DIARIO", "PLUS_NOCTURNIDAD");
