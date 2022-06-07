@@ -92,11 +92,33 @@ public class TrainingPercentages2022UpdateII implements Update {
 			.execute()
 			;
 			
-			// Close old  DESMPL_E, IT_E & IMS_E
+			SelectConditionStep<Record1<Integer>> fpConcept = 
+			DSL.select(DEDUCTION_CONCEPT.ID).from(DEDUCTION_CONCEPT).where(DEDUCTION_CONCEPT.DOMAIN.eq(0)).and(DEDUCTION_CONCEPT.CODE.eq("FP"));
+			
+			// Close old  FP
+			dslContext.update(SYSTEM_DEDUCTION)
+			.set(SYSTEM_DEDUCTION.END_DATE, end2021Date)
+			.where(SYSTEM_DEDUCTION.DOMAIN.eq(-101))
+			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.eq(fpConcept))
+			.and(SYSTEM_DEDUCTION.END_DATE.isNull())
+			.execute();
+			
+			// Insert new FP
+			dslContext
+			.insertInto(SYSTEM_DEDUCTION)
+			.set(SYSTEM_DEDUCTION.DOMAIN, -101)
+			.set(SYSTEM_DEDUCTION.START_DATE, start2022Date)
+			.set(SYSTEM_DEDUCTION.EXPRESSION, "REMOVE()" )
+			.set(SYSTEM_DEDUCTION.END_DATE, DSL.castNull(SYSTEM_DEDUCTION.END_DATE))
+			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, fpConcept )
+			.execute()
+			;
+
+			// Close old  FP_E, DESMPL_E, IT_E & IMS_E
 			dslContext.update(SYSTEM_COST)
 			.set(SYSTEM_COST.END_DATE, end2021Date)
 			.where(SYSTEM_COST.DOMAIN.eq(-101))
-			.and(SYSTEM_COST.CODE.in("DESMPL_E", "IT_E", "IMS_E"))
+			.and(SYSTEM_COST.CODE.in("FP_E", "DESMPL_E", "IT_E", "IMS_E"))
 			.and(SYSTEM_COST.END_DATE.isNull())
 			.execute();
 
@@ -109,6 +131,14 @@ public class TrainingPercentages2022UpdateII implements Update {
 			.set(SYSTEM_COST.START_DATE, start2022Date)
 			.set(SYSTEM_COST.DESCRIPTION, "Desempleo")
 			.set(SYSTEM_COST.EXPRESSION, "64.17" )
+			.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_COST.END_DATE))
+			.newRecord()
+			.set(SYSTEM_COST.DOMAIN, -101)
+			.set(SYSTEM_COST.TYPE, (byte) 3 )
+			.set(SYSTEM_COST.CODE, "FP_E" )
+			.set(SYSTEM_COST.START_DATE, start2022Date)
+			.set(SYSTEM_COST.DESCRIPTION, "FP")
+			.set(SYSTEM_COST.EXPRESSION, "REMOVE()" )
 			.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_COST.END_DATE))
 			.newRecord()
 			// Insert new IT_E
