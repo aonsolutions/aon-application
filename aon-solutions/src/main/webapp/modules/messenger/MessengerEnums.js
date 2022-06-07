@@ -84,10 +84,11 @@ export const MESSENGER_IDS = {
     EXTERNAL_TASK: "externalTask",
     BTN_SEND_MESSAGE: "btnSendMessage",
     DIV_TASK_TAGS:"divTaskTags",
-    createSelectCau:"divTaskTags",
     TYPE_REQUEST_CAU: "typeRequestCau",
     SELECT_APP: "selectApp",
     AON_TAB: "aonTabMessenger",
+    TOOLBAR_BRANCH: "toolbarBranch",
+    TOOLBAR_LABELS: "toolbarLabels"
 }
 
 export const WORKFLOW_TYPES = {

@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
@@ -127,7 +126,7 @@ public class TaskServlet extends AonApiHttpServlet{
 					response(req, resp, sendTaskHistoricEmail(api));
 					break;
 				case "/workflow":
-					response(req, resp, saveWorkflow(api, Optional.empty()));
+					response(req, resp, saveWorkflow(api, Optional.empty(), true));
 					break;
 				case "/workflow/update":
 					response(req, resp, updateWorkflow(api));
@@ -263,11 +262,13 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		if(task.isChild()) {
 			Task parent = AON_SOLUTIONS.getTask(domain, user, f-> f.getIdProperty().eq(task.getParent()) );
-			json.put("parentObj", TaskJSON.toJSON(parent));
+			if(parent.getId()!=null) {
+				json.put("parentObj", TaskJSON.toJSON(parent));
+			}
+
 		} else {
 			List<Task> chids = AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getParentProperty().eq(task.getId()) )
 			.sorted(Comparator.comparing(Task::getId)).collect(Collectors.toList());
-			
 			json.put("childs", TaskJSON.toJSON(chids) );
 		}
 		
@@ -279,12 +280,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		return TaskWorkflowJSON.toJSON(
 			AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
 				f-> TaskFilter.workflow(api, f)
-			) 
+			)
 		);
 	}
 	
 	private JSONArray getTaskTags(AonApiData api) {
-
 		Domain domain = api.getDomain();
 		
 		return TagJSON.toJSON( 
@@ -304,13 +304,16 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
 		boolean edit = task.getId() != null;
-		if(TaskUtils.isCau(api.getData())) 
+		if(TaskUtils.isCau(api.getData())) {
 			TaskUtils.setCauInfo(api, task);
-		
-		if(edit) 
+		}
+	
+		if(edit) {
 			TaskUtils.checkFilesAndSave(api, task);
-		else 
-		 setWgAndThDefault(api, task);
+		} else {
+			setWgAndThDefault(api, task);
+		}
+
 
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		
@@ -331,13 +334,13 @@ public class TaskServlet extends AonApiHttpServlet{
 					w.setComment(description);
 				}
 				
-				saveWorkflow( api, Optional.of(w.setTask(taskId)) );
+				saveWorkflow( api, Optional.of(w.setTask(taskId)), true);
 			}); // SAVE WORKFLOW ALL
 		}
 		return TaskJSON.toJSON(task);
 	}
 	
-	private JSONObject saveWorkflow(AonApiData api, Optional<TaskWorkflow> workflowOpt) {
+	private JSONObject saveWorkflow(AonApiData api, Optional<TaskWorkflow> workflowOpt, boolean notification) {
 		TaskWorkflow workflowTmp = workflowOpt.isPresent() ? workflowOpt.get() : TaskWorkflowJSON.fromJSON(api.getData());
 		
 		if(TaskUtils.isCau(api.getData())) {
@@ -349,7 +352,10 @@ public class TaskServlet extends AonApiHttpServlet{
 		}
 	
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
-		TaskUtils.onSaveWorkflow(api, workflow);
+		if(notification) {
+			TaskUtils.onSaveWorkflow(api, workflow);
+		}
+
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
 	
@@ -497,17 +503,24 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray sendTaskHistoric(AonApiData api) {
-		 Integer workflowId = api.getData().optInt("workflowId");
+		 JSONObject params = api.getData();
+		 
+		 Integer taskId = params.optInt("task");
+		 Integer workflowId = params.optInt("workflowId");
+		 
 		 JSONArray json = new JSONArray();
-		 if(workflowId > 0) {
+		 
+		 if(taskId!=0 && workflowId !=0) {
 			
-			Task task = TaskJSON.fromJSON(api.getData());
+			Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId));
+			
 			LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
 					 f->f.getTaskProperty().eq(task.getId())
 					 .and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
 					 .and(f.getNotificationUserProperty().isNotNull())
 					 .or(f.getIdProperty().eq(workflowId))
 			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
+			
 			task.setWorkflows(taskWorkflow);
 			
 			TaskNotification.sendHistoricWorkflow(api, task, true);
@@ -539,11 +552,13 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		String comment = workflow.getComment();
 		
-		TaskHolder taskHolderReceiver = TaskHolderJSON.fromJSON(params.optJSONObject("task_holder_receiver"));
-		
 		Workgroup workgroup = WorkgroupJSON.fromJSON(params.optJSONObject(IJsonNames.WORKGROUP));
-
-		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(taskHolderReceiver.getUserId()));
+		
+		TaskHolder sender = workflow.getTaskHolder();
+		
+		TaskHolder receiver = TaskHolderJSON.fromJSON(params.optJSONObject("task_holder_receiver"));
+		
+		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(receiver.getUserId()));
 	
 		Task taskParent = AON_SOLUTIONS.getTask(domain, userReceiver, f-> f.getIdProperty().eq(id) );
 		
@@ -556,14 +571,7 @@ public class TaskServlet extends AonApiHttpServlet{
 
 		AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), taskParent );
 		
-		List<Byte> types = new ArrayList<>(Arrays.asList(TaskWorkflowType.OPEN.value()));
-		
-	    LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
-				f->f.getTaskProperty().eq(taskId)
-				.and(f.getTypeProperty().in(types.toArray(Byte[]::new)))
-		).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
-	    
-	   taskParent.setTaskHolder(taskHolderReceiver);
+	   taskParent.setTaskHolder(receiver);
 	   taskParent.setWorkgroup(workgroup);
 	   taskParent.setStatus(TaskStatus.PENDING);
 	   
@@ -573,25 +581,29 @@ public class TaskServlet extends AonApiHttpServlet{
 	   
 	   taskParent.setParent(taskId);
 	   
-	   taskParent.setSender(workflow.getTaskHolder());
+	   taskParent.setSender(sender);
 
 	   Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), taskParent);
 	   
-	   saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())) ); // SAVE CONNECTED TASK PARENT
+	   // SAVE CONNECTED TASK PARENT
+	   saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
+	   
+	   //  ASIGNED NEW TASK
+	   TaskWorkflow assign = new TaskWorkflow()
+       .setTask(newTask.getId())
+	   .setComment(receiver.getName())
+	   .setTaskHolder(sender)
+	   .setEmail(workflow.getEmail())
+	   .setType(TaskWorkflowType.ASSIGN)
+	   .setDomain(newTask.getDomain().getId())
+	   ;
 
-	   taskWorkflow.forEach(wf->{
-		    wf.setId(null);
-		   	wf.setTask(newTask.getId());
-		   	
-		    if(wf.getType().equals(TaskWorkflowType.OPEN)) {
-		    	wf.setComment(comment);
-			    wf.setEmail(workflow.getEmail());
-			    wf.setTaskHolder(workflow.getTaskHolder());
-		    }
-	
-			saveWorkflow( api, Optional.of(wf) );
-	   });
-	
+	   // SAVE ASSIGN
+	   saveWorkflow( api, Optional.of(assign), true);
+	   
+	   // SAVE COMMENT
+	   saveWorkflow( api, Optional.of( assign.setComment(comment).setType(TaskWorkflowType.COMMENT).setId(null)), false);
+
 	   return new JSONObject();
    }
 

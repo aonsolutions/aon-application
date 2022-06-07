@@ -4,7 +4,7 @@ import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openDialogBranch} from "./creationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, taskNumberParse, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import * as ACTIONS from "../../actions.js";
@@ -55,7 +55,7 @@ const buildToolbar = (aonMessengerChat) => {
     const toolbar = setAttributes(new AonToolbar(), {
       id:aonMessengerChat.TOOLBAR,
       type:ToolbarType.SECONDARY,
-      title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
+      title:sourceText +" "+taskNumberParse(task.number)
     });
 
     aonMessengerChat.appendChild(toolbar);
@@ -68,14 +68,14 @@ const buildToolbar = (aonMessengerChat) => {
 
         if(task.id){
           toolbar.addButton2({
-            id:"createBranch",
+            id: MESSENGER_IDS.TOOLBAR_BRANCH,
             name: "Crear Rama",
             aonIcon: AON_ICONS.AON_BRANCH,
           }, (e) =>openDialogBranch(e));
         }
 
         toolbar.addButton2({
-          id: 'Labels',
+          id:  MESSENGER_IDS.TOOLBAR_LABELS,
           name: MSG.LABELS,
           icon: MATERIAL_ICONS.LABEL
           }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
@@ -146,10 +146,14 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
 
     tab.addOption({ 
       title: MSG.CONVERSATION, 
+      dataset:{
+        id: task.id,
+        number: taskNumberParse(task.number)
+      },
       fn: () => {
         buildChat(task, wrapper);
         aonMessengerChat.getTaskWorkflow(task);
-      }
+      },
     });
 
     let parentObj = task.getParentObj();
@@ -157,13 +161,20 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
       const tk = new Task(parentObj);
       let title = getTitleHtml(tk, true);
 
-      tab.addOption({
+      const parentTab = tab.addOption({
         title,
+        dataset:{
+          id: tk.id,
+          number: taskNumberParse(tk.number)
+        },
         fn: ()=>{
-          buildChat(tk, wrapper);
-          aonMessengerChat.getTaskWorkflow(tk);
+          // buildChat(tk, wrapper);
+          // aonMessengerChat.getTaskWorkflow(tk);
         }
       });
+      if(parentTab){
+        parentTab.style.display = 'none';
+      }
     }
 
     sortBy(task.getChilds(), 'number').forEach(t=>{
@@ -173,6 +184,10 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
 
       tab.addOption({
         title,
+        dataset:{
+          id: tk.id,
+          number: taskNumberParse(tk.number)
+        },
         fn: ()=>{
           buildChat(tk, wrapper);
           aonMessengerChat.getTaskWorkflow(tk);
@@ -353,7 +368,7 @@ const getTitleHtml = (task, isParent) => {
 
   let span = document.createElement(TAG.SPAN);
 
-  const { icon_color} = getIconJson(task);
+  const { icon_color } = getIconJson(task);
 
   let icon = document.createElement(TAG.I);
 
@@ -386,7 +401,7 @@ const getTitleHtml = (task, isParent) => {
   }                                       
    
   let spanTwo = document.createElement(TAG.SPAN);
-  spanTwo.innerHTML = "#"+(task.number || "0").toString().padStart(5, 0);
+  spanTwo.innerHTML = taskNumberParse(task.number);
   spanTwo.title = assigned;
   span.appendChild(spanTwo);
 

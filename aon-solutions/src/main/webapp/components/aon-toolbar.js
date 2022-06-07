@@ -282,6 +282,13 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
+	showButton(id, show = false) {
+		const aib = this.getElement(this.TOOL_SECTION + id + 'Button');
+		if(aib!=null && aib.parentNode!=null) {
+			aib.parentNode.style.display = show ? 'block' : 'none';
+		}
+	}
+
 	addTitleToolSection(title) {
 		const id = this.TOOL_SECTION + 'Title';
 		if(this.getElement(id) == null) {

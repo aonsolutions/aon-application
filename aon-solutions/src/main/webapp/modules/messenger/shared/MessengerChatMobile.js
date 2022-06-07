@@ -4,7 +4,7 @@ import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
 import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar } from "./utils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar, taskNumberParse } from "./utils.js";
 import * as ACTIONS from "../../actions.js";
 /**
  * 
@@ -184,7 +184,7 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
      const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
+        title:sourceText +" " +taskNumberParse(task.number)
     });
     toolbar.style.width = "100%"; 
     
