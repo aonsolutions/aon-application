@@ -602,7 +602,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	   saveWorkflow( api, Optional.of(assign), true);
 	   
 	   // SAVE COMMENT
-	   saveWorkflow( api, Optional.of( assign.setComment(comment).setType(TaskWorkflowType.COMMENT).setId(null)), false);
+	   if(comment!=null && comment!="") {
+		   saveWorkflow( api, Optional.of( assign.setComment(comment).setType(TaskWorkflowType.COMMENT).setId(null)), false);
+	   }
 
 	   return new JSONObject();
    }
