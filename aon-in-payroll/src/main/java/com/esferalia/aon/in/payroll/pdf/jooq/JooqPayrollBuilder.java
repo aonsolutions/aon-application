@@ -334,6 +334,11 @@ public class JooqPayrollBuilder {
 					
 
 					PDFPayment accrual = new PDFPayment(p.getAmount(), description);
+					
+					// Check this!! (set CRA0001 if not exist)
+					if(null == p.getPaymentType())
+						p.setPaymentType(com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001);
+					
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
 

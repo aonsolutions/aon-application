@@ -41,6 +41,11 @@
 		.field{
 			height: 1.1rem;
 		}
+
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
 		
 	</ui:style>
 
@@ -53,7 +58,7 @@
 				<g:TextBox ui:field="contractIde" styleName="aon-inputText {style.field}" />
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
-				<g:Label styleName="{style.subTitle}">Fecha fin prórroga:</g:Label>
+				<g:Label styleName="{style.subTitle} {style.requiredColor}">Fecha fin prórroga:</g:Label>
 				<a:DateBoxEx ui:field="newEndDateBx" styleName="aon-inputText {style.field}" />
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
