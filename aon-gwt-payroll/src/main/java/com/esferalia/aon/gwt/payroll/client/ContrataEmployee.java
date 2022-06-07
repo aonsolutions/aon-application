@@ -670,12 +670,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			removeContract.setVisible(isComunica);
 			removeContractTransform.setVisible(isComunica);
 		}
-		
-		public void setIsComunicated(boolean isComunicate) {
-			sendBasicCopy.setVisible(!isComunicate);
-			sendContract.setVisible(!isComunicate);
-			sendContractTransform.setVisible(!isComunicate);
-		}
 
 		public void setIsExtension() {
 			contractExtension.setVisible(true);
@@ -688,6 +682,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			removeContractTransform.setVisible(false);
 		}
 		
+		public void setCanExtension(boolean canExtension) {
+			contractExtension.setVisible(canExtension);
+		}
+		
 		public void setCanTransform(boolean canTranform) {
 			contractTransform.setVisible(canTranform);
 		}
@@ -695,21 +693,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		public void setIsTransform() {
 			contractExtension.setVisible(false);
 			removeContractExtension.setVisible(false);
-			sendBasicCopy.setVisible(false);
 			sendContract.setVisible(false);
 			
-			contractTransform.setVisible(true);
+			contractTransform.setVisible(false);
+			sendBasicCopy.setVisible(true);
 			sendContractTransform.setVisible(true);
 			removeContractTransform.setVisible(true);
 		}
 		
 		public void setDafaultContract() {
-			contractExtension.setVisible(false);
+			contractExtension.setVisible(true);
+			removeContractExtension.setVisible(true);
 			contractTransform.setVisible(false);
-			removeContractExtension.setVisible(false);
 			sendContractTransform.setVisible(false);
 			removeContractTransform.setVisible(false);
-			
 			sendBasicCopy.setVisible(true);
 			sendContract.setVisible(true);
 		}
@@ -2170,12 +2167,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void checkSepeContextMenu() {
-		String sepeId = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeId();
 		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
-		sepeContextMenu.setIsComunica(this.hasCertificateSEPE);
-		sepeContextMenu.setIsComunicated(this.hasCertificateSEPE && AonStringUtils.isNotBlank(sepeId));
 		sepeContextMenu.setDafaultContract();
+		sepeContextMenu.setIsComunica(this.hasCertificateSEPE);
 		
 		// Extension
 		boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
@@ -2187,6 +2182,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		if (AonStringUtils.isNotBlank(contractTypeStr)) {
 			Integer contractType = Integer.parseInt(contractTypeStr);
 			sepeContextMenu.setCanTransform(contractType >= 400);
+			sepeContextMenu.setCanExtension(contractType == 402 || contractType == 420 || contractType == 421 || contractType == 502 || contractType == 520 || contractType == 521 );
 		}
 		
 		// Transform
@@ -2196,8 +2192,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		if(Boolean.TRUE.equals(hasExtension) && Boolean.TRUE.equals(hasTransform)) sepeContextMenu.getSeparatorAdds().setVisible(false);
 		
 		sepeContextMenu.setEndDate(endDate);
-		sepeContextMenu.setHasCTO(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCto());
-		sepeContextMenu.setHasCBC(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCbc());
+		if(!hasTransform && !hasExtension) {
+			sepeContextMenu.setHasCTO(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCto());
+			sepeContextMenu.setHasCBC(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCbc());
+		}
 	}
 
 	// ------------------------------------------------- TGSS status
