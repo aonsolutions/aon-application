@@ -679,6 +679,67 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testTaxUndefVariable()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+				},
+				new String[] { 
+				});
+		
+		addPayment(aonContext, 
+				contract, 
+				"SALARIO BASE", 
+				"666.66 * DIAS_TRABAJADOS / DIAS_MES", 
+				"CUALESQUIERA", 
+				"_P", 
+				PaymentType.CRA_0001);
+		addPayment(aonContext, 
+				contract, 
+				"PLUS SALARIAL", 
+				"66.66 * DIAS_TRABAJADOS / DIAS_MES", 
+				"CUALESQUIERA", 
+				"_P", 
+				PaymentType.CRA_0001);
+		
+		Date start = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		final List<String> errors = new ArrayList<String>();
+		
+		calculator.setListener(new SmartContractSalaryCalculator.Listener() {
+			@Override
+			public void onUndefinedData(IContractPayment payment, String variableName, String message) {
+				super.onUndefinedData(payment, variableName, message);
+				errors.add(variableName);
+			}
+		});
+		
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals(0.00, salary.getTotalPayment());
+		
+		for ( String message: errors ) 
+			System.out.println("ERROR: " + message);
+		
+		
+		Assert.assertEquals(2, errors.size() );
+		//Assert.assertEquals(666.66 * 2, salary.getTotalPayment());
+		
+		
+	}
+
+	@Test
 	public void testConstantWarnningI()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();

@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonArrayUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -222,37 +221,37 @@ public class TaskFilter {
 				} catch (Exception e) {e.printStackTrace();}
 			}
 	
-//		
-				List<Integer> list = new ArrayList<>();
-				if(workgroupStr.isEmpty()) {
-					if( api.getDur().isMessengerManager()) {
-						AON.getWorkgroupStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-								t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value()))
-						)
-						.map(Workgroup::getId)
-						.forEach(list::add);
-					} else {
-						AON.getWorkgroupByTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
-							t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value())),
-							taskHolder)
-						.map(Workgroup::getId)
-						.forEach(list::add);
-					}
-			
+			List<Integer> list = new ArrayList<>();
+			if(workgroupStr.isEmpty()) {
+				if( api.getDur().isMessengerManager()) {
+					AON.getWorkgroupStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
+							t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value()))
+					)
+					.map(Workgroup::getId)
+					.forEach(list::add);
 				} else {
-					list.addAll(getWorkgroupList(workgroupStr));
+					AON.getWorkgroupByTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
+						t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value())),
+						taskHolder)
+					.map(Workgroup::getId)
+					.forEach(list::add);
 				}
-				
-				if(!list.isEmpty()) {
-					filter = filter.and(
-						f.getWorkgroupProperty().in(list.toArray(Integer[]::new))
-						.and(
-							f.getTaskHolderProperty().eq(taskHolder)
-							.or(f.getTaskHolderProperty().isNull())
-						)
-					);
-				}
-//			} 
+		
+			} else {
+				list.addAll(getWorkgroupList(workgroupStr));
+			}
+
+			if(!list.isEmpty()) {
+				filter = filter.and(
+					f.getWorkgroupProperty().in(list.toArray(Integer[]::new))
+					.and(
+						f.getTaskHolderProperty().eq(taskHolder)
+						.or(f.getTaskHolderProperty().isNull())
+					)
+				);
+			} else {
+				 filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
+			}
 		}
 		
 		return filter;
@@ -270,12 +269,11 @@ public class TaskFilter {
 			
 			List<Byte> types = new ArrayList<>(Arrays.asList(TaskWorkflowType.OPEN.value(), TaskWorkflowType.CLOSE.value(), TaskWorkflowType.CONNECTED.value()));
 
-			filter = filter
-					.and(
-							f.getEmailProperty().eq(email)
-							.or(f.getNotificationUserProperty().isNotNull())
-							.or(f.getTypeProperty().in(types.toArray(Byte[]::new)))
-					);
+			filter = filter.and(
+				f.getEmailProperty().eq(email)
+				.or(f.getNotificationUserProperty().isNotNull())
+				.or(f.getTypeProperty().in(types.toArray(Byte[]::new)))
+			);
 		}
 		
 		return filter;
@@ -385,41 +383,40 @@ public class TaskFilter {
 	
 	private static Filter getSearchCombination(TaskProperties f, String search) {
 
-		List<List<String>> combinations = AonArrayUtils.allNoRepeatCombinations(search.split("\\s"));
-		
 		Filter joinSequence = null;
+		String[] comb = search.trim().split("\\s");
 		
-		for (List<String> comb : combinations) {
-
-			StringBuilder processed = new StringBuilder("%");
-			for (String word : comb) {
-				processed.append(word).append("%");
-			}			
-
+		System.out.println(String.join(", ", comb));
+		
+		for (String word : comb) {
+			StringBuilder processed = new StringBuilder("%").append(word).append("%");
 			if(joinSequence == null) {
 				joinSequence = getSearch(f, processed.toString()); 
 			} else {
-				joinSequence = joinSequence.or(getSearch(f, processed.toString()));		
+				joinSequence = joinSequence.and(getSearch(f, processed.toString()));		
 			}
-		}	
-
+		}			
 		return joinSequence;
 	}
 	
 	private static Filter getSearch(TaskProperties f, String search) {
 		
-		Filter filter = f.getDescriptionProperty().like("%" + search + "%")
-		.or(f.getRegistryNameProperty().like("%" + search + "%"))
-		.or(f.getCommentsProperty().like("%" + search + "%")) 
-		.or(f.getTagNameProperty().like("%" + search + "%"))
-		.or(f.getGtaskIdProperty().like("%" + search + "%"))
-		.or(f.getCommentsWorkflowProperty().like("%" + search + "%"))
-		;
+		Filter filter = f.getDescriptionProperty().like(search)
+		.or(f.getRegistryNameProperty().like(search))
+		.or(f.getCommentsProperty().like(search)) 
+		.or(f.getTagNameProperty().like(search))
+		.or(f.getGtaskIdProperty().like(search))
+		.or(f.getCommentsWorkflowProperty().like(search));
+		
 		Integer numberSearch = 0;
-		try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); } 
-		catch(NumberFormatException e){}
-		if(numberSearch!=0)
+		
+		try { 
+			numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); 
+		} catch(NumberFormatException e){}
+		
+		if(numberSearch!=0) {
 			filter = filter.or(f.getNumberProperty().like(numberSearch));
+		}
 
 		return filter;
 	}	
@@ -428,13 +425,16 @@ public class TaskFilter {
 		List<Integer> workgroupList = new ArrayList<>();
 		if(!workgroupStr.isEmpty()) {
 			String newStr = workgroupStr;
-			if(newStr.contains(",all")) {
-				newStr = newStr.replace(",all","");
+			if(newStr.contains(",all") || newStr.equals("0")) {
+				newStr = newStr.replace(",all","").replace("0", "");
 			}
 			
-			String[]  str = newStr.split(",");
-			for(int i=0; i<str.length; i++) {
-				workgroupList.add(Integer.parseInt(str[i]) );
+			if(newStr!=null && !"".equals(newStr)) {
+				String[] str = newStr.split(",");
+		
+				for(int i=0; i<str.length; i++) {
+					workgroupList.add(Integer.parseInt(str[i]) );
+				}
 			}
 		}
 		

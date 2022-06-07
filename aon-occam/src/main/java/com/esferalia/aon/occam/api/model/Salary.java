@@ -85,6 +85,10 @@ public class Salary implements Serializable {
 			return paymentType;
 		}
 		
+		public void setPaymentType(PaymentType paymentType) {
+			this.paymentType = paymentType;
+		}
+		
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {

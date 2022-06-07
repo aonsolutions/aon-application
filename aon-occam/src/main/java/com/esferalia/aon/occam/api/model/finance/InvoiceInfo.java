@@ -45,6 +45,18 @@ public class InvoiceInfo implements Serializable {
 		this.type = type;
 		return this;
 	}
+	
+	public boolean isAccepted() {
+		return InvoiceCommunicationStatus.ACCEPTED.equals(getStatus());
+	}
+	
+	public boolean isAcceptedWithErrors() {
+		return InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(getStatus());
+	}
+	
+	public boolean isAnnuled() {
+		return InvoiceCommunicationStatus.ANNULLED.equals(getStatus());
+	}
 
 	public InvoiceCommunicationStatus getStatus() {
 		if(status == null) {

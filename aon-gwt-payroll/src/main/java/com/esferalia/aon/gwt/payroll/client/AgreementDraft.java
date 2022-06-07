@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -50,6 +51,8 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -1355,6 +1358,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	TextBox partialTextBox;
 	@UiField
 	MonthListBox previewMonthListBox;
+	@UiField
+	ListBox tc2ListBox;
 
 	// Stuff for a properly built salary table.
 	// Head, first column, and last column frozen.
@@ -2272,7 +2277,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		calculate();
 	}
 
-	@UiHandler({ "typeListBox", "levelListBox", "partialTextBox", "groupListBox" })
+	@UiHandler({ "typeListBox", "levelListBox", "partialTextBox", "groupListBox", "tc2ListBox" })
 	void onChangePreview(ChangeEvent event) {
 		printPreview();
 	}
@@ -4447,6 +4452,18 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return Type.valueOf(value);
 	}
 
+	private void initTc2ListBox() {
+		tc2ListBox.clear();
+
+		for (Entry<Integer, ContractTypeRecord> entry : new ContractType().getContractTypes().entrySet()) { 
+			String value = AonStringUtils.leftPad(entry.getKey().toString(), 3, '0');
+			String item = entry.getKey() + " - " + AonStringUtils.upperCase(AonStringUtils.abbreviate(entry.getValue().getContractTypeShortDescription(),40));
+			tc2ListBox.addItem(item, value);
+		}
+		
+		tc2ListBox.setSelectedIndex(1);// 100
+	}
+
 	private void initTypeListBox() {
 		typeListBox.clear();
 		typeListBox.addItem(Type.SALARY.getDescription(), Type.SALARY.name());
@@ -4458,6 +4475,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String value = levelListBox.getValue(index);
 		return Integer.valueOf(value);
 
+	}
+
+	private String getTc2() {
+		return tc2ListBox.getSelectedValue();
 	}
 
 	private String getGroup() {
@@ -4538,13 +4559,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private void printPreview() {
 		Type type = getType();
 		int levelId = getLevelId();
+		String tc2 = getTc2();
 		String group = getGroup();
 		double partial = getPartial();
 		
 		
 		List<Variable> context = new ArrayList<>();
-		StringVariable groupVariable = new StringVariable();
-		context.add(new StringVariable.Builder().setName("TC2").setValue("100").create());
+		context.add(new StringVariable.Builder().setName("TC2").setValue(tc2).create());
 		context.add(new StringVariable.Builder().setName("GRUPO_COTIZACION").setValue(group).create());
 		context.add(new NumberVariable.Builder().setName("COEFICIENTE_PARCIALIDAD").setValue(partial).create());
 		
@@ -4904,6 +4925,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
 		printPreviewButton.addClickHandler(e -> {
 			showPreview();
+			initTc2ListBox();
 			initTypeListBox();
 			initLevelListBox();
 			initPreviewMonthListBox();

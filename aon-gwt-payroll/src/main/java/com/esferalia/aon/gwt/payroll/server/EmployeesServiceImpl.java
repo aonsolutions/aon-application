@@ -305,6 +305,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract.ContractBuilder;
+import aon.sepe.objects.Contract.DiscontinuoReason;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
@@ -7161,6 +7162,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} else
 			builder.setPrevisible(false);
 		
+		
+		Boolean disc = employeeContractInfo.getContractSpecificData().getDisc();
+		if(null != disc) {
+			builder.setDiscontinuo(disc);
+			String discReason = employeeContractInfo.getContractSpecificData().getDiscReason();
+			if(disc && AonStringUtils.isBlank(discReason))
+				throw new IllegalArgumentException("Si la transformaci\u00f3n es con indicador de discontinuidad, es obligatorio rellenar el motivo de la discontinuidad");
+			builder.setDiscontinuoReason(DiscontinuoReason.valueOf(discReason));
+		} else
+			builder.setDiscontinuo(false);
 			
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());

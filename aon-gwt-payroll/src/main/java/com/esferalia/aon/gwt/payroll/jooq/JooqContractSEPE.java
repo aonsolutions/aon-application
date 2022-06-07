@@ -93,6 +93,7 @@ public class JooqContractSEPE {
 		getContractCNO(dslContext, contractId, contractSpecificData);
 		getContractIDE(dslContext, contractId, contractSpecificData);
 		getContractComunicationDate(dslContext, contractId, contractSpecificData);
+		getContractTransformDisc(dslContext, contractId, contractSpecificData);
 		
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
@@ -171,6 +172,38 @@ public class JooqContractSEPE {
 			}
 		}
 	}
+	
+	private static void getContractTransformDisc(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
+		Result<Record> discRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("DISCONTINUOS"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(discRecords.isNotEmpty()) {
+			Boolean discBoolean;
+			try {
+				discBoolean = Boolean.parseBoolean(discRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+				contractSpecificData.setDisc(discBoolean);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		Result<Record> discReasonRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("DISCONTINUOS_REASON"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(discReasonRecords.isNotEmpty()) {
+			String discReason;
+			try {
+				discReason = discReasonRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+				contractSpecificData.setDiscReason(discReason);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	private static void setContractSpecificDataDB(DSLContext dslContext, Integer domainId, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try {
@@ -184,6 +217,7 @@ public class JooqContractSEPE {
 			updateContractCNO(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getCno());
 			updateContractIDE(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getIde());
 			updateContractComunicationDate(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getComunicationDate());
+			updateContractTransformDisc(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getDisc(), contractSpecificData.getDiscReason());
 		
 			IContratoType contrato = JooqContrata.createCONTRATOS(employeeContractInfo);
 			
@@ -281,6 +315,36 @@ public class JooqContractSEPE {
 				.set(CONTRACT_DATA.START_DATE, startDate)
 				.set(CONTRACT_DATA.END_DATE, endDate)
 				.execute();
+		}
+	}
+	
+	private static void updateContractTransformDisc(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
+			Date endDate, Boolean disc, String discReason) {
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("DISCONTINUOS").or(CONTRACT_DATA.NAME.eq("DISCONTINUOS_REASON")))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+	
+		if(null != disc) {
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.NAME, "DISCONTINUOS")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, disc ? "true" : "false")
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
+			
+			if(disc && AonStringUtils.isNotBlank(discReason))
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.NAME, "DISCONTINUOS_REASON")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, discReason)
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.execute();
 		}
 	}
 
