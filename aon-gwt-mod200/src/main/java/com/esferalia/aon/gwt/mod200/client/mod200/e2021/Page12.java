@@ -78,7 +78,7 @@ public class Page12 extends PageAbs {
 						paintDescription(table, keys[i].getDescription(), row, 0, bold, 0);
 						paintDescription = false;
 					}
-					paintKeyField(table,keys[i], row, i+1);					
+					paintKeyField(table, keys[i], row, i+1);					
 				}
 			}
 			row++;

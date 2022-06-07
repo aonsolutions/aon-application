@@ -40,10 +40,9 @@ public class Page19 extends PageAbs {
 	
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable()
-  		  && (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0021) 
-		   || callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0039))
-  		  ;
+		boolean av = super.isAvailable() && 
+				     (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0021) || 
+				      callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0039));
 		return av;
 	}
 	

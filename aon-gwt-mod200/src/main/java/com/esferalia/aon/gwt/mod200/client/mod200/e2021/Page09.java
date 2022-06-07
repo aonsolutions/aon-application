@@ -210,6 +210,9 @@ public class Page09 extends PageAbs {
 		int col = 0;
 		for (IMod200KeysProvider key : Mod2002021LQ1033_1Key.values()) {
 			Label desc = new Label(key.getDescription() );
+			desc.setStyleName(AON.AON_CSS.aonMarginLeft());
+			if ("Total".equals(key.getDescription()))
+				desc.addStyleName(AON.AON_CSS.aonBold());
 			tableDetail.setWidget(r, 0, desc);
 			tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 			col = 1;
@@ -240,6 +243,8 @@ public class Page09 extends PageAbs {
 		col = 0;
 		for (IMod200KeysProvider key : Mod2002021LQ1033_2Key.values()) {
 			Label desc = new Label(key.getDescription() );
+			if ("Total".equals(key.getDescription()))
+				desc.setStyleName(AON.AON_CSS.aonBold());
 			tableDetail2.setWidget(r, 0, desc);
 			tableDetail2.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 			col = 1;

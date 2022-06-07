@@ -2360,7 +2360,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("En efectivo")
 	String cash();
 	
-	@DefaultMessage("Domicialici\u00F3n")
+	@DefaultMessage("Domiciliaci\u00F3n")
 	String directDebit();
 	
 	@DefaultMessage("I.B.A.N.")

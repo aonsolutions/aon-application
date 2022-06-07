@@ -146,6 +146,8 @@ public class Mod2002021DAO  {
 			(mod,reg) -> mod.getMinorEntities().add(new MinorEntity()				
 					.setDocument(reg.getDocument())					
 					.setName( reg.getName())))
+		,FILM_PRODUCTIONS( 
+			(mod,reg) -> mod.getFilmProductions().add(reg.getDocument()))
 		;
 		
 		private IPopulater populater;
@@ -428,8 +430,7 @@ public class Mod2002021DAO  {
 				list.add(detail);
 			}
 		}
-		
-		
+				
 		// Agrupaciones de interes economico y UTES. Deducción para evitar la doble imposicion 
 		if (mod200.getUteBases() != null) {
 			for ( UteBase ute : mod200.getUteBases() ) {
@@ -469,6 +470,21 @@ public class Mod2002021DAO  {
 				}
 			}
 		}
+		
+		// Información producciones cinematográficas
+		if (mod200.getFilmProductions() != null) {
+			for ( String fp : mod200.getFilmProductions() ) {
+				if (AonStringUtils.isNotBlank(fp)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002021RegistryType.FILM_PRODUCTIONS.byteValue());
+					detail.setDocument(AonStringUtils.substring(fp,0,9));
+					list.add(detail);
+				}
+			}
+		}		
+		
 		if (!list.isEmpty()) {
 			ctx.getDslContext().batchStore(list).execute();
 			ctx.log().info("\t\t MOD 200 REGISTRY (" + list.size() + " rows)");

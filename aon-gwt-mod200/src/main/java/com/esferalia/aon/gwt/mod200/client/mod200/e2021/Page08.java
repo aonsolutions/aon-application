@@ -79,7 +79,7 @@ public class Page08 extends PageAbs {
 		paintKeyDescription(tab1, Mod2002021Key.LQ500, row, 0);
 		paintEmptyCell(tab1, row, 1);
 		paintEmptyCell(tab1, row, 2);
-		paintKeyField(tab1, Mod2002021Key.LQ500, row, 3);
+		paintKeyField(tab1, Mod2002021Key.LQ500, row, 3, true);
 		++row;
 		
 		paintEmptyCell(tab1, row, 0);
@@ -98,7 +98,7 @@ public class Page08 extends PageAbs {
 		paintKeyDescription(tab1, Mod2002021Key.LQ501, row, 0);
 		paintEmptyCell(tab1, row, 1);
 		paintEmptyCell(tab1, row, 2);
-		paintKeyField(tab1, Mod2002021Key.LQ501, row, 3);
+		paintKeyField(tab1, Mod2002021Key.LQ501, row, 3, true);
 		++row;
 		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010) ) {
@@ -165,8 +165,8 @@ public class Page08 extends PageAbs {
 		}
 		
 		paintKeyDescription(tab2, Mod2002021Key.I0417, row, 0);
-		paintKeyField(tab2, Mod2002021Key.I0417, row, 1);
-		paintKeyField(tab2, Mod2002021Key.D0418, row, 2);
+		paintKeyField(tab2, Mod2002021Key.I0417, row, 1, true);
+		paintKeyField(tab2, Mod2002021Key.D0418, row, 2, true);
 		
 		// Detalle de Correcciones (Totales)
 		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
@@ -188,7 +188,7 @@ public class Page08 extends PageAbs {
 			int col = 1; 
 			for (Mod2002021Key key : ck.getKeys() ) {
 				if (key != null) {
-					paintKeyField(tab3,key,row,col);	
+					paintKeyField(tab3,key,row,col, true);	
 				}
 				++col;
 			}

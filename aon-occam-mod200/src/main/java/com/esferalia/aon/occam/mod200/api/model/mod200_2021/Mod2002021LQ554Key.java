@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
 // Régimen de cooperativas - Determinación de la base imponible
-public enum Mod2002021LQ554Key implements Serializable, IMod200KeysProvider  {
+public enum Mod2002021LQ554Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// K --> \u00CD í --> \u00ED
@@ -30,11 +30,11 @@ public enum Mod2002021LQ554Key implements Serializable, IMod200KeysProvider  {
 	;
 	 
     private String description;
-    private Mod2002021Key[] keys;
+    private Mod2002021Key[] keys;    
 
 	private Mod2002021LQ554Key(Mod2002021Key[] keys, String description) {
 		this.description = description;
-		this.keys = keys;
+		this.keys = keys;		
 	}
 	
 	public String getDescription() {

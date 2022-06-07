@@ -72,10 +72,13 @@ public class Page20 extends PageAbs {
 		FlexTable table = addTable(AON.MSG.liquidacion());
 		
 		int row = 0;		
-		paintKey(table, Mod2002021Key.LQ552, row++);
-		paintKey(table, Mod2002021Key.LQ562, row++);
-		paintKey(table, Mod2002021Key.BN621, row);
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		row = paintKey(table, Mod2002021Key.LQ552, row, false, true);
+		row = paintKey(table, Mod2002021Key.LQ562, row, false, true);
+		paintDescription(table, Mod2002021Key.BN621.getDescription() + ": Estado", row, 0, false);
+		paintKeyField(table, Mod2002021Key.BN621, row++, 1, false);
+		paintDescription(table, "Opci\u00F3n de fraccionamiento art. 19.1 LIS", row++, 0, true);
+		paintDescription(table, Mod2002021Key.LQ2489.getDescription() + ": Estado", row, 0, false);
+		paintKeyField(table, Mod2002021Key.LQ2489, row++, 1, false);
 		
 		// Panel Devolución
 		
@@ -254,8 +257,13 @@ public class Page20 extends PageAbs {
 		// Abono / Compensación
 		
 		FlexTable table2 = addTable("Abono / Compensaci\u00F3n");
-		paintKey(table2, Mod2002021Key.LM150, 0);
-		paintKey(table2, Mod2002021Key.LM506, 1);
+		paintDescription(table2, "Abono por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)", 0, 0, true);
+		paintKeyField(table2, Mod2002021Key.BN1020, 0, 1, true, "A");
+		paintDescription(table2, "Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)", 1, 0, true);
+		paintKeyField(table2, Mod2002021Key.BN1021, 1, 1, true, "C");		
+		paintKey(table2, Mod2002021Key.LQ3318, 2);
+		paintKey(table2, Mod2002021Key.LQ2490, 3);
+		paintKey(table2, Mod2002021Key.LQ2493, 4);
 		
 		// Cuota Cero
 		
@@ -264,8 +272,9 @@ public class Page20 extends PageAbs {
 		zeroPanel.add(getTitle(AON.MSG.zeroQuota()));
 		
 		zeroQuota = new CheckBox(AON.MSG.zeroQuota());
-		zeroQuota.setStyleName(AON.CSS.aonMarginLeft());
-		zeroQuota.addStyleName(AON.CSS.aonMarginTop());
+		zeroQuota.addStyleName(AON.CSS.aonMarginLeft());
+//		zeroQuota.addStyleName(AON.CSS.aonMarginTop());
+//		zeroQuota.setStyleName(AON.CSS.aonPadding());		
 		
 		zeroPanel.add(zeroQuota);
 		basePanel.add(zeroPanel);

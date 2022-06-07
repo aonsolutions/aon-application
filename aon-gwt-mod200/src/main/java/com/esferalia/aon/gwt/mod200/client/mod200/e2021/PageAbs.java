@@ -113,9 +113,21 @@ public abstract class PageAbs extends ResizeComposite {
 		return ++row;
 	}
 	
+	protected int paintKey(FlexTable tab, final Mod2002021Key key, int row, boolean bold) {
+		paintDescription(tab, key.getDescription(), row, 0, bold);
+		paintKeyField(tab, key, row, 1);	
+		return ++row;
+	}
+	
+	protected int paintKey(FlexTable tab, final Mod2002021Key key, int row, boolean bold, boolean padding) {
+		paintDescription(tab, key.getDescription(), row, 0, bold);
+		paintKeyField(tab, key, row, 1, padding);	
+		return ++row;
+	}
+	
 	protected void paintKeyDescription(FlexTable tab, Mod2002021Key key, int row, int col) {
-		String description = key.getDescription();
-		paintDescription(tab, description, row, col, isTitle(key));	
+//		String description = key.getDescription();
+		paintDescription(tab, key.getDescription(), row, col, isTitle(key));	
 	}
 	
 	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean bold) {
@@ -135,20 +147,36 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyField(FlexTable tab, final Mod2002021Key key, int row, int col) {
-		paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH, true);
+		//paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH, true);
+		paintKeyField(tab, key, row, col, !isTitle(key));
+	}
+	
+	protected void paintKeyField(FlexTable tab, final IMod200Key key, int row, int col, boolean padding) {
+		String code = key.getCode(callback.getMod200Object().getAdministration());
+		paintKeyField(tab, key, row, col, padding, code);
+	}
+	
+	protected void paintKeyField(FlexTable tab, final IMod200Key key, int row, int col, boolean padding, String code) {
+		paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH, padding, code);
 	}
 	
 	protected void paintKeyField(FlexTable tab, final IMod200Key k, int row, int col, int visibleLength, boolean padding) {
+		String code = k.getCode(callback.getMod200Object().getAdministration());
+		paintKeyField(tab, k, row, col, visibleLength, padding, code);
+	}
+	
+	protected void paintKeyField(FlexTable tab, final IMod200Key k, int row, int col, int visibleLength, boolean padding, String code) {
 		
 		boolean disabled = isDisabled(k);
 		
 		FlowPanel panel = new FlowPanel();
-		if (padding && !isTitle(k)) {
+//		if (padding && !isTitle(k)) {
+		if (padding) {
 			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
 		}		
 
-		String code = k.getCode(callback.getMod200Object().getAdministration());
-		if (!code.isEmpty()) {
+//		String code = k.getCode(callback.getMod200Object().getAdministration());
+		if (code != null && !code.isEmpty()) {
 			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, Model2002021.BOX_LENGTH);
 			getLabels().put(k, codeBoxLabel);
 			panel.add(codeBoxLabel);
@@ -254,6 +282,8 @@ public abstract class PageAbs extends ResizeComposite {
 						Label desc = new Label(key.getDescription());			
 						tableDetail.setWidget(r, 0, desc);
 						desc.setStyleName(AON.AON_CSS.aonMarginLeft());
+						if ("Total".equals(key.getDescription()))
+							desc.addStyleName(AON.AON_CSS.aonBold());
 						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 						paintDesc = false;
 					}
@@ -459,7 +489,6 @@ public abstract class PageAbs extends ResizeComposite {
 			footernote.setWidth("95%");
 			footernote.addStyleName(AON.CSS.aonFontSmaller());
 			footernote.addStyleName(AON.CSS.aonBlockCenter());
-			//footernote.addStyleName(AON.CSS.aonPaddingBottom());
 			container.add(footernote);
 		}
 	
@@ -467,8 +496,23 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	protected void addLabel(String text) {
 		addLabel(text, false);		
-	}	
+	}
 	protected void addLabel(String text, boolean isBold) {
+		
+//		Label label = new Label(text);
+//		label.setStyleName(AON.CSS.aonMargin());
+//		label.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		label.addStyleName(AON.CSS.aonBlockCenter());
+//		if (isBold) 
+//			label.addStyleName(AON.CSS.aonBold());
+//		
+//		basePanel.add(label);
+		
+		paintLabel(basePanel, text, isBold);		
+		
+	}
+	
+	protected void paintLabel(Panel container, String text, boolean isBold) {
 		
 		Label label = new Label(text);
 		label.setStyleName(AON.CSS.aonMargin());
@@ -477,8 +521,8 @@ public abstract class PageAbs extends ResizeComposite {
 		if (isBold) 
 			label.addStyleName(AON.CSS.aonBold());
 		
-		basePanel.add(label);
+		container.add(label);
 		
-	}
+	}	
 	
 }

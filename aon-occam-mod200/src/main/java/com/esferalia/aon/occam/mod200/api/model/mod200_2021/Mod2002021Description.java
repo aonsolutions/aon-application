@@ -571,10 +571,12 @@ public class Mod2002021Description {
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1044,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ3243, "Complementaria: Devoluci\u00F3n acordada/compensada"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ3317, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ3320, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ3317, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ3318, DESCRIPTION_MAP.get(Mod2002021Key.LQ3317));
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ3320, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2490, DESCRIPTION_MAP.get(Mod2002021Key.LQ3320));
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ2492, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
-		
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2493, DESCRIPTION_MAP.get(Mod2002021Key.LQ2492));		
 	}
 	
 	static {

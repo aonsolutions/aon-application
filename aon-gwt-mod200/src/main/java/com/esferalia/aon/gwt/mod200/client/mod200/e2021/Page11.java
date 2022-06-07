@@ -2,6 +2,9 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200PageCallback;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
@@ -54,6 +57,8 @@ public class Page11 extends PageAbs {
 	private static final String FOOTER_588_1 = "En este apartado no se deben indicar las deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] de la p\u00E1g. 14 y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
 	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2022: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2022.";
 	private static final String FOOTER_082_1 = "Entre otros requisitos, ser\u00E1 necesario que transcurra, al menos, uno a\u00F1o desde la finalizaci\u00F3n del per\u00EDodo impositivo en que se gener\u00F3 la deducci\u00F3n, sin que la misma haya sido objeto de aplicaci\u00F3n.";
+	
+	private FlowPanel filmPanel;
 
 	public Page11( Model200PageCallback callback ) {
 		super(callback);
@@ -121,6 +126,64 @@ public class Page11 extends PageAbs {
 				
 			}
 		}
+		
+		// Información adicional producciones cinematográficas españolas y espectáculos en vivo
+		filmPanel = new FlowPanel();		
+		filmPanel.addStyleName(AON.CSS.aonPaddingBottom());
+		basePanel.add(filmPanel);
+		paintFilmPanel();
+		
+	}
+	
+	private void paintFilmPanel() {
+				
+		filmPanel.clear();
+		
+		filmPanel.add(getTitle("Informaci\u00F3n adicional producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo"));
+		paintLabel(filmPanel, "Los contribuyentes que participen en la financiaci\u00F3n de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales (arts. 36.1 y 3 LIS y art. 39.7 LIS) consignar\u00E1n, a continuaci\u00F3n, el NIF del contribuyente que realiza la producci\u00F3n o espect\u00E1culo.", false);
+		
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.setWidth("30%");
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		filmPanel.add(tab);
+		
+		tab.addRow()
+			.addCell( new Label("NIF Contribuyente"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		
+		for (int i = 0; i < callback.getMod200Object().getMod200().getFilmProductions().size(); i++) {
+			final int idx = i;
+			
+			AonDocumentTextBox document = new AonDocumentTextBox();
+			document.setMaxLength(9);
+			document.setValue(callback.getMod200Object().getMod200().getFilmProductions().get(idx));
+			document.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getFilmProductions().set(idx, document.getValue());
+				callback.markAsDirty();
+			});
+			
+			// Boton borrar linea
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(event -> {
+				callback.getMod200Object().getMod200().getFilmProductions().remove(idx);
+				paintFilmPanel();
+				callback.markAsDirty();
+			});
+
+			tab.addRow()
+				.addCell(document)
+				.addCell(deleteButton);
+			
+		}
+		
+		// Botón añadir 
+		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+		addButton.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().getFilmProductions().add(new String());
+			paintFilmPanel();
+		});
+		tab.addRow().addCell(addButton);		
+
 	}
 	
 	private int paintKeyBreakdownLinkBN565(final FlexTable tab, int row) {
@@ -207,6 +270,8 @@ public class Page11 extends PageAbs {
 						Label desc = new Label(key.getDescription());			
 						tableDetail.setWidget(r, 0, desc);
 						desc.setStyleName(AON.AON_CSS.aonMarginLeft());
+						if ("Total".equals(key.getDescription()))
+							desc.addStyleName(AON.AON_CSS.aonBold());
 						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 						paintDesc = false;
 					}

@@ -65,8 +65,7 @@ public class Mod2002021 extends Mod200 {
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>(); // UTES - Relación de socios
 	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();  // Grupos de Sociedades- NIF de las entidades del grupo 
 	private LinkedList<String> establishments = new LinkedList<String>();	// No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
-	
-	// FALTA - Información adicional producciones cinematográficas españolas y espectáculos en vivo (Página 17) con el desglose de la casilla 588, son unos NIF (en el impreso 6) 
+	private LinkedList<String> filmProductions = new LinkedList<String>();	// Información adicional producciones cinematográficas españolas y espectáculos en vivo 
 	
 	private String devType;
 	private String payType;
@@ -237,6 +236,12 @@ public class Mod2002021 extends Mod200 {
 	}
 	public void setEstablishments(LinkedList<String> establishments) {
 		this.establishments = establishments;
+	}
+	public LinkedList<String> getFilmProductions() {
+		return filmProductions;
+	}
+	public void setFilmProductions(LinkedList<String> filmProductions) {
+		this.filmProductions = filmProductions;		
 	}
 	public String getDevType() {
 		return devType;
