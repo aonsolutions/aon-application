@@ -216,15 +216,16 @@ public class TaskUtils {
 	public static LinkedList<Auth> getAuthsTask(AonApiData api, Task task, TaskWorkflow workflow, User user) {
 		LinkedList<Auth> list = new LinkedList<>();
 		Domain domain = api.getDomain();
+		Optional<String> gtaskId = task.getGtaskId();
 		//SEND SENDER
 		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			
 			getAuthForTaskHolder(api, task.getSender()).ifPresent(list::add);
 			System.out.println("SENDER SEND NOTIFICATION ID:"+ task.getSender().getId());
 			
-		} else if(task.getGtaskId()!=null && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
+		} else if(gtaskId.isPresent() && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
 			
-			Auth authSender = AON_SOLUTIONS.getAuth(task.getGtaskId());
+			Auth authSender = AON_SOLUTIONS.getAuth(gtaskId.get());
 			
 			if( authSender!=null && authSender.getEmail()!=null &&  !Arrays.equals(user.getAuth().getAuth(), authSender.getAuth())) {
 				list.add(authSender);

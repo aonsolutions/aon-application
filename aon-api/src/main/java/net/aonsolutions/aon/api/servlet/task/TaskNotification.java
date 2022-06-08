@@ -209,15 +209,17 @@ public class TaskNotification {
 	public static void onCloseEmail(AonApiData api, Task task, TaskWorkflow workflow){		
 		
 		if(	TaskUtils.isExternal(task, api.getDomain()) ) {
+			Optional<String> gtaskId = task.getGtaskId();
 			if(
 				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) &&
-				task.getGtaskId()!=null && task.getGtaskId().indexOf("@")>=0 && workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())
+				gtaskId.isPresent() && gtaskId.get().contains("@") && 
+				workflow.getEmail()!=null && !workflow.getEmail().equals(gtaskId.get())
 			) {
 				LOGGER.info("onCloseEmail Enternal");
 				ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParamsRequest.APP_REQUESTS_EMAIL_RATING.name());
 				
 				if(exists.getId()!=null && exists.getValue().equals("true")) {
-					Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
+					Auth auth = AON_SOLUTIONS.getAuth(gtaskId.get());
 					
 					if(!auth.getEmail().isEmpty()) {						
 						sendEmailWorkflow(api, task, workflow, Optional.of(auth), true); // true
@@ -335,8 +337,8 @@ public class TaskNotification {
 				String bcc = null;
 				if( TaskUtils.isCau(api.getData()) ) {
 					to = EMAIL_SUPPORT;
-				} else if( task.getGtaskId()!=null && !task.getGtaskId().isEmpty() ) {
-					to = task.getGtaskId();
+				} else if( task.getGtaskId().isPresent()) {
+					to = task.getGtaskId().get();
 					bcc = EMAIL_SUPPORT;
 				}
 				
@@ -345,8 +347,6 @@ public class TaskNotification {
 					String url = URL_BASE;
 					
 					String description = TaskUtils.parseDescription(task).replaceAll("\\<img[^\\>]*\\>|\\&amp;|\n|<br[^\\>]*\\>", " ");
-					
-					JSONObject auth = TaskUtils.parseAuth(task);
 					
 					TaskMail tm = new TaskMail()
 					.setNumber(TaskUtils.parseNumber(task.getNumber()))
@@ -357,11 +357,12 @@ public class TaskNotification {
 					.setDescription(description)
 					.setUrl(url)
 					.setLogo(logo);
-					
+
+                    JSONObject auth = TaskUtils.parseAuth(task);
 					if(!auth.optString(IJsonNames.EMAIL).isEmpty()) {
 						tm.setContact(auth.optString(IJsonNames.EMAIL));
 					}
-					
+			
 					task.getTmp().ifPresent(tm::setNote);
 				
 					String body = TaskMailTemplate.taskWorkflowContent(tm);
@@ -374,8 +375,9 @@ public class TaskNotification {
 //					.setReplyTo(to)
 					;
 					
-					if(bcc!=null && sendSupport) 
+					if(bcc!=null && sendSupport) {						
 						msg.setBcc(bcc);
+					}
 
 				    SES.sendEmail(msg);
 					System.out.println("SEND EMAIL HISTORIC: "+ to);
