@@ -7169,7 +7169,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String discReason = employeeContractInfo.getContractSpecificData().getDiscReason();
 			if(disc && AonStringUtils.isBlank(discReason))
 				throw new IllegalArgumentException("Si la transformaci\u00f3n es con indicador de discontinuidad, es obligatorio rellenar el motivo de la discontinuidad");
-			builder.setDiscontinuoReason(DiscontinuoReason.valueOf(discReason));
+			builder.setDiscontinuoReason(AonStringUtils.equals(discReason, "P") ? DiscontinuoReason.PRORROGA_TACITA : DiscontinuoReason.INCAPACIDAD_TRANSITORIA);
 		} else
 			builder.setDiscontinuo(false);
 			
