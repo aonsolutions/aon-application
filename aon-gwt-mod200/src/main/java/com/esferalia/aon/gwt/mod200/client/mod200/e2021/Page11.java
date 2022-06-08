@@ -252,7 +252,7 @@ public class Page11 extends PageAbs {
 	
 	private void paintKeyBreakdownLinkContainer(FlowPanel container, Mod2002021Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers, String footernote) {
 		
-		FlexTable tableDetail = getFlexTable(container, 0, headers);
+		FlexTable tableDetail = getFlexTable(container, headers);
 		tableDetail.addStyleName(AON.CSS.aonPaddingTop());
 		
 		int r = 1;

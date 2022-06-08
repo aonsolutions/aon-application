@@ -158,7 +158,6 @@ public class Page01 extends PageAbs {
 			if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010)) {
 				dominantIdentificationNumber.setVisibleLength(15);
 				dominantIdentificationNumber.setMaxLength(15);
-//				dominantIdentificationNumber.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010));		
 				dominantIdentificationNumber.addValueChangeHandler(event -> {
 					callback.markAsDirty();
 				});						

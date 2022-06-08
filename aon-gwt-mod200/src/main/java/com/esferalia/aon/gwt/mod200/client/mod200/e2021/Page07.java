@@ -187,7 +187,7 @@ public class Page07 extends PageAbs {
 						if (key != null) {
 							AonBoxLabel code = new AonBoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 							panel.add(code);
-							getLabels().put(key, code);
+//							getLabels().put(key, code);
 							
 							final AonDoubleBox text = new AonDoubleBox(8);
 							text.addChangeHandler(new ChangeHandler() {

@@ -162,6 +162,7 @@ public class Page20 extends PageAbs {
 		basePanel.add(devPanel);
 
 		//	Panel Ingreso
+		
 		payPanel = new FlowPanel(); 
 		payPanel.add(getTitle(AON.MSG.deposit()));
 		
@@ -268,13 +269,10 @@ public class Page20 extends PageAbs {
 		// Cuota Cero
 		
 		zeroPanel = new FlowPanel();
-		
 		zeroPanel.add(getTitle(AON.MSG.zeroQuota()));
 		
 		zeroQuota = new CheckBox(AON.MSG.zeroQuota());
 		zeroQuota.addStyleName(AON.CSS.aonMarginLeft());
-//		zeroQuota.addStyleName(AON.CSS.aonMarginTop());
-//		zeroQuota.setStyleName(AON.CSS.aonPadding());		
 		
 		zeroPanel.add(zeroQuota);
 		basePanel.add(zeroPanel);

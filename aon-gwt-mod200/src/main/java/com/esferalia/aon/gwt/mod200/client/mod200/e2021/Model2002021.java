@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -11,8 +12,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -334,7 +335,16 @@ public class Model2002021 extends DockLayoutPanel {
 				public void onSuccess(Mod2002021 result) {
 					super.onSuccess(result);
 					saveButton.setEnabled(true);
-					setDirty(false);
+					setDirty(false);					
+					// Quitar style aonChanged de los DoubleBox
+					for (PageAbs page : PAGES) 						
+						if (page != null) 
+							if (page.getInputs() != null) 
+								for (AonDoubleBox input : page.getInputs().values()) {
+									input.removeStyleName(AON.AON_CSS.aonChanged());
+								}
+					// Dejar DraftMap vacio. DraftMap lleva los DoubleBox modificados. 
+					result.getDraftMap().clear();
 				}
 				@Override
 				public void onFailure(Throwable caught) {

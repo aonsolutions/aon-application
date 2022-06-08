@@ -43,7 +43,7 @@ public abstract class PageAbs extends ResizeComposite {
 	};
 	
 	private HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
-	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
+//	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
 
 	protected FlowPanel basePanel;
 	protected Model200PageCallback callback;
@@ -55,17 +55,18 @@ public abstract class PageAbs extends ResizeComposite {
 			
 			@Override
 			public void mod200Changed(Mod2002021 mod200) {
-				for ( IMod200Key key : inputs.keySet() ) {
+				for (IMod200Key key : inputs.keySet()) {
 					DoubleVariableEx var = mod200.getDraftMap().get(key);
 					if (var != null && !var.isChangedByUser()) {
 						AonDoubleBox input = inputs.get(key);
-						input.setValue(var.getValue(),false,true); ;
-						input.addStyleName(AON.AON_CSS.aonChanged());
+						input.setValue(var.getValue(),false,true); ;						
+						if (input.isEnabled())
+							input.addStyleName(AON.AON_CSS.aonChanged());
 					}
 				}
-				for ( AonBoxLabel label  : labels.values() ) {
-					label.removeErrorState();
-				}
+//				for ( AonBoxLabel label  : labels.values() ) {
+//					label.removeErrorState();
+//				}
 			}
 		});
 	}
@@ -78,8 +79,9 @@ public abstract class PageAbs extends ResizeComposite {
 			if (inputs.containsKey(key)) {
 				AonDoubleBox input = inputs.get(key);
 				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
-				input.setValue(var.getValue()); ;
-				input.addStyleName(AON.AON_CSS.aonChanged());
+				input.setValue(var.getValue()); 
+				if (input.isEnabled())
+					input.addStyleName(AON.AON_CSS.aonChanged());
 			}
 		}
 	}
@@ -91,9 +93,9 @@ public abstract class PageAbs extends ResizeComposite {
 	public Map<IMod200Key, AonDoubleBox> getInputs() {
 		return inputs;
 	}
-	public Map<IMod200Key, AonBoxLabel> getLabels() {
-		return labels;
-	}
+//	public Map<IMod200Key, AonBoxLabel> getLabels() {
+//		return labels;
+//	}
 	
 	protected void addBasePanel() {
 		ScrollPanel scroll = new ScrollPanel();
@@ -126,7 +128,6 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyDescription(FlexTable tab, Mod2002021Key key, int row, int col) {
-//		String description = key.getDescription();
 		paintDescription(tab, key.getDescription(), row, col, isTitle(key));	
 	}
 	
@@ -147,7 +148,6 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyField(FlexTable tab, final Mod2002021Key key, int row, int col) {
-		//paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH, true);
 		paintKeyField(tab, key, row, col, !isTitle(key));
 	}
 	
@@ -170,15 +170,13 @@ public abstract class PageAbs extends ResizeComposite {
 		boolean disabled = isDisabled(k);
 		
 		FlowPanel panel = new FlowPanel();
-//		if (padding && !isTitle(k)) {
 		if (padding) {
 			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
 		}		
 
-//		String code = k.getCode(callback.getMod200Object().getAdministration());
-		if (code != null && !code.isEmpty()) {
+		if (AonStringUtils.isNotBlank(code)) {
 			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, Model2002021.BOX_LENGTH);
-			getLabels().put(k, codeBoxLabel);
+//			getLabels().put(k, codeBoxLabel);
 			panel.add(codeBoxLabel);
 		}
 
@@ -196,9 +194,10 @@ public abstract class PageAbs extends ResizeComposite {
 					if (AonStringUtils.isEmpty(text.getText())) {
 						text.setValue(0.0,false);
 					}
+					
 					Double d = text.getValueOrThrow();
 					text.addStyleName(AON.AON_CSS.aonChanged());
-					callback.getMod200Object().doubleValueChanged(k, d );
+					callback.getMod200Object().doubleValueChanged(k, d);
 					callback.markAsDirty();
 					
 					// Caso especial, la casilla 103 de Deducciones de Doble Imposición, es la 
@@ -251,7 +250,7 @@ public abstract class PageAbs extends ResizeComposite {
 		final int boxRow = row-1;
 		final int boxCell = 1;
 		
-		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
+		FlowPanel panel = (FlowPanel) tab.getWidget( boxRow , boxCell );
 		panel.addStyleName(AON.AON_CSS.aonNowrap());
 		
 		Button breakdown = new Button();		
@@ -266,7 +265,7 @@ public abstract class PageAbs extends ResizeComposite {
 		container.addStyleName(AON.CSS.aonPaddingBottom());
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
-		FlexTable tableDetail = getFlexTable(container, row, headers);
+		FlexTable tableDetail = getFlexTable(container, headers);
 		int r = 1;
 		int col = 0;		
 		for (IMod200KeysProvider key : keysProvider) {
@@ -332,7 +331,6 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 				
 		for (IMod200KeysProvider kp : keysProvider) {
-			//paintDescription(tab, kp.getDescription(), row, 0, false);
 			paintDescription(tab, kp.getDescription(), row, 0, "Total".equals(kp.getDescription()));
 			int col = 1;
 			for (IMod200Key key : kp.getKeys()) {				 
@@ -345,24 +343,23 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	}
 	
-	protected FlexTable getFlexTable(Panel container, int row, String[] headers) {
+	protected FlexTable getFlexTable(Panel container, String[] headers) {
 		FlexTable tableDetail = new FlexTable();
 		container.add(tableDetail);
-		return getFlexTable(tableDetail, row, headers);
+		return getFlexTable(tableDetail, 0, headers);
 	}
 	
 	protected FlexTable getFlexTable(FlexTable tableDetail, int row, String[] headers) {
 		tableDetail.addStyleName(AON.AON_CSS.aonWidthAll());
-		int r = 0;
 		int col = 0;
 		if (headers != null) {
 			for (String  headerText : headers ) {
 				Label headerLabel = new Label(headerText);
-				tableDetail.setWidget(r, col, headerLabel);
-				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonBold());
-				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonBorderBottom());
-				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonTextCenter());
-				tableDetail.getFlexCellFormatter().addStyleName(r, col, AON.AON_CSS.aonFontSmall());
+				tableDetail.setWidget(row, col, headerLabel);
+				tableDetail.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+				tableDetail.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+				tableDetail.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+				tableDetail.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
 				if (col>0) {
 					tableDetail.getColumnFormatter().setWidth(col, "140px");
 				}
@@ -418,7 +415,6 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		
 		FlexTable tab = new FlexTable();
-//		tab.setCellSpacing(0);
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab.addStyleName(AON.CSS.aonMargin());
 		
@@ -455,18 +451,6 @@ public abstract class PageAbs extends ResizeComposite {
 		
 	}
 	
-//	protected void paintTitle(FlexTable tab, String description, int row, int col) {
-//	Label desc = new Label( description);
-//	desc.setStyleName(AON.AON_CSS.aonBold());
-//	desc.addStyleName(AON.AON_CSS.aonTextCenter());
-//	desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
-//	tab.setWidget(row, col, desc);
-//  }
-	
-//	protected void addHeaderCell(FlexTable tab, String description, int row, int col) {
-//		addHeaderCell(tab, row, col, description, false); 
-//	}
-	
 	protected void addHeaderCell(FlexTable table, int row, int col, String msg) {
 		addHeaderCell(table, row, col, msg, true);
 	}
@@ -498,18 +482,7 @@ public abstract class PageAbs extends ResizeComposite {
 		addLabel(text, false);		
 	}
 	protected void addLabel(String text, boolean isBold) {
-		
-//		Label label = new Label(text);
-//		label.setStyleName(AON.CSS.aonMargin());
-//		label.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		label.addStyleName(AON.CSS.aonBlockCenter());
-//		if (isBold) 
-//			label.addStyleName(AON.CSS.aonBold());
-//		
-//		basePanel.add(label);
-		
 		paintLabel(basePanel, text, isBold);		
-		
 	}
 	
 	protected void paintLabel(Panel container, String text, boolean isBold) {

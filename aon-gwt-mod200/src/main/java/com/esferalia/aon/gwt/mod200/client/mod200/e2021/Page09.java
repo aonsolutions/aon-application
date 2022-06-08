@@ -167,8 +167,8 @@ public class Page09 extends PageAbs {
 				}
     			if (key == Mod2002021Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ547, Mod2002021LQ547Key.values(), HEADERS_4, FOOTER_547);    				
-				}
-    			if (key == Mod2002021Key.LQ1033) {
+				}    			
+    			if (key == Mod2002021Key.LQ1034) {
 					row = paintKeyBreakdownLinkLQ1033(table, row, Mod2002021Key.LQ1033.getDescription());
 				}
 			}
@@ -194,19 +194,14 @@ public class Page09 extends PageAbs {
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
 		
-		Label label1 = new Label("Reducci\u00F3n en base imponible");
-		label1.setStyleName(AON.AON_CSS.aonBold());
-		label1.addStyleName(AON.AON_CSS.aonTextUnderline());
-		label1.addStyleName(AON.CSS.aonPaddingTop());
-		container.add(label1);
-		FlexTable tableDetail = getFlexTable(container, row, new String[]{
-				 "Ejercicio de generaci\u00F3n"
+		FlexTable tableDetail = getFlexTable(container, new String[]{
+				 "REDUCCION EN BASE IMPONIBLE  -  Ejercicio de generaci\u00F3n"
 				,"Importe minoraci\u00F3n B.I. en el per\u00EDodo/pendiente de adicionar a inicio del per\u00EDodo"
 				,"Importe adicionado a base imponible en el per\u00EDodo"
 				,"Importe integrado en la declaraci\u00F3n por incumplimiento de requisitos"
 				,"Importe pendiente de adicionar en per\u00EDodos futuros"
 				});
-		int r = 1;
+		int r = 2;
 		int col = 0;
 		for (IMod200KeysProvider key : Mod2002021LQ1033_1Key.values()) {
 			Label desc = new Label(key.getDescription() );
@@ -226,19 +221,14 @@ public class Page09 extends PageAbs {
 		}
 		paintFooterNote(container, FOOTER_1033);
 				
-		Label label2 = new Label("Dotaci\u00F3n de la reserva");
-		label2.setStyleName(AON.AON_CSS.aonBold());
-		label2.addStyleName(AON.AON_CSS.aonTextUnderline());
-		label2.addStyleName(AON.CSS.aonMarginTop());
-		container.add(label2);
-		FlexTable tableDetail2 = getFlexTable(container,row, new String[]{
-				 "Ejercicio de generaci\u00F3n"
+		FlexTable tableDetail2 = getFlexTable(container, new String[]{
+				 "DOTACION DE LA RESERVA  -  Ejercicio de generaci\u00F3n"
 				,"Importe reserva a dotar"
 				,"Importe reserva dotada"
 				,"Importe reserva pendiente dotaci\u00F3n"
 				,"Reserva dispuesta"				
-				}				
-				);
+				});
+		tableDetail2.addStyleName(AON.CSS.aonPaddingTop());
 		r = 1;
 		col = 0;
 		for (IMod200KeysProvider key : Mod2002021LQ1033_2Key.values()) {
