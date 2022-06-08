@@ -38,8 +38,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -138,8 +138,7 @@ public class ElaborationDownload extends HttpServlet {
 		Sales sales = null;
 		Customer customer = null;
 		if(elaboration.getSourceId()!=null){
-			ElaborationSource source = ElaborationSource.safeValueOf(elaboration.getSource());
-			if(source==ElaborationSource.SALES){
+			if(ElaborationSource.SALES.equals(elaboration.getSource())){
 				salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, 
 						f -> f.getIdProperty().eq(elaboration.getSourceId()))
 						.findFirst().orElse(null);
@@ -152,7 +151,7 @@ public class ElaborationDownload extends HttpServlet {
 						customer = sales.getCustomer();
 					}
 				}
-			} else if(source==ElaborationSource.PURCHASE){
+			} else if(ElaborationSource.PURCHASE.equals(elaboration.getSource())){
 				// TODO purchase source of elaboration
 			}
 		}
