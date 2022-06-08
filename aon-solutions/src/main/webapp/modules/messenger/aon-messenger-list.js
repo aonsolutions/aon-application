@@ -64,8 +64,10 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
     
       async build() {
         this.paintTable();
-        if(this.isMobile())
+        if(this.isMobile()){
           this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
+        }
+
       }
     
       async paintTable(divNotification) {

@@ -258,8 +258,8 @@ public class Task  implements Serializable{
 		return this;
 	}
 
-	public String getGtaskId() {
-		return gtaskId;
+	public Optional<String> getGtaskId() {
+		return Optional.ofNullable(gtaskId);
 	}
 
 	public Task setGtaskId(String gtaskId) {

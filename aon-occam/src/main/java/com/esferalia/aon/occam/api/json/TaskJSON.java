@@ -88,7 +88,7 @@ public class TaskJSON {
 			.put(IJsonNames.DUE_DATE, task.getDueDate()!=null ?  task.getDueDate().getTime() : null)
 			.put(IJsonNames.START_DATE, task.getStartDate()!=null ?  task.getStartDate().getTime() : null)
 			.put(IJsonNames.END_DATE, task.getEndDate()!=null ?  task.getEndDate().getTime() : null)
-			.put("gtask_id", task.getGtaskId())
+			.put("gtask_id", task.getGtaskId().isPresent() ? task.getGtaskId().get() : null)
 			.put(IJsonNames.PARENT, task.getParent())
 			.put("tags", TagJSON.toJSON(task.getTags()))
 			.put(IJsonNames.CREATION_USER, task.getCreationUser())
