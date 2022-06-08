@@ -165,4 +165,13 @@ public class TaskWorkflow implements Serializable{
 	public boolean isPrivate() {
 		return !isPublic();
 	}
+	
+	public TaskWorkflow clone() {
+		return new TaskWorkflow()
+	       .setTask(task)
+		   .setComment(comment)
+		   .setTaskHolder(taskHolder)
+		   .setEmail(email)
+		   .setDomain(domain);
+	}
 }

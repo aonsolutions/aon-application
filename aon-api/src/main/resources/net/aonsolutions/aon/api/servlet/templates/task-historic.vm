@@ -2,187 +2,198 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EMAIL</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMAIL</title>
 
-  <style type="text/css">
-    .space {
-      margin: 25px;
-    }
+    <style type="text/css">
+        .space {
+            margin: 25px;
+        }
 
-    .marginDocument {
-      margin: 5px 25px;
-    }
+        .marginDocument {
+            margin: 5px 25px;
+        }
 
-    .diva {
-      background-color: #f1f1f1;
-      padding-top: 20px;
-      padding-bottom: 20px;
-    }
+        .diva {
+            background-color: #f1f1f1;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
 
-    .divb {
-      margin: 0px auto;
-      max-width: 600px;
-      background-color: white;
-      border-radius: 5px;
-    }
+        .divb {
+            margin: 0px auto;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 5px;
+        }
 
-    .tableA {
-      width: 100%;
-      padding-top: 10px;
-    }
+        .tableA {
+            width: 100%;
+            padding-top: 10px;
+        }
 
-    .label {
-      font-size: 12px;
-      margin-bottom: 0px;
-      color: rgba(0, 0, 0, .54);
-    }
+        .label {
+            font-size: 12px;
+            margin-bottom: 0px;
+            color: rgba(0, 0, 0, .54);
+        }
 
-    .taskTable {
-      margin-top: 5px;
-      padding: 10px;
-      border: 1px solid #bbb;
-      box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 6px;
-      border-radius: 5px;
-      width: 100%;
-      position: relative;
-    }
+        .taskTable {
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #bbb;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 6px;
+            border-radius: 5px;
+            width: 100%;
+            position: relative;
+        }
 
-    .taskName {
-      font-size: 14px;
-      font-weight: 600;
-      color: #787878;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      width: 80%;
-    }
+        .taskName {
+            font-size: 14px;
+            font-weight: 600;
+            color: #787878;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 80%;
+        }
 
-    .taskDate {
-      color: gray;
-      font-size: 12px;
-      font-weight: 500;
-      width: 20%;
-    }
+        .taskDate {
+            color: gray;
+            font-size: 12px;
+            font-weight: 500;
+            width: 20%;
+        }
 
-    .taskMessage {
-      font-size: 1em;
-      text-align: left;
-      font-weight: 400;
-      color: #787878;
-    }
+        .taskMessage {
+            font-size: 1em;
+            text-align: left;
+            font-weight: 400;
+            color: #787878;
+        }
 
-    .lineStyle{
-      border-left: 1px solid red;
-      position: absolute;
-      content: "";
-      left: 18px;
-      z-index: 888888;
-      height: 95%;
-    }
-  </style>
+        .lineStyle {
+            border-left: 1px solid red;
+            position: absolute;
+            content: "";
+            left: 18px;
+            z-index: 888888;
+            height: 95%;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="diva">
-    <div class="divb">
-      <table class="tableA">
-        <tr>
-          <td>
-            <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
-              <img alt="" src="$task.getLogo()" style="cursor: pointer;" width="300px">
-            </a>
-          </td>
-          <td></td>
-        </tr>
+    <div class="diva">
+        <div class="divb">
+            <table class="tableA">
+                <tr>
+                    <td>
+                        <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
+                            <img alt="" src="$task.getLogo()" style="cursor: pointer;" width="300px">
+                        </a>
+                    </td>
+                    <td></td>
+                </tr>
 
-        <tr>
-          <td>
-            <div class="space"></div>
-          </td>
-        </tr>
+                <tr>
+                    <td>
+                        <div class="space"></div>
+                    </td>
+                </tr>
 
-        <tr>
-          <td>
-            <div class="marginDocument grey">
-              <div>
-                <strong>Asunto: </strong> $task.getTitle()
-              </div>
-             #if( $task.getNote() )
-               <div>
-                <strong>Nota: </strong> $task.getNote()
-              </div>
-             #end
-              <div>
-                <strong>Fecha: </strong> $task.getDate()
-              </div>
-              #if( $task.getDomainName() )
-	       		  <div>
-	                <strong>Dominio: </strong> https://$task.getDomainName()
-	              </div>
-	          #end
-	          
-	          <div class="grey">
-              	<br>
-                $task.getDescription()
-              </div>
+                <tr>
+                    <td>
+                        <div class="marginDocument grey">
+                            <div>
+                                <strong> Solicitud $task.getNumber()</strong>
+                            </div>
+                            <div>
+                                <strong>Asunto: </strong> $task.getTitle()
+                            </div>
+                            #if( $task.getNote() )
+	                            <div>
+	                                <strong>Nota: </strong> $task.getNote()
+	                            </div>
+                            #end
+                            <div>
+                                <strong>Fecha: </strong> $task.getDate()
+                            </div>
+                            #if( $task.getDomainName() )
+	                            <div>
+	                                <strong>Dominio: </strong> https://$task.getDomainName()
+	                            </div>
+                            #end
+                            #if( $task.getContact() )
+	                            <div>
+	                                <strong>Contacto: </strong> $task.getContact()
+	                            </div>
+                            #end
 
-            </div>
-          </td>
-        </tr>
+                            <div class="grey">
+                                <br>
+                                $task.getDescription()
+                            </div>
 
-        <tr>
-          <td>
-            <div class="marginDocument grey">
-              <strong> Histórico solicitud $task.getNumber()</strong>
-            </div>
-          </td>
-        </tr>
+                        </div>
+                    </td>
+                </tr>
 
-        <tr>
-          <td>
-            <hr>
-          </td>
-        </tr>
-        <tr>
-          <table class="taskTable">
-            <tr>
-            	#foreach($ws in $task.getWorkflows())
-            		<div>
-            			<div>
-            				$ws.getDate(), $ws.getName() escribió:<br>
-            			</div>
-            			#if($ws.getMessage())
-	            			<div>
-	            				$ws.getMessage()<br/><br/>
-	            			</div>
-            			#end
-            			<blockquote style="margin:0px 0px 0px 0.8ex;color:grey;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-            	#end
-            	#foreach($workflow in $task.getWorkflows())
-        			</div>
-        			</blockquote>
-            	#end
-            </tr>
-          </table>
-        </tr>
-        <tr>
-          <td>
-            <hr>
-          </td>
-        </tr>
-        <tr class="label">
-          <td>
-            <div style="text-align:center">Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a
-              este correo.</div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+                #if( $task.getWorkflows().size() !=0 )
+                    <tr>
+                        <td>
+                            <div class="marginDocument grey">
+                                <strong> Historial </strong>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <table class="taskTable">
+                            <tr>
+                                #foreach($ws in $task.getWorkflows())
+	                                <div>
+	                                    <div>
+	                                        $ws.getDate(), $ws.getName() escribió:<br>
+	                                    </div>
+	                                    #if($ws.getMessage())
+	                                    <div>
+	                                        $ws.getMessage()<br /><br />
+	                                    </div>
+	                                    #end
+	                                    <blockquote style="margin:0px 0px 0px 0.8ex;color:grey;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+	                             #end
+                                 #foreach($workflow in $task.getWorkflows())
+	                                </div>
+                                	</blockquote>
+                                 #end
+                            </tr>
+                        </table>
+                    </tr>
+                #end
+                <tr>
+                    <td>
+                        <hr>
+                    </td>
+                </tr>
+                <tr class="label">
+                    <td>
+                        <div style="text-align:center">Este es un mensaje generado autom&aacute;ticamente. Por favor, no
+                            conteste a
+                            este correo.</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
 </body>
 
 </html>

@@ -7,7 +7,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
     import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
     import { AonMessenger } from "./aon-messenger.js";
     import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
-    import { getIconJson } from "./shared/utils.js";
+    import { getIconJson, taskNumberParse } from "./shared/utils.js";
     import { getTaskHolder } from "../../services/taskHolderService.js";
     import * as LS from '../../services/localStorageService.js';
     import { AonDateUtils } from "../utils/AonDateUtils.js";
@@ -604,11 +604,10 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
               let icon = this.getIcon(t, "16px", true);
               icon.style.display = "inline-block";
               div.appendChild(icon);
-          
-              let number = "#"+(t.number ? t.number : 0).toString().padStart(5,0);
+
               let span = document.createElement(TAG.SPAN);
               span.className = CSS.AON_LINK;
-              span.innerText = number;
+              span.innerText = taskNumberParse(t.number);
               span.title = "Creador por "+ sender;
               span.addEventListener(EVENT.CLICK, (ev)=>{
                 ev.preventDefault();
@@ -640,7 +639,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
               if(tasksClosed.length === length) {
                 let iconParent = document.querySelector(`span[data-task-id='${task.id}']`);
                 if(iconParent){
-                  iconParent.style.color = "#a371f7";
+                  iconParent.style.color = "#d81b60";
                 }
               }
             }
