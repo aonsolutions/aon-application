@@ -47,11 +47,10 @@ public class TaskUtils {
 	    throw new IllegalStateException("Utility class");
 	}
 	
-	public static void onSaveWorkflow(AonApiData api, TaskWorkflow workflow) {
+	public static void onNotification(AonApiData api, TaskWorkflow workflow) {
 		Thread newThread = new Thread(() -> {
 			try {
 				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
-				
 				switch (workflow.getType()) {
 					case OPEN:
 						TaskNotification.onOpenNotification(api, task, workflow);
@@ -62,11 +61,15 @@ public class TaskUtils {
 						break;
 					case ASSIGN:
 						TaskNotification.onAssignNotification(api, task, workflow);
+						TaskNotification.onAssignEmail(api, task, workflow);
 						break;
 					case CLOSE:
 						TaskNotification.onCloseNotification(api, task, workflow);
 						TaskNotification.onCloseEmail(api, task, workflow);
 						closeTaskChildOrParent(api, task, workflow);
+						break;
+					case CONNECTED:
+						//TODO
 						break;
 					default:
 						break;
@@ -91,28 +94,43 @@ public class TaskUtils {
 		return task.getDescription();
 	}
 	
+	public static JSONObject parseCauInfo(Task task) {
+		try {
+			return new JSONObject(task.getDescription()).optJSONObject("cauInfo");
+		} catch (Exception e) {}
+		return new JSONObject();
+	}
+	
+	public static JSONObject parseAuth(Task task) {
+		try {
+			return parseCauInfo(task).optJSONObject(IJsonNames.AUTH);
+		} catch (Exception e) {}
+		return new JSONObject();
+	}
+	
 	public static String parseNumber(Integer number) {
 		if(number==null) number = 0;
-		return "#"+StringUtils.leftPad(number.toString(), 5, "0");
+		return "\u0023"+StringUtils.leftPad(number.toString(), 5, "0");
 	}
 	
 	public static void setCauInfo(AonApiData api, Task task) {
 		try {
 			boolean edit = task.getId() != null;
 			task.setDomain(api.getDomain());
-			JSONObject description = new JSONObject(task.getDescription());
-			JSONObject cauInfo = description.optJSONObject("cauInfo");
+			JSONObject cauInfo = parseCauInfo(task);
+			JSONObject auth    = parseAuth(task);
 			JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
 			JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
-			JSONObject auth = cauInfo.optJSONObject(IJsonNames.AUTH);
+			
 			String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
 			String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
 
 			String doc = docParent!=null ? docParent : docCustomer;
 			
-			if(!auth.optString(IJsonNames.EMAIL).isEmpty()) 
+			if(!auth.optString(IJsonNames.EMAIL).isEmpty()) {
 				task.setGtaskId(auth.optString(IJsonNames.EMAIL));
-			
+			}
+	
 			if(doc!=null) {
 				Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
 				if(registry!=null && registry.getId()!=null)
@@ -298,7 +316,7 @@ public class TaskUtils {
 				
 				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
 				
-				onSaveWorkflow(api, tmp);
+				onNotification(api, tmp);
 			});
 		}
 	}

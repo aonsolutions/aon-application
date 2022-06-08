@@ -1,14 +1,15 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
-import { setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
+import { setAttributes, setClasses, setDataset, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createDivGrid, createInputContact, createInputTitle, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createTagHtml, createTaskHolder, createWorkgroup } from "./creationUtils.js";
+import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessageNew, createCustomer, createDivGrid, createInputContact, createInputTitle, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createTagHtml, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillAdvisory, fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
 import { createFormTimeControl } from "../forms/time-control.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import * as ACTIONS from "../../actions.js";
 
 /**
  * Build standard toolbar options 
@@ -144,7 +145,7 @@ export const chooseIconMessage = ({type, date, name, comment}) => {
     } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
         actionJson.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
     } else if(WORKFLOW_TYPES.CONNECTED.indexOf(type)>=0){
-        let b = "#" + (comment || "0").toString().padStart(5, 0);
+        let b = taskNumberParse(comment);
         actionJson.comment = `${WORKFLOW_TYPE(type)} con <b>${b}</b> ${dateParse}`;
     }
 
@@ -162,7 +163,7 @@ const appendChatMessage = (properties) => {
     if(noMessage)
         chat.removeChild(noMessage);
 
-    const message = setStyles( createChatMessage(properties, chat),{
+    const message = setStyles( createChatMessageNew(properties, chat),{
         opacity : 0,
         marginTop : '20px',
         transition : ".25s"
@@ -181,7 +182,8 @@ const appendChatMessage = (properties) => {
  */
 export const sendMessage = async (text, task) => {
     let workflowId = undefined;
-    let messageEl = undefined;
+    let taskId     = undefined;
+    let messageEl  = undefined;
     let value = text;
 
     let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
@@ -193,6 +195,9 @@ export const sendMessage = async (text, task) => {
     }
 
     if(textArea.hasAttribute("data-workflow-id")){
+        taskId = parseInt(textArea.getAttribute("data-task"));
+        textArea.removeAttribute("data-task-id");
+
         workflowId = parseInt(textArea.getAttribute("data-workflow-id"));
         textArea.removeAttribute("data-workflow-id");
     } 
@@ -221,7 +226,8 @@ export const sendMessage = async (text, task) => {
     return{
         comment:value, 
         messageEl,
-        workflowId
+        workflowId,
+        taskId
     } 
 }
 
@@ -279,8 +285,8 @@ const checkFileAonFile = async(task, textArea)=> {
 }
 
 const checkFileBase64 = async(textArea)=> {
-    const textAreaDiv = textArea.getTextArea();
-    const elements = textAreaDiv.querySelectorAll(`img[src*=";base64"]`);
+    const elements = textArea.getTextArea().querySelectorAll(`img[src*=";base64"]`);
+
     let files = [];
     for (const el of elements) {
         let blob = getBlobBySrc(el.src);
@@ -1032,13 +1038,33 @@ export const setStyleMessageHistoric = async (workflows) => {
     }
 }
 
-export const setContentMessageChat =(workflowId)=>{
+export const setContentMessageChat = (task, workflowId) => {
 
     let content = document.querySelector(`${MESSENGER_COMPONENTS.MESSAGE}[data-id="${workflowId}"] > .${CSS.MESSAGE_CONTENT}`);
     let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
 
     if(content && textArea){
-        textArea.dataset.workflowId = workflowId;
-        textArea.setValueHtml(content.innerHTML)
+        // content.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+        setDataset(textArea, { workflowId, task });
+        textArea.setValueHtml(content.innerHTML);
     }
 }
+
+export const checkButtonsToolbar = (aonMessengerChat, taskId)=>{
+    const task = aonMessengerChat.task;
+
+    let toolbar = document.getElementById(aonMessengerChat.TOOLBAR);
+
+    if(toolbar && task && task.id){
+        const show = task.id === taskId;
+        toolbar.showButton(MESSENGER_IDS.TOOLBAR_BRANCH, show);
+        toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, show);
+        toolbar.showButton(ACTIONS.RESTORE.id, show);
+        toolbar.showButton(ACTIONS.DELETE.id, show);
+        toolbar.showButton(ACTIONS.SAVE.id, show);
+        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, show);
+        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, show);
+    }
+}
+
+export const taskNumberParse = (number) => "#"+(number || "0").toString().padStart(5, 0);

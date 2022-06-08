@@ -219,16 +219,20 @@ export class AonTextArea extends AonElement {
 		const range = this.getSelection().getRangeAt(0);
 		const selectedText = range.extractContents();
 
-		let div = document.createElement(TAG.DIV); 
-		div.appendChild(selectedText);
-		range.insertNode(div);
+		if(range && range.toString()!=""){
+			let div = document.createElement(TAG.DIV); 
+			div.appendChild(selectedText);
+			range.insertNode(div);
+	
+			const baseSelection = this.getSelection().baseNode;
+	
+			const inside = textArea.contains(baseSelection);
+			if(inside) {//  inside
+				return div; 
+			}
+		}
 
-		const baseSelection = this.getSelection().baseNode;
-
-		const inside = textArea.contains(baseSelection);
-
-		if(!inside) div = textArea; // not inside
-		return div;
+		return textArea;
 	}
 
 	generateTextArea(){
@@ -469,7 +473,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	interceptorPaste(ev){
-			// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
+		// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
 		// const html  = clipboardData.getData('text/html');
 		// console.log(html);
 		// setTimeout(()=>{
@@ -498,38 +502,38 @@ export class AonTextArea extends AonElement {
 		// let newValue = newHtml.replace(/src=\"([^\"]*)\"/g, (match, url) =>{ // eslint-disable-line
 		// 	let newUrl = url.replaceAll("&amp;", "&");
 
-			// console.log(match);
-			// console.log(url);
-			// this.getBase64FromUrl(url).then(base64=>{
-			// 	console.log(base64);
-			// })
-		// 	let codec, extension;
-		// 	if (url.indexOf('data:image/png;base64,') == 0) {
-		// 		codec = 'png';
-		// 		extension = '.png';
-		// 	} else if (url.indexOf('data:image/jpeg;base64,') == 0) {
-		// 		codec = 'jpeg';
-		// 		extension = '.jpg';
-		// 	}
-		// 	if (codec) {
-		// 		let name = 'image' + images.length + extension,
-		// 		base64 = url.replace('data:image/' + codec + ';base64,', ''),
-		// 		buffer = new Buffer(base64, 'base64');
-		// 		images.push(new mailgun_client.Attachment({
-		// 		contentType: 'image/' + codec,
-		// 		filename: name,
-		// 		data: buffer,
-		// 		knownLength: buffer.length,
-		// 		}));
-		// 		return match.replace(url, 'cid:' + name);
-		// 	}
-		// 	return match.replace(url, `${newUrl}" onerror="this.remove()" referrerpolicy="no-referrer`);
+		// 	// console.log(match);
+		// 	console.log(newUrl);
+		// 	this.getBase64FromUrl(newUrl).then(base64=>{
+		// 		console.log(base64);
+		// 	})
+			// let codec, extension;
+			// if (url.indexOf('data:image/png;base64,') == 0) {
+			// 	codec = 'png';
+			// 	extension = '.png';
+			// } else if (url.indexOf('data:image/jpeg;base64,') == 0) {
+			// 	codec = 'jpeg';
+			// 	extension = '.jpg';
+			// }
+			// if (codec) {
+			// 	let name = 'image' + images.length + extension,
+			// 	base64 = url.replace('data:image/' + codec + ';base64,', ''),
+			// 	buffer = new Buffer(base64, 'base64');
+			// 	images.push(new mailgun_client.Attachment({
+			// 	contentType: 'image/' + codec,
+			// 	filename: name,
+			// 	data: buffer,
+			// 	knownLength: buffer.length,
+			// 	}));
+			// 	return match.replace(url, 'cid:' + name);
+			// }
+			// return match.replace(url, `${newUrl}" onerror="this.remove()" referrerpolicy="no-referrer`);
 		// });
-
+// 
 		// if(newValue && newValue.trim()) {
-		// 	newHtml = newValue;
+			// newHtml = newValue;
 		// }
-
+// 
 		// this.setValueHtml(newValue)
 	}
 
@@ -548,7 +552,9 @@ export class AonTextArea extends AonElement {
 	}
 
 	async getBase64FromUrl(url){
-		const data = await fetch(url);
+		const data = await fetch(url,{
+			headers: { 'Content-Type': 'image/jpeg'}
+		});
 		const blob = await data.blob();
 		return new Promise((resolve) => {
 		  const reader = new FileReader();

@@ -19,14 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.domain.DomainName2LowerCase;
-import net.aonsolutions.db.up2date.payroll.AlterSalaryDeduction;
-import net.aonsolutions.db.up2date.payroll.AlterSalaryEmbargo;
-import net.aonsolutions.db.up2date.payroll.ContractAttachUpdate;
-import net.aonsolutions.db.up2date.payroll.Holidays2022Update;
-import net.aonsolutions.db.up2date.payroll.ContractAttachUpdateII;
-import net.aonsolutions.db.up2date.security.UserAddTypeColumnUpdate;
-import net.aonsolutions.db.up2date.tgss.Art1512022Update;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022UpdateII;
 
 public class Up2Date {
 
@@ -242,7 +235,8 @@ public class Up2Date {
 //    		Holidays2022Update.HOLIDAYS2022UPDATE,
 //    		Art1512022Update.ART1512022UPDATE,
 //    		ContractAttachUpdate.CONTRACTATTACHUPDATE
-    		AlterSalaryDeduction.ALTERSALARYDEDUCTION
+//    		AlterSalaryDeduction.ALTERSALARYDEDUCTION
+   		TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII
     };
     
 

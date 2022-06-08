@@ -108,7 +108,7 @@ export class AonMessengerConfig extends AonElement {
     let divContent = this.createElement(TAG.DIV);
     cardContent.appendChild(divContent);
     
-    const {APP_REQUESTS_INT_WORKGROUP, APP_REQUESTS_INT_TASK_HOLDER , APP_REQUESTS_INT_OPENED, APP_REQUESTS_INT_CLOSED,  APP_REQUESTS_INT_EMAIL_OPENED, APP_REQUESTS_INT_EMAIL_CLOSED, APP_REQUESTS_INT_COMMENT, APP_REQUESTS_INT_ASSIGN} = APP_PARAMS_REQUEST;
+    const {APP_REQUESTS_INT_WORKGROUP, APP_REQUESTS_INT_TASK_HOLDER , APP_REQUESTS_INT_OPENED, APP_REQUESTS_INT_CLOSED,  APP_REQUESTS_INT_EMAIL_OPENED, APP_REQUESTS_INT_EMAIL_CLOSED, APP_REQUESTS_INT_EMAIL_ASSIGN, APP_REQUESTS_INT_COMMENT, APP_REQUESTS_INT_ASSIGN} = APP_PARAMS_REQUEST;
 
     let workgroup = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_INT_WORKGROUP, default:true});
     divContent.appendChild(workgroup);
@@ -164,11 +164,14 @@ export class AonMessengerConfig extends AonElement {
 
     let closedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_INT_EMAIL_CLOSED]});
     divEmail.appendChild(closedEmail);
+
+    let assignEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_INT_EMAIL_ASSIGN]});
+    divEmail.appendChild(assignEmail);
   }
 
   cardExternal(divSecond, params){
 
-    let card = setAttributes(new AonCard(), { title:"Externas",id:this.CARD_TWO });
+    let card = setAttributes(new AonCard(), { title:"Externas", id:this.CARD_TWO });
     divSecond.appendChild(card);
 
     let cardContent = this.getElement(this.CARD_TWO).getContent();
