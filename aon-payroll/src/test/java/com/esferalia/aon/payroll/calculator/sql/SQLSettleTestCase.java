@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -633,6 +632,84 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testSettleVacations2Month30() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		ContractRecord contract = newContract(
+		aonContext, 
+		firstDayOfYear,
+		new HashMap<String, String>() {
+			{
+				put(MONTH_DAYS.getName(), format("%d", 30));
+				put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+			}
+		}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" }, 
+		null);
+		
+		addSSRegimeStuff(aonContext);
+
+		Date startNoHolidays = AonDateUtils.getLastDayOfMonth(firstDayOfYear) ;
+		
+		setData(aonContext, contract, 
+				startNoHolidays
+				, startNoHolidays
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 1));
+			}
+		});
+		
+		
+		setData(aonContext, contract, 
+				AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 1)
+				, AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 10)
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 10));
+			}
+		});
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, firstDayOfYear, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		settle.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount()+ "," + p.getQuote() ));
+		
+		double br = (1750.00 * 1.10) * 12 / 365; 
+
+		org.junit.Assert.assertEquals( br * 11 , settle.getRawCommonBase(), DELTA);
+		// TODO: 
+		//Assert.assertEquals( br * ( 10 + noHolidays ) , settle.getCommonBase(), DELTA);
+		
+		SalaryData cgcBases [] = settle.getSalaryDatas()
+				.stream()
+				.filter(s->s.getName().equals(ContextVariable.CGC_BASE.getName()))
+				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
+				.toArray(l-> new SalaryData[l]);
+		
+		org.junit.Assert.assertEquals(2, cgcBases.length);
+		
+		org.junit.Assert.assertEquals(startNoHolidays, cgcBases[0].getStartDate());
+		org.junit.Assert.assertEquals(startNoHolidays, cgcBases[0].getEndDate());
+
+		org.junit.Assert.assertEquals(br, Double.parseDouble(cgcBases[0].getExpression()), DELTA);
+		
+		org.junit.Assert.assertEquals(AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 1), cgcBases[1].getStartDate());
+		org.junit.Assert.assertEquals(AonDateUtils.add(startNoHolidays, DAY_OF_MONTH, 10), cgcBases[1].getEndDate());
+		org.junit.Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases[1].getExpression()), DELTA);
+		
+	}
 
 	@Test
 	@Ignore
