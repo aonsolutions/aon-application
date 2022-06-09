@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -45,10 +46,15 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.controller.SalesDetailController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1C;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1L;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1T;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.seres.reader.udapa.UdapaSalesReader;
 
 public class EdiSalesImporterHandler implements Serializable {
@@ -273,15 +279,41 @@ public class EdiSalesImporterHandler implements Serializable {
 										+ " de " + description);
 							}
 						}
+						createDataResponse(sales, ere1c);
 					}
-					
 				}
 			}
 		} catch (ManagerBeanException e) {
 			getLogPanel().error(e.getMessage());
 			LOGGER.error(e.getMessage());
 		}
+	}
+	
+	private void createDataResponse(Sales sales, ERE1C ere1c) {
+		DataResponse dr = new DataResponse()
+			.setDomain(sales.getDomain())
+			.setCode("")
+			.setResponseDate(new Date())
+			.setSource(DataResponseSource.SERES_SALES)
+			.setSourceId(sales.getId());
+		dr = AON.insertDataResponse(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser(), dr);
+		
+		createDataResponseDetail(dr, "MS", ere1c.getCodigoEmisor_MS_());
+		createDataResponseDetail(dr, "MR", ere1c.getCodigoReceptor_MR_());
+		createDataResponseDetail(dr, "SU", ere1c.getCodigoProveedor_SU_());
+		createDataResponseDetail(dr, "PW", ere1c.getCodigoPuntoDeExpedicion_PW_());
+		createDataResponseDetail(dr, "DP", ere1c.getCodigoPuntoDeEntrega_DP_());
+		createDataResponseDetail(dr, "BY", ere1c.getCodigoComprador_BY_());
+		createDataResponseDetail(dr, "IV", ere1c.getCodigoAQuienSeFactura_IV_());
+	}
 
+	private void createDataResponseDetail(DataResponse dr, String name, String value) {
+		DataResponseDetail drd = new DataResponseDetail()
+				.setDomain(dr.getDomain())
+				.setDataResponse(dr.getId())
+				.setDataVariable(name)
+				.setDataValue(value);
+		AON.insertDataResponseDetail(AonUtil.getDomainName(), dr.getDomain(), AonUtil.getRemoteUser(), drd);
 	}
 	
 	private Double obtainQuantity(Double quantity, Tag customerPackingTag,
