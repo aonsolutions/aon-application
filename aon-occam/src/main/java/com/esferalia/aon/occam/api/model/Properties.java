@@ -1088,6 +1088,7 @@ public interface Properties {
 		Property<String> getShippingAlternativeRecipientProperty();
 		Property<String> getShippingContactProperty();
 		Property<Byte> getShippingPeriodProperty();
+		Property<Integer> getSalesDetailIdProperty();
 	}
 	
 	public interface SalesDetailProperties{

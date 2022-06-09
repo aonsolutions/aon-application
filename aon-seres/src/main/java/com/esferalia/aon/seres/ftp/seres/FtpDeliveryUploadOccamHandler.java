@@ -2,13 +2,13 @@ package com.esferalia.aon.seres.ftp.seres;
 
 import static com.code.aon.customer.IEdiSupport.ALBARANES;
 import static com.code.aon.customer.IEdiSupport.CABECERA;
+import static com.code.aon.customer.IEdiSupport.DEPARTMENT;
 import static com.code.aon.customer.IEdiSupport.EDI_CODES_PATTERN;
 import static com.code.aon.customer.IEdiSupport.FACTURA;
 import static com.code.aon.customer.IEdiSupport.FINANCIERA;
 import static com.code.aon.customer.IEdiSupport.MEDIDA;
 import static com.code.aon.customer.IEdiSupport.PEDIDOS;
 import static com.code.aon.customer.IEdiSupport.PTO_ENTREGA;
-import static com.code.aon.customer.IEdiSupport.DEPARTMENT;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,12 +27,13 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.seres.ftp.FtpException;
@@ -179,17 +180,9 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	
 	public FileOutput exportEdiFile(Delivery delivery) throws AonException {
 		FileOutput output = null;
-		ConnectDeliveryWriterOccam writer = new ConnectDeliveryWriterOccam(domainName, domainId, login);
-		Map<String, String> ediCodes = obtainEdiCodes(delivery.getCustomer().getId(), delivery.getAddress().getId());
-		try {			
-			String department = ediCodes.get(IEdiSupport.DEPARTMENT);
-			String customerEdiCode = ediCodes.get(IEdiSupport.ALBARANES);
-			String deliveryPointEdiCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
-			String customerPackage = obtainPackingTag(
-					delivery.getCustomer().getId(),
-					delivery.getAddress().getId());
-			String companyEdiCode = obtainEdiCompanyCode();
-			
+		try {
+			com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam writer = new com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam(domainName, domainId, login);			
+			EdiCodes codes = SERES.getEdiCodes(domainName, domainId, login, delivery);
 			byte[] attachData = ConnectDeliveryWriterOccam.DeliveryPackages.obtainPackageDataAttach(
 					domainName, domainId, login, delivery.getId()).getData();
 			if(attachData==null || "".equals(attachData)){
@@ -206,8 +199,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 			}
 			
 			// write file
-			output = writer.createFile(delivery, new String(attachData), companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode, customerPackage, department);
+			output = writer.createFile(delivery, new String(attachData), codes);
 			return output;
 		} catch (IOException e) {
 			throw new AonException(e.getMessage(), e);

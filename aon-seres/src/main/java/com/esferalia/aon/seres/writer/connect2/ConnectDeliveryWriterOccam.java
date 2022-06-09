@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
@@ -71,11 +72,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		this.login = login;
 	}
 
-	public FileOutput createFile(Delivery delivery, String packageData, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode,
-			String customerPackage, String department) throws FileNotFoundException, UnsupportedEncodingException {
-		RECTL rectl = createRECTLRecord(delivery, packageData, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode, customerPackage, department);
+	public FileOutput createFile(Delivery delivery, String packageData, EdiCodes codes) throws FileNotFoundException, UnsupportedEncodingException {
+		RECTL rectl = createRECTLRecord(delivery, packageData, codes);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectDelivery(rectl, writer);
@@ -85,21 +83,17 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Delivery delivery, String packageData, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode, String customerPackage, String department) {
+	private RECTL createRECTLRecord(Delivery delivery, String packageData, EdiCodes codes) {
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.AVISO_DE_EXPEDICION_DESADV.getValue());
-		rectl.setCodigoEmisor(companyEdiCode);
-		rectl.setCodigoReceptor(customerEdiCode);
+		rectl.setCodigoEmisor(codes.getMscode());
+		rectl.setCodigoReceptor(codes.getMrcode());
 		rectl.setIdentificacionDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		
-		rectl.seh1c = createSEH1CRecord(delivery, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode);
-		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode, department);
-		rectl.seh1pList = createSEH1PList(delivery, packageData, companyEdiCode,
-				customerEdiCode, customerPackage);
+		rectl.seh1c = createSEH1CRecord(delivery, codes);
+		rectl.seh1dList = createSEH1DList(delivery, codes);
+		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -109,8 +103,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Cabecera
 	 */
-	private SEH1C createSEH1CRecord(Delivery delivery, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode) {
+	private SEH1C createSEH1CRecord(Delivery delivery, EdiCodes codes) {
 		SEH1C seh1c = new SEH1C();
 	
 //		String referenceCode = isECI(delivery.getCustomer().getDocument())
@@ -147,7 +140,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setIdentificacionDeTransportista(delivery.getDriverDocument());
 		seh1c.setNombreDelTransportista(delivery.getDriver());
 		seh1c.setMatriculaDelVehiculo(delivery.getNumberPlate());
-		seh1c.setLugarDeEntrega_Codificado_8_(deliveryPointEdiCode);
+		seh1c.setLugarDeEntrega_Codificado_8_(codes.getDpcode());
 		String deliveryAddress = getDeliveryFullAddress(delivery.getAddress().getId());
 		deliveryAddress = deliveryAddress != null
 				&& deliveryAddress.length() > 70 ? StringUtils.abbreviate(
@@ -156,37 +149,36 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return seh1c;
 	}
 
-	private List<SEH1D> createSEH1DList(Delivery delivery,
-			String companyEdiCode, String customerEdiCode,
-			String deliveryPointEdiCode, String department) {
+	private List<SEH1D> createSEH1DList(Delivery delivery, EdiCodes codes) {
 		List<SEH1D> list = new ArrayList<>();
 
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
+				codes.getMscode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), codes.getDepartment()));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
-				customerEdiCode, delivery.getCustomer().getId(), department));
-		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
-		// null, null));
+				codes.getMrcode(), delivery.getCustomer().getId(), codes.getDepartment()));
+		
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
+				codes.getSucode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), codes.getDepartment()));
+
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
+				codes.getPwcode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), codes.getDepartment()));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				deliveryPointEdiCode, delivery.getCustomer().getId(), department));
+				codes.getDpcode(), delivery.getCustomer().getId(), codes.getDepartment()));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
 		// null, null));
-		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
-				delivery.getCustomer().getId(), department));
-		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
-				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, codes.getBycode(),
+				delivery.getCustomer().getId(), codes.getDepartment()));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, codes.getShcode(),
+				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), codes.getDepartment()));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCode, delivery.getCustomer().getId(), department));
+				codes.getIvcode(), delivery.getCustomer().getId(), codes.getDepartment()));
 
 		return list;
 	}
 
-	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, 
-			String companyEdiCode, String customerEdiCode, String customerPackage) {
+	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
 		
 		List<SEH1P> list = new ArrayList<>();
 		List<DeliveryDetail> detailList = getDetailList(delivery.getId()).stream()
@@ -225,8 +217,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 							Integer mainPackageKey = level1Map.get(level1Key).get(0);
 							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
 							int lineNumber = mainPackage.seh1lList.size()+1;
-							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null,
-									companyEdiCode, customerEdiCode, customerPackage));
+							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null, codes));
 						} else {
 							SEH1P subPackage = null;
 							
@@ -241,14 +232,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 									subPackage.seh1lList = new ArrayList<>();
 									list.add(subPackage);
 								}
-								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key),
-										companyEdiCode, customerEdiCode, customerPackage);
+								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key), codes);
 							}
 						}
 					}
 				}				
-			}
-			
+			}	
 		}
 		
 		return list;
@@ -259,7 +248,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private void addLine(List<SEH1P> list, SEH1P targetPackage, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
-			String sscc, String companyEdiCode, String customerEdiCode, String customerPackage) {
+			String sscc, EdiCodes codes) {
 		String seralNumber = getItem(detail.getItem().getId()).getSerialNumber();
 		boolean success = false;
 		for(SEH1P p: list){
@@ -268,8 +257,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				for(SEH1L l: p.seh1lList){
 					if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
 							&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-						SEH1L newLine = createSEH1LRecord(0, delivery, detail, packageQuantity,
-								companyEdiCode, customerEdiCode, customerPackage);
+						SEH1L newLine = createSEH1LRecord(0, delivery, detail, packageQuantity, codes);
 						l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
 						if(packageQuantity!=null){
 							p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
@@ -281,8 +269,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		if(!success){
 			int lineNumber = targetPackage.seh1lList.size()+1;
-			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, detail, packageQuantity,
-					companyEdiCode, customerEdiCode, customerPackage));
+			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, detail, packageQuantity, codes));
 		}
 	}
 	
@@ -415,7 +402,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 * Línea de artículos
 	 */
 	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
-			String companyEdiCode, String customerEdiCode, String customerPackage) {
+			EdiCodes codes) {
 		OldItem item = getItem(detail.getItem().getId());
 		Integer customerId = delivery.getCustomer().getId();
 		String productCustomerCode = obtainProductCustomerCode(item, customerId);
@@ -435,7 +422,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		double quantity = 0.0;
 		double packUnits = item.getPackUnits();
 		if(packageQuantity==null){
-			quantity = obtainPackageQuantity(detail, customerPackage);
+			quantity = obtainPackageQuantity(detail, codes.getCustomerEdiCode());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
