@@ -67,6 +67,16 @@ public class CheckItTestCase {
 	}
 	
 	@Test
+	public void testAddExtraField() {
+		try {
+			CheckItAPI.addExtraField(RAYSON_ID, 39, "17");
+		} catch (Exception e) {
+			if (!e.getMessage().equals(CheckItException.NO_CONNECTION_MSG))
+				fail(e.getMessage());
+		}
+	}
+	
+	@Test
 	public void testGetAccounts() {
 		try {
 			CheckItAPI.getAccounts(AON_ID, 1, null);
