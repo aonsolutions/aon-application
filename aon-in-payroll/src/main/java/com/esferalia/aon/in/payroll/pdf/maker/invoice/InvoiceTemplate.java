@@ -83,8 +83,10 @@ import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.zxing.BarcodeFormat;
@@ -145,6 +147,9 @@ public class InvoiceTemplate {
 	List<String> legalLines;
 	
 	public InvoiceTemplate(CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
+//		company.getRegistry().getDomain().getDomainType(); DomainType.GARAGE;
+//		Invoice inv = new Invoice();
+//		inv.getDetails().get(0).getItem().getProduct().getType(); ProductType.LABOUR
 		
 		if (invoices == null || invoices.isEmpty() || invoices.stream().allMatch(Objects::isNull))
 			throw new CanNotCreatePdfException("No invoice found.");
@@ -569,20 +574,20 @@ public class InvoiceTemplate {
 		Date get(InvoiceDetail detail);
 	}
 	
-	private static void iterateDetails(Invoice invoice, InvoiceSource source,  Map<SourceCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback) {
+	private static void iterateDetailsBySource(Invoice invoice, InvoiceSource source,  Map<DetailCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback) {
 		if (source == null)
 			return;
 		invoice.getDetails().stream()
 		.filter(detail -> detail != null && source.equals(detail.getSource()))
 		.forEach(detail -> {
-			SourceCategory key = new SourceCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail));
+			DetailCategory key = new DetailCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail));
 			List<InvoiceDetail> detailList = map.getOrDefault(key, new LinkedList<>());
 			detailList.add(detail);
 			map.put(key, detailList);
 		});
 	}
 	
-	private static void sortOtherSources(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
+	private static void sortOtherSources(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
 		List<InvoiceSource> sortedTypes = Arrays.asList(SORTED_SOURCES);
 		invoice.getDetails().stream()
 		.filter(detail -> detail != null && !sortedTypes.contains(detail.getSource()))
@@ -593,29 +598,29 @@ public class InvoiceTemplate {
 		});
 	}
 	
-	private static void sortDeliveries(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
-		iterateDetails(invoice, InvoiceSource.DELIVERY, map,
+	private static void sortDeliveries(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(invoice, InvoiceSource.DELIVERY, map,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getId() : null,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? AonStringUtils.trimToEmpty(detail.getDeliveryDetail().getDelivery().getReferenceCode()) : "",
-			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getIssueTime() : null
+			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getDate() : null
 		);
 	}
-	private static void sortSales(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
-		iterateDetails(invoice, InvoiceSource.SALES, map,
+	private static void sortSales(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(invoice, InvoiceSource.SALES, map,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getId() : null,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? AonStringUtils.trimToEmpty(detail.getSalesDetail().getSales().getReferenceCode()) : "",
-			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getIssueDate() : null
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getDate() : null
 		);
 	}
-	private static void sortIncome(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
-		iterateDetails(invoice, InvoiceSource.INCOME, map,
+	private static void sortIncome(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(invoice, InvoiceSource.INCOME, map,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getId() : null,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? AonStringUtils.trimToEmpty(detail.getIncomeDetail().getIncome().getReferenceCode()) : "",
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getIssueDate() : null
 		);
 	}
-	private static void sortOffer(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
-		iterateDetails(invoice, InvoiceSource.OFFER, map,
+	private static void sortOffer(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(invoice, InvoiceSource.OFFER, map,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getId() : null,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? AonStringUtils.trimToEmpty(detail.getOfferDetail().getOffer().getReferenceCode()) : "",
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getIssueDate() : null	
@@ -623,8 +628,8 @@ public class InvoiceTemplate {
 	}
 	
 	
-	private static Map<SourceCategory, List<InvoiceDetail>> groupBySource(Invoice invoice) {
-		Map<SourceCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
+	private static Map<DetailCategory, List<InvoiceDetail>> groupBySource(Invoice invoice) {
+		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
 		if (invoice == null)
 			return map;
 		
@@ -641,15 +646,51 @@ public class InvoiceTemplate {
 		
 		return map;
 	}
+	
+	private static Map<DetailCategory, List<InvoiceDetail>> groupByProductType(Invoice invoice) {
+		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
+		if (invoice == null)
+			return map;
+		
+		if (invoice.getDetails() != null) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				if (detail != null) {
+					if (detail.getItem() != null && detail.getItem().getProduct() != null) {
+						ProductType productType = detail.getItem().getProduct().getType();
+						DetailCategory category = new DetailCategory(productType);
+						List<InvoiceDetail> detailList = map.getOrDefault(category, new LinkedList<>());
+						detailList.add(detail);
+						map.put(category, detailList);
+					} else {
+						List<InvoiceDetail> detailList = map.getOrDefault(null, new LinkedList<>());
+						detailList.add(detail);
+						map.put(null, detailList);
+					}
+				}
+			}
+		}
+		
+		return map;
+	}
+	
+	private static Map<DetailCategory, List<InvoiceDetail>> sortInvoiceDetails(Invoice invoice, CompanyFull company) {
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = null;		
+		if (isGarage(company)) {
+			detailMap = groupByProductType(invoice);
+		} else {
+			detailMap = groupBySource(invoice);			
+		}
+		return detailMap;
+	}
 
 	// DRAW DETAILED ENTRIES
 	public void drawDetailedEntries(PDDocument doc, CompanyFull company, Invoice invoice) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
-		Map<SourceCategory, List<InvoiceDetail>> detailMap = groupBySource(invoice);
 		int i = 0;
-		for (Entry<SourceCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-			SourceCategory category = entry.getKey();
+		for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
+			DetailCategory category = entry.getKey();
 			List<InvoiceDetail> details = entry.getValue();
 			if (details != null && !details.isEmpty()) {
 				if (category != null) {
@@ -680,6 +721,12 @@ public class InvoiceTemplate {
 		}
 	}
 	
+	private static boolean isGarage(CompanyFull company) {
+		if (company != null && company.getRegistry() != null && company.getRegistry().getDomain() != null)
+			return DomainType.GARAGE.equals(company.getRegistry().getDomain().getDomainType());
+		return false;
+	}
+	
 	private void jumpToNewPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
 		drawJail(bottom);
 		contents.close();
@@ -694,10 +741,11 @@ public class InvoiceTemplate {
 	private int predictNumberOfDetailedPages(Invoice invoice) throws IOException {
 		AtomicInteger numberOfPages = new AtomicInteger(1);
 		
-		Map<SourceCategory, List<InvoiceDetail>> detailMap = groupBySource(invoice);
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
+
 		int i = 0;
-		for (Entry<SourceCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-			SourceCategory category = entry.getKey();
+		for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
+			DetailCategory category = entry.getKey();
 			List<InvoiceDetail> details = entry.getValue();
 			if (details != null && !details.isEmpty()) {
 				if (category != null) {
@@ -942,10 +990,10 @@ public class InvoiceTemplate {
 	public int predictSimplifiedPages (Invoice invoice) throws IOException {
 		int numOfPages = 1;
 		if (invoice.getDetails() != null) {
+			Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 			
-			Map<SourceCategory, List<InvoiceDetail>> detailMap = groupBySource(invoice);
-			for (Entry<SourceCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-				SourceCategory category = entry.getKey();
+			for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
+				DetailCategory category = entry.getKey();
 				List<InvoiceDetail> details = entry.getValue();
 				if (details != null && !details.isEmpty()) {
 					if (category != null) {
@@ -993,14 +1041,12 @@ public class InvoiceTemplate {
 
 	// DRAW SIMPLIFIED ENTRIES
 	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
-		
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
-		Map<SourceCategory, List<InvoiceDetail>> detailMap = groupBySource(invoice);
-		
-		for (Entry<SourceCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
+		for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
 			
-			SourceCategory category = entry.getKey();
+			DetailCategory category = entry.getKey();
 			List<InvoiceDetail> details = entry.getValue();
 			if (details != null && !details.isEmpty() && category != null) {
 				if (y - 15 < bottom + 5) {
@@ -1622,19 +1668,24 @@ public class InvoiceTemplate {
 		return config;
 	}
 	
-	private static class SourceCategory implements Serializable {
+	private static class DetailCategory implements Serializable {
 		private static final long serialVersionUID = 6029475582594296883L;
 		private Integer id;
 		private String reference;
 		private Date date;
-		private InvoiceSource source;
+		private String name;
 		
-		public SourceCategory(InvoiceSource source, Integer id, String reference, Date date) {
+		public DetailCategory (InvoiceSource source, Integer id, String reference, Date date) {
 			super();
 			this.id = id;
-			this.source = source;
+			this.name = source != null ? AonStringUtils.trimToEmpty(source.getDescription()) : null;
 			this.reference = reference;
 			this.date = date;
+		}
+
+		public DetailCategory (ProductType productType) {
+			super();
+			this.name = productType != null ? AonStringUtils.trimToEmpty(productType.getName()) : null;
 		}
 		
 		public String getReference() {
@@ -1643,27 +1694,27 @@ public class InvoiceTemplate {
 		public Date getDate() {
 			return date;
 		}
-		public InvoiceSource getSource() {
-			return source;
+		public String getName() {
+			return name;
 		}
-		
-		
 		
 		@Override
 		public String toString() {
 			String ref =  AonStringUtils.trimToEmpty(getReference());
 			String dateStr = AonStringUtils.trimToEmpty(AonDateUtils.format(getDate(), "dd/MM/yyyy"));
-			String typeStr = AonStringUtils.trimToEmpty(getSource().getDescription());
+			String typeStr = AonStringUtils.trimToEmpty(getName());
 			return (!typeStr.isEmpty() ? typeStr + ": " : "") + ref + (!dateStr.isEmpty() ? " del " + dateStr : "");
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((id == null) ? 0 : id.hashCode());
-			result = prime * result + ((source == null) ? 0 : source.hashCode());
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -1672,18 +1723,19 @@ public class InvoiceTemplate {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			SourceCategory other = (SourceCategory) obj;
+			DetailCategory other = (DetailCategory) obj;
 			if (id == null) {
 				if (other.id != null)
 					return false;
 			} else if (!id.equals(other.id))
 				return false;
-			if (source != other.source)
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
 				return false;
 			return true;
 		}
-		
-		
 		
 	}
 }
