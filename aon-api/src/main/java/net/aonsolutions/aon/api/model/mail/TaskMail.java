@@ -20,7 +20,7 @@ public class TaskMail {
 	String contact;
 	String taskHolderName;
 	String note;
-	Boolean showRating;
+	Boolean showEvaluation;
 	TaskWorkflowType type;
 	List<TaskWorkflow> workflows;
 	
@@ -136,12 +136,12 @@ public class TaskMail {
 		return this;
 	}
 	
-	public Boolean getShowRating() {
-		return showRating!=null && showRating;
+	public Boolean getShowEvaluation() {
+		return showEvaluation!=null && showEvaluation;
 	}
 
-	public TaskMail setShowRating(Boolean showRating) {
-		this.showRating = showRating;
+	public TaskMail setShowEvaluation(Boolean showEvaluation) {
+		this.showEvaluation = showEvaluation;
 		return this;
 	}
 	

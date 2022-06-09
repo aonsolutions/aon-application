@@ -115,9 +115,10 @@ export class AonMessenger extends AonElement {
 
 					let promisesLoad = [];
 
-					promisesLoad.push(this.loadTag());
+					promisesLoad.push(this.loadTag(TAG_TYPE.TASK_LABEL));
 
                     if(!this.cau){
+						promisesLoad.push(this.loadTag(TAG_TYPE.TASK_TYPE));
 						promisesLoad.push(this.loadWorkgroup());
                     } else {
                         this._filter.email = email;
@@ -398,12 +399,20 @@ export class AonMessenger extends AonElement {
     tagNavBar() {
 		let application = this.applicationEl;
 		
-		const fnTag = this.getDur().isMessengerManager() && !this.cau ? () => this.dialogTag() : null; 
+		const fnTag = this.getDur().isMessengerManager() && !this.cau ? () => this.dialogTag({}, TAG_TYPE.TASK_LABEL) : null; 
 		
 		application.addSidenavOptions2({
-			id: 'Tag',
+			id: TAG_TYPE.TASK_LABEL,
 			name: this.cau ? MSG.APPLICATION : MSG.TAG
 		}, [], fnTag);
+
+		if(!this.cau){
+			const fnTagType = this.getDur().isMessengerManager() ? () => this.dialogTag({}, TAG_TYPE.TASK_TYPE) : null; 
+			application.addSidenavOptions2({
+				id: TAG_TYPE.TASK_TYPE,
+				name: MSG.TYPE
+			}, [], fnTagType);
+		}
 	}
 
 	async loadWorkgroup() {
@@ -479,10 +488,19 @@ export class AonMessenger extends AonElement {
 		});
 	}
 
-	async loadTag() {
+	async loadTag(type){
+		if(type === TAG_TYPE.TASK_LABEL){
+			await this.loadTagLabel();
+		} else if(type === TAG_TYPE.TASK_TYPE && !this.cau){
+			await this.loadTagType();
+		}
+	}
+
+	async loadTagLabel() {
+		const type = TAG_TYPE.TASK_LABEL;
 		let application = this.applicationEl;
 
-		let params = {type:TAG_TYPE.TASK_LABEL};
+		let params = {type};
 
 		if(this.cau){
 			let tags = getAppsByDur(this.getDur()).map(app => app.tag);
@@ -491,11 +509,13 @@ export class AonMessenger extends AonElement {
 			}
 		}
 
-		await getTaskTags(params).then(tags => {
-		  this._tags = sortBy(tags, "name", "asc").map(t => ({...t, value: t.id, description: t.name, name:t.name}));
-		  this.clearElementById(application.SIDENAV+'TagList');
+		const resp = await this.getTags(params);
 
-		  this._tags.forEach(item => {
+		this._tags = resp;
+
+		this.clearElementById(application.SIDENAV+type+'List');
+
+		resp.forEach(item => {
 			let option = {
 				id:item.id,
 				name: item.description,
@@ -512,16 +532,53 @@ export class AonMessenger extends AonElement {
 			if(this.getDur().isMessengerManager() && !this.cau){
 				option.actions.push(
 					{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
-					{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }
+					{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item, type) }
 				);
 			}
 
 			application.addSidenavOptionsListValue({
-				id: 'Tag',
+				id: type,
 				name: MSG.TAG.toUpperCase()
 			}, option);
-		  });
-		})
+		});
+	}
+
+	async loadTagType() {
+		if(!this.cau){
+			const type = TAG_TYPE.TASK_TYPE;
+			let application = this.applicationEl;
+	
+			const resp = await this.getTags({type});
+	
+			this.clearElementById(application.SIDENAV+type+'List');
+	
+			resp.forEach(item => {
+				let option = {
+					id:item.id,
+					name: item.description,
+					icon: MATERIAL_ICONS.LABEL,
+					actions:[],
+					fn: () => {}
+				};
+	
+				if(this.getDur().isMessengerManager()){
+					option.actions.push(
+						{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
+						{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item, type) }
+					);
+				}
+				application.addSidenavOptionsListValue({
+					id: type,
+					name: MSG.TYPE.toUpperCase()
+				}, option);
+			});
+		}
+	}
+
+	async getTags(params) {
+		let resp = await getTaskTags(params)
+		resp = sortBy(resp, "name", "asc").map(t => ({...t, value: t.id, description: t.name, name:t.name}));
+		return resp;
 	}
 
 	addListFilter(obj) {
@@ -578,25 +635,30 @@ export class AonMessenger extends AonElement {
 		}
 	}
 
-	dialogTag(tag={}) {
+	dialogTag(tag={}, type) {
+		const isEdit = tag && tag.id;
 		let d = this.getElement(this.getApplication().DIALOG);
 		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(tag && tag.id ? MSG.EDIT : MSG.ADD);
+		if(!this.isMobile()) {
+			d.width = '400px';
+		}
+		d.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
 
 		let aonInput = new AonInput();
 		aonInput.id = "addTag";
-		aonInput.description = MSG.TAG;
-		if(tag.name) aonInput.value = tag.name;
-		d.setContent(aonInput);
+		aonInput.description = type === TAG_TYPE.TASK_LABEL ? MSG.TAG : MSG.TYPE;
+		if(tag.name) {
+			aonInput.value = tag.name;
+		}
 
+		d.setContent(aonInput);
 		d.addAcceptAction(() => {
 			if(aonInput.value){
 				tag.name = aonInput.value;
-				tag.type = TAG_TYPE.TASK_LABEL;
+				tag.type = type;
 				saveTaskTag(tag).then(() => {
 					this.showMessage();
-					this.loadTag();
+					this.loadTag(type);
 				}).catch(err=>{
 					this.showError(err);
 				});
@@ -613,8 +675,8 @@ export class AonMessenger extends AonElement {
 		d.setContentHTML(`Estás seguro de eliminar la ${MSG.TAG} ${tag.name}`);
 		d.addAcceptAction(() => {
 			deleteTaskTag(tag).then(() => {
-				this.showMessage(`${MSG.TAG} eliminada!` );
-				this.loadTag();
+				this.showMessage(`Eliminada!`);
+				this.loadTag(tag.tag_type);
 			}).catch(err=>{
 				this.showError(err);
 			});
@@ -683,11 +745,9 @@ export class AonMessenger extends AonElement {
 					}
 				}
 
-				if(this.cau){
-					if(tag){
-						for(const key in tag){
-							application.updateSidenavCount(key, tag[key]);
-						}
+				if(tag && this.cau){
+					for(const key in tag){
+						application.updateSidenavCount(key, tag[key]);
 					}
 				}
 			} catch (error) {

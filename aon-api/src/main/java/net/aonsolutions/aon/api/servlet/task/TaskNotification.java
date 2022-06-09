@@ -207,18 +207,24 @@ public class TaskNotification {
 	 * @param workflow
 	 */
 	public static void onCloseEmail(AonApiData api, Task task, TaskWorkflow workflow){		
-		
-		if(	TaskUtils.isExternal(task, api.getDomain()) ) {
+		boolean isExternal = TaskUtils.isExternal(task, api.getDomain());
+		if(isExternal) {
 			Optional<String> gtaskId = task.getGtaskId();
 			if(
-				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) &&
 				gtaskId.isPresent() && gtaskId.get().contains("@") && 
-				workflow.getEmail()!=null && !workflow.getEmail().equals(gtaskId.get())
+				workflow.getEmail()!=null && !workflow.getEmail().equals(gtaskId.get()) 
 			) {
-				LOGGER.info("onCloseEmail Enternal");
-				ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParamsRequest.APP_REQUESTS_EMAIL_RATING.name());
 				
-				if(exists.getId()!=null && exists.getValue().equals("true")) {
+				if(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) ) {
+					LOGGER.info("onCloseEmail External");
+					//TODO
+				}  
+				// EVALUATION
+				if(
+						//TODO NOT EXIST EVALUATION
+						isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EMAIL_RATING ) 
+				 ) {
+					LOGGER.info("onCloseEmail External Evaluation");
 					Auth auth = AON_SOLUTIONS.getAuth(gtaskId.get());
 					
 					if(!auth.getEmail().isEmpty()) {						
@@ -241,7 +247,7 @@ public class TaskNotification {
 	}
 	
 	
-	private static void sendEmailWorkflow(AonApiData api, Task task, TaskWorkflow workflow, Optional<Auth> authOpt, boolean showRating){
+	private static void sendEmailWorkflow(AonApiData api, Task task, TaskWorkflow workflow, Optional<Auth> authOpt, boolean showEvaluation){
 		try {
 			Domain domain = api.getDomain();
 			JSONObject params = api.getData();
@@ -267,7 +273,10 @@ public class TaskNotification {
 
 				String title = task.getTitle()+" "+TaskUtils.parseNumber(task.getNumber());
 		
-				String url = URL_BASE;
+				String url = showEvaluation ?  
+					"https://"+domain.getName()+"/ms/api/task-evaluation?task="+task.getId() : 
+					URL_BASE
+				;
 				
 				String description = TaskUtils.parseDescription(task).replaceAll("\\<img[^\\>]*\\>|\\&amp;|\n|<br[^\\>]*\\>", " ");
 
@@ -276,7 +285,7 @@ public class TaskNotification {
 				.setDate(task.getModificationDate())
 				.setTitle(task.getTitle())
 				.setType(workflow.getType())
-				.setShowRating(showRating)
+				.setShowEvaluation(showEvaluation)
 				.setUrl(url)
 				.setLogo(logo)
 				.setDescription(description)
@@ -292,11 +301,12 @@ public class TaskNotification {
 				.setBody(body)
 				.setTo(to);
 				
-				if(TaskUtils.isCau(params))
+				if(TaskUtils.isCau(params)) {					
 					msg.setBcc(EMAIL_SUPPORT);
+				}
 
 			    SES.sendEmail(msg);
-			    System.out.println("SEND EMAIL TO: "+ to);
+			    LOGGER.info("SEND EMAIL TO: "+ to);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -380,7 +390,7 @@ public class TaskNotification {
 					}
 
 				    SES.sendEmail(msg);
-					System.out.println("SEND EMAIL HISTORIC: "+ to);
+				    LOGGER.info("SEND EMAIL HISTORIC: "+ to);
 				}
 			}
 		});
@@ -394,7 +404,9 @@ public class TaskNotification {
 		Domain domain = isExternal ? task.getDomain() : api.getDomain();
 
 		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", param.name());
-		System.out.println("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
+		
+		LOGGER.info("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
+		
 		return appParam.getId() == null || (appParam.getId()!=null && appParam.getValue().equals("true"));
 	}
 	

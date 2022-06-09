@@ -607,6 +607,7 @@ public interface Properties {
 		Property<Integer> getSourceIdProperty();
 		Property<Timestamp> getStartDateProperty();
 		Property<Byte> getStatusProperty();
+		Property<Byte> getEvaluationProperty();
 		Property<Integer> getTaskHolderProperty();
 		Property<Integer> getWorkgroupProperty();
 		Property<Integer> getNumberProperty();
