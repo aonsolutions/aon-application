@@ -6,7 +6,7 @@ import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
-import { checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
+import { checkButtonsToolbar, checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
@@ -80,10 +80,11 @@ export class AonMessengerChat extends AonElement {
     this.setData(data); 
     this.task = new Task(this.getData());
     this.task.onPropertyChanged = (propName, val) => {
-        if(propName == "project")
+        if(propName == "project"){
           this.onChangeProject();
-        else if(propName == "tags")
+        } else if(propName == "tags"){
           setTaskTags();
+        }
     }
     
     this.setWhAndTh();
@@ -99,10 +100,11 @@ export class AonMessengerChat extends AonElement {
 
   paintView() {
     this.style.fontSize = "12px";
-    if (this.isMobile()) 
+    if (this.isMobile()) {
       this.paintMobile();
-    else 
+    } else {
       this.paintDesktop();
+    }
   }
 
   paintDesktop() {
@@ -121,10 +123,10 @@ export class AonMessengerChat extends AonElement {
   async saveComment(text = undefined, task=undefined) {
     const taskW = task ? task : this.task;
     try {
-          const {comment, messageEl, workflowId}  = await sendMessage(text, taskW); 
+          const {comment, messageEl, workflowId, taskId}  = await sendMessage(text, taskW); 
           if(comment){
-            if(workflowId){
-              this.updateComment(taskW, comment, workflowId);
+            if(workflowId && taskId){
+              this.updateComment(taskId, workflowId, comment);
             } else {
               this.saveCommentNew(taskW, comment, messageEl);
             }
@@ -154,8 +156,9 @@ export class AonMessengerChat extends AonElement {
 
         if(workflow){
           messageEl.dataset["id"] = workflow.id;
-          if(this.isCau()) 
-            this.sendMessageHistoric(workflow.id);
+          if(this.isCau()) {
+            this.sendMessageHistoric(task.id, workflow.id);
+          }
         }
       } catch (error) {
         console.error("updateComment", error);
@@ -166,16 +169,16 @@ export class AonMessengerChat extends AonElement {
 
   /**
    * 
-   * @param {Task} task  
-   * @param {String} text
+   * @param {Number} taskId
    * @param {Number} workflow workflowId
+   * @param {String} text
    */
-   async updateComment(task, text, workflow) {
+   async updateComment(taskId, workflow, text) {
     try {
         let messageContent = document.querySelector(`${MESSENGER_COMPONENTS.MESSAGE}[data-id="${workflow}"] > .${CSS.MESSAGE_CONTENT}`);
         if(messageContent){
           await updateTaskWorkflow({
-            task: task.getId(),
+            task: taskId,
             comment:text,
             workflow
           });
@@ -219,7 +222,13 @@ export class AonMessengerChat extends AonElement {
   async getTaskWorkflow(task) {
     try {
       const taskId = task.id;
+
+      checkButtonsToolbar(this, task.id);
+
       let params = { task:taskId, domainId:task.domain.id, domainName:task.domain.name };
+      if(task.parent){
+        params.parent = task.parent;
+      }
       if(this.isCau() && this.getAuth().email){
         params.email =  this.getAuth().email;
       }
@@ -275,8 +284,9 @@ export class AonMessengerChat extends AonElement {
   }
 
   async saveSourceQuery(){
-    if(!this.task.id)
+    if(!this.task.id){
       this.setCauData(this.task);
+    }
       
     const data = await saveTask(this.task);
     this.task.editTask(data);
@@ -291,8 +301,9 @@ export class AonMessengerChat extends AonElement {
   }
 
   setCauData(){
-    if(this.getCauInfo())
+    if(this.getCauInfo()){
       this.task.setDescriptionJson({cauInfo:this.getCauInfo()});
+    }
   }
 
   getCauInfo(){
@@ -301,8 +312,9 @@ export class AonMessengerChat extends AonElement {
 
   getAuth(){
     try{
-      if(this.getCauInfo().auth && this.getCauInfo().auth.email)
-      return this.getCauInfo().auth;
+      if(this.getCauInfo().auth && this.getCauInfo().auth.email){
+        return this.getCauInfo().auth;
+      }
     }catch(e){}
 
     return {};
@@ -349,14 +361,16 @@ export class AonMessengerChat extends AonElement {
 
   /**
    * 
-   * @param {number} workflowId 
+   * @param {Number} taskId 
+   * @param {Number} workflowId 
    * @param {Boolean} showSuccess 
    */
-  async sendMessageHistoric(workflowId, showSuccess=false){
+  async sendMessageHistoric(taskId, workflowId, showSuccess=false){
     try {
-      const workflows  = await sendTaskHistoric({...this.task, workflowId});
-      if(showSuccess)
+      const workflows  = await sendTaskHistoric({task:taskId, workflowId: workflowId});
+      if(showSuccess){
         this.showMessage("Comentario enviado por correo!");
+      }
 
       setStyleMessageHistoric(workflows);
     } catch (error) {
@@ -413,7 +427,7 @@ export class AonMessengerChat extends AonElement {
         //TODO
       }
 
-      if(this.task.source === TASK_SOURCE.CAU){
+      if(this.task.source === TASK_SOURCE.CAU && this.isCau()){
         this.task.setSender({});
       }
     }
@@ -475,8 +489,9 @@ export class AonMessengerChat extends AonElement {
       this.task.setTaskHolder(new TaskHolder());
     }
 
-    if(!this.task.getId())
+    if(!this.task.getId()){
       this.task.setSender( new TaskHolder(this.task.senderCondition()));
+    }
 
     this.task.setWorkflowTmp({
       comment:"",
@@ -528,13 +543,15 @@ export class AonMessengerChat extends AonElement {
   async getWorkgroup(workgroup){
     const workgroups = await this.getWorkGroups();
     let options = [];
-    if(workgroups && workgroups.length>0)
-        options = workgroups.map( wg=> ({...wg, id: wg.value}) );
+    if(workgroups && workgroups.length>0){
+      options = workgroups.map( wg=> ({...wg, id: wg.value}) );
+    }
     
     if( workgroup && workgroup.id && workgroup.description){
       const exist = options.some(({id})=> id  === workgroup.id );
-      if(!exist)
+      if(!exist){
         options.push({...workgroup, value:workgroup.id, name:workgroup.description});  
+      }
     }
 
     return options;

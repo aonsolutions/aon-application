@@ -17,6 +17,7 @@ public class TaskMail {
 	String description;
 	String companyName;
 	String domainName;
+	String contact;
 	String taskHolderName;
 	String note;
 	Boolean showRating;
@@ -114,6 +115,15 @@ public class TaskMail {
 
 	public TaskMail setDomainName(String domainName) {
 		this.domainName = domainName;
+		return this;
+	}
+	
+	public String getContact() {
+		return contact;
+	}
+
+	public TaskMail setContact(String contact) {
+		this.contact = contact;
 		return this;
 	}
 	

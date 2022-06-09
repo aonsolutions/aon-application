@@ -2020,6 +2020,51 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 		}
 	}
+
+	@Test
+	public void testIdcXXIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXXI.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH,11);
+			calendar.set(Calendar.MONTH,Calendar.MAY);
+
+			Date may112022 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( may112022 , pec.getStartDate()));
+
+			
+
+			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.MONTH,Calendar.NOVEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date november = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
 	@Test
 	public void testIdcXIPECs() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
@@ -3136,12 +3181,16 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 	
 	public static ContractRecord newContract(AONContext aonContext, String domainName,  Date startDate, String ccc, String nss) {
+		return newContract(aonContext, domainName, startDate, ccc, nss, null);
+	}
+	
+	public static ContractRecord newContract(AONContext aonContext, String domainName,  Date startDate, String ccc, String nss, String doc) {
 		DomainRecord domain = newDomain(aonContext, domainName);
 		ScopeRecord scope = newScope(aonContext, domain.getId());
 		EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(aonContext, domain.getId(), scope.getId(), SSRegimeType.GENERAL);
 		EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getId(), CCCType.PRINCIPAL, ccc);
 		WorkplaceRecord workplace = newWorkplace(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getEnterprise());
-		RegistryRecord person = newPerson(aonContext, domain.getId(), null, nss);
+		RegistryRecord person = newPerson(aonContext, domain.getId(), doc, nss);
 		
 		ContractRecord contract = newContract(aonContext,
 				SSRegimeType.GENERAL, 

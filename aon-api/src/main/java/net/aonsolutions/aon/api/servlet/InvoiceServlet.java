@@ -41,6 +41,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -310,7 +312,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		if(invoice.isSales() && tbaiConfiguration.isActive()) {
+
+		boolean accepted = true;
+		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
+			InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
+				f.getInvoiceProperty().eq(invoiceId)
+				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE_1_1.value())));
+			accepted = info.isAccepted() || info.isAcceptedWithErrors();
+		}
+
+		if(invoice.isSales() && tbaiConfiguration.isActive() && accepted) {
 			tbaiConfiguration.setCertificate(checkCertificate(api));
 			TbaiMain tbai = new TbaiMain();
 			try {

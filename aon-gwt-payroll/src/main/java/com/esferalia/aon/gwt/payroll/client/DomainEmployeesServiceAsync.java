@@ -602,6 +602,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.sendContractoCBSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 	
+	public void sendContractoCBTransformSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractoCBTransformSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+	
 	public void removeContractoSEPE(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.removeContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}

@@ -56,6 +56,7 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.EMPRESATYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.REPRESENTANTETYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE.DatosVacacionesCotizadas;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE.DatosVacacionesCotizadasREA;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Certificates;
@@ -744,7 +745,8 @@ public class JooqCertifica2 {
 		trabajadorType.setNombre(removeAccents(certifica2Info.getName()));
 		trabajadorType.setApellido1(removeAccents(certifica2Info.getSurname()));
 		trabajadorType.setNumSS(certifica2Info.getSSNumber());
-		trabajadorType.setGrupoCotizacion(certifica2Info.getQuoteGroup());
+		if(AonStringUtils.isNotBlank(certifica2Info.getRegime()) && !AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+			trabajadorType.setGrupoCotizacion(certifica2Info.getQuoteGroup());
 		trabajadorType.setTipoContrato(certifica2Info.getContractType());
 		trabajadorType.setDuracionContrato(StringUtils.leftPad(certifica2Info.getContractDuration().toString(), 5, '0'));
 
@@ -764,14 +766,21 @@ public class JooqCertifica2 {
 		} else
 			getDatosCotizacion(trabajadorType, certifica2Info);
 
-		DatosVacacionesCotizadas datosVacacionesCotizadas = new DatosVacacionesCotizadas();
-		datosVacacionesCotizadas.setNumDiasCotizados(StringUtils.leftPad(certifica2Info.getSettleQuoteDays().toString(), 3, '0'));
-		datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(
-				StringUtils.leftPad(format(certifica2Info.getBaseCgc()), 9, '0'));
-		datosVacacionesCotizadas
-				.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Info.getBaseUnemployment()), 9, '0'));
-		trabajadorType.setDatosVacacionesCotizadas(datosVacacionesCotizadas);
-
+		if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163")) {
+			DatosVacacionesCotizadasREA datosVacacionesCotizadasREA = new DatosVacacionesCotizadasREA();
+			datosVacacionesCotizadasREA.setNumDiasCotizados(StringUtils.leftPad(certifica2Info.getSettleQuoteDays().toString(), 2, '0'));
+			// Revisar num jornadas cotizadas
+			datosVacacionesCotizadasREA.setNumJornadasCotizadas(StringUtils.leftPad("", 2, '0'));
+			datosVacacionesCotizadasREA.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Info.getBaseUnemployment()), 9, '0'));
+			trabajadorType.setDatosVacacionesCotizadasREA(datosVacacionesCotizadasREA);
+		} else {
+			DatosVacacionesCotizadas datosVacacionesCotizadas = new DatosVacacionesCotizadas();
+			datosVacacionesCotizadas.setNumDiasCotizados(StringUtils.leftPad(certifica2Info.getSettleQuoteDays().toString(), 3, '0'));
+			datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(format(certifica2Info.getBaseCgc()), 9, '0'));
+			datosVacacionesCotizadas.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Info.getBaseUnemployment()), 9, '0'));
+			trabajadorType.setDatosVacacionesCotizadas(datosVacacionesCotizadas);
+		}
+		
 		cuentaCotizacion.setDatosRepresentante(representanteType);
 		cuentaCotizacion.setDatosEmpresa(empresaType);
 		cuentaCotizacion.getDatosTrabajador().add(trabajadorType);

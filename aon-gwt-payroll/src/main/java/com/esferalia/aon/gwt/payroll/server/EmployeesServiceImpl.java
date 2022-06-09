@@ -305,6 +305,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract.ContractBuilder;
+import aon.sepe.objects.Contract.DiscontinuoReason;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
@@ -6720,6 +6721,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void sendContractoCBTransformSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+
+			// Data
+			String ipf = employeeContractInfo.getEmployeeInfo().getDocument();
+			Date startDate = employeeContractInfo.getContractInfo().getStartDate();
+			
+			aon.sepe.objects.CopyBasic copyBasic = createCopyBasic(employeeContractInfo);
+			
+			Sepe.sendTransformationCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), copyBasic, ipf, startDate);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void removeContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo)throws IllegalArgumentException {
@@ -7054,7 +7080,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return builder.build();
 	}
 
-	private CopyBasic createCopyBasic(EmployeeContractInfo employeeContractInfo) {
+	private CopyBasic createCopyBasic(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		CopyBasic copyBasic = new CopyBasic();
 		copyBasic.setFini(employeeContractInfo.getContractInfo().getStartDate());
 		copyBasic.setFend(employeeContractInfo.getContractInfo().getEndDate());
@@ -7065,6 +7091,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Integer signType = Integer.parseInt(AonStringUtils.isBlank(signBasicCopy) ? "1" : signBasicCopy);
 		copyBasic.setFirmType(CopyBasic.FirmType.values()[signType]);
 
+		if(AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getBasicCopy()))
+			throw new IllegalArgumentException("El campo \"Texto copia basica\" es obligatorio");
+		
 		copyBasic.setRestContract(employeeContractInfo.getContractSpecificData().getBasicCopy());
 
 		return copyBasic;
@@ -7133,6 +7162,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} else
 			builder.setPrevisible(false);
 		
+		
+		Boolean disc = employeeContractInfo.getContractSpecificData().getDisc();
+		if(null != disc) {
+			builder.setDiscontinuo(disc);
+			String discReason = employeeContractInfo.getContractSpecificData().getDiscReason();
+			if(disc && AonStringUtils.isBlank(discReason))
+				throw new IllegalArgumentException("Si la transformaci\u00f3n es con indicador de discontinuidad, es obligatorio rellenar el motivo de la discontinuidad");
+			builder.setDiscontinuoReason(AonStringUtils.equals(discReason, "P") ? DiscontinuoReason.PRORROGA_TACITA : DiscontinuoReason.INCAPACIDAD_TRANSITORIA);
+		} else
+			builder.setDiscontinuo(false);
 			
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());

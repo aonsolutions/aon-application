@@ -72,6 +72,9 @@ public class ContractSpecificData implements Serializable {
 	private Boolean quoteReduction;
 	private String journeyPercent;
 	
+	private Boolean disc;
+	private String discReason;
+	
 	public ContractSpecificData() {
 		super();
 	}
@@ -570,6 +573,22 @@ public class ContractSpecificData implements Serializable {
 
 	public void setJourneyPercent(String journeyPercentTB) {
 		this.journeyPercent = journeyPercentTB;
+	}
+
+	public Boolean getDisc() {
+		return disc;
+	}
+
+	public void setDisc(Boolean disc) {
+		this.disc = disc;
+	}
+
+	public String getDiscReason() {
+		return discReason;
+	}
+
+	public void setDiscReason(String discReason) {
+		this.discReason = discReason;
 	}
 	
 }
