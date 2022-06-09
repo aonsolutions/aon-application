@@ -2525,6 +2525,98 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testGtzdoInfiniteLoop() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				null);
+		//@formatter:on
+		
+		PaymentConceptRecord extra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord garantizado = addConcept(aonContext, "GARANTIZADO", PaymentType.CRA_0055);
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				extra,
+				"PAGA EXTRA", 
+				"1000.00", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004,
+				(byte) get(getToday(), Calendar.MONTH));
+
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				garantizado,
+				"MEJORAS PREST.SS.ENFERMEDAD COMUN", 
+				"isdef DIAS_ENFERMEDAD_COMUN ? /*user*/GTZDO((), 1, 180)/**/ : HIDE()", 
+				"_P", null, PaymentType.CRA_0055);
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(),
+				garantizado,
+				"MEJORAS PREST.SS.ENFERMEDAD PROFESIONAL", 
+				"isdef DIAS_ENFERMEDAD_PROFESIONAL ? /*user*/GTZDO((), 1, 180)/**/ : HIDE()", 
+				"_P", null, PaymentType.CRA_0055);
+
+		addPrestIts(aonContext, contract);
+		
+		
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getToday();
+		Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount());
+				
+		
+		
+	}
 
 	@Test
 	public void testGtzdoExtras() throws ExpressionException, SQLException,
