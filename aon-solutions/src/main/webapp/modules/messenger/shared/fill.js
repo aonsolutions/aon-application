@@ -2,10 +2,10 @@ import {  EVENT, MSG } from "../../../environments/environments.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomer, getCustomers } from "../../../services/registryService.js";
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
-import { waitEl } from "../../../services/utils.js";
+import { sortBy, waitEl } from "../../../services/utils.js";
 import { getAppsByDur } from "../../../services/app.js";
-import { MESSENGER_DIRECTION, MESSENGER_IDS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { createAction, createChatMessage, createMessageOpen, createNoMessage} from "./creationUtils.js";
+import { MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { createAction, createChatMessageNew, createMessageOpen, createNoMessage} from "./creationUtils.js";
 import { chooseIconMessage } from "./utils.js";
 
 
@@ -297,6 +297,9 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
  * @param {Array} workflows array de flujo de trabajo
  */
 export const fillChat = (task, meId, workflows=[])=>{
+    let aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const taskMainId = aonMessengerChat.task.id;
+    const aonTab = document.getElementById(MESSENGER_IDS.AON_TAB);
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
         chat.innerHTML = "";
         if(workflows.length == 0){
@@ -304,8 +307,11 @@ export const fillChat = (task, meId, workflows=[])=>{
             noMessage.appendTo(chat);
         } else {
 
+            workflows = sortBy(workflows, "id");
+
             const firstComment = workflows.find(w=> WORKFLOW_TYPES.OPEN.includes(w.type));
             const observation = task.getDescriptionJson().observation;
+          
             if(!firstComment){
                 const date = (task.getCreationDate() || new Date().getTime());
                 workflows.unshift({
@@ -324,39 +330,54 @@ export const fillChat = (task, meId, workflows=[])=>{
                 });
             } else if(firstComment && !firstComment.comment){
                 workflows = workflows.map(w=>{
-                    if(w.id == firstComment.id)
+                    if(w.id == firstComment.id){
                         w.comment = observation;
+                    }
                     return w;
                 })
             }
 
+            const getNumber = (taskWorkflow)=>{
+                if(taskMainId === task.id && taskWorkflow && taskMainId !== taskWorkflow && aonTab){
+                    const element = aonTab.getTabByDatasetId(taskWorkflow);
+                    if(element && element.dataset && element.dataset.number){
+                        return element.dataset.number;
+                    }
+                    return "parent";
+                } 
+                return null;
+            }
+
             workflows.forEach(workflow => {
-                const {id, comment, type, creation_date, creation_user, notification_user, notification_date, email, task_holder:{name, id:taskHolderId}} = workflow;
+                const {id, comment, type, task:taskWorkflow, creation_date, creation_user, notification_user, notification_date, email, task_holder:{name, id:taskHolderId}} = workflow;
                 const me = (taskHolderId == meId) || (email ===task.auth.email); // if taskHolder id is me
                 const userName = name || email || creation_user;
+
                 let message = {
                     id,
                     type,
                     comment,
                     me,
-                    direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT,
-                    date: creation_date,
                     notification_date,
-                    notification_user
+                    notification_user,
+                    task:taskWorkflow,
+                    number: getNumber(taskWorkflow),
+                    date: creation_date,
+                    direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT
                 }
 
                 if(!me) message.name = userName;
                 if (type == WORKFLOW_TYPES.COMMENT) {
-                    createChatMessage(message, chat);
+                    createChatMessageNew(message, chat);
                 } else {
                     message.name = userName;
                     const actionJson = chooseIconMessage(message);
-                    const submessage =  message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
+                    const submessage = message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
                     const action = createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
 
                     if(WORKFLOW_TYPES.OPEN.includes(type) && message.comment){
-                        createMessageOpen({comment: message.comment, id:message.id, me, date: creation_date }, action.element);
+                        createMessageOpen({comment: message.comment, id:message.id, me, date: creation_date, task:taskWorkflow }, action.element);
                     }
                 }
             });

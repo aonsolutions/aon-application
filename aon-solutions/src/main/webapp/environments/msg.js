@@ -488,6 +488,7 @@ export const TO_SHOW = "Mostrar";//TODO
 
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;
 export const UPLOAD = MSG.UPLOAD;
+export const UPDATE = "Actualizar"; //TODO
 export const UPLOAD_FILE = MSG.UPLOAD_FILE;
 export const USER = MSG.USER;
 export const USER_DATA = MSG.USER_DATA;

@@ -16,7 +16,9 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -25,6 +27,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -276,10 +279,17 @@ public class InvoiceValidation {
 	public static final BiConsumer<Invoice, AonConfigurationContext> TBAI = (inv,ctx) -> {
 		TbaiConfiguration tbai = TbaiConfigurationDAO.get(ctx.getContext());
 		if(tbai.isActive()) {
+			boolean accepted = true;
+			if(tbai.isBizkaia()) {
+				InvoiceInfo info = InvoiceInfoDAO.get(ctx.getContext(), f -> f.getInvoiceProperty().eq(inv.getId())
+						.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE_1_1.value())));
+				accepted = info.isAccepted() || info.isAcceptedWithErrors();
+			}
+			
 			DataResponse dr = DataResponseDAO.get(ctx.getContext(), f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
 					.and(f.getSourceIdProperty().eq(inv.getId())));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
-			if(dr.getId() != null && "alta".equalsIgnoreCase(type)) {
+			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
 				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
 			}
 		}
