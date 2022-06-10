@@ -1,5 +1,7 @@
 package com.code.aon.test.ql;
 
+import static org.junit.Assert.fail;
+
 /*
  * Created on 19-nov-2003
  *
@@ -8,10 +10,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import antlr.RecognitionException;
-import antlr.TokenStreamException;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import com.code.aon.ql.antlr.ExpressionBuilder;
 import com.code.aon.ql.antlr.QlLexer;
@@ -20,13 +19,16 @@ import com.code.aon.ql.ast.AbstractExpressionFactory;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.sql.SqlRenderer;
 
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
+
 /**
  * @author Raúl Trepiana
  *  
  */
-public class ToqlParserTest extends TestCase {
+public class ToqlParserTest {
 
-	private static final String IDENT = "item.ident"; 
+	private static final String IDENT = "variable"; 
 	
 	private static final String EXPS[] = {
 	// item.ident <> "1"
@@ -87,31 +89,12 @@ public class ToqlParserTest extends TestCase {
 			// Value"
 			"<First Value&>Second Value", };
 
-	/**
-	 * Constructor for ToqlParserTest.
-	 * 
-	 * @param arg0
-	 */
-	public ToqlParserTest(String arg0) {
-		super(arg0);
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		ToqlParserTest test = new ToqlParserTest("");
-		test.testExpressions();
-	}
-
-	/**
-	 * 
-	 */
+	@Test
 	public final void testExpressions() {
-		AbstractExpressionFactory f = AbstractExpressionFactory
-				.newExpressionFactory();
+		AbstractExpressionFactory f = AbstractExpressionFactory.newExpressionFactory();
 		Expression left = null, rigth = null;
 		for (int i = 0; i < EXPS.length; i++) {
+			System.out.println("Testing: [" + EXPS[i] + "]");
 			rigth = getExpression( EXPS[i] );
 			testExpressionWithSqlRenderer( rigth );
 			left = (left == null) ? rigth : f.newLogicalAndExpression(left, rigth);
@@ -119,14 +102,12 @@ public class ToqlParserTest extends TestCase {
 		testExpressionWithSqlRenderer( left );
 	}
 
-	/**
-	 * @param expression
-	 */
-	public final void testExpressionWithSqlRenderer( Expression expression ) {
+	private final void testExpressionWithSqlRenderer( Expression expression ) {
 		StringWriter out = new StringWriter();
 		SqlRenderer sqlRenderer = new SqlRenderer(out);
 		expression.accept(sqlRenderer);
-		System.out.println(out.toString());
+		System.out.println("\t" + expression);
+		System.out.println("\t" + out.toString());
 	}
 
 	private final Expression getExpression(String expressionString) {

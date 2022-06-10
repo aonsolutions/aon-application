@@ -2,16 +2,16 @@ package com.code.aon;
 
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonVersion {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AonVersion.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AonVersion.class.getName());
 	
 	public static final String VERSION = getVersion();
 	
@@ -28,27 +28,27 @@ public class AonVersion {
 			InputStream in = AonVersion.class.getResourceAsStream(POM_PROPERTIES);
 			properties.load(in);
 			in.close();
-			version = StringUtils.trimToNull(properties.getProperty(VERSION_ATTRIBUTE));
+			version = AonStringUtils.trimToNull(properties.getProperty(VERSION_ATTRIBUTE));
 		} catch ( Throwable th ) {
-			LOGGER.warn("Imposible determinar la versión");
+			LOGGER.warning("Imposible determinar la versión");
 		}
-		LOGGER.info("Version: {}", version);
+		LOGGER.log(Level.INFO,"Version: {}", version);
 		return version;
 	}
 	
 	private static long getSerialVersionUID( String version ) {
 		long result = 1;
-		String value = StringUtils.substringBefore(version, "-");
-		String[] numbers = StringUtils.split(value, ".");
-		if ( ArrayUtils.getLength(numbers) > 1 ) {
-			if ( NumberUtils.isDigits(numbers[0]) ) {
-				result = NumberUtils.toInt(numbers[0]) * 100;
+		String value = AonStringUtils.substringBefore(version, "-");
+		String[] numbers = AonStringUtils.split(value, '.');
+		if ( AonArrayUtils.getLength(numbers) > 1 ) {
+			if ( AonNumberUtils.isDigits(numbers[0]) ) {
+				result = AonNumberUtils.toint(numbers[0]) * 100;
 			}
-			if ( NumberUtils.isDigits(numbers[1]) ) {
-				result += NumberUtils.toInt(numbers[1]);
+			if ( AonNumberUtils.isDigits(numbers[1]) ) {
+				result += AonNumberUtils.toint(numbers[1]);
 			}
 		}
-		LOGGER.info("serialVersionUID: {}", result);
+		LOGGER.log(Level.INFO,"serialVersionUID: {}", result);
 		return result;
 	}	
 

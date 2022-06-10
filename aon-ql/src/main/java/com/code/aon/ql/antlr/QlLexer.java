@@ -60,8 +60,8 @@ public class QlLexer extends antlr.CharScanner implements QLTokenTypes,
 		caseSensitiveLiterals = true;
 		setCaseSensitive(true);
 		literals = new Hashtable();
-		literals.put(new ANTLRHashString("null", this), new Integer(18));
-		literals.put(new ANTLRHashString("not null", this), new Integer(19));
+		literals.put(new ANTLRHashString("null", this), Integer.valueOf(18));
+		literals.put(new ANTLRHashString("not null", this), Integer.valueOf(19));
 	}
 
 	public Token nextToken() throws TokenStreamException {
