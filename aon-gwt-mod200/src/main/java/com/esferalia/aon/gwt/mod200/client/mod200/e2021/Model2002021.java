@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -344,7 +345,11 @@ public class Model2002021 extends DockLayoutPanel {
 									input.removeStyleName(AON.AON_CSS.aonChanged());
 								}
 					// Dejar DraftMap vacio. DraftMap lleva los DoubleBox modificados. 
-					result.getDraftMap().clear();
+//					result.getDraftMap().clear();
+					// esto lo pongo cuando quito lo del draft
+					for (DoubleVariableEx dv : result.getKeysMap().values()) {
+						dv.setChangedByUser(false);
+					}
 				}
 				@Override
 				public void onFailure(Throwable caught) {

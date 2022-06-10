@@ -497,11 +497,11 @@ public class Mod2002021DAO  {
 		// Insertamos los valores de Mod2002021Key
 		for (Mod2002021Key k : Mod2002021Key.values()) {
 			DoubleVariableEx dv = null;	
-			if (mod200.getDraftMap().containsKey(k)) {
-				dv = mod200.getDraftMap().get(k);
-			} else {
+//			if (mod200.getDraftMap().containsKey(k)) {
+//				dv = mod200.getDraftMap().get(k);
+//			} else {
 				dv = mod200.getKeysMap().get(k);
-			}
+//			}
 			if (dv != null && dv.getValue() != 0.0){
 				detail = new FsModel200DetailRecord();
 				detail.setFsModel200(mod200.getId());
@@ -514,11 +514,11 @@ public class Mod2002021DAO  {
 		// Insertamos los valores de Mod2002021KeyDC (Detalle correcciones)
 		for (Mod2002021KeyDC k : Mod2002021KeyDC.values()) {
 			DoubleVariableEx dv = null;	
-			if (mod200.getDraftMap().containsKey(k)) {
-				dv = mod200.getDraftMap().get(k);
-			} else {
+//			if (mod200.getDraftMap().containsKey(k)) {
+//				dv = mod200.getDraftMap().get(k);
+//			} else {
 				dv = mod200.getKeysMap().get(k);
-			}
+//			}
 			if (dv != null && dv.getValue() != 0.0){
 				detail = new FsModel200DetailRecord();
 				detail.setFsModel200(mod200.getId());
@@ -963,13 +963,13 @@ public class Mod2002021DAO  {
 			addCharacters(ctx,mod200);
 			addBalanceCharacters(ctx,mod200);
 			
-			DoubleVariableEx d = null;
-			for (IMod200Key key : mod200.getDraftMap().keySet() ) {
-				d = mod200.getDraftMap().get(key);
-				if (d.isChangedByUser()) {
-					ctx.put(key.toString(), d.getValue());
-				}
-			}
+//			DoubleVariableEx d = null;
+//			for (IMod200Key key : mod200.getDraftMap().keySet() ) {
+//				d = mod200.getDraftMap().get(key);
+//				if (d.isChangedByUser()) {
+//					ctx.put(key.toString(), d.getValue());
+//				}
+//			}
 			
 			// Actualmente las casillas calculadas solo son de Mod2002021Key
 			DoubleVariableEx v = null;
@@ -985,11 +985,12 @@ public class Mod2002021DAO  {
 					if ( !AonMathUtils.equals( existingValue , calculated ) ) {
 						v = new DoubleVariableEx( k );
 						v.setValue( calculated );
-						if (addToDraft) {
-							mod200.addDraftVariable(v);	
-						} else {
+//						if (addToDraft) {
+//							mod200.addDraftVariable(v);	
+//						} else {
+						    v.setChangedByUser(true); // Esto lo pongo cuando quito lo del draft
 							mod200.addVariable(v);
-						}
+//						}
 					}
 				}
 			}

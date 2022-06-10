@@ -81,7 +81,7 @@ public class Mod2002021 extends Mod200 {
 	private String justActivos;
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
-	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
+//	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
 	private HashMap<IMod200Key,Boolean> visibleMap = new HashMap<IMod200Key,Boolean>();
 
 	public boolean isInitializedFromLastYear() {
@@ -381,27 +381,28 @@ public class Mod2002021 extends Mod200 {
 		return keysMap;
 	}
 	
-	public HashMap<IMod200Key, DoubleVariableEx> getDraftMap() {
-		return draftMap;
-	}
+//	public HashMap<IMod200Key, DoubleVariableEx> getDraftMap() {
+//		return draftMap;
+//	}
 	
 	public HashMap<IMod200Key, Boolean> getVisibleMap() {
 		return visibleMap;
 	}
 	
-	public void addDraftVariable(DoubleVariableEx t) {
-		draftMap.put( t.getKey(), t);
-    }
+//	public void addDraftVariable(DoubleVariableEx t) {
+//		draftMap.put( t.getKey(), t);
+//    }
 	
 	public void addVariable(DoubleVariableEx t) {
 		keysMap.put( t.getKey(), t);
 	}
 	
 	public DoubleVariableEx getVariable(IMod200Key key) {
-		DoubleVariableEx var = getDraftMap().get(key);
-		if (var == null ) {
-			var = getKeysMap().get(key);
-		}
+//		DoubleVariableEx var = getDraftMap().get(key);
+//		if (var == null ) {
+//			var = getKeysMap().get(key);
+//		}
+		DoubleVariableEx var = getKeysMap().get(key);
 		return var; 
 	}
 	
