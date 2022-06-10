@@ -8,25 +8,42 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.watson</artifactId>
 	<name>AON WATSON</name>
+	<description>
+		"El criado obedece; los mayordomos anticipamos deseos"
+	</description>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArgs>
+						<arg>-Werror</arg>
+						<arg>-Xlint:all</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<dependencies>
 		<!--
 			******************************************************************
 			¡¡ANALIZAR EXHAUSTIVAMENTE SI ES NECESARIO CREAR UNA DEPENDENCIA!!  
 			******************************************************************
-		 -->
-
-
-
-
-		<!--
+			
+					ESTE PROYECTO NO DEBE TENER DEPENDENCIAS
+			
 			******************************************************************
 			******************************************************************
 		 -->
-		<!-- TEST DEPENDENCIES -->
+		 
+		<!-- **** TEST DEPENDENCIES **** -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13-beta-1</version>
+			<version>${junitVersion}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

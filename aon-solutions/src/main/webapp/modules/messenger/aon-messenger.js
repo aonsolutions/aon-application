@@ -97,8 +97,10 @@ export class AonMessenger extends AonElement {
 
 				let promises = [getCauInfo()];
 
-				if(!this.cau)
+				if(!this.cau){
 					promises.push(this.getMyWorkgroups());
+				}
+				
 
 				const [cauInfo] = await Promise.all(promises);
 
@@ -179,6 +181,10 @@ export class AonMessenger extends AonElement {
 		} else {
 			this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
+			);
+						
+			this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
+				this.rootPanel(new AonMessenger())
 			);
 		}
 

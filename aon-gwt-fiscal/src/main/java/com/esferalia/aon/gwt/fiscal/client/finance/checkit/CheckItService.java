@@ -25,4 +25,5 @@ public interface CheckItService extends RemoteService {
 	Boolean editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields) throws IllegalArgumentException;
 	CheckItLoginFields getFields(Integer loginId) throws IllegalArgumentException;
 	List<CheckItBankStatement> getMovements(String domainName, int domain, String user, Integer empresaId, CheckItBankAccount checkItBankAccount, Date startDate, Date endDate) throws IllegalArgumentException; 
+	Boolean addExtraField(Integer enterpriseId, String iban, String extraField);
 }

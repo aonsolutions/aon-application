@@ -26,6 +26,7 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -127,9 +128,11 @@ public class ContractFill {
 				acroForm.setDefaultResources(resources);
 				
 				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
-					System.out.println(valueStr + "  --  " + fieldName);
+//					System.out.println(valueStr + "  --  " + fieldName);
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
 					
 					if(null != renderFieldName) {
@@ -163,7 +166,7 @@ public class ContractFill {
 						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
 							valueStr = valueStr.replace("${", "");
 							valueStr = valueStr.replace("}", "");
-							
+							System.out.println(valueStr + " -- " + contractFillInfo.getOrDefault(valueStr, ""));
 							if(!StringUtils.contains(valueStr, " ")){
 								String newValue = contractFillInfo.getOrDefault(valueStr, "");
 								newValue = AonStringUtils.isBlank(newValue) ? newValue : newValue.toUpperCase();
@@ -280,6 +283,8 @@ public class ContractFill {
 				acroForm.setDefaultResources(resources);
 				
 				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
@@ -366,6 +371,8 @@ public class ContractFill {
 				acroForm.setDefaultResources(resources);
 				
 				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);

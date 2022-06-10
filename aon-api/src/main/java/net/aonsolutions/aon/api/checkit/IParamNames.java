@@ -29,5 +29,6 @@ public interface IParamNames {
 	String DATE_TO_PARAM = "fecha_hasta";
 	String CCC = "ccc";
 	String BANK_ID = "id_banco";
+	String EXTRA_FIELD = "campo_extra";
 	
 }

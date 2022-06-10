@@ -7611,7 +7611,7 @@ public class AonStringUtils {
 		
 			String[] searcherWords = searcher.split("\\s+");
 			
-			for (String string : searcherWords) {
+			for (@SuppressWarnings("unused") String string : searcherWords) {
 				int currentDistance = AonStringUtils.getLevenshteinDistance(normalized(searcher).toUpperCase(), normalized(word).toUpperCase());
 				int realTolerance = tolerance;			
 				

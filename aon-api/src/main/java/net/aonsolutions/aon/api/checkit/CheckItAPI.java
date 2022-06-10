@@ -389,6 +389,56 @@ public class CheckItAPI implements IParamNames{
 	}
 
 //------------------------------------------------------------------------------------------
+	
+//------------------------------------ADD EXTRA FIELD---------------------------------------
+	/**
+	 * Función que inserta el campo extra en credenciales
+	 * para la empresa y tipo_login_banco_id
+	 * 
+	 * @param params
+	 *               <ul>
+	 *               <li><strong>claveApi</strong>: <em>required (string)</em>
+	 *               <p>
+	 *               Token que identifica el despacho
+	 *               </p>
+	 *               </li>
+	 *               <li><strong>empresa_id</strong>: <em>required (integer)</em>
+	 *               <p>
+	 *               Campo único que identifica la empresa. Se obtiene de /empresas
+	 *               </p>
+	 *               </li>
+	 *               <li><strong>tipo_login_banco_id</strong>: <em>required
+	 *               (integer)</em>
+	 *               <p>
+	 *               Campo único que identifica el tipo del login del banco. Se
+	 *               obtiene de /bancos/logins
+	 *               </p>
+	 *               </li>
+	 *               <li><strong>campo_extra</strong>: <em>(string)</em>
+	 *               <p>
+	 *               campo_extra
+	 *               </p>
+	 *               </li>
+	 *               </ul>
+	 * @return JSONObject
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
+	 */
+	public static JSONObject addExtraField(JSONObject params) throws CheckItException {
+		Object json = post(API_URL + "credenciales/campoextra", params);
+		return parseJSONObject(json);
+	}
+	
+	public static JSONObject addExtraField(Integer empresaId, Integer tipoLoginBancoId, String extraField) throws CheckItException {
+		JSONObject params = new JSONObject();
+		params.put(API_KEY_PARAM, API_KEY);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
+		params.put(EXTRA_FIELD, extraField);
+		return addExtraField(params);
+	}
+//------------------------------------------------------------------------------------------
+
 
 //--------------------------------------GET ACCOUNTS----------------------------------------
 	/**
@@ -1366,5 +1416,5 @@ public class CheckItAPI implements IParamNames{
 		calendar.set(Calendar.HOUR, 0);
 		return calendar.getTime();
 	}
-
+	
 }

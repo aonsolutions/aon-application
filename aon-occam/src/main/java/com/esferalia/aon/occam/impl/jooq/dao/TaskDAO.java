@@ -205,7 +205,7 @@ public class TaskDAO {
 			.set(TASK.SENDER, task.getSender().getId())
 			.set(TASK.COMMENTS, task.getDescription())
 			.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
-			.set(TASK.GTASK_ID, task.getGtaskId())
+			.set(TASK.GTASK_ID, task.getGtaskId().isPresent() ? task.getGtaskId().get() : null)
 			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.PARENT, task.getParent())
 			.set(TASK.MODIFICATION_USER, ctx.getUser())
@@ -429,6 +429,7 @@ public class TaskDAO {
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
+		 Optional<String> gtaskId = task.getGtaskId();
 		 return 
 				 DSL.select( 
 						DSL.val(task.getActivityType()),
@@ -437,7 +438,7 @@ public class TaskDAO {
 						DSL.val(task.getDomain().getId()),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
-						DSL.val(task.getGtaskId()),
+						DSL.val(gtaskId.isPresent() ? gtaskId.get() : null),
 						DSL.val(task.getGtasklistId()),
 						DSL.val(task.getPercent()),
 						DSL.val(task.getParent()),
