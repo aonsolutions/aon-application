@@ -383,6 +383,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getAttachData(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
 	
+	public void setAttachData(Integer attachId, byte[] dataURI, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.setAttachData(getCurrentDomainName(), getCurrentUser(), attachId, dataURI, asyncCallback);
+	}
+	
 	// ------------------------------------------------ Contract Clauses
 	
 	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException  {

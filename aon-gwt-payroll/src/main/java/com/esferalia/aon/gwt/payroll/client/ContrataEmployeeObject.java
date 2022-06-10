@@ -467,6 +467,25 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void getComunicationInfo() {
+		String document = employeeContractData.getEmployeeInfo().getDocument();
+		Date fini = employeeContractData.getContractInfo().getStartDate();
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		
+		employeesService.getSepeComunicationData(document, fini, contractId, new AsyncCallback<Map<String,String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
 	// ------------------------------------------------- Database Methods (TGSS Comunications)
 	
 	public void sendEmployeeAlta(Consumer<Void> success, Consumer<Throwable> failure) {

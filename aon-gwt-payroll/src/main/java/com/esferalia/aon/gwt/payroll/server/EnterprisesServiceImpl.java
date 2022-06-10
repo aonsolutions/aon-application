@@ -2337,6 +2337,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public void setAttachData(String domainName, String login, Integer attachId, byte[] data) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			AON.setAttach(domainName, domainId, login, data, attachId, AttachType.CONTRACT);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public List<ContractClause> getContractClauses(String domainName, Integer contractId) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractClauses.getContractClauses(connection, contractId);
