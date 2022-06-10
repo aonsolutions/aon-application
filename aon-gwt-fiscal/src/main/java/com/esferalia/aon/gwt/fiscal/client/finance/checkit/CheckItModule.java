@@ -34,15 +34,23 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -163,8 +171,6 @@ public class CheckItModule extends MainEntryPoint {
 			sessionLog.add(loadingLabel);
 			openFootPanel();
 		}
-		
-		
 //		ScriptInjector.fromString("if($doc.querySelector('aon-application')) {"
 //				+ "$doc.querySelector('aon-application').stopLoader()"
 //				+ "}").inject();
@@ -1807,7 +1813,7 @@ public class CheckItModule extends MainEntryPoint {
 									ListBox loginDropdown = new ListBox();
 									loginDropdown.addItem("Seleccione un login");
 									if (checkItUnlinkedBankAccount.getLogin() != null) {
-										checkItUnlinkedBankAccount.getLogin().clear();									
+										checkItUnlinkedBankAccount.getLogin().clear();
 									}
 									
 									for (CheckItLoginFields item : result) {
@@ -1990,23 +1996,66 @@ public class CheckItModule extends MainEntryPoint {
 							
 							
 						} else {
-							loadingPanel.hide();
-							String error = "Se ha producido un error desconocido";
-							errLabel.setText(error);
-							Label errorLabel = new Label("Se ha producido un error desconocido al a\u00F1adir la cuenta");
-							errorLabel.setStyleName(AON.CSS.aonColorRed());
-							if (!isMobile()) {								
-								sessionLog.add(errorLabel);
-								openFootPanel();
+							JSONValue jsonValue = JSONParser.parseStrict(result);
+							JSONObject response = jsonValue.isObject();
+							
+							if (response != null && response.get("extrafield") != null) {
+								if (dial != null && dial.isShowing()) {									
+									dial.hide();
+								}
+								chooseContractDialog(response, enterpriseId, checkItUnlinkedBankAccount.getIban(), () -> {
+									CHECKIT_SERVICE.getConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<CheckItConfiguration>() {
+										@Override
+										public void onSuccess(CheckItConfiguration result) {
+											loadingPanel.hide();
+											opt.setConfiguration(result);
+											if (!isMobile()) {							
+												enterpriseData.remove(unlinkedBanks);
+												enterpriseData.remove(linkedBanks);
+												linkedBanks = paintBanks(opt);
+												unlinkedBanks = paintUnlinkedBanks(opt);
+												enterpriseData.add(linkedBanks);
+												enterpriseData.add(unlinkedBanks);
+												dial.hide();
+											} else {
+												toolbar.remove(0);
+												centerPanel.clear();
+												loadModule(opt, true);
+											}
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											loadingPanel.hide();
+											dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
+											if (!isMobile()) {							
+												dial.hide();
+											} else {
+												toolbar.remove(0);
+												centerPanel.clear();
+												loadModule(opt, true);
+											}
+										}
+									});
+								});
+								
+								
+								
+								
+							} else {
+								String error = "Se ha producido un error desconocido";
+								errLabel.setText(error);
+								Label errorLabel = new Label("Se ha producido un error desconocido al a\u00F1adir la cuenta");
+								errorLabel.setStyleName(AON.CSS.aonColorRed());
+								if (!isMobile()) {								
+									sessionLog.add(errorLabel);
+									openFootPanel();
+								}	
 							}
+							loadingPanel.hide();
 						}
 					}
 				});
-				
-				
-				
-				
-				
 			});
 			
 			iie.addClickHandler(handler -> {
@@ -2016,12 +2065,112 @@ public class CheckItModule extends MainEntryPoint {
 				checkItUnlinkedBankAccount.setLogin(null);
 				
 			});
-			if (dial != null) {				
+			if (dial != null) {
 				dialog.center();
 				dialog.show();
 			}
 		}
 		
+	}
+	
+	private static interface ChooseContractCallback {
+		public void clearScreen();
+	}
+	
+	private ListBox chooseContractDialog(JSONObject response, Integer enterpriseId, String iban, ChooseContractCallback callback) {
+		FlowPanel pnl = new FlowPanel();
+		AonDialog dialog = new AonDialog("Seleccione el contrato", pnl);
+		JSONValue contractArrayValue = response.get("extrafield");
+		JSONArray contractArray = contractArrayValue.isArray();
+		ListBox listBox = new ListBox();
+		listBox.setWidth("100%");
+		if (contractArray != null) {
+			for (int i=0; i< contractArray.size(); i++) {
+				JSONValue value = contractArray.get(i);
+				JSONObject obj = value.isObject();
+				Integer id = obtainIntProperty(obj, "account_id");
+				String desc = obtainStringProperty(obj, "description");
+				listBox.addItem(desc, String.valueOf(id));
+			}
+		}
+		
+		Button hai = new Button(AON.MSG.accept());
+		if (isMobile()) {
+			mobileAcceptButton(hai);
+		} else {
+			desktopAcceptButton(hai);
+		}
+		hai.addClickHandler(event -> {
+			callback.clearScreen();
+			CHECKIT_SERVICE.addExtraField(enterpriseId, iban, listBox.getSelectedValue(), new AsyncCallback<Boolean>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Label errorLabel = new Label("No se ha podido seleccionar el contrato");
+					errorLabel.setStyleName(AON.CSS.aonColorRed());
+					if (!isMobile()) {
+						sessionLog.add(errorLabel);
+						openFootPanel();
+					}
+					dialog.hide();
+				}
+
+				@Override
+				public void onSuccess(Boolean result) {
+					Label errorLabel = new Label();
+					if (result != null && result) {
+						errorLabel.setText("Se ha seleccionado el contrato");
+						errorLabel.setStyleName(AON.CSS.aonColorGreen());						
+					} else {
+						errorLabel.setText("No se ha podido seleccionar el contrato");
+						errorLabel.setStyleName(AON.CSS.aonColorRed());
+					}
+					if (!isMobile()) {
+						sessionLog.add(errorLabel);
+						openFootPanel();
+					}
+					dialog.hide();
+				}
+			});
+		});
+		
+		hai.getElement().getStyle().setDisplay(Display.BLOCK);
+		hai.getElement().getStyle().setMarginTop(1, Unit.EM);
+		hai.getElement().getStyle().setProperty("marginLeft", "auto");
+		hai.getElement().getStyle().setProperty("marginRight", "auto");
+		
+		pnl.add(listBox);
+		pnl.add(hai);
+		
+		dialog.center();
+		dialog.show();
+		
+		return listBox;
+	}
+	
+	private String obtainStringProperty(JSONObject jsonObj, String property) {
+		if (jsonObj != null) {
+			JSONValue idValue = jsonObj.get(property);
+			if (idValue != null) {
+				JSONString idStr = idValue.isString();
+				if (idStr != null) {												
+					return idStr.stringValue();
+				}
+			}
+		}
+		return null;
+	}
+	private Integer obtainIntProperty(JSONObject jsonObj, String property) {
+		if (jsonObj != null) {
+			JSONValue idValue = jsonObj.get(property);
+			if (idValue != null) {
+				JSONNumber idStr = idValue.isNumber();
+				if (idStr != null) {												
+					return (int) idStr.doubleValue();
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void mobileAcceptButton(Button hai) {

@@ -439,7 +439,6 @@ public class ExpressionUtilities {
 	 * @param data
 	 * @return a <code>RelationalExpression</code>.
 	 */
-	@SuppressWarnings("rawtypes")
 	public static RelationalExpression getInExpression(String identifier, Object[] data) {
 		return getRelationalExpression(identifier, data, RelationalType.IN);
 	}

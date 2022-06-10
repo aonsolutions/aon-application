@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -15,9 +17,9 @@ import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
@@ -187,12 +189,10 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 			return Collections.emptyList();
 		}
 	}
-
-
+	
 	@Override
 	public String addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount,
 			String userID, String userPassword, String userPIN) {
-		
 		if (checkitUnlinkedBankAccount != null) {
 			String error = null;
 			
@@ -226,8 +226,19 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 					if (credentials)
 						CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
 					JSONObject johnson = CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
+					
 					String msg = johnson.optString("message");
 					msg += johnson.optString("result");
+					
+					if (AonStringUtils.containsIgnoreCase(msg, "campoextra")) {
+						Pattern pattern = Pattern.compile("(\\[\\{)(?:(?!\\}\\,?\\]).)+(\\}\\,?\\])$", Pattern.CASE_INSENSITIVE);
+						Matcher matcher = pattern.matcher(msg);
+						if (matcher.find()) {
+							String jsonArrStr = matcher.group();
+							return "{\"extrafield\": " + jsonArrStr + "}";
+						}
+					}
+					
 					String code = johnson.optString("code");
 					return msg + ((code != null && !code.isEmpty()) ? ", código: " + code : "");
 				} catch (Exception e) {
@@ -353,6 +364,23 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		} catch (Exception e) {
 			throwException(e);
 			return null;
+		}
+	}
+
+
+	@Override
+	public Boolean addExtraField(Integer enterpriseId, String iban, String extraField) throws AonCoreException {
+		try {
+			JSONArray accs = CheckItAPI.getAccounts(enterpriseId, 1, iban);
+			if (accs.isEmpty())
+				return false;
+			JSONObject acc = accs.getJSONObject(0);
+			int loginType = acc.getInt("tipo_login_banco_id");
+			CheckItAPI.addExtraField(enterpriseId, loginType, extraField);
+			return true;
+		} catch (Exception e) {
+			throwException(e);
+			return false;			
 		}
 	}
 
