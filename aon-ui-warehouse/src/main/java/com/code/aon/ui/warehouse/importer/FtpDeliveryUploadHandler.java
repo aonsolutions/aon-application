@@ -266,8 +266,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 
 			EdiCodes codes = SERES.getEdiCodes(AonUtil.getDomainName(), del.getDomain(), AonUtil.getRemoteUser(), del);
 			ConnectDeliveryWriterOccam writer2 = new ConnectDeliveryWriterOccam(AonUtil.getDomainName(), delivery.getDomain(), AonUtil.getRemoteUser());
-			writer2.createFile(del, new String(attachData), codes);
-			
+			output = writer2.createFile(del, new String(attachData), codes);
 			return output;
 		} catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());

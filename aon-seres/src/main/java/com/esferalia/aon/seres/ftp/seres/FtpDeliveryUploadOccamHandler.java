@@ -181,7 +181,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	public FileOutput exportEdiFile(Delivery delivery) throws AonException {
 		FileOutput output = null;
 		try {
-			com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam writer = new com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam(domainName, domainId, login);			
+			com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam writer = new com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam(domainName, domainId, login);
 			EdiCodes codes = SERES.getEdiCodes(domainName, domainId, login, delivery);
 			byte[] attachData = ConnectDeliveryWriterOccam.DeliveryPackages.obtainPackageDataAttach(
 					domainName, domainId, login, delivery.getId()).getData();

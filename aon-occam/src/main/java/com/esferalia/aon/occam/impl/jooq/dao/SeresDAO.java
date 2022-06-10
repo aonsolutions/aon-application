@@ -2,26 +2,26 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.ALBARANES;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.CABECERA;
+import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.DEPARTMENT;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.EDI_CODES_PATTERN;
+import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.EDI_DEPARTMENT_PATTERN;
+import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.EDI_PACKING_PATTERN;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.FACTURA;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.FINANCIERA;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.MEDIDA;
+import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.MEDIDA_FACTURA;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.PEDIDOS;
 import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.PTO_ENTREGA;
-import static com.esferalia.aon.occam.api.model.seres.IEdiSupport.DEPARTMENT;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.DataResponseDetail;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
@@ -33,16 +33,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 
 public class SeresDAO {
-	
-	public static final String CABECERA = "EDI_CABECERA";
-	public static final String PEDIDOS = "EDI_PEDIDOS";
-	public static final String PTO_ENTREGA = "EDI_PTO_ENTREGA";
-	public static final String FACTURA = "EDI_FACTURA";
-	public static final String FINANCIERA = "EDI_FINANCIERA";
-	public static final String ALBARANES = "EDI_ALBARANES";
-	public static final String MEDIDA = "EDI_MEDIDA";
-	public static final String MEDIDA_FACTURA = "EDI_MEDIDA_FACTURA";
-	public static final String DEPARTMENT = "EDI_DEPARTMENT";
 	
 	private SeresDAO() {
 
@@ -85,26 +75,25 @@ public class SeresDAO {
 				codes.setIvcode(drd.getDataValue());
 			}
 		});
-				
 
 		return codes;
 	}
-		
 	
-	public static Map<String, String> obtainEdiCodes(AONContext ctx, Integer registryId, Integer rAddressId){
+	public static Map<String, String> obtainEdiCodes(AONContext ctx, Integer registryId, Integer rAddressId) {
 		String value = getRegistryNoteComments(ctx, rAddressId.toString(), registryId);
 		Map<String, String> values = new HashMap<>();
 		Matcher m;
-		Pattern p = Pattern.compile(EDI_CODES_PATTERN);
+		Pattern p = Pattern.compile(EDI_CODES_PATTERN + EDI_PACKING_PATTERN + EDI_DEPARTMENT_PATTERN);
 		if (value != null && (m = p.matcher(value)).find()) {
-			values.put(CABECERA, m.groupCount()>0 ? m.group(1) : null);
-			values.put(PEDIDOS, m.groupCount()>1 ? m.group(2) : null);
-			values.put(PTO_ENTREGA, m.groupCount()>2 ? m.group(3) : null);
-			values.put(FACTURA, m.groupCount()>3 ? m.group(4) : null);
-			values.put(FINANCIERA, m.groupCount()>4 ? m.group(5) : null);
-			values.put(ALBARANES, m.groupCount()>5 ? m.group(6) : null);
-			values.put(MEDIDA, m.groupCount()>6 ? m.group(7) : null);
-			values.put(DEPARTMENT, m.groupCount()>7 ? m.group(8) : null);
+			values.put(CABECERA, m.groupCount() > 0 ? m.group(1) : null);
+			values.put(PEDIDOS, m.groupCount() > 1 ? m.group(2) : null);
+			values.put(PTO_ENTREGA, m.groupCount() > 2 ? m.group(3) : null);
+			values.put(FACTURA, m.groupCount() > 3 ? m.group(4) : null);
+			values.put(FINANCIERA, m.groupCount() > 4 ? m.group(5) : null);
+			values.put(ALBARANES, m.groupCount() > 5 ? m.group(6) : null);
+			values.put(MEDIDA, m.groupCount() > 6 ? m.group(7) : null);
+			values.put(MEDIDA_FACTURA, m.groupCount() > 7 ? m.group(8) : null);
+			values.put(DEPARTMENT, m.groupCount() > 8 ? m.group(9) : null);
 		}
 		return values;
 	}
