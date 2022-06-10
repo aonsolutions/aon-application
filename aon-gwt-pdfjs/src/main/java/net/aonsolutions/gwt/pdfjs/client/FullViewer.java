@@ -85,6 +85,15 @@ public class FullViewer extends Frame {
 		nativeOpen( this.getElement().cast() ,dataURI);
 	}
 
+	public byte[] getData() {
+		return getData(this.getElement().cast());
+	}
+
+	private native byte[] getData(FrameElement el) /*-{
+		el.contentWindow.PDFViewerApplication.pdfDocument.getData().then(function (data) {
+			return data;
+		});
+	}-*/;
 	
 	private native String encodeURIComponent(String URI) /*-{
 		return encodeURIComponent(URI);
