@@ -28,6 +28,16 @@ public interface IAttachment {
 	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter);
 
+	public void setRegistryAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setContractAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setInvoiceAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setItemAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setOfferAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setPayrollAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setProjectAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setSepeAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	public void setDataAttachStream(AONContext ctx, Integer attachId, byte[] data);
+	
 	
 	public Integer insertContractAttach(AONContext ctx, Attach attach);
 	public Integer insertItemAttach(AONContext ctx, Attach attach);
