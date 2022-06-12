@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.task.TaskAddEvaluation;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022UpdateII;
 
 public class Up2Date {
@@ -236,7 +237,8 @@ public class Up2Date {
 //    		Art1512022Update.ART1512022UPDATE,
 //    		ContractAttachUpdate.CONTRACTATTACHUPDATE
 //    		AlterSalaryDeduction.ALTERSALARYDEDUCTION
-   		TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII
+   		TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII,
+   		TaskAddEvaluation.TASK_ADD_EVALUATION
     };
     
 
