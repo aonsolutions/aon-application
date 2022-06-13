@@ -148,33 +148,32 @@
 	        <tr>
 	          <td>
 	            <div class="divMain" style="justify-content: center !important;">
-	              <a href="$task.getUrl()&evaluation=1" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=0" class="grey styleCircle" target="_blank">
 	                <div class="faces">
-	                  <img alt="Muy Mala" src="https://aonsolutions.org/assets/img/very_bad.png">
-	                </div>
-	                <div class="faceText">
-	                  <span>Muy Mala</span>
-	                </div>
-	              </a>
-	              <a href="$task.getUrl()&evaluation=2" class="grey styleCircle" target="_blank">
-	                <div class="faces">
-	                  <img alt="Mala" src="https://aonsolutions.org/assets/img/very.png">
+	                  <img alt="Mala" src="https://aonsolutions.org/assets/img/very_bad.png">
 	                </div>
 	                <div class="faceText">
 	                  <span>Mala</span>
 	                </div>
 	              </a>
-	
-	              <a href="$task.getUrl()&evaluation=3" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=1" class="grey styleCircle" target="_blank">
 	                <div class="faces">
-	                  <img alt="Regular" src="https://aonsolutions.org/assets/img/regular.png">
+	                  <img alt="Mejorable" src="https://aonsolutions.org/assets/img/bad.png">
 	                </div>
 	                <div class="faceText">
-	                  <span>Regular</span>
+	                  <span>Mejorable</span>
+	                </div>
+	              </a>
+	              <a href="$task.getUrl()&evaluation=2" class="grey styleCircle" target="_blank">
+	                <div class="faces">
+	                  <img alt="Correcta" src="https://aonsolutions.org/assets/img/regular.png">
+	                </div>
+	                <div class="faceText">
+	                  <span>Correcta</span>
 	                </div>
 	              </a>
 	
-	              <a href="$task.getUrl()&evaluation=4" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=3" class="grey styleCircle" target="_blank">
 	                <div class="faces">
 	                  <img alt="Buena" src="https://aonsolutions.org/assets/img/good.png">
 	                </div>
@@ -183,7 +182,7 @@
 	                </div>
 	              </a>
 	
-	              <a href="$task.getUrl()&evaluation=5" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=4" class="grey styleCircle" target="_blank">
 	                <div class="faces">
 	                  <img alt="Muy buena" src="https://aonsolutions.org/assets/img/very_good.png">
 	                </div>
