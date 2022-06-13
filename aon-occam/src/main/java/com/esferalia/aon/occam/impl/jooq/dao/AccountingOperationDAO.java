@@ -70,23 +70,23 @@ public class AccountingOperationDAO {
 	private static Field<BigDecimal> sumRetentionQuota = DSL.sum(DSL.when(retInvoiceTax.QUOTA.eq(0.0),DSL.round(retInvoiceTax.BASE.mul(retInvoiceTax.PERCENTAGE).div(100),2)).otherwise(retInvoiceTax.QUOTA));
 	private static Field<String> conceptType = DSL				
 		// Conceptos de Ingreso
-		.when(OP_DETAIL_ACC_CODE.substring(1, 1).eq("7").and(INVOICE.ID.isNull()),"IX1") // IX1 - Otros Ingresos (incluidas subvenciones y otras transferencias) - Apuntes sin factura				
-		.when(OP_DETAIL_ACC_CODE.substring(1, 1).eq("7"),"I00") // I01 - Ingresos de explotación - Facturas
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 1).eq("7").and(INVOICE.ID.isNull()),"IX1") // IX1 - Otros Ingresos (incluidas subvenciones y otras transferencias) - Apuntes sin factura				
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 1).eq("7"),"I00") // I01 - Ingresos de explotación - Facturas
 		
 		// Conceptos de Gasto
-		.when(OP_DETAIL_ACC_CODE.substring(1, 3).eq("640"),"G04") // G04 - Sueldos y salarios - 640
-		.when(OP_DETAIL_ACC_CODE.substring(1, 3).eq("642"),"GX2") // GX2 - Seguridad Social a cargo de la empresa (incluidas las cotizaciones del titular) - 642				
-		.when(OP_DETAIL_ACC_CODE.substring(1, 3).eq("621"),"G12") // G12 - Arrendamientos y cánones - 621
-		.when(OP_DETAIL_ACC_CODE.substring(1, 3).eq("622"),"G13") // G13 - Reparaciones y conservación - 622
-		.when(OP_DETAIL_ACC_CODE.substring(1, 3).eq("628"),"GX4") // GX4 - Suministros (entre otros agua, gas, electricidad, telefonía, internet) - 628
-		.when(OP_DETAIL_ACC_CODE.substring(1, 3).eq("623"),"G19") // G19 - Servicios de profesionales independientes - 623
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("60").or(OP_DETAIL_ACC_CODE.substring(1, 2).eq("61")),"GX1") // GX1 - Consumos de explotación - 60, 61
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("64"),"GX3") // GX3 - Otros gastos de personal - RESTO 64
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("62"),"GX5") // GX5 - Otros servicios exteriores - RESTO 62
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("66"),"GX6") // GX6 - Gastos financieros - 66
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("63"),"GX7") // GX7 - Tributos fiscalmente deducibles - 63, IVA,REQ,REAGYP NO DED.
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("68"),"GX8") // GX8 - Amortizaciones: dotaciones del ejercicio fiscalmente deducibles - 68
-		.when(OP_DETAIL_ACC_CODE.substring(1, 2).eq("65"),"G34") // G34 - Pérdidas por insolvencias de deudores - 65
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 3).eq("640"),"G04") // G04 - Sueldos y salarios - 640
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 3).eq("642"),"GX2") // GX2 - Seguridad Social a cargo de la empresa (incluidas las cotizaciones del titular) - 642				
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 3).eq("621"),"G12") // G12 - Arrendamientos y cánones - 621
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 3).eq("622"),"G13") // G13 - Reparaciones y conservación - 622
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 3).eq("628"),"GX4") // GX4 - Suministros (entre otros agua, gas, electricidad, telefonía, internet) - 628
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 3).eq("623"),"G19") // G19 - Servicios de profesionales independientes - 623
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("60").or(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("61")),"GX1") // GX1 - Consumos de explotación - 60, 61
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("64"),"GX3") // GX3 - Otros gastos de personal - RESTO 64
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("62"),"GX5") // GX5 - Otros servicios exteriores - RESTO 62
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("66"),"GX6") // GX6 - Gastos financieros - 66
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("63"),"GX7") // GX7 - Tributos fiscalmente deducibles - 63, IVA,REQ,REAGYP NO DED.
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("68"),"GX8") // GX8 - Amortizaciones: dotaciones del ejercicio fiscalmente deducibles - 68
+		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("65"),"G34") // G34 - Pérdidas por insolvencias de deudores - 65
 		.otherwise("G37") // G37 - Otros conceptos fiscalmente deducibles (excepto provisiones) - RESTO
 	;
 	public static Stream<OperationBreakdown> newGetOperationBreakdown(final AONContext ctx, int domain, OperationParams params) {
@@ -100,6 +100,7 @@ public class AccountingOperationDAO {
 	// ******************************************************
 	// ******************************************************
 	public static Stream<OperationBreakdown> getOperationBreakdown(final AONContext ctx, int domain, OperationParams params) {
+		
 		if ( !isActivityEnabledForReport(ctx,params)) {
 			return Stream.empty();
 		}
