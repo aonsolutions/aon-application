@@ -14,12 +14,13 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.GroupField;
+import org.jooq.Record;
 import org.jooq.Record14;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -40,6 +41,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class AccountingOperationDAO {
 	
@@ -89,35 +91,20 @@ public class AccountingOperationDAO {
 		.when(DSL.substring(OP_DETAIL_ACC_CODE,1, 2).eq("65"),"G34") // G34 - Pérdidas por insolvencias de deudores - 65
 		.otherwise("G37") // G37 - Otros conceptos fiscalmente deducibles (excepto provisiones) - RESTO
 	;
-	public static Stream<OperationBreakdown> newGetOperationBreakdown(final AONContext ctx, int domain, OperationParams params) {
-		if ( !isActivityEnabledForReport(ctx,params)) {
-			return Stream.empty();
-		}
-		return Stream.empty();
-	}
-	// ******************************************************
-	// ******************************************************
-	// ******************************************************
-	// ******************************************************
+	
 	public static Stream<OperationBreakdown> getOperationBreakdown(final AONContext ctx, int domain, OperationParams params) {
 		
 		if ( !isActivityEnabledForReport(ctx,params)) {
 			return Stream.empty();
 		}
 		// Numero de actividades de la empresa en la fecha del apunte o fecha de IVA (se usará en los apuntes imputados a todas las actividades -actividad es null-, en empresas que tengan mas de una actividad)
-		Field<Integer> activityCount = params.getIrpf() ? 
-				DSL.selectCount()
-					.from(ENTERPRISE_ACTIVITY)
-					.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(domain))
-					.and(ENTERPRISE_ACTIVITY.START_DATE.isNull().or(ENTERPRISE_ACTIVITY.START_DATE.lessOrEqual(OP_DATE)))
-					.and(ENTERPRISE_ACTIVITY.END_DATE.isNull().or(ENTERPRISE_ACTIVITY.END_DATE.greaterOrEqual(OP_DATE)))
-					.asField("activityCount") :
-				DSL.selectCount()
-					.from(ENTERPRISE_ACTIVITY)
-					.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(domain))
-					.and(ENTERPRISE_ACTIVITY.START_DATE.isNull().or(ENTERPRISE_ACTIVITY.START_DATE.lessOrEqual(INVOICE.TAX_DATE)))
-					.and(ENTERPRISE_ACTIVITY.END_DATE.isNull().or(ENTERPRISE_ACTIVITY.END_DATE.greaterOrEqual(INVOICE.TAX_DATE)))
-					.asField("activityCount");
+		Field<java.sql.Date> date = params.isIrpf() ? OP_DATE:INVOICE.TAX_DATE;
+		Field<Integer> activityCount =DSL.selectCount()
+			.from(ENTERPRISE_ACTIVITY)
+			.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(domain))
+			.and(ENTERPRISE_ACTIVITY.START_DATE.isNull().or(ENTERPRISE_ACTIVITY.START_DATE.lessOrEqual(date)))
+			.and(ENTERPRISE_ACTIVITY.END_DATE.isNull().or(ENTERPRISE_ACTIVITY.END_DATE.greaterOrEqual(date)))
+			.asField("activityCount");
 					
 		// Condición para que aparezcan los diferentes apuntes:
 		// Listado IRPF: Aparecen todos los apuntes del grupo 6 (compras y gastos) o 7 (ventas e ingresos)
@@ -143,23 +130,15 @@ public class AccountingOperationDAO {
 		// Listado IRPF: asiento + cuenta contable
 		// Listado IVA:  asiento + porcentaje de IVA
 		// Libro Registro AEAT (IRPF): asiento + concepto + porcentaje_iva
-		GroupField[] groupBy = new GroupField[]{ OP_ID, vatInvoiceTax.PERCENTAGE };
-		if (params.getAeatBook() && params.getIrpf()) {
-			groupBy = new GroupField[]{ OP_ID, conceptType, vatInvoiceTax.PERCENTAGE };
-		} else if (params.getIrpf()) {
-			groupBy = new GroupField[]{ OP_ID, OP_DETAIL_ACC_ID };
-		}
+		GroupField[] groupBy = getGroupBy( params );
 				
 		// Ordenamos por:
 		// Listado IRPF: Fecha apunte + nº documento + numero asiento + linea apunte
 		// Listado IVA: Fecha IVA + nº documento + nº asiento + linea apunte
-		Field<?>[] orderBy = new Field<?>[]{OP_DETAIL_DOCUMENT_NUMBER, INVOICE.TAX_DATE, OP_JOURNAL, OP_DETAIL_LINE};  // Listado IVA
-		if (params.getIrpf()) {
-			orderBy = new Field<?>[]{OP_DATE, OP_DETAIL_DOCUMENT_NUMBER, OP_JOURNAL, OP_DETAIL_LINE};  // Listado IRPF 
-		}
+		Field<?>[] orderBy = getOrderBy( params );
 		
-		Table<Record14<Integer,Integer,Integer,Byte,Integer,java.sql.Date,UInteger,String,String,BigDecimal,BigDecimal,Integer,String,String>> ACCOUNTING =
-				DSL.select(  
+		Table<Record14<Integer,Integer,Integer,Byte,Integer,java.sql.Date,UInteger,String,String,BigDecimal,BigDecimal,Integer,String,String>> 
+			accountingSelect = DSL.select(  
 					  OP_ID
 					, OP_DOMAIN
 					, OP_JOURNAL
@@ -178,9 +157,9 @@ public class AccountingOperationDAO {
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.where(params.getIrpf()
+				.where(params.isIrpf()
 					?(ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate()))
-					.and(ACCOUNT.CODE.startsWith(params.getExpenses()?"6":"7")))
+					.and(ACCOUNT.CODE.startsWith(params.getAccountPrefix())))
 					:DSL.trueCondition()
 						)
 				.groupBy(OP_ID,OP_DETAIL_ACC_ID)
@@ -188,7 +167,7 @@ public class AccountingOperationDAO {
 		
 		// Obtenemos los datos
         return ctx.getDslContext()
-    		.select(ACCOUNTING.fields())
+    		.select(accountingSelect.fields())
 			.select(
 				  INVOICE.ID
                 , INVOICE.TAX_DATE
@@ -221,7 +200,7 @@ public class AccountingOperationDAO {
 				, INVOICE_DUA.ID
 				, INVOICE_TAX_ACCOUNT.ACCOUNT
                 )				
-                .from(ACCOUNTING)
+                .from(accountingSelect)
                 .leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(OP_ID))		                
                 .leftOuterJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) 
                 .leftOuterJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -230,7 +209,10 @@ public class AccountingOperationDAO {
                 	.on(	 vatInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID)
                 		.and(vatInvoiceTax.TAX_TYPE.equal((byte)1)))  
                 	
-                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(vatInvoiceTax.ID))
+                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(
+                		INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(vatInvoiceTax.ID)
+                		.and(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(OP_DETAIL_ACC_ID))
+                		)
                 .leftOuterJoin(retInvoiceTax).on(retInvoiceTax.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(retInvoiceTax.TAX_TYPE.equal((byte)2)))  // Retención IRPF
                 .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
                 .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
@@ -248,28 +230,54 @@ public class AccountingOperationDAO {
                 .orderBy(orderBy)
                 .fetch()
 				.stream()
-				.map( rec -> {						
-							
-					Integer invoice = rec.getValue(INVOICE.ID);
-						String cuenta = rec.getValue(OP_DETAIL_ACC_CODE);
-						
-						double base = rec.getValue(sumBase)==null?0.0:rec.getValue(sumBase).doubleValue();
-						double quota = rec.getValue(sumQuota)==null?0.0:rec.getValue(sumQuota).doubleValue();					
-						double deductibleQuota = rec.getValue(sumDeductibleQuota)==null?0.0:rec.getValue(sumDeductibleQuota).doubleValue();					
-						double surchargeQuota = rec.getValue(sumSurchargeQuota)==null?0.0:rec.getValue(sumSurchargeQuota).doubleValue();
-						double retentionQuota = rec.getValue(sumRetentionQuota)==null?0.0:rec.getValue(sumRetentionQuota).doubleValue();
-
-						// El total es la suma de base + impuestos en facturas y el importe debe o haber en el resto de apuntes
-						double total = 0;
-						// Apuntes que no son facturas (base y total coinciden)
-						double debit = rec.getValue(OP_DETAIL_DEBIT) == null ? 0.0 : rec.getValue(OP_DETAIL_DEBIT).doubleValue();
-						double credit = rec.getValue(OP_DETAIL_CREDIT) == null ? 0.0 : rec.getValue(OP_DETAIL_CREDIT).doubleValue();
-						if (invoice == null) {
-							if (cuenta.startsWith("6")) {
-								base = debit - credit;  // Compras y Gastos
-							} else {
-								base =  credit - debit; // Ventas e Ingresos
-							}
+				.map(rec -> new Pair<Record,OperationBreakdown>(rec,new OperationBreakdown()))
+				.map(pair -> {
+					Record rec = pair.getLeft();
+					pair.getRight()
+						.setEntryId(rec.getValue(OP_ID))
+						.setEntryDate(rec.getValue(OP_DATE))
+						.setAccount(rec.getValue(OP_DETAIL_ACC_CODE))
+						.setAccountDescription(rec.getValue(OP_DETAIL_ACC_DESCRIPTION))
+						.setConcept(rec.getValue(OP_DETAIL_CONCEPT))
+						.setInvoice(rec.getValue(INVOICE.ID))
+						.setDocNumber(rec.getValue(OP_DETAIL_DOCUMENT_NUMBER))
+						.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+						.setRegistryName(rec.getValue(INVOICE.RNAME))
+						.setTaxDate(Objects.requireNonNullElse(rec.getValue(INVOICE.TAX_DATE), rec.getValue(OP_DATE)))
+						.setPercent(Objects.requireNonNullElse(rec.getValue(vatInvoiceTax.PERCENTAGE), 0.0))
+						.setSurchargePercent(Objects.requireNonNullElse(rec.getValue(vatInvoiceTax.SURCHARGE),0.0))
+						// Nuevos datos para el Libro Registro AEAT
+						.setActivityType(getActivityType(rec.getValue(IAE.SECTION),rec.getValue(IAE.EPIGRAPH))) // Actividad - Tipo							
+						.setActivityIAE(AonStringUtils.trimToEmpty(rec.getValue(IAE.EPIGRAPH)))					// Actividad - Epígrafe							
+						.setInvoiceType(getInvoiceType( rec ))                 // Tipo de Factura									
+						.setConceptType(rec.getValue(conceptType))   // Concepto de Ingreso/Gasto
+						.setInvoiceSeries(rec.getValue(INVOICE.SERIES))  // Factura - Serie							 
+						.setInvoiceNumber(params.isExpenses() 
+								? rec.getValue(INVOICE.REFERENCE_CODE) 
+								: AonNumberUtils.toString(rec.getValue(INVOICE.NUMBER))) // Factura - Número
+						.setRegistryDocumentType(getRegistryDocumentType(rec))   // Tipo NIF 
+						.setRegistryDocumentCountry(rec.getValue(INVOICE.RDOCUMENT_COUNTRY))  // Pais
+						.setOperationType(getOperationType(rec))   	// Tipo de Operación
+						.setPayDate(null)                   // Cobro/Pago - Fecha (Los cobros y pagos se obtienen al crear el libro)
+						.setPayAmount(0) 					// Cobro/Pago - Amount
+						.setPayMethod("")  					// Cobro/Pago - Medio de cobro/pago
+						.setPayMethodName("") 				// Cobro/Pago - Identificación medio de cobro/pago									
+						.setRetentionPercent(Objects.requireNonNullElse(rec.getValue(retInvoiceTax.PERCENTAGE), 0.0));
+					return pair;
+				})
+				.map( pair -> {
+					Record rec = pair.getLeft();
+					
+					double base = AonNumberUtils.todouble(rec.getValue(sumBase));
+					double quota = AonNumberUtils.todouble(rec.getValue(sumQuota));
+					double deductibleQuota = AonNumberUtils.todouble(rec.getValue(sumDeductibleQuota));
+					double surchargeQuota = AonNumberUtils.todouble(rec.getValue(sumSurchargeQuota));
+					double retentionQuota = AonNumberUtils.todouble(rec.getValue(sumRetentionQuota));
+					double total = 0; // El total es la suma de base + impuestos en facturas y el importe debe o haber en el resto de apuntes
+					// Apuntes que no son facturas (base y total coinciden)
+					
+						if (pair.getRight().getInvoice() == null) {
+							base = getAccountEntryBalance( pair );
 							total = base;
 						} else {
 							// Apuntes que son facturas (total es base + iva + recargo_equivalencia (no se tiene en cuenta la retencion)
@@ -280,9 +288,11 @@ public class AccountingOperationDAO {
 							// por ejemplo con IVA no deducible, incluso en las facturas de gestión, no está grabada ni siquiera la cuota 
 							// de IVA, asi que se hace por ahora que si no hay cuenta de IVA o si la cuenta de IVA es la misma que la de gasto
 							// se asume que el IVA no es deducible
-							if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() || rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
+							if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() 
+								|| rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
 								Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
 								if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
+//								if (idTaxAccount != null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
 									deductibleQuota = 0;
 								}									
 							}								
@@ -302,102 +312,105 @@ public class AccountingOperationDAO {
 							total = AonMathUtils.round(total/count);
 							retentionQuota = AonMathUtils.round(retentionQuota/count);
 						}
-						
-						// Fecha IVA (se pone siempre, aunque sean apuntes sin factura, porque se usa en los Libros Registro AEAT)
-						Date taxDate = rec.getValue(INVOICE.TAX_DATE);
-						if (taxDate == null)
-							taxDate = rec.getValue(OP_DATE);
-						
-						// Tipo de Factura (Libros Registro AEAT)
-						String invoiceType = "SF";  // Apuntes sin factura
-						if (rec.getValue(INVOICE.ID) != null) {
-							byte rectificationType = rec.getValue(INVOICE.RECTIFICATION_TYPE);
-							if (rectificationType == RectificationType.NORMAL_RECTIFIER.value() || rectificationType == RectificationType.SPECIAL_RECTIFIER.value())
-								invoiceType = "R0";  // Rectificativa
-							else if (rec.getValue(INVOICE_DUA.ID) != null)
-								invoiceType = "F5"; // DUA
-							else if (rec.getValue(INVOICE.TYPE) == InvoiceType.UNDEDUCTIBLE.value())
-								invoiceType = "F2"; // Factura sin identificación del destinatario (tickets, estan como no deducibles)
-							else invoiceType = "F1";  // Resto
-						}							
-						
-						// Tipo de Operación (Libros Registro AEAT)
-						String operationType = "";
-						if (rec.getValue(INVOICE.ID) != null) {
-							if (rec.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1)
-								operationType = "07";  // RECC
-							else if (rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
-									 operationType = "02";	// REAGYP							
-						}							
-						
-						// Tipo NIF (Libros Registro AEAT)							
-						// Se hace como se hace en el SII:
-						// Factura intracomunitaria: 02-NIF-IVA
-						// Pasp., P.T., T.C., Otr: El valor que lleva (3, 4, 5 ó 6)
-						// Resto: no lleva tipo
-					    String registryDocumentType = "";	
-					    Byte it = rec.getValue(INVOICE.TRANSACTION); 
-						if (it != null && it == InvoiceTransactionType.INTRACOMMUNITY.value())
-							registryDocumentType = "02";
-						else { 
-							Byte dt = rec.getValue(INVOICE.RDOCUMENT_TYPE);
-							if (dt != null && (dt == DocumentType.PASSPORT.value() || dt == DocumentType.WORK_PERMIT.value() ||	dt == DocumentType.COMMUNITY_CARD.value() || dt == DocumentType.OTHER.value())) {
-								registryDocumentType = AonNumberUtils.toString(dt);
-								registryDocumentType = AonStringUtils.leftPad(registryDocumentType, 2, '0');
-							}
-						}
-						
 						// Ingreso computable/Gasto deducible (Libros Registro AEAT)
 						// base + iva no deducible
 						double amount = base + (quota-deductibleQuota);
 						
 						// Completar todos los datos
-						return new OperationBreakdown()
-								.setEntryId(rec.getValue(OP_ID))
-								.setEntryDate(rec.getValue(OP_DATE))
-								.setAccount(cuenta)
-								.setAccountDescription(rec.getValue(OP_DETAIL_ACC_DESCRIPTION))
-								.setConcept(rec.getValue(OP_DETAIL_CONCEPT))
-								.setTotal(total)					
-								.setInvoice(rec.getValue(INVOICE.ID))
-								.setDocNumber(rec.getValue(OP_DETAIL_DOCUMENT_NUMBER))
-								.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
-								.setRegistryName(rec.getValue(INVOICE.RNAME))
-								.setTaxDate(taxDate)
-								.setBase(base)
-								.setQuota(quota)					
-								.setDeductibleQuota(deductibleQuota)					
-								.setSurchargeQuota(surchargeQuota)
-								.setPercent(rec.getValue(vatInvoiceTax.PERCENTAGE)==null?0.0:rec.getValue(vatInvoiceTax.PERCENTAGE))
-								.setSurchargePercent(rec.getValue(vatInvoiceTax.SURCHARGE)==null?0.0:rec.getValue(vatInvoiceTax.SURCHARGE))
-						
-								// Nuevos datos para el Libro Registro AEAT
-								.setActivityType(getActivityType(rec.getValue(IAE.SECTION),rec.getValue(IAE.EPIGRAPH))) // Actividad - Tipo							
-								.setActivityIAE(AonStringUtils.trimToEmpty(rec.getValue(IAE.EPIGRAPH)))					// Actividad - Epígrafe							
-								.setInvoiceType(invoiceType)                 // Tipo de Factura									
-								.setConceptType(rec.getValue(conceptType))   // Concepto de Ingreso/Gasto
-								.setAmount(amount)                           // Ingreso computable/Gasto deducible 
-								.setInvoiceSeries(rec.getValue(INVOICE.SERIES))  // Factura - Serie							 
-								.setInvoiceNumber(params.getExpenses() ? rec.getValue(INVOICE.REFERENCE_CODE) : AonNumberUtils.toString(rec.getValue(INVOICE.NUMBER))) // Factura - Número
-								.setRegistryDocumentType(registryDocumentType)   // Tipo NIF 
-								.setRegistryDocumentCountry(rec.getValue(INVOICE.RDOCUMENT_COUNTRY))  // Pais
-								.setOperationType(operationType)   	// Tipo de Operación
-								.setPayDate(null)                   // Cobro/Pago - Fecha (Los cobros y pagos se obtienen al crear el libro)
-								.setPayAmount(0) 					// Cobro/Pago - Amount
-								.setPayMethod("")  					// Cobro/Pago - Medio de cobro/pago
-								.setPayMethodName("") 				// Cobro/Pago - Identificación medio de cobro/pago									
-								.setRetentionPercent(rec.getValue(retInvoiceTax.PERCENTAGE)==null?0.0:rec.getValue(retInvoiceTax.PERCENTAGE)) // Porcentaje Retención
-								.setRetentionQuota(retentionQuota)																			// Cuota Retención
+						return pair.getRight()
+							.setTotal(total)
+							.setBase(base)
+							.setQuota(quota)					
+							.setDeductibleQuota(deductibleQuota)					
+							.setSurchargeQuota(surchargeQuota)
+							.setAmount(amount)
+							.setRetentionQuota(retentionQuota) 
 								;
 					});
 	}
 	
+	private static double getAccountEntryBalance(Pair<Record, OperationBreakdown> pair) {
+		Record rec = pair.getLeft();
+		double debit = AonNumberUtils.todouble(rec.getValue(OP_DETAIL_DEBIT));
+		double credit = AonNumberUtils.todouble(rec.getValue(OP_DETAIL_CREDIT));
+		return (AonStringUtils.startsWith(pair.getRight().getAccount(), "6")) 
+			? debit - credit   // Compras y Gastos
+			: credit - debit; // Ventas e Ingresos
+	}
+
+	private static String getOperationType(Record rec) {
+		// Tipo de Operación (Libros Registro AEAT)
+		String operationType = "";
+		if (rec.getValue(INVOICE.ID) != null) {
+			if (rec.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1)
+				operationType = "07";  // RECC
+			else if (rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
+					 operationType = "02";	// REAGYP							
+		}							
+		return operationType;
+	}
+
+	/**
+	 * Tipo NIF (Libros Registro AEAT)
+	 * Se hace como se hace en el SII:
+	 * Factura intracomunitaria: 02-NIF-IVA
+	 * Pasp., P.T., T.C., Otr: El valor que lleva (3, 4, 5 ó 6)
+	 * Resto: no lleva tipo
+	 * 
+	 * @param rec
+	 * @return
+	 */
+	private static String getRegistryDocumentType(Record rec) {
+	    String registryDocumentType = "";	
+	    Byte it = rec.getValue(INVOICE.TRANSACTION); 
+		if (it != null && it == InvoiceTransactionType.INTRACOMMUNITY.value())
+			registryDocumentType = "02";
+		else { 
+			Byte dt = rec.getValue(INVOICE.RDOCUMENT_TYPE);
+			if (dt != null && (dt == DocumentType.PASSPORT.value() || dt == DocumentType.WORK_PERMIT.value() ||	dt == DocumentType.COMMUNITY_CARD.value() || dt == DocumentType.OTHER.value())) {
+				registryDocumentType = AonNumberUtils.toString(dt);
+				registryDocumentType = AonStringUtils.leftPad(registryDocumentType, 2, '0');
+			}
+		}
+		return registryDocumentType;
+	}
+
+	private static String getInvoiceType(Record rec) {
+		String invoiceType = "SF";  // Apuntes sin factura
+		if (rec.getValue(INVOICE.ID) != null) {
+			byte rectificationType = rec.getValue(INVOICE.RECTIFICATION_TYPE);
+			if (rectificationType == RectificationType.NORMAL_RECTIFIER.value() || rectificationType == RectificationType.SPECIAL_RECTIFIER.value()) {
+				invoiceType = "R0";  // Rectificativa
+			} else if (rec.getValue(INVOICE_DUA.ID) != null) {
+				invoiceType = "F5"; // DUA
+			} else if (rec.getValue(INVOICE.TYPE) == InvoiceType.UNDEDUCTIBLE.value()) {
+				invoiceType = "F2"; // Factura sin identificación del destinatario (tickets, estan como no deducibles)
+			} else {
+				invoiceType = "F1";  // Resto
+			}
+		}
+		return invoiceType;
+	}
+
+	private static Field<?>[] getOrderBy(OperationParams params) {
+		return params.isIrpf()
+			? new Field<?>[]{OP_DATE, OP_DETAIL_DOCUMENT_NUMBER, OP_JOURNAL, OP_DETAIL_LINE}
+			: new Field<?>[]{OP_DETAIL_DOCUMENT_NUMBER, INVOICE.TAX_DATE, OP_JOURNAL, OP_DETAIL_LINE};
+	}
+
+	private static GroupField[] getGroupBy(OperationParams params) {
+		GroupField[] groupBy = new GroupField[]{ OP_ID, vatInvoiceTax.PERCENTAGE };
+		if (params.getAeatBook() && params.isIrpf()) {
+			groupBy = new GroupField[]{ OP_ID, conceptType, vatInvoiceTax.PERCENTAGE };
+		} else if (params.isIrpf()) {
+			groupBy = new GroupField[]{ OP_ID, OP_DETAIL_ACC_ID };
+		}
+		return groupBy;
+	}
+
 	private static Condition getCondition(OperationParams params) {
 		Condition condition = OP_TYPE.notEqual(AccountEntryType.OPERATING.getValue());
-		if (params.getIrpf()) {
-//			condition = condition
-//				.and(OP_DETAIL_ACC_CODE.startsWith(params.getExpenses()?"6":"7"))
-//				.and( OP_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate())));
+		if (params.isIrpf()) {
 			if (params.getAeatBook()) {
 				condition = condition.and(INVOICE.ID.isNull().or(vatInvoiceTax.ID.isNotNull()));
 			}
@@ -406,7 +419,7 @@ public class AccountingOperationDAO {
 			condition = condition
 				.and( INVOICE.ID.isNotNull() )
 				.and( INVOICE.TAX_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate())));
-			if (params.getExpenses()) {
+			if (params.isExpenses()) {
 				condition = condition.and(vatInvoiceTax.ID.isNotNull())
 						.and(INVOICE.TYPE.in(InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value())); // Listado IVA (Compras)
 			} else {
@@ -421,7 +434,7 @@ public class AccountingOperationDAO {
 		// Listado IRPF: No salen datos, si la actividad está en Regimen de IRPF exento
 		// Listado IVA: No salen datos, si la actividad está en Regimen de IVA exento o en Recargo de Equivalencia
 		Condition activityCondition;					
-		if (params.getIrpf()) {			
+		if (params.isIrpf()) {			
 			activityCondition = ENTERPRISE_ACTIVITY.RETENTION_REGIME.isNull().or(ENTERPRISE_ACTIVITY.RETENTION_REGIME.notEqual(IRPFRegime.EXEMPT.value())); // Listado IRPF
 		} else {
 			activityCondition = (ENTERPRISE_ACTIVITY.VAT_REGIME.isNull().or(ENTERPRISE_ACTIVITY.VAT_REGIME.notEqual(VATRegime.EXEMPT.value()))  
