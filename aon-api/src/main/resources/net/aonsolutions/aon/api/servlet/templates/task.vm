@@ -95,7 +95,7 @@
       <table class="tableA">
         <tr>
           <td>
-            <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
+            <a href="#" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
               <img alt="" src="$task.getLogo()" style="cursor: pointer;" width="300px">
             </a>
           </td>
@@ -132,7 +132,7 @@
             </div>
           </td>
         </tr>
-        #if( $task.getShowRating() )
+        #if( $task.getShowEvaluation() )
 	        <tr>
 	          <td>
 	            <hr>
@@ -148,36 +148,44 @@
 	        <tr>
 	          <td>
 	            <div class="divMain" style="justify-content: center !important;">
-	              <a href="$task.getUrl()/0" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=1" class="grey styleCircle" target="_blank">
 	                <div class="faces">
-	                  <img alt="Mala" src="https://aonsolutions.org/assets/img/sentiment_dissatisfied_black_36dp.png">
+	                  <img alt="Muy Mala" src="https://aonsolutions.org/assets/img/very_bad.png">
+	                </div>
+	                <div class="faceText">
+	                  <span>Muy Mala</span>
+	                </div>
+	              </a>
+	              <a href="$task.getUrl()&evaluation=2" class="grey styleCircle" target="_blank">
+	                <div class="faces">
+	                  <img alt="Mala" src="https://aonsolutions.org/assets/img/very.png">
 	                </div>
 	                <div class="faceText">
 	                  <span>Mala</span>
 	                </div>
 	              </a>
 	
-	              <a href="$task.getUrl()/1" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=3" class="grey styleCircle" target="_blank">
 	                <div class="faces">
-	                  <img alt="Regular" src="https://aonsolutions.org/assets/img/sentiment_neutral_black_36dp.png">
+	                  <img alt="Regular" src="https://aonsolutions.org/assets/img/regular.png">
 	                </div>
 	                <div class="faceText">
 	                  <span>Regular</span>
 	                </div>
 	              </a>
 	
-	              <a href="$task.getUrl()/2" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=4" class="grey styleCircle" target="_blank">
 	                <div class="faces">
-	                  <img alt="Buena" src="https://aonsolutions.org/assets/img/sentiment_satisfied_black_36dp.png">
+	                  <img alt="Buena" src="https://aonsolutions.org/assets/img/good.png">
 	                </div>
 	                <div class="faceText">
 	                  <span>Buena</span>
 	                </div>
 	              </a>
 	
-	              <a href="$task.getUrl()/3" class="grey styleCircle" target="_blank">
+	              <a href="$task.getUrl()&evaluation=5" class="grey styleCircle" target="_blank">
 	                <div class="faces">
-	                  <img alt="Excelente" src="https://aonsolutions.org/assets/img/insert_emoticon_black_36dp.png">
+	                  <img alt="Muy buena" src="https://aonsolutions.org/assets/img/very_good.png">
 	                </div>
 	                <div class="faceText">
 	                  <span>Muy buena</span>
