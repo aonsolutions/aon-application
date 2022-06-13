@@ -156,6 +156,22 @@ export const TASK_SOURCE = {
 	REQUEST: "request"
 } 
 
+export const TASK_EVALUATION = {
+	VERY_BAD:"very_bad",
+	BAD:"bad",
+	REGULAR:"regular",
+	GOOD:"good",
+	VERY_GOOD:"very_good"
+} 
+
+export const getTaskEvaluation = {
+	VERY_BAD:"very_bad",
+	BAD:"bad",
+	REGULAR:"regular",
+	GOOD:"good",
+	VERY_GOOD:"very_good"
+} 
+
 export const MessengerSidenav = {
     ADD_COMMENT: {
         name: "Addcomment",
