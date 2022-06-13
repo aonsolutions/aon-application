@@ -195,6 +195,7 @@ public class TaskOldDAO {
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SOURCE_ID);}
 		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.START_DATE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.STATUS);}
+		@Override public Property<Byte> getEvaluationProperty() {return new FilterDAO.PropertyDAO<>(TASK.EVALUATION);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.TASK_HOLDER);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.WORKGROUP);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.NUMBER);}

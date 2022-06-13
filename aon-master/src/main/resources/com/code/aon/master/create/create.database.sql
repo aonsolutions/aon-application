@@ -3964,6 +3964,7 @@ CREATE TABLE `task` (
   `due_date` datetime DEFAULT NULL COMMENT 'Fecha de vencimiento de la Tarea',
   `priority` tinyint(2) DEFAULT '0' COMMENT 'Prioridad de la Tarea',
   `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la Tarea',
+  `evaluation` tinyint(2) DEFAULT null COMMENT 'Calificacion',
   `percent` tinyint(2) DEFAULT '0' COMMENT 'Porcentaje de realizacion de la Tarea',
   `task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Usuario asociado a la Tarea',
   `workgroup` int(4) DEFAULT NULL COMMENT 'Identificador del Grupo de Trabajo asociado a la Tarea',
