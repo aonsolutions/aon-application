@@ -552,6 +552,7 @@ public class ElaborationDAO {
 							new Elaboration().setId(r
 									.getValue(ELABORATION_DETAIL.ELABORATION)))
 					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
+					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
 					.setItem(checkField(r, ITEM.ID)
 							? ItemFiller.build(r)
 							: new Item().setId(getValue(r, ELABORATION_DETAIL.ITEM)))
