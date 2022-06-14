@@ -42,11 +42,11 @@ public class JooqContractOtherInfo {
 	
 	// ---------------------------------------------------- DataBase
 	
-	public static  Map<String, String> getContractOtherInfo(Connection conn, Integer domainId, Integer parentDomainId, Integer contractId, String contractType) {
+	public static  Map<String, String> getContractOtherInfo(Connection conn, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType) {
 		return getContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, parentDomainId, contractId, contractType);
 	}
 	
-	private static Map<String, String> getContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer contractId, String contractType) {
+	private static Map<String, String> getContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType) {
 		Map<String, String> contractOtherInfoMap = new HashMap<>();
 		List<String> contractOtherDataNames = getContractOtherDataListNames(contractType);
 		
@@ -277,15 +277,7 @@ public class JooqContractOtherInfo {
 		return contractOtherDataNames;
 	}
 	
-	private static List<String> getContractOtherDataListNames(String contractTypeStr) {
-		Integer contractType = 100;
-		try {
-			contractType = Integer.parseInt(contractTypeStr);
-		}catch (Exception e) {
-			System.out.println("ContractType :" + contractTypeStr);
-			return new ArrayList<>();
-		}
-		
+	private static List<String> getContractOtherDataListNames(Integer contractType) {
 		if(contractType >= 100 && contractType <= 400) {
 			return getContractOtherDataIndefiniteListNames();
 		} else if (contractType == 421) {
