@@ -40,6 +40,7 @@
 		<aon:methodParam name="rowSelectorAction" value="start" />
 		<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+			<ui:param name="rows" value="10" />
 			<ui:param name="controller" value="#{domainSwitcher}" />
 			<ui:param name="skipFocusFirst" value="true" />
 			<ui:param name="showAonPaginator" value="true" />

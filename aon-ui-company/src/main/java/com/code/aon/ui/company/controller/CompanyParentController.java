@@ -20,6 +20,8 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -76,6 +78,12 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.jooq.tables.Rattach;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.server.AonDatabaseUtil;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 /**
  * Controller used in the company maintenance.
@@ -544,14 +552,30 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 
 	public boolean isWithLogo() throws ManagerBeanException {
-		Company company = obtainCompany();
-		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-		criteria.addEqualExpression(alias, company.getId());
-		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
-		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
-		return registryAttachBean.getCount(criteria) > 0;
+		
+		try (Connection connection = DatabaseUtil.getConnection(AonUtil.getServerName())){
+			Company company = obtainCompany();
+			return 
+			new AONContext(connection).getDslContext()
+			.selectOne()
+			.from(Rattach.RATTACH)
+			.where(Rattach.RATTACH.REGISTRY.eq(company.getId()))
+			.and(Rattach.RATTACH.TYPE.eq((byte)RegistryAttachmentType.LOGO.ordinal()))
+			.limit(1)
+			.fetchOptional()
+			.isPresent()
+			;
+		} catch ( AonConnectionException | SQLException e ) {
+			throw new ManagerBeanException(e);
+		}
+		
+//		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+//		Criteria criteria = new Criteria();
+//		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+//		criteria.addEqualExpression(alias, company.getId());
+//		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+//		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+//		return registryAttachBean.getCount(criteria) > 0;
 	}
 	
 	/**
