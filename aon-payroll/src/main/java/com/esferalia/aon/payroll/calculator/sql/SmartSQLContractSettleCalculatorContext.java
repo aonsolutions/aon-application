@@ -113,6 +113,11 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	// ------------------------------------- SQLContractSettleCalculatorContext
 	
 	@Override
+	protected double getActiveDays(Period p) {
+		return 0.00;
+	}
+	
+	@Override
 	public Collection<IContractPayment> getContractPayments() throws AonException {
 		try {
 			return new CompositePayments<IContractPayment>(super.getContractPayments(), getAgreementExtraPayments(), getContractExtraPayments());

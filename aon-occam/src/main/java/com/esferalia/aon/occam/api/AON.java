@@ -2881,6 +2881,35 @@ public class AON {
 		}
 	}
 	
+	public static void setAttach(String domainName, Integer domainId, String login, byte[] data, Integer attachId, AttachType attachType) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			if (attachType.equals(AttachType.REGISTRY))
+				getAttachment().setRegistryAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.CONTRACT))
+				getAttachment().setContractAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.INVOICE))
+				getAttachment().setInvoiceAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.ITEM))
+				getAttachment().setItemAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.OFFER))
+				getAttachment().setOfferAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.PAYROLL))
+				getAttachment().setPayrollAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.PROJECT))
+				getAttachment().setProjectAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.SEPE))
+				getAttachment().setSepeAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.DATA))
+				getAttachment().setDataAttachStream(ctx, attachId, data);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<Attach> getAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
 			AttachType attachType, Boolean withData) {

@@ -170,6 +170,25 @@ public class AonApiHttpServlet extends HttpServlet{
 		giveBack(req, resp, object, meta);
 	}
 	
+	public void responseHtml(HttpServletRequest req, HttpServletResponse resp, Object object) {
+		try {
+			String js = req.getParameter(IConstants.CALLBACK);
+			if(js != null){
+				resp.setContentType("text/html; charset=utf-8");     
+				PrintWriter out = resp.getWriter();
+				out.flush();
+			} else {
+				resp.setContentType("text/html");     
+				PrintWriter out = resp.getWriter();
+				out.print(object);
+				out.flush();
+			}
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+	}
+	
+	
 	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
 		responseFile(resp, attach.getDescription(), is, attach.getMimeType());

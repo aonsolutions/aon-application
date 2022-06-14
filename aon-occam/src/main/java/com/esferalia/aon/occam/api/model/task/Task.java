@@ -40,6 +40,7 @@ public class Task  implements Serializable{
 	private Project project; 
 	private Integer activityType; 
 	private TaskPeriod repeatPeriod;  
+	private TaskEvaluation evaluation;  
 	private Integer number;
 	private Integer parent;
 	
@@ -150,6 +151,15 @@ public class Task  implements Serializable{
 		return this;
 	}
 
+	public TaskEvaluation getEvaluation() {
+		return evaluation;
+	}
+
+	public Task setEvaluation(TaskEvaluation evaluation) {
+		this.evaluation = evaluation;
+		return this;
+	}
+	
 	public Byte getPercent() {
 		return percent;
 	}
@@ -258,8 +268,8 @@ public class Task  implements Serializable{
 		return this;
 	}
 
-	public String getGtaskId() {
-		return gtaskId;
+	public Optional<String> getGtaskId() {
+		return Optional.ofNullable(gtaskId);
 	}
 
 	public Task setGtaskId(String gtaskId) {

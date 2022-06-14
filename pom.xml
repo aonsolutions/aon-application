@@ -9,8 +9,10 @@
 	<artifactId>aon.parent</artifactId>
 	<version>9.23-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<description>POM padre de los proyectos AON</description>
 	<name>AON PARENT</name>
+	<description>
+		"Un padre para cien hijos, antes que cien hijos para un padre."
+	</description>
 
 	<properties>
 		<compileSource>1.8</compileSource>
@@ -23,6 +25,7 @@
 		<jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
 		<jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
 		<jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
+		<junitVersion>4.13.2</junitVersion>
 	</properties>
 
 	<modules>
@@ -424,14 +427,15 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-								<version>3.2.5</version>
+									<version>3.2.5</version>
 								</requireMavenVersion>
-							</rules>    
+							</rules>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-      			<plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.10.1</version>
@@ -523,6 +527,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -545,9 +550,10 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<!--groupId>cz.atomsoft.maven</groupId-->
+				<!--groupId>cz.atomsoft.maven</groupId -->
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>3.0.0</version>
 				<executions>
@@ -562,7 +568,7 @@
 					<shortRevisionLength>5</shortRevisionLength>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
-                                </configuration>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -570,11 +576,12 @@
 				<artifactId>versions-maven-plugin</artifactId>
 				<version>2.10.0</version>
 			</plugin>
-                        <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-plugin-plugin</artifactId>
-                                <version>3.6.4</version>
-                        </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>3.6.4</version>
+			</plugin>
 		</plugins>
 	</build>
 	

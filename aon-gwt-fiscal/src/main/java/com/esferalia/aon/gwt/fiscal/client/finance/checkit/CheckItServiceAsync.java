@@ -25,4 +25,5 @@ public interface CheckItServiceAsync {
 	void editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields, AsyncCallback<Boolean> callback);
 	void getFields(Integer loginId, AsyncCallback<CheckItLoginFields> callback);
 	void getMovements(String domainName, int domain, String user, Integer empresaId, CheckItBankAccount checkItBankAccount, Date startDate, Date endDate, AsyncCallback<List<CheckItBankStatement>> callback); 
+	void addExtraField(Integer enterpriseId, String iban, String extraField, AsyncCallback<Boolean> callback);
 }

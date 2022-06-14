@@ -219,6 +219,8 @@ public interface EnterprisesService extends RemoteService {
 
 	String getAttachData(String currentDomainName, String currentUser, Integer attachId) throws IllegalArgumentException;
 
+	void setAttachData(String currentDomainName, String currentUser, Integer attachId, byte[] dataURI);
+
 	// ------------------------------------------------ Contract Clauses
 	
 	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId) throws IllegalArgumentException ;

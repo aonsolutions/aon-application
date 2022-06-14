@@ -395,5 +395,50 @@ public class AttachmentImpl implements IAttachment{
 		return ctx.getDslContext().transactionResult(configuration -> 
 		AttachmentDAO.getRegistryAttachTag(ctx, rattachId));	
 	}
+	@Override
+	public void setRegistryAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setRegistryAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setContractAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setContractAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setInvoiceAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setInvoiceAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setItemAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setItemAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setOfferAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setOfferAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setPayrollAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setPayrollAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setProjectAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setProjectAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setSepeAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setSepeAttachStream(ctx, attachId, data));
+	}
+	@Override
+	public void setDataAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().transaction(
+				configuration -> AttachmentDAO.setSepeAttachStream(ctx, attachId, data));
+	}
 	
 }

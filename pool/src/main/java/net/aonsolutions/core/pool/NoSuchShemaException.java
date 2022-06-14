@@ -8,6 +8,8 @@ package net.aonsolutions.core.pool;
 
 public class NoSuchShemaException extends AonConnectionException {
 	
+	private static final long serialVersionUID = -4416041997099908592L;
+	
 	private String schema;
 	
     /**
@@ -18,5 +20,9 @@ public class NoSuchShemaException extends AonConnectionException {
      */
     public NoSuchShemaException(String schema) {
         this.schema = schema;
+    }
+    
+    public String getSchema() {
+    	return this.schema;
     }
 }

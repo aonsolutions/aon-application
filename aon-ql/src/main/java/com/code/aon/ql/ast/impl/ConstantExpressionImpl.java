@@ -1,13 +1,12 @@
 package com.code.aon.ql.ast.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.ConstantExpression;
 import com.code.aon.ql.ast.CriterionVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * Unary <code>Expression</code> that contains a constant.
@@ -81,12 +80,11 @@ public class ConstantExpressionImpl implements ConstantExpression {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	@SuppressWarnings("rawtypes")
 	public String toString() {
 		if ( this.data.getClass().isArray() ) {
-			return ArrayUtils.toString(this.data);
+			return Arrays.toString( (Object[]) this.data);
 		} else if ( this.data.getClass().isAssignableFrom(Collection.class) ) {
-			return StringUtils.join((Collection) this.data, ",");
+			return AonStringUtils.join((Collection<?>) this.data, ",");
 		}
 		return this.data.toString();
 	}

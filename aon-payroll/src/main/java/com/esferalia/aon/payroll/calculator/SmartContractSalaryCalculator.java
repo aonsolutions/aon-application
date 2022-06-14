@@ -888,6 +888,12 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 						
 						return super.fixGuaranteedResults(_contractPayment, _results, _its, _start, _end, _expressionContext);
 					}
+					
+					@Override
+					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+						return TaxCalculator.getTaxCalculator(ctx);
+					}
+					
 				}.calculate(noItContractSalaryCalculatorContext)
 				;
 			} catch ( DoubleReturnException e ) {

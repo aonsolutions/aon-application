@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -49,7 +48,7 @@ public class SqlRenderer implements CriterionVisitor {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private final static Logger LOGGER = LoggerFactory.getLogger(SqlRenderer.class);
+	private final static Logger LOGGER = Logger.getLogger(SqlRenderer.class.getName());
 
 	/**
 	 * Where the result will be printed.
@@ -267,7 +266,7 @@ public class SqlRenderer implements CriterionVisitor {
 		try {
 			out.write(str);
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE,e.getMessage(), e);
 		}
 	}
 
