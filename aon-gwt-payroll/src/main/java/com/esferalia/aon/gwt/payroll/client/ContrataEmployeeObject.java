@@ -190,7 +190,7 @@ public class ContrataEmployeeObject {
 	
 	public void getContractOtherInfo(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		String contractType = employeeContractData.getContractInfo().getContractType();
+		Integer contractType = Integer.parseInt(contractData.getContractType());
 		
 		enterprisesService.getContractOtherInfo(contractId, contractType, new AsyncCallback<Map<String, String>>() {
 			

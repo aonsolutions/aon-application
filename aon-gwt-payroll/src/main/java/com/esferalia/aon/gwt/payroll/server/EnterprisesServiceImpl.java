@@ -1824,13 +1824,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public EnterpriseInfo getEnterpriseInfo(Integer enterpriseId, String domain) {
 		try(Connection connection = AonServletUtils.getConnection(domain)) {
-			Integer domainID = AonServletUtils.getDomainID(domain);
-			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
-
 			EnterpriseInfo enterpriseInfo = JooqEnterprise.getEnterpriseInfo(connection, enterpriseId);
-			enterpriseInfo.setAgreements(JooqAgreement.getAgreements(connection, true, domainID, parentDomainID));
-			enterpriseInfo.setScopes(JooqEnterprise.getEnterpriseScopes(connection, enterpriseId));
-			
+			enterpriseInfo.setScopes(JooqEnterprise.getEnterpriseScopes(connection, enterpriseId));			
 			return enterpriseInfo;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -2400,7 +2395,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, String contractType) {
+	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, Integer contractType) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);

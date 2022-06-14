@@ -409,7 +409,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getDomainClauses(getCurrentDomainName(), asyncCallback);
 	}
 
-	public void getContractOtherInfo(Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback) {
+	public void getContractOtherInfo(Integer contractId, Integer contractType, AsyncCallback<Map<String, String>> asyncCallback) {
 		enterprisesServiceAsync.getContractOtherInfo(getCurrentDomainName(), contractId, contractType, asyncCallback);
 	}
 	

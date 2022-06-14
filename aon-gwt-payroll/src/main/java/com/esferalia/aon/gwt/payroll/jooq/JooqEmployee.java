@@ -903,7 +903,6 @@ public class JooqEmployee {
 			}else {
 				contractDataTable = dslContext.select().from(CONTRACT_DATA)
 						.where(CONTRACT_DATA.CONTRACT.eq(contract))
-						.and(CONTRACT_DATA.START_DATE.le(currentDate))
 						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
 						.fetch();
 				

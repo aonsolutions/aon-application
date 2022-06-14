@@ -310,8 +310,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(),
-					contrataEmployeeObject.getContractStartDate());
+			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(), contrataEmployeeObject.getContractStartDate()) {
+					@Override
+					protected void onAccept() {
+						// Nothing to refresh
+					}
+			};
 		}
 	}
 

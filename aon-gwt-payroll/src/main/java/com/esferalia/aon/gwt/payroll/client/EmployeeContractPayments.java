@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,8 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
@@ -44,6 +46,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -173,6 +176,9 @@ public class EmployeeContractPayments extends Composite {
 	@UiField(provided = true)
 	AonToolbar toolbar;
 
+	@UiField
+	HTMLPanel messagePanel;
+	
 	@UiField(provided = true)
 	DataGrid<ContractConceptCalc> contractConceptCalcDG;
 	
@@ -438,7 +444,7 @@ public class EmployeeContractPayments extends Composite {
 	
 	private void openDialog(ContractConceptCalc selectedPayment) {
 		boolean isHide = AonStringUtils.isNotBlank(selectedPayment.getExpression()) && AonStringUtils.containsIgnoreCase(selectedPayment.getExpression(), "HIDE");
-    	new EmployeeContractPaymentEditor(selectedPayment.getContractConceptCalcType(), selectedPayment) {
+    	EmployeeContractPaymentEditor paymentEditor = new EmployeeContractPaymentEditor(selectedPayment.getContractConceptCalcType(), selectedPayment) {
 			@Override
 			protected void onAccept(ContractConceptCalc updatedPayment) {
 				switch (updatedPayment.getContractConceptCalcType()) {
@@ -475,6 +481,7 @@ public class EmployeeContractPayments extends Composite {
 				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
+				onSave();
 			}
 
 			private void updateDeduction(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
@@ -491,6 +498,7 @@ public class EmployeeContractPayments extends Composite {
 				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
+				onSave();
 			}
 
 			private void updateCost(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
@@ -505,6 +513,7 @@ public class EmployeeContractPayments extends Composite {
 				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
+				onSave();
 			}
 
 			private void updateBonus(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
@@ -519,8 +528,11 @@ public class EmployeeContractPayments extends Composite {
 				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
+				onSave();
 			}
 		};
+		
+		paymentEditor.setSaveButton();
 	}
 	
 	public String showHideContractConceptCalc(String description, String expression, ContractConceptCalcType paymentType) {
@@ -542,7 +554,9 @@ public class EmployeeContractPayments extends Composite {
 	
 	// ----------------------------------------------- InitContractConceptCalcs
 	
-	public void initContractConceptCalcsTable() {		
+	public void initContractConceptCalcsTable() {	
+		hideMessage();
+		
 		// Create a data provider.
 		ListDataProvider<ContractConceptCalc> contractConceptCalcDataProvider = new ListDataProvider<>();
 
@@ -615,6 +629,7 @@ public class EmployeeContractPayments extends Composite {
 	
 	public void setEmployeeContractPaymentsObject(EmployeeContractPaymentsObject employeeContractPaymentsObject) {
 		this.employeeContractPaymentsObject = employeeContractPaymentsObject;
+		showLoading("Obteniendo conceptos de calculo ...");
 		this.employeeContractPaymentsObject.getContractPayements(
 				r -> {
 					initializeYearLB(this.yearLB);
@@ -708,10 +723,6 @@ public class EmployeeContractPayments extends Composite {
 		
 		this.toolbar = new AonToolbar("Conceptos Calculo");
 		
-		AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveButton.addClickHandler(e -> onSave());
-		toolbar.add(saveButton);
-		
 		AonExpandButton addExpand = new AonExpandButton("A\u00f1adir pagos", AON.CSS.aonIconAddBlock()) {
 			
 			@Override
@@ -743,9 +754,12 @@ public class EmployeeContractPayments extends Composite {
 	// ----------------------------------------------- Toolbar.Methods
 
 	public void onSave() {
+		showLoading("Guardando conceptos de calculo ...");
 		employeeContractPaymentsObject.updateContractPayments(
-				r -> changeYear(), 
-				t -> {});
+				r -> {
+					showSuccess("Conceptos Calculo", "Conceptos Calculo guardados correctamente");
+					changeYear();
+				}, t -> showError("Error Conceptos Calculo", t.getMessage()));
 	}
 	
 	private void onPaymentWizard() {
@@ -763,14 +777,7 @@ public class EmployeeContractPayments extends Composite {
 						contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
 						contractConceptCalcListAux.add(contractConceptCalc);
 					}
-					employeeContractPaymentsObject.createContractPayment(
-							contractConceptCalcListAux, 
-							s ->
-								employeeContractPaymentsObject.getContractPayements(
-										r -> initContractConceptCalcsTable()
-										,t -> {})
-							, 
-							f -> {});
+					createAndGetPayments(contractConceptCalcListAux);
 				}
 				
 				@Override
@@ -778,14 +785,7 @@ public class EmployeeContractPayments extends Composite {
 					ContractConceptCalc contractConceptCalc = (ContractConceptCalc)payment;
 					contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 					contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
-					employeeContractPaymentsObject.createContractPayment(
-							contractConceptCalc, 
-							s ->
-								employeeContractPaymentsObject.getContractPayements(
-										r -> initContractConceptCalcsTable()
-										,t -> {})
-							, 
-							f -> {});
+					createAndGetPayments(contractConceptCalc);
 				}
 				
 				@Override
@@ -793,14 +793,7 @@ public class EmployeeContractPayments extends Composite {
 					ContractConceptCalc contractConceptCalc = new ContractConceptCalc(payment);
 					contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 					contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
-					employeeContractPaymentsObject.createContractPayment(
-							contractConceptCalc, 
-							s ->
-								employeeContractPaymentsObject.getContractPayements(
-										r -> initContractConceptCalcsTable()
-										,t -> {})
-							, 
-							f -> {});
+					createAndGetPayments(contractConceptCalc);
 				}
 			};
 			
@@ -838,19 +831,40 @@ public class EmployeeContractPayments extends Composite {
 	}
 	
 	public void openEditor(ContractConceptCalcType type) {
-		new EmployeeContractPaymentEditor(type) {
+		EmployeeContractPaymentEditor paymentEditor = new EmployeeContractPaymentEditor(type) {
 			@Override
 			protected void onAccept(ContractConceptCalc contractConceptCalc) {
-				employeeContractPaymentsObject.createContractPayment(
-						contractConceptCalc, 
-						s ->
-							employeeContractPaymentsObject.getContractPayements(
-									r -> initContractConceptCalcsTable()
-									,t -> {})
-						, 
-						f -> {});
+				createAndGetPayments(contractConceptCalc);
 			}
 		};
+		
+		paymentEditor.setSaveButton();
+	}
+	
+	private void createAndGetPayments(ContractConceptCalc contractConceptCalc) {
+		showLoading("Creando concepto de calculo ...");
+		employeeContractPaymentsObject.createContractPayment(
+				contractConceptCalc, 
+				s -> {
+					showLoading("Obteniendo conceptos de calculo ...");
+					employeeContractPaymentsObject.getContractPayements(
+							r -> initContractConceptCalcsTable()
+							,t -> showError("Error Conceptos Calculo", t.getMessage()));
+				}, 
+				f -> showError("Error Conceptos Calculo", f.getMessage()));
+	}
+	
+	private void createAndGetPayments(List<ContractConceptCalc> contractConceptCalcs) {
+		showLoading("Creando conceptos de calculo ...");
+		employeeContractPaymentsObject.createContractPayment(
+				contractConceptCalcs, 
+				s -> {
+					showLoading("Obteniendo conceptos de calculo ...");
+					employeeContractPaymentsObject.getContractPayements(
+							r -> initContractConceptCalcsTable()
+							,t -> showError("Error Conceptos Calculo", t.getMessage()));
+				}, 
+				f -> showError("Error Conceptos Calculo", f.getMessage()));
 	}
 	
 	// -------------------------------------------------- ContrataEmployee.Methods
@@ -869,5 +883,27 @@ public class EmployeeContractPayments extends Composite {
 	
 	public void setMonthLB(ListBox monthLB) {
 		this.monthLB = monthLB;
+	}
+	
+	// ------------------------------------------------- Aon Messages panel
+
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messagePanel, errorMap);
+	}
+
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
+	}
+
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messagePanel);
 	}
 }

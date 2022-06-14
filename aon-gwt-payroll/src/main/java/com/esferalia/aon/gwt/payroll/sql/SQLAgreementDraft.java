@@ -1346,7 +1346,7 @@ public class SQLAgreementDraft {
 	private static void updatePayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
 
-		JooqAgreement.updatePayment(conn, agreementId, payment);
+		JooqAgreement.updatePayment(conn, domainId, agreementId, payment);
 	}
 
 	private static void removePayment(Connection conn, Integer domainId,
