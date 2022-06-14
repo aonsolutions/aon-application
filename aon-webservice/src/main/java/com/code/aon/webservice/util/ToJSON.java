@@ -38,8 +38,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
-import com.esferalia.aon.occam.api.model.type.ElaborationSource;
-import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -406,10 +404,10 @@ public class ToJSON {
 			.put(MSG.SERIES, elaboration.getSeries())
 			.put(MSG.NUMBER, elaboration.getNumber())
 			.put(MSG.STATUS, new JSONObject()
-				.put(MSG.ID, elaboration.getStatus() != null ? elaboration.getStatus().intValue() : "")
-				.put(MSG.NAME, elaboration.getStatus() != null ? ElaborationStatus.values()[elaboration.getStatus()].getName(): ""))
+				.put(MSG.ID, elaboration.getStatus() != null ? elaboration.getStatusValue() : "")
+				.put(MSG.NAME, elaboration.getStatus() != null ? elaboration.getStatus().getName(): ""))
 			.put(MSG.DATE, elaboration.getDate() != null ? AonDateUtils.format(elaboration.getDate(), "yyyy/MM/dd") : "")
-			.put(MSG.ITEM, itemToJSON(elaboration.getItem()))
+			.put(MSG.ITEM, itemToJSON2(elaboration.getItem()))
 			.put(MSG.DESCRIPTION, elaboration.getDescription())
 			.put(MSG.QUANTITY, elaboration.getQuantity())
 			.put(MSG.WAREHOUSE, new JSONObject()
@@ -418,8 +416,8 @@ public class ToJSON {
 			.put(MSG.COMMENTS, elaboration.getComments() != null ? elaboration.getComments() : " ")
 			.put(MSG.REMARKS, elaboration.getRemarks() != null ? elaboration.getRemarks() : " ")
 			.put("source", new JSONObject()
-					.put(MSG.ID, elaboration.getSource() != null ? elaboration.getSource().intValue() : "")
-					.put(MSG.NAME, elaboration.getSource() != null ? ElaborationSource.values()[elaboration.getSource()].getName(): ""))
+					.put(MSG.ID, elaboration.getSource() != null ? elaboration.getSourceValue() : "")
+					.put(MSG.NAME, elaboration.getSource() != null ? elaboration.getSource().getName(): ""))
 			.put("source_id", elaboration.getSourceId())
 			.put(MSG.CREATION_DATE, elaboration.getCreationDate() != null ? AonDateUtils.simpleFormat(elaboration.getCreationDate()): "")
 			.put(MSG.CREATION_USER, elaboration.getCreationUser())
@@ -432,7 +430,7 @@ public class ToJSON {
 				.put(MSG.ID, detail.getId())
 				.put(MSG.DOMAIN, detail.getDomain())
 				.put(MSG.DATE, detail.getDate() != null ? AonDateUtils.format(detail.getDate(), "yyyy/MM/dd") : "")
-				.put(MSG.ITEM, itemToJSON(detail.getItem()))
+				.put(MSG.ITEM, itemToJSON2(detail.getItem()))
 				.put(MSG.QUANTITY, detail.getQuantity())
 				.put(MSG.WAREHOUSE, new JSONObject()
 						.put(MSG.ID, detail.getWarehouse() != null ? detail.getWarehouse().getId() : "")
@@ -448,7 +446,7 @@ public class ToJSON {
 		return new JSONObject()
 				.put(MSG.ID, detailComposition.getId())
 				.put(MSG.DOMAIN, detailComposition.getDomain())
-				.put(MSG.ITEM, itemToJSON(detailComposition.getItem()))
+				.put(MSG.ITEM, itemToJSON2(detailComposition.getItem()))
 				.put(MSG.QUANTITY, detailComposition.getQuantity())
 				.put(MSG.WAREHOUSE, new JSONObject()
 						.put(MSG.ID, detailComposition.getWarehouse() != null ? detailComposition.getWarehouse().getId() : "")

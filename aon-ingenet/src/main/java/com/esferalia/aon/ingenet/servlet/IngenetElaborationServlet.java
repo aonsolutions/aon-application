@@ -144,7 +144,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				flushElaborations(httpResponse, ctx, elaborationList);
 				elaborationList.forEach(elaboration -> {
 					if(elaboration.getSourceId()!=null && existSales(ctx, elaboration)){						
-						elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
+						elaboration.setStatus(ElaborationStatus.IN_PROGRESS);
 						ElaborationDAO.updateElaboration(ctx, elaboration);
 					} else {
 						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
@@ -205,8 +205,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			Integer number = Integer.parseInt(ref.getNUMERO());
 			Elaboration elaboration = ElaborationDAO.getElaboration(ctx,
 					series, number);
-			if(elaboration.getStatus()==ElaborationStatus.IN_PROGRESS.value()){
-				elaboration.setStatus(ElaborationStatus.REOPEN.value());
+			if(ElaborationStatus.IN_PROGRESS.equals(elaboration.getStatus())){
+				elaboration.setStatus(ElaborationStatus.REOPEN);
 				elaboration.setRemarks(StringUtils.mid(ref.getOBSERVACIONES(), 0, 128));
 				elaborationList.add(elaboration);
 			}
@@ -328,7 +328,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", salesDetail.getPrice()));
 //					Double price = obtainCustomerProductPrice(ctx, elaboration.getItem(), customer);
 //					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", price));
-					RegistryItem rItem = obtainCustomerItem(ctx, elaboration.getItem(), customer);
+					RegistryItem rItem = obtainCustomerItem(ctx, elaboration.getItem().getId(), customer);
 					elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(rItem.getCode());
 				} else {
 					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
@@ -342,10 +342,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 							+ elaboration.getItem().getProduct().getName();
 					errorList.add(errorMsg);
 				}
-				ElaborationStatus elaborationStatus = ElaborationStatus.values()[elaboration.getStatus()];
-				if(elaborationStatus==ElaborationStatus.PENDING){
+				if(ElaborationStatus.PENDING.equals(elaboration.getStatus())) {
 					elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PENDIENTE);
-				} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
+				} else if(ElaborationStatus.IN_PROGRESS.equals(elaboration.getStatus())) {
 					elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
 				}
 				elaboracion.setFECHACONSULTA(getDateFormatter().format(elaboration.getModificationDate()));
@@ -363,12 +362,12 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	}
 
 	
-	private RegistryItem obtainCustomerItem(AONContext ctx, OldItem item, Customer customer) {
+	private RegistryItem obtainCustomerItem(AONContext ctx, Integer itemId, Customer customer) {
 		RegistryItem rItem = null;
-		if(item!=null && item.getId()!=null && customer!=null && customer.getId()!=null){
+		if(itemId != null && customer!=null && customer.getId()!=null){
 			 rItem = RegistryOldDAO
 					.getRItemStream(ctx,
-							f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getItemProperty().eq(item.getId()))
+							f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getItemProperty().eq(itemId))
 									.and(f.getRegistryProperty().eq(customer.getId())))
 					.sorted((o1, o2) -> o1.getPriority().compareTo(o2.getPriority())).findFirst()
 					.orElse(new RegistryItem());
@@ -538,7 +537,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	private SalesDetail obtainSalesDetail(AONContext ctx, Elaboration elaboration){
 		if(elaboration.getSource()!=null
 				&& elaboration.getSourceId()!=null
-				&& elaboration.getSource()==ElaborationSource.SALES.value()){
+				&& ElaborationSource.SALES.equals(elaboration.getSource())){
 			return SalesDAO.getSalesDetail(ctx, elaboration.getSourceId());
 		}
 		return null;

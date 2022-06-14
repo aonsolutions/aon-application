@@ -2,7 +2,6 @@ package com.code.aon.ui.warehouse.importer;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.logging.Level;
 
 import javax.faces.event.AbortProcessingException;
@@ -16,13 +15,9 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
-import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
@@ -30,6 +25,9 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.Options;
+import com.esferalia.aon.occam.api.SERES;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.seres.DeliveryPackages;
@@ -39,7 +37,7 @@ import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;
-import com.esferalia.aon.seres.writer.connect.ConnectDeliveryWriter;;
+import com.esferalia.aon.seres.writer.connect2.ConnectDeliveryWriterOccam;;
 
 public class FtpDeliveryUploadHandler implements Serializable {
 	
@@ -234,21 +232,6 @@ public class FtpDeliveryUploadHandler implements Serializable {
 				AonUtil.addErrorMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage());
 			}
-			Map<String, String> ediCodes = ediSupport.getEdiCodes(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress());
-			String department = ediCodes.get(IEdiSupport.DEPARTMENT);
-			String customerEdiCode = ediCodes.get(
-							IEdiSupport.ALBARANES);
-			String deliveryPointEdiCode = ediCodes.get(
-							IEdiSupport.PTO_ENTREGA);
-			Tag pt = ediSupport.obtainPackingTag(
-					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress());
-			String customerPackage = pt != null ? pt.getName(): "";
-			CompanyController company = (CompanyController) AonUtil
-					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
 			
 			if(delivery.getCarrierPacking() != null) {
 				CarrierPacking cp = AON.getCarrierPacking(AonUtil.getDomainName(), delivery.getDomain(), "", f -> f.getIdProperty().eq(delivery.getCarrierPacking()));
@@ -276,9 +259,14 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			}
 			
 			// write file
-			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
-			output = writer.createFile(delivery, new String(attachData), companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode, customerPackage, department);
+			
+			com.esferalia.aon.occam.api.model.warehouse.Delivery del = AON.getDelivery(AonUtil.getDomainName(), delivery.getDomain(), AonUtil.getRemoteUser(),
+					f -> f.getIdProperty().eq(delivery.getId()),
+					new Options().setFull(true));
+
+			EdiCodes codes = SERES.getEdiCodes(AonUtil.getDomainName(), del.getDomain(), AonUtil.getRemoteUser(), del);
+			ConnectDeliveryWriterOccam writer2 = new ConnectDeliveryWriterOccam(AonUtil.getDomainName(), delivery.getDomain(), AonUtil.getRemoteUser());
+			output = writer2.createFile(del, new String(attachData), codes);
 			return output;
 		} catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());

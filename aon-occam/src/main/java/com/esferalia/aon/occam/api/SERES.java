@@ -1,0 +1,33 @@
+package com.esferalia.aon.occam.api;
+
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.impl.jooq.SeresImpl;
+
+public class SERES {
+
+	private SERES() {
+		throw new IllegalStateException("Utility class");
+	}
+	
+	private static ISeres getSeres() {
+		return new SeresImpl();
+	}
+
+	public static EdiCodes getEdiCodes(Domain domain, User user, Delivery delivery){
+		return getEdiCodes(domain.getName(), domain.getId(), user.getLogin(), delivery);
+	}
+	
+	public static EdiCodes getEdiCodes(Domain domain, String login, Delivery delivery){
+		return getEdiCodes(domain.getName(), domain.getId(), login, delivery);
+	}
+	
+	public static EdiCodes getEdiCodes(String domainName, Integer domainId, String login, Delivery delivery){
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSeres().getEdiCodes(ctx, delivery);
+		}
+	}
+}

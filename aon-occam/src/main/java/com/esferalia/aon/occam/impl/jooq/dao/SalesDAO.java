@@ -116,6 +116,7 @@ public class SalesDAO {
 		@Override public Property<String> getShippingContactProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_CONTACT);}
 		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_PERIOD);}
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
+		@Override public Property<Integer> getSalesDetailIdProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.ID);}
 	}
 	
 	public static int getNextNumber(AONContext ctx, String series ) {
