@@ -3708,6 +3708,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentEditor.setEditButton(newButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setDescriptionSuggestBox(descriptionSuggest);
+		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
 
 		return paymentEditor;
 

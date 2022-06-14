@@ -46,7 +46,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -54,7 +53,6 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -63,7 +61,6 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
@@ -390,8 +387,20 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onSuccess(Enterprise[] enterprises) {
-				for (Enterprise enterprise : enterprises)
-					Employees.this.onEnterprise(enterprise);
+				enterprisesService.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("NO");
+					}
+
+					@Override
+					public void onSuccess(EnterpriseContext enterpriseContextDB) {
+						enterpriseContext = enterpriseContextDB;
+						for (Enterprise enterprise : enterprises)
+							Employees.this.onEnterprise(enterprise);
+					}
+				});
 			}
 
 		});
@@ -419,19 +428,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				filter(toolbar.getSearchTextBox().getValue());
 			}
 		};
-		
-		enterprisesService.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("NO");
-			}
-
-			@Override
-			public void onSuccess(EnterpriseContext enterpriseContextDB) {
-				enterpriseContext = enterpriseContextDB;
-			}
-		});
 
 	}
 
@@ -465,13 +461,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	public void onEnterprise(Enterprise enterprise, boolean open) {
-
+		
 		clearEnterprise(enterprise);
 
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
 		final TreeItem enterpriseItem = addEnterpriseItem(enterprise);
-
+		
 		addEnterpriseCostsItem(enterpriseItem, enterprise);
 		
 		addEnterpriseSalariesItem(enterpriseItem, enterprise);
@@ -492,7 +488,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		for (Workplace workplace : workplaces) {
 			workplaceItems.add(addEnterpriseWorkplaceItem(enterpriseItem, enterprise, workplace));
 		}
-
+		
 		enterpriseItem.setState(true, true);
 		tree.setSelectedItem(enterpriseItem, true); // Send event to show
 													// enterprise data
@@ -505,8 +501,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			this.inactive = true;
 			workplaceItems.forEach( workplaceItem -> workplaceItem.setVisible(true));
 		}
-			
-
+		
 		scrollPanel.scrollToLeft();
 
 		initViewButton(toolbar.getViewButton());
