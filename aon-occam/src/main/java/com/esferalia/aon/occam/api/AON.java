@@ -2838,18 +2838,18 @@ public class AON {
 	// ********************************************
 
 	public static Attach getAttach(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
-		return getAttachStream(domainName, domainId, login, filter, attachType, true)
+		return getAttachStream(domainName, domainId, login, p -> filter.filter(p).limit(0, 1), attachType, true)
 				.findFirst().orElse(new Attach());
 	}
 	
 	public static Attach getRawdocAttach(String domainName, Integer domainId, String login, RawdocFilter filter, AttachType attachType) {
-		return getRawdocAttachStream(domainName, domainId, login, filter, attachType)
+		return getRawdocAttachStream(domainName, domainId, login, p -> filter.filter(p).limit(0, 1), attachType)
 				.findFirst().orElse(new Attach());
 	}
 	
 	public static Attach getAttach(String domainName, Integer domainId,
 			String login, AttachFilter filter, AttachType attachType, Boolean withData) {
-		return getAttachStream(domainName, domainId, login, filter, attachType, withData)
+		return getAttachStream(domainName, domainId, login, p -> filter.filter(p).limit(0, 1), attachType, withData)
 				.findFirst().orElse(new Attach());
 	}
 	public static LinkedList<Attach> getAttachList(String domainName, Integer domainId, String login, AttachFilter filter, AttachType attachType) {
