@@ -160,8 +160,9 @@ const appendChatMessage = (properties) => {
     const noMessage = document.getElementById(MESSENGER_IDS.NO_MESSAGES);
     const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
     
-    if(noMessage)
+    if(noMessage){
         chat.removeChild(noMessage);
+    }
 
     const message = setStyles( createChatMessageNew(properties, chat),{
         opacity : 0,
@@ -238,12 +239,19 @@ export const sendMessage = async (text, task) => {
  */
 const checkFilesAndSend = async (textArea, task)=>{
     const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
-    if(btnSend)btnSend.style.pointerEvents = "none";
+
+    if(btnSend){
+        btnSend.style.pointerEvents = "none";
+    }
+
     try {
         await checkFileBase64(textArea);
         await checkFileAonFile(task, textArea);
     } catch (error) { console.log(error); }
-    if(btnSend)btnSend.style.pointerEvents = "auto";
+
+    if(btnSend) {
+        btnSend.style.pointerEvents = "auto";
+    }
 }
 
 const checkFileAonFile = async(task, textArea)=> {
@@ -272,13 +280,15 @@ const checkFileAonFile = async(task, textArea)=> {
                 
                 let linkTmp = `/${API_URL}/file/${jsonBase64}`;
 
-                if(aonMessengerChat.isCau())
+                if(aonMessengerChat.isCau()){
                     linkTmp = SIG_URL+linkTmp;
+                }
 
-                if(file.contentType.indexOf("image")>=0)
+                if(file.contentType.indexOf("image")>=0){
                     el.src = linkTmp;
-                else 
+                } else {
                     el.href = linkTmp;
+                } 
             }
         }
     }
