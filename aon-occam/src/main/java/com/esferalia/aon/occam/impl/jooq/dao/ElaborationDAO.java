@@ -3,9 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
 import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,10 +31,20 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilt
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO.WarehouseFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ElaborationDAO {
+	
+	private ElaborationDAO() {
+	
+	}
 	
 	private static final ElaborationPropertiesDAO ELABORATION_PROPERTIES = new ElaborationPropertiesDAO();
 	private static final ElaborationDetailPropertiesDAO ELABORATION_DETAIL_PROPERTIES = new ElaborationDetailPropertiesDAO();
@@ -49,24 +61,24 @@ public class ElaborationDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.DOMAIN);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.SERIES);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.NUMBER);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.DATE);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.ITEM);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.DESCRIPTION);}
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.WAREHOUSE);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION.QUANTITY);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ELABORATION.STATUS);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.COMMENTS);}
-		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.REMARKS);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(ELABORATION.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.SOURCE_ID);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.DOMAIN);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.NUMBER);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.DATE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.ITEM);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.DESCRIPTION);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.WAREHOUSE);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.QUANTITY);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.STATUS);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.REMARKS);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.SOURCE_ID);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.MODIFICATION_DATE);}
 	}
 
 	protected static class ElaborationDetailPropertiesDAO implements ElaborationDetailProperties {
@@ -75,18 +87,18 @@ public class ElaborationDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getElaborationProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.ELABORATION);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL.DATE);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION_DETAIL.QUANTITY);}
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.WAREHOUSE);}
-		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL.ADD_INFO);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getElaborationProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ELABORATION);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.DATE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.QUANTITY);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.WAREHOUSE);}
+		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ADD_INFO);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.MODIFICATION_DATE);}
 	}
 
 	protected static class ElaborationDetailCompositionPropertiesDAO implements ElaborationDetailCompositionProperties {
@@ -95,45 +107,39 @@ public class ElaborationDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.DOMAIN);}
-		@Override public Property<Integer> getElaborationDetailProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION_DETAIL_COMPOSITION.QUANTITY);}
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE);}
-		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL_COMPOSITION.ADD_INFO);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL_COMPOSITION.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.DOMAIN);}
+		@Override public Property<Integer> getElaborationDetailProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.QUANTITY);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE);}
+		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ADD_INFO);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE);}
 	}
-	
 
-
-	
 	/*
 	 * ELABORATION 
 	 */
 	
-	public static Stream<Elaboration> getElaborationStream(AONContext ctx,
-			ElaborationFilter filter) {
+	public static Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter) {
 		ctx.checkRead();
 		SelectConditionStep<Record> select = (SelectConditionStep<Record>) (ELABORATION_PROPERTIES
 				.build(ctx.getDslContext().select().from(ELABORATION)
 						.leftJoin(WAREHOUSE)
 						.on(WAREHOUSE.ID.eq(ELABORATION.WAREHOUSE)), filter));
 		return select.orderBy(ELABORATION.DATE.desc()).fetch().stream()
-				.map(new FullElaborationFiller());
+				.map(new ElaborationFiller());
 	}
 	
-	public static List<Elaboration> getElaborationList(AONContext ctx,
-			ElaborationFilter filter) {
+	public static List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter) {
 		return getElaborationStream(ctx, filter)
 				.collect(Collectors.toList());
 	}
 
-	public static Elaboration getElaboration(AONContext ctx,
-			Integer elaborationId) {
+	public static Elaboration getElaboration(AONContext ctx, Integer elaborationId) {
 		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION.ID.eq(elaborationId)).limit(1)
@@ -142,8 +148,7 @@ public class ElaborationDAO {
 				.orElse(new Elaboration());
 	}
 	
-	public static Elaboration getElaboration(AONContext ctx, String series,
-			Integer number) {
+	public static Elaboration getElaboration(AONContext ctx, String series, Integer number) {
 		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION)
 				.where(ELABORATION.SERIES.eq(series))
@@ -154,15 +159,20 @@ public class ElaborationDAO {
 				.orElse(new Elaboration());
 	}
 	
+	public static Elaboration save(AONContext ctx, Elaboration elaboration) {
+		return elaboration.getId() != null
+			? updateElaboration(ctx, elaboration)
+			: elaboration.setId(insertElaboration(ctx, elaboration));
+	}
+
+	
 	public static int insertElaboration(AONContext ctx, Elaboration elaboration) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		Timestamp now = AonDateUtils.toTimestamp(new Date());
 		String series = elaboration.getSeries();
-		int number = elaboration.getNumber() > 0 ? elaboration.getNumber()
-				: getSerieMaxNumber(ctx, series) + 1;
+		int number = elaboration.getNumber() > 0 
+				? elaboration.getNumber()
+				: getNextNumber(ctx, series);
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION, ELABORATION.DOMAIN,
@@ -183,19 +193,16 @@ public class ElaborationDAO {
 						elaboration.getDescription(),
 						elaboration.getWarehouse() != null ? elaboration
 								.getWarehouse().getId() : null,
-						elaboration.getQuantity(), elaboration.getStatus(),
+						elaboration.getQuantity(), elaboration.getStatusValue(),
 						elaboration.getComments(), elaboration.getRemarks(),
-						elaboration.getSource(), elaboration.getSourceId(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).returning(ELABORATION.ID).fetchOne()
+						elaboration.getSourceValue(), elaboration.getSourceId(),
+						ctx.getUser(), now, ctx.getUser(), now)
+				.returning(ELABORATION.ID).fetchOne()
 				.getId();
 	}
 
-	public static Elaboration updateElaboration(AONContext ctx,
-			Elaboration elaboration) {
+	public static Elaboration updateElaboration(AONContext ctx, Elaboration elaboration) {
 		ctx.checkWrite();
-		Timestamp modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
 		return ctx
 				.getDslContext()
 				.update(ELABORATION)
@@ -210,13 +217,13 @@ public class ElaborationDAO {
 						elaboration.getWarehouse() != null ? elaboration
 								.getWarehouse().getId() : null)
 				.set(ELABORATION.QUANTITY, elaboration.getQuantity())
-				.set(ELABORATION.STATUS, elaboration.getStatus())
+				.set(ELABORATION.STATUS, elaboration.getStatusValue())
 				.set(ELABORATION.COMMENTS, elaboration.getComments())
 				.set(ELABORATION.REMARKS, elaboration.getRemarks())
-				.set(ELABORATION.SOURCE, elaboration.getSource())
+				.set(ELABORATION.SOURCE, elaboration.getSourceValue())
 				.set(ELABORATION.SOURCE_ID, elaboration.getSourceId())
 				.set(ELABORATION.MODIFICATION_USER, ctx.getUser())
-				.set(ELABORATION.MODIFICATION_DATE, modificationDate)
+				.set(ELABORATION.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.where(ELABORATION.ID.eq(elaboration.getId())).returning()
 				.fetch().stream().map(new ElaborationFiller()).findFirst()
 				.orElse(null);
@@ -275,10 +282,7 @@ public class ElaborationDAO {
 	public static int insertElaborationDetail(AONContext ctx,
 			ElaborationDetail elaborationDetail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		Timestamp now = AonDateUtils.toTimestamp(new Date());
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION_DETAIL, ELABORATION_DETAIL.DOMAIN,
@@ -298,7 +302,7 @@ public class ElaborationDAO {
 						elaborationDetail.getQuantity(),
 						elaborationDetail.getWarehouse()!=null?elaborationDetail.getWarehouse().getId():null,
 						elaborationDetail.getAddInfo(), ctx.getUser(),
-						creationDate, ctx.getUser(), modificationDate)
+						now, ctx.getUser(), now)
 				.returning(ELABORATION_DETAIL.ID).fetchOne().getId();
 	}
 	
@@ -398,13 +402,9 @@ public class ElaborationDAO {
 				.orElse(new ElaborationDetailComposition());
 	}
 	
-	public static int insertElaborationDetailComposition(AONContext ctx,
-			ElaborationDetailComposition elaborationDetailComposition) {
+	public static int insertElaborationDetailComposition(AONContext ctx, ElaborationDetailComposition elaborationDetailComposition) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		Timestamp now = AonDateUtils.toTimestamp(new Date());
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION_DETAIL_COMPOSITION,
@@ -426,8 +426,7 @@ public class ElaborationDAO {
 						elaborationDetailComposition.getWarehouse()!=null?
 								elaborationDetailComposition.getWarehouse().getId():null,
 						elaborationDetailComposition.getAddInfo(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate)
+						ctx.getUser(), now, ctx.getUser(), now)
 				.returning(ELABORATION_DETAIL_COMPOSITION.ID).fetchOne()
 				.getId();
 	}
@@ -486,90 +485,64 @@ public class ElaborationDAO {
 				.where(ELABORATION_DETAIL_COMPOSITION.ID.eq(composition.getId()))
 				.returning().fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst().orElse(null);
 	}
-	
-
-	
-	public static int getSerieMaxNumber(AONContext ctx, String series) {
-		Integer next = ctx.getDslContext().select(DSL.max(ELABORATION.NUMBER))
-				.from(ELABORATION)
-				.where(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
-				.fetch() .stream()
-				.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(ELABORATION.NUMBER)) != null) 
-						? rec.getValue(DSL.max(ELABORATION.NUMBER)) 
-						: 0)
-				.findFirst()
-				.orElse(0);
+		
+	public static int getNextNumber(AONContext ctx, String series ) {
+		Integer next = ctx.getDslContext()
+			.select( DSL.max(ELABORATION.NUMBER))
+			.from(ELABORATION)
+			.where(ELABORATION.DOMAIN.eq(ctx.getDomainId()))
+			.and(AonStringUtils.isBlank(series)
+					? ELABORATION.SERIES.isNull().or(DSL.trim(ELABORATION.SERIES).eq(""))
+					: ELABORATION.SERIES.eq(series))
+			.fetch()
+			.stream()
+			.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(ELABORATION.NUMBER)) != null) 
+					? rec.getValue(DSL.max(ELABORATION.NUMBER)) : 0)
+			.findFirst()
+			.orElse(0);
+		if(next < 0) next = 0;
 		return ++next;
 	}
-	
 	
 	/*
 	 * FILLERS 
 	 */
 	
-	private static class ElaborationFiller implements
-			Function<Record, Elaboration> {
+	public static class ElaborationFiller extends Filler implements Function<Record, Elaboration> {
+
 		@Override
 		public Elaboration apply(Record r) {
-			return new Elaboration()
-					.setId(r.getValue(ELABORATION.ID))
-					.setDomain(r.getValue(ELABORATION.DOMAIN))
-					.setSeries(r.getValue(ELABORATION.SERIES))
-					.setNumber(r.getValue(ELABORATION.NUMBER))
-					.setDate(r.getValue(ELABORATION.DATE))
-					.setItem(new OldItem().setId(r.getValue(ELABORATION.ITEM)))
-					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
-					.setWarehouse(
-							new Warehouse().setId(r
-									.getValue(ELABORATION.WAREHOUSE)))
-					.setQuantity(r.getValue(ELABORATION.QUANTITY))
-					.setStatus(r.getValue(ELABORATION.STATUS))
-					.setComments(r.getValue(ELABORATION.COMMENTS))
-					.setRemarks(r.getValue(ELABORATION.REMARKS))
-					.setSource(r.getValue(ELABORATION.SOURCE))
-					.setSourceId(r.getValue(ELABORATION.SOURCE_ID))
-					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))
-					.setCreationUser(r.getValue(ELABORATION.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION.MODIFICATION_DATE))
-					.setModificationUser(
-							r.getValue(ELABORATION.MODIFICATION_USER));
+			return build(r);
 		}
-	}
-	
-	private static class FullElaborationFiller implements
-			Function<Record, Elaboration> {
-		@Override
-		public Elaboration apply(Record r) {
+		
+		public static Elaboration build(Record r) {
 			return new Elaboration()
-					.setId(r.getValue(ELABORATION.ID))
-					.setDomain(r.getValue(ELABORATION.DOMAIN))
-					.setSeries(r.getValue(ELABORATION.SERIES))
-					.setNumber(r.getValue(ELABORATION.NUMBER))
-					.setDate(r.getValue(ELABORATION.DATE))
-					.setItem(new OldItem().setId(r.getValue(ELABORATION.ITEM)))
-					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
-					.setWarehouse(
-							new Warehouse().setId(
-									r.getValue(ELABORATION.WAREHOUSE)).setName(
-									(r.getValue(ELABORATION.WAREHOUSE)!=null?r.getValue(WAREHOUSE.NAME):"")))
-					.setQuantity(r.getValue(ELABORATION.QUANTITY))
-					.setStatus(r.getValue(ELABORATION.STATUS))
-					.setComments(r.getValue(ELABORATION.COMMENTS))
-					.setRemarks(r.getValue(ELABORATION.REMARKS))
-					.setSource(r.getValue(ELABORATION.SOURCE))
-					.setSourceId(r.getValue(ELABORATION.SOURCE_ID))
-					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))
-					.setCreationUser(r.getValue(ELABORATION.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION.MODIFICATION_DATE))
-					.setModificationUser(
-							r.getValue(ELABORATION.MODIFICATION_USER));
+					.setId(getValue(r, ELABORATION.ID))
+					.setDomain(getValue(r, ELABORATION.DOMAIN))
+					.setSeries(getValue(r, ELABORATION.SERIES))
+					.setNumber(getValue(r, ELABORATION.NUMBER))
+					.setDate(getValue(r, ELABORATION.DATE))
+					.setItem(checkField(r, ITEM.ID)
+							? ItemFiller.build(r)
+							: new Item().setId(getValue(r, ELABORATION.ITEM)))
+					.setDescription(getValue(r, ELABORATION.DESCRIPTION))
+					.setWarehouse(checkField(r, WAREHOUSE.ID)
+							? WarehouseFiller.build(r)
+							: new Warehouse().setId(getValue(r, ELABORATION.WAREHOUSE)))
+					.setQuantity(getValue(r, ELABORATION.QUANTITY))
+					.setStatus(ElaborationStatus.safeValueOf(getValue(r, ELABORATION.STATUS)))
+					.setComments(getValue(r, ELABORATION.COMMENTS))
+					.setRemarks(getValue(r, ELABORATION.REMARKS))
+					.setSource(ElaborationSource.safeValueOf(getValue(r, ELABORATION.SOURCE)))
+					.setSourceId(getValue(r, ELABORATION.SOURCE_ID))
+					.setCreationDate(getValue(r, ELABORATION.CREATION_DATE))
+					.setCreationUser(getValue(r, ELABORATION.CREATION_USER))
+					.setModificationDate(getValue(r, ELABORATION.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, ELABORATION.MODIFICATION_USER));
 		}
 	}
 
-	private static class FullElaborationDetailFiller implements
-			Function<Record, ElaborationDetail> {
+	private static class FullElaborationDetailFiller extends Filler implements Function<Record, ElaborationDetail> {
 		@Override
 		public ElaborationDetail apply(Record r) {
 			return new ElaborationDetail()
@@ -579,10 +552,10 @@ public class ElaborationDAO {
 							new Elaboration().setId(r
 									.getValue(ELABORATION_DETAIL.ELABORATION)))
 					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
-					.setItem(
-							new OldItem().setId(r
-									.getValue(ELABORATION_DETAIL.ITEM)))
 					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
+					.setItem(checkField(r, ITEM.ID)
+							? ItemFiller.build(r)
+							: new Item().setId(getValue(r, ELABORATION_DETAIL.ITEM)))
 					.setWarehouse(
 							new Warehouse().setId(r
 									.getValue(ELABORATION_DETAIL.WAREHOUSE)))
@@ -598,8 +571,7 @@ public class ElaborationDAO {
 		}
 	}
 
-	private static class FullElaborationDetailCompositionFiller implements
-			Function<Record, ElaborationDetailComposition> {
+	private static class FullElaborationDetailCompositionFiller extends Filler implements Function<Record, ElaborationDetailComposition> {
 		@Override
 		public ElaborationDetailComposition apply(Record r) {
 			return new ElaborationDetailComposition()
@@ -609,9 +581,9 @@ public class ElaborationDAO {
 					.setElaborationDetail(
 							new ElaborationDetail().setId(r
 									.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
-					.setItem(
-							new OldItem().setId(r
-									.getValue(ELABORATION_DETAIL_COMPOSITION.ITEM)))
+					.setItem(checkField(r, ITEM.ID)
+							? ItemFiller.build(r)
+							: new Item().setId(getValue(r, ELABORATION_DETAIL_COMPOSITION.ITEM)))
 					.setQuantity(
 							r.getValue(ELABORATION_DETAIL_COMPOSITION.QUANTITY))
 					.setWarehouse(

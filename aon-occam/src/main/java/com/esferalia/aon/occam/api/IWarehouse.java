@@ -163,6 +163,7 @@ public interface IWarehouse {
 	ElaborationDetailComposition getElaborationDetailComposition(AONContext ctx, Integer compositionId);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, Integer id);
 	List<ElaborationDetailComposition> getElaborationDetailCompositionList(AONContext ctx, ElaborationDetailCompositionFilter filter);
+	Elaboration saveElaboration(AONContext ctx, Elaboration elaboration);
 	Integer insertElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration updateElaboration(AONContext ctx, Elaboration elaboration);
 	Elaboration deleteElaboration(AONContext ctx, Integer id);

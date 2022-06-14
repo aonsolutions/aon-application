@@ -105,21 +105,25 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		CompanyController companyController = (CompanyController) event.getController();
+		companyController.setSignatureFile(CompanyController.NOT_INITIALIZED);
+	}
+	
+	public static void initSignatureFile(CompanyController companyController) {
 		try {
-			RegistryAttachment companySignature = companyController.obtainCompanySignature();
-			if (companySignature != null) {
-				companyController.setSignatureAttach(companySignature);
-				
-				AonFile f = new AonFile();
-				f.setAttachment(companySignature);
-				f.setFileName(companySignature.getDescription());
-				f.setMimeType(companySignature.getMimeType());
-				companyController.setSignatureFile(f);
-			} else {
-				companyController.setSignatureFile(null);
-			}
+		RegistryAttachment companySignature = companyController.obtainCompanySignature();
+		if (companySignature != null) {
+			companyController.setSignatureAttach(companySignature);
+			
+			AonFile f = new AonFile();
+			f.setAttachment(companySignature);
+			f.setFileName(companySignature.getDescription());
+			f.setMimeType(companySignature.getMimeType());
+			companyController.setSignatureFile(f);
+		} else {
+			companyController.setSignatureFile(null);
+		}
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
+			companyController.setSignatureFile(null);
 		}
 	}
 

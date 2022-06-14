@@ -18,6 +18,7 @@ export class Task {
   workflow;
   description;
   status;
+  evaluation;
   source;
   source_id;
   gtask_id;
@@ -52,6 +53,7 @@ export class Task {
       this.parent      = undefined;
       this.auth        = undefined;
       this.parentObj   = undefined;
+      this.evaluation  = undefined;
       this.domain      = new Domain();
       this.workgroup   = new Workgroup();
       this.project     = new Project();
@@ -81,6 +83,7 @@ export class Task {
       this.setId(task.id || undefined);
       this.setAuth(task.auth || {});
       this.setStatus(task.status || TASK_STATUS.PENDING);
+      this.setEvaluation(task.evaluation);
       this.setNumber(task.number || undefined);
       this.setWorkgroup(new Workgroup(task.workgroup));
       this.setRegistry(new Registry(task.registry));
@@ -125,6 +128,7 @@ export class Task {
       if(task.workgroup && task.workgroup.id)     this.setWorkgroup(new Workgroup(task.workgroup));
       if(task.task_holder && task.task_holder.id) this.setTaskHolder(task.task_holder);
       if(task.status)                             this.setStatus(task.status);
+      if(task.evaluation)                         this.setEvaluation(task.evaluation);
       if(task.source_id)                          this.setSourceId(task.source_id);
       if(task.registry && task.registry.id)       this.setRegistry(new Registry(task.registry));
       if(task.project && task.project.id)         this.setProject(new Project(task.project));
@@ -136,23 +140,6 @@ export class Task {
       this.setFiles([]);
     }
   }
-
-  /**
-   * 
-   * @param {Boolean} projectDefault default project, false clean, true not clean
-   */
-  // cleanTask(projectDefault=false){
-  //   this.workgroup   = new Workgroup();
-  //   if(!projectDefault)
-  //     this.setProject(new Project());
-  //   this.registry    = new Registry();
-  //   this.task_holder = new TaskHolder();
-  //   this.title       = "";
-  //   this.description = "";
-  //   this.source_id   = undefined;
-  //   this.workflow    = [];
-  //   this.setFiles([]);
-  // }
 
   getId() {
     return this.id;
@@ -168,6 +155,14 @@ export class Task {
 
   setStatus(status) {
     this.status = status;
+  }
+
+  getEvaluation() {
+    return this.evaluation;
+  }
+
+  setEvaluation(evaluation) {
+    this.evaluation = evaluation;
   }
 
   getNumber() {

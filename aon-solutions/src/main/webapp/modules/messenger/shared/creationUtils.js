@@ -890,3 +890,65 @@ export const openDialogBranch = ()=> {
 
   dialog.open();
 }
+
+// create section rating
+export const createSectionRating = (parent, isMobile)=> {
+  const div = setStyles(document.createElement(TAG.DIV),{
+    display: 'flex',
+    justifyContent: 'center',
+    borderTop: `1px solid #ddd`,
+    width:'100%',
+  });
+  parent.appendChild(div);
+
+  if(isMobile){
+    div.style.position = "absolute";
+    div.style.bottom   = "5px";
+    // div.style.border   = "0";
+  }
+
+  const second = newComponent({
+    type: MESSENGER_COMPONENTS.DIV,
+    classes: [CSS.FLEX_ROW],
+    styles: {
+      maxWidth: "calc(100% - 130px)",
+      padding: '1em 0',
+      gap: '0 16px',
+    }
+  }).element;
+
+  div.appendChild(second);
+  return second;
+}
+
+export const createIconEvaluation = (img, active = false) => {
+  let label = document.createElement(TAG.LABEL);
+  label.classList.add("rating");
+  label.style = `
+    padding: 5px 3px;
+    font-size: 32px;
+    opacity: 0.7;
+    filter: grayscale(1);
+    cursor: pointer;
+  `;
+  let i = document.createElement(TAG.I);
+  i.style = `
+    background-image: url(${img});
+    height: 1em;
+    width: 1em;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    vertical-align: middle;
+  `;
+  label.appendChild(i);
+
+  if(active){
+    label.style.filter = "grayscale(0)";
+    label.style.opacity = "1";
+    label.style.transform = "scale(1.1)";
+  }
+
+  return label;
+}

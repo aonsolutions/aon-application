@@ -24,6 +24,9 @@ import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.ui.company.event.CompanyLogoControllerListener;
+import com.code.aon.ui.company.event.CompanySignatureControllerListener;
+import com.code.aon.webmail.bean.AonListEmail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -35,12 +38,13 @@ public class CompanyController extends CompanyParentController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyController.class.getName());
 	
+	public static final AonFile NOT_INITIALIZED = new AonFile();  
 
 	/** The uploaded logo file. */
-	private AonFile logoFile;
+	private AonFile logoFile = NOT_INITIALIZED;
 
 	/** The uploaded signature file. */
-	private AonFile signatureFile;
+	private AonFile signatureFile = NOT_INITIALIZED;
 	
 	private String ediSupport;
 	private String ediCompanyCode;
@@ -72,6 +76,9 @@ public class CompanyController extends CompanyParentController {
 	 * @return the file
 	 */
 	public AonFile getLogoFile() {
+		if ( this.logoFile == NOT_INITIALIZED ) {
+			CompanyLogoControllerListener.initLogoFile(this);
+		}
 		return this.logoFile;
 	}
 	public AonFile getAonFile() {
@@ -97,6 +104,9 @@ public class CompanyController extends CompanyParentController {
 	 * @return the file
 	 */
 	public AonFile getSignatureFile() {
+		if ( this.signatureFile == NOT_INITIALIZED ) {
+			CompanySignatureControllerListener.initSignatureFile(this);
+		}
 		return this.signatureFile;
 	}
 	

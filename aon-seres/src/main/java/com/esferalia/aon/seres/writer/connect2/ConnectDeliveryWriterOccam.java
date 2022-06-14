@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ import com.esferalia.aon.file.seres.connect2.delivery.v4.data.SEH1G;
 import com.esferalia.aon.file.seres.connect2.delivery.v4.data.SEH1L;
 import com.esferalia.aon.file.seres.connect2.delivery.v4.data.SEH1P;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -42,10 +44,11 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
@@ -58,8 +61,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(ConnectDeliveryWriterOccam.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectDeliveryWriterOccam.class);
 	
 	private String domainName;
 	private Integer domainId;
@@ -71,11 +73,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		this.login = login;
 	}
 
-	public FileOutput createFile(Delivery delivery, String packageData, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode,
-			String customerPackage, String department) throws FileNotFoundException, UnsupportedEncodingException {
-		RECTL rectl = createRECTLRecord(delivery, packageData, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode, customerPackage, department);
+	public FileOutput createFile(Delivery delivery, String packageData, EdiCodes codes) throws FileNotFoundException, UnsupportedEncodingException {
+		RECTL rectl = createRECTLRecord(delivery, packageData, codes);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectDelivery(rectl, writer);
@@ -85,21 +84,17 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Delivery delivery, String packageData, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode, String customerPackage, String department) {
+	private RECTL createRECTLRecord(Delivery delivery, String packageData, EdiCodes codes) {
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.AVISO_DE_EXPEDICION_DESADV.getValue());
-		rectl.setCodigoEmisor(companyEdiCode);
-		rectl.setCodigoReceptor(customerEdiCode);
+		rectl.setCodigoEmisor(codes.getMscode());
+		rectl.setCodigoReceptor(codes.getMrcode());
 		rectl.setIdentificacionDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		rectl.setFecha_horaDelMensaje(SeresUtils.dateTimeFormat().format(new Date()));
 		
-		rectl.seh1c = createSEH1CRecord(delivery, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode);
-		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode, department);
-		rectl.seh1pList = createSEH1PList(delivery, packageData, companyEdiCode,
-				customerEdiCode, customerPackage);
+		rectl.seh1c = createSEH1CRecord(delivery, codes);
+		rectl.seh1dList = createSEH1DList(delivery, codes);
+		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -109,12 +104,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Cabecera
 	 */
-	private SEH1C createSEH1CRecord(Delivery delivery, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode) {
+	private SEH1C createSEH1CRecord(Delivery delivery, EdiCodes codes) {
 		SEH1C seh1c = new SEH1C();
-	
-//		String referenceCode = isECI(delivery.getCustomer().getDocument())
-//				? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
 		
 		String referenceCode = delivery.getReferenceCode();
 		
@@ -123,8 +114,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setNumeroDelDocumento(referenceCode);
 		seh1c.setFuncionDelMensaje(SEH1C.SEH1C_4.ORIGINAL___EL_ENVIO_DE_UN_AVISO_DE_EXPEDICION_ORIGINAL_9
 				.getValue());
-		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery.getIssueTime()));
-		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getIssueTime()));
+		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
+		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
 		seh1c.setCalificadorFecha_Hora1_2_11_64_(null);
 		seh1c.setFecha_hora1(null);
 		seh1c.setCalificadorFecha_Hora2_2_11_63_(null);
@@ -147,7 +138,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setIdentificacionDeTransportista(delivery.getDriverDocument());
 		seh1c.setNombreDelTransportista(delivery.getDriver());
 		seh1c.setMatriculaDelVehiculo(delivery.getNumberPlate());
-		seh1c.setLugarDeEntrega_Codificado_8_(deliveryPointEdiCode);
+		seh1c.setLugarDeEntrega_Codificado_8_(codes.getDpcode());
 		String deliveryAddress = getDeliveryFullAddress(delivery.getAddress().getId());
 		deliveryAddress = deliveryAddress != null
 				&& deliveryAddress.length() > 70 ? StringUtils.abbreviate(
@@ -156,43 +147,35 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return seh1c;
 	}
 
-	private List<SEH1D> createSEH1DList(Delivery delivery,
-			String companyEdiCode, String customerEdiCode,
-			String deliveryPointEdiCode, String department) {
+	private List<SEH1D> createSEH1DList(Delivery delivery, EdiCodes codes) {
 		List<SEH1D> list = new ArrayList<>();
 
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
+				codes.getMscode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
-				customerEdiCode, delivery.getCustomer().getId(), department));
-		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
-		// null, null));
-		list.add(createSEH1DRecord(
-				SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-				companyEdiCode, getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
-		list.add(createSEH1DRecord(
-				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				deliveryPointEdiCode, delivery.getCustomer().getId(), department));
-		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
-		// null, null));
-		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
-				delivery.getCustomer().getId(), department));
-		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
-				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), department));
-		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCode, delivery.getCustomer().getId(), department));
+				codes.getMrcode(), delivery.getCustomer().getId(), ""));
+		
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
+				codes.getSucode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
 
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
+				codes.getPwcode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
+				codes.getDpcode(), delivery.getCustomer().getId(), ""));
+		// TODO UC list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC, null, null));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, codes.getBycode(),
+				delivery.getCustomer().getId(), codes.getDepartment()));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, codes.getShcode(),
+				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
+		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
+				codes.getIvcode(), delivery.getCustomer().getId(), ""));
+		
 		return list;
 	}
 
-	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, 
-			String companyEdiCode, String customerEdiCode, String customerPackage) {
-		
+	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();
-		List<DeliveryDetail> detailList = getDetailList(delivery.getId()).stream()
-				.map(to -> (DeliveryDetail)to)
-				.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
-				.collect(Collectors.toList());
+		List<DeliveryDetail> detailList = delivery.getDetails();
 		
 		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
 		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
@@ -202,9 +185,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		int mainPackageLine = 0;
 		int packageLine = 0;
 		int mainPackageSize = 0;
-		for(Integer level1Key: level1Map.keySet()){
-			List<Integer> packageLineList = level1Map.get(level1Key);
-			
+		for(Entry<Integer, List<Integer>> entry: level1Map.entrySet()) {
+			Integer level1Key = entry.getKey();
+			List<Integer> packageLineList = entry.getValue();
+
 			// MAIN-PACKAGE
 			mainPackageSize = (int)detailList.stream()
 				.filter(detail->packageLineList.contains((int)detail.getLine()))
@@ -215,25 +199,24 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			list.add(mainPackage);
 			
 			// SUB-PACKAGE OR PRODUCT OVER MAIN-PACKAGE
-			for(Integer level2Key: level2Map.keySet()){
-				if(packageLineList.contains(level2Key)){
-					
-					List<Integer> level2LineList = new LinkedList<>(level2Map.get(level2Key));
+			for(Entry<Integer, List<Integer>> entry2: level2Map.entrySet()){
+				Integer level2Key = entry2.getKey();
+				if(packageLineList.contains(level2Key)){		
+					List<Integer> level2LineList = entry2.getValue();
 					for(int level2LineId: level2LineList){
-						DeliveryDetail level2Detail = (DeliveryDetail) detailList.get(level2LineId-1);
+						DeliveryDetail level2Detail = detailList.get(level2LineId-1);
 						if(!isPackageItem(level2Detail.getItem().getId())) {
 							Integer mainPackageKey = level1Map.get(level1Key).get(0);
 							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
 							int lineNumber = mainPackage.seh1lList.size()+1;
-							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null,
-									companyEdiCode, customerEdiCode, customerPackage));
+							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null, codes));
 						} else {
 							SEH1P subPackage = null;
 							
 							// PRODUCT OVER SUB-PACKAGE, IF EXIST
 							List<Integer> level3LineList = new LinkedList<>(level3Map.get((int)level2Detail.getLine()));
 							for(int level3LineId: level3LineList){
-								DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
+								DeliveryDetail level3Detail = detailList.get(level3LineId-1);
 								SEH1P p = searchExistingPackage(list, level3Detail, ssccMap.get(level2Key));
 								if(p==null && subPackage==null){
 									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT", ssccMap.get(level2Key));
@@ -241,14 +224,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 									subPackage.seh1lList = new ArrayList<>();
 									list.add(subPackage);
 								}
-								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key),
-										companyEdiCode, customerEdiCode, customerPackage);
+								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key), codes);
 							}
 						}
 					}
 				}				
-			}
-			
+			}	
 		}
 		
 		return list;
@@ -259,8 +240,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private void addLine(List<SEH1P> list, SEH1P targetPackage, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
-			String sscc, String companyEdiCode, String customerEdiCode, String customerPackage) {
-		String seralNumber = getItem(detail.getItem().getId()).getSerialNumber();
+			String sscc, EdiCodes codes) {
+		String seralNumber = detail.getItem().getSerialNumber();
 		boolean success = false;
 		for(SEH1P p: list){
 			if( StringUtils.isBlank(p.getNumeroSerial1ONumeroDeIdentificacionInferior())
@@ -268,8 +249,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				for(SEH1L l: p.seh1lList){
 					if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
 							&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-						SEH1L newLine = createSEH1LRecord(0, delivery, detail, packageQuantity,
-								companyEdiCode, customerEdiCode, customerPackage);
+						SEH1L newLine = createSEH1LRecord(0, delivery, detail, packageQuantity, codes);
 						l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
 						if(packageQuantity!=null){
 							p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
@@ -281,13 +261,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		if(!success){
 			int lineNumber = targetPackage.seh1lList.size()+1;
-			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, detail, packageQuantity,
-					companyEdiCode, customerEdiCode, customerPackage));
+			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, detail, packageQuantity, codes));
 		}
 	}
 	
 	private SEH1P searchExistingPackage(List<SEH1P> list, DeliveryDetail detail, String sscc) {
-		String seralNumber = getItem(detail.getItem().getId()).getSerialNumber();
+		String seralNumber = detail.getItem().getSerialNumber();
 		boolean success = false;
 		SEH1P p = null;
 		Iterator<SEH1P> packageIt = list.iterator();
@@ -322,181 +301,179 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 */
 	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, Integer registryId, String department) {
 		Registry registry = getRegistry(registryId);
-		SEH1D record = new SEH1D();
-		record.setCalificadorDelInterlocutor(type.getValue());
-		record.setCodigoInterlocutor(ediCode);
-		record.setAgenciaResponsableDeLaListaDeCodigos(SEH1D.SEH1D_4.EAN_9.getValue());
-		record.setNombre1(registry.getName().replaceAll("[^\\w\\.,\\s/-]", "?"));
-		record.setNombre2(null);
-		record.setNombre3(null);
-		record.setNombre4(null);
-		record.setNombre5(null);
+		SEH1D seh1d = new SEH1D();
+		seh1d.setCalificadorDelInterlocutor(type.getValue());
+		seh1d.setCodigoInterlocutor(ediCode);
+		seh1d.setAgenciaResponsableDeLaListaDeCodigos(SEH1D.SEH1D_4.EAN_9.getValue());
+		seh1d.setNombre1(registry.getName().replaceAll("[^\\w\\.,\\s/-]", "?"));
+		seh1d.setNombre2(null);
+		seh1d.setNombre3(null);
+		seh1d.setNombre4(null);
+		seh1d.setNombre5(null);
 		try {
 			RAddress defaultAddress = getDefaultAddress(registryId);
-			record.setCalleYNumero1(defaultAddress.getAddress().replaceAll("[^\\w\\.,\\s/-]", "?"));
-			record.setCalleYNumero2(defaultAddress.getAddress2().replaceAll("[^\\w\\.,\\s/-]", "?"));
-			record.setCalleYNumero3(defaultAddress.getAddress3().replaceAll("[^\\w\\.,\\s/-]", "?"));
-			record.setCalleYNumero4(defaultAddress.getNumber());
-			record.setPoblacion(defaultAddress.getCity().replaceAll("[^\\w\\.,\\s/-]", "?"));
-			record.setCodigoPostal(defaultAddress.getZip());
+			seh1d.setCalleYNumero1(defaultAddress.getAddress().replaceAll("[^\\w\\.,\\s/-]", "?"));
+			seh1d.setCalleYNumero2(defaultAddress.getAddress2().replaceAll("[^\\w\\.,\\s/-]", "?"));
+			seh1d.setCalleYNumero3(defaultAddress.getAddress3().replaceAll("[^\\w\\.,\\s/-]", "?"));
+			seh1d.setCalleYNumero4(defaultAddress.getNumber());
+			seh1d.setPoblacion(defaultAddress.getCity().replaceAll("[^\\w\\.,\\s/-]", "?"));
+			seh1d.setCodigoPostal(defaultAddress.getZip());
 			GeoZone geozone = getGeozone(defaultAddress.getGeozone());
 			if(geozone!=null && geozone.getId()!=null){
-				record.setProvincia(geozone.getName());
-				record.setCodigoPais(getGeoZoneCountry(geozone.getId()).getCode());
+				seh1d.setProvincia(geozone.getName());
+				seh1d.setCodigoPais(getGeoZoneCountry(geozone.getId()).getCode());
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		record.setCalificadorReferencia1("API");
-		record.setReferencia1(department);
-		record.setFuncionDeContacto(null);
-		record.setDepartamentoOIdentificacionDelEmpleado(null);
-		record.setDepartamentoOEmpleado(null);
-		record.setCalificadorReferencia2(null);
-		record.setReferencia2(null);
-		return record;
+		seh1d.setCalificadorReferencia1("API");
+		seh1d.setReferencia1(department);
+		seh1d.setFuncionDeContacto(null);
+		seh1d.setDepartamentoOIdentificacionDelEmpleado(null);
+		seh1d.setDepartamentoOEmpleado(null);
+		seh1d.setCalificadorReferencia2(null);
+		seh1d.setReferencia2(null);
+		return seh1d;
 	}
 
 	/**
 	 * Secuencia de embalajes
 	 */
 	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format, String sscc) {
-		SEH1P record = new SEH1P();
-		record.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
-		record.setNumeroDeJerarquiaPadreDeEmbalaje(null);
-		record.setNumeroDePaquetes(quantity);
-		record.setInformacionSobreElEmbalaje_Codificado(null);
-		record.setTerminosYCondicionesDelEmbalaje_Codificado(null);
-		record.setTipoDeEmbalaje_Codificado(format);
-		record.setTipoDeEmbalaje_TextoLibre(null);
-		record.setResponsabilidadPagoTransporteDeEmbalaje(null);
-		record.setPesoNeto1_AAC_(null);
-		record.setPesoNeto2(null);
-		record.setCodigoSignificacionDeLaMedidaPesoNeto(null);
-		record.setUnidadDeMedidaParaElPesoNeto(null);
-		record.setPesoBruto1_AAD_(null);
-		record.setPesoBruto2(null);
-		record.setCodigoSignificacionDeLaMedidaPesoBruto(null);
-		record.setUnidadDeMedidaParaElPesoBruto(null);
-		record.setDimensionDeAltura1_HT_(null);
-		record.setDimensionDeAltura2(null);
-		record.setCodigoSignificacionDeLaMedidaAltura(null);
-		record.setUnidadDeMedidaParaLaAltura(null);
-		record.setDimensionDeAncho1_WD_(null);
-		record.setDimensionDeAncho2(null);
-		record.setCodigoSignificacionDeLaMedidaAncho(null);
-		record.setUnidadDeMedidaParaElAncho(null);
-		record.setDimensionDeLongitud1_LN_(null);
-		record.setDimensionDeLongitud2(null);
-		record.setCodigoSignificacionDeLaMedidaLongitud(null);
-		record.setUnidadDeMedidaParaLaLongitud(null);
-		record.setDimensionDeTemperatura1_TC_(null);
-		record.setDimensionDeTemperatura2(null);
-		record.setCodigoSignificacionDeLaMedidaTemperatura(null);
-		record.setUnidadDeMedidaParaLaTemperatura(null);
-		record.setCantidadPorEmbalaje(null);
-		record.setInstruccionesDeManejo_Codificado(null);
-		record.setInstruccionesDeManejo_TextoLibre(null);
-		record.setMarcaDeEnvio1(null);
-		record.setMarcaDeEnvio2(null);
-		record.setMarcaDeEnvio3(null);
-		record.setMarcaDeEnvio4(null);
+		SEH1P seh1p = new SEH1P();
+		seh1p.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
+		seh1p.setNumeroDeJerarquiaPadreDeEmbalaje(null);
+		seh1p.setNumeroDePaquetes(quantity);
+		seh1p.setInformacionSobreElEmbalaje_Codificado(null);
+		seh1p.setTerminosYCondicionesDelEmbalaje_Codificado(null);
+		seh1p.setTipoDeEmbalaje_Codificado(format);
+		seh1p.setTipoDeEmbalaje_TextoLibre(null);
+		seh1p.setResponsabilidadPagoTransporteDeEmbalaje(null);
+		seh1p.setPesoNeto1_AAC_(null);
+		seh1p.setPesoNeto2(null);
+		seh1p.setCodigoSignificacionDeLaMedidaPesoNeto(null);
+		seh1p.setUnidadDeMedidaParaElPesoNeto(null);
+		seh1p.setPesoBruto1_AAD_(null);
+		seh1p.setPesoBruto2(null);
+		seh1p.setCodigoSignificacionDeLaMedidaPesoBruto(null);
+		seh1p.setUnidadDeMedidaParaElPesoBruto(null);
+		seh1p.setDimensionDeAltura1_HT_(null);
+		seh1p.setDimensionDeAltura2(null);
+		seh1p.setCodigoSignificacionDeLaMedidaAltura(null);
+		seh1p.setUnidadDeMedidaParaLaAltura(null);
+		seh1p.setDimensionDeAncho1_WD_(null);
+		seh1p.setDimensionDeAncho2(null);
+		seh1p.setCodigoSignificacionDeLaMedidaAncho(null);
+		seh1p.setUnidadDeMedidaParaElAncho(null);
+		seh1p.setDimensionDeLongitud1_LN_(null);
+		seh1p.setDimensionDeLongitud2(null);
+		seh1p.setCodigoSignificacionDeLaMedidaLongitud(null);
+		seh1p.setUnidadDeMedidaParaLaLongitud(null);
+		seh1p.setDimensionDeTemperatura1_TC_(null);
+		seh1p.setDimensionDeTemperatura2(null);
+		seh1p.setCodigoSignificacionDeLaMedidaTemperatura(null);
+		seh1p.setUnidadDeMedidaParaLaTemperatura(null);
+		seh1p.setCantidadPorEmbalaje(null);
+		seh1p.setInstruccionesDeManejo_Codificado(null);
+		seh1p.setInstruccionesDeManejo_TextoLibre(null);
+		seh1p.setMarcaDeEnvio1(null);
+		seh1p.setMarcaDeEnvio2(null);
+		seh1p.setMarcaDeEnvio3(null);
+		seh1p.setMarcaDeEnvio4(null);
 		if(sscc!=null)
-			record.setNumeroSerial1ONumeroDeIdentificacionInferior(StringUtils.leftPad(sscc, 18, "0"));
-		record.setNumeroSerial1ONumeroDeIdentificacionSuperior(null);
-		record.setNumeroSerial2oNumeroDeIdentificacionInferior(null);
-		record.setNumeroSerial2ONumeroDeIdentificacionSuperior(null);
-		record.setNumeroSerial3ONumeroDeIdentificacionInferior(null);
-		record.setNumeroSerial3ONumeroDeIdentificacionSuperior(null);
-		return record;
+			seh1p.setNumeroSerial1ONumeroDeIdentificacionInferior(StringUtils.leftPad(sscc, 18, "0"));
+		seh1p.setNumeroSerial1ONumeroDeIdentificacionSuperior(null);
+		seh1p.setNumeroSerial2oNumeroDeIdentificacionInferior(null);
+		seh1p.setNumeroSerial2ONumeroDeIdentificacionSuperior(null);
+		seh1p.setNumeroSerial3ONumeroDeIdentificacionInferior(null);
+		seh1p.setNumeroSerial3ONumeroDeIdentificacionSuperior(null);
+		return seh1p;
 	}
 
 	/**
 	 * Línea de artículos
 	 */
-	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
-			String companyEdiCode, String customerEdiCode, String customerPackage) {
-		OldItem item = getItem(detail.getItem().getId());
+	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity, EdiCodes codes) {
 		Integer customerId = delivery.getCustomer().getId();
-		String productCustomerCode = obtainProductCustomerCode(item, customerId);
+		String productCustomerCode = obtainProductCustomerCode(detail.getItem(), customerId);
 		
-		SEH1L record = new SEH1L();
-		record.setNumeroDeLineaDelArticulo(lineNumber);
-		record.setCodigoEANDelArticulo(productCustomerCode);
-		record.setDescripcionDelArticulo(item.getProduct().getName());
-		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
-		record.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
-		record.setNumeroVariablePromocional_PV_(null);
-		record.setCodigoDUN_14_ADU_(null);
-		record.setCodigoACU_ACU_(null);
-		record.setNumeroDeLote_NB_(item.getSerialNumber());
-		record.setNumeroDeArticuloDelComprador_IN_(null);
+		SEH1L seh1l = new SEH1L();
+		seh1l.setNumeroDeLineaDelArticulo(lineNumber);
+		seh1l.setCodigoEANDelArticulo(productCustomerCode);
+		seh1l.setDescripcionDelArticulo(detail.getItem().getProduct().getName());
+		seh1l.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
+		seh1l.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
+		seh1l.setNumeroVariablePromocional_PV_(null);
+		seh1l.setCodigoDUN_14_ADU_(null);
+		seh1l.setCodigoACU_ACU_(null);
+		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
+		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
 		
 		double quantity = 0.0;
-		double packUnits = item.getPackUnits();
-		if(packageQuantity==null){
-			quantity = obtainPackageQuantity(detail, customerPackage);
+		double packUnits = detail.getItem().getPackUnits();
+		if(packageQuantity==null) {
+			quantity = obtainPackageQuantity(detail, codes.getCustomerEdiCode());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
-		
-		if(item.getPackFormatTag().getName().equals(item.getPackUnitsTag().getName())){
-			record.setCantidadEnviada_12_(quantity * item.getPackUnits() * item.getPackMeasurement());
-			if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
-				record.setUnidadDeMedidaCantidadEnviada(
-						StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+
+		if(detail.getItem().getPackFormatTag().getName().equals(detail.getItem().getPackUnitsTag().getName())){
+			seh1l.setCantidadEnviada_12_(quantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement());
+			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null){
+				seh1l.setUnidadDeMedidaCantidadEnviada(
+						StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
 			}
-			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackUnits() * item.getPackMeasurement());
+			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement());
 		} else {
-			record.setCantidadEnviada_12_(quantity);
-			record.setUnidadDeMedidaCantidadEnviada(null);
-			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+			seh1l.setCantidadEnviada_12_(quantity);
+			seh1l.setUnidadDeMedidaCantidadEnviada(null);
+			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
-		record.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(item.getSerialDate()));
-		record.setCalificadorReferencia1(null);
-		record.setNumeroReferencia1(null);
-		record.setFecha_horaReferencia1_102_203_(null);
-		record.setCalificadorReferencia2(null);
-		record.setNumeroReferencia2(null);
-		record.setFecha_horaReferencia2_102_203_(null);
-		record.setCalificadorReferencia3(null);
-		record.setNumeroReferencia3(null);
-		record.setFecha_horaReferencia3_102_203_(null);
-		record.setUnidadesEnAgrupacionSuperior_45E_(null);
-		record.setCodigoEANAdicional(null);
-		record.setCantidadSinCargo_192_(null);
-		record.setCalificadorCantidadAdicional(null);
-		record.setCantidadAdicional(null);
-		record.setUnidadDeMedidaCantidadAdicional(null);
-		record.setNumeroDeSerieDelArticulo_SN_(item.getSerialNumber());
-		record.setNumeroArticuloFabricante_MF_(null);
-		record.setNumeroDeLineaReferencia1(null);
-		record.setNumeroDeLineaReferencia2(null);
-		record.setNumeroDeLineaReferencia3(null);
-		record.setDiferenciaEnCantidadPedida_21_(null);
-		record.setCodigoDiscrepancia(null);
-		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * item.getPackMeasurement());
-		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
-		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
-			record.setUnidadDeMedidaPeso(
-					StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+		seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(detail.getItem().getSerialDate()));
+		seh1l.setCalificadorReferencia1(null);
+		seh1l.setNumeroReferencia1(null);
+		seh1l.setFecha_horaReferencia1_102_203_(null);
+		seh1l.setCalificadorReferencia2(null);
+		seh1l.setNumeroReferencia2(null);
+		seh1l.setFecha_horaReferencia2_102_203_(null);
+		seh1l.setCalificadorReferencia3(null);
+		seh1l.setNumeroReferencia3(null);
+		seh1l.setFecha_horaReferencia3_102_203_(null);
+		seh1l.setUnidadesEnAgrupacionSuperior_45E_(null);
+		seh1l.setCodigoEANAdicional(null);
+		seh1l.setCantidadSinCargo_192_(null);
+		seh1l.setCalificadorCantidadAdicional(null);
+		seh1l.setCantidadAdicional(null);
+		seh1l.setUnidadDeMedidaCantidadAdicional(null);
+		seh1l.setNumeroDeSerieDelArticulo_SN_(detail.getItem().getSerialNumber());
+		seh1l.setNumeroArticuloFabricante_MF_(null);
+		seh1l.setNumeroDeLineaReferencia1(null);
+		seh1l.setNumeroDeLineaReferencia2(null);
+		seh1l.setNumeroDeLineaReferencia3(null);
+		seh1l.setDiferenciaEnCantidadPedida_21_(null);
+		seh1l.setCodigoDiscrepancia(null);
+		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
+		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null){
+			seh1l.setUnidadDeMedidaPeso(
+					StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
 		}
-		record.setDimensionDeTemperatura1_TC_(null);
-		record.setDimensionDeTemperatura2(null);
-		record.setUnidadDeMedidaParaLaTemperatura(null);
-		record.setDenominacionComercial(null);
-		record.setDenominacionCientifica(null);
-		record.setPaisDeCaptura_produccion_cosecha_cria(null);
-		record.setZonaFAODeCaptura(null);
-		record.setMetodoDeProduccion(null);
-		record.setCodigoDePresentacion(null);
-		record.setCodigoFAODeLaEspecie(null);
-		record.setFechaOPeriodoDeCaptura(null);
-		record.setFechaDeProduccion(null);
-		record.setArteDePesca(null);
-		record.setInformacionDeCongelado(null);
-		record.setFechaDeCongelacion_91E_(null);
-		return record;
+		seh1l.setDimensionDeTemperatura1_TC_(null);
+		seh1l.setDimensionDeTemperatura2(null);
+		seh1l.setUnidadDeMedidaParaLaTemperatura(null);
+		seh1l.setDenominacionComercial(null);
+		seh1l.setDenominacionCientifica(null);
+		seh1l.setPaisDeCaptura_produccion_cosecha_cria(null);
+		seh1l.setZonaFAODeCaptura(null);
+		seh1l.setMetodoDeProduccion(null);
+		seh1l.setCodigoDePresentacion(null);
+		seh1l.setCodigoFAODeLaEspecie(null);
+		seh1l.setFechaOPeriodoDeCaptura(null);
+		seh1l.setFechaDeProduccion(null);
+		seh1l.setArteDePesca(null);
+		seh1l.setInformacionDeCongelado(null);
+		seh1l.setFechaDeCongelacion_91E_(null);
+		return seh1l;
 	}
 
 	/**
@@ -597,17 +574,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 	}
 	
-	private Integer getBaseItemId(OldProduct product){
-		try {
-			OldItem item = AON.getItem(domainName, domainId, login, f -> f
-					.getProductProperty().eq(product.getId())
-					.and(f.getSerialNumberProperty().isNull()));
-			if(item!=null)
-				return item.getId();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage());
-		}
-		return null;
+	private Integer getBaseItemId(Integer product){
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		Item item = AON.getItem(domain, login, f -> f.getProductProperty().eq(product)
+				.and(f.getSerialNumberProperty().isNull()));
+		return item.getId();
 	}
 
 	private OldItem getItem(Integer itemId){
@@ -619,16 +590,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 	
-	private String getItemBarcode(Integer itemId){
-		try {
-			OldItem item = getItem(itemId);
-			if(item!=null)
-				return item.getBarcode();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage());
-		}
-		return null;
-	}
 	
 	private String obtainPurchaseReference(Delivery delivery) {
 		List<DeliveryDetail> list = getDetailList(delivery.getId()).stream()
@@ -643,9 +604,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 
-	private String obtainProductCustomerCode(OldItem item, Integer customerId) {
+	private String obtainProductCustomerCode(Item item, Integer customerId) {
 		try {
-			Integer baseItemId = getBaseItemId(item.getProduct());
+			Integer baseItemId = getBaseItemId(item.getProduct().getId());
 			com.esferalia.aon.occam.api.model.registry.RegistryItem rItem = 
 				AON.getRItemStream(domainName, domainId, login, f -> f
 					.getItemProperty().eq(baseItemId)
