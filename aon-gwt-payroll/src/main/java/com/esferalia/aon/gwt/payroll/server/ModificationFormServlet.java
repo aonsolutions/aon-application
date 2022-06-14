@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqModificationFormBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -43,7 +45,12 @@ public class ModificationFormServlet extends HttpServlet {
 			Date date = AonDateUtils.parse(req.getParameter("date"), AonDateUtils.SIMPLE_DATE_FORMAT);
 			String domainName = req.getParameter("domain_name");
 			String login = req.getParameter("user");
-			int domainId = AonNumberUtils.toint(req.getParameter("domain_id"));
+//			int domainId = AonNumberUtils.toint(req.getParameter("domain_id"));
+			int domainId = 0;
+			try {
+				domainId = AonServletUtils.getDomainID(domainName);
+			} catch (SQLException e) {
+			}
 			if (contractId > 0) {
 				JooqModificationFormBuilder.createModificationForm(os, domainName, domainId, login, contractId, title, info, date);
 				os.flush();
