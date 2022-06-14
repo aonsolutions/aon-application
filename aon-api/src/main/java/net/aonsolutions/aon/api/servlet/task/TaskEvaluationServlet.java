@@ -61,15 +61,13 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 			throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
 		}
 		
-		if(task.getEvaluation()!=null) {
+		if( task.getEvaluation()!=null) {
 			message = "Ya ha calificado!";
 		} else {
 			Integer evaluation = params.optInt("evaluation");
-			if(evaluation!=0) {
-				task.setEvaluation(TaskEvaluation.safeValueOf(evaluation));
-				AON_SOLUTIONS.saveTask(api.getDomain(), new User(), task);
-				message = "Gracias por su calificaci\u00f3n!";
-			}
+			task.setEvaluation(TaskEvaluation.safeValueOf(evaluation));
+			AON_SOLUTIONS.saveTask(api.getDomain(), new User(), task);
+			message = "Gracias por su calificaci\u00f3n!";
 		}
 		
 		return "<div style='font-family: Arial;background-color: #e3f2fd; width: 100%; height: 100%; position: absolute; right: 0; top: 0; left: 0; bottom: 0;'>\n" + 

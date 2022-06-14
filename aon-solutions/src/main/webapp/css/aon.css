@@ -1364,3 +1364,9 @@ button:disabled, button[disabled]{
   padding-top: 8px;
   margin-left: 2px;
 }
+
+label.rating:hover {
+  filter: grayscale(0.84);
+  transform: scale(1.1);
+  transition: 100ms ease;
+}
