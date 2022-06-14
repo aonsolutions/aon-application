@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SubmitButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -625,7 +626,26 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		textArea.getElement().setPropertyString("placeholder", "INFORMACI\u00D3N ADICIONAL");
 		editorPanel.add(textArea);
 		
-		Button acceptButton = new Button("GENERAR");
+		Label dateLabel = new Label("Fecha");
+		dateLabel.addStyleName(AON.CSS.aonFontSmall());
+		dateLabel.setWidth("85.75%");
+		dateLabel.getElement().getStyle().setProperty("margin", "1em auto 2px auto");
+		dateLabel.getElement().getStyle().setProperty("textTransform", "uppercase");
+		dateLabel.getElement().getStyle().setProperty("fontWeight", "bold");
+		editorPanel.add(dateLabel);
+		
+		TextBox dateBox = new TextBox();
+		dateBox.setName("date");
+		dateBox.setWidth("30%");
+		dateBox.getElement().setPropertyString("pattern", "[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}");
+		dateBox.getElement().getStyle().setDisplay(Display.BLOCK);
+		dateBox.getElement().getStyle().setProperty("margin", "0 0 1em 7%");
+		dateBox.getElement().getStyle().setProperty("borderRadius", "5px");
+		dateBox.setHeight("1.5em");
+		dateBox.getElement().setPropertyString("placeholder", "DD/MM/AAAA");
+		editorPanel.add(dateBox);
+		
+		SubmitButton acceptButton = new SubmitButton("GENERAR");
 		acceptButton.getElement().removeClassName("gwt-Button");
 		
 		acceptButton.setHeight("3em");
@@ -666,9 +686,9 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		form.addSubmitCompleteHandler(ev -> {			
 			dialog.hide();
 		});
-		acceptButton.addClickHandler(ev -> {
-			form.submit();
-		});
+//		acceptButton.addClickHandler(ev -> {
+//			form.submit();
+//		});
 		
 	}
 
