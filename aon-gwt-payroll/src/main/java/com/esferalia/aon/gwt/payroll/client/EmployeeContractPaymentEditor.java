@@ -168,6 +168,8 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private TypeListBox<Payment.Type> paymentTypeLB;
 	private TypeListBox<Bonus.Type> bonusTypeLB;
+	
+	private Button acceptDialog;
 
 	// ----------------------------------------- Constructor
 
@@ -175,6 +177,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		setCaption(getCaption(paymentType));
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
+		getFooterButtons();
 		this.paymentType = paymentType;
 
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
@@ -184,7 +187,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 				contractConcepts = contractConceptsIn;
 
 				providedDeckPanel();
-				getFooterButtons();
 				showDialog();
 			}
 
@@ -200,6 +202,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		setCaption(getCaption(paymentType));
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
+		getFooterButtons();
 		this.paymentType = paymentType;
 		this.payment = selectedPayment;
 
@@ -211,7 +214,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 				providedDeckPanel();
 				fillDeckPanel();
-				getFooterButtons();
 				showDialog();
 			}
 
@@ -595,7 +597,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	private void getFooterButtons() {
 		buttonsPanel.clear();
 
-		Button acceptDialog = new Button();
+		acceptDialog = new Button();
 		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
@@ -606,6 +608,10 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		buttonsPanel.add(acceptDialog);
 	}
 
+	public void setSaveButton() {
+		acceptDialog.setText("Grabar");
+	}
+	
 	private ContractConceptCalc createContractConceptCalc() {
 		switch (this.paymentType) {
 		case PAYMENT:
