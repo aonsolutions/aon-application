@@ -38,7 +38,7 @@ public class ModificationFormServlet extends HttpServlet {
 		resp.setContentType(MimeType.MIME_PDF.getName());
 		resp.setHeader("Content-disposition", "attachment; filename=\"formulario_modificacion.pdf\";");
 		try (OutputStream os = resp.getOutputStream()) {
-			req.setCharacterEncoding("utf-8");	//DESCOMENTAR EN CASO DE EXPERIMENTAR PROBLEMAS CON LA CODIFICACIÓN DE CARACTERES
+//			req.setCharacterEncoding("utf-8");	//DESCOMENTAR EN CASO DE EXPERIMENTAR PROBLEMAS CON LA CODIFICACIÓN DE CARACTERES
 			int contractId = AonNumberUtils.toint(req.getParameter("id"));
 			String title = req.getParameter("title");
 			String info = req.getParameter("info");

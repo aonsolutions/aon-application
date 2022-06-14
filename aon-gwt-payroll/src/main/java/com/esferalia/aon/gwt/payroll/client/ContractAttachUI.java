@@ -577,6 +577,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		FlowPanel editorPanel = new FlowPanel();
 		editorPanel.setWidth("100%");
 		FormPanel form = new FormPanel("_blank");
+		form.getElement().setPropertyString("acceptCharset", "ISO-8859-1");
 		form.setAction(GWT.getModuleBaseURL() + "modification_form/modificacion.pdf");
 		form.setMethod(FormPanel.METHOD_POST);
 		form.setWidth("100%");
