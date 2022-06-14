@@ -1,5 +1,6 @@
 // HTML
 export const A = 'a';
+export const BR = 'br';
 export const DIV = 'div';
 export const IMG = 'img';
 export const I = 'i';

@@ -287,18 +287,13 @@ const checkFileAonFile = async(task, textArea)=> {
 const checkFileBase64 = async(textArea)=> {
     const elements = textArea.getTextArea().querySelectorAll(`img[src*=";base64"]`);
 
-    let files = [];
-    for (const el of elements) {
+    for await (const el of elements) {
+        let parent = document.createElement(TAG.DIV);
         let blob = getBlobBySrc(el.src);
         if(blob){
-            files.push(blob);
+            await textArea.addFile(blob, parent);
         }
-
-        el.remove();
-    }
-
-    if(files.length){
-        await textArea.addFiles(files);
+        el.parentNode.replaceChild(parent, el);
     }
 }
 
@@ -348,10 +343,11 @@ export const checkFilesAddEventClick = (parent)=>{
             if(url){
                 if(task.id && aonMessengerChat.isCau()){
                     url = SIG_URL+url.substr(url.indexOf("/ms"));
-                    if(element.src)
+                    if(element.src){
                         element.src = url;
-                    else if(element.href)
+                    } else if(element.href){
                         element.href = url;
+                    }
                 }
 
                 element.addEventListener(EVENT.CLICK, (ev)=> {
