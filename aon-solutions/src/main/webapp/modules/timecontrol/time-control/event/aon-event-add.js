@@ -3,7 +3,7 @@ import { setValueName, serializeForm, isEmptyObject } from "../../../../services
 import { deleteTimeControl, getLocation, getStatus, saveTimeControlDetail, getTimeControlHistoric } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import { createFormEvent, createCardEvent } from "../../createComponent.js";
 import { createToolbar } from "../../../notification/createComponent.js";
 import { AonMessenger } from "../../../messenger/aon-messenger.js";

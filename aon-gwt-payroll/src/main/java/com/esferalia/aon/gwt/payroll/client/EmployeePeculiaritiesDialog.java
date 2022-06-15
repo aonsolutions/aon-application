@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities.Peculiarity;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.TRL;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
@@ -24,9 +23,8 @@ import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -36,17 +34,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeePeculiaritiesDialog extends AonCustomDialog {
+public abstract class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
@@ -73,7 +71,7 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	ListBox peculiarities;
 	
 	@UiField
-	DateBoxEx start_date_peculiarity;
+	DateBoxEx startDatePeculiarity;
 	
 	@UiField
 	SuggestBox trl;
@@ -113,76 +111,74 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	//ENTERPRISE TABLE
 	
 	@UiField
-	CheckBox cgc_eCheck;
+	CheckBox cgcECheck;
 	
 	@UiField
-	Label cgc_eDate;
+	Label cgcEDate;
 
 	@UiField
-	TextBox cgc_eValue;
+	TextBox cgcEValue;
 	
 	@UiField
-	CheckBox it_Check;
+	CheckBox itCheck;
 	
 	@UiField
-	Label it_Date;
+	Label itDate;
 
 	@UiField
-	TextBox it_Value;
+	TextBox itValue;
 	
 	@UiField
-	CheckBox ims_Check;
+	CheckBox imsCheck;
 	
 	@UiField
-	Label ims_Date;
+	Label imsDate;
 
 	@UiField
-	TextBox ims_Value;
+	TextBox imsValue;
 	
 	@UiField
-	CheckBox fogasa_Check;
+	CheckBox fogasaCheck;
 	
 	@UiField
-	Label fogasa_Date;
+	Label fogasaDate;
 
 	@UiField
-	TextBox fogasa_Value;
+	TextBox fogasaValue;
 	
 	@UiField
-	CheckBox fp_eCheck;
+	CheckBox fpECheck;
 	
 	@UiField
-	Label fp_eDate;
+	Label fpEDate;
 
 	@UiField
-	TextBox fp_eValue;
+	TextBox fpEValue;
 	
 	@UiField
-	CheckBox desmpl_eCheck;
+	CheckBox desmplECheck;
 	
 	@UiField
-	Label desmpl_eDate;
+	Label desmplEDate;
 
 	@UiField
-	TextBox desmpl_eValue;
+	TextBox desmplEValue;
 	
 	//BUTTONS ACCEPT AND CANCEL
 	
 	@UiField
 	HTMLPanel buttonsPanel;
 	
-	
 	//BEGIN OF CLASS
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	private ArrayList<Date> dateList;
 	private Peculiarities peculiaritiesMap;
 	private Integer contractId;
 	private Date contractStartDate;
-	
-	private Button closeBtnDialog;
-	private Button acceptBtnDialog;
 
-	public EmployeePeculiaritiesDialog(Integer contractId, Date contractStartDate) {
-		setCaption("Peculiaridades de cotizaci"+String.valueOf("\u00D3")+"n");
+	protected EmployeePeculiaritiesDialog(Integer contractId, Date contractStartDate) {
+		setCaption("Peculiaridades de cotizaci\u00D3n");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -193,54 +189,31 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		
 		//Initialize TRL SuggestBox
 		Collection<String> trlEntries = TRL.getAllEntriesCollection();
-		List<String> contractTRLSuggest = new ArrayList<String>();
-		trlEntries.forEach(e -> {
-			contractTRLSuggest.add(e+"");
-		});
+		List<String> contractTRLSuggest = new ArrayList<>();
+		trlEntries.forEach(e -> contractTRLSuggest.add(e+""));
 		
 		MultiWordSuggestOracle orclTRL = (MultiWordSuggestOracle) this.trl.getSuggestOracle();
 		orclTRL.addAll(contractTRLSuggest);
 		orclTRL.setDefaultSuggestionsFromText(trlEntries);
 		this.trl.setAutoSelectEnabled(true);
 		
-		trl.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<SuggestOracle.Suggestion> event) {
-//				String selectedTrl = employee.trl.getValue();
-//				if(StringUtils.isEmpty(selectedTrl) || selectedTrl.equals(" - "))
-//					employeeDialogObject.setContractTRL(null);
-//				else {
-//					String trlCode = selectedTrl.split(" -")[0];
-//					employeeDialogObject.setContractTRL(trlCode);
-//				}
-			}
-		});
-		
-		trl.getValueBox().addKeyDownHandler( (event) -> {
-//			if ( KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode() )
-//				employee.trl.hideSuggestionList();
-//			else if ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode()) 
-//				employee.trl.showSuggestionList();
-		});
-		
 		impl.getEmployeePeculiarities(contractId, new AsyncCallback<Peculiarities>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				
+				// Nothing to do
 			}
 
 			@Override
 			public void onSuccess(Peculiarities result) {
 				peculiaritiesMap = result;
-				dateList = new ArrayList<Date>();
+				dateList = new ArrayList<>();
 				dateList.addAll(peculiaritiesMap.getPeculiarities().keySet());
 				
 				if(dateList.isEmpty())
 					peculiarities.setEnabled(false);
 				
-				if(peculiaritiesMap.getTrl() == null || com.esferalia.aon.gwt.common.shared.StringUtils.isEmpty(peculiaritiesMap.getTrl())) {
+				if(peculiaritiesMap.getTrl() == null || AonStringUtils.isBlank(peculiaritiesMap.getTrl())) {
 					peculiaritiesTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
 				} else {
 					peculiaritiesTable.getRows().getItem(1).getStyle().clearDisplay();
@@ -260,32 +233,32 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		Integer selectedPeculiarity = this.peculiarities.getSelectedIndex();
 		switch (selectedPeculiarity) {
 		case 1: //JUBILACION ACTIVA
-			peculiaritiesMap.addPeculiarityJubAct(this.start_date_peculiarity.getValue());
+			peculiaritiesMap.addPeculiarityJubAct(this.startDatePeculiarity.getValue());
 			tabsPanel.clear();
 			initView();
 			break;
 		case 2: //COOPERATIVAS
-			peculiaritiesMap.addPeculiarityCoop(this.start_date_peculiarity.getValue());
+			peculiaritiesMap.addPeculiarityCoop(this.startDatePeculiarity.getValue());
 			tabsPanel.clear();
 			initView();
 			break;
 		case 3: //BECARIOS
-			peculiaritiesMap.addPeculiarityBec(this.start_date_peculiarity.getValue());
+			peculiaritiesMap.addPeculiarityBec(this.startDatePeculiarity.getValue());
 			tabsPanel.clear();
 			initView();
 			break;
 		case 4: //REGIMEN GENERAL ASIMILADOS
-			peculiaritiesMap.addPeculiarityRegGen(this.start_date_peculiarity.getValue());
+			peculiaritiesMap.addPeculiarityRegGen(this.startDatePeculiarity.getValue());
 			tabsPanel.clear();
 			initView();
 			break;
 		case 5: //MAYORES 65 > 4 AÑOS COTIZADOS
-			peculiaritiesMap.addPeculiarity65Old(this.start_date_peculiarity.getValue());
+			peculiaritiesMap.addPeculiarity65Old(this.startDatePeculiarity.getValue());
 			tabsPanel.clear();
 			initView();
 			break;
 		case 6: // MINISTRO DE CULTO
-			peculiaritiesMap.addPeculiarityMinCult(this.start_date_peculiarity.getValue());
+			peculiaritiesMap.addPeculiarityMinCult(this.startDatePeculiarity.getValue());
 			tabsPanel.clear();
 			initView();
 			break;
@@ -294,7 +267,7 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		}
 	}
 	
-	@UiHandler("start_date_peculiarity")
+	@UiHandler("startDatePeculiarity")
 	void onDateChange(ValueChangeEvent<Date> event) {
 		if(null != event.getValue()) {
 			if(event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate)) {
@@ -305,12 +278,12 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 					peculiaritiesMap.addPeculiarity(event.getValue());
 					addTab(event.getValue());
 				}else {
-					start_date_peculiarity.setValue(null);
+					startDatePeculiarity.setValue(null);
 				}
 			}else {
 				this.peculiarities.setEnabled(false);
 				this.peculiarities.setSelectedIndex(0);
-				this.start_date_peculiarity.setValue(this.contractStartDate, true);
+				this.startDatePeculiarity.setValue(this.contractStartDate, true);
 			}
 		}else {
 			this.peculiarities.setEnabled(false);
@@ -320,197 +293,194 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	
 	@UiHandler("cgcCheck")
 	void onCgcCheckClick(ClickEvent event) {
-		if(cgcCheck.getValue()) {
+		if(Boolean.TRUE.equals(cgcCheck.getValue())) {
 			cgcValue.setEnabled(true);
 			cgcValue.setValue("");
 		}else {
 			cgcValue.setEnabled(false);
 			cgcValue.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_CGC");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_CGC");
 		}
 	}
 	
 	@UiHandler("cgcValue")
 	void onCgcValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_CGC");
 		}
 	}
 	
 	@UiHandler("desmplCheck")
 	void onDesmplCheckClick(ClickEvent event) {
-		if(desmplCheck.getValue()){
+		if(Boolean.TRUE.equals(desmplCheck.getValue())){
 			desmplValue.setEnabled(true);
 			desmplValue.setValue("");
 		}else {
 			desmplValue.setEnabled(false);
 			desmplValue.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_DESMPL");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_DESMPL");
 		}
 	}
 	
 	@UiHandler("desmplValue")
 	void onDesmplValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_DESMPL");
 		}
 	}
 	
 	@UiHandler("fpCheck")
 	void onFpCheckClick(ClickEvent event) {
-		if(fpCheck.getValue()){
+		if(Boolean.TRUE.equals(fpCheck.getValue())){
 			fpValue.setEnabled(true);
 			fpValue.setValue("");
 		}else {
 			fpValue.setEnabled(false);
 			fpValue.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_FP");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_FP");
 		}
 	}
 	
 	@UiHandler("fpValue")
 	void onFpValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_FP");
 		}
 	}
 	
-	@UiHandler("cgc_eCheck")
-	void onCgc_eCheckClick(ClickEvent event) {
-		if(cgc_eCheck.getValue()) {
-			cgc_eValue.setEnabled(true);
-			cgc_eValue.setValue("");
+	@UiHandler("cgcECheck")
+	void onCgcECheckClick(ClickEvent event) {
+		if(Boolean.TRUE.equals(cgcECheck.getValue())) {
+			cgcEValue.setEnabled(true);
+			cgcEValue.setValue("");
 		}else {
-			cgc_eValue.setEnabled(false);
-			cgc_eValue.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_CGC_E");
+			cgcEValue.setEnabled(false);
+			cgcEValue.setValue("Sistema");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_CGC_E");
 		}
 	}
 	
-	@UiHandler("cgc_eValue")
-	void onCgc_eValueChange(ValueChangeEvent<String> event) {
+	@UiHandler("cgcEValue")
+	void onCgcEValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_CGC_E");
 		}
 	}
 	
-	@UiHandler("it_Check")
-	void onIt_CheckClick(ClickEvent event) {
-		if(it_Check.getValue()) {
-			it_Value.setEnabled(true);
-			it_Value.setValue("");
+	@UiHandler("itCheck")
+	void onItCheckClick(ClickEvent event) {
+		if(Boolean.TRUE.equals(itCheck.getValue())) {
+			itValue.setEnabled(true);
+			itValue.setValue("");
 		}else {
-			it_Value.setEnabled(false);
-			it_Value.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_IT");
+			itValue.setEnabled(false);
+			itValue.setValue("Sistema");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_IT");
 		}
 	}
 	
-	@UiHandler("it_Value")
-	void onIt_ValueChange(ValueChangeEvent<String> event) {
+	@UiHandler("itValue")
+	void onItValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_IT");
 		}
 	}
 	
-	@UiHandler("ims_Check")
-	void onIms_CheckClick(ClickEvent event) {
-		if(ims_Check.getValue()) {
-			ims_Value.setEnabled(true);
-			ims_Value.setValue("");
+	@UiHandler("imsCheck")
+	void onImsCheckClick(ClickEvent event) {
+		if(Boolean.TRUE.equals(imsCheck.getValue())) {
+			imsValue.setEnabled(true);
+			imsValue.setValue("");
 		}else {
-			ims_Value.setEnabled(false);
-			ims_Value.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_IMS");
+			imsValue.setEnabled(false);
+			imsValue.setValue("Sistema");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_IMS");
 		}
 	}
 	
-	@UiHandler("ims_Value")
-	void onIms_ValueChange(ValueChangeEvent<String> event) {
+	@UiHandler("imsValue")
+	void onImsValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_IMS");
 		}
 	}
 	
-	@UiHandler("fogasa_Check")
-	void onFogasa_CheckClick(ClickEvent event) {
-		if(fogasa_Check.getValue()) {
-			fogasa_Value.setEnabled(true);
-			fogasa_Value.setValue("");
+	@UiHandler("fogasaCheck")
+	void onFogasaCheckClick(ClickEvent event) {
+		if(Boolean.TRUE.equals(fogasaCheck.getValue())) {
+			fogasaValue.setEnabled(true);
+			fogasaValue.setValue("");
 		}else {
-			fogasa_Value.setEnabled(false);
-			fogasa_Value.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_FOGASA");
+			fogasaValue.setEnabled(false);
+			fogasaValue.setValue("Sistema");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_FOGASA");
 		}
 	}
 	
-	@UiHandler("fogasa_Value")
-	void onFogasa_ValueChange(ValueChangeEvent<String> event) {
+	@UiHandler("fogasaValue")
+	void onFogasaValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_FOGASA");
 		}
 	}
 	
-	@UiHandler("fp_eCheck")
-	void onFp_eCheckClick(ClickEvent event) {
-		if(fp_eCheck.getValue()) {
-			fp_eValue.setEnabled(true);
-			fp_eValue.setValue("");
+	@UiHandler("fpECheck")
+	void onFpECheckClick(ClickEvent event) {
+		if(Boolean.TRUE.equals(fpECheck.getValue())) {
+			fpEValue.setEnabled(true);
+			fpEValue.setValue("");
 		}else {
-			fp_eValue.setEnabled(false);
-			fp_eValue.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_FP_E");
+			fpEValue.setEnabled(false);
+			fpEValue.setValue("Sistema");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_FP_E");
 		}
 	}
 	
-	@UiHandler("fp_eValue")
-	void onFp_eValueChange(ValueChangeEvent<String> event) {
+	@UiHandler("fpEValue")
+	void onFpEValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_FP_E");
 		}
 	}
 	
-	@UiHandler("desmpl_eCheck")
-	void onDesmpl_eCheckClick(ClickEvent event) {
-		if(desmpl_eCheck.getValue()) {
-			desmpl_eValue.setEnabled(true);
-			desmpl_eValue.setValue("");
+	@UiHandler("desmplECheck")
+	void onDesmplECheckClick(ClickEvent event) {
+		if(Boolean.TRUE.equals(desmplECheck.getValue())) {
+			desmplEValue.setEnabled(true);
+			desmplEValue.setValue("");
 		}else {
-			desmpl_eValue.setEnabled(false);
-			desmpl_eValue.setValue("Sistema");
-			this.peculiaritiesMap.updatePecularity(this.start_date_peculiarity.getValue(), "Sistema", "PORCENTAJE_DESMPL_E");
+			desmplEValue.setEnabled(false);
+			desmplEValue.setValue("Sistema");
+			this.peculiaritiesMap.updatePecularity(this.startDatePeculiarity.getValue(), "Sistema", "PORCENTAJE_DESMPL_E");
 		}
 	}
 	
-	@UiHandler("desmpl_eValue")
-	void onDesmpl_eValueChange(ValueChangeEvent<String> event) {
+	@UiHandler("desmplEValue")
+	void onDesmplEValueChange(ValueChangeEvent<String> event) {
 		if(event.getValue().length() > 0) {
-			Date date = this.start_date_peculiarity.getValue();
+			Date date = this.startDatePeculiarity.getValue();
 			this.peculiaritiesMap.updatePecularity(date, event.getValue(), "PORCENTAJE_DESMPL_E");
 		}
 	}
 	
-
 	
-	@SuppressWarnings("deprecation")
 	private void initView() {
-		if(dateList.size() == 0) {
+		if(dateList.isEmpty()) {
 			initializePeculiaritiesTable();
 		}else {
 			for(int i=0; i < dateList.size(); i++){
 				HorizontalPanel hPanel = new HorizontalPanel();
+				hPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 				
-				ToggleButton button = new ToggleButton(StringUtils.leftPad(dateList.get(i).getDate()+"", 2, '0')+
-														"/"+StringUtils.leftPad((dateList.get(i).getMonth()+1)+"", 2, '0')+
-														"/"+(dateList.get(i).getYear()+1900));
+				ToggleButton button = new ToggleButton(formatDate.format(dateList.get(i)));
 				button.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -539,20 +509,16 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 							//Get selected date
 							ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
 							String dateStr = toggleButton.getText();
-							Integer date = Integer.parseInt(dateStr.split("/")[0]);
-							Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
-							Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
-							Date findingDate = new Date(year, month, date);
+							Date findingDate = formatDate.parse(dateStr);
 							DateUtils.resetTime(findingDate);
 							
 							//Set date and paint data
-							start_date_peculiarity.setValue(findingDate);
+							startDatePeculiarity.setValue(findingDate);
 							initPeculiaritiesTable(findingDate);
 							
-						}else{
+						} else
 							button.setDown(true);
-							return;
-						}
+						
 					}	
 				});
 				
@@ -587,10 +553,7 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 								HorizontalPanel hPanel = (HorizontalPanel)tabsPanel.getWidget(selectedButton);
 								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
 								String dateStr = toggleButton.getText();
-								Integer date = Integer.parseInt(dateStr.split("/")[0]);
-								Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
-								Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
-								Date findingDate = new Date(year, month, date);
+								Date findingDate = formatDate.parse(dateStr);
 								DateUtils.resetTime(findingDate);
 								
 								//Delete strech and update dates
@@ -613,14 +576,14 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		
 		initListBox();
 		
-		if(this.dateList.size() > 0) {
-			if(null == this.start_date_peculiarity.getValue() || this.dateList.size() == 1 ) {
+		if(!this.dateList.isEmpty()) {
+			if(null == this.startDatePeculiarity.getValue() || this.dateList.size() == 1 ) {
 				initFirstToggleButton();
-				this.start_date_peculiarity.setValue(this.dateList.get(0));
+				this.startDatePeculiarity.setValue(this.dateList.get(0));
 				initPeculiaritiesTable(this.dateList.get(0));
 			}else {
-				Date dateAux = this.start_date_peculiarity.getValue();
-				selectTab(StringUtils.leftPad(dateAux.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((dateAux.getMonth()+1)+"", 2, '0')+"/"+(dateAux.getYear()+1900));
+				Date dateAux = this.startDatePeculiarity.getValue();
+				selectTab(formatDate.format(dateAux));
 				initPeculiaritiesTable(dateAux);
 			}
 			
@@ -656,67 +619,65 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		peculiarities.addItem("SOCIOS COOPERATIVISTAS");
 		peculiarities.addItem("BECARIOS CURRICULARES");
 		peculiarities.addItem("REGIMEN GENERAL ASIMILADOS");
-		peculiarities.addItem("MAYOR 65 A" + String.valueOf("\u00D1") + "OS > 38 A" + String.valueOf("\u00D1") + "OS COTIZADOS");
+		peculiarities.addItem("MAYOR 65 A\u00D1OS > 38 A\u00D1OS COTIZADOS");
 		peculiarities.addItem("MINISTRO DE CULTO");
-		
-//		peculiarities.getElement().getElementsByTagName("option").getItem(3).setAttribute("disabled", "disabled");
 	}
 	
-	@SuppressWarnings("deprecation")
+	
 	private void initPeculiaritiesTable(Date date) {
-		if(this.dateList.size() != 0) {
+		if(!this.dateList.isEmpty()) {
 			ArrayList<Peculiarity> peculiritiesList = peculiaritiesMap.getPeculiaritiesByDate(date);
 			
-			if(peculiritiesList.size() > 0)
+			if(!peculiritiesList.isEmpty())
 				this.peculiarities.setSelectedIndex(peculiritiesList.get(0).getType());
 			
 			for(Peculiarity peculiarity : peculiritiesList) {
 				if(isCgc(peculiarity.getName())) {
 					cgcCheck.setValue(peculiarity.isChecked());
-					cgcDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
+					cgcDate.setText(formatDate.format(date));
 					cgcValue.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) cgcValue.setEnabled(true); else cgcValue.setEnabled(false);
+					cgcValue.setEnabled(peculiarity.isChecked());
 				} else if(isDesmpl(peculiarity.getName())) {
 					desmplCheck.setValue(peculiarity.isChecked());
-					desmplDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
+					desmplDate.setText(formatDate.format(date));
 					desmplValue.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) desmplValue.setEnabled(true); else desmplValue.setEnabled(false);
+					desmplValue.setEnabled(peculiarity.isChecked());
 				} else if(isFp(peculiarity.getName())) {
 					fpCheck.setValue(peculiarity.isChecked());
-					fpDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
+					fpDate.setText(formatDate.format(date));
 					fpValue.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) fpValue.setEnabled(true); else fpValue.setEnabled(false);
+					fpValue.setEnabled(peculiarity.isChecked());
 				} else if(isCgcE(peculiarity.getName())) {
-					cgc_eCheck.setValue(peculiarity.isChecked());
-					cgc_eDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
-					cgc_eValue.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) cgc_eValue.setEnabled(true); else cgc_eValue.setEnabled(false);
+					cgcECheck.setValue(peculiarity.isChecked());
+					cgcEDate.setText(formatDate.format(date));
+					cgcEValue.setValue(peculiarity.getValue());
+					cgcEValue.setEnabled(peculiarity.isChecked());
 				} else if(isIt(peculiarity.getName())) {
-					it_Check.setValue(peculiarity.isChecked());
-					it_Date.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
-					it_Value.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) it_Value.setEnabled(true); else it_Value.setEnabled(false);
+					itCheck.setValue(peculiarity.isChecked());
+					itDate.setText(formatDate.format(date));
+					itValue.setValue(peculiarity.getValue());
+					itValue.setEnabled(peculiarity.isChecked());
 				} else if(isIms(peculiarity.getName())) {
-					ims_Check.setValue(peculiarity.isChecked());
-					ims_Date.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
-					ims_Value.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) ims_Value.setEnabled(true); else ims_Value.setEnabled(false);
+					imsCheck.setValue(peculiarity.isChecked());
+					imsDate.setText(formatDate.format(date));
+					imsValue.setValue(peculiarity.getValue());
+					imsValue.setEnabled(peculiarity.isChecked());
 				} else if(isFogasa(peculiarity.getName())) {
-					fogasa_Check.setValue(peculiarity.isChecked());
-					fogasa_Date.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
-					fogasa_Value.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) fogasa_Value.setEnabled(true); else fogasa_Value.setEnabled(false);
+					fogasaCheck.setValue(peculiarity.isChecked());
+					fogasaDate.setText(formatDate.format(date));
+					fogasaValue.setValue(peculiarity.getValue());
+					fogasaValue.setEnabled(peculiarity.isChecked());
 					break;
 				} else if(isFpE(peculiarity.getName())) {
-					fp_eCheck.setValue(peculiarity.isChecked());
-					fp_eDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
-					fp_eValue.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) fp_eValue.setEnabled(true); else fp_eValue.setEnabled(false);
+					fpECheck.setValue(peculiarity.isChecked());
+					fpEDate.setText(formatDate.format(date));
+					fpEValue.setValue(peculiarity.getValue());
+					fpEValue.setEnabled(peculiarity.isChecked());
 				} else if(isDesmplE(peculiarity.getName())) {
-					desmpl_eCheck.setValue(peculiarity.isChecked());
-					desmpl_eDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
-					desmpl_eValue.setValue(peculiarity.getValue());
-					if(peculiarity.isChecked()) desmpl_eValue.setEnabled(true); else desmpl_eValue.setEnabled(false);
+					desmplECheck.setValue(peculiarity.isChecked());
+					desmplEDate.setText(formatDate.format(date));
+					desmplEValue.setValue(peculiarity.getValue());
+					desmplEValue.setEnabled(peculiarity.isChecked());
 				}
 			}
 		}
@@ -758,16 +719,14 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_DESMPL_E") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_DESMPL_E");
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addTab(Date date) {
 		tabsPanel.clear();
 		
 		for(int i=0; i < dateList.size(); i++){
 			HorizontalPanel hPanel = new HorizontalPanel();
+			hPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 			
-			ToggleButton button = new ToggleButton(StringUtils.leftPad(dateList.get(i).getDate()+"", 2, '0')+
-													"/"+StringUtils.leftPad((dateList.get(i).getMonth()+1)+"", 2, '0')+
-													"/"+(dateList.get(i).getYear()+1900));
+			ToggleButton button = new ToggleButton(formatDate.format(dateList.get(i)));
 			button.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -796,20 +755,15 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 						//Get selected date
 						ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
 						String dateStr = toggleButton.getText();
-						Integer date = Integer.parseInt(dateStr.split("/")[0]);
-						Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
-						Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
-						Date findingDate = new Date(year, month, date);
+						Date findingDate = formatDate.parse(dateStr);
 						DateUtils.resetTime(findingDate);
 						
 						//Set date and paint data
-						start_date_peculiarity.setValue(findingDate);
+						startDatePeculiarity.setValue(findingDate);
 						initPeculiaritiesTable(findingDate);
 						
-					}else{
+					} else
 						button.setDown(true);
-						return;
-					}
 				}	
 			});
 			
@@ -825,7 +779,9 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 					dialog.confirm(new AonAcceptDialogCallback() {
 						
 						@Override
-						public void onCancel() {}
+						public void onCancel() {
+							//  Close dialog
+						}
 						
 						@Override
 						public void onAccept() {
@@ -844,10 +800,7 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 							HorizontalPanel hPanel = (HorizontalPanel)tabsPanel.getWidget(selectedButton);
 							ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
 							String dateStr = toggleButton.getText();
-							Integer date = Integer.parseInt(dateStr.split("/")[0]);
-							Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
-							Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
-							Date findingDate = new Date(year, month, date);
+							Date findingDate = formatDate.parse(dateStr);
 							DateUtils.resetTime(findingDate);
 							
 							//Delete strech and update dates
@@ -867,14 +820,14 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 			tabsPanel.add(hPanel);
 		}
 		
-		if(this.dateList.size() > 0) {
-			if(null == this.start_date_peculiarity.getValue() || this.dateList.size() == 1 ) {
+		if(!this.dateList.isEmpty()) {
+			if(null == this.startDatePeculiarity.getValue() || this.dateList.size() == 1 ) {
 				initFirstToggleButton();
-				this.start_date_peculiarity.setValue(this.dateList.get(0));
+				this.startDatePeculiarity.setValue(this.dateList.get(0));
 				initPeculiaritiesTable(this.dateList.get(0));
 			}else {
-				Date dateAux = this.start_date_peculiarity.getValue();
-				selectTab(StringUtils.leftPad(dateAux.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((dateAux.getMonth()+1)+"", 2, '0')+"/"+(dateAux.getYear()+1900));
+				Date dateAux = this.startDatePeculiarity.getValue();
+				selectTab(formatDate.format(dateAux));
 				initPeculiaritiesTable(dateAux);
 			}
 			
@@ -882,7 +835,7 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	}
 
 	private void initializePeculiaritiesTable() {
-		this.start_date_peculiarity.setValue(null);
+		this.startDatePeculiarity.setValue(null);
 		
 		this.cgcCheck.setEnabled(false);
 		this.cgcCheck.setValue(false);
@@ -902,41 +855,41 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		this.fpValue.setText("Sistema");
 		this.fpValue.setEnabled(false);
 		
-		this.cgc_eCheck.setEnabled(false);
-		this.cgc_eCheck.setValue(false);
-		this.cgc_eDate.setText("");
-		this.cgc_eValue.setText("Sistema");
-		this.cgc_eValue.setEnabled(false);
+		this.cgcECheck.setEnabled(false);
+		this.cgcECheck.setValue(false);
+		this.cgcEDate.setText("");
+		this.cgcEValue.setText("Sistema");
+		this.cgcEValue.setEnabled(false);
 	
-		this.it_Check.setEnabled(false);
-		this.it_Check.setValue(false);
-		this.it_Date.setText("");
-		this.it_Value.setText("Sistema");
-		this.it_Value.setEnabled(false);
+		this.itCheck.setEnabled(false);
+		this.itCheck.setValue(false);
+		this.itDate.setText("");
+		this.itValue.setText("Sistema");
+		this.itValue.setEnabled(false);
 		
-		this.ims_Check.setEnabled(false);
-		this.ims_Check.setValue(false);
-		this.ims_Date.setText("");
-		this.ims_Value.setText("Sistema");
-		this.ims_Value.setEnabled(false);
+		this.imsCheck.setEnabled(false);
+		this.imsCheck.setValue(false);
+		this.imsDate.setText("");
+		this.imsValue.setText("Sistema");
+		this.imsValue.setEnabled(false);
 		
-		this.fogasa_Check.setEnabled(false);
-		this.fogasa_Check.setValue(false);
-		this.fogasa_Date.setText("");
-		this.fogasa_Value.setText("Sistema");
-		this.fogasa_Value.setEnabled(false);
+		this.fogasaCheck.setEnabled(false);
+		this.fogasaCheck.setValue(false);
+		this.fogasaDate.setText("");
+		this.fogasaValue.setText("Sistema");
+		this.fogasaValue.setEnabled(false);
 	
-		this.fp_eCheck.setEnabled(false);
-		this.fp_eCheck.setValue(false);
-		this.fp_eDate.setText("");
-		this.fp_eValue.setText("Sistema");
-		this.fp_eValue.setEnabled(false);
+		this.fpECheck.setEnabled(false);
+		this.fpECheck.setValue(false);
+		this.fpEDate.setText("");
+		this.fpEValue.setText("Sistema");
+		this.fpEValue.setEnabled(false);
 		
-		this.desmpl_eCheck.setEnabled(false);
-		this.desmpl_eCheck.setValue(false);
-		this.desmpl_eDate.setText("");
-		this.desmpl_eValue.setText("Sistema");
-		this.desmpl_eValue.setEnabled(false);
+		this.desmplECheck.setEnabled(false);
+		this.desmplECheck.setValue(false);
+		this.desmplEDate.setText("");
+		this.desmplEValue.setText("Sistema");
+		this.desmplEValue.setEnabled(false);
 	
 	}
 	
@@ -944,12 +897,12 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		this.cgcCheck.setEnabled(true);
 		this.desmplCheck.setEnabled(true);
 		this.fpCheck.setEnabled(true);
-		this.cgc_eCheck.setEnabled(true);
-		this.it_Check.setEnabled(true);
-		this.ims_Check.setEnabled(true);
-		this.fogasa_Check.setEnabled(true);
-		this.fp_eCheck.setEnabled(true);
-		this.desmpl_eCheck.setEnabled(true);	
+		this.cgcECheck.setEnabled(true);
+		this.itCheck.setEnabled(true);
+		this.imsCheck.setEnabled(true);
+		this.fogasaCheck.setEnabled(true);
+		this.fpECheck.setEnabled(true);
+		this.desmplECheck.setEnabled(true);	
 	}
 	
 	private void selectTab(String dateStr) {
@@ -976,56 +929,39 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
 		toggleButton.setDown(true);
 	}
-
-	private void onAccept() {
-		impl.setEmployeePeculiarities(this.contractId, this.peculiaritiesMap, new AsyncCallback<String>() {
-
-			@Override
-			public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(String result) {
-				hide();
-			}});	
-	}
 	
 	private void getButtonsPanel() {
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.setAccessKey('C');
-		closeBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onCloseDialog(event);
-			}
-		});
+		closeBtnDialog.addClickHandler(e -> hide());
 		
 		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new Button();
+		Button acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText( AON.MSG.accept());
-		acceptBtnDialog.setAccessKey('A');
-		acceptBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAcceptDialog(event);
-			}
-		});
+		acceptBtnDialog.setText("Grabar");
+		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
 		
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
-	private void onCloseDialog(ClickEvent event) {
-		hide();
-	}
-	
-	private void onAcceptDialog(ClickEvent event) {
-		hide();
-		onAccept();
+	private void onAcceptDialog() {
+		impl.setEmployeePeculiarities(this.contractId, this.peculiaritiesMap, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// Nothing to do here
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				hide();
+				onAccept();
+			}
+		});	
 	}
 	
 	public void showDialog() {
@@ -1035,4 +971,9 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 			show();
 		});
 	}
+	
+	// Abstract method
+
+	protected abstract void onAccept();
+
 }

@@ -2,8 +2,8 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT, TAG, AON_ICONS} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openDialogBranch} from "./creationUtils.js";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
+import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openDialogBranch, createIconEvaluation, createSectionRating} from "./creationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, taskNumberParse, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
@@ -235,36 +235,44 @@ const buildChat = (task, wrapper) => {
     wrapper.appendChild(chat);
 
     //-----------------ADD TEXT AREA CHAT
-    addTextAreaChat(wrapper, task); //
+    if( [TASK_STATUS.IN_PROGRESS, TASK_STATUS.PENDING].includes(task.status) ){
+      addTextAreaChat(wrapper, task); //
+    } else if(task.evaluation){ // create section rating section
+      const evaluation = task.evaluation;
+
+      let section = createSectionRating(wrapper, false);
+      
+      Object.values(TASK_EVALUATION)
+      .forEach((r)=>{
+        const selected = r === evaluation;
+        section.appendChild(createIconEvaluation(`../../../assets/img/evaluation/${r}.png`, selected));
+      });
+    }
 }
 
 const addTextAreaChat = (wrapper, task) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  const divs = createSectionComment(wrapper);
+  setStyles(divs.divWrite,{
+    borderRadius:"5px",
+    border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
+  });
 
-  if( [TASK_STATUS.IN_PROGRESS, TASK_STATUS.PENDING].includes(task.status) ){
-    const divs = createSectionComment(wrapper);
-    setStyles(divs.divWrite,{
-      borderRadius:"5px",
-      border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
-    });
+  const label = createLabelFileText();
+  label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
+  divs.divWrite.appendChild(label);
 
-    const label = createLabelFileText();
-    label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
-    divs.divWrite.appendChild(label);
+  divs.aonTextArea.height = "60px";
+  divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
+    if (ev.ctrlKey && ev.keyCode == 13) {
+      aonMessengerChat.saveComment(undefined, task);
+    } else if(ev.ctrlKey && ev.keyCode == 88){
+      openFullComment(aonMessengerChat, divs.aonTextArea, task);
+    }
+  });
 
-    divs.aonTextArea.height = "60px";
-    divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
-      if (ev.ctrlKey && ev.keyCode == 13) {
-        aonMessengerChat.saveComment(undefined, task);
-      } else if(ev.ctrlKey && ev.keyCode == 88){
-        openFullComment(aonMessengerChat, divs.aonTextArea, task);
-      }
-    });
-
-
-    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment(undefined, task));
-    divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
-  }
+  divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment(undefined, task));
+  divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
 }
 
 const openFullComment = (aonMessengerChat, aonTextArea, task) => {

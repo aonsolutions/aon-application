@@ -104,21 +104,25 @@ public class CompanyLogoControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		CompanyController companyController = (CompanyController) event.getController();
+		companyController.setLogoFile(CompanyController.NOT_INITIALIZED);				
+	}
+	
+	public static void initLogoFile(CompanyController companyController) {
 		try {
-			RegistryAttachment companyLogo = companyController.obtainCompanyLogo();
-			if (companyLogo != null) {
-				companyController.setLogoAttach(companyLogo);
+		RegistryAttachment companyLogo = companyController.obtainCompanyLogo();
+		if (companyLogo != null) {
+			companyController.setLogoAttach(companyLogo);
 
-				AonFile f = new AonFile();
-				f.setAttachment(companyLogo);
-				f.setFileName(companyLogo.getDescription());
-				f.setMimeType(companyLogo.getMimeType());
-				companyController.setLogoFile(f);
-			} else {
-				companyController.setLogoFile(null);				
-			}
+			AonFile f = new AonFile();
+			f.setAttachment(companyLogo);
+			f.setFileName(companyLogo.getDescription());
+			f.setMimeType(companyLogo.getMimeType());
+			companyController.setLogoFile(f);
+		} else {
+			companyController.setLogoFile(null);				
+		}
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
+			//throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
 

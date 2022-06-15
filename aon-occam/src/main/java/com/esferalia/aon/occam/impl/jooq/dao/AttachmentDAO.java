@@ -137,8 +137,8 @@ public class AttachmentDAO {
 	}
 	
 	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
-		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD).from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
-		if(withData) select = ctx.getDslContext().selectDistinct().from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH);//.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		if(withData) select = ctx.getDslContext().select().from(RATTACH); //.leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
 		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
 	}
 	

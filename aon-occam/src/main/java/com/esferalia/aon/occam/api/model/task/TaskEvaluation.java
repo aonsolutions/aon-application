@@ -14,6 +14,10 @@ public enum TaskEvaluation {
     	return (byte) this.ordinal();
 	}
     
+	public String getName() {
+    	return this.toString().toLowerCase();
+    }
+    
     public static TaskEvaluation safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

@@ -175,7 +175,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();
-		List<DeliveryDetail> detailList = delivery.getDetails();
+		List<DeliveryDetail> detailList = delivery.getDetails().isEmpty()
+				? getDetailList(delivery.getId()).stream()
+						.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
+						.collect(Collectors.toList())
+				: delivery.getDetails();
 		
 		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
 		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);

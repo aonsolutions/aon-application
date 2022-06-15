@@ -108,7 +108,7 @@ public class JooqContractPDF {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 				
 			try {
-				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
+				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType);
 				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 				
 				TreeMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));

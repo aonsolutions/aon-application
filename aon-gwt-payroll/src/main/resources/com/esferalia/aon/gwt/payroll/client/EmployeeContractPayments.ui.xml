@@ -12,6 +12,11 @@
 			padding-left: 25px !important;
 			background-size: contain;
 		}
+		
+		.container{
+			width: 100%;
+			min-width: 600px;
+		}
 
 	</ui:style>
 
@@ -20,7 +25,10 @@
 			<aon:AonToolbar ui:field="toolbar" />
 		</g:north>
 		<g:center>
-			<c:DataGrid ui:field="contractConceptCalcDG" />
+			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container}">
+				<g:HTMLPanel ui:field="messagePanel" />
+				<c:DataGrid ui:field="contractConceptCalcDG" />
+			</g:VerticalPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	
