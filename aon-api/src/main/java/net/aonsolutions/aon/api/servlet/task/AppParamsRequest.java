@@ -24,15 +24,20 @@ public enum AppParamsRequest{
 	APP_REQUESTS_INT_EMAIL_CLOSED,
 	APP_REQUESTS_INT_EMAIL_COMMENT,
 	APP_REQUESTS_INT_EMAIL_ASSIGN,
+	
 	//-----EXTERNA EMAIL
 	APP_REQUESTS_EXT_EMAIL_OPENED,
 	APP_REQUESTS_EXT_EMAIL_CLOSED,
 	APP_REQUESTS_EXT_EMAIL_COMMENT,
-	APP_REQUESTS_EXT_EMAIL_ASSIGN
+	APP_REQUESTS_EXT_EMAIL_ASSIGN,
+	APP_REQUESTS_EMAIL_RATING_CLOSED
 	;
 	
 	private AppParamsRequest() {}
 
+	public String getName() {
+    	return this.toString().toLowerCase();
+    }
     
 	public static AppParamsRequest safeValueOf( Byte i ) {
 		if (i == null) return null;

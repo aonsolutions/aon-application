@@ -17,7 +17,10 @@ import * as ACTIONS from "../../actions.js";
  */
 export const buildTextareaToolbar =  (aonTextArea) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
-    if(textAreaText) setStyles(textAreaText, {resize: "none"});
+    if(textAreaText){
+        setStyles(textAreaText, {resize: "none"});
+    } 
+        
     /**
      * Bold format button **bold**
      */
@@ -35,7 +38,7 @@ export const buildTextareaToolbar =  (aonTextArea) => {
         icon: MATERIAL_ICONS.FORMAT_ITALIC,
         name:"Cursiva"
     },() =>  documentExec("italic"));
-    
+
         /**
      * List bulleted button - listItem
      */
@@ -75,6 +78,8 @@ export const buildTextareaToolbar =  (aonTextArea) => {
         icon: MATERIAL_ICONS.ATTACH_FILE,
         name:MSG.ADD_FILE
     },() =>{});
+
+
 }
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);

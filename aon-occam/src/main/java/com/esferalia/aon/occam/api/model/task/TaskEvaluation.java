@@ -3,13 +3,23 @@ package com.esferalia.aon.occam.api.model.task;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum TaskEvaluation {
-	VERY_BAD,
-	BAD,
-	REGULAR,
-	GOOD,
-	VERY_GOOD
+	VERY_BAD("Mala"),
+	BAD("Mejorable"),
+	REGULAR("Correcta"),
+	GOOD("Buena"),
+	VERY_GOOD("Muy buena")
 	;
 
+	private String value;
+	
+	private TaskEvaluation(String value) {
+		this.value = value;
+	}
+	
+	public String getValue() {
+		return value;
+	}
+	
     public byte value() {
     	return (byte) this.ordinal();
 	}
