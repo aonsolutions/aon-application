@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -605,7 +606,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		titleBox.getElement().getStyle().setProperty("margin", "0 auto 1em auto");
 		titleBox.getElement().getStyle().setProperty("borderRadius", "5px");
 		titleBox.setHeight("1.5em");
-		titleBox.getElement().setPropertyString("placeholder", "T\u00CDTULO DEL DOCUMENTO");
+		titleBox.getElement().setPropertyString("placeholder", "NOTIFICACI\u00D3N LABORAL");
 		editorPanel.add(titleBox);
 		
 		Label areaLabel = new Label("Informaci\u00F3n");
@@ -634,15 +635,15 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		dateLabel.getElement().getStyle().setProperty("fontWeight", "bold");
 		editorPanel.add(dateLabel);
 		
-		TextBox dateBox = new TextBox();
-		dateBox.setName("date");
+		AonDateBox dateBox = new AonDateBox();
 		dateBox.setWidth("30%");
+		dateBox.getElement().setPropertyString("name", "date");
 		dateBox.getElement().setPropertyString("pattern", "[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}");
 		dateBox.getElement().getStyle().setDisplay(Display.BLOCK);
 		dateBox.getElement().getStyle().setProperty("margin", "0 0 1em 7%");
 		dateBox.getElement().getStyle().setProperty("borderRadius", "5px");
 		dateBox.setHeight("1.5em");
-		dateBox.getElement().setPropertyString("placeholder", "DD/MM/AAAA");
+		dateBox.getElement().setPropertyString("placeholder", DateTimeFormat.getFormat("dd/MM/yyyy").format(new Date()));
 		editorPanel.add(dateBox);
 		
 		SubmitButton acceptButton = new SubmitButton("GENERAR");
