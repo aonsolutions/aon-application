@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class ElaborationDetailComposition implements Serializable {
@@ -17,7 +17,7 @@ public class ElaborationDetailComposition implements Serializable {
 	private Integer id;
 	private int domain;
 	private ElaborationDetail elaborationDetail;
-	private OldItem item;
+	private Item item;
 	private double quantity;
 	private Warehouse warehouse;
 	private String addInfo;
@@ -51,10 +51,10 @@ public class ElaborationDetailComposition implements Serializable {
 		this.elaborationDetail = elaborationDetail;
 		return this;
 	}
-	public OldItem getItem() {
+	public Item getItem() {
 		return item;
 	}
-	public ElaborationDetailComposition setItem(OldItem item) {
+	public ElaborationDetailComposition setItem(Item item) {
 		this.item = item;
 		return this;
 	}

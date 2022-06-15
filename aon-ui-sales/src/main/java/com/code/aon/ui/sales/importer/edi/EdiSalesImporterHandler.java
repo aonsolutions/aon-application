@@ -3,6 +3,7 @@ package com.code.aon.ui.sales.importer.edi;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,11 +49,16 @@ import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.controller.SalesDetailController;
 import com.code.aon.ui.sales.importer.edi.FtpSalesDownloadHandler.FtpFileItem;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1L;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1P;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1T;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
 public class EdiSalesImporterHandler implements Serializable {
 	
@@ -353,8 +359,8 @@ public class EdiSalesImporterHandler implements Serializable {
 							getLogPanel().info(String.format("Linea de pedido %1$d creada: %2$.2f unidades ", newDetail.getLine(), newDetail.getQuantity())
 									+ " de " + newDetail.getDescription());
 						}
+						createDataResponse(sales, rectl);
 					}
-					
 				}
 					
 			} catch (ManagerBeanException e) {
@@ -364,6 +370,29 @@ public class EdiSalesImporterHandler implements Serializable {
 			}
 		}
 
+	}
+	
+	private void createDataResponse(Sales sales, RECTL rectl) {
+		DataResponse dr = new DataResponse()
+			.setDomain(sales.getDomain())
+			.setCode("")
+			.setResponseDate(new Date())
+			.setSource(DataResponseSource.SERES_SALES)
+			.setSourceId(sales.getId());
+		dr = AON.insertDataResponse(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser(), dr);
+		
+		for (ERE1P ere1p : rectl.ere1pList) {
+			createDataResponseDetail(dr, ere1p.getCalificadorDelInterlocutor(), ere1p.getCodigoInterlocutor());
+		}
+	}
+
+	private void createDataResponseDetail(DataResponse dr, String name, String value) {
+		DataResponseDetail drd = new DataResponseDetail()
+				.setDomain(dr.getDomain())
+				.setDataResponse(dr.getId())
+				.setDataVariable(name)
+				.setDataValue(value);
+		AON.insertDataResponseDetail(AonUtil.getDomainName(), dr.getDomain(), AonUtil.getRemoteUser(), drd);
 	}
 	
 	private String obtainProductErrorLabel(ERE1L ere1l, Customer customer) {

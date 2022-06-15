@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -58,6 +59,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -223,16 +225,32 @@ public class DeliveryDAO {
 	}
 	
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
+		List<Tag> tagList = TagDAO.getList(ctx, f -> f.getTypeProperty().eq(TagType.PACKING.value()));
 		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
 			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
 			.fetchGroups(
 				new DeliveryFiller()::apply,
 				new DeliveryDetailFiller()::apply
 			);
-		map.forEach((object, details) -> details.forEach(object::addDetail));
+		map.forEach((object, details) -> details.forEach(detail -> {
+			detail.setItem(completeItemPackingTag(detail.getItem(), tagList));
+			object.addDetail(detail);
+		}));
 		return map.keySet().stream(); 
 	}
 	
+	private static Item completeItemPackingTag(Item item, List<Tag> tags) {
+		item.setPackFormatTag(getItemPackingTag(tags, item.getPackFormatTag()));
+		item.setPackMeasurementTag(getItemPackingTag(tags, item.getPackMeasurementTag()));
+		item.setPackUnitsTag(getItemPackingTag(tags, item.getPackUnitsTag()));
+		item.setStockUnitTag(getItemPackingTag(tags, item.getStockUnitTag()));
+		return item;
+	}
+	
+	private static Tag getItemPackingTag(List<Tag> tags, Tag tag) {
+		return tags.stream().filter(f -> f.getId().equals(tag.getId())).findFirst().orElse(tag);
+	}
+		
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
 		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
 			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
@@ -606,7 +624,7 @@ public class DeliveryDAO {
 	}
 
 	public static class DeliveryDetailFiller extends Filler implements Function<Record, DeliveryDetail> {
-
+		
 		@Override
 		public DeliveryDetail apply(Record r) {
 			return build(r);

@@ -305,13 +305,18 @@ public class WarehouseImpl implements IWarehouse {
 		ElaborationDAO.getElaborationDetailCompositionList(ctx, filter));
 	}
 	
-	
+	@Override
+	public Elaboration saveElaboration(AONContext ctx, Elaboration elaboration) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.save(ctx, elaboration));
+	}
 	
 	@Override
 	public Integer insertElaboration(AONContext ctx, Elaboration elaboration) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.insertElaboration(ctx, elaboration));
-	}	
+	}
+	
 	@Override
 	public Integer insertElaborationDetail(AONContext ctx,
 			ElaborationDetail detail) {
@@ -367,10 +372,9 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
-	public Integer getElaborationNextNumber(AONContext ctx,
-			String series) {
+	public Integer getElaborationNextNumber(AONContext ctx, String series) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ElaborationDAO.getSerieMaxNumber(ctx, series));
+			ElaborationDAO.getNextNumber(ctx, series));
 	}
 	
 	

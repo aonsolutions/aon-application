@@ -731,7 +731,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			dedQuotaLabelCell.setVisible(!isUndeductible() && otherLineWithInvestAssests);
 			adjAccountLabelCell.setVisible(!isUndeductible() && otherLineWithInvestAssests);
 			
-			investAssetCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable());
+			investAssetCell.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			investAsset.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable());
 			dedPercentCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
 			dedQuotaCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
 			adjAccountCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);

@@ -42,7 +42,8 @@ public enum AonApp implements Serializable{
 	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),
 	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
 	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
-	API_SERVICE(getEmptyModules(), "Servicio API")
+	API_SERVICE(getEmptyModules(), "Servicio API"),
+	WAREHOUSE(getEmptyModules(), "Almacén")
 	;
 	
 	LinkedList<Module> modules;

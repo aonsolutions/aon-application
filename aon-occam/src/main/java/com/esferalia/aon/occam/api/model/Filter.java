@@ -26,9 +26,13 @@ public interface Filter extends Serializable{
 	public Filter and(Filter filter);
 	public Filter not(Filter filter);
 	
+	@Deprecated(forRemoval = true)
 	public Filter page(Integer page);
+	@Deprecated(forRemoval = true)
 	public Filter perPage(Integer perPage);
-
+	
+	public Filter limit(int offset, int rows);
+	
 	@FunctionalInterface
 	public interface ApplicationParameterFilter{
 		Filter filter(ApplicationParameterProperties properties);

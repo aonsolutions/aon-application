@@ -39,7 +39,7 @@ public class DeliveryPackages {
 									.eq(deliveryId)), AttachType.DATA,
 					true);
 			attach.setAttachType(AttachType.DATA);
-			if(attach != null && attach.getData() == null) {
+			if(attach != null && !attach.isEmpty() && attach.getData() == null) {
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));

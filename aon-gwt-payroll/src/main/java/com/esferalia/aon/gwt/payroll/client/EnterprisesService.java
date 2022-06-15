@@ -233,7 +233,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<ContractClause> getDomainClauses(String currentDomainName) throws IllegalArgumentException;
 	
-	Map<String, String> getContractOtherInfo(String currentDomainName, Integer contractId, String contractType);
+	Map<String, String> getContractOtherInfo(String currentDomainName, Integer contractId, Integer contractType);
 	
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData);

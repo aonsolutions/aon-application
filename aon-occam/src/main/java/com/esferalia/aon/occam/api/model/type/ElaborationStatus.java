@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ElaborationStatus {
 
@@ -32,6 +33,15 @@ public enum ElaborationStatus {
 		if (i == null) return null;
 		if (i < 0 || i >= ElaborationStatus.values().length) return null;
 		return ElaborationStatus.values()[i];
+	}
+	
+	public static ElaborationStatus safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (ElaborationStatus rs : values()) {
+			if(rs.name().equalsIgnoreCase(i) || rs.getName().equalsIgnoreCase(i))
+				return rs;
+		}
+		return null;
 	}
 
 }

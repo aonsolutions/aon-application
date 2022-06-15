@@ -13,6 +13,7 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
+@SuppressWarnings("serial")
 public class FilterDAO implements Filter {
 	
 	public static class PropertyDAO<T> implements Property<T> {
@@ -448,7 +449,10 @@ public class FilterDAO implements Filter {
 	}
 
 	private Condition condition;
+	
+	@Deprecated(forRemoval = true, since = "13/06/2022")
 	private Integer perPage;
+	@Deprecated(forRemoval = true, since = "13/06/2022")
 	private Integer page;
 
 	public FilterDAO(Condition condition) {
@@ -473,6 +477,16 @@ public class FilterDAO implements Filter {
 	public Filter not(Filter filter) {
 		return (filter == null)?this:new FilterDAO(condition.not());
 	}
+	
+	@Override
+	public Filter limit(int offset, int rows) {
+		return new FilterDAO(condition) {
+			@Override
+			public Select<Record> build(SelectJoinStep<Record> select) {
+				return select.where(getCondition()).limit(offset, rows);
+			}
+		};
+	}
 
 	@Override
 	public Filter page(Integer page) {
@@ -486,11 +500,12 @@ public class FilterDAO implements Filter {
 		return this;
 	}
 	
-	
+	@Deprecated(forRemoval = true, since = "13/06/2022")
 	public Integer getPage(){
 		return page;
 	}
 	
+	@Deprecated(forRemoval = true, since = "13/06/2022")
 	public Integer getPerPage(){
 		return perPage;
 	}

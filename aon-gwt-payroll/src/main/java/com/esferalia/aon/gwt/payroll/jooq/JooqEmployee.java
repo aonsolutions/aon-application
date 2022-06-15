@@ -903,7 +903,6 @@ public class JooqEmployee {
 			}else {
 				contractDataTable = dslContext.select().from(CONTRACT_DATA)
 						.where(CONTRACT_DATA.CONTRACT.eq(contract))
-						.and(CONTRACT_DATA.START_DATE.le(currentDate))
 						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
 						.fetch();
 				
@@ -1595,26 +1594,6 @@ public class JooqEmployee {
 					}
 				}
 				
-				if(null == contractData.getQuoteGroupIdxMonthId()){
-					if(contractData.getQuoteGroupIdxMonth()){
-						ContractDataRecord contizacionRecord = null;
-						
-						contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(contractData.getQuoteGroupIdxMonthId(), domain, "DIAS_MES", contractData.getContractId(), "30", startDate, endDate)
-							.returning(CONTRACT_DATA.ID)
-							.fetchOne();
-						
-						contractData.setQuoteGroupIdxMonthId(contizacionRecord.getId());
-					}
-				}else{
-					if(!contractData.getQuoteGroupIdxMonth()){
-						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuoteGroupIdxMonthId())).execute();
-						contractData.setQuoteGroupIdxMonthId(null);
-						contractData.setQuoteGroupIdxMonth(false);
-					}
-				}
-				
 				if(null == contractData.getOcupationId()){
 					if(null != contractData.getOcupation()){
 						ContractDataRecord ocupacionRecord = null;
@@ -1671,6 +1650,27 @@ public class JooqEmployee {
 					}
 				}
 				
+			}
+			
+			// I. Cotizacion mensual
+			if(null == contractData.getQuoteGroupIdxMonthId()){
+				if(contractData.getQuoteGroupIdxMonth()){
+					ContractDataRecord contizacionRecord = null;
+					
+					contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getQuoteGroupIdxMonthId(), domain, "DIAS_MES", contractData.getContractId(), "30", startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setQuoteGroupIdxMonthId(contizacionRecord.getId());
+				}
+			}else{
+				if(!contractData.getQuoteGroupIdxMonth()){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuoteGroupIdxMonthId())).execute();
+					contractData.setQuoteGroupIdxMonthId(null);
+					contractData.setQuoteGroupIdxMonth(false);
+				}
 			}
 			
 			if(null == contractData.getMdctzId()){

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum ElaborationSource {
 
 	SALES,
@@ -24,4 +26,12 @@ public enum ElaborationSource {
 		return ElaborationSource.values()[i];
 	}
 
+	public static ElaborationSource safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return null;
+		for (ElaborationSource rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
 }
