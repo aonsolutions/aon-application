@@ -271,11 +271,9 @@ const addTextAreaChat = (wrapper, task) => {
     }
   });
 
-
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment(undefined, task));
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
 }
-
 
 const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();

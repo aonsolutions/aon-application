@@ -266,21 +266,28 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const dur = aonMessengerChat.getDur();
 
     let options = [];
-    if(!dur.isPayrollManager() && !dur.isPayrollPortal())
-        options.push(getTaskProcess(1));
-    else if(!dur.isPayrollManager() && dur.isPayrollPortal())
-        options.push(getTaskProcess(2));
-    
-    if( !dur.isTimecontrolManager() && !dur.isTimecontrolPortal() )
-        options.push(getTaskProcess(3));
 
-    if(source_id && !options.some(({value})=> value ==source_id))
+    if(dur.isPayroll()){
+        options.push(getTaskProcess(1));
+    }  
+
+    if(dur.isPayrollManager() || dur.isPayrollPortal()){
+        options.push(getTaskProcess(2));
+    }
+    
+    if( dur.isTimecontrol() ){
+        options.push(getTaskProcess(3));
+    }
+
+    if(source_id && !options.some(({value})=> value ==source_id)){
         options.push(getTaskProcess(source_id));
+    }
     
     aonSelect.setOptions( options );
 
-    if(source_id) 
+    if(source_id) {
         aonSelect.value = source_id;
+    }
 
     aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
       if(detail && detail.value) {
@@ -366,7 +373,10 @@ export const fillChat = (task, meId, workflows=[])=>{
                     direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT
                 }
 
-                if(!me) message.name = userName;
+                if(!me){
+                    message.name = userName;
+                }
+
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessageNew(message, chat);
                 } else {
@@ -400,8 +410,9 @@ export const fillChat = (task, meId, workflows=[])=>{
             const tags  = await getTaskTags({type:TAG_TYPE.TASK_TYPE});
             const options = tags.map(t => ({...t,value: t.id, description: t.name, name:t.name}));
     
-            if(options)
+            if(options){
                 aonSelect.setOptions( options );
+            }
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.value) {
@@ -430,13 +441,15 @@ export const fillChat = (task, meId, workflows=[])=>{
             const apps = getAppsByDur(aonMessengerChat.getDur());
             let options = apps.map(app => ({...app, value:app.tag, name:app.title}));
     
-            if(options)
+            if(options){
                 aonSelect.setOptions( options );
+            }
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.value) {
-                    if(!task.id && prev.name)  
+                    if(!task.id && prev.name) {
                         task.removeTagName(prev.name);
+                    } 
 
                     const tag = { name:detail.tag, color:detail.color, type:TAG_TYPE.TASK_LABEL };
                     prev = tag;

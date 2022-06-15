@@ -40,9 +40,9 @@ export class Task {
   domainCompany;
   
   constructor(task) {
-    if(task)
+    if(task){
       this.setTask(task);
-    else {
+    } else {
       this.id          = undefined;
       this.number      = undefined;
       this.title       = undefined;
@@ -103,8 +103,10 @@ export class Task {
       this.setChilds(task.childs || []);
       this.setParentObj(task.parentObj || undefined);
       this.setDomainTmp(this.domain);
-      if(task.domainCompany) 
+
+      if(task.domainCompany) {
         this.setDomainCompany(task.domainCompany);
+      }
 
       this.setWorkflowTmp({
         comment:"",
@@ -220,8 +222,9 @@ export class Task {
 
   setSource(v) {
     this.source = v;
-    if(TASK_SOURCE.REQUEST !== v)
+    if(TASK_SOURCE.REQUEST !== v){
       this.source_id = null;
+    }
   }
 
   getSourceId() {
@@ -230,7 +233,7 @@ export class Task {
 
   setSourceId(source_id) {
     this.source_id = source_id;
-    this.onPropertyChanged('source_id', this.source_id);
+    this.onPropertyChanged('source_id', source_id);
   }
 
   getWorkgroup() {
@@ -268,8 +271,9 @@ export class Task {
 
   addTag(tag) {
     const existName = this.tags.find(t=> t.name === tag.name);
-    if(!existName) 
+    if(!existName) {
       this.tags.push(tag);
+    }
   
     this.onPropertyChanged('tags', this.tags);
   }
@@ -335,7 +339,6 @@ export class Task {
   getDescription(){
     return this.description;
   }
-
 
   getFiles() {
     return this.files;
@@ -424,10 +427,7 @@ export class Task {
   }
 
   isExternal(){
-    let bool = false;
-    if( !this.isAdvisoryCompany() && this.id && this.isOtherDomain())
-      bool = true;
-    return bool;
+    return !this.isAdvisoryCompany() && this.id && this.isOtherDomain() ? true : false;
   }
 
   isOtherDomain(){
