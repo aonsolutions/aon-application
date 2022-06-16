@@ -958,7 +958,9 @@ public class JooqEmployee {
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COEFICIENTE_PARCIALIDAD")) {
 				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
-				contractData.setPartialityCoef(Double.parseDouble(r.get(CONTRACT_DATA.EXPRESSION)));
+				String partiality = r.get(CONTRACT_DATA.EXPRESSION);
+				partiality = partiality.replace(',', '.');
+				contractData.setPartialityCoef(Double.parseDouble(partiality));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "MODELO_COTIZACION_AGRARIO")) {
 				contractData.setMdctzId(r.get(CONTRACT_DATA.ID));
 				contractData.setMdctz(r.get(CONTRACT_DATA.EXPRESSION));
@@ -1068,6 +1070,7 @@ public class JooqEmployee {
 				.fetch();
 		
 		contractData.setHasSettle(settlementRecords.isNotEmpty());
+		if(settlementRecords.isNotEmpty()) contractData.setHolidaysDate(settlementRecords.get(0).get(SALARY.END_DATE));
 		
 		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)

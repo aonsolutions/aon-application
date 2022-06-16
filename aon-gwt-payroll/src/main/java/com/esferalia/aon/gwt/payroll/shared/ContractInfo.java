@@ -82,6 +82,7 @@ public class ContractInfo implements Serializable{
 	
 	private String settleReason;
 	private boolean hasSettle;
+	private Date holidaysDate;
 	private boolean hasCertifica2;
 	
 	private boolean isTGSSActive;
@@ -570,6 +571,14 @@ public class ContractInfo implements Serializable{
 		this.hasSettle = hasSettle;
 	}
 	
+	public void setHolidaysDate(Date holidaysDate) {
+		this.holidaysDate = holidaysDate;
+	}
+	
+	public Date getHolidaysDate() {
+		return holidaysDate;
+	}
+
 	public boolean hasCertifica2() {
 		return hasCertifica2;
 	}

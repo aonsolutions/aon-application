@@ -138,8 +138,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					null);
 		} else {
 			// Esto se puede subir al primer if quitando que sea menor 0 (comentar con Julio)
-			if(AonStringUtils.isNotBlank(payment.getName()) && null != payment.getConceptId() && payment.getConceptId() > 0)
-				updatePaymentConcept(dslContext, payment);
+//			if(AonStringUtils.isNotBlank(payment.getName()) && null != payment.getConceptId() && payment.getConceptId() > 0)
+//				updatePaymentConcept(dslContext, payment);
 				
 			updateAgreementPayment(dslContext, payment);
 		}
