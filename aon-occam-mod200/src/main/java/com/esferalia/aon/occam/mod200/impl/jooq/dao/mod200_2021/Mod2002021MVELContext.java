@@ -228,6 +228,229 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		context = null;
 	}
 	
+	// ***********************************************************************
+	// Métodos disponibles en las expresiones MVEL.
+	// ***********************************************************************
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sab(int[] accounts  ) throws AonCoreException {
+		return getCreditBalance(accounts);
+	}
+
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sabPositivo(int[] accounts) throws AonCoreException {
+		double d = sab(accounts); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sab(int account) throws AonCoreException {
+		return getCreditBalance(new int[]{account});
+	}
+	
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sabPositivo(int account) throws AonCoreException {
+		double d = sab(account); 
+		return d>0?d:0;
+	}
+
+	/**
+	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdb(int[] accounts) throws AonCoreException {
+		return getDebitBalance(accounts);
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdbPositivo(int[] accounts) throws AonCoreException {
+		double d = sdb(accounts); 
+		return d>0?d:0;
+	}
+	/**
+	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdb(int account) throws AonCoreException {
+		return getDebitBalance(new int[]{account});
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdbPositivo(int account) throws AonCoreException {
+		double d = sdb(account); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sap(int[] accounts) throws AonCoreException {
+		return getCreditPyG(accounts);
+	}
+
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sapPositivo(int[]  accounts) throws AonCoreException {
+		double d = sap(accounts); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sap(int account) throws AonCoreException {
+		return getCreditPyG(new int[]{account});
+	}
+	
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sapPositivo(int account) throws AonCoreException {
+		double d = sap(account); 
+		return d>0?d:0;
+	}
+
+	/**
+	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdp(int[]  accounts  ) throws AonCoreException {
+		return getDebitPyG(accounts);
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdpPositivo(int[] accounts) throws AonCoreException {
+		double d = sdp(accounts); 
+		return d>0?d:0;
+	}
+	/**
+	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AonCoreException
+	 */
+	public double sdp(int account) throws AonCoreException {
+		return getDebitPyG(new int[]{account});
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AonCoreException
+	 */
+	public double sdpPositivo(int account) throws AonCoreException {
+		double d = sdp(account); 
+		return d>0?d:0;
+	}
+	/**
+	 * Redondeo a dos decimales.
+	 * @param value
+	 * @return El dato a redondear.
+	 * @throws AonCoreException
+	 */
+	public double round(double value) throws AonCoreException {
+		return AonMathUtils.round(value); 
+	}	
+	
+	private double getCreditBalance(int[] accounts  ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getCreditBalance();
+			}
+		}
+		return d;
+	}
+	
+	private double getDebitBalance(int[] accounts ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getDebitBalance();
+			}
+		}
+		return d;
+	}
+	
+	private double getCreditPyG(int[] accounts  ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getCreditPyG();
+			}
+		}
+		return d;
+	}
+	
+	private double getDebitPyG(int[] accounts ) throws AonCoreException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getDebitPyG();
+			}
+		}
+		return d;
+	}
+	
 	public Boolean isChecked(Mod2002021Key key) {
 		return (Boolean) get(key.toString());
 	}
@@ -301,18 +524,20 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return (AonMathUtils.isGreatherThanZero(lq552))?0.0:1.0;
 	}
 	
-	public double computeLQ558() throws AonCoreException {		
+	// Tipo de Gravamen
+	public double computeLQ558() throws AonCoreException {
+		
 		if ( isChecked(C0030) || 
-				isChecked(C0047) ||
-				isChecked(C0078) || 
-				isChecked(C0081) ||
-				isChecked(C0082) ) 
+			 isChecked(C0047) ||
+			 isChecked(C0078) || 
+			 isChecked(C0081) ||
+			 isChecked(C0082) )
 			return roundKey(LQ558);
 		
 		if ( isChecked(C0063) ) return 15.0;
-		if ( isChecked(C0066)) return 25.0;
-		if ( isChecked(C0071)) return 15.0;
-		if ( isChecked(C0024)) return 30.0;	
+		if ( isChecked(C0066) ) return 25.0;
+		if ( isChecked(C0071) ) return 15.0;
+		if ( isChecked(C0024) ) return 30.0;	
 		
 		if ( isChecked(C0046) ) return 25.0;
 		if ( isChecked(C0021) ) return 25.0;
@@ -352,7 +577,7 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		if ( isChecked(C0064) ) return 25.0;
 		
 		if ( isChecked(C0080) ) return 25.0;
-
+ 
 		return 25.0;
 	}
 	
@@ -360,18 +585,18 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
 	
-	public double computeLQ1230() throws AonCoreException {
-		if (!context.containsKey(Mod2002021Key.LQ1230.toString())) {
-			return 0.0;
-		}
-		return isGroup()?getValue(Mod2002021Key.LQ1230):0.0;
-	}
-	public double computeLQ1231() throws AonCoreException {
-		if (!context.containsKey(Mod2002021Key.LQ1231.toString())) {
-			return 0.0;
-		}
-		return isGroup()?getValue(Mod2002021Key.LQ1231):0.0;
-	}
+//	public double computeLQ1230() throws AonCoreException {
+//		if (!context.containsKey(Mod2002021Key.LQ1230.toString())) {
+//			return 0.0;
+//		}
+//		return isGroup()?getValue(Mod2002021Key.LQ1230):0.0;
+//	}
+//	public double computeLQ1231() throws AonCoreException {
+//		if (!context.containsKey(Mod2002021Key.LQ1231.toString())) {
+//			return 0.0;
+//		}
+//		return isGroup()?getValue(Mod2002021Key.LQ1231):0.0;
+//	}
 
 	public double computeLQ1032() throws AonCoreException {
 		if (isGroup() && getContainsKey(Mod2002021Key.LQ1032)) {
@@ -387,20 +612,29 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return round(lq1745+lq1986);
 	}
 
-	public double computeD1004() throws AonCoreException {
-		if (getContainsKey(Mod2002021Key.D1004)) {
-			double d1004 = getValue(Mod2002021Key.D1004);
-			if ( AonMathUtils.isZero(d1004)) {
-				return 0.0;
-			} 	
-			if (d1004>getLimit(LIM_3)){
-				return getLimit(LIM_3);			
-			} else {
-				return d1004;				
-			}
+//	public double computeD1004() throws AonCoreException {
+//		if (getContainsKey(Mod2002021Key.D1004)) {
+//			double d1004 = getValue(Mod2002021Key.D1004);
+//			if ( AonMathUtils.isZero(d1004)) {
+//				return 0.0;
+//			} 	
+//			if (d1004>getLimit(LIM_3)){
+//				return getLimit(LIM_3);			
+//			} else {
+//				return d1004;				
+//			}
+//		}
+//		return 0.0;
+//	}
+	
+	public double computeD1004(double d1004) throws AonCoreException {
+		if (d1004>getLimit(LIM_3)){
+			return getLimit(LIM_3);			
+		} else {
+			return d1004;				
 		}
-		return 0.0;
 	}
+	
 	public double computeLQ562() throws AonCoreException {
 		
 		double lq558 = roundKey(LQ558);
@@ -670,16 +904,16 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return 0.0;
 	}
 
-	public double computeP1505() throws AonCoreException {
-		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
-			double x = 0.0;
-			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getLossReversion();
-			}
-			return round( x ); 
-		}
-		return 0.0;
-	}
+//	public double computeP1505() throws AonCoreException {
+//		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+//			double x = 0.0;
+//			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
+//				x += p.getLossReversion();
+//			}
+//			return round( x ); 
+//		}
+//		return 0.0;
+//	}
 
 	public double computeP1506() throws AonCoreException {
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
@@ -759,228 +993,56 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		else return 0.0;
 	}
 	
-	// ***********************************************************************
-	// Métodos disponibles en las expresiones MVEL.
-	
-	/**
-	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i>.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sab(int[] accounts  ) throws AonCoreException {
-		return getCreditBalance(accounts);
-	}
-
-	/**
-	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sabPositivo(int[] accounts) throws AonCoreException {
-		double d = sab(accounts); 
-		return d>0?d:0;
-	}
-	
-	/**
-	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i>.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sab(int account) throws AonCoreException {
-		return getCreditBalance(new int[]{account});
-	}
-	
-	/**
-	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sabPositivo(int account) throws AonCoreException {
-		double d = sab(account); 
-		return d>0?d:0;
-	}
-
-	/**
-	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i>.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sdb(int[] accounts) throws AonCoreException {
-		return getDebitBalance(accounts);
-	}
-	/**
-	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sdbPositivo(int[] accounts) throws AonCoreException {
-		double d = sdb(accounts); 
-		return d>0?d:0;
-	}
-	/**
-	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i>.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sdb(int account) throws AonCoreException {
-		return getDebitBalance(new int[]{account});
-	}
-	/**
-	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i>.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sdbPositivo(int account) throws AonCoreException {
-		double d = sdb(account); 
-		return d>0?d:0;
-	}
-	
-	/**
-	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sap(int[] accounts) throws AonCoreException {
-		return getCreditPyG(accounts);
-	}
-
-	/**
-	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sapPositivo(int[]  accounts) throws AonCoreException {
-		double d = sap(accounts); 
-		return d>0?d:0;
-	}
-	
-	/**
-	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sap(int account) throws AonCoreException {
-		return getCreditPyG(new int[]{account});
-	}
-	
-	/**
-	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sapPositivo(int account) throws AonCoreException {
-		double d = sap(account); 
-		return d>0?d:0;
-	}
-
-	/**
-	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sdp(int[]  accounts  ) throws AonCoreException {
-		return getDebitPyG(accounts);
-	}
-	/**
-	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sdpPositivo(int[] accounts) throws AonCoreException {
-		double d = sdp(accounts); 
-		return d>0?d:0;
-	}
-	/**
-	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return
-	 * @throws AonCoreException
-	 */
-	public double sdp(int account) throws AonCoreException {
-		return getDebitPyG(new int[]{account});
-	}
-	/**
-	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
-	 * @param accounts
-	 * @return El dato si es positivo, en otro caso cero.
-	 * @throws AonCoreException
-	 */
-	public double sdpPositivo(int account) throws AonCoreException {
-		double d = sdp(account); 
-		return d>0?d:0;
-	}
-	/**
-	 * Redondeo a dos decimales.
-	 * @param value
-	 * @return El dato a redondear.
-	 * @throws AonCoreException
-	 */
-	public double round(double value) throws AonCoreException {
-		return AonMathUtils.round(value); 
-	}
-
-	//------------------------------------------------------------------------------------------
-	
-	private double getCreditBalance(int[] accounts  ) throws AonCoreException {
-		double d = 0.0;
-		for (int account : accounts) {
-			String acc = Integer.toString(account);
-			if (this.accounts.containsKey(acc)) {
-				AccountBalance ab = this.accounts.get(acc);
-				d = d + ab.getCreditBalance();
+	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
+	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
+		
+		System.out.println("ENTRA "+col1+" "+col3+" "+suma);
+		
+		double lq552 = getValue(Mod2002021Key.LQ552);
+		
+		if (lq552>=0) {
+			// Base imponible [552] positiva o cero, [col2] = 0 
+			return 0.0;
+		} else {
+			// Base imponible [552] negativa, [col2] = [col1] - [col3] con el limite de la [552]
+			double col2 = col1-col3;
+			double total = suma + col2;			
+			if (total > Math.abs(lq552)) {
+				col2 = col2 - (total - Math.abs(lq552));
 			}
-		}
-		return d;
+			System.out.println("SALE "+col2);
+			return col2;		
+		}		
 	}
 	
-	private double getDebitBalance(int[] accounts ) throws AonCoreException {
-		double d = 0.0;
-		for (int account : accounts) {
-			String acc = Integer.toString(account);
-			if (this.accounts.containsKey(acc)) {
-				AccountBalance ab = this.accounts.get(acc);
-				d = d + ab.getDebitBalance();
-			}
+	// La clave 01034 sólo puede tener contenido si se ha marcado la clave 00006 de caracteres de la
+	// declaración.
+	// La clave 01034 (disminuciones) sólo podrá tener contenido cuando la base imponible (clave
+	// 00552) sea positiva, y su importe máximo será el 10% de dicha base positiva y no puede superar
+	// el millón de euros si el periodo impositivo es igual al año o si su período impositivo tiene una
+	// duración inferior al año el importe máximo será = 1.000.000 x d/365.	
+	public double computeLQ1034A() throws AonCoreException {
+		
+		double lq552 = getValue(Mod2002021Key.LQ552);
+		if (isChecked(Mod2002021Key.C0006) && lq552 > 0) {
+			double lq1034 = roundKey(Mod2002021Key.LQ1034A);
+			if (lq1034 > round(lq552*10/100))
+				lq1034 = round(lq552*10/100);
+			if (lq1034 > getLimit(LIM_2))
+				lq1034 = getLimit(LIM_2);
+			return lq1034;			
+		} else {
+			return 0.0;
 		}
-		return d;
+		
 	}
 	
-	private double getCreditPyG(int[] accounts  ) throws AonCoreException {
-		double d = 0.0;
-		for (int account : accounts) {
-			String acc = Integer.toString(account);
-			if (this.accounts.containsKey(acc)) {
-				AccountBalance ab = this.accounts.get(acc);
-				d = d + ab.getCreditPyG();
-			}
-		}
-		return d;
-	}
 	
-	private double getDebitPyG(int[] accounts ) throws AonCoreException {
-		double d = 0.0;
-		for (int account : accounts) {
-			String acc = Integer.toString(account);
-			if (this.accounts.containsKey(acc)) {
-				AccountBalance ab = this.accounts.get(acc);
-				d = d + ab.getDebitPyG();
-			}
-		}
-		return d;
-	}
+	
+	
+	
+	
+	
+	
 			
 }

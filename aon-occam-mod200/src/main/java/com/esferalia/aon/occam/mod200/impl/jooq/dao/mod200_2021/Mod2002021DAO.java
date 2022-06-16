@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.FsModel200Registry.FS_MODEL200_REGIS
 import static com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021Initialization.INITIALIZE_EXPRESSION_MAP;
 
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -497,11 +498,11 @@ public class Mod2002021DAO  {
 		// Insertamos los valores de Mod2002021Key
 		for (Mod2002021Key k : Mod2002021Key.values()) {
 			DoubleVariableEx dv = null;	
-//			if (mod200.getDraftMap().containsKey(k)) {
-//				dv = mod200.getDraftMap().get(k);
-//			} else {
+			if (mod200.getDraftMap().containsKey(k)) {
+				dv = mod200.getDraftMap().get(k);
+			} else {
 				dv = mod200.getKeysMap().get(k);
-//			}
+			}
 			if (dv != null && dv.getValue() != 0.0){
 				detail = new FsModel200DetailRecord();
 				detail.setFsModel200(mod200.getId());
@@ -514,11 +515,11 @@ public class Mod2002021DAO  {
 		// Insertamos los valores de Mod2002021KeyDC (Detalle correcciones)
 		for (Mod2002021KeyDC k : Mod2002021KeyDC.values()) {
 			DoubleVariableEx dv = null;	
-//			if (mod200.getDraftMap().containsKey(k)) {
-//				dv = mod200.getDraftMap().get(k);
-//			} else {
+			if (mod200.getDraftMap().containsKey(k)) {
+				dv = mod200.getDraftMap().get(k);
+			} else {
 				dv = mod200.getKeysMap().get(k);
-//			}
+			}
 			if (dv != null && dv.getValue() != 0.0){
 				detail = new FsModel200DetailRecord();
 				detail.setFsModel200(mod200.getId());
@@ -956,24 +957,32 @@ public class Mod2002021DAO  {
 	private static Mod2002021 calculate(Mod2002021 mod200, boolean addToDraft) {
 		try {
 			Mod2002021MVELContext ctx = new Mod2002021MVELContext( mod200, ACCEPTER );
-			ctx.setExpressionMap(Mod2002021Compute.COMPUTE_EXPRESSION_MAP);
+			
+			// PRUEBA - SIN EXPRESION EN ctx
+//			ctx.setExpressionMap(Mod2002021Compute.COMPUTE_EXPRESSION_MAP);			
+			
+			// Añadir valores de keysMap
 			for (DoubleVariableEx dv : mod200.getKeysMap().values()) {
 				ctx.put(dv.getKey().toString(), dv.getValue());
 			}
 			addCharacters(ctx,mod200);
 			addBalanceCharacters(ctx,mod200);
 			
-//			DoubleVariableEx d = null;
-//			for (IMod200Key key : mod200.getDraftMap().keySet() ) {
-//				d = mod200.getDraftMap().get(key);
-//				if (d.isChangedByUser()) {
-//					ctx.put(key.toString(), d.getValue());
-//				}
-//			}
+			// Añadir valores de draftMap (modificadas por el usuario)
+			DoubleVariableEx d = null;
+			for (IMod200Key key : mod200.getDraftMap().keySet() ) {
+				d = mod200.getDraftMap().get(key);
+				if (d.isChangedByUser()) {
+					ctx.put(key.toString(), d.getValue());
+				}
+			}
 			
 			// Actualmente las casillas calculadas solo son de Mod2002021Key
+			Date ini = new Date();
+			System.out.println("***** INI " + ini);
 			DoubleVariableEx v = null;
 			for (Mod2002021Key k : Mod2002021Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
+				System.out.println("COMPUTE KEY="+k.toString()+"="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.get(k));
 				String stringKey = k.toString();
 				DoubleVariableEx existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
@@ -985,15 +994,17 @@ public class Mod2002021DAO  {
 					if ( !AonMathUtils.equals( existingValue , calculated ) ) {
 						v = new DoubleVariableEx( k );
 						v.setValue( calculated );
-//						if (addToDraft) {
-//							mod200.addDraftVariable(v);	
-//						} else {
-						    v.setChangedByUser(true); // Esto lo pongo cuando quito lo del draft
+						if (addToDraft) {
+							mod200.addDraftVariable(v);	
+						} else {
 							mod200.addVariable(v);
-//						}
+						}
 					}
 				}
 			}
+			Date fin = new Date();			
+			System.out.println("***** FIN. TIME "+ (fin.getTime()-ini.getTime()) + "ms. TOTAL REGISTROS MAP="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.size());
+			
 			v = mod200.getVariable(Mod2002021Key.BN621);
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {

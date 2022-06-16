@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021;
 
 import java.util.Arrays;
-import java.util.EnumMap;
+import java.util.LinkedHashMap;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
@@ -10,7 +10,8 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1040Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1041Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1280Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN1344Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_1Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN565_2Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN570Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN571Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021BN572Key;
@@ -36,9 +37,14 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021LQ561Key;
 
 public class Mod2002021Compute {
 	
-	// FALTA - REVISAR CALCULOS CON DOCUMENTO PADIS
+	// MUY IMPORTANTE - LOS CALCULOS DEBEN ESTAR ORDENADOS EN EL MAP SEGUN LOS CALCULOS DE LAS CASILLAS
+	// DEL MODELO, YA QUE NO SE HACEN CALCULOS RECURSIVOS EN LAS EXPRESIONES MVEL, PUES NO SE LE PASA
+	// EL MAP AL CONTEXT DE MVEL, PARA GANAR VELOCIDAD, DADO EL TAMAÑO DEL MAP Y LOS CALCULOS A REALIZAR
+	// POR ESO SE USA UN LinkedHashMap, PORQUE SE NECESITA QUE PARA EL CALCULO DEL MODELO, SE RECORRA 
+	// EL MAP EXACTAMENTE EN EL ORDEN EN QUE APARECE EN ESTA CLASE
 	
-	public static EnumMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new EnumMap<Mod2002021Key,String>(Mod2002021Key.class);
+//	public static EnumMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new EnumMap<Mod2002021Key,String>(Mod2002021Key.class);
+	public static LinkedHashMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<Mod2002021Key,String>();
 		
 	static {
 		
@@ -59,76 +65,83 @@ public class Mod2002021Compute {
 	static { 
 		
 		// BALANCE: ACTIVO
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA101,"(BA102+BA111+BA115+BA118+BA126+BA134+BA135)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA102,"isBalanceNormal()?(BA103+BA104+BA105+BA106+BA107+BA108+BA700+BA109):(BA106+BA110)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA111,"isBalanceNormal()?(BA112+BA113+BA114):(BA111)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA115,"isBalanceNormal()?(BA116+BA117):(BA115)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA118,"isBalanceNormal()?(BA119+BA120+BA121+BA122+BA123+BA124):(BA119+BA125)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA126,"isBalanceNormal()?(BA127+BA128+BA129+BA130+BA131+BA132):(BA127+BA133)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA136,"(BA137+BA138+BA149+BA160+BA168+BA176+BA177)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA138,"isBalanceNormal()?(BA139+BA140+BA141+BA144+BA147+BA148+BA701):(BA138)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA101,"(BA102+BA111+BA115+BA118+BA126+BA134+BA135)");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA141,"isBalanceNormal()?(BA142+BA143):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA144,"isBalanceNormal()?(BA145+BA146):(0.0)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA149,"isBalanceNormal()?(BA150+BA153+BA154+BA155+BA156+BA157+BA158):(BA150+BA158+BA159)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA138,"isBalanceNormal()?(BA139+BA140+BA141+BA144+BA147+BA148+BA701):(BA138)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA150,"(BA151+BA152)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA149,"isBalanceNormal()?(BA150+BA153+BA154+BA155+BA156+BA157+BA158):(BA150+BA158+BA159)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA160,"isBalanceNormal()?(BA161+BA162+BA163+BA164+BA165+BA166):(BA161+BA167)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA168,"isBalanceNormal()?(BA169+BA170+BA171+BA172+BA173+BA174):(BA169+BA175)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA177,"isBalanceNormal()?(BA178+BA179):(BA177)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA136,"(BA137+BA138+BA149+BA160+BA168+BA176+BA177)");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BA180,"(BA101+BA136)");
 		
 	}
 	
 	static { 
 		
-		// BALANCE: PATRIMONIO NETO Y PASIVO
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP201,"isBalancePymes()?(0.0):(BP201)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP185,"isBalancePymes()?(BP186+BP209+BP208):(BP186+BP209+BP202)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP186,"isBalancePymes()?(BP187+BP190+BP191+BP194+BP195+BP198+BP199+BP200):(BP187+BP190+BP191+BP194+BP195+BP198+BP199+BP200+BP201)");
+		// BALANCE: PATRIMONIO NETO Y PASIVO		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP187,"(BP188+BP189)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP191,"isBalanceNormal()?(BP192+BP193+BP702+BP1001+BP1002+BP712):(BP193+BP1001+BP1002+BP712)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP195,"isBalanceNormal()?(BP196+BP197):(BP195)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP201,"isBalancePymes()?(0.0):(BP201)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP186,"isBalancePymes()?(BP187+BP190+BP191+BP194+BP195+BP198+BP199+BP200):(BP187+BP190+BP191+BP194+BP195+BP198+BP199+BP200+BP201)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP202,"isBalanceNormal()?(BP203+BP204+BP205+BP206+BP207):(BP202)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP210,"(BP211+BP216+BP223+BP224+BP225+BP226+BP227)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP185,"isBalancePymes()?(BP186+BP209+BP208):(BP186+BP209+BP202)");
+				
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP211,"isBalanceNormal()?(BP212+BP213+BP214+BP215):(BP211)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP216,"isBalanceNormal()?(BP217+BP218+BP219+BP220+BP221):(BP218+BP219+BP222)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP228,"isBalanceNormal()?(BP229+BP230+BP231+BP238+BP239+BP250+BP251):(BP229+BP230+BP231+BP238+BP239+BP250+BP251)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP210,"(BP211+BP216+BP223+BP224+BP225+BP226+BP227)");
+				
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP230,"isBalanceNormal()?(BP703+BP704):(BP230)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP231,"isBalanceNormal()?(BP232+BP233+BP234+BP235+BP236):(BP233+BP234+BP237)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP239,"isBalanceNormal()?(BP240+BP243+BP244+BP245+BP246+BP247+BP248):(BP240+BP249)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP240,"(BP241+BP242)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP239,"isBalanceNormal()?(BP240+BP243+BP244+BP245+BP246+BP247+BP248):(BP240+BP249)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP228,"isBalanceNormal()?(BP229+BP230+BP231+BP238+BP239+BP250+BP251):(BP229+BP230+BP231+BP238+BP239+BP250+BP251)");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BP252,"(BP185+BP210+BP228)");
 		
 	}
 	
 	static { 
 		
-		// CUENTA DE PERDIDAS Y GANANCIAS
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG255,"isPygNormal()?(PG256+PG257+PG711+PG705):(PG255)");
+		// CUENTA DE PERDIDAS Y GANANCIAS		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG705,"isPygNormal()?(PG706+PG707+PG708):(0.0)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG260,"(PG261+PG262+PG263+PG264)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG265,"(PG266+PG269)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG255,"isPygNormal()?(PG256+PG257+PG711+PG705):(PG255)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG261,"(PG760+PG761)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG262,"(PG762+PG763)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG260,"(PG261+PG262+PG263+PG264)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG266,"(PG267+PG268)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG265,"(PG266+PG269)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG270,"(PG271+PG273+PG274+PG275+PG276+PG277+PG278)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG279,"(PG280+PG281+PG282+PG283+PG709)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG280,"(PG253+PG254)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG287,"(PG288+PG291+PG710)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG279,"(PG280+PG281+PG282+PG283+PG709)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG288,"(PG289+PG290)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG291,"(PG292+PG293)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG287,"(PG288+PG291+PG710)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG296,"isPygPymes()"
 			+ "?(PG255+PG258+PG259+PG260+PG265+PG270+PG279+PG284+PG285+PG286+PG287+PG295)"
 			+ ":(PG255+PG258+PG259+PG260+PG265+PG270+PG279+PG284+PG285+PG286+PG287+PG294+PG295)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG297,"(PG298+PG301+PG304)");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG298,"(PG299+PG300)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG301,"(PG302+PG303)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG301,"(PG302+PG303)");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG297,"(PG298+PG301+PG304)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG305,"(PG306+PG307+PG308)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG309,"isPygNormal()?(PG310+PG311):(PG309)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG313,"(PG314+PG319)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG314,"(PG315+PG316+PG317+PG318)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG319,"(PG320+PG321+PG322+PG323)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG313,"(PG314+PG319)");		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG329,"(PG330+PG331+PG332)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG324,"(PG297+PG305+PG309+PG312+PG313+PG329)");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG325,"(PG296+PG324)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG327,"(PG325+PG326)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.PG500,"isPygNormal()?(PG327+PG328):(PG327)");
@@ -150,6 +163,8 @@ public class Mod2002021Compute {
 	static { 
 		
 		// ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO TOTAL DE CAMBIOS EN EL PATRIMONIO NETO
+		
+		// Fila: SALDO AJUSTADO, INICIO DEL EJERCICIO (N, A, P)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC422,"(TC380+TC394+TC408)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC423,"(TC381+TC395+TC409)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC424,"(TC382+TC396+TC410)");
@@ -163,8 +178,9 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC432,"(TC390+TC404+TC418)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC433,"(TC391+TC405+TC419)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC434,"(TC392+TC406+TC420)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC435,"(TC393+TC407+TC421)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC435,"(TC393+TC407+TC421)");
 		
+		// Fila: Ingresos y gastos reconocidos en patrimonio neto (P) 
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC464,"isEcpnPymes()?(TC478+TC492):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC465,"isEcpnPymes()?(TC479+TC493):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC466,"isEcpnPymes()?(TC480+TC494):(0.0)");
@@ -176,8 +192,9 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC472,"isEcpnPymes()?(TC486+TC502):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC475,"isEcpnPymes()?(TC489+TC503):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC476,"isEcpnPymes()?(TC490+TC504):(0.0)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC477,"isEcpnPymes()?(TC491+TC505):(0.0)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC477,"isEcpnPymes()?(TC491+TC505):(0.0)");
 
+		// Fila: Operaciones con socios o propietarios (N, A, P) 
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC506,"isEcpnNormal()?(TC520+TC534+TC548+TC562+TC576+TC590+TC604):(TC520+TC534+TC604)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC507,"isEcpnNormal()?(TC521+TC535+TC549+TC563+TC577+TC591+TC605):(TC521+TC535+TC605)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC508,"isEcpnNormal()?(TC522+TC536+TC550+TC564+TC578+TC592+TC606):(TC522+TC536+TC606)");
@@ -191,8 +208,9 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC516,"isEcpnNormal()?(TC530+TC544+TC558+TC572+TC586+TC600+TC614):(TC530+TC544+TC614)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC517,"isEcpnNormal()?(TC531+TC545+TC615):(TC531+TC545+TC615)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC518,"isEcpnNormal()?(TC532+TC546+TC560+TC574+TC588+TC602+TC616):(TC532+TC546+TC616)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC519,"isEcpnNormal()?(TC533+TC547+TC561+TC575+TC589+TC603+TC617):(TC533+TC547+TC617)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC519,"isEcpnNormal()?(TC533+TC547+TC561+TC575+TC589+TC603+TC617):(TC533+TC547+TC617)");
 		
+		// Fila: Otras variaciones del patrimonio neto (N, A, P)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC618,"(TC715+TC729)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC619,"(TC716+TC730)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC620,"(TC717+TC731)");
@@ -206,8 +224,9 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC628,"(TC725+TC739)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC629,"(TC726+TC740)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC630,"(TC727+TC741)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC631,"(TC728+TC742)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC631,"(TC728+TC742)");
 
+		// Fila: SALDO, FINAL DEL EJERCICIO (N, A, P)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC632,"isEcpnPymes()?(TC422+TC436+TC450+TC464+TC506+TC618):(TC422+TC436+TC506+TC618)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC633,"isEcpnPymes()?(TC423+TC437+TC451+TC465+TC507+TC619):(TC423+TC437+TC507+TC619)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC634,"isEcpnPymes()?(TC424+TC438+TC452+TC466+TC508+TC620):(TC424+TC438+TC508+TC620)");
@@ -221,8 +240,9 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC642,"isEcpnPymes()?(TC432+TC446+TC516+TC628):(TC432+TC446+TC516+TC628)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC643,"isEcpnPymes()?(TC433+TC461+TC475+TC517+TC629):(TC433+TC517+TC629)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC644,"isEcpnPymes()?(TC434+TC448+TC462+TC476+TC518+TC630):(TC434+TC448+TC518+TC630)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC645,"isEcpnPymes()?(TC435+TC449+TC463+TC477+TC519+TC631):(TC435+TC449+TC519+TC631)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC645,"isEcpnPymes()?(TC435+TC449+TC463+TC477+TC519+TC631):(TC435+TC449+TC519+TC631)");
 
+		// Columna: Total (N,A,P)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC393,"(TC380+TC381+TC382+TC383+TC384+TC385+TC386+TC387+TC388+TC389+TC390+TC391+TC392)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC407,"(TC394+TC395+TC396+TC397+TC398+TC399+TC400+TC401+TC402+TC403+TC404+TC405+TC406)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.TC421,"(TC408+TC409+TC410+TC411+TC412+TC413+TC414+TC415+TC416+TC417+TC418+TC419+TC420)");
@@ -252,14 +272,15 @@ public class Mod2002021Compute {
 	static { 
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ500,"PG500");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ301,"(PG326<0)?(PG326*-1):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ302,"(PG326>0)?(PG326):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ501,"(LQ500+LQ301-LQ302)");
 		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1230,"computeLQ1230()"); 
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1231,"computeLQ1231()"); 
-		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.D1004,"computeD1004()"); // Libertad de amortización inmovilizado material nuevo (limite)
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1230,"computeLQ1230()"); 
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1231,"computeLQ1231()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1230,"isGroup()?LQ1230:0.0"); 
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1231,"isGroup()?LQ1231:0.0");
 		
 		// Detalle de las correcciones al resultado contable
 		
@@ -291,7 +312,8 @@ public class Mod2002021Compute {
 						detailKeys = detailKeys + key2.toString();
 					}
 				}
-				COMPUTE_EXPRESSION_MAP.put(key.getIncrease(), detailKeys);
+				
+				COMPUTE_EXPRESSION_MAP.put(key.getIncrease(), "computeD1004(" + detailKeys + ")");
 				
 				if (detailIncrease[0] != null)
 					dc2305 = dc2305 + (dc2305.isEmpty()?"":"+")+detailIncrease[0].toString(); 
@@ -320,7 +342,11 @@ public class Mod2002021Compute {
 						detailKeys = detailKeys + key2.toString();
 					}
 				}
-				COMPUTE_EXPRESSION_MAP.put(key.getDecrease(), detailKeys);
+				if (key.getIncrease() == Mod2002021Key.D1004) {
+					COMPUTE_EXPRESSION_MAP.put(key.getIncrease(), "computeD1004(" + detailKeys + ")");
+				} else {
+					COMPUTE_EXPRESSION_MAP.put(key.getDecrease(), detailKeys);
+				}
 				
 				if (detailDecrease[0]!=null)
 					dc2306 = dc2306 + (dc2306.isEmpty()?"":"+")+detailDecrease[0].toString(); 
@@ -339,6 +365,7 @@ public class Mod2002021Compute {
 			
 		}
 		
+		// Totales de los desgloses de las correcciones
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.DC2301, dc2301);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.DC2303, dc2303);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.DC2307, dc2307);
@@ -388,18 +415,37 @@ public class Mod2002021Compute {
 		// Base imponible
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ552,"LQ550-LQ1032-LQ547");
 				
-		// Casilla 1033: Reserva de nivelación - Reducción de la base imponible
-		addBreakdown(Mod2002021LQ1033_1Key.values(), Mod2002021Key.LQ1033);
-	
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1034,"C0006?LQ1034A:0.0");
+		// Casilla 1033: Reserva de nivelación - Reducción de la base imponible 
+		// Lleva cálculos especiales en las casillas de la columna 2
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1145,"LQ1144-LQ1600");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1456,"computeLQ1033_1(LQ1455,LQ1601,LQ1145)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1962,"computeLQ1033_1(LQ1961,LQ1602,LQ1145+LQ1456)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ2239,"computeLQ1033_1(LQ2238,LQ1603,LQ1145+LQ1456+LQ1962)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ2411,"computeLQ1033_1(LQ2410,LQ1604,LQ1145+LQ1456+LQ1962+LQ2239)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1730,"computeLQ1033_1(LQ1109,LQ1605,LQ1145+LQ1456+LQ1962+LQ2239+LQ2411)");
 		
-		// Reserva de nivelación - Dotacion de la reserva
-		addBreakdown(Mod2002021LQ1033_2Key.values(), Mod2002021Key.LQ1158);
+		// Además las casillas de la última columna, no siguen la regla de la diferencia de las dos columnas anteriores
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1457,"LQ1455-LQ1456-LQ1601");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1963,"LQ1961-LQ1962-LQ1602");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ2240,"LQ2238-LQ2239-LQ1603");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ2412,"LQ2410-LQ2411-LQ1604");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1111,"LQ1109-LQ1730-LQ1605");
+		
+		// Penúltima fila (casilla 1034)
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1034A,"computeLQ1034A()");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1731,"LQ1034A"); 
+		
+		// Fila de totales 
+		addBreakdown(Mod2002021LQ1033_1Key.values(), Mod2002021Key.LQ1033, false);
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1034,"LQ1034A");
+		
+		// Reserva de nivelación - Dotacion de la reserva (no lleva columna de totales)
+		addBreakdown(Mod2002021LQ1033_2Key.values(), Mod2002021Key.LQ1158, false);
 		
 		// Base imponible después de la reserva de nivelación
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1330,"C0006?LQ552+LQ1033-LQ1034:LQ552");
 
-		// Sólo entidades cooperativas
+		// Sólo entidades cooperativas (Casillas 553 y 554)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.CP0C6,"(isCooperativa())?CP0C1-CP0C2-CP0C3-CP0C4:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.CP0E6,"(isCooperativa())?CP0E1-CP0E2-CP0E3-CP0E4+CP0E5:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.CPC12,"(isCooperativa())?CP0C6+CP0C7-CP0C8-CP0C9+CPC10+CPC11:0.0");
@@ -407,13 +453,13 @@ public class Mod2002021Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ553,"(isCooperativa())?CPC12:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ554,"(isCooperativa())?CPE12:0.0");
 		
-		// Solo SOCIMIS (Casillas 520 y 521 automaticas, solo si caracter 64, si no, son manuales)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ520,"C0064?LQ550TG-LQ1032-LQ547:LQ520");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ521,"C0064?LQ550T0:LQ521");
+		// Solo SOCIMIS (Casillas 520 y 521 automaticas, solo si caracter 12 o 64, si no, son manuales)
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ520,"(C0012 || C0064)?LQ550TG-LQ1032-LQ547:LQ520");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ521,"(C0012 || C0064)?LQ550T0:LQ521");
 		
 		// Rentas que no limitan la compensación de bases imponibles y cuotas negativas
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ545,"(LQ545<0.0)?0.0:LQ545");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ593,"(LQ593<0.0)?0.0:LQ593");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1509,"(LQ1509<0.0)?0.0:LQ1509");
 		
 		// Tipo de gravamen
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ558,"computeLQ558()");
@@ -421,12 +467,16 @@ public class Mod2002021Compute {
 		// Sólo entidades cooperativas
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ560,"computeLQ560()");
 		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ593,"(LQ593<0.0)?0.0:LQ593");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1510,"(LQ1510<0.0)?0.0:LQ1510");		
+		
 		// Casilla 561: Compensación de cuotas por pérdidas de cooperativas 
 		addBreakdown(Mod2002021LQ561Key.values(), Mod2002021Key.LQ561);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1226,"LQ1225");
 		
 		// Cuota íntegra
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1331,"(isCooperativa() && (LQ560+LQ210-LQ480+LQ408-LQ1037-LQ561+LQ1285-LQ1286)>0)?(LQ560+LQ210-LQ480+LQ408-LQ1037-LQ561+LQ1285-LQ1286):(0.0)");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ562,"(isCooperativa())?(LQ1331):(computeLQ562())");
 		
 	}
@@ -436,49 +486,53 @@ public class Mod2002021Compute {
 	static { 
 		
 		// Casilla 570: DI interna de periodos anteriores aplicada en el ejercicio (art.30 RDL 4/2004)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN846,"(BN103A==0||BN105==0||LQ562==0)?(BN104):(round(BN104*BN103A/BN105))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN282,"(BN103A==0||BN107==0||LQ562==0)?(BN106):(round(BN106*BN103A/BN107))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN702,"(BN103A==0||BN109==0||LQ562==0)?(BN108):(round(BN108*BN103A/BN109))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN071,"(BN103A==0||BN111==0||LQ562==0)?(BN110):(round(BN110*BN103A/BN111))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN025,"(BN103A==0||BN113==0||LQ562==0)?(BN112):(round(BN112*BN103A/BN113))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN714,"(BN103A==0||BN115==0||LQ562==0)?(BN114):(round(BN114*BN103A/BN115))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN736,"(BN103A==0||BN920==0||LQ562==0)?(BN735):(round(BN735*BN103A/BN920))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN846,"(BN103A==0||BN105==0||LQ562==0)?(BN104):(round(BN104*BN103A/BN105))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN282,"(BN103A==0||BN107==0||LQ562==0)?(BN106):(round(BN106*BN103A/BN107))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN702,"(BN103A==0||BN109==0||LQ562==0)?(BN108):(round(BN108*BN103A/BN109))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN071,"(BN103A==0||BN111==0||LQ562==0)?(BN110):(round(BN110*BN103A/BN111))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN025,"(BN103A==0||BN113==0||LQ562==0)?(BN112):(round(BN112*BN103A/BN113))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN714,"(BN103A==0||BN115==0||LQ562==0)?(BN114):(round(BN114*BN103A/BN115))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN736,"(BN103A==0||BN920==0||LQ562==0)?(BN735):(round(BN735*BN103A/BN920))");
+		addDoubleImpositionBreakdown(Mod2002021BN570Key.values(), Mod2002021Key.BN570, Mod2002021Key.BN103A);
 		addBreakdown(Mod2002021BN570Key.values(), Mod2002021Key.BN570);
 		
 		// Casilla 1344: DI interna de periodos anteriores aplicada en el ejercicio (DT 23.1 LIS)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN119, "(BN103B==0||BN102 ==0||LQ562==0)?(BN101 ):(round(BN101 *BN103B/BN102 ))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN124, "(BN103B==0||BN123 ==0||LQ562==0)?(BN122 ):(round(BN122 *BN103B/BN123 ))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1597,"(BN103B==0||BN1596==0||LQ562==0)?(BN1595):(round(BN1595*BN103B/BN1596))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1830,"(BN103B==0||BN1829==0||LQ562==0)?(BN1828):(round(BN1828*BN103B/BN1829))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2198,"(BN103B==0||BN2197==0||LQ562==0)?(BN2196):(round(BN2196*BN103B/BN2197))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2321,"(BN103B==0||BN2320==0||LQ562==0)?(BN2319):(round(BN2319*BN103B/BN2320))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN204 ,"(BN103B==0||BN203==0 ||LQ562==0)?(BN199 ):(round(BN199 *BN103B/BN203 ))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN119, "(BN103B==0||BN102 ==0||LQ562==0)?(BN101 ):(round(BN101 *BN103B/BN102 ))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN124, "(BN103B==0||BN123 ==0||LQ562==0)?(BN122 ):(round(BN122 *BN103B/BN123 ))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1597,"(BN103B==0||BN1596==0||LQ562==0)?(BN1595):(round(BN1595*BN103B/BN1596))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1830,"(BN103B==0||BN1829==0||LQ562==0)?(BN1828):(round(BN1828*BN103B/BN1829))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2198,"(BN103B==0||BN2197==0||LQ562==0)?(BN2196):(round(BN2196*BN103B/BN2197))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2321,"(BN103B==0||BN2320==0||LQ562==0)?(BN2319):(round(BN2319*BN103B/BN2320))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN204 ,"(BN103B==0||BN203==0 ||LQ562==0)?(BN199 ):(round(BN199 *BN103B/BN203 ))");
+		addDoubleImpositionBreakdown(Mod2002021BN1344Key.values(), Mod2002021Key.BN1344, Mod2002021Key.BN103B);
 		addBreakdown(Mod2002021BN1344Key.values(), Mod2002021Key.BN1344);
 		
-		// DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
+		// Casilla 1280: DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
 		addBreakdown(Mod2002021BN1280Key.values(), Mod2002021Key.BN1280);
 		
 		// Casilla 572: DI internacional de períodos anteriores aplicada en el ejercicio (RDL 4/2004)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN637,"(BN103C==0||BN728==0||LQ562==0)?(BN153):(round(BN153*BN103C/BN728))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN849,"(BN103C==0||BN729==0||LQ562==0)?(BN154):(round(BN154*BN103C/BN729))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN285,"(BN103C==0||BN730==0||LQ562==0)?(BN155):(round(BN155*BN103C/BN730))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN825,"(BN103C==0||BN731==0||LQ562==0)?(BN156):(round(BN156*BN103C/BN731))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN001,"(BN103C==0||BN732==0||LQ562==0)?(BN157):(round(BN157*BN103C/BN732))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN028,"(BN103C==0||BN733==0||LQ562==0)?(BN158):(round(BN158*BN103C/BN733))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN717,"(BN103C==0||BN734==0||LQ562==0)?(BN159):(round(BN159*BN103C/BN734))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN722,"(BN103C==0||BN721==0||LQ562==0)?(BN720):(round(BN720*BN103C/BN721))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN740,"(BN103C==0||BN921==0||LQ562==0)?(BN739):(round(BN739*BN103C/BN921))");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN135,"(BN103C==0||BN926==0||LQ562==0)?(BN134):(round(BN134*BN103C/BN926))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN637,"(BN103C==0||BN728==0||LQ562==0)?(BN153):(round(BN153*BN103C/BN728))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN849,"(BN103C==0||BN729==0||LQ562==0)?(BN154):(round(BN154*BN103C/BN729))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN285,"(BN103C==0||BN730==0||LQ562==0)?(BN155):(round(BN155*BN103C/BN730))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN825,"(BN103C==0||BN731==0||LQ562==0)?(BN156):(round(BN156*BN103C/BN731))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN001,"(BN103C==0||BN732==0||LQ562==0)?(BN157):(round(BN157*BN103C/BN732))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN028,"(BN103C==0||BN733==0||LQ562==0)?(BN158):(round(BN158*BN103C/BN733))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN717,"(BN103C==0||BN734==0||LQ562==0)?(BN159):(round(BN159*BN103C/BN734))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN722,"(BN103C==0||BN721==0||LQ562==0)?(BN720):(round(BN720*BN103C/BN721))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN740,"(BN103C==0||BN921==0||LQ562==0)?(BN739):(round(BN739*BN103C/BN921))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN135,"(BN103C==0||BN926==0||LQ562==0)?(BN134):(round(BN134*BN103C/BN926))");
+		addDoubleImpositionBreakdown(Mod2002021BN572Key.values(), Mod2002021Key.BN572, Mod2002021Key.BN103C);
 		addBreakdown(Mod2002021BN572Key.values(), Mod2002021Key.BN572);
 		
 		// Casilla 571: DI internacional de períodos anteriores aplicada en el ejercicio (LIS)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1051,"(BN103D==0||BN1050==0||LQ562==0)?(BN1054):round(BN1054*BN103D/BN1050)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1350,"(BN103D==0||BN1349==0||LQ562==0)?(BN1348):round(BN1348*BN103D/BN1349)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1772,"(BN103D==0||BN1771==0||LQ562==0)?(BN1770):round(BN1770*BN103D/BN1771)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1835,"(BN103D==0||BN1834==0||LQ562==0)?(BN1833):round(BN1833*BN103D/BN1834)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2203,"(BN103D==0||BN2202==0||LQ562==0)?(BN2201):round(BN2201*BN103D/BN2202)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2326,"(BN103D==0||BN2325==0||LQ562==0)?(BN2324):round(BN2324*BN103D/BN2325)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN209 ,"(BN103D==0||BN208==0 ||LQ562==0)?(BN207) :round(BN207 *BN103D/BN208 )");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1051,"(BN103D==0||BN1050==0||LQ562==0)?(BN1054):round(BN1054*BN103D/BN1050)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1350,"(BN103D==0||BN1349==0||LQ562==0)?(BN1348):round(BN1348*BN103D/BN1349)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1772,"(BN103D==0||BN1771==0||LQ562==0)?(BN1770):round(BN1770*BN103D/BN1771)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN1835,"(BN103D==0||BN1834==0||LQ562==0)?(BN1833):round(BN1833*BN103D/BN1834)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2203,"(BN103D==0||BN2202==0||LQ562==0)?(BN2201):round(BN2201*BN103D/BN2202)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN2326,"(BN103D==0||BN2325==0||LQ562==0)?(BN2324):round(BN2324*BN103D/BN2325)");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN209 ,"(BN103D==0||BN208==0 ||LQ562==0)?(BN207) :round(BN207 *BN103D/BN208 )");
+		addDoubleImpositionBreakdown(Mod2002021BN571Key.values(),Mod2002021Key.BN571, Mod2002021Key.BN103D);
 		addBreakdown(Mod2002021BN571Key.values(),Mod2002021Key.BN571);
 
 		// Casilla 573: DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)
@@ -498,14 +552,27 @@ public class Mod2002021Compute {
 		addBreakdown(Mod2002021BN584Key.values(), Mod2002021Key.BN584);
 		
 	    // Casilla 588: Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI, DT 24ª.3 LIS y art. 27.3 primero Ley 49/2002)
-		// Lleva 2 totales, la fila de las casillas 634, 635 y 636 y la fila de las casillas 831, 588, 832
-		// FALTA - REVISAR TOTALES CON EL DOCUMENTO PADIS
+		// Lleva 2 totales, la fila de las casillas 634, 635 y 636 y la fila de las casillas 831, 588, 832		
 		addBreakdown(Mod2002021BN588Key.values(), Mod2002021Key.BN635, true, Mod2002021Key.BN1626, Mod2002021Key.BN1683);
 		addBreakdown(Mod2002021BN588Key.values(), Mod2002021Key.BN588, true, null, Mod2002021Key.BN1683);
 
-		// Casilla 565: Deducción donaciones a entidades sin fines de lucro (Ley 49/2002)		
-		addBreakdown(Mod2002021BN565Key.values(), Mod2002021Key.BN565);
+		// Casilla 565: Deducción donaciones a entidades sin fines de lucro (Ley 49/2002). Tiene dos apartados con varios subtotales
+		// Donaciones de carácter general 
+		addBreakdown(Mod2002021BN565_1Key.values(), Mod2002021Key.BN1689, true, Mod2002021Key.BN201, Mod2002021Key.BN997);
+		addBreakdown(Mod2002021BN565_1Key.values(), Mod2002021Key.BN1692, true, Mod2002021Key.BN246, Mod2002021Key.BN891);
+		addBreakdown(Mod2002021BN565_1Key.values(), Mod2002021Key.BN1695, true, Mod2002021Key.BN246, Mod2002021Key.BN891);
+		addBreakdown(Mod2002021BN565_1Key.values(), Mod2002021Key.BN1698, true, Mod2002021Key.BN1689, Mod2002021Key.BN1695);
+		// Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
+		addBreakdown(Mod2002021BN565_2Key.values(), Mod2002021Key.BN1701, true, Mod2002021Key.BN2471, Mod2002021Key.BN930);
+		addBreakdown(Mod2002021BN565_2Key.values(), Mod2002021Key.BN1704, true, Mod2002021Key.BN933, Mod2002021Key.BN1073);
+		addBreakdown(Mod2002021BN565_2Key.values(), Mod2002021Key.BN1729, true, Mod2002021Key.BN933, Mod2002021Key.BN1073);
+		addBreakdown(Mod2002021BN565_2Key.values(), Mod2002021Key.BN1079, true, Mod2002021Key.BN1701, Mod2002021Key.BN1729);
+		// Total deducciones a entidades sin fines de lucro (Ley 49/2002)
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN598,"BN1698+BN1079");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN565,"BN1699+BN1080");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN895,"BN1700+BN1081");
 		
+// AQUI ESTAMOS -----------------------------------------------------------------------
 		// Casilla 590: Deducciones Inversión Canarias con limites incrementados
 		addBreakdown(Mod2002021BN590Key.values(), Mod2002021Key.BN590);
 		
@@ -742,6 +809,7 @@ public class Mod2002021Compute {
 		if (fromKey == null)
 			validKey = true;
 		
+		int row = 0;
 		for (IMod200KeysProvider kp : keysProvider) {
 			
 			IMod200Key[] keys = kp.getKeys(); 
@@ -762,34 +830,50 @@ public class Mod2002021Compute {
 				if (!validKey)
 					continue;
 				
-				// Acumular para la fila total
-				for (int i = 0; i < totalRow.length; i++) {
-					if (keys[i] != null)
-						totalRow[i] = totalRow[i] + (totalRow[i].isEmpty() ? "" : "+") + keys[i].toString();				
+				row++;
+				boolean accumulate = true;
+				
+				// Desglose [565], subtotales [1692] y [1704] solo leen filas impares				
+				if (totalRowKey == Mod2002021Key.BN1692 || totalRowKey == Mod2002021Key.BN1704) {
+					if (row % 2 == 0)
+						accumulate = false;					
 				}
 				
-				// Desgloses estandar, donde las 3 ultimas columnas son: pendiente inicio/generado, aplicado, pendiente futuro
-				// Formula para las 3 últimas columnas 
-				// - La última es la diferencia entre la antepenúltima y la penúltima
-				if (computeTotalCol) {
-					Mod2002021Key key1 = (Mod2002021Key) keys[totalRow.length-3];
-					Mod2002021Key key2 = (Mod2002021Key) keys[totalRow.length-2];
-					Mod2002021Key key3 = (Mod2002021Key) keys[totalRow.length-1];
-					// Desglose casilla 082: Lleva una columna más al final que es informativa, luego se cogen las 3 anteriores
-					if (totalRowKey == Mod2002021Key.BN082) {
-						key1 = (Mod2002021Key) keys[totalRow.length-4];
-						key2 = (Mod2002021Key) keys[totalRow.length-3];
-						key3 = (Mod2002021Key) keys[totalRow.length-2];
+				// Desglose [565], subtotales [1695] y [1729] solo leen filas pares
+				if (totalRowKey == Mod2002021Key.BN1695 || totalRowKey == Mod2002021Key.BN1729) {
+					if (row % 2 != 0)
+						accumulate = false;					
+				}
+				
+				if (accumulate) {
+					// Acumular para la fila total
+					for (int i = 0; i < totalRow.length; i++) {
+						if (keys[i] != null)
+							totalRow[i] = totalRow[i] + (totalRow[i].isEmpty() ? "" : "+") + keys[i].toString();				
 					}
-						
-					if (key3 != null && key2 != null && key1 != null) {
-						COMPUTE_EXPRESSION_MAP.put(key3 , key1.toString() + "-" + key2.toString());
+					
+					// Desgloses estandar, donde las 3 ultimas columnas son: pendiente inicio/generado, aplicado, pendiente futuro
+					// Formula para las 3 últimas columnas 
+					// - La última es la diferencia entre la antepenúltima y la penúltima
+					if (computeTotalCol) {
+						Mod2002021Key key1 = (Mod2002021Key) keys[totalRow.length-3];
+						Mod2002021Key key2 = (Mod2002021Key) keys[totalRow.length-2];
+						Mod2002021Key key3 = (Mod2002021Key) keys[totalRow.length-1];
+						// Desglose casilla 082: Lleva una columna más al final que es informativa, luego se cogen las 3 anteriores
+						if (totalRowKey == Mod2002021Key.BN082) {
+							key1 = (Mod2002021Key) keys[totalRow.length-4];
+							key2 = (Mod2002021Key) keys[totalRow.length-3];
+							key3 = (Mod2002021Key) keys[totalRow.length-2];
+						}
+							
+						if (key3 != null && key2 != null && key1 != null) {
+							COMPUTE_EXPRESSION_MAP.put(key3 , key1.toString() + "-" + key2.toString());
+						}
 					}
 				}
 				
 				if (toKey != null && Arrays.asList(keys).contains(toKey))
-					validKey = false;
-				
+					validKey = false;				
 			}
 		}		
 	}
@@ -802,14 +886,39 @@ public class Mod2002021Compute {
 		addBreakdown(keysProvider, totalRowKey, true, null, null);	
 	}
 	
-//	public static void main(String[] args) {
-//				
-//		for (int i = 0; i < COMPUTE_EXPRESSION_MAP.size(); i++) {
-//			System.out.println(
-//					COMPUTE_EXPRESSION_MAP.keySet().toArray()[i] + " -> " +
-//					COMPUTE_EXPRESSION_MAP.values().toArray()[i]   );			
-//		}
-//		
-//    }
+	// Cálculo de la columna 3 de determinados apartados de desglose de Deducciones Doble Imposición
+	
+	private static void addDoubleImpositionBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key taxRateKey) {
+		
+		for (IMod200KeysProvider kp : keysProvider) {
+			
+			IMod200Key[] keys = kp.getKeys(); 
+			
+			if (Arrays.asList(keys).contains(totalRowKey)) {
+				// Hemos llegado a la fila que contiene los totales
+				break;
+			}
+			else { 
+				// Resto de filas, se añade para calcular la columna 3				
+				Mod2002021Key key1 = (Mod2002021Key) keys[0];  // Deduccion pendiente
+				Mod2002021Key key2 = (Mod2002021Key) keys[1];  // Tipo de gravamen periodo de generación
+				Mod2002021Key key3 = (Mod2002021Key) keys[2];  // 2021 deducción pendiente
+				
+				COMPUTE_EXPRESSION_MAP.put(key3, "("+taxRateKey.toString()+"==0||"+key2.toString()+"==0||LQ562==0)?("+key1.toString()+"):(round("+key1.toString()+"*"+taxRateKey.toString()+"/"+key2.toString()+"))");
+				
+			}
+		}		
+	}
+
+	
+	public static void main(String[] args) {
+				
+		for (int i = 0; i < COMPUTE_EXPRESSION_MAP.size(); i++) {
+			System.out.println(
+					COMPUTE_EXPRESSION_MAP.keySet().toArray()[i] + " -> " +
+					COMPUTE_EXPRESSION_MAP.values().toArray()[i]   );			
+		}
+		
+    }
 
 }

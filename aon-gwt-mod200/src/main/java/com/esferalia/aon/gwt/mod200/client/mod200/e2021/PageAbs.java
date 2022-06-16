@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -43,7 +44,6 @@ public abstract class PageAbs extends ResizeComposite {
 	};
 	
 	private HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
-	
 //	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
 
 	protected FlowPanel basePanel;
@@ -57,14 +57,13 @@ public abstract class PageAbs extends ResizeComposite {
 			@Override
 			public void mod200Changed(Mod2002021 mod200) {
 				for (IMod200Key key : inputs.keySet()) {
-					//DoubleVariableEx var = mod200.getDraftMap().get(key);
-					DoubleVariableEx var = mod200.getKeysMap().get(key);
-					//if (var != null && !var.isChangedByUser()) { 
-					if (var != null && var.isChangedByUser()) {
+					DoubleVariableEx var = mod200.getDraftMap().get(key);
+					if (var != null && !var.isChangedByUser()) {
+						// Se repintan los valores calculados automaticamente
 						AonDoubleBox input = inputs.get(key);
-						input.setValue(var.getValue(),false,true); ;						
-						if (input.isEnabled())
-							input.addStyleName(AON.AON_CSS.aonChanged());
+						//input.setValue(var.getValue(),false,true);
+						input.setValue(var.getValue());						
+//						input.addStyleName(AON.AON_CSS.aonChanged());
 					}
 				}
 //				for ( AonBoxLabel label  : labels.values() ) {
@@ -77,17 +76,13 @@ public abstract class PageAbs extends ResizeComposite {
 	protected abstract void populate();
 	protected abstract void initializeTable();
 	
-	protected void dump() {
-//		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
-		for (IMod200Key key : callback.getMod200Object().getMod200().getKeysMap().keySet()) {
+	protected void dump() {		
+		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
 			if (inputs.containsKey(key)) {
 				AonDoubleBox input = inputs.get(key);
-//				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
-				DoubleVariableEx var = callback.getMod200Object().getMod200().getKeysMap().get(key);
-				input.setValue(var.getValue()); 
-				//if (input.isEnabled())
-				if (input.isEnabled() && var.isChangedByUser())  // esto lo pongo cuando quito lo del draft
-					input.addStyleName(AON.AON_CSS.aonChanged());
+				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
+				input.setValue(var.getValue());
+//				input.addStyleName(AON.AON_CSS.aonChanged());
 			}
 		}
 	}
@@ -226,10 +221,6 @@ public abstract class PageAbs extends ResizeComposite {
 						db.setValue(d,true);
 					}
 					
-					// FALTA- SE PODRIA PONER AQUI EL REFRESH DE LAS CASILLAS QUE SE HAYAN MODIFICADO
-					// SIN NECESIDAD DE HACER EL REFRESH DE TODAS LAS PAGINAS
-					//callback.getMod200Object().getMod200()					
-					
 				} catch (ParseException e) {
 					// nothing
 				}
@@ -300,7 +291,7 @@ public abstract class PageAbs extends ResizeComposite {
 						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 						paintDesc = false;
 					}
-					paintKeyField(tableDetail, k, r, col, 9, false);
+					paintKeyField(tableDetail, k, r, col, 9, false);					
 				}
 				++col;
 			}
@@ -510,6 +501,7 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		container.add(label);
 		
-	}	
+	}
+	
 	
 }

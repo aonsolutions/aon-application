@@ -167,8 +167,7 @@ public class Mod2002021Object implements Serializable {
 		DoubleVariableEx newVar = oldVar.clone();
 		newVar.setValue( value );
 		newVar.setChangedByUser(true);
-		//mod200.addDraftVariable(newVar);
-		mod200.addVariable(newVar);
+		mod200.addDraftVariable(newVar);
 		if (isAuthomaticCalculation()) {
 			calculate();
 		}

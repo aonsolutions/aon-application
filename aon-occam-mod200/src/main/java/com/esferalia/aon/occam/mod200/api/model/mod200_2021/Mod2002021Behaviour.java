@@ -483,6 +483,13 @@ public class Mod2002021Behaviour {
 
 		// Desglose Casillas 1033 y 1034 (Reserva de nivelación)
 		addBreakdown(Mod2002021LQ1033_1Key.values(), Mod2002021Key.LQ1033);
+		// Además de la columna y fila de totales, las casillas de la columna 2 tambien son calculadas
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1145,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1456,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1962,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2239,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ2411,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1730,new Boolean[]{FALSE,TRUE});
 		addBreakdown(Mod2002021LQ1033_2Key.values(), Mod2002021Key.LQ1158, new byte[]{});  // No lleva columnas de totales
 		
 		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
