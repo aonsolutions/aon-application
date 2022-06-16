@@ -6,10 +6,7 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -19,11 +16,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONObject;
@@ -37,7 +30,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -45,11 +37,8 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SubmitButton;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -445,6 +434,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("Certific\u00402 (Pdf)", "103");
 		typeLB.addItem("IDC", "104");
 		typeLB.addItem("IDCPlNss", "105");
+		typeLB.addItem("Modificaci\u00f3n Contrato", "107");
 		typeLB.addItem("Otros", "106");
 		return typeLB;
 	}
@@ -573,124 +563,6 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			}
 			
 		});
-	}
-	
-	public void showModificationPdfPopup() {
-		FlowPanel editorPanel = new FlowPanel();
-		editorPanel.setWidth("100%");
-		FormPanel form = new FormPanel("_blank");
-		form.getElement().setPropertyString("acceptCharset", "ISO-8859-1");
-		form.setAction(GWT.getModuleBaseURL() + "modification_form/modificacion.pdf");
-		form.setMethod(FormPanel.METHOD_POST);
-		form.setWidth("100%");
-		form.setHeight("100%");
-		form.setWidget(editorPanel);
-//		editorPanel.add(new Hidden("date", DateTimeFormat.getFormat("dd/MM/yyyy").format(new Date())));
-		editorPanel.add(new Hidden("user", Wnd.getCurrentUser()));
-		editorPanel.add(new Hidden("domain_name", Wnd.getCurrentDomainNameURL()));
-		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-		editorPanel.add(new Hidden("id", "" + contractId));
-		
-		Label titleLabel = new Label("T\u00EDtulo");
-		titleLabel.addStyleName(AON.CSS.aonFontSmall());
-		titleLabel.setWidth("85.75%");
-		titleLabel.getElement().getStyle().setProperty("margin", "1em auto 2px auto");
-		titleLabel.getElement().getStyle().setProperty("textTransform", "uppercase");
-		titleLabel.getElement().getStyle().setProperty("fontWeight", "bold");
-		editorPanel.add(titleLabel);
-		
-		TextBox titleBox = new TextBox();
-		titleBox.setName("title");
-		titleBox.setWidth("85.5%");
-		titleBox.getElement().getStyle().setDisplay(Display.BLOCK);
-		titleBox.getElement().getStyle().setProperty("margin", "0 auto 1em auto");
-		titleBox.getElement().getStyle().setProperty("borderRadius", "5px");
-		titleBox.setHeight("1.5em");
-		titleBox.getElement().setPropertyString("placeholder", "NOTIFICACI\u00D3N LABORAL");
-		editorPanel.add(titleBox);
-		
-		Label areaLabel = new Label("Informaci\u00F3n");
-		areaLabel.addStyleName(AON.CSS.aonFontSmall());
-		areaLabel.setWidth("85.75%");
-		areaLabel.getElement().getStyle().setProperty("margin", "1em auto 2px auto");
-		areaLabel.getElement().getStyle().setProperty("textTransform", "uppercase");
-		areaLabel.getElement().getStyle().setProperty("fontWeight", "bold");
-		editorPanel.add(areaLabel);
-		
-		TextArea textArea = new TextArea();
-		textArea.setName("info");
-		textArea.setVisibleLines(10);
-		textArea.setWidth("85%");
-		textArea.getElement().getStyle().setDisplay(Display.BLOCK);
-		textArea.getElement().getStyle().setProperty("margin", "0 auto");
-		textArea.getElement().getStyle().setProperty("borderRadius", "5px");
-		textArea.getElement().setPropertyString("placeholder", "INFORMACI\u00D3N ADICIONAL");
-		editorPanel.add(textArea);
-		
-		Label dateLabel = new Label("Fecha");
-		dateLabel.addStyleName(AON.CSS.aonFontSmall());
-		dateLabel.setWidth("85.75%");
-		dateLabel.getElement().getStyle().setProperty("margin", "1em auto 2px auto");
-		dateLabel.getElement().getStyle().setProperty("textTransform", "uppercase");
-		dateLabel.getElement().getStyle().setProperty("fontWeight", "bold");
-		editorPanel.add(dateLabel);
-		
-		AonDateBox dateBox = new AonDateBox();
-		dateBox.setWidth("30%");
-		dateBox.getElement().setPropertyString("name", "date");
-		dateBox.getElement().setPropertyString("pattern", "[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}");
-		dateBox.getElement().getStyle().setDisplay(Display.BLOCK);
-		dateBox.getElement().getStyle().setProperty("margin", "0 0 1em 7%");
-		dateBox.getElement().getStyle().setProperty("borderRadius", "5px");
-		dateBox.setHeight("1.5em");
-		dateBox.getElement().setPropertyString("placeholder", DateTimeFormat.getFormat("dd/MM/yyyy").format(new Date()));
-		editorPanel.add(dateBox);
-		
-		SubmitButton acceptButton = new SubmitButton("GENERAR");
-		acceptButton.getElement().removeClassName("gwt-Button");
-		
-		acceptButton.setHeight("3em");
-		acceptButton.setWidth("15%");
-		acceptButton.getElement().getStyle().setDisplay(Display.BLOCK);
-		acceptButton.getElement().getStyle().setProperty("borderRadius", "5px");
-		acceptButton.getElement().getStyle().setProperty("margin", "1em auto");
-		acceptButton.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		acceptButton.getElement().getStyle().setBackgroundColor("#002469");
-		acceptButton.getElement().getStyle().setColor("white");
-		acceptButton.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
-		acceptButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		acceptButton.getElement().getStyle().setProperty("boxShadow", "lightgray 1px 1px 2px 2px");
-		acceptButton.addMouseOverHandler(ev -> {
-			acceptButton.getElement().getStyle().setBackgroundColor("#7A9AD7");
-			acceptButton.getElement().getStyle().setProperty("boxShadow", "none");
-			acceptButton.getElement().getStyle().setCursor(Cursor.POINTER);
-		});
-		acceptButton.addMouseOutHandler(ev -> {
-			acceptButton.getElement().getStyle().setBackgroundColor("#002469");
-			acceptButton.getElement().getStyle().setProperty("boxShadow", "lightgray 1px 1px 2px 2px");
-			acceptButton.getElement().getStyle().setCursor(Cursor.DEFAULT);
-		});
-		
-		editorPanel.add(acceptButton);
-		
-		CustomDialog dialog = new CustomDialog();
-		dialog.setCaption("DOCUMENTO DE MODIFICACI\u00D3N");
-		dialog.setWidget(form);
-		
-		dialog.setWidth("60vw");
-		dialog.setAutoHideEnabled(false);
-		if (!dialog.isShowing()) {
-			dialog.show();
-			dialog.center();
-		}
-		
-		form.addSubmitCompleteHandler(ev -> {			
-			dialog.hide();
-		});
-//		acceptButton.addClickHandler(ev -> {
-//			form.submit();
-//		});
-		
 	}
 
 	// ------------------------------------------------------ Abstract Methods
