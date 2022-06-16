@@ -29,8 +29,6 @@ import static java.util.stream.Collectors.summingDouble;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -197,8 +195,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.Enterprise
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
@@ -6191,6 +6189,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return dataUri;
 
 		} catch (SQLException | SepeException | IOException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -7043,6 +7042,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setIpf(ipf);
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setFrb(employeeContractInfo.getContractInfo().getEndDate());
+		builder.setFrv(employeeContractInfo.getContractInfo().getHolidaysDate());
 		builder.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
 		builder.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));

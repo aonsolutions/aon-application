@@ -1068,6 +1068,7 @@ public class JooqEmployee {
 				.fetch();
 		
 		contractData.setHasSettle(settlementRecords.isNotEmpty());
+		if(settlementRecords.isNotEmpty()) contractData.setHolidaysDate(settlementRecords.get(0).get(SALARY.END_DATE));
 		
 		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)
