@@ -79,7 +79,7 @@ export const buildTextareaToolbar =  (aonTextArea) => {
         name:MSG.ADD_FILE
     },() =>{});
 
-
+    aonTextArea.addColorPicker(MATERIAL_ICONS.FORMAT_LIST_NUMBERED);
 }
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
