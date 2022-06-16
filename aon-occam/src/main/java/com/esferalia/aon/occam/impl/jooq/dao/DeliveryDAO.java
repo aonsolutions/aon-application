@@ -225,7 +225,9 @@ public class DeliveryDAO {
 	}
 	
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
-		List<Tag> tagList = TagDAO.getList(ctx, f -> f.getTypeProperty().eq(TagType.PACKING.value()));
+		List<Tag> tagList = TagDAO.getList(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getTypeProperty().eq(TagType.PACKING.value())));
+		
 		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
 			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
 			.fetchGroups(
@@ -444,12 +446,16 @@ public class DeliveryDAO {
 	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter){
+		List<Tag> tagList = TagDAO.getList(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getTypeProperty().eq(TagType.PACKING.value())));
+	
 		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
 				.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.join(DELIVERY).on(DELIVERY.ID.eq(DELIVERY_DETAIL.DELIVERY))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new DeliveryDetailFiller());
+			.fetch().stream().map(new DeliveryDetailFiller())
+			.map(detail -> detail.setItem(completeItemPackingTag(detail.getItem(), tagList)));
 	}
 	
 	public static DeliveryDetail insertDeliveryDetail(AONContext ctx, DeliveryDetail detail) {
