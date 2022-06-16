@@ -8,7 +8,7 @@ public enum ProductType implements Serializable {
 	
 	LABOUR("Mano de Obra"),
     SERVICE("Servicio"),
-	COMMERCIAL_PRODUCT("Product Comercial"),
+	COMMERCIAL_PRODUCT("Producto Comercial"),
 	EXTERNAL_WORK("Trabajo Externo"),
 	EXPENSE("Gasto"),
 	PREPAYMENT("Suplidos"),
