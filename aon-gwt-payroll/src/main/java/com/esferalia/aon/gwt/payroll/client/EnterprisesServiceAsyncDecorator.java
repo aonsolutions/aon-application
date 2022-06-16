@@ -655,7 +655,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> callback) {
+	public void getContractOtherInfo(String currentDomainName, Integer contractId, Integer contractType, AsyncCallback<Map<String, String>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getContractOtherInfo(currentDomainName, contractId, contractType, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}

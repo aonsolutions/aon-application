@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
@@ -608,7 +609,7 @@ public class DeliveryCreator implements Serializable {
 				elaborationDetail.setElaboration(elaboration);
 				elaborationDetail.setDate(new Date());
 				elaborationDetail
-						.setItem(obtainItem(ctx, linea.getPRODUCTO(), test));
+						.setItem(obtainItem(ctx, linea.getPRODUCTO(), test).toNewItem());
 				elaborationDetail.setQuantity(Double.valueOf(linea.getCANTIDAD()));
 				elaborationDetail.setWarehouse(null);
 				elaborationDetail.setAddInfo("");
@@ -630,7 +631,7 @@ public class DeliveryCreator implements Serializable {
 									elaborationDetailComposition
 									.setElaborationDetail(elaborationDetail);
 									elaborationDetailComposition
-									.setItem(compositionItem);
+									.setItem(compositionItem.toNewItem());
 									elaborationDetailComposition.setQuantity(Double
 											.valueOf(lineaComposicion.getCANTIDAD()));
 									elaborationDetailComposition.setWarehouse(null);
@@ -654,7 +655,7 @@ public class DeliveryCreator implements Serializable {
 					ElaborationDAO.insertElaborationDetailComposition(ctx, c);
 				});
 
-				elaboration.setStatus(ElaborationStatus.CLOSED.value());
+				elaboration.setStatus(ElaborationStatus.CLOSED);
 				elaboration.setModificationUser(ctx.getUser());
 				elaboration.setModificationDate(new Date());
 				ElaborationDAO.updateElaboration(ctx, elaboration);
@@ -667,7 +668,7 @@ public class DeliveryCreator implements Serializable {
 		Elaboration elaboration = obtainElaboration(ctx,
 				linea.getDATOSELABORACIONORIGEN());
 		if (elaboration != null && elaboration.getId() != null) {
-			elaboration.setStatus(ElaborationStatus.FAIL.value());
+			elaboration.setStatus(ElaborationStatus.FAIL);
 			elaboration.setRemarks(StringUtils.mid(cause, 0, 128));
 			elaboration.setModificationUser(ctx.getUser());
 			elaboration.setModificationDate(new Date());
@@ -979,7 +980,7 @@ public class DeliveryCreator implements Serializable {
 		Elaboration elaboration = obtainElaboration(ctx,
 				linea.getDATOSELABORACIONORIGEN());
 		if (elaboration != null && elaboration.getId() != null
-				&& elaboration.getSource() == 0 // SALES
+				&& ElaborationSource.SALES.equals(elaboration.getSource())// SALES
 				&& elaboration.getSourceId() != null) {
 			Integer salesDetailId = elaboration.getSourceId();
 			try {

@@ -310,8 +310,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(),
-					contrataEmployeeObject.getContractStartDate());
+			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(), contrataEmployeeObject.getContractStartDate()) {
+					@Override
+					protected void onAccept() {
+						// Nothing to refresh
+					}
+			};
 		}
 	}
 
@@ -1935,7 +1939,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		AonToolbarButton pdfExportBtn = new AonToolbarButton("Generar Borrador Contrato", AON.CSS.aonIconPdf());
 		pdfExportBtn.addClickHandler(e -> contractAttachUI.exportContract());
 		hPanel.add(pdfExportBtn);
-
+		
+		AonToolbarButton pdfModifyBtn = new AonToolbarButton("Generar Documento Modificaci\u00F3n", AON.CSS.aonIconData());
+		pdfModifyBtn.addClickHandler(e -> contractAttachUI.showModificationPdfPopup());
+		hPanel.add(pdfModifyBtn);
+		
 		return hPanel;
 	}
 

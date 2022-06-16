@@ -302,6 +302,8 @@ export const IMG_MAX_WIDTH = "imgMaxWidth";
 export const AON_FA_SPIN = 'aonFaSpin';
 export const AON_FA_PULSE = 'aonFaPulse';
 
+export const TEXT_DECORATION_NONE = 'textDecorationNone';
+
 
 // aon-textarea 
 

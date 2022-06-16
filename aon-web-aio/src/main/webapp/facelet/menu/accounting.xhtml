@@ -513,7 +513,7 @@
 	********************************************************************************************************* 
 	********************************************************************************************************* 
  -->
-				<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable and !userUtils.newAONTheme}">
 
 					<aon:div style="padding: 10px; border: solid red 1px;">
 						<aon:div style="text-align: center; margin-bottom: 10px;">

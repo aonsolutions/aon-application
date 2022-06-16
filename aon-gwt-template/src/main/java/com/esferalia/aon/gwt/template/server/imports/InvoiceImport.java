@@ -1118,9 +1118,10 @@ public class InvoiceImport {
 				throw new Exception("% Retención y Cuota Retención no coinciden.");
 			}
 		}
-		
-		if(Utils.isAyudaT(domain.getName()) && AonDateUtils.getYear(iic.getDate()) < 2020) {
-			throw new Exception("La Factura es del ejercicio " + AonDateUtils.getYear(iic.getDate()));
+
+		AccountPeriod period = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", iic.getDate());
+		if(period.isClosed()) {
+			throw new Exception("El Ejercicio " + period.getName() + " de la factura está cerrado.");
 		}
 	}
 	

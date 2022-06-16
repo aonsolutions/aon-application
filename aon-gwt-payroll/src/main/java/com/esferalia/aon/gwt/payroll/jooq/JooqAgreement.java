@@ -120,12 +120,12 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	}
 
-	public static void updatePayment(Connection conn, Integer agreementId, Payment payment)
+	public static void updatePayment(Connection conn, Integer domainId, Integer agreementId, Payment payment)
 			throws SQLException {
-		updatePayment(DSL.using(conn, getDefaultSettings()), agreementId, payment);
+		updatePayment(DSL.using(conn, getDefaultSettings()), domainId, agreementId, payment);
 	}
 
-	public static void updatePayment(DSLContext dslContext, Integer agreementId, Payment payment)
+	public static void updatePayment(DSLContext dslContext, Integer domainId, Integer agreementId, Payment payment)
 			throws SQLException {
 		if (payment.getConceptId() != null && payment.getConceptId() < 0) {
 			updatePaymentConcept(dslContext, payment);
@@ -137,6 +137,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					EPOCH, 
 					null);
 		} else {
+			// Esto se puede subir al primer if quitando que sea menor 0 (comentar con Julio)
+			if(AonStringUtils.isNotBlank(payment.getName()) && null != payment.getConceptId() && payment.getConceptId() > 0)
+				updatePaymentConcept(dslContext, payment);
+				
 			updateAgreementPayment(dslContext, payment);
 		}
 		

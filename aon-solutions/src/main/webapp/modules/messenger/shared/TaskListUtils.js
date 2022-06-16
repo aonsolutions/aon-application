@@ -1,0 +1,559 @@
+import { AonIcon } from "../../../components/aon-icon.js";
+import {
+  AON_ICONS,
+  COLORS,
+  CONSTANT,
+  CSS,
+  EVENT,
+  MATERIAL_ICONS,
+  TAG,
+} from "../../../environments/environments.js";
+import { getTaskOne } from "../../../services/taskService.js";
+import { sortBy } from "../../../services/utils.js";
+import { setStyles } from "../../../services/utilsComponents.js";
+import { firstLetters, StringTwoLetters } from "../../timecontrol/time-control/utils.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import { MESSENGER_VIEWS, TAG_TYPE, TASK_STATUS } from "../MessengerEnums.js";
+import { createTagHtml } from "./creationUtils.js";
+import { getIconJson, taskNumberParse } from "./utils.js";
+
+// ------------DESKTOP
+const getTitleHtmlDesktop = (res) => {
+  const title = res.title || "Sin asunto";
+  let div = setStyles(document.createElement(TAG.DIV), {
+    top: "-15px",
+    position: "absolute",
+    left: "0",
+    right: "0",
+  });
+
+  let divFlex = setStyles(document.createElement(TAG.DIV), {
+    display: "flex",
+    whiteSpace: "nowrap",
+  });
+
+  div.appendChild(divFlex);
+
+  const divOne = setStyles(document.createElement(TAG.DIV), {
+    fontWeight: "550",
+    fontSize: "14px",
+    overflow: CONSTANT.HIDDEN,
+  });
+  divOne.innerText = title;
+  divOne.title = title;
+
+  divFlex.appendChild(divOne);
+
+  const divTwo = setStyles(document.createElement(TAG.DIV), {
+    display: "flex",
+    overflow: CONSTANT.HIDDEN,
+    marginLeft: "5px",
+    marginTop: "-4px",
+    gap: "3px",
+  });
+
+  divFlex.appendChild(divTwo);
+
+  getTagsLabel(res.tags).forEach((tag) => {
+    setStyles(createTagHtml(tag, divTwo), {
+      margin: "0",
+      textAlign: "center",
+    });
+  });
+
+  return div;
+};
+
+const getSubTitleHtml = (res, doc, documentTh) => {
+  const type = getTagType(res.tags) || "";
+  // sender
+  const sender = getSender(res, doc, documentTh);
+
+  //----------- DESCRIPTION
+  let description = res.description;
+  try {
+    description = JSON.parse(res.description).observation;
+  } catch (e) {}
+
+  let div = setStyles(document.createElement(TAG.DIV), {
+    position: "absolute",
+    top: "6px",
+    left: "0",
+    right: "0",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+  });
+
+  let spanOne = document.createElement(TAG.SPAN);
+  const subTitle = `${type} ${res.newNumber}`;
+  spanOne.title = `${subTitle} ${sender}`;
+  spanOne.innerHTML = `${subTitle} <b>${sender}</b>`;
+  div.appendChild(spanOne);
+
+  if (description) {
+    const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, " ");
+    let span = setStyles(document.createElement(TAG.SPAN), {
+      color: "grey",
+      marginLeft: "3px",
+    });
+    span.textContent = dText;
+    span.title = dText;
+    div.appendChild(span);
+  }
+  return div;
+};
+// ------------END DESKTOP
+
+// ------------MOBILE
+
+const getTitleMobile = (res, doc, documentTh) => {
+  const div = setStyles(document.createElement(TAG.DIV), { display: "flex" });
+
+  const senderDiv = setStyles(document.createElement(TAG.DIV), {
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    fontWeight: "500",
+  });
+
+  senderDiv.innerText = getSender(res, doc, documentTh);
+  div.appendChild(senderDiv);
+
+  const dateDiv = setStyles(document.createElement(TAG.DIV), {
+    color: "grey",
+    marginLeft: "auto",
+    fontSize: "14px",
+    fontWeight: "500",
+  });
+
+  div.appendChild(dateDiv);
+
+  const date = AonDateUtils.getDayMonthOrFull(res.date);
+
+  dateDiv.innerText = date;
+
+  return div.outerHTML;
+};
+
+const getSubtitleMobileOne = (res) => {
+  const div = setStyles(document.createElement(TAG.DIV), { color: "black" });
+  div.innerText = res.title || "Sin asunto";
+  return div.outerHTML;
+};
+
+const getSubtitleMobileTwo = (res) => {
+  const type = getTagType(res.tags) || "";
+  const div = setStyles(document.createElement(TAG.DIV), { display: "flex" });
+
+  const divOne = document.createElement(TAG.DIV);
+  divOne.innerText = type + " " + res.newNumber;
+  div.appendChild(divOne);
+
+  const divTwo = setStyles(document.createElement(TAG.DIV), {
+    display: "flex",
+    gap: "2px",
+    marginLeft: "2px",
+    overflow: "hidden",
+    height: "19px",
+    flexWrap: "wrap",
+  });
+
+  div.appendChild(divTwo);
+
+  getTagsLabel(res.tags).forEach((tag) => {
+    setStyles(createTagHtml(tag, divTwo), {
+      margin: "0",
+      textAlign: "center",
+      padding: "1px 4px",
+      height: "19px",
+      fontSize: "12px",
+    });
+  });
+
+  return div.outerHTML;
+};
+//----------END MOBILE
+
+const addTaskChilds = (task, row, documents, isCau) => {
+  try {
+    document.querySelectorAll(`div[data-task-id='${task.id}']`).forEach((l) => l.remove());
+
+    const parent = row.parent;
+
+    let paddingBottom = 25;
+    let top = 21;
+    let childs = [];
+
+    if (task.childs && task.childs.length) {
+      childs.push(...task.childs);
+    } else if (task.parentObj && typeof task.parentObj === "object") {
+      childs.push(task.parentObj);
+    }
+
+    if (isCau && childs.length) {
+      //distinct task for workgroup
+      childs = sortBy(childs, "id", "desc")
+        .filter((t) => t.workgroup && t.workgroup.id)
+        .filter((t, idx, self) => self.map((x) => x.workgroup.id).indexOf(t.workgroup.id) === idx);
+
+      childs = sortBy(childs, "id", "asc");
+    }
+
+    childs.forEach((t, idx) => {
+      let { person, workgroupDescription } = getAssined(t, documents.domainId);
+
+      let assigned = person || workgroupDescription;
+
+      if (idx > 0) {
+        top = top + 15;
+        paddingBottom = paddingBottom + 15;
+      } else {
+        paddingBottom = paddingBottom + 5;
+      }
+
+      const div = setStyles(document.createElement(TAG.DIV), {
+        top: `${top}px`,
+        color: "grey",
+        display: "flex",
+        position: "absolute",
+        left: "0",
+        right: "0",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        gap: "4px",
+        transition: "opacity .5s linear",
+        opacity: "1",
+      });
+      div.dataset.taskId = task.id;
+
+      div.dataset.taskChild = t.id;
+
+      parent.appendChild(div);
+
+      let icon = getIcon(t, isCau, "16px", true);
+      icon.style.display = "inline-block";
+      div.appendChild(icon);
+
+      const sender = getSender(t, documents.document, documents.documentTh);
+      let span = document.createElement(TAG.SPAN);
+      span.className = CSS.AON_LINK;
+      span.innerText = taskNumberParse(t.number);
+      span.title = "Creador por " + sender;
+      if (!isCau) {
+        span.addEventListener(EVENT.CLICK, (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST).goMessengerChat(t, 0);
+        });
+      } else {
+        assigned = workgroupDescription || null;
+        span.classList.add(CSS.TEXT_DECORATION_NONE);
+      }
+      div.appendChild(span);
+
+      if (assigned) {
+        const spanTwo = document.createElement(TAG.SPAN);
+        spanTwo.innerText = `Asignada a ${assigned}`;
+        div.appendChild(spanTwo);
+      }
+
+      let spanThree = document.createElement(TAG.SPAN);
+      spanThree.innerText =
+        firstLetters(AonDateUtils.setFullDate(t.creation_date)) +
+        " " +
+        AonDateUtils.setTime(t.creation_date);
+      div.appendChild(spanThree);
+    });
+
+    row.paddingBottom = paddingBottom;
+
+    if (parent.parentNode && parent.parentNode.parentNode) {
+      const tr = parent.parentNode.parentNode;
+      tr.style.paddingBottom = paddingBottom + "px";
+    }
+
+    // CHANGE COLORS ALL BRANCH CLOSES
+    const length = childs.length;
+    if (length > 0) {
+      let tasksClosed = childs.filter(({ status }) => status === TASK_STATUS.FINISHED);
+      if (tasksClosed.length === length) {
+        let iconParent = document.querySelector(`span[data-task-id='${task.id}']`);
+        if (iconParent) {
+          iconParent.style.color = CSS.variable(COLORS.MATERIAL_RED);
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getIcon = (task, isCau, size = undefined, isChild = undefined) => {
+  const { source, status, parent, id } = task;
+
+  let div = document.createElement(TAG.DIV);
+
+  let iconJson = getIconList({ source, status, parent });
+
+  let span = setStyles(document.createElement(TAG.SPAN), {
+    color: iconJson.icon_color,
+    position: "relative",
+  });
+  span.title = source;
+  div.appendChild(span);
+
+  span.dataset.taskId = id;
+  if (isChild) {
+    span.dataset.isChild = isChild;
+  } else {
+    try {
+      let arr = [];
+      if (task.parent) {
+        arr.push(task.parent);
+      }
+      if (task.childs && task.childs.length) {
+        task.childs.forEach((k) => arr.push(k.id));
+      }
+      if (arr.length) {
+        span.dataset.taskChild = arr.join(",");
+      }
+    } catch (e) {}
+  }
+
+  let icon = document.createElement(TAG.I);
+
+  if (iconJson.aonIcon) {
+    icon = new AonIcon();
+    icon.icon = iconJson.aonIcon;
+    icon.color = iconJson.icon_color;
+    if (size) {
+      icon.size = size;
+    }
+  } else {
+    icon.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
+    icon.textContent = iconJson.icon;
+    if (size) {
+      icon.style.fontSize = size;
+    }
+  }
+
+  span.appendChild(icon);
+
+  if (!isCau) {
+    div.addEventListener(EVENT.CLICK, (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      const aonMessengerList = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+      const documents = aonMessengerList.getDocuments();
+      getTaskOne({ id }).then((t) => {
+        let row = aonMessengerList.ROWS.find((x) => x.id === t.id);
+        if (row && row.parent) {
+          addChilds(t, row, documents, isCau);
+        }
+      });
+    });
+  }
+
+  return div;
+};
+
+const getAssignedHtml = (res, domainId) => {
+  let { person, workgroupDescription } = getAssined(res, domainId);
+
+  let div = setStyles(document.createElement(TAG.DIV), {
+    display: "flex",
+    gap: "4px",
+  });
+
+  if (workgroupDescription) {
+    const color = person ? "949393" : "FF6F1D";
+    const divOne = setStyles(document.createElement(TAG.DIV), {
+      border: `2px solid #${color}`,
+      color: `#${color}`,
+      borderRadius: "29px",
+      height: "23px",
+      lineHeight: "21px",
+      width: "23px",
+      display: "block",
+      fontSize: "15px",
+      textAlign: "center",
+    });
+    divOne.title = workgroupDescription;
+    div.appendChild(divOne);
+
+    const icon = setStyles(document.createElement(TAG.I), {
+      fontSize: "17px",
+      lineHeight: "19px",
+    });
+
+    icon.className = CSS.MATERIAL_ICONS;
+    icon.innerText = MATERIAL_ICONS.PEOPLE_ALT;
+    divOne.appendChild(icon);
+  }
+
+  if (person) {
+    const divTwo = setStyles(document.createElement(TAG.DIV), {
+      border: `2px solid ${CSS.variable(COLORS.AON_BLACK)}`,
+      color: CSS.variable(COLORS.AON_BLACK),
+      borderRadius: "29px",
+      height: "23px",
+      lineHeight: "21px",
+      width: "23px",
+      display: "block",
+      fontSize: "14px",
+      textAlign: "center",
+    });
+
+    divTwo.innerText = StringTwoLetters(person.toUpperCase());
+    divTwo.title = person;
+    div.appendChild(divTwo);
+  }
+
+  if (!workgroupDescription && !person) {
+    const divOne = setStyles(document.createElement(TAG.DIV), {
+      border: `2px solid #f44336`,
+      color: `#f44336`,
+      borderRadius: "29px",
+      height: "23px",
+      lineHeight: "21px",
+      width: "23px",
+      display: "block",
+      fontSize: "15px",
+      textAlign: "center",
+    });
+
+    divOne.title = "Sin asignar";
+    div.appendChild(divOne);
+
+    const icon = setStyles(document.createElement(TAG.I), {
+      fontSize: "17px",
+      lineHeight: "19px",
+    });
+
+    icon.className = CSS.MATERIAL_ICONS;
+    icon.innerText = MATERIAL_ICONS.GROUP_OFF;
+    divOne.appendChild(icon);
+  }
+
+  return div;
+};
+
+const getAssined = (res, domainId) => {
+  const workgroup = res.workgroup;
+
+  let person = undefined;
+
+  let workgroupDescription = undefined;
+
+  if (res.domain && res.domain.id && domainId !== parseInt(res.domain.id)) {
+    person = res.domain.description;
+  } else if (res.task_holder && res.task_holder.id) {
+    person = res.task_holder.alias || res.task_holder.name;
+  }
+
+  if (workgroup && workgroup.description) {
+    workgroupDescription = workgroup.description;
+  }
+
+  return {
+    person,
+    workgroupDescription,
+  };
+};
+
+const getSender = (res, document, documentTh) => {
+  let sender = "";
+  if (res.registry && res.registry.name && document !== res.registry.document) {
+    sender = `${res.registry.name} ${sender}`;
+  } else if (res.sender && res.sender.name && documentTh !== res.sender.document) {
+    sender = `${res.sender.name} ${sender}`;
+  } else if (res.workgroup && res.workgroup.description) {
+    // GRUPO ASIGNADO
+    sender = res.workgroup.description;
+  } else {
+    sender = "SIN GRUPO ASIGNADO";
+  }
+
+  return sender;
+};
+
+const getTagsLabel = (tags) =>
+  tags && tags.length ? tags.filter(({ tag_type }) => tag_type === TAG_TYPE.TASK_LABEL) : [];
+
+const getTagType = (tags) => {
+  if (tags && tags.length) {
+    let type = tags.find((tag) => tag.tag_type === TAG_TYPE.TASK_TYPE);
+    return type ? type.name : null;
+  }
+  return null;
+};
+
+const getIconList = ({ source, status, parent }) => {
+  let json = {
+    ...getIconJson({ source, status }),
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED,
+    icon_title: source,
+  };
+
+  if (parent) {
+    json.aonIcon = AON_ICONS.AON_BRANCH;
+  }
+
+  return json;
+};
+
+const getDateParseNew = ({ gtask_id, date }) => {
+  const email = gtask_id;
+
+  const style = {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+  };
+
+  const div = setStyles(document.createElement(TAG.DIV), { position: "relative" });
+
+  const dateText = firstLetters(AonDateUtils.setFullDate(date)) + " " + AonDateUtils.setTime(date);
+
+  const divTwo = setStyles(document.createElement(TAG.DIV), {
+    bottom: email ? "-1px" : "-9px",
+    ...style
+  });
+
+  divTwo.innerText = dateText;
+  divTwo.title = dateText;
+  div.appendChild(divTwo);
+
+  if (email) {
+    const divThree = setStyles(document.createElement(TAG.DIV), {
+      color: "grey",
+      position: "absolute",
+      top: "4px",
+      ...style
+    });
+    divThree.textContent = email;
+    divThree.title = email;
+
+    div.appendChild(divThree);
+  }
+
+  return div;
+};
+
+export const TaskListUtils = {
+  getTitleHtmlDesktop,
+  getSubTitleHtml,
+  getTitleMobile,
+  getSubtitleMobileOne,
+  getSubtitleMobileTwo,
+  addTaskChilds,
+  getIcon,
+  getIconList,
+  getAssignedHtml,
+  getDateParseNew
+};

@@ -375,53 +375,60 @@ export class AonTextArea extends AonElement {
 		if(el) el.appendChild(element);
 	}
 
-	getValue() {return this.value && this.value === 'true';}
+	getValue() {
+		return this.value && this.value === 'true';
+	}
 
-	async addFiles(files){
-		let div = this.getSelectionForAdd();
-
+	async addFiles(files, parent=undefined) {
 		for await (const file of files) {
-			const reader = await getReader(file).catch(()=>null);
-			if(reader) {
-				
-				const fileId = Math.random().toString(36).substring(7);
-
-				this.FILES.push({
-					contentType: reader.contentType,
-					content: reader.content,
-					id:fileId
-				});
-
-				const url = this.convertBase64Url(reader.content, reader.contentType);
-				let element = null;
-				if(reader.contentType && reader.contentType.indexOf("image")>-1){
-					element = document.createElement(TAG.IMG);
-					element.src = url;
-					element.className = CSS.AON_IMG_COMMENT;
-				} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
-					element = document.createElement("video");
-					element.controls = true;
-					element.style.width = "100%";
-					element.style.minHeight = element.style.maxHeight = "184px";
-					const source = document.createElement("source");
-					source.src = url;
-					source.type = reader.contentType;
-					element.appendChild(source);
-				} else {
-					element = document.createElement(TAG.A);
-					element.target = "_blank";
-					element.className = CSS.AON_LINK;
-					element.href = url;
-					element.textContent = reader.name;
-				}
-				element.dataset.id = fileId;
-				element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
-				element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-				div.appendChild(element);
-				div.appendChild(document.createElement("br"));
-			}
+			await this.addFile(file, parent);
 		}
-		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+	}
+
+	async addFile(file, parent=undefined) {
+		let div = parent || this.getSelectionForAdd();
+
+		const reader = await getReader(file).catch(()=>null);
+		if(reader) {
+			
+			const fileId = Math.random().toString(36).substring(7);
+
+			this.FILES.push({
+				contentType: reader.contentType,
+				content: reader.content,
+				id:fileId
+			});
+
+			const url = this.convertBase64Url(reader.content, reader.contentType);
+			let element = null;
+			if(reader.contentType && reader.contentType.indexOf("image")>-1){
+				element = document.createElement(TAG.IMG);
+				element.src = url;
+				element.className = CSS.AON_IMG_COMMENT;
+			} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
+				element = document.createElement("video");
+				element.controls = true;
+				element.style.width = "100%";
+				element.style.minHeight = element.style.maxHeight = "184px";
+				const source = document.createElement("source");
+				source.src = url;
+				source.type = reader.contentType;
+				element.appendChild(source);
+			} else {
+				element = document.createElement(TAG.A);
+				element.target = "_blank";
+				element.className = CSS.AON_LINK;
+				element.href = url;
+				element.textContent = reader.name;
+			}
+			element.dataset.id = fileId;
+			element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
+			element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
+			div.appendChild(element);
+			div.appendChild(document.createElement(TAG.BR));
+
+			this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+		}
 	}
 
 	getToolbar(){
@@ -436,6 +443,7 @@ export class AonTextArea extends AonElement {
 			divTextArea.classList.add('highlight');
 			divTextArea.setAttribute("placeholder", "");
 		} 
+		
 		const unhighlight = () =>{
 			divTextArea.classList.remove('highlight');
 			divTextArea.setAttribute("placeholder", this.placeholder);

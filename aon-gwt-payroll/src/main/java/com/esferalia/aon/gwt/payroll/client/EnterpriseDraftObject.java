@@ -59,11 +59,14 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 			@Override
 			public void onSuccess(EnterpriseInfo enterpriseInfoIn) {
 				enterpriseInfo = enterpriseInfoIn;
-				agreements = getActiveAgreements(enterpriseInfo.getAgreements());
 				scopes = enterpriseInfo.getScopes();
 				success.accept(enterpriseInfoIn);
 			}
 		});	
+	}
+	
+	public void setAgreements(List<Agreement> agreementsContext) {
+		agreements = getActiveAgreements(agreementsContext);
 	}
 	
 	private List<Agreement> getActiveAgreements(List<Agreement> agreements) {

@@ -18,6 +18,7 @@ export class Task {
   workflow;
   description;
   status;
+  evaluation;
   source;
   source_id;
   gtask_id;
@@ -39,9 +40,9 @@ export class Task {
   domainCompany;
   
   constructor(task) {
-    if(task)
+    if(task){
       this.setTask(task);
-    else {
+    } else {
       this.id          = undefined;
       this.number      = undefined;
       this.title       = undefined;
@@ -52,6 +53,7 @@ export class Task {
       this.parent      = undefined;
       this.auth        = undefined;
       this.parentObj   = undefined;
+      this.evaluation  = undefined;
       this.domain      = new Domain();
       this.workgroup   = new Workgroup();
       this.project     = new Project();
@@ -81,6 +83,7 @@ export class Task {
       this.setId(task.id || undefined);
       this.setAuth(task.auth || {});
       this.setStatus(task.status || TASK_STATUS.PENDING);
+      this.setEvaluation(task.evaluation);
       this.setNumber(task.number || undefined);
       this.setWorkgroup(new Workgroup(task.workgroup));
       this.setRegistry(new Registry(task.registry));
@@ -100,8 +103,10 @@ export class Task {
       this.setChilds(task.childs || []);
       this.setParentObj(task.parentObj || undefined);
       this.setDomainTmp(this.domain);
-      if(task.domainCompany) 
+
+      if(task.domainCompany) {
         this.setDomainCompany(task.domainCompany);
+      }
 
       this.setWorkflowTmp({
         comment:"",
@@ -125,6 +130,7 @@ export class Task {
       if(task.workgroup && task.workgroup.id)     this.setWorkgroup(new Workgroup(task.workgroup));
       if(task.task_holder && task.task_holder.id) this.setTaskHolder(task.task_holder);
       if(task.status)                             this.setStatus(task.status);
+      if(task.evaluation)                         this.setEvaluation(task.evaluation);
       if(task.source_id)                          this.setSourceId(task.source_id);
       if(task.registry && task.registry.id)       this.setRegistry(new Registry(task.registry));
       if(task.project && task.project.id)         this.setProject(new Project(task.project));
@@ -136,23 +142,6 @@ export class Task {
       this.setFiles([]);
     }
   }
-
-  /**
-   * 
-   * @param {Boolean} projectDefault default project, false clean, true not clean
-   */
-  // cleanTask(projectDefault=false){
-  //   this.workgroup   = new Workgroup();
-  //   if(!projectDefault)
-  //     this.setProject(new Project());
-  //   this.registry    = new Registry();
-  //   this.task_holder = new TaskHolder();
-  //   this.title       = "";
-  //   this.description = "";
-  //   this.source_id   = undefined;
-  //   this.workflow    = [];
-  //   this.setFiles([]);
-  // }
 
   getId() {
     return this.id;
@@ -168,6 +157,14 @@ export class Task {
 
   setStatus(status) {
     this.status = status;
+  }
+
+  getEvaluation() {
+    return this.evaluation;
+  }
+
+  setEvaluation(evaluation) {
+    this.evaluation = evaluation;
   }
 
   getNumber() {
@@ -225,8 +222,9 @@ export class Task {
 
   setSource(v) {
     this.source = v;
-    if(TASK_SOURCE.REQUEST !== v)
+    if(TASK_SOURCE.REQUEST !== v){
       this.source_id = null;
+    }
   }
 
   getSourceId() {
@@ -235,7 +233,7 @@ export class Task {
 
   setSourceId(source_id) {
     this.source_id = source_id;
-    this.onPropertyChanged('source_id', this.source_id);
+    this.onPropertyChanged('source_id', source_id);
   }
 
   getWorkgroup() {
@@ -273,8 +271,9 @@ export class Task {
 
   addTag(tag) {
     const existName = this.tags.find(t=> t.name === tag.name);
-    if(!existName) 
+    if(!existName) {
       this.tags.push(tag);
+    }
   
     this.onPropertyChanged('tags', this.tags);
   }
@@ -340,7 +339,6 @@ export class Task {
   getDescription(){
     return this.description;
   }
-
 
   getFiles() {
     return this.files;
@@ -429,10 +427,7 @@ export class Task {
   }
 
   isExternal(){
-    let bool = false;
-    if( !this.isAdvisoryCompany() && this.id && this.isOtherDomain())
-      bool = true;
-    return bool;
+    return !this.isAdvisoryCompany() && this.id && this.isOtherDomain() ? true : false;
   }
 
   isOtherDomain(){

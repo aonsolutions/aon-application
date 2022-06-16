@@ -242,6 +242,7 @@ public enum AppParam {
 	// TICKET BAI
 	, TBAI_ACTIVE
 	, TBAI_TEST	
+	, EDI_COMPANY_CODE
 	;
 	
 	public String getValue() {

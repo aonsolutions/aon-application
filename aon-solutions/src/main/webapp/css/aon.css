@@ -109,6 +109,10 @@ a {
   text-decoration: underline;
 }
 
+.textDecorationNone{
+  text-decoration: none !important; 
+} 
+
 form {
   margin: 0;
 }
@@ -1363,4 +1367,10 @@ button:disabled, button[disabled]{
   position: absolute;
   padding-top: 8px;
   margin-left: 2px;
+}
+
+label.rating:hover {
+  filter: grayscale(0.84);
+  transform: scale(1.1);
+  transition: 100ms ease;
 }

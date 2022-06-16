@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
+import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class Elaboration implements Serializable {
@@ -19,14 +21,14 @@ public class Elaboration implements Serializable {
 	private String series;
 	private int number;
 	private Date date;
-	private OldItem item;
+	private Item item;
 	private String description;
 	private Warehouse warehouse;
 	private double quantity;
-	private Byte status;
+	private ElaborationStatus status;
 	private String comments;
 	private String remarks;
-	private Byte source;
+	private ElaborationSource source;
 	private Integer sourceId;
 	private String creationUser;
 	private Date creationDate;
@@ -72,10 +74,13 @@ public class Elaboration implements Serializable {
 		this.date = date;
 		return this;
 	}
-	public OldItem getItem() {
+	public Item getItem() {
+		if(item == null) {
+			item = new Item();
+		}
 		return item;
 	}
-	public Elaboration setItem(OldItem item) {
+	public Elaboration setItem(Item item) {
 		this.item = item;
 		return this;
 	}
@@ -100,10 +105,19 @@ public class Elaboration implements Serializable {
 		this.quantity = quantity;
 		return this;
 	}
-	public Byte getStatus() {
+	public ElaborationStatus getStatus() {
 		return status;
 	}
-	public Elaboration setStatus(Byte status) {
+	
+	public String getStatusName() {
+		return getStatus() != null ? getStatus().name() : null;
+	}
+	
+	public Byte getStatusValue() {
+		return getStatus() != null ? getStatus().value() : null;
+	}
+	
+	public Elaboration setStatus(ElaborationStatus status) {
 		this.status = status;
 		return this;
 	}
@@ -121,16 +135,28 @@ public class Elaboration implements Serializable {
 		this.remarks = remarks;
 		return this;
 	}
-	public Byte getSource() {
+	
+	public ElaborationSource getSource() {
 		return source;
 	}
-	public Elaboration setSource(Byte source) {
+	
+	public String getSourceName() {
+		return getSource() != null ? getSource().name() : null;
+	}
+	
+	public Byte getSourceValue() {
+		return getSource() != null ? getSource().value() : null;
+	}
+	
+	public Elaboration setSource(ElaborationSource source) {
 		this.source = source;
 		return this;
 	}
+	
 	public Integer getSourceId() {
 		return sourceId;
 	}
+	
 	public Elaboration setSourceId(Integer sourceId) {
 		this.sourceId = sourceId;
 		return this;

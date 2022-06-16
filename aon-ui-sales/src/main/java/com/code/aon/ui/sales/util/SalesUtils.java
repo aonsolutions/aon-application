@@ -268,20 +268,19 @@ public class SalesUtils {
 
 		int number = AON.getElaborationNextNumber(AonUtil.getDomainName(),
 				salesDetail.getDomain(), AonUtil.getRemoteUser(), series);
-		
 		Elaboration elaboration = new Elaboration();
 		elaboration.setDomain(salesDetail.getDomain());
 		elaboration.setSeries(series);
 		elaboration.setNumber(number);
 		elaboration.setDate(date);
-		elaboration.setItem(new com.esferalia.aon.occam.api.model.product.OldItem().setId(salesDetail.getItem().getId()));
+		elaboration.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(salesDetail.getItem().getId()));
 		elaboration.setDescription(salesDetail.getDescription());
 		elaboration.setWarehouse(new com.esferalia.aon.occam.api.model.warehouse.Warehouse().setId(warehouseId));
 		elaboration.setQuantity(salesDetail.getQuantity());
-		elaboration.setStatus(ElaborationStatus.PENDING.value());
+		elaboration.setStatus(ElaborationStatus.PENDING);
 		elaboration.setComments(salesDetail.getSales().getComments());
 		elaboration.setRemarks("Pedido "+salesDetail.getSales().getSeries()+"/"+salesDetail.getSales().getNumber());
-		elaboration.setSource(ElaborationSource.SALES.value());
+		elaboration.setSource(ElaborationSource.SALES);
 		elaboration.setSourceId(salesDetail.getId());
 		
 		int elaborationId = AON.insertElaboration(AonUtil.getDomainName(),
