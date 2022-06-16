@@ -542,47 +542,49 @@
 					<!--
 						OLD OPTIONS 
 					-->
-					<!--aon:panelGroup>
-						<aon:panelGrid id="group_payroll_contrata_general"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="ANTIGUAS OPCIONES (OBSOLETAS)" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
+					<aon:if test="#{!userUtils.newAONTheme}">				
+						<aon:panelGroup>
+							<aon:panelGrid id="group_payroll_contrata_general"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="ANTIGUAS OPCIONES (OBSOLETAS)" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="contract-payroll"
+												action="contract_search-payroll"
+												actionListener="#{contract.onEditSearch}"
+												value="#{bundle.payroll_contract_module}" />
+										</aon:div>
+									</aon:if>
+									<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="person-payroll"
+												action="#{person.initialAction}"
+												actionListener="#{person.onEditSearch}"
+												value="#{bundle.report_room_persons}" />
+										</aon:div>
+									</aon:if>
+									<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="contractLeave-payroll"
+												action="contractLeave_search-payroll"
+												actionListener="#{contractLeave.onEditSearch}"
+												value="#{bundle.payroll_contractLeave_module}" />
+										</aon:div>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contract-payroll"
-											action="contract_search-payroll"
-											actionListener="#{contract.onEditSearch}"
-											value="#{bundle.payroll_contract_module}" />
+										<aon:commandLink id="craBatch-payroll"
+											action="craBatch_search-payroll"
+											actionListener="#{craBatch.onEditSearch}"
+											value="#{bundle.payroll_craBatch_module}" />
 									</aon:div>
-								</aon:if>
-								<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="person-payroll"
-											action="#{person.initialAction}"
-											actionListener="#{person.onEditSearch}"
-											value="#{bundle.report_room_persons}" />
-									</aon:div>
-								</aon:if>
-								<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contractLeave-payroll"
-											action="contractLeave_search-payroll"
-											actionListener="#{contractLeave.onEditSearch}"
-											value="#{bundle.payroll_contractLeave_module}" />
-									</aon:div>
-								</aon:if>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="craBatch-payroll"
-										action="craBatch_search-payroll"
-										actionListener="#{craBatch.onEditSearch}"
-										value="#{bundle.payroll_craBatch_module}" />
 								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup-->
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</aon:if>
 
 	
 					<!--
