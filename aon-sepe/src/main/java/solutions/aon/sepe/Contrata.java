@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
@@ -75,7 +77,10 @@ public class Contrata {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 	}
 	
 	public static String sendCopyBasic(final InputStream certificateInputStream,
@@ -87,7 +92,10 @@ public class Contrata {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 			return null;
 	}
 	
@@ -100,7 +108,10 @@ public class Contrata {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 			return null;
 	}
 	
@@ -113,7 +124,10 @@ public class Contrata {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 	}
 	
 	
@@ -126,7 +140,10 @@ public class Contrata {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 	}
 	
 	public static byte[] getTransformationPdf(final InputStream certificateInputStream, final String certificatePassword,
@@ -138,7 +155,10 @@ public class Contrata {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 	}
 	
 	public static byte[] getTransformationCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
@@ -161,7 +181,10 @@ public class Contrata {
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 	}
 	
 	private static String sendContrataImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
@@ -773,7 +796,10 @@ public class Contrata {
 		catch (MalformedURLException e) {throw new SepeException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SepeException(e);}
-		catch (Exception e) {throw new SepeException(e);}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new SepeException(e);
+		}
 	}
 	
 	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword, 
@@ -783,14 +809,18 @@ public class Contrata {
 		catch (MalformedURLException e) {throw new SepeException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SepeException(e);}
-		catch (Exception e) {throw new SepeException(e);}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new SepeException(e);
+		}
 	}
 	
 	private static byte[] getContratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	
 	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
-			
+	    	 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        handleSepeExceptions(htmlPage);
 	        
@@ -1191,11 +1221,14 @@ public class Contrata {
 		}
 	}
 	
-	private static HtmlPage getFirstPageSepeContrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	private static HtmlPage getFirstPageSepeContrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException {
 		  webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
 		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
-	      return webClient.getPage("https://www.sepe.es:444/ccomunicacto/servlet/ServletInicio?CCAA=99&idioma=14");
+		  HtmlPage htmlPage = webClient.getPage("https://www.sepe.es:444/ccomunicacto/servlet/ServletInicio?CCAA=99&idioma=14");
+		  HtmlUnitToolkit.manageStatusCode(htmlPage); 
+		  handleSepeExceptions(htmlPage);
+	      return htmlPage;
 	}
 	
 	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto) throws ElementNotFoundException, IOException, SepeException {
@@ -1281,14 +1314,26 @@ public class Contrata {
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
 		try {
 			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
-			if(error!=null && !error.getVisibleText().isEmpty()) 
+			if(error!=null && !error.getVisibleText().isEmpty()) {
 				throw new SepeException(error.getVisibleText());
+			} else {
+				String body = htmlPage.asText();
+				if(body!=null) {	
+					Pattern pattern = Pattern.compile("certificado\\s*digital\\s*no\\s*v.lido", Pattern.CASE_INSENSITIVE);
+					Matcher matcher = pattern.matcher(body);
+					if(matcher.find()){
+						throw new SepeException("Certificado digital no v\u00e1lido");
+					}
+				}
+			}
+	
 		} catch (NullPointerException e) {}
 	}
 	
 	private static void handleSepeAlert(List<String> list) throws SepeException{
-		if(!list.isEmpty()) 
+		if(!list.isEmpty()) {
 			throw new SepeException(list.get(0));
+		}
 	}
 	
 	private static void validateCertImpl(final InputStream certificateInputStream, final String certificatePassword,

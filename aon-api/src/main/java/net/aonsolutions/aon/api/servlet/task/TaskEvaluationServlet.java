@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskEvaluation;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -53,6 +55,7 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 		Domain domain = api.getDomain();
 		JSONObject params = api.getData();
 		Integer id = params.optInt(IJsonNames.TASK);
+		Integer evaluation = params.optInt("evaluation");
 		String message = "";
 		
 		Task task = AON_SOLUTIONS.getTask(domain, new User(), f-> f.getIdProperty().eq(id));
@@ -61,13 +64,19 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 			throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
 		}
 		
+		TaskWorkflow workflow = new TaskWorkflow()
+		.setTask(task.getId())
+		.setType(TaskWorkflowType.EVALUATION)
+		;
+		
 		if( task.getEvaluation()!=null) {
 			message = "Ya ha calificado!";
 		} else {
-			Integer evaluation = params.optInt("evaluation");
+			message = "Gracias por su calificaci\u00f3n!";
+			
 			task.setEvaluation(TaskEvaluation.safeValueOf(evaluation));
 			AON_SOLUTIONS.saveTask(api.getDomain(), new User(), task);
-			message = "Gracias por su calificaci\u00f3n!";
+			TaskUtils.onNotification(api, workflow);
 		}
 		
 		return "<div style='font-family: Arial;background-color: #e3f2fd; width: 100%; height: 100%; position: absolute; right: 0; top: 0; left: 0; bottom: 0;'>\n" + 

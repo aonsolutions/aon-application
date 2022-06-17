@@ -15,6 +15,7 @@ import * as LS from '../../services/localStorageService.js';
 import { APP_PARAMS_REQUEST } from './MessengerEnums.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import { AonInput } from '../../components/aon-input.js';
 
 
 export class AonMessengerConfig extends AonElement {
@@ -128,44 +129,44 @@ export class AonMessengerConfig extends AonElement {
 
     let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: "8px", marginTop:"19px" });
     textC.className = CSS.AON_CARD_TITLE;
-    textC.innerText = "Comunicación";
+    textC.innerText = MSG.COMMUNICATION;
     divContent.appendChild(textC);
 
     let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
-    text.innerText = "Enviar Notificación al:";
+    text.innerText = `${MSG.SEND} ${MSG.NOTIFICATION} al:`;
     divContent.appendChild(text);
     
     let div = setStyles(this.createElement(TAG.DIV),{display:"flex", flexWrap:"wrap", columnGap: "10px"});
     divContent.appendChild(div);
 
-    let opened = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_OPENED, title: "Abrir", checked:params[APP_REQUESTS_INT_OPENED]});
+    let opened = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_OPENED, title: MSG.OPEN, checked:params[APP_REQUESTS_INT_OPENED]});
     div.appendChild(opened);
 
-    let closed = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_INT_CLOSED]});
+    let closed = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_CLOSED, title: MSG.CLOSE, checked:params[APP_REQUESTS_INT_CLOSED]});
     div.appendChild(closed);
 
     let comment = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_COMMENT, title: "Comentar", checked:params[APP_REQUESTS_INT_COMMENT]});
     div.appendChild(comment);
 
-    let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_INT_ASSIGN]});
+    let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_ASSIGN, title: MSG.ASSIGN, checked:params[APP_REQUESTS_INT_ASSIGN]});
     div.appendChild(assign);
 
 
     // --------------------PARAMS SEND EMAIL--------------------------------
     let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
-    textEmail.innerText = "Enviar Correo al:";
+    textEmail.innerText = `${MSG.SEND} ${MSG.EMAIL} al:`;
     divContent.appendChild(textEmail);
     
     let divEmail = setStyles(this.createElement(TAG.DIV),{display:"flex", flexWrap:"wrap", columnGap: "10px"});
     divContent.appendChild(divEmail);
 
-    let openedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_OPENED, title: "Abrir", checked:params[APP_REQUESTS_INT_EMAIL_OPENED]});
+    let openedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_OPENED, title: MSG.OPEN, checked:params[APP_REQUESTS_INT_EMAIL_OPENED]});
     divEmail.appendChild(openedEmail);
 
-    let closedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_INT_EMAIL_CLOSED]});
+    let closedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_CLOSED, title: MSG.CLOSE, checked:params[APP_REQUESTS_INT_EMAIL_CLOSED]});
     divEmail.appendChild(closedEmail);
 
-    let assignEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_INT_EMAIL_ASSIGN]});
+    let assignEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_EMAIL_ASSIGN, title: MSG.ASSIGN, checked:params[APP_REQUESTS_INT_EMAIL_ASSIGN]});
     divEmail.appendChild(assignEmail);
   }
 
@@ -178,7 +179,7 @@ export class AonMessengerConfig extends AonElement {
     let divContent = this.createElement(TAG.DIV);
     cardContent.appendChild(divContent);
 
-    const {APP_REQUESTS_EMAIL_RATING, APP_REQUESTS_EXT_WORKGROUP, APP_REQUESTS_EXT_TASK_HOLDER , APP_REQUESTS_EXT_OPENED, APP_REQUESTS_EXT_CLOSED, APP_REQUESTS_EXT_EMAIL_OPENED, APP_REQUESTS_EXT_EMAIL_CLOSED, APP_REQUESTS_EXT_COMMENT, APP_REQUESTS_EXT_ASSIGN} = APP_PARAMS_REQUEST;
+    const {APP_REQUESTS_EMAIL_RATING, APP_REQUESTS_EXT_WORKGROUP, APP_REQUESTS_EXT_TASK_HOLDER , APP_REQUESTS_EXT_OPENED, APP_REQUESTS_EXT_CLOSED, APP_REQUESTS_EXT_EMAIL_OPENED, APP_REQUESTS_EXT_EMAIL_CLOSED, APP_REQUESTS_EXT_COMMENT, APP_REQUESTS_EXT_ASSIGN, APP_REQUESTS_EMAIL_RATING_CLOSED} = APP_PARAMS_REQUEST;
 
     let workgroup = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_EXT_WORKGROUP, default:true});
     divContent.appendChild(workgroup);
@@ -199,45 +200,64 @@ export class AonMessengerConfig extends AonElement {
 
     let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: "8px", marginTop:"19px" });
     textC.className = CSS.AON_CARD_TITLE;
-    textC.innerText = "Comunicación";
+    textC.innerText = MSG.COMMUNICATION;
     divContent.appendChild(textC);
 
     let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px"});
-    text.innerText = "Enviar Notificación al:";
+    text.innerText = `${MSG.SEND} ${MSG.NOTIFICATION} al:`;
     divContent.appendChild(text);
     
     let div = setStyles(this.createElement(TAG.DIV),{display:"flex", flexWrap:"wrap", columnGap: "10px"});
     divContent.appendChild(div);
 
-    let opened = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_OPENED, title: "Abrir", checked:params[APP_REQUESTS_EXT_OPENED]});
+    let opened = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_OPENED, title: MSG.OPEN, checked:params[APP_REQUESTS_EXT_OPENED]});
     div.appendChild(opened);
 
-    let closed = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_EXT_CLOSED]});
+    let closed = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_CLOSED, title: MSG.CLOSE, checked:params[APP_REQUESTS_EXT_CLOSED]});
     div.appendChild(closed);
 
     let comment = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_COMMENT, title: "Comentar", checked:params[APP_REQUESTS_EXT_COMMENT]});
     div.appendChild(comment);
 
-    let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_EXT_ASSIGN]});
+    let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_ASSIGN, title: MSG.ASSIGN, checked:params[APP_REQUESTS_EXT_ASSIGN]});
     div.appendChild(assign);
 
 
     // --------------------PARAMS SEND EMAIL--------------------------------
+
+    let divEvaluationEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
+    let ai = new AonInput();
+
     let textEmail = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:"4px", marginTop:"13px"});
-    textEmail.innerText = "Enviar Correo al:";
+    textEmail.innerText = `${MSG.SEND} ${MSG.EMAIL} al:`;
     divContent.appendChild(textEmail);
     
     let divEmail = setStyles(this.createElement(TAG.DIV),{display:"flex", flexWrap:"wrap", columnGap: "10px"});
     divContent.appendChild(divEmail);
 
-    let openedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_EMAIL_OPENED, title: "Abrir", checked:params[APP_REQUESTS_EXT_EMAIL_OPENED]});
+    let openedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_EMAIL_OPENED, title: MSG.OPEN, checked:params[APP_REQUESTS_EXT_EMAIL_OPENED]});
     divEmail.appendChild(openedEmail);
 
-    let closedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_EMAIL_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_EXT_EMAIL_CLOSED]});
+    let closedEmail = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_EMAIL_CLOSED, title: MSG.CLOSE, checked:params[APP_REQUESTS_EXT_EMAIL_CLOSED]});
     divEmail.appendChild(closedEmail);
 
-    let rating = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EMAIL_RATING, title: "Cerrar para calificación", checked:params[APP_REQUESTS_EMAIL_RATING]});
+    let rating = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EMAIL_RATING, title: `${MSG.CLOSE} para calificación`, checked:params[APP_REQUESTS_EMAIL_RATING]});
+    rating.addEventListener(EVENT.CHANGE, ({target})=>{
+      ai.setVisible(target.checked);
+      ai.value = "";
+    });
     divEmail.appendChild(rating);
+
+    divContent.appendChild(divEvaluationEmail);
+
+    const evaluationEmail = params[APP_REQUESTS_EMAIL_RATING_CLOSED];
+    ai.description  = `${MSG.EMAIL} para notificar calificación`; // TODO
+    ai.autocomplete = "off";
+    ai.name = APP_REQUESTS_EMAIL_RATING_CLOSED;
+    divEvaluationEmail.appendChild(ai);
+    ai.value = evaluationEmail ? evaluationEmail : "";
+    
+    ai.setVisible(rating.isChecked());
   }
 
   getIdRand(){

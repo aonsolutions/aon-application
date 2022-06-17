@@ -47,10 +47,6 @@ export class AonMessengerList extends AonElement {
     if (this.AON_TABLE) {
       this.AON_TABLE.removeEventListener(EVENT.MORE, this.fnMore);
     }
-
-    if (this.getApplication()) {
-      this.getApplication().removeFloatOption();
-    }
   }
 
   initialize() {
