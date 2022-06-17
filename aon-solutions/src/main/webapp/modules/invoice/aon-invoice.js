@@ -1594,24 +1594,32 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildFinanceCard(parent) {
-		let card = new AonCard();
-		card.id = this.FINANCE;
-		card.title = MSG.EXPIRATIONS;
-		parent.appendChild(card);
+		let card = this.getElement(this.FINANCE);
+		if(!card) {
+			card = new AonCard();
+			card.id = this.FINANCE;
+			card.title = MSG.EXPIRATIONS;
+			parent.appendChild(card);
+		}
 
-		let table = new AonBasicTable();
-		table.id = this.FINANCE_TABLE;
-		card.setContent(table);
-
+		let table = this.getElement(this.FINANCE_TABLE);
+		if(!table) {
+			table = new AonBasicTable();
+			table.id = this.FINANCE_TABLE;
+			card.setContent(table);
+		}
+		table.removeRows();
 		for(let i = 0; i < this.invoice.finances.length; i++) {
 			let finance = this.invoice.finances[i];
-			this.printFinance(table, finance, i);
+			if(this.fileOpened) this.printMinimizeFinance(table, finance, i)
+			else this.printFinance(table, finance, i);
 		}
 
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
 
-		if(!this.invoice.isReadonly()) {
+		let addButton = this.getElement(this.FINANCE_ADD);
+		if(!this.invoice.isReadonly() && !addButton) {
 			let addButton = new AonIconButton();
 			addButton.id = this.FINANCE_ADD;
 			addButton.title = MSG.ADD_FINANCE;
@@ -1620,9 +1628,183 @@ export class AonInvoice extends AonElement {
 				this.setFocus(this.FINANCE_DUE_DATE + this.invoice.finances.length);
 				this.invoice.addFinance();
 				this.reload();
+				if(this.fileOpened) {
+					const i = this.invoice.finances.length -1;
+					const finance = this.invoice.finances[i];
+					this.printFinanceDialog(finance, i);
+				}
 				if(this.autosave) this.save();
 			});
 			div.appendChild(addButton);
+		}
+	}
+
+	printFinanceDialog(finance, i) {
+		let dialog = this.getApplication().getDialog();
+		dialog.setTitle("VENCIMIENTO");
+		dialog.addAcceptAction(() => {
+			
+		});
+		
+
+		let div = this.createElement(TAG.DIV);
+		div.style.margin = '15px';
+		dialog.setContent(div);
+
+		let table = new AonBasicTable();
+		table.id = this.DIALOG + 'Detail';
+		div.appendChild(table);
+
+		table.addRow(); // ----- ROW 1
+
+		// ----- FINANCE DUE DATE
+
+		let date = new AonDate();
+		date.id = this.FINANCE_DUE_DATE + 'Dialog' + i;
+		date.title = MSG.DATE; //MSG.DUE_DATE;
+		date.readonly = this.invoice.isReadonly();
+		date.addEventListener(EVENT.CHANGE, () => {
+			finance.due_date = date.value;
+			this.setFocus(date.id);
+			this.invoice.setFinance(finance, i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(date);
+		date.value = finance.due_date;
+		
+		table.addRow(); // ----- ROW 2
+
+		// ----- FINANCE PAYMETHOD
+
+		let paymethod = new AonSelect();
+		paymethod.id =this.FINANCE_PAYMETHOD + 'Dialog' + i;
+		paymethod.title = MSG.PAYMETHOD;
+		paymethod.autocomplete = true;
+		// paymethod.options = JSON.stringify(Paymethods);
+		paymethod.readonly = this.invoice.isReadonly();
+		paymethod.addEventListener(EVENT.SELECT, () => {
+			this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
+			finance.paymethod = paymethod.value;
+			this.invoice.setFinance(finance, i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(paymethod);
+
+		getPaymethods({}).then(paymethods => {
+			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+			paymethod.options = JSON.stringify(pms);
+			paymethod.value = finance.paymethod;
+		});
+
+
+		table.addRow(); // ----- ROW 3
+
+		// ----- FINANCE BANK ACCOUNT | RBANK
+		
+		let bankAccount = new AonSuggestion();
+		bankAccount.id = this.FINANCE_BANK_ACCOUNT + 'Dialog' + i;
+		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
+		bankAccount.readonly = this.invoice.isReadonly();
+
+		bankAccount.addEventListener(EVENT.KEYUP, () => {
+
+		});
+
+		bankAccount.addEventListener(EVENT.CHANGE, () => {
+			this.setFocus(this.FINANCE_AMOUNT + i);	
+			finance.bank_account = bankAccount.value;
+			this.invoice.setFinance(finance, i);
+		});
+	
+		// bankAccount.addEventListener(EVENT.SELECT,() => {
+		// 	this.setFocus(this.FINANCE_AMOUNT + i);
+		// })
+		
+		table.addCell(bankAccount);
+		finance.bank_account = finance.bank_account || finance.iban;
+		bankAccount.value = finance.bank_account;
+
+		table.addRow(); // ----- ROW 3
+
+		// ----- FINANCE AMOUNT
+	
+		let amount = new AonNumber();
+		amount.id = this.FINANCE_AMOUNT + 'Dialog' +  i;
+		amount.description = MSG.AMOUNT;
+		amount.format = CONSTANT.TRUE;
+		amount.decimals = "2";
+		amount.readonly = this.invoice.isReadonly();
+		amount.addEventListener(EVENT.CHANGE, () => {
+			this.setFocus(this.FINANCE_AMOUNT + i);
+			finance.amount = amount.value;
+			this.invoice.setFinance(finance, i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(amount);
+		amount.value = finance.amount;
+
+		dialog.open();
+	}
+
+	printMinimizeFinance(table, finance, i) {
+		table.addRow(); // ----- ROW i
+		
+		// ----- FINANCE DUE DATE
+
+		let date = new AonDate();
+		date.id = this.FINANCE_DUE_DATE + i;
+		date.title = MSG.DATE; //MSG.DUE_DATE;
+		date.readonly = this.invoice.isReadonly();
+		date.addEventListener(EVENT.CHANGE, () => {
+			finance.due_date = date.value;
+			this.setFocus(date.id);
+			this.invoice.setFinance(finance, i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(date);
+		date.value = finance.due_date;
+
+		// ----- FINANCE AMOUNT
+		
+		let amount = new AonNumber();
+		amount.id = this.FINANCE_AMOUNT + i;
+		amount.description = MSG.AMOUNT;
+		amount.format = CONSTANT.TRUE;
+		amount.decimals = "2";
+		amount.readonly = this.invoice.isReadonly();
+		amount.addEventListener(EVENT.CHANGE, () => {
+			this.setFocus(this.FINANCE_AMOUNT + i);
+			finance.amount = amount.value;
+			this.invoice.setFinance(finance, i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(amount);
+		amount.value = finance.amount;
+
+		// ----- FINANCE OPTIONS
+
+		let financeOptions = new AonIconButton();
+		financeOptions.id = this.FINANCE_OPTIONS + i;
+		financeOptions.title = MSG.OPTIONS;
+		financeOptions.icon = MATERIAL_ICONS.EDIT;
+		financeOptions.addEventListener(EVENT.CLICK, () => {
+			this.printFinanceDialog(finance, i);
+		});
+		table.addCell(financeOptions);
+
+		// ----- FINANCE DELETE
+		
+		if(!this.invoice.isReadonly()) {
+			let financeDelete = new AonIconButton();
+			financeDelete.id = this.FINANCE_DELETE + i;
+			financeDelete.title = MSG.DELETE_FINANCE;
+			financeDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
+			financeDelete.addEventListener(EVENT.CLICK, () => {
+				this.invoice.deleteFinance(finance, i);
+				this.reload();
+				if(this.autosave) this.save();
+			});
+			table.addCell(financeDelete);
 		}
 	}
 
@@ -1812,6 +1994,7 @@ export class AonInvoice extends AonElement {
 			fileDiv.appendChild(viewer);
 		}
 		this.buildDetailCard();
+		this.buildFinanceCard();
 	}
 
 	previousInvoice() {
