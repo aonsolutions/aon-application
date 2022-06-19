@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -18,7 +17,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -74,9 +72,9 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 	Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
 	Hidden contractHidden = new Hidden("contractId", "");
 	
-	Hidden titleHidden = new Hidden("title", "");
+	Hidden titleHidden = new Hidden("title", "Notificaci\u00f3n Laboral");
 	Hidden informationHidden = new Hidden("information", "");
-	Hidden dateHidden = new Hidden("date", "");
+	Hidden dateHidden = new Hidden("date", formatDate.format(new Date()));
 	
 	// Button
 	Button exportPDF;
@@ -103,9 +101,11 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor methods
 
 	private void initElementHandlers() {
+		titleTB.getElement().setPropertyString("placeholder", "Notificaci\u00f3n Laboral");
 		titleTB.addValueChangeHandler(e -> titleHidden.setValue(e.getValue()));
 		informationTA.addValueChangeHandler(e -> informationHidden.setValue(e.getValue()));
 		dateBox.addValueChangeHandler(e -> dateHidden.setValue(formatDate.format(e.getValue())));
+		dateBox.getElement().setPropertyString("placeholder", formatDate.format(new Date()));
 	}
 
 	private void initializeForm() {
@@ -176,7 +176,7 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 			showLoading("Exportando modificaci\u00f3n");
 			form.setAction(GWT.getModuleBaseURL() + "modification_form/export/");
 			form.submit();
-			hideTimer();
+			hideMessageTimer();
 		});
 		
 		buttonsPanel.add(exportPDF);
@@ -194,14 +194,14 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 		buttonsPanel.add(generatePDF);
 	}
 	
-	private void hideTimer() {
+	private void hideMessageTimer() {
 		Timer timer = new Timer() {
 			@Override
 			public void run() {
-				hide();
+				hideMessage();
 			}
 		};
-		timer.schedule(1500);
+		timer.schedule(2000);
 	}
 	
 	// ------------------------------------------------- Aon Messages panel
