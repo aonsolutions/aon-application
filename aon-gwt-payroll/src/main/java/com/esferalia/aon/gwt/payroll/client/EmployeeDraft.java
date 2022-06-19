@@ -51,6 +51,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -676,7 +677,7 @@ public abstract class EmployeeDraft extends Composite {
 		employeeDraftObject.getIdcDates(
 		dates -> {
 			// filter out 'Baja' dates
-			dates = filterEven(dates);
+			//dates = filterEven(dates);
 			Collections.sort(dates);
 			int count = dates.size();
 			idcDateListBox.setRowCount(count, true);
@@ -1497,25 +1498,29 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	// ------------------------------------------------- Aon Messages panel
-
-	private void showSuccess(String title, String message) {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put(title, message);
-		AonMessagePanel.showSuccess(messageContainer, successMap);
+	
+	protected Panel getMessagePanel() {
+		return messageContainer;
 	}
 	
-	public static void showError(String title, String message) {
+	protected void hideMessage() {
+		AonMessagePanel.hideMessage(getMessagePanel());
+	}
+
+	protected void showLoading(String message) {
+		AonMessagePanel.showLoading(getMessagePanel(), message);
+	}
+
+	protected void showError(String title, String message) {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
-		AonMessagePanel.showError(messageContainer, errorMap);
+		AonMessagePanel.showError(getMessagePanel(), errorMap);
 	}
 	
-	private void showLoading(String message) {
-		AonMessagePanel.showLoading(messageContainer, message);
-	}
-	
-	private void hideMessage() {
-		AonMessagePanel.hideMessage(messageContainer);
+	protected void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(getMessagePanel(), successMap);
 	}
 	
 	private static native void open(String datauristring, String name) /*-{

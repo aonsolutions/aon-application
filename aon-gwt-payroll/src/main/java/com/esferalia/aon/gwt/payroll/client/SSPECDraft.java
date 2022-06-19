@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
@@ -358,24 +359,28 @@ public class SSPECDraft extends Composite {
 	public void setToolbarTitle(String employeeName) {
 		toolbar.setTitle(employeeName);
 	}
+	
+	protected Panel getMessagePanel() {
+		return messagePanel;
+	}
 
-	private void showSuccess(String title, String message) {
+	protected void showSuccess(String title, String message) {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put(title, message);
-		AonMessagePanel.showSuccess(messagePanel, successMap);
+		AonMessagePanel.showSuccess(getMessagePanel(), successMap);
 	}
 	
-	private void showError(String title, String message) {
+	protected void showError(String title, String message) {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
-		AonMessagePanel.showError(messagePanel, errorMap);
+		AonMessagePanel.showError(getMessagePanel(), errorMap);
 	}
 	
-	private void showLoading(String message) {
-		AonMessagePanel.showLoading(messagePanel, message);
+	protected void showLoading(String message) {
+		AonMessagePanel.showLoading(getMessagePanel(), message);
 	}
 	
-	private void hideMessage() {
-		AonMessagePanel.hideMessage(messagePanel);
+	protected void hideMessage() {
+		AonMessagePanel.hideMessage(getMessagePanel());
 	}
 }
