@@ -48,8 +48,9 @@ export const buildDesktop = (aonMessengerChat)=> {
 const buildToolbar = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     let application = aonMessengerChat.getApplication();
-    if(application)
+    if(application){
       application.addToolbarOption2(SigninSidenav.ADD, () =>application.getParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
+    }
 
     const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
     const toolbar = setAttributes(new AonToolbar(), {

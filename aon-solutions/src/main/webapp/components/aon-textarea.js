@@ -1,7 +1,7 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
 import { getReader } from '../services/utils.js';
-import { newComponent, setAttributes} from '../services/utilsComponents.js';
+import { newComponent, setAttributes, setStyles} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
 import '../css/aon-textarea.css';
 import '../css/aon-css-utils.css';
@@ -211,7 +211,7 @@ export class AonTextArea extends AonElement {
 		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
-		return userSelection;
+		return userSelection;eqweqweqwe
 	} 
 
 	getSelectionForAdd(){
@@ -374,6 +374,97 @@ export class AonTextArea extends AonElement {
 		const el = this.getElement(this.RIGHT);
 		if(el) el.appendChild(element);
 	}
+
+	addColorPicker(beforeId= undefined){
+		if(beforeId){
+			const defaultColor = "#002469";
+
+			let div = document.createElement(TAG.DIV);
+			div.id = MATERIAL_ICONS.FORMAT_COLOR_TEXT;
+			div.innerHTML =  MATERIAL_ICONS.FORMAT_COLOR_TEXT;		
+			div.classList.add("icon", "material-icons", CSS.CENTER_FLEX);
+			div.setAttribute("title", `Color del texto (Ctrl + Click para cambiar el color)`);
+			div.style.position = "relative";
+
+			let input = setAttributes(document.createElement(TAG.INPUT),{
+				type : "color",
+				value: defaultColor,
+				id : Math.random().toString(36).substring(7),
+			});
+			setStyles(input,{
+				position: "absolute",
+				visibility: "hidden",
+				height:"0",
+				width: "0",
+				padding: "0",
+				margin: "0",
+				left: "0",
+				right:"0",
+				bottom: "0"
+			});
+			div.appendChild(input)
+
+			let lastColor = "";
+			div.addEventListener(EVENT.CLICK, ({ctrlKey})=>{
+				if(ctrlKey){
+					input.click();
+				} else {
+					let value  = input.value;
+					let text = this.getSelection().toString();	
+	
+					if(text){
+						lastColor = "";
+					}
+			
+					if(lastColor && lastColor === value ){
+						value = "#212529";
+					} 
+					// console.log("value", value);
+					// div.style.color = value;
+					document.execCommand("ForeColor", false, value);
+	
+					lastColor = value;
+				}
+			});
+
+			let tapedTwice = false;
+			let lastColorMobile = "";
+			div.addEventListener(EVENT.TOUCHSTART, (ev)=>{
+				if(!tapedTwice) {
+					tapedTwice = true;
+					// console.log(lastColorMobile);
+					lastColorMobile = lastColor;
+					setTimeout( () => { tapedTwice = false; }, 300 );
+				} else {
+					ev.preventDefault();
+					input.click();
+				}
+			});
+
+			const changeColor = (ev)=>{
+				ev.preventDefault();
+				ev.stopPropagation();
+				const {value} = ev.target;
+				div.style.color = value;
+				document.execCommand("ForeColor", false, value);
+			}
+
+			input.addEventListener(EVENT.INPUT, changeColor);
+			input.addEventListener(EVENT.CHANGE, changeColor);
+			
+
+			const el = this.getElement(beforeId);
+			if(el) el.parentNode.insertBefore(div, el);
+		} 
+
+		// const changeFont = ()=>{
+		// 	document.execCommand("fontSize", false, "7");
+		// 	let fontElements = window.getSelection().anchorNode.parentNode
+		// 	fontElements.removeAttribute("size");
+		// 	fontElements.style.fontSize = "30px";
+		// }
+	
+    }
 
 	getValue() {
 		return this.value && this.value === 'true';

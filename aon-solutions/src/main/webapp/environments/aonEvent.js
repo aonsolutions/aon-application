@@ -18,6 +18,7 @@ export const AON_KEYUP = 'aon-keyup';
 export const MOUSELEAVE = 'mouseleave';
 export const MOUSEOVER = 'mouseover';
 export const MOUSEMOVE = 'mousemove';
+export const MOUSEDOWN = 'mousedown';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';
 export const SEARCH = 'search';
 export const SEARCH_NEW = 'searchNew';

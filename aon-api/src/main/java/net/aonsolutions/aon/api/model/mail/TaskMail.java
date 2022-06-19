@@ -20,9 +20,11 @@ public class TaskMail {
 	String contact;
 	String taskHolderName;
 	String note;
+	String evaluationText;
 	Boolean showEvaluation;
 	TaskWorkflowType type;
 	List<TaskWorkflow> workflows;
+
 	
 	public TaskMail() {}
 
@@ -75,6 +77,9 @@ public class TaskMail {
 			break;
 			case CLOSE:
 				txt = "Cerrado";
+			break;
+			case EVALUATION:
+				txt = "Calificado";
 			break;
 			default:
 			break;
@@ -142,6 +147,15 @@ public class TaskMail {
 
 	public TaskMail setShowEvaluation(Boolean showEvaluation) {
 		this.showEvaluation = showEvaluation;
+		return this;
+	}
+	
+	public String getEvaluationText() {
+		return evaluationText;
+	}
+
+	public TaskMail setEvaluationText(String evaluationText) {
+		this.evaluationText = evaluationText;
 		return this;
 	}
 	

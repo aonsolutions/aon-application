@@ -50,6 +50,10 @@ export class AonMessengerChat extends AonElement {
   connectedCallback() {
     this.initialize();
     this.build();
+    
+    if (this.getApplication()) {
+      this.getApplication().removeFloatOption();
+    }
   }
 
   disconnectedCallback() {}

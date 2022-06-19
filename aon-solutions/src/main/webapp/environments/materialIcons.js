@@ -124,6 +124,7 @@ export const FORWARD_TO_INBOX = "forward_to_inbox";
 export const FORMAT_UNDERLINED = "format_underlined"; 
 export const FORMAT_CLEAR = "format_clear"; 
 export const FORMAT_QUOTE = "format_quote"; 
+export const FORMAT_COLOR_TEXT = "format_color_text";
 export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
