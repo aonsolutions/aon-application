@@ -834,6 +834,10 @@ public class IdcTest extends AbstractSQLTestCase {
 		return calculate(ssPECs, datas, date, new SalaryBuilder());
 	}
 
+	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, String [] payments, Date startDate, Date endDate) throws ExpressionException, SQLException, SalaryException {
+		return calculate(ssPECs, datas, payments, startDate, endDate, new SalaryBuilder());
+	}
+
 	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, Date date, ISalaryBuilder<Salary> salaryBuilder) throws ExpressionException, SQLException, SalaryException {
 		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
 		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
@@ -845,6 +849,21 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = 
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> builder = 
+		new SmartContractSalaryCalculator<Salary>(salaryBuilder);
+		Salary salary = builder.calculate(ctx);
+		return salary;
+	}
+
+	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, String [] payments, Date startDate, Date endDate, ISalaryBuilder<Salary> salaryBuilder) throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		ContractRecord contract = newContract(aonContext, toSQL(startDate) , ssPECs, datas, payments);
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection,toSQL(startDate), toSQL(endDate), toSQL(endDate), contract);
 		SmartContractSalaryCalculator<Salary> builder = 
 		new SmartContractSalaryCalculator<Salary>(salaryBuilder);
 		Salary salary = builder.calculate(ctx);
@@ -930,17 +949,72 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertNull( bonus.getEndDate());
 			
 			
-			calendar.set(Calendar.DAY_OF_MONTH,1);
-			Date january = calendar.getTime();
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date january31 = calendar.getTime();
 			
-			Salary salary = calculate(ssBonuses, Collections.emptyList(), january);
+			Salary salary = calculate(ssBonuses, Collections.emptyList(), new String [] {"710.47 * DIAS_TRABAJADOS / DIAS_MES"},january18, january31);
 			double totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			assertEquals(totalCost/31*17, salary.getTotalEnterprise(), DELTA);
 			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			
+			double totalBonus = salary.getSalaryBonus().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(Math.min(321.50/30.00*14.00, totalCost), totalBonus, DELTA);			
+			
+			salary = calculate(ssBonuses, Collections.emptyList(), new String [] {"2500.00* DIAS_TRABAJADOS / DIAS_MES"},january18, january31);
+			totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(totalCost - (321.50/30.00 * 14), salary.getTotalEnterprise(), DELTA);
+			
+			totalBonus = salary.getSalaryBonus().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(321.50/30.00*14.00 , totalBonus, DELTA);			
 		}
 	}
 
+	@Test
+	public void testIdcVBonusI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcV.pdf") ){
+			Collection<PEC> ssBonuses = Idc.getSSPECs(is);
+			assertEquals(1, ssBonuses.size());
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,18);
+			calendar.set(Calendar.MONTH,Calendar.JANUARY);
+
+			Date january18 = calendar.getTime();
+			PEC bonus = ssBonuses.stream().findFirst().get();
+			
+			Assert.assertEquals( january18 , bonus.getStartDate());
+			Assert.assertNull( bonus.getEndDate());
+			
+			
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date january31 = calendar.getTime();
+			
+			Salary salary = calculate(ssBonuses, Collections.emptyList(), new String [] {"2500.00* DIAS_TRABAJADOS / DIAS_MES"},january18, january31);
+			Double totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(totalCost - (321.50/30.00 * 14), salary.getTotalEnterprise(), DELTA);
+			
+			Double totalBonus = salary.getSalaryBonus().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(321.50/30.00*14.00 , totalBonus, DELTA);			
+		}
+	}
 
 	@Test
 	public void testIdcVIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
@@ -1768,18 +1842,20 @@ public class IdcTest extends AbstractSQLTestCase {
 			});
 			
 			calendar.set(Calendar.DAY_OF_MONTH,1);
-			Date may = calendar.getTime();
+			Date december = calendar.getTime();
 			
-			Salary salary = calculate(ssPecs, Collections.emptyList(), may);
+			Salary salary = calculate(ssPecs, Collections.emptyList(), december);
 
 			double totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
 			
-			salary.getSalaryDeductions().forEach(d -> System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			//salary.getSalaryDeductions().forEach(d -> System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
 			
-			salary.getSalaryCosts().forEach(d -> System.out.println(d.getCostConcept() +" : " + d.getAmount() +", " + d.getType()));
+			//salary.getSalaryCosts().forEach(d -> System.out.println(d.getCostConcept() +" : " + d.getAmount() +", " + d.getType()));
 
-			assertEquals(totalCost - 50.00, salary.getTotalEnterprise(), DELTA);
+			salary.getSalaryBonus().forEach(d -> System.out.println(d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType() +","+ d.getDescription()));
+
+			assertEquals(totalCost - 50.00 / 30.00 * 7.00, salary.getTotalEnterprise(), DELTA);
 			
 			salary.getSalaryCosts().stream()
 			.filter( c -> c.getType() == DeductionType.FOGASA)
@@ -3380,7 +3456,16 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 	
 	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate, Collection<PEC> ssBonuses, Collection<Data> datas) {
-		
+		return 
+		newContract(aonContext, startDate, ssBonuses, datas, 	new String[] { 
+				"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"500.00*DIAS_TRABAJADOS/DIAS_MES",
+				}
+				);
+	}
+	
+	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate, Collection<PEC> ssBonuses, Collection<Data> datas, String [] payments) {
+		 
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 		cleanDeductionConcepts(aonContext);
@@ -3472,10 +3557,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
 				}
 				},
-				new String[] { 
-						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
-						"500.00*DIAS_TRABAJADOS/DIAS_MES",
-						}, 
+				payments, 
 				new String[] {
 						
 				},
