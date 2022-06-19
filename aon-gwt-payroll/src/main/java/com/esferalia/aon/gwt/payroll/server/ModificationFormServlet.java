@@ -94,7 +94,7 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 				.setDate(new Date())
 				.setAttachModule(contractId)
 				.setData(os.toByteArray())
-				.setDescription("Modificaci\u00f3n")
+				.setDescription(parseDescription(title))
 				.setDomain(domain)
 				.setMimeType(MimeType.PDF)
 				.setConfidential(false)
@@ -132,6 +132,10 @@ public class ModificationFormServlet extends AonApiHttpServlet {
 			e.printStackTrace();
 		}
 		
+	}
+
+	private String parseDescription(String description) {
+		return description.length() < 64 ? description : description.substring(0, 63);
 	}
 	
 }

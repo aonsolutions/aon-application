@@ -185,6 +185,8 @@ public class ContractFill {
 	        // Remove unsed pages
 	        removeIndefiniteNotUsingPage(contractType, pdfDocument);
 	        
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
 			pdfDocument.save(out);
 			pdfDocument.close();
 			
@@ -332,6 +334,8 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 	        pdfDocument.save(out);
 			pdfDocument.close();
@@ -417,6 +421,8 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 	        pdfDocument.save(out);
 			pdfDocument.close();
@@ -496,6 +502,8 @@ public class ContractFill {
 	        
 	        // Remove unsed pages
 	        removeTemporalPages(contractType, pdfDocument);
+	        
+	        pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 	        pdfDocument.save(out);
 			pdfDocument.close();
