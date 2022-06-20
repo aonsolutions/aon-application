@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -747,6 +747,27 @@ export class AonInvoice extends AonElement {
 				paymethod.value = this.invoice.finances[0].paymethod;
 			}
 		});
+
+		// getWorkplaces().then(r => {
+		// 	if(r.length > 1) {
+		// 		table.addRow();
+		// 		let workplaces = r.map(w => {return {name: w.description, value: w.id};});
+		// 		let workplace = new AonSelect();
+		// 		workplace.id = this.WORKPLACE;
+		// 		workplace.title = MSG.WORKPLACE;
+		// 		workplace.autocomplete = true;
+		// 		workplace.readonly = this.invoice.isReadonly();
+		// 		workplace.options = JSON.stringify(workplaces);
+		// 		workplace.value = this.invoice.getWorkplace();
+		// 		workplace.addEventListener(EVENT.SELECT, () => {
+		// 			this.invoice.setWorkplace(workplace.value);
+		// 			if(this.autosave) this.save();
+		// 		});
+		// 		table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+		// 	} else this.invoice.setWorkplace(r[0].id);
+		// }).catch(e => {
+		// 	console.error(e);
+		// });
 	}
 
 	buildTaxCard(parent) {
@@ -1963,8 +1984,8 @@ export class AonInvoice extends AonElement {
 		this.fileOpened = !visible;
 		if(visible) {
 			button.icon = 'visibility';
-			fileDiv.style.display = 'none'
-			dataDiv.style.width = '100%'
+			fileDiv.style.display = 'none';
+			dataDiv.style.width = '100%';
 			this.getElement(this.GENERAL).style.display = 'flex';
 		} else {
 			button.icon = 'visibility_off';
