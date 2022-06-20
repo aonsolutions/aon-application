@@ -369,7 +369,7 @@ public class AgreementParser {
 	}
 
 	private static void getAgreementLevelAndCategory(Document document, Agreement agreement) {
-		System.out.println("--------- AGREMENT LEVELS -----------");
+//		System.out.println("--------- AGREMENT LEVELS -----------");
 		NodeList list = document.getElementsByTagName("CATALOGO_CAT_PROF");
 		for(int i=0; i<list.getLength(); i++) {
 			Node node = list.item(i);
@@ -404,7 +404,7 @@ public class AgreementParser {
 	    	            
 	    	            agreement.addAgreementLevel(code, description, category);
 	    	            
-	    	            System.out.println("code : " + code + ", description : " + description + ", category : " + category);
+//	    	            System.out.println("code : " + code + ", description : " + description + ", category : " + category);
 	    	            
 	    	        }
 	    		}
@@ -413,7 +413,7 @@ public class AgreementParser {
 	}
 	
 	private static void getAgreementLevelData(DSLContext dslContext, Document document, Agreement agreement, List<Integer> selectedDates) {
-		System.out.println("\n\n------------- TABLAS SALARIALES ---------------");
+//		System.out.println("\n\n------------- TABLAS SALARIALES ---------------");
 		NodeList listTS = document.getElementsByTagName("TABLAS_SALARIALES");
 		for(int i=0; i<listTS.getLength(); i++) {
 			Node nodeTS = listTS.item(i);
@@ -483,7 +483,7 @@ public class AgreementParser {
 			   	    	            	
 				   	    	            AgreementLevel agreementLevel = agreement.getAgreementLevel(description, category);
 				   	    	            
-				   	    	            System.out.println("description : " + description + ", category : " + category);
+//				   	    	            System.out.println("description : " + description + ", category : " + category);
 					    	           
 			   	    	            	Node nodeConcept = elementCPI.getElementsByTagName("CONCEPTOS").item(0);
 			   	    	            	if (null != nodeConcept && nodeConcept.getNodeType() == Node.ELEMENT_NODE) {
@@ -732,7 +732,7 @@ public class AgreementParser {
 				
 				if(null != agreementPayment) {
 					
-//					System.out.println(agreementPayment.getConceptCode());
+					System.out.println(agreementPayment.getConceptCode());
 					
 					String irpfExpression = "_P";
 					String quoteExpression = "_P";
