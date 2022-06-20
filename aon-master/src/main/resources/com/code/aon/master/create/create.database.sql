@@ -3403,7 +3403,7 @@ CREATE TABLE `contract_bonus` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
-  `expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'F�rmula',
+  `expression` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'F�rmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `bonus_concept` int(4) DEFAULT NULL COMMENT 'Concepto de bonificacion',
