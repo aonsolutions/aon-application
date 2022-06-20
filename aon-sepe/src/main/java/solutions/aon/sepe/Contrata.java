@@ -43,6 +43,7 @@ import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.CopyBasic;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
+import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.sepe.exceptions.statusCode.StatusCodeException;
 import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
@@ -1322,7 +1323,7 @@ public class Contrata {
 					Pattern pattern = Pattern.compile("certificado\\s*digital\\s*no\\s*v.lido", Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(body);
 					if(matcher.find()){
-						throw new SepeException("Certificado digital no v\u00e1lido");
+						throw new InvalidCertificateException("Certificado digital no v\u00e1lido");
 					}
 				}
 			}
