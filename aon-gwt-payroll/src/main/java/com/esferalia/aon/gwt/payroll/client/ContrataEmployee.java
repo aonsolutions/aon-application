@@ -754,11 +754,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- ScheduledCommand (ContractAttach)
 	
-	class AddDocumentCommand implements ScheduledCommand {
+	class ExportContractCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
-			contractAttachUI.newAttachment();
+			contractAttachUI.exportContract();
 		}
 	}
 	
@@ -766,29 +766,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			new ModificationPDFDialog(contractId) {
-
-				@Override
-				protected void onSuccess(String message) {
-					showSuccess("Modificaci\u00f3n PDF", message);
-					contractAttachUI.refreshPage();
-				}
-
-				@Override
-				protected void onError(String message) {
-					showError("Error Modificaci\u00f3n PDF", message);
-				}};
+			contractAttachUI.modificationPDF();
 		}
 	}
 
 	class AttachContextMenu extends ContextMenu {
 
-		private MenuItem addAttach;
+		private MenuItem exportContract;
 		private MenuItem modificationPDF;
 		
 		public AttachContextMenu() {
-			addAttach = addMenuItem("Nuevo documento", new AddDocumentCommand(), AON.CSS.aonIconAdd(), "addAttach");
-			modificationPDF = addMenuItem("Fichero modificaci\u00f3n", new ModificationPDFCommand(), AON.CSS.aonIconData(), "modificationPDF");	
+			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
+			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(), AON.CSS.aonIconPdf(), "modificationPDF");	
 		}
 		
 		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
@@ -2005,8 +1994,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private HTMLPanel initEmployeeAttachButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
-
-		AonExpandButton newAttachment = new AonExpandButton(AON.MSG.newAction() + " Documento", AON.CSS.aonIconAdd()) {
+		
+		AonToolbarButton newAttachment = new AonToolbarButton(AON.MSG.newAction() + " Documento", AON.CSS.aonIconAdd());
+		newAttachment.addClickHandler(e -> contractAttachUI.newAttachment());
+		hPanel.add(newAttachment);
+		
+		AonExpandButton pdfAttachment = new AonExpandButton("Documento PDF", AON.CSS.aonIconPdf()) {
 
 			@Override
 			public void onExpandClick(ClickEvent event) {
@@ -2017,14 +2010,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 			@Override
 			public void onDefaultClick(ClickEvent evet) {
-				contractAttachUI.newAttachment();
+				if(contractAttachUI.existContract())
+					contractAttachUI.modificationPDF();
+				else
+					contractAttachUI.exportContract();
 			}
 		};
-		hPanel.add(newAttachment);
-		
-		AonToolbarButton pdfExportBtn = new AonToolbarButton("Generar Borrador Contrato", AON.CSS.aonIconPdf());
-		pdfExportBtn.addClickHandler(e -> contractAttachUI.exportContract());
-		hPanel.add(pdfExportBtn);
+		hPanel.add(pdfAttachment);
 		
 		return hPanel;
 	}
