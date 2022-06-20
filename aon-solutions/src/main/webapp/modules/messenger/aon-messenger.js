@@ -19,17 +19,18 @@ import { getNotificationByDomain, markReadNotification } from '../../services/no
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
-	APP_PARAMS=[];
-	TIMEOUT;
-	_workgroups;
-	_tags;
-	_filter={};
 	_listFilter;
 	TASK_HOLDER;
 	TASK_HOLDER_ENTERPRISE;
 	cau; //BOOLEAN
 	cauInfo;
 	dur;
+	TIMEOUT;
+	_workgroups;
+	_tags;
+	APP_PARAMS=[];
+	_filter={};
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -122,6 +123,10 @@ export class AonMessenger extends AonElement {
 						promisesLoad.push(this.loadWorkgroup());
                     } else {
                         this._filter.email = email;
+						let document = this.getDocumentEnterprise();
+						if(document){
+							this._filter.document = document;
+						}
                         this.addListFilter(this._filter);
                     }
 
@@ -183,10 +188,12 @@ export class AonMessenger extends AonElement {
 			this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
 			);
-						
-			this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
-				this.rootPanel(new AonMessenger())
-			);
+			
+			if(!this.cau){
+				this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
+					this.rootPanel(new AonMessenger())
+				);
+			}
 		}
 
 		this.buildToolbarSearch();
@@ -717,8 +724,8 @@ export class AonMessenger extends AonElement {
 
 		let filter = {};
 
-		if(this._filter.source) {
-			filter.source = this._filter.source;
+		if(this._filter.document) {
+			filter.document = this._filter.document;
 		}
 
 		if(filterCount.workgroups){
@@ -732,10 +739,10 @@ export class AonMessenger extends AonElement {
 		if(filterCount.task_holder && !this.getDur().isMessengerManager()){
 			filter.task_holder = filterCount.task_holder;
 		}
-		
 		if(this._tags.length){
 			filter.tag = this._tags.map(t=> t.id).join(',');
 		}
+
 
 		getTaskGeneralCount(filter).then(({workgroups, tag})=>{
 			try {
@@ -954,6 +961,14 @@ export class AonMessenger extends AonElement {
 			font-weight: 800;
 		`
 		return span;
+	}
+
+	getDocumentEnterprise(){
+		let document = undefined;
+		if(this.cauInfo && this.cauInfo.company && this.cauInfo.company.document){
+			document = this.cauInfo.company.document;
+		}
+		return document;
 	}
 
 	markReadNotification(taskId){

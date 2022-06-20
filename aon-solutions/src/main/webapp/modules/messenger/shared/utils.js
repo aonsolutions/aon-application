@@ -347,7 +347,8 @@ export const checkFilesAddEventClick = (parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const task = aonMessengerChat.task;
-        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`).forEach(element=>{
+        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`)
+        .forEach(element=>{
             const tagName = element.tagName;
             if(tagName && tagName.toLowerCase() === TAG.IMG){
                 // parent.style.position = "relative";
@@ -583,8 +584,9 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
                     task.setGTaskId(undefined);
                     if(aonMessengerChat.isBeta() && !aonMessengerChat.isCau()){
                         const myTaskHolder = task.myTaskHolder;
-                        if(myTaskHolder && myTaskHolder.id && task.getTaskHolder() && !task.getTaskHolder().id)
+                        if(myTaskHolder && myTaskHolder.id && task.getTaskHolder() && !task.getTaskHolder().id){
                             task.setTaskHolder(myTaskHolder);
+                        }
                     }
                 } 
             }
@@ -748,10 +750,11 @@ export const getIconJson =({source,status}) => {
     let icon = MATERIAL_ICONS.INFO;
     let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
 
-    if(source===TASK_SOURCE.CAU) 
-      icon = MATERIAL_ICONS.SUPPORT_AGENT;
-    else if(source===TASK_SOURCE.REQUEST) 
-      icon = MATERIAL_ICONS.ASSIGNMENT;
+    if(source===TASK_SOURCE.CAU){
+        icon = MATERIAL_ICONS.SUPPORT_AGENT;
+    } else if(source===TASK_SOURCE.REQUEST){
+        icon = MATERIAL_ICONS.ASSIGNMENT;
+    } 
 
     if(status === TASK_STATUS.IN_PROGRESS) 
       icon_color = AON_MESSENGER_LIST_IN_PROGRESS.icon_color;

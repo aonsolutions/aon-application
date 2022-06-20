@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
@@ -417,8 +418,10 @@ public class TaskDAO {
 			.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 			.join(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TASK.ID)
-			.fetch().stream().forEach(r->  {
+			.groupBy(TAG.ID)
+			.fetch()
+			.stream()
+			.forEach(r->  {
 				if(r.get(TAG.ID)!=null) {
 					taskCounts.addTag(r.get(TAG.ID).toString(), (Integer) r.get(DSL.name(count)));
 				}

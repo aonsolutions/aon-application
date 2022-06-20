@@ -401,7 +401,6 @@ public class TaskNotification {
 					.setSubject(subject)
 					.setBody(body)
 					.setTo(to)
-//					.setReplyTo(to)
 					;
 					
 					if(bcc!=null && sendSupport) {						

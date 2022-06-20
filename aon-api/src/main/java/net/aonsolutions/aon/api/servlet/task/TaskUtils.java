@@ -128,8 +128,8 @@ public class TaskUtils {
 			JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
 			JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
 			
-			String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
-			String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
+			String docParent   = parent!=null  && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
+			String docCustomer = company!=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
 
 			String doc = docParent!=null ? docParent : docCustomer;
 			
@@ -137,10 +137,11 @@ public class TaskUtils {
 				task.setGtaskId(auth.optString(IJsonNames.EMAIL));
 			}
 	
-			if(doc!=null) {
-				Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
-				if(registry!=null && registry.getId()!=null)
+			if(doc!=null && !(task.getRegistry()!=null && task.getRegistry().getId()!=null)) {
+				Registry registry = AON.getRegistry(api.getDomain(), api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
+				if(registry!=null && registry.getId()!=null) {					
 					task.setRegistry(registry);
+				}
 			}
 			
 			task.setSender(new TaskHolder());

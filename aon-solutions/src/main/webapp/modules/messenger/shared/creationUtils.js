@@ -717,7 +717,7 @@ export const createCardMessenger = (id, title) =>{
 export const createInputContact = () =>  setAttributes(new AonInput(),{
   name:MESSENGER_IDS.GTASK_ID_TASK,
   id: MESSENGER_IDS.GTASK_ID_TASK,
-  description: MSG.CONTACT + ` (${MSG.OPTIONAL})`
+  description: `${MSG.CONTACT} (${MSG.OPTIONAL})`
 });
 
 export const createInputTitle = () =>  setAttributes(new AonInput(),{
@@ -771,7 +771,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   });
   divOne.appendChild(divTwo);
 
-  const icon =  setStyles(document.createElement(TAG.I),{ fontSize:"15px" });
+  const icon = setStyles(document.createElement(TAG.I),{ fontSize:"15px" });
   icon.className = CONSTANT.MATERIAL_ICONS;
   icon.innerText = MATERIAL_ICONS.CLOSE;
   divTwo.appendChild(icon);
