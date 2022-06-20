@@ -517,7 +517,7 @@ public class Contract {
 				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", oldDateIniContract=" + oldDateIniContract + ", dateBirth="
 				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType + ", discontinuoReason=" + discontinuoReason
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
-				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+"]";
+				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+  ", previsible=" + previsible+"]";
 	}
 	
 	
