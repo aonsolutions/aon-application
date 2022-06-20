@@ -961,18 +961,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalBonus = salary.getSalaryBonus().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
 			
-			assertEquals(Math.min(321.50/30.00*14.00, totalCost), totalBonus, DELTA);			
+			assertEquals(Math.min(10.72*14.00, totalCost), totalBonus, DELTA);			
 			
-			salary = calculate(ssBonuses, Collections.emptyList(), new String [] {"2500.00* DIAS_TRABAJADOS / DIAS_MES"},january18, january31);
-			totalCost = salary.getSalaryCosts().stream()
-			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			
-			assertEquals(totalCost - (321.50/30.00 * 14), salary.getTotalEnterprise(), DELTA);
-			
-			totalBonus = salary.getSalaryBonus().stream()
-			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			
-			assertEquals(321.50/30.00*14.00 , totalBonus, DELTA);			
 		}
 	}
 
@@ -1007,12 +997,47 @@ public class IdcTest extends AbstractSQLTestCase {
 			Double totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
 			
-			assertEquals(totalCost - (321.50/30.00 * 14), salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost - (10.72 * 14), salary.getTotalEnterprise(), DELTA);
 			
 			Double totalBonus = salary.getSalaryBonus().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
 			
-			assertEquals(321.50/30.00*14.00 , totalBonus, DELTA);			
+			assertEquals(10.72*14.00 , totalBonus, DELTA);			
+		}
+	}
+
+	@Test
+	public void testIdcVBonusIII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcV.pdf") ){
+			Collection<PEC> ssBonuses = Idc.getSSPECs(is);
+			assertEquals(1, ssBonuses.size());
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+
+			Date february1 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,28);
+			Date february31 = calendar.getTime();
+			
+			Salary salary = calculate(ssBonuses, Collections.emptyList(), new String [] {"2500.00* DIAS_TRABAJADOS / DIAS_MES"},february1, february31);
+			Double totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(totalCost - 321.50, salary.getTotalEnterprise(), DELTA);
+			
+			Double totalBonus = salary.getSalaryBonus().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			
+			assertEquals(321.50 , totalBonus, DELTA);			
 		}
 	}
 
@@ -1855,7 +1880,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			salary.getSalaryBonus().forEach(d -> System.out.println(d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType() +","+ d.getDescription()));
 
-			assertEquals(totalCost - 50.00 / 30.00 * 7.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost - 1.67 * 7.00, salary.getTotalEnterprise(), DELTA);
 			
 			salary.getSalaryCosts().stream()
 			.filter( c -> c.getType() == DeductionType.FOGASA)
