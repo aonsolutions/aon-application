@@ -1,7 +1,7 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
 import { getReader } from '../services/utils.js';
-import { newComponent, setAttributes} from '../services/utilsComponents.js';
+import { newComponent, setAttributes, setStyles} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
 import '../css/aon-textarea.css';
 import '../css/aon-css-utils.css';
@@ -211,7 +211,7 @@ export class AonTextArea extends AonElement {
 		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
-		return userSelection;
+		return userSelection;eqweqweqwe
 	} 
 
 	getSelectionForAdd(){
@@ -219,16 +219,20 @@ export class AonTextArea extends AonElement {
 		const range = this.getSelection().getRangeAt(0);
 		const selectedText = range.extractContents();
 
-		let div = document.createElement(TAG.DIV); 
-		div.appendChild(selectedText);
-		range.insertNode(div);
+		if(range && range.toString()!=""){
+			let div = document.createElement(TAG.DIV); 
+			div.appendChild(selectedText);
+			range.insertNode(div);
+	
+			const baseSelection = this.getSelection().baseNode;
+	
+			const inside = textArea.contains(baseSelection);
+			if(inside) {//  inside
+				return div; 
+			}
+		}
 
-		const baseSelection = this.getSelection().baseNode;
-
-		const inside = textArea.contains(baseSelection);
-
-		if(!inside) div = textArea; // not inside
-		return div;
+		return textArea;
 	}
 
 	generateTextArea(){
@@ -371,53 +375,151 @@ export class AonTextArea extends AonElement {
 		if(el) el.appendChild(element);
 	}
 
-	getValue() {return this.value && this.value === 'true';}
+	addColorPicker(beforeId= undefined){
+		if(beforeId){
+			const defaultColor = "#002469";
 
-	async addFiles(files){
-		let div = this.getSelectionForAdd();
+			let div = document.createElement(TAG.DIV);
+			div.id = MATERIAL_ICONS.FORMAT_COLOR_TEXT;
+			div.innerHTML =  MATERIAL_ICONS.FORMAT_COLOR_TEXT;		
+			div.classList.add("icon", "material-icons", CSS.CENTER_FLEX);
+			div.setAttribute("title", `Color del texto (Ctrl + Click para cambiar el color)`);
+			div.style.position = "relative";
 
-		for await (const file of files) {
-			const reader = await getReader(file).catch(()=>null);
-			if(reader) {
-				
-				const fileId = Math.random().toString(36).substring(7);
+			let input = setAttributes(document.createElement(TAG.INPUT),{
+				type : "color",
+				value: defaultColor,
+				id : Math.random().toString(36).substring(7),
+			});
+			setStyles(input,{
+				position: "absolute",
+				visibility: "hidden",
+				height:"0",
+				width: "0",
+				padding: "0",
+				margin: "0",
+				left: "0",
+				right:"0",
+				bottom: "0"
+			});
+			div.appendChild(input)
 
-				this.FILES.push({
-					contentType: reader.contentType,
-					content: reader.content,
-					id:fileId
-				});
-
-				const url = this.convertBase64Url(reader.content, reader.contentType);
-				let element = null;
-				if(reader.contentType && reader.contentType.indexOf("image")>-1){
-					element = document.createElement(TAG.IMG);
-					element.src = url;
-					element.className = CSS.AON_IMG_COMMENT;
-				} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
-					element = document.createElement("video");
-					element.controls = true;
-					element.style.width = "100%";
-					element.style.minHeight = element.style.maxHeight = "184px";
-					const source = document.createElement("source");
-					source.src = url;
-					source.type = reader.contentType;
-					element.appendChild(source);
+			let lastColor = "";
+			div.addEventListener(EVENT.CLICK, ({ctrlKey})=>{
+				if(ctrlKey){
+					input.click();
 				} else {
-					element = document.createElement(TAG.A);
-					element.target = "_blank";
-					element.className = CSS.AON_LINK;
-					element.href = url;
-					element.textContent = reader.name;
+					let value  = input.value;
+					let text = this.getSelection().toString();	
+	
+					if(text){
+						lastColor = "";
+					}
+			
+					if(lastColor && lastColor === value ){
+						value = "#212529";
+					} 
+					// console.log("value", value);
+					// div.style.color = value;
+					document.execCommand("ForeColor", false, value);
+	
+					lastColor = value;
 				}
-				element.dataset.id = fileId;
-				element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
-				element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-				div.appendChild(element);
-				div.appendChild(document.createElement("br"));
+			});
+
+			let tapedTwice = false;
+			let lastColorMobile = "";
+			div.addEventListener(EVENT.TOUCHSTART, (ev)=>{
+				if(!tapedTwice) {
+					tapedTwice = true;
+					// console.log(lastColorMobile);
+					lastColorMobile = lastColor;
+					setTimeout( () => { tapedTwice = false; }, 300 );
+				} else {
+					ev.preventDefault();
+					input.click();
+				}
+			});
+
+			const changeColor = (ev)=>{
+				ev.preventDefault();
+				ev.stopPropagation();
+				const {value} = ev.target;
+				div.style.color = value;
+				document.execCommand("ForeColor", false, value);
 			}
+
+			input.addEventListener(EVENT.INPUT, changeColor);
+			input.addEventListener(EVENT.CHANGE, changeColor);
+			
+
+			const el = this.getElement(beforeId);
+			if(el) el.parentNode.insertBefore(div, el);
+		} 
+
+		// const changeFont = ()=>{
+		// 	document.execCommand("fontSize", false, "7");
+		// 	let fontElements = window.getSelection().anchorNode.parentNode
+		// 	fontElements.removeAttribute("size");
+		// 	fontElements.style.fontSize = "30px";
+		// }
+	
+    }
+
+	getValue() {
+		return this.value && this.value === 'true';
+	}
+
+	async addFiles(files, parent=undefined) {
+		for await (const file of files) {
+			await this.addFile(file, parent);
 		}
-		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+	}
+
+	async addFile(file, parent=undefined) {
+		let div = parent || this.getSelectionForAdd();
+
+		const reader = await getReader(file).catch(()=>null);
+		if(reader) {
+			
+			const fileId = Math.random().toString(36).substring(7);
+
+			this.FILES.push({
+				contentType: reader.contentType,
+				content: reader.content,
+				id:fileId
+			});
+
+			const url = this.convertBase64Url(reader.content, reader.contentType);
+			let element = null;
+			if(reader.contentType && reader.contentType.indexOf("image")>-1){
+				element = document.createElement(TAG.IMG);
+				element.src = url;
+				element.className = CSS.AON_IMG_COMMENT;
+			} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
+				element = document.createElement("video");
+				element.controls = true;
+				element.style.width = "100%";
+				element.style.minHeight = element.style.maxHeight = "184px";
+				const source = document.createElement("source");
+				source.src = url;
+				source.type = reader.contentType;
+				element.appendChild(source);
+			} else {
+				element = document.createElement(TAG.A);
+				element.target = "_blank";
+				element.className = CSS.AON_LINK;
+				element.href = url;
+				element.textContent = reader.name;
+			}
+			element.dataset.id = fileId;
+			element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
+			element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
+			div.appendChild(element);
+			div.appendChild(document.createElement(TAG.BR));
+
+			this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+		}
 	}
 
 	getToolbar(){
@@ -432,6 +534,7 @@ export class AonTextArea extends AonElement {
 			divTextArea.classList.add('highlight');
 			divTextArea.setAttribute("placeholder", "");
 		} 
+		
 		const unhighlight = () =>{
 			divTextArea.classList.remove('highlight');
 			divTextArea.setAttribute("placeholder", this.placeholder);
@@ -469,7 +572,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	interceptorPaste(ev){
-			// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
+		// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
 		// const html  = clipboardData.getData('text/html');
 		// console.log(html);
 		// setTimeout(()=>{
@@ -498,38 +601,38 @@ export class AonTextArea extends AonElement {
 		// let newValue = newHtml.replace(/src=\"([^\"]*)\"/g, (match, url) =>{ // eslint-disable-line
 		// 	let newUrl = url.replaceAll("&amp;", "&");
 
-			// console.log(match);
-			// console.log(url);
-			// this.getBase64FromUrl(url).then(base64=>{
-			// 	console.log(base64);
-			// })
-		// 	let codec, extension;
-		// 	if (url.indexOf('data:image/png;base64,') == 0) {
-		// 		codec = 'png';
-		// 		extension = '.png';
-		// 	} else if (url.indexOf('data:image/jpeg;base64,') == 0) {
-		// 		codec = 'jpeg';
-		// 		extension = '.jpg';
-		// 	}
-		// 	if (codec) {
-		// 		let name = 'image' + images.length + extension,
-		// 		base64 = url.replace('data:image/' + codec + ';base64,', ''),
-		// 		buffer = new Buffer(base64, 'base64');
-		// 		images.push(new mailgun_client.Attachment({
-		// 		contentType: 'image/' + codec,
-		// 		filename: name,
-		// 		data: buffer,
-		// 		knownLength: buffer.length,
-		// 		}));
-		// 		return match.replace(url, 'cid:' + name);
-		// 	}
-		// 	return match.replace(url, `${newUrl}" onerror="this.remove()" referrerpolicy="no-referrer`);
+		// 	// console.log(match);
+		// 	console.log(newUrl);
+		// 	this.getBase64FromUrl(newUrl).then(base64=>{
+		// 		console.log(base64);
+		// 	})
+			// let codec, extension;
+			// if (url.indexOf('data:image/png;base64,') == 0) {
+			// 	codec = 'png';
+			// 	extension = '.png';
+			// } else if (url.indexOf('data:image/jpeg;base64,') == 0) {
+			// 	codec = 'jpeg';
+			// 	extension = '.jpg';
+			// }
+			// if (codec) {
+			// 	let name = 'image' + images.length + extension,
+			// 	base64 = url.replace('data:image/' + codec + ';base64,', ''),
+			// 	buffer = new Buffer(base64, 'base64');
+			// 	images.push(new mailgun_client.Attachment({
+			// 	contentType: 'image/' + codec,
+			// 	filename: name,
+			// 	data: buffer,
+			// 	knownLength: buffer.length,
+			// 	}));
+			// 	return match.replace(url, 'cid:' + name);
+			// }
+			// return match.replace(url, `${newUrl}" onerror="this.remove()" referrerpolicy="no-referrer`);
 		// });
-
+// 
 		// if(newValue && newValue.trim()) {
-		// 	newHtml = newValue;
+			// newHtml = newValue;
 		// }
-
+// 
 		// this.setValueHtml(newValue)
 	}
 
@@ -548,7 +651,9 @@ export class AonTextArea extends AonElement {
 	}
 
 	async getBase64FromUrl(url){
-		const data = await fetch(url);
+		const data = await fetch(url,{
+			headers: { 'Content-Type': 'image/jpeg'}
+		});
 		const blob = await data.blob();
 		return new Promise((resolve) => {
 		  const reader = new FileReader();

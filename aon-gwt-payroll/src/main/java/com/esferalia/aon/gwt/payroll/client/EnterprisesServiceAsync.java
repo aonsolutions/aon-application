@@ -147,6 +147,7 @@ public interface EnterprisesServiceAsync {
 	void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getAttachData(String currentDomainName, String currentUser, Integer attachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	void setAttachData(String currentDomainName, String currentUser, Integer attachId, byte[] dataURI, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------ Contract Caluses
 	
@@ -155,7 +156,7 @@ public interface EnterprisesServiceAsync {
 	void deleteContractClause(String currentDomainName, Integer clauseId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void importContractClauses(String currentDomainName, List<Integer> clausesIds, Integer contractId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getDomainClauses(String currentDomainName, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException;
-	void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback);
+	void getContractOtherInfo(String currentDomainName, Integer contractId, Integer contractType, AsyncCallback<Map<String, String>> asyncCallback);
 	void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> asyncCallback);
 	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) throws IllegalArgumentException;

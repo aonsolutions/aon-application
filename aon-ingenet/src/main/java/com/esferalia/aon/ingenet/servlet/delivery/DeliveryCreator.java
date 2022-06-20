@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -130,8 +131,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 				elaborationDetail.setDomain(ctx.getDomainId());
 				elaborationDetail.setElaboration(elaboration);
 				elaborationDetail.setDate(new Date());
-				elaborationDetail
-						.setItem(obtainItem(ctx, linea.getPRODUCTO(), test));
+				elaborationDetail.setItem(obtainItem(ctx, linea.getPRODUCTO(), test).toNewItem());
 				elaborationDetail.setQuantity(Double.valueOf(linea.getCANTIDAD()));
 				elaborationDetail.setWarehouse(null);
 				elaborationDetail.setAddInfo("");
@@ -153,7 +153,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 									elaborationDetailComposition
 									.setElaborationDetail(elaborationDetail);
 									elaborationDetailComposition
-									.setItem(compositionItem);
+									.setItem(compositionItem.toNewItem());
 									elaborationDetailComposition.setQuantity(Double
 											.valueOf(lineaComposicion.getCANTIDAD()));
 									elaborationDetailComposition.setWarehouse(null);
@@ -177,7 +177,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 					ElaborationDAO.insertElaborationDetailComposition(ctx, c);
 				});
 
-				elaboration.setStatus(ElaborationStatus.CLOSED.value());
+				elaboration.setStatus(ElaborationStatus.CLOSED);
 				elaboration.setModificationUser(ctx.getUser());
 				elaboration.setModificationDate(new Date());
 				ElaborationDAO.updateElaboration(ctx, elaboration);
@@ -190,7 +190,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 		Elaboration elaboration = obtainElaboration(ctx,
 				linea.getDATOSELABORACIONORIGEN());
 		if (elaboration != null && elaboration.getId() != null) {
-			elaboration.setStatus(ElaborationStatus.FAIL.value());
+			elaboration.setStatus(ElaborationStatus.FAIL);
 			elaboration.setRemarks(StringUtils.mid(cause, 0, 128));
 			elaboration.setModificationUser(ctx.getUser());
 			elaboration.setModificationDate(new Date());
@@ -227,7 +227,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 		Elaboration elaboration = obtainElaboration(ctx,
 				linea.getDATOSELABORACIONORIGEN());
 		if (elaboration != null && elaboration.getId() != null
-				&& elaboration.getSource() == 0 // SALES
+				&& ElaborationSource.SALES.equals(elaboration.getSource()) // SALES
 				&& elaboration.getSourceId() != null) {
 			Integer salesDetailId = elaboration.getSourceId();
 			try {

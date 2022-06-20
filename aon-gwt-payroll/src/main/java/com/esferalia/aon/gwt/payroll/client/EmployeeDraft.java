@@ -370,7 +370,12 @@ public abstract class EmployeeDraft extends Composite {
 
 		@Override
 		public void execute() {
-			new EmployeePeculiaritiesDialog(employeeDraftObject.getContractId(), employeeDraftObject.getContractStartDate());
+			new EmployeePeculiaritiesDialog(employeeDraftObject.getContractId(), employeeDraftObject.getContractStartDate()) {
+
+				@Override
+				protected void onAccept() {
+					// Nothing to refresh
+				}};
 		}
 	}
 	

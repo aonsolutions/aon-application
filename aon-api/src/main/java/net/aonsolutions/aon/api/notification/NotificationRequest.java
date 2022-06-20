@@ -148,6 +148,7 @@ public class NotificationRequest extends Notification {
 	  });
 	  return authDevices.stream()
 			  .filter(at->at.getDeviceToken()!=null && !at.getDeviceToken().isEmpty())
+			  .distinct()
 			  .map(AuthDevice::getDeviceToken).toArray(String[]::new);
 	}
 	

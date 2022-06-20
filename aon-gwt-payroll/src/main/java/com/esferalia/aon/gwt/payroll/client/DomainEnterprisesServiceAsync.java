@@ -383,6 +383,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getAttachData(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
 	
+	public void setAttachData(Integer attachId, byte[] dataURI, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.setAttachData(getCurrentDomainName(), getCurrentUser(), attachId, dataURI, asyncCallback);
+	}
+	
 	// ------------------------------------------------ Contract Clauses
 	
 	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException  {
@@ -405,7 +409,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getDomainClauses(getCurrentDomainName(), asyncCallback);
 	}
 
-	public void getContractOtherInfo(Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback) {
+	public void getContractOtherInfo(Integer contractId, Integer contractType, AsyncCallback<Map<String, String>> asyncCallback) {
 		enterprisesServiceAsync.getContractOtherInfo(getCurrentDomainName(), contractId, contractType, asyncCallback);
 	}
 	

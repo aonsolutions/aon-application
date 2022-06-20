@@ -261,9 +261,10 @@ public class TaskFilter {
 		JSONObject params = api.getData();
 
 		Integer task = params.optInt(IJsonNames.TASK);
+		Integer parent = params.optInt(IJsonNames.PARENT);
 		
 		Filter filter = f.getTaskProperty().eq(task);
-		
+
 		if(TaskUtils.isCau(params)) {
 			String email = params.optString(IJsonNames.EMAIL);
 			
@@ -274,6 +275,8 @@ public class TaskFilter {
 				.or(f.getNotificationUserProperty().isNotNull())
 				.or(f.getTypeProperty().in(types.toArray(Byte[]::new)))
 			);
+		} else if(parent!=0) {
+			filter = filter.or(f.getTaskProperty().eq(parent));
 		}
 		
 		return filter;

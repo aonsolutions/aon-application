@@ -61,6 +61,7 @@ import org.junit.rules.TestName;
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -72,15 +73,19 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -280,6 +285,7 @@ public class InvoiceTest {
 		detailOne.setQuantity(781212783);
 		detailOne.setTaxableBase(712382113);
 		detailOne.setSource(InvoiceSource.DELIVERY);
+		detailOne.setItem(new Item().setProduct(new Product().setType(ProductType.LABOUR)));
 		
 		DeliveryDetail deliveryDetail = new DeliveryDetail().setId(288).setDelivery(new Delivery().setId(123).setIssueTime(new Date()).setSeries("3434"));
 		detailOne.setDeliveryDetail(deliveryDetail);
@@ -293,6 +299,7 @@ public class InvoiceTest {
 		detailTwo.setQuantity(1);
 		detailTwo.setTaxableBase(712382113);
 		detailTwo.setSource(InvoiceSource.SALES);
+		detailTwo.setItem(new Item().setProduct(new Product().setType(ProductType.LABOUR)));
 		
 		SalesDetail deliveryDetailTwo = new SalesDetail().setId(288).setSales(new Sales().setId(123).setIssueDate(new Date()).setPurchaseReference("123456/12345"));
 		detailTwo.setSalesDetail(deliveryDetailTwo);
@@ -335,6 +342,7 @@ public class InvoiceTest {
 		detailThree.setDiscountExpression("288");
 		detailThree.setQuantity(781212783);
 		detailThree.setTaxableBase(712382113);
+		detailThree.setItem(new Item().setProduct(new Product().setType(ProductType.SERVICE)));
 		
 		InvoiceDetail detailThreeAndAHalf = new InvoiceDetail();
 		detailThreeAndAHalf.setAccountCode("0192831010");
@@ -624,7 +632,7 @@ public class InvoiceTest {
 //			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(false);
+			config.setDetailed(true);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
@@ -704,6 +712,7 @@ public class InvoiceTest {
 			
 			Company registry = new Company();
 			registry.setName("COMPAÑÍA FALSA PERO MUY FALSA EH XD S.L.").setDocument("L012345678").setDocumentCountry(Country.JP);
+			registry.setDomain(new Domain().setDomainType(DomainType.GARAGE));
 			
 			LinkedList<RegistryAddress> addressList = new LinkedList<>();
 			addressList.add(new RegistryAddress().setAddress("Rey Don Sancho, Rey Don Sancho, no digas que no te aviso, pero, de dentro de Zamora un alevoso ha salido"));

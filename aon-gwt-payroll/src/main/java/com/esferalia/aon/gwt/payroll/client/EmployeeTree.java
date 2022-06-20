@@ -2833,6 +2833,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEnterprisePanel());
 		getEnterprisePanel().setEnterprise(enterprise);
 		getEnterprisePanel().selectWidget(getEnterpriseDraft());
+		enterpriseDraftObject.setAgreements(employees.getEnterpriseContext().getAgreements());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
 
 //		checkStatus(enterpriseDraftObject);

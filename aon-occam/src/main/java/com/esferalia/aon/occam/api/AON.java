@@ -2881,6 +2881,35 @@ public class AON {
 		}
 	}
 	
+	public static void setAttach(String domainName, Integer domainId, String login, byte[] data, Integer attachId, AttachType attachType) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			if (attachType.equals(AttachType.REGISTRY))
+				getAttachment().setRegistryAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.CONTRACT))
+				getAttachment().setContractAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.INVOICE))
+				getAttachment().setInvoiceAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.ITEM))
+				getAttachment().setItemAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.OFFER))
+				getAttachment().setOfferAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.PAYROLL))
+				getAttachment().setPayrollAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.PROJECT))
+				getAttachment().setProjectAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.SEPE))
+				getAttachment().setSepeAttachStream(ctx, attachId, data);
+			else if (attachType.equals(AttachType.DATA))
+				getAttachment().setDataAttachStream(ctx, attachId, data);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<Attach> getAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
 			AttachType attachType, Boolean withData) {
@@ -4267,15 +4296,17 @@ public class AON {
 	
 	// ------------------ ELABORATION
 	
-	public static Stream<Elaboration> getElaborationStream(String domainName, Integer domainId, String login,
-			ElaborationFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Stream<Elaboration> getElaborationStream(Domain domain, User user, ElaborationFilter filter) {
+		return getElaborationStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+
+	public static Stream<Elaboration> getElaborationStream(Domain domain, String login, ElaborationFilter filter) {
+		return getElaborationStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Stream<Elaboration> getElaborationStream(String domainName, Integer domainId, String login, ElaborationFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getWarehouse().getElaborationStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -4285,8 +4316,11 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Elaboration e = getWarehouse().getElaboration(ctx, id);
-			e.setItem(AON.getItem(domainName, domainId, login, e.getItem()
-					.getId()));
+			
+			Item item = getItem(new Domain().setName(domainName).setId(domainId), login, f -> 
+			f.getIdProperty().eq(e.getItem().getId()));
+			e.setItem(item);
+			
 			e.setWarehouse(getWarehouse(
 					domainName,
 					domainId,
@@ -4299,48 +4333,58 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static Elaboration saveElaboration(Domain domain, User user, Elaboration elaboration) {
+		return saveElaboration(domain.getName(), domain.getId(), user.getLogin(), elaboration); 
+	}
 	
+	public static Elaboration saveElaboration(Domain domain, String login, Elaboration elaboration) {
+		return saveElaboration(domain.getName(), domain.getId(), login, elaboration); 	
+	}
 	
-	public static Integer insertElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().insertElaboration(ctx, elaboration);
-		} finally {
-			if (ctx != null) ctx.close();
+	public static Elaboration saveElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().saveElaboration(ctx, elaboration);
 		}
 	}
 	
-	public static Elaboration updateElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().updateElaboration(ctx, elaboration);
-		} finally {
-			if (ctx != null) ctx.close();
+	/**
+	 * @deprecated  Replaced by saveElaboration
+	 */
+	@Deprecated(forRemoval = true )
+	public static Integer insertElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().insertElaboration(ctx, elaboration);
 		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by saveElaboration
+	 */
+	@Deprecated(forRemoval = true )
+	public static Elaboration updateElaboration(String domainName, Integer domainId, String login, Elaboration elaboration) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().updateElaboration(ctx, elaboration);
+		}
+	}
+	
+	public static Elaboration deleteElaboration(Domain domain, User user, Integer elaborationId) {
+		return deleteElaboration(domain.getName(), domain.getId(), user.getLogin(), elaborationId);
+	}
+
+	public static Elaboration deleteElaboration(Domain domain, String login, Integer elaborationId) {
+		return deleteElaboration(domain.getName(), domain.getId(), login, elaborationId);
 	}
 	
 	public static Elaboration deleteElaboration(String domainName, Integer domainId, String login, Integer elaborationId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getWarehouse().deleteElaboration(ctx, elaborationId);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static Integer getElaborationNextNumber(
-			String domainName, Integer domainId, String login,
-			String series) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Integer getElaborationNextNumber(String domainName, Integer domainId, String login, String series) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getWarehouse().getElaborationNextNumber(ctx, series);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -4351,8 +4395,10 @@ public class AON {
 			List<ElaborationDetail> list = getWarehouse().getElaborationDetailList(ctx, filter);
 			
 			list.forEach(detail -> {
-				detail.setItem(AON.getItem(domainName, domainId, login, detail
-						.getItem().getId()));
+				Item item = getItem(new Domain().setName(domainName).setId(domainId), login, f -> 
+				f.getIdProperty().eq(detail.getItem().getId()));
+				detail.setItem(item);
+				
 				detail.setWarehouse(getWarehouse(
 						domainName,
 						domainId,
@@ -4372,12 +4418,14 @@ public class AON {
 			Integer elaborationId) {
 		CloseableAONContext ctx = null;
 		try {
+
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			List<ElaborationDetail> list = getWarehouse()
 					.getElaborationDetailList(ctx, elaborationId);
 			list.forEach(detail -> {
-				detail.setItem(AON.getItem(domainName, domainId, login, detail
-						.getItem().getId()));
+				Item item = getItem(new Domain().setName(domainName).setId(domainId), login, f -> 
+					f.getIdProperty().eq(detail.getItem().getId()));
+				detail.setItem(item);
 				detail.setWarehouse(getWarehouse(
 						domainName,
 						domainId,
@@ -4398,8 +4446,11 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			ElaborationDetail d = getWarehouse().getElaborationDetail(ctx, id);
-			d.setItem(AON.getItem(domainName, domainId, login, d.getItem()
-					.getId()));
+			
+			Item item = getItem(new Domain().setName(domainName).setId(domainId), login, f -> 
+			f.getIdProperty().eq(d.getItem().getId()));
+			d.setItem(item);
+			
 			d.setWarehouse(getWarehouse(
 					domainName,
 					domainId,
@@ -4496,8 +4547,10 @@ public class AON {
 					.getElaborationDetailCompositionList(ctx,
 							elaborationDetailId);
 			list.forEach(composition -> {
-				composition.setItem(AON.getItem(domainName, domainId, login, composition
-						.getItem().getId()));
+				Item item = getItem(new Domain().setName(domainName).setId(domainId), login, f -> 
+				f.getIdProperty().eq(composition.getItem().getId()));
+				composition.setItem(item);
+				
 				composition.setWarehouse(getWarehouse(
 						domainName,
 						domainId,

@@ -166,7 +166,7 @@ public class SSPECDraft extends Composite {
 		ssPecDG.addColumn(infoColumn, "");
 		ssPecDG.addColumn(startDateColumn, "F. Inicio");
 		ssPecDG.addColumn(endDateColumn, "F. Fin");
-		ssPecDG.addColumn(descriptionColumn, "Descripci\u00F3n"); 
+		ssPecDG.addColumn(descriptionColumn, "Descripci\u00F3n");
 	}
 	
 	// ----------------------------------------------- InitContractVariables
@@ -236,13 +236,18 @@ public class SSPECDraft extends Composite {
 	public void setContractSSPECObject(SSPECObject ssPECObject) {
 		showLoading("Obteniendo bonifinicaciones y peculiaridades...");
 		this.ssPECObject = ssPECObject;
+		initializeYearLB();
+		loadSSPecs();
+	}
+	
+	private void loadSSPecs() {
 		this.ssPECObject.getSSPECData(
-				s -> {
-					hideMessage();
-					initializeYearLB();
-					initSSPecTable();
-				}, 
-				f -> showError("Error obtenci\u00f3n", f.getMessage()));
+			s -> {
+				hideMessage();
+				initSSPecTable();
+			}, 
+			f -> showError("Error obtenci\u00f3n", f.getMessage())
+		);
 	}
 	
 	// -------------------------------------------------- Table methods
@@ -319,15 +324,24 @@ public class SSPECDraft extends Composite {
 		this.toolbar = new AonToolbar("Peculiaridades");
 		
 		AonToolbarButton addBtn = new AonToolbarButton("Nueva peculiaridad", AON.CSS.aonIconAdd());
-		addBtn.addClickHandler(e -> new EmployeePeculiaritiesDialog(ssPECObject.getContractId(), ssPECObject.getContractStartDate()));
+		addBtn.addClickHandler(e -> new EmployeePeculiaritiesDialog(ssPECObject.getContractId(), ssPECObject.getContractStartDate()) {
+
+			@Override
+			protected void onAccept() {
+				loadSSPecs();
+			}
+			
+		});
 		toolbar.add(addBtn);
 		
 		AonToolbarButton syncBtn = new AonToolbarButton("Sincronizaci\u00f3n TGSS", AON.CSS.aonIconTgss());
 		syncBtn.addClickHandler(e -> {
 			showLoading("Sincronizando bonifinicaciones y peculiaridades TGSS...");
 			this.ssPECObject.syncSSPECData(
-					s -> showSuccess("Sincronizaci\u00f3n TGSS", "Bonificaciones y peculiaridades sincronizadas correctamente"), 
-					f -> showError("Error sincronizaci\u00f3n TGSS", f.getMessage()));
+					s -> {
+						showSuccess("Sincronizaci\u00f3n TGSS", "Bonificaciones y peculiaridades sincronizadas correctamente");
+						loadSSPecs();
+					}, f -> showError("Error sincronizaci\u00f3n TGSS", f.getMessage()));
 		});
 		toolbar.add(syncBtn);
 		

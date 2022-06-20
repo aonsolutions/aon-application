@@ -190,7 +190,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		List<SEH1P> list = new ArrayList<>();
 		List<DeliveryDetail> detailList = getDetailList(delivery.getId()).stream()
-				.map(to -> (DeliveryDetail)to)
 				.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
 				.collect(Collectors.toList());
 		

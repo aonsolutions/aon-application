@@ -8,6 +8,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.FrameElement;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Frame;
 
 public class FullViewer extends Frame {
@@ -85,6 +86,18 @@ public class FullViewer extends Frame {
 		nativeOpen( this.getElement().cast() ,dataURI);
 	}
 
+	public byte[] getData() {
+		byte [] data = getData(this.getElement().cast());
+		Window.alert("getData : " + data);
+		return data;
+	}
+
+	private native byte[] getData(FrameElement el) /*-{
+		el.contentWindow.PDFViewerApplication.pdfDocument.getData().then(function (data) {
+			console.log("Inner getData : " + data);
+			return data;
+		});
+	}-*/;
 	
 	private native String encodeURIComponent(String URI) /*-{
 		return encodeURIComponent(URI);

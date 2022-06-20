@@ -181,6 +181,37 @@ public class PDFToolkit {
 			
 		}
 	}
+	
+	public static void drawTextWellJustified(
+			List<String> lines, float max, float fontSize, PDFont font, float x, float y, Color color,
+			PDPageContentStream stream, float lineSeparation
+			) throws IOException {
+		stream.setNonStrokingColor(color);
+		for (int i = 0; i < lines.size(); i++, y -= lineSeparation) {
+			String line = lines.get(i) != null ? lines.get(i).trim() : "";
+			boolean isNextEmpty = false;
+			if (i < lines.size() -1) {
+				isNextEmpty = lines.get(i + 1).isEmpty();
+			} else
+				isNextEmpty = true;
+			
+			if (!isNextEmpty) {
+				
+				float size = fontSize * font.getStringWidth(line) / 1000;
+				float free = max - size;
+				
+				if (free > max*0.1) {					
+					drawText(stream, line, x, y, color, font, fontSize);
+				} else {					
+					drawTextJustified(line, max, fontSize, font, x, y, stream);
+				}
+				
+			} else {
+				drawText(stream, line, x, y, color, font, fontSize);
+			}
+			
+		}
+	}
 
 	/**
 	 * <p>
@@ -581,7 +612,7 @@ public class PDFToolkit {
 					//String aux = words.get(i).replace(" ", " ");
 					float fw = (font.getStringWidth(line + " " + aux) / 1000.0f) * fontSize;
 					if (fw < max) {
-						line += " " + aux;
+						line += (!AonStringUtils.isEmpty(line) ? " " : "") + aux;
 					} else {
 						lines.add(line);
 						line = "" + aux;
@@ -790,6 +821,7 @@ public class PDFToolkit {
 			}
 		}
 	}
+	
 	public static float getLogoFinalHeight(byte[] logo, float maxHeight, float maxWidth) throws IOException {
 		if (logo == null)
 			return 0;
@@ -809,6 +841,27 @@ public class PDFToolkit {
 		}
 		
 		return logoHeigth;
+	}
+	
+	public static float getLogoFinalWidth (byte[] logo, float maxHeight, float maxWidth) throws IOException {
+		if (logo == null)
+			return 0;
+		BufferedImage bufferedImage = null;
+		bufferedImage = ImageIO.read(new ByteArrayInputStream(logo));
+		float logoHeigth = bufferedImage.getHeight();
+		float logoWidth = bufferedImage.getWidth();
+		float proportion = logoHeigth/logoWidth;
+		
+		if (logoHeigth > maxHeight) {
+			logoHeigth = maxHeight;
+			logoWidth = logoHeigth / proportion;
+		}
+		if (logoWidth > maxWidth) {
+			logoWidth = maxWidth;
+			logoHeigth = logoWidth * proportion;
+		}
+		
+		return logoWidth;
 	}
 	
 	

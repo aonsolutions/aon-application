@@ -1104,6 +1104,39 @@ public class AttachmentDAO {
 					.setTag(TagFiller.buildTag(r));
 		}
 	}
+
+
+	public static void setRegistryAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(RATTACH).set(RATTACH.DATA, data).where(RATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void setContractAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(CONTRACT_ATTACH).set(CONTRACT_ATTACH.DATA, data).where(CONTRACT_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void setInvoiceAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(INVOICE_ATTACH).set(INVOICE_ATTACH.DATA, data).where(INVOICE_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void setItemAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(IATTACH).set(IATTACH.DATA, data).where(IATTACH.ID.eq(attachId)).execute();	
+	}
+
+	public static void setOfferAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(OFFER_ATTACH).set(OFFER_ATTACH.DATA, data).where(OFFER_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void setPayrollAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(PAYROLL_BATCH_ATTACH).set(PAYROLL_BATCH_ATTACH.DATA, data).where(PAYROLL_BATCH_ATTACH.ID.eq(attachId)).execute();	
+	}
+
+	public static void setProjectAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(PROJECT_ATTACH).set(PROJECT_ATTACH.DATA, data).where(PROJECT_ATTACH.ID.eq(attachId)).execute();
+	}
+
+	public static void setSepeAttachStream(AONContext ctx, Integer attachId, byte[] data) {
+		ctx.getDslContext().update(SEPE_BATCH_ATTACH).set(SEPE_BATCH_ATTACH.DATA, data).where(SEPE_BATCH_ATTACH.ID.eq(attachId)).execute();
+	}
 	
 	
 	

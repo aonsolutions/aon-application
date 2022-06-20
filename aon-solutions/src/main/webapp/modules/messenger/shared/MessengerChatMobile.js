@@ -2,9 +2,9 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
-import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar } from "./utils.js";
+import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
+import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment, createIconEvaluation, createSectionRating} from "./creationUtils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar, taskNumberParse } from "./utils.js";
 import * as ACTIONS from "../../actions.js";
 /**
  * 
@@ -63,33 +63,45 @@ const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
     chat.classList.add(CSS.NO_SCROLLBAR);
     wrapper.appendChild(chat);
 
-    addTextAreaChat(aonMessengerChat);
-}
-
-const addTextAreaChat = (aonMessengerChat) => {
     const firstDiv = document.getElementById(MESSENGER_IDS.FIRST_DIV);
-    const task = aonMessengerChat.task;
 
     if( [TASK_STATUS.IN_PROGRESS, TASK_STATUS.PENDING].includes(task.status) ){
-        const div = newComponent({
-            classes: [CSS.FLEX_ROW],
-            styles: {
-                width: "100%",
-                position: "absolute",
-                bottom: 0
-            },
+        addTextAreaChat(aonMessengerChat, firstDiv);
+    } else if(task.evaluation){        // create section rating section
+        const evaluation = task.evaluation;
+
+        let section = createSectionRating(firstDiv, true);
+
+        Object.values(TASK_EVALUATION)
+        .forEach((r)=>{
+            const selected = r === evaluation;
+            section.appendChild(createIconEvaluation(`../../../assets/img/evaluation/${r}.png`, selected));
         });
-        div.appendTo(firstDiv);
-    
-        const divs = createSectionComment(div);
-        divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>showFullComment(true));
-        divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment());
-        changeStyleSectionComment(divs);
-    
-        buildFullComment(aonMessengerChat, divs.aonTextArea);
     } else {
         firstDiv.style.height = "100%";
     }
+
+}
+
+const addTextAreaChat = (aonMessengerChat, firstDiv) => {
+    const div = newComponent({
+        classes: [CSS.FLEX_ROW],
+        styles: {
+            width: "100%",
+            position: "absolute",
+            borderTop: "1px solid #ddd",
+            bottom: 0
+        },
+    });
+    div.appendTo(firstDiv);
+
+    const divs = createSectionComment(div);
+    divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>showFullComment(true));
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment());
+    changeStyleSectionComment(divs);
+
+    buildFullComment(aonMessengerChat, divs.aonTextArea);
+    
 }
 
 /**
@@ -184,7 +196,7 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
      const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
+        title:sourceText +" " +taskNumberParse(task.number)
     });
     toolbar.style.width = "100%"; 
     

@@ -2,7 +2,6 @@ package net.aonsolutions.aon.api.servlet.task;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedList;
@@ -47,11 +46,10 @@ public class TaskUtils {
 	    throw new IllegalStateException("Utility class");
 	}
 	
-	public static void onSaveWorkflow(AonApiData api, TaskWorkflow workflow) {
+	public static void onNotification(AonApiData api, TaskWorkflow workflow) {
 		Thread newThread = new Thread(() -> {
 			try {
 				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
-				
 				switch (workflow.getType()) {
 					case OPEN:
 						TaskNotification.onOpenNotification(api, task, workflow);
@@ -62,11 +60,22 @@ public class TaskUtils {
 						break;
 					case ASSIGN:
 						TaskNotification.onAssignNotification(api, task, workflow);
+						TaskNotification.onAssignEmail(api, task, workflow);
 						break;
 					case CLOSE:
 						TaskNotification.onCloseNotification(api, task, workflow);
 						TaskNotification.onCloseEmail(api, task, workflow);
-						closeTaskChildOrParent(api, task, workflow);
+						changeStatusTask(api, task, workflow);
+						break;
+					case EVALUATION:
+						TaskNotification.onEvaluationCloseEmail(api, task, workflow);
+						//TODO
+						break;
+					case REOPEN:
+						//TODO
+						break;
+					case CONNECTED:
+						//TODO
 						break;
 					default:
 						break;
@@ -91,28 +100,43 @@ public class TaskUtils {
 		return task.getDescription();
 	}
 	
+	public static JSONObject parseCauInfo(Task task) {
+		try {
+			return new JSONObject(task.getDescription()).optJSONObject("cauInfo");
+		} catch (Exception e) {}
+		return new JSONObject();
+	}
+	
+	public static JSONObject parseAuth(Task task) {
+		try {
+			return parseCauInfo(task).optJSONObject(IJsonNames.AUTH);
+		} catch (Exception e) {}
+		return new JSONObject();
+	}
+	
 	public static String parseNumber(Integer number) {
 		if(number==null) number = 0;
-		return "#"+StringUtils.leftPad(number.toString(), 5, "0");
+		return "\u0023"+StringUtils.leftPad(number.toString(), 5, "0");
 	}
 	
 	public static void setCauInfo(AonApiData api, Task task) {
 		try {
 			boolean edit = task.getId() != null;
 			task.setDomain(api.getDomain());
-			JSONObject description = new JSONObject(task.getDescription());
-			JSONObject cauInfo = description.optJSONObject("cauInfo");
+			JSONObject cauInfo = parseCauInfo(task);
+			JSONObject auth    = parseAuth(task);
 			JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
 			JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
-			JSONObject auth = cauInfo.optJSONObject(IJsonNames.AUTH);
+			
 			String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
 			String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
 
 			String doc = docParent!=null ? docParent : docCustomer;
 			
-			if(!auth.optString(IJsonNames.EMAIL).isEmpty()) 
+			if(!auth.optString(IJsonNames.EMAIL).isEmpty()) {
 				task.setGtaskId(auth.optString(IJsonNames.EMAIL));
-			
+			}
+	
 			if(doc!=null) {
 				Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
 				if(registry!=null && registry.getId()!=null)
@@ -198,19 +222,20 @@ public class TaskUtils {
 	public static LinkedList<Auth> getAuthsTask(AonApiData api, Task task, TaskWorkflow workflow, User user) {
 		LinkedList<Auth> list = new LinkedList<>();
 		Domain domain = api.getDomain();
+		Optional<String> gtaskId = task.getGtaskId();
 		//SEND SENDER
 		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			
 			getAuthForTaskHolder(api, task.getSender()).ifPresent(list::add);
-			System.out.println("SENDER SEND NOTIFICATION ID:"+ task.getSender().getId());
+			System.out.println("SENDER ID:"+ task.getSender().getId());
 			
-		} else if(task.getGtaskId()!=null && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
+		} else if(gtaskId.isPresent() && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
 			
-			Auth authSender = AON_SOLUTIONS.getAuth(task.getGtaskId());
+			Auth authSender = AON_SOLUTIONS.getAuth(gtaskId.get());
 			
 			if( authSender!=null && authSender.getEmail()!=null &&  !Arrays.equals(user.getAuth().getAuth(), authSender.getAuth())) {
 				list.add(authSender);
-				System.out.println("SENDER SEND NOTIFICATION EMAIL:"+ authSender.getEmail());
+				System.out.println("SENDER EMAIL:"+ authSender.getEmail());
 			}
 		}
 		
@@ -221,7 +246,7 @@ public class TaskUtils {
 				
 				if(usr!=null) list.add(usr.getAuth());
 				
-				System.out.println("TASKHOLDER SEND NOTIFICATION ID:"+ task.getTaskHolder().getId());
+				System.out.println("TASKHOLDER ID:"+ task.getTaskHolder().getId());
 			}		
 		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ // SEND WORKGROUP ASSIGNED
 			AON.getTaskHolderWorkgroupStream(
@@ -238,7 +263,7 @@ public class TaskUtils {
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 				if(usr!=null) list.add(usr.getAuth());
 			});
-			System.out.println("WORKGROUP SEND NOTIFICATION ID:"+ task.getWorkgroup().getId());
+			System.out.println("WORKGROUP ID:"+ task.getWorkgroup().getId());
 		}
 		
 		return list;
@@ -267,25 +292,23 @@ public class TaskUtils {
 	    return matcher;
 	}
 	
-	private static void closeTaskChildOrParent(AonApiData api, Task task, TaskWorkflow workflow) {
-		List<Byte> types = new ArrayList<>(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()));
+	private static void changeStatusTask(AonApiData api, Task task, TaskWorkflow workflow) {
+		List<Byte> types = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
 		if(task.isChild()) {
-			List<Task> list = AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
-				f-> f.getParentProperty().eq(task.getParent())
-				.and(f.getIdProperty().ne(task.getId()))
-				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
-			).collect(Collectors.toList());
 			
-			if(list.isEmpty()) {
-				Task tmp = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), 
-					f-> f.getIdProperty().eq(task.getParent())
-					.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()))
-				);
-				if(tmp!=null && tmp.getId()!=null) {
-					AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), tmp.setStatus(TaskStatus.PENDING));
-				}
+			Task parent = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+			
+			if(parent!=null && parent.getId()!=null) {
+				
+				List<Task> childs = AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
+					f-> f.getParentProperty().eq(task.getParent())
+					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+				).collect(Collectors.toList());
+				
+				TaskStatus status = childs.isEmpty() ? TaskStatus.PENDING : TaskStatus.IN_PROGRESS;
+				AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), parent.setStatus(status));
 			}
-		} else {
+		} else { // IS PARENT
 			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
 					f-> f.getParentProperty().eq(task.getId())
 					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
@@ -298,7 +321,7 @@ public class TaskUtils {
 				
 				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
 				
-				onSaveWorkflow(api, tmp);
+				onNotification(api, tmp);
 			});
 		}
 	}

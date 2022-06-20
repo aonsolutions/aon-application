@@ -1,11 +1,15 @@
 package com.esferalia.aon.watson.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class AonArrayUtils {
+	
+	private AonArrayUtils() {
+		
+	}
 
 	/**
 	 * An empty immutable {@code String} array.
@@ -714,7 +718,6 @@ public class AonArrayUtils {
 			return aux;
 		}
 		
-		final int size = dataset.length;
 		ArrayList<List<T>> total = new ArrayList<>();
 		
 		// Add first line
@@ -745,4 +748,30 @@ public class AonArrayUtils {
 		return total;
 	}
 	
+    /**
+     * <p>Returns the length of the specified array.
+     * This method can deal with <code>Object</code> arrays and with primitive arrays.</p>
+     *
+     * <p>If the input array is <code>null</code>, <code>0</code> is returned.</p>
+     *
+     * <pre>
+     * ArrayUtils.getLength(null)            = 0
+     * ArrayUtils.getLength([])              = 0
+     * ArrayUtils.getLength([null])          = 1
+     * ArrayUtils.getLength([true, false])   = 2
+     * ArrayUtils.getLength([1, 2, 3])       = 3
+     * ArrayUtils.getLength(["a", "b", "c"]) = 3
+     * </pre>
+     *
+     * @param array  the array to retrieve the length from, may be null
+     * @return The length of the array, or <code>0</code> if the array is <code>null</code>
+     * @throws IllegalArgumentException if the object arguement is not an array.
+     * @since 2.1
+     */
+    public static int getLength(Object array) {
+        if (array == null) {
+            return 0;
+        }
+        return Array.getLength(array);
+    }
 }

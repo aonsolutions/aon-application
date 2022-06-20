@@ -452,9 +452,8 @@ public class AonWordUtils {
         if (str == null || (strLen = str.length()) == 0) {
             return str;
         }
-        StringBuffer buffer = new StringBuffer(strLen);
+        StringBuilder buffer = new StringBuilder(strLen);
 
-        boolean whitespace = true;
         char ch = 0;
         char tmp = 0;
 
@@ -468,7 +467,6 @@ public class AonWordUtils {
                 tmp = ch;
             }
             buffer.append(tmp);
-            whitespace = Character.isSpace(ch);
         }
         return buffer.toString();
     }
@@ -563,7 +561,7 @@ public class AonWordUtils {
      */
     private static boolean isDelimiter(char ch, char[] delimiters) {
         if (delimiters == null) {
-            return Character.isSpace(ch);
+            return Character.isWhitespace(ch);
         }
         for (int i = 0, isize = delimiters.length; i < isize; i++) {
             if (ch == delimiters[i]) {

@@ -63,6 +63,7 @@ export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = MSG.ATTACH_FILES_DRAGGI
 export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = MSG.ATTACH_FILES_DRAGGING_DROPPING_LOGO;
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
+export const ASSIGN = "Asignar";// TODO
 
 // ----- B
 
@@ -488,6 +489,7 @@ export const TO_SHOW = "Mostrar";//TODO
 
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;
 export const UPLOAD = MSG.UPLOAD;
+export const UPDATE = "Actualizar"; //TODO
 export const UPLOAD_FILE = MSG.UPLOAD_FILE;
 export const USER = MSG.USER;
 export const USER_DATA = MSG.USER_DATA;

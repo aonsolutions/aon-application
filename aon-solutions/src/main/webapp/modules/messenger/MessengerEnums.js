@@ -84,10 +84,11 @@ export const MESSENGER_IDS = {
     EXTERNAL_TASK: "externalTask",
     BTN_SEND_MESSAGE: "btnSendMessage",
     DIV_TASK_TAGS:"divTaskTags",
-    createSelectCau:"divTaskTags",
     TYPE_REQUEST_CAU: "typeRequestCau",
     SELECT_APP: "selectApp",
     AON_TAB: "aonTabMessenger",
+    TOOLBAR_BRANCH: "toolbarBranch",
+    TOOLBAR_LABELS: "toolbarLabels"
 }
 
 export const WORKFLOW_TYPES = {
@@ -153,6 +154,14 @@ export const TASK_SOURCE = {
 	GITHUB:"github",
     QUERY: "query",
 	REQUEST: "request"
+} 
+
+export const TASK_EVALUATION = {
+	VERY_BAD:"very_bad",
+	BAD:"bad",
+	REGULAR:"regular",
+	GOOD:"good",
+	VERY_GOOD:"very_good"
 } 
 
 export const MessengerSidenav = {
@@ -227,6 +236,8 @@ export const APP_PARAMS_REQUEST = {
 
     APP_REQUESTS_INT_EMAIL_OPENED:"APP_REQUESTS_INT_EMAIL_OPENED",
 	APP_REQUESTS_INT_EMAIL_CLOSED:"APP_REQUESTS_INT_EMAIL_CLOSED",
+    APP_REQUESTS_INT_EMAIL_ASSIGN:"APP_REQUESTS_INT_EMAIL_ASSIGN",
     APP_REQUESTS_EXT_EMAIL_OPENED:"APP_REQUESTS_EXT_EMAIL_OPENED",
-	APP_REQUESTS_EXT_EMAIL_CLOSED:"APP_REQUESTS_EXT_EMAIL_CLOSED"
+	APP_REQUESTS_EXT_EMAIL_CLOSED:"APP_REQUESTS_EXT_EMAIL_CLOSED",
+    APP_REQUESTS_EMAIL_RATING_CLOSED: "APP_REQUESTS_EMAIL_RATING_CLOSED"
   }

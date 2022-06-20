@@ -659,7 +659,7 @@ public class Delivery implements Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof Sales ))
+		if(!(obj instanceof Delivery ))
 			return false;
 		Delivery delivery = (Delivery) obj;
 		return Objects.equals(id, delivery.id);

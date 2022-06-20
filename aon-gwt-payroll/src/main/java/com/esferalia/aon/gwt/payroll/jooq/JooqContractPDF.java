@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -107,7 +108,7 @@ public class JooqContractPDF {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 				
 			try {
-				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
+				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType);
 				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 				
 				TreeMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
@@ -346,6 +347,17 @@ public class JooqContractPDF {
 			String cnoCode = parseContractData(cnoRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
 			CNO cno = cnoMap.get(cnoCode);
 			contractFillData.put("E_CNO", cnoCode + " " + (null == cno ? "" : cno.getTitle()));
+		}
+		
+		// Employee (Contract Info)
+		
+		Record contractInfo = dslContext.selectFrom(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.eq("I_PARTIALLY_TIME_HOURS"))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.fetchOne();
+		
+		if(null != contractInfo) {
+			contractFillData.put("I_PARTIALLY_TIME_HOURS", contractInfo.get(CONTRACT_INFO.EXPRESSION));
 		}
 		
 		return contractFillData;

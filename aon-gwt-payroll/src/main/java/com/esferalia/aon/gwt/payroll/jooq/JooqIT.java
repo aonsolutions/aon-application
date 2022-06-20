@@ -199,7 +199,11 @@ public class JooqIT {
 						
 						for(Record record : baseCGCRecords) {
 							if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
-								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+								try {
+									it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+								} catch (NumberFormatException e) {
+									System.err.println("No se puede parsear a Double -> " + record.get(CONTRACT_DATA.EXPRESSION) + " (" + fullName + "  ||  " + startContract + " - " + endContract + ")");
+								}
 						}
 					}
 					

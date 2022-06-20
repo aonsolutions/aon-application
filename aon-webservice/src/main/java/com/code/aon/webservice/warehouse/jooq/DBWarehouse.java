@@ -20,7 +20,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -142,15 +142,14 @@ public class DBWarehouse {
 	 */
 	public static JSONObject createElaboration(Domain domain, String login) {
 		Elaboration elaboration = new Elaboration();
-		elaboration.setStatus(ElaborationStatus.PENDING.value());
+		elaboration.setStatus(ElaborationStatus.PENDING);
 		elaboration.setDate(new Date());
-		elaboration.setItem(new OldItem());
 		return ToJSON.elaborationToJSON(elaboration);
 	}
 	
 	public static JSONObject insertElaboration(Domain domain, String login, JSONObject json) {
 		Elaboration elaboration = getElaboration(domain, login, json, new Elaboration());
-		elaboration.setStatus(ElaborationStatus.PENDING.value());
+		elaboration.setStatus(ElaborationStatus.PENDING);
 		Integer id = AON.insertElaboration(domain.getName(), domain.getId(), login, elaboration);
 		elaboration.setId(id);
 		return ToJSON.elaborationToJSON(elaboration);
@@ -182,15 +181,14 @@ public class DBWarehouse {
 		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, detail.getElaboration().getId());
 		
 		Integer baseItemId = elaboration.getItem().getId();
-		OldItem item = elaboration.getItem();
+		Item item = elaboration.getItem();
 		if (json.opt(MSG.NUMBER) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.NUMBER))) {
 			// create serialized item
 			item.setSerialNumber(json.getString(MSG.NUMBER));
 			item.setSerialDate(new java.sql.Date(detail.getDate().getTime()));
 			item.setBarcode(null);
-			int itemId = AON.insertItem(domain.getName(), domain.getId(), login, item).getId();
-			item.setId(itemId);
+			item = AON.saveItem(domain, login, item);
 		}
 		
 		detail.setItem(item);
@@ -201,7 +199,7 @@ public class DBWarehouse {
 		AON.getItemCompositionList(domain.getName(), domain.getId(), login, baseItemId).forEach(ic -> {
 			ElaborationDetailComposition composition = new ElaborationDetailComposition();
 			composition.setElaborationDetail(detail);
-			composition.setItem(new OldItem().setId(ic.getCompositionItemId()));
+			composition.setItem(new Item().setId(ic.getCompositionItemId()));
 			composition.setQuantity(detail.getQuantity()*ic.getQuantity());
 			composition.setWarehouse(detail.getWarehouse());
 			AON.insertElaborationDetailComposition(domain.getName(), domain.getId(), login, composition);
@@ -250,7 +248,7 @@ public class DBWarehouse {
 			elaboration.setDate(new Date(json.getLong(MSG.DATE)));
 		}
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
-			elaboration.setItem(new OldItem().setId(json.getInt(MSG.ITEM)));
+			elaboration.setItem(new Item().setId(json.getInt(MSG.ITEM)));
 		}
 		if (json.opt(MSG.DESCRIPTION) != null && !MSG.EMPTY.equals(json.opt(MSG.DESCRIPTION))) {
 			elaboration.setDescription(json.getString(MSG.DESCRIPTION));
@@ -266,8 +264,8 @@ public class DBWarehouse {
 		}
 		if (json.opt(MSG.STATUS) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.STATUS))) {
-			elaboration.setStatus(ElaborationStatus.valueOf(json
-					.getString(MSG.STATUS)).value());
+			elaboration.setStatus(ElaborationStatus.safeValueOf(json
+					.getString(MSG.STATUS)));
 		}
 		if (json.opt(MSG.COMMENTS) != null) {
 			elaboration.setComments(json.getString(MSG.COMMENTS));
@@ -288,7 +286,7 @@ public class DBWarehouse {
 			detail.setDate(new Date(json.getLong(MSG.DATE)));
 		}
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
-			detail.setItem(new OldItem().setId(json.getInt(MSG.ITEM)));
+			detail.setItem(new Item().setId(json.getInt(MSG.ITEM)));
 		}
 		if (json.opt(MSG.QUANTITY) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {
@@ -312,7 +310,7 @@ public class DBWarehouse {
 			composition.setElaborationDetail(new ElaborationDetail().setId(json.getInt("elaboration_detail")));
 		}
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
-			composition.setItem(new OldItem().setId(json.getInt(MSG.ITEM)));
+			composition.setItem(new Item().setId(json.getInt(MSG.ITEM)));
 		}
 		if (json.opt(MSG.QUANTITY) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {

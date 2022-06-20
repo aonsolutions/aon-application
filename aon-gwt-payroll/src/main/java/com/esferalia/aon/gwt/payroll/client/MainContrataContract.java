@@ -170,6 +170,8 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private Task syncTask;
 	
+	private boolean contextLoaded = false;
+	
 	// ------------------------------------------ ContrataEmployee
 
 	private class ContrataEmployeeImpl extends ContrataEmployee {
@@ -351,6 +353,9 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private void addEmployeeInfoColumns(NoSelectionModel<EmployeeContractInfo> selectionCCCInfoModel) {
 		selectionCCCInfoModel.addSelectionChangeHandler(event -> {
+			if(!contextLoaded)
+				return;
+			
 			EmployeeContractInfo employeeContractInfoSelected = selectionCCCInfoModel.getLastSelectedObject();
 			Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 
@@ -801,6 +806,7 @@ public class MainContrataContract extends MainEntryPoint {
 
 	public void onModuleLoad(MainContrataContractObject mainContrataContractObject) {
 		this.mainContrataContractObject = mainContrataContractObject;
+		this.contextLoaded = false;
 		
 		AonMessagePanel.showLoading(messageContainer, "Obteniendo contexto de la empresa...");
 		
@@ -820,6 +826,7 @@ public class MainContrataContract extends MainEntryPoint {
 					setTableHeights();
 					employeeDataGrid.redraw();
 					initWorkplaceLB();
+					contextLoaded = true;
 				}, f -> {}
 		);
 

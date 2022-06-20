@@ -903,7 +903,6 @@ public class JooqEmployee {
 			}else {
 				contractDataTable = dslContext.select().from(CONTRACT_DATA)
 						.where(CONTRACT_DATA.CONTRACT.eq(contract))
-						.and(CONTRACT_DATA.START_DATE.le(currentDate))
 						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
 						.fetch();
 				
@@ -959,7 +958,9 @@ public class JooqEmployee {
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COEFICIENTE_PARCIALIDAD")) {
 				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
-				contractData.setPartialityCoef(Double.parseDouble(r.get(CONTRACT_DATA.EXPRESSION)));
+				String partiality = r.get(CONTRACT_DATA.EXPRESSION);
+				partiality = partiality.replace(',', '.');
+				contractData.setPartialityCoef(Double.parseDouble(partiality));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "MODELO_COTIZACION_AGRARIO")) {
 				contractData.setMdctzId(r.get(CONTRACT_DATA.ID));
 				contractData.setMdctz(r.get(CONTRACT_DATA.EXPRESSION));
@@ -1069,6 +1070,7 @@ public class JooqEmployee {
 				.fetch();
 		
 		contractData.setHasSettle(settlementRecords.isNotEmpty());
+		if(settlementRecords.isNotEmpty()) contractData.setHolidaysDate(settlementRecords.get(0).get(SALARY.END_DATE));
 		
 		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)
@@ -1595,26 +1597,6 @@ public class JooqEmployee {
 					}
 				}
 				
-				if(null == contractData.getQuoteGroupIdxMonthId()){
-					if(contractData.getQuoteGroupIdxMonth()){
-						ContractDataRecord contizacionRecord = null;
-						
-						contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(contractData.getQuoteGroupIdxMonthId(), domain, "DIAS_MES", contractData.getContractId(), "30", startDate, endDate)
-							.returning(CONTRACT_DATA.ID)
-							.fetchOne();
-						
-						contractData.setQuoteGroupIdxMonthId(contizacionRecord.getId());
-					}
-				}else{
-					if(!contractData.getQuoteGroupIdxMonth()){
-						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuoteGroupIdxMonthId())).execute();
-						contractData.setQuoteGroupIdxMonthId(null);
-						contractData.setQuoteGroupIdxMonth(false);
-					}
-				}
-				
 				if(null == contractData.getOcupationId()){
 					if(null != contractData.getOcupation()){
 						ContractDataRecord ocupacionRecord = null;
@@ -1671,6 +1653,27 @@ public class JooqEmployee {
 					}
 				}
 				
+			}
+			
+			// I. Cotizacion mensual
+			if(null == contractData.getQuoteGroupIdxMonthId()){
+				if(contractData.getQuoteGroupIdxMonth()){
+					ContractDataRecord contizacionRecord = null;
+					
+					contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getQuoteGroupIdxMonthId(), domain, "DIAS_MES", contractData.getContractId(), "30", startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setQuoteGroupIdxMonthId(contizacionRecord.getId());
+				}
+			}else{
+				if(!contractData.getQuoteGroupIdxMonth()){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuoteGroupIdxMonthId())).execute();
+					contractData.setQuoteGroupIdxMonthId(null);
+					contractData.setQuoteGroupIdxMonth(false);
+				}
 			}
 			
 			if(null == contractData.getMdctzId()){

@@ -1,4 +1,5 @@
 import { CONSTANT, EVENT, TAG } from "../environments/environments.js";
+import { setDataset } from "../services/utilsComponents.js";
 import { AonElement } from "./AonElement.js";
 
 export class AonTab extends AonElement {
@@ -51,6 +52,9 @@ export class AonTab extends AonElement {
         span.style.padding = '10px';
         span.style.paddingBottom = '5px';
         span.style.cursor = 'pointer';
+        if(option.dataset){
+            setDataset(span, option.dataset);
+        }
         span.addEventListener(EVENT.CLICK, () => {
             this.querySelectorAll(TAG.SPAN).forEach(sp => {
                 sp.style.borderBottom = 'none';
@@ -63,6 +67,7 @@ export class AonTab extends AonElement {
             span.style.borderBottom = '2px solid #002469';
         }
         this.getElement(this.DIV).appendChild(span);
+        return span;
     }
 
     setOptions(options) {
@@ -71,7 +76,7 @@ export class AonTab extends AonElement {
 
     addOption(option) {
         this.options.push(option);
-        this.printOption(option, this.options.length - 1);
+        return this.printOption(option, this.options.length - 1);
     }
 
     setOptionsPrint(options){
@@ -79,6 +84,10 @@ export class AonTab extends AonElement {
         this.options.forEach((option, i) => {
             this.printOption(option, i);
         })
+    }
+
+    getTabByDatasetId(id){
+        return document.querySelector(`[id*='${this.SPAN}'][data-id='${id}']`);
     }
 
 }

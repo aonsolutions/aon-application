@@ -316,7 +316,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				
 				@Override
 				public void onSuccess(String dataURI) {
-					showAttachPDf(dataURI);
+					showAttachPDf(attach.getId(), dataURI);
 				}
 				
 				@Override
@@ -434,6 +434,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("Certific\u00402 (Pdf)", "103");
 		typeLB.addItem("IDC", "104");
 		typeLB.addItem("IDCPlNss", "105");
+		typeLB.addItem("Modificaci\u00f3n Contrato", "107");
 		typeLB.addItem("Otros", "106");
 		return typeLB;
 	}
@@ -544,18 +545,41 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			refreshPage();
 		}, f -> showErrorMessage("Contrato", f.getMessage()));
 	}
+	
+	public void setAttachData(Integer attachId, byte[] data) {
+		if(null == attachId || null == data) return;
+		
+		showLoadingMessagePDF("Guardando documento...");
+		impl.setAttachData(attachId, data, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				showSuccessMessagePDF("Documentos", "Documento guardado");
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Nothing to do here
+			}
+			
+		});
+	}
 
 	// ------------------------------------------------------ Abstract Methods
 
 	protected abstract void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 	
-	protected abstract void showAttachPDf(String dataURI);
+	protected abstract void showAttachPDf(Integer attachId, String dataURI);
 
 	protected abstract void showErrorMessage(String title, String message);
 
 	protected abstract void showSuccessMessage(String title, String message);
 	
+	protected abstract void showSuccessMessagePDF(String title, String message);
+	
 	protected abstract void showLoadingMessage(String message);
+	
+	protected abstract void showLoadingMessagePDF(String message);
 
 	// ------------------------------------------------------ Refresh table
 

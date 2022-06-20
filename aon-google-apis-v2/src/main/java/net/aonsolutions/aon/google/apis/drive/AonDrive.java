@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -123,8 +122,13 @@ public class AonDrive extends DriveUtils{
 		} else 	file = principal(drive, attach);
 		return setPermissions(drive, file.getId(), emails);
 	}
-
+	
+	@Deprecated
 	public Boolean sync(Drive drive, User user, Attach attach, Boolean dryRun){		
+		return sync(drive, attach, dryRun);
+	}
+	
+	public Boolean sync(Drive drive, Attach attach, Boolean dryRun){		
 		if (!checkTypes(attach)) {
 			if(attach.getDriveId() == null){
 				if (dryRun) { 

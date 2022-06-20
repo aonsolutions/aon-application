@@ -219,7 +219,7 @@ const createCommentContent = (properties) => newComponent({
  * @param {String} submessage optional submessage
  * @returns 
  */
-export const createAction = (icon, message, submessage) => {
+export const createAction = (icon, message, submessage, margin=true) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
@@ -234,7 +234,7 @@ export const createAction = (icon, message, submessage) => {
     width : '20px',
     height : '20px',
     borderRadius : "100em",
-    marginRight : "1em",
+    marginRight : margin ? "1em" : "0",
     background : CSS.variable(COLORS.AON_LIGHT_GRAY),
    }
   });
@@ -242,7 +242,8 @@ export const createAction = (icon, message, submessage) => {
   let properties = {
     name :  icon.icon,
     color : icon.color,
-    size : "1.4em"
+    title: icon.title,
+    size : "1.4em",
   };
 
   const image = icon.type === CONSTANT.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
@@ -328,7 +329,7 @@ const createMaterialIcon = (properties) => newComponent({
         color: properties.color
     },
     attributes:{
-      title: properties.name,
+      title: properties.title || properties.name 
     }
 });
 
@@ -347,7 +348,7 @@ const createMaterialIcon = (properties) => newComponent({
           color: properties.color ? properties.color : "#404040"
       },
       attributes:{
-        title: properties.name,
+        title: properties.title || properties.name,
       }
   });
 
@@ -481,58 +482,14 @@ const iconComment = (icon_name) => {
 }
 
 /**
- * Create a new message
- * @param {*} properties 
- * @returns 
- */
-export const createChatMessage = (properties, chat) => {
-    properties = checkProperties(properties);
-
-    const message = createMessageBox(properties);
-    chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
-
-    let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
-
-    let messageSend = properties.notification_user; // si el mensaje fue enviado
-
-    createIconMessage(message, messageSend, me, true, properties.notification_date, properties.date);
- 
-    if(!me){
-      properties.marginLeft = "20px";
-    }
-
-    const name = createMessageAuthor(properties);
-    name.appendTo(message);
-
-    const description = createCommentContent(properties);
-    description.appendTo(message);
-
-    const date = createText({
-        text: AonDateUtils.setDateTimestampDay(new Date(properties.date)),
-        color: CSS.variable(COLORS.AON_GRAY),
-        fontSize : "11px",//'0.6em',
-        classes: [CSS.FIRST_LETTER_UPPER]
-    });
-    date.appendTo(name.element);
-    
-    checkFilesAddEventClick(message); //ADD EVENT CLICK
-
-    downChat();
-
-    return message;
-}
-
-
-/**
  * 
  * @param {HTMLElement} message  
  * @param {Boolean} messageSend 
- * @param {Boolean} me 
  * @param {Boolean} iconSendMail
- * @param {Date} notification_date 
- * @param {Date} date creation date 
+ * @param {Object} properties 
  */
-const createIconMessage = (message, messageSend, me, iconSendMail, notification_date, date) => {
+const createIconMessage = (message, messageSend, iconSendMail, properties) => {
+  const {me, notification_date, date, task} = properties;
 
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
 
@@ -559,7 +516,7 @@ const createIconMessage = (message, messageSend, me, iconSendMail, notification_
         setStyles(iconSend, { right: "17px", cursor: "pointer" });
         iconSend.addEventListener(EVENT.CLICK, async()=> {
           if(aonMessengerChat) 
-            aonMessengerChat.sendMessageHistoric(parseInt(message.dataset.id), true);
+            aonMessengerChat.sendMessageHistoric(task, parseInt(message.dataset.id), true);
         });
       } 
     }
@@ -571,7 +528,7 @@ const createIconMessage = (message, messageSend, me, iconSendMail, notification_
       message.appendChild(iconEdit);
       iconEdit.title = MSG.EDIT;
       setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 , right: "17px", cursor: "pointer" });
-      iconEdit.addEventListener(EVENT.CLICK, ()=> setContentMessageChat(parseInt(message.dataset.id)));
+      iconEdit.addEventListener(EVENT.CLICK, ()=> setContentMessageChat(task, parseInt(message.dataset.id)));
 
       if(iconSend) iconSend.style.right = "41px";
     }
@@ -593,13 +550,70 @@ const createIconMessage = (message, messageSend, me, iconSendMail, notification_
 
   chat.appendChild(message); //ADD MESSAGE IN DIV CHA
 
-  createIconMessage(message, false, properties.me, false, properties.notification_date, properties.date);
+  createIconMessage(message, false, false, properties);
  
-
   const description = createCommentContent(properties);
   description.appendTo(message);
 
   checkFilesAddEventClick(message); //ADD EVENT CLICK
+
+  return message;
+}
+
+/**
+ * Create a new message
+ * @param {*} properties 
+ * @returns 
+ */
+ export const createChatMessageNew = (properties, chat) => {
+  properties = checkProperties(properties);
+
+  let parentElement = chat;
+
+  if(properties.number){
+    const action = createAction({
+      icon:MATERIAL_ICONS.FORK_LEFT,
+      color: CSS.variable(COLORS.MATERIAL_BLUE),
+      type: CONSTANT.MATERIAL_OUTLINED,
+      title: properties.number || ""
+    }, undefined, undefined, false);
+  
+    action.appendTo(parentElement);
+
+    parentElement = action.element;
+  }
+
+
+  const message = createMessageBox(properties);
+  parentElement.appendChild(message); //ADD MESSAGE IN DIV CHAT
+
+  let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
+
+  let messageSend = properties.notification_user; // si el mensaje fue enviado
+  
+  createIconMessage(message, messageSend, true, properties);
+
+  if(!me){
+    properties.marginLeft = "20px";
+  }
+
+  const name = createMessageAuthor(properties);
+  name.appendTo(message);
+
+  const description = createCommentContent(properties);
+  description.appendTo(message);
+
+  const date = createText({
+      text: AonDateUtils.setDateTimestampDay(new Date(properties.date)),
+      color: CSS.variable(COLORS.AON_GRAY),
+      fontSize : "11px",
+      classes: [CSS.FIRST_LETTER_UPPER]
+  });
+  date.appendTo(name.element);
+  
+  checkFilesAddEventClick(message); //ADD EVENT CLICK
+
+  downChat();
 
   return message;
 }
@@ -875,4 +889,66 @@ export const openDialogBranch = ()=> {
   }, MSG.CREATE)
 
   dialog.open();
+}
+
+// create section rating
+export const createSectionRating = (parent, isMobile)=> {
+  const div = setStyles(document.createElement(TAG.DIV),{
+    display: 'flex',
+    justifyContent: 'center',
+    borderTop: `1px solid #ddd`,
+    width:'100%',
+  });
+  parent.appendChild(div);
+
+  if(isMobile){
+    div.style.position = "absolute";
+    div.style.bottom   = "5px";
+    // div.style.border   = "0";
+  }
+
+  const second = newComponent({
+    type: MESSENGER_COMPONENTS.DIV,
+    classes: [CSS.FLEX_ROW],
+    styles: {
+      maxWidth: "calc(100% - 130px)",
+      padding: '1em 0',
+      gap: '0 16px',
+    }
+  }).element;
+
+  div.appendChild(second);
+  return second;
+}
+
+export const createIconEvaluation = (img, active = false) => {
+  let label = document.createElement(TAG.LABEL);
+  label.classList.add("rating");
+  label.style = `
+    padding: 5px 3px;
+    font-size: 32px;
+    opacity: 0.7;
+    filter: grayscale(1);
+    cursor: pointer;
+  `;
+  let i = document.createElement(TAG.I);
+  i.style = `
+    background-image: url(${img});
+    height: 1em;
+    width: 1em;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    vertical-align: middle;
+  `;
+  label.appendChild(i);
+
+  if(active){
+    label.style.filter = "grayscale(0)";
+    label.style.opacity = "1";
+    label.style.transform = "scale(1.1)";
+  }
+
+  return label;
 }

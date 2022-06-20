@@ -20,7 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.AlterContractBonus;
-import net.aonsolutions.db.up2date.payroll.Irpf4DelaysInsert;
+import net.aonsolutions.db.up2date.task.TaskAddEvaluation;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2022UpdateII;
 
@@ -240,9 +240,8 @@ public class Up2Date {
 //    		ContractAttachUpdate.CONTRACTATTACHUPDATE
 //    		AlterSalaryDeduction.ALTERSALARYDEDUCTION
 //    		TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII,
-//    		TrainningBases2022UpdateII.TRAINNINGBASES2022UPDATEII,
-//    		Irpf4DelaysInsert.IRPF4DELAYSINSERT
-    		AlterContractBonus.ALTERCONTRACTBONUS
+   		TaskAddEvaluation.TASK_ADD_EVALUATION,
+    	AlterContractBonus.ALTERCONTRACTBONUS
     };
     
 

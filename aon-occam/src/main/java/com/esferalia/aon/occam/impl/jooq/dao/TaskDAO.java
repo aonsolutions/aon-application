@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
@@ -29,10 +28,12 @@ import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
+import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.TaskTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskCounts;
+import com.esferalia.aon.occam.api.model.task.TaskEvaluation;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
@@ -100,6 +102,7 @@ public class TaskDAO {
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE_ID);}
 		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.START_DATE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(TASK.STATUS);}
+		@Override public Property<Byte> getEvaluationProperty() {return new FilterDAO.PropertyDAO<>(TASK.EVALUATION);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK.TASK_HOLDER);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<>(TASK.WORKGROUP);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(TASK.NUMBER);}
@@ -187,9 +190,9 @@ public class TaskDAO {
 	}
 	
 	public static Task update(AONContext ctx, Task task) {
-		ctx.getDslContext().update(TASK)
+		UpdateSetMoreStep<TaskRecord> sets = ctx.getDslContext()
+			.update(TASK)
 			.set(TASK.DESCRIPTION, task.getTitle())
-//			.set(TASK.START_DATE, AonDateUtils.toTimestamp(task.getStartDate()))
 			.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
 			.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
 			.set(TASK.PRIORITY, task.getPriority().value())
@@ -205,12 +208,18 @@ public class TaskDAO {
 			.set(TASK.SENDER, task.getSender().getId())
 			.set(TASK.COMMENTS, task.getDescription())
 			.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
-			.set(TASK.GTASK_ID, task.getGtaskId())
+			.set(TASK.GTASK_ID, task.getGtaskId().isPresent() ? task.getGtaskId().get() : null)
 			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.PARENT, task.getParent())
 			.set(TASK.MODIFICATION_USER, ctx.getUser())
-			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
-			.where(TASK.ID.eq(task.getId())).execute();
+			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()));
+		
+		if(task.getEvaluation()!=null) {
+			sets.set(TASK.EVALUATION, task.getEvaluation().value());
+		}
+			
+		sets.where(TASK.ID.eq(task.getId())).execute();
+		
 		ctx.log().debug("UPDATE TASK id: " + task.getId());		
 		return task;
 	}
@@ -342,7 +351,7 @@ public class TaskDAO {
 		TaskOldDAO.deleteTaskEvent(ctx, f -> f.getTaskProperty().eq(id));
 		TaskOldDAO.deleteTaskComment(ctx, f -> f.getTaskProperty().eq(id));
 		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(id));
-		delete(ctx, f -> f.getIdProperty().eq(id));
+		delete(ctx, f -> f.getIdProperty().eq(id).or(f.getParentProperty().eq(id)));
 		ctx.log().debug("DELETE TASK id:" + id);
 	}
 	
@@ -429,6 +438,7 @@ public class TaskDAO {
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
+		 Optional<String> gtaskId = task.getGtaskId();
 		 return 
 				 DSL.select( 
 						DSL.val(task.getActivityType()),
@@ -437,7 +447,7 @@ public class TaskDAO {
 						DSL.val(task.getDomain().getId()),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
-						DSL.val(task.getGtaskId()),
+						DSL.val(gtaskId.isPresent() ? gtaskId.get() : null),
 						DSL.val(task.getGtasklistId()),
 						DSL.val(task.getPercent()),
 						DSL.val(task.getParent()),
@@ -497,6 +507,7 @@ public class TaskDAO {
 				.setNumber(r.getValue(TASK.NUMBER))
 				.setCreationUser(r.getValue(TASK.CREATION_USER))
 				.setCreationDate(r.getValue(TASK.CREATION_DATE))
+				.setEvaluation(r.getValue(TASK.EVALUATION)!=null ? TaskEvaluation.safeValueOf(r.getValue(TASK.EVALUATION)) : null)
 				.setModificationUser(r.getValue(TASK.MODIFICATION_USER))
 				.setModificationDate(r.getValue(TASK.MODIFICATION_DATE))
 				.setParent(r.getValue(TASK.PARENT));

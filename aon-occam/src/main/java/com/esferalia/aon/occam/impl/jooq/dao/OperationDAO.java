@@ -204,7 +204,9 @@ public class OperationDAO {
 		                .leftOuterJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) 
 		                .leftOuterJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 		                .leftOuterJoin(invoice_tax1).on(invoice_tax1.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(invoice_tax1.TAX_TYPE.equal((byte)1)))  // Importes IVA y REq
-		                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(invoice_tax1.ID))
+		                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(invoice_tax1.ID)
+		                			.and(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+		                		)
 		                .leftOuterJoin(invoice_tax2).on(invoice_tax2.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(invoice_tax2.TAX_TYPE.equal((byte)2)))  // Retención IRPF
 		                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
 		                .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))

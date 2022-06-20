@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
@@ -7,37 +9,47 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon.ql</artifactId>
-	<description>AON QL</description>
 	<name>AON QL</name>
+	<description>
+		"El que busca la verdad corre el riesgo de encontrarla."
+	</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArgs>
+						<arg>-Werror</arg>
+						<arg>-Xlint:all</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
+		<!--****** AON DEPENDENCIES ****** -->  
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.watson</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!--****** EXTERNAL DEPENDENCIES ****** -->  
 		<dependency>
 			<groupId>antlr</groupId>
 			<artifactId>antlr</artifactId>
 			<version>20030911</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
-			<scope>compile</scope>
-		</dependency>		
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.8.0-beta2</version>
-			<scope>compile</scope>
-		</dependency>		
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jcl</artifactId>
-			<version>1.7.25</version>
-			<scope>test</scope>
-		</dependency>		
+		
+		<!--****** TEST DEPENDENCIES ****** -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13-beta-1</version>
+			<version>${junitVersion}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

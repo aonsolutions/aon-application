@@ -49,6 +49,7 @@ public class TaskWorkflowJSON {
 			.put(IJsonNames.TYPE, workflow.getType().getName())
 			.put(IJsonNames.COMMENT, workflow.getComment())
 			.put(IJsonNames.EMAIL, workflow.getEmail())
+			.put(IJsonNames.TASK, workflow.getTask())
 			.put(IJsonNames.CREATION_DATE,  workflow.getCreationDate()!=null ? workflow.getCreationDate().getTime() : null)
 			.put(IJsonNames.CREATION_USER, workflow.getCreationUser())
 			.put(IJsonNames.MODIFICATION_DATE, workflow.getModificationDate()!=null ? workflow.getModificationDate().getTime(): null)

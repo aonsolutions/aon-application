@@ -190,7 +190,7 @@ public class ContrataEmployeeObject {
 	
 	public void getContractOtherInfo(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		String contractType = employeeContractData.getContractInfo().getContractType();
+		Integer contractType = Integer.parseInt(contractData.getContractType());
 		
 		enterprisesService.getContractOtherInfo(contractId, contractType, new AsyncCallback<Map<String, String>>() {
 			
@@ -464,6 +464,25 @@ public class ContrataEmployeeObject {
 				success.accept(result);
 			}
 			
+		});
+	}
+	
+	public void getComunicationInfo() {
+		String document = employeeContractData.getEmployeeInfo().getDocument();
+		Date fini = employeeContractData.getContractInfo().getStartDate();
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		
+		employeesService.getSepeComunicationData(document, fini, contractId, new AsyncCallback<Map<String,String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
 		});
 	}
 	

@@ -348,15 +348,6 @@ class ConnectionInfoImpl extends ConnectionInfo{
 
 	// ---------------------------------------------------------------- private
 
-	private void closeQuietly(Connection conn) {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-		}
-	}
-
 	private void closeQuietly(PreparedStatement ps) {
 		if (ps != null) {
 			try {

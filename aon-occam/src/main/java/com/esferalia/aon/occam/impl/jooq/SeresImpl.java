@@ -1,0 +1,16 @@
+package com.esferalia.aon.occam.impl.jooq;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.ISeres;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.impl.jooq.dao.SeresDAO;
+
+public class SeresImpl implements ISeres {
+
+	@Override
+	public EdiCodes getEdiCodes(AONContext ctx, Delivery delivery) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			SeresDAO.getEdiCodes(ctx, delivery));
+	}
+}

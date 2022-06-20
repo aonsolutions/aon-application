@@ -231,12 +231,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 
 		@Override
-		protected void showAttachPDf(String dataURI) {
+		protected void showAttachPDf(Integer attachIdIn, String dataURIIn) {
 			showPdf();
 			hideMessage();
+			attachId = attachIdIn;
+			dataURI = dataURIIn;
 			pdfViewer.open(dataURI);
 			idcDateListBox.setVisible(false);
 			idcMonthListBox.setVisible(false);
+//			saveDocument.setVisible(true);
+			
+		}
+
+		@Override
+		protected void showSuccessMessagePDF(String title, String message) {
+			showSuccessPDF(title, message);
+		}
+
+		@Override
+		protected void showLoadingMessagePDF(String message) {
+			showLoadingPDF(message);
 		}
 	}
 
@@ -297,8 +311,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(),
-					contrataEmployeeObject.getContractStartDate());
+			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(), contrataEmployeeObject.getContractStartDate()) {
+					@Override
+					protected void onAccept() {
+						// Nothing to refresh
+					}
+			};
 		}
 	}
 
@@ -564,10 +582,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showLoading("Notificando transformaci\u00f3n contrato...");
 
 					contrataEmployeeObject.sendContractTransform(
-							s -> showSuccess("Transformaci\u00F3n Contrato",
+							s -> {
+								showSuccess("Transformaci\u00F3n Contrato",
 									"La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName()
-											+ " ha sido notificada al SEPE correctamente"),
-							f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage()));
+											+ " ha sido notificada al SEPE correctamente");
+								contrataEmployeeObject.getComunicationInfo();
+							}, f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage()));
 				}
 			});
 		}
@@ -732,6 +752,53 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 
+	// ------------------------------------------------- ScheduledCommand (ContractAttach)
+	
+	class AddDocumentCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.newAttachment();
+		}
+	}
+	
+	class ModificationPDFCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			new ModificationPDFDialog(contractId) {
+
+				@Override
+				protected void onSuccess(String message) {
+					showSuccess("Modificaci\u00f3n PDF", message);
+					contractAttachUI.refreshPage();
+				}
+
+				@Override
+				protected void onError(String message) {
+					showError("Error Modificaci\u00f3n PDF", message);
+				}};
+		}
+	}
+
+	class AttachContextMenu extends ContextMenu {
+
+		private MenuItem addAttach;
+		private MenuItem modificationPDF;
+		
+		public AttachContextMenu() {
+			addAttach = addMenuItem("Nuevo documento", new AddDocumentCommand(), AON.CSS.aonIconAdd(), "addAttach");
+			modificationPDF = addMenuItem("Fichero modificaci\u00f3n", new ModificationPDFCommand(), AON.CSS.aonIconData(), "modificationPDF");	
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+
+	}
+	
 	// ------------------------------------------------- UiFields
 
 	@UiField
@@ -825,6 +892,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ResultsPanel resultsPanel;
 
 	// ------------------------------------------------- Class variables
+	
+	private static String BLANK_PAGE = "data:@file/pdf;base64,JVBERi0xLjYNJeLjz9MNCjI0IDAgb2JqDTw8L0ZpbHRlci9GbGF0ZURlY29kZS9GaXJzdCA0L0xlbmd0aCAyMTYvTiAxL1R5cGUvT2JqU3RtPj5zdHJlYW0NCmjePI9RS8MwFIX/yn1bi9jepCQ6GYNpFBTEMsW97CVLbjWYNpImmz/fVsXXcw/f/c4SEFarepPTe4iFok8dU09DgtDBQx6TMwT74vaLTE7uSPDUdXM0Xe/73r1FnVwYYEtHR6d9WdY3kX4ipRMV6oojSmxQMoGyac5RLBAXf63p38aGA7XPorLewyvFcYaJile8rB+D/YcwiRdMMGScszO8/IW0MdhsaKKYGA46gXKTr/cUQVY4We/cYMNpnLVeXPJUXHs9fECr7kAFk+eZ5Xr9LcAAfKpQrA0KZW5kc3RyZWFtDWVuZG9iag0yNSAwIG9iag08PC9GaWx0ZXIvRmxhdGVEZWNvZGUvRmlyc3QgNC9MZW5ndGggNDkvTiAxL1R5cGUvT2JqU3RtPj5zdHJlYW0NCmjeslAwULCx0XfOL80rUTDU985MKY42NAIKBsXqh1QWpOoHJKanFtvZAQQYAN/6C60NCmVuZHN0cmVhbQ1lbmRvYmoNMjYgMCBvYmoNPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0ZpcnN0IDkvTGVuZ3RoIDQyL04gMi9UeXBlL09ialN0bT4+c3RyZWFtDQpo3jJTMFAwVzC0ULCx0fcrzS2OBnENFIJi7eyAIsH6LnZ2AAEGAI2FCDcNCmVuZHN0cmVhbQ1lbmRvYmoNMjcgMCBvYmoNPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0ZpcnN0IDUvTGVuZ3RoIDEyMC9OIDEvVHlwZS9PYmpTdG0+PnN0cmVhbQ0KaN4yNFIwULCx0XfOzytJzSspVjAyBgoE6TsX5Rc45VdEGwB5ZoZGCuaWRrH6vqkpmYkYogGJRUCdChZgfUGpxfmlRcmpxUAzA4ryk4NTS6L1A1zc9ENSK0pi7ez0g/JLEktSFQz0QyoLUoF601Pt7AACDADYoCeWDQplbmRzdHJlYW0NZW5kb2JqDTIgMCBvYmoNPDwvTGVuZ3RoIDM1MjUvU3VidHlwZS9YTUwvVHlwZS9NZXRhZGF0YT4+c3RyZWFtDQo8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/Pgo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjQtYzAwNSA3OC4xNDczMjYsIDIwMTIvMDgvMjMtMTM6MDM6MDMgICAgICAgICI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOnBkZj0iaHR0cDovL25zLmFkb2JlLmNvbS9wZGYvMS4zLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgICAgICAgICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIj4KICAgICAgICAgPHBkZjpQcm9kdWNlcj5BY3JvYmF0IERpc3RpbGxlciA2LjAgKFdpbmRvd3MpPC9wZGY6UHJvZHVjZXI+CiAgICAgICAgIDx4bXA6Q3JlYXRlRGF0ZT4yMDA2LTAzLTA2VDE1OjA2OjMzLTA1OjAwPC94bXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhtcDpDcmVhdG9yVG9vbD5BZG9iZVBTNS5kbGwgVmVyc2lvbiA1LjIuMjwveG1wOkNyZWF0b3JUb29sPgogICAgICAgICA8eG1wOk1vZGlmeURhdGU+MjAxNi0wNy0xNVQxMDoxMjoyMSswODowMDwveG1wOk1vZGlmeURhdGU+CiAgICAgICAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMTYtMDctMTVUMTA6MTI6MjErMDg6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx4bXBNTTpEb2N1bWVudElEPnV1aWQ6ZmYzZGNmZDEtMjNmYS00NzZmLTgzOWEtM2U1Y2FlMmRhMmViPC94bXBNTTpEb2N1bWVudElEPgogICAgICAgICA8eG1wTU06SW5zdGFuY2VJRD51dWlkOjM1OTM1MGIzLWFmNDAtNGQ4YS05ZDZjLTAzMTg2YjRmZmIzNjwveG1wTU06SW5zdGFuY2VJRD4KICAgICAgICAgPGRjOmZvcm1hdD5hcHBsaWNhdGlvbi9wZGY8L2RjOmZvcm1hdD4KICAgICAgICAgPGRjOnRpdGxlPgogICAgICAgICAgICA8cmRmOkFsdD4KICAgICAgICAgICAgICAgPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ij5CbGFuayBQREYgRG9jdW1lbnQ8L3JkZjpsaT4KICAgICAgICAgICAgPC9yZGY6QWx0PgogICAgICAgICA8L2RjOnRpdGxlPgogICAgICAgICA8ZGM6Y3JlYXRvcj4KICAgICAgICAgICAgPHJkZjpTZXE+CiAgICAgICAgICAgICAgIDxyZGY6bGk+RGVwYXJ0bWVudCBvZiBKdXN0aWNlIChFeGVjdXRpdmUgT2ZmaWNlIG9mIEltbWlncmF0aW9uIFJldmlldyk8L3JkZjpsaT4KICAgICAgICAgICAgPC9yZGY6U2VxPgogICAgICAgICA8L2RjOmNyZWF0b3I+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9InciPz4NCmVuZHN0cmVhbQ1lbmRvYmoNMTEgMCBvYmoNPDwvTWV0YWRhdGEgMiAwIFIvUGFnZUxhYmVscyA2IDAgUi9QYWdlcyA4IDAgUi9UeXBlL0NhdGFsb2c+Pg1lbmRvYmoNMjMgMCBvYmoNPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAxMD4+c3RyZWFtDQpIiQIIMAAAAAABDQplbmRzdHJlYW0NZW5kb2JqDTI4IDAgb2JqDTw8L0RlY29kZVBhcm1zPDwvQ29sdW1ucyA0L1ByZWRpY3RvciAxMj4+L0ZpbHRlci9GbGF0ZURlY29kZS9JRFs8REI3Nzc1Q0NFMjI3RjZCMzBDNDQwREY0MjIxREMzOTA+PEJGQ0NDRjNGNTdGNjEzNEFCRDNDMDRBOUU0Q0ExMDZFPl0vSW5mbyA5IDAgUi9MZW5ndGggODAvUm9vdCAxMSAwIFIvU2l6ZSAyOS9UeXBlL1hSZWYvV1sxIDIgMV0+PnN0cmVhbQ0KaN5iYgACJjDByGzIwPT/73koF0wwMUiBWYxA4v9/EMHA9I/hBVCxoDOQeH8DxH2KrIMIglFwIpD1vh5IMJqBxPpArHYgwd/KABBgAP8bEC0NCmVuZHN0cmVhbQ1lbmRvYmoNc3RhcnR4cmVmDQo0NTc2DQolJUVPRg0K";
 
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 
@@ -840,9 +909,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton closePDF;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
+	private AonToolbarButton saveDocument;
 
 	private TGSSContextMenu tgssContextMenu;
 	private SEPEContextMenu sepeContextMenu;
+	private AttachContextMenu attachContextMenu;
 
 	// ContractOtherData
 	private HTMLPanel employeeSepeButtons;
@@ -874,6 +945,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private boolean changes = false;
 
 	private boolean isComunica = false;
+	
+	// PDF Save
+	Integer attachId;
+	String dataURI;
 
 	// ------------------------------------------------- Constructor
 
@@ -912,6 +987,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		// Init ContextMenu
 		tgssContextMenu = new TGSSContextMenu();
 		sepeContextMenu = new SEPEContextMenu();
+		attachContextMenu = new AttachContextMenu();
 
 		// Init view
 		setScrollPanelsHeight();
@@ -1087,8 +1163,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		mainDeckPanel.showWidget(1);
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
-		pdfViewer.open(null);
+		saveDocument.setVisible(false);
+		dataURI = null;
+		attachId = null;
 		showMessagePDFContainer();
+	}
+	
+	private void showBlakPdf() {
+		pdfViewer.open(BLANK_PAGE);
 	}
 	
 	private void onClosePDF() {
@@ -1312,6 +1394,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconClose());
 		closePDF.addClickHandler(e -> onClosePDF());
 		toolbarPDFViewer.add(closePDF);
+		
+		saveDocument = new AonToolbarButton("Guardar documento", AON.CSS.aonIconSave());
+		saveDocument.addClickHandler(e -> contractAttachUI.setAttachData(attachId, pdfViewer.getData()));
+		toolbarPDFViewer.add(saveDocument);
 		
 		idcMonthListBox = new MonthListBox();
 		idcMonthListBox.addChangeHandler(e -> showIdcPlNss(idcMonthListBox.getSelectedMonth()));
@@ -1545,7 +1631,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error TA", f.getMessage()), "ALTA");
+		}, f -> {
+			showBlakPdf();
+			showError("Error TA", f.getMessage());
+		}, "ALTA");
 	}
 
 	private void showTaEnd() {
@@ -1554,7 +1643,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error TA (Baja)", f.getMessage()), "BAJA");
+		}, f -> {
+			showBlakPdf();
+			showError("Error TA (Baja)", f.getMessage());
+		}, "BAJA");
 	}
 
 	private void showIdc() {
@@ -1571,7 +1663,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.downloadIdc(date, dataURI -> {
 			hideMessagePDF();
 			pdfViewer.open(dataURI);
-		}, f -> showErrorPDF("Error IDC", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showErrorPDF("Error IDC", f.getMessage());
+		});
 	}
 
 	private void showIdcPlNss() {
@@ -1588,7 +1683,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.downloadIdcPlNss(month, dataURI -> {
 			hideMessagePDF();
 			pdfViewer.open(dataURI);
-		}, f -> showErrorPDF("Error IDC PL NSS", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showErrorPDF("Error IDC PL NSS", f.getMessage());
+		});
 	}
 
 	private void onDeleteContract() {
@@ -1673,7 +1771,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error CTO", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showError("Error CTO", f.getMessage());
+		});
 	}
 
 	private void onCBC() {
@@ -1686,7 +1787,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error CBC", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showError("Error CBC", f.getMessage());
+		});
 	}
 
 	private void showCertifica2PDF() {
@@ -1695,7 +1799,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error Certific@2", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showError("Error Certific@2", f.getMessage());
+		});
 	}
 	
 	private void sendBasicCopyTimer(Consumer<Void> success, Consumer<Void> failure) {
@@ -1751,6 +1858,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						success -> downloadCbc(suc -> loadWindow(succe -> {})),
 						failure -> loadWindow(succe -> {})), 
 				fa -> loadWindow(succe -> {}));
+			contrataEmployeeObject.getComunicationInfo();
 		}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 		
 //		contrataEmployeeObject.sendContract(s -> {
@@ -1898,14 +2006,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
 
-		AonToolbarButton newAttachment = new AonToolbarButton(AON.MSG.newAction() + " Documento", AON.CSS.aonIconAdd());
-		newAttachment.addClickHandler(e -> contractAttachUI.newAttachment());
-		hPanel.add(newAttachment);
+		AonExpandButton newAttachment = new AonExpandButton(AON.MSG.newAction() + " Documento", AON.CSS.aonIconAdd()) {
 
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				attachContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				attachContextMenu.show();
+			}
+
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				contractAttachUI.newAttachment();
+			}
+		};
+		hPanel.add(newAttachment);
+		
 		AonToolbarButton pdfExportBtn = new AonToolbarButton("Generar Borrador Contrato", AON.CSS.aonIconPdf());
 		pdfExportBtn.addClickHandler(e -> contractAttachUI.exportContract());
 		hPanel.add(pdfExportBtn);
-
+		
 		return hPanel;
 	}
 

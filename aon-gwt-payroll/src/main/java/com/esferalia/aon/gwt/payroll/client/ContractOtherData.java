@@ -2152,7 +2152,6 @@ public abstract class ContractOtherData extends ResizeComposite {
 	
 	public void getContractOtherDataDB(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
 		Integer contractId = contractEmployeeInfo.getContractInfo().getContractId();
-		String contractType = contractEmployeeInfo.getContractInfo().getContractType();
 		
 		enterprisesService.getContractOtherInfo(contractId, contractType, new AsyncCallback<Map<String, String>>() {
 			

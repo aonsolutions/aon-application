@@ -80,14 +80,14 @@ public class SalesElaborationProcess implements Serializable {
 	public String getRowStatus(){
 		if(getModel().isRowAvailable()){
 			SalesDetail detail = (SalesDetail) getModel().getRowData();
-			Byte status = AON.getElaborationStream(
+			ElaborationStatus status = AON.getElaborationStream(
 					AonUtil.getDomainName(),
 					detail.getDomain(),
 					AonUtil.getRemoteUser(),
 					f -> f.getSourceProperty().eq(ElaborationSource.SALES.value())
 							.and(f.getSourceIdProperty().eq(detail.getId())))
 							.map(Elaboration::getStatus).findFirst().orElse(null);
-			return status!=null?ElaborationStatus.safeValueOf(status).getName():"-";
+			return status != null ? status.getName() : "-";
 		}
 		return null;
 	}
