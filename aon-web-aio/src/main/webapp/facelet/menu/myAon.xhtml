@@ -465,6 +465,17 @@
 									<aon:outputText value="#{bundle.config_tax_module}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_vatReport-myAon"
+												action="gwt_vatReport-myAon" title="Panel de control de IVA"
+												value="Panel de control de IVA" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_irpfReport-myAon"
+												action="gwt_irpfReport-myAon" title="Panel de control de IRPF"
+												value="Panel de control de IRPF" />
+										</aon:div>
+<!-- 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="vat_report-myAon"
 											action="vat_report_search-myAon"
@@ -476,7 +487,8 @@
 											action="retention_report_search-myAon"
 											actionListener="#{retentionReport.onReset}"
 											value="#{bundle.fiscal_retention_report_module}" />
-									</aon:div>	
+									</aon:div>
+ -->										
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_sii-myAon"
 											action="gwt_sii-myAon"
