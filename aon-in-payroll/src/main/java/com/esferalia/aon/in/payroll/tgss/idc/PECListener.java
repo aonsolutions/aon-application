@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -178,6 +179,8 @@ class PECListener  implements IdcParserListener {
 			put("16", "%s (%.2f)"); 															// 
 		}
 	};
+	
+	private Date contractEnd;
 
 	private Collection<PEC> ssPECs = new LinkedList<PEC>();
 	
@@ -186,26 +189,34 @@ class PECListener  implements IdcParserListener {
 	}
 
 	// ------------------------------------------------------------ IdcParserListener
+	
+	@Override
+	public void onContractEnd(Date end) {
+		this.contractEnd = end;
+	}
 
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
+		
+		Date pecEnd = Objects.equals(end, contractEnd) ? null : end;
+		
 		if ( PEC_BONUS_MAP.containsKey(code )) {
 			try {
 				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota))
-					ssPECs.add( newBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
+					ssPECs.add( newBonus(nss, ccc, code, description, portTipo, quota, start, pecEnd)) ;
 				if ( DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota))
-					ssPECs.add( newDeduction(nss, ccc, code, description, portTipo, quota, start, end)) ;
+					ssPECs.add( newDeduction(nss, ccc, code, description, portTipo, quota, start, pecEnd)) ;
 			} catch (ParseException e) {
 			}
 		}
 		if ( PEC_COST_MAP.containsKey(code )) {
 			if ( COST_QUOTA_PROVIDERS_MAP.containsKey(quota))
-				COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> ssPECs.add(f.newCost(nss, ccc, code, quota, portTipo, description, start, end))) ;
+				COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> ssPECs.add(f.newCost(nss, ccc, code, quota, portTipo, description, start, pecEnd))) ;
 		}
 		if ( PEC_DEDUCTION_MAP.containsKey(code )) {
 			if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota))
-				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> ssPECs.add( f.newDeduction(nss, ccc, code, quota, portTipo, description, start, end))) ;
+				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> ssPECs.add( f.newDeduction(nss, ccc, code, quota, portTipo, description, start, pecEnd))) ;
 		}
 	}
 	

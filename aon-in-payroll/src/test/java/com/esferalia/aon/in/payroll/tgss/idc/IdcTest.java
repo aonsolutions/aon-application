@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -76,6 +77,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -835,7 +837,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, String [] payments, Date startDate, Date endDate) throws ExpressionException, SQLException, SalaryException {
-		return calculate(ssPECs, datas, payments, startDate, endDate, new SalaryBuilder());
+		return calculate(ssPECs, datas, payments, startDate, endDate, new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP)));
 	}
 
 	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, Date date, ISalaryBuilder<Salary> salaryBuilder) throws ExpressionException, SQLException, SalaryException {
@@ -2166,6 +2168,138 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcXXIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXXII.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH,21);
+			calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+
+			Date february21 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( february21 , pec.getStartDate()));
+
+			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH,28);
+			Date february28 = calendar.getTime();
+			
+			Collection<Data> datas = new ArrayList<>();
+			datas.add(new Data() { { expression = "0.80"; startDate = february21; name= "PORCENTAJE_IT"; }});
+			datas.add(new Data() { { expression = "0.70"; startDate = february21; name= "PORCENTAJE_IMS"; }});
+			datas.add(new Data() { { expression = "23.60"; startDate = february21; name= "PORCENTAJE_CGC_E"; }});
+			datas.add(new Data() { { expression = "0.60"; startDate = february21; name= "PORCENTAJE_FP_E"; }});
+			datas.add(new Data() { { expression = "0.20"; startDate = february21; name= "PORCENTAJE_FOGASA"; }});
+			datas.add(new Data() { { expression = "5.50"; startDate = february21; name= "PORCENTAJE_DESMPL_E"; }});
+			
+			Salary salary = calculate(ssPecs, datas ,new String [] {"320.43"}, february21, february28);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			 
+			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
+			
+			assertEquals(91.12, totalBonus, DELTA);
+			
+			assertEquals(9.48, salary.getTotalEnterprise(), DELTA);
+			
+		}
+	}
+
+	@Test
+	public void testIdcXXIIBonusI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXXII.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.MARCH);
+
+			Date march1 = calendar.getTime();
+
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date march31 = calendar.getTime();
+			
+			Collection<Data> datas = new ArrayList<>();
+			datas.add(new Data() { { expression = "0.80"; startDate = march1; name= "PORCENTAJE_IT"; }});
+			datas.add(new Data() { { expression = "0.70"; startDate = march1; name= "PORCENTAJE_IMS"; }});
+			datas.add(new Data() { { expression = "23.60"; startDate = march1; name= "PORCENTAJE_CGC_E"; }});
+			datas.add(new Data() { { expression = "0.60"; startDate = march1; name= "PORCENTAJE_FP_E"; }});
+			datas.add(new Data() { { expression = "0.20"; startDate = march1; name= "PORCENTAJE_FOGASA"; }});
+			datas.add(new Data() { { expression = "5.50"; startDate = march1; name= "PORCENTAJE_DESMPL_E"; }});
+			
+			Salary salary = calculate(ssPecs, datas ,new String [] {"1201.61"}, march1, march31);
+			 
+			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
+			
+			assertEquals(341.66, totalBonus, DELTA);
+			assertEquals(377.30 - 341.66, salary.getTotalEnterprise(), DELTA);
+			
+			calendar.set(Calendar.MONTH,Calendar.APRIL);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date april1 = calendar.getTime();
+
+			calendar.set(Calendar.DAY_OF_MONTH,30);
+			Date april30 = calendar.getTime();
+
+			salary = calculate(ssPecs, datas ,new String [] {"1201.61"}, april1, april30);
+			 
+			totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
+			
+			assertEquals(341.66, totalBonus, DELTA);
+			assertEquals(377.30 - 341.66, salary.getTotalEnterprise(), DELTA);
+
+		}
+	}
+
+
+	@Test
+	public void testIdcXXIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXXIII.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH,11);
+			calendar.set(Calendar.MONTH,Calendar.MARCH);
+
+			Date march11 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( march11 , pec.getStartDate()));
+
+			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			
+		}
+	}
+	
+	
 	@Test
 	public void testIdcXIPECs() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
