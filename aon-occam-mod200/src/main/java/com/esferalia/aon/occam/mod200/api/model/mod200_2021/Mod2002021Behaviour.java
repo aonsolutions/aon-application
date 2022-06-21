@@ -350,7 +350,7 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1234B,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1332,new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1200,new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1042,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1042,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.BN1333,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1586, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1587, new Boolean[]{FALSE,TRUE});
@@ -428,10 +428,10 @@ public class Mod2002021Behaviour {
 		addBreakdown(Mod2002021BN565_2Key.values(), Mod2002021Key.BN1701, Mod2002021Key.BN1704, Mod2002021Key.BN1729, Mod2002021Key.BN1079);
 				
 		// Desglose Casilla 1040
-		addBreakdown(Mod2002021BN1040Key.values(), Mod2002021Key.BN1040);
+		addBreakdown(Mod2002021BN1040Key.values(), Mod2002021Key.BN1040, new byte[] {1,3});
 
 		// Desglose Casilla 1041
-		addBreakdown(Mod2002021BN1041Key.values(), Mod2002021Key.BN1041);
+		addBreakdown(Mod2002021BN1041Key.values(), Mod2002021Key.BN1041, new byte[] {1,3});
 
 		// Desglose Casilla 082
 		addBreakdown(Mod2002021BN082Key.values(), Mod2002021Key.BN082, new byte[] {1,3});  // Dos columnas calculadas, ademas 1 de ellas no es la última
@@ -684,11 +684,11 @@ public class Mod2002021Behaviour {
 			// Claves que contiene la fila
 			IMod200Key[] keys = kp.getKeys();
 			
-			// Columna de totales
+			// Columna(s) calculada(s)
 			// Normalmente la última columna es el total (totalColumnPosition=null), salvo que venga cumplimentado totalColumnPosition, 
-			// en tal caso se le pasará un array con las posiciones (base 0), que ocupan las columnas de los totales
-			// ya que algunos desgloses llevan mas de una columna de totales, o la ultima columna no es el total, 
-			// o no llevan columnas de totales (en este ultimo caso, pasar un array vacio)
+			// en tal caso se le pasará un array con las posiciones (base 0), que ocupan las columnas calculadas
+			// ya que algunos desgloses llevan mas de una columna calculada, o la ultima columna no es calculada, 
+			// o no llevan columnas calculadas (en este ultimo caso, pasar un array vacio)
 			if (totalColumnPosition == null) {
 				// Se asume que la columna del total es la ultima columna
 				if (keys[keys.length-1] != null)
