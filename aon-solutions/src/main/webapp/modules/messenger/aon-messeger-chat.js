@@ -15,6 +15,7 @@ import { getOfficeProjects } from "../../services/projectService.js";
 import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
 import { getTastHoldersWorkGroup } from "../../services/taskHolderService.js";
+import {getDomainLogin} from '../../services/localStorageService.js';
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -289,7 +290,7 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceQuery(){
     if(!this.task.id){
-      this.setCauData(this.task);
+      this.setCauData();
     }
       
     const data = await saveTask(this.task);
@@ -306,12 +307,20 @@ export class AonMessengerChat extends AonElement {
 
   setCauData(){
     if(this.getCauInfo()){
-      this.task.setDescriptionJson({cauInfo:this.getCauInfo()});
+      this.task.setDescriptionJson({
+        cauInfo:this.getCauInfo(),
+        ...this.task.getDescriptionJson()
+      });
     }
   }
 
   getCauInfo(){
-    return this.applicationParentEl.cauInfo;
+    let cauInfo = this.applicationParentEl.cauInfo;
+    let login = getDomainLogin();
+    if(login) {
+      cauInfo.login = login;
+    }
+    return cauInfo;
   }
 
   getAuth(){

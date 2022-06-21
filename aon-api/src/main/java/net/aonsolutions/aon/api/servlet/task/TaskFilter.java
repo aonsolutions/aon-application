@@ -422,7 +422,7 @@ public class TaskFilter {
 		if(!document.isEmpty()) {
 			Registry registry = AON.getRegistry(api.getDomain(), api.getUser(), r->r.getDocumentProperty().eq(document));
 			if(registry!=null && registry.getId()!=null) {					
-				filterCau = filterCau.or(f.getRegistryProperty().eq(registry.getId()));
+				filterCau = filterCau.or(f.getRegistryProperty().eq(registry.getId()).and(f.getParentProperty().isNull()));
 			}
 		}
 		return filterCau;

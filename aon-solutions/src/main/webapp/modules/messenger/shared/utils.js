@@ -651,8 +651,9 @@ const hideBtnExternal = (type, btnForExternal, divRequest) => {
     //-------------------------CAU--------------------------
     if( ( (task.source === TASK_SOURCE.CAU && !applicationParent.cau) || forExternal) && !hideData){
 
-        if(isAdvisoryCompany || task.source === TASK_SOURCE.CAU)
+        if(isAdvisoryCompany || task.source === TASK_SOURCE.CAU){
             addCustomerAndContact(task, aonMessengerChat, divDinamic);
+        }
         
         if(forExternal){
             // ------------------ADVISORY SELECT
@@ -974,39 +975,71 @@ export const setTaskTags = () => {
 
 const addCauForm = (aonMessengerChat, divStatic)=> {
     const task = aonMessengerChat.task;
-    if( task.source === TASK_SOURCE.CAU ){
-        if(task.id && !aonMessengerChat.isCau() && task.getDescriptionJson().cauInfo){
-            try {
-                const cauInfo =  task.getDescriptionJson().cauInfo;
-                const company = cauInfo.company;
-                const auth = cauInfo.auth;
-                
-                if(company && company.domain){
-                    createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
-                }
-    
-                if(auth && auth.email){
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
-                }
+    const isCau = aonMessengerChat.isCau();
+    try {
+        if( task.source === TASK_SOURCE.CAU ){
+            const json = task.getDescriptionJson();
+            const isEditable = !task.id && !isCau;
+            let cauInfo = task.id && json.cauInfo ? json.cauInfo : aonMessengerChat.getCauInfo();
+            
+            // if(task.id && !isCau && task.getDescriptionJson().cauInfo) cauInfo = task.getDescriptionJson().cauInfo;
+        
+            const company = cauInfo.company;
+            const auth    = cauInfo.auth;
+            const email   = auth.email;
+            const login   = cauInfo.login;
 
-            } catch (error) {}
-        } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
-            try {
-                const cauInfo = aonMessengerChat.getCauInfo();
-                const auth = cauInfo.auth;
-                const company = cauInfo.company;
+            if(company && company.name && (task.id || isCau)){
+                const {label, anchor} = createLabelAnchor(MSG.ENTERPRISE, company.name, false, isEditable);
+                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                if(isEditable){
+                    anchor.addEventListener(EVENT.INPUT, ({target})=>{
+                        const value = target.innerText;
+                        cauInfo.company.name = value;
+                        task.setDescriptionJson({cauInfo});
+                    });
+                }
+            }
+            
+            if(company && company.domain && task.id && !isCau ){
+                const {label, anchor} = createLabelAnchor(MSG.DOMAIN, company.domain.name, true, isEditable);
+                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                if(isEditable){
+                    anchor.addEventListener(EVENT.INPUT, ({target})=>{
+                        const value = target.innerText;
+                        cauInfo.company.domain.name = value;
+                        task.setDescriptionJson({cauInfo});
+                    });
+                }
+            }
+        
+            if(email && (task.id || isCau)){
+                const {label, anchor} = createLabelAnchor(MSG.EMAIL, email, false, isEditable);
+                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                if(isEditable){
+                    anchor.addEventListener(EVENT.INPUT, ({target})=>{
+                        const value = target.innerText;
+                        cauInfo.auth.email = value;
+                        task.setDescriptionJson({cauInfo});
+                    });
+                }
+            }
 
-                if(company && company.name){
-                    createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+            if(login && task.id && !isCau ){
+                const {label, anchor} =  createLabelAnchor(MSG.USER, login, false, isEditable);
+                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+                if(isEditable){
+                    anchor.addEventListener(EVENT.INPUT, ({target})=>{
+                        const value = target.innerText;
+                        cauInfo.login = value;
+                        task.setDescriptionJson({cauInfo});
+                    });
                 }
-                    
-                if(auth && auth.email){
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
-                }
- 
-            } catch (error) {}
-        }
-    } 
+            }
+        } 
+    } catch (error) {
+        console.log(error);
+    }
 
     task.setSource(TASK_SOURCE.CAU);
 
@@ -1024,7 +1057,7 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
     }
 }
 
-const createLabelAnchor = (text, domainNam, clickable = true) => {
+const createLabelAnchor = (text, domainNam, clickable = true, editable = false) => {
     const label = setStyles(document.createElement(TAG.LABEL),{
         color:CSS.variable(COLORS.GRAYSON),
         paddingLeft:"4px",
@@ -1035,8 +1068,16 @@ const createLabelAnchor = (text, domainNam, clickable = true) => {
         color:CSS.variable(COLORS.AON_BLUE),
         cursor: "text"
     });
+    if(editable){
+        anchor.setAttribute("contenteditable", true);
+        anchor.addEventListener(EVENT.PASTE, (ev) => {
+            ev.preventDefault();
+            const t = ev.clipboardData.getData('text/plain');
+            document.execCommand("insertHTML", false, t);
+        });
+    }
     
-    if(clickable){
+    if(clickable && !editable){
         anchor.href = "https://"+domainNam;
         anchor.target = "_blank";
         anchor.style.cursor = "pointer";
@@ -1045,7 +1086,10 @@ const createLabelAnchor = (text, domainNam, clickable = true) => {
     anchor.textContent = domainNam;
     label.appendChild(anchor);
 
-    return label;
+    return {
+        label,
+        anchor
+    };
 }
 
 

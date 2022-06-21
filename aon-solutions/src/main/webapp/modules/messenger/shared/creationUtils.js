@@ -429,7 +429,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createCustomer = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
-  title: MSG.ENTERPRISE,
+  title: MSG.CUSTOMER,
   autocomplete: CONSTANT.OFF,
   readonly: CONSTANT.FALSE
 });

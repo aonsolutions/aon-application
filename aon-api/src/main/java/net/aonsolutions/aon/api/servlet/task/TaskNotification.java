@@ -66,7 +66,7 @@ public class TaskNotification {
 			LOGGER.info("onOpenNotification");
 			String body = "Solicitud Abierta";
 			Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
-			if(auth!=null && !auth.getName().isEmpty()) {
+			if(auth!=null && auth.getName()!=null && !auth.getName().isEmpty()) {
 				body += " por <b>" +auth.getName()+"</b>.";
 			}
 

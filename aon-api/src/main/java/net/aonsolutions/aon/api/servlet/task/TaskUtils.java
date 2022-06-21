@@ -89,7 +89,7 @@ public class TaskUtils {
 	}
 	
 	public static boolean isCau(JSONObject params) {
-		return !params.optString("cau").isEmpty() && params.optInt("cau") > 0;
+		return params.optInt("cau") != 0;
 	}
 	
 	public static String parseDescription(Task task) {
