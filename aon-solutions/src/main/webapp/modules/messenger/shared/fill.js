@@ -20,23 +20,27 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
         {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] }
     ];
 
-    if(!aonMessengerChat.isCau())
-     sources.push({value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES });
+    if(!aonMessengerChat.isCau()){
+        sources.push({value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES });
+    }
 
-    if(TASK_SOURCE.MANUAL === source)
+    if(TASK_SOURCE.MANUAL === source){
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
+    }
 
     if(aonMessengerChat.getDur().hasCallCenter() || (source && source == TASK_SOURCE.CAU) ){
         sources.push({value: TASK_SOURCE.CAU, name: "Call Center" });
         
-        if(!aonMessengerChat.task.id && aonMessengerChat.isSig())
+        if(!aonMessengerChat.task.id && aonMessengerChat.isSig()){
             source = TASK_SOURCE.CAU;
+        }
     }
     
     aonSelect.setOptions(sources);
 
-    if(source)
+    if(source){
         aonSelect.value = source;
+    }
 }
 
 export const fillAdvisory = async (task, aonMessengerChat) => {

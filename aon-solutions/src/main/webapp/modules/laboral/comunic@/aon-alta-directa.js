@@ -380,9 +380,10 @@ export class AonAltaDirecta extends AonElement {
                 let geozones = [];
                 groupedGeozone.forEach((cccsOld, name)=>{
                     let cccs = [];
-                    if(cccsOld && cccsOld.length)
+                    if(cccsOld && cccsOld.length){
                         cccs = cccsOld.filter( (value,index)=>cccsOld.findIndex((m) => m.ccc === value.ccc) === index );
-                        
+                    }
+                    
                     geozones.push({
                         cccs,
                         name,

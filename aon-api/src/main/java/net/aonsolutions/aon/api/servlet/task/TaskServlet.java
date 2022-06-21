@@ -253,10 +253,10 @@ public class TaskServlet extends AonApiHttpServlet{
 
 	private JSONObject getTask(AonApiData api) {
 		JSONObject params = api.getData();
-		Domain domain = api.getDomain();
-		User user = api.getUser();
-		Integer taskId = params.optInt(IJsonNames.ID);
-		Integer number = params.optInt(IJsonNames.NUMBER);
+		Domain domain     = api.getDomain();
+		User user         = api.getUser();
+		Integer taskId    = params.optInt(IJsonNames.ID);
+		Integer number    = params.optInt(IJsonNames.NUMBER);
 
 		Task task = AON_SOLUTIONS.getTask(domain, user, f-> 
 			f.getDomainProperty().eq(domain.getId())
