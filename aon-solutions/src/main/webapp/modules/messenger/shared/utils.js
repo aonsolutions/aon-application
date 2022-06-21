@@ -3,7 +3,7 @@ import { openFileUrl } from "../../../services/fileService.js";
 import { setAttributes, setClasses, setDataset, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessageNew, createCustomer, createDivGrid, createInputContact, createInputTitle, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createTagHtml, createTaskHolder, createWorkgroup } from "./creationUtils.js";
+import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessageNew, createCustomer, createDivGrid, createDivGridBefore, createInputContact, createInputTitle, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createTagHtml, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillAdvisory, fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
@@ -976,35 +976,40 @@ export const setTaskTags = () => {
 const addCauForm = (aonMessengerChat, divStatic)=> {
     const task = aonMessengerChat.task;
     const isCau = aonMessengerChat.isCau();
+    const isBeta = aonMessengerChat.isBeta();
     try {
         if( task.source === TASK_SOURCE.CAU ){
             const json = task.getDescriptionJson();
-            const isEditable = !task.id && !isCau;
+            const isEditable = isBeta && !isCau;
             let cauInfo = task.id && json.cauInfo ? json.cauInfo : aonMessengerChat.getCauInfo();
             
             // if(task.id && !isCau && task.getDescriptionJson().cauInfo) cauInfo = task.getDescriptionJson().cauInfo;
         
             const company = cauInfo.company;
             const auth    = cauInfo.auth;
-            const email   = auth.email;
+            const email   = auth && auth.email ? auth.email : undefined;
             const login   = cauInfo.login;
 
-            if(company && company.name && (task.id || isCau)){
-                const {label, anchor} = createLabelAnchor(MSG.ENTERPRISE, company.name, false, isEditable);
-                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
-                if(isEditable){
-                    anchor.addEventListener(EVENT.INPUT, ({target})=>{
-                        const value = target.innerText;
-                        cauInfo.company.name = value;
-                        task.setDescriptionJson({cauInfo});
-                    });
-                }
+            const fn = (task.id || isCau) ? createDivGrid : createDivGridBefore;
+
+            const companyName = company && company.name ? company.name : undefined;
+
+            let element = createLabelAnchor(MSG.ENTERPRISE, companyName, false, isEditable);
+            fn(divStatic, element.label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+            if(!companyName || isEditable){
+                element.anchor.addEventListener(EVENT.INPUT, ({target})=>{
+                    const value = target.innerText;
+                    cauInfo.company.name = value;
+                    task.setDescriptionJson({cauInfo});
+                });
             }
-            
-            if(company && company.domain && task.id && !isCau ){
-                const {label, anchor} = createLabelAnchor(MSG.DOMAIN, company.domain.name, true, isEditable);
-                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
-                if(isEditable){
+    
+            if(!isCau){
+                const domainName = task.id && company && company.domain && company.domain.name ? company.domain.name : undefined;
+                const domainIsEditable = !domainName && isEditable;
+                let {label, anchor} = createLabelAnchor(MSG.DOMAIN, domainName, true, domainIsEditable);
+                fn(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+                if(domainIsEditable){
                     anchor.addEventListener(EVENT.INPUT, ({target})=>{
                         const value = target.innerText;
                         cauInfo.company.domain.name = value;
@@ -1012,22 +1017,20 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                     });
                 }
             }
-        
-            if(email && (task.id || isCau)){
-                const {label, anchor} = createLabelAnchor(MSG.EMAIL, email, false, isEditable);
-                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
-                if(isEditable){
-                    anchor.addEventListener(EVENT.INPUT, ({target})=>{
-                        const value = target.innerText;
-                        cauInfo.auth.email = value;
-                        task.setDescriptionJson({cauInfo});
-                    });
-                }
+
+            let elementTwo = createLabelAnchor(MSG.EMAIL, email, false, isEditable);
+            fn(divStatic, elementTwo.label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
+            if(!email || isEditable){
+                elementTwo.anchor.addEventListener(EVENT.INPUT, ({target})=>{
+                    const value = target.innerText;
+                    cauInfo.auth.email = value;
+                    task.setDescriptionJson({cauInfo});
+                });
             }
 
-            if(login && task.id && !isCau ){
-                const {label, anchor} =  createLabelAnchor(MSG.USER, login, false, isEditable);
-                createDivGrid(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+            if(!isCau){
+                let {label, anchor} = createLabelAnchor(MSG.USER, login, false, isEditable);
+                fn(divStatic, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
                 if(isEditable){
                     anchor.addEventListener(EVENT.INPUT, ({target})=>{
                         const value = target.innerText;
@@ -1061,6 +1064,7 @@ const createLabelAnchor = (text, domainNam, clickable = true, editable = false) 
     const label = setStyles(document.createElement(TAG.LABEL),{
         color:CSS.variable(COLORS.GRAYSON),
         paddingLeft:"4px",
+        display:"flex"
     });
     label.textContent =  `${text}: `;
 
@@ -1068,16 +1072,18 @@ const createLabelAnchor = (text, domainNam, clickable = true, editable = false) 
         color:CSS.variable(COLORS.AON_BLUE),
         cursor: "text"
     });
+    
     if(editable){
+        anchor.style.minWidth = "150px";
+        anchor.setAttribute("placeholder", "Introducir texto aquí");
         anchor.setAttribute("contenteditable", true);
+    
         anchor.addEventListener(EVENT.PASTE, (ev) => {
             ev.preventDefault();
             const t = ev.clipboardData.getData('text/plain');
             document.execCommand("insertHTML", false, t);
         });
-    }
-    
-    if(clickable && !editable){
+    } else if(clickable){
         anchor.href = "https://"+domainNam;
         anchor.target = "_blank";
         anchor.style.cursor = "pointer";

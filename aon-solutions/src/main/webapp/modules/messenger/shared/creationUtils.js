@@ -29,6 +29,17 @@ import { AonMessengerChat } from "../aon-messeger-chat.js";
   return div;
 }
 
+export const createDivGridBefore = (parent, child, properties)=> {
+
+  const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+  parent.parentNode.insertBefore(div, parent.lastElementChild);
+
+  if(child) div.appendChild(child);
+
+  return div;
+}
+
 export const createBtnAccept = () => {
   let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
   btnAccept.className = CSS.AON_BUTTON;

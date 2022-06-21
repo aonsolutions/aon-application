@@ -584,7 +584,12 @@ export class AonMessenger extends AonElement {
 					name: item.description,
 					icon: MATERIAL_ICONS.LABEL,
 					actions:[],
-					fn: () => {}
+					fn: () => {
+						this._filter.workgroups = this.getWorkgroupsStr();
+						this._filter.tag = this._filter.tag == item.id ? undefined : item.id;
+						this.addListFilter({...this._filter});
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+					}
 				};
 	
 				if(this.getDur().isMessengerManager()){
@@ -775,7 +780,7 @@ export class AonMessenger extends AonElement {
 				if(this._tags.length){
 					this._tags.forEach(({id}) => application.updateSidenavCount(id, 0));
 				}
-				
+
 				if(tag){
 					for(const key in tag){
 						application.updateSidenavCount(key, tag[key]);
