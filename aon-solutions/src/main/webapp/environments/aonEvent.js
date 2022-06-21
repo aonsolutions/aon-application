@@ -38,3 +38,4 @@ export const COORDINATES = 'coordinates';
 export const TOUCHSTART = 'touchstart';
 export const TOUCHMOVE = 'touchmove';
 export const TOUCHEND = 'touchend';
+export const PASTE = 'paste';
