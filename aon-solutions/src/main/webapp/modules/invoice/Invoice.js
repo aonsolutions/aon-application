@@ -49,6 +49,8 @@ export class Invoice {
   tbai; // boolean
   tbaiUrl;
 
+  workplace;
+
   constructor(invoice) {
     this.buildObject(invoice);
   }
@@ -119,6 +121,7 @@ export class Invoice {
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
       this.tbai = invoice.tbai || false;
       this.tbaiUrl = invoice.tbaiUrl || '';
+      this.workplace = invoice.workplace; 
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
@@ -421,6 +424,18 @@ export class Invoice {
     this.withholdingFarmer = withholdingFarmer;
     this.calculateWithholdingFromTax();
     this.calculateTotalFromTax();
+    return this;
+  }
+
+  getWorkplace () {
+    return this.workplace;
+  }
+
+  setWorkplace (workplace) {
+    this.workplace = workplace;
+    this.getDetails().forEach((detail, i) => {
+      this.getDetails()[i].workplace = workplace;
+    });
     return this;
   }
 

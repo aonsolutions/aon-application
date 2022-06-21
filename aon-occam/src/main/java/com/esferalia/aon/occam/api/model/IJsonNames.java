@@ -220,6 +220,7 @@ public final class IJsonNames {
 	public static final String IN_PERIOD_OPENING_CREDIT = "inPeriodOpeningCredit"; 
 	public static final String INACTIVE = "inactive";
 	public static final String INCREASE_PERCENT = "increasePercent";
+	public static final String INGENET = "ingenet";
 	public static final String INITIATION_DATE = "initiationDate";
 	public static final String INSIDE_PERIOD = "insidePeriod";
 	public static final String INTE = "inte";
@@ -419,6 +420,7 @@ public final class IJsonNames {
 	public static final String SELLER = "seller";
 	public static final String SELLER_IDS = "sellerIds";
 	public static final String SENDER = "sender";
+	public static final String SERFRUIT = "serfruit";
 	public static final String SERIAL_NUMBER = "serialNumber";
 	public static final String SERIAL_DATE = "serialDate";
 	public static final String SERIALIZABLE = "serializable";
