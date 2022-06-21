@@ -669,6 +669,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertTrue((salaryHours * 7.03 ) <  ( 38.89 * 31 * 0.25 )  ) ;
 		click("expand-button-system");
 		assertNotElement("editor-base_cgc_min_hora");
+
+		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");
+		calculate(Calendar.JUNE,2022);
+		double cgcBase = getValue("cgcBaseLabel");
+		salaryHours = getValue("db-amount-label-2");
+		assertTrue((salaryHours * 7.03 ) <  cgcBase  ) ;
+
 	}
 
 	@Test
