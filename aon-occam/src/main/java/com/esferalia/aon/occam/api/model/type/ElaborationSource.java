@@ -4,16 +4,22 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ElaborationSource {
 
-	SALES,
-	PURCHASE,
-	;
+	SALES("Interno"),
+	SALES_INGENET("Ingenet"),
+	SALES_SERFRUIT("Serfruit");
+	
+	String name;
+	
+	private ElaborationSource(String name) {
+		this.name = name;
+	}
 	
 	public byte value(){
 		return (byte) this.ordinal();
 	}
 	
     public String getName() {
-		return this.toString();
+		return name;
     }
     
     public static ElaborationSource safeValueOf( Byte i ) {

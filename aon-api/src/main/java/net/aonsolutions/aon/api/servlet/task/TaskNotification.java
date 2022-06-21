@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
@@ -177,6 +178,20 @@ public class TaskNotification {
 		
 		}
 	}
+
+	public static void onEvaluationCloseEmail(AonApiData api, Task task, TaskWorkflow workflow){
+		LOGGER.info("onEvaluationCloseEmail");
+
+		Domain domain = task.getDomain();
+
+		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParamsRequest.APP_REQUESTS_EMAIL_RATING_CLOSED.getName());
+		
+		if(appParam.getId()!=null && appParam.getValue()!=null) {
+			workflow.setEmail(appParam.getValue());
+			sendEmailWorkflow(api, task, workflow, Optional.empty(), false);
+		}
+	
+	}
 	
 	/**
 	 * SEND NOTIFICATION ON CLOSE
@@ -249,7 +264,7 @@ public class TaskNotification {
 	
 	private static void sendEmailWorkflow(AonApiData api, Task task, TaskWorkflow workflow, Optional<Auth> authOpt, boolean showEvaluation){
 		try {
-			Domain domain = api.getDomain();
+			Domain domain = task.getDomain();
 			JSONObject params = api.getData();
 			Company company = AON.getCompany(domain.getName(),domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 			if(company!=null) {
@@ -292,6 +307,10 @@ public class TaskNotification {
 				.setCompanyName(companyName)
 				.setTaskHolderName(taskHolderName)
 				;
+				
+				if(workflow.getType().equals(TaskWorkflowType.EVALUATION) && task.getEvaluation()!=null) {
+					tm.setEvaluationText(task.getEvaluation().getValue());
+				}
 				
 				String body = TaskMailTemplate.taskContent(tm);
 				

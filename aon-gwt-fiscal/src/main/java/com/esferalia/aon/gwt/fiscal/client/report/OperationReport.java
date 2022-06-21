@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -53,18 +54,6 @@ public class OperationReport extends MainEntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 	}
 
-//	private class NewContextMenu extends ContextMenu {
-//		  public NewContextMenu() {
-//			super.addItem("Facturas Expedidas (IVA)", (ScheduledCommand) () -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(false).setExpenses(false)));
-//			super.addItem("Facturas Recibidas (IVA)", (ScheduledCommand) () -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(false).setExpenses(true)));
-//			super.addItem("Ventas e Ingresos (IRPF)", (ScheduledCommand) () -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(true).setExpenses(false)));
-//			super.addItem("Compras y Gastos (IRPF)", (ScheduledCommand) () -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(true).setExpenses(true)));
-//			super.addItem("Unificado de Facturas Expedidas (IVA) y de Ventas e Ingresos (IRPF)", (ScheduledCommand) () -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(true).setIrpf(true).setExpenses(false)));
-//			super.addItem("Unificado de Facturas Recibidas (IVA) y de Compras y Gastos (IRPF)", (ScheduledCommand) () -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(true).setIrpf(true).setExpenses(true)));
-//			addStyleName(AON.CSS.aonSelector());
-//		  }
-//		}
-	
 	private OperationReportModuleOptions options;
 	
 	private TabLayoutPanel tabLayout;
@@ -127,7 +116,6 @@ public class OperationReport extends MainEntryPoint {
 		tabLayout.addSelectionHandler( event -> {
 			if (event.getSelectedItem() == IVA_TAB) ivaContent.clear();
 			else if (event.getSelectedItem() == IRPF_TAB) irpfContent.clear();
-			onSearch();	
 		});
 		ivaContent = new SimpleLayoutPanel();
 		tabLayout.add(ivaContent, "Listado IVA");
@@ -152,15 +140,6 @@ public class OperationReport extends MainEntryPoint {
 		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export(),AON.CSS.aonIconExcel());
 		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_PRINT, getWidgetParams()));
 		toolbarPanel.add(export);
-		
-//		final NewContextMenu newContextMenu = new NewContextMenu();
-//		final AonToolbarButton book = new AonToolbarButton("Libro Registro AEAT",AON.CSS.aonIconAeatBw());
-//		book.addClickHandler(event -> {
-//			NativeEvent nativeEvent = event.getNativeEvent();
-//			newContextMenu.setPopupPosition(nativeEvent.getClientX(),nativeEvent.getClientY());
-//			newContextMenu.show();
-//		});
-//		toolbarPanel.add(book);
 		
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -251,32 +230,21 @@ public class OperationReport extends MainEntryPoint {
 		type .addStyleName(AON.CSS.aonMarginLeft());
 		type.addItem("Compras y Gastos", "");
 		type.addItem("Ventas e Ingresos");
-		type.addChangeHandler(event -> {
-			fillDates();
-			onSearch();
-		});
+		type.addChangeHandler(event -> fillDates());
 		
 		year = new AonIntegerBox();
 		year.addStyleName(AON.CSS.aonMarginLeft());
 		year.setMaxLength(4);
 		year.setVisibleLength(5);
-		year.addValueChangeHandler(event -> {
-			fillDates();
-			onSearch();
-		});
+		year.addValueChangeHandler(event -> fillDates());
 		
 		period = new PeriodListBox();
 		period.addStyleName(AON.CSS.aonMarginLeft());
-		period.addChangeHandler(event -> {
-			fillDates();
-			onSearch();
-		});
+		period.addChangeHandler(event -> fillDates());
 		
 		fromDate = new AonDateBox();
 		fromDate.addStyleName(AON.CSS.aonMarginLeft());
-		fromDate.addValueChangeHandler(event -> onSearch());
 		toDate = new AonDateBox();
-		toDate.addValueChangeHandler(event -> onSearch());
 	
 		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
 			activity = new ListBox();
@@ -293,7 +261,6 @@ public class OperationReport extends MainEntryPoint {
 				i++;
 			}
 			activity.setSelectedIndex(indexMainActivity);
-			activity.addChangeHandler(event -> onSearch());
 		}
 
 		FlexTable tab = new FlexTable();
@@ -357,6 +324,14 @@ public class OperationReport extends MainEntryPoint {
 			thirdRowPanel.add(activity);
 		}
 
+		
+		AonSearchPanelButton searchButton = new AonSearchPanelButton(AON.MSG.searchAction(),AON.CSS.aonIconSearch());
+		searchButton.addStyleName(AON.CSS.aonBold());
+		searchButton.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		searchButton.setText(AON.MSG.searchAction());
+		searchButton.addClickHandler(event -> onSearch());
+		thirdRowPanel.add(searchButton);
+
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
@@ -388,7 +363,7 @@ public class OperationReport extends MainEntryPoint {
 		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
 			activity.setSelectedIndex(indexMainActivity);
 		}
-		onSearch();
+//		 onSearch(); Disable initial search
 	}
 	
 	private void submitForm(String action, OperationParams params) {

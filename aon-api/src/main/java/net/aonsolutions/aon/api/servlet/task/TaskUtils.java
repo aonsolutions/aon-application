@@ -67,6 +67,10 @@ public class TaskUtils {
 						TaskNotification.onCloseEmail(api, task, workflow);
 						changeStatusTask(api, task, workflow);
 						break;
+					case EVALUATION:
+						TaskNotification.onEvaluationCloseEmail(api, task, workflow);
+						//TODO
+						break;
 					case REOPEN:
 						//TODO
 						break;

@@ -240,6 +240,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idcDateListBox.setVisible(false);
 			idcMonthListBox.setVisible(false);
 //			saveDocument.setVisible(true);
+			
 		}
 
 		@Override
@@ -751,6 +752,42 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 
+	// ------------------------------------------------- ScheduledCommand (ContractAttach)
+	
+	class ExportContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportContract();
+		}
+	}
+	
+	class ModificationPDFCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.modificationPDF();
+		}
+	}
+
+	class AttachContextMenu extends ContextMenu {
+
+		private MenuItem exportContract;
+		private MenuItem modificationPDF;
+		
+		public AttachContextMenu() {
+			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
+			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(), AON.CSS.aonIconPdf(), "modificationPDF");	
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+
+	}
+	
 	// ------------------------------------------------- UiFields
 
 	@UiField
@@ -865,6 +902,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private TGSSContextMenu tgssContextMenu;
 	private SEPEContextMenu sepeContextMenu;
+	private AttachContextMenu attachContextMenu;
 
 	// ContractOtherData
 	private HTMLPanel employeeSepeButtons;
@@ -938,6 +976,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		// Init ContextMenu
 		tgssContextMenu = new TGSSContextMenu();
 		sepeContextMenu = new SEPEContextMenu();
+		attachContextMenu = new AttachContextMenu();
 
 		// Init view
 		setScrollPanelsHeight();
@@ -1114,10 +1153,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
 		saveDocument.setVisible(false);
-		pdfViewer.open(BLANK_PAGE);
 		dataURI = null;
 		attachId = null;
 		showMessagePDFContainer();
+	}
+	
+	private void showBlakPdf() {
+		pdfViewer.open(BLANK_PAGE);
 	}
 	
 	private void onClosePDF() {
@@ -1578,7 +1620,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error TA", f.getMessage()), "ALTA");
+		}, f -> {
+			showBlakPdf();
+			showError("Error TA", f.getMessage());
+		}, "ALTA");
 	}
 
 	private void showTaEnd() {
@@ -1587,7 +1632,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error TA (Baja)", f.getMessage()), "BAJA");
+		}, f -> {
+			showBlakPdf();
+			showError("Error TA (Baja)", f.getMessage());
+		}, "BAJA");
 	}
 
 	private void showIdc() {
@@ -1604,7 +1652,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.downloadIdc(date, dataURI -> {
 			hideMessagePDF();
 			pdfViewer.open(dataURI);
-		}, f -> showErrorPDF("Error IDC", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showErrorPDF("Error IDC", f.getMessage());
+		});
 	}
 
 	private void showIdcPlNss() {
@@ -1621,7 +1672,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.downloadIdcPlNss(month, dataURI -> {
 			hideMessagePDF();
 			pdfViewer.open(dataURI);
-		}, f -> showErrorPDF("Error IDC PL NSS", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showErrorPDF("Error IDC PL NSS", f.getMessage());
+		});
 	}
 
 	private void onDeleteContract() {
@@ -1706,7 +1760,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error CTO", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showError("Error CTO", f.getMessage());
+		});
 	}
 
 	private void onCBC() {
@@ -1719,7 +1776,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error CBC", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showError("Error CBC", f.getMessage());
+		});
 	}
 
 	private void showCertifica2PDF() {
@@ -1728,7 +1788,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, f -> showError("Error Certific@2", f.getMessage()));
+		}, f -> {
+			showBlakPdf();
+			showError("Error Certific@2", f.getMessage());
+		});
 	}
 	
 	private void sendBasicCopyTimer(Consumer<Void> success, Consumer<Void> failure) {
@@ -1931,18 +1994,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private HTMLPanel initEmployeeAttachButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
-
+		
 		AonToolbarButton newAttachment = new AonToolbarButton(AON.MSG.newAction() + " Documento", AON.CSS.aonIconAdd());
 		newAttachment.addClickHandler(e -> contractAttachUI.newAttachment());
 		hPanel.add(newAttachment);
-
-		AonToolbarButton pdfExportBtn = new AonToolbarButton("Generar Borrador Contrato", AON.CSS.aonIconPdf());
-		pdfExportBtn.addClickHandler(e -> contractAttachUI.exportContract());
-		hPanel.add(pdfExportBtn);
 		
-		AonToolbarButton pdfModifyBtn = new AonToolbarButton("Generar Documento Modificaci\u00F3n", AON.CSS.aonIconData());
-		pdfModifyBtn.addClickHandler(e -> contractAttachUI.showModificationPdfPopup());
-		hPanel.add(pdfModifyBtn);
+		AonExpandButton pdfAttachment = new AonExpandButton("Documento PDF", AON.CSS.aonIconPdf()) {
+
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				attachContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				attachContextMenu.show();
+			}
+
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				if(contractAttachUI.existContract())
+					contractAttachUI.modificationPDF();
+				else
+					contractAttachUI.exportContract();
+			}
+		};
+		hPanel.add(pdfAttachment);
 		
 		return hPanel;
 	}

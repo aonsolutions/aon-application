@@ -13,8 +13,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -26,7 +24,6 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
-import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -36,16 +33,20 @@ public class ContractFill {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private static final Map<String, String> FIELDNAMESTOMAP = new HashMap<>();
 	
+	private ContractFill() {
+		super();
+	}
+	
 	public static byte[] fillContract(
 			Integer contractType, 
 			String sepeIde, 
 			Date comunicationDate, 
 			Map<String, String> contractOtherInfo, 
 			Map<String, String> contractFillInfo, 
-			TreeMap<String, String> contractClauses) {
+			TreeMap<String, String> contractClauses) throws IllegalArgumentException {
 		
 		if(null == contractType)
-			return null;
+			throw new IllegalArgumentException("El tipo de contrato no esta definido.");
 		
 		initializeFieldNames();
 		checkContractOtherInfo(contractOtherInfo);
@@ -59,6 +60,29 @@ public class ContractFill {
 		else 
 			return fillTemporalContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 		
+	}
+	
+	private static void initializeFieldNames() {
+		FIELDNAMESTOMAP.clear();
+		FIELDNAMESTOMAP.put("Texto10", "ENTERPRISE_COUNTRY_CODE");
+		FIELDNAMESTOMAP.put("Texto14", "ENTERPRISE_MUNICIPALITY_CODE");
+		FIELDNAMESTOMAP.put("Texto19", "ENTERPRISE_ZIP");
+		FIELDNAMESTOMAP.put("REG_CCC", "ENTERPRISE_CCC_REG");
+		FIELDNAMESTOMAP.put("PRV_CCC", "ENTERPRISE_CCC_PRV");
+		FIELDNAMESTOMAP.put("NUM_CCC", "ENTERPRISE_CCC_NUM");
+		FIELDNAMESTOMAP.put("DC_CCC", "ENTERPRISE_CCC_DC");
+		FIELDNAMESTOMAP.put("Texto3441", "ENTERPRISE_ACTIVITY_CODE");
+		FIELDNAMESTOMAP.put("COD_PAISCT", "WORKPLC_COUNTRY_CODE");
+		FIELDNAMESTOMAP.put("COD_MUNCT", "WORKPLC_MUNICIPALITY_CODE");
+		FIELDNAMESTOMAP.put("COD_NACTRA", "E_NATIONALITY_CODE");
+		FIELDNAMESTOMAP.put("COD_MUNDO", "E_MUNICIPALITY_ADDR_CODE");
+		FIELDNAMESTOMAP.put("COD_PAISDO", "E_COUNTRY_ADDR_CODE");
+		FIELDNAMESTOMAP.put("PRV_NASS", "E_SS1");
+		FIELDNAMESTOMAP.put("NUM_NASS", "E_SS2");
+		FIELDNAMESTOMAP.put("DC_NASS", "E_SS3");
+		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
+		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
+		FIELDNAMESTOMAP.put("HOR_JOR_HH", "I_PARTIALLY_TIME_HOURS");
 	}
 	
 	private static void checkContractOtherInfo(Map<String, String> contractOtherInfo) {
@@ -88,29 +112,6 @@ public class ContractFill {
 		
 	}
 
-	private static void initializeFieldNames() {
-		FIELDNAMESTOMAP.clear();
-		FIELDNAMESTOMAP.put("Texto10", "ENTERPRISE_COUNTRY_CODE");
-		FIELDNAMESTOMAP.put("Texto14", "ENTERPRISE_MUNICIPALITY_CODE");
-		FIELDNAMESTOMAP.put("Texto19", "ENTERPRISE_ZIP");
-		FIELDNAMESTOMAP.put("REG_CCC", "ENTERPRISE_CCC_REG");
-		FIELDNAMESTOMAP.put("PRV_CCC", "ENTERPRISE_CCC_PRV");
-		FIELDNAMESTOMAP.put("NUM_CCC", "ENTERPRISE_CCC_NUM");
-		FIELDNAMESTOMAP.put("DC_CCC", "ENTERPRISE_CCC_DC");
-		FIELDNAMESTOMAP.put("Texto3441", "ENTERPRISE_ACTIVITY_CODE");
-		FIELDNAMESTOMAP.put("COD_PAISCT", "WORKPLC_COUNTRY_CODE");
-		FIELDNAMESTOMAP.put("COD_MUNCT", "WORKPLC_MUNICIPALITY_CODE");
-		FIELDNAMESTOMAP.put("COD_NACTRA", "E_NATIONALITY_CODE");
-		FIELDNAMESTOMAP.put("COD_MUNDO", "E_MUNICIPALITY_ADDR_CODE");
-		FIELDNAMESTOMAP.put("COD_PAISDO", "E_COUNTRY_ADDR_CODE");
-		FIELDNAMESTOMAP.put("PRV_NASS", "E_SS1");
-		FIELDNAMESTOMAP.put("NUM_NASS", "E_SS2");
-		FIELDNAMESTOMAP.put("DC_NASS", "E_SS3");
-		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
-		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
-		FIELDNAMESTOMAP.put("HOR_JOR_HH", "I_PARTIALLY_TIME_HOURS");
-	}
-
 	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
@@ -132,7 +133,6 @@ public class ContractFill {
 					
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
-//					System.out.println(valueStr + "  --  " + fieldName);
 					String renderFieldName = FIELDNAMESTOMAP.getOrDefault(fieldName, null);
 					
 					if(null != renderFieldName) {
@@ -166,7 +166,6 @@ public class ContractFill {
 						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
 							valueStr = valueStr.replace("${", "");
 							valueStr = valueStr.replace("}", "");
-							System.out.println(valueStr + " -- " + contractFillInfo.getOrDefault(valueStr, ""));
 							if(!StringUtils.contains(valueStr, " ")){
 								String newValue = contractFillInfo.getOrDefault(valueStr, "");
 								newValue = AonStringUtils.isBlank(newValue) ? newValue : newValue.toUpperCase();
@@ -179,16 +178,14 @@ public class ContractFill {
 				}
 			}
 			
-			pdfDocument.setAllSecurityToBeRemoved(true);
-	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-	        dictionary.removeItem(COSName.PERMS);
-	        
 	        // Add Sepe info if exists
 	        if(AonStringUtils.isNotBlank(sepeIde))
 	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
 	        
 	        // Remove unsed pages
 	        removeIndefiniteNotUsingPage(contractType, pdfDocument);
+	        
+	        pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 			pdfDocument.save(out);
 			pdfDocument.close();
@@ -327,10 +324,6 @@ public class ContractFill {
 						
 				}
 			}
-			
-			pdfDocument.setAllSecurityToBeRemoved(true);
-	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-	        dictionary.removeItem(COSName.PERMS);
 
 	        // Add Sepe info if exists
 	        if(AonStringUtils.isNotBlank(sepeIde))
@@ -341,6 +334,8 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 	        pdfDocument.save(out);
 			pdfDocument.close();
@@ -416,10 +411,6 @@ public class ContractFill {
 				}
 			}
 			
-			pdfDocument.setAllSecurityToBeRemoved(true);
-	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-	        dictionary.removeItem(COSName.PERMS);
-			
 	        // Add Sepe info if exists
 	        if(AonStringUtils.isNotBlank(sepeIde))
 	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
@@ -430,6 +421,8 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
+			
+			pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 	        pdfDocument.save(out);
 			pdfDocument.close();
@@ -448,12 +441,8 @@ public class ContractFill {
 		
 		try (PDDocument pdfDocument = Loader.loadPDF(is)){
 			
-			pdfDocument.setAllSecurityToBeRemoved(true);
-			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
-			
-//			System.out.println("acroForm size : " + acroForm.getFields().size());
 			
 			if(null != acroForm) {
 				PDResources resources = new PDResources();
@@ -507,16 +496,14 @@ public class ContractFill {
 				}
 			}
 			
-			pdfDocument.setAllSecurityToBeRemoved(true);
-	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-	        dictionary.removeItem(COSName.PERMS);
-			
 	        // Add Sepe info if exists
 	        if(AonStringUtils.isNotBlank(sepeIde))
 	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
 	        
 	        // Remove unsed pages
 	        removeTemporalPages(contractType, pdfDocument);
+	        
+	        pdfDocument.setAllSecurityToBeRemoved(true);
 	        
 	        pdfDocument.save(out);
 			pdfDocument.close();
@@ -584,11 +571,7 @@ public class ContractFill {
 	public static void defaultCheckBox(PDField field) throws IOException {
 	    if (field instanceof PDCheckBox) {
 	    	try {
-//				System.out.println("START " + field.getPartialName() + " --> " + field.getValueAsString() + " (isChecked: " + ((PDCheckBox) field).isChecked() + ")");
-//		        field.setValue("No");
-//		        ((PDCheckBox) field).setDefaultValue("No");
 		        ((PDCheckBox) field).unCheck();
-//		        System.out.println("END " + field.getPartialName() + " --> " + field.getValueAsString() + " (isChecked: " + ((PDCheckBox) field).isChecked() + ")");
 	    	} catch (Exception e) {
 				System.out.println("Error default PDFCheckBox -> " + field.getPartialName());
 			}
@@ -596,20 +579,12 @@ public class ContractFill {
 	}
 
 	public static void setField(PDField field, String value) throws IOException {
-//	    if (field instanceof PDCheckBox) {
-//	        field.setValue("No");
-//	        ((PDCheckBox) field).setDefaultValue("No");
-//	        ((PDCheckBox) field).unCheck();
-//	    } else 
 	    if (field instanceof PDTextField) {
 	    	try{
-		    	field.getCOSObject().removeItem(COSName.AP);
-//		        System.out.println("Original value: " + field.getValueAsString());
 		        field.setValue(value);
 		        ((PDTextField) field).setDefaultValue(value);
-//		        System.out.println("New value: " + field.getValueAsString());
 	    	} catch (Exception e) {
-//				System.out.println("ERR : " + field.getValueAsString());
+				System.out.println("ERR : " + field.getValueAsString());
 			}
 	    } else {
 	        System.out.println("Tipo no identificado");
@@ -617,12 +592,7 @@ public class ContractFill {
 	}
 	
 	public static void setAditionalClauses(PDField field, TreeMap<String, String> contractClauses) throws IOException {
-	    
-//		System.out.println("Original value: " + field.getValueAsString());
-		
-		field.getCOSObject().removeItem(COSName.AP);
-		
-		String clauses = "\n";
+	    String clauses = "\n";
 		for(Entry<String, String> entry : contractClauses.entrySet()) {
 			System.out.println("setAditionalClauses  --> " + entry.getKey());
 			clauses += "\t" + entry.getKey() + " :  \t\t" + entry.getValue() + "\n\n";
@@ -630,10 +600,8 @@ public class ContractFill {
 		try {
 			field.setValue(clauses);
 		} catch (Exception e) {}
+		
 		((PDTextField) field).setDefaultValue(clauses);
-		
-//		System.out.println("New value: " + field.getValueAsString());
-		
 	}
 	
 	private static void addSepeInfo(PDDocument document, String sepeIde, Date comunicationDate) {

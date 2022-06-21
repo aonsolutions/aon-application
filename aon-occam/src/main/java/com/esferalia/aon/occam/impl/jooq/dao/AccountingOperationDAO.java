@@ -23,6 +23,7 @@ import org.jooq.GroupField;
 import org.jooq.Record;
 import org.jooq.Record14;
 import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
@@ -157,9 +158,9 @@ public class AccountingOperationDAO {
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.where(params.isIrpf()
-					?(ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate()))
-					.and(ACCOUNT.CODE.startsWith(params.getAccountPrefix())))
+				.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq( domain ))
+				.and(params.isIrpf()
+					?(ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate())).and(ACCOUNT.CODE.startsWith(params.getAccountPrefix())))
 					:DSL.trueCondition()
 						)
 				.groupBy(OP_ID,OP_DETAIL_ACC_ID)
@@ -292,7 +293,6 @@ public class AccountingOperationDAO {
 								|| rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
 								Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
 								if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
-//								if (idTaxAccount != null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
 									deductibleQuota = 0;
 								}									
 							}								

@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -60,6 +61,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Up2Date;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -109,11 +111,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -138,8 +142,9 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener,
 		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener {
-
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
+	
+	
 
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
 
@@ -195,7 +200,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			enterpriseService.getWorkplacesExtras(workplaceIds, callback);
 		}
 	}
-
+	
 	class ShowResultsCommand implements ScheduledCommand {
 
 		@Override
@@ -2432,11 +2437,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 
+	@UiField(provided = true)
+	SimpleLayoutPanel messagePanel;
+
 	@UiField
 	AonMinimizePanel footPanel;
 	
 	@UiField
 	TabLayoutPanel footTabPanel;
+	
 
 	private JSF jsf;
 	private Documents documents;
@@ -2539,7 +2548,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}
 			}
 		};
+		
+		messagePanel = new SimpleLayoutPanel() {
+			@Override
+			public void add(Widget widget) {
+				super.add(widget);
+				EmployeeTree.this.showMessagePanel();
+			}
+			
+			@Override
+			public boolean remove(Widget w) {
+				boolean remove = super.remove(w);
+				EmployeeTree.this.hideMessagePanel();
+				return remove;
+			};
+			@Override
+			public void clear() {
+				super.clear();
+				EmployeeTree.this.hideMessagePanel();
+			}
+			
+		};
 
+		
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		logEvent("uiCreatedAndBound");
@@ -2588,6 +2619,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		initOpenCloseEmployees();
 			
 		initFootPanel();
+		
+		initMessagePanel();
 	}
 
 	private void initFootPanel() {
@@ -2597,6 +2630,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		this.footPanel.addMinimizeHandlerNew(e-> closeFootPanel());
 	}
 	
+	private void initMessagePanel() {
+		logEvent("initMessagePanel");
+		hideMessagePanel();
+	}
+
 	private void initOpenCloseEmployees() {
 		
 		Element closeEmployeesButton = Document.get().createSpanElement();
@@ -3125,8 +3163,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 //	void onFootMaximize(MaximizeEvent event) {
 //		showFootPanel();
 //	}
-
+	
+	
 	// --------------------------------------------------------- Private methods
+
+	private Panel getMessagePanel() {
+		return messagePanel;
+	}
+	
+	private void showMessagePanel() {
+		EmployeeTree.this.splitLayoutPanel.setWidgetHidden(EmployeeTree.this.getMessagePanel(), false);		
+	}
+
+	private void hideMessagePanel() {
+		EmployeeTree.this.splitLayoutPanel.setWidgetHidden(EmployeeTree.this.getMessagePanel(), true);		
+	}
 
 	private void showFootPanel() {
 		footPanel.addButtonMore();
@@ -3383,20 +3434,52 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeEventsDraft getEmployeeEventsDraft() {
 		if (employeeEventsDraft == null)
 			employeeEventsDraft = new EmployeeEventsDraft() {
+
 				@Override
 				protected void onShowCalendar() {
 					showEmployeeCalendar(this.getEmployeeCalendarObject());
-				}};
+				}
+				
+				@Override
+				protected void showEvents() {
+					super.showEvents();
+					hideMessagePanel();
+				}
+				
+				@Override
+				protected void showLoading() {
+					super.showLoading();
+					AonMessagePanel.showLoading(getMessagePanel(), 
+					"Obteniendo variables de c\u00E1lculo del trabajador ...");
+					showMessagePanel();
+				}
+				
+				@Override
+				protected void initLoadingPanel() {
+				}
+				
+				
+			};
 		return employeeEventsDraft;
 	}
 
 	private EmployeeDraft getEmployeeDraft() {
 		if (employeeDraft == null)
 			employeeDraft = new EmployeeDraft() {
+			
+				@Override
+				protected Panel getMessagePanel() {
+					return EmployeeTree.this.getMessagePanel();
+				}
+
 				@Override
 				protected void onCheckStatus(EmployeeDraftObject employeeDraftObject) {
 					checkStatus(employeeDraftObject);
-				}}
+				}
+				
+		}
+			
+		
 		;// .setOnSaved(w -> refreshWorkplace() );
 		return employeeDraft;
 	}
@@ -3434,7 +3517,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private SSPECDraft getEmployeeSSPEC() {
 		if (ssPECDraft == null)
-			ssPECDraft = new SSPECDraft();
+			ssPECDraft = new SSPECDraft() {
+		
+			@Override
+			protected Panel getMessagePanel() {
+				return EmployeeTree.this.getMessagePanel();
+			}
+			
+		};
 		return ssPECDraft;
 	}
 
@@ -3635,6 +3725,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						closeFootPanel();
 						getEmployeeDraft().disableSistemaRED();
 					});
+				}
+				
+				// --------------------------------------------------------- EmployeeStatus
+				
+				@Override
+				public void up2Date() {
+					AonMessagePanel.showSuccess(
+					EmployeeTree.this.getMessagePanel(), 
+					"Trabajador actualizado, no existen movimientos y/o cambios nuevos.");
 				}
 				
 				
@@ -4456,5 +4555,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		;
 		
 	}
+	
+	private static native void log (String message ) /*-{
+		console.log(message);
+	}-*/;
+
+	
 
 }

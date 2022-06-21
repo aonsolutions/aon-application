@@ -13,6 +13,10 @@
 	     gwt-image: 'configgroup';
 	     float: left;
 	   }
+	   
+	.gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-HDragger {
+		display: none;
+	}
 
 	</ui:style>
 
@@ -20,10 +24,13 @@
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
 
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-	
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel" debugId="messagePanel" >
+		<g:north size="42" >
+			<g:SimpleLayoutPanel ui:field="messagePanel" />
+		</g:north>
+
 		<g:west size='275'>
-			<payroll:Employees ui:field='employees' extended="true" formers="false"/>
+				<payroll:Employees ui:field='employees' extended="true" formers="false"/>
 		</g:west>
 		
 		<g:center>

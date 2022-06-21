@@ -372,7 +372,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		initializeTable();
 		
 		initLoadingPanel();
-		showLoading();
+		//showLoading();
 		
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
@@ -390,7 +390,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 
 	// ----------------------------------------------- Constructor.Methods
 	
-	private void initLoadingPanel() {
+	protected void initLoadingPanel() {
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
@@ -1018,11 +1018,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	// -------------------------------------------------- DeckPanel.Methods
 
-	private void showLoading() {
+	protected void showLoading() {
 		deckPanel.showWidget(0);
 	}
 	
-	private void showEvents() {
+	protected void showEvents() {
 		deckPanel.showWidget(1);
 	}
 	

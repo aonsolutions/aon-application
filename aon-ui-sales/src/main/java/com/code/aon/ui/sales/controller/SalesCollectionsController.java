@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.AonVersion;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 
 public class SalesCollectionsController implements Serializable {
 	
@@ -18,6 +19,7 @@ public class SalesCollectionsController implements Serializable {
 
 	private List<SelectItem> salesStatuses;
 	private List<SelectItem> documentTypes;
+	private List<SelectItem> elaborationSources;
 
 	public List<SelectItem> getSalesStatuses() {
 		if (salesStatuses == null) {
@@ -55,4 +57,15 @@ public class SalesCollectionsController implements Serializable {
 		return list;
 	}
 
+	public List<SelectItem> getElaborationSources() {
+		if (elaborationSources == null) {
+			elaborationSources = new LinkedList<>();
+			for (ElaborationSource source : ElaborationSource.values()) {
+				String name = source.getName();
+				SelectItem item = new SelectItem(source, name);
+				elaborationSources.add(item);
+			}
+		}
+		return elaborationSources;
+	}
 }

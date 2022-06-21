@@ -263,7 +263,7 @@ public class SalesUtils {
 		}
 	}
 	
-	public void createElaboration(SalesDetail salesDetail, Date date, Integer warehouseId) {
+	public void createElaboration(SalesDetail salesDetail, Date date, Integer warehouseId, ElaborationSource source) {
 		String series = salesDetail.getSales().getSeries();
 
 		int number = AON.getElaborationNextNumber(AonUtil.getDomainName(),
@@ -280,7 +280,7 @@ public class SalesUtils {
 		elaboration.setStatus(ElaborationStatus.PENDING);
 		elaboration.setComments(salesDetail.getSales().getComments());
 		elaboration.setRemarks("Pedido "+salesDetail.getSales().getSeries()+"/"+salesDetail.getSales().getNumber());
-		elaboration.setSource(ElaborationSource.SALES);
+		elaboration.setSource(source);
 		elaboration.setSourceId(salesDetail.getId());
 		
 		int elaborationId = AON.insertElaboration(AonUtil.getDomainName(),
