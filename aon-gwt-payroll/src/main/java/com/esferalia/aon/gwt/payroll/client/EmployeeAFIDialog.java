@@ -472,7 +472,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			partialityCoef.setValue(null);
 
 			Integer contractTypeAux = null;
-
+			
 			for (AFIChange afiChange : afiChangeList) {
 				switch (afiChange.getName()) {
 				case "TC2":
@@ -493,7 +493,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				}
 			}
 
-			checkPartialityVisibility(contractTypeAux);
+			if(null != contractTypeAux) checkPartialityVisibility(contractTypeAux);
 
 		}
 	}
