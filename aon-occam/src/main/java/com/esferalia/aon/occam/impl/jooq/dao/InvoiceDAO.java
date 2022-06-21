@@ -247,7 +247,7 @@ public class InvoiceDAO {
 				.from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
 				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
-				.where(INVOICE.ID.eq(id))
+				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()).and(INVOICE.ID.eq(id)))
 				.fetch()
 				.stream()
 				.map( new InvoiceFiller() )
@@ -1002,8 +1002,8 @@ public class InvoiceDAO {
 		invoice.setId(record.getValue(INVOICE.ID));
 		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),invoice.getActivity());
 	
-		if(invoice.getAddress() != null && !invoice.getAddress().isEmpty())
-			invoice.setAddress(InvoiceAddressDAO.save(ctx, invoice.getAddress(), invoice.getId()));
+//		if(invoice.getAddress() != null && !invoice.getAddress().isEmpty())
+//			invoice.setAddress(InvoiceAddressDAO.save(ctx, invoice.getAddress(), invoice.getId()));
 		
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.save(ctx, config, invoice);

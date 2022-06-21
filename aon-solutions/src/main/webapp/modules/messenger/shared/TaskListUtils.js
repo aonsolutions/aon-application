@@ -193,9 +193,9 @@ const addTaskChilds = (task, row, documents, isCau) => {
 
     if (isCau && childs.length) {
       //distinct task for workgroup
-      childs = sortBy(childs, "id", "desc")
-        .filter((t) => t.workgroup && t.workgroup.id)
-        .filter((t, idx, self) => self.map((x) => x.workgroup.id).indexOf(t.workgroup.id) === idx);
+      childs = sortBy(childs, "id", "desc").filter((t) => t.workgroup && t.workgroup.id);
+      
+      childs.filter((t, idx) => childs.findIndex(x => x.workgroup.id === t.workgroup.id) === idx);
 
       childs = sortBy(childs, "id", "asc");
     }
