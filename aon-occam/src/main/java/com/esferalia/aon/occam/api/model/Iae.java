@@ -4,15 +4,20 @@ import java.io.Serializable;
 
 public class Iae implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
 	private String section;
 	private String epigraph;
 	private String title;
+	
+	public Iae() {
+	}
+	public Iae(String section,String epigraph,String title) {
+		setSection(section);
+		setEpigraph(epigraph);
+		setTitle(title);
+	}
 	
 	public Integer getId() {
 		return id;

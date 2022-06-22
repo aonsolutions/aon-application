@@ -292,8 +292,23 @@ public class AonRandom {
 		return getRandomAdministration(-1);
 	}
 	public static Administration getRandomAdministration(int nullThreshold) {
+		// **********************
+		// No tiene ningún sentido que en OCCAM exista Administration.UNKNOWN
+		// cuando en el enumerado de FACES no existía.
+		// Si se genera UNKNOWN de manera aleatoria, la aplicacion faces no funciona.
+		// **********************
+		int length = 0;
+		if (Administration.UNKNOWN != null) {
+			length =  Administration.values().length - 1;
+		} else {
+			length =  Administration.values().length;
+		}
+		// **********************
+		// **********************
+		// **********************
+		
     	return gt(nullThreshold)
-    			?Administration.values()[faker.random().nextInt(Administration.values().length)]
+    			?Administration.values()[faker.random().nextInt(length)]
     			:null;
 	}
 

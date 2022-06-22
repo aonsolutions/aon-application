@@ -110,7 +110,17 @@ public class GeoZoneDAO {
 			.returning(GEOZONE.ID)
 			.fetchOne()
 			.getValue(GEOZONE.ID);
-		return get(ctx, id);
+		return geozone.setId(id);
+	}
+
+	public static void bind(AONContext ctx, Integer domain, Integer parentId, Integer childId) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.insertInto(GEOTREE)
+			.set(GEOTREE.DOMAIN, domain)
+			.set(GEOTREE.PARENT,parentId)
+			.set(GEOTREE.CHILD,childId)
+			.execute();
 	}
 
 	// *************************************************
