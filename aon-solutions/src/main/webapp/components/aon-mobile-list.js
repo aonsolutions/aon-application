@@ -205,6 +205,27 @@ export class AonMobileList extends AonElement {
     div.innerHTML = message;
     this.appendChild(div);
   }
+
+  loading(b){
+    const id = "MobileTableLoading";
+    let load = this.getElement(id);
+    if (b && !load) {
+      load = this.createElement(TAG.DIV);
+      load.id = id;
+      load.classList.add(CSS.AON_ICON_CONTAINER);
+      load.style.right     = "0";
+      load.style.left      = "0";
+      load.style.textAlign = "center";
+      let icon = this.createElement(TAG.I);
+      icon.classList.add(CSS.AON_LOADER);
+      load.appendChild(icon);
+
+      this.appendChild(load);
+
+    } else if (!b && load) {
+      load.remove();
+    }
+  }
 }
 if(!window.customElements.get('aon-mobile-list')){
   window.customElements.define("aon-mobile-list", AonMobileList);

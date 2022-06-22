@@ -215,17 +215,20 @@ export const sendMessage = async (text, task) => {
             type: WORKFLOW_TYPES.COMMENT,
             sender: "",
             comment: value,
-            creation_date: new Date()
+            creation_date: new Date(),
+            task:task.id
         }
     
         task.workflow.push(message);
-    
+
         messageEl = appendChatMessage({
             id: "id",
             name: message.sender,
             comment:message.comment,
             date: message.creation_date,
-            direction : MESSENGER_DIRECTION.RIGHT
+            task:message.task,
+            direction : MESSENGER_DIRECTION.RIGHT,
+            me: true
         });
     }
 

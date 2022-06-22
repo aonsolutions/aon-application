@@ -685,6 +685,19 @@ public interface Properties {
 		Property<Byte> getSystemProperty();
 	}
 	
+	public interface IAEProperties {
+		Property<Integer> getIdProperty();
+		Property<String> getSectionProperty();
+		Property<String> getEpigraphProperty();
+		Property<String> getTitleProperty();		
+	}
+
+	public interface Cnae2009Properties {
+		Property<Integer> getIdProperty();
+		Property<String> getCodeProperty();
+		Property<String> getTitleProperty();		
+	}
+
 	public interface ProjectReservationProperties extends AuditProperties{
 		Property<Integer> getProjectProperty();
 		Property<Integer> getDomainProperty();

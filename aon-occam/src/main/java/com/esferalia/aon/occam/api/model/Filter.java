@@ -280,6 +280,16 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface IAEFilter{
+		Filter filter(IAEProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface Cnae2009Filter{
+		Filter filter(Cnae2009Properties properties);
+	}
+
+	@FunctionalInterface
 	public interface ProjectHolderFilter{
 		Filter filter(ProjectHolderProperties properties);
 	}
