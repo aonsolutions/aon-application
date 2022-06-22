@@ -166,6 +166,7 @@ public class MainCertificates extends MainEntryPoint{
 	private MainCertificatesObject mainDigitalCertificatesObject;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	private Integer domainId = null;
 	private boolean showInactives = false;
 	
 	// ------------------------------------------------------ Constructor
@@ -397,7 +398,10 @@ public class MainCertificates extends MainEntryPoint{
 						if(!domainUserRole.isAdmin())
 							hideEnterpriseTab();
 					}, fa -> {});
-					loadDigitalCertificates();
+					mainDigitalCertificatesObject.getDomainId(domainIdIn -> {
+						domainId = domainIdIn;
+						loadDigitalCertificates();
+					}, f -> {});
 				}, f -> {});
 	}
 	
@@ -471,7 +475,7 @@ public class MainCertificates extends MainEntryPoint{
 		else {
 			userCertDataTableDeckPanel.showWidget(1);
 			for(Certificate certificate : userCertificateList)
-				insertCertificateRow(certificate, userCertDataTable);
+				insertCertificateRow(certificate, userCertDataTable, false);
 		}
 	}
 	
@@ -482,21 +486,21 @@ public class MainCertificates extends MainEntryPoint{
 		else {
 			enterpriseCertDataTablDeckPanel.showWidget(1);
 			for(Certificate certificate : enterpriseCertificateList)
-				insertCertificateRow(certificate, enterpriseCertDataTable);
+				insertCertificateRow(certificate, enterpriseCertDataTable, true);
 		}
 	}
 	
 	// ------------------------------------------------------ Insert Rows
 	
-	private void insertCertificateRow(Certificate certificate, Grid dataTable) {
+	private void insertCertificateRow(Certificate certificate, Grid dataTable, boolean isEnterprise) {
 		// Insert new row
 		int row = dataTable.insertRow(dataTable.getRowCount());
 		
 		// Form Panel
-		createFormPanel(dataTable, row, certificate);
+		createFormPanel(dataTable, row, certificate, isEnterprise);
 	}
 
-	private void createFormPanel(Grid table, int row, Certificate certificate) {
+	private void createFormPanel(Grid table, int row, Certificate certificate, boolean isEnterprise) {
 		
 		// Save Button
 		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
@@ -718,6 +722,24 @@ public class MainCertificates extends MainEntryPoint{
 			table.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
 			table.setWidget(row, 8, buttonsPanel);
 			table.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.RIGHT);
+		}
+		
+		// Para poder visualizar certificados publicos del padre pero con edicion restringida
+		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && certificate.getDomain() != domainId)) {
+			alias.setEnabled(false);
+			alias.setTitle("Certificado p\u00fablico del dominio padre");
+			security.setEnabled(false);
+			tgssCB.setEnabled(false);
+			tgssCB.setTitle("Certificado p\u00fablico del dominio padre");
+			sepeCB.setEnabled(false);
+			sepeCB.setTitle("Certificado p\u00fablico del dominio padre");
+			aeatCB.setEnabled(false);
+			aeatCB.setTitle("Certificado p\u00fablico del dominio padre");
+			
+			saveButton.setVisible(false);
+			verifyButton.setVisible(false);
+			secondaryUsersButton.setVisible(false);
+			deleteButton.setVisible(false);
 		}
 	}
 	

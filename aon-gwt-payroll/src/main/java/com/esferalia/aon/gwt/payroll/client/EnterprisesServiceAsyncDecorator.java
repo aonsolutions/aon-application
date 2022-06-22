@@ -885,9 +885,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	// --------------------------- Certificates
 
 	@Override
-	public void getCertificates(String domain, String login, AsyncCallback<List<Certificate>> callback) throws IllegalArgumentException {
+	public void getCertificates(String domain, String login, boolean withParent, AsyncCallback<List<Certificate>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getCertificates(domain, login, new AsyncCallbackWrapper<>(callback));
+		enterprisesServiceAsync.getCertificates(domain, login, withParent, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
