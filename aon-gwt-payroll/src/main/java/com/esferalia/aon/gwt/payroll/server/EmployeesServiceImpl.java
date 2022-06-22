@@ -6514,6 +6514,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeAux.getNss(), fecha, Optional.of(tc2), null);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
 				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
 			throw new IllegalArgumentException(e.getMessage());
