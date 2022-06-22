@@ -210,8 +210,11 @@ export class AonMessenger extends AonElement {
 
 
 	buildToolbarSearch(){
-		let btnSearch = this.applicationEl.addSearchOption();
+		const opened = !this.isMobile();
+
+		let btnSearch = this.applicationEl.addSearchOption(opened);
 		let timeOut = null;
+		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
 		  clearTimeout(timeOut);
 		  
