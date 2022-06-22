@@ -328,7 +328,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	// --------------------------- Certificates
 
-	List<Certificate> getCertificates(String domain, String login) throws IllegalArgumentException;
+	List<Certificate> getCertificates(String domain, String login, boolean withParent);
 
 	void deleteCertificate(String domain, String login, Certificate certificate) throws IllegalArgumentException;
 

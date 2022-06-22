@@ -159,7 +159,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
 				
 				if(Boolean.FALSE.equals(userRoles.isAdmin())) disableEnterprise();
 				
-				enterprisesService.getCertificates(new AsyncCallback<List<Certificate>>() {
+				enterprisesService.getCertificates(false, new AsyncCallback<List<Certificate>>() {
 					
 					@Override
 					public void onSuccess(List<Certificate> certificatesDB) {

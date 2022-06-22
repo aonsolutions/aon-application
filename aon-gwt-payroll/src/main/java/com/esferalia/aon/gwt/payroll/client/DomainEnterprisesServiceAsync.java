@@ -560,8 +560,8 @@ public class DomainEnterprisesServiceAsync {
 	
 	// --------------------------- Certificates
 	
-	public void getCertificates(AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	public void getCertificates(boolean withParent, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCertificates(getCurrentDomainName(), getCurrentUser(), withParent, asyncCallback);
 	}
 	
 	public void deleteCertificate(Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
