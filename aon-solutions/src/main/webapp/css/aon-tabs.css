@@ -17,6 +17,8 @@
     box-shadow: var(--shadow-small);
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
+    z-index: 9;
+    top:60px;
   }
   
   .tabs-menu {
@@ -50,9 +52,6 @@
 
   .tab-button > div > .badge {
     position: absolute; 
-    /* left: 58%;
-    top: 5px; */
-    /* margin: -6px 19px; */
     margin-left: 21px;
     padding: 1px 4px;
     border-radius: 50%;
@@ -64,8 +63,6 @@
 
   .tab-button > .material-icons {
     padding-bottom: 1px;
-    /* background-color:"#f1f1f1";
-    color: "black"; */
   }
   
   .tab-button .active {
