@@ -493,19 +493,21 @@ export class AonInput extends AonElement {
     this.getElement(this.INPUT).value = "";
   }
 
-  loading(valor) {
+  loading(b) {
     let label = this.getElement(this.LABEL);
     let id = this.LOADING;
-    let div_load = this.getElement(id);
-    if (valor && !div_load) {
-      div_load = this.createElement(TAG.DIV);
-      div_load.id = id;
-      div_load.classList.add(CSS.AON_ICON_CONTAINER);
-      let load_i = this.createElement(TAG.I);
-      load_i.classList.add(CSS.AON_LOADER);
-      div_load.appendChild(load_i);
-      label.appendChild(div_load);
-    } else if (!valor && div_load) div_load.remove();
+    let load = this.getElement(id);
+    if (b && !load) {
+      load = this.createElement(TAG.DIV);
+      load.id = id;
+      load.classList.add(CSS.AON_ICON_CONTAINER);
+      let icon = this.createElement(TAG.I);
+      icon.classList.add(CSS.AON_LOADER);
+      load.appendChild(icon);
+      label.appendChild(load);
+    } else if (!b && load) {
+      load.remove();
+    }
   }
 
   focus() {

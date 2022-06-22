@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonCheckbox } from "./aon-checkbox.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
@@ -178,7 +178,7 @@ export class AonTable extends AonElement {
             }
           });
         }
-        this.dispatchEvent(new CustomEvent("select"));
+        this.dispatchEvent(new CustomEvent(EVENT.SELECT));
       });
     }
 
@@ -287,6 +287,36 @@ export class AonTable extends AonElement {
     td.style.fontWeight = 'bold';
     tr.appendChild(td);
   }
+
+
+  loading(b) {
+    let body = this.getElement(this.TBODY);
+    let id = this.TBODY+"Loading";
+    let tr = this.getElement(id);
+    if (b && !tr) {
+      tr = this.createElement(TAG.TR);
+      tr.id = id;
+      tr.style.textAlign = 'center';
+      tr.style.position  = 'relative';
+      tr.style.top       = '-14px';
+      tr.style.border    = 'none';
+      body.appendChild(tr);
+     
+      let load = this.createElement(TAG.DIV);
+      load.classList.add(CSS.AON_ICON_CONTAINER);
+      load.style.right     = "0";
+      load.style.left      = "0";
+      tr.appendChild(load);
+
+      let icon = this.createElement(TAG.I);
+      icon.classList.add(CSS.AON_LOADER);
+      load.appendChild(icon);
+
+    } else if (!b && tr) {
+      tr.remove();
+    }
+  }
+
 }
 if(!window.customElements.get('aon-table')){
   window.customElements.define("aon-table", AonTable);

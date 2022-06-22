@@ -297,7 +297,7 @@ public class TaskUtils {
 		List<Byte> types = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
 		if(task.isChild()) {
 			
-			Task parent = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+			Task parent = AON_SOLUTIONS.getTask(task.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
 			
 			if(parent!=null && parent.getId()!=null) {
 				
@@ -307,22 +307,20 @@ public class TaskUtils {
 				).collect(Collectors.toList());
 				
 				TaskStatus status = childs.isEmpty() ? TaskStatus.PENDING : TaskStatus.IN_PROGRESS;
-				AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), parent.setStatus(status));
+				AON_SOLUTIONS.saveTask(task.getDomain(), api.getUser(), parent.setStatus(status));
 			}
 		} else { // IS PARENT
+			
+//			workflow.setId(null).setTask(task.getId()).setType(TaskWorkflowType.CLOSE);
+			
+//			AON_SOLUTIONS.saveTaskWorkflow(task.getDomain(), new User(), workflow); /// SAVE WORKFLOW
+			
 			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
-					f-> f.getParentProperty().eq(task.getId())
-					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
-				)
+				f-> f.getParentProperty().eq(task.getId())
+				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+			)
 			.forEach(t->{
-				
-				workflow.setId(null).setTask(t.getId()).setType(TaskWorkflowType.CLOSE);
-				
-				TaskWorkflow tmp = AON_SOLUTIONS.saveTaskWorkflow(t.getDomain(), new User(), workflow);
-				
 				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
-				
-				onNotification(api, tmp);
 			});
 		}
 	}
