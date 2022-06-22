@@ -1469,7 +1469,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
-				this.contrataEmployeeObject.getContractData().getWorkplaceId(), false) {
+				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
+				this.contrataEmployeeObject.getContractData().isHasTransformation(),
+				false) {
 
 			@Override
 			protected void onAcceptCB() {
@@ -1515,7 +1517,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
-				this.contrataEmployeeObject.getContractData().getWorkplaceId(), true) {
+				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
+				this.contrataEmployeeObject.getContractData().isHasTransformation(),
+				true) {
 
 			@Override
 			protected void onAcceptCB() {
