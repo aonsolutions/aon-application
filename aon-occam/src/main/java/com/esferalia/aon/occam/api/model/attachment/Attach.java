@@ -10,8 +10,6 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-import com.google.gwt.view.client.ProvidesKey;
-
 @SuppressWarnings("serial")
 public class Attach implements Serializable {
 
@@ -59,10 +57,6 @@ public class Attach implements Serializable {
 	private Scope fullScope;
 	private Category fullCategory;
 	private LinkedList<Tag> tagList;
-	
-	//--------------------- Key provider
-	
-    public static final ProvidesKey<Attach> KEY_PROVIDER = item -> item == null ? null : item.getId();
 	
 	//--------------------- Constructors
 	
