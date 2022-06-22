@@ -49,7 +49,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementsClean;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 import com.esferalia.aon.gwt.payroll.jooq.JooqComunicaEnterpriseSettings;
-import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractClauses;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractOtherInfo;
@@ -74,6 +73,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
+import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -82,7 +82,6 @@ import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
@@ -130,7 +129,6 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -2271,34 +2269,31 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public List<Attach> getContractAttachments(String domainName, String login, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return AON.getAttachList(
+			List<com.esferalia.aon.occam.api.model.attachment.Attach> occamAttachs = AON.getAttachList(
 					domainName, 
 					domainId, 
 					login, 
 					f -> f.getDomainProperty().eq(domainId).and(f.getContractProperty().eq(contractId)), 
 					AttachType.CONTRACT, 
 					false);
+			
+			return wrapperOccamToPayrollAttachs(occamAttachs);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
-	
-	@Override
-	public void setContractAttachments(String domainName, Integer contractId, List<ContractAttach> contractAttachments) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqContractAttach.setContractAttachments(connection, contractAttachments);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
-	}
 
-	@Override
-	public void createContractAttach(String domainName, ContractAttach contractAttach) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqContractAttach.createContractAttach(connection, contractAttach);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e.getMessage());
+	private List<Attach> wrapperOccamToPayrollAttachs(List<com.esferalia.aon.occam.api.model.attachment.Attach> occamAttachs) {
+		List<Attach> payrollAttachs = new ArrayList<Attach>();
+		
+		if(occamAttachs.isEmpty()) return payrollAttachs;
+		
+		for(com.esferalia.aon.occam.api.model.attachment.Attach occamAttach : occamAttachs) {
+			Attach payrollAttach = new Attach(occamAttach);
+			payrollAttachs.add(payrollAttach);
 		}
+		
+		return payrollAttachs;
 	}
 
 	@Override
@@ -2315,7 +2310,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public String getAttachData(String domainName, String login, Integer attachId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Attach attach = AON.getAttach(domainName, domainId, login,  f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
+			com.esferalia.aon.occam.api.model.attachment.Attach attach = AON.getAttach(domainName, domainId, login,  f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
 			String base64Pdf = Base64.getEncoder().encodeToString(attach.getData());
 			
 			Writer stringWriter = new StringWriter();

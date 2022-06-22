@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class EmployeeContractInfo implements Serializable{

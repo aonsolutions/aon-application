@@ -138,21 +138,17 @@ public class ElaborationDownload extends HttpServlet {
 		Sales sales = null;
 		Customer customer = null;
 		if(elaboration.getSourceId()!=null){
-			if(ElaborationSource.SALES.equals(elaboration.getSource())){
-				salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, 
-						f -> f.getIdProperty().eq(elaboration.getSourceId()))
-						.findFirst().orElse(null);
-				if(salesDetail!=null && salesDetail.getSales().getId()>0){
-					int salesId = salesDetail.getSales().getId(); 
-					Options options = new Options().setFull(true);
-					sales = AON.getSales(domain.getName(), domain.getId(), login, 
-							f -> f.getIdProperty().eq(salesId), options);
-					if(sales!=null && sales.getId()!=null){
-						customer = sales.getCustomer();
-					}
+			salesDetail = AON.getSalesDetailStream(domain.getName(), domain.getId(), login, 
+					f -> f.getIdProperty().eq(elaboration.getSourceId()))
+					.findFirst().orElse(null);
+			if(salesDetail!=null && salesDetail.getSales().getId()>0){
+				int salesId = salesDetail.getSales().getId(); 
+				Options options = new Options().setFull(true);
+				sales = AON.getSales(domain.getName(), domain.getId(), login, 
+						f -> f.getIdProperty().eq(salesId), options);
+				if(sales!=null && sales.getId()!=null){
+					customer = sales.getCustomer();
 				}
-			} else if(ElaborationSource.PURCHASE.equals(elaboration.getSource())){
-				// TODO purchase source of elaboration
 			}
 		}
 		

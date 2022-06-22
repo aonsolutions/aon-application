@@ -12,7 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.INGENET;
 import com.esferalia.aon.occam.api.Options;
+import com.esferalia.aon.occam.api.SERFRUIT;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.SalesJSON;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -103,8 +105,26 @@ public class SalesServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONArray getSales(AonApiData api) {
+		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
+			return getSerfruitSales(api);
+		} else if(JsonUtils.getboolean(api.getData(), IJsonNames.INGENET)) {
+			return getIngenetSales(api);
+		} else return getAonSales(api);
+	}
+	
+	private JSONArray getAonSales(AonApiData api) {
 		Stream<Sales> stream = AON.getSalesStream(api.getDomain(), api.getUser(), 
-				f -> salesFilter(api, f), salesOptions(api));
+			f -> salesFilter(api, f), salesOptions(api));
+		return SalesJSON.toJSON(stream);
+	}
+	
+	private JSONArray getSerfruitSales(AonApiData api) {
+		Stream<Sales> stream = SERFRUIT.getSalesStream(api.getDomain(), api.getUser(), f -> salesFilter(api, f), salesOptions(api));
+		return SalesJSON.toJSON(stream);
+	}	
+	
+	private JSONArray getIngenetSales(AonApiData api) {
+		Stream<Sales> stream = INGENET.getSalesStream(api.getDomain(), api.getUser(), f -> salesFilter(api, f), salesOptions(api));
 		return SalesJSON.toJSON(stream);
 	}
 	
