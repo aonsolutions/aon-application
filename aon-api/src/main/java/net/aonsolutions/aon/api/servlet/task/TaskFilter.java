@@ -418,7 +418,7 @@ public class TaskFilter {
 		String document   = params.optString(IJsonNames.DOCUMENT);
 		String email      = params.optString(IJsonNames.EMAIL);
 		
-		Filter filterCau  = f.getGtaskIdProperty().eq(email);
+		Filter filterCau  = f.getGtaskIdProperty().eq(email).and(f.getParentProperty().isNull());
 		if(!document.isEmpty()) {
 			Registry registry = AON.getRegistry(api.getDomain(), api.getUser(), r->r.getDocumentProperty().eq(document));
 			if(registry!=null && registry.getId()!=null) {					
