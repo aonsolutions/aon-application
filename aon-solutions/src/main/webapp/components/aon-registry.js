@@ -14,12 +14,9 @@ export class AonRegistry extends AonElement {
   DOCUMENT;
   NAME;
   ADDRESS;
-
   options;
   selected;
-
   showAddress;
-
   types;
 
 	get id() {
@@ -285,6 +282,10 @@ export class AonRegistry extends AonElement {
         });
       } else this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     }
+  }
+
+  onChange(fn) {
+    this.addEventListener(EVENT.CHANGE, fn);
   }
 
   setTypes(types){

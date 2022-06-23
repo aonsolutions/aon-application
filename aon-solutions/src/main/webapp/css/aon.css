@@ -1182,6 +1182,10 @@ button:disabled, button[disabled]{
   display: flex;
 }
 
+.aonBlock {
+  display: block;
+}
+
 
 .aonDialog>.aonDialogContent>.btn-close{
   color: grey;

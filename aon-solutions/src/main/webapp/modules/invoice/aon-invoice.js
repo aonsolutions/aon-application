@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -24,9 +24,11 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonNumber } from '../../components/aon-number.js';
 import { AonRegistry } from '../../components/aon-registry.js';
+import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { AonSuggestion } from '../../components/aon-suggestion.js';
 import { AonSwitch } from '../../components/aon-switch.js';
+import { AonTab } from '../../components/aon-tab.js';
 
 export class AonInvoice extends AonElement {
 
@@ -113,7 +115,12 @@ export class AonInvoice extends AonElement {
 		this.fileOpened = false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
+		this.DIV = this.id + CONSTANT.DIV.initCap();
+		this.TABS = this.id + 'Tabs';
+		this.CONTENT = this.id + 'Content';
 		this.DATA = this.id + 'Data';
+		this.TBAI_CARD = this.id + 'Tbai' + CONSTANT.CARD.initCap();
+		this.COMMUNICATION = this.id + 'Communication';
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
@@ -123,6 +130,10 @@ export class AonInvoice extends AonElement {
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
 		this.invoice = this.invoice || new Invoice().setType(this.type);
+		this.options = this.options || [
+			{ title: MSG.GENERAL_DATA, fn: () => this.buildInvoiceContent()},
+			{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
+		];
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
@@ -135,14 +146,15 @@ export class AonInvoice extends AonElement {
 		this.REGISTRY = CONSTANT.AON_INVOICE + CONSTANT.REGISTRY.initCap();
 		this.CATEGORY = CONSTANT.AON_INVOICE + CONSTANT.CATEGORY.initCap();
 		this.PAYMETHOD = CONSTANT.AON_INVOICE + CONSTANT.PAYMETHOD.initCap();
+		this.WORKPLACE = CONSTANT.AON_INVOICE + CONSTANT.WORKPLACE.initCap();
 		this.DIALOG_BLANK = CONSTANT.AON_INVOICE + 'DialogBlank';
-
 
 		// ----- TAX
 
 		this.TAX = CONSTANT.AON_INVOICE_TAX;
 		this.TAX_TABLE = this.TAX + CONSTANT.TABLE.initCap();
 		this.TAX_TABLE2 = this.TAX_TABLE + '2';
+		this.TAX_DIV = this.TAX + 'Div';
 	
 		this.ACTIVITY = CONSTANT.AON_INVOICE + CONSTANT.ACTIVITY.initCap();
 
@@ -398,38 +410,132 @@ export class AonInvoice extends AonElement {
 
 	buildContent() {
 		let div = this.createElement(TAG.DIV);
+		div.id = this.DIV;
 		div.className = CSS.AON_FLEX;
 		this.appendChild(div);
 
-		let data = this.createElement(TAG.DIV);
-		data.style.width = this.fileOpened ? '50%' : '100%';
+		let data = this.getElement(this.DATA) || this.createElement(TAG.DIV);
 		data.id = this.DATA;
+		this.clearElement(data);
+		data.style.width = this.fileOpened ? '50%' : '100%';
 		data.className = CSS.AON_SUB_CONTENT;
-		data.style.width = '100%';
 		div.appendChild(data);
 
-		this.buildCommentCard(data);
+		this.buildTabs(data);
 
-		let general = this.createElement(TAG.DIV);
-		general.id = this.GENERAL;
-		general.className = CSS.AON_FLEX;
-		data.appendChild(general);
-
-		this.buildGeneralCard(general);
-		this.buildTaxCard(general);
-
-		this.buildDetailCard(data);
-		this.buildFinanceCard(data);
-
-		let file = this.createElement(TAG.DIV);
-		file.id  = this.FILE;
-		file.className = CSS.AON_SUB_CONTENT;
-		div.appendChild(file);
+		this.buildInvoiceContent();
+		this.buildFileContent();
 
 		if(this.fileOpened) {
 			this.showFile();
 		}
 	}
+
+	buildTabs(data) {
+		if(!this.invoice.isRawdoc() && this.invoice.isTbai()) {
+			let tab = new AonTab();
+			tab.id = this.TABS;
+			tab.setOptions(this.options);
+			data.appendChild(tab);
+		}
+	}
+
+	buildInvoiceContent() {
+		let data = this.getElement(this.DATA);
+		let content = this.getElement(this.CONTENT);
+		if(!content) {
+			content = this.createElement(TAG.DIV);
+			content.id = this.CONTENT;
+			data.appendChild(content);
+		}
+		this.clearElement(content);
+		this.buildCommentCard(content);
+
+		let general = this.createElement(TAG.DIV);
+		general.id = this.GENERAL;
+		general.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
+		content.appendChild(general);
+
+		this.buildGeneralCard(general);
+		this.buildTaxCard(general);
+
+		this.buildDetailCard(content);
+		this.buildFinanceCard(content);
+	}
+
+	buildCommunication() {
+		let content = this.getElement(this.CONTENT);
+		this.clearElement(content);
+
+		let communication = this.createElement(TAG.DIV);
+		communication.id = this.COMMUNICATION;
+		communication.className = this.fileOpened ? CSS.AON_BLOCK : CSS.AON_FLEX;
+		content.appendChild(communication);
+		this.buildTbaiCard(communication);
+	}
+
+	buildFileContent() {
+		let div = this.getElement(this.DIV);
+		let file = this.createElement(TAG.DIV);
+		file.id  = this.FILE;
+		file.className = CSS.AON_SUB_CONTENT;
+		div.appendChild(file);
+	}
+
+	buildTbaiCard(parent) {
+		let card = this.createAonElement(new AonCard(), this.TBAI_CARD, MSG.TICKETBAI);
+		card.style.width = this.fileOpened ? '100%' : '50%';
+		parent.appendChild(card);
+
+		let table = this.getElement(this.DETAIL_TABLE);
+		if(!table) {
+			table = new AonBasicTable();
+			table.id = this.DETAIL_TABLE;
+			card.setContent(table);
+		}
+		table.removeRows();
+
+		getTbaiHistory(this.invoice.id).then(requests => {
+			for(let i = 0; i < requests.length; i++) {
+				let history = requests[i];
+				this.printTbaiHistory(table, history, i);
+			}
+		})
+
+	}
+
+	printTbaiHistory(table, history, i) {
+		table.addRow(); // ----- ROW i
+		
+		let span = this.createElement(TAG.SPAN);
+		span.innerHTML = history.date;
+		table.addCell(span);
+
+		let span2 = this.createElement(TAG.SPAN);
+		span2.innerHTML = history.operation;
+		table.addCell(span2);
+
+		let icon = this.createElement(TAG.I);
+		icon.className = "material-icons";
+		icon.style.color =  history.ok ? "green" : "red";
+        icon.innerHTML = history.ok ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+		table.addCell(icon);
+
+		let requestDownload = new AonIconButton();
+		requestDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+		requestDownload.addEventListener(EVENT.CLICK, () => {
+			open(history.requestUrl, '_blank');
+		});
+		table.addCell(requestDownload);
+
+		let responseDownload = new AonIconButton();
+		responseDownload.icon = MATERIAL_ICONS.FILE_DOWNLOAD;
+		responseDownload.addEventListener(EVENT.CLICK, () => {
+			open(history.responseUrl, '_blank');
+		});
+		table.addCell(responseDownload);
+	}
+	
 
 	buildCommentCard(parent) {
 		let commentsDiv = this.createElement(TAG.DIV);
@@ -501,10 +607,16 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+
+	onChangeInvoiceTotal(value) {
+		this.invoice.setTotal(value);
+		this.setFocus(this.TOTAL);
+		this.reload();
+		if(this.autosave) this.save();
+	}
+
 	buildGeneralCard(parent) {
-		let card = new AonCard();
-		card.id = this.GENERAL_CARD;
-		card.title = MSG.INVOICE_DATA;
+		let card = this.createAonElement(new AonCard(), this.GENERAL_CARD, MSG.INVOICE_DATA);
 		card.style.width = '50%';
 		parent.appendChild(card);
 
@@ -578,8 +690,7 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isEmitida()) {
 
 			// ----- SERIE
-
-			// ----- SERIE
+			
 			let serie = this.createAonElement(new AonSuggestion(), this.SERIE, MSG.SERIE);
 			table.addCell(serie);
 			serie.setMaxlength(5);
@@ -662,47 +773,49 @@ export class AonInvoice extends AonElement {
 		
 		// ----- TOTAL
 
-		let total = new AonNumber();
-		total.id = this.TOTAL;
-		total.description = MSG.TOTAL;
-		total.format = CONSTANT.TRUE;
-		total.decimals = "2";
-		total.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setTotal(total.value);
-			this.setFocus(total.id);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let total = this.createAonNumber(this.TOTAL, MSG.TOTAL, this.invoice.total);
+		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 		table.addCell(total, this.invoice.isEmitida() ? '1' : '2');
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
-		total.value = this.invoice.total;
 
 		table.addRow(); // ----- ROW 2
 
 		// ----- REGISTRY
+		if(this.invoice.isEmitida()) {
+			let customer = new AonCustomerSuggestion();	
+			customer.id = this.REGISTRY;
+			console.log(this.invoice.getRegistry());	
+			customer.showAddress = true;
+			customer.readonly = this.invoice.isReadonly();
+			customer.customer = this.invoice.getRegistry();
+			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
+			table.addCell(customer, '4');	
 
-		let registry = new AonRegistry();
-		registry.id = this.REGISTRY;
-		registry.types = this.invoice.getRegistryType();
-		registry.value = this.invoice.getRegistry();
-		registry.setRegistry(this.invoice.getRegistry());
-		registry.readonly = this.invoice.isReadonly();
-		registry.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setRegistry(registry.getRegistry());
-			if(this.autosave) this.save();
-		});
-		registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
-			this.invoice.setRegistry(registry.getRegistry());
-			getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
-				this.invoice.setPaymethod(rpm.paymethod.id);
-				this.invoice.setBankAccount(rpm.rbank.bank_account);
-				this.reload();
+		} else {
+			let registry = new AonRegistry();
+			registry.id = this.REGISTRY;
+			registry.types = this.invoice.getRegistryType();
+			registry.value = this.invoice.getRegistry();
+			registry.setRegistry(this.invoice.getRegistry());
+			registry.readonly = this.invoice.isReadonly();
+			registry.addEventListener(EVENT.CHANGE, () => {
+				this.invoice.setRegistry(registry.getRegistry());
+				if(this.autosave) this.save();
 			});
-			if(this.autosave) this.save();
-		});
-		table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');
+			registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
+				this.invoice.setRegistry(registry.getRegistry());
+				
+				getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
+					this.invoice.setPaymethod(rpm.paymethod.id);
+					this.invoice.setBankAccount(rpm.rbank.bank_account);
+					this.reload();
+				});
+				if(this.autosave) this.save();
+			});
+			table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');	
+		}
 
 		table.addRow(); // ----- ROW 3
 
@@ -717,57 +830,60 @@ export class AonInvoice extends AonElement {
 			this.invoice.setCategory(category.value);
 			if(this.autosave) this.save();
 		});
-		table.addCell(category, this.invoice.isEmitida() ? '2' : '3');
+		table.addCell(category, this.invoice.isEmitida() ? '4' : '6');
 		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
 			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
 			category.options = JSON.stringify(accs);
 			category.value = this.invoice.getCategory();
 		});
 
-		// ----- PAYMETHOD
+		// // ----- PAYMETHOD
 
-		let paymethod = new AonSelect();
-		paymethod.id = this.PAYMETHOD;
-		paymethod.title = MSG.PAYMETHOD;
-		paymethod.autocomplete = true;
-		// paymethod.options = JSON.stringify(Paymethods);
-		paymethod.readonly = this.invoice.isReadonly();
-		paymethod.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setPaymethod(paymethod.value);
-			this.setFocus(paymethod.id);
-			this.reload();
-			if(this.autosave) this.save();
-		});
-		table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
-		
-		getPaymethods({}).then(paymethods => {
-			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-			paymethod.options = JSON.stringify(pms);
-			if(this.invoice.finances.length === 1) {
-				paymethod.value = this.invoice.finances[0].paymethod;
-			}
-		});
-
-		// getWorkplaces().then(r => {
-		// 	if(r.length > 1) {
-		// 		table.addRow();
-		// 		let workplaces = r.map(w => {return {name: w.description, value: w.id};});
-		// 		let workplace = new AonSelect();
-		// 		workplace.id = this.WORKPLACE;
-		// 		workplace.title = MSG.WORKPLACE;
-		// 		workplace.autocomplete = true;
-		// 		workplace.readonly = this.invoice.isReadonly();
-		// 		workplace.options = JSON.stringify(workplaces);
-		// 		workplace.value = this.invoice.getWorkplace();
-		// 		workplace.addEventListener(EVENT.SELECT, () => {
-		// 			this.invoice.setWorkplace(workplace.value);
-		// 			if(this.autosave) this.save();
-		// 		});
-		// 		table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-		// 	} else this.invoice.setWorkplace(r[0].id);
-		// }).catch(e => {
-		// 	console.error(e);
+		// let paymethod = new AonSelect();
+		// paymethod.id = this.PAYMETHOD;
+		// paymethod.title = MSG.PAYMETHOD;
+		// paymethod.autocomplete = true;
+		// // paymethod.options = JSON.stringify(Paymethods);
+		// paymethod.readonly = this.invoice.isReadonly();
+		// paymethod.addEventListener(EVENT.SELECT, () => {
+		// 	this.invoice.setPaymethod(paymethod.value);
+		// 	this.setFocus(paymethod.id);
+		// 	this.reload();
+		// 	if(this.autosave) this.save();
 		// });
+		// table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
+		
+		// getPaymethods({}).then(paymethods => {
+		// 	let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+		// 	paymethod.options = JSON.stringify(pms);
+		// 	if(this.invoice.finances.length === 1) {
+		// 		paymethod.value = this.invoice.finances[0].paymethod;
+		// 	}
+		// });
+
+		getWorkplaces().then(r => {
+			if(!this.invoice.workplace && r.length > 0) {
+				this.invoice.setWorkplace(r[0].id);
+			}
+			if(r.length > 1) {
+				table.addRow();
+				let workplaces = r.map(w => {return {name: w.description, value: w.id};});
+				let workplace = new AonSelect();
+				workplace.id = this.WORKPLACE;
+				workplace.title = MSG.WORKPLACE;
+				workplace.autocomplete = true;
+				workplace.readonly = this.invoice.isReadonly();
+				workplace.options = JSON.stringify(workplaces);
+				workplace.value = this.invoice.getWorkplace();
+				workplace.addEventListener(EVENT.SELECT, () => {
+					this.invoice.setWorkplace(workplace.value);
+					if(this.autosave) this.save();
+				});
+				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+			} else this.invoice.setWorkplace(r[0].id);
+		}).catch(e => {
+			console.error(e);
+		});
 	}
 
 	buildTaxCard(parent) {
@@ -842,9 +958,18 @@ export class AonInvoice extends AonElement {
 			accrual.setMarginBottom('10px');
 		});
 
-		let table = new AonBasicTable();
-		table.id = this.TAX_TABLE;
-		card.setContent(table);
+		this.buildTaxCardContent(card);	
+	}
+
+	buildTaxCardContent(card) {
+		if(!card) card = this.getElement(this.TAX);
+		let table = this.getElement(this.TAX_TABLE);
+		if(!table){
+			table = new AonBasicTable();
+			table.id = this.TAX_TABLE;
+			card.setContent(table);
+		}
+		table.removeRows();
 
 		table.addRow(); // ----- ROW 1
 
@@ -922,9 +1047,13 @@ export class AonInvoice extends AonElement {
 
 		// ----- TAXES
 
-		let taxesTable = new AonBasicTable();
-		taxesTable.id = this.TAX_TABLE2;
-		card.addContent(taxesTable);
+		let taxesTable = this.getElement(this.TAX_TABLE2);
+		if(!taxesTable) {
+			taxesTable = new AonBasicTable();
+			taxesTable.id = this.TAX_TABLE2;
+			card.addContent(taxesTable);
+		}
+		taxesTable.removeRows();
 
 		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			this.invoice.taxes = [];
@@ -948,9 +1077,13 @@ export class AonInvoice extends AonElement {
 			}
 		}
 
-		let div = this.createElement(TAG.DIV);
-		card.addContent(div);
-
+		let div = this.getElement(this.TAX_DIV);
+		if(!div) {
+			div = this.createElement(TAG.DIV);
+			div.id = this.TAX_DIV;
+			card.addContent(div);
+		}
+		this.clearElement(div);
 
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
@@ -1000,20 +1133,32 @@ export class AonInvoice extends AonElement {
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 	}
 
+	onChangeRegistry(registry) { 
+		this.invoice.setRegistry(registry);
+		if(registry.paymethod) this.invoice.setPaymethod(registry.paymethod.paymethod);
+		if(registry.transaction) this.invoice.setTransaction(registry.transaction);
+		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
+		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
+
+		this.buildTaxCardContent();
+		this.buildDetailCard();
+		this.buildFinanceCard();
+		if(this.autosave) this.save();
+
+	}
+
+	onChangeTaxBase(tax, value, i) {
+		tax.base = value;
+		this.invoice.setTax(tax, i);
+		this.reload();
+		if(this.autosave) this.save();
+	}
+
 	printTax(taxesTable, tax, i) {
 		taxesTable.addRow(); // ----- ROW i
 
-		// ----- TAX TYPE
-
-		// tax.type = tax.type || tax.tax;
-		// let taxType = new AonInput();
-		// taxType.id = this.TAX_TYPE + i;
-		// taxType.description = MSG.TYPE;
-		// taxesTable.addCell(taxType);
-		// taxType.readonly = CONSTANT.TRUE;
-		// taxType.value = getTaxTypeName(tax.type);
-
 		// ----- TAX PERCENT
+
 		tax.type = tax.type || tax.tax;
 		let percentage = new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
@@ -1033,40 +1178,21 @@ export class AonInvoice extends AonElement {
 
 		// ----- TAX BASE
 
-		let base = new AonNumber();
-		base.id = this.TAX_BASE + i;
-		base.description = MSG.BASE;
-		base.format = CONSTANT.TRUE;
-		base.decimals = "2";
-		base.addEventListener(EVENT.CHANGE, () => {
-			tax.base = base.value;
-			this.invoice.setTax(tax, i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let base = this.createAonNumber(this.TAX_BASE + i, MSG.BASE, tax.base);
+		base.onChange(() => this.onChangeTaxBase(tax, tax.base, i))
 		taxesTable.addCell(base);
 		base.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
-		base.value = tax.base;
 
 		// ----- TAX QUOTA
 
-		let quota = new AonNumber();
-		quota.id = this.TAX_QUOTA + i;
-		quota.description = MSG.QUOTA;
-		quota.format = CONSTANT.TRUE;
-		quota.decimals = "2";
-		// quota.addEventListener(Event.CHANGE, () => {
-		// 	tax.quota = quota.value;
-		// 	this.invoice.setTax(tax, i);
-		// 	if(this.autosave) this.save();
-		// });
+		let quotaVal = tax.surcharge_quota ? tax.quota + tax.surcharge_quota : tax.quota;
+
+		let quota = this.createAonNumber(this.TAX_QUOTA + i, MSG.QUOTA, quotaVal)
 		taxesTable.addCell(quota);
-		let quotaVal = tax.quota;
-		if(tax.surcharge_quota) quotaVal = tax.quota + tax.surcharge_quota;
-		quota.value = quotaVal;
 		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
 
 		// ----- TAX DELETE
+
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			let taxDelete = new AonIconButton();
 			taxDelete.id = this.TAX_DELETE + i;
@@ -1168,15 +1294,10 @@ export class AonInvoice extends AonElement {
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
 
-				// ----- DETAIL AMOUNT
+		// ----- DETAIL AMOUNT
 
-		let amount = new AonNumber();
-		amount.id = this.DETAIL_AMOUNT + i;
-		amount.description = MSG.AMOUNT;
-		amount.format = CONSTANT.TRUE;
-		amount.decimals = "2";
-		amount.value = detail.amount;
-		table.addCell(amount);
+		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
+		table.addCell(amount);		
 		amount.readonly = CONSTANT.TRUE;
 
 		// ----- DETAIL OPTIONS
@@ -1205,6 +1326,40 @@ export class AonInvoice extends AonElement {
 			});
 			table.addCell(detailDelete);
 		}
+	}
+
+	createAonNumber(id, title, value) {
+		let aonNumber = this.createAonElement(new AonNumber(), id, title);
+		aonNumber.format = CONSTANT.TRUE;
+		aonNumber.decimals = "2";
+		aonNumber.readonly = this.invoice.isReadonly();
+		aonNumber.value = value;
+		return aonNumber;
+	}
+
+	onChangeDetail(detail, i, dialog) {
+		this.invoice.setDetail(detail, i);
+		this.reload();
+		if(dialog) this.printDetailDialog(this.invoice.details[i], i);
+		if(this.autosave) this.save();
+	}
+
+	onChangeDetailQuantity(detail, value, i, dialog) {
+		detail.quantity = value;
+		if(!dialog) this.setFocus(this.DETAIL_PRICE + i);
+		this.onChangeDetail(detail, i, dialog);
+	}
+
+	onChangeDetailPrice(detail, value, i, dialog) {
+		detail.price = value;
+		if(!dialog)	this.setFocus(this.DETAIL_DISCOUNT + i);
+		this.onChangeDetail(detail, i, dialog);
+	}
+
+	onChangeDetailDiscount(detail, value, i, dialog) {
+		detail.discount = value;
+		if(!dialog) this.setFocus(this.DETAIL_VAT + i);
+		this.onChangeDetail(detail, i, dialog);
 	}
 
 	printDetail(table, detail, i) {
@@ -1249,66 +1404,28 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL QUANTITY
 
-		let quantity = new AonNumber();
-		quantity.id = this.DETAIL_QUANTITY + i;
-		quantity.description = MSG.QUANTITY;
-		quantity.format = CONSTANT.TRUE;
-		quantity.decimals = "2";
-		quantity.addEventListener(EVENT.CHANGE, () => {
-			detail.quantity = quantity.value;
-			this.invoice.setDetail(detail, i);
-			this.setFocus(this.DETAIL_PRICE + i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + i, MSG.QUANTITY, detail.quantity);
+		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i));
 		table.addCell(quantity);
-		quantity.readonly = this.invoice.isReadonly();
-		quantity.value = detail.quantity;
+		quantity.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL PRICE
 
-		let price = new AonNumber();
-		price.id = this.DETAIL_PRICE + i;
-		price.description = MSG.PRICE;
-		price.format = CONSTANT.TRUE;
-		price.decimals = "2";
-		price.addEventListener(EVENT.CHANGE, () => {
-			detail.price = price.value;
-			this.invoice.setDetail(detail, i);
-			this.setFocus(this.DETAIL_DISCOUNT + i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let price = this.createAonNumber(this.DETAIL_PRICE + i, MSG.PRICE, detail.price);
+		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i));
 		table.addCell(price);
-		price.readonly = this.invoice.isReadonly();
-		price.value = detail.price;
+		price.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL DISCOUNT
 
-		let discount = new AonNumber();
-		discount.id = this.DETAIL_DISCOUNT + i;
-		discount.description = '%Dto'//MSG.DISCOUNT;
-		discount.format = CONSTANT.TRUE;
-		discount.decimals = "2";
-		discount.addEventListener(EVENT.CHANGE, () => {
-			detail.discount = discount.value;
-			this.invoice.setDetail(detail, i);
-			this.setFocus(this.DETAIL_VAT + i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + i, '%Dto', detail.discount);
+		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i));
 		table.addCell(discount);
-		discount.readonly = this.invoice.isReadonly();
-		discount.value = detail.discount;
+		discount.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL AMOUNT
 
-		let amount = new AonNumber();
-		amount.id = this.DETAIL_AMOUNT + i;
-		amount.description = MSG.AMOUNT;
-		amount.format = CONSTANT.TRUE;
-		amount.decimals = "2";
-		amount.value = detail.amount;
+		let amount = this.createAonNumber(this.DETAIL_AMOUNT + i, MSG.AMOUNT, detail.amount);
 		table.addCell(amount);
 		amount.readonly = CONSTANT.TRUE;
 
@@ -1370,7 +1487,6 @@ export class AonInvoice extends AonElement {
 		dialog.addAcceptAction(() => {
 			
 		});
-		
 
 		let div = this.createElement(TAG.DIV);
 		div.style.margin = '15px';
@@ -1422,72 +1538,34 @@ export class AonInvoice extends AonElement {
 
 		// ----- DETAIL QUANTITY
 
-		let quantity = new AonNumber();
-		quantity.id = this.DETAIL_QUANTITY + 'Dialog' + i;
-		quantity.description = MSG.QUANTITY;
-		quantity.format = CONSTANT.TRUE;
-		quantity.decimals = "2";
-		quantity.addEventListener(EVENT.CHANGE, () => {
-			detail.quantity = quantity.value;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
-		});
+		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
+		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
 		table.addCell(quantity);
-		quantity.readonly = this.invoice.isReadonly();
-		quantity.value = detail.quantity;
+		quantity.readonly = this.invoice.isReadonly()
 	
 		// ----- DETAIL PRICE
-	
-		let price = new AonNumber();
-		price.id = this.DETAIL_PRICE + 'Dialog' + i;
-		price.description = MSG.PRICE;
-		price.format = CONSTANT.TRUE;
-		price.decimals = "2";
-		price.addEventListener(EVENT.CHANGE, () => {
-			detail.price = price.value;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(price);
-		price.readonly = this.invoice.isReadonly();
-		price.value = detail.price;
 
+		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
+		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
+		table.addCell(price);
+		price.readonly = this.invoice.isReadonly()
+	
 		table.addRow(); // ----- ROW 3
 
 		// ----- DETAIL DISCOUNT
-		
-		let discount = new AonNumber();
-		discount.id = this.DETAIL_DISCOUNT + 'Dialog' + i;
-		discount.description = '%Dto'//MSG.DISCOUNT;
-		discount.format = CONSTANT.TRUE;
-		discount.decimals = "2";
-		discount.addEventListener(EVENT.CHANGE, () => {
-			detail.discount = discount.value;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
-		});
+
+		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
+		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
 		table.addCell(discount);
-		discount.readonly = this.invoice.isReadonly();
-		discount.value = detail.discount;
+		discount.readonly = this.invoice.isReadonly()
 
 		// ----- DETAIL AMOUNT
-		
-		let amount = new AonNumber();
-		amount.id = this.DETAIL_AMOUNT + 'Dialog' + i;
-		amount.description = MSG.AMOUNT;
-		amount.format = CONSTANT.TRUE;
-		amount.decimals = "2";
-		amount.value = detail.amount;
-		table.addCell(amount);
-		amount.readonly = CONSTANT.TRUE;		
 
-		table.addRow(); // ----- ROW 3
+		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
+		table.addCell(amount);
+		amount.readonly = CONSTANT.TRUE;
+
+		table.addRow(); // ----- ROW 4
 
 		// ----- PREPAYMENT | SUPLIDO
 		
@@ -1660,6 +1738,14 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+
+	onChangeFinanceAmount(finance, value, i, dialog) {
+		this.setFocus(this.FINANCE_AMOUNT + i);
+		finance.amount = value;
+		this.invoice.setFinance(finance, i);
+		if(this.autosave) this.save();		
+	}
+
 	printFinanceDialog(finance, i) {
 		let dialog = this.getApplication().getDialog();
 		dialog.setTitle("VENCIMIENTO");
@@ -1749,21 +1835,10 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE AMOUNT
 	
-		let amount = new AonNumber();
-		amount.id = this.FINANCE_AMOUNT + 'Dialog' +  i;
-		amount.description = MSG.AMOUNT;
-		amount.format = CONSTANT.TRUE;
-		amount.decimals = "2";
-		amount.readonly = this.invoice.isReadonly();
-		amount.addEventListener(EVENT.CHANGE, () => {
-			this.setFocus(this.FINANCE_AMOUNT + i);
-			finance.amount = amount.value;
-			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
-		});
+		let amount = this.createAonNumber(this.FINANCE_AMOUNT + 'Dialog' + i, MSG.AMOUNT, finance.amount);
+		amount.onChange(() => this.onChangeFinanceAmount(finance, amount.value, i, true));
 		table.addCell(amount);
-		amount.value = finance.amount;
-
+		amount.readonly = this.invoice.isReadonly()
 		dialog.open();
 	}
 
@@ -1786,21 +1861,11 @@ export class AonInvoice extends AonElement {
 		date.value = finance.due_date;
 
 		// ----- FINANCE AMOUNT
-		
-		let amount = new AonNumber();
-		amount.id = this.FINANCE_AMOUNT + i;
-		amount.description = MSG.AMOUNT;
-		amount.format = CONSTANT.TRUE;
-		amount.decimals = "2";
-		amount.readonly = this.invoice.isReadonly();
-		amount.addEventListener(EVENT.CHANGE, () => {
-			this.setFocus(this.FINANCE_AMOUNT + i);
-			finance.amount = amount.value;
-			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
-		});
+
+		let amount = this.createAonNumber(this.FINANCE_AMOUNT + i, MSG.AMOUNT, finance.amount);
+		amount.onChange(() => this.onChangeFinanceAmount(finance, amount.value, i));
 		table.addCell(amount);
-		amount.value = finance.amount;
+		amount.readonly = this.invoice.isReadonly()
 
 		// ----- FINANCE OPTIONS
 
@@ -1903,21 +1968,10 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE AMOUNT
 
-		let amount = new AonNumber();
-		amount.id = this.FINANCE_AMOUNT + i;
-		amount.description = MSG.AMOUNT;
-		amount.format = CONSTANT.TRUE;
-		amount.decimals = "2";
-		amount.readonly = this.invoice.isReadonly();
-		amount.addEventListener(EVENT.CHANGE, () => {
-			this.setFocus(this.FINANCE_AMOUNT + i);
-			finance.amount = amount.value;
-			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
-		});
-		let amountCell = table.addCell(amount);
-		amountCell.style.width = '10%';
-		amount.value = finance.amount;
+		let amount = this.createAonNumber(this.FINANCE_AMOUNT + i, MSG.AMOUNT, finance.amount);
+		amount.onChange(() => this.onChangeFinanceAmount(finance, amount.value, i));
+		table.addCell(amount);
+		amount.readonly = this.invoice.isReadonly()
 
 		// ----- FINANCE DELETE
 
@@ -1986,13 +2040,23 @@ export class AonInvoice extends AonElement {
 			button.icon = 'visibility';
 			fileDiv.style.display = 'none';
 			dataDiv.style.width = '100%';
-			this.getElement(this.GENERAL).style.display = 'flex';
+
+			let general = this.getElement(this.GENERAL);
+			if(general) general.style.display = 'flex';
+
+			let communication = this.getElement(this.COMMUNICATION);
+			if(communication) communication.style.display = 'flex';
 		} else {
 			button.icon = 'visibility_off';
 			fileDiv.style.display = 'block';
 			fileDiv.style.width = '50%';
 			dataDiv.style.width = '50%';
-			this.getElement(this.GENERAL).style.display = 'block';
+			
+			let general = this.getElement(this.GENERAL);
+			if(general) general.style.display = 'block';
+
+			let communication = this.getElement(this.COMMUNICATION);
+			if(communication) communication.style.display = 'block';
 
 			this.clearElement(fileDiv);
 
@@ -2104,7 +2168,6 @@ export class AonInvoice extends AonElement {
 				d.open();
 		}
 	}
-
 
 	rejectInvoice() {
 		let d = this.getApplication().getDialog();

@@ -72,7 +72,8 @@ public class RegistryAddressJSON {
 			.put(IJsonNames.POSTAL_CODE, address.getZip())
 			.put(IJsonNames.ZIP, address.getZip())
 			.put(IJsonNames.DIRTY, address.isDirty())
-			.put(IJsonNames.REMOVED, address.isRemoved());
+			.put(IJsonNames.REMOVED, address.isRemoved())
+			.put(IJsonNames.FULL_ADDRESS, address.getFullAddress());
 	}
 	
 }

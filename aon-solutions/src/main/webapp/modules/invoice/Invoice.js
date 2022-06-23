@@ -3,7 +3,6 @@ import { RegistryType } from "../../models/enums.js";
 import { round } from "../../services/utils.js";
 import { getSurchargeByVat, TaxType } from "./invoiceEnums.js";
 import * as LS from '../../services/localStorageService.js';
-import {getCompany} from '../../services/companyService.js';
 
 export class Invoice {
 

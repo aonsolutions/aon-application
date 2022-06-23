@@ -171,6 +171,7 @@ export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';
 export const PERSON_ADD_ALT = 'person_add_alt';
 export const PHONE = 'phone';
+export const PLAYLIST_ADD_CIRCLE = 'playlist_add_circle';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
