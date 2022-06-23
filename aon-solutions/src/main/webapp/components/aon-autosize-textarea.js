@@ -159,7 +159,7 @@ export class AonAutosizeTextarea extends AonElement {
 
     createTitleBar() {
         this.TITLE_BAR = document.createElement("div");
-        this.TITLE_BAR.style.display = "flex";
+        this.TITLE_BAR.style.display = "block";
         this.TITLE_BAR.style.width = "95%";
         this.TITLE_BAR.style.color = this.detailColor;
         this.TITLE_BAR.style.overflow = "hidden";
@@ -171,7 +171,7 @@ export class AonAutosizeTextarea extends AonElement {
         this.TITLE_BAR.style.top = "0px";
         
         this.TITLE_BAR.style.fontSize = "1em";
-        this.TITLE_BAR.style.alignItems = "flex-start";
+        // this.TITLE_BAR.style.alignItems = "flex-start";
     }
     
     createTextArea() {
