@@ -267,6 +267,14 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.moveAgreement2Parent(domain, agreement, new 
 				AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void moveAgreement2Child(String domain, Integer agreementId,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.moveAgreement2Child(domain, agreementId, new 
+				AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void getParentDomain(String domain, AsyncCallback<Integer> callback) {
