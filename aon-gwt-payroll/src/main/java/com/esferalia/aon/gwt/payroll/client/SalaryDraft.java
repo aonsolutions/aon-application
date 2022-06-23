@@ -4727,7 +4727,9 @@ public class SalaryDraft extends ResizeComposite
 		!isExtra() &&
 		!isSettle() &&
 		!isReadOnly() && 
-		handler != null && (
+		handler != null && 
+		iconStyleName != AON.AON_ICON_BLANK &&
+		(
 		item.getType() == Payment.Type.CRA_0004 
 		|| item.getType() == Payment.Type.CRA_0005 )
 		) {
