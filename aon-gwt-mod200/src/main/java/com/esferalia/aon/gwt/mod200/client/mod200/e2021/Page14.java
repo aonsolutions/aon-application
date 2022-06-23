@@ -70,26 +70,32 @@ public class Page14 extends PageAbs {
 		justActivos.setMaxLength(13);
 		
 		nrsAnexoIII.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
 			callback.markAsDirty();
 		});
 
 		nrsAnexoIV.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());			
 			callback.markAsDirty();
 		});
 
 		nrsAnexoVric.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoVric(nrsAnexoVric.getValue());
 			callback.markAsDirty();
 		});
 
 		nrsAnexoV.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
 			callback.markAsDirty();
 		});
 
 		justCanarias.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
 			callback.markAsDirty();
 		});
 
 		justActivos.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setJustActivos(justActivos.getValue());
 			callback.markAsDirty();
 		});
 		

@@ -519,10 +519,10 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return 365;
 	}
 	
-	public double computeC0027() throws AonCoreException {
-		double lq552 = roundKey(LQ552);
-		return (AonMathUtils.isGreatherThanZero(lq552))?0.0:1.0;
-	}
+//	public double computeC0027() throws AonCoreException {
+//		double lq552 = roundKey(LQ552);
+//		return (AonMathUtils.isGreatherThanZero(lq552))?0.0:1.0;
+//	}
 	
 	// Tipo de Gravamen
 	public double computeLQ558() throws AonCoreException {

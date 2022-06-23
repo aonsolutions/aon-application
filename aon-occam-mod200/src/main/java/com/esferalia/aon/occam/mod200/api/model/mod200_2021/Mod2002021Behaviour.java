@@ -509,6 +509,9 @@ public class Mod2002021Behaviour {
 		// Activos por impuesto diferido (AID). Art. 130 LIS
 		addBreakdown(Mod2002021LM1561Key.values(), Mod2002021Key.LM1561, new byte[]{});  // No lleva columnas de totales
 		
+		// Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM393,new Boolean[]{FALSE,TRUE});
+		
 		// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)
 		addBreakdown(Mod2002021LM1579Key.values(), Mod2002021Key.LM1579);  
 		

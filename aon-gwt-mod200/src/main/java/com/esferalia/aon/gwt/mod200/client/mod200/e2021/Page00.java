@@ -348,12 +348,14 @@ public class Page00 extends PageAbs {
 		nif.setVisibleLength(9);
 		nif.setMaxLength(9);
 		nif.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setDocument(nif.getValue());
 			callback.markAsDirty();
 		});		
 		
 		companyName.setVisibleLength(45);
 		companyName.setMaxLength(45);
 		companyName.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setName(companyName.getValue());
 			callback.markAsDirty();
 		});
 		
@@ -367,9 +369,11 @@ public class Page00 extends PageAbs {
 		phones.add(phone2);
 		
 		phone1.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setEnterprisePhone1(phone1.getValue());
 			callback.markAsDirty();
 		});
 		phone2.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setEnterprisePhone2(phone2.getValue());
 			callback.markAsDirty();
 		});
 		
@@ -378,6 +382,7 @@ public class Page00 extends PageAbs {
 			CNAE2009 selected = event.getSelectedItem();
 			cnae.setValue(selected.getCode());
 			cnaeLabel.setText(selected.getDescription());
+			callback.getMod200Object().getMod200().setCnae(cnae.getValue());
 			callback.markAsDirty();
 		});
 		
@@ -407,11 +412,13 @@ public class Page00 extends PageAbs {
 		
 		periodStart.addStyleName(AON.CSS.aonMarginLeft());
 		periodStart.addValueChangeHandler( event -> {
+			callback.getMod200Object().getMod200().setPeriodStart(periodStart.getValue());			
 			callback.markAsDirty();
 		});
 		
 		periodEnd.addStyleName(AON.CSS.aonMarginLeft());
 		periodEnd.addValueChangeHandler( event -> {
+			callback.getMod200Object().getMod200().setPeriodEnd(periodEnd.getValue());
 			callback.markAsDirty();
 		});
 		
@@ -436,9 +443,11 @@ public class Page00 extends PageAbs {
 			if (!complementary.getValue()) {
 				complementaryReceipt.setValue("", true);
 			}
+			callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
 			callback.markAsDirty();
 		});
 		complementaryReceipt.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());			
 			callback.markAsDirty();
 		});
 
@@ -503,13 +512,19 @@ public class Page00 extends PageAbs {
 		
 		c041.setMaxLength(8);
 		c041.setVisibleLength(8);		
-		c041.addValueChangeHandler(event -> {
+		c041.addValueChangeHandler(event -> {			
+			DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.C0041);
+			dv.setValue(c041.getValue());
+			callback.getMod200Object().getMod200().addVariable(dv);
 			callback.markAsDirty();
 		});
 		
 		c042.setMaxLength(8);
 		c042.setVisibleLength(8);		
 		c042.addValueChangeHandler(event -> {
+			DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.C0042);
+			dv.setValue(c042.getValue());
+			callback.getMod200Object().getMod200().addVariable(dv);
 			callback.markAsDirty();
 		});
 		

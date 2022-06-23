@@ -127,6 +127,9 @@ public class Page08 extends PageAbs {
 		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
 		opeVol.addItem("3 - Al menos 60 millones de euros");
 		opeVol.addChangeHandler( event -> {
+			DoubleVariableEx bv = new DoubleVariableEx(Mod2002021Key.VOLOPE);
+			bv.setValue((double)opeVol.getSelectedIndex());
+			callback.getMod200Object().getMod200().addVariable(bv);
 			callback.markAsDirty();
 		});
 		

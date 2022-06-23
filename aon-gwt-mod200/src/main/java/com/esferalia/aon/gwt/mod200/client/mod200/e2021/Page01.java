@@ -94,6 +94,15 @@ public class Page01 extends PageAbs {
 	protected void initializeTable() {
 	}
 	
+	private Secretary getSecretary() {
+		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
+		if (secretary == null) {
+			secretary = new Secretary();
+			callback.getMod200Object().getMod200().setSecretary(secretary);	
+		}
+		return secretary;
+	}
+	
 	private void paint() {
 		
 		basePanel.clear();
@@ -108,16 +117,19 @@ public class Page01 extends PageAbs {
 		basePanel.add(tab1);
 		
 		secretaryDocument.addValueChangeHandler(event -> {
+			getSecretary().setDocument(secretaryDocument.getValue());
 			callback.markAsDirty();
 		});
 		
 		secretaryName.setVisibleLength(40);
 		secretaryName.setMaxLength(25);
 		secretaryName.addValueChangeHandler(event -> {
+			getSecretary().setName(secretaryName.getValue());
 			callback.markAsDirty();
 		});
 		
 		irnr.addValueChangeHandler(event -> {
+			getSecretary().setIrnr(irnr.getValue());
 			callback.markAsDirty();
 		});
 		
@@ -140,11 +152,13 @@ public class Page01 extends PageAbs {
 			fiscalGroup.setVisibleLength(7);
 			fiscalGroup.setMaxLength(7);
 			fiscalGroup.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().setFiscalGroup(fiscalGroup.getValue());
 				callback.markAsDirty();
 			});
 			
 			dominantDocument.setMaxLength(9);
 			dominantDocument.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().setDominantDocument(dominantDocument.getValue());
 				callback.markAsDirty();
 			});
 			
@@ -159,6 +173,7 @@ public class Page01 extends PageAbs {
 				dominantIdentificationNumber.setVisibleLength(15);
 				dominantIdentificationNumber.setMaxLength(15);
 				dominantIdentificationNumber.addValueChangeHandler(event -> {
+					callback.getMod200Object().getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
 					callback.markAsDirty();
 				});						
 				
@@ -180,6 +195,7 @@ public class Page01 extends PageAbs {
 			basePanel.add(tab3);
 			
 			ultimateDocument.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().setUltimateDocument(ultimateDocument.getValue());         
 				callback.markAsDirty();
 			});
 			
@@ -195,6 +211,7 @@ public class Page01 extends PageAbs {
 			ultimateName.setVisibleLength(40); 
 			ultimateName.setMaxLength(40);
 			ultimateName.addValueChangeHandler(event -> {
+			    callback.getMod200Object().getMod200().setUltimateName(ultimateName.getValue());
 				callback.markAsDirty();
 			});
 			

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -153,7 +154,13 @@ public class Mod2002021Object implements Serializable {
 
 	public Double getDoubleValue(IMod200Key k) {
 		if (mod200 == null ) throw new IllegalStateException("Mod. 200 no inicializado." );
-		return mod200.getDoubleValue(k);
+		//return mod200.getDoubleValue(k);
+		DoubleVariableEx dv = mod200.getVariable(k);
+		if (dv != null)
+			return AonNumberUtils.todouble(dv.getValue());
+		else 
+			return 0.0;
+			
 	}
 	public boolean isVisible(Mod2002021Key key) {
 		return  mod200.getVisibleMap().containsKey(key);

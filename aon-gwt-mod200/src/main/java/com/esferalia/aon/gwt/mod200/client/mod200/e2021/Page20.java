@@ -53,13 +53,13 @@ public class Page20 extends PageAbs {
 	    addBasePanel();
 		initializeTable();
 		
-		callback.getMod200Object().register( new IMod200ChangeListener() {
-			
-			@Override
-			public void mod200Changed(Mod2002021 mod200) {
-				dumpPay(mod200);
-			}
-		});		
+//		callback.getMod200Object().register( new IMod200ChangeListener() {
+//			
+//			@Override
+//			public void mod200Changed(Mod2002021 mod200) {
+//				dumpPay(mod200);
+//			}
+//		});		
 	}
 
 	@Override
@@ -95,6 +95,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setDevType("R");
 				callback.markAsDirty();				
 			}
 		});
@@ -106,6 +107,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setDevType("D");
 				callback.markAsDirty();				
 			}
 		});
@@ -117,6 +119,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setDevType("V");
 				callback.markAsDirty();				
 			}
 		});
@@ -149,7 +152,9 @@ public class Page20 extends PageAbs {
 				Suggestion suggestion = event.getSelectedItem();
 				if (suggestion instanceof IbanSuggestion) {
 					IbanSuggestion is = (IbanSuggestion) suggestion;
-					ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+					ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
+					callback.getMod200Object().getMod200().setIban(ibanD.getValue());
+					callback.getMod200Object().getMod200().setBic(ibanD.getBic());
 				} else {
 					ibanD.setValue(suggestion.getReplacementString());	
 				}
@@ -176,6 +181,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setPayType("I");
 				callback.markAsDirty();				
 			}
 		});
@@ -187,6 +193,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setPayType("H");
 				callback.markAsDirty();				
 			}
 		});
@@ -198,6 +205,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setPayType("U");
 				callback.markAsDirty();				
 			}
 		});
@@ -209,6 +217,7 @@ public class Page20 extends PageAbs {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				callback.getMod200Object().getMod200().setPayType("G");
 				callback.markAsDirty();				
 			}
 		});
@@ -242,7 +251,9 @@ public class Page20 extends PageAbs {
 				Suggestion suggestion = event.getSelectedItem();
 				if (suggestion instanceof IbanSuggestion) {
 					IbanSuggestion is = (IbanSuggestion) suggestion;
-					ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+					ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
+					callback.getMod200Object().getMod200().setIban(ibanP.getValue());
+					callback.getMod200Object().getMod200().setBic(ibanP.getBic());
 				} else {
 					ibanP.setValue(suggestion.getReplacementString());	
 				}
