@@ -175,6 +175,10 @@ public class DomainEnterprisesServiceAsync {
 	public void moveAgreement2Parent(Agreement agreement, AsyncCallback<Void> callback) {
 		enterprisesServiceAsync.moveAgreement2Parent(getCurrentDomainName(), agreement, callback);
 	}
+	
+	public void moveAgreement2Child(Integer agreementId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.moveAgreement2Child(getCurrentDomainName(), agreementId, callback);
+	}
 
 	public void getParentDomain(AsyncCallback<Integer> callback) {
 		enterprisesServiceAsync.getParentDomain(getCurrentDomainName(), callback);

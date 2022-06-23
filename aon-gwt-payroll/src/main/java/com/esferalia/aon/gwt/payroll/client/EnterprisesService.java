@@ -94,6 +94,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	void moveAgreement2Parent(String domain, Agreement agreement);
 	
+	void moveAgreement2Child(String domain, Integer agreementId) throws IllegalArgumentException;
+
 	Agreement copyAgreement(String domain, Agreement agreement);
 
 	Agreement getAgreement(String domain, Integer agreementId);
