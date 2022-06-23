@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -673,13 +674,37 @@ public class InvoiceTemplate {
 		return map;
 	}
 	
+	private static Map<DetailCategory, List<InvoiceDetail>> groupByProductType(List<InvoiceDetail> details) {
+		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
+		if (details == null)
+			return map;
+		
+		for (InvoiceDetail detail : details) {
+			if (detail != null) {
+				if (detail.getItem() != null && detail.getItem().getProduct() != null) {
+					ProductType productType = detail.getItem().getProduct().getType();
+					DetailCategory category = new DetailCategory(productType);
+					List<InvoiceDetail> detailList = map.getOrDefault(category, new LinkedList<>());
+					detailList.add(detail);
+					map.put(category, detailList);
+				} else {
+					List<InvoiceDetail> detailList = map.getOrDefault(null, new LinkedList<>());
+					detailList.add(detail);
+					map.put(null, detailList);
+				}
+			}
+		}
+		
+		return map;
+	}
+	
 	private static Map<DetailCategory, List<InvoiceDetail>> sortInvoiceDetails(Invoice invoice, CompanyFull company) {
 		Map<DetailCategory, List<InvoiceDetail>> detailMap = null;		
-		if (isGarage(company)) {
-			detailMap = groupByProductType(invoice);
-		} else {
+//		if (isGarage(company)) {
+//			detailMap = groupByProductType(invoice);
+//		} else {
 			detailMap = groupBySource(invoice);			
-		}
+//		}
 		return detailMap;
 	}
 
@@ -688,37 +713,112 @@ public class InvoiceTemplate {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
-		int i = 0;
-		for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-			DetailCategory category = entry.getKey();
-			List<InvoiceDetail> details = entry.getValue();
-			if (details != null && !details.isEmpty()) {
-				if (category != null) {
-					if (y - 15 < bottom + 5) {
-						jumpToNewPage(doc, company, invoice, config);
-						y = entriesStart - 10;
+		AtomicInteger atomicI = new AtomicInteger();
+		detailMap.entrySet().stream().sorted((a, b) -> {
+			String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+			return aKey.compareTo(bKey);
+		}).forEach(entry -> {
+			try {
+				if (isGarage(company)) {
+					DetailCategory category = entry.getKey();
+						drawCategoryName(category, doc, invoice, theme, false);
+	
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					
+					productMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(productEntry -> {
+						try {
+							atomicI.set(drawDetailedCategory(doc, productEntry, company, invoice, theme, atomicI.get(), category != null));
+						} catch (IOException e) {
+						}
+					});
+					
+				} else {				
+					try {
+						atomicI.set(drawDetailedCategory(doc, entry, company, invoice, theme, atomicI.get(), false));
+					} catch (IOException e) {
 					}
-					x = 50;
-					y-= 5;
-					drawText(contents, category.toString(), x + 5, y, theme.getTextColor(), boldFont, 9);
-					y-= 10;
 				}
+			} catch (IOException e1) {
+			}
+		});
+	}
+	
+	private void drawCategoryName(DetailCategory category, PDDocument doc, Invoice invoice, PrintInvoiceThemeConfiguration theme, boolean indent) throws IOException {
+		if (category != null) {
+			if (y - 15 < bottom + 5) {
+				jumpToNewPage(doc, company, invoice, config);
+				y = entriesStart - 10;
+			}
+			x = 50;
+			y-= 5;
+			drawText(contents, category.toString(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
+			y-= 10;
+		}
+	}
+	
+	private void simulateCategoryName(DetailCategory category, Invoice invoice, boolean indent, AtomicInteger numberOfPages) throws IOException {
+		if (category != null) {
+			if (y - 15 < bottom + 5) {
+				fictionalPageJump(invoice);
+				numberOfPages.getAndIncrement();
+				y = entriesStart - 10;
+			}
+			y-= 5;
+			y-= 10;
+		}
+	}
+
+	private int drawDetailedCategory(PDDocument doc, Entry<DetailCategory, List<InvoiceDetail>> entry,
+			CompanyFull company, Invoice invoice, PrintInvoiceThemeConfiguration theme, int i, boolean indent) throws IOException {
+		DetailCategory category = entry.getKey();
+		List<InvoiceDetail> details = entry.getValue();
+		if (details != null && !details.isEmpty()) {
+			drawCategoryName(category, doc, invoice, theme, indent);
+			
+			for (InvoiceDetail detail : details) {
+				x = 50;
+				String description = 
+						safeString(detail.getDescription())
+							.replace("\t", " ");
 				
-				for (InvoiceDetail detail : details) {
-					x = 50;
-					String description = 
-							safeString(detail.getDescription())
-								.replace("\t", " ");
+				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240 - (indent ? 10 : 0),regularFont, 8);				
+				float lineDiff = 10;
+				
+				drawDetail(i, detail, divided, lineDiff, doc, invoice, company, indent);
 					
-					ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240,regularFont, 8);				
-					float lineDiff = 10;
-					
-					drawDetail(i, detail, divided, lineDiff, doc, invoice, company);
-						
-					i++;
-				}
+				i++;
 			}
 		}
+		return i;
+	}
+	
+	private int simulateDetailedCategory(Entry<DetailCategory, List<InvoiceDetail>> entry,
+			CompanyFull company, Invoice invoice, PrintInvoiceThemeConfiguration theme, int i, boolean indent, AtomicInteger numberOfPages) throws IOException {
+		DetailCategory category = entry.getKey();
+		List<InvoiceDetail> details = entry.getValue();
+		if (details != null && !details.isEmpty()) {
+			simulateCategoryName(category, invoice, indent, numberOfPages);
+			
+			for (InvoiceDetail detail : details) {
+				x = 50;
+				String description = 
+						safeString(detail.getDescription())
+						.replace("\t", " ");
+				
+				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240 - (indent ? 10 : 0),regularFont, 8);				
+				float lineDiff = 10;
+				
+				simulateDetail(i, divided, lineDiff, invoice, indent, numberOfPages);
+				
+				i++;
+			}
+		}
+		return i;
 	}
 	
 	private static boolean isGarage(CompanyFull company) {
@@ -740,67 +840,46 @@ public class InvoiceTemplate {
 	
 	private int predictNumberOfDetailedPages(Invoice invoice) throws IOException {
 		AtomicInteger numberOfPages = new AtomicInteger(1);
-		
+		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
-
-		int i = 0;
-		for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-			DetailCategory category = entry.getKey();
-			List<InvoiceDetail> details = entry.getValue();
-			if (details != null && !details.isEmpty()) {
-				if (category != null) {
-					if (y - 15 < bottom + 5) {
-						fictionalPageJump(invoice);
-						numberOfPages.getAndAdd(1);
-						y = entriesStart - 10;
+		
+		AtomicInteger atomicI = new AtomicInteger();
+		detailMap.entrySet().stream().sorted((a, b) -> {
+			String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+			return aKey.compareTo(bKey);
+		}).forEach(entry -> {
+			try {
+				if (isGarage(company)) {
+					DetailCategory category = entry.getKey();
+					simulateCategoryName(category, invoice, false, numberOfPages);
+	
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					
+					productMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(productEntry -> {
+						try {
+							atomicI.set(simulateDetailedCategory(productEntry, company, invoice, theme, atomicI.get(), category != null, numberOfPages));
+						} catch (IOException e) {
+						}
+					});
+					
+				} else {				
+					try {
+						atomicI.set(simulateDetailedCategory(entry, company, invoice, theme, atomicI.get(), false, numberOfPages));
+					} catch (IOException e) {
 					}
-					y-= 5;
-					y-= 10;
 				}
-				
-				for (InvoiceDetail detail : details) {
-					String description = 
-							safeString(detail.getDescription())
-								.replace("\t", " ");
-		
-					ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240,regularFont, 8);				
-					float lineDiff = 10;
-					predictDetailPages(i, divided, invoice, lineDiff, numberOfPages);
-					i++;
-				}
+			} catch (IOException e1) {
 			}
-		}
-		
+		});
 		return numberOfPages.get();
 	}
 	
-	private void predictDetailPages(int i, ArrayList<String> divided, Invoice invoice, float lineDiff, AtomicInteger numberOfPages) throws IOException {
-		float dy = y;
-		for (int ind=0; ind<divided.size(); ind++) {
-			dy -= lineDiff;
-			if (dy < bottom + 5) {
-				fictionalPageJump(invoice);
-				y		 = height - top - topInfoHeight - 5;
-				dy = entriesStart - 10;
-				numberOfPages.getAndIncrement();
-			}
-			
-		}
-		
-		if (dy < limit + 5 && i == invoice.getDetails().size() - 1) {
-			fictionalPageJump(invoice);
-			y		 = height - top - topInfoHeight - 5;
-			dy = entriesStart - 10;
-			numberOfPages.getAndIncrement();
-		}
-		
-		y = dy - 3;
-		
-	}
-	
-	
 	private void fictionalPageJump(Invoice invoice) throws IOException {
-		y = height - top - 20;
 		
 		RegistryAddress transmitterAddr = null;
 		
@@ -914,18 +993,19 @@ public class InvoiceTemplate {
 		
 		y -= 60;
 		
+//		y		 = height - top - topInfoHeight - 5;
 		entriesStart = y;
 		
 	}
 	
 	private void drawDetail(int i, InvoiceDetail detail, ArrayList<String> divided, float lineDiff,
-			PDDocument doc, Invoice invoice, CompanyFull company) throws IOException {
+			PDDocument doc, Invoice invoice, CompanyFull company, boolean indent) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		float dy = y;
 		int line = 0;
 		float originX = x;
 		for (String str : divided) {
-			drawText(contents, str.trim(), x + 5, dy, theme.getTextColor(), regularFont, 8, i + DETAIL_DESCRIPTION);
+			drawText(contents, str.trim(), x + 5 + (indent ? 10 : 0), dy, theme.getTextColor(), regularFont, 8, i + DETAIL_DESCRIPTION);
 			
 			if (line++ == 0) {
 				x += 250;
@@ -977,7 +1057,6 @@ public class InvoiceTemplate {
 			}
 			
 		}
-		
 		if (dy < limit + 5 && i == invoice.getDetails().size() - 1) {
 			jumpToNewPage(doc, company, invoice, config);
 			dy = entriesStart - 10;
@@ -986,57 +1065,64 @@ public class InvoiceTemplate {
 		y = dy - 3;
 	}
 	
+	private void simulateDetail(int i, ArrayList<String> divided, float lineDiff, Invoice invoice, boolean indent, AtomicInteger numberOfPages) throws IOException {
+		float dy = y;
+		for (String str : divided) {
+			dy -= lineDiff;
+			if (dy < bottom + 5) {
+				fictionalPageJump(invoice);
+				numberOfPages.getAndIncrement();
+				dy = entriesStart - 10;
+			}
+		}
+		if (dy < limit + 5 && i == invoice.getDetails().size() - 1) {
+			fictionalPageJump(invoice);
+			numberOfPages.getAndIncrement();
+			dy = entriesStart - 10;
+		}
+		y = dy - 3;
+	}
+	
 	
 	public int predictSimplifiedPages (Invoice invoice) throws IOException {
-		int numOfPages = 1;
-		if (invoice.getDetails() != null) {
-			Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
-			
-			for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-				DetailCategory category = entry.getKey();
-				List<InvoiceDetail> details = entry.getValue();
-				if (details != null && !details.isEmpty()) {
-					if (category != null) {
-						if (y - 15 < bottom + 5) {
-							fictionalPageJump(invoice);
-							numOfPages++;
-							y = entriesStart - 10;
+		AtomicInteger numberOfPages = new AtomicInteger(1);
+		
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
+		
+		detailMap.entrySet().stream().sorted((a, b) -> {
+			String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+			return aKey.compareTo(bKey);
+		}).forEach(entry -> {
+			try {				
+				if (isGarage(company)) {
+					DetailCategory category = entry.getKey();
+					simulateCategoryName(category, invoice, false, numberOfPages);
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					productMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(productEntry -> {
+						try {						
+							simulateSimplifiedCategory(productEntry, invoice, category != null, numberOfPages);
+						} catch (IOException e ) {
 						}
-						y-= 5;
-						y-= 10;
-					}
-					
-					for (InvoiceDetail detail : details) {
-						if (y < bottom + 5) {
-							fictionalPageJump(invoice);
-							numOfPages++;
-							y = entriesStart - 10;
-						}
-						String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
-						List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420, regularFont, 8);
-						if (lines.isEmpty()) {
-							y -= 10;
-						}
-						for (int ind=0; ind<lines.size(); ind++) {
-							y -= 10;
-							if (y < bottom + 5) {
-								fictionalPageJump(invoice);
-								numOfPages++;
-								y = entriesStart - 10;
-							}
-						}
-					}
+					});
+				} else {				
+					simulateSimplifiedCategory(entry, invoice, false, numberOfPages);
 				}
+			} catch (IOException e) {
 			}
-				
-			if (y < limit + 5) {
-				fictionalPageJump(invoice);
-				y = height - top - topInfoHeight - 5;
-				numOfPages++;
-			}
-			
+
+		});
+		
+		if (y < limit + 5) {
+			fictionalPageJump(invoice);
+			numberOfPages.getAndIncrement();
 		}
-		return numOfPages;
+		
+		return numberOfPages.get();
 	}
 
 	// DRAW SIMPLIFIED ENTRIES
@@ -1044,74 +1130,114 @@ public class InvoiceTemplate {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
-		for (Entry<DetailCategory, List<InvoiceDetail>> entry : detailMap.entrySet()) {
-			
-			DetailCategory category = entry.getKey();
-			List<InvoiceDetail> details = entry.getValue();
-			if (details != null && !details.isEmpty() && category != null) {
-				if (y - 15 < bottom + 5) {
-					jumpToNewPage(doc, company, invoice, config);
-					y = entriesStart - 10;
+		detailMap.entrySet().stream().sorted((a, b) -> {
+			String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+			return aKey.compareTo(bKey);
+		}).forEach(entry -> {
+			try {				
+				if (isGarage(company)) {
+					DetailCategory category = entry.getKey();
+					drawCategoryName(category, doc, invoice, theme, false);
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					productMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(productEntry -> {
+						try {							
+							drawSimplifiedCategory(productEntry, invoice, doc, company, config, theme, category != null);
+						} catch (IOException e ) {
+						}
+					});
+				} else {				
+					drawSimplifiedCategory(entry, invoice, doc, company, config, theme, false);
 				}
-				x = 50;
-				y-= 5;
-				drawText(contents, category.toString(), x + 5, y, theme.getTextColor(), boldFont, 9);
-				y-= 10;
+			} catch (IOException e) {
 			}
-			for (InvoiceDetail detail : details) {
-				x = 50;
-				
-				if (y < bottom + 5) {
-					jumpToNewPage(doc, company, invoice, config);
-					y = entriesStart - 10;
-				}
-				String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
-				
-				x += 430;
-				
-				String total = detail.getTaxableBase() != 0 ? PdfFormats.toLatinNumber(detail.getTaxableBase()) : "";
-				
-				PDFToolkit.drawTextRight(contents,
-										new PDRectangle(x, y, 69, 15),
-										total,
-										config.getTheme().getTextColor(),
-										regularFont,
-										8,
-										4.5f,
-										0);
-				
-				x -= 430;
-				
-				List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420, regularFont, 8);
-				if (lines.isEmpty()) {
-					y -= 10;
-				}
-				for (String line : lines) {
-					drawText(
-							contents,
-							AonStringUtils.trimToEmpty(line),
-							x + 5,
-							y,
-							theme.getTextColor(),
-							regularFont,
-							8,
-							DETAIL_DESCRIPTION
-						);
-					y -= 10;
-					if (y < bottom + 5) {
-						jumpToNewPage(doc, company, invoice, config);
-						y = entriesStart - 10;
-					}
-				}
 
-			}
-		}
+		});
 		
 		if (y < limit + 5) {
 			jumpToNewPage(doc, company, invoice, config);
 		}
 	}
 
+	private void drawSimplifiedCategory(Entry<DetailCategory, List<InvoiceDetail>> entry, Invoice invoice,
+			PDDocument doc, CompanyFull company, PrintInvoiceConfiguration config, PrintInvoiceThemeConfiguration theme, boolean indent)
+			throws IOException {
+		DetailCategory category = entry.getKey();
+		List<InvoiceDetail> details = entry.getValue();
+		
+		if (details != null && !details.isEmpty() && category != null) {
+			drawCategoryName(category, doc, invoice, theme, indent);
+		}
+		for (InvoiceDetail detail : details) {
+			x = 50;
+			
+			if (y < bottom + 5) {
+				jumpToNewPage(doc, company, invoice, config);
+				y = entriesStart - 10;
+			}
+			String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
+			
+			x += 430;
+			
+			String total = detail.getTaxableBase() != 0 ? PdfFormats.toLatinNumber(detail.getTaxableBase()) : "";
+			
+			PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15), total, config.getTheme().getTextColor(), regularFont, 8, 4.5f, 0);
+			
+			x -= 430;
+			
+			List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420 - (indent ? 10 : 0), regularFont, 8);
+			if (lines.isEmpty()) {
+				y -= 10;
+			}
+			for (String line : lines) {
+				drawText(contents, AonStringUtils.trimToEmpty(line), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), regularFont, 8, DETAIL_DESCRIPTION);
+				y -= 10;
+				if (y < bottom + 5) {
+					jumpToNewPage(doc, company, invoice, config);
+					y = entriesStart - 10;
+				}
+			}
+
+		}
+	}
+
+	private void simulateSimplifiedCategory(Entry<DetailCategory, List<InvoiceDetail>> entry, Invoice invoice,
+			boolean indent, AtomicInteger numberOfPages)
+			throws IOException {
+		DetailCategory category = entry.getKey();
+		List<InvoiceDetail> details = entry.getValue();
+		
+		if (details != null && !details.isEmpty() && category != null) {
+			simulateCategoryName(category, invoice, indent, numberOfPages);
+		}
+		for (InvoiceDetail detail : details) {
+			if (y < bottom + 5) {
+				fictionalPageJump(invoice);
+				numberOfPages.getAndIncrement();
+				y = entriesStart - 10;
+			}
+			String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
+			List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420 - (indent ? 10 : 0), regularFont, 8);
+			if (lines.isEmpty()) {
+				y -= 10;
+			}
+			for (String line : lines) {
+				y -= 10;
+				if (y < bottom + 5) {
+					fictionalPageJump(invoice);
+					numberOfPages.getAndIncrement();
+					y = entriesStart - 10;
+				}
+			}
+
+		}
+	}
+	
+	
 	// DRAW UPPER INFO
 	private void drawTopInfo(PDDocument doc, PrintInvoiceConfiguration config, Invoice invoice, CompanyFull company) throws IOException {
 		
@@ -1379,6 +1505,7 @@ public class InvoiceTemplate {
 		
 		
 	}
+	
 
 	// DRAW SIMPLE HEADER
 	private void drawSimpleHeader(PrintInvoiceThemeConfiguration theme) throws IOException {
@@ -1418,7 +1545,7 @@ public class InvoiceTemplate {
 			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
 			if(tbaiId != null)
-				drawText(contents, tbaiId, x + 5f, y + 2f, Color.BLACK, regularFont, 5);
+				drawText(contents, tbaiId, x + 5f, y + 2f + 110, Color.BLACK, regularFont, 5);
 		}
 		drawTaxes(invoice, theme);
 		drawFinances(invoice, theme);
