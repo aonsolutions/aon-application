@@ -440,8 +440,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		
 	}
 
-	private IListener listener;
-	private ISalaryBuilder<T> salaryBuilder;
+	protected IListener listener;
+	protected ISalaryBuilder<T> salaryBuilder;
 
 	public GenericContractSalaryCalculator() {
 	}
@@ -523,6 +523,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	// -------------------------------------------------------------- Protected
+	
 
 	protected void fillEnterpriseData(IContractSalaryCalculatorContext ctx) {
 		salaryBuilder.setCcc(ctx.getCcc());

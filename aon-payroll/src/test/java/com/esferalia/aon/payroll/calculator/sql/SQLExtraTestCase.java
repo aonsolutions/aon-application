@@ -4697,6 +4697,105 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtrasAtSalaryOverrideI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*VERANO*/1100.00 * DIAS_TRABAJADOS / DIAS_MES";
+							this.month = Month.JUNE;
+							this.start = "01/01";
+							this.end = "30/06";
+							this.issue = "30/06";
+						}
+					}, 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*NAVIDAD*/1100.00 * DIAS_TRABAJADOS / DIAS_MES";
+							this.month = Month.DECEMBER;
+							this.start = "01/07";
+							this.end = "31/12";
+							this.issue = "31/12";
+						}
+					}, 
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "1000.00 * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "100.00 * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfYear
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+		Date startDate ;
+		for ( startDate = firstDayOfYear ;  get(startDate, Calendar.MONTH) < Calendar.JUNE; startDate = add(startDate, Calendar.MONTH, 1)  ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder )
+			.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+			jooqSalaryBuilder.execute();
+			
+			addData(aonContext, contract, startDate, endDate, "PAGA_EXTRA_30_6", "10.00");
+		}
+		
+		
+		
+		// 
+		// EXTRA 
+		//
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 5 );
+		Date endIt = add(startIt, Calendar.DAY_OF_MONTH, 1 );
+		
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startIt, endIt, null);
+		
+		addData(aonContext, contract, startDate, endDate, "PAGA_EXTRA_30_6", "10.00");
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount() + "(" + p.getQuote() +")"));
+		
+		org.junit.Assert.assertEquals((1100.00 / 30 * 28  + 60.00), (double) salary.getTotalPayment(), 0.01);
+		
+		org.junit.Assert.assertEquals((1100.00 / 30 * 28  + 10.00), (double) salary.getCommonBase(), 0.01);
+
+	}
+
+	@Test
 	public void testExtrasAtSalaryWithoutAgreementI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
