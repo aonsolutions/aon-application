@@ -1045,7 +1045,7 @@ public class Mod2002021Compute {
 		}		
 	}
 	
-	// Calculos de la columna 2 del deslose de la casilla [00082]
+	// Calculos de la columna 2 del desglose de la casilla [00082], excepto la fila de totales (col2 = col1 * 0.8)
 	private static void addPreBreakdownBN082() {
 		
 		for (IMod200KeysProvider kp : Mod2002021BN082Key.values()) {

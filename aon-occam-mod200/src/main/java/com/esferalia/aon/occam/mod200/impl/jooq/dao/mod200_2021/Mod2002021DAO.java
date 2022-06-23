@@ -886,7 +886,28 @@ public class Mod2002021DAO  {
 				mod200.setUltimateDocumentCountry(null);   // Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
 				mod200.setUltimateName("");				   // Grupo - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
 				mod200.setUltimateCountry(null); 		   // Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción		
-		    }			
+		    }	
+			
+			// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras
+			// Casilla 987 y NIF de las entidades del grupo, dejarlo vacio si no se ha marcado el caracter 00039
+			if (mod200.isNotChecked(Mod2002021Key.C0039)) {
+				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN987);
+				dv.setValue(0.0);
+				mod200.addVariable(dv);
+				mod200.getGroupEntities().clear();
+			}
+			
+			// No residentes con más de un establecimiento permanente
+			// Casilla 988, Nº Establecimientos y NIF establecimientos permanentes, dejarlo vacio si no se ha marcado el caracter 00021
+			if (mod200.isNotChecked(Mod2002021Key.C0021)) {
+				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN988);
+				dv.setValue(0.0);
+				mod200.addVariable(dv);
+				dv = new DoubleVariableEx(Mod2002021Key.CNEST);
+				dv.setValue(0.0);
+				mod200.addVariable(dv);
+				mod200.getEstablishments().clear(); 
+			}
 			
 			// Inicialización estados contables (solo afecta a claves de Mod2002021Key)
 			Mod2002021MVELContext mvelCtx = new Mod2002021MVELContext( mod200, ACCEPTER );		

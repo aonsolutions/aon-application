@@ -80,16 +80,16 @@ public class Mod2002021Import2020 {
 		
 		 PAG1 ( new IPropertyFiller[] {
 				 
-			 (mod200old,mod200new) -> mod200new.setPeriodStart( addOneYear(mod200old.getPeriodStart()))   // Periodo Impositivo - Inicio					
-			,(mod200old,mod200new) -> mod200new.setPeriodEnd( addOneYear(mod200old.getPeriodEnd()))       // Periodo Impositivo - Fin
-			,(mod200old,mod200new) -> mod200new.setPeriodType( mod200old.getPeriodType())                 // Identificación - Tipo de ejercicio
-			,(mod200old,mod200new) -> mod200new.setCnae( mod200old.getCnae() )  						  // Identificación - C.N.A.E.  Actividad principal (convertido a CNAE 2009)
-			,(mod200old,mod200new) -> mod200new.setDocument( mod200old.getDocument()) 					  // Identificación - NIF 
-			,(mod200old,mod200new) -> mod200new.setName(mod200old.getName())          					  // Identificación - Apellidos y nombre o Razón Social
-			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())      // Identificación - Teléfono 1
-			,(mod200old,mod200new) -> mod200new.setEnterprisePhone2(mod200old.getEnterprisePhone2())      // Identificación - Teléfono 2
-			,(mod200old,mod200new) -> mod200new.setYear( 2021 )                                           // Ejercicio
-			,(mod200old,mod200new) -> mod200new.setAdministration( mod200old.getAdministration() )		  // Administracion                                           
+			 (mod200old,mod200new) -> mod200new.setPeriodStart(addOneYear(mod200old.getPeriodStart()))  // Periodo Impositivo - Inicio					
+			,(mod200old,mod200new) -> mod200new.setPeriodEnd(addOneYear(mod200old.getPeriodEnd()))      // Periodo Impositivo - Fin
+			,(mod200old,mod200new) -> mod200new.setPeriodType(mod200old.getPeriodType())                // Identificación - Tipo de ejercicio
+			,(mod200old,mod200new) -> mod200new.setCnae(mod200old.getCnae())  			 			  	// Identificación - C.N.A.E.  Actividad principal (convertido a CNAE 2009)
+			,(mod200old,mod200new) -> mod200new.setDocument(mod200old.getDocument()) 					// Identificación - NIF 
+			,(mod200old,mod200new) -> mod200new.setName(mod200old.getName())          					// Identificación - Apellidos y nombre o Razón Social
+			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())    // Identificación - Teléfono 1
+			,(mod200old,mod200new) -> mod200new.setEnterprisePhone2(mod200old.getEnterprisePhone2())    // Identificación - Teléfono 2
+			,(mod200old,mod200new) -> mod200new.setYear(2021)             	                            // Ejercicio
+			,(mod200old,mod200new) -> mod200new.setAdministration(mod200old.getAdministration())		// Administracion                                           
 			
 			// CARACTERES DE LA DECLARACION 
 			
@@ -208,8 +208,7 @@ public class Mod2002021Import2020 {
 
 		,PAG2  ( new IPropertyFiller[] {
 				
-			 (mod200old,mod200new) -> mod200new.getAdministrators().addAll(mod200old.getAdministrators())       // A. Relación de administradores
-			 // FALTA - CONFIRMAR QUE DESAPARECE LA CASILLA b) Y SE DESPLAZAN EL RESTO PARA ARRIBA, DEPENDE COMO LO DEJE AL FINAL, HABRA QUE RETOCAR LOS IMPORTES QUE SE TRASPASEN AHORA
+			 (mod200old,mod200new) -> mod200new.getAdministrators().addAll(mod200old.getAdministrators())       // A. Relación de administradores			 
 			,(mod200old,mod200new) -> {
 				mod200new.getParticipationsOut().addAll(mod200old.getParticipationsOut()); // B1. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado
 				// La casilla "b) Reversión de pérdidas por deterioro de valores", se elimina para el 2021, por lo tanto se quita cualquier importe que pudiera tener en el 2020
@@ -217,18 +216,16 @@ public class Mod2002021Import2020 {
 					cp.setLossReversion(0.0);
 				}				
 			}
+			,(mod200old,mod200new) -> mod200new.getParticipationsIn().addAll(mod200old.getParticipationsIn())   // B2. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
+            
+		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002021Key.POR51, mod200old.getDoubleValue(Mod2002020Key.POR51))  // B2. Suma de porcentajes de participación de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado 
+		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002021Key.PORES, mod200old.getDoubleValue(Mod2002020Key.PORES))  // B2. Suma de porcentajes de participaciones en situaciones especiales
 			
 		})
 		
 		,PAG2B  ( new IPropertyFiller[] {
 				
-			(mod200old,mod200new) -> mod200new.getParticipationsIn().addAll(mod200old.getParticipationsIn())   // B2. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
-				                                      
-		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002021Key.POR51, mod200old.getDoubleValue(Mod2002020Key.POR51))  // B2. Suma de porcentajes de participación de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado 
-		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002021Key.PORES, mod200old.getDoubleValue(Mod2002020Key.PORES))  // B2. Suma de porcentajes de participaciones en situaciones especiales
-		    
-		    ,(mod200old,mod200new) -> mod200new.getMinorEntities().addAll(mod200old.getMinorEntities())   // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
-		    
+		     (mod200old,mod200new) -> mod200new.getMinorEntities().addAll(mod200old.getMinorEntities())   // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 		    ,(mod200old,mod200new) -> mod200new.getUteForeign().addAll(mod200old.getUteForeign())         // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
 		    
 		})
@@ -323,15 +320,15 @@ public class Mod2002021Import2020 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN2319, adjustDoubleTax( // 2020
 					mod200old.getDoubleValue(Mod2002020Key.BN2323)+mod200old.getDoubleValue(Mod2002020Key.BN129), mod200old.getDoubleValue(Mod2002020Key.BN2320), mod200old.getDoubleValue(Mod2002020Key.BN103B) ) )
 
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN102 , mod200old.getDoubleValue(Mod2002020Key.BN102)) // 2015
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN123 , mod200old.getDoubleValue(Mod2002020Key.BN123)) // 2016
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN102 , mod200old.getDoubleValue(Mod2002020Key.BN102)) 	// 2015
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN123 , mod200old.getDoubleValue(Mod2002020Key.BN123)) 	// 2016
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN1596 , mod200old.getDoubleValue(Mod2002020Key.BN1596)) // 2017
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN1829 , mod200old.getDoubleValue(Mod2002020Key.BN1829)) // 2018
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN2197 , mod200old.getDoubleValue(Mod2002020Key.BN2197)) // 2019
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN2320 , mod200old.getDoubleValue(Mod2002020Key.BN2320)) // 2020
 
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN119 , mod200old.getDoubleValue(Mod2002020Key.BN121)) // 2015
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN124 , mod200old.getDoubleValue(Mod2002020Key.BN126)) // 2016
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN119 , mod200old.getDoubleValue(Mod2002020Key.BN121)) 	// 2015
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN124 , mod200old.getDoubleValue(Mod2002020Key.BN126)) 	// 2016
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN1597 , mod200old.getDoubleValue(Mod2002020Key.BN1599)) // 2017
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN1830 , mod200old.getDoubleValue(Mod2002020Key.BN1832)) // 2018
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN2198 , mod200old.getDoubleValue(Mod2002020Key.BN2200)) // 2019
@@ -480,7 +477,7 @@ public class Mod2002021Import2020 {
             
 		})
 			
-		,PAG17_18 ( new IPropertyFiller[] {
+		,PAG17 ( new IPropertyFiller[] {
 				
 		    // Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI y DT 24ª.3 LIS)
 			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN198 , mod200old.getDoubleValue(Mod2002020Key.BN897 )) // 2003
@@ -572,12 +569,13 @@ public class Mod2002021Import2020 {
 		})
 			
 		,PAG18B ( new IPropertyFiller[] {
-
-			// FALTA - ESTE AÑO ESTE APARTADO SE DESGLOSA EN 2 APARTADOS Y ADEMAS ALGUNAS LINEAS SE DESGLOSAN EN DOS LINEAS
-			// POR AHORA, A FALTA DE VER COMO SON LOS CALCULOS Y VER LAS CLAVES DEFINITIVAS POR AHORA EL TRASPASO DEL 
-			// EJERCICIO ANTERIOR SE HACE AL APARTADO DE DONACIONES DE CARACTER GENERAL Y A LAS LINEAS DE SIN REITERACION...
 				
-			// Deducción donativos a entidades sin fines de lucro. Ley 49/2002			 
+			// Deducción donativos a entidades sin fines de lucro. Ley 49/2002				
+
+			// Este año este apartado se desglosa en 2 apartados y ademas algunas lineas se 
+			// desglosan en dos lineas, por lo tanto el traspaso del ejercicio anterior se 
+			// hace al apartado de "Donaciones de caracter general" y a las lineas de "sin reiteracion"
+						 
 			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN201 , mod200old.getDoubleValue(Mod2002020Key.BN203))  // 2011
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN904 , mod200old.getDoubleValue(Mod2002020Key.BN906))  // 2012
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN990 , mod200old.getDoubleValue(Mod2002020Key.BN992))  // 2013
@@ -627,9 +625,8 @@ public class Mod2002021Import2020 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN1957, AonMathUtils.round(mod200old.getDoubleValue(Mod2002020Key.BN1960)/0.05)) // 2019
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN2234, AonMathUtils.round(mod200old.getDoubleValue(Mod2002020Key.BN2237)/0.05)+
 			                                                              			   AonMathUtils.round(mod200old.getDoubleValue(Mod2002020Key.BN2390)/0.05)) // 2020
-			
 		})
-		
+
 		,PAG20 ( new IPropertyFiller[] {
 				
 			// Limitacion en la deducilidad de gastos financieros. Gastos financieros pendientes de deducir
@@ -712,6 +709,13 @@ public class Mod2002021Import2020 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.LM2264, mod200old.getDoubleValue(Mod2002020Key.LM2266)+mod200old.getDoubleValue(Mod2002020Key.LM2436)) // 2020: Que no han cumplido ...
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.LM2431, mod200old.getDoubleValue(Mod2002020Key.LM2433)) // 2020: Que han cumplido ...
 				
+		})
+				
+		,PAG21 ( new IPropertyFiller[] {
+				
+			     (mod200old,mod200new) -> mod200new.getGroupEntities().addAll(mod200old.getGroupEntities())    // NIF de las entidades del grupo
+			    ,(mod200old,mod200new) -> mod200new.getEstablishments().addAll(mod200old.getEstablishments())  // NIF de los establecimientos permanentes		    
+			    
 		})
 		
         ,PAG22 ( new IPropertyFiller[] {

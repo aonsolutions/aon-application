@@ -996,8 +996,6 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
-		System.out.println("ENTRA "+col1+" "+col3+" "+suma);
-		
 		double lq552 = getValue(Mod2002021Key.LQ552);
 		
 		if (lq552>=0) {
@@ -1010,7 +1008,6 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 			if (total > Math.abs(lq552)) {
 				col2 = col2 - (total - Math.abs(lq552));
 			}
-			System.out.println("SALE "+col2);
 			return col2;		
 		}		
 	}
