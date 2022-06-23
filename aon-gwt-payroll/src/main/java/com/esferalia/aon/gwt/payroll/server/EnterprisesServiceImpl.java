@@ -1569,6 +1569,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public void moveAgreement2Child(String domainName, Integer agreementId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqAgreement.moveAgreement2ChildDomain(connection, domainId, agreementId);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public Integer getParentDomain(String domain) {		
 		try {
 			return AonServletUtils.getParentDomainID(domain);
