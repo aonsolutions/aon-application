@@ -639,7 +639,7 @@ public class ContractFill {
 			contentStream.setNonStrokingColor(Color.RED);
 			contentStream.setFont( font, 10 );
 			contentStream.newLineAtOffset( 270, 750 );
-			contentStream.showText("F. Comunicaci\u00f3n : " + dateFormat.format(comunicationDate));
+			contentStream.showText("F. Comunicaci\u00f3n : " + (null == comunicationDate ? "" : dateFormat.format(comunicationDate)));
 			contentStream.endText();
 			
 			contentStream.setNonStrokingColor(Color.RED);

@@ -14,13 +14,13 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
+import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -46,13 +47,11 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -143,8 +142,6 @@ public interface EnterprisesServiceAsync {
 	// ------------------------------------------------ Contract Attachments
 	
 	void getContractAttachments(String currentDomainName, String login, Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException;
-	void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
-	void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getAttachData(String currentDomainName, String currentUser, Integer attachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void setAttachData(String currentDomainName, String currentUser, Integer attachId, byte[] dataURI, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
@@ -214,7 +211,7 @@ public interface EnterprisesServiceAsync {
 	
 	// --------------------------- Certificates
 	
-	void getCertificates(String domain, String login, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException;
+	void getCertificates(String domain, String login, boolean withParent, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteCertificate(String domain, String login, Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> asyncCallback) throws IllegalArgumentException ;
 	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;

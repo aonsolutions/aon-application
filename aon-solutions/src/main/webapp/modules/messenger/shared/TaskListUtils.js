@@ -8,7 +8,7 @@ import {
   MATERIAL_ICONS,
   TAG,
 } from "../../../environments/environments.js";
-import { getTaskOne } from "../../../services/taskService.js";
+// import { getTaskOne } from "../../../services/taskService.js";
 import { sortBy } from "../../../services/utils.js";
 import { setStyles } from "../../../services/utilsComponents.js";
 import { firstLetters, StringTwoLetters } from "../../timecontrol/time-control/utils.js";
@@ -232,7 +232,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
 
       parent.appendChild(div);
 
-      let icon = getIcon(t, isCau, "16px", true);
+      let icon = getIcon(t, "16px", true);
       icon.style.display = "inline-block";
       div.appendChild(icon);
 
@@ -266,7 +266,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
         AonDateUtils.setTime(t.creation_date);
       div.appendChild(spanThree);
     });
-
+    
     row.paddingBottom = paddingBottom;
 
     if (parent.parentNode && parent.parentNode.parentNode) {
@@ -277,7 +277,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
     // CHANGE COLORS ALL BRANCH CLOSES
     const length = childs.length;
     if (length > 0) {
-      let tasksClosed = childs.filter(({ status }) => status === TASK_STATUS.FINISHED);
+      let tasksClosed = childs.filter(({ status, parent:p }) => p && status === TASK_STATUS.FINISHED);
       if (tasksClosed.length === length) {
         let iconParent = document.querySelector(`span[data-task-id='${task.id}']`);
         if (iconParent) {
@@ -290,7 +290,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
   }
 };
 
-const getIcon = (task, isCau, size = undefined, isChild = undefined) => {
+const getIcon = (task, size = undefined, isChild = undefined) => {
   const { source, status, parent, id } = task;
 
   let div = document.createElement(TAG.DIV);
@@ -341,20 +341,21 @@ const getIcon = (task, isCau, size = undefined, isChild = undefined) => {
 
   span.appendChild(icon);
 
-  if (!isCau) {
-    div.addEventListener(EVENT.CLICK, (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      const aonMessengerList = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST);
-      const documents = aonMessengerList.getDocuments();
-      getTaskOne({ id }).then((t) => {
-        let row = aonMessengerList.ROWS.find((x) => x.id === t.id);
-        if (row && row.parent) {
-          addChilds(t, row, documents, isCau);
-        }
-      });
-    });
-  }
+  // if (!isCau) {
+  //   console.log(div);
+  //   div.addEventListener(EVENT.CLICK, (ev) => {
+  //     ev.stopPropagation();
+  //     ev.preventDefault();
+      // const aonMessengerList = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+      // const documents = aonMessengerList.getDocuments();
+      // getTaskOne({ id }).then((t) => {
+      //   let row = aonMessengerList.ROWS.find((x) => x.id === t.id);
+      //   if (row && row.parent) {
+      //     addChilds(t, row, documents, isCau);
+      //   }
+      // });
+    // });
+  // }
 
   return div;
 };

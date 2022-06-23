@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -173,7 +173,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		Column<Attach, String> dateColumn = new Column<Attach, String>(new TextCell()) {
 			@Override
 	        public String getValue(Attach attach) {
-				return formatDate.format(attach.getDate());
+				return null == attach.getDate() ? "" : formatDate.format(attach.getDate());
 	        }
 		};
 

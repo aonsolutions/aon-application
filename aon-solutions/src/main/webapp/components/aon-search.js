@@ -107,38 +107,14 @@ export class AonSearch extends AonElement {
 
 		searchButton.addEventListener(EVENT.CLICK, () => {
 			if(input.style.display === 'none'){
-				if(isMobile) {
-					this.style.position = 'absolute';
-					this.style.width = '100%';
-					this.style.background = 'white';
-					span.style.width = '100%';
-					advancedButton.style.position = 'absolute';
-					advancedButton.style.right = '0px';		
-				}
-				input.style.display = 'block';
-				advancedButton.style.display = 'block';
-				span.style.borderBottom = '2px solid #002469';
-				if(this.disabled) 
+				this.openSearch();
+				if(this.disabled) {
 					this.openOrClose();
-				else 
-					input.focus();
-			} else {
-				if(isMobile) {
-					this.style.position = null;
-					this.style.width = null;
-					this.style.background = 'transparent';
-					span.style.width = '100%';
-					advancedButton.style.position = 'absolute';
-					advancedButton.style.right = '0px';		
 				} else {
-					this.clearValues();
+					input.focus();
 				}
-				input.value = '';
-				this.dispatchEventSearch(input.value);
-				input.style.display = 'none';
-				advancedButton.style.display = 'none';
-				span.style.borderBottom = '0px';
-				this.closeOptions();
+			} else {
+				this.closeSearch();
 			}
 		});
 
@@ -170,7 +146,7 @@ export class AonSearch extends AonElement {
 		}));
 	}
 
-	 openOrClose(){
+	openOrClose(){
 	  	let divOpts = this.getElement(this.OPTIONS);
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
@@ -181,7 +157,50 @@ export class AonSearch extends AonElement {
 				divOpts.classList.add('is-visible');
 			}
 		}
-	  }
+	}
+
+	openSearch(){
+		let span = this.getElement(this.SPAN);
+		let advancedButton = this.getElement(this.ADVANCED_BUTTON);
+		let input = this.getElement(this.SEARCH_INPUT);
+		if(span && advancedButton && input){
+			if(this.isMobile()) {
+				this.style.position = 'absolute';
+				this.style.width = '100%';
+				this.style.background = 'white';
+				span.style.width = '100%';
+				advancedButton.style.position = 'absolute';
+				advancedButton.style.right = '0px';		
+			}
+			input.style.display = 'block';
+			advancedButton.style.display = 'block';
+			span.style.borderBottom = '2px solid #002469';
+		}
+	}
+
+	closeSearch(){
+		let span = this.getElement(this.SPAN);
+		let advancedButton = this.getElement(this.ADVANCED_BUTTON);
+		let input = this.getElement(this.SEARCH_INPUT);
+		if(span && advancedButton && input){
+			if(this.isMobile()) {
+				this.style.position = null;
+				this.style.width = null;
+				this.style.background = 'transparent';
+				span.style.width = '100%';
+				advancedButton.style.position = 'absolute';
+				advancedButton.style.right = '0px';		
+			} else {
+				this.clearValues();
+			}
+			input.value = '';
+			this.dispatchEventSearch(input.value);
+			input.style.display = 'none';
+			advancedButton.style.display = 'none';
+			span.style.borderBottom = '0px';
+			this.closeOptions();
+		}
+	}
 
 
 	disabledInputSearch(){

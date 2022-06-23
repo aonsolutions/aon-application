@@ -115,6 +115,14 @@ public class CertificateDAO {
 		getEnterpriseCertificates(ctx, domainId, certificateList);
 		return certificateList;
 	}
+	
+	public static List<Certificate> getListWithParent(AONContext ctx, Integer domainId, Integer parentDomainId, Integer userId) {
+		List<Certificate> certificateList = new ArrayList<>();
+		getUserCertificates(ctx, userId, certificateList);
+		getEnterpriseCertificates(ctx, domainId, certificateList);
+		getEnterprisParentCertificates(ctx, parentDomainId, certificateList);
+		return certificateList;
+	}
 
 	public static Certificate get(AONContext ctx, AttachFilter attachFilter) {
 		Record rattachRecord = ctx.getDslContext().select().from(RATTACH).where(ATTACH_PROPERTIES.getConditions(attachFilter)).fetchOne();
@@ -200,6 +208,40 @@ public class CertificateDAO {
 			
 			Certificate certificate = new Certificate();
 			certificate.setId(certificateRecord.get(RATTACH.ID));
+			certificate.setOwner(CertificateOwner.ENTERPRISE);
+			certificate.setDescription(parseDescription(description));
+			certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
+			certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
+			certificate.setUpdateDate(updateDate);
+			parsePassword(ctx, registryEnterpriseId, description, certificate);
+			getCertificateTags(ctx, certificate);
+			getCertificateInfo(ctx, certificate);
+			
+			certificateList.add(certificate);
+		}
+	}
+	
+	private static void getEnterprisParentCertificates(AONContext ctx, Integer parentDomainId, List<Certificate> certificateList) {
+		Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
+		
+		if(null == registryEnterpriseId)
+			return;
+		
+		Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+				.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
+				.and(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
+				.and(RATTACH.DOMAIN.eq(parentDomainId))
+				.fetch();
+		
+		for(Record certificateRecord : certificateRecords) {
+			
+			java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+			String description = certificateRecord.get(RATTACH.DESCRIPTION);
+			
+			Certificate certificate = new Certificate();
+			certificate.setId(certificateRecord.get(RATTACH.ID));
+			certificate.setDomain(certificateRecord.get(RATTACH.DOMAIN));
 			certificate.setOwner(CertificateOwner.ENTERPRISE);
 			certificate.setDescription(parseDescription(description));
 			certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);

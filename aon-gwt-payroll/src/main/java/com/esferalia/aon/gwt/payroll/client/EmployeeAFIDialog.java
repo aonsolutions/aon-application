@@ -147,11 +147,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private Date selectedDate;
 	
 	private boolean isComunication = false;
+	private boolean isTransform = false;
 
 	// ------------------------------------------------- Constructor
 
 	protected EmployeeAFIDialog(Date contractStartDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, 
-			Integer contractId, Integer domainId, Integer workplaceId, boolean isComunication) {
+			Integer contractId, Integer domainId, Integer workplaceId, boolean isTransform, boolean isComunication) {
 
 		setCaption(isComunication ? "Notificaci\u00f3n TGSS (AFI)" : "Datos AFI");
 
@@ -159,7 +160,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		
 		this.isComunication = isComunication;
 		this.contractStartDate = contractStartDate;
-
+		this.isTransform = isTransform;
+		
 		getButtonsPanel();
 		initToggleButtons();
 		
@@ -472,7 +474,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			partialityCoef.setValue(null);
 
 			Integer contractTypeAux = null;
-
+			
 			for (AFIChange afiChange : afiChangeList) {
 				switch (afiChange.getName()) {
 				case "TC2":
@@ -493,7 +495,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				}
 			}
 
-			checkPartialityVisibility(contractTypeAux);
+			if(null != contractTypeAux) checkPartialityVisibility(contractTypeAux);
 
 		}
 	}
@@ -717,6 +719,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"), afiChangesMap.getChangeDate());
 				if (isPartialityCoefContract())
 					onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+				// Solo para las transformaciones que tienen una pestaña y necesitan comunicar el cambio de tc2
+				if (!isChangeContract() && isTransform && dateList != null && dateList.size() == 1)
+					onChangeContract(this.tc2Original, afiChangesMap.getChangeDate());
 			}
 			
 			// Solo recargar la informacion del empleado si la fecha de modificacion es

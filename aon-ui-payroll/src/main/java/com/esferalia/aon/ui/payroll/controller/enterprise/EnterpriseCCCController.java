@@ -146,6 +146,7 @@ public class EnterpriseCCCController extends LinesController {
 	}
 
 	private boolean existWorplaceGeozone(GeoZone geoZone) {
+		if (geoZone == null) return false;
 		Connection connection = null;
 		try {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
