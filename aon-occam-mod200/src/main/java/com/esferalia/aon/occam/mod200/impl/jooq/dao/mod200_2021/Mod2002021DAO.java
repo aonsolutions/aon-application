@@ -889,24 +889,30 @@ public class Mod2002021DAO  {
 		    }	
 			
 			// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras
-			// Casilla 987 y NIF de las entidades del grupo, dejarlo vacio si no se ha marcado el caracter 00039
+			// NIF de las entidades del grupo, dejarlo vacio si no se ha marcado el caracter 00039
 			if (mod200.isNotChecked(Mod2002021Key.C0039)) {
-				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN987);
-				dv.setValue(0.0);
-				mod200.addVariable(dv);
+//				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN987);
+//				dv.setValue(0.0);
+//				mod200.addVariable(dv);
 				mod200.getGroupEntities().clear();
 			}
 			
 			// No residentes con más de un establecimiento permanente
-			// Casilla 988, Nº Establecimientos y NIF establecimientos permanentes, dejarlo vacio si no se ha marcado el caracter 00021
+			// NIF establecimientos permanentes, dejarlo vacio si no se ha marcado el caracter 00021
 			if (mod200.isNotChecked(Mod2002021Key.C0021)) {
-				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN988);
-				dv.setValue(0.0);
-				mod200.addVariable(dv);
-				dv = new DoubleVariableEx(Mod2002021Key.CNEST);
-				dv.setValue(0.0);
-				mod200.addVariable(dv);
+//				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN988);
+//				dv.setValue(0.0);
+//				mod200.addVariable(dv);
+//				dv = new DoubleVariableEx(Mod2002021Key.CNEST);
+//				dv.setValue(0.0);
+//				mod200.addVariable(dv);
 				mod200.getEstablishments().clear(); 
+			}
+			
+			// Agrupaciones de interés económico y UTES - Relación de Socios
+			// Dejarlo vacio si no se ha marcado el carácter 00013 o 00014
+			if (mod200.isNotChecked(Mod2002021Key.C0013) && mod200.isNotChecked(Mod2002021Key.C0014)) {
+				mod200.getUteParticipations().clear(); 
 			}
 			
 			// Inicialización estados contables (solo afecta a claves de Mod2002021Key)
@@ -979,7 +985,10 @@ public class Mod2002021DAO  {
 		try {
 			Mod2002021MVELContext ctx = new Mod2002021MVELContext( mod200, ACCEPTER );
 			
-			// PRUEBA - SIN EXPRESION EN ctx
+			// No asignamos Expression Map al contexto MVEL, para ganar en velocidad de cálculo del 
+			// modelo, cada vez que se modifica una casilla (dado el numero de casillas que tiene el
+			// modelo actualmente). Eso obliga a que en COMPUTE_EXPRESSION_MAP estén introducidos los
+			// datos, siguiendo el orden de los cálculos que se deban realizar
 //			ctx.setExpressionMap(Mod2002021Compute.COMPUTE_EXPRESSION_MAP);			
 			
 			// Añadir valores de keysMap
@@ -999,11 +1008,11 @@ public class Mod2002021DAO  {
 			}
 			
 			// Actualmente las casillas calculadas solo son de Mod2002021Key
-			Date ini = new Date();
-			System.out.println("***** INI " + ini);
+//			Date ini = new Date();
+//			System.out.println("***** COMPUTE INI " + ini);
 			DoubleVariableEx v = null;
 			for (Mod2002021Key k : Mod2002021Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
-				System.out.println("COMPUTE KEY="+k.toString()+"="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.get(k));
+//				System.out.println("COMPUTE KEY="+k.toString()+"="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.get(k));
 				String stringKey = k.toString();
 				DoubleVariableEx existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
@@ -1023,8 +1032,8 @@ public class Mod2002021DAO  {
 					}
 				}
 			}
-			Date fin = new Date();			
-			System.out.println("***** FIN. TIME "+ (fin.getTime()-ini.getTime()) + "ms. TOTAL REGISTROS MAP="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.size());
+//			Date fin = new Date();			
+//			System.out.println("***** COMPUTE FIN. TIME "+ (fin.getTime()-ini.getTime()) + "ms. TOTAL REGISTROS MAP="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.size());
 			
 			v = mod200.getVariable(Mod2002021Key.BN621);
 			mod200.setResultType(null);

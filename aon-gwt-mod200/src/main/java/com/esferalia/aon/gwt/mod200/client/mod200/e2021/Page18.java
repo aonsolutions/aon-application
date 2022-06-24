@@ -32,18 +32,21 @@ public class Page18 extends PageAbs {
 	
 	private static final String FOOTER = "(*) La informaci\u00F3n sobre los datos a incluir en los apartados 6 a 9 anteriores, debe hacer referencia al importe total de las cantidades a imputar por la entidad declarante a las personas o entidades que ostenten los derechos inherentes o la cualidad de socio o de empresa miembro que sean residentes en territorio espa\u00F1ol o no residentes con establecimiento permanente en el mismo.";
 
+	private FlowPanel panelB6;
+	private FlowPanel panelB11; 
+
 	public Page18( Model200PageCallback callback ) {
 		super(callback);
 		addBasePanel();
 		initializeTable();
 		
-//		callback.getMod200Object().register( new IMod200ChangeListener() {
-//			
-//			@Override
-//			public void mod200Changed(Mod2002021 mod200) {
-//				paint();
-//			}
-//		});
+		callback.getMod200Object().register( new IMod200ChangeListener() {
+			
+			@Override
+			public void mod200Changed(Mod2002021 mod200) {
+				paintB11Panel(); // La tabla del panel del apartado B11 lleva un dato calculado, por lo tanto es necesario repintarlo, si se recalcula el modelo por cualquier otra casilla
+			}
+		});
 		
 	}
 
@@ -148,7 +151,9 @@ public class Page18 extends PageAbs {
 //		panelB6.add(tabB6);
 //		
 //		table1.setWidget(row++, 0, panelB6);
-		table1.setWidget(row++, 0, paintB6Panel(new FlowPanel()));
+		panelB6 = new FlowPanel();
+		paintB6Panel();
+		table1.setWidget(row++, 0, panelB6);
 
 		paintKey(table1, Mod2002021Key.UTC01, row++);
 		paintDescription(table1, AON.MSG.ute4(), row++, 0, false);
@@ -286,13 +291,15 @@ public class Page18 extends PageAbs {
 		
 		table1.getFlexCellFormatter().setColSpan(row, 0, 2);
 //		table1.setWidget(row, 0, panelB11);
-		table1.setWidget(row, 0, paintB11Panel(new FlowPanel()));
+		panelB11 = new FlowPanel();
+		paintB11Panel();
+		table1.setWidget(row, 0, panelB11);
 		
 		paintFooterNote(basePanel, FOOTER);
 		
 	}
 	
-	private FlowPanel paintB6Panel(FlowPanel panelB6) {
+	private void paintB6Panel() {
 
 		panelB6.clear();
 		
@@ -328,8 +335,7 @@ public class Page18 extends PageAbs {
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 			deleteButton.addClickHandler(event -> {
 				callback.getMod200Object().getMod200().getUteBases().remove(idx);
-				//paint();
-				paintB6Panel(panelB6);
+				paintB6Panel();
 				callback.markAsDirty();
 			});
 
@@ -344,18 +350,15 @@ public class Page18 extends PageAbs {
 		AonTableButton addButtonB6 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 		addButtonB6.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().getUteBases().add(new UteBase());
-			//paint();
-			paintB6Panel(panelB6);
+			paintB6Panel();
 		});
 		tabB6.addRow().addCell(addButtonB6);
 		
 		panelB6.add(tabB6);
 		
-		return panelB6;
-		
 	}
 	
-	private FlowPanel paintB11Panel(FlowPanel panelB11) {
+	private void paintB11Panel() {
 		
 		panelB11.clear();
 		
@@ -451,8 +454,7 @@ public class Page18 extends PageAbs {
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 			deleteButton.addClickHandler(event -> {
 				callback.getMod200Object().getMod200().getUteParticipations().remove(idx);
-//				paint();
-				paintB11Panel(panelB11);
+				paintB11Panel();
 				callback.markAsDirty();
 			});
 	
@@ -472,14 +474,11 @@ public class Page18 extends PageAbs {
 		addButtonB11.addStyleName(AON.CSS.aonMarginLeft());
 		addButtonB11.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().getUteParticipations().add(new UteParticipation());
-			//paint();
-			paintB11Panel(panelB11);
+			paintB11Panel();
 		});
 		
 		panelB11.add(tabB11);
 		panelB11.add(addButtonB11);
-		
-		return panelB11;
 		
 	}
 	
