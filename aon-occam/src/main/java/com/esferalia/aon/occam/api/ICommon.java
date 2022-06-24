@@ -188,6 +188,7 @@ public interface ICommon {
 	// --------------------------------------------
 	
 	public List<Certificate> getCertificates(AONContext ctx, Integer domainId, Integer userId);
+	public List<Certificate> getCertificatesWithParent(AONContext ctx, Integer domainId, Integer parentDomainId, Integer userId);
 	public Certificate getCertificate(AONContext ctx, AttachFilter attachFilter);
 	public CertificateInfo getCertificateInfo(AONContext ctx, AttachFilter attachFilter) throws IllegalArgumentException;
 	public CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException;

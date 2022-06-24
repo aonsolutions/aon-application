@@ -762,6 +762,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					
 					if ( startDate.after(guarenteeEnd ))
 						return;
+					if ( guarenteeStart.after(guarenteeEnd ))
+						return;
 
 					lastLeaveEnd = Period.max(leaveEnd, lastLeaveEnd);
 

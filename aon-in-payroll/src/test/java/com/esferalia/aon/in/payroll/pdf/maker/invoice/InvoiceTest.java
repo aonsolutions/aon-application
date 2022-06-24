@@ -298,11 +298,11 @@ public class InvoiceTest {
 		detailTwo.setDiscountExpression("1.19");
 		detailTwo.setQuantity(1);
 		detailTwo.setTaxableBase(712382113);
-		detailTwo.setSource(InvoiceSource.SALES);
-		detailTwo.setItem(new Item().setProduct(new Product().setType(ProductType.LABOUR)));
+		detailTwo.setSource(InvoiceSource.DELIVERY);
+//		detailTwo.setItem(new Item().setProduct(new Product().setType(ProductType.COMMERCIAL_PRODUCT)));
 		
 		SalesDetail deliveryDetailTwo = new SalesDetail().setId(288).setSales(new Sales().setId(123).setIssueDate(new Date()).setPurchaseReference("123456/12345"));
-		detailTwo.setSalesDetail(deliveryDetailTwo);
+		detailTwo.setDeliveryDetail(deliveryDetail);
 		
 		InvoiceDetail detailThree = new InvoiceDetail();
 		detailThree.setAccountCode("0192831010");
@@ -385,6 +385,8 @@ public class InvoiceTest {
 		
 		InvoiceDetail detailFour = new InvoiceDetail();
 		detailFour.setAccountCode("0192831010");
+		detailFour.setSource(InvoiceSource.DELIVERY);
+		detailFour.setDeliveryDetail(deliveryDetail);
 		detailFour.setDescription
 		(
 		    "Con diez cañones por banda,\n" + 
@@ -527,7 +529,7 @@ public class InvoiceTest {
 		detailFive.setAccountCode("0192831010");
 		
 		String largeDesc = "";
-		for (int i=1; i<=200; i++) {
+		for (int i=1; i<=20; i++) {
 			largeDesc += "abcdefghijklmnño Hola, ¿Qué tal? Esta línea es la línea " + i + "\n";
 		}
 		
@@ -585,7 +587,7 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=46; i++) {
+		for (int i=1; i<=12; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
@@ -603,10 +605,10 @@ public class InvoiceTest {
 		details.add(detailX);
 		details.add(detailOne);
 		details.add(detailTwo);
-		details.add(detailThree);
+//		details.add(detailThree);
 		details.add(detailThreeAndAHalf);
-		details.add(detailFour);
-		details.add(detailFive);
+//		details.add(detailFour);
+//		details.add(detailFive);
 		
 		
 //		details.add(shortDetail1);
@@ -1507,7 +1509,7 @@ public class InvoiceTest {
 //			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(false);
+			config.setDetailed(true);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);

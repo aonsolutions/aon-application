@@ -306,19 +306,19 @@ public class EmployeeContractVariables extends Composite {
 	private void addSortColums(List<ContractVariable> contractVariableList) {
 		ListHandler<ContractVariable> columnSortHandler = new ListHandler<>(contractVariableList);
 		
-		columnSortHandler.setComparator(contractVariablesDG.getColumn(0),
+		columnSortHandler.setComparator(contractVariablesDG.getColumn(1),
 			(o1, o2) -> compareString(o1, o2, getVariableTypeShort(o1.getVariableType()), getVariableTypeShort(o2.getVariableType())));
 			
-	    columnSortHandler.setComparator(contractVariablesDG.getColumn(1), 
+	    columnSortHandler.setComparator(contractVariablesDG.getColumn(2), 
 	    	(o1, o2) -> compareString(o1, o2, o1.getDescription(), o2.getDescription()));
 	    
-	    columnSortHandler.setComparator(contractVariablesDG.getColumn(2), 
+	    columnSortHandler.setComparator(contractVariablesDG.getColumn(3), 
 	    	(o1, o2) -> compareString(o1, o2, o1.getExpression(), o2.getExpression()));
 	    
-	    columnSortHandler.setComparator(contractVariablesDG.getColumn(3), 
+	    columnSortHandler.setComparator(contractVariablesDG.getColumn(4), 
 	    	(o1, o2) -> compareDates(o1, o2, o1.getStartDate(), o2.getStartDate()));
 	    
-	    columnSortHandler.setComparator(contractVariablesDG.getColumn(4),
+	    columnSortHandler.setComparator(contractVariablesDG.getColumn(5),
 	    	(o1, o2) -> compareDates(o1, o2, o1.getEndDate(), o2.getEndDate()));
 	    
 	    contractVariablesDG.addColumnSortHandler(columnSortHandler);
@@ -330,16 +330,16 @@ public class EmployeeContractVariables extends Composite {
 	
 	private int compareString(Object o1, Object o2, String s1, String s2) {
 		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
+		else if (o1 == null || AonStringUtils.isBlank(s1)) return -1;
+		else if (o2 == null || AonStringUtils.isBlank(s2)) return 1;
 		else
         	return s1.compareTo(s2);
 	}
 	
 	private int compareDates(Object o1, Object o2, Date d1, Date d2) {
 		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
+		else if (o1 == null || d1 == null) return -1;
+		else if (o2 == null || d2 == null) return 1;
 		else
         	return d1.compareTo(d2);
 	}

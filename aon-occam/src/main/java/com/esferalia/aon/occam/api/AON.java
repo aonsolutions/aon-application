@@ -6237,6 +6237,12 @@ public class AON {
 		}
 	}
 	
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificatesWithParent(ctx, domainId, parentDomainId, userId);
+		}
+	}
+	
 	public static com.esferalia.aon.occam.api.model.Certificate getCertificate(String domainName, Integer domainId, String login, AttachFilter attachFilter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificate(ctx, attachFilter);

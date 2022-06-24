@@ -173,7 +173,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		Column<Attach, String> dateColumn = new Column<Attach, String>(new TextCell()) {
 			@Override
 	        public String getValue(Attach attach) {
-				return formatDate.format(attach.getDate());
+				return null == attach.getDate() ? "" : formatDate.format(attach.getDate());
 	        }
 		};
 

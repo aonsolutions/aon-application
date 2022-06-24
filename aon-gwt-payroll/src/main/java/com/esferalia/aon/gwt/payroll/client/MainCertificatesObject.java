@@ -71,11 +71,26 @@ public class MainCertificatesObject {
 		});
 	}
 	
+	public void getDomainId(Consumer<Integer> success, Consumer<Throwable> failure) {
+		impl.getDomain(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	// -------------------------------------------------- DataBase methods (DigitalCertificate)
 	
 	public void getCertificates(Consumer<List<Certificate>> success, Consumer<Throwable> failure){
 		
-		impl.getCertificates(new AsyncCallback<List<Certificate>>() {
+		impl.getCertificates(true, new AsyncCallback<List<Certificate>>() {
 			
 			@Override
 			public void onSuccess(List<Certificate> certificateListDB) {

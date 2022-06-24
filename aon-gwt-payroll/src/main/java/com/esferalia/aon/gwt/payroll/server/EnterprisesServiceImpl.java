@@ -3345,13 +3345,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// --------------------------- Certificates
 
 	@Override
-	public List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domain, String login) throws IllegalArgumentException {
+	public List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domain, String login, boolean withParent) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
 			
-			return AON.getCertificates(domain, domainId, login, userId);
+			return withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, userId) : AON.getCertificates(domain, domainId, login, userId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

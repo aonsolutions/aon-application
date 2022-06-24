@@ -211,7 +211,7 @@ public interface EnterprisesServiceAsync {
 	
 	// --------------------------- Certificates
 	
-	void getCertificates(String domain, String login, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException;
+	void getCertificates(String domain, String login, boolean withParent, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteCertificate(String domain, String login, Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> asyncCallback) throws IllegalArgumentException ;
 	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
