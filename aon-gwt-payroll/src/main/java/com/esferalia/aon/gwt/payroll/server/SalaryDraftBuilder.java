@@ -155,6 +155,24 @@ public class SalaryDraftBuilder
 		return formatted;
 	}
 	
+	private static String formatChildItemDescription(Item<?> item, Date draftStart, Date draftEnd) {
+
+		Date itemStart = item.getStartDate();
+		Date itemEnd = item.getEndDate();
+		
+		StringBuffer description = new StringBuffer(); 
+		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
+		
+		String format = "dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
+		String formatted = 	description.append(" ")
+							.append(formatDate(itemStart, format).orElse(""))
+							.append(" - ")
+							.append(formatDate(itemEnd, format).orElse(""))
+							.toString();
+		
+		return formatted;
+	}
+
 	private static String formatItemDescription(Item<?> item, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd) {
 		
 		if ( item.getType() == Deduction.Type.IRPF )
@@ -791,11 +809,14 @@ public class SalaryDraftBuilder
 				|| isNotZero(tax) ) {
 				Payment compositePayment = newCompositePayment(siblingPayment, draftPayment);
 				replacePayment(siblingPayment, compositePayment);
+
+				draftPayment.setDescription(formatChildItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 			}
 		}else {
 			salaryDraft.addPayment(draftPayment);
+			draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 		}
-		draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		
 		
 	}
 
