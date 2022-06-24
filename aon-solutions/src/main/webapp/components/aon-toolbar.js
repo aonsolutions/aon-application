@@ -178,13 +178,12 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
-	addSearchButton() {
+	addSearchButton(opened=false) {
 		const id = this.TOOL_SECTION + 'Search';
 		let search = this.getElement(id);
 		if(!search) {
 			search = new AonSearch();
 			search.id = id;
-
 			const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
 			const searchValueFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE, { detail: event.detail }));
 
@@ -199,8 +198,15 @@ export class AonToolbar extends AonElement {
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(search, toolSection.children[0]);
-			} else toolSection.appendChild(search);
+			} else{
+				toolSection.appendChild(search);
+			}
+
+			if(opened){
+				search.openSearch();
+			}
 		}
+
 		return search;
 	}
 

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
+import static com.esferalia.aon.payroll.calculator.TaxCalculator.getMonth;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
@@ -53,6 +54,8 @@ import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.TaxCalculator.ExtraException;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
@@ -330,24 +333,18 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					throw new ExtraException();
 				
 				if ( !extraEmited(extraIssueDate, payment, ctx)) {
-					amount = calculateExtra(ctx, extraPayment, extraIssueDate);
+					Salary extra = calculateExtra(ctx, extraPayment, extraIssueDate);
+					amount = extra.getTotalPayment();
 					payment = new SalaryExtraPayment(payment, amount);
 					double tax = delegate.tax(payment, start, end, extraIssueDate, amount, total);
 					throw new YesExtraException(tax);
 				}
 				
-			} catch ( ClassCastException e ) {
-			} catch ( NullPointerException e ) {
+			} catch ( NullPointerException  | ClassCastException e ) {
 			} 
 			throw new ExtraException();
 		}
 		
-		private static IExtraPayment getExtraPayment(IPayment payment) {
-			while ( payment instanceof IHasPayment<?> )
-				payment = ((IHasPayment<?>) payment).getPayment();
-			return ( IExtraPayment) payment;
-		}
-
 	}
 
 	private class SmartQuoteCalculator extends QuoteCalculator {
@@ -360,34 +357,42 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			this.expressionContext = expressionContext;
 		}
 		
+		@Override
 		public Double getItBase() throws AonException {
 			return delegate.getItBase();
 		}
 
+		@Override
 		public Double getCgcBase() throws AonException {
 			return delegate.getCgcBase();
 		}
 
+		@Override
 		public Double getRawCgcBase() {
 			return delegate.getRawCgcBase();
 		}
 
+		@Override
 		public Double getRawCgpBase() {
 			return delegate.getRawCgpBase();
 		}
 
+		@Override
 		public Double getCgpBase() throws AonException {
 			return delegate.getCgpBase();
 		}
 
+		@Override
 		public Double getProExtBase() throws AonException {
 			return delegate.getProExtBase();
 		}
 
+		@Override
 		public Double getStructuralBase() throws AonException {
 			return delegate.getStructuralBase();
 		}
 
+		@Override
 		public Double getNonStructuralBase() throws AonException {
 			return delegate.getNonStructuralBase();
 		}
@@ -509,9 +514,68 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return expressionContext.eval(quoteExpr, start, end, Double.class);
 		}
 		
+		
+		
 
 	}
+	private static class ExtraBuilder extends SalaryBuilder{
+		@Override
+		public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+			
+			ExtraPayment extraPayment = new ExtraPayment(){
+				@Override
+				public boolean equals(Object obj) {
+					return this == obj;
+				}
+			};
+
+			extraPayment.setSalary(salary);
+			extraPayment.setIrpf(tax);
+			extraPayment.setQuote(quote);
+			extraPayment.setAmount(amount);
+			extraPayment.setType(payment.getType());
+			extraPayment.setPaymentConcept(payment.getName());
+			extraPayment.setDescription(description);
+			extraPayment.setExpression(payment.getExpression());
+
+			extraPayment.setStartDate(startDate);
+			extraPayment.setEndDate(endDate);
+			extraPayment.setContext(context);
+
+			getSalary().getSalaryPayments().add(extraPayment);
+		}
+	}
 	
+	private static class ExtraPayment extends SalaryPayment {
+		private Date endDate;
+		private Date startDate;
+		private Map<String, ITimedVariable<?>> context;
+		
+		public Date getEndDate() {
+			return endDate;
+		}
+		
+		public void setEndDate(Date endDate) {
+			this.endDate = endDate;
+		}
+		
+		public Date getStartDate() {
+			return startDate;
+		}
+		
+		public void setStartDate(Date startDate) {
+			this.startDate = startDate;
+		}
+		
+		public Map<String, ITimedVariable<?>> getContext() {
+			return context;
+		}
+		
+		public void setContext(Map<String, ITimedVariable<?>> context) {
+			this.context = context;
+		}
+	}
 	
 	
 	private List<PaymentResult> gtzdos;
@@ -552,6 +616,24 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		if ( AonStringUtils.isBlank(contractPayment.getExpression()) ) {
 			onCompileError(contractPayment, "Concepto vac\u00edo");
 			return;
+		}
+		SalaryType salaryType = contractPayment.getSalaryType();
+		
+		if ( salaryType != ctx.getSalaryType()  
+			&& salaryType == SalaryType.EXTRA ) {
+			try {
+				resolveExtra(contractPayment, 
+						start, 
+						end, 
+						issueDate, 
+						expressionContext, 
+						((SmartTaxCalculator)taxCalculator).delegate, 
+						((SmartQuoteCalculator)quoteCalculator).delegate, 
+						leavePeriods, 
+						strikePeriods);
+				return;
+			} catch ( NotNowException | ClassCastException e ) {
+			}
 		}
 		
 		super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
@@ -1241,7 +1323,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 
-	private static Double calculateExtra(ISQLContractSalaryCalculatorContext ctx, IExtraPayment extraPayment, Date issueDate) throws AonException {
+	private static Salary calculateExtra(ISQLContractSalaryCalculatorContext ctx, IExtraPayment extraPayment, Date issueDate) throws AonException {
 		SQLExtraSalaryCalculatorContext extraCtx = null;
 		try {
 			Criteria criteria = new Criteria();
@@ -1278,7 +1360,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				}
 			});
 
-			Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() ) {
+			return new SmartContractSalaryCalculator<Salary>(new ExtraBuilder() ) {
 					
 					@Override
 					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
@@ -1286,8 +1368,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					}
 			}
 			.calculate(extraCtx);
-			
-			return extra.getTotalPayment();
 			
 		} catch (NotNowException e) {
 			throw e;
@@ -1571,6 +1651,85 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		throw expressionException;
 	}
 
+	private void resolveExtra(IContractPayment contractPayment, Date start, Date end, Date issueDate,
+			ExpressionContext expressionContext, TaxCalculator taxCalculator, QuoteCalculator quoteCalculator,
+			List<Period> leavePeriods, List<Period> strikePeriods) 
+			throws AonException {
+		try {
+			IExtraPayment extraPayment = getExtraPayment(contractPayment);
+			Date extraIssueDate = parseExtraDate(extraPayment.getExtraIssueDate(), issueDate).getTime();
+			if ( !extraIssueDate.equals(issueDate) )
+				throw new NotNowException();
+			
+			Period extraPeriod = new Period(start, end);
+			
+			if ( !extraEmited(extraIssueDate, contractPayment, ctx)) {
+				Salary extra = calculateExtra(ctx, extraPayment, extraIssueDate);
+				
+				for ( SalaryPayment salaryPayment : extra.getSalaryPayments() ) {
+
+					ExtraPayment payment = (ExtraPayment) salaryPayment;
+					
+					Period paymentPeriod =new Period(payment.getStartDate(), payment.getEndDate());
+					List<Period> activePeriods = Period.sub(paymentPeriod, leavePeriods);
+					long allActiveDays = activePeriods.stream().collect(Collectors.summingLong(Period::getDays));
+					
+					for ( Period activePeriod : activePeriods ) {
+						
+						boolean atPaymentPeriod  = extraPeriod.intersects(activePeriod);
+						
+						double periodAmount = payment.getAmount() / allActiveDays * activePeriod.getDays();  
+						double periodQuote = atPaymentPeriod ? periodAmount: 0.00 ;  
+						if ( periodQuote > 0.00  ) {
+							quoteCalculator.quote(new DelegateContractPayment(contractPayment) {
+								@Override
+								public String getQuoteExpression() {
+									// TODO Auto-generated method stub
+									return Double.toString(periodQuote);
+								}
+							}, 
+							activePeriod.getStart(), 
+							activePeriod.getEnd(), 
+							periodQuote);
+						}
+						
+						salaryBuilder.addPayment(
+								periodAmount, 
+								periodQuote, 
+								periodAmount, 
+								payment.getDescription(), 
+								activePeriod.getStart(), 
+								activePeriod.getEnd(), 
+								contractPayment, 
+								payment.getContext());
+						
+					}
+
+				};
+				
+				DelegateContractPayment salaryExtraContractPayment = new DelegateContractPayment(contractPayment) {
+					@Override
+					public SalaryType getSalaryType() {
+						return SalaryType.SALARY;
+					};
+					
+					@Override
+					public String getIrpfExpression() {
+						return extra.getTotalPayment().toString();
+					}
+				};
+				
+				taxCalculator.tax(salaryExtraContractPayment, start, end, extraIssueDate, extra.getTotalPayment(), extra.getTotalPayment());
+				
+				return;
+			}
+			
+		} catch ( NullPointerException | ClassCastException e ) {
+		}
+		
+		throw new NotNowException();
+	}
+
 	// ------------------------------------------------------------------------
 	
 	protected static long getDays(Period period){
@@ -1591,6 +1750,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		return factor;
 	}
+
+
 	// ------------------------------------------------------------------------
 
 	private static long getDays(List<Period> periods){
@@ -1767,5 +1928,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return ctx.getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
 	}
 
+	private static IExtraPayment getExtraPayment(IPayment payment) {
+		while ( payment instanceof IHasPayment<?> )
+			payment = ((IHasPayment<?>) payment).getPayment();
+		return ( IExtraPayment) payment;
+	}
 	
 }

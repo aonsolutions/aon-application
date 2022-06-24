@@ -45,7 +45,7 @@ export class AonMessengerList extends AonElement {
 
   disconnectedCallback() {
     if (this.AON_TABLE) {
-      this.AON_TABLE.removeEventListener(EVENT.MORE, this.fnMore);
+      this.AON_TABLE.removeEventListener(EVENT.MORE, () =>this.loadMore(false));
     }
   }
 
@@ -90,7 +90,7 @@ export class AonMessengerList extends AonElement {
       this.AON_TABLE.addColumn("Asignado", "html", "assigned", "5%");
       this.AON_TABLE.addColumn(MSG.DATE, "html", "dateParse", "14%");
     }
-    this.AON_TABLE.addEventListener(EVENT.MORE, this.fnMore);
+    this.AON_TABLE.addEventListener(EVENT.MORE,() =>this.loadMore(false));
 
     await this.loadMore(true);
   }
@@ -107,13 +107,12 @@ export class AonMessengerList extends AonElement {
   }
 
   async loadMore(reload) {
-    // const application = this.getApplication();
-
-    // if(reload) application.startLoader();
-
+  
+    this.AON_TABLE.loading(true);
+    
     const datos = await this.getData();
 
-    // if(reload) application.stopLoader();
+    this.AON_TABLE.loading(false);
 
     if (reload) {
       setTasks(datos);

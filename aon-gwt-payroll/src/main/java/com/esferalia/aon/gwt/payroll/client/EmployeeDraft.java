@@ -1094,6 +1094,7 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
+				this.employeeDraftObject.getContractData().isHasTransformation(),
 				false){
 
 					@Override
@@ -1249,7 +1250,9 @@ public abstract class EmployeeDraft extends Composite {
 				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
-				this.employeeDraftObject.getContractData().getWorkplaceId(), true) {
+				this.employeeDraftObject.getContractData().getWorkplaceId(), 
+				this.employeeDraftObject.getContractData().isHasTransformation(),
+				true) {
 
 			@Override
 			protected void onAcceptCB() {

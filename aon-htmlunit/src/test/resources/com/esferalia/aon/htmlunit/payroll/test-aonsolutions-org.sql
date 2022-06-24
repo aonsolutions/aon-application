@@ -13531,7 +13531,7 @@ CREATE TABLE `contract_data` (
   KEY `IDX_CONTRACT_DATA_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRACT_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57804 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
+) ENGINE=InnoDB AUTO_INCREMENT=57806 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -15355,7 +15355,8 @@ INSERT INTO `contract_data` VALUES
 (57800,8777,'GRUPO_COTIZACION',6039,'\"04\"','2022-03-01',NULL),
 (57801,8777,'TIPO_SOLICITANTE_MAT_PAT',6039,'0','2021-06-08',NULL),
 (57802,8777,'MOTIVO_MAT_PAT',6039,'0','2021-06-08',NULL),
-(57803,8777,'COEFICIENTE_PATERNIDAD',6039,'0.5','2021-06-08',NULL);
+(57803,8777,'COEFICIENTE_PATERNIDAD',6039,'0.5','2021-06-08',NULL),
+(57805,8777,'SALARIO_MENSUAL',6039,'SMI*1.5','2022-06-01',NULL);
 /*!40000 ALTER TABLE `contract_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -16622,7 +16623,7 @@ CREATE TABLE `contract_payment` (
   CONSTRAINT `FK_CONTRACT_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29148 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
+) ENGINE=InnoDB AUTO_INCREMENT=29162 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -16906,8 +16907,8 @@ INSERT INTO `contract_payment` VALUES
 (29142,8777,1,6035,NULL,'HORAS_NOMINA',0,'HORAS_NOMINA','_P','_P','2022-01-01',NULL,NULL,0),
 (29143,8780,NULL,6036,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2022-01-01',NULL,NULL,0),
 (29145,8780,1,6037,NULL,'SALARIO JORNADAS',0,'10.00','_P','_P','2022-01-01',NULL,NULL,0),
-(29146,8777,NULL,6039,6266,'PLUS SALARIAL MENSUAL',0,'/*user*/ SMI*1.5/**/ * DIAS_TRABAJADOS / DIAS_MES',NULL,NULL,'2022-03-01',NULL,NULL,0),
-(29147,8777,1,6039,NULL,'[99] CHECK HORAS_NOMINA',0,'CHECK(HORAS_NOMINA<750.00/7.03, \"ERROR\" )','_P','_P','2022-06-01',NULL,NULL,0);
+(29159,8777,NULL,6039,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2022-06-01',NULL,NULL,0),
+(29161,8777,1,6039,NULL,'CHECK HORAS NOMINA',0,'CHECK(HORAS_NOMINA<750.00/7.03, \"ERROR HORAS NOMINA\")','_P','_P','2022-06-01',NULL,NULL,0);
 /*!40000 ALTER TABLE `contract_payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -17947,11 +17948,11 @@ LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
 INSERT INTO `domain` VALUES
 (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2020-12-09 20:01:33'),
-(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-06-20 22:13:51'),
-(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-06-20 22:13:54'),
+(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-06-21 18:40:17'),
+(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-06-21 18:08:39'),
 (8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2021-04-27 19:18:31'),
 (8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),
-(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2022-04-20 13:47:49'),
+(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2022-06-21 21:35:17'),
 (8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),
 (8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2021-04-27 19:35:50'),
 (8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2018-03-19 17:35:16'),
@@ -17959,7 +17960,7 @@ INSERT INTO `domain` VALUES
 (8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),
 (8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2017-11-09 16:43:50'),
 (8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2018-11-28 11:01:48'),
-(8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2022-03-31 20:17:45'),
+(8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2022-06-21 18:41:28'),
 (8790,'sistem-red-payroll-test.aonsolutions.org','SISTEMA RED',8776,0,NULL,NULL,1,0,0,1,100,0,1,'admon@aonsolutions.org','admin','2020-12-09 19:53:26',NULL,NULL,NULL,'portal','2020-12-11 08:38:43');
 /*!40000 ALTER TABLE `domain` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -57354,7 +57355,7 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
 (2862,0,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),
-(10248,8776,0,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,0,'es',NULL,NULL,'','2022-06-20 22:13:01',NULL,0),
+(10248,8776,0,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-06-21 21:35:16',NULL,0),
 (10249,8790,0,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -58052,4 +58053,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-20 20:26:29
+-- Dump completed on 2022-06-21 19:44:48

@@ -156,6 +156,12 @@ button:disabled, button[disabled]{
   color: #5f6368;
 }
 
+[placeholder]:empty::before {
+  content: attr(placeholder);
+  color: #555; 
+  opacity: 0.6;
+}
+
 .aonColorGray {
   color: #a2a8b6;
 }

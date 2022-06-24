@@ -43,13 +43,14 @@ import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.CopyBasic;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
+import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.sepe.exceptions.statusCode.StatusCodeException;
 import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
 	
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testContrata.html");
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 	
 	private Contrata() {
 		throw new IllegalStateException("Utility class");
@@ -370,7 +371,7 @@ public class Contrata {
 					htmlPage = sepeReturnInitPage(htmlPage, cto); 
 				} 
 			}
-
+			
 			if(message!=null && message.indexOf("E")>=0) {
 				message = message.substring(1);	
 			} else {
@@ -1264,7 +1265,8 @@ public class Contrata {
 		final List<String> list = Arrays.asList(
 				"sin fecha de t\u00E9rmino", 
 				"f\u00EDsica en la base de datos", 
-				"igual o inferior a 90"
+				"igual o inferior a 90", //previsible inferior o igual a 90 dias
+				"convenio colectivo que autoriza" //previsible mayor a 90 dias
 		);
 		
 		for( DomNode p: texts) {
@@ -1301,8 +1303,13 @@ public class Contrata {
 		//---------------------PREVISIBLE---------------------
 		if( Arrays.asList("402", "502").contains(cto.getCodContract()) ) { // es previsible
 			DomNode previsible = form.querySelector("select[name=preg90dias]"); 
-			if(previsible!=null) {
+			if(previsible!=null) {	//previsible inferior o igual a 90 dias
 				((HtmlSelect)previsible).setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
+			} else {
+				DomNode previsibleAutoriza = form.querySelector("select[name=AutorizaDuracion]");
+				if(previsibleAutoriza!=null) { //previsible mayor a 90 dias
+					((HtmlSelect)previsibleAutoriza).setSelectedAttribute(cto.getPrevisible() ? "1" : "0", true);
+				}
 			}
 		}
 		
@@ -1322,7 +1329,7 @@ public class Contrata {
 					Pattern pattern = Pattern.compile("certificado\\s*digital\\s*no\\s*v.lido", Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(body);
 					if(matcher.find()){
-						throw new SepeException("Certificado digital no v\u00e1lido");
+						throw new InvalidCertificateException("Certificado digital no v\u00e1lido");
 					}
 				}
 			}

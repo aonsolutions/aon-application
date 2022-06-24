@@ -29,6 +29,17 @@ import { AonMessengerChat } from "../aon-messeger-chat.js";
   return div;
 }
 
+export const createDivGridBefore = (parent, child, properties)=> {
+
+  const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+  parent.parentNode.insertBefore(div, parent.lastElementChild);
+
+  if(child) div.appendChild(child);
+
+  return div;
+}
+
 export const createBtnAccept = () => {
   let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
   btnAccept.className = CSS.AON_BUTTON;
@@ -429,7 +440,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createCustomer = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
-  title: MSG.ENTERPRISE,
+  title: MSG.CUSTOMER,
   autocomplete: CONSTANT.OFF,
   readonly: CONSTANT.FALSE
 });
@@ -492,7 +503,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   const {me, notification_date, date, task} = properties;
 
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-
+  
   if(messageSend || me){
     let color = COLORS.AON_BLUE;
 
@@ -528,7 +539,9 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
       message.appendChild(iconEdit);
       iconEdit.title = MSG.EDIT;
       setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 , right: "17px", cursor: "pointer" });
-      iconEdit.addEventListener(EVENT.CLICK, ()=> setContentMessageChat(task, parseInt(message.dataset.id)));
+      iconEdit.addEventListener(EVENT.CLICK, ()=> {
+        setContentMessageChat(task, parseInt(message.dataset.id))
+      });
 
       if(iconSend) iconSend.style.right = "41px";
     }
@@ -587,13 +600,11 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   const message = createMessageBox(properties);
   parentElement.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
-  let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
-
   let messageSend = properties.notification_user; // si el mensaje fue enviado
-  
+ 
   createIconMessage(message, messageSend, true, properties);
 
-  if(!me){
+  if(!properties.me){
     properties.marginLeft = "20px";
   }
 
@@ -633,7 +644,7 @@ export const createSectionComment = (div) => {
     divComment.title = MSG.COMMENT;
     divWrite.appendChild(divComment);
   
-    const divMain  = setStyles(document.createElement(TAG.DIV),{
+    const divMain = setStyles(document.createElement(TAG.DIV),{
       width: "100%",
       display: "flex",
       flexDirection: "row-reverse",
@@ -717,7 +728,7 @@ export const createCardMessenger = (id, title) =>{
 export const createInputContact = () =>  setAttributes(new AonInput(),{
   name:MESSENGER_IDS.GTASK_ID_TASK,
   id: MESSENGER_IDS.GTASK_ID_TASK,
-  description: MSG.CONTACT + ` (${MSG.OPTIONAL})`
+  description: `${MSG.CONTACT} (${MSG.OPTIONAL})`
 });
 
 export const createInputTitle = () =>  setAttributes(new AonInput(),{
@@ -771,7 +782,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   });
   divOne.appendChild(divTwo);
 
-  const icon =  setStyles(document.createElement(TAG.I),{ fontSize:"15px" });
+  const icon = setStyles(document.createElement(TAG.I),{ fontSize:"15px" });
   icon.className = CONSTANT.MATERIAL_ICONS;
   icon.innerText = MATERIAL_ICONS.CLOSE;
   divTwo.appendChild(icon);

@@ -30,6 +30,7 @@ public class Certificate implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	private Integer domain;
 	private CertificateOwner owner;
 	private String description;
 	private CertificateSecurity confidential;
@@ -59,6 +60,15 @@ public class Certificate implements Serializable {
 
 	public Certificate setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public Certificate setDomain(Integer domain) {
+		this.domain = domain;
 		return this;
 	}
 

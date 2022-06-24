@@ -4779,6 +4779,75 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 	}
 	
 
+	@Test
+	public void testGtzdoOut() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA,16,199)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"( P_0 + P_1 + P_2 ) * 0.10"
+						
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		Date endIt = AonDateUtils.add(startIt, Calendar.DATE, 5);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.OCCUPATIONAL_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 / 30 * 24 * 1.10, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
 	// ----------------------------------------------------------------------------------
 
 

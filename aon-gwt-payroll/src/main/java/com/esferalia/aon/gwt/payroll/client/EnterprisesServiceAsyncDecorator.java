@@ -18,13 +18,13 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
+import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -50,13 +51,11 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -266,6 +265,14 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.moveAgreement2Parent(domain, agreement, new 
+				AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void moveAgreement2Child(String domain, Integer agreementId,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.moveAgreement2Child(domain, agreementId, new 
 				AsyncCallbackWrapper<Void>(callback));
 	}
 
@@ -591,18 +598,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.setContractAttachments(currentDomainName, contractId, contractAttachments, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.createContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
 	public void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deleteContractAttach(currentDomainName, login, attachId, new AsyncCallbackWrapper<Void>(callback));
@@ -898,9 +893,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	// --------------------------- Certificates
 
 	@Override
-	public void getCertificates(String domain, String login, AsyncCallback<List<Certificate>> callback) throws IllegalArgumentException {
+	public void getCertificates(String domain, String login, boolean withParent, AsyncCallback<List<Certificate>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getCertificates(domain, login, new AsyncCallbackWrapper<>(callback));
+		enterprisesServiceAsync.getCertificates(domain, login, withParent, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

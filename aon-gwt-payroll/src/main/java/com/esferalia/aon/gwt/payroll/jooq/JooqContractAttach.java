@@ -78,60 +78,6 @@ public class JooqContractAttach {
 		return contractAttachs;
 	}
 
-	public static void createContractAttach(Connection conn, ContractAttach contractAttach) {
-		createContractAttachDB(DSL.using(conn, getDefaultSettings()), contractAttach);
-	}
-
-	private static void createContractAttachDB(DSLContext dslContext, ContractAttach contractAttach) {
-		 dslContext.insertInto(CONTRACT_ATTACH)
-			.set(CONTRACT_ATTACH.DOMAIN, contractAttach.getDomain())
-			.set(CONTRACT_ATTACH.CONTRACT, contractAttach.getContract())
-			.execute();
-	}
-	
-	public static void setContractAttachments(Connection conn, List<ContractAttach> contractAttachments) {
-		setContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), contractAttachments);
-	}
-	
-	private static void setContractAttachmentsDB(DSLContext dslContext, List<ContractAttach> contractAttachments) {
-		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-		
-		for(ContractAttach contractAttach : contractAttachments) {
-			if(null == contractAttach.getContract())
-				continue;
-			
-			dslContext.update(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DESCRIPTION, contractAttach.getDescription())
-				.set(CONTRACT_ATTACH.TYPE, contractAttach.getType() == (byte) -1 ? null : contractAttach.getType())
-				.set(CONTRACT_ATTACH.SCOPE, contractAttach.getScope() == (byte) -1 ? null : contractAttach.getScope())
-				.set(CONTRACT_ATTACH.SECURITY_LEVEL, contractAttach.getSecurityLevel())
-				.set(CONTRACT_ATTACH.ATTACH_DATE, contractAttach.getAttachDate() == null ? null : new Timestamp(contractAttach.getAttachDate().getTime()))
-				.where(CONTRACT_ATTACH.ID.eq(contractAttach.getId()))
-				.execute();
-			
-		}
-		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
-	}
-	
-	public static void setContractAttachAttachment(String domainName, Integer attachId, String fileName, byte[] data, byte mimeType) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			
-			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-			
-			dslContext.update(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DESCRIPTION, fileName)
-				.set(CONTRACT_ATTACH.DATA, data)
-				.set(CONTRACT_ATTACH.MIMETYPE, mimeType)
-				.where(CONTRACT_ATTACH.ID.eq(attachId))
-				.execute();
-			
-		}catch (SQLException e) {
-			throw new RuntimeException(e);
-		} 
-	}
-
 	public static byte[] getContractAttachAttachment(String domainName, Integer attachId) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
@@ -343,23 +289,6 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.TYPE, (byte)103)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
-	}
-	
-	// ------------------------------------------ SaveAttach
-
-	private void saveAttach(String domainName, Integer domainId, String login, Integer contractId, String description, ContractAttachType type, byte[] data) {
-		com.esferalia.aon.occam.api.model.payroll.ContractAttach contractAttach = new com.esferalia.aon.occam.api.model.payroll.ContractAttach();
-		
-		contractAttach
-			.setDomain(domainId)
-			.setContract(contractId)
-			.setMimeType(MimeType.PDF)
-			.setDescription(description)
-			.setData(data)
-			.setType(type)
-			.setAttachDate(new Date());
-
-		PAYROLL.saveContractAttach(domainName, domainId, login, contractAttach);
 	}
 	
 }
