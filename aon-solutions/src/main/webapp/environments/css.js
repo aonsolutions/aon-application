@@ -314,6 +314,12 @@ export const AON_TEXTAREA = 'aonTextarea';
 
 export const AON_SEARCH_INPUT = 'aonSearchInput';
 
+// aon-autosize-textarea
+
+export const AON_AUTOSIZE_TEXTAREA = 'aonAutosizeTextarea';
+export const AON_AUTOSIZE_TEXTAREA_CONTENT = 'aonAutosizeTextareaContent';
+export const AON_AUTOSIZE_TEXTAREA_TITLE = 'aonAutosizeTextareaTitle';
+
 /**
  * Name to CSS variable conversion.
  * @param {string} name - the variable name

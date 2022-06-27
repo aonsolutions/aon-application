@@ -432,8 +432,8 @@ export class Invoice {
 
   setWorkplace (workplace) {
     this.workplace = workplace;
-    this.getDetails().forEach((detail, i) => {
-      this.getDetails()[i].workplace = workplace;
+    this.details.forEach((detail, i) => {
+      this.details[i].workplace = workplace;
     });
     return this;
   }

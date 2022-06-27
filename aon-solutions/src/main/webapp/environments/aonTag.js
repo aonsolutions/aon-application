@@ -20,9 +20,11 @@ export const SECTION = 'section';
 export const IFRAME = 'iframe';
 
 // COMPONENTS
+
 export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
+export const AON_AUTOSIZE_TEXTAREA = 'aon-autosize-textarea';
 export const AON_BASIC_TABLE = 'aon-basic-table';
 export const AON_CARD = 'aon-card';
 export const AON_CHECKBOX = 'aon-checkbox';

@@ -15,6 +15,7 @@ export const KEYPRESS = 'keypress';
 export const KEYUP = 'keyup';
 export const KEYDOWN = 'keydown';
 export const AON_KEYUP = 'aon-keyup';
+export const AON_CHANGE = 'aon-change';
 export const MOUSELEAVE = 'mouseleave';
 export const MOUSEOVER = 'mouseover';
 export const MOUSEMOVE = 'mousemove';
