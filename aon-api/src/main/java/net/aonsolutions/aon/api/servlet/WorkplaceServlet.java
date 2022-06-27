@@ -11,12 +11,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.WorkplaceJSON;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;

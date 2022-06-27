@@ -24,6 +24,8 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.DailyTrackingJSON;
+import com.esferalia.aon.occam.api.json.JobTypeJSON;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskHolderJSON;
@@ -40,6 +42,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.DailyTracking;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskCounts;
@@ -73,6 +76,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/notice":
 					response(req, resp, new JSONObject());
+					break;
+				case "/job-type":
+					response(req, resp, getJobType(api));
 					break;
 				case "/one":
 					response(req, resp, getTask(api));
@@ -287,6 +293,15 @@ public class TaskServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
+	private JSONArray getJobType(AonApiData api) {
+		Domain domain     = api.getDomain();
+		User user         = api.getUser();
+
+		return JobTypeJSON.toJSON(
+				AON_SOLUTIONS.getJobTypeStream(domain, user, f->f.getDomainProperty().eq(domain.getId()))
+		);
+	}
+	
 	private JSONArray getWorkflows(AonApiData api) {
 		Domain domain = new Domain().setId(api.getData().optInt(IJsonNames.DOMAIN_ID)).setName(api.getData().optString(IJsonNames.DOMAIN_NAME));
 		
@@ -369,6 +384,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(notification) {
 			TaskUtils.onNotification(api, workflow);
 		}
+		
+		if(workflowTmp.getType().equals(TaskWorkflowType.CLOSE)){
+			 // save DAILY_TRACKING
+			saveDailyTracking(api);
+		}
 
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
@@ -376,9 +396,10 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject updateWorkflow(AonApiData api) {
 		JSONObject params = api.getData();
-		Integer taskId = params.optInt(IJsonNames.TASK);
+		
+		Integer taskId   = params.optInt(IJsonNames.TASK);
 		Integer workflow = params.getInt(IJsonNames.WORKFLOW);
-		String comment = params.optString(IJsonNames.COMMENT);
+		String comment   = params.optString(IJsonNames.COMMENT);
 		
 		if(!comment.isEmpty()) {
 			TaskWorkflow data = AON_SOLUTIONS.getTaskWorkflow(
@@ -694,7 +715,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					if(!taskHolderExist) { 
 						appParams.stream().filter(p-> 
 							p.getName().contentEquals(isCau ? AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER.name() : AppParamsRequest.APP_REQUESTS_INT_TASK_HOLDER.name())
-						).findFirst().ifPresent(d->{
+						)
+						.findFirst()
+						.ifPresent(d->{
 							TaskHolder th = new TaskHolder();
 							th.setId(Integer.parseInt(d.getValue()));
 							task.setTaskHolder(th);
@@ -704,4 +727,23 @@ public class TaskServlet extends AonApiHttpServlet{
 			}
 		} catch (Exception e) {}
 	}
+	
+	//---------DAILY_TRACKING----------
+	private void saveDailyTracking(AonApiData api) {
+		JSONObject json = api.getData().optJSONObject("dailyTracking");
+		if(json!=null) {
+			DailyTracking dailyTracking = DailyTrackingJSON.fromJSON(json);
+			Domain domain = dailyTracking.getDomain();
+			User user = api.getUser();
+			DailyTracking exist = AON_SOLUTIONS.getDailyTracking(domain, user, f->f.getDomainProperty().eq(domain.getId()).and(f.getTaskProperty().eq(dailyTracking.getTask())));
+			if(exist!=null && exist.getId()!=null) {
+				LOGGER.info("---- UPDATE DAILY_TRACKING------");
+				AON_SOLUTIONS.saveDailyTracking(domain, api.getUser(), dailyTracking.setId(exist.getId()));
+			} else {
+				LOGGER.info("---- SAVE DAILY_TRACKING------");
+				AON_SOLUTIONS.saveDailyTracking(domain, api.getUser(), dailyTracking);
+			}	
+		}
+	}
+	
 }
