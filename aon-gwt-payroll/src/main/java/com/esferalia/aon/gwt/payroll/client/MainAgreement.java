@@ -196,6 +196,43 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 	}
 	
+	class MoveDownAgreementCommand implements ScheduledCommand {
+		@Override
+		public void execute() {
+			AonDialog dialog = new AonDialog("Descargar dominio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					moveAgreement2Child(MainAgreement.this.agreement);
+				}
+			});
+		}
+		
+		private void moveAgreement2Child(Agreement agreement) {
+			AonMessagePanel.showLoading(messagesPanel, "Descargando convenio al dominio...");
+			MainAgreement.this.agreements.getAgreementsTree().getEnterpriseService()
+				.moveAgreement2Child(agreement.getId(), new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagesPanel, "Opss... " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					AonMessagePanel.showSuccess(messagesPanel, "Convenio descargado correctamente");
+					MainAgreement.this.agreements.reloadAgreements();
+				}
+			});
+		}
+	}
+	
 	// ------------------------------------------- ContextMenu
 	
 	class AgreementContextMenu extends ContextMenu {
@@ -205,6 +242,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		private MenuItem copyItem = null;
 		private MenuItem pasteItem = null;
 		private MenuItem moveItem = null;
+		private MenuItem moveDownItem = null;
 		private MenuItem deleteItem = null;
 		
 		public AgreementContextMenu() {
@@ -231,6 +269,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			moveItem.ensureDebugId("moveItem");
 			moveItem.setTitle("Mover convenio al dominio padre");
 			moveItem.setVisible(false);
+			
+			moveDownItem = addItem("Descargar a..", new MoveDownAgreementCommand(), 
+					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			moveDownItem.ensureDebugId("moveItem");
+			moveDownItem.setTitle("Descargar convenio al dominio hijo (incluye contratos asociados)");
+			moveDownItem.setVisible(false);
 
 		}
 		
@@ -255,6 +299,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		public void setVisibleMoveItem(boolean visible) {
 			this.moveItem.setVisible(visible);
+		}
+		
+		public void setVisibleMoveDownItem(boolean visible) {
+			this.moveDownItem.setVisible(visible);
 		}
 
 		public void setVisibleDeleteItem(boolean visible) {
@@ -333,7 +381,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private static final String AGREEMENT = "c-agreement";
 	
 	private HTMLPanel messagesPanel = new HTMLPanel("");
-	private Integer parentDomain;	
+	private Integer parentDomain;
+	private Integer domain;
 	private Storage storage;
 	private Map<Integer, AgreementDraftObject> agreementDrafts;	
 	private Agreement agreement;
@@ -396,6 +445,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.editionsListener = new LinkedList<>();
 		this.agreement = null;
 		this.parentDomain = null;
+		this.domain = null;
 		this.contextMenu = new AgreementContextMenu();
 		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
@@ -429,19 +479,32 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void onSuccess(Integer parentDomain) {
 				MainAgreement.this.parentDomain = parentDomain;	
-				agreements.getAgreementsTree().getEnterpriseService().getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
-					
-					@Override
-					public void onSuccess(DomainUserRoles result) {
-						userRoles = result;
-						toolbar.setVisibleImportButton(true);
-					}
+				agreements.getAgreementsTree().getEnterpriseService().getDomain(new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onFailure(Throwable caught) {
 						// Not use here
 					}
 					
+					@Override
+					public void onSuccess(Integer domain) {
+						MainAgreement.this.domain = domain;	
+
+						agreements.getAgreementsTree().getEnterpriseService().getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+							
+							@Override
+							public void onSuccess(DomainUserRoles result) {
+								userRoles = result;
+								toolbar.setVisibleImportButton(true);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								// Not use here
+							}
+							
+						});
+					}
 				});
 			}
 		});
@@ -466,6 +529,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
 				parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
+		
+		this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
 
 		AgreementDraftObject agreementDraftObject = agreementDrafts.get(agreement.getId());
 		

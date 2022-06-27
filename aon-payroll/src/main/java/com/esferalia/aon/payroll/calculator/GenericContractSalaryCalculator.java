@@ -145,6 +145,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static final String EXTRA_DATE_ERROR = "<div>Fecha '%s' err\u00f3nea en la paga extra %s. Por favor, rev\u00edsela.</div>"
 			+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>";
 	
+	private static final String TAX_UNDEFINED_ERROR = "<div>Error en la tributaci\u00f3n del concepto <span style='color:blue;'>%s</span>, no se ha encontrado <span style='color:orange;'>%s</span>. Por favor, rev\u00edselo.</div>"
+			+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>";
+
 	private static final Collection<String> CONCEPTS = new ArrayList<String>() {
 		{
 			add("ANTIGUEDAD");
@@ -440,8 +443,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		
 	}
 
-	private IListener listener;
-	private ISalaryBuilder<T> salaryBuilder;
+	protected IListener listener;
+	protected ISalaryBuilder<T> salaryBuilder;
 
 	public GenericContractSalaryCalculator() {
 	}
@@ -523,6 +526,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	// -------------------------------------------------------------- Protected
+	
 
 	protected void fillEnterpriseData(IContractSalaryCalculatorContext ctx) {
 		salaryBuilder.setCcc(ctx.getCcc());
@@ -1566,7 +1570,23 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						e.getMessage(),
 						contractPayment.getDescription())
 						);
-					} 
+					} catch ( UndefinedVariablesException e) {
+						tax = resultValue;
+						String irpfExpression = Double.toString(resultValue);
+						taxCalculator.tax(new DelegateContractPayment(contractPayment) {
+							@Override
+							public String getIrpfExpression() {
+								return irpfExpression;
+							};
+						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						onCheckError(
+						contractPayment,
+						String.format(
+						TAX_UNDEFINED_ERROR,
+						contractPayment.getDescription(),
+						Arrays.stream(e.getVariableNames()).collect(Collectors.joining(",")))
+						);
+					}
 					String description = null;
 					try {
 						description = expressionContext.evalTemplate(contractPayment.getDescription(), resultStart,

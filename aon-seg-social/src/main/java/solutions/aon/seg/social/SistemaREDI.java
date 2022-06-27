@@ -689,7 +689,11 @@ class SistemaREDI {
 						ret.add(new Idc("BAJA", d));
 					}
 				}
-				htmlPage = clickAndCheckCode(htmlPage.getElementById("Sub2206501001"));
+				
+				DomElement pagSig = htmlPage.getElementById("Sub2206301003");
+				if ( pagSig != null ) {
+					htmlPage = clickAndCheckCode(pagSig);
+				}
 
 				try {
 					HtmlUnitToolkit.getSSCode(htmlPage);

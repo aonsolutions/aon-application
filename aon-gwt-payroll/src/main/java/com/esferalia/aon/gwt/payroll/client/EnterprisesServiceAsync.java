@@ -84,6 +84,7 @@ public interface EnterprisesServiceAsync {
 	void getPaymentConcepts(String domain, int offset , int limit, AsyncCallback<List<Payment>> callback);
 	void getDeductionConcepts(String domain, int offset , int limit, AsyncCallback<List<Deduction>> callback);
 	void moveAgreement2Parent(String domain, Agreement agreement, AsyncCallback<Void> callback);
+	void moveAgreement2Child(String domain, Integer agreementId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	void getParentDomain(String domain, AsyncCallback<Integer> callback);
 	void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
