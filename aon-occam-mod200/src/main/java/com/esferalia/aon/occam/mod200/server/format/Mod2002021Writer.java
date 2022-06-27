@@ -335,12 +335,12 @@ public class Mod2002021Writer {
 			document = mod200.getGroupEntities().get(index).getDocument();
 			country = mod200.getGroupEntities().get(index).getCountry();
 		}
-		line.append(AonFiscalFileUtils.text(document,15));                        // NIF 
-		//line.append(AonFiscalFileUtils.spaces(5));                                // Reservado para la AEAT
+		line.append(AonFiscalFileUtils.text(document,15));                          // NIF 
 		line.append(AonFiscalFileUtils.text((country == "ES" ? "" : country), 2));  // Pais (solo se pone pais si no es España)
 	}
 
 	// Cifra de Negocios - Nif establecimientos permanentes
+	// Producciones cinematográficas
 	private static void addNIF(Writer line, LinkedList<String> list, int index) throws IOException {
 		String document = "";
 		if (index < list.size()) {
@@ -613,16 +613,10 @@ public class Mod2002021Writer {
 						for (int i = 1; i <= 5; i++) {
 							addCompanyAdministrator(line, mod200, a++);
 						}
-//						addCompanyAdministrator(line, mod200, a++);
-//						addCompanyAdministrator(line, mod200, a++);
-//						addCompanyAdministrator(line, mod200, a++);
-//						addCompanyAdministrator(line, mod200, a++);						
 		
 						for (int i = 1; i <= 3; i++) {
 							addCompanyParticipationOut(line, mod200, b1++);
 						}
-//						addCompanyParticipationOut(line, mod200, b1++);
-//						addCompanyParticipationOut(line, mod200, b1++);
 		
 						addUnSignedKey(line, mod200, Mod2002021Key.P1501, DS, DD, isComplementary);
 						addUnSignedKey(line, mod200, Mod2002021Key.P1502, DS, DD, isComplementary);
@@ -637,11 +631,6 @@ public class Mod2002021Writer {
 						for (int i = 1; i <= 6; i++) {
 							addCompanyParticipationIn(line, mod200, b2++);
 						}
-//						addCompanyParticipationIn(line, mod200, b2++);
-//						addCompanyParticipationIn(line, mod200, b2++);
-//						addCompanyParticipationIn(line, mod200, b2++);
-//						addCompanyParticipationIn(line, mod200, b2++);
-//						addCompanyParticipationIn(line, mod200, b2++);
 		
 						addUnSignedKey(line, mod200, Mod2002021Key.POR51, 5, 2, isComplementary);
 						addUnSignedKey(line, mod200, Mod2002021Key.PORES, 5, 2, isComplementary);
@@ -1328,9 +1317,8 @@ public class Mod2002021Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002021Key.LQ1033)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002021Key.LQ1034)
 				
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(153)) // Reservado para la AEAT
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(153))  // Reservado para la AEAT
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces( 47)) // Reservado para la AEAT
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(153)) // Reservado para la AEAT
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(47)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 
@@ -1524,10 +1512,6 @@ public class Mod2002021Writer {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");
 						addBreakdown(line, mod200, Mod2002021BN590Key.values(), Mod2002021Key.BN2287, null, isComplementary);
-//						addSignedKey(line, mod200, Mod2002021Key.BN2287, isComplementary); // Información adicional para el cálculo de límites de deducciones - 2021: Deducción por investigación y desarrollo en Canarias generada en el período impositivo 
-//						addSignedKey(line, mod200, Mod2002021Key.BN2288, isComplementary); // Información adicional para el cálculo de límites de deducciones - 2021: Deducción por innovación tecnológica en Canarias generada en el período impositivo 
-//						addSignedKey(line, mod200, Mod2002021Key.BN2495, isComplementary); // Información adicional para el cálculo de límites de deducciones - 2021: Deducción por producciones cinematográficas españolas en Canarias generada en el período impositivo 
-//						addSignedKey(line, mod200, Mod2002021Key.BN2496, isComplementary); // Información adicional para el cálculo de límites de deducciones - 2021: Deducción por espectáculos en vivo de artes escénicas y musicales en Canarias generada en el período impositivo 
 						addBreakdown(line, mod200, Mod2002021BN588Key.values(), null, Mod2002021Key.BN2192, isComplementary);
 						
 						for (int i = 1; i <= 6; i++) {
@@ -1659,17 +1643,6 @@ public class Mod2002021Writer {
 						for (int i = 1; i <= 12; i++) {
 							addGroupNIF(line, mod200, i1++);
 						}
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
-//						addGroupNIF(line, mod200, i1++);
 		
 						addSignedKey(line, mod200, Mod2002021Key.CN988, isComplementary);
 						addUnSignedKey(line, mod200, Mod2002021Key.CNEST, 3, 0, isComplementary);
@@ -1677,10 +1650,6 @@ public class Mod2002021Writer {
 						for (int i = 1; i <= 5; i++) {
 							addNIF(line, mod200.getEstablishments(), i2++);
 						}
-//						addNIF(line, mod200.getEstablishments(), i2++);
-//						addNIF(line, mod200.getEstablishments(), i2++);
-//						addNIF(line, mod200.getEstablishments(), i2++);
-//						addNIF(line, mod200.getEstablishments(), i2++);
 		
 						addSignedKey(line, mod200, Mod2002021Key.CN989, isComplementary);
 						
@@ -1741,9 +1710,6 @@ public class Mod2002021Writer {
 						for (int i = 1; i <= 4; i++) {
 							addUteBase(line, mod200, i1++);
 						}
-//						addUteBase(line, mod200, i1++);
-//						addUteBase(line, mod200, i1++);
-//						addUteBase(line, mod200, i1++);
 		
 						addSignedKey(line, mod200, Mod2002021Key.UTC01, isComplementary);
 						addSignedKey(line, mod200, Mod2002021Key.UTC02, isComplementary);
@@ -1755,15 +1721,6 @@ public class Mod2002021Writer {
 						for (int i = 1; i <= 10; i++) {
 							addUteParticipation(line, mod200, i2++);
 						}
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
-//						addUteParticipation(line, mod200, i2++);
 								
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		

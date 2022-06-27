@@ -21,20 +21,12 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1501, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1502, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1503, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1515, new Boolean[]{FALSE,TRUE});
-		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1504, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1505, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1506, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1809, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1810, new Boolean[]{FALSE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1507, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1508, new Boolean[]{FALSE,TRUE});
-		
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1516, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1517, new Boolean[]{FALSE,TRUE});		
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1523, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.P1571, new Boolean[]{FALSE,TRUE});
 		
 	}
 	
@@ -492,10 +484,6 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LQ1730,new Boolean[]{FALSE,TRUE});
 		addBreakdown(Mod2002021LQ1033_2Key.values(), Mod2002021Key.LQ1158, new byte[]{});  // No lleva columnas de totales
 		
-		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
-		// propios de entidades pendientes de reversión (DT 16ª LIS).	
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.LM1517,new Boolean[]{FALSE,TRUE});
-		
 	}
 	
 	static { 
@@ -535,17 +523,9 @@ public class Mod2002021Behaviour {
 	static { 
 		
 		// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC2437, new Boolean[]{FALSE,TRUE});
-////		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC093, new Boolean[]{FALSE,TRUE});
-////		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC048, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC527, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC925, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC996, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.RC2441, new Boolean[]{FALSE,TRUE});
 		addBreakdown(Mod2002021RIC_1Key.values(), new Mod2002021Key[] {}); // No lleva fila de totales
 		
 		// REGIMEN DE COOPERATIVAS - Determinacion de la base imponible
-//		addBreakdown(Mod2002021LQ554Key.values(), Mod2002021Key.CP0C6, Mod2002021Key.CPC12, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
 		addBreakdown(Mod2002021LQ554Key.values(), new Mod2002021Key[] {Mod2002021Key.CP0C6, Mod2002021Key.CPC12}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
 		
 		// REGIMEN DE COOPERATIVAS - Desglose Casilla 561 - Detalle de compensación de cuotas
@@ -591,7 +571,6 @@ public class Mod2002021Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR616, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR642, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR618, new Boolean[]{FALSE,TRUE});
-//		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR620, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1332,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002021Key.TR1333,new Boolean[]{FALSE,TRUE});
 
@@ -636,50 +615,7 @@ public class Mod2002021Behaviour {
 	// Añade los totales de los desgloses a BEHAVIOUR_KEYS_MAP, como casillas que no se pueden modificar, pues son calculadas
 	// Normalmente los totales van en la última columna y en la última fila, aunque algunos desgloses no cumplen esa regla
 	// por eso se indica alguna de las casillas de la fila(s) de los totales para indicar cual es la fila de totales y
-	// la columna de total se asume que es la última salvo que venga indicado el parametro positionsColumnsTotal
-//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key totalRowKey2, byte... positionsColumnsTotal ) {
-//		
-//		for (IMod200KeysProvider kp : keysProvider) {			
-//		
-//			IMod200Key[] keys = kp.getKeys();
-//			
-//			// Columna de totales
-//			// Normalmente la última columna es el total, salvo que venga cumplimentado positionsColumnsTotal, 
-//			// en tal caso se le pasará un array con las posiciones (base 0), que ocupan las columnas de los totales
-//			// ya que algunos desgloses llevan mas de una columna de totales, o la ultima columna no es el total, 
-//			// o no llevan columnas de totales
-//			if (positionsColumnsTotal == null) {
-//				if (keys[keys.length-1] != null)
-//					BEHAVIOUR_KEYS_MAP.put((Mod2002021Key)keys[keys.length-1], new Boolean[]{FALSE,TRUE});
-//			}
-//			else {
-//				for (byte position : positionsColumnsTotal) {
-//					if (keys[position] != null)
-//						BEHAVIOUR_KEYS_MAP.put((Mod2002021Key)keys[position], new Boolean[]{FALSE,TRUE});
-//				}
-//			}
-//				
-//			// Fila(s) de totales 
-//			if (Arrays.asList(keys).contains(totalRowKey) || (totalRowKey2 != null && Arrays.asList(keys).contains(totalRowKey2)))
-//				for (IMod200Key key : keys)
-//					if (key != null)
-//						BEHAVIOUR_KEYS_MAP.put((Mod2002021Key) key, new Boolean[]{FALSE,TRUE});
-//		}
-//				
-//	}
-//
-//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, byte... positionsColumnsTotal) {
-//		addBreakdown(keysProvider, totalRowKey, null, positionsColumnsTotal);
-//	}
-//	
-//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey, Mod2002021Key totalRowKey2) {
-//		addBreakdown(keysProvider, totalRowKey, totalRowKey2, null);
-//	}
-//	
-//	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key totalRowKey) {
-//		addBreakdown(keysProvider, totalRowKey, null, null);
-//	}
-	
+	// la columna de total se asume que es la última salvo que venga indicado el parametro totalColumnPosition
 	private static void addBreakdown(IMod200KeysProvider[] keysProvider, Mod2002021Key[] totalRowKey, byte[] totalColumnPosition) {
 		
 		for (IMod200KeysProvider kp : keysProvider) {			

@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;

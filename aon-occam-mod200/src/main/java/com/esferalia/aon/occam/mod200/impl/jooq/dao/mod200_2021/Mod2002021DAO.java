@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.FsModel200Registry.FS_MODEL200_REGIS
 import static com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021Initialization.INITIALIZE_EXPRESSION_MAP;
 
 import java.io.StringWriter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -891,21 +890,12 @@ public class Mod2002021DAO  {
 			// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras
 			// NIF de las entidades del grupo, dejarlo vacio si no se ha marcado el caracter 00039
 			if (mod200.isNotChecked(Mod2002021Key.C0039)) {
-//				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN987);
-//				dv.setValue(0.0);
-//				mod200.addVariable(dv);
 				mod200.getGroupEntities().clear();
 			}
 			
 			// No residentes con más de un establecimiento permanente
 			// NIF establecimientos permanentes, dejarlo vacio si no se ha marcado el caracter 00021
 			if (mod200.isNotChecked(Mod2002021Key.C0021)) {
-//				DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.CN988);
-//				dv.setValue(0.0);
-//				mod200.addVariable(dv);
-//				dv = new DoubleVariableEx(Mod2002021Key.CNEST);
-//				dv.setValue(0.0);
-//				mod200.addVariable(dv);
 				mod200.getEstablishments().clear(); 
 			}
 			

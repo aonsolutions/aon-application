@@ -6,22 +6,13 @@ public class Mod2002021Constants {
 		 Mod2002021Key.P1501,
 		 Mod2002021Key.P1502,
 		 Mod2002021Key.P1503,
-//		 Mod2002021Key.P1515,
 		 Mod2002021Key.P1504,
-//		 Mod2002021Key.P1505,
 		 Mod2002021Key.P1506,
 		 Mod2002021Key.P1809,
 		 Mod2002021Key.P1810,		 
 		 Mod2002021Key.P1507,
 		 Mod2002021Key.P1508
 	};
-	
-//	public static Mod2002021Key[] PARTICIPATION_KEYS_2 = new Mod2002021Key[] {
-//		 Mod2002021Key.P1516,
-//		 Mod2002021Key.P1517,
-//		 Mod2002021Key.P1523,
-//		 Mod2002021Key.P1571
-//	};
 	
 	public static Mod2002021Key[] BALANCE_ACTIVE_KEYS = new Mod2002021Key[] {
 		Mod2002021Key.BA101,
@@ -583,12 +574,6 @@ public class Mod2002021Constants {
 		,new Mod2002021Key[]{null				 ,Mod2002021Key.LM1259}
 		,new Mod2002021Key[]{null				 ,Mod2002021Key.LM1260}
 	};
-	
-	// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
-	// propios de entidades pendientes de reversión (DT 16a LIS).
-//	public static Mod2002021Key[] DOTACION_KEYS_2 = new Mod2002021Key[] {
-//		 Mod2002021Key.NUMPER,Mod2002021Key.LM1515,Mod2002021Key.LM1516,Mod2002021Key.LM1585,Mod2002021Key.LM1517
-//	};
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
 	public static Mod2002021Key[] DOTACION_KEYS_5 = new Mod2002021Key[] {

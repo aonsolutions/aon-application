@@ -86,25 +86,12 @@ public class Mod2002021Print extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-//		String urlParameters = "IDI=ES" 
-//							  +"&LEV=000000000000"
-//							  +"&FIC=" + encodedFile  
-//							  +"&RUT="  
-//							  +"&PRG="  
-//							  +"&FIN="  
-//							  +"&EJF=2021"  
-//							  +"&MOD=200"
-//							  //+"&SINVL=" // Indica que no se desea validación
-//							  ;
-
 		String urlParameters = "MOD=200" + "&" +
 							   "EJF=2021" + "&" +
  				               "FIC=" + encodedFile + "&" +
 					           "IDI=ES";
 				               // +"&SINVL="; // Indica que no se desea validación
 		
-		//String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali"; // Pruebas de Externos
-		//String request = "https://www2.agenciatributaria.gob.es/wlpl/PFTW-PICW/ServVali"; // Producción
 		String request = "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali";
 		      
 		URL url = new URL(request);

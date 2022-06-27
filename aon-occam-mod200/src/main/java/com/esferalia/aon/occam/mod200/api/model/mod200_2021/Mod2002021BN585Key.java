@@ -49,12 +49,6 @@ public enum Mod2002021BN585Key implements Serializable, IMod200KeysProvider {
 	public String getDescription() {
 		return description;
 	}
-	
-	public static String[] getFooternotes() {
-		return new String[] {
-				"(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021."
-		};
-	}
 
 }
 

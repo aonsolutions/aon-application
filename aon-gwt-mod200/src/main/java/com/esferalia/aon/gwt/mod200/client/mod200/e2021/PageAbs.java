@@ -22,7 +22,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -34,7 +33,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class PageAbs extends ResizeComposite {
 	
-	protected final String ACCOUNTING_STATEMENTS_FOOTER = "(N) Modelo normal de dep\u00F3sito de cuentas en el Registro Mercantil; (A) Modelo abreviado de dep\u00F3sito de cuentas en el Registro Mercantil; (P) Modelo PYMES de dep\u00F3sito de cuentas en el Registro Mercantil.";
+	protected static final String ACCOUNTING_STATEMENTS_FOOTER = "(N) Modelo normal de dep\u00F3sito de cuentas en el Registro Mercantil; (A) Modelo abreviado de dep\u00F3sito de cuentas en el Registro Mercantil; (P) Modelo PYMES de dep\u00F3sito de cuentas en el Registro Mercantil.";
+	protected static final int BOX_LENGTH = 5;	
 
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -77,6 +77,7 @@ public abstract class PageAbs extends ResizeComposite {
 	protected abstract void initializeTable();
 	
 	protected void dump() {		
+		// Se repintan los valores calculados automáticamente. DraftMap lleva los valores que se han modificado o calculado automáticamente, desde que hemos entrado en el modelo
 		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
 			if (inputs.containsKey(key)) {
 				AonDoubleBox input = inputs.get(key);
@@ -176,7 +177,7 @@ public abstract class PageAbs extends ResizeComposite {
 		}		
 
 		if (AonStringUtils.isNotBlank(code)) {
-			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, Model2002021.BOX_LENGTH);
+			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, BOX_LENGTH);
 //			getLabels().put(k, codeBoxLabel);
 			panel.add(codeBoxLabel);
 		}

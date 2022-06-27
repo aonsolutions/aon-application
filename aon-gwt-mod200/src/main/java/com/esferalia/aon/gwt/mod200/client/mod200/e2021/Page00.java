@@ -573,7 +573,7 @@ public class Page00 extends PageAbs {
 		
 		for (final Mod2002021Key key : declarationCharatersBlock ) {
 			if (key != Mod2002021Key.C0012R) {
-			   AonBoxLabel l = new AonBoxLabel( key.getCode() , Model2002021.BOX_LENGTH );
+			   AonBoxLabel l = new AonBoxLabel( key.getCode() , BOX_LENGTH );
 			   table.setWidget(row, 0, l);
 			}
 			

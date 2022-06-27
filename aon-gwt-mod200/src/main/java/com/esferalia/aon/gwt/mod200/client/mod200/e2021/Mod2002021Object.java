@@ -154,7 +154,6 @@ public class Mod2002021Object implements Serializable {
 
 	public Double getDoubleValue(IMod200Key k) {
 		if (mod200 == null ) throw new IllegalStateException("Mod. 200 no inicializado." );
-		//return mod200.getDoubleValue(k);
 		DoubleVariableEx dv = mod200.getVariable(k);
 		if (dv != null)
 			return AonNumberUtils.todouble(dv.getValue());

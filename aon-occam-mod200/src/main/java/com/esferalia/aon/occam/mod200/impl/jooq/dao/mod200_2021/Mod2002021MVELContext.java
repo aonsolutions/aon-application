@@ -519,11 +519,6 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return 365;
 	}
 	
-//	public double computeC0027() throws AonCoreException {
-//		double lq552 = roundKey(LQ552);
-//		return (AonMathUtils.isGreatherThanZero(lq552))?0.0:1.0;
-//	}
-	
 	// Tipo de Gravamen
 	public double computeLQ558() throws AonCoreException {
 		
@@ -585,19 +580,6 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
 	
-//	public double computeLQ1230() throws AonCoreException {
-//		if (!context.containsKey(Mod2002021Key.LQ1230.toString())) {
-//			return 0.0;
-//		}
-//		return isGroup()?getValue(Mod2002021Key.LQ1230):0.0;
-//	}
-//	public double computeLQ1231() throws AonCoreException {
-//		if (!context.containsKey(Mod2002021Key.LQ1231.toString())) {
-//			return 0.0;
-//		}
-//		return isGroup()?getValue(Mod2002021Key.LQ1231):0.0;
-//	}
-
 	public double computeLQ1032() throws AonCoreException {
 		if (isGroup() && getContainsKey(Mod2002021Key.LQ1032)) {
 			return getValue(Mod2002021Key.LQ1032);
@@ -605,28 +587,11 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		if (isGroup()) {
 			return 0.0;
 		}		
-//		double lq1471 = roundKey(Mod2002021Key.LQ1471);
 		double lq1745 = roundKey(Mod2002021Key.LQ1745);
 		double lq1986 = roundKey(Mod2002021Key.LQ1986);
-//		return round(lq1471+lq1745+lq1986);
 		return round(lq1745+lq1986);
 	}
 
-//	public double computeD1004() throws AonCoreException {
-//		if (getContainsKey(Mod2002021Key.D1004)) {
-//			double d1004 = getValue(Mod2002021Key.D1004);
-//			if ( AonMathUtils.isZero(d1004)) {
-//				return 0.0;
-//			} 	
-//			if (d1004>getLimit(LIM_3)){
-//				return getLimit(LIM_3);			
-//			} else {
-//				return d1004;				
-//			}
-//		}
-//		return 0.0;
-//	}
-	
 	public double computeD1004(double d1004) throws AonCoreException {
 		if (d1004>getLimit(LIM_3)){
 			return getLimit(LIM_3);			
@@ -904,17 +869,6 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		return 0.0;
 	}
 
-//	public double computeP1505() throws AonCoreException {
-//		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
-//			double x = 0.0;
-//			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-//				x += p.getLossReversion();
-//			}
-//			return round( x ); 
-//		}
-//		return 0.0;
-//	}
-
 	public double computeP1506() throws AonCoreException {
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
@@ -1033,13 +987,5 @@ public class Mod2002021MVELContext implements Map<String, Object> {
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 			
 }

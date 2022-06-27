@@ -33,8 +33,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model2002021 extends DockLayoutPanel {
 	
-	public static final int BOX_LENGTH = 5;
-	
 	protected interface Model200PageCallback {	
 		public Mod2002021Object getMod200Object();
 		public void markAsDirty(); 

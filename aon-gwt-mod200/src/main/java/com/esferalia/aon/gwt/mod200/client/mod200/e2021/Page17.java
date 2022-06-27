@@ -17,7 +17,6 @@ public class Page17 extends PageAbs {
 	
 	private static final String FOOTER_1494_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2021.";
 	private static final String FOOTER_1494_2 = "(**) Los importes se consignar\u00E1n a nivel de base. Cooperativas: sus importes deben ir referidos a cuota.";
-	
 	private static final String FOOTER_1535 = "(*) Activos por impuesto diferido con derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130 LIS).";
 	private static final String FOOTER_1579 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
 

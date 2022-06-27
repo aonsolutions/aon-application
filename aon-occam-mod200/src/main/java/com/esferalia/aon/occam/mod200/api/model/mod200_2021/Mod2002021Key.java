@@ -66,9 +66,7 @@ public enum Mod2002021Key implements IMod200Key {
 	,P1501
 	,P1502
 	,P1503
-//	,P1515
 	,P1504
-//	,P1505
 	,P1506
 	,P1809
 	,P1810
@@ -78,15 +76,6 @@ public enum Mod2002021Key implements IMod200Key {
 	,POR51 // Suma de porcentajes de participación de personas o entidades en el capital de la declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado
 	,PORES // Suma de porcentajes de participaciones en situaciones especiales 
 	
-// --------------- PAGINA 2 BIS --------------- //	
-	
-	// PARTICIPACIONES INDIRECTAS (Totales)
-//	,P1516
-//	,P1517
-//	,P1523
-//	,P1571
-	
-
 // --------------- PAGINA 3 --------------- //
 	
 	// BALANCE: ACTIVO (I)
@@ -440,7 +429,6 @@ public enum Mod2002021Key implements IMod200Key {
 	,I0415	,D0211
 	,I0331	,D0332
 	,I0325	,D0326
-//	,I1518	,D0394
 	,I0327	,D0328
 	,I0416	,D0543
 	,I0335	,D0336
@@ -528,7 +516,6 @@ public enum Mod2002021Key implements IMod200Key {
 	// Base imponible
 	,LQ550
 	
-	// FALTA - REVISAR SI EL FORMATO DE ESTE AÑO TAMBIEN LAS LLEVA
 	// Según el formato del fichero aqui hay dos casillas mas sin numeración (se usan en SOCIMIS)
 	,LQ550TG  // Parte de la base imponible del período impositivo que tributa al tipo general (antes de compensación de bases imponibles negativas) 
 	,LQ550T0  // Parte de la base imponible del período impositivo que tributa al tipo del 0% (antes de compensación de bases imponibles negativas)

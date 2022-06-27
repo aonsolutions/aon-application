@@ -189,8 +189,9 @@ public enum Mod2002021KeyDC implements IMod200Key {
 	,DC3389 ,DC3386 ,DC3387 ,DC3388 ,DC3390
 	,DC3394 ,DC3391 ,DC3392 ,DC3393 ,DC3395
 	,DC3399 ,DC3396 ,DC3397 ,DC3398 ,DC3400
-	,DC2305 ,DC2301 ,DC2303 ,DC2307 ,DC2309 // Total - AUMENTO
-	,DC2306 ,DC2302 ,DC2304 ,DC2308 ,DC2310 // Total - DISMINUCION
+	// Estas casillas de totales nuevas en la página 26 sexies, son las mismas que hay en Mod2002021Key 
+//	,DC2305 ,DC2301 ,DC2303 ,DC2307 ,DC2309 // Total - AUMENTO
+//	,DC2306 ,DC2302 ,DC2304 ,DC2308 ,DC2310 // Total - DISMINUCION
 	;
     
 	public String getCode() {

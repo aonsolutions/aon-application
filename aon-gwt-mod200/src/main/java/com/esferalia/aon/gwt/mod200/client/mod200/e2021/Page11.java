@@ -36,15 +36,6 @@ public class Page11 extends PageAbs {
 			AON.MSG.futurePending()
 	};
 	
-//	private static final String[] HEADERS_2 = new String[] {
-//			null,
-//			AON.MSG.pendingDeduction(),
-//			AON.MSG.reducedDeduction(),
-//			AON.MSG.current(),
-//			"Importe abonado por insuficiencia de cuota",
-//			"Deducci\u00F3n resto del grupo"
-//	};
-	
 	private static final String[] HEADERS_3 = new String[] {
 			null,
 			AON.MSG.deductionTaxablebase(),
@@ -70,8 +61,6 @@ public class Page11 extends PageAbs {
 	};
 	
 	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
-	
-//	private static final String FOOTER_588_1 = "En este apartado no se deben indicar las deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] de la p\u00E1g. 14 y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
 	private static final String FOOTER_588_1 = "(***) Excepto deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] de la p\u00E1g. 14 y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
 	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2022: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2022.";
 	private static final String FOOTER_082 = "(**) Entre otros requisitos, ser\u00E1 necesario que transcurra, al menos, uno a\u00F1o desde la finalizaci\u00F3n del per\u00EDodo impositivo en que se gener\u00F3 la deducci\u00F3n, sin que la misma haya sido objeto de aplicaci\u00F3n.";
@@ -104,11 +93,9 @@ public class Page11 extends PageAbs {
 					row = paintKeyBreakdownLink(table, row, Mod2002021Key.BN584, Mod2002021BN584Key.values(), HEADERS_1, FOOTER_1);
 				} 
 				if (key == Mod2002021Key.BN588) {
-					//row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN588,Mod2002021BN588Key.values(),HEADERS_1, FOOTER_588_1, FOOTER_1, FOOTER_588_2);
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN588,Mod2002021BN588Key.values(), HEADERS_588, FOOTER_1, FOOTER_588_1, FOOTER_588_2);
 				} 
 				if (key == Mod2002021Key.BN082) {
-					//row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN082,Mod2002021BN082Key.values(),HEADERS_2, FOOTER_082_1, FOOTER_1);
 					row = paintKeyBreakdownLink(table, row, Mod2002021Key.BN082, Mod2002021BN082Key.values(), HEADERS_082, FOOTER_1, FOOTER_082);
 				}
 				if (key == Mod2002021Key.BN565) {
@@ -201,7 +188,6 @@ public class Page11 extends PageAbs {
 		addButton.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().getFilmProductions().add(new String());
 			paintFilmPanel();
-//			initializeTable();
 		});
 		tab.addRow().addCell(addButton);		
 
