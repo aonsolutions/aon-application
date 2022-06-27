@@ -63,6 +63,7 @@ export class AonElement extends HTMLElement{
   createAonElement(el, id, title){
     el.id = id || '';
     el.title = title || '';
+    el.description = title || '';
     return el;
   }
 
