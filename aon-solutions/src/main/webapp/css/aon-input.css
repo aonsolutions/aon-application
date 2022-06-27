@@ -45,7 +45,7 @@ input:required {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: 1px solid var(--aon-color-ink-medium-contrast);
+	border-bottom: 2px solid var(--aon-color-ink-medium-contrast);
 	box-shadow: none !important;
 }
 

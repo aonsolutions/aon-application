@@ -20,6 +20,7 @@ export class AonCustomer extends AonReg {
   	}
 	
 	customerInitialize() {
+		this.type = "customer";
 		this.saveBool = true;
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},

@@ -2,7 +2,6 @@ import { AonElement } from './AonElement.js';
 
 import './aon-input.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
-import { I } from '../environments/aonTag.js';
 
 export class AonSuggestion extends AonElement {
 
@@ -108,6 +107,7 @@ export class AonSuggestion extends AonElement {
   build() {
     let input = this.getElement(this.INPUT);
     input.readonly = this.isReadonly();
+    input.value = this.value;
     input.addEventListener(EVENT.KEYUP, (e) => {
       this.value = input.value;
       if(e.key || e.keyCode) {
@@ -131,10 +131,12 @@ export class AonSuggestion extends AonElement {
        } else if (e.keyCode == '13' || e.key == 'Enter') {
          // enter
          this.closeOptions();
-         this.value = this.options[this.selected].value;
-         let input = this.getElement(this.INPUT);
-         input.value = this.options[this.selected].name;
-         this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: this.options[this.selected] }));
+        if(this.selected) {
+            this.value = this.options[this.selected].value;
+            let input = this.getElement(this.INPUT);
+            input.value = this.options[this.selected].name;
+            this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: this.options[this.selected] }));
+        }  
        } else {
          this.dispatchEvent(new Event(EVENT.AON_KEYUP));
        }
