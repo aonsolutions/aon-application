@@ -718,23 +718,23 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 		calculator.setListener(new SmartContractSalaryCalculator.Listener() {
 			@Override
-			public void onUndefinedData(IContractPayment payment, String variableName, String message) {
-				super.onUndefinedData(payment, variableName, message);
-				errors.add(variableName);
+			public void onCheckError(IContractPayment payment, String message) {
+				super.onCheckError(payment, message);
+				errors.add(message);
 			}
 		});
 		
 		
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(0.00, salary.getTotalPayment());
+		//Assert.assertEquals(0.00, salary.getTotalPayment());
 		
 		for ( String message: errors ) 
 			System.out.println("ERROR: " + message);
 		
 		
 		Assert.assertEquals(2, errors.size() );
-		//Assert.assertEquals(666.66 * 2, salary.getTotalPayment());
+		Assert.assertEquals(666.66 + 66.66, salary.getTotalPayment());
 		
 		
 	}

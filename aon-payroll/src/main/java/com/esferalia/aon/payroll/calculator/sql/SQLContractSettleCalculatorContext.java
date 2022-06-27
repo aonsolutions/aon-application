@@ -38,6 +38,7 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
@@ -392,7 +393,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		ctx.next();
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = calculator.calculate(ctx);
 
