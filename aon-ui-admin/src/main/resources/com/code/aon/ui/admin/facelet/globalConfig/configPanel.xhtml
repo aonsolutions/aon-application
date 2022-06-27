@@ -308,7 +308,7 @@
 																		
 					</rich:panelBarItem>
 
-					<aon:if test="#{marketplace.suitePortal}">
+					<aon:if test="#{aonRole.sysAdmin or marketplace.suitePortal}">
 					<rich:panelBarItem id="new_suite"
 						label="#{bundle.new_suite}">
 						<aon:div styleClass="aon-direct-access-list-element">

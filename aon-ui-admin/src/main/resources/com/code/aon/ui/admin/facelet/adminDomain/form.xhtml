@@ -223,7 +223,7 @@
 					<aon:div>
 						<aon:inputText id="Domain_maxDefinedUsers" required="true"
 							validator="#{adminDomain.userNumberCheck}"
-							disabled="#{adminDomain.bookingInfo.aonMode == 2}"
+							disabled="#{adminDomain.bookingInfo.aonMode == 2 and domainSwitcher.childDomain}"
 							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
 						</aon:inputText>
 						<aon:div styleClass="aon-margin-left"  layout="inline"
@@ -281,7 +281,7 @@
 									value="#{adminDomain.bookingInfo.aonMode}">
 									<f:selectItem itemLabel="#{bundle.admin_domain_myAON}" itemValue="#{0}" />
 									<f:selectItem itemLabel="#{bundle.admin_domain_aonSMB}" itemValue="#{1}" />
-									<f:selectItem itemLabel="#{bundle.aon_module_management}" itemDisabled="#{domainUser.numberOfActiveUsers > 0}" itemValue="#{2}" />
+									<f:selectItem itemLabel="#{bundle.aon_module_management}" itemDisabled="#{domainSwitcher.childDomain and domainUser.numberOfActiveUsers > 0}" itemValue="#{2}" />
 									<a4j:support event="onchange" ajaxSingle="true"
 										actionListener="#{adminDomain.bookingInfo.onAonOneChanged}"
 										reRender="Domain_capabilities" />
