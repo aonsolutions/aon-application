@@ -716,7 +716,7 @@ public final class EmployeeAFIGeneration {
 			this.sintaxIndent = "AFI90W0000";
 			this.authKey = StringUtils.leftPad(authKey, 8, '0');
 			this.payrollProvider = payrollProvider;
-			this.reserved5 = StringUtils.leftPad("", 5, '9');
+			this.reserved5 = StringUtils.leftPad("", 5, '0');
 			
 			this.fileName = (null == fileName) ? day + month + hour + minute : fileName;
 			
