@@ -200,6 +200,7 @@ export const EXPENSE = MSG.EXPENSE;
 export const EXPENSES = MSG.EXPENSES; 
 export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
+export const ESTIMATED_TIME = "Tiempo estimado";
 
 // ----- F
 
@@ -482,6 +483,7 @@ export const TYPE_HERE = "Escriba aquí"; //TODO
 export const TYPE_REQUEST = "Tipo solicitud";//TODO
 export const TYPE_INCIDENT = "Tipo incidencia";//TODO
 export const TYPE_CONTRACT = "Tipos de contrato";//TODO
+export const TYPE_JOB = "Tipo de trabajo";//TODO
 export const TO_SHOW = "Mostrar";//TODO
 
 

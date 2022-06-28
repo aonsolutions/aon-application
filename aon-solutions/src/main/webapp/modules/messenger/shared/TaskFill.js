@@ -5,16 +5,15 @@ import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
 import { sortBy, waitEl } from "../../../services/utils.js";
 import { getAppsByDur } from "../../../services/app.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { createAction, createChatMessageNew, createMessageOpen, createNoMessage} from "./creationUtils.js";
+import { TaskCreationUtils} from "./TaskCreationUtils.js";
 import { chooseIconMessage } from "./utils.js";
-
 
 /**
  * fill typeRequest (Tipo de solicitud)
  * @param {Task} {source} tipo de tarea
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillRequestType = ({source}, aonMessengerChat) => {
+const fillRequestType = ({source}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.SOURCE_TASK);
     let sources = [
         {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] }
@@ -43,7 +42,7 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     }
 }
 
-export const fillAdvisory = async (task, aonMessengerChat) => {
+const fillAdvisory = async (task, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.ADVISORY_TASK);
     if(aonSelect){
         aonSelect.loading(true);
@@ -79,13 +78,12 @@ export const fillAdvisory = async (task, aonMessengerChat) => {
     }
 }
 
-
 /**
  * fill typeRequest (Tipo de solicitud) RE
  * @param {Task} Class task
  * @param {Array} Array optionals
  */
-export const fillProject = async (task, projects =[], registry = undefined) => {
+const fillProject = async (task, projects =[], registry = undefined) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
     if(aonSelect){
         aonSelect.loading(true);
@@ -131,7 +129,7 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
  * fill workgroup (Grupo de trabajo)
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillWorkGroup = async (aonMessengerChat) => {
+const fillWorkGroup = async (aonMessengerChat) => {
     try {
         const task = aonMessengerChat.task;
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
@@ -163,7 +161,7 @@ export const fillWorkGroup = async (aonMessengerChat) => {
  * @param {HTMLElement} aon-messenger-chat component
  * @param {Integer} workgroup 
  */
-export const fillTaskHolder = async (aonMessengerChat) => {
+const fillTaskHolder = async (aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
@@ -203,7 +201,7 @@ export const fillTaskHolder = async (aonMessengerChat) => {
  * @param {Task} {registry} registry de customer
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillCustomer = async ({registry}, aonMessengerChat) => {
+const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
@@ -264,7 +262,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
  * @param {Task} Class task 
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillProcessType =  ({source_id}, aonMessengerChat) => {
+const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROCESS_TYPE);
     aonSelect.clear();
     const dur = aonMessengerChat.getDur();
@@ -307,14 +305,14 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
  * @param {HTMLElement} aon-messenger-chat component
  * @param {Array} workflows array de flujo de trabajo
  */
-export const fillChat = (task, meId, workflows=[])=>{
+const fillChat = (task, meId, workflows=[])=>{
     let aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const taskMainId = aonMessengerChat.task.id;
     const aonTab = document.getElementById(MESSENGER_IDS.AON_TAB);
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
         chat.innerHTML = "";
         if(workflows.length == 0){
-            let noMessage = createNoMessage();
+            let noMessage = TaskCreationUtils.createNoMessage();
             noMessage.appendTo(chat);
         } else {
 
@@ -382,16 +380,16 @@ export const fillChat = (task, meId, workflows=[])=>{
                 }
 
                 if (type == WORKFLOW_TYPES.COMMENT) {
-                    createChatMessageNew(message, chat);
+                    TaskCreationUtils.createChatMessageNew(message, chat);
                 } else {
                     message.name = userName;
                     const actionJson = chooseIconMessage(message);
                     const submessage = message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
-                    const action = createAction(actionJson, actionJson.comment, submessage);
+                    const action = TaskCreationUtils.createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
 
                     if(WORKFLOW_TYPES.OPEN.includes(type) && message.comment){
-                        createMessageOpen({comment: message.comment, id:message.id, me, date: creation_date, task:taskWorkflow }, action.element);
+                        TaskCreationUtils.createMessageOpen({comment: message.comment, id:message.id, me, date: creation_date, task:taskWorkflow }, action.element);
                     }
                 }
             });
@@ -399,12 +397,11 @@ export const fillChat = (task, meId, workflows=[])=>{
    })
 }
 
-
 /**
  * fill processType Tipo de incidencia
  * @param {Task} Class task 
  */
- export const fillTypeRequestCau =  async (aonMessengerChat) => {
+const fillTypeRequestCau =  async (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const aonSelect = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
     if(aonSelect){
@@ -430,12 +427,11 @@ export const fillChat = (task, meId, workflows=[])=>{
     }
 }
 
-
 /**
  * fill processType Aplicacion
  * @param {Task} Class task 
  */
- export const fillSelectAppCau =  (aonMessengerChat) => {
+const fillSelectAppCau =  (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const aonSelect = document.getElementById(MESSENGER_IDS.SELECT_APP);
     if(aonSelect){
@@ -465,3 +461,16 @@ export const fillChat = (task, meId, workflows=[])=>{
         }
     }
 }
+
+export const TaskFill = {
+    fillRequestType,
+    fillAdvisory,
+    fillProject,
+    fillWorkGroup,
+    fillTaskHolder,
+    fillCustomer,
+    fillProcessType,
+    fillChat,
+    fillTypeRequestCau,
+    fillSelectAppCau
+};
