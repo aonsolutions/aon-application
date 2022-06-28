@@ -104,6 +104,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/cau":
 					response(req, resp, getCauInfo(api));
 					break;
+				case "/daily-tracking-by-task":
+					response(req, resp, getDailyTrackingByTask(api));
+					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -302,6 +305,16 @@ public class TaskServlet extends AonApiHttpServlet{
 		);
 	}
 	
+	private JSONArray getDailyTrackingByTask(AonApiData api) {
+		Domain  domain = api.getDomain();
+		User    user   = api.getUser();
+		Integer task   = api.getData().optInt(IJsonNames.TASK);
+
+		return DailyTrackingJSON.toJSON(
+				AON_SOLUTIONS.getDailyTrackingStream(domain, user, f->f.getDomainProperty().eq(domain.getId()).and(f.getTaskProperty().eq(task)))
+		);
+	}
+	
 	private JSONArray getWorkflows(AonApiData api) {
 		Domain domain = new Domain().setId(api.getData().optInt(IJsonNames.DOMAIN_ID)).setName(api.getData().optString(IJsonNames.DOMAIN_NAME));
 		
@@ -385,8 +398,8 @@ public class TaskServlet extends AonApiHttpServlet{
 			TaskUtils.onNotification(api, workflow);
 		}
 		
+		 // save DAILY_TRACKING
 		if(workflowTmp.getType().equals(TaskWorkflowType.CLOSE)){
-			 // save DAILY_TRACKING
 			saveDailyTracking(api);
 		}
 
@@ -581,9 +594,9 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		Domain domain = api.getDomain();
 		
-		String login = api.getUser().getLogin();
-		
-		Integer id = params.optInt(IJsonNames.TASK);
+		User user     = api.getUser();
+		String login  = user.getLogin();
+		Integer id    = params.optInt(IJsonNames.TASK);
 		
 		TaskWorkflow workflow = TaskWorkflowJSON.fromJSON(params);
 		
@@ -606,7 +619,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			 taskParent.setStatus(TaskStatus.IN_PROGRESS);
 		}
 
-		AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), taskParent);
+		AON_SOLUTIONS.saveTask(api.getDomain(), user, taskParent);
 		
 	   taskParent.setTaskHolder(receiver);
 	   taskParent.setWorkgroup(workgroup);
@@ -620,7 +633,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	   
 	   taskParent.setSender(sender);
 
-	   Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), taskParent);
+	   Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), user, taskParent);
 	   
 	   // SAVE CONNECTED TASK PARENT
 	   saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
@@ -732,18 +745,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	private void saveDailyTracking(AonApiData api) {
 		JSONObject json = api.getData().optJSONObject("dailyTracking");
 		if(json!=null) {
+			LOGGER.info("---- SAVE DAILY_TRACKING------");
 			DailyTracking dailyTracking = DailyTrackingJSON.fromJSON(json);
-			Domain domain = dailyTracking.getDomain();
-			User user = api.getUser();
-			DailyTracking exist = AON_SOLUTIONS.getDailyTracking(domain, user, f->f.getDomainProperty().eq(domain.getId()).and(f.getTaskProperty().eq(dailyTracking.getTask())));
-			if(exist!=null && exist.getId()!=null) {
-				LOGGER.info("---- UPDATE DAILY_TRACKING------");
-				AON_SOLUTIONS.saveDailyTracking(domain, api.getUser(), dailyTracking.setId(exist.getId()));
-			} else {
-				LOGGER.info("---- SAVE DAILY_TRACKING------");
-				AON_SOLUTIONS.saveDailyTracking(domain, api.getUser(), dailyTracking);
-			}	
+			AON_SOLUTIONS.saveDailyTracking(dailyTracking.getDomain(), api.getUser(), dailyTracking);
 		}
 	}
-	
 }

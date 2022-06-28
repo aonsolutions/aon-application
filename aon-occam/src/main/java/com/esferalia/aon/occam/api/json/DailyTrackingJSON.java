@@ -52,20 +52,24 @@ public class DailyTrackingJSON {
 	}
 	
 	public static JSONObject toJSON(DailyTracking dt) {
-		return new JSONObject()
+		JSONObject json = new JSONObject();
+		if(dt!=null && dt.getId()!=null) {	
+			json
 			.put(IJsonNames.ID, dt.getId())
 			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(dt.getDomain()))
 			.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(dt.getTaskHolder()))
-			.put("tracking_date", dt.getTrackingDate().getTime())
-			.put("tracking_duration", dt.getTrackingDuration())
-			.put("job_type", dt.getJobType())
 			.put(IJsonNames.REGISTRY, dt.getRegistry()!=null ? RegistryJSON.toJSON(dt.getRegistry()) : null)
 			.put(IJsonNames.PROJECT, dt.getProject()!=null ? ProjectJSON.toJSON(dt.getProject()): null)
 			.put(IJsonNames.ACTIVITY_TYPE, dt.getActivityType())
 			.put(IJsonNames.COMMENTS, dt.getComments())
 			.put(IJsonNames.TASK, dt.getTask())
+			.put("tracking_date", dt.getTrackingDate().getTime())
+			.put("tracking_duration", dt.getTrackingDuration())
+			.put("job_type", dt.getJobType())
 			.put("cost", dt.getCost())
 			;
+		}
+		return json;
 	}
 
 }
