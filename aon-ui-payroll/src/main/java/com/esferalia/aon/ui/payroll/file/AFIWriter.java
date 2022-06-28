@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -253,16 +255,18 @@ public class AFIWriter implements Serializable {
 	private TRA createTRARecord(ContractBatchDetail detail) {
 		TRA tra = new TRA();
 		tra.setNumeroAfiliacion( detail.getContract().getPerson().getSocialSecurityNumber() ); 
-		String tipo;
-		if(detail.getContract().getPerson().getRegistry().getDocumentType()== DocumentType.NIF){
-			tipo = "1";
-		} else if(detail.getContract().getPerson().getRegistry().getDocumentType()== DocumentType.PASSPORT){
-			tipo = "2";
-		} else if(detail.getContract().getPerson().getRegistry().getDocumentType()== DocumentType.NIE){
-			tipo = "6";
-		} else {
-			tipo = "1";
-		}
+//		String tipo;
+//		if(detail.getContract().getPerson().getRegistry().getDocumentType()== DocumentType.NIF){
+//			tipo = "1";
+//		} else if(detail.getContract().getPerson().getRegistry().getDocumentType()== DocumentType.PASSPORT){
+//			tipo = "2";
+//		} else if(detail.getContract().getPerson().getRegistry().getDocumentType()== DocumentType.NIE){
+//			tipo = "6";
+//		} else {
+//			tipo = "1";
+//		}
+		System.out.println(detail.getContract().getPerson().getRegistry().getDocument() + " -> " + getDocumentType(detail.getContract().getPerson().getRegistry().getDocument()));
+		String tipo = getDocumentType(detail.getContract().getPerson().getRegistry().getDocument());
 		String pais = String.valueOf(detail.getContract().getPerson().getRegistry().getDocumentCountry().getIsoNum());
 		String doc = autoComplete(detail.getContract().getPerson().getRegistry().getDocument(), 14, "0", true);
 		String ipf = StringUtils.isBlank(tipo)?"9":tipo;
@@ -272,6 +276,22 @@ public class AFIWriter implements Serializable {
 		tra.setAyn(createAYNRecord(detail.getContract()));
 		tra.setFct(createFCTRecord(detail));
 		return tra;
+	}
+	
+	private static String getDocumentType(String document) {
+		Pattern dniPattern = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
+		Matcher dniMatcher = dniPattern.matcher(document);
+		
+		if(dniMatcher.matches())
+			return "1";
+		
+		Pattern niePattern = Pattern.compile("[a-zA-Z0-9][0-9]{7}[a-zA-Z0-9]{1,2}");
+		Matcher nieMatcher = niePattern.matcher(document);
+		
+		if(nieMatcher.matches())
+			return "6";
+		
+		return "2";
 	}
 	
 	private AYN createAYNRecord(Contract contract) {
