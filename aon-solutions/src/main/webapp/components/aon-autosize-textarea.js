@@ -1,7 +1,7 @@
 import { CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js";
 import { AonElement } from "./AonElement.js";
 
-import '../css/aon-autosize-textarea.css';
+// import '../css/aon-autosize-textarea.css';
 
 export class AonAutosizeTextarea extends AonElement {
 
@@ -54,6 +54,14 @@ export class AonAutosizeTextarea extends AonElement {
         return this.getAttribute(CONSTANT.VALUE);
     }
 
+    set name(name) {
+        this.setAttribute(CONSTANT.NAME, name)
+    }
+
+    get name() {
+        return this.getAttribute(CONSTANT.NAME);
+    }
+
     getValue() {
         return this.value;
     }
@@ -73,14 +81,6 @@ export class AonAutosizeTextarea extends AonElement {
 
     get DETAIL_COLOR_NOT_ACTIVE() {
         return "var(--aon-color-ink-medium-contrast)";
-    }
-
-    set name(name) {
-        this.setAttribute(CONSTANT.NAME, name);
-    }
-
-    get name() {
-        return this.TEXTAREA.name;
     }
 
     constructor() {
@@ -126,7 +126,10 @@ export class AonAutosizeTextarea extends AonElement {
             }
             this.updateScrollLimit();
         } else if (CONSTANT.NAME === name) {
-            this.TEXTAREA.name = newValue;
+            if (this.TEXTAREA) {
+                this.name = newValue;
+                this.TEXTAREA.name = newValue;
+            }
         } else if (CONSTANT.VALUE === name) {
             if (this.TEXTAREA) {
                 this.TEXTAREA.value = newValue;
@@ -202,6 +205,9 @@ export class AonAutosizeTextarea extends AonElement {
     createTextArea() {
         let lineHeight = "1.3em";
         this.TEXTAREA = this.createElement("textarea");
+        if (this.name) {
+            this.TEXTAREA.name = this.name;
+        }
         this.TEXTAREA.id = this.TEXTAREA_ID;
         this.TEXTAREA.rows = 1;
         this.TEXTAREA.style.display = "block";
@@ -213,7 +219,7 @@ export class AonAutosizeTextarea extends AonElement {
         // this.TEXTAREA.style.height = lineHeight;
         this.TEXTAREA.style.resize = "none";
         // this.TEXTAREA.contentEditable = true;
-        this.TEXTAREA.innerHTML = this.value;
+        this.TEXTAREA.value = this.value;
         this.TEXTAREA.className = CSS.AON_AUTOSIZE_TEXTAREA_CONTENT;
         this.TEXTAREA.tabIndex = 0;
 
