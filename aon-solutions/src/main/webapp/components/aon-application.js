@@ -722,6 +722,11 @@ export class AonApplication extends AonElement {
       span.appendChild(aonIconButton);
       this.appendChild(span);
       aonIconButton.addEventListener(EVENT.CLICK, fn);
+
+      const btn = aonIconButton.getButton();
+      if(btn){
+        btn.style.boxShadow = "0px 1px 8px rgb(0 0 0 / 43%)";
+      }
     }
 
     return aonIconButton;
