@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Reserva de nivelación - Dotación de la reserva
 public enum Mod2002020LQ1033_2Key implements Serializable, IMod200KeysProvider  {
 	// Á --> \u00C1 á --> \u00E1

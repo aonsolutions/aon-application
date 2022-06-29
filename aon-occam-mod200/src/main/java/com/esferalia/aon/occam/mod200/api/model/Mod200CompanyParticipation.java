@@ -19,13 +19,14 @@ public class Mod200CompanyParticipation implements Serializable {
 	private double nominalValue;
 	private double bookValue;
 	private double incomes;
-	private double aValue;   // Corrección de valor ... (Totaliza en 1504)
-	private double bValue;   // Reversión de pérdidas ... (Totaliza en 1505)
-	private double cValue;   // Efecto de la corrección valorativa ... (En 2018 pasa al apartado f), Totaliza en 1507)
-	private double ccValue;  // Eliminación del deterioro contable ... (Totaliza en 1506)
-	private double dValue;   // Saldo de correcciones fiscales ... (En 2018 pasa al apartado g), Totaliza en 1508)
-	private double ddValue;  // Eliminación del deterioro de valores ... (Nuevo 2018 en apartado d), totaliza en 1809)
-	private double eValue;   // Ajuste por la disminucion de valor ... (Nuevo 2018 en apartado e), totaliza en 1810)
+	
+	private double valueCorrection;       // [Campo a_value ] Corrección de valor ... (Totaliza en 1504)
+	private double lossReversion;         // [Campo b_value ] Reversión de pérdidas ... (Totaliza en 1505)
+	private double correctionEffect;      // [Campo c_value ] Efecto de la corrección valorativa ... (Totaliza en 1507)
+	private double accountingElimination; // [Campo cc_value] Eliminación del deterioro contable ... (Totaliza en 1506)
+	private double correctionsBalance;    // [Campo d_value ] Saldo de correcciones fiscales ... (Totaliza en 1508)
+	private double valuesElimination;     // [Campo dd_value] Eliminación del deterioro de valores ... (Totaliza en 1809)
+	private double adjustmentDecrease;    // [Campo e_value ] Ajuste por la disminucion de valor ... (Totaliza en 1810)
 	
 	private double capital;
 	private double reserve;
@@ -120,48 +121,48 @@ public class Mod200CompanyParticipation implements Serializable {
 		return this;
 	}
 
-	public double getaValue() {
-		return aValue;
+	public double getValueCorrection() {
+		return valueCorrection;
 	}
 
-	public Mod200CompanyParticipation setaValue(double aValue) {
-		this.aValue = aValue;
+	public Mod200CompanyParticipation setValueCorrection(double valueCorrection) {
+		this.valueCorrection = valueCorrection;
 		return this;
 	}
 
-	public double getbValue() {
-		return bValue;
+	public double getLossReversion() {
+		return lossReversion;
 	}
 
-	public Mod200CompanyParticipation setbValue(double bValue) {
-		this.bValue = bValue;
+	public Mod200CompanyParticipation setLossReversion(double lossReversion) {
+		this.lossReversion = lossReversion;
 		return this;
 	}
 
-	public double getcValue() {
-		return cValue;
+	public double getCorrectionEffect() {
+		return correctionEffect;
 	}
 
-	public Mod200CompanyParticipation setcValue(double cValue) {
-		this.cValue = cValue;
+	public Mod200CompanyParticipation setCorrectionEffect(double correctionEffect) {
+		this.correctionEffect = correctionEffect;
 		return this;
 	}
 
-	public double getccValue() {
-		return ccValue;
+	public double getAccountingElimination() {
+		return accountingElimination;
 	}
 
-	public Mod200CompanyParticipation setccValue(double ccValue) {
-		this.ccValue = ccValue;
+	public Mod200CompanyParticipation setAccountingElimination(double accountingElimination) {
+		this.accountingElimination = accountingElimination;
 		return this;
 	}
 
-	public double getdValue() {
-		return dValue;
+	public double getCorrectionsBalance() {
+		return correctionsBalance;
 	}
 
-	public Mod200CompanyParticipation setdValue(double dValue) {
-		this.dValue = dValue;
+	public Mod200CompanyParticipation setCorrectionsBalance(double correctionsBalance) {
+		this.correctionsBalance = correctionsBalance;
 		return this;
 	}
 
@@ -217,21 +218,21 @@ public class Mod200CompanyParticipation implements Serializable {
 		return isRepresentative()?"1":"0"; 
 	}
 
-	public double getddValue() {
-		return ddValue;
+	public double getValuesElimination() {
+		return valuesElimination;
 	}
 
-	public Mod200CompanyParticipation setddValue(double ddValue) {
-		this.ddValue = ddValue;
+	public Mod200CompanyParticipation setValuesElimination(double valuesElimination) {
+		this.valuesElimination = valuesElimination;
 		return this;
 	}
 
-	public double geteValue() {
-		return eValue;
+	public double getAdjustmentDecrease() {
+		return adjustmentDecrease;
 	}
 
-	public Mod200CompanyParticipation seteValue(double eValue) {
-		this.eValue = eValue;
+	public Mod200CompanyParticipation setAdjustmentDecrease(double adjustmentDecrease) {
+		this.adjustmentDecrease = adjustmentDecrease;
 		return this;
 	}
 	

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
 public class Mod2002020Behaviour {
 	

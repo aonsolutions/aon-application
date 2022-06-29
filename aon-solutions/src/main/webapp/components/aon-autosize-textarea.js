@@ -35,7 +35,7 @@ export class AonAutosizeTextarea extends AonElement {
     }
 
     static get observedAttributes() {
-        return ["disabled", "title", "scroll-limit"];
+        return ["disabled", "title", "scroll-limit", CONSTANT.NAME, CONSTANT.VALUE];
     }    
 
     get title() {
@@ -52,6 +52,18 @@ export class AonAutosizeTextarea extends AonElement {
 
     get value() {
         return this.getAttribute(CONSTANT.VALUE);
+    }
+
+    set name(name) {
+        this.setAttribute(CONSTANT.NAME, name)
+    }
+
+    get name() {
+        return this.getAttribute(CONSTANT.NAME);
+    }
+
+    getValue() {
+        return this.value;
     }
 
     set disabled(disabled) {
@@ -71,10 +83,6 @@ export class AonAutosizeTextarea extends AonElement {
         return "var(--aon-color-ink-medium-contrast)";
     }
 
-    getValue() {
-        return this.TEXTAREA.innerHTML;
-    }
-
     constructor() {
         super();
 
@@ -86,7 +94,7 @@ export class AonAutosizeTextarea extends AonElement {
     }
     
     initialize() {
-        this._scrollLimit = "100px";
+        this._scrollLimit = this._scrollLimit ? this._scrollLimit  : "100px";
         this.detailColor = "darkgray";
         this.mainColor = "transparent";
         
@@ -117,8 +125,17 @@ export class AonAutosizeTextarea extends AonElement {
                 this._scrollLimit = newValue || '';
             }
             this.updateScrollLimit();
-        } else if (CONSTANT.VALUE === name && this.TEXTAREA) {
-            this.TEXTAREA.innerHTML = newValue || '';
+        } else if (CONSTANT.NAME === name) {
+            if (this.TEXTAREA) {
+                this.name = newValue;
+                this.TEXTAREA.name = newValue;
+            }
+        } else if (CONSTANT.VALUE === name) {
+            if (this.TEXTAREA) {
+                this.TEXTAREA.value = newValue;
+                this.TEXTAREA.style.height = "auto";
+                this.TEXTAREA.style.height = this.TEXTAREA.scrollHeight + "px";
+            }
         }
     }
 
@@ -186,12 +203,37 @@ export class AonAutosizeTextarea extends AonElement {
     }
     
     createTextArea() {
-        this.TEXTAREA = this.createElement(TAG.DIV);
+        let lineHeight = "1.3em";
+        this.TEXTAREA = this.createElement("textarea");
+        if (this.name) {
+            this.TEXTAREA.name = this.name;
+        }
         this.TEXTAREA.id = this.TEXTAREA_ID;
-        this.TEXTAREA.contentEditable = true;
-        this.TEXTAREA.innerHTML = this.value;
+        this.TEXTAREA.rows = 1;
+        this.TEXTAREA.style.display = "block";
+        this.TEXTAREA.style.backgroundColor = "transparent";
+        this.TEXTAREA.style.border = "none";
+        this.TEXTAREA.style.height = "auto";
+        this.TEXTAREA.style.overflowY = "scroll";
+        this.TEXTAREA.style.maxHeight = this._scrollLimit;
+        // this.TEXTAREA.style.height = lineHeight;
+        this.TEXTAREA.style.resize = "none";
+        // this.TEXTAREA.contentEditable = true;
+        this.TEXTAREA.value = this.value;
         this.TEXTAREA.className = CSS.AON_AUTOSIZE_TEXTAREA_CONTENT;
         this.TEXTAREA.tabIndex = 0;
+
+        this.TEXTAREA.addEventListener("input", ({target}) => {
+            target.style.height = "auto";
+            target.style.height = target.scrollHeight + "px";
+
+            // ev.preventDefault();
+            // let rowNum = this.TEXTAREA.rows;
+            // // console.log(this.TEXTAREA.value.split(/\n/g));
+            // if (rowNum > 0) {
+            //     this.TEXTAREA.style.height = lineHeight * rowNum;
+            // }
+        });
     }
 
     createOptions() {
@@ -226,25 +268,27 @@ export class AonAutosizeTextarea extends AonElement {
         let disabledColor = "var(--aon-color-bg-low-contrast)";
         this.style.backgroundColor = disabledColor;
         this.style.color = this.DETAIL_COLOR_NOT_ACTIVE;
-        this.TEXTAREA.contentEditable = false;
+        this.TEXTAREA.disabled = true;
         this.style.cursor = "not-allowed";
+        this.TEXTAREA.style.cursor = "not-allowed";
     }
 
     setEnabled() {
         this.style.backgroundColor = "transparent";
-        this.TEXTAREA.contentEditable = true;
+        this.TEXTAREA.disabled = false;
+        this.TEXTAREA.style.cursor = "text";
         this.style.cursor = "text";
     }
 
     updateScrollLimit() {
-        let editableDiv = this.getElement(this.TEXTAREA_ID);
-        if (editableDiv) {
-            editableDiv.style.maxHeight = this._scrollLimit;
+        // let textArea = this.getElement(this.TEXTAREA_ID);
+        if (this.TEXTAREA) {
+            this.TEXTAREA.style.maxHeight = this._scrollLimit;
         }
     }
 
     onkeyupTextarea(e) {
-        this.value = this.getValue();
+        this.value = this.TEXTAREA.value;
         if(e.key || e.keyCode) {
           if (e.keyCode == '38' || e.key == 'ArrowUp') {
             // up arrow

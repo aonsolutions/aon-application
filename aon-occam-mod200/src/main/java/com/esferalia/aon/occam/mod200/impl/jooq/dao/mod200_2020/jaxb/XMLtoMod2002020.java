@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2020.jaxb;
 
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 
@@ -518,7 +518,7 @@ public class XMLtoMod2002020 {
 	}
 	
 	private static void addVariable(Mod2002020 mod200, Mod2002020Key key, Number d) {
-		DoubleVariable2020 dv = new DoubleVariable2020(key);
+		DoubleVariableEx dv = new DoubleVariableEx(key);
 		dv.setValue(d==null?0:d.doubleValue());
 		mod200.addVariable(dv);
 	}

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Pendiente de adición por límite beneficio operativo no aplicado
 public enum Mod2002020LM538Key implements Serializable, IMod200KeysProvider  {
 

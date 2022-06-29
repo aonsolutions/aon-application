@@ -1,22 +1,31 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.text.MessageFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
+import com.esferalia.aon.occam.api.model.accounting.AccSctiptMVELContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.fiscal.AccountEntryDetailExpressionScript;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.entry.Mod303DefaultAccountEntryScript;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
@@ -25,6 +34,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -257,5 +267,39 @@ public class Mod303DAO extends FiscalModelDAO {
 	public static Stream<Mod303> getEffectivePreviousModels(AONContext ctx, Mod303 mod) {
 		return FiscalModelDAO.getEffectivePreviousModels(ctx, mod, Mod303::new);
 	}
+	
+	public static AccountEntry recordModel(AONContext ctx, Mod303 mod) {
+		Optional<AccountEntryDetailExpressionScript> script = Mod303DefaultAccountEntryScript.getScript(mod);
+		if (script.isPresent()) {
+			Date entryDate = new Date();
+			AccountPeriod period = AccountPeriodDAO.getActivePeriod(ctx,entryDate);
+			if (period == null) {
+				throw new AonCoreException( MessageFormat.format("No se ha encontrado un ejercicio activo para la fecha {0,date,dd/MM/yyyy}",entryDate) );
+			}
+			AccountEntry ae = new AccountEntry()
+					.setDomain(mod.getDomain())
+					.setPeriod(period.getId())
+					.setEntryDate( entryDate )
+					.setEntryType(AccountEntryType.TAX);
+			
+			AccSctiptMVELContext mvel = new AccSctiptMVELContext( ae ) {
+				private static final long serialVersionUID = -858390524319034071L;
+				@Override
+				public void fillContext() {
+					put(MODEL,mod);
+					for (String key : mod.getMap().keySet()) {
+						Mod303Key mod303Key = Mod303Key.getKey(key);
+						if (mod303Key != null) {
+							FiscalModelDetail detail = mod.getMap().get(key);
+							put(mod303Key.toString(), detail==null?0.0:detail.getAmount());
+						}
+					}
+				}
+			};
+			mvel.fillContext();
+			return mvel.fillDetails(ctx, script.get());
+		}
+		return null;
+	}
+	
 }
-
