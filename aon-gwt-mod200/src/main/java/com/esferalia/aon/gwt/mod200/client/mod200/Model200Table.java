@@ -36,171 +36,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-//public class Model200Table extends CellTable<Mod200> {
-//	
-//	public static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
-//	
-//
-//	public Model200Table(ProvidesKey<Mod200> providesKey) {
-//		super(1,TABLE_STYLE, providesKey);
-//		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
-//		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-//		
-//		addSelectorColumn();
-//		addAdministrationColumn();
-//		addYearColumn();
-//		addModelColumn();
-//		addStatusColumn();
-//		addComplementaryColumn();
-//		addDocumentColumn();
-//		addNameColumn();
-//		addResultTypeColumn();
-//		addResultColumn();
-//		addFinanceStatusColumn();
-//		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-//	}
-//
-//	private void addSelectorColumn() {
-//		final Column<Mod200, ImageResource> selectorColumn = new Column<Mod200, ImageResource>(
-//				new ImageResourceCell()) {
-//			@Override
-//			public ImageResource getValue(Mod200 model) {
-//				return AON.AON_RESOURCES.aonIconRowSelector();
-//			}
-//		};
-//		this.addColumn(selectorColumn);
-//		this.setColumnWidth(selectorColumn, 20, Unit.PX);
-//	}
-//
-//	private void addAdministrationColumn() {
-//		final Column<Mod200, ImageResource> iconColumn = new Column<Mod200, ImageResource>(
-//				new ImageResourceCell()) {
-//			@Override
-//			public ImageResource getValue(Mod200 model) {
-//				return FiscalModelUtils.getAdministrationIconResource(model.getAdministration());
-//			}
-//		};
-//		this.addColumn(iconColumn, "A" );
-//		this.setColumnWidth(iconColumn, 20, Unit.PX);
-//	}
-//	
-//	private void addYearColumn() {
-//		final TextColumn<Mod200> yearColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				return Integer.toString(model.getYear());
-//			}
-//		};
-//		this.addColumn(yearColumn, AON.MSG.fiscalYear());
-//		yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-//		this.setColumnWidth(yearColumn, 80, Unit.PX);
-//	}
-//
-//	private void addModelColumn() {
-//		final TextColumn<Mod200> modelColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				return FiscalModelUtils.getModelName(model);
-//			}
-//		};
-//		this.addColumn(modelColumn, AON.MSG.model());
-//		modelColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-//		this.setColumnWidth(modelColumn, 50, Unit.PX);
-//	}
-//
-//	private void addStatusColumn() {
-//		final Column<Mod200, ImageResource> iconColumn = new Column<Mod200, ImageResource>(
-//				new ImageResourceCell()) {
-//			@Override
-//			public ImageResource getValue(Mod200 model) {
-//				return model.isFinished()
-//						?AON.AON_RESOURCES.aonIconLock()
-//						:AON.AON_RESOURCES.aonIconUnlock();
-//			}
-//		};
-//		this.addColumn(iconColumn, "E" );
-//		this.setColumnWidth(iconColumn, 20, Unit.PX);
-//	}
-//	
-//	private void addComplementaryColumn() {
-//		Column<Mod200, ImageResource> complementaryColumn = new Column<Mod200, ImageResource>(
-//				new ImageResourceCell()) {
-//			@Override
-//			public ImageResource getValue(Mod200 model) {
-//				return model.isComplementary() 
-//					? AON.AON_RESOURCES.aonIconChecked()
-//					: AON.AON_RESOURCES.aonIconCheck();
-//			}
-//		};
-//		this.addColumn(complementaryColumn, "C" );
-//		complementaryColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
-//		this.setColumnWidth(complementaryColumn, 20, Unit.PX);
-//	}
-//	
-//	private void addDocumentColumn() {
-//		final TextColumn<Mod200> documentColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				return model.getDocument();
-//			}
-//		};
-//		this.addColumn(documentColumn, AON.MSG.document());
-//		this.setColumnWidth(documentColumn, 100, Unit.PX);
-//	}
-//
-//	private void addNameColumn() {
-//		final TextColumn<Mod200> nameColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				return model.getFullName();
-//			}
-//		};
-//		this.addColumn(nameColumn, AON.MSG.name());
-//		this.setColumnWidth(nameColumn, "auto");
-//	}	
-//
-//	private void addResultTypeColumn() {
-//		final TextColumn<Mod200> nameColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				if (model.isDeposit()) return AON.MSG.deposit(); 
-//				else if (model.isPayback()) return AON.MSG.payBack();
-//				else return AonStringUtils.EMPTY;
-//			}
-//		};
-//		this.addColumn(nameColumn, AON.MSG.result());
-//		this.setColumnWidth(nameColumn, 100, Unit.PX);
-//	}	
-//
-//	private void addResultColumn() {
-//		final TextColumn<Mod200> amountColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				return AON.FMT.format(model.getResult()) ;
-//			}
-//		};
-//		this.addColumn(amountColumn, AON.MSG.result());
-//		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-//		this.setColumnWidth(amountColumn, 100, Unit.PX);
-//	}	
-//
-//	private void addFinanceStatusColumn() {
-//		final TextColumn<Mod200> financeStatusColumn = new TextColumn<Mod200>() {
-//			@Override
-//			public String getValue(Mod200 model) {
-//				if (model.getFinance() != null && model.getFinance().getFinanceStatus() != null) {
-//					return model.getFinance().getFinanceStatus().getDescription();
-//				}
-//				return AonStringUtils.EMPTY;
-//			}
-//		};
-//		this.addColumn(financeStatusColumn, AON.MSG.financeStatus());
-//		financeStatusColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-//		this.setColumnWidth(financeStatusColumn, 120, Unit.PX);
-//	}	
-//
-//}
-
 public class Model200Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod200>{
 	
 	// PARA COMPILAR LOS ANTERIORES LO USABA LA CLASE ErrorPage
@@ -245,11 +80,21 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 		ContextMenu menu = new ContextMenu();		
 		menu.addStyleName(AON.AON_CSS.aonSelector());
 		
-		for (int i = 2020; i >= 2013; i--) {
+		for (int i = 2021; i >= 2013; i--) {
+			
+			// Ejercicio 2021 solo dominios BETA
+//			if (i==2021 && !cbk.getOptions().getConfiguration().isBetaEnabled())
+//				continue;			
+			
+			String msg = AON.MSG.newSomething(String.valueOf(i));
+			
+			// Ejercicio 2021 BETA
+//			if (i==2021)
+//				msg = msg + " (BETA)";
 			
 			final int year = i;
 			
-			menu.addItem("200", AON.MSG.newSomething(String.valueOf(year)), new ScheduledCommand() {
+			menu.addItem("200", msg, new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
@@ -294,7 +139,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter()) // Administración
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter()) // Año
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter()) // Periodo
-		// LA COLUMNA DE ESTADO NO SE PONDRÁ HASTA QUE SE DESARROLLE LO DEL ESTADO EN EL MODELO 200
+		// FALTA - LA COLUMNA DE ESTADO NO SE PONDRÁ HASTA QUE SE DESARROLLE LO DEL ESTADO EN EL MODELO 200
 //		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado
 		, CMP("C"					, 20 ,AON.CSS.aonTextCenter()) // Complementaria
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())   // Documento
@@ -365,7 +210,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
  				.addCell( new InlineLabel(AonNumberUtils.toString( mod200.getYear())), AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod200.getPeriod().getDescription()), AON.CSS.aonTextCenter());
 			
-			// El "Estado" se empezará a usar a partir del Modelo 200 - 2021
+			// FALTA - El "Estado" se empezará a usar a partir del Modelo 200 - 2021
 //			AonDisplayGridCell statusCell = new AonDisplayGridCell();
 //			statusCell.add(new InlineLabel(mod200.getYear() < 2021 ? "" : mod200.getStatus().getName()));
 //			statusCell.addStyleName(AON.CSS.aonTextCenter());

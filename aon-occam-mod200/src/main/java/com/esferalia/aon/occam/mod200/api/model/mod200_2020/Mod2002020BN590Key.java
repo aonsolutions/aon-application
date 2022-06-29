@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Deducciones inversión en Canarias.
 public enum Mod2002020BN590Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1

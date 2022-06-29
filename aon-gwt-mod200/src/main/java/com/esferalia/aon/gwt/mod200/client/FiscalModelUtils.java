@@ -25,34 +25,6 @@ public class FiscalModelUtils {
 		return  com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getPeriodDescription(fm);
 	}
 	
-//	public static <T extends FiscalModel> void fillPaymentInfo(FlowPanel paymentInfo,T mod) {
-//		paymentInfo.clear();
-//		paymentInfo.setVisible(mod.isFinished() || mod.isSent());
-//		InlineLabel l1 = new InlineLabel(AON.MSG.result());
-//		l1.setStyleName(AON.CSS.aonInnerLabel());
-//		paymentInfo.add(l1);
-//		InlineLabel l2 = new InlineLabel(AON.FMT.format(mod.getResult()));
-//		l2.setStyleName(AON.CSS.aonInnerLabel());
-//		l2.addStyleName(AON.CSS.aonBold());
-//		paymentInfo.add(l2);
-//		if (mod.getDeclarationType() != null) {
-//			InlineLabel l3 = new InlineLabel(mod.getDeclarationType().getDescription());
-//			l3.setStyleName(AON.CSS.aonInnerLabel());
-//			l3.addStyleName(AON.CSS.aonBold());
-//			paymentInfo.add(l3);
-//		}
-//		if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null) {
-//			InlineLabel l4 = new InlineLabel(mod.getFinance().getBankAccount().getIban());
-//			l4.setStyleName(AON.CSS.aonInnerLabel());
-//			l4.addStyleName(AON.CSS.aonBold());
-//			paymentInfo.add(l4);
-//			
-//			InlineLabel l5 = new InlineLabel(mod.getFinance().getBankAlias());
-//			l5.setStyleName(AON.CSS.aonInnerLabel());
-//			paymentInfo.add(l5);
-//		}
-//	}
-//
 	private static class FiscalStatusBackgroundRGB implements IFiscalStatusVisitor<String> {
 		@Override public String visitMissing() 	{return "White";}
 		@Override public String visitPending() 	{return "LightGray";}
@@ -69,7 +41,7 @@ public class FiscalModelUtils {
 	public static String getStatusBckColorRGB(FiscalStatus status) {
 		return ((status != null) ? status : FiscalStatus.MISSING).visit(FISCAL_STATUS_BACKGROUND_RGB);
 	}
-//
+
 	private static class FiscalStatusForegroundRGB implements IFiscalStatusVisitor<String> {
 		@Override public String visitPending() 	{return "black";}
 		@Override public String visitFinished() {return "black";}
@@ -98,20 +70,7 @@ public class FiscalModelUtils {
 	public static String getAdministrationIconStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_ICON_STYLE);
 	}
-//	
-//	private static class AdministrationBWIconStyle implements IAdministrationVisitor<String> {
-//		@Override public String visitAlava() 	{return AON.CSS.aonIconArabaBw();}
-//		@Override public String visitBizkaia() 	{return AON.CSS.aonIconBizkaiaBw();}
-//		@Override public String visitGipuzkoa() {return AON.CSS.aonIconGipuzkoaBw();}
-//		@Override public String visitNavarra() 	{return AON.CSS.aonIconNavarraBw();}
-//		@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeatBw();}
-//		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
-//	}
-//	private static final IAdministrationVisitor<String> ADMINISTRATION_BW_ICON_STYLE = new AdministrationBWIconStyle();
-//	public static String getAdministrationBWIconStyle(Administration adm) {
-//		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BW_ICON_STYLE);
-//	}
-//
+
 	private static class AdministrationIconResource implements IAdministrationVisitor<DataResource> {
 		@Override public DataResource visitAlava() 		{return AON.AON_SOLUTIONS_RESOURCES.aonIconAraba();}
 		@Override public DataResource visitBizkaia() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconBizkaia();}
@@ -124,20 +83,7 @@ public class FiscalModelUtils {
 	public static DataResource getAdministrationIconDataResource(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_ICON_RESOURCE);
 	}
-//
-//	private static class AdministrationBWIconResource implements IAdministrationVisitor<DataResource> {
-//		@Override public DataResource visitAlava() 		{return AON.AON_SOLUTIONS_RESOURCES.aonIconArabaBw();}
-//		@Override public DataResource visitBizkaia() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconBizkaiaBw();}
-//		@Override public DataResource visitGipuzkoa() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconGipuzkoaBw();}
-//		@Override public DataResource visitNavarra() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconNavarraBw();}
-//		@Override public DataResource visitCommonTerritory() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw();}
-//		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
-//	}
-//	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_BW_ICON_RESOURCE = new AdministrationBWIconResource();
-//	public static DataResource getAdministrationBWIconDataResource(Administration adm) {
-//		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BW_ICON_RESOURCE);
-//	}
-//	
+
 	private static class AdministrationBackgroundStyle implements IAdministrationVisitor<String> {
 		@Override public String visitAlava() 	{return AON.CSS.aonArabaBackgroundColor();}
 		@Override public String visitBizkaia() 	{return AON.CSS.aonBizkaiaBackgroundColor();}
@@ -150,62 +96,6 @@ public class FiscalModelUtils {
 	public static String getAdministrationBackgroundStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BACKGROUND_STYLE);
 	}
-//	
-//
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//	// 	------------------------------------------------------------------------	
-//
-//	/**
-//	 * @deprecated Use com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader
-//	 */
-//	@Deprecated
-//	public static void paintHeaderTable(SimplePanel headerPanel, IFiscalModel fm) {
-//		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
-//		headerPanel.clear();
-//		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
-//		
-//		FlexTable headerTable = new FlexTable();
-//		headerTable.getColumnFormatter().setWidth(0, "55px");
-//		headerTable.getColumnFormatter().setWidth(1, "70px");
-//		headerTable.getColumnFormatter().setWidth(2, "auto");
-//		headerTable.getColumnFormatter().setWidth(3, "75px");
-//		
-//		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
-//		
-//		Label image = new Label("");
-//		image.setStyleName(getAdministrationImage(admon));
-//		
-//		headerTable.setWidget(0, 0, image);
-//		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
-//		headerTable.getFlexCellFormatter().setRowSpan(0, 0, 2);
-//		
-//		headerTable.setWidget(0, 1, new Label( FiscalModelUtils.getModelName(fm))); 
-//		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-//		headerTable.getFlexCellFormatter().addStyleName(0, 1, getAdministrationBG(admon));
-//		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
-//		
-//		
-//		headerTable.setWidget(0, 2, new Label(AON.MSG.fiscalModelDescriptionlong(fm.getModel())));
-//		headerTable.getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-//		headerTable.getFlexCellFormatter().addStyleName(0, 2, getAdministrationBG(admon));
-//		headerTable.getFlexCellFormatter().setRowSpan(0, 2, 2);
-//		
-//		headerTable.setWidget(0, 3, new Label(""+fm.getYear()));
-//		headerTable.getFlexCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-//		headerTable.getFlexCellFormatter().addStyleName(0, 3, getAdministrationBG(admon));
-//		
-//		headerTable.setWidget(1, 0, new Label(getPeriodDescription(fm)));
-//		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-//		headerTable.getFlexCellFormatter().addStyleName(1, 0, getAdministrationBG(admon));
-//
-//		headerPanel.setWidget(headerTable);
-//	}
 
 	@Deprecated
 	public static String getAdministrationBG(Administration admon) {
@@ -270,10 +160,10 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_CSS.aonIconAeatBW();
 	}
-//
-//	/**
-//	 * @deprecated Use getAdministrationIconDataResource
-//	 */
+
+	/**
+	 * @deprecated Use getAdministrationIconDataResource
+	 */
 	@Deprecated
 	public static ImageResource getAdministrationIconResource(Administration adm) {
 		if (adm ==Administration.ALAVA) {
@@ -289,40 +179,7 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_RESOURCES.aonAeat();
 	}
-//
-//	
-//	/**
-//	 * @deprecated Use fillPaymentInfo
-//	 */
-//	@Deprecated
-//	public static <T extends FiscalModel> void paintPaymentInfo(FlowPanel paymentInfo,T mod) {
-//		paymentInfo.clear();
-//		paymentInfo.setVisible(mod.isFinished() || mod.isSent());
-//		InlineLabel l1 = new InlineLabel(AON.MSG.result());
-//		l1.setStyleName(AON.AON_CSS.aonInnerLabel());
-//		paymentInfo.add(l1);
-//		InlineLabel l2 = new InlineLabel(AON.FMT.format(mod.getResult()));
-//		l2.setStyleName(AON.AON_CSS.aonInnerLabel());
-//		l2.addStyleName(AON.AON_CSS.aonBold());
-//		paymentInfo.add(l2);
-//		if (mod.getDeclarationType() != null) {
-//			InlineLabel l3 = new InlineLabel(mod.getDeclarationType().getDescription());
-//			l3.setStyleName(AON.AON_CSS.aonInnerLabel());
-//			l3.addStyleName(AON.AON_CSS.aonBold());
-//			paymentInfo.add(l3);
-//		}
-//		if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null) {
-//			InlineLabel l4 = new InlineLabel(mod.getFinance().getBankAccount().getIban());
-//			l4.setStyleName(AON.AON_CSS.aonInnerLabel());
-//			l4.addStyleName(AON.AON_CSS.aonBold());
-//			paymentInfo.add(l4);
-//			
-//			InlineLabel l5 = new InlineLabel(mod.getFinance().getBankAlias());
-//			l5.setStyleName(AON.AON_CSS.aonInnerLabel());
-//			paymentInfo.add(l5);
-//		}
-//	}
-//	
+	
 	@Deprecated
 	public static FlowPanel getAnchorPanel(IFiscalModel model, String label, String href) {
 		FlowPanel p = new FlowPanel();
@@ -446,7 +303,6 @@ public class FiscalModelUtils {
 //			}
 //		});
 //	}
-	
 
 }
 

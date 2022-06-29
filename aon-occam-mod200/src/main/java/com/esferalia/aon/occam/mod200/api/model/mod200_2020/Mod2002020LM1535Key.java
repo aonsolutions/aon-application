@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Activos por impuesto diferido (AID). DT 33ª y DA 13ª LIS
 public enum Mod2002020LM1535Key implements Serializable, IMod200KeysProvider  {
 

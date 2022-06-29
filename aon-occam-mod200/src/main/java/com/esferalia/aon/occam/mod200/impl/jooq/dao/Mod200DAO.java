@@ -19,28 +19,8 @@ import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
-//public class Mod200DAO extends FiscalModelDAO {
 public class Mod200DAO {
 	
-//	public static Stream<Mod200> getHeaders(AONContext ctx, int domain) {
-//		return getHeaders(ctx, domain, null);
-//	}
-//	public static Stream<Mod200> getHeaders(AONContext ctx, int domain, Integer scope) {
-//		ctx.checkRead();
-//		return  ctx.getDslContext()
-//			.select(FS_MODEL200.fields())
-//			.select(DOMAIN.DESCRIPTION)
-//			.from(FS_MODEL200)
-//			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
-//			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
-//			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
-//			.orderBy(FS_MODEL200.YEAR.desc(),FS_MODEL200.NAME.asc())
-//			.fetch()
-//			.stream()
-//			.map( new Mod200Filler() )
-//			;
-//	}
-
 	public static Stream<Mod200> getMod200s(AONContext ctx,int domain) {
 		ctx.checkRead();
 		return ctx.getDslContext()

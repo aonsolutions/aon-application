@@ -31,6 +31,8 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
 public class Page18 extends PageAbs {
+	
+	private FlowPanel panelB11;
 
 	public Page18( Model200PageCallback callback ) {
 		super(callback);
@@ -41,7 +43,7 @@ public class Page18 extends PageAbs {
 			
 			@Override
 			public void mod200Changed(Mod2002020 mod200) {
-				paint();
+				paintB11Panel();
 			}
 		});
 		
@@ -162,126 +164,129 @@ public class Page18 extends PageAbs {
 		
 		paintDescription(table1, AON.MSG.ute6(), row++, 0, true);
 		
-		AonDisplayTable tabB11 = new AonDisplayTable();
-		tabB11.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tabB11.addStyleName(AON.CSS.aonBlockCenter());
-		
-		tabB11.addRow()
-			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20())
-			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
-			.addCell( new Label(AON.MSG.province() + "/" + AON.MSG.country()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.nominalValue()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label("%"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
-	
-		for (int i = 0; i < callback.getMod200Object().getMod200().getUteParticipations().size(); i++) {
-			final int idx = i;
-			
-			AonDocumentTextBox document = new AonDocumentTextBox();			
-			document.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getDocument());
-			document.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setDocument(document.getValue());
-				callback.markAsDirty();
-			});
-			
-			CheckBox rep = new CheckBox();
-			rep.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).isRepresentative());
-			rep.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setRepresentative(rep.getValue());
-					callback.markAsDirty();
-				}
-			});
-			
-			AonTextBox name = new AonTextBox();
-			name.setMaxLength(30);
-			name.setVisibleLength(40);			
-			name.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getName());
-			name.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setName(name.getValue());
-				callback.markAsDirty();
-			});
-			
-			ProvinceCountryListBox provinceCountry = new ProvinceCountryListBox();
-			provinceCountry.setSelectedIndex(0);
-			UteParticipation ca = callback.getMod200Object().getMod200().getUteParticipations().get(idx);
-			int p = ca.getProvince();
-			Country c = Country.safeValueOf(ca.getCountry());
-			if (p > 0 && p < Province.values().length) {
-				provinceCountry.setSelectedIndex(p);				
-			} else if (c != null) {				
-				provinceCountry.setSelectedIndex(Province.values().length + c.ordinal());
-			}			
-			provinceCountry.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					int index = provinceCountry.getSelectedIndex();
-					if (index < Province.values().length) {
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(index);
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(null);
-					} else {				
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(0);
-						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(Country.safeIso2(Country.values()[index-Province.values().length]));
-					}
-					callback.markAsDirty();
-				}
-			});
-			
-			Label nominal = new Label();
-			nominal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
-			nominal.addStyleName(AON.CSS.aonMarginRight());
-			
-			AonDoubleBox percent = new AonDoubleBox();
-			percent.setMaxLength(6);
-			percent.setVisibleLength(6);
-			percent.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getPercent());
-			percent.addValueChangeHandler(event -> {
-				double per = AonNumberUtils.todouble(percent.getValue());
-				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setPercent(per);
-				
-	    		// Recalcular Base según el porcentaje indicado
-	    		double c1330 = callback.getMod200Object().getMod200().getVariable(Mod2002020Key.UT1330).getValue();
-	    		double base = AonMathUtils.round(c1330 * per / 100); 
-	    		callback.getMod200Object().getMod200().getUteParticipations().get(idx).setBase(base);
-	    		nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
-				callback.markAsDirty();
-			});
-			
-			// Boton borrar linea
-			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-			deleteButton.addClickHandler(event -> {
-				callback.getMod200Object().getMod200().getUteParticipations().remove(idx);
-				paint();
-				callback.markAsDirty();
-			});
-	
-			tabB11.addRow()
-				.addCell(document)
-				.addCell(rep)				
-				.addCell(name)
-				.addCell(provinceCountry)
-				.addCell(nominal)
-				.addCell(percent)				
-				.addCell(deleteButton);
-		}
-		
-		// Botón añadir 
-		AonTableButton addButtonB11 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
-		addButtonB11.addStyleName(AON.CSS.aonMarginTop());
-		addButtonB11.addStyleName(AON.CSS.aonMarginLeft());
-		addButtonB11.addClickHandler(event -> {
-			callback.getMod200Object().getMod200().getUteParticipations().add(new UteParticipation());
-			paint();
-		});
-		
-		FlowPanel panelB11 = new FlowPanel();
-		panelB11.add(tabB11);
-		panelB11.add(addButtonB11);
+//		AonDisplayTable tabB11 = new AonDisplayTable();
+//		tabB11.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tabB11.addStyleName(AON.CSS.aonBlockCenter());
+//		
+//		tabB11.addRow()
+//			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+//			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20())
+//			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
+//			.addCell( new Label(AON.MSG.province() + "/" + AON.MSG.country()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+//			.addCell( new Label(AON.MSG.nominalValue()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+//			.addCell( new Label("%"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+//	
+//		for (int i = 0; i < callback.getMod200Object().getMod200().getUteParticipations().size(); i++) {
+//			final int idx = i;
+//			
+//			AonDocumentTextBox document = new AonDocumentTextBox();			
+//			document.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getDocument());
+//			document.addValueChangeHandler(event -> {
+//				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setDocument(document.getValue());
+//				callback.markAsDirty();
+//			});
+//			
+//			CheckBox rep = new CheckBox();
+//			rep.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).isRepresentative());
+//			rep.addClickHandler(new ClickHandler() {
+//				@Override
+//				public void onClick(ClickEvent event) {
+//					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setRepresentative(rep.getValue());
+//					callback.markAsDirty();
+//				}
+//			});
+//			
+//			AonTextBox name = new AonTextBox();
+//			name.setMaxLength(30);
+//			name.setVisibleLength(40);			
+//			name.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getName());
+//			name.addValueChangeHandler(event -> {
+//				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setName(name.getValue());
+//				callback.markAsDirty();
+//			});
+//			
+//			ProvinceCountryListBox provinceCountry = new ProvinceCountryListBox();
+//			provinceCountry.setSelectedIndex(0);
+//			UteParticipation ca = callback.getMod200Object().getMod200().getUteParticipations().get(idx);
+//			int p = ca.getProvince();
+//			Country c = Country.safeValueOf(ca.getCountry());
+//			if (p > 0 && p < Province.values().length) {
+//				provinceCountry.setSelectedIndex(p);				
+//			} else if (c != null) {				
+//				provinceCountry.setSelectedIndex(Province.values().length + c.ordinal());
+//			}			
+//			provinceCountry.addChangeHandler(new ChangeHandler() {			
+//				@Override
+//				public void onChange(ChangeEvent event) {
+//					int index = provinceCountry.getSelectedIndex();
+//					if (index < Province.values().length) {
+//						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(index);
+//						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(null);
+//					} else {				
+//						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(0);
+//						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(Country.safeIso2(Country.values()[index-Province.values().length]));
+//					}
+//					callback.markAsDirty();
+//				}
+//			});
+//			
+//			Label nominal = new Label();
+//			nominal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+//			nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
+//			nominal.addStyleName(AON.CSS.aonMarginRight());
+//			
+//			AonDoubleBox percent = new AonDoubleBox();
+//			percent.setMaxLength(6);
+//			percent.setVisibleLength(6);
+//			percent.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getPercent());
+//			percent.addValueChangeHandler(event -> {
+//				double per = AonNumberUtils.todouble(percent.getValue());
+//				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setPercent(per);
+//				
+//	    		// Recalcular Base según el porcentaje indicado
+//	    		double c1330 = callback.getMod200Object().getMod200().getVariable(Mod2002020Key.UT1330).getValue();
+//	    		double base = AonMathUtils.round(c1330 * per / 100); 
+//	    		callback.getMod200Object().getMod200().getUteParticipations().get(idx).setBase(base);
+//	    		nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
+//				callback.markAsDirty();
+//			});
+//			
+//			// Boton borrar linea
+//			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+//			deleteButton.addClickHandler(event -> {
+//				callback.getMod200Object().getMod200().getUteParticipations().remove(idx);
+//				paint();
+//				callback.markAsDirty();
+//			});
+//	
+//			tabB11.addRow()
+//				.addCell(document)
+//				.addCell(rep)				
+//				.addCell(name)
+//				.addCell(provinceCountry)
+//				.addCell(nominal)
+//				.addCell(percent)				
+//				.addCell(deleteButton);
+//		}
+//		
+//		// Botón añadir 
+//		AonTableButton addButtonB11 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+//		addButtonB11.addStyleName(AON.CSS.aonMarginTop());
+//		addButtonB11.addStyleName(AON.CSS.aonMarginLeft());
+//		addButtonB11.addClickHandler(event -> {
+//			callback.getMod200Object().getMod200().getUteParticipations().add(new UteParticipation());
+//			paint();
+//		});
+//		
+//		FlowPanel panelB11 = new FlowPanel();
+//		panelB11.add(tabB11);
+//		panelB11.add(addButtonB11);
 		
 		table1.getFlexCellFormatter().setColSpan(row, 0, 2);
+//		table1.setWidget(row, 0, panelB11);
+		panelB11 = new FlowPanel();
+		paintB11Panel();
 		table1.setWidget(row, 0, panelB11);
 	
 		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
@@ -380,6 +385,130 @@ public class Page18 extends PageAbs {
 			paint();
 		});		
 		basePanel.add(addButtonForeign);
+		
+	}
+	
+	private void paintB11Panel() {
+		
+		panelB11.clear();
+		
+		AonDisplayTable tabB11 = new AonDisplayTable();
+		tabB11.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tabB11.addStyleName(AON.CSS.aonBlockCenter());
+		
+		tabB11.addRow()
+			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20())
+			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
+			.addCell( new Label(AON.MSG.province() + "/" + AON.MSG.country()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label("Base imponible imputada"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+			.addCell( new Label("% Partic."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+	
+		for (int i = 0; i < callback.getMod200Object().getMod200().getUteParticipations().size(); i++) {
+			final int idx = i;
+			
+			AonDocumentTextBox document = new AonDocumentTextBox();			
+			document.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getDocument());
+			document.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setDocument(document.getValue());
+				callback.markAsDirty();
+			});
+			
+			CheckBox rep = new CheckBox();
+			rep.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).isRepresentative());
+			rep.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					callback.getMod200Object().getMod200().getUteParticipations().get(idx).setRepresentative(rep.getValue());
+					callback.markAsDirty();
+				}
+			});
+			
+			AonTextBox name = new AonTextBox();
+			name.setMaxLength(30);
+			name.setVisibleLength(40);			
+			name.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getName());
+			name.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setName(name.getValue());
+				callback.markAsDirty();
+			});
+			
+			ProvinceCountryListBox provinceCountry = new ProvinceCountryListBox();
+			provinceCountry.setSelectedIndex(0);
+			UteParticipation ca = callback.getMod200Object().getMod200().getUteParticipations().get(idx);
+			int p = ca.getProvince();
+			Country c = Country.safeValueOf(ca.getCountry());
+			if (p > 0 && p < Province.values().length) {
+				provinceCountry.setSelectedIndex(p);				
+			} else if (c != null) {				
+				provinceCountry.setSelectedIndex(Province.values().length + c.ordinal());
+			}			
+			provinceCountry.addChangeHandler(new ChangeHandler() {			
+				@Override
+				public void onChange(ChangeEvent event) {
+					int index = provinceCountry.getSelectedIndex();
+					if (index < Province.values().length) {
+						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(index);
+						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(null);
+					} else {				
+						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setProvince(0);
+						callback.getMod200Object().getMod200().getUteParticipations().get(idx).setCountry(Country.safeIso2(Country.values()[index-Province.values().length]));
+					}
+					callback.markAsDirty();
+				}
+			});
+			
+			Label nominal = new Label();
+			nominal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
+			nominal.addStyleName(AON.CSS.aonMarginRight());
+			
+			AonDoubleBox percent = new AonDoubleBox(8,4);
+			percent.setMaxLength(8);
+			percent.setVisibleLength(8);
+			percent.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getPercent());
+			percent.addValueChangeHandler(event -> {
+				double per = AonNumberUtils.todouble(percent.getValue());
+				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setPercent(per);
+				
+	    		// Recalcular Base según el porcentaje indicado
+	    		double c1330 = callback.getMod200Object().getMod200().getVariable(Mod2002020Key.UT1330).getValue();
+	    		double base = AonMathUtils.round(c1330 * per / 100); 
+	    		callback.getMod200Object().getMod200().getUteParticipations().get(idx).setBase(base);
+	    		nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
+				callback.markAsDirty();
+			});
+			
+			// Boton borrar linea
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(event -> {
+				callback.getMod200Object().getMod200().getUteParticipations().remove(idx);
+				paintB11Panel();
+				callback.markAsDirty();
+			});
+	
+			tabB11.addRow()
+				.addCell(document)
+				.addCell(rep)				
+				.addCell(name)
+				.addCell(provinceCountry)
+				.addCell(nominal)
+				.addCell(percent)				
+				.addCell(deleteButton);
+		}
+		
+		// Botón añadir 
+		AonTableButton addButtonB11 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+		addButtonB11.addStyleName(AON.CSS.aonMarginTop());
+		addButtonB11.addStyleName(AON.CSS.aonMarginLeft());
+		addButtonB11.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().getUteParticipations().add(new UteParticipation());
+			paintB11Panel();
+		});
+		
+		panelB11.add(tabB11);
+		panelB11.add(addButtonB11);
 		
 	}
 	

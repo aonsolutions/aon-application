@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanS
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -325,7 +325,7 @@ public class Page20 extends PageAbs {
 
 	@Override
 	public void populate() {
-		DoubleVariable2020 dv =  callback.getMod200Object().getMod200().getVariable(Mod2002020Key.BN621);
+		DoubleVariableEx dv =  callback.getMod200Object().getMod200().getVariable(Mod2002020Key.BN621);
 		Double value = dv==null?0.0:dv.getValue();
 		if (AonMathUtils.round(value) == 0.0) {
 			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
