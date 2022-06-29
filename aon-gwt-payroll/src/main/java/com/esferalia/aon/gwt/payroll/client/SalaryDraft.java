@@ -1064,11 +1064,13 @@ public class SalaryDraft extends ResizeComposite
 					String value = super.getValue(getSelectedIndex());
 					if (AonStringUtils.isBlank(value))
 						return "NADA";
-					Payment.Type delay = Payment.Type.valueOf(Payment.Type.class, value);
-
-					String contextVariable =  getContextVariable(delay);
-					
-					return contextVariable;
+					try {
+						Payment.Type delay = Payment.Type.valueOf(Payment.Type.class, value);
+						String contextVariable =  getContextVariable(delay);
+						return contextVariable;
+					} catch ( Exception e ) {
+						return null;
+					}
 				}
 				
 				private String getContextVariable(Payment.Type e) {
@@ -1125,14 +1127,17 @@ public class SalaryDraft extends ResizeComposite
 
 				@Override
 				public String getValue() {
-
 					String value = super.getValue(getSelectedIndex());
-					if (StringUtils.isBlank(value))
+					if (AonStringUtils.isBlank(value))
 						return "NADA";
+					
+					try {
+						Dismissal dismissal = Dismissal.valueOf(Dismissal.class, value);
+						return getContextVariable(dismissal);
+					} catch ( Exception e) {
+						return null;
+					}
 
-					Dismissal dismissal = Dismissal.valueOf(Dismissal.class, value);
-
-					return getContextVariable(dismissal);
 				}
 
 				private String getContextVariable(Dismissal e) {
@@ -1166,6 +1171,7 @@ public class SalaryDraft extends ResizeComposite
 
 			return textListBox;
 		}
+		
 
 	}
 
@@ -3811,7 +3817,7 @@ public class SalaryDraft extends ResizeComposite
 		.filter(v ->  intersects(variable,  v))
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
-		.map(SalaryDraft::format )
+		.map( v -> format(v, variable))
 		.distinct()
 		.collect(Collectors.joining(","))
 		;
@@ -5317,23 +5323,23 @@ public class SalaryDraft extends ResizeComposite
 		valuePanel.add(editor);
 
 		valuePanel.add(new InlineHTML("&nbsp;"));
-
-		InlineLabel dbAmountLabel = new InlineLabel();
-		dbAmountLabel.setText(getDbValueOf(variable));
-		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
-		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
 		
-		String value = editor.getValue();
-		if ( "DIAS_NATURALES_MES".equals(value))
-			value = Integer.toString(DateUtils.getLastDayOfMonth(variable.getEndDate()).getDate());
-			
-		setDbStyleName(dbAmountLabel, format(value), dbAmountLabel.getText());
-		
-		valuePanel.add(dbAmountLabel);
+		try {
+			InlineLabel dbAmountLabel = new InlineLabel();
+			dbAmountLabel.setText(getDbValueOf(variable));
+			dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
+			dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
 
-		VisibilityImpl dbWidget = new VisibilityImpl(dbAmountLabel.getElement().getParentElement());
-		dbWidget.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
-		addDbWidget(dbWidget);
+			setDbStyleName(dbAmountLabel, format(editor.getValue(), variable), dbAmountLabel.getText());
+		
+			valuePanel.add(dbAmountLabel);
+
+			VisibilityImpl dbWidget = new VisibilityImpl(dbAmountLabel.getElement().getParentElement());
+			dbWidget.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
+			addDbWidget(dbWidget);
+		} catch ( Exception e ) {
+			info(e.getMessage());
+		}
 
 		//valuePanel.setCellWidth(dbAmountLabel, "50%");
 		
@@ -7803,9 +7809,52 @@ public class SalaryDraft extends ResizeComposite
 		return intersects(p1, p2);
 	}
 	
-	private static String format(Object obj) {
+	private static String format(Object obj, Variable variable) {
+		if ( obj == null )
+			return null;
+		
+		if ( AonStringUtils.equals("DIAS_NATURALES_MES", obj.toString()))
+			obj = Integer.toString(DateUtils.getLastDayOfMonth(variable.getEndDate()).getDate());
+
+		else if ( AonStringUtils.equals("IMPROCEDENTE",obj.toString()))
+			return Dismissal.UNFAIR.getDescription();
+		else if ( AonStringUtils.equals("FIN_TEMPORAL",obj.toString()))
+			return Dismissal.TEMP_END.getDescription();
+		else if ( AonStringUtils.equals("FIN_OBRA",obj.toString()))
+			return Dismissal.WORK_END.getDescription();
+		else if ( AonStringUtils.equals("FIN",obj.toString()))
+			return Dismissal.DEFINITE_END.getDescription();
+		else if ( AonStringUtils.equals("PROCEDENTE",obj.toString()))
+			return Dismissal.OBJECTIVE.getDescription();
+		else if ( AonStringUtils.equals("CAMBIO_CONDICIONES",obj.toString()))
+			return Dismissal.CONDITIONS_CHANGE.getDescription();
+		else if ( AonStringUtils.equals("JUBILACION",obj.toString()))
+			return Dismissal.RETIREMENT.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.UNFAIR.name(),obj.toString()))
+			return Dismissal.UNFAIR.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.TEMP_END.name(),obj.toString()))
+			return Dismissal.TEMP_END.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.WORK_END.name(),obj.toString()))
+			return Dismissal.WORK_END.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.DEFINITE_END.name(),obj.toString()))
+			return Dismissal.DEFINITE_END.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.OBJECTIVE.name(),obj.toString()))
+			return Dismissal.OBJECTIVE.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.CONDITIONS_CHANGE.name(),obj.toString()))
+			return Dismissal.CONDITIONS_CHANGE.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.RETIREMENT.name(),obj.toString()))
+			return Dismissal.RETIREMENT.getDescription();
+		
 		try {
 			double value = Double.parseDouble(obj.toString());
+			value = BigDecimal.valueOf(value)
+					.setScale(2, RoundingMode.HALF_UP).doubleValue();
+			return format(value);
+		} catch ( Exception e ) {
+			
+		}
+		try {
+			double value = parse(obj.toString());
 			value = BigDecimal.valueOf(value)
 					.setScale(2, RoundingMode.HALF_UP).doubleValue();
 			return format(value);

@@ -38,6 +38,7 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
@@ -328,7 +329,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 		for (Period period : periods) {
 
-			DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+			//DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+			@SuppressWarnings("serial")
+			SimpleContractPayment payment = new SimpleContractPayment(contractPayment) {
 				
 				@Override
 				public Integer getId() {
@@ -366,6 +369,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					return AonStringUtils.isNotBlank(name) ? name : DEFAULT_EXTRA_NAME ;
 				}
 			};
+			
+			
+			;
 			
 			payments.add(payment);
 		}
