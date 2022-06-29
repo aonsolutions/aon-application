@@ -129,7 +129,7 @@ public class JooqEmployeeContractPayments {
 				contractPayment.setId(contractPaymentRecord.get(CONTRACT_PAYMENT.ID));
 				contractPayment.setDomain(contractPaymentRecord.get(CONTRACT_PAYMENT.DOMAIN));
 				contractPayment.setConceptId(paymentConceptId);
-				contractPayment.setType(Payment.Type.getByCode(paymentCRA.intValue()));
+				contractPayment.setType(null == paymentCRA ? Payment.Type.CRA_0001 :Payment.Type.getByCode(paymentCRA.intValue()));
 				contractPayment.setName(code);
 				contractPayment.setDescription(contractPaymentRecord.get(CONTRACT_PAYMENT.DESCRIPTION));
 				contractPayment.setExpression(contractPaymentRecord.get(CONTRACT_PAYMENT.EXPRESSION));
