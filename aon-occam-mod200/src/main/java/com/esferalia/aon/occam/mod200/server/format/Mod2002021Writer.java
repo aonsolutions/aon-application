@@ -480,11 +480,11 @@ public class Mod2002021Writer {
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> { // Tipo de declaración 
 						if ("N".equals(mod200.getResultType()) || AonStringUtils.isEmpty(mod200.getResultType())) {
-							line.append("N");
+							line.append("N");  // Cuota Cero
 						} else if ("I".equals(mod200.getResultType())) {
-							line.append(AonFiscalFileUtils.text(mod200.getPayType(), 1)); // Tipo de declaración
+							line.append(AonFiscalFileUtils.text(mod200.getPayType(), 1)); // Ingreso
 						} else if ("D".equals(mod200.getResultType())) {
-							line.append(AonFiscalFileUtils.text(mod200.getDevType(), 1)); // Tipo de declaración
+							line.append(AonFiscalFileUtils.text(mod200.getDevType(), 1)); // Devolución
 						}
 					}
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDocument(), 9))
@@ -1822,7 +1822,6 @@ public class Mod2002021Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002021Key.BN621) // Liquidación - Líquido a ingresar o a devolver Estado [621]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002021Key.LQ2489) // Liquidación - Opción de fraccionamiento art. 19.1 LIS - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS: Estado 
 				
-				
 				,(line, mod200, label) -> {
 					
 					double importe = mod200.getDoubleValue(Mod2002021Key.BN621); // importe a ingresar o a devolver
@@ -1833,7 +1832,10 @@ public class Mod2002021Writer {
                     line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "", 34));         // Devolución - Número de cuenta IBAN (si devolución por transferencia)
 					line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getBic() : "", 11));          // Devolución - Código SWIFT-BIC
 					line.append(AonFiscalFileUtils.text(importe > 0 ? mod200.getPayType() : "", 1));    // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Adeudo en cuenta, "U" Domiciliación
-					line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));    // Ingreso - Importe a ingresar
+					if (mod200.getDoubleValue(Mod2002021Key.LQ2489) > 0) 
+					   line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(Mod2002021Key.LQ2489), DS, DD));    // Ingreso - Importe a ingresar
+					else
+					   line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));    // Ingreso - Importe a ingresar
 					line.append(AonFiscalFileUtils.text(importe > 0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType()))	? mod200.getIban() : "", 34));  // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)
 
 					addSignedKey(line, mod200, Mod2002021Key.BN1020); // Abono/Compensación - Abono por conversión de activos impuesto diferido - A

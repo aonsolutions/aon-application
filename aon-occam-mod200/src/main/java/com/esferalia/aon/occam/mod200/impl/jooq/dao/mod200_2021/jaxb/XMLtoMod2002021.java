@@ -519,6 +519,10 @@ public class XMLtoMod2002021 {
 		DoubleVariableEx dv = new DoubleVariableEx(key);
 		dv.setValue(d==null?0:d.doubleValue());
 		mod200.addVariable(dv);
+		// Se añade tambien a draft, para que se repinten los datos en todas las páginas, despues de cargar el fichero
+		dv = new DoubleVariableEx(key);
+		dv.setValue(d==null?0:d.doubleValue());
+		mod200.addDraftVariable(dv);
 	}
 	
 }
