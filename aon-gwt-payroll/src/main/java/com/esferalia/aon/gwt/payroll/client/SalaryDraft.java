@@ -6,6 +6,8 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LEN
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +35,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.client.CalendarDraft.AddEventCommand;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.Calculate;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -55,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.NoHolidaysVariable;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
@@ -2782,21 +2784,33 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label employeeAgreementCategoryLabel;
 	@UiField
-	Label employeeGroupLabel;
+	ValueLabel employeeGroupLabel;
 	@UiField
-	Label employeeContractLabel;
+	Label dbEmployeeGroupLabel;
 	@UiField
-	Label employeeOcupationLabel;
+	ValueLabel employeeContractLabel;
 	@UiField
-	Label employeeWorkedHoursLabel;
+	Label dbEmployeeContractLabel;
+	@UiField
+	ValueLabel employeeOcupationLabel;
+	@UiField
+	Label dbEmployeeOcupationLabel;
+	@UiField
+	ValueInlineHTML employeeWorkedHoursLabel;
+	@UiField
+	Label dbEmployeeWorkedHoursLabel;
 	@UiField
 	Label employeeWorkedHoursTitle;
 	@UiField
-	Label employeeWorkedDaysLabel;
+	ValueInlineHTML employeeWorkedDaysLabel;
+	@UiField
+	Label dbEmployeeWorkedDaysLabel;
 	@UiField
 	Label employeeWorkedDaysTitle;
 	@UiField
-	Label employeePartialFactorLabel;
+	ValueInlineHTML employeePartialFactorLabel;
+	@UiField
+	Label dbEmployeePartialFactorLabel;
 	@UiField
 	Label employeePartialFactorTitle;
 	@UiField
@@ -3361,7 +3375,14 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalDeductionLabel.setVisible(visible);
 		dbTotalLiquidLabel.setVisible(visible);
 		dbTotalPaymentLabel.setVisible(visible);
-
+		
+		dbEmployeeContractLabel.setVisible(visible);
+		dbEmployeeGroupLabel.setVisible(visible);
+		dbEmployeeOcupationLabel.setVisible(visible);
+		dbEmployeeWorkedDaysLabel.setVisible(employeeWorkedDaysLabel.isVisible() && visible);
+		dbEmployeeWorkedHoursLabel.setVisible(employeeWorkedHoursLabel.isVisible() && visible);
+		dbEmployeePartialFactorLabel.setVisible(employeePartialFactorLabel.isVisible() && visible);
+		
 		for (HasVisibility obj : dbUIObjects)
 			obj.setVisible(visible);
 		
@@ -3588,15 +3609,26 @@ public class SalaryDraft extends ResizeComposite
 		
 		employeeContractLabel.setText(getValueOf("TC2"));
 		employeeContractLabel.setTitle(getTitleOfTC2());
+		dbEmployeeContractLabel.setText(getDbValueOf("TC2"));
+		setDbStyleName(dbEmployeeContractLabel, employeeContractLabel);
+		
 		employeeOcupationLabel.setText(getValueOf("OCUPACION"));
 		employeeOcupationLabel.setTitle(getTitleOf("OCUPACION",Employee.Occupation.class));
+		dbEmployeeOcupationLabel.setText(getDbValueOf("OCUPACION"));
+		setDbStyleName(dbEmployeeOcupationLabel, employeeOcupationLabel);
+		
 		employeeGroupLabel.setText(getValueOf("GRUPO_COTIZACION"));
+		dbEmployeeGroupLabel.setText(getDbValueOf("GRUPO_COTIZACION"));
+		setDbStyleName(dbEmployeeGroupLabel, employeeGroupLabel);
 		
 		double workHours = getValuesOf("HORAS_TRABAJADAS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedHoursLabel.setText(formatValue(workHours));
 		employeeWorkedHoursLabel.setVisible(isSalary() && workHours > 0);
 		employeeWorkedHoursTitle.setVisible(employeeWorkedHoursLabel.isVisible());
 		employeeWorkedHoursButton.setVisible(employeeWorkedHoursLabel.isVisible() );
+		double dbWorkHours = getDbValuesOf("HORAS_TRABAJADAS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		dbEmployeeWorkedHoursLabel.setText(formatValue(dbWorkHours));
+		setDbStyleName(dbEmployeeWorkedHoursLabel, employeeWorkedHoursLabel);
 		
 		Variable partialFactorsVars [] = getVariablesOf("COEFICIENTE_PARCIALIDAD").toArray(Variable[]::new);
 
@@ -3622,6 +3654,9 @@ public class SalaryDraft extends ResizeComposite
 		employeeWorkedDaysLabel.setVisible(isSalary() && workHours == 0 && partialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
 		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
+		double dbWorkDays = getDbValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		dbEmployeeWorkedDaysLabel.setText(formatValue(workDays));
+		setDbStyleName(dbEmployeeWorkedDaysLabel, employeeWorkedDaysLabel);
 		
 		String seniorityYears = 
 		getValuesOf("A\u00D1OS_ANTIGUEDAD").distinct().map(AonNumberUtils::todouble).filter( d -> d > 0)
@@ -3719,6 +3754,15 @@ public class SalaryDraft extends ResizeComposite
 		;
 	}
 
+	public Stream<String> getDbValuesOf(String name) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		;
+	}
+
 	public Stream<Variable> getVariablesOf(String name) {
 		return salaryDraftObject.getContext().stream()
 		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
@@ -3732,6 +3776,18 @@ public class SalaryDraft extends ResizeComposite
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
 		.map(String::valueOf )
+		.distinct()
+		.collect(Collectors.joining(","))
+		;
+	}
+
+	public String getDbValueOf(String name) {
+		return salaryDraftObject.getDbContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		.distinct()
 		.collect(Collectors.joining(","))
 		;
 	}
@@ -3745,6 +3801,18 @@ public class SalaryDraft extends ResizeComposite
 		.map(v -> valueOf(enumType, v))
 		.filter(Objects::nonNull)
 		.map( t -> t.getDescription())
+		.collect(Collectors.joining(","))
+		;
+	}
+
+	public String getDbValueOf(Variable variable) {
+		return salaryDraftObject.getDbContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(variable.getName(), v.getName()))
+		.filter(v ->  intersects(variable,  v))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(SalaryDraft::format )
+		.distinct()
 		.collect(Collectors.joining(","))
 		;
 	}
@@ -5238,7 +5306,7 @@ public class SalaryDraft extends ResizeComposite
 		htmlPanel.add(label);
 		variableChangeHandler.setLabel(label);
 
-		Panel valuePanel = new HorizontalPanel();
+		HorizontalPanel valuePanel = new HorizontalPanel();
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
 		//TextBox variableTextBox = new ExpressionBox();
@@ -5250,6 +5318,25 @@ public class SalaryDraft extends ResizeComposite
 
 		valuePanel.add(new InlineHTML("&nbsp;"));
 
+		InlineLabel dbAmountLabel = new InlineLabel();
+		dbAmountLabel.setText(getDbValueOf(variable));
+		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
+		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
+		
+		String value = editor.getValue();
+		if ( "DIAS_NATURALES_MES".equals(value))
+			value = Integer.toString(DateUtils.getLastDayOfMonth(variable.getEndDate()).getDate());
+			
+		setDbStyleName(dbAmountLabel, format(value), dbAmountLabel.getText());
+		
+		valuePanel.add(dbAmountLabel);
+
+		VisibilityImpl dbWidget = new VisibilityImpl(dbAmountLabel.getElement().getParentElement());
+		dbWidget.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
+		addDbWidget(dbWidget);
+
+		//valuePanel.setCellWidth(dbAmountLabel, "50%");
+		
 		boolean enabled = editor.isEnabled() ;
 		
 
@@ -5495,7 +5582,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
-	private String format(Date date) {
+	private static String format(Date date) {
 		return date == null ? null : DATE_FORMAT.format(date);
 	}
 
@@ -6335,6 +6422,10 @@ public class SalaryDraft extends ResizeComposite
 	
 	private boolean isExtra(){
 		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.EXTRA;
+	}
+
+	private boolean isDelay(){
+		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.DELAY;
 	}
 
 	private boolean isSalary(){
@@ -7698,4 +7789,31 @@ public class SalaryDraft extends ResizeComposite
 		MatchResult result = RegExp.compile("var:([A-Z_0-9]+)").exec(expression);
 		return result != null ? result.getGroup(1): null;
 	}
+	
+	private static boolean intersects ( Period p1, Period p2) {
+		Date maxStart = AonDateUtils.max(p1.getStart(), p2.getStart());
+		Date minEnd = AonDateUtils.min(p1.getEnd(), p2.getEnd());
+		return AonDateUtils.compare(maxStart, minEnd) <= 0;
+		
+	}
+	
+	private static boolean intersects( Variable v1, Variable v2) {
+		Period p1 = new Period(v1.getStartDate(), v1.getEndDate());
+		Period p2 = new Period(v2.getStartDate(), v2.getEndDate());
+		return intersects(p1, p2);
+	}
+	
+	private static String format(Object obj) {
+		try {
+			double value = Double.parseDouble(obj.toString());
+			value = BigDecimal.valueOf(value)
+					.setScale(2, RoundingMode.HALF_UP).doubleValue();
+			return format(value);
+		} catch ( Exception e ) {
+			
+		}
+		return obj.toString();
+	}
+	
+	
 }
