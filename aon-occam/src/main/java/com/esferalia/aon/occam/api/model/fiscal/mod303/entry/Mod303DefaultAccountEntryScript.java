@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod303.entry;
 import java.util.Arrays;
 import java.util.Optional;
 
-import com.esferalia.aon.occam.api.model.fiscal.AccountEntryDetailExpressionScript;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
 public class Mod303DefaultAccountEntryScript {

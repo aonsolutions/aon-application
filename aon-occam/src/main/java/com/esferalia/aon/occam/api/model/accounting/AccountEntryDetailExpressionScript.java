@@ -1,7 +1,9 @@
-package com.esferalia.aon.occam.api.model.fiscal;
+package com.esferalia.aon.occam.api.model.accounting;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
 public abstract class AccountEntryDetailExpressionScript implements Serializable {
 	

@@ -20,12 +20,12 @@ public class Mod303RecordTest extends AbstractOccamTest {
 		ctx.getDslContext().transaction( config -> {
 			for (Mod303 model : MODEL303.getMod303s(getOccam()) ) {
 				AccountEntry ae = Mod303DAO.recordModel(ctx, model);
-					FiscalTestSuite.print( ae );
-					assertNotNull("Mod303. Sin apunte", ae);
-					assertNotEquals("Mod303. Sin detalles en apuntes", 0, ae.getDetailsSize());
-					assertEquals("Mod303. Apunte descuadrado", 
-							ae.getDetails().stream().map(aed -> aed.getDebit() ).reduce(0.0, Double::sum),
-							ae.getDetails().stream().map(aed -> aed.getCredit() ).reduce(0.0, Double::sum));
+				FiscalTestSuite.print( ae );
+				assertNotNull("Mod303. Sin apunte", ae);
+				assertNotEquals("Mod303. Sin detalles en apuntes", 0, ae.getDetailsSize());
+				assertEquals("Mod303. Apunte descuadrado", 
+					ae.getDetails().stream().map(aed -> aed.getDebit() ).reduce(0.0, Double::sum),
+					ae.getDetails().stream().map(aed -> aed.getCredit() ).reduce(0.0, Double::sum));
 //				}
 			}
 			

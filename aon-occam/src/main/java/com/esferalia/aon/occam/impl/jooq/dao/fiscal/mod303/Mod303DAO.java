@@ -13,8 +13,8 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccSctiptMVELContext;
+import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.fiscal.AccountEntryDetailExpressionScript;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -291,7 +291,11 @@ public class Mod303DAO extends FiscalModelDAO {
 						Mod303Key mod303Key = Mod303Key.getKey(key);
 						if (mod303Key != null) {
 							FiscalModelDetail detail = mod.getMap().get(key);
-							put(mod303Key.toString(), detail==null?0.0:detail.getAmount());
+							String mapKey = mod303Key.toString(); 
+							if (mod303Key.getBox() != 0) {
+								mapKey = "C" + mod303Key.getBox();
+							}
+							put(mapKey, detail==null?0.0:detail.getAmount());
 						}
 					}
 				}
