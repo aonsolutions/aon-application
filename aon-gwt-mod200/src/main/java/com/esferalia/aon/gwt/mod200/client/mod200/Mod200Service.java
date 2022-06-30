@@ -13,5 +13,6 @@ public interface Mod200Service extends RemoteService {
 
 	Mod200 getMod200(Occam occam, Integer id) throws AonCoreException;
 	LinkedList<Mod200> getMod200s(Occam occam) throws AonCoreException;
+	Mod200 saveComments(Occam occam, Mod200 mod200) throws AonCoreException;
 
 }

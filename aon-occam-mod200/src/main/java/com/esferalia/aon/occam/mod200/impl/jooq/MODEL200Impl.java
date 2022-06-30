@@ -25,5 +25,10 @@ public class MODEL200Impl implements IMODEL200 {
 				.findFirst()
 				.orElse(null);
 	}
+
+	@Override
+	public Mod200 saveComments(AONContext ctx, Mod200 mod200) {		
+		return Mod200DAO.saveComments(ctx, mod200);
+	}
 	
 }

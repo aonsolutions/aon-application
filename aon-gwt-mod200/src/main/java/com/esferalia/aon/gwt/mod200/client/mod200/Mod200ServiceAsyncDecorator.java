@@ -25,4 +25,9 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 		AON.start();
 		fsa.getMod200s(occam, new AsyncCallbackWrapper<LinkedList<Mod200>>(asyncCallback));
 	}
+	@Override
+	public void saveComments(Occam occam, Mod200 mod200, AsyncCallback<Mod200> asyncCallback) {
+		AON.start();
+		fsa.saveComments(occam, mod200, new AsyncCallbackWrapper<Mod200>(asyncCallback));
+	}
 }

@@ -7,12 +7,15 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -29,6 +32,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model2002021 extends DockLayoutPanel {
@@ -44,14 +48,17 @@ public class Model2002021 extends DockLayoutPanel {
 	protected Mod2002021Object mod200Object;
 	private Model200Callback mod200Callback;
 	
-	AonToolbarButton initializeButton = new AonToolbarButton("");
-	AonToolbarButton saveButton = new AonToolbarButton("");
-	AonToolbarButton removeButton = new AonToolbarButton("");
-	AonToolbarButton resetButton = new AonToolbarButton("");
-	AonToolbarButton importAccountingButton = new AonToolbarButton("");
-	AonToolbarButton aeatAccountingFileButton = new AonToolbarButton("");
-	AonToolbarButton aeatFileButton = new AonToolbarButton("");
-	AonToolbarButton aeatPrintButton = new AonToolbarButton("");
+	AonToolbarButton initializeButton;
+	AonToolbarButton saveButton;
+	AonToolbarButton removeButton;
+	AonToolbarButton resetButton;
+	AonToolbarButton importAccountingButton;
+	AonToolbarButton aeatAccountingFileButton;
+	AonToolbarButton aeatFileButton;
+	AonToolbarButton aeatPrintButton;
+	AonToolbarButton commentsButton;
+	
+	AonToast commentsToast = null;
 
 	SimpleLayoutPanel pageContainer = new SimpleLayoutPanel();
 	
@@ -162,6 +169,7 @@ public class Model2002021 extends DockLayoutPanel {
 		aeatFileButton.setEnabled(!isDirty());
 		aeatPrintButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatPrintButton.setEnabled(!isDirty());
+		commentsButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 	}
 	
 	private void populatePages() {
@@ -296,6 +304,9 @@ public class Model2002021 extends DockLayoutPanel {
 			if (mod200Callback.getOptions().isBackButtonVisible() && mod200Callback.getOptions().hasExternalCallback()) {
 				mod200Callback.getOptions().getExternalCallback().onExit(mod200Object.getMod200());
 			} else {
+				if (commentsToast != null) {
+					commentsToast.hide();					
+				}					
 				mod200Callback.onCancel(mod200Object.getMod200());
 			}
 		});
@@ -559,6 +570,42 @@ public class Model2002021 extends DockLayoutPanel {
 		});
 		toolbarPanel.add(aeatPrintButton);
 		
+		// Comentarios		
+		commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
+		commentsButton.addClickHandler( event -> {
+			if (commentsToast == null || commentsToast.getParent() == null) {
+				commentsToast = new AonToast();
+				FlowPanel commentPanel = new FlowPanel();
+				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(mod200Object.getMod200().getAdministration()) );
+				commentPanel.addStyleName(AON.CSS.aonHeightAll());
+				commentPanel.addStyleName(AON.CSS.aonTextCenter());
+				TextArea comment = new TextArea();
+				comment.addValueChangeHandler(event1 -> {
+					mod200Object.getMod200().setComments(event1.getValue());
+					styleCommentsButton();
+					Model200.MOD200_SERVICE.saveComments(mod200Callback.getOptions().getOccam(), mod200Object.getMod200(), new AsyncCallback<Mod200>() {
+						@Override
+						public void onSuccess(Mod200 result) {						
+							commentsToast.hide();
+						}
+	
+						@Override
+						public void onFailure(Throwable caught) {						
+							commentsToast.hide();
+							mod200Callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
+				});
+				comment.setText(mod200Object.getMod200().getComments());
+				comment.setWidth("90%");
+				comment.setHeight("5em");
+				commentPanel.add(comment);
+				commentsToast.show(AON.MSG.comments(), commentPanel);
+			}
+		});
+		toolbarPanel.add(commentsButton);
+		styleCommentsButton();
+		
 		// Marca "Cambios sin guardar"
 		
 		FlowPanel marksPanels = new FlowPanel();
@@ -574,6 +621,17 @@ public class Model2002021 extends DockLayoutPanel {
 
 		toolbarPanel.add(diskForm);		
 		return toolbarPanel;
+	}
+	
+	private void styleCommentsButton() {
+		if (AonStringUtils.isEmpty(mod200Object.getMod200().getComments())) {
+			commentsButton.addStyleName(AON.CSS.aonIconNoComments());
+			commentsButton.removeStyleName(AON.CSS.aonIconComments());
+		} else {
+			commentsButton.addStyleName(AON.CSS.aonIconComments());
+			commentsButton.removeStyleName(AON.CSS.aonIconNoComments());
+		}
+		commentsButton.setTitle(mod200Object.getMod200().getComments());
 	}
 	
 	private Widget getLinksPanel() {
