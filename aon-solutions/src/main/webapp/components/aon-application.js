@@ -588,8 +588,9 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptions(title, options, newButton) {
+    let tmp = undefined;
     if (options && options.length > 0) {
-      this.addSidenavOptionsTitle(
+      tmp = this.addSidenavOptionsTitle(
         {
           id: title,
           name: title,
@@ -604,6 +605,7 @@ export class AonApplication extends AonElement {
         options
       );
     }
+    return tmp;
   }
 
   addSidenavOptions2(data, options, newButton) {

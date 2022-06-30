@@ -104,6 +104,7 @@ export const DONE = 'done';
 
 export const EDIT = 'edit';
 export const ERROR = 'error';
+export const EVENT = 'event';
 export const EXTENSION = 'extension';
 export const EXPAND_LESS = 'expand_less';
 export const EXPAND_MORE = 'expand_more';

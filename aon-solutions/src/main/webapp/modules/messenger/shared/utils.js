@@ -343,6 +343,7 @@ const getBlobBySrc = (src)=>{
 /**
  * 
  * @param {HTMLElement} parent check html and add event 
+ * @param {Task} tsks tasks
  * @param {*} json 
  */
 export const checkFilesAddEventClick = (parent)=>{

@@ -281,6 +281,7 @@ export const LOCATION = MSG.LOCATION;
 // ----- M
 
 export const MANAGEMENT = MSG.MANAGEMENT;
+export const MODEL = "Modelo"; //TODO
 export const MODEL_111 = MSG.MODEL_111;
 export const MODEL_111_DESCRIPTION = MSG.MODEL_111_DESCRIPTION;
 export const MODEL_190 = MSG.MODEL_190;
