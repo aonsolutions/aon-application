@@ -63,7 +63,7 @@ public abstract class AccountEntryDetailExpressionScript<T> implements Serializa
 	}
 
 	public abstract LinkedList<AccountEntryDetailExpression> getDetails();
-	public abstract boolean accept(T accpetContext);
+	public abstract boolean accept(T accepter);
 
 }
 
