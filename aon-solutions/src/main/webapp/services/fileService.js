@@ -22,10 +22,14 @@ export const getFileUrl = (data) =>{
 }
 
 export const openFileUrl = async (url) => {
-  if (webkitRequestMobile())
-    await openFileMobile(url)
-      .then(async (obj) => await actionRequestMobile(obj))
-      .catch((e) => null);
-  else openFileDesktop(url);
+  try {
+    if (webkitRequestMobile()){
+      await openFileMobile(url).then(async (obj) => await actionRequestMobile(obj));
+    } else {
+      openFileDesktop(url);
+    }
+  } catch (error) {
+    alert(error);
+  }
   return;
 };

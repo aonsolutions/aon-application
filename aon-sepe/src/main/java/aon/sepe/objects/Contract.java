@@ -33,6 +33,7 @@ public class Contract {
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
 	private String interinidad;
+	private String titulacion;
 	
 	private DiscontinuoReason discontinuoReason; // solo para transformaciones
 	
@@ -106,6 +107,10 @@ public class Contract {
 
 	public Integer getCodFormativo() {
 		return codFormativo;
+	}
+	
+	public Optional<String> getTitulacion() {
+		return Optional.ofNullable(titulacion);
 	}
 
 	public String getCodOccupation() {
@@ -210,6 +215,7 @@ public class Contract {
 		private String durationTypeCvnHour;
 		private String durationTypeCvnMin;
 		private String interinidad;
+		private String titulacion;
 		
 		private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 		private boolean previsible; // ¿El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
@@ -251,6 +257,11 @@ public class Contract {
 			return this;
 		}
 
+		public ContractBuilder setTitulacion(String titulacion) {
+			this.titulacion = titulacion;
+			return this;
+		}
+		
 		public ContractBuilder setRegimen(String regimen) {
 			this.regimen = regimen;
 			return this;
@@ -421,6 +432,7 @@ public class Contract {
 			contract.discontinuo = this.discontinuo;
 			contract.previsible = this.previsible;
 			contract.oldDateIniContract = this.oldDateIniContract;
+			contract.titulacion = this.titulacion;
 			return contract;
 		}
 	}
@@ -517,7 +529,9 @@ public class Contract {
 				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", oldDateIniContract=" + oldDateIniContract + ", dateBirth="
 				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType + ", discontinuoReason=" + discontinuoReason
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
-				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+  ", previsible=" + previsible+"]";
+				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad
+				+  ", titulacion=" + titulacion
+				+  ", previsible=" + previsible+"]";
 	}
 	
 	

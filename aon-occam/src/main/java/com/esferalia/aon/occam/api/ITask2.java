@@ -6,9 +6,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
+import com.esferalia.aon.occam.api.model.task.DailyTracking;
+import com.esferalia.aon.occam.api.model.task.JobType;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskCounts;
@@ -42,4 +46,16 @@ public interface ITask2 {
 	public LinkedList<TaskAttach> getTaskAttachList(AONContext ctx, TaskAttachFilter filter);
 	public TaskAttach saveTaskAttach(AONContext ctx, TaskAttach task);
 	public void deleteTaskAttach(AONContext ctx, Integer id);
+	
+	
+	//DAILY_TRACKING
+	public DailyTracking getDailyTracking(AONContext ctx, DailyTrackingFilter filter);
+	public Stream<DailyTracking> getDailyTrackingStream(AONContext ctx, DailyTrackingFilter filter);
+	public Stream<DailyTracking> getDailyTrackingStream(AONContext ctx, DailyTrackingFilter filter, Integer page, Integer perPage);
+
+	public DailyTracking saveDailyTracking(AONContext ctx, DailyTracking dailyTracking);
+	public void deleteDailyTracking(AONContext ctx, Integer id);
+	
+	//------JOB_TYPE
+	public Stream<JobType> getJobTypeStream(AONContext ctx, JobTypeFilter filter);
 }

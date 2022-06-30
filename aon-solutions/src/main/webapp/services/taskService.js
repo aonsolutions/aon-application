@@ -46,4 +46,10 @@ export const getTaskProcess =  (data) => {
 }
 
 
+//---------------- GET JOB_TYPE
+export const getJobType = (data) => isSigGet("task/job-type", data); 
+
+//----- DAILY_TRACKING
+export const getDailyTrackingByTask = (data) => isSigGet("task/daily-tracking-by-task", data); 
+
 
