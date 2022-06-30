@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonus;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateIII;
+import net.aonsolutions.db.up2date.tgss.ArtistPartialFactorFix;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFix;
 
 public class Up2Date {
@@ -243,7 +244,8 @@ public class Up2Date {
     		//TaskAddEvaluation.TASK_ADD_EVALUATION,
     		//AlterContractBonus.ALTERCONTRACTBONUS,
     		//SalaryHoursFix.SALARYHOURSFIX
-    		AgriculturalBases2022UpdateIII.AGRICULTURALBASES2021UPDATEIII
+    		//AgriculturalBases2022UpdateIII.AGRICULTURALBASES2021UPDATEIII
+    		ArtistPartialFactorFix.ARTISTPARTIALFACTORFIX
     };
     
 
