@@ -24,13 +24,8 @@ public class MainEntryPoint implements EntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
 	}
 	
-//	private static final String ENTRY_POINT_PARAM = "entryPoint";
-	
-//	private static final String FS_MOD200_ENTRY_POINT = "Model200";
-	
 	@Override
 	public void onModuleLoad() {
-//		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
 		if(getToken() != null) {
 			Occam occam = new Occam()
 				.setDomainName(getCurrentDomainName())
@@ -40,7 +35,6 @@ public class MainEntryPoint implements EntryPoint {
 			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
 				
 				@Override public void onSuccess(AonConfiguration config) {
-//					selection(entryPoint,aonConfiguration);				
 					selection(aonConfiguration);
 				}
 				
@@ -49,32 +43,29 @@ public class MainEntryPoint implements EntryPoint {
 				}
 			});
 		} else {
-//			selection(entryPoint,null);
 			selection(null);
 		}
 
 		
 	}
 	
-//	private void selection(String entryPoint,AonConfiguration aonConfiguration) {
 	private void selection(AonConfiguration aonConfiguration) {
-//		if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
-			GWT.runAsync(Model200.class, new RunAsyncCallback() {
+		GWT.runAsync(Model200.class, new RunAsyncCallback() {
 
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(ERROR_MSG);
+			}
 
-				@Override
-				public void onSuccess() {
-					Model200 model200 = new Model200();
-					model200.onModuleLoad();
-				}
+			@Override
+			public void onSuccess() {
+				Model200 model200 = new Model200();
+				model200.onModuleLoad();
+			}
 				
-			});
-//		} 
+		});
 	}
+	
 	protected Occam getOccam() {
 		return new Occam()
 			.setDomainName(getCurrentDomainName())

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.IMod200KeysProvider;
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN082Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1040Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1041Key;

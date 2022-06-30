@@ -1062,27 +1062,27 @@ export class AonInvoice extends AonElement {
 		}
 		taxesTable.removeRows();
 
-		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
-			this.invoice.taxes = [];
-		}
-
 		if(this.invoice.isCcm()) {
-			this.invoice.taxes = this.invoice.taxes.filter(f => TaxType.IRPF === f.tax);
+			// this.invoice.taxes = this.invoice.taxes.filter(f => TaxType.IRPF === f.tax);
 		}
 
-		for(let i = 0; i < this.invoice.taxes.length; i++) {
-			let tax = this.invoice.taxes[i];
-			if(TaxType.IVA === tax.tax)
-				this.printTax(taxesTable, tax, i);
-		}
-
-		for(let i = 0; i < this.invoice.taxes.length; i++) {
-			let tax = this.invoice.taxes[i];
-			if(TaxType.IRPF === tax.tax) {
-				this.invoice.withholding = true;
-				this.printTax(taxesTable, tax, i);
+		if(this.invoice.isNacional()){
+			for(let i = 0; i < this.invoice.taxes.length; i++) {
+				let tax = this.invoice.taxes[i];
+				if(TaxType.IVA === tax.tax)
+					this.printTax(taxesTable, tax, i);
 			}
 		}
+		if(this.invoice.isNacional() || this.invoice.isCcm()){
+			for(let i = 0; i < this.invoice.taxes.length; i++) {
+				let tax = this.invoice.taxes[i];
+				if(TaxType.IRPF === tax.tax) {
+					this.invoice.withholding = true;
+					this.printTax(taxesTable, tax, i);
+				}
+			}
+		}
+
 
 		let div = this.getElement(this.TAX_DIV);
 		if(!div) {
@@ -1146,6 +1146,7 @@ export class AonInvoice extends AonElement {
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
 
+		this.getElement(this.TOTAL).value = this.invoice.getTotal();
 		this.buildTaxCardContent();
 		this.buildDetailCard();
 		this.buildFinanceCard();
@@ -1368,13 +1369,18 @@ export class AonInvoice extends AonElement {
 		this.onChangeDetail(detail, i, dialog);
 	}
 
+	onChangeDetailVat(detail, value, i, dialog) {
+		detail.percentage = value;
+		this.invoice.setDetail(detail, i);
+		this.onChangeDetail(detail, i, dialog);
+	}
+
 	printDetail(table, detail, i) {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
 
-		// let description = new AonAutosizeTextarea();
-		let description = new AonSuggestion()
+		let description = new AonAutosizeTextarea();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
 		description.readonly = this.invoice.isReadonly();
@@ -1442,29 +1448,27 @@ export class AonInvoice extends AonElement {
 		amount.readonly = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
-
-		let vat = new AonSelect();
-		vat.id = this.DETAIL_VAT + i;
-		vat.title = '%IVA';
-		vat.options = JSON.stringify(TaxIVAPercentage);
-		if(detail.prepayment === undefined) detail.prepayment = false;
-		vat.readonly = this.invoice.isReadonly() || detail.prepayment;
-		vat.addEventListener(EVENT.SELECT, () => {
-			console.log(vat.value);
-			detail.percentage = vat.value;
+		if(this.invoice.isNacional()) {
+			let vat = new AonSelect();
+			vat.id = this.DETAIL_VAT + i;
+			vat.title = '%IVA';
+			vat.options = JSON.stringify(TaxIVAPercentage);
+			if(detail.prepayment === undefined) detail.prepayment = false;
+			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
+			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailDiscount(detail, vat.value, i));
+			let td6 = table.addCell(vat);
+			td6.style.verticalAlign = "bottom";
+			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+				detail.percentage = undefined;
+				detail.vat = undefined;
+				vat.setDisabled(true);
+			}
+			detail.percentage = detail.percentage || detail.vat;
+			if(detail.percentage) vat.value = detail.percentage;
+		} else {
+			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
-		let td6 = table.addCell(vat);
-		td6.style.verticalAlign = "bottom";
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-			detail.percentage = undefined;
-			detail.vat = undefined;
-			vat.setDisabled(true);
 		}
-		detail.percentage = detail.percentage || detail.vat;
-		if(detail.percentage) vat.value = detail.percentage;
 
 		// ----- DETAIL OPTIONS
 
@@ -1596,29 +1600,32 @@ export class AonInvoice extends AonElement {
 		prepayment.checked = detail.prepayment;
 
 		// ----- DETAIL VAT
-	
-		let vat = new AonSelect();
-		vat.id = this.DETAIL_VAT + 'Dialog' + i;
-		vat.title = '%IVA';
-		vat.options = JSON.stringify(TaxIVAPercentage);
-		if(detail.prepayment === undefined) detail.prepayment = false;
-		vat.readonly = this.invoice.isReadonly() || detail.prepayment;
-		vat.addEventListener(EVENT.SELECT, () => {
-			detail.percentage = vat.value;
+		if(this.invoice.isNacional()) {
+			let vat = new AonSelect();
+			vat.id = this.DETAIL_VAT + 'Dialog' + i;
+			vat.title = '%IVA';
+			vat.options = JSON.stringify(TaxIVAPercentage);
+			if(detail.prepayment === undefined) detail.prepayment = false;
+			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
+			vat.addEventListener(EVENT.SELECT, () => {
+				detail.percentage = vat.value;
+				this.invoice.setDetail(detail, i);
+				this.reload();
+				this.printDetailDialog(this.invoice.details[i], i);
+				if(this.autosave) this.save();
+			});
+			table.addCell(vat);
+			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+				detail.percentage = undefined;
+				detail.vat = undefined;
+				vat.setDisabled(true);
+			}
+			detail.percentage = detail.percentage || detail.vat;
+			if(detail.percentage) vat.value = detail.percentage;
+		} else {
+			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
-			this.reload();
-			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(vat);
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-			detail.percentage = undefined;
-			detail.vat = undefined;
-			vat.setDisabled(true);
 		}
-		detail.percentage = detail.percentage || detail.vat;
-		if(detail.percentage) vat.value = detail.percentage;
-
 		dialog.open();
 	}
 

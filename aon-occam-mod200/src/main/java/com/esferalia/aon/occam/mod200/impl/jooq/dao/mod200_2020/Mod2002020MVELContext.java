@@ -60,14 +60,14 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020KeyDC;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.BalanceType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -666,7 +666,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getaValue();
+				x += p.getValueCorrection();
 			}
 			return round( x ); 
 		}
@@ -677,7 +677,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getbValue();
+				x += p.getLossReversion();
 			}
 			return round( x ); 
 		}
@@ -688,7 +688,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getccValue();
+				x += p.getAccountingElimination();
 			}
 			return round( x ); 
 		}
@@ -699,7 +699,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getddValue();
+				x += p.getValuesElimination();
 			}
 			return round( x ); 
 		}
@@ -710,7 +710,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.geteValue();
+				x += p.getAdjustmentDecrease();
 			}
 			return round( x ); 
 		}
@@ -721,7 +721,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getcValue();
+				x += p.getCorrectionEffect();
 			}
 			return round( x ); 
 		}
@@ -732,7 +732,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getdValue();
+				x += p.getCorrectionsBalance();
 			}
 			return round( x ); 
 		}

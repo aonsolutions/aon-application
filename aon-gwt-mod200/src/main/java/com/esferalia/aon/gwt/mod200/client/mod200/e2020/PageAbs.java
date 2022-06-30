@@ -12,9 +12,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.IMod200KeysProvider;
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -54,7 +54,7 @@ public abstract class PageAbs extends ResizeComposite {
 			@Override
 			public void mod200Changed(Mod2002020 mod200) {
 				for ( IMod200Key key : inputs.keySet() ) {
-					DoubleVariable2020 var = mod200.getDraftMap().get(key);
+					DoubleVariableEx var = mod200.getDraftMap().get(key);
 					if (var != null && !var.isChangedByUser()) {
 						AonDoubleBox input = inputs.get(key);
 						input.setValue(var.getValue(),false,true); ;
@@ -359,7 +359,7 @@ public abstract class PageAbs extends ResizeComposite {
 		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
 			if (inputs.containsKey(key)) {
 				AonDoubleBox input = inputs.get(key);
-				DoubleVariable2020 var = callback.getMod200Object().getMod200().getDraftMap().get(key);
+				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
 				input.setValue(var.getValue()); ;
 				input.addStyleName(AON.AON_CSS.aonChanged());
 			}

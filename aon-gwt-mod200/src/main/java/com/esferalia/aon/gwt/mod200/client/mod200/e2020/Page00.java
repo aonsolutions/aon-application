@@ -22,11 +22,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
+import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.BalanceType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -156,7 +156,7 @@ public class Page00 extends PageAbs {
 			
 			@Override
 			public void mod200Changed(Mod2002020 mod200) {
-				DoubleVariable2020 sv = mod200.getVariable(Mod2002020Key.C0027);
+				DoubleVariableEx sv = mod200.getVariable(Mod2002020Key.C0027);
 				if (sv != null && inputs.containsKey( Mod2002020Key.C0027 )) {
 					inputs.get( Mod2002020Key.C0027 ).setValue( AonMathUtils.equals(sv.getValue() , 1.0) );
 				}
@@ -185,7 +185,7 @@ public class Page00 extends PageAbs {
 		index = callback.getMod200Object().getMod200().getPygType().ordinal();
 		profitAndLossType.setSelectedIndex(index);
 		
-		DoubleVariable2020 dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002020Key.C0041);
+		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002020Key.C0041);
 		Double value = 0.0;
 		if (dv != null) {
 			value = dv.getValue();
@@ -204,7 +204,7 @@ public class Page00 extends PageAbs {
 		}
 		
 		for (Mod2002020Key key : CHARACTERS_KEYS) {
-			DoubleVariable2020 sv = callback.getMod200Object().getMod200().getKeysMap().get(key);
+			DoubleVariableEx sv = callback.getMod200Object().getMod200().getKeysMap().get(key);
 			if (sv != null && inputs.containsKey( key )) {
 				boolean checked = AonMathUtils.equals(sv.getValue() , 1.0);
 				inputs.get( key ).setValue( checked);
@@ -236,58 +236,58 @@ public class Page00 extends PageAbs {
 		callback.getMod200Object().getMod200().setPygType( profitAndLossType.getSelectedIndex() );
 		callback.getMod200Object().getMod200().setCnae(cnae.getValue());
 		
-		DoubleVariable2020 bv = null;
+		DoubleVariableEx bv = null;
 		for (Mod2002020Key key : inputs.keySet()) {
-			bv = new DoubleVariable2020( key );
+			bv = new DoubleVariableEx( key );
 			bv.setValue(inputs.get(key).getValue());
 			callback.getMod200Object().getMod200().addVariable(bv);
 		}
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0061 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0061 );
 		bv.setValue( c061.getValue() );
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0050 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0050 );
 		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0051 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0051 );
 		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0052 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0052 );
 		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0075 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0075 );
 		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.NORMAL));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0076 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0076 );
 		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.ABREVIADO));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0077 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0077 );
 		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.PYMES));
 		callback.getMod200Object().getMod200().addVariable(bv);
 					
-		bv = new DoubleVariable2020( Mod2002020Key.C0053 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0053 );
 		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0054 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0054 );
 		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.ABREVIADO));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0055 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0055 );
 		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.PYMES));
 		callback.getMod200Object().getMod200().addVariable(bv);
 		
-		bv = new DoubleVariable2020( Mod2002020Key.C0041 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0041 );
 		bv.setValue( c041.getValue() );
 		callback.getMod200Object().getMod200().addVariable(bv);
 
-		bv = new DoubleVariable2020( Mod2002020Key.C0042 );
+		bv = new DoubleVariableEx( Mod2002020Key.C0042 );
 		bv.setValue( c042.getValue() );
 		callback.getMod200Object().getMod200().addVariable(bv);
 		

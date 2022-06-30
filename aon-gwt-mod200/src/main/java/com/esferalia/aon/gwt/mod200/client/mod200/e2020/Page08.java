@@ -5,8 +5,8 @@ import java.io.Serializable;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.IMod200KeysProvider;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020CorrectionKey;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -194,7 +194,7 @@ public class Page08 extends PageAbs {
 	
 	@Override
 	protected void populate() {
-		DoubleVariable2020 bv = new DoubleVariable2020( Mod2002020Key.VOLOPE );
+		DoubleVariableEx bv = new DoubleVariableEx( Mod2002020Key.VOLOPE );
 		bv.setValue( (double)opeVol.getSelectedIndex() );
 		callback.getMod200Object().getMod200().addVariable(bv);
 	}
@@ -202,7 +202,7 @@ public class Page08 extends PageAbs {
 	@Override
 	public void dump() {
 		super.dump();
-		DoubleVariable2020 dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002020Key.VOLOPE);
+		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002020Key.VOLOPE);
 		int index = 0;
 		if (dv != null) {
 			index = dv.getValue().intValue();

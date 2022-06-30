@@ -59,4 +59,8 @@ public enum FiscalModelDeclarationType {
 		if (i < 0 || i >= FiscalModelDeclarationType.values().length) return null;
 		return FiscalModelDeclarationType.values()[i];
 	}
+	
+	public static boolean isToDeposit(FiscalModelDeclarationType type ) {
+		return type != null && (type == DEPOSIT || type == BANK || type == DEPOSIT_CCT);
+	}
 }

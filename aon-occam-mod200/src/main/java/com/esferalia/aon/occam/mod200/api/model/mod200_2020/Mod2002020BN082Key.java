@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Desglose Casilla 082
 // Deducciones I + D + i excluidas de límite. Opción art. 39.2 LIS
 public enum Mod2002020BN082Key implements Serializable, IMod200KeysProvider {
