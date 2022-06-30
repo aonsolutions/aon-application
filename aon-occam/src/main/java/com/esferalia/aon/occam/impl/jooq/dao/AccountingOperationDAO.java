@@ -23,7 +23,6 @@ import org.jooq.GroupField;
 import org.jooq.Record;
 import org.jooq.Record14;
 import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 

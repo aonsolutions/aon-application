@@ -4,11 +4,11 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
-import {  getCccForActivity } from "../../../services/contractService.js";
-import {  serializeForm, sortBy } from "../../../services/utils.js";
+import { getCccForActivity } from "../../../services/contractService.js";
+import { serializeForm, sortBy } from "../../../services/utils.js";
 import { setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
+import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType, sendAlta } from "../../../services/comunicaService.js";
 
 /**
@@ -22,7 +22,7 @@ import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType,
     
     let data = task.id ? JSON.parse(task.description) : {};
 
-    const form  = setAttributes(document.createElement(TAG.FORM),{
+    const form = setAttributes(document.createElement(TAG.FORM),{
         id:MESSENGER_IDS.FORM_DINAMIC,
         action:"#"
     });
@@ -61,7 +61,7 @@ import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType,
 const createDataEnterprise = (form, data) => {
 
     let ctaCti = setAttributes(new AonSelect(),{ title: "Cuenta de cotización", id:"ctaCti", name:"ctaCti"});
-    createDivGrid(form, ctaCti, {classes:[CSS.AON_COL_XS_12]})
+    TaskCreationUtils.createDivGrid(form, ctaCti, {classes:[CSS.AON_COL_XS_12]})
     fillCtaCti(ctaCti, data);
 
     let regime = setAttributes(new AonInput(),{ id:"regime", name:"regime", visible:CONSTANT.FALSE });
@@ -85,7 +85,7 @@ const createDataEnterprise = (form, data) => {
         description: "DNI/NIE",
         value: data.ipf ? data.ipf : ""
     });
-    createDivGrid(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let nss = setAttributes(new AonInput(),{
         id:"nss",
@@ -93,7 +93,7 @@ const createDataEnterprise = (form, data) => {
         description:"NSS/NAF (Opcional)",
         value: data.nss ? data.nss : ""
     });
-    createDivGrid(form, nss, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, nss, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let name = setAttributes(new AonInput(),{
         id: "name",
@@ -101,7 +101,7 @@ const createDataEnterprise = (form, data) => {
         description: MSG.NAME,
         value: data.name ? data.name : ""
     });
-    createDivGrid(form, name, {classes:[CSS.AON_COL_XS_12]})
+    TaskCreationUtils.createDivGrid(form, name, {classes:[CSS.AON_COL_XS_12]})
 
     let surname = setAttributes(new AonInput(),{
         id:"surname",
@@ -109,7 +109,7 @@ const createDataEnterprise = (form, data) => {
         description:"1er Apellido",
         value: data.surname ? data.surname : ""
     });
-    createDivGrid(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let lastSurname = setAttributes(new AonInput(),{
         id: "lastSurname",
@@ -117,7 +117,7 @@ const createDataEnterprise = (form, data) => {
         description: `2do Apellido (${MSG.OPTIONAL})`,
         value: data.lastSurname ? data.lastSurname : ""
     });
-    createDivGrid(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 }
 
 /**
@@ -132,7 +132,7 @@ const createDataEnterprise = (form, data) => {
     createTitle(form, `${MSG.DATA} del Contrato`);
 
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
-    createDivGrid(form, fra, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, fra, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.fra) fra.setDate(new Date(data.fra))
 
     let category = setAttributes(new AonInput(),{
@@ -141,13 +141,13 @@ const createDataEnterprise = (form, data) => {
         description:"Categoria profesional",
         value: data.category ? data.category : "",
     });
-    createDivGrid(form, category, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, category, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let salaryCheck = setAttributes(new AonSwitch(),{ title: "Salario s/convenio", id:"salaryCheck", name:"salaryCheck", checked: data.salaryCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
-    createDivGrid(form, salaryCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
+    TaskCreationUtils.createDivGrid(form, salaryCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
 
     let salaryType = setAttributes(new AonSelect(),{ title: "Tipo", id:"salaryType", name:"salaryType"});
-    createDivGrid(form, salaryType, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_3]});
+    TaskCreationUtils.createDivGrid(form, salaryType, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_3]});
     salaryType.setDisabled(salaryCheck.isChecked());
     fillSalaryType(salaryType, data.salaryType);
 
@@ -159,7 +159,7 @@ const createDataEnterprise = (form, data) => {
         format:CONSTANT.TRUE,
         value: data.salary ? data.salary : "",
     })
-    createDivGrid(form, salary, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_4]});
+    TaskCreationUtils.createDivGrid(form, salary, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_4]});
     if(salaryCheck.isChecked()) salary.disabled = CONSTANT.TRUE;
 
     salaryCheck.addEventListener(EVENT.CHANGE,({target})=>{
@@ -170,10 +170,10 @@ const createDataEnterprise = (form, data) => {
     });
 
     let fullTimeCheck = setAttributes(new AonSwitch(),{ title: "Jornada completa", id:"fullTimeCheck", name:"fullTimeCheck", checked: data.fullTimeCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
-    createDivGrid(form, fullTimeCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
+    TaskCreationUtils.createDivGrid(form, fullTimeCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
 
     let jornadaType = setAttributes(new AonSelect(),{ title: "Tipo", id:"jornadaType", name:"jornadaType"});
-    createDivGrid(form, jornadaType, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_3]});
+    TaskCreationUtils.createDivGrid(form, jornadaType, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_3]});
 
     jornadaType.setDisabled(fullTimeCheck.isChecked());
     fillJornadaType(jornadaType, data.jornadaType);
@@ -187,7 +187,7 @@ const createDataEnterprise = (form, data) => {
         value: data.hour ? data.hour : "",
     });
 
-    createDivGrid(form, hour, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_2]});
+    TaskCreationUtils.createDivGrid(form, hour, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_2]});
     if(fullTimeCheck.isChecked()) hour.disabled = CONSTANT.TRUE;
 
     let coef = setAttributes(new AonNumber(),{
@@ -198,7 +198,7 @@ const createDataEnterprise = (form, data) => {
         format:CONSTANT.TRUE,
         value: data.coef ? data.coef : "",
     })
-    createDivGrid(form, coef, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_2]});
+    TaskCreationUtils.createDivGrid(form, coef, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_2]});
     // addSpanDecimal(coef);
     if(fullTimeCheck.isChecked()) coef.disabled = CONSTANT.TRUE;
 
@@ -210,10 +210,10 @@ const createDataEnterprise = (form, data) => {
     });
 
     let durationCheck = setAttributes(new AonSwitch(),{ title: "Duración indefinida", id:"durationCheck", name:"durationCheck", checked: data.durationCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
-    createDivGrid(form, durationCheck, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_5]});
+    TaskCreationUtils.createDivGrid(form, durationCheck, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_5]});
 
     let frb = setAttributes(new AonDate(),{ title: MSG.END_DATE, id:"frb", name:"frb"});
-    createDivGrid(form, frb, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_7]});
+    TaskCreationUtils.createDivGrid(form, frb, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_7]});
     frb.disabledDate(durationCheck.isChecked());
     if(data.frb) frb.setDate(new Date(data.frb))
 
@@ -222,23 +222,23 @@ const createDataEnterprise = (form, data) => {
         frb.disabledDate(target.checked);
     });
 
-    const divManager = createDivGrid(form, undefined, {});
+    const divManager = TaskCreationUtils.createDivGrid(form, undefined, {});
     divManager.style.display = data.fra && (dur.isComunicaManager() || dur.isSaltraManager()) ? "block" : "none";
     //---------------------DATA RESTANT
     let contract = setAttributes(new AonSelect(),{ title: "Tipo de contrato", id:"contract", name:"contract", autocomplete: CONSTANT.OFF});
-    createDivGrid(divManager, contract, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
+    TaskCreationUtils.createDivGrid(divManager, contract, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillContract(contract, data.contract);
 
     let gc = setAttributes(new AonSelect(),{ title: "Grupo de cotización", id:"gc", name:"gc"});
-    createDivGrid(divManager, gc, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
+    TaskCreationUtils.createDivGrid(divManager, gc, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillGc(gc, data.gc);
 
     let ocup = setAttributes(new AonSelect(),{ title: "Ocupación", id:"ocup", name:"ocup"});
-    createDivGrid(divManager, ocup, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
+    TaskCreationUtils.createDivGrid(divManager, ocup, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillOcu(ocup, data.ocup);
 
     let rlce = setAttributes(new AonSelect(),{ title: "RLCE (opcional)", id:"rlce", name:"rlce"});
-    createDivGrid(divManager, rlce, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_12]});
+    TaskCreationUtils.createDivGrid(divManager, rlce, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_12]});
     fillRlce(rlce, data.rlce);
 
     jornadaType.addEventListener(EVENT.CHANGE,({detail})=> {
@@ -251,14 +251,14 @@ const createDataEnterprise = (form, data) => {
     hour.addEventListener(EVENT.CHANGE,()=> calculoCoef(jornadaType.getDetail()) );
 
     // ------------OBSERVATION
-    const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
-    createDivGrid(form, observation, {classes:[CSS.AON_COL_XS_12]});
+    const observation = TaskCreationUtils.createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
+    TaskCreationUtils.createDivGrid(form, observation, {classes:[CSS.AON_COL_XS_12]});
 
     if((dur.isComunicaManager() || dur.isSaltraManager()) && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
-        let btnAccept = createBtnAccept();
+        let btnAccept = TaskCreationUtils.createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=>  processAccept(aonMessengerChat) );
          
-        createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+        TaskCreationUtils.createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
     }
 }
 
@@ -284,7 +284,7 @@ const createDataEnterprise = (form, data) => {
 const createTitle = (parent, text) => {
     let title = setStyles(document.createElement(TAG.SPAN),{ fontSize: "16px", fontWeight:750, color:CSS.variable(COLORS.AON_DARK_GRAY) });
     title.innerHTML = text;
-    createDivGrid(parent, title, {
+    TaskCreationUtils.createDivGrid(parent, title, {
         classes:[CSS.AON_COL_XS_12],
         styles:{ padding: "5px 0" }
     });

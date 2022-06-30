@@ -618,6 +618,24 @@ public interface Properties {
 		Property<String> getCommentsWorkflowProperty();
 	}
 	
+	public interface DailyTrackingProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getJobTypeProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getActivityTypeProperty();
+		Property<Integer> getTaskProperty();
+		Property<String> getCommentsProperty();
+	}
+	
+	public interface JobTypeProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+	}
+	
 	public interface TaskTagProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -685,6 +703,19 @@ public interface Properties {
 		Property<Byte> getSystemProperty();
 	}
 	
+	public interface IAEProperties {
+		Property<Integer> getIdProperty();
+		Property<String> getSectionProperty();
+		Property<String> getEpigraphProperty();
+		Property<String> getTitleProperty();		
+	}
+
+	public interface Cnae2009Properties {
+		Property<Integer> getIdProperty();
+		Property<String> getCodeProperty();
+		Property<String> getTitleProperty();		
+	}
+
 	public interface ProjectReservationProperties extends AuditProperties{
 		Property<Integer> getProjectProperty();
 		Property<Integer> getDomainProperty();

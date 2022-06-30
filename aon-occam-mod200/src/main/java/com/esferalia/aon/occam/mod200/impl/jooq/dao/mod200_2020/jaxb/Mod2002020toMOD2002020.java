@@ -3,10 +3,10 @@ package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2020.jaxb;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.BalanceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod2002020toMOD2002020 {
@@ -526,7 +526,7 @@ public class Mod2002020toMOD2002020 {
 	}
 	
 	private static BigDecimal getKey(Mod2002020 mod200, Mod2002020Key key,int scale) {
-		DoubleVariable2020 dv = mod200.getVariable(key);
+		DoubleVariableEx dv = mod200.getVariable(key);
 		Double value = dv==null?null:AonMathUtils.round(dv.getValue());
 		return (value == null || value == 0.0)
 			?null

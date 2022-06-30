@@ -8,13 +8,19 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask2;
+import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
+import com.esferalia.aon.occam.api.model.task.DailyTracking;
+import com.esferalia.aon.occam.api.model.task.JobType;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskCounts;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.occam.impl.jooq.dao.DailyTrackingDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.JobTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskAttachDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskWorkflowDAO;
@@ -152,4 +158,43 @@ public class Task2Impl implements ITask2 {
 		return ctx.getDslContext().transactionResult(configuration -> TaskAttachDAO.save(ctx, task));
 	}	
 	//END----------------TASKATTACH
+	
+	
+	//------- DAILY_TRACKING-------------------
+	@Override
+	public DailyTracking getDailyTracking(AONContext ctx, DailyTrackingFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		DailyTrackingDAO.get(ctx, filter));
+	}
+
+	@Override
+	public Stream<DailyTracking> getDailyTrackingStream(AONContext ctx, DailyTrackingFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		DailyTrackingDAO.getStream(ctx, filter));	
+	}
+	
+	@Override
+	public Stream<DailyTracking> getDailyTrackingStream(AONContext ctx, DailyTrackingFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		DailyTrackingDAO.getStream(ctx, filter, page, perPage));	
+	}
+
+	@Override
+	public DailyTracking saveDailyTracking(AONContext ctx, DailyTracking dailyTracking) {
+		return ctx.getDslContext().transactionResult(configuration -> DailyTrackingDAO.save(ctx, dailyTracking));
+	}	
+	
+	
+	@Override
+	public void deleteDailyTracking(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> DailyTrackingDAO.delete(ctx, id));
+	}
+	//-------- END DAILY_TRACKING------------
+	
+	
+	//---------JOB_TYPE----------
+	@Override
+	public Stream<JobType> getJobTypeStream(AONContext ctx, JobTypeFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> JobTypeDAO.getStream(ctx, filter));	
+	}
 }

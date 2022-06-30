@@ -43,8 +43,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDMov {
 	
-	
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testRedMov.html");
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 	
 	 private SistemaREDMov() {
 	    throw new IllegalStateException("Utility class");
@@ -584,8 +583,7 @@ class SistemaREDMov {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR02&E=I&AP=AFIR");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR02&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			String ident = Toolkit.getIdentityType(ipf);
@@ -778,16 +776,12 @@ class SistemaREDMov {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
-			Integer ident = 1;
-			if (Toolkit.getIdentityType(ipf).equals("6")) {
-				ident = 3; // NIE
-			}
+			Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 3 : 1;
 
 			// Date
 			String[] fr = formatDate(fecha); // date [day,month,year]
 
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
 
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
@@ -813,20 +807,22 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fr[1]);
 			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fr[2]);
 
-			if (!contract.isEmpty())
-				form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); // tipo de contrato
+			if (!contract.isEmpty()) {
+				form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); // tipo de contrato				
+			}
 
-			if (coef == null)
+			if (coef == null || coef.isEmpty()) {				
 				coef = "0";
-
+			}
+			
 			form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); // coef 3 digits
 
 			btnSubmit = htmlPage.querySelector("#Sub2207401004");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-
+	
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-			if (msg2 != null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
+			if (msg2 != null && msg2.getTextContent().trim().contains("Revise el contenido del coeficiente a tiempo parcial")) {
 				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
@@ -845,10 +841,7 @@ class SistemaREDMov {
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 			HtmlPage htmlPage = webClient.getPage(url);
 
-			Integer ident = 1;
-			if (Toolkit.getIdentityType(ipf).equals("6")) {				
-				ident = 3; // NIE
-			}
+			Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 3 : 1;
 
 			String[] fr = formatDate(fecha); // date [day,month,year]
 

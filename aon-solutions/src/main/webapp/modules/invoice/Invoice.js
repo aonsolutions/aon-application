@@ -3,7 +3,6 @@ import { RegistryType } from "../../models/enums.js";
 import { round } from "../../services/utils.js";
 import { getSurchargeByVat, TaxType } from "./invoiceEnums.js";
 import * as LS from '../../services/localStorageService.js';
-import {getCompany} from '../../services/companyService.js';
 
 export class Invoice {
 
@@ -48,6 +47,8 @@ export class Invoice {
 
   tbai; // boolean
   tbaiUrl;
+
+  workplace;
 
   constructor(invoice) {
     this.buildObject(invoice);
@@ -119,6 +120,7 @@ export class Invoice {
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
       this.tbai = invoice.tbai || false;
       this.tbaiUrl = invoice.tbaiUrl || '';
+      this.workplace = invoice.workplace; 
     } else {
       this.domain = LS.getDomainId();
       this.type = 'ticket';
@@ -424,6 +426,18 @@ export class Invoice {
     return this;
   }
 
+  getWorkplace () {
+    return this.workplace;
+  }
+
+  setWorkplace (workplace) {
+    this.workplace = workplace;
+    this.details.forEach((detail, i) => {
+      this.details[i].workplace = workplace;
+    });
+    return this;
+  }
+
   getTransaction() {
 
   }
@@ -436,13 +450,21 @@ export class Invoice {
       if(!this.isCcm()) {
         this.withholding = false;
         this.withholdingFarmer = false;
-        this.taxes = [];
+        this.taxes = [{
+          tax:TaxType.IVA,
+          type: TaxType.IVA,
+          percentage: 0.0,
+          quota:0.0,
+          base: this.total,
+          surcharge: 0.0,
+          surcharge_quota: 0.0
+        }];
       } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
 
       this.details.forEach((detail,i) => {
-        detail.percentage = undefined;
-        detail.vat = undefined;
-        detail[i] = this.calculateDetail(detail);
+        detail.percentage = 0.0;
+        detail.vat = 0.0;
+        this.setDetail(detail, i);
       });
     }
     return this;
@@ -647,7 +669,15 @@ export class Invoice {
 
   calculateTaxFromTotal() {
     if(this.isEmitida() && !this.isNacional()){
-      this.taxes = [];
+      this.taxes = [{
+          tax:TaxType.IVA,
+          type: TaxType.IVA,
+          percentage: 0.0,
+          quota:0.0,
+          base: this.total,
+          surcharge: 0.0,
+          surcharge_quota: 0.0
+      }];
     } else if (this.taxes.length === 0) {
       let div = this.isSurcharge() ? 1.262 : 1.21;
 			let tax = {
@@ -692,7 +722,7 @@ export class Invoice {
       amount: 0.0,
       category: this.category,
       prepayment: false,
-      percentage: 21.0, 
+      percentage: this.isNacional() ? 21.0 : 0.0, 
       quota: 0.0,
       surcharge: this.isSurcharge() ? 5.2 : 0.0, 
       surcharge_quota: 0.0,
@@ -702,25 +732,24 @@ export class Invoice {
       withholding_quota: 0.0, 
      };
      this.details.push(detail);
-     console.log("bb - " + this.isWithholding());
-     if(this.isNacional()) this.calculateTaxFromDetail();
-     else if(this.isCcm()) this.calculateWithholdingFromDetail();
+     this.calculateTaxFromDetail();
+     if(this.isCcm()) this.calculateWithholdingFromDetail();
      this.calculateTotalFromDetail();
       return this;
   }
 
   deleteDetail(detail, i) {
     this.details.splice(i, 1);
-    if(this.isNacional()) this.calculateTaxFromDetail();
-     else if(this.isCcm()) this.calculateWithholdingFromDetail();
+    this.calculateTaxFromDetail();
+    if(this.isCcm()) this.calculateWithholdingFromDetail();
     this.calculateTotalFromDetail();
     return this;
   }
 
-  setDetail(detail, i) {  
+  setDetail(detail, i) {
     this.details[i] = this.calculateDetail(detail);
-    if(this.isNacional()) this.calculateTaxFromDetail();
-    else if(this.isCcm()) this.calculateWithholdingFromDetail();
+    this.calculateTaxFromDetail();
+    if(this.isCcm()) this.calculateWithholdingFromDetail();
     this.calculateTotalFromDetail();
     return this;
   }
@@ -729,7 +758,8 @@ export class Invoice {
       let amount = round(Number(detail.quantity) * Number(detail.price));
 			amount = amount - amount * (detail.discount / 100);
       detail.amount = round(amount);
-      if(!detail.prepayment && detail.percentage) {
+      detail.percentage = detail.percentage || 0.0;
+      if(!detail.prepayment) {
         detail.quota = round(detail.amount / 100 * detail.percentage);
         detail.surcharge = this.isSurcharge() ? getSurchargeByVat(detail.percentage) : 0.0;
         detail.surcharge_quota = round(detail.amount / 100 * detail.surcharge);
@@ -768,6 +798,7 @@ export class Invoice {
             }
           });
         } else {
+          console.log(detail);
           let tax = {
             tax: TaxType.IVA,
             type: this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA,
@@ -780,8 +811,9 @@ export class Invoice {
           this.taxes.push(tax);
         }
       }
-    });  
-    this.calculateWithholdingFromTax();
+    }); 
+    if(this.isNacional() || this.isCcm())   
+      this.calculateWithholdingFromTax();
   }
   
   calculateTotalFromDetail() {

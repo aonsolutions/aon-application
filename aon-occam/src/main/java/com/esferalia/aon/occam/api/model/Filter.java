@@ -240,6 +240,16 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface DailyTrackingFilter{
+		Filter filter(DailyTrackingProperties properties);
+	}
+		
+	@FunctionalInterface
+	public interface JobTypeFilter{
+		Filter filter(JobTypeProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface TaskTagFilter{
 		Filter filter(TaskTagProperties properties);
 	}
@@ -279,6 +289,16 @@ public interface Filter extends Serializable{
 		Filter filter(GeoZoneProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface IAEFilter{
+		Filter filter(IAEProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface Cnae2009Filter{
+		Filter filter(Cnae2009Properties properties);
+	}
+
 	@FunctionalInterface
 	public interface ProjectHolderFilter{
 		Filter filter(ProjectHolderProperties properties);

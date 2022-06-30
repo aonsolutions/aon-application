@@ -321,10 +321,17 @@ public class InvoiceAutoComplete {
 	
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS = (inv,ctx) -> {
 		if(inv.getAddress() == null || inv.getAddress().isEmpty()) {
-			RegistryAddressFilter filter = f -> f.getDomainProperty().eq(inv.getDomain())
-					.and(f.getRegistryProperty().eq(inv.getRegistry()).and(f.getTypeProperty().eq((byte) 0)));
+			RegistryAddressFilter filter = inv.getRegistryAddress() != null 
+					? f -> f.getDomainProperty().eq(inv.getDomain())
+							.and(f.getRegistryProperty().eq(inv.getRegistry()))
+							.and(f.getIdProperty().eq(inv.getRegistryAddress()))
+					: f -> f.getDomainProperty().eq(inv.getDomain())
+							.and(f.getRegistryProperty().eq(inv.getRegistry())
+							.and(f.getTypeProperty().eq((byte) 0)));
+			
 			RegistryAddress raddress = RegistryAddressDAO.get(ctx.getContext(), filter);
 			inv.setAddress(raddress);
+			inv.setRegistryAddress(raddress.getId());
 		}
 		
 		if(inv.getAddress() != null && inv.getAddress().getDomain() == null && !inv.getAddress().isEmpty()) {

@@ -21,6 +21,8 @@ public class Warehouse implements EntryPoint {
 	
 	private static final String ELABORATION_ENTRY_POINT = "elaboration";
 	
+	private static final String ELABORATION_NEW_ENTRY_POINT = "elaborationNew";
+	
 	private static final String STOCK_FORECAST_ENTRY_POINT = "stockForecast";
 	
 	private static final String MOVEMENT_LIST_ENTRY_POINT = "movementList";
@@ -43,6 +45,8 @@ public class Warehouse implements EntryPoint {
 			new CarrierPacking(aonData).onModuleLoad();
 		} else if (ELABORATION_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
 			new Elaboration(aonData).onModuleLoad();
+		} else if (ELABORATION_NEW_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
+			new net.aonsolutions.aon.gwt.warehouse.client.elaboration.nuevo.Elaboration().onModuleLoad();
 		} else if (STOCK_FORECAST_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
 			new StockForecast(aonData).onModuleLoad();
 		} else if (MOVEMENT_LIST_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {

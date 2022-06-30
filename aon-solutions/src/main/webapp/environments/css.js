@@ -93,6 +93,7 @@ export const AON_DOT = 'aonDot';
 export const ACTIVE = 'active';
 export const AON_DESKTOP_SLIDE_FADE = 'aonDesktopSlideFade';
 export const AON_FLEX = 'aonFlex';
+export const AON_BLOCK = 'aonBlock';
 export const AON_SHOW_MENU = 'aonShowMenu';
 export const AON_COMPANY_LOGO = 'aonCompanyLogo';
 export const AON_COMPANY_LOGO_SPAN = 'aonCompanyLogoSpan';
@@ -312,6 +313,12 @@ export const AON_TEXTAREA = 'aonTextarea';
 // aon-search 
 
 export const AON_SEARCH_INPUT = 'aonSearchInput';
+
+// aon-autosize-textarea
+
+export const AON_AUTOSIZE_TEXTAREA = 'aonAutosizeTextarea';
+export const AON_AUTOSIZE_TEXTAREA_CONTENT = 'aonAutosizeTextareaContent';
+export const AON_AUTOSIZE_TEXTAREA_TITLE = 'aonAutosizeTextareaTitle';
 
 /**
  * Name to CSS variable conversion.

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
 public enum Mod2002020LM1212Key implements Serializable, IMod200KeysProvider  {
 

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Desglose Casilla 1041
 // Deducción por reversión de medidas temporales (D.T. 37ª.2 LIS)
 public enum Mod2002020BN1041Key implements Serializable, IMod200KeysProvider  {

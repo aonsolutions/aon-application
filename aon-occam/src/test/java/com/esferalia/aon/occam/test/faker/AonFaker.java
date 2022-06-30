@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -132,6 +133,20 @@ public class AonFaker {
 			;
 	}
 	
+	public static EnterpriseActivity getEnterpriseActivity(AONContext ctx) {
+		return new EnterpriseActivity()
+			.setDescription(faker.job().title())
+			.setPrincipal(AonRandom.gt(50))
+			
+			;			
+//			private Iae iae;
+//			private Integer cnae;
+//			private VATRegime vatRegime; 
+//			.setEnterprise(company.getId())
+//			.setScope(scope.getId())
+//			.setAddress(company.getAddresses().getFirst().getId());
+	}
+
 	public static Employee getEmployee( AONContext ctx, Date startDate, Date endDate) {
 		return getEmployee(ctx, getCCC(), startDate, endDate);
 	}
@@ -309,10 +324,15 @@ public class AonFaker {
 		return getRegistryAddress(ctx, null); 
 	}
 	public static RegistryAddress getRegistryAddress( AONContext ctx, Registry registry ) {
+		return getRegistryAddress( ctx, registry, null );	
+	}
+	public static RegistryAddress getRegistryAddress( AONContext ctx, Registry registry, GeoZone geozone) {
 		if (registry == null) {
 			registry = AonRandom.getRegistry(ctx);
 		}
-		GeoZone geozone = AonRandom.getGeozone(ctx,30);
+		if (geozone == null) {
+			geozone = AonRandom.getGeozone(ctx,10);
+		}
 		RegistryAddress address = new RegistryAddress()
 			.setDomain(ctx.getDomainId())
 			.setRegistry(registry.getId())
@@ -592,12 +612,8 @@ public class AonFaker {
 	}
 	
 	public static Warehouse getWarehouse(AONContext ctx) {
-		CompanyFull company = CompanyDAO.getFull(ctx, ctx.getDomainId());
-		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
-		
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
-
 		return new Warehouse()
 			.setDomain(ctx.getDomainId())	
 			.setWorkplace(workplace.getId())

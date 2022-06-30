@@ -659,7 +659,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getaValue();
+				x += p.getValueCorrection();
 			}
 			return round( x ); 
 		}
@@ -670,7 +670,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getbValue();
+				x += p.getLossReversion();
 			}
 			return round( x ); 
 		}
@@ -681,7 +681,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getccValue();
+				x += p.getAccountingElimination();
 			}
 			return round( x ); 
 		}
@@ -692,7 +692,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getddValue();
+				x += p.getValuesElimination();
 			}
 			return round( x ); 
 		}
@@ -703,7 +703,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.geteValue();
+				x += p.getAdjustmentDecrease();
 			}
 			return round( x ); 
 		}
@@ -714,7 +714,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getcValue();
+				x += p.getCorrectionEffect();
 			}
 			return round( x ); 
 		}
@@ -725,7 +725,7 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
 			double x = 0.0;
 			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
-				x += p.getdValue();
+				x += p.getCorrectionsBalance();
 			}
 			return round( x ); 
 		}

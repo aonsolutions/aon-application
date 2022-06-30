@@ -1664,7 +1664,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Participaciones directas de la declarante en otras sociedades y de otras personas o entidades en la declarante a la fecha de cierre del per\u00EDodo declarado")
 	String participationsTitle();
 
-	@DefaultMessage("Participaciones de la declarante en otras sociedades")
+	@DefaultMessage("Participaciones de la declarante en otras entidades")
 	String participationsOut();
 
 	@DefaultMessage("Participaciones de personas o entidades en la declarante")
@@ -2057,7 +2057,7 @@ public interface CommonMessages extends Messages {
 	String nrsAnexoV();
 	@DefaultMessage("N\u00FAmero de justificante identificativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Canarias") 
 	String justCanarias();
-	@DefaultMessage("N\u00FAmero de justificante identificativo autoliquidaci\u00F3n de la prestaci\u00F3n patrimonial por conversi\u00F3n de activos (DA 13a LIS)")
+	@DefaultMessage("N\u00FAmero de justificante identificativo autoliquidaci\u00F3n de la prestaci\u00F3n patrimonial por conversi\u00F3n de activos (DA 13\u00AA LIS)")
 	String justActivos();
 	
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
@@ -2108,19 +2108,19 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Dotaciones aplicadas por la conversi\u00F3n de los activos por impuesto diferido")	
 	String dot23();	
 	
-	@DefaultMessage("Importe total AID pendientes de aplicaci\u00F3n a principio del per\u00EDodo (DT 33a.1 y 6 a) LIS)")
+	@DefaultMessage("Importe total AID pendientes de aplicaci\u00F3n a principio del per\u00EDodo (DT 33\u00AA.1 y 6 a) LIS)")
 	String dot30();
 	@DefaultMessage("AID aplicados en el per\u00EDodo por integraci\u00F3n dotaciones en la liquidaci\u00F3n)")
 	String dot31();
 	@DefaultMessage("AID convertidos en cr\u00E9dito exigible en el per\u00EDodo")
 	String dot32();
-	@DefaultMessage("Con prestaci\u00F3n patrimonial (DT 33a.6 c) LIS)")
+	@DefaultMessage("Con prestaci\u00F3n patrimonial (DT 33\u00AA.6 c) LIS)")
 	String dot33();
-	@DefaultMessage("Sin prestaci\u00F3n patrimonial (DT 33a.6 d) LIS)")
+	@DefaultMessage("Sin prestaci\u00F3n patrimonial (DT 33\u00AA.6 d) LIS)")
 	String dot34();
-	@DefaultMessage("Sin prestaci\u00F3n patrimonial. Minoraci\u00F3n prestaci\u00F3n por exceso cuota otros per\u00EDodos iniciados a partir de 2016 (DT 33a.4 y 6 d) LIS)")
+	@DefaultMessage("Sin prestaci\u00F3n patrimonial. Minoraci\u00F3n prestaci\u00F3n por exceso cuota otros per\u00EDodos iniciados a partir de 2016 (DT 33\u00AA.4 y 6 d) LIS)")
 	String dot35();
-	@DefaultMessage("Importe total AID pendientes (DT 33a.1 y 6 a) LIS)(*)")
+	@DefaultMessage("Importe total AID pendientes (DT 33\u00AA.1 y 6 a) LIS)")
 	String dot36();
 	
 	@DefaultMessage("AID pendientes de aplicaci\u00F3n a principio del per\u00EDodo/generados en el propio per\u00EDodo")
@@ -2153,9 +2153,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Exceso cuota l\u00EDquida positiva pendiente a principio del per\u00EDodo/generado en el propio per\u00EDodo")
 	String dot50();
-	@DefaultMessage("Exceso cuota l\u00EDquida positiva aplicado en per\u00EDodos impositivos de 2008 a 2015 (DT 33a.4 LIS)")
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva aplicado en per\u00EDodos impositivos de 2008 a 2015 (DT 33\u00AA.4 LIS)")
 	String dot51();
-	@DefaultMessage("Exceso cuota l\u00EDquida positiva aplicado en per\u00EDodos impositivos iniciados a partir de 2016 (art. 130.1 p\u00E1rrafo 2o LIS)")
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva aplicado en per\u00EDodos impositivos iniciados a partir de 2016 (art. 130.1 p\u00E1rrafo 2\u00BA LIS)")
 	String dot52();
 	@DefaultMessage("Exceso cuota l\u00EDquida positiva pendiente de aplicaci\u00F3n en per\u00EDodos futuros")
 	String dot53();
@@ -2176,16 +2176,16 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Reversi\u00F3n de las p\u00E9rdidas por deterioro de valores representativos de "
 			+ "la participaci\u00F3n en el capital o en los fondos"
-			+"propios de entidades pendientes de reversi\u00F3n (DT 16a LIS).")
+			+"propios de entidades pendientes de reversi\u00F3n (DT 16\u00AA LIS).")
 	String damageAmount3();
 	
-	@DefaultMessage("Activos por impuesto diferido (AID). DT 33a y DA 13a LIS")
+	@DefaultMessage("Activos por impuesto diferido (AID). DT 33\u00AA y DA 13\u00AA LIS")
 	String damageAmount4();
 	
 	@DefaultMessage("Activos por impuesto diferido (AID). Art. 130 LIS")
 	String damageAmount5();
 
-	@DefaultMessage("Exceso cuota l\u00EDquida positiva (art. 130.1 y DT 33a.4 LIS)")
+	@DefaultMessage("Exceso cuota l\u00EDquida positiva (art. 130.1 y DT 33\u00AA.4 LIS)")
 	String damageAmount6();
 	
 	@DefaultMessage("C\u00E1lculo autom\u00E1tico")
@@ -2304,7 +2304,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Resultados extracooperativos")
 	String extraCooperativeResult();
 
-	@DefaultMessage("Bases de reparto")
+	@DefaultMessage("Base de reparto")
 	String distributionBases();
 	
 	@DefaultMessage("Aplicaci\u00F3n")
@@ -2360,13 +2360,13 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("En efectivo")
 	String cash();
 	
-	@DefaultMessage("Domicialici\u00F3n")
+	@DefaultMessage("Domiciliaci\u00F3n")
 	String directDebit();
 	
 	@DefaultMessage("I.B.A.N.")
 	String iban();
 
-	@DefaultMessage("Fecha I.R.N.R.")
+	@DefaultMessage("Fecha (s\u00F3lo declaraciones del IRNR)")
 	String irnrDate();
 
 	@DefaultMessage("Importe total de las operaciones")
@@ -3912,7 +3912,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("8.- Base de las deducciones para incentivar la realizaci\u00F3n de determinadas actividades:")
 	String ute4();
 
-	@DefaultMessage("10.- Dividendos y participaciones en benefi cios distribuidos con cargo a reservas:")
+	@DefaultMessage("10.- Dividendos y participaciones en beneficios distribuidos con cargo a reservas:")
 	String ute5();
 
 	@DefaultMessage("11.- Relaci\u00F3n de socios existentes a la fecha de cierre del per\u00EDodo impositivo, que deban soportar las imputaciones, en orden decreciente de grado de participaci\u00F3n, con sus datos identificativos y grado de participaci\u00F3n en dicha fecha:")
@@ -4069,7 +4069,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Nombre o raz\u00F3n social")
 	String ultimateName();
 	
-	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Pa\u00EDs o jurisdicci\u00F3n")
+	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Pa\u00EDs o jurisdicci\u00F3n de residencia fiscal")
 	String ultimateCountry();
 
     @DefaultMessage("Participaciones y Entidades Menores")

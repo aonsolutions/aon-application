@@ -652,13 +652,13 @@ public class Mod2002015Import2014 {
 													,AonStringUtils.SPACE
 													,cp.getIncomes()
 													,AonStringUtils.SPACE
-													,cp.getaValue()
+													,cp.getValueCorrection()
 													,AonStringUtils.SPACE
-													,cp.getbValue()
+													,cp.getLossReversion()
 													,AonStringUtils.SPACE
-													,cp.getcValue()
+													,cp.getCorrectionEffect()
 													,AonStringUtils.SPACE
-													,cp.getdValue()
+													,cp.getCorrectionsBalance()
 													,AonStringUtils.SPACE
 													,cp.getCapital()
 													,AonStringUtils.SPACE

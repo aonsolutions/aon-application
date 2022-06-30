@@ -386,7 +386,7 @@ public class BookingInfo implements Serializable {
 		if (isAonFinance()) {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_FINANCE));
-			getDomain().setMaxDefinedUsers(0);
+			if(getDomain().getParent() != null) getDomain().setMaxDefinedUsers(0);
 		} else if (isAonOne()) {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));

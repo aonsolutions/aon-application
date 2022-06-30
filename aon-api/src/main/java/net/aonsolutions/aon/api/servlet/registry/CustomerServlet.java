@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -27,38 +28,12 @@ public class CustomerServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[GET] /ms/api/customer/* - AON API CUSTOMER SERVLET");
-		try {
-			AonApiData api = initialize(req);
-		
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getCustomers(api, api.getData()));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[POST] /ms/api/customer/* - AON API CUSTOMER SERVLET");
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getCustomers(api, api.getData()));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
 	}
 	
 	@Override
@@ -79,34 +54,59 @@ public class CustomerServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private Object getCustomer(AonApiData api, JSONObject json) {
-		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
-				? api.getData().optInt(IJsonNames.REGISTRY)
-				: api.getData().optInt(IJsonNames.ID);
-		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id));
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			switch (api.getPath()) {
+			case "/":
+				response(req, resp, getCustomers(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private Object getCustomer(AonApiData api) {
+		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> customerFilter(api, f));
 		JSONObject object = CustomerJSON.toJSON(customer);
 		
-		return RegistryServlet.getRegistryAdditionalInfo(object, api, json, id, null);
+		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), customer.getId(), null);
 	}
 	
-	private Object getCustomers(AonApiData api, JSONObject json) {
-		if(json.opt(IJsonNames.ID) != null || json.opt(IJsonNames.REGISTRY) != null)
-			return getCustomer(api, json);
+	private Object getCustomers(AonApiData api) {
+		if(api.getData().opt(IJsonNames.ID) != null || api.getData().opt(IJsonNames.REGISTRY) != null 
+				|| api.getData().opt(IJsonNames.DOCUMENT) != null)
+			return getCustomer(api);
 		
-		Integer page = json.opt(IJsonNames.PAGE) != null 
-			? json.optInt(IJsonNames.PAGE) : 1;
-		Integer perPage = json.opt(IJsonNames.PER_PAGE) != null
-			? json.optInt(IJsonNames.PER_PAGE) : 50;
+		Integer page = api.getData().opt(IJsonNames.PAGE) != null 
+			? api.getData().optInt(IJsonNames.PAGE) : 1;
+		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
+			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 
 		return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> customerFilter(api, json, f), perPage * (page -1), perPage));
+			f -> customerFilter(api, f), perPage * (page -1), perPage));
 	}
 	
-	private Filter customerFilter(AonApiData api, JSONObject json, CustomerProperties f) {
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+	private Filter customerFilter(AonApiData api, CustomerProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;
+				//.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()));
 		
-		if(json.opt(IJsonNames.VALUE) != null) {
-			String value = json.optString(IJsonNames.VALUE);
+		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY)));
+		} else if(api.getData().opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.ID)));
+		}
+		
+		if(api.getData().opt(IJsonNames.DOCUMENT) != null) {
+			filter = filter.and(f.getDocumentProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT)));
+		}
+		
+		if(api.getData().opt(IJsonNames.VALUE) != null) {
+			String value = api.getData().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getNameProperty().like("%" + value + "%")
 					.or(f.getDocumentProperty().like("%" + value + "%"))
 					.or(f.getAliasProperty().like("%" + value + "%"));

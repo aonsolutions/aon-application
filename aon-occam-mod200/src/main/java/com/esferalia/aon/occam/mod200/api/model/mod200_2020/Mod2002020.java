@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +10,9 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
+import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.GroupEntitie;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.MinorEntity;
@@ -28,18 +30,6 @@ public class Mod2002020 extends Mod200 {
 	
 	private static final long serialVersionUID = -5669862778411873677L;
 
-	public static enum BalanceType implements Serializable {
-		NORMAL,
-		ABREVIADO,
-		PYMES;
-	}
-	public static enum EcpnType implements Serializable {
-		NORMAL,
-		ABREVIADO,
-		PYMES,
-		NO_CONSTA;
-	}	
-	
 	private boolean initializedFromLastYear;
 	
 //	private Integer id;
@@ -81,10 +71,10 @@ public class Mod2002020 extends Mod200 {
 	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
-	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // C. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B.1. Participaciones de la declarante en otras entidades 
+	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // B.2. Participaciones de personas o entidades en la declarante
 
-	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // D. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 	
 	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();
@@ -106,8 +96,8 @@ public class Mod2002020 extends Mod200 {
 	private String nrsAnexoVric;
 	private String justActivos;
 	
-	private HashMap<IMod200Key,DoubleVariable2020> keysMap = new HashMap<IMod200Key,DoubleVariable2020>();
-	private HashMap<IMod200Key,DoubleVariable2020> draftMap = new HashMap<IMod200Key,DoubleVariable2020>();
+	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
+	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
 	private HashMap<IMod200Key,Boolean> visibleMap = new HashMap<IMod200Key,Boolean>();
 
 //	private LinkedList<ValidationMessage2020> messages;
@@ -497,11 +487,11 @@ public class Mod2002020 extends Mod200 {
 		this.ultimateCountry = ultimateCountry;
 	}
 	
-	public HashMap<IMod200Key, DoubleVariable2020> getKeysMap() {
+	public HashMap<IMod200Key, DoubleVariableEx> getKeysMap() {
 		return keysMap;
 	}
 	
-	public HashMap<IMod200Key, DoubleVariable2020> getDraftMap() {
+	public HashMap<IMod200Key, DoubleVariableEx> getDraftMap() {
 		return draftMap;
 	}
 	
@@ -509,23 +499,23 @@ public class Mod2002020 extends Mod200 {
 		return visibleMap;
 	}
 	
-	public void addDraftVariable(DoubleVariable2020 t) {
+	public void addDraftVariable(DoubleVariableEx t) {
 		draftMap.put( t.getKey(), t);
     }
 	
-	public void addVariable(DoubleVariable2020 t) {
+	public void addVariable(DoubleVariableEx t) {
 		keysMap.put( t.getKey(), t);
 	}
 	
-	public DoubleVariable2020 getVariable(IMod200Key key) {
-		DoubleVariable2020 var = getDraftMap().get(key);
+	public DoubleVariableEx getVariable(IMod200Key key) {
+		DoubleVariableEx var = getDraftMap().get(key);
 		if (var == null ) {
 			var = getKeysMap().get(key);
 		}
 		return var; 
 	}
 	
-	public DoubleVariable2020 getKey(IMod200Key key) {
+	public DoubleVariableEx getKey(IMod200Key key) {
 		return keysMap.get(key);
 	}
 	
@@ -533,7 +523,7 @@ public class Mod2002020 extends Mod200 {
 		if (!keysMap.containsKey(key)){
 			return 0.0;
 		}
-		DoubleVariable2020 v = keysMap.get(key);
+		DoubleVariableEx v = keysMap.get(key);
 		if (v==null) {
 			return 0.0;
 		}
@@ -545,7 +535,7 @@ public class Mod2002020 extends Mod200 {
 	}
 	
 	public boolean isChecked(IMod200Key key) {
-		DoubleVariable2020 dv = keysMap.get(key); 
+		DoubleVariableEx dv = keysMap.get(key); 
 		return dv != null && (AonMathUtils.round(dv.getValue()) == 1.0);
 	}
 	

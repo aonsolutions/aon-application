@@ -89,7 +89,7 @@ public class TaskUtils {
 	}
 	
 	public static boolean isCau(JSONObject params) {
-		return !params.optString("cau").isEmpty() && params.optInt("cau") > 0;
+		return params.optInt("cau") != 0;
 	}
 	
 	public static String parseDescription(Task task) {
@@ -128,8 +128,8 @@ public class TaskUtils {
 			JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
 			JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
 			
-			String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
-			String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
+			String docParent   = parent!=null  && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
+			String docCustomer = company!=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
 
 			String doc = docParent!=null ? docParent : docCustomer;
 			
@@ -137,10 +137,11 @@ public class TaskUtils {
 				task.setGtaskId(auth.optString(IJsonNames.EMAIL));
 			}
 	
-			if(doc!=null) {
-				Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
-				if(registry!=null && registry.getId()!=null)
+			if(doc!=null && !(task.getRegistry()!=null && task.getRegistry().getId()!=null)) {
+				Registry registry = AON.getRegistry(api.getDomain(), api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
+				if(registry!=null && registry.getId()!=null) {					
 					task.setRegistry(registry);
+				}
 			}
 			
 			task.setSender(new TaskHolder());
@@ -296,7 +297,7 @@ public class TaskUtils {
 		List<Byte> types = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
 		if(task.isChild()) {
 			
-			Task parent = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+			Task parent = AON_SOLUTIONS.getTask(task.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
 			
 			if(parent!=null && parent.getId()!=null) {
 				
@@ -306,22 +307,20 @@ public class TaskUtils {
 				).collect(Collectors.toList());
 				
 				TaskStatus status = childs.isEmpty() ? TaskStatus.PENDING : TaskStatus.IN_PROGRESS;
-				AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), parent.setStatus(status));
+				AON_SOLUTIONS.saveTask(task.getDomain(), api.getUser(), parent.setStatus(status));
 			}
 		} else { // IS PARENT
+			
+//			workflow.setId(null).setTask(task.getId()).setType(TaskWorkflowType.CLOSE);
+			
+//			AON_SOLUTIONS.saveTaskWorkflow(task.getDomain(), new User(), workflow); /// SAVE WORKFLOW
+			
 			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
-					f-> f.getParentProperty().eq(task.getId())
-					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
-				)
+				f-> f.getParentProperty().eq(task.getId())
+				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+			)
 			.forEach(t->{
-				
-				workflow.setId(null).setTask(t.getId()).setType(TaskWorkflowType.CLOSE);
-				
-				TaskWorkflow tmp = AON_SOLUTIONS.saveTaskWorkflow(t.getDomain(), new User(), workflow);
-				
 				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
-				
-				onNotification(api, tmp);
 			});
 		}
 	}

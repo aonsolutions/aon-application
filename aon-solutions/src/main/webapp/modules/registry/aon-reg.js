@@ -34,6 +34,7 @@ import * as GWT from '../../gwt/gwt.js';
 export class AonReg extends AonElement {
 
 	registry;
+	type; 
 	showLogo;
 	oneAddress;
 	logo;
@@ -337,7 +338,10 @@ export class AonReg extends AonElement {
 			paymethodSelect.setOptions(paymethods);
 			paymethodSelect.value = this.registry.getPaymethod().getPaymethod() || paymethods[0].id;
 		});
-		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().setPaymethod(paymethodSelect.value));
+		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => {
+			this.registry.getPaymethod().setPaymethod(paymethodSelect.value);
+			// TODO SI ES TRANSFERENCIA ACTUALIZAR DATOS BANK
+		});
 
 
 		table.addRow();
@@ -350,6 +354,8 @@ export class AonReg extends AonElement {
 		bankSelect.value = this.registry.getPaymethod().getBank();
 		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().setBank(bankSelect.value));
 		table.addCell(bankSelect, 4);
+		
+		
 
 		table.addRow();
 
@@ -864,6 +870,10 @@ export class AonReg extends AonElement {
 
 	setShowLogo(showLogo) {
 		this.showLogo = showLogo;
+	}
+
+	isCustomer() {
+		return this.type && 'customer' === this.type;		
 	}
 }
 

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
@@ -15,7 +16,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019CorrectionKey;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019KeyDC;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020KeyDC;
@@ -37,9 +37,9 @@ public class Mod2002020Import2019 {
 	// Añadir casilla si no existe o asignar el valor a la casilla, al Modelo 200
 	private static void setDoubleValue(Mod2002020 mod200, IMod200Key key, double value) {
 		 
-		DoubleVariable2020 t = mod200.getVariable(key);
+		DoubleVariableEx t = mod200.getVariable(key);
 		if (t == null) {
-			t = new DoubleVariable2020(key);
+			t = new DoubleVariableEx(key);
 			t.setValue(value);
 			mod200.addVariable(t);		
 		}
@@ -887,13 +887,13 @@ public class Mod2002020Import2019 {
 													,AonStringUtils.SPACE
 													,cp.getIncomes()
 													,AonStringUtils.SPACE
-													,cp.getaValue()
+													,cp.getValueCorrection()
 													,AonStringUtils.SPACE
-													,cp.getbValue()
+													,cp.getLossReversion()
 													,AonStringUtils.SPACE
-													,cp.getcValue()
+													,cp.getCorrectionEffect()
 													,AonStringUtils.SPACE
-													,cp.getdValue()
+													,cp.getCorrectionsBalance()
 													,AonStringUtils.SPACE
 													,cp.getCapital()
 													,AonStringUtils.SPACE

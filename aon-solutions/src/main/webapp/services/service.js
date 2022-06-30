@@ -51,6 +51,8 @@ export * from './productService.js';
 
 export * from './applicationParameterService.js';
 
+export * from './workplaceService.js';
+
 export const clear = () => {
   clearCompanyService();
   clearRegistryService();

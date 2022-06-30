@@ -81,16 +81,18 @@ export class AonNotification extends AonElement {
     toast.id = this.TOAST;
     this.appendChild(toast);
     this.eventListener();
-    if (this.isMobile()) 
+
+    if (this.isMobile()){
       this.paintMobile();
-    else 
+    } else {
       this.paintDesk();
+    }
       
     this.changeTabs(0);
     
     let elementScroll = this.getElement(this.ROOT_PANEL);
     elementScroll.classList.add(CSS.MATERIAL_SCROLL);
-    this.scrollInfinite(elementScroll , async()=>{
+    this.scrollInfinite(elementScroll, async()=>{
       await this.loadMore();
     })
   }
@@ -130,8 +132,9 @@ export class AonNotification extends AonElement {
 
       createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
-      if(!this.getDur().isEmployee()) 
+      if(!this.getDur().isEmployee()) {
         this.addFloatButton();
+      }
       
       await this.loadMore();
       this.changeBadgeComponent();
@@ -229,13 +232,15 @@ export class AonNotification extends AonElement {
     
     createLi(data).appendTo(ulEl).appendChild(aonCard);
 
-    if(close)
+    if(close){
       this.buttonClose(aonCard, data.id);
+    }
 
     const content = createContent(data.body);
     aonCard.setContent(content.element);
-    if (!data.status) 
+    if (!data.status) {
       aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
+    }
 
     aonCard.getContent().classList.add(CSS.IMG_MAX_WIDTH);
 
@@ -352,8 +357,10 @@ export class AonNotification extends AonElement {
     dialog.id = this.DIALOG;
     aonNotification.appendChild(dialog);
     const span = createSpanFloat().element;
-    if(!this.isMobile())
+
+    if(!this.isMobile()){
       setStyles(span,{ bottom:0, top:76, right: "7%" });
+    }
 
     aonNotification.appendChild(span);
     let icon = createIconButton({
@@ -374,7 +381,10 @@ export class AonNotification extends AonElement {
   openDialog() {
     const dialog = 	this.getElement(this.DIALOG);
     dialog.clear();
-    if (!this.isMobile()) dialog.width = "500px";
+    if (!this.isMobile()) {
+      dialog.width = "500px";
+    }
+    
     dialog.setContent(this.dialogHtml());
     dialog.setTitle(MSG.NOTIFICATION);
     dialog.open();

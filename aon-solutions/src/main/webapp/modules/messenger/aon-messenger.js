@@ -13,23 +13,23 @@ import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
-import { getCustomers } from '../../services/registryService.js';
 import { sortBy, waitEl } from '../../services/utils.js';
 import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
-	APP_PARAMS=[];
-	TIMEOUT;
-	_workgroups;
-	_tags;
-	_filter={};
 	_listFilter;
 	TASK_HOLDER;
 	TASK_HOLDER_ENTERPRISE;
 	cau; //BOOLEAN
 	cauInfo;
 	dur;
+	TIMEOUT;
+	_workgroups;
+	_tags;
+	APP_PARAMS=[];
+	_filter={};
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -100,7 +100,6 @@ export class AonMessenger extends AonElement {
 				if(!this.cau){
 					promises.push(this.getMyWorkgroups());
 				}
-				
 
 				const [cauInfo] = await Promise.all(promises);
 
@@ -183,15 +182,22 @@ export class AonMessenger extends AonElement {
 			this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
 			);
-						
-			this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
-				this.rootPanel(new AonMessenger())
-			);
+			
+			if(!this.cau){
+				this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
+					this.rootPanel(new AonMessenger())
+				);
+			}
 		}
 
 		this.buildToolbarSearch();
 			
-		this.inboxNavBar();
+		if(this.cau){
+			this.inboxNavBarCau();
+		} else {
+			this.inboxNavBar();
+		}
+		
 		this.statusNavBar();
 		
 		if(!this.cau){
@@ -203,8 +209,11 @@ export class AonMessenger extends AonElement {
 
 
 	buildToolbarSearch(){
-		let btnSearch = this.applicationEl.addSearchOption();
+		const opened = !this.isMobile();
+
+		let btnSearch = this.applicationEl.addSearchOption(opened);
 		let timeOut = null;
+		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
 		  clearTimeout(timeOut);
 		  
@@ -249,23 +258,27 @@ export class AonMessenger extends AonElement {
 
 
 	searchValueDefault(){
-		let registryEl = this.getElement("registry");
-		let taskHolderEl = this.getElement("task_holder");
-		let senderEl = this.getElement("senderFilter");
+
+
+
 		// let statusEl = this.getElement("status");
 		// let workgroup = this.getElement("workgroup");
-		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
-		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
-		});
-	
-		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
-			const value = target.value;
-			if(value.length > 2){
-			  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
-			  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
-			}
-		});
 
+		// let registryEl = this.getElement("registry");
+		// getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
+		//   registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+		// });
+	
+		// registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+		// 	const value = target.value;
+		// 	if(value.length > 2){
+		// 	  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
+		// 	  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+		// 	}
+		// });
+
+		let taskHolderEl = this.getElement("task_holder");
+		let senderEl = this.getElement("senderFilter");
 		this.getTaskHoldersEnterprise().then(ths=>{
 			senderEl.setOptions(ths);
 			taskHolderEl.setOptions(ths);
@@ -281,46 +294,42 @@ export class AonMessenger extends AonElement {
 	inboxNavBar(){
 		let messengerOpts = [];
 		
-		if(!this.cau){
-			messengerOpts.push({
-				name: 'Recibidas',
-				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
-				id: MATERIAL_ICONS.MOVE_TO_INBOX,
-				fn: () =>{
-					this._filter.workgroup = undefined;
-
-					if(this.TASK_HOLDER && this.TASK_HOLDER.id){
-						this._filter.sender = undefined;
-						this._filter.task_holder = this.TASK_HOLDER.id;
-					}
-					
-					this._filter.workgroups = this.getWorkgroupsStr();
-					this.addListFilter(this._filter);
-					this.updateStatusCount();
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
-				}
-			},
-			{
-				name: MSG.SENT,
-				icon: MATERIAL_ICONS.OUTBOX,
-				id: MATERIAL_ICONS.OUTBOX,
-				fn: () =>{
-					this._filter.workgroup = undefined;
-
-					if(this.TASK_HOLDER && this.TASK_HOLDER.id){
-						this._filter.task_holder = undefined;
-						this._filter.sender = this.TASK_HOLDER.id;
-					}
-		
-					this._filter.workgroups = this.getWorkgroupsStr();
-					this.addListFilter(this._filter);
-					this.updateStatusCount();
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
-				}
-			});
-		}
-
 		messengerOpts.push({
+			name: 'Recibidas',
+			icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+			id: MATERIAL_ICONS.MOVE_TO_INBOX,
+			fn: () =>{
+				this._filter.workgroup = undefined;
+
+				if(this.TASK_HOLDER && this.TASK_HOLDER.id){
+					this._filter.sender = undefined;
+					this._filter.task_holder = this.TASK_HOLDER.id;
+				}
+				
+				this._filter.workgroups = this.getWorkgroupsStr();
+				this.addListFilter(this._filter);
+				this.updateStatusCount();
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+			}
+		},
+		{
+			name: MSG.SENT,
+			icon: MATERIAL_ICONS.OUTBOX,
+			id: MATERIAL_ICONS.OUTBOX,
+			fn: () =>{
+				this._filter.workgroup = undefined;
+
+				if(this.TASK_HOLDER && this.TASK_HOLDER.id){
+					this._filter.task_holder = undefined;
+					this._filter.sender = this.TASK_HOLDER.id;
+				}
+	
+				this._filter.workgroups = this.getWorkgroupsStr();
+				this.addListFilter(this._filter);
+				this.updateStatusCount();
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+			}
+		},{
 			name: 'Todas',
 			icon: MATERIAL_ICONS.ALL_INBOX,
 			id: MATERIAL_ICONS.ALL_INBOX,
@@ -329,13 +338,6 @@ export class AonMessenger extends AonElement {
 				this._filter.sender = undefined;
 				this._filter.workgroup = undefined;
 				this._filter.workgroups = this.getWorkgroupsStr();
-
-				if(!this.cau){
-					let taskHolder = this.TASK_HOLDER.id ? this.TASK_HOLDER.id : undefined;
-					this._filter.sender = taskHolder;
-					this._filter.task_holder = taskHolder;
-				}
-
 				this.addListFilter(this._filter);
 				this.updateStatusCount();
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
@@ -344,6 +346,36 @@ export class AonMessenger extends AonElement {
 
 		this.applicationEl.addSidenavOptions("MI BANDEJA", messengerOpts);
 	}
+
+	inboxNavBarCau(){
+		let messengerOpts = [];
+	
+			messengerOpts.push({
+				name: 'Mi bandeja',
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+				id: MATERIAL_ICONS.MOVE_TO_INBOX,
+				fn: () =>{
+					this._filter.document = undefined;
+					this.addListFilter(this._filter);
+					this.updateCount();
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+				}
+			},
+			{
+				name: 'Todas',
+				icon: MATERIAL_ICONS.ALL_INBOX,
+				id: MATERIAL_ICONS.ALL_INBOX,
+				fn: () =>{
+					this._filter.document = this.getDocumentEnterprise();
+					this.addListFilter(this._filter);
+					this.updateCount();
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+				}
+			});
+
+		this.applicationEl.addSidenavOptions("BANDEJA", messengerOpts);
+	}
+
 
 	statusNavBar(){
 		let messengerOpts = [
@@ -558,7 +590,12 @@ export class AonMessenger extends AonElement {
 					name: item.description,
 					icon: MATERIAL_ICONS.LABEL,
 					actions:[],
-					fn: () => {}
+					fn: () => {
+						this._filter.workgroups = this.getWorkgroupsStr();
+						this._filter.tag = this._filter.tag == item.id ? undefined : item.id;
+						this.addListFilter({...this._filter});
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+					}
 				};
 	
 				if(this.getDur().isMessengerManager()){
@@ -597,8 +634,9 @@ export class AonMessenger extends AonElement {
 	addBackgroundSidenav(filter){
 		if(filter){
 			this.applicationEl.removeBackgroundSidenavAll();
-
-			if(filter.workgroup){
+			if(this.cau){
+				this.applicationEl.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX);
+			} else if(filter.workgroup){
 				this.applicationEl.addBackgroundSidenav(filter.workgroup);
 			} else if(filter.sender && filter.task_holder){
 				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
@@ -717,11 +755,11 @@ export class AonMessenger extends AonElement {
 
 		let filter = {};
 
-		if(this._filter.source) {
-			filter.source = this._filter.source;
+		if(this._filter.document) {
+			filter.document = this._filter.document;
 		}
 
-		if(filterCount.workgroups){
+		if(filterCount.workgroups && !this.cau){
 			filter.workgroups = filterCount.workgroups;
 		}
 
@@ -732,7 +770,7 @@ export class AonMessenger extends AonElement {
 		if(filterCount.task_holder && !this.getDur().isMessengerManager()){
 			filter.task_holder = filterCount.task_holder;
 		}
-		
+
 		if(this._tags.length){
 			filter.tag = this._tags.map(t=> t.id).join(',');
 		}
@@ -745,7 +783,11 @@ export class AonMessenger extends AonElement {
 					}
 				}
 
-				if(tag && this.cau){
+				if(this._tags.length){
+					this._tags.forEach(({id}) => application.updateSidenavCount(id, 0));
+				}
+
+				if(tag){
 					for(const key in tag){
 						application.updateSidenavCount(key, tag[key]);
 					}
@@ -954,6 +996,14 @@ export class AonMessenger extends AonElement {
 			font-weight: 800;
 		`
 		return span;
+	}
+
+	getDocumentEnterprise(){
+		let document = undefined;
+		if(this.cauInfo && this.cauInfo.company && this.cauInfo.company.document){
+			document = this.cauInfo.company.document;
+		}
+		return document;
 	}
 
 	markReadNotification(taskId){

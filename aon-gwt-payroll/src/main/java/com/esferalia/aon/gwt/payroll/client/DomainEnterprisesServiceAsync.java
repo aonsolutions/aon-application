@@ -14,13 +14,13 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
+import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
@@ -52,7 +52,6 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -175,6 +174,10 @@ public class DomainEnterprisesServiceAsync {
 
 	public void moveAgreement2Parent(Agreement agreement, AsyncCallback<Void> callback) {
 		enterprisesServiceAsync.moveAgreement2Parent(getCurrentDomainName(), agreement, callback);
+	}
+	
+	public void moveAgreement2Child(Integer agreementId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.moveAgreement2Child(getCurrentDomainName(), agreementId, callback);
 	}
 
 	public void getParentDomain(AsyncCallback<Integer> callback) {
@@ -365,14 +368,6 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getContractAttachments(Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getContractAttachments(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
-	}
-	
-	public void setContractAttachments(Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.setContractAttachments(getCurrentDomainName(), contractId, contractAttachments, asyncCallback);
-	}
-
-	public void createContractAttach(ContractAttach contractAttach, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.createContractAttach(getCurrentDomainName(), contractAttach, asyncCallback);	
 	}
 	
 	public void deleteContractAttach(Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
@@ -569,8 +564,8 @@ public class DomainEnterprisesServiceAsync {
 	
 	// --------------------------- Certificates
 	
-	public void getCertificates(AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	public void getCertificates(boolean withParent, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCertificates(getCurrentDomainName(), getCurrentUser(), withParent, asyncCallback);
 	}
 	
 	public void deleteCertificate(Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
