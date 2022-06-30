@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public abstract class AccSctiptMVELContext extends HashMap<String, Object> {
+public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 
 	private static final long serialVersionUID = 2589312117223760204L;
 	
@@ -118,7 +118,7 @@ public abstract class AccSctiptMVELContext extends HashMap<String, Object> {
 			:sc.setDebit(amount);
 	}
 
-	public AccountEntry fillDetails(AONContext ctx, AccountEntryDetailExpressionScript script) {
+	public AccountEntry fillDetails(AONContext ctx, AccountEntryDetailExpressionScript<T> script) {
 		script
 			.getDetails()
 			.stream()

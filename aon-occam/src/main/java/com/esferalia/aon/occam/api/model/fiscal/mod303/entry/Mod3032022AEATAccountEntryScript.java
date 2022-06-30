@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
-public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressionScript {
+public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
 	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo(model)";
 
 	private static final long serialVersionUID = 2085902232416480013L;

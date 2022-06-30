@@ -269,7 +269,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static AccountEntry recordModel(AONContext ctx, Mod303 mod) {
-		Optional<AccountEntryDetailExpressionScript> script = Mod303DefaultAccountEntryScript.getScript(mod);
+		Optional<AccountEntryDetailExpressionScript<Mod303>> script = Mod303DefaultAccountEntryScript.getScript(mod);
 		if (script.isPresent()) {
 			Date entryDate = new Date();
 			AccountPeriod period = AccountPeriodDAO.getActivePeriod(ctx,entryDate);
@@ -282,7 +282,7 @@ public class Mod303DAO extends FiscalModelDAO {
 					.setEntryDate( entryDate )
 					.setEntryType(AccountEntryType.TAX);
 			
-			AccSctiptMVELContext mvel = new AccSctiptMVELContext( ae ) {
+			AccSctiptMVELContext<Mod303> mvel = new AccSctiptMVELContext<Mod303>( ae ) {
 				private static final long serialVersionUID = -858390524319034071L;
 				@Override
 				public void fillContext() {
