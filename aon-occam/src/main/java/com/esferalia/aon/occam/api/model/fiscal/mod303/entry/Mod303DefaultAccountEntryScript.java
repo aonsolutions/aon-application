@@ -11,6 +11,7 @@ public class Mod303DefaultAccountEntryScript {
 	private static final LinkedList<AccountEntryDetailExpressionScript<Mod303>> SCRIPTS = new LinkedList<>();
 	static {
 		SCRIPTS.add(new Mod3032022AEATAccountEntryScript());	
+		SCRIPTS.add(new Mod3032022ARABAAcountEntryScript());
 	}
 	
 	public static boolean accept(Mod303 mod) {

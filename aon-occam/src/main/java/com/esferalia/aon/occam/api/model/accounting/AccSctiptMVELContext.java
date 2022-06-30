@@ -157,8 +157,12 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 	}
 	
 	public boolean esComplementaria(FiscalModel model) {
-		return model.isComplementary() || model.isReplacement();
+		return model.isComplementary();
 	}
+	public boolean esSustitutiva(FiscalModel model) {
+		return model.isReplacement();
+	}
+	
 	public boolean aIngresar(FiscalModel model) {
 		return FiscalModelDeclarationType.isToDeposit(model.getDeclarationResultType());
 	}

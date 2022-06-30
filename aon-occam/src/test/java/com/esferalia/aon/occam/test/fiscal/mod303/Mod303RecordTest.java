@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -25,7 +24,9 @@ public class Mod303RecordTest extends AbstractOccamTest {
 				if ( ae != null) {
 					FiscalTestSuite.print( ae );
 					assertNotNull("Mod303. Sin apunte", ae);
-					assertNotEquals("Mod303. Sin detalles en apuntes", 0, ae.getDetailsSize());
+					if ( AonMathUtils.isNotZero( model.getDeclarationResult() )) {
+						assertNotEquals("Mod303. Sin detalles en apuntes", 0, ae.getDetailsSize());
+					}
 					Asserts.assertEqualsDouble("Mod303. Apunte descuadrado", 
 							ae.getDetails().stream().map(aed -> aed.getDebit() ).reduce(0.0, Double::sum),
 							ae.getDetails().stream().map(aed -> aed.getCredit() ).reduce(0.0, Double::sum));
