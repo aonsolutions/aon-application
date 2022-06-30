@@ -13,7 +13,6 @@ import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
-import { getCustomers } from '../../services/registryService.js';
 import { sortBy, waitEl } from '../../services/utils.js';
 import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
 
@@ -259,23 +258,27 @@ export class AonMessenger extends AonElement {
 
 
 	searchValueDefault(){
-		let registryEl = this.getElement("registry");
-		let taskHolderEl = this.getElement("task_holder");
-		let senderEl = this.getElement("senderFilter");
+
+
+
 		// let statusEl = this.getElement("status");
 		// let workgroup = this.getElement("workgroup");
-		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
-		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
-		});
-	
-		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
-			const value = target.value;
-			if(value.length > 2){
-			  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
-			  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
-			}
-		});
 
+		// let registryEl = this.getElement("registry");
+		// getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
+		//   registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+		// });
+	
+		// registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+		// 	const value = target.value;
+		// 	if(value.length > 2){
+		// 	  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
+		// 	  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+		// 	}
+		// });
+
+		let taskHolderEl = this.getElement("task_holder");
+		let senderEl = this.getElement("senderFilter");
 		this.getTaskHoldersEnterprise().then(ths=>{
 			senderEl.setOptions(ths);
 			taskHolderEl.setOptions(ths);

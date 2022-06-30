@@ -162,10 +162,12 @@ public class Certificado {
 	    	String ipfManager= certificates.getIpfManager();
 	    	String typeContract = certificates.getTypeContract();
 	    	String tipodocManager = "NIF";
-	    	if(Toolkit.getIdentityType(ipfManager).equals("4")) 
+	    	if(Toolkit.getIdentityType(ipfManager).equals("4")) {	    		
 	    		tipodocManager = "CIF";
-	    	else if(Toolkit.getIdentityType(ipfManager).equals("6")) 
+	    	} else if(Toolkit.getIdentityType(ipfManager).equals("6")) {	    		
 	    		tipodocManager = "NIE"; 
+	    	}
+	    	
 	    	
 	    	String[] fAE = Toolkit.formatDate(certificates.getfAEd());
 	    	String[] fST = Toolkit.formatDate(certificates.getfSTd());
@@ -187,7 +189,7 @@ public class Certificado {
 			
 			htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 			handleSepeExceptions(htmlPage);
-			
+
 			{//DATA REPRESENTATIVE
 				HtmlForm formRepresentative = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 				formRepresentative.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getNameManager());
@@ -234,16 +236,31 @@ public class Certificado {
 					if(input!=null) ((HtmlInput)input).setValueAttribute(d);
 				});
 				
-				formEmployee.getInputByName("orDatosTrabajador.srDuracionContratoTrab").setValueAttribute(certificates.getDurationContract().toString());
+				DomNode duration = formEmployee.querySelector("[name=\"orDatosTrabajador.srDuracionContratoTrab\"]");
+				if(duration!=null && certificates.getDurationContract()!=null) {
+					((HtmlInput)duration).setValueAttribute(certificates.getDurationContract().toString());
+				}
 				
-				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]")).setSelectedAttribute(certificates.getGz(), true);
-			
-				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoContrato.valor\"]")).setSelectedAttribute(typeContract, true);
+				DomNode gc = formEmployee.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]");
+				if(gc!=null && certificates.getGz()!=null) {
+					((HtmlSelect)gc).setSelectedAttribute(certificates.getGz(), true);
+				}
 				
-				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]")).setSelectedAttribute(certificates.getTypeDuration().getValue(), true);
+				DomNode contractType = formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoContrato.valor\"]");
+				if(contractType!=null && typeContract!=null) {
+					((HtmlSelect)contractType).setSelectedAttribute(typeContract, true);
+				}
 				
-				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]")).setSelectedAttribute(certificates.getCatProfessional(), true);
-			
+				DomNode durationType = formEmployee.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]");
+				if(durationType!=null && certificates.getTypeDuration()!=null) {
+					((HtmlSelect)durationType).setSelectedAttribute(certificates.getTypeDuration().getValue(), true);
+				}
+				
+				DomNode professionType = formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]");
+				if(professionType!=null && certificates.getCatProfessional()!=null) {
+					((HtmlSelect)professionType).setSelectedAttribute(certificates.getCatProfessional(), true);
+				}
+	
 				if( Arrays.asList("2","5").contains( typeContract.substring(0,1) ) ) {
 					formEmployee.getInputByName("orDatosTrabajador.existenDetalles").setChecked(true);
 				}
@@ -263,8 +280,9 @@ public class Certificado {
 			
 			{//DATA SUSPENSION OR TERMINATION
 				HtmlForm formTermination = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				if(certificates.getCauseSuspension()!=null)
+				if(certificates.getCauseSuspension()!=null) {					
 					((HtmlSelect)formTermination.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(certificates.getCauseSuspension(), true);
+				}
 				formTermination.getInputByName("orDatosTrabajador.srDiaFechaAlta").setValueAttribute(fAE[0]);
 				formTermination.getInputByName("orDatosTrabajador.srMesFechaAlta").setValueAttribute(fAE[1]);
 				formTermination.getInputByName("orDatosTrabajador.srAnyoFechaAlta").setValueAttribute(fAE[2]);
@@ -275,29 +293,45 @@ public class Certificado {
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
-			
+
 			{//DATA CONTINGENCIES
 				{//DATA CTZ
 					for(QuoteData qdata: certificates.getQuoteData()) {
 						HtmlForm formContingence = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 						
-						formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion")
-						.setValueAttribute(qdata.getAnio().toString());
+						DomNode yearCtz = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion\"]");
+						if(yearCtz==null) {
+							yearCtz = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAPre.srAnyoCotizacion\"]");
+						}
+						((HtmlInput)yearCtz).setValueAttribute(qdata.getAnio().toString());
 						
-						formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion")
-						.setValueAttribute(qdata.getMonth().toString());
+						DomNode monthCtz =  formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion\"]");
+						if(monthCtz==null) {
+							monthCtz = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAPre.srMesCotizacion\"]");
+						}
+						((HtmlInput)monthCtz).setValueAttribute(qdata.getMonth().toString());
 						
-						formContingence.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion")
-						.setValueAttribute(qdata.getDays().toString());
+						DomNode dayCtz = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion\"]");
+						if(dayCtz==null) {
+							dayCtz = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAPre.srMesesCotizados\"]");
+						}
+						((HtmlInput)dayCtz).setValueAttribute(qdata.getDays().toString());
 						
 						qdata.getBccc().ifPresent(d->{
 							DomNode input = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes\"]");
-							if(input!=null) ((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+							if(input!=null) {
+								((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+							}
 						});
 				
 					    qdata.getBcd().ifPresent(d->{
 					    	DomNode input = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo\"]");
-					    	if(input!=null) ((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+					    	if(input==null) {
+								 input = formContingence.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAPre.srCotizacionDesempleo\"]");
+							}
+					    	if(input!=null) {
+					    		((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+					    	}
 					    });
 		
 						htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
@@ -309,17 +343,29 @@ public class Certificado {
 					HtmlForm formVacation = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 					if(certificates.getDaysCtzVc()!=null) {
 						DomNode input = formVacation.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion\"]");
-				    	if(input!=null) ((HtmlInput)input).setValueAttribute(certificates.getDaysCtzVc().toString());
+						if(input==null) {
+							 input = formVacation.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srMesesCotizados\"]");
+						}
+				    	if(input!=null) {
+				    		((HtmlInput)input).setValueAttribute(certificates.getDaysCtzVc().toString());
+				    	}
 					}
 					
 					certificates.getBcccVc().ifPresent(d->{
 						DomNode input = formVacation.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes\"]");
-					   	if(input!=null) ((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+					   	if(input!=null) {
+					   		((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+					   	}
 					});
 			
 					certificates.getBcdVc().ifPresent(d->{
 						DomNode input = formVacation.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo\"]");
-						if(input!=null) ((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+						if(input==null) {
+							 input = formVacation.querySelector("[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srCotizacionDesempleo\"]");
+						}
+						if(input!=null) {
+							((HtmlInput)input).setValueAttribute(decimalFormat.format(d));
+						}
 					});
 						
 					htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]")).click();

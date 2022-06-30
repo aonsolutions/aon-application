@@ -53,6 +53,7 @@ export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
 export const AON_IBAN = 'aon-iban';
+export const AON_TEXTAREA ='aon-textarea';
 
 // MODULES - COMPANY
 

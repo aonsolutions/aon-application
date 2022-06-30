@@ -3,7 +3,7 @@ import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT, TAG, AON_ICONS} from
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openDialogBranch, createIconEvaluation, createSectionRating} from "./creationUtils.js";
+import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, taskNumberParse, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
@@ -22,7 +22,7 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   buildToolbar(aonMessengerChat);
 
-  const mainView = createMainView(aonMessengerChat); //DIV MAIN
+  const mainView = TaskCreationUtils.createMainView(aonMessengerChat); //DIV MAIN
   mainView.style.overflow = 'auto';
   mainView.classList.add(CSS.NO_SCROLLBAR);
 
@@ -72,7 +72,7 @@ const buildToolbar = (aonMessengerChat) => {
             id: MESSENGER_IDS.TOOLBAR_BRANCH,
             name: "Crear Rama",
             aonIcon: AON_ICONS.AON_BRANCH,
-          }, (e) =>openDialogBranch(e));
+          }, (e) =>TaskCreationUtils.openDialogBranch(e));
         }
 
         toolbar.addButton2({
@@ -89,9 +89,7 @@ const buildToolbar = (aonMessengerChat) => {
           name: MSG.CLOSE,
           icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
         }, () =>{
-          aonMessengerChat.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
-            aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED)
-          })
+          aonMessengerChat.closeTask();
         });
       }
     }
@@ -215,7 +213,7 @@ const buildWrapper = (secondDiv) => {
     /**
      * The chat itself
      */
-    const chat = createChat(); 
+    const chat = TaskCreationUtils.createChat(); 
     
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
@@ -230,7 +228,7 @@ const buildChat = (task, wrapper) => {
 
     wrapper.dataset.taskId = task.id;
 
-    const chat = createChat(); 
+    const chat = TaskCreationUtils.createChat(); 
     
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
@@ -241,25 +239,25 @@ const buildChat = (task, wrapper) => {
     } else if(task.evaluation){ // create section rating section
       const evaluation = task.evaluation;
 
-      let section = createSectionRating(wrapper, false);
+      let section = TaskCreationUtils.createSectionRating(wrapper, false);
       
       Object.values(TASK_EVALUATION)
       .forEach((r)=>{
         const selected = r === evaluation;
-        section.appendChild(createIconEvaluation(`../../../assets/img/evaluation/${r}.png`, selected));
+        section.appendChild(TaskCreationUtils.createIconEvaluation(`../../../assets/img/evaluation/${r}.png`, selected));
       });
     }
 }
 
 const addTextAreaChat = (wrapper, task) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-  const divs = createSectionComment(wrapper);
+  const divs = TaskCreationUtils.createSectionComment(wrapper);
   setStyles(divs.divWrite,{
     borderRadius:"5px",
     border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
   });
 
-  const label = createLabelFileText();
+  const label = TaskCreationUtils.createLabelFileText();
   label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
   divs.divWrite.appendChild(label);
 
@@ -280,7 +278,7 @@ const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();
   dialog.clear();
   if (!aonMessengerChat.isMobile()) dialog.width = "600px";
-  const textarea = setStyles(createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
+  const textarea = setStyles(TaskCreationUtils.createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
     height: '100%',
     maxHeight: '300px',
     minHeight: '250px'
