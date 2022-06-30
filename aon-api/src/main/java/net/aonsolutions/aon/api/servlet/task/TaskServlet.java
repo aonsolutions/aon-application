@@ -349,12 +349,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			TaskUtils.setCauInfo(api, task);
 		}
 	
-		if(edit) {
-			TaskUtils.checkFilesAndSave(api, task);
-		} else {
+		if(!edit) {
 			setWgAndThDefault(api, task);
 		}
-
 
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		

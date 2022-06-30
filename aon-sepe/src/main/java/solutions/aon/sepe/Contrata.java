@@ -193,9 +193,10 @@ public class Contrata {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
+			
 			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
 			webClient.setAlertHandler(alertHandler);
-
+			
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 	
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
@@ -235,8 +236,9 @@ public class Contrata {
 				String ctaCti = cto.getCtaCti();
 				String regimen = cto.getRegimen();
 				
-				if(cto.getCifEnterprise()!=null) 
+				if(cto.getCifEnterprise()!=null) {					
 					form.getInputByName("cifnif").setValueAttribute(cto.getCifEnterprise());
+				}
 
 				form.getInputByName("regimen").setValueAttribute(regimen);
 				form.getInputByName("numsecprov").setValueAttribute(ctaCti.substring(0,2));
@@ -259,11 +261,13 @@ public class Contrata {
 				form.getInputByName("nombre").setValueAttribute(cto.getName());
 				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
 				
-				if(cto.getLastSurname()!=null)
+				if(cto.getLastSurname()!=null) {					
 					form.getInputByName("apellido2").setValueAttribute(cto.getLastSurname());
+				}
 				
-				if(cto.getSex()!=null)
+				if(cto.getSex()!=null) {					
 					((HtmlSelect)form.querySelector("select[name=codsexo]")).setSelectedAttribute(cto.getSex().getValue().toString(), true);//SELECT  ("-1"=>"","1"=>"HOMBRE","2"=>"MUJER")
+				}
 
 				if(cto.getDateBirth()!=null) {
 					String[] dateBirth = Toolkit.dateString(cto.getDateBirth());
@@ -284,7 +288,6 @@ public class Contrata {
 				form.getInputByName("nass2").setValueAttribute(nss.substring(2, 10));
 
 				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
-				
 			}
 			
 			{//DATA CONTRACT
@@ -297,21 +300,25 @@ public class Contrata {
 					form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
 					form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
 					form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
-					if(cto.getCodFormativo()!=null && cto.getCodFormativo() > 0) 
+					if(cto.getCodFormativo()!=null && cto.getCodFormativo() > 0) {						
 						((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
+					}
 				}
 				
 				setOccupation(cto, form);
 	
-				if(cto.getCodPaisWork()!=null) 
+				if(cto.getCodPaisWork()!=null) {					
 					((HtmlSelect)form.querySelector("select[name=codpais]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
+				}
 				
-				if(cto.getCodMunWork()!=null) 
+				if(cto.getCodMunWork()!=null) {					
 					form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork());//disabled
+				}
 		
 				DomNode ofertaEmpleo = form.querySelector("select[name=procedeDeOfertaEmpleo]");
-				if(ofertaEmpleo!=null) 
-	 				((HtmlSelect)ofertaEmpleo).setSelectedAttribute(cto.getOffer().getValue(), true);
+				if(ofertaEmpleo!=null) {					
+					((HtmlSelect)ofertaEmpleo).setSelectedAttribute(cto.getOffer().getValue(), true);
+				}
 			}
 			
 			{//OTHERS DATA CONTRACT (OPTIONAL)
@@ -322,23 +329,41 @@ public class Contrata {
 					form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
 				}
 
-				if(cto.getJndType()!=null)
-					((HtmlSelect)form.querySelector("select[name=codtipojornada]")).setSelectedAttribute(cto.getJndType().getValue(), true); //review
+				if(cto.getJndType()!=null) {
+					((HtmlSelect)form.querySelector("select[name=codtipojornada]")).setSelectedAttribute(cto.getJndType().getValue(), true);				
+				}
 			
-				if(cto.getDurationTypeJndHour()!=null)
+				if(cto.getDurationTypeJndHour()!=null) {					
 					form.getInputByName("horasduracionjornada").setValueAttribute(cto.getDurationTypeJndHour());
+				}
 				
-				if(cto.getDurationTypeJndMin()!=null)
+				if(cto.getDurationTypeJndMin()!=null) {					
 					form.getInputByName("minutosduracionjornada").setValueAttribute(cto.getDurationTypeJndMin());
+				}
 				
 				//TIEMPO PARCIAL
-				if(cto.getDurationTypeCvnHour()!=null)
+				if(cto.getDurationTypeCvnHour()!=null) {					
 					form.getInputByName("horasduracionconvenio").setValueAttribute(cto.getDurationTypeCvnHour());
+				}
 			
-				if(cto.getDurationTypeCvnMin()!=null)
+				if(cto.getDurationTypeCvnMin()!=null) {					
 					form.getInputByName("minutosduracionconvenio").setValueAttribute(cto.getDurationTypeCvnMin());
+				}
 				
-				//INTERINIDAD
+				// NIVEL FORMATIVO
+				DomNode numNivelForm = form.querySelector("[name=\"numNivelForm\"]");
+				if(numNivelForm!=null) {
+					((HtmlSelect)numNivelForm).setSelectedAttribute(cto.getCodFormativo().toString(), true);
+				}
+				
+				//TITULACION
+				Optional<String> titulacion = cto.getTitulacion();
+				DomNode titulacionEl = form.querySelector("[name=\"titulacion\"]");
+				if(titulacionEl!=null && titulacion.isPresent()) {
+					((HtmlSelect)titulacionEl).setSelectedAttribute(titulacion.get(), true);
+				}
+
+				//INTERINIDAD OR SUBSTITUTION
 				Optional<String> interinidad = cto.getInterinidad();
 				if(interinidad.isPresent()) {
 		
@@ -354,24 +379,21 @@ public class Contrata {
 					
 					((HtmlSelect)form.querySelector("select[name=codobjetointerinidad]")).setSelectedAttribute(interinidad.get(), true);
 				}
-			}
-
+			}	
+		
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
 			String message = null;
 			
 			for (int i = 0; i < 3; i++) {
 				message = getSuccessMessage(htmlPage);
-				
 				if(message==null || (message!=null && message.indexOf("E")>=0)) {
 					break;
 				} else if(message.contains("returnInit")) {
 					htmlPage = sepeReturnInitPage(htmlPage, cto); 
 				} 
 			}
-			
 			if(message!=null && message.indexOf("E")>=0) {
 				message = message.substring(1);	
 			} else {
@@ -1242,7 +1264,7 @@ public class Contrata {
 			case "2": // INDEFINIDO_TIEMPO_PARCIAL
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=2";
 			break;
-			case "3": // Fijo discontinuo
+			case "3": // FIJO_DISCONTINUO
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=3";
 			break;
 			case "4": // TEMPORAL_TIEMPO_COMPLETO
@@ -1254,6 +1276,8 @@ public class Contrata {
 			default:
 				throw new SepeException("Contrato no soportado");
 		}
+        //        /ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7  // FP TC
+        //        /ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8  // FP TP
         htmlPage = htmlPage.getAnchorByHref(href).click();
         return htmlPage;
 	}
@@ -1275,10 +1299,11 @@ public class Contrata {
 			boolean b = false;
 			if(pInt > 2 && !pStr.isEmpty()) {
 				String pLowerCase = pStr.toLowerCase();
-				if(pLowerCase.contains("identificador de la comunicaci\u00F3n :")) {
+				if(pLowerCase.contains("identificador de la comunicaci\u00F3n")) {
 					String[] parts = pStr.split(":");
-					if(parts.length > 0) 
+					if(parts.length > 0) {
 						msg = (parts[1]).trim().replace("-", "");
+					}
 					b = true;
 				} else if(pLowerCase.contains("se ha realizado correctamente")) {
 					msg = pStr;
@@ -1287,7 +1312,10 @@ public class Contrata {
 					msg = "returnInit";
 					b = true;
 				} 
-				if(b) break;
+				
+				if(b) {
+					break;
+				}
 			}
 		}
 		return msg;
