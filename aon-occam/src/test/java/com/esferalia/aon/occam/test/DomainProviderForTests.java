@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 class DomainProviderForTests {
 	
@@ -224,7 +225,7 @@ class DomainProviderForTests {
 			.set(ENTERPRISE_ACTIVITY.DOMAIN, context.getDomainId())
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte) 1)
 			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, company.getId())
-			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, iae.getTitle())
+			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, AonStringUtils.abbreviate(iae.getTitle(), 64))
 			.set(ENTERPRISE_ACTIVITY.IAE, iae.getId())
 			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
 			.set(ENTERPRISE_ACTIVITY.TYPE, SSRegimeType.GENERAL.getValue())
