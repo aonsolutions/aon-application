@@ -100,10 +100,6 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		}
 	}
 	
-	public AccSctiptMVELContext(AccountEntry accountEntry) {
-		this.accountEntry = accountEntry;
-	}
-	
 	private ScriptContext fillConcept(ScriptContext sc) {
 		Object ret = MVEL.eval( sc.getAede().getConceptExpression() , this , this);
 		return sc.setConcept(ret == null? null : ret.toString());
@@ -119,7 +115,12 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 			:sc.setDebit(amount);
 	}
 
-	public AccountEntry fillDetails(AONContext ctx, AccountEntryDetailExpressionScript<T> script) {
+	public AccountEntry fillDetails(AONContext ctx, T t, AccountEntryDetailExpressionScript<T> script) {
+		if (isEmpty()) fillContext();
+		if (this.accountEntry == null) this.accountEntry = fillAccountEntry( t );
+		
+		if (this.accountEntry == null)
+			throw new IllegalStateException("No se ha rellenado una cabecera de apunte");
 		script
 			.getDetails()
 			.stream()
@@ -146,6 +147,7 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		return (added == null) ? ae.addDetail(aed) : ae;
 	}
 
+	public abstract AccountEntry fillAccountEntry(T t);
 	public abstract void fillContext();
 	
 

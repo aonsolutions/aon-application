@@ -673,4 +673,28 @@ p ->
 	}  
 	
 	
+	public static void unrecord(AONContext ctx, Integer accountEntryId) {
+		ctx.getDslContext()
+			.select( FS_MODEL.ID,FS_MODEL.MODEL )
+			.from(FS_MODEL)
+			.where(FS_MODEL.ACCOUNT_ENTRY.eq(accountEntryId))
+			.fetch()
+			.stream()
+			.forEach(rec -> ctx.getDslContext()
+				.update(FS_MODEL)
+				.setNull(FS_MODEL.ACCOUNT_ENTRY)
+				.where(FS_MODEL.ID.eq(rec.getValue(FS_MODEL.ID )))
+				.execute()
+			);
+	}  
+	
+	public static void doRecord(AONContext ctx, Integer modelId, Integer accountEntryId) {
+		ctx.getDslContext()
+			.update(FS_MODEL)
+			.set(FS_MODEL.ACCOUNT_ENTRY, accountEntryId)
+			.where(FS_MODEL.ID.eq(modelId))
+			.execute()
+			;
+	}
+	
 }

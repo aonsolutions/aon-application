@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.entry.Mod303DefaultAccoun
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -268,42 +269,58 @@ public class Mod303DAO extends FiscalModelDAO {
 		return FiscalModelDAO.getEffectivePreviousModels(ctx, mod, Mod303::new);
 	}
 	
-	public static AccountEntry recordModel(AONContext ctx, Mod303 mod) {
+	public static Mod303 unrecord(AONContext ctx, Mod303 mod) {
+		FiscalModelDAO.unrecord(ctx, mod.getAccountEntry());
+		return get(ctx, mod.getId());
+	}
+
+	public static Mod303 doRecord(AONContext ctx, Mod303 mod) {
 		Optional<AccountEntryDetailExpressionScript<Mod303>> script = Mod303DefaultAccountEntryScript.getScript(mod);
 		if (script.isPresent()) {
-			Date entryDate = new Date();
-			AccountPeriod period = AccountPeriodDAO.getActivePeriod(ctx,entryDate);
-			if (period == null) {
-				throw new AonCoreException( MessageFormat.format("No se ha encontrado un ejercicio activo para la fecha {0,date,dd/MM/yyyy}",entryDate) );
+			AccSctiptMVELContext<Mod303> mvel = getAccSctiptMVELContext( ctx, mod );
+			Optional<AccountEntry> optAe = Optional.ofNullable(mvel.fillDetails(ctx, mod, script.get()));
+			if (optAe.isPresent()) {
+				Integer entryId = AccountEntryDAO.save(ctx, optAe.get());
+				FiscalModelDAO.doRecord(ctx, mod.getId(), entryId);
+				mod = get(ctx, mod.getId());
 			}
-			AccountEntry ae = new AccountEntry()
+		}
+		return mod;
+	}
+	
+	private static AccSctiptMVELContext<Mod303> getAccSctiptMVELContext(AONContext ctx, Mod303 mod) {
+		return new AccSctiptMVELContext<Mod303>() {
+			private static final long serialVersionUID = -858390524319034071L;
+			@Override
+			public void fillContext() {
+				put(MODEL,mod);
+				for (String key : mod.getMap().keySet()) {
+					Mod303Key mod303Key = Mod303Key.getKey(key);
+					if (mod303Key != null) {
+						FiscalModelDetail detail = mod.getMap().get(key);
+						String mapKey = mod303Key.toString(); 
+						if (mod303Key.getBox() != 0) {
+							mapKey = "C" + mod303Key.getBox();
+						}
+						put(mapKey, detail==null?0.0:detail.getAmount());
+					}
+				}
+			}
+			@Override
+			public AccountEntry fillAccountEntry(Mod303 mod) {
+				Date entryDate = new Date();
+				AccountPeriod period = AccountPeriodDAO.getActivePeriod(ctx,entryDate);
+				if (period == null) {
+					throw new AonCoreException( MessageFormat.format("No se ha encontrado un ejercicio activo para la fecha {0,date,dd/MM/yyyy}",entryDate) );
+				}
+				
+				return new AccountEntry()
 					.setDomain(mod.getDomain())
 					.setPeriod(period.getId())
 					.setEntryDate( entryDate )
 					.setEntryType(AccountEntryType.TAX);
-			
-			AccSctiptMVELContext<Mod303> mvel = new AccSctiptMVELContext<Mod303>( ae ) {
-				private static final long serialVersionUID = -858390524319034071L;
-				@Override
-				public void fillContext() {
-					put(MODEL,mod);
-					for (String key : mod.getMap().keySet()) {
-						Mod303Key mod303Key = Mod303Key.getKey(key);
-						if (mod303Key != null) {
-							FiscalModelDetail detail = mod.getMap().get(key);
-							String mapKey = mod303Key.toString(); 
-							if (mod303Key.getBox() != 0) {
-								mapKey = "C" + mod303Key.getBox();
-							}
-							put(mapKey, detail==null?0.0:detail.getAmount());
-						}
-					}
-				}
-			};
-			mvel.fillContext();
-			return mvel.fillDetails(ctx, script.get());
-		}
-		return null;
+			}
+		};
 	}
 	
 }

@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
@@ -24,16 +25,17 @@ public class Mod303RecordTest extends AbstractOccamTest {
 				System.out.println();
 				System.out.println();
 				FiscalTestSuite.printModel( model );
-				AccountEntry ae = Mod303DAO.recordModel(ctx, model);
-				if ( ae != null) {
-					FiscalTestSuite.print( ae );
+				model =  Mod303DAO.doRecord(ctx, model);
+				if ( model.isRecorded()) {
+					AccountEntry ae = AccountEntryDAO.getAccountEntry(ctx, model.getAccountEntry());
 					assertNotNull("Mod303. Sin apunte", ae);
+					FiscalTestSuite.print( ae );
 					if ( AonMathUtils.isNotZero( model.getDeclarationResult() )) {
 						assertNotEquals("Mod303. Sin detalles en apuntes", 0, ae.getDetailsSize());
 					}
 					Asserts.assertEqualsDouble("Mod303. Apunte descuadrado", 
-							ae.getDetails().stream().map(aed -> aed.getDebit() ).reduce(0.0, Double::sum),
-							ae.getDetails().stream().map(aed -> aed.getCredit() ).reduce(0.0, Double::sum));
+						ae.getDetails().stream().map(aed -> aed.getDebit() ).reduce(0.0, Double::sum),
+						ae.getDetails().stream().map(aed -> aed.getCredit() ).reduce(0.0, Double::sum));
 				} else {
 					fail("WARNING! No script found!!");
 				}
