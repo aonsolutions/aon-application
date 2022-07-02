@@ -7163,6 +7163,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} else
 			builder.setPrevisible(false);
 		
+		builder.setTitulacion(employeeContractInfo.getContractSpecificData().getAcademicTitulation());
 		
 		Boolean disc = employeeContractInfo.getContractSpecificData().getDisc();
 		if(null != disc) {
