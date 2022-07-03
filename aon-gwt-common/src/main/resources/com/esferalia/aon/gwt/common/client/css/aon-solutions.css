@@ -189,6 +189,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveDown aonIconMoveDown;
+.aon_icon_move_down { background-image: iconMoveDown;}
 @url iconStatics aonIconStatics;
 .aon_icon_statics { background-image: iconStatics;}
 @url iconClean aonIconClean;
