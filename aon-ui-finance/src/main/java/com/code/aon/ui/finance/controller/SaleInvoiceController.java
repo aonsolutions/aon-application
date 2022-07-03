@@ -772,24 +772,29 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	public void anularInvoice() {
-		try {
-			if(isTbaiInvoice()) {
+		if(isTbaiInvoice()) {
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			tbaiConfiguration.setCertificate(getCertData());
+			try {
 				checkCertificate();
-				Invoice inv = (Invoice) getTo();
-				String domainName = AonUtil.getDomainName();
-				String login = UserUtils.getInstance().getLoggedUser().getLogin();
-				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-				tbaiConfiguration.setCertificate(getCertData());
 				TbaiMain tbai = new TbaiMain();
 				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
 				AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
+			} catch (Exception e) {
+				if(tbaiConfiguration.isTest()) {
+					AON.deleteInvoice(domainName, invoice.getDomain(), login, invoice.getId());
+				} else {
+					e.printStackTrace();
+					AonUtil.addErrorMessage(e.getMessage());
+				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			AonUtil.addErrorMessage(e.getMessage());
 		}
+		
 	}
 	@Override
 	public void onRemove(ActionEvent event) {
