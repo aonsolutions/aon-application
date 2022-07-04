@@ -300,8 +300,11 @@ public class Contrata {
 					form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
 					form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
 					form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
+					
+					//NIVEL FORMATIVO
 					if(cto.getCodFormativo()!=null && cto.getCodFormativo() > 0) {						
-						((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
+						htmlPage = ((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
+						form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					}
 				}
 				
@@ -350,7 +353,7 @@ public class Contrata {
 					form.getInputByName("minutosduracionconvenio").setValueAttribute(cto.getDurationTypeCvnMin());
 				}
 				
-				// NIVEL FORMATIVO
+				// Titulacion academica
 				DomNode numNivelForm = form.querySelector("[name=\"numNivelForm\"]");
 				if(numNivelForm!=null) {
 					((HtmlSelect)numNivelForm).setSelectedAttribute(cto.getCodFormativo().toString(), true);
@@ -394,6 +397,7 @@ public class Contrata {
 					htmlPage = sepeReturnInitPage(htmlPage, cto); 
 				} 
 			}
+			
 			if(message!=null && message.indexOf("E")>=0) {
 				message = message.substring(1);	
 			} else {
@@ -814,7 +818,7 @@ public class Contrata {
 	
 	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword, 
 			final String certificateType, String ide) throws SepeException {
-		 try { removeContratoImpl(certificateInputStream, certificatePassword, certificateType, ide); }
+		 try { removeContrataImpl(certificateInputStream, certificatePassword, certificateType, ide); }
 		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 		catch (MalformedURLException e) {throw new SepeException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -1033,7 +1037,7 @@ public class Contrata {
 		return null;
 	}
 	
-	private static void removeContratoImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static void removeContrataImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ide)  throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
@@ -1087,7 +1091,8 @@ public class Contrata {
 	}
 	
 	private static HtmlPage lastPageRemove(HtmlPage htmlPage, String ide) throws SepeException, ElementNotFoundException, IOException, InterruptedException  {
-		
+		if(ide==null) throw new InvalidDataException("Sepe IDE requerido");
+	
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		String ide1 = ide.substring(0, 2); //2 digits
 		String ide2 = ide.substring(2, 6); //4 digits
@@ -1290,7 +1295,8 @@ public class Contrata {
 				"sin fecha de t\u00E9rmino", 
 				"f\u00EDsica en la base de datos", 
 				"igual o inferior a 90", //previsible inferior o igual a 90 dias
-				"convenio colectivo que autoriza" //previsible mayor a 90 dias
+				"convenio colectivo que autoriza", //previsible mayor a 90 dias
+				"certificado de profesionalidad" // indicar si el trabajador tiene Certificado de Profesionalidad
 		);
 		
 		for( DomNode p: texts) {
@@ -1328,6 +1334,7 @@ public class Contrata {
 		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
 		form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
 		form.getInputByName("nass").setValueAttribute(cto.getNss()); 
+		
 		//---------------------PREVISIBLE---------------------
 		if( Arrays.asList("402", "502").contains(cto.getCodContract()) ) { // es previsible
 			DomNode previsible = form.querySelector("select[name=preg90dias]"); 
@@ -1340,6 +1347,12 @@ public class Contrata {
 				}
 			}
 		}
+		
+		DomNode certificadoProf = form.querySelector("select[name=certificadoProf]"); 
+		if(certificadoProf!=null) {
+			((HtmlSelect)certificadoProf).setSelectedAttribute(cto.getCertificateProfessional() ? "S" : "N", true);
+		}
+		
 		
 		htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 		
