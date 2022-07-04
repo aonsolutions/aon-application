@@ -1,7 +1,8 @@
 package com.esferalia.aon.in.payroll.aws.lambda;
 
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,11 +46,17 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFParser;
-import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
+import com.esferalia.aon.in.payroll.pdf.jooq.DSLPDFSalaryBuilder;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
+
 public class SESRequestHandler implements RequestHandler<Object, String> {
+	
+	private static final String DOMAIN_NAME_PATTERN = "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$";
 
 	
 	private static interface Callback {
@@ -96,28 +102,31 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
         String bucket = "aon-ses-inbox" ;
 
         List<String> messageIds = getMessageIds(input);
-       
-    	try (
-		Connection connection = getConnection();
-		DSLContext dslContext = getDSLContext(connection);
-      	){
-    		for ( String messageId: messageIds ) {
-	    		String key = String.format("laboral@aon.solutions/%s", messageId);
-	    		MimeCallback callback = new MimeCallback();
-	    		JooqPDFSalaryBuilder  salaryBuilder = 
-	    		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net");
-	    		
-	    		dslContext.transaction((c)->{	
-	    			Optional<MimeMessage> mimeMessage =
-		    		handleMessage(
-							bucket, 
-							key, 
-							callback, 
-			   				SESRequestHandler::handleZIP, 			   					
-			   				//SESRequestHandler::handleText,
-		    				SESRequestHandler.handlePDF(salaryBuilder)
-		 					);
-		    		salaryBuilder.execute();
+        
+		for ( String messageId: messageIds ) {
+			System.out.println("messageId: " + messageId );
+	    	String key = String.format("laboral@aon.solutions/%s", messageId);
+    		MimeCallback callback = new MimeCallback();
+    		DSLPDFSalaryBuilder  salaryBuilder = 
+    		new DSLPDFSalaryBuilder();
+			Optional<MimeMessage> mimeMessage =
+    		handleMessage(
+			bucket, 
+			key, 
+			callback, 
+			SESRequestHandler::handleZIP, 			   					
+			//SESRequestHandler::handleText,
+			SESRequestHandler.handlePDF(salaryBuilder)
+			);
+			
+			String domain = mimeMessage.map( SESRequestHandler::getDomain ).orElse(null);
+			
+    		try (
+			Connection connection = getConnection(domain);
+	      	){
+    			DSLContext dslContext = getDSLContext(connection);
+	    		dslContext.transaction(c->{	
+		    		salaryBuilder.execute( dslContext, domain);
 		    		try {
 		    			
 		    			Address[] to = mimeMessage.map( SESRequestHandler::getTo ).orElse( new Address[] {});		    			
@@ -125,15 +134,33 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		    		} catch ( Exception e ) {
 		    			System.out.println("ERROR:" + e.getMessage());
 		    		}
+	    		
 	    		});
-    		}
-    		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    	} catch (Exception e) {
+				e.printStackTrace();
+			}
 
+
+		}
         return "That's all Folks!";
+    }
+    
+    private static String getDomain(MimeMessage mimeMessage) {
+    	try {
+    		System.out.println("Subject: " + mimeMessage.getSubject() );
+			return findDomain(mimeMessage.getSubject());
+		} catch (MessagingException e) {
+			return null;
+		}
+    }
+    
+    private static String findDomain( String str ) {
+    	if ( AonStringUtils.isEmpty(str))
+    		return null;
+    	Matcher matcher = Pattern.compile(DOMAIN_NAME_PATTERN).matcher(str);
+    	if ( !matcher.matches() )
+    		return null;
+    	return matcher.group();
     }
 
 	private static Address[] getTo(MimeMessage mimeMessage) {
@@ -155,35 +182,12 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     	for ( Map<String,?> record : records ) {
     		Map<String,?>  ses = (Map<String, ?>)record.get("ses");
     		Map<String,?>  mail = (Map<String, ?>)ses.get("mail");
-//    		Map<String,?>  commonHeaders = (Map<String, ?>)mail.get("commonHeaders");
-//    		String messageId = (String) commonHeaders.get("messageId");
     		String messageId = (String) mail.get("messageId");
     		messageIds.add(messageId);
     	}
     	
     	return messageIds;
     }
-    
-//    private static String[] getMessageFrom(Object input, String messageId) {
-//        
-//    	List<String> messageFrom = new ArrayList<String>();
-//    	
-//    	Map<String,?> map = (Map<String,?>) input;
-//    	List<Map<String,?>> records = (List<Map<String,?>>) map.get("Records");
-//    	
-//    	for ( Map<String,?> record : records ) {
-//    		Map<String,?>  ses = (Map<String, ?>)record.get("ses");
-//    		Map<String,?>  mail = (Map<String, ?>)ses.get("mail");
-//    		if ( !messageId.equals((String) mail.get("messageId")))
-//    				continue;
-//
-//    		Map<String,?>  commonHeaders = (Map<String, ?>)mail.get("commonHeaders");
-//    		return (String []) commonHeaders.get("from");
-//    	}
-//    	
-//    	return new String[] {};
-//    }
-    
     
     private static Optional<MimeMessage> handleMessage(String bucket, String key, Callback callback, Handler ...handlers ) {
     	MimeMessage mimeMessage = null;
@@ -192,7 +196,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
         try ( InputStream is = s3Object.getObjectContent()) {
         	mimeMessage = handleMIME(is , callback, handlers );
         } catch ( Exception e ) {
-        	
+        	e.printStackTrace();
         }
         return Optional.ofNullable(mimeMessage);
     }
@@ -306,25 +310,52 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 		
-		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
-    	return dslContext;
+		return DSL.using(connection, SQLDialect.MARIADB, settings);
     }
     
-    private static Connection getConnection() throws SQLException {
-		String port = "3306";
-    	String host = System.getenv("DB_HOST");
-		String user = System.getenv("DB_USER");
-		String password = System.getenv("DB_PASSWD");
-		String database = System.getenv("DB_NAME");
-    	
-		Properties properties = new Properties();
-		properties.setProperty("user", user);
-		properties.setProperty("password", password);
-		properties.setProperty("useSSL", "false");
-		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
-		String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
+	private static Connection getConnection(String domain) throws SQLException, AonConnectionException, ClassNotFoundException {
 		
-		return DriverManager.getConnection(url, properties);
+		System.out.println("getConnection (" + domain + ") {");
+		
+    	ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+    	String schema = ci.getDomainDatabase(domain);
+    	
+		System.out.println("schema = " + schema + ";");
+
+		Class.forName(ci.getDriverClass(schema));
+
+        Properties properties = new Properties();
+        properties.setProperty("user", ci.getUser(schema));
+        properties.setProperty("password", ci.getPassword(schema));
+        properties.setProperty("useSSL", ci.getUseSSL(schema));
+        properties.setProperty("serverTimezone", ci.getTimeZone(schema));
+        
+        properties.forEach((k,v)-> System.out.println( k + " = " + v + ";" ) );
+
+        
+		System.out.println("}");
+		
+        return DriverManager.getConnection(ci.getSchemaUrl(schema), properties);
+    }
+
+    private static Optional<Connection> getOptionalConnection(String ccc) throws SQLException, AonConnectionException {
+    	ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+    	for ( String schema : connectionInfo.getSchemas() ) {
+    		Connection connection = connectionInfo.getConnection(schema);
+    		if ( getEnterpriseCCC(connection, ccc).isPresent() ) 
+    			return Optional.of(connection);
+    		connection.close();
+    	}
+    	return Optional.empty();
+    }
+    
+    private static Optional<EnterpriseCccRecord> getEnterpriseCCC(Connection connection, String ccc ) throws SQLException{
+		return 
+		getDSLContext(connection).select()
+    	.from(ENTERPRISE_CCC)
+    	.where(ENTERPRISE_CCC.CCC.eq(ccc))
+    	.fetchOptionalInto(ENTERPRISE_CCC)
+    	;
     }
     
     private static String convert(InputStream inputStream, Charset charset) throws IOException {
@@ -368,35 +399,41 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		return new MimetypesFileTypeMap().getContentType(zipEntry.getName());	
 	}
 	
-    public static void main(String[] args) {
-    
-	try (
-		Connection connection = getConnection();
-		DSLContext dslContext = getDSLContext(connection);
-//		FileInputStream is = new FileInputStream("/Users/aonsolutions/Documents/pdf.mime");
-		FileInputStream is = new FileInputStream(args[0]);
-		){	
-		
-		JooqPDFSalaryBuilder  salaryBuilder = 
-//		new CheckSalaryPDFBuilder<ISalary>()
-		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net")
-		;
-		dslContext.transaction((c)->{			
-			MimeMessage mimeMessage =
-			handleMIME(
-					is, 
-					new MimeCallback(),
-	   				SESRequestHandler::handleZIP, 
-    				SESRequestHandler.handlePDF(salaryBuilder)
-					);
-		salaryBuilder.execute();
-		SESSMTPSender.send(getTo(mimeMessage), salaryBuilder.getInserted());
-		//throw new RuntimeException();
-		});
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-}
+//    public static void main(String[] args) throws Exception {
+//
+//    	DSLPDFSalaryBuilder dslpdfSalaryBuilder = new DSLPDFSalaryBuilder();
+//		Connection connection = getConnection("payroll-test.aonsolutions.org");
+//		DSLContext dslContext = getDSLContext(connection);
+//    	
+//		SalaryPDFParser.parse(new File("/home/rtrepiana/Downloads/nominas noviembre.PDF"), dslpdfSalaryBuilder);
+//		
+//		dslpdfSalaryBuilder.execute(dslContext, "payroll-test.aonsolutions.org");
+//    	
+//	try (
+//		Connection connection = getConnection("ayudat.aonsolutions.net");
+//		DSLContext dslContext = getDSLContext(connection);
+//		FileInputStream is = new FileInputStream(args[0]);
+//		){	
+//		
+//		JooqPDFSalaryBuilder  salaryBuilder = 
+//		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net")
+//		;
+//		dslContext.transaction((c)->{			
+//			MimeMessage mimeMessage =
+//			handleMIME(
+//					is, 
+//					new MimeCallback(),
+//	   				SESRequestHandler::handleZIP, 
+//    				SESRequestHandler.handlePDF(salaryBuilder)
+//					);
+//		salaryBuilder.execute();
+//		SESSMTPSender.send(getTo(mimeMessage), salaryBuilder.getInserted());
+//		//throw new RuntimeException();
+//		});
+//	} catch (Exception e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//    }
     
 }
