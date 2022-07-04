@@ -199,7 +199,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	class MoveDownAgreementCommand implements ScheduledCommand {
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Descargar dominio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
+			AonDialog dialog = new AonDialog("Descargar convenio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -271,7 +271,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			moveItem.setVisible(false);
 			
 			moveDownItem = addItem("Descargar a..", new MoveDownAgreementCommand(), 
-					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconMoveDown(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			moveDownItem.ensureDebugId("moveItem");
 			moveDownItem.setTitle("Descargar convenio al dominio hijo (incluye contratos asociados)");
 			moveDownItem.setVisible(false);

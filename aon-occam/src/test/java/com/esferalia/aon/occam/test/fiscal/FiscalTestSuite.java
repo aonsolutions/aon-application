@@ -36,14 +36,16 @@ public class FiscalTestSuite {
 	private static final int lineSize = 126;
 	private static NumberFormat FMT = DecimalFormat.getInstance();
 
-	public static <T extends FiscalModel> T printModel( T mod ) {
-		System.out.println( "\t" 
-			+ AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
+	public static <T extends FiscalModel> String toString( T mod ) {
+		return AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
 			+ " Modelo "
 			+ AonStringUtils.rightPad(mod.getModelFullName(), 30)
 			+ AonStringUtils.leftPad(FMT.format(mod.getDeclarationResult()),25)
-			+ AonStringUtils.leftPad(mod.getStatus().getName(),35)
-			);
+			+ AonStringUtils.leftPad(mod.getStatus().getName(),35);
+	}
+	
+	public static <T extends FiscalModel> T printModel( T mod ) {
+		System.out.println( "\t" + toString(mod));
 		return mod; 
 	}
 

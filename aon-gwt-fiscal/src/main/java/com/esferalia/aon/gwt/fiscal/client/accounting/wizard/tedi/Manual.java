@@ -117,6 +117,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 			 || type == AccountEntryType.SOCIAL_INSURANCE
 			 || type == AccountEntryType.SOCIAL_INSURANCE_ADJUST
 			 || type == AccountEntryType.LOAN
+			 || type == AccountEntryType.TAX
 			 || type == AccountEntryType.LOAN_FEE );
 	}
 	@Override

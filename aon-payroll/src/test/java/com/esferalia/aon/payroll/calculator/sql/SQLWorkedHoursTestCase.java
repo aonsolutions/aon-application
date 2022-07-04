@@ -715,6 +715,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		
 	}
 
+
 	@Test
 	public void testPartialTimeSalaryHoursI()
 			throws ExpressionException, SQLException, SalaryException {
@@ -871,6 +872,71 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		.calculate(ctx);
 
 
+	}
+
+	@Test
+	public void testPartialTimeHolidaysWorkedHours()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+
+						put(MONDAY_HOURS.getName(), format("%d", 4));
+						put(TUESDAY_HOURS.getName(), format("%d", 4));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 4));
+					}
+				},
+
+				new String[] { "250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
+
+				new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+
+		
+		Date startHolidays = add(endDate, Calendar.DAY_OF_MONTH, -9);
+		Date endWorkedDays = add(startHolidays, Calendar.DAY_OF_MONTH, -1);
+		addData(aonContext, contract, startHolidays, endDate, ContextVariable.HOLIDAYS, "10");
+
+//		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.THURSDAY_HOURS, "4");
+
+		addData(aonContext, contract, contract.getStartDate(), endWorkedDays, ContextVariable.THURSDAY_HOURS, "4");
+		addData(aonContext, contract, startHolidays, endDate, ContextVariable.THURSDAY_HOURS, "4");
+		addData(aonContext, contract, add(endDate, Calendar.DAY_OF_MONTH,1), contract.getEndDate(), ContextVariable.THURSDAY_HOURS, "4");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		double expectedHours =  
+		new Period(startDate, endWorkedDays).daysStream()
+		.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY )
+		.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY )
+		.peek( d -> System.out.println(d.get(Calendar.DAY_OF_MONTH) + "-." + d.get(Calendar.DAY_OF_WEEK)))
+		.count() * 4.00;
+		
+		double workedHours = ctx.getExpressionContext()
+		.getVariables(WORKED_HOURS).stream()
+//		.peek( v -> System.out.println("****"+ v.getPeriod().getStart() + "," + v.getPeriod().getEnd() + ":" + v.getValue(v.getPeriod())) )
+		.collect(Collectors.summingDouble(v -> ((Number)v.getValue(v.getPeriod())).doubleValue() ))
+		;
+		
+
+		org.junit.Assert.assertEquals(expectedHours, workedHours, 0.00 );
+		
 	}
 
 	// ------------------------------------------------------------------------

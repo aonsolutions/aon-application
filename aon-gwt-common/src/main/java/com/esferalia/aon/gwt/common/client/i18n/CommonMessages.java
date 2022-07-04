@@ -319,6 +319,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se pudo marcar la declaraci\u00F3n como enviada . Causa: \n {0}")
 	String unableToMarkAsSentDeclaration(String message);	
 
+	@DefaultMessage("No se pudo contabilizar la declaraci\u00F3n. Causa: \n {0}")
+	String unableToRecordDeclaration(String message);	
+
+	@DefaultMessage("No se pudo descontabilizar la declaraci\u00F3n. Causa: \n {0}")
+	String unableToUnrecordDeclaration(String message);	
+
 	@DefaultMessage("No se pudo finalizar la declaraci\u00F3n. Causa: \n {0}")
 	String unableToFinishDeclaration(String message);	
 
@@ -440,6 +446,12 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("La declaraci\u00F3n se encuentra en estado \"PRESENTADO\", si contin\u00FAa se borrar\u00E1n los documentos relativos a su presentaci\u00F3n, si los hubiere, \u00BFRealmente desea continuar?")
 	String confirmReopenDeclarationAction();
+
+	@DefaultMessage("\u00BFDesea realizar la contabilizaci\u00F3n de la declaraci\u00F3n?")
+	String confirmRecordDeclarationAction();
+
+	@DefaultMessage("\u00BFDesea realizar la descontabilizaci\u00F3n de la declaraci\u00F3n?")
+	String confirmUnrecordDeclarationAction();
 
 	@DefaultMessage("Si continua se borrar\u00E1n los todos los datos de la actividad.\n \u00BFContinuar con el borrado?")
 	String newEpigrapSelected();
@@ -3419,6 +3431,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Previsualizar asiento")
 	String previewAccountEntry();
  	
+ 	@DefaultMessage("Ver asiento")
+	String viewAccountEntry();
+
  	@DefaultMessage("Cuenta contable")
  	String account();
  	
@@ -3700,6 +3715,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Contabilizar")
 	String record();
+
+	@DefaultMessage("Descontabilizar")
+	String unrecord();
 
 	@DefaultMessage("Vencimiento")
 	String finance();

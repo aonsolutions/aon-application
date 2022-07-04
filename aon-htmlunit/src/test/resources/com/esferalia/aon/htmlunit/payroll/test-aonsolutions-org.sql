@@ -6849,7 +6849,7 @@ CREATE TABLE `app_param` (
   UNIQUE KEY `IDX_APP_PARAM_DOMAIN_NAME` (`domain`,`name`),
   KEY `IDX_APP_PARAM_DOMAIN` (`domain`),
   CONSTRAINT `FK_APP_PARAM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1760716 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parametros de la Aplicacion';
+) ENGINE=InnoDB AUTO_INCREMENT=1760782 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parametros de la Aplicacion';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7299,7 +7299,73 @@ INSERT INTO `app_param` VALUES
 (1760712,8780,'FS_MODEL_CFG_M202',NULL),
 (1760713,8780,'FS_MODEL_CFG_M184',NULL),
 (1760714,8780,'FS_MODEL_CFG_M193',NULL),
-(1760715,8780,'FS_MODEL_CFG_SII',NULL);
+(1760715,8780,'FS_MODEL_CFG_SII',NULL),
+(1760716,8782,'FS_DEFAULT_ADMINISTRATION',NULL),
+(1760717,8782,'FS_DEFAULT_YEAR',NULL),
+(1760718,8782,'FS_ADMINISTRATION_CODE',NULL),
+(1760719,8782,'FS_TAX_REFUND_REGISTRY',NULL),
+(1760720,8782,'FS_TAX_REGIME',NULL),
+(1760721,8782,'FS_ADMON_CREDITOR',NULL),
+(1760722,8782,'FS_ADMON_VAT_CREDITOR',NULL),
+(1760723,8782,'FS_ADMON_RETENTION_CREDITOR',NULL),
+(1760724,8782,'FS_PERM_ADDRESS_CHANGES',NULL),
+(1760725,8782,'FS_CONCTACT_PERSON',NULL),
+(1760726,8782,'FS_CONCTACT_PHONE',NULL),
+(1760727,8782,'FS_CONCTACT_CELLULAR',NULL),
+(1760728,8782,'FS_CONCTACT_MAIL',NULL),
+(1760729,8782,'FS_MOD303_BY_DIFFERENCE_DISABLED',NULL),
+(1760730,8782,'FS_CUSTOMER_CHECK_ENABLED',NULL),
+(1760731,8782,'FS_MODEL_CFG_M111',NULL),
+(1760732,8782,'FS_MODEL_CFG_M115',NULL),
+(1760733,8782,'FS_MODEL_CFG_M123',NULL),
+(1760734,8782,'FS_MODEL_CFG_M130',NULL),
+(1760735,8782,'FS_MODEL_CFG_M131',NULL),
+(1760736,8782,'FS_MODEL_CFG_M303_RS',NULL),
+(1760737,8782,'FS_MODEL_CFG_M303_RG',NULL),
+(1760738,8782,'FS_MODEL_CFG_M347',NULL),
+(1760739,8782,'FS_MODEL_CFG_M349',NULL),
+(1760740,8782,'FS_MODEL_CFG_M390_HF',NULL),
+(1760741,8782,'FS_MODEL_CFG_M390',NULL),
+(1760742,8782,'FS_MODEL_CFG_M180',NULL),
+(1760743,8782,'FS_MODEL_CFG_M190',NULL),
+(1760744,8782,'FS_MODEL_CFG_M200',NULL),
+(1760745,8782,'FS_MODEL_CFG_M202',NULL),
+(1760746,8782,'FS_MODEL_CFG_M184',NULL),
+(1760747,8782,'FS_MODEL_CFG_M193',NULL),
+(1760748,8782,'FS_MODEL_CFG_SII',NULL),
+(1760749,8791,'FS_DEFAULT_ADMINISTRATION',NULL),
+(1760750,8791,'FS_DEFAULT_YEAR',NULL),
+(1760751,8791,'FS_ADMINISTRATION_CODE',NULL),
+(1760752,8791,'FS_TAX_REFUND_REGISTRY',NULL),
+(1760753,8791,'FS_TAX_REGIME',NULL),
+(1760754,8791,'FS_ADMON_CREDITOR',NULL),
+(1760755,8791,'FS_ADMON_VAT_CREDITOR',NULL),
+(1760756,8791,'FS_ADMON_RETENTION_CREDITOR',NULL),
+(1760757,8791,'FS_PERM_ADDRESS_CHANGES',NULL),
+(1760758,8791,'FS_CONCTACT_PERSON',NULL),
+(1760759,8791,'FS_CONCTACT_PHONE',NULL),
+(1760760,8791,'FS_CONCTACT_CELLULAR',NULL),
+(1760761,8791,'FS_CONCTACT_MAIL',NULL),
+(1760762,8791,'FS_MOD303_BY_DIFFERENCE_DISABLED',NULL),
+(1760763,8791,'FS_CUSTOMER_CHECK_ENABLED',NULL),
+(1760764,8791,'FS_MODEL_CFG_M111',NULL),
+(1760765,8791,'FS_MODEL_CFG_M115',NULL),
+(1760766,8791,'FS_MODEL_CFG_M123',NULL),
+(1760767,8791,'FS_MODEL_CFG_M130',NULL),
+(1760768,8791,'FS_MODEL_CFG_M131',NULL),
+(1760769,8791,'FS_MODEL_CFG_M303_RS',NULL),
+(1760770,8791,'FS_MODEL_CFG_M303_RG',NULL),
+(1760771,8791,'FS_MODEL_CFG_M347',NULL),
+(1760772,8791,'FS_MODEL_CFG_M349',NULL),
+(1760773,8791,'FS_MODEL_CFG_M390_HF',NULL),
+(1760774,8791,'FS_MODEL_CFG_M390',NULL),
+(1760775,8791,'FS_MODEL_CFG_M180',NULL),
+(1760776,8791,'FS_MODEL_CFG_M190',NULL),
+(1760777,8791,'FS_MODEL_CFG_M200',NULL),
+(1760778,8791,'FS_MODEL_CFG_M202',NULL),
+(1760779,8791,'FS_MODEL_CFG_M184',NULL),
+(1760780,8791,'FS_MODEL_CFG_M193',NULL),
+(1760781,8791,'FS_MODEL_CFG_SII',NULL);
 /*!40000 ALTER TABLE `app_param` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -12683,7 +12749,8 @@ INSERT INTO `company` VALUES
 (8628500,8787,1,0,0,0,0),
 (8628519,8788,1,0,0,0,0),
 (8628541,8789,1,0,0,0,0),
-(8628664,8790,1,0,0,0,0);
+(8628664,8790,1,0,0,0,0),
+(8628685,8791,1,0,0,0,0);
 /*!40000 ALTER TABLE `company` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -12837,7 +12904,7 @@ CREATE TABLE `contract` (
   CONSTRAINT `FK_CONTRACT_ENTERPRISE_CCC` FOREIGN KEY (`enterprise_ccc`) REFERENCES `enterprise_ccc` (`id`),
   CONSTRAINT `FK_CONTRACT_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
   CONSTRAINT `FK_CONTRACT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6040 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
+) ENGINE=InnoDB AUTO_INCREMENT=6041 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -13124,7 +13191,8 @@ INSERT INTO `contract` VALUES
 (6036,8780,8628682,8367,1168,'2022-01-01',NULL,NULL,NULL,0,NULL,'2022-01-01',1449,0,NULL,NULL,0,NULL),
 (6037,8780,8628683,8367,1168,'2022-01-01',NULL,NULL,NULL,0,NULL,'2022-01-01',1449,0,NULL,NULL,0,NULL),
 (6038,8777,8628677,8419,1166,'2022-01-01','2022-01-28',NULL,NULL,0,NULL,'2022-01-01',1447,0,NULL,'NIVEL 6',0,5906),
-(6039,8777,8628684,8357,1177,'2022-03-01',NULL,NULL,NULL,0,NULL,'2022-03-01',1458,0,NULL,NULL,0,NULL);
+(6039,8777,8628684,8357,1177,'2022-03-01',NULL,NULL,NULL,0,NULL,'2022-03-01',1458,0,NULL,NULL,0,NULL),
+(6040,8791,8628686,8421,1182,'2022-06-30',NULL,NULL,NULL,0,NULL,'2022-06-30',1460,0,NULL,NULL,0,NULL);
 /*!40000 ALTER TABLE `contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -13531,7 +13599,7 @@ CREATE TABLE `contract_data` (
   KEY `IDX_CONTRACT_DATA_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRACT_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57806 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
+) ENGINE=InnoDB AUTO_INCREMENT=57809 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -15356,7 +15424,10 @@ INSERT INTO `contract_data` VALUES
 (57801,8777,'TIPO_SOLICITANTE_MAT_PAT',6039,'0','2021-06-08',NULL),
 (57802,8777,'MOTIVO_MAT_PAT',6039,'0','2021-06-08',NULL),
 (57803,8777,'COEFICIENTE_PATERNIDAD',6039,'0.5','2021-06-08',NULL),
-(57805,8777,'SALARIO_MENSUAL',6039,'SMI*1.5','2022-06-01',NULL);
+(57805,8777,'SALARIO_MENSUAL',6039,'SMI*1.5','2022-06-01',NULL),
+(57806,8791,'TC2',6040,'\"100\"','2022-06-30',NULL),
+(57807,8791,'GRUPO_COTIZACION',6040,'\"07\"','2022-06-30',NULL),
+(57808,8791,'SALARIO_MENSUAL',6040,'SMI','2022-06-30',NULL);
 /*!40000 ALTER TABLE `contract_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -15498,7 +15569,7 @@ CREATE TABLE `contract_info` (
   KEY `IDX_CONTRACT_INFO_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRACT_INFO_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48406 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion temporal del Contrato';
+) ENGINE=InnoDB AUTO_INCREMENT=48409 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion temporal del Contrato';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -16439,7 +16510,10 @@ INSERT INTO `contract_info` VALUES
 (48402,8777,6038,'SS_ALTA','PENDING','2022-01-01','2022-01-28','admin','2022-05-09 22:51:48',NULL,NULL),
 (48403,8777,6039,'OPCION_CONTRATO','\"INDEFINITE_OPT1\"','2022-03-01',NULL,NULL,NULL,NULL,NULL),
 (48404,8777,6039,'SEPE_CONTRATO','PENDING','2022-03-01',NULL,'admin','2022-06-20 22:15:43',NULL,NULL),
-(48405,8777,6039,'SS_ALTA','PENDING','2022-03-01',NULL,'admin','2022-06-20 22:15:43',NULL,NULL);
+(48405,8777,6039,'SS_ALTA','PENDING','2022-03-01',NULL,'admin','2022-06-20 22:15:43',NULL,NULL),
+(48406,8791,6040,'OPCION_CONTRATO','\"INDEFINITE_OPT1\"','2022-06-30',NULL,NULL,NULL,NULL,NULL),
+(48407,8791,6040,'SEPE_CONTRATO','PENDING','2022-06-30',NULL,'admin','2022-06-30 17:28:06',NULL,NULL),
+(48408,8791,6040,'SS_ALTA','PENDING','2022-06-30',NULL,'admin','2022-06-30 17:28:06',NULL,NULL);
 /*!40000 ALTER TABLE `contract_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -16623,7 +16697,7 @@ CREATE TABLE `contract_payment` (
   CONSTRAINT `FK_CONTRACT_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29162 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
+) ENGINE=InnoDB AUTO_INCREMENT=29165 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -16908,7 +16982,10 @@ INSERT INTO `contract_payment` VALUES
 (29143,8780,NULL,6036,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2022-01-01',NULL,NULL,0),
 (29145,8780,1,6037,NULL,'SALARIO JORNADAS',0,'10.00','_P','_P','2022-01-01',NULL,NULL,0),
 (29159,8777,NULL,6039,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2022-06-01',NULL,NULL,0),
-(29161,8777,1,6039,NULL,'CHECK HORAS NOMINA',0,'CHECK(HORAS_NOMINA<750.00/7.03, \"ERROR HORAS NOMINA\")','_P','_P','2022-06-01',NULL,NULL,0);
+(29161,8777,1,6039,NULL,'CHECK HORAS NOMINA',0,'CHECK(HORAS_NOMINA<750.00/7.03, \"ERROR HORAS NOMINA\")','_P','_P','2022-06-01',NULL,NULL,0),
+(29162,8791,NULL,6040,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2022-06-01',NULL,NULL,0),
+(29163,8791,NULL,6040,6194,'PAGA EXTRAORDINARIA NAVIDAD',0,NULL,NULL,NULL,'2022-06-01',NULL,NULL,0),
+(29164,8791,NULL,6040,6194,'PAGA EXTRAORDINARIA VERANO',0,NULL,NULL,NULL,'2022-06-01',NULL,NULL,0);
 /*!40000 ALTER TABLE `contract_payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -17937,7 +18014,7 @@ CREATE TABLE `domain` (
   KEY `IDX_DOMAIN_SCOPE` (`scope`),
   CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_DOMAIN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8791 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
+) ENGINE=InnoDB AUTO_INCREMENT=8792 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -17948,20 +18025,21 @@ LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
 INSERT INTO `domain` VALUES
 (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2020-12-09 20:01:33'),
-(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-06-21 18:40:17'),
+(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-06-30 17:20:28'),
 (8777,'general-payroll-test.aonsolutions.org','RÃ‰GIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-06-21 18:08:39'),
 (8778,'trainning-payroll-test.aonsolutions.org','FORMACIÃ“N Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2021-04-27 19:18:31'),
 (8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),
 (8780,'agrarian-payroll-test.aonsolutions.org','RÃ‰GIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2022-06-21 21:35:17'),
 (8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),
-(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2021-04-27 19:35:50'),
+(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2022-06-30 17:20:23'),
 (8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2018-03-19 17:35:16'),
 (8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÃA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),
 (8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),
 (8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2017-11-09 16:43:50'),
 (8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÃ“N DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2018-11-28 11:01:48'),
 (8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2022-06-21 18:41:28'),
-(8790,'sistem-red-payroll-test.aonsolutions.org','SISTEMA RED',8776,0,NULL,NULL,1,0,0,1,100,0,1,'admon@aonsolutions.org','admin','2020-12-09 19:53:26',NULL,NULL,NULL,'portal','2020-12-11 08:38:43');
+(8790,'sistem-red-payroll-test.aonsolutions.org','SISTEMA RED',8776,0,NULL,NULL,1,0,0,1,100,0,1,'admon@aonsolutions.org','admin','2020-12-09 19:53:26',NULL,NULL,NULL,'portal','2020-12-11 08:38:43'),
+(8791,'assimilated-payroll-test.aonsolutions.org','ASIMILADOS',8776,0,3535,NULL,1,0,0,1,100,0,1,'admin@aonsolutions.org','admin','2022-06-30 17:19:49',NULL,NULL,NULL,'admin','2022-06-30 17:20:30');
 /*!40000 ALTER TABLE `domain` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18013,7 +18091,7 @@ CREATE TABLE `domain_application` (
   KEY `IDX_DOMAIN_APPLICATION_APPLICATION` (`application`),
   CONSTRAINT `FK_APPLICATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_DOMAIN_APPLICATION_APPLICATION` FOREIGN KEY (`application`) REFERENCES `application` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10053 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
+) ENGINE=InnoDB AUTO_INCREMENT=10054 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -18037,7 +18115,8 @@ INSERT INTO `domain_application` VALUES
 (10049,8787,28,1,0),
 (10050,8788,28,1,0),
 (10051,8789,28,1,0),
-(10052,8790,28,1,0);
+(10052,8790,28,1,0),
+(10053,8791,28,1,0);
 /*!40000 ALTER TABLE `domain_application` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18058,7 +18137,7 @@ CREATE TABLE `domain_application_module` (
   KEY `IDX_DOMAIN_APPLICATION_MODULE_DOMAIN` (`domain`),
   CONSTRAINT `FK_DOMAIN_APPLICATION_MODULE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION` FOREIGN KEY (`domain_application`) REFERENCES `domain_application` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32076 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
+) ENGINE=InnoDB AUTO_INCREMENT=32077 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -18087,7 +18166,8 @@ INSERT INTO `domain_application_module` VALUES
 (32072,8789,10051,23),
 (32073,8790,10052,23),
 (32074,8776,10038,14),
-(32075,8776,10038,22);
+(32075,8776,10038,22),
+(32076,8791,10053,23);
 /*!40000 ALTER TABLE `domain_application_module` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18294,7 +18374,8 @@ INSERT INTO `enterprise` VALUES
 (8628500,8787,3535,NULL),
 (8628519,8788,3535,NULL),
 (8628541,8789,3535,NULL),
-(8628664,8790,3535,NULL);
+(8628664,8790,3535,NULL),
+(8628685,8791,3535,NULL);
 /*!40000 ALTER TABLE `enterprise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18339,7 +18420,7 @@ CREATE TABLE `enterprise_activity` (
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_IAE` FOREIGN KEY (`iae`) REFERENCES `iae` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_TAX_RETENTION` FOREIGN KEY (`retention_tax`) REFERENCES `tax` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_TAX_VAT` FOREIGN KEY (`vat_tax`) REFERENCES `tax` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1460 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=1461 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -18361,7 +18442,8 @@ INSERT INTO `enterprise_activity` VALUES
 (1456,8788,'MOTOS y BICICLETAS',8628519,273,NULL,0,4540,0,NULL,NULL,0,0,'2016-01-01',NULL,0.00,0,1),
 (1457,8789,'EMPLEADOS DE HOGAR',8628541,516,NULL,0,97,0,NULL,NULL,0,0,NULL,NULL,0.00,0,1),
 (1458,8777,'OFICINAS Y DESPACHOS (CRET@)',8628388,990,NULL,0,6202,0,NULL,NULL,0,0,NULL,NULL,0.00,0,1),
-(1459,8790,'SERVICIOS CLOUD/SAAS',8628664,555,NULL,0,6209,0,NULL,NULL,0,0,NULL,NULL,0.00,0,0);
+(1459,8790,'SERVICIOS CLOUD/SAAS',8628664,555,NULL,0,6209,0,NULL,NULL,0,0,NULL,NULL,0.00,0,0),
+(1460,8791,'PROGRAMACIÃ“N (TEST INTEGRACIÃ“N)',8628685,NULL,NULL,0,6201,0,NULL,NULL,NULL,NULL,'2022-01-01',NULL,100.00,0,1);
 /*!40000 ALTER TABLE `enterprise_activity` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18386,7 +18468,7 @@ CREATE TABLE `enterprise_ccc` (
   CONSTRAINT `FK_ENTERPRISE_CCC_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_ENTERPRISE_CCC_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1182 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Codigo Cuenta Cotizacion';
+) ENGINE=InnoDB AUTO_INCREMENT=1183 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Codigo Cuenta Cotizacion';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -18414,7 +18496,8 @@ INSERT INTO `enterprise_ccc` VALUES
 (1177,8777,'00000000001',0,1458,133890),
 (1179,8782,'00000000000',8,1451,133917),
 (1180,8790,'01105360062',0,1459,133904),
-(1181,8790,'01105577910',5,1459,133890);
+(1181,8790,'01105577910',5,1459,133890),
+(1182,8791,'01345678902',4,1460,133890);
 /*!40000 ALTER TABLE `enterprise_ccc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -32144,7 +32227,7 @@ CREATE TABLE `payroll_workplace` (
   CONSTRAINT `FK_PAYROLL_WORKPLACE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_PAYROLL_WORKPLACE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3600 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos laborales del Centro de Trabajo';
+) ENGINE=InnoDB AUTO_INCREMENT=3602 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos laborales del Centro de Trabajo';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -32216,7 +32299,8 @@ INSERT INTO `payroll_workplace` VALUES
 (3596,8790,8416,NULL,1459,NULL),
 (3597,8777,8417,1156,1447,NULL),
 (3598,8777,8418,1156,1447,NULL),
-(3599,8777,8419,1156,1447,NULL);
+(3599,8777,8419,1156,1447,NULL),
+(3601,8791,8421,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `payroll_workplace` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -32561,7 +32645,8 @@ INSERT INTO `person` VALUES
 (8628681,8777,NULL,0,5,NULL,'( GRUPO 10 )','HORAS','NÃ“MINA'),
 (8628682,8780,NULL,0,5,NULL,'MENSUAL ( GRUPO 01 )','BASE','MÃNIMA'),
 (8628683,8780,NULL,0,5,NULL,'JORNADAS ( GRUPO 10 )','BASE','MÃNIMA'),
-(8628684,8777,NULL,0,5,NULL,'(PATERNIDAD PARCIAL)','HORAS','NÃ“MINA');
+(8628684,8777,NULL,0,5,NULL,'(PATERNIDAD PARCIAL)','HORAS','NÃ“MINA'),
+(8628686,8791,NULL,0,5,NULL,'GENERAL','ASMILADO','REGIMEN');
 /*!40000 ALTER TABLE `person` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -34652,7 +34737,7 @@ CREATE TABLE `raddress` (
   CONSTRAINT `FK_RADDRESS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RADDRESS_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`),
   CONSTRAINT `FK_RADDRESS_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7730614 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=7730615 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -34910,7 +34995,8 @@ INSERT INTO `raddress` VALUES
 (7730610,8782,8628644,0,NULL,'CL','.','.','','','','',133917,NULL,'28079'),
 (7730611,8782,8628645,0,NULL,'CL','.','.','','','','',133917,NULL,'28079'),
 (7730612,8790,8628664,0,NULL,'CL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(7730613,8777,8628666,0,NULL,'CL','.','.','','','','',133917,NULL,'28079');
+(7730613,8777,8628666,0,NULL,'CL','.','.','','','','',133917,NULL,'28079'),
+(7730614,8791,8628685,0,NULL,'CL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `raddress` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -34948,7 +35034,7 @@ CREATE TABLE `rattach` (
   CONSTRAINT `FK_RATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RATTACH_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_RATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=68240 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=68241 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -34999,7 +35085,8 @@ INSERT INTO `rattach` VALUES
 (68235,0,216081,NULL,3,'sistem-red-payroll-test.aonsolutions.org','#\n#Wed Dec 09 19:53:27 CET 2020\nparent=payroll-test.aonsolutions.org\nmaxTotalDocumentSize=100\nnumberOfUsers=0\nname=sistem-red-payroll-test.aonsolutions.org\ndomainManagement=false\ntype=ENTERPRISE\nuser=admin\nmodules=AON_FINANCE\n',13,NULL,0,'2020-12-09',NULL,NULL,'admin','2020-12-09 19:53:27',NULL,NULL),
 (68236,8790,8628664,NULL,3,'20201209195350','#\n#Wed Dec 09 19:53:50 CET 2020\nparent=payroll-test.aonsolutions.org\nmaxTotalDocumentSize=100\nautoUpdate=true\nnumberOfUsers=0\nname=sistem-red-payroll-test.aonsolutions.org\ndomainManagement=false\ntype=ENTERPRISE\nuser=admin\nmodules=AON_FINANCE\n',12,NULL,0,'2020-12-09',NULL,NULL,'admin','2020-12-09 19:53:50',NULL,NULL),
 (68238,8776,8628387,NULL,3,'20201210155150','#\n#Thu Dec 10 15:51:50 CET 2020\nmaxTotalDocumentSize=100\nnumberOfUsers=1\nname=payroll-test.aonsolutions.org\ndomainManagement=true\ntype=CONSULTANCY\nuser=admin\nmodules=PAYROLL PAYROLL_PORTAL FINANCE_PORTAL\n',12,NULL,0,'2020-12-10',NULL,NULL,'admin','2020-12-10 15:51:50',NULL,NULL),
-(68239,8776,8628665,NULL,36,'TGSSHIDE(jg@FNMT)','0€0€	*†H†÷\r €$€‚è0€0€	*†H†÷\r €$€‚è0‚„0‚€*†H†÷\r\n ‚û0‚÷0)\n*†H†÷\r0¯	|eWËÄŒn”\r°Ûƒ;\0È\0‚ÈZJÏ\"¯p¤¤ëNL­8qÀ’/¹}º#0ØëÚÈÔ\nbª\n’’|ú•p¡AQšz\Zjn§Ðé!Íœ”úÚ¿+û¢z.mhÞ§Ô³ª/\0V\n¸PÏýv¤‘§7€í¹å\r„\Z¼Ýµ•$*,ïèð ô\rì±þôR­Øwd1oY°	Î†\\’«1YVhßèf9G–y})òKé‰ñ‡×·zwj˜°é\nØ@,Íõl+_{\ZWù^Ì#²WCý†..´0aUÌßWåVÖEþ2Nçë[ÓÒ7`hQ<¡%ä|ÁßÈyŠrò,³Ò·É„i·×\\…Þ1AkõÁ\"«±—¥L¸r>Ñ·¢ê»GŒÈ‹½“Ýs&I»ðÃØ°÷$i(ÁÉ¹ýwO03ý-¾9Ò[KÅñ\Zo‰Y-âÇIÅ²#æ;±® šu\0\'ãŒ©…aß„5²ÑÔ\'d;·¤#^ß%H‡[¢@”RLø&«ÞäÖN„8£?6Y}Ž<Ñ¦%5<Õ<µáÃÃL¨I°Ü~W‡‰¢ŽË`Ÿ$‹·]·ã“ûJ¾¥•ú=§RŸÈ„DÕ!g¼³§²J‘Ê{k1l®­z¤À@öY	³îd\nþ÷) ß/ YúzÕ9uk|ÍXtF£›»éÅÝñ>x4ÔA3”á KS	V§å“1šuRËšO·­+P6¡P+Ãm‘›±B¨\ZaºI»ù[‰ŸF¶äNž§*êí¢þ€ÌÅåÖÌuâK|AÐ_µª:ª\'‰cÈ¢j¬\'dÃ,Æ¢áäå§\0PFxaÙ¶V™”„Å<ð&¶Hlj:ˆ—3Ò—Rt!á—¾Läeú¥¶GÉb‚Ø‹Ýü[Þ¿v4g1Ž,ßN{€&IŽ³^H7r@¿»!Õ9<³Ú‘j;/¾ÁblÁH„34ImZPÍA§ÂP4MºÕ…Íœ$	·.žJ½2œY>^•_z‹ãÆÇZ±ð®pxí…s­\"+1³rj†“‘§±j¿I’B-eAã2v–/\r¬~*à­ÍrZYP(î²uVlx/—LÂ	Ä;	CdèI\"Ú*¾©¨³tU¢RØª¶»JR\"êV›+	Û;’±]SòœÌžŽ‚\ržŒ{qËûÕ‰5$¶ÀŠvÁ”í}u¯â†ÓEa O\0‚è5~\\9é,SÌß\nì:Tà6VB~¡‚ ;´àqþÒAÒ÷µ¸eôÝGùàÜ&«vÈÑ„Û—§{ž7ÿ„6ï™vnÜ¹³«`”QIæ¶\'^¢BíŠ¤:ÜrCë[·O+-IâÕ»¢I~ 1è_ŸS`©“rD#8Èç êj­¥²¶¸i‹„`6pyš×\ZFçä‹b*\ZfŸ`·ÂBÆá¦ôÛøD,¢H›âî)¾^;’bJ¯|~9”ÁŽLKÃÁ\Zéƒ$ÍMÒßù@\Zä§pÑpyµçlÂ¯9ªLŽçî[	á‚7H%‘=©ýÌMÍÙ¢çð²cýAú©‰0¯‘@ÑØ—Ô-’ªÃÿUC‘egæ{Zuž×pºíàÇÀ\0Á#Ô%áªˆ<\rué­0H¨k¤ü.‘o®]!¥E¦¶1r0#	*†H†÷\r	1y;£)Iw¡(DŸò%Ôâ§ÏŽ0K	*†H†÷\r	1><\0G\0A\0R\0C\0I\0A\0_\0P\0E\0R\0E\0Z\0_\0J\0U\0L\0I\0O\0_\0_\0_\01\06\02\06\02\08\03\05\0H\0\0\0\0\0\00€	*†H†÷\r €0€\00€	*†H†÷\r0)\n*†H†÷\r0ôVÑ•8EÞÐ¿¯ßZ$ù‡m\0È\0 €‚èV“D¢ÖPy‹Q«êºsôAöZó&L)Ä8×T6ÔLWüÛÊÿ»à­>i±)íljt¡7aážüj†ek4¡Š8ÿl~®“!Çt$ŸHùh[¢BØú3ò#$A‡VóÞ„ö`ŠXH®P[¨œÚ7·I“pfžîúôLô¹ð£U5óûDSA,Z»YŠËÁX0½šMæ<üIÌ½»ðJµé÷ŒÈ” A .Ë{p{¹¯ÿ„¢Rpåý†Õ ÝG*ö¥ÁÜÚaÁ\"+55ÍžxÝKŽY 5é[xp°Üm‚ÇUM|“o¾`î…@”Œ¦†.2ù¢Ž4=Ñ¸íþÁƒºéjtÕÑPYJrÀ‘;¢¶š„‘‘\Z—,øòpÂ #\"´s²\"gfáS$/™7¢[52?¦Å½LxdÝALäÃ~ÑêQ§ÿŸvZ’ÈâÆ \Z-*Vm\'XˆÔöÃY	;í5øáN½”YS×vÜµ &‹ŽÂQáD\'àûâ`ÏëRAëÐ FnÝ7úmÔ«Y11mÎùš9`ó1tJ¦UÚ~ô‹ZøEH&ÛÊ°ÈQ^[Œ;vYT\r•–ûR€9|@¥*Þ%Ðvv5S°rï#•	¸‚è‚4\Zˆ}†UéYP¸€Å¡¾=0åxÇ\Z,Ñø»­1Ý{è¥¬?_¢¿¢oø²èÜÐ<¥§è64.,QcW‚¾tï	ù_T`wà›‚›4 ¯Eµb{ûíU1ü\Z}£$\"Ý?¨}Ý«^ó,bNæ¿]^É¸/°\ZéÎß&.I*v56Š¹:÷Sß/F¹1Ê÷çm4ð¾—&™PžqœŒÛ7ŒaÚœMK)ü&ÓVÅ8â?ž@Ÿí*õÉ‘ÏTÖô,ËçYV¯ˆÆ»ƒE¾j½õ4m\"VƒèH âTrBêüÛýËßÙ–>æ—ˆê;ÕÏaÌ”ðWÁßôÞ{ç­ÐaW<\0Ó\ZWÈÛqyËÚÓ÷\nr‚1…E!Ã\\ä€oêJÑ,P°f‡¬¶]k¹UI«#ùBàEmè·¿GXSI’Yc÷2­Wç4ÚÍÖNÉÍbvÂ¥˜Á½~N½Å¯¬ëDÄX\\¿íä>‘¼ÎÉ@ÍÐ“«9°ÌƒªiZÙ0]|b©\r>#’ƒ2^]lè„ãŸ’\ZÊ?xýÂ‹FÁ5UÀÙ¡¡õ»ñ|ÄëWXn>\'@[‚MëFW«ÑH ­O¸e õÉÜ…SO²Hç}u`ö6ê¼FÛR,\rqìçÚœKl&³Â÷6ò‚ÕÚyq=Ähø5<}±-Ç%WÙP“ÂÐì£V@»\"­¦AwÊxB~=à‚èPŒŒÕiô¾iªQBm?ç±NFô¯Ãý\0ü\\ÛcM8ï\\lZæ›€½GÛEëÌ;(µX‰žDë%žÊ>T©˜ƒ¨q;£È5Hesf÷,íq]E\rq\Z¤æWqÕ4®B‡PàÊ9b;<NIRU£ÒnÇ[‡I¾²<QTCn‹]%’=\Z›î‘„fX]ì×f‡jË\0Žæ¬[ëú.dPÃþ‘÷Y\nÅ¿À«ýY•[ˆ´.Q¯–Ç\n¢eÍÝ—//ÚÚ¯·ý+F±”ñÀ	tlÔ8,ÈöÁÀ:ù»)Ë.»€èÕ8äùÑÛ§p¯D™Ç\0}\"˜¶ƒ£ùq\0Ó“£\r˜Ò©FeSqºGr:áú«èÙV:„5XJ¢A“ýÏ”z‡¨‡Ó /gr„Ÿø	•™õlì¨o\0uOlEz‰bFKøY“þ…ÁëKü”ÀÇâ=¤µ_…&ÐžÆ}ÜÈ4NÏ{ì´ŽQmPo¾’´vüMgPÂ–Bx³/ ¼7À\'S¤p¬´‹,\'/f=Œ2JZ|(Žl>¤¼Ý¸BF>¾ðrr“NÖco¼š\\¼»¥›þ“÷\n¯Á£aÇÞÁdV\\ˆÈºÉa	v‚è_Ž£:£f–5ö*c?ãh±â•ùÉ‡\".Ìñ>ü#hPZà®PÿŽg¯0·òÒîÈÐ„ô‹Y§Íûœô[b½G|“Mä ]òšA‰£0]^CsæÚxÎ6ŠÊv¨>#>|æ|&dµ 	¥™4 “¹¥¯þW¥lk%õ$í@`%“s·Ý|œ˜Ì-õ³uïì3®a7…35†qÊe±0,ÊXßÇ:–(x%¦‰yVk2‡ÿ Š)s°{8€;•{k% ÏÚqB1ü5!P`~OS…¹DÓxu›˜Ç›H•ïB¼Ø†Þ3›/3ÚjJGÍwûiæ_‘~ïSÃ`‘ûm/‹\"üî þVûúríŠp´A+\\¿u™m= )ÃF‚—*Sƒ$+§Ž7_ëC4cüòKIbæY*Š\'šÓg™i4yØvd€áœ+¸‰Ø¢-pÒ°ò;¿>YxPig69o¨…c$èåãŽ7ì²…ê•VúÛ6òÓîÉGð1Ö€×ú×8Èæ„z÷šˆFöPø§=tTS³ª¸³ü´¹âÝ´ÑBùÒ&\r¾kÉ˜Šñ±‹;x:ˆpïD©ëYåíˆr÷ÇBŽÍ\nÓ„j\nõP´Þô›A¼Š‰x,íi…ÙåàÚ¸Clv€6Ö1ÉéÕÇì½á=\'1²ñ·lk]hc;6S¹(C€øùwòõ“ú¸;Ð¶ÞŽ‚èÃ}|¯¦°v7ôAWw„.XHÿÙÆÏn·Œô]‚N±Y7Ü.›Â4ßÎ9²Œ¤‹]A~Y™Û;{¸,U¯êÆG{TÛØêO¾¹ìR•³u›%hà—S™ÖÃÖˆñê›à–žik_ZÁ”kÂEÔF‡·¦tc\Zíc Ú¥¾iàV¨µ“-Ä™‘cŒîÿþZŽ\\K£])\\/Y[ Š*VQù5§ö¦½è©\nCu)­\\Á5ÜÏ°rµx{í¼9Îè$÷2EŸÚ…v<Œ@—¡¸¤ÖjaçgÇÇêp™$·\"`Ü’˜`íVÚÎíÄ±·\"î²”ëaÏä—›|DÇ1z	œ\'÷+Ñ¼ƒ;^Ñëòß*Böììß$\rRV%A\\$& ªßw¾K`æ ï1ìPR÷¡SpÓ5®(Ýœ½„ó¡-j\nïõ—+ˆÎÇT‡Éb™¨Jw}Cÿj;Óz›Œþ;áÇe?A±\"n²xŸ2[ÁMFåÅ˜dîáh.·—‚ù´ýÑà§BXecƒ\0¡`µFèêpÐÖ×\Z%5±9kÈ…ä9Ÿ(›Ö\"³Û‚Xa„$[2§7Ò5eVëê‘sw¬ç‡”€ZšVÅæéü¿-„ÍÅ„:‚è3G\'[dú÷dÐ´ê¿¡¦!ûöO*ô¾!öŒ^ÖàsÞáÁ—w®ÇÌjpý«\ZÏv»¥Å¹\nfÕ~ \'Â…zuz4…\nåŸ<S/fŒñ3¦}1¼fÈ½»dŠ“•´…ù¥\\ëiG€]3ÔÜ{@¤Ño$Pýé³6ïwwÍkÚ&•çü(kì¸ñÄtËå%_¶ÔàÁÚæ“5@Àš	‡ùóÄeY\'§2‘w..&MëÛê;\nPílc¾Às>çî—,ðÍcþçûkÃi(…w”y½H×8ª aŸ-ã{•UááÅ&s£´­æÛÇßè¨o .FP²‹4NO‚Ü.w±ESœŸ¨5“Ýs„ù½AÃæ\\µ2)Ôç†srrä£}eO€#v#‰¥sÃx2 s»«},å©°QÍÉßŠA42:I²2?œijžkº¤ºghèÄ™0=³ín_Ô·%Š®€°Š\0©90Èßt™}k8Ò,õhÀu‡rÑ“ÎœÝSÜëQ\ZLö”Nç†l¢gÄgÎ]ç&Oò™¿djÏYíµ¦TN„ p>ê~JŒSäjS«U“=”/ÛzšnN€Fâ T©1ÈÚe*¦àHÄõ«|Õ[²6Y2•w†÷OýLÿÊk¶›|@uV™KÑ+H\0MFÐ™Ù\\–¿Óü7 .sÃëv/FÉ(:[?¨Û\ZeRïìAn’C‚è^\næH<æsYR½ïG]\Zù˜¢©dXàñ	‡¦³õ%ßfóó©oùFZOi±~b#­ùÀ»ÉoU\Z\r™g]²Ù\\9À²‰ˆ1Ñ„.ÎÅÒ½vÀ×ø›–€–ŽóÏc”2‹AD=1/\\&‚3çS HïÓêQñDÔIÀ\\…®n‘´ú2_ã<|OÛ‘)B+[cŠÃUÔhO\0òãjK€ñ•o÷Œ).}Ð.·2ÿð‹zð*ŒÃë\nTÙ“{@f¤rÿ>%J4N\\² )~i±¹fŽ ÁYXŠk§@)¯ÈhÌùâ€à	Â@¯‹w8±x¶¹E¼ÈH³à†‰£Ëˆ¬(:ø…­N\\õa­N¿\'<ŒÜª…0þû‹Ñ,yÀ.¤EÁ…‹Ñþ¸‡wD-/õk1Û´3‰C·K\Z«˜E9¤µ ³˜äÔÍ/¶ #ÕŠJjIŒVG{£4	-øài…ÝÛ\"cf’§FíÍOQ~”‘î\0Ÿœ^‘+žy£]s÷ÉªU“{Ýl¢4ÀvR…¶yˆˆ-¶Sñ¿#Åå}gMVÝ2Z…X\n~W±p\'ÉXcÀ©f’7²kò]Ö\'ÎuW‚èz®(3êN-¬<¡°Îæ Þi±…=ýš\0ñáÁ+(+’˜EØo¶\Z¶·±°“gYoðùi·\"Ø\n»0Ì¬ô(òyg^CžÃYzwpÃ ·ñ‚ÿ$OKûpè¦@©–Þ¥Y£–ùˆßz&¯ÞI{‡Ywh*úYJíÕ¤\rÁÐ!M:\r7m n­ Â#E„á\"{PÈæZ7™5oÄ6²Üzà“§œp€\r³ÆîéCkx}Ñ}iI‡Z½,œÒe_À&…4„@±ÃL&Rn‘U{@ëæ\n€Ajî¯ñQs\Z°*TÎôT¿\Z½“Í¸6‰<¥[‡¬¨x1~ëk9\ZòËÁÚ|2kK•,Ê#D¡D¢ÚÖN¢5êMLL½Ü2€ðW0ú°\"H”Áe±q‡ÙQÐÁö7‡]®É0Ë»w¶±ÆNdÉjW~35	8¯~œQÓ„¤¸\r“BÊR\"9˜)¿{T=¢òÝ”¶Ž²³–»{p³FP•« 2ŽTöó¾‹V:u+°Ç}Ÿ|/z|F3Ø¨E®¸žDš\nÏb¸öõn²íXã­\0€›#\Z/–nå\0K?à+o2¿«‰¨ŽV=}I4ëU ,i.ÕduÙVÏ›ã´VÊ¸\0á€˜F{y[TµÁIÆ\0u0ÄZ¶/p)çz·Ô9v\nªÇèÖ[ êbÿò@ñÏ}Úi†fÌu^UtÑA,×ÓÂë‘\\>ÔÔ)‚è-\rµ]Þv£¿8óy÷/ß2îƒ}WqÝkŒÈƒ{²ZNÜ„l šüS.òvRO¦)£|ô”+æ%xZÊeœX¯›Ññ;SüÙ\"¬.<¦Ýÿ;(ka:nDuT÷Ù,¼Cˆ¼ÇfrqŠÀxÚÀÊ¥\'‰¸l¯ô±S¿ÝÛ¯Ð õ¾ÑfX‘Y‡ká<ÌíëEVHÕ7v†WÍ­2„ìúMq\ZPT–âùµWzkIò\"oªÐ&\ZMUÇ&²;OÃ°+&ÀššõLÃî¹ÝäšDÖèèòÀ gãiÖ¤ëèg{DÊVjdìÆ\nIî­OG÷™öÓóÀ&tìfž kuÿ?ÝŠ˜në’C´/Æ•àö4‹³\"˜MNŒåú9gƒ³_)ÕÏ)0/ dD_”ßùÕùÉÝDœ¥¡°ï_\Zc%Hö)\\›ø™èPi’O¶JhÄÓ	åígåïy…+Û¦)ôN­ä¾E9b^ÞËBÜ’WOøawÈû^©ýIL•PLì¶ì8ñÓ áÄ‘ø\rjH&ÂñÂÁ-Etl1¡õ—ÝH°ÅqÚ,ÝŒÂ4×\0Qà(fxº\'§àøâ;B†î\'™\0 ¼`w¤•…Ø‚ƒ¶`JqŽŠKŒh}‰Õ4Œk~“ÄOœhùÇy9P–¸îuTªÛ“WÔ³=Ó¿è©]º—@I“…èÂ‘“AœKx\"ªšïó8e%F\0§S—ÖaEÅÉPJ5!/`\r¹ÄÓÎ~ÔëÖLÒj(ÌüÅjhCDñdøGH]ÔAýl€]+C÷Š	,³R24wcA¥Gœg¿öƒì‰°¦?!80ÓŒP/î\0K3®Øpô¬ò\rôìA~\0ù\0¸\\·Œyç¦Ë­3ðèj‚hlýi^ê×ÖL‰~î\'58Uù(I?gDVkóòú½ˆ?ÇÎ‰B(ÁÂæ¹G¦‡•/ ‹ÅCL’Xßp¢Ë$HükÊ!’ìeœ,\'JèJã‘HŠ\rBê·kì5Hc®\'Ä§âS¯üy}ëõF¬æ ´Þ°¤?DwžÍ_>†n—šêí›³é¿ÿÄšuýŒ!m˜Sz®,>2š«Kê,69‘æ®’LŒ\\iQ÷Ã›,ˆƒëQmÕB²’‰ŽR$X;à\'ð¾CÅ1![ÛD{xÝTfŽôÜÇéò4\'·â…Í\Zvw“*Mñ\\…jÔ²­r&’”œì<:<”¤/(ýš7`~„ß)nª7d¢š-å\\Ýˆ–Êâòp!ØyW©zø®yß.¢,(%vÕ¦÷®€ðh¤»tp«Þ„ŽN2wESC\nà¨ªÄÓW´”H‡‚P4FNôHVgPôFV!R%/:n©Nóî_;ÌàwÖ¸Õ5VEëïœJ‹žS…=h\Zœ?bÄ`` cûßüŸ=e„„—qçKEðÐQ9]¸;\rSÀsÿè¡[A¸(*\'•FÜ=S<Tïí>3Þ”%£Ýgñcª”\\…’Á}­¼`ßž!Lx\nåäif.EGã*{p’!ÄŽœ‚LX¸»>‚t²œŸûzW„\rtßp.ý±O\Z.h!«°^DÇQþSçmõ¿1ÊE¡Êœ5ê–ìK¦h0)Hr—®û%¬KM,¤½×j¼/V“>šSl>[¸híiPb	ˆ¢X=r5bÐ$ÞæÔv€ìm[æ×ä5ð‡¼z\' øë+qéÚOáŠy’Ù=öÆîŒÑ9ó¿«šã£È@ƒÏºyy)žƒáÜ\ròpQùO\n¹MÝ½\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\00>0!0	+\Z\0Ï½,`•ìk1EÔâ¹9À{ÁðúK5ùÞ1\0\\¨]_<DO÷\0\0\0',4,NULL,0,'2020-12-09',NULL,NULL,'admin','2021-12-09 19:59:07',NULL,'2020-12-09 19:02:39');
+(68239,8776,8628665,NULL,36,'TGSSHIDE(jg@FNMT)','0€0€	*†H†÷\r €$€‚è0€0€	*†H†÷\r €$€‚è0‚„0‚€*†H†÷\r\n ‚û0‚÷0)\n*†H†÷\r0¯	|eWËÄŒn”\r°Ûƒ;\0È\0‚ÈZJÏ\"¯p¤¤ëNL­8qÀ’/¹}º#0ØëÚÈÔ\nbª\n’’|ú•p¡AQšz\Zjn§Ðé!Íœ”úÚ¿+û¢z.mhÞ§Ô³ª/\0V\n¸PÏýv¤‘§7€í¹å\r„\Z¼Ýµ•$*,ïèð ô\rì±þôR­Øwd1oY°	Î†\\’«1YVhßèf9G–y})òKé‰ñ‡×·zwj˜°é\nØ@,Íõl+_{\ZWù^Ì#²WCý†..´0aUÌßWåVÖEþ2Nçë[ÓÒ7`hQ<¡%ä|ÁßÈyŠrò,³Ò·É„i·×\\…Þ1AkõÁ\"«±—¥L¸r>Ñ·¢ê»GŒÈ‹½“Ýs&I»ðÃØ°÷$i(ÁÉ¹ýwO03ý-¾9Ò[KÅñ\Zo‰Y-âÇIÅ²#æ;±® šu\0\'ãŒ©…aß„5²ÑÔ\'d;·¤#^ß%H‡[¢@”RLø&«ÞäÖN„8£?6Y}Ž<Ñ¦%5<Õ<µáÃÃL¨I°Ü~W‡‰¢ŽË`Ÿ$‹·]·ã“ûJ¾¥•ú=§RŸÈ„DÕ!g¼³§²J‘Ê{k1l®­z¤À@öY	³îd\nþ÷) ß/ YúzÕ9uk|ÍXtF£›»éÅÝñ>x4ÔA3”á KS	V§å“1šuRËšO·­+P6¡P+Ãm‘›±B¨\ZaºI»ù[‰ŸF¶äNž§*êí¢þ€ÌÅåÖÌuâK|AÐ_µª:ª\'‰cÈ¢j¬\'dÃ,Æ¢áäå§\0PFxaÙ¶V™”„Å<ð&¶Hlj:ˆ—3Ò—Rt!á—¾Läeú¥¶GÉb‚Ø‹Ýü[Þ¿v4g1Ž,ßN{€&IŽ³^H7r@¿»!Õ9<³Ú‘j;/¾ÁblÁH„34ImZPÍA§ÂP4MºÕ…Íœ$	·.žJ½2œY>^•_z‹ãÆÇZ±ð®pxí…s­\"+1³rj†“‘§±j¿I’B-eAã2v–/\r¬~*à­ÍrZYP(î²uVlx/—LÂ	Ä;	CdèI\"Ú*¾©¨³tU¢RØª¶»JR\"êV›+	Û;’±]SòœÌžŽ‚\ržŒ{qËûÕ‰5$¶ÀŠvÁ”í}u¯â†ÓEa O\0‚è5~\\9é,SÌß\nì:Tà6VB~¡‚ ;´àqþÒAÒ÷µ¸eôÝGùàÜ&«vÈÑ„Û—§{ž7ÿ„6ï™vnÜ¹³«`”QIæ¶\'^¢BíŠ¤:ÜrCë[·O+-IâÕ»¢I~ 1è_ŸS`©“rD#8Èç êj­¥²¶¸i‹„`6pyš×\ZFçä‹b*\ZfŸ`·ÂBÆá¦ôÛøD,¢H›âî)¾^;’bJ¯|~9”ÁŽLKÃÁ\Zéƒ$ÍMÒßù@\Zä§pÑpyµçlÂ¯9ªLŽçî[	á‚7H%‘=©ýÌMÍÙ¢çð²cýAú©‰0¯‘@ÑØ—Ô-’ªÃÿUC‘egæ{Zuž×pºíàÇÀ\0Á#Ô%áªˆ<\rué­0H¨k¤ü.‘o®]!¥E¦¶1r0#	*†H†÷\r	1y;£)Iw¡(DŸò%Ôâ§ÏŽ0K	*†H†÷\r	1><\0G\0A\0R\0C\0I\0A\0_\0P\0E\0R\0E\0Z\0_\0J\0U\0L\0I\0O\0_\0_\0_\01\06\02\06\02\08\03\05\0H\0\0\0\0\0\00€	*†H†÷\r €0€\00€	*†H†÷\r0)\n*†H†÷\r0ôVÑ•8EÞÐ¿¯ßZ$ù‡m\0È\0 €‚èV“D¢ÖPy‹Q«êºsôAöZó&L)Ä8×T6ÔLWüÛÊÿ»à­>i±)íljt¡7aážüj†ek4¡Š8ÿl~®“!Çt$ŸHùh[¢BØú3ò#$A‡VóÞ„ö`ŠXH®P[¨œÚ7·I“pfžîúôLô¹ð£U5óûDSA,Z»YŠËÁX0½šMæ<üIÌ½»ðJµé÷ŒÈ” A .Ë{p{¹¯ÿ„¢Rpåý†Õ ÝG*ö¥ÁÜÚaÁ\"+55ÍžxÝKŽY 5é[xp°Üm‚ÇUM|“o¾`î…@”Œ¦†.2ù¢Ž4=Ñ¸íþÁƒºéjtÕÑPYJrÀ‘;¢¶š„‘‘\Z—,øòpÂ #\"´s²\"gfáS$/™7¢[52?¦Å½LxdÝALäÃ~ÑêQ§ÿŸvZ’ÈâÆ \Z-*Vm\'XˆÔöÃY	;í5øáN½”YS×vÜµ &‹ŽÂQáD\'àûâ`ÏëRAëÐ FnÝ7úmÔ«Y11mÎùš9`ó1tJ¦UÚ~ô‹ZøEH&ÛÊ°ÈQ^[Œ;vYT\r•–ûR€9|@¥*Þ%Ðvv5S°rï#•	¸‚è‚4\Zˆ}†UéYP¸€Å¡¾=0åxÇ\Z,Ñø»­1Ý{è¥¬?_¢¿¢oø²èÜÐ<¥§è64.,QcW‚¾tï	ù_T`wà›‚›4 ¯Eµb{ûíU1ü\Z}£$\"Ý?¨}Ý«^ó,bNæ¿]^É¸/°\ZéÎß&.I*v56Š¹:÷Sß/F¹1Ê÷çm4ð¾—&™PžqœŒÛ7ŒaÚœMK)ü&ÓVÅ8â?ž@Ÿí*õÉ‘ÏTÖô,ËçYV¯ˆÆ»ƒE¾j½õ4m\"VƒèH âTrBêüÛýËßÙ–>æ—ˆê;ÕÏaÌ”ðWÁßôÞ{ç­ÐaW<\0Ó\ZWÈÛqyËÚÓ÷\nr‚1…E!Ã\\ä€oêJÑ,P°f‡¬¶]k¹UI«#ùBàEmè·¿GXSI’Yc÷2­Wç4ÚÍÖNÉÍbvÂ¥˜Á½~N½Å¯¬ëDÄX\\¿íä>‘¼ÎÉ@ÍÐ“«9°ÌƒªiZÙ0]|b©\r>#’ƒ2^]lè„ãŸ’\ZÊ?xýÂ‹FÁ5UÀÙ¡¡õ»ñ|ÄëWXn>\'@[‚MëFW«ÑH ­O¸e õÉÜ…SO²Hç}u`ö6ê¼FÛR,\rqìçÚœKl&³Â÷6ò‚ÕÚyq=Ähø5<}±-Ç%WÙP“ÂÐì£V@»\"­¦AwÊxB~=à‚èPŒŒÕiô¾iªQBm?ç±NFô¯Ãý\0ü\\ÛcM8ï\\lZæ›€½GÛEëÌ;(µX‰žDë%žÊ>T©˜ƒ¨q;£È5Hesf÷,íq]E\rq\Z¤æWqÕ4®B‡PàÊ9b;<NIRU£ÒnÇ[‡I¾²<QTCn‹]%’=\Z›î‘„fX]ì×f‡jË\0Žæ¬[ëú.dPÃþ‘÷Y\nÅ¿À«ýY•[ˆ´.Q¯–Ç\n¢eÍÝ—//ÚÚ¯·ý+F±”ñÀ	tlÔ8,ÈöÁÀ:ù»)Ë.»€èÕ8äùÑÛ§p¯D™Ç\0}\"˜¶ƒ£ùq\0Ó“£\r˜Ò©FeSqºGr:áú«èÙV:„5XJ¢A“ýÏ”z‡¨‡Ó /gr„Ÿø	•™õlì¨o\0uOlEz‰bFKøY“þ…ÁëKü”ÀÇâ=¤µ_…&ÐžÆ}ÜÈ4NÏ{ì´ŽQmPo¾’´vüMgPÂ–Bx³/ ¼7À\'S¤p¬´‹,\'/f=Œ2JZ|(Žl>¤¼Ý¸BF>¾ðrr“NÖco¼š\\¼»¥›þ“÷\n¯Á£aÇÞÁdV\\ˆÈºÉa	v‚è_Ž£:£f–5ö*c?ãh±â•ùÉ‡\".Ìñ>ü#hPZà®PÿŽg¯0·òÒîÈÐ„ô‹Y§Íûœô[b½G|“Mä ]òšA‰£0]^CsæÚxÎ6ŠÊv¨>#>|æ|&dµ 	¥™4 “¹¥¯þW¥lk%õ$í@`%“s·Ý|œ˜Ì-õ³uïì3®a7…35†qÊe±0,ÊXßÇ:–(x%¦‰yVk2‡ÿ Š)s°{8€;•{k% ÏÚqB1ü5!P`~OS…¹DÓxu›˜Ç›H•ïB¼Ø†Þ3›/3ÚjJGÍwûiæ_‘~ïSÃ`‘ûm/‹\"üî þVûúríŠp´A+\\¿u™m= )ÃF‚—*Sƒ$+§Ž7_ëC4cüòKIbæY*Š\'šÓg™i4yØvd€áœ+¸‰Ø¢-pÒ°ò;¿>YxPig69o¨…c$èåãŽ7ì²…ê•VúÛ6òÓîÉGð1Ö€×ú×8Èæ„z÷šˆFöPø§=tTS³ª¸³ü´¹âÝ´ÑBùÒ&\r¾kÉ˜Šñ±‹;x:ˆpïD©ëYåíˆr÷ÇBŽÍ\nÓ„j\nõP´Þô›A¼Š‰x,íi…ÙåàÚ¸Clv€6Ö1ÉéÕÇì½á=\'1²ñ·lk]hc;6S¹(C€øùwòõ“ú¸;Ð¶ÞŽ‚èÃ}|¯¦°v7ôAWw„.XHÿÙÆÏn·Œô]‚N±Y7Ü.›Â4ßÎ9²Œ¤‹]A~Y™Û;{¸,U¯êÆG{TÛØêO¾¹ìR•³u›%hà—S™ÖÃÖˆñê›à–žik_ZÁ”kÂEÔF‡·¦tc\Zíc Ú¥¾iàV¨µ“-Ä™‘cŒîÿþZŽ\\K£])\\/Y[ Š*VQù5§ö¦½è©\nCu)­\\Á5ÜÏ°rµx{í¼9Îè$÷2EŸÚ…v<Œ@—¡¸¤ÖjaçgÇÇêp™$·\"`Ü’˜`íVÚÎíÄ±·\"î²”ëaÏä—›|DÇ1z	œ\'÷+Ñ¼ƒ;^Ñëòß*Böììß$\rRV%A\\$& ªßw¾K`æ ï1ìPR÷¡SpÓ5®(Ýœ½„ó¡-j\nïõ—+ˆÎÇT‡Éb™¨Jw}Cÿj;Óz›Œþ;áÇe?A±\"n²xŸ2[ÁMFåÅ˜dîáh.·—‚ù´ýÑà§BXecƒ\0¡`µFèêpÐÖ×\Z%5±9kÈ…ä9Ÿ(›Ö\"³Û‚Xa„$[2§7Ò5eVëê‘sw¬ç‡”€ZšVÅæéü¿-„ÍÅ„:‚è3G\'[dú÷dÐ´ê¿¡¦!ûöO*ô¾!öŒ^ÖàsÞáÁ—w®ÇÌjpý«\ZÏv»¥Å¹\nfÕ~ \'Â…zuz4…\nåŸ<S/fŒñ3¦}1¼fÈ½»dŠ“•´…ù¥\\ëiG€]3ÔÜ{@¤Ño$Pýé³6ïwwÍkÚ&•çü(kì¸ñÄtËå%_¶ÔàÁÚæ“5@Àš	‡ùóÄeY\'§2‘w..&MëÛê;\nPílc¾Às>çî—,ðÍcþçûkÃi(…w”y½H×8ª aŸ-ã{•UááÅ&s£´­æÛÇßè¨o .FP²‹4NO‚Ü.w±ESœŸ¨5“Ýs„ù½AÃæ\\µ2)Ôç†srrä£}eO€#v#‰¥sÃx2 s»«},å©°QÍÉßŠA42:I²2?œijžkº¤ºghèÄ™0=³ín_Ô·%Š®€°Š\0©90Èßt™}k8Ò,õhÀu‡rÑ“ÎœÝSÜëQ\ZLö”Nç†l¢gÄgÎ]ç&Oò™¿djÏYíµ¦TN„ p>ê~JŒSäjS«U“=”/ÛzšnN€Fâ T©1ÈÚe*¦àHÄõ«|Õ[²6Y2•w†÷OýLÿÊk¶›|@uV™KÑ+H\0MFÐ™Ù\\–¿Óü7 .sÃëv/FÉ(:[?¨Û\ZeRïìAn’C‚è^\næH<æsYR½ïG]\Zù˜¢©dXàñ	‡¦³õ%ßfóó©oùFZOi±~b#­ùÀ»ÉoU\Z\r™g]²Ù\\9À²‰ˆ1Ñ„.ÎÅÒ½vÀ×ø›–€–ŽóÏc”2‹AD=1/\\&‚3çS HïÓêQñDÔIÀ\\…®n‘´ú2_ã<|OÛ‘)B+[cŠÃUÔhO\0òãjK€ñ•o÷Œ).}Ð.·2ÿð‹zð*ŒÃë\nTÙ“{@f¤rÿ>%J4N\\² )~i±¹fŽ ÁYXŠk§@)¯ÈhÌùâ€à	Â@¯‹w8±x¶¹E¼ÈH³à†‰£Ëˆ¬(:ø…­N\\õa­N¿\'<ŒÜª…0þû‹Ñ,yÀ.¤EÁ…‹Ñþ¸‡wD-/õk1Û´3‰C·K\Z«˜E9¤µ ³˜äÔÍ/¶ #ÕŠJjIŒVG{£4	-øài…ÝÛ\"cf’§FíÍOQ~”‘î\0Ÿœ^‘+žy£]s÷ÉªU“{Ýl¢4ÀvR…¶yˆˆ-¶Sñ¿#Åå}gMVÝ2Z…X\n~W±p\'ÉXcÀ©f’7²kò]Ö\'ÎuW‚èz®(3êN-¬<¡°Îæ Þi±…=ýš\0ñáÁ+(+’˜EØo¶\Z¶·±°“gYoðùi·\"Ø\n»0Ì¬ô(òyg^CžÃYzwpÃ ·ñ‚ÿ$OKûpè¦@©–Þ¥Y£–ùˆßz&¯ÞI{‡Ywh*úYJíÕ¤\rÁÐ!M:\r7m n­ Â#E„á\"{PÈæZ7™5oÄ6²Üzà“§œp€\r³ÆîéCkx}Ñ}iI‡Z½,œÒe_À&…4„@±ÃL&Rn‘U{@ëæ\n€Ajî¯ñQs\Z°*TÎôT¿\Z½“Í¸6‰<¥[‡¬¨x1~ëk9\ZòËÁÚ|2kK•,Ê#D¡D¢ÚÖN¢5êMLL½Ü2€ðW0ú°\"H”Áe±q‡ÙQÐÁö7‡]®É0Ë»w¶±ÆNdÉjW~35	8¯~œQÓ„¤¸\r“BÊR\"9˜)¿{T=¢òÝ”¶Ž²³–»{p³FP•« 2ŽTöó¾‹V:u+°Ç}Ÿ|/z|F3Ø¨E®¸žDš\nÏb¸öõn²íXã­\0€›#\Z/–nå\0K?à+o2¿«‰¨ŽV=}I4ëU ,i.ÕduÙVÏ›ã´VÊ¸\0á€˜F{y[TµÁIÆ\0u0ÄZ¶/p)çz·Ô9v\nªÇèÖ[ êbÿò@ñÏ}Úi†fÌu^UtÑA,×ÓÂë‘\\>ÔÔ)‚è-\rµ]Þv£¿8óy÷/ß2îƒ}WqÝkŒÈƒ{²ZNÜ„l šüS.òvRO¦)£|ô”+æ%xZÊeœX¯›Ññ;SüÙ\"¬.<¦Ýÿ;(ka:nDuT÷Ù,¼Cˆ¼ÇfrqŠÀxÚÀÊ¥\'‰¸l¯ô±S¿ÝÛ¯Ð õ¾ÑfX‘Y‡ká<ÌíëEVHÕ7v†WÍ­2„ìúMq\ZPT–âùµWzkIò\"oªÐ&\ZMUÇ&²;OÃ°+&ÀššõLÃî¹ÝäšDÖèèòÀ gãiÖ¤ëèg{DÊVjdìÆ\nIî­OG÷™öÓóÀ&tìfž kuÿ?ÝŠ˜në’C´/Æ•àö4‹³\"˜MNŒåú9gƒ³_)ÕÏ)0/ dD_”ßùÕùÉÝDœ¥¡°ï_\Zc%Hö)\\›ø™èPi’O¶JhÄÓ	åígåïy…+Û¦)ôN­ä¾E9b^ÞËBÜ’WOøawÈû^©ýIL•PLì¶ì8ñÓ áÄ‘ø\rjH&ÂñÂÁ-Etl1¡õ—ÝH°ÅqÚ,ÝŒÂ4×\0Qà(fxº\'§àøâ;B†î\'™\0 ¼`w¤•…Ø‚ƒ¶`JqŽŠKŒh}‰Õ4Œk~“ÄOœhùÇy9P–¸îuTªÛ“WÔ³=Ó¿è©]º—@I“…èÂ‘“AœKx\"ªšïó8e%F\0§S—ÖaEÅÉPJ5!/`\r¹ÄÓÎ~ÔëÖLÒj(ÌüÅjhCDñdøGH]ÔAýl€]+C÷Š	,³R24wcA¥Gœg¿öƒì‰°¦?!80ÓŒP/î\0K3®Øpô¬ò\rôìA~\0ù\0¸\\·Œyç¦Ë­3ðèj‚hlýi^ê×ÖL‰~î\'58Uù(I?gDVkóòú½ˆ?ÇÎ‰B(ÁÂæ¹G¦‡•/ ‹ÅCL’Xßp¢Ë$HükÊ!’ìeœ,\'JèJã‘HŠ\rBê·kì5Hc®\'Ä§âS¯üy}ëõF¬æ ´Þ°¤?DwžÍ_>†n—šêí›³é¿ÿÄšuýŒ!m˜Sz®,>2š«Kê,69‘æ®’LŒ\\iQ÷Ã›,ˆƒëQmÕB²’‰ŽR$X;à\'ð¾CÅ1![ÛD{xÝTfŽôÜÇéò4\'·â…Í\Zvw“*Mñ\\…jÔ²­r&’”œì<:<”¤/(ýš7`~„ß)nª7d¢š-å\\Ýˆ–Êâòp!ØyW©zø®yß.¢,(%vÕ¦÷®€ðh¤»tp«Þ„ŽN2wESC\nà¨ªÄÓW´”H‡‚P4FNôHVgPôFV!R%/:n©Nóî_;ÌàwÖ¸Õ5VEëïœJ‹žS…=h\Zœ?bÄ`` cûßüŸ=e„„—qçKEðÐQ9]¸;\rSÀsÿè¡[A¸(*\'•FÜ=S<Tïí>3Þ”%£Ýgñcª”\\…’Á}­¼`ßž!Lx\nåäif.EGã*{p’!ÄŽœ‚LX¸»>‚t²œŸûzW„\rtßp.ý±O\Z.h!«°^DÇQþSçmõ¿1ÊE¡Êœ5ê–ìK¦h0)Hr—®û%¬KM,¤½×j¼/V“>šSl>[¸híiPb	ˆ¢X=r5bÐ$ÞæÔv€ìm[æ×ä5ð‡¼z\' øë+qéÚOáŠy’Ù=öÆîŒÑ9ó¿«šã£È@ƒÏºyy)žƒáÜ\ròpQùO\n¹MÝ½\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\00>0!0	+\Z\0Ï½,`•ìk1EÔâ¹9À{ÁðúK5ùÞ1\0\\¨]_<DO÷\0\0\0',4,NULL,0,'2020-12-09',NULL,NULL,'admin','2021-12-09 19:59:07',NULL,'2020-12-09 19:02:39'),
+(68240,0,216081,NULL,3,'assimilated-payroll-test.aonsolutions.org','#\n#Thu Jun 30 17:19:49 CEST 2022\nparent=payroll-test.aonsolutions.org\nmaxTotalDocumentSize=100\nnumberOfUsers=0\nname=assimilated-payroll-test.aonsolutions.org\ndomainManagement=false\ntype=ENTERPRISE\nuser=admin\nmodules=AON_FINANCE\n',13,NULL,0,'2022-06-30',NULL,NULL,'admin','2022-06-30 17:19:49',NULL,NULL);
 /*!40000 ALTER TABLE `rattach` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -38879,7 +38966,7 @@ CREATE TABLE `registry` (
   KEY `IDX_REGISTRY_DOCUMENT` (`document`),
   KEY `IDX_REGISTRY_DOMAIN` (`domain`),
   CONSTRAINT `FK_REGISTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8628685 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=8628687 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39183,7 +39270,9 @@ INSERT INTO `registry` VALUES
 (8628681,8777,NULL,0,'ES','HORAS NÃ“MINA, ( GRUPO 10 )',NULL,NULL,'ES',0),
 (8628682,8780,NULL,0,'ES','BASE MÃNIMA, MENSUAL ( GRUPO 01 )',NULL,NULL,'ES',0),
 (8628683,8780,NULL,0,'ES','BASE MÃNIMA, JORNADAS ( GRUPO 10 )',NULL,NULL,'ES',0),
-(8628684,8777,NULL,0,'ES','HORAS NÃ“MINA, (PATERNIDAD PARCIAL)',NULL,NULL,'ES',0);
+(8628684,8777,NULL,0,'ES','HORAS NÃ“MINA, (PATERNIDAD PARCIAL)',NULL,NULL,'ES',0),
+(8628685,8791,NULL,1,'ES','ASIMILADOS','ASSIMILATED-PAYROLL-TEST',NULL,'ES',0),
+(8628686,8791,NULL,0,'ES','ASMILADO REGIMEN, GENERAL',NULL,NULL,'ES',0);
 /*!40000 ALTER TABLE `registry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56400,7 +56489,7 @@ INSERT INTO `system_data` VALUES
 (25011,-105,'BASE_CGP_MIN','MAX(7.03, 1166.70 * DIAS_NOMINA/DIAS_MES * COEFICIENTE_PARCIALIDAD)','2022-01-01',NULL,NULL,NULL),
 (25012,-107,'BASE_CGC_MIN_MES','[ \"01\":1629.30,\"02\":1351.20,\"03\":1175.40,\"04\":1166.70,\"05\":1166.70,\"06\":1166.70,\"07\":1166.70,\"08\":1166.70,\"09\":1166.70,\"10\":1166.70,\"11\":1166.70][GRUPO_COTIZACION] * ( DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30 )','2022-01-01',NULL,NULL,NULL),
 (25013,-107,'BASE_CGC_MIN_DIA','[ \"01\":70.84, \"02\":58.75, \"03\":51.10, \"04\":50.73, \"05\":50.73, \"06\":50.73, \"07\":50.73, \"08\":50.73, \"09\":50.73, \"10\":50.73, \"11\":50.73][GRUPO_COTIZACION]  * JORNADAS_REALES ','2022-01-01',NULL,NULL,NULL),
-(25014,-107,'BASE_CGP_MIN_DIA','1166.70 * JORNADAS_REALES / 30','2022-01-01',NULL,NULL,NULL),
+(25014,-107,'BASE_CGP_MIN_DIA','BASE_CGC_MIN_DIA','2022-01-01',NULL,NULL,NULL),
 (25015,-107,'BASE_CGP_MIN_MES','( TIEMPO_COMPLETO ) ? 1166.70 * ((DIAS_COTIZADOS == DIAS_MES) ? 1 : DIAS_COTIZADOS/30) : 7.03 * HORAS_NOMINA','2022-01-01',NULL,NULL,NULL),
 (25017,-105,'BASE_CGP_MIN','MAX(7.03, 1166.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD)','2022-01-01',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `system_data` ENABLE KEYS */;
@@ -57355,7 +57444,7 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
 (2862,0,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),
-(10248,8776,0,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-06-21 21:35:16',NULL,0),
+(10248,8776,0,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-06-30 17:14:56',NULL,0),
 (10249,8790,0,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -57790,7 +57879,7 @@ CREATE TABLE `workplace` (
   CONSTRAINT `FK_WORKPLACE_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_WORKPLACE_RADDRESS` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`),
   CONSTRAINT `FK_WORKPLACE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8420 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros de Trabajo';
+) ENGINE=InnoDB AUTO_INCREMENT=8422 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros de Trabajo';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57863,7 +57952,8 @@ INSERT INTO `workplace` VALUES
 (8416,8790,8628664,'PRINCIPAL',7730612,NULL,3535,0,1),
 (8417,8777,8628388,'HORAS COMPLEMENTARIAS',7730378,NULL,3535,4,1),
 (8418,8777,8628388,'EN ESPECIE',7730378,NULL,3535,4,1),
-(8419,8777,8628388,'REAL DECRETO 32/2021',7730378,NULL,3535,4,1);
+(8419,8777,8628388,'REAL DECRETO 32/2021',7730378,NULL,3535,4,1),
+(8421,8791,8628685,'PRINCIPAL',7730614,NULL,3535,4,1);
 /*!40000 ALTER TABLE `workplace` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58053,4 +58143,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-21 19:44:48
+-- Dump completed on 2022-06-30 16:02:22

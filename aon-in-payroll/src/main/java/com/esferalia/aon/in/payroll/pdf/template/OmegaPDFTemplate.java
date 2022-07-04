@@ -893,7 +893,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 					, Pattern.CASE_INSENSITIVE);     
 	
 	private static final Pattern  OTHER_DEDUCTION = 
-			Pattern.compile("^\\s*(?<other>\\w.+?)?\\.{2,}\\s*(?<otheramount>\\d[\\d\\.]*,\\d{2})?\\s*$"
+			Pattern.compile("^\\s*(?<other>[\\w-].+?)?\\.{2,}\\s*(?<otheramount>\\d[\\d\\.]*,\\d{2})?\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 	
 	//Resto Horas Extras         4,70%         ................................................................     

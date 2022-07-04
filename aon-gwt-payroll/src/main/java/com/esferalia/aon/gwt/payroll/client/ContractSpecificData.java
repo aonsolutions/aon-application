@@ -1953,8 +1953,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);

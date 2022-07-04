@@ -7141,7 +7141,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setCodMunWork(workAddress.getMunicipalityCode());
 		Integer contractType = Integer.parseInt(employeeContractInfo.getContractInfo().getContractType());
 		builder.setCodContract(contractType.toString());
-		if (contractType == 410) {
+		if (contractType == 410 || contractType == 510) {
 			String interimCause = employeeContractInfo.getContractSpecificData().getInterimCause();
 			if (AonStringUtils.isBlank(interimCause))
 				throw new IllegalArgumentException("La interinidad es obligatoria para este tipo de contrato. Debe rellenarlo en la pesta\u00F1a Datos SEPE");
@@ -7163,6 +7163,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} else
 			builder.setPrevisible(false);
 		
+		builder.setTitulacion(employeeContractInfo.getContractSpecificData().getAcademicTitulation());
 		
 		Boolean disc = employeeContractInfo.getContractSpecificData().getDisc();
 		if(null != disc) {
@@ -7175,6 +7176,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			builder.setDiscontinuo(false);
 			
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
+		
+		if((contractType == 420 || contractType == 520) && null == employeeContractInfo.getContractInfo().getEndDate())
+			throw new IllegalArgumentException("La fecha fin es obligatoria para los contratos de tipo 420 y 520. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
+		
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());

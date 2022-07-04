@@ -31,4 +31,7 @@ public interface Mod303ServiceAsync {
 	void markAsCustomerCheck(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> asyncCallback);
 
+	void doRecord(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
+	void unrecord(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
+
 }

@@ -29,4 +29,8 @@ public interface IMODEL303 {
 	public Mod303 markAsCustomerCheck(AONContext ctx, Mod303 mod303);
 	public Mod303 markAsCustomerAccepted(AONContext ctx, Mod303 mod303);
 	public Mod303 markAsCustomerRejected(AONContext ctx, Mod303 mod303, String reason);
+	
+	public Mod303 doRecord(AONContext ctx, Mod303 mod303);
+	public Mod303 unrecord(AONContext ctx, Mod303 mod303);
+	
 }

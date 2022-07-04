@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
@@ -23,6 +24,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfo;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfoGridPanel;
@@ -36,6 +39,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -109,6 +113,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
+	
+	protected final AonToolbarButton recordButton = new AonToolbarButton(AON.MSG.record(),AON.CSS.aonIconValid());
+	protected final AonToolbarButton unrecordButton = new AonToolbarButton(AON.MSG.unrecord(),AON.CSS.aonIconInvalid());
+	protected final AonToolbarButton viewEntryButton = new AonToolbarButton(AON.MSG.previewAccountEntry(),AON.CSS.aonIconBook());
 	
 	private FlowPanel paymentContainer;
 	
@@ -214,6 +222,19 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
 		
+		
+		recordButton.addClickHandler( event -> doRecord());
+		recordButton.addStyleName(AON.CSS.aonMarginLeft());
+//		toolbarPanel.add(recordButton);
+		
+
+		unrecordButton.addClickHandler( event -> unRecord());
+		unrecordButton.addStyleName(AON.CSS.aonMarginLeft());
+//		toolbarPanel.add(unrecordButton);
+
+		viewEntryButton.addClickHandler( event -> viewEntry());
+//		toolbarPanel.add(viewEntryButton);
+		
 		toolbarPanel.add(diskForm);
 
 		return toolbarPanel;
@@ -290,13 +311,20 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		//resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
 		resetButton.setVisible(false);
 		// -----------------------
+		boolean canBeSaved = !getModel().isFinished() && !getModel().isSent() && !getModel().isRecorded(); 
 		auditButton.setVisible(!getModel().isNew());
 		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(!getModel().isFinished() && !getModel().isSent());
-		deleteButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		saveButton.setVisible(canBeSaved);
+		recordButton.setVisible( (getModel().isFinished() || getModel().isSent()) && !getModel().isRecorded());
+		
+		unrecordButton.setVisible( (getModel().isFinished() || getModel().isSent()) && getModel().isRecorded());
+		viewEntryButton.setVisible( (getModel().isFinished() || getModel().isSent()) && getModel().isRecorded() 
+				&& viewEntryButton.isEnabled() );
+		
+		deleteButton.setVisible(!getModel().isNew() && canBeSaved);
 		printButton.setVisible(!getModel().isNew());
-		markAsPendingButton.setVisible(!getModel().isNew() &&
+		markAsPendingButton.setVisible(!getModel().isNew() && !getModel().isRecorded() &&
 				(getModel().getStatus() == FiscalStatus.FINISHED 
 				|| getModel().getStatus() == FiscalStatus.BATCHED
 				|| getModel().getStatus() == FiscalStatus.SENT
@@ -1077,6 +1105,92 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					}
 				});
 	}
+	
+	private void doRecord() {
+		recordButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmRecordDeclarationAction(), new AonConfirmDialogCallback() {
+			
+			@Override
+			public void onAccept() {
+				Model303.service.doRecord(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 result) {
+						setDirty(false);
+						selectAndPopulate(result);
+						viewEntry();
+						recordButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						getCallback().showError(AON.MSG.unableToRecordDeclaration(caught.getMessage()));
+						recordButton.setEnabled(true);
+					}
+				});
+			}
+			
+			@Override
+			public void onCancel() {
+				recordButton.setEnabled(true);
+			}
+		});
+	}
+	
+	private void viewEntry() {
+		viewEntryButton.setEnabled(false); 
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+		module.onModuleLoad( new AccountEntryModuleOptions()
+			.setParentWidget( getCallback().getNewTabWidget( AON.MSG.accountEntry() ) )
+			.setDomainName( getCallback().getOptions().getDomainName() )
+			.setUser( getCallback().getOptions().getUser() )
+			.setDomain( getCallback().getOptions().getDomain())
+			.setAccountEntryId( getModel() .getAccountEntry())
+			.setSessionLogTabVisible(false)
+			.setJournalTabVisible(false)
+			.setExtraInfoTabVisible(false)
+			.setPreviewTabVisible(false)
+			.setTrialBalanceFromPreviewEnabled(false)
+			.setExternalCallback( new ModuleCallback() {
+			
+				@Override public void onRemove(IAccountEntryWrapper removed) {}
+				@Override public void onFailure(Throwable caught) {}
+				@Override public void onExit() {}
+				@Override public void onChange(IAccountEntryWrapper changed) {}
+			})
+		);
+	}
+		
+	private void unRecord() {
+		unrecordButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmUnrecordDeclarationAction(), new AonConfirmDialogCallback() {
+			
+			@Override
+			public void onAccept() {
+				Model303.service.unrecord(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 result) {
+						setDirty(false);
+						selectAndPopulate(result);
+						unrecordButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						getCallback().showError(AON.MSG.unableToUnrecordDeclaration(caught.getMessage()));
+						unrecordButton.setEnabled(true);
+					}
+				});
+			}
+			
+			@Override
+			public void onCancel() {
+				unrecordButton.setEnabled(true);
+			}
+		});
+	}
+
 
 	private void audit() {
 		AonAuditDialog dialog = new AonAuditDialog();

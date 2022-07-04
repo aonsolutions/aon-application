@@ -130,4 +130,15 @@ public class MODEL303 {
 		}
 	}
 
+	public static Mod303 doRecord(Occam occam, Mod303 mod303) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().doRecord(ctx, mod303);
+		}
+	}
+
+	public static Mod303 unrecord(Occam occam, Mod303 mod303) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().unrecord(ctx, mod303);
+		}
+	}
 }
