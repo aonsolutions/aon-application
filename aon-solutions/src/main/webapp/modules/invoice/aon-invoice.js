@@ -1374,6 +1374,7 @@ export class AonInvoice extends AonElement {
 
 	onChangeDetailVat(detail, value, i, dialog) {
 		detail.percentage = value;
+		detail.vat = value;
 		this.invoice.setDetail(detail, i);
 		this.onChangeDetail(detail, i, dialog);
 	}
@@ -1458,7 +1459,7 @@ export class AonInvoice extends AonElement {
 			vat.options = JSON.stringify(TaxIVAPercentage);
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
-			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailDiscount(detail, vat.value, i));
+			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailVat(detail, vat.value, i));
 			let td6 = table.addCell(vat);
 			td6.style.verticalAlign = "bottom";
 			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
