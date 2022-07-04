@@ -196,10 +196,10 @@ public class Mod2002014Reader {
 		cp.setNominalValue(nominalValue);
 		cp.setBookValue(bookValue);
 		cp.setIncomes(incomes);
-		cp.setaValue(aValue);
-		cp.setbValue(bValue);
-		cp.setcValue(cValue);
-		cp.setdValue(dValue);
+		cp.setValueCorrection(aValue);
+		cp.setLossReversion(bValue);
+		cp.setCorrectionEffect(cValue);
+		cp.setCorrectionsBalance(dValue);
 		cp.setCapital(capital);
 		cp.setReserve(reserve);
 		cp.setOtherAmounts(otherAmounts);
@@ -2163,13 +2163,13 @@ public class Mod2002014Reader {
 													,AonStringUtils.SPACE
 													,cp.getIncomes()
 													,AonStringUtils.SPACE
-													,cp.getaValue()
+													,cp.getValueCorrection()
 													,AonStringUtils.SPACE
-													,cp.getbValue()
+													,cp.getLossReversion()
 													,AonStringUtils.SPACE
-													,cp.getcValue()
+													,cp.getCorrectionEffect()
 													,AonStringUtils.SPACE
-													,cp.getdValue()
+													,cp.getCorrectionsBalance()
 													,AonStringUtils.SPACE
 													,cp.getCapital()
 													,AonStringUtils.SPACE

@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.Window;
@@ -160,11 +160,11 @@ public class Mod2002020Object implements Serializable {
 	}
 	
 	public void doubleValueChanged(IMod200Key k, double value) {
-		DoubleVariable2020 oldVar = getMod200().getKey(k);
+		DoubleVariableEx oldVar = getMod200().getKey(k);
 		if (oldVar == null) {
-			oldVar = new DoubleVariable2020(k);
+			oldVar = new DoubleVariableEx(k);
 		}
-		DoubleVariable2020 newVar = oldVar.clone();
+		DoubleVariableEx newVar = oldVar.clone();
 		newVar.setValue( value );
 		newVar.setChangedByUser(true);
 		mod200.addDraftVariable(newVar);

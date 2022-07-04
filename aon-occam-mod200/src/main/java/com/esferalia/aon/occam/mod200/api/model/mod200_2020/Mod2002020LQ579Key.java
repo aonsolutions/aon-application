@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Régimen de las entidades navieras en función del tonelaje (Desglose casilla 579)
 public enum Mod2002020LQ579Key implements Serializable, IMod200KeysProvider  {
 	 C0001(Mod2002020Key.LQ0N1,Mod2002020Key.LQ0N1.getDescription())

@@ -64,7 +64,6 @@ export const CREATE_INVOICE_TICKET = 'createInvoiceTicket';
 export const CREDITOR = 'creditor';
 export const CUSTOMER = 'customer';
 
-
 // ----- D
 
 export const DATE = 'date';
@@ -109,9 +108,11 @@ export const FOOTER = 'footer';
 // ----- G
 
 // ----- H
+
 export const HEADER = 'header';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
+export const HTML_ELEMENT = 'htmlElement';
 
 // ----- I
 
@@ -145,6 +146,7 @@ export const MATERIAL = "material";
 export const MATERIAL_ICONS = 'material-icons';
 export const MATERIAL_OUTLINED = 'material_outlined';
 export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
+
 // ----- N
 
 export const NAME = 'name';
@@ -273,8 +275,7 @@ export const VISIBLE = 'visible';
 
 export const WITHHOLDING = 'withholding';
 export const WITHHOLDING_FARMER = 'withholdingFarmer';
-
-export const HTML_ELEMENT = 'htmlElement';
+export const WORKPLACE = 'workplace';
 
 // ----- X
 

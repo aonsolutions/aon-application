@@ -43,10 +43,10 @@ public class ItemJSON {
 				.setStatus(ProductStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
 				.setProduct(ProductJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PRODUCT)))
 				.setPrice(JsonUtils.getDouble(json, IJsonNames.PRICE))
-				.setExpensesPercent(JsonUtils.getDouble(json, IJsonNames.EXPENSES_PERCENT))
-				.setProfitPercent(JsonUtils.getDouble(json, IJsonNames.PROFIT_PERCENT))
-				.setPurchasePrice(JsonUtils.getDouble(json, IJsonNames.PURCHASE_PRICE))
-				.setExpensesFixed(JsonUtils.getDouble(json, IJsonNames.EXPENSES_FIXED))
+				.setExpensesPercent(JsonUtils.getdouble(json, IJsonNames.EXPENSES_PERCENT))
+				.setProfitPercent(JsonUtils.getdouble(json, IJsonNames.PROFIT_PERCENT))
+				.setPurchasePrice(JsonUtils.getdouble(json, IJsonNames.PURCHASE_PRICE))
+				.setExpensesFixed(JsonUtils.getdouble(json, IJsonNames.EXPENSES_FIXED))
 
 				.setInternet(JsonUtils.getboolean(json, IJsonNames.INTERNET))
 

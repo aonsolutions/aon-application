@@ -171,7 +171,8 @@ export class AonNumber extends AonElement {
         if(this.required) input.required = this.required;
         input.id = this.INPUT;
         input.name = this.getAttribute(CONSTANT.NAME);
-        input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
+        this.value = this.value ? this.onBlur(this.value) : '';
+        input.value = this.value;
         input.style.fontSize = "14px";
         input.type = 'text';
         input.autocomplete = "off"
@@ -265,8 +266,7 @@ export class AonNumber extends AonElement {
     }
 
     onChange(fn) {
-        let input = this.getElement(this.getAttribute('id') + 'Input');
-        input.addEventListener(EVENT.CHANGE, fn);
+        this.addEventListener(EVENT.CHANGE, fn);
     }
 
     onInput(fn) {
