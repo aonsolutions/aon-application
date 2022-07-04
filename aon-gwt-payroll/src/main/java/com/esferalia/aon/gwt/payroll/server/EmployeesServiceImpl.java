@@ -6759,7 +6759,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 
 			// Get contract SEPE id
-			String sepeId = employeeContractInfo.getContractInfo().getSepeId();
+			String sepeId = AonStringUtils.isBlank(employeeContractInfo.getContractSpecificData().getIde()) ?
+					employeeContractInfo.getContractInfo().getSepeId() : employeeContractInfo.getContractSpecificData().getIde();
 
 			// Remove Contrato from SEPE
 			Sepe.removeContrato(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), sepeId);
