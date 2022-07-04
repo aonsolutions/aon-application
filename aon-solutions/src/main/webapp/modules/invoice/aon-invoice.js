@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, 
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
@@ -2379,9 +2379,9 @@ export class AonInvoice extends AonElement {
 			let mail = this.getElement('sendInvoicesMail');
 			let message = {
 				to: mail.value,
-				invoices: [this.invoice]
+				invoice: this.invoice
 			};
-			sendInvoiceMail(message).then(() => {});
+			sendInvoice2Mail(message).then(() => {});
 		});
 		d.open();
 	}
