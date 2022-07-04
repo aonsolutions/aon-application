@@ -144,7 +144,7 @@ export class AonFiscal extends AonElement {
         const datos = await getModelsFiscal();
         if (datos) {
           this.MODELS = sortBy(datos,'year','desc')
-          .filter(el=>"PENDING"!==el.status)
+          .filter(({status})=>status!=="PENDING")
           .map((model) => FiscalUtils.getModelNew(model));
         }
       } catch (error) {
