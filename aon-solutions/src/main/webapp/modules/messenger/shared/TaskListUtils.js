@@ -224,6 +224,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
         transition: "opacity .5s linear",
         opacity: "1",
       });
+
       div.dataset.taskId = task.id;
 
       div.dataset.taskChild = t.id;
@@ -274,8 +275,8 @@ const addTaskChilds = (task, row, documents, isCau) => {
 
     // CHANGE COLORS ALL BRANCH CLOSES
     if ([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && childs.length) {
-      const taskChilds = childs.filter(({ status, parent:p }) => p && status === TASK_STATUS.FINISHED);
-      if (taskChilds.length) {
+      const isChildPending = childs.some(({ status, parent:p }) => p && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status));
+      if (!isChildPending) {
         const iconParent = document.querySelector(`${TAG.SPAN}[data-task-id='${task.id}']`);
         if (iconParent) {
           iconParent.style.color = CSS.variable(COLORS.MATERIAL_RED);

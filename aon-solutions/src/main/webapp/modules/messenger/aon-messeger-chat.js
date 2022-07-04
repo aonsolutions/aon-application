@@ -233,12 +233,15 @@ export class AonMessengerChat extends AonElement {
       checkButtonsToolbar(this, task.id);
 
       let params = { task:taskId, domainId:task.domain.id, domainName:task.domain.name };
+      
       if(task.parent){
         params.parent = task.parent;
       }
+
       if(this.isCau() && this.getAuth().email){
         params.email =  this.getAuth().email;
       }
+
       let workflows = await getTaskWorkflow(params);
 
       const taskHolderId = this.MY_TASKHOLDER ? this.MY_TASKHOLDER.id : null;
@@ -353,7 +356,7 @@ export class AonMessengerChat extends AonElement {
   deleteTask(){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-        await deleteTask({task:this.task.id});
+        await deleteTask(this.task);
         this.showToast({message:MSG.DELETED_DATA});
         this.applicationParentEl.updateCount();
         this.back();
@@ -366,7 +369,7 @@ export class AonMessengerChat extends AonElement {
   deleteTaskWorkflow(id){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-        await deleteTaskWorkflow({id});
+        await deleteTaskWorkflow({id, domain:this.task.domain});
         this.showToast({message:MSG.DELETED_DATA});
         const element = document.querySelector(`[data-id='${id}']`);
         if(element) element.remove();
@@ -421,16 +424,16 @@ export class AonMessengerChat extends AonElement {
     const processType = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
     if(processType){
       this.task.title = processType.getText();
-    
-      if("1" === processType.value )
+      const type = processType.value;
+      if("1" === type){
         json = getFormVacationJson();
-      else if("2" === processType.value )
+      } else if("2" === type){
         json = getFormMovJson();
-      else if("3" === processType.value )
+      } else if("3" === type){
         json = getFormTimeJson();
+      }
   
-      if(json){
-        //TAGS
+      if(json){//TAGS
         let descriptionJson = this.task.getDescriptionJson();
         if(descriptionJson.tags) json.tags = descriptionJson.tags;
 

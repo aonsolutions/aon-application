@@ -326,7 +326,6 @@ export class AonTax extends AonElement {
     buttonAccept.disabled = true;
   }
 
-
   eventData(resp){
     this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
         let nrc = this.getElement("nrc");
@@ -399,6 +398,7 @@ export class AonTax extends AonElement {
       await this.getTable();
       this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
     } catch (error) {
+      console.error(error);
       this.showToast(error);
     }
     this.applicationEl.stopLoading();

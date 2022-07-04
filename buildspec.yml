@@ -74,6 +74,7 @@ phases:
       - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:snapshot
       - docker tag aonsolutions/aon-application:snapshot $REPOSITORY_URI/aon-application:snapshot
       - docker tag aonsolutions/aon-solutions:snapshot $REPOSITORY_URI/aon-solutions:snapshot
+      - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
       # - command
   post_build:
     commands:
@@ -98,10 +99,12 @@ phases:
         {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:snapshot"}
         ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotsolutionsimgdef.json
       - cat snapshotsolutionsimgdef.json
+      - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
       # - command
 artifacts:
   files:
+    - aon-in-payroll.jar
     - snapshotimgdef.json
     - snapshotsolutionsimgdef.json
     # - location

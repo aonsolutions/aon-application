@@ -194,7 +194,7 @@ export const sendMessage = async (text, task) => {
     let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
 
     if(!text){
-        await checkFilesAndSend(textArea, task); //CHECK FILES COMMENT AND SEND
+        await checkFilesAndSend(task, textArea); //CHECK FILES COMMENT AND SEND
         value = textArea.value;
         textArea.clear();
     }
@@ -241,10 +241,11 @@ export const sendMessage = async (text, task) => {
 
 /**
  * 
+ * @param {Task} task task
  * @param {HTMLElement} textArea htmlElement textArea
  * check files and send uploadFile(taskAttach) 
  */
-const checkFilesAndSend = async (textArea, task)=>{
+const checkFilesAndSend = async (task, textArea)=>{
     const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
 
     if(btnSend){
@@ -268,13 +269,12 @@ const checkFileAonFile = async(task, textArea)=> {
     const textAreaDiv = textArea.getTextArea();
 
     const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
-    const {id:taskId} = task;
     const files = textArea.FILES;
     for await (const el of elements) {
         const fileId = el.dataset.id;
         const file = files.find(({id})=> id == fileId);
         if(file){
-            const attach = await aonMessengerChat.uploadFile({ file, task:taskId });
+            const attach = await aonMessengerChat.uploadFile({ file, task });
             if(attach){
                 const json = {
                     domain_name: attach.domain_name,

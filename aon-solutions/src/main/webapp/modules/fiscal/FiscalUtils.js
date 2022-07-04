@@ -31,7 +31,8 @@ const getPathImg = (administration)=>{
 }
 
 const getModelNew = (model)=> {
-  let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model.model];
+  const newModel = TAX_ENUMS.TAX_MODEL_NUMBER[model.model];
+  const statusText = TAX_ENUMS.TAX_STATUS[model.status];
   let color = "";
 
   if("PENDING" === model.status)  {
@@ -40,15 +41,15 @@ const getModelNew = (model)=> {
     color = "in";
   }
 
-  const lettersHtml = /*html*/`<div class="profile-letters size ${color}">${TAX_ENUMS.TAX_MODEL_NUMBER[model.model]}</div>`;
+  const lettersHtml = /*html*/`<div class="profile-letters size ${color}" title="${statusText}">${TAX_ENUMS.TAX_MODEL_NUMBER[model.model]}</div>`;
   
   return {
     ...model,
     resultFormat: !isNaN(model.result) ? formatNumber(model.result, 2, "EUR") : null,
     periodText: TAX_ENUMS.TAX_PERIOD[model.period],
-    statusText: TAX_ENUMS.TAX_STATUS[model.status],
     modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
     typeText: TAX_ENUMS.TAX_TYPE[model.type],
+    statusText,
     lettersHtml,
     newModel
   }
