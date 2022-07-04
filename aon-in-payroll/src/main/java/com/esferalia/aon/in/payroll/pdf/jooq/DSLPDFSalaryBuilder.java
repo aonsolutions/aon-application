@@ -24,23 +24,29 @@ import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
+import org.jooq.Update;
+import org.jooq.UpdateConditionStep;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.in.payroll.pdf.SalaryPDFBuilder;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
-import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -51,11 +57,12 @@ import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.jooq.DSLSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -64,12 +71,11 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> implements SalaryPDFBuilder<Salary>  {
+public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> {
 	
-	
-	private static final Date ISSUE_DATE = new Date(System.currentTimeMillis());
 	
 	public static interface PDFFilter {
 		void accept(PDFContract contract) throws SalaryPDFException;
@@ -88,32 +94,37 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		}
 	}
 
-	
 	String creationUser;
 	byte enableHeredity;
 	String parentDomainName;
 	String domainNamePreffix; 
-	DomainRecord parentDomain;
-	
-	int deleteMark;
 	
 	PDFFilter filter;
 	private int deleted;
 	private int inserted;
 	
+	int deleteMark;
+	Collection<Update<?>> mark4DeleteUpdates;
+	
+	Map<Integer, PDFContract> pdfContractsMap ;
+
 
 	@SuppressWarnings("unchecked")
-	public JooqPDFSalaryBuilder(DSLContext dslContext, String parentDomainName) {
-		super(new LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>(new JooqSalaryBuilder<Salary>(dslContext)), new PDFSalaryBuilder());
+	public DSLPDFSalaryBuilder() {
+		super(new LazySalaryBuilder<DSLSalaryBuilder<Salary>, Salary>(new DSLSalaryBuilder<>()), new PDFSalaryBuilder());
 		
 		
-		this.filter = (p) -> {};
+		this.filter = p -> {};
 		this.enableHeredity = 1;
-		this.creationUser = "altai2aon";
-		this.domainNamePreffix = "altai";
-		this.parentDomainName = parentDomainName;
-		this.parentDomain = getParentDomain(parentDomainName);
-		this.deleteMark = (int) (Math.random() * Integer.MAX_VALUE );
+		
+		this.creationUser = "";
+		this.domainNamePreffix = "";
+
+		this.pdfContractsMap = new HashMap<>();
+
+		this.deleteMark = new Random().nextInt();
+		this.mark4DeleteUpdates = new LinkedList<>();
+		
 	}
 	
 	public int getDeleted() {
@@ -124,29 +135,19 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		return inserted;
 	}
 	
-	public JooqPDFSalaryBuilder setFilter(PDFFilter filter) {
+	public DSLPDFSalaryBuilder setFilter(PDFFilter filter) {
 		this.filter = filter;
 		return this;
-	}
-
-	@Override
-	public void createNewSalary() {
-		super.createNewSalary();
 	}
 	
 	@Override
 	public void setContract(Object contract) {
 		filter.accept((PDFContract)contract);
-		getSQLSalaryProxy((PDFContract)contract)
-		.ifPresentOrElse(
-		(s) -> {
-			super.setContract(s); 
-		},
-		() ->  {
-			SQLSalaryProxy s = newSQLSalaryProxy((PDFContract)contract);
-			super.setContract(s); 
-		});
-		;
+		
+		int contractId = -1 * pdfContractsMap.size();
+		pdfContractsMap.put(contractId, (PDFContract) contract);
+		
+		super.setContract(new SQLSalaryProxy(contractId, contractId));
 	}
 	
 	
@@ -159,10 +160,15 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	}
 	
 	
-	public void execute() {
-		deleted = delete();
+	
+	
+	public void execute(DSLContext dslContext, String parentDomainName) {
+		setParentDomainName(parentDomainName);
+		setContracts(dslContext);
+		mark4Delete(dslContext);
+		deleted = delete(dslContext);
 		info("%d nóminas eliminadas.", deleted);
-		inserted = getJooqSalaryBuilder().execute();
+		inserted = getDSLSalaryBuilder().execute(dslContext);
 		info("%d nóminas traspasadas.", inserted);
 	}
 	
@@ -175,18 +181,33 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		System.out.println("");
 	}
 	
+	protected void setParentDomainName(String parentDomainName) {
+		this.parentDomainName = parentDomainName;
+	}
+	
 	// ------------------------------------------------------------------------
 	
-
-	private DomainRecord getParentDomain(String parentDomainName ) {
-		return getDSLContext().select().from(DOMAIN).where(DOMAIN.NAME.eq(parentDomainName)).fetchOneInto(DOMAIN);	
+	private void setContracts(DSLContext dslContext) {
+		pdfContractsMap.forEach((contractId, pdfContract) -> {
+			SQLSalaryProxy salaryProxy = 
+			getSQLSalaryProxy(dslContext, pdfContract).orElseGet(() -> newSQLSalaryProxy(dslContext, pdfContract));
+			setContract( contractId, salaryProxy);
+		});
 	}
 	
 	
-	private Optional<SQLSalaryProxy> getSQLSalaryProxy(PDFContract contract) {
+	private void setContract(int contractId, SQLSalaryProxy salaryProxy) {
+		SalaryRecord salaryRecord = 
+		getDSLSalaryBuilder().getSalaryRecord(r -> AonNumberUtils.equals(r.getContract(), contractId));
+		salaryRecord.setDomain(salaryProxy.getDomainId());
+		salaryRecord.setContract(salaryProxy.getContractId());
+	}
+	
+
+	private Optional<SQLSalaryProxy> getSQLSalaryProxy(DSLContext dslContext, PDFContract contract) {
 		try {
 		return 
-		getDSLContext()
+		dslContext
 		.select(CONTRACT.ID, DOMAIN.ID)
 		.from(CONTRACT)
 		.innerJoin(PERSON).onKey()
@@ -211,24 +232,24 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		}
 	}
 	
-	private SQLSalaryProxy newSQLSalaryProxy(PDFContract pdfContract) {
+	private SQLSalaryProxy newSQLSalaryProxy(DSLContext dslContext, PDFContract pdfContract) {
 		
 		Salary salary = super.getSalary();
 		
-		EnterpriseRecord enterprise = getEnterprise(pdfContract)
-		.orElseGet(() -> newEnterprise(pdfContract));
+		EnterpriseRecord enterprise = getEnterprise(dslContext, pdfContract)
+		.orElseGet(() -> newEnterprise(dslContext, pdfContract));
 		
-		EnterpriseCccRecord enterpriseCcc = getEnterpriseCCC(pdfContract)
-		.orElseGet(() -> newEnterpriseCCC(pdfContract, enterprise));
+		EnterpriseCccRecord enterpriseCcc = getEnterpriseCCC(dslContext, pdfContract)
+		.orElseGet(() -> newEnterpriseCCC(dslContext, pdfContract, enterprise));
 		
 		
-		RegistryRecord person = getPerson(pdfContract, enterpriseCcc.getDomain())
-		.orElseGet(() -> newPerson(pdfContract,  enterpriseCcc.getDomain()));
+		RegistryRecord person = getPerson(dslContext, pdfContract, enterpriseCcc.getDomain())
+		.orElseGet(() -> newPerson(dslContext, pdfContract,  enterpriseCcc.getDomain()));
 		
-		PayrollWorkplaceRecord workplace = getWorkplace(pdfContract, enterpriseCcc.getDomain())
-		.orElseGet(() -> newWorkplace(pdfContract, enterprise, enterpriseCcc, salary));
+		PayrollWorkplaceRecord workplace = getWorkplace(dslContext, pdfContract, enterpriseCcc.getDomain())
+		.orElseGet(() -> newWorkplace(dslContext, pdfContract, enterprise, enterpriseCcc, salary));
 		
-		ContractRecord contract = newContract(enterpriseCcc, person, workplace, salary);
+		ContractRecord contract = newContract(dslContext, enterpriseCcc, person, workplace, salary);
 		
 		System.out.printf("WARN: [EMPLOYEE CREATED] %s,\"%2$td/%2$tm/%2$tY\",\"%3$td/%3$tm/%3$tY\"\r\n", getMessage(pdfContract), contract.getStartDate(), contract.getEndDate());
 
@@ -239,8 +260,8 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	}
 	
 	
-	private Optional<RegistryRecord> getPerson(PDFContract contract, int domainId) {
-		return getDSLContext()
+	private Optional<RegistryRecord> getPerson(DSLContext dslContext,PDFContract contract, int domainId) {
+		return dslContext
 		.select()
 		.from(REGISTRY)
 		.innerJoin(PERSON).onKey()
@@ -251,10 +272,10 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.fetchOptionalInto(REGISTRY);
 	}
 	
-	private RegistryRecord newPerson(PDFContract contract, int domainId) {
+	private RegistryRecord newPerson(DSLContext dslContext,PDFContract contract, int domainId) {
 		
 		RegistryRecord registry = 
-		getDSLContext()
+		dslContext
 		.select()
 		.from(REGISTRY)
 		.where(REGISTRY.DOMAIN.eq(domainId))
@@ -269,7 +290,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 //				nationality = "ES";
 			
 			RegistryRecord r = 
-			getDSLContext().newRecord(REGISTRY);			
+			dslContext.newRecord(REGISTRY);			
 			r.setDomain(domainId);
 			r.setNationality(nationality);
 			r.setDocument(contract.getNif());
@@ -287,14 +308,14 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		
 		try {
 			PersonRecord person = 
-			getDSLContext().newRecord(PERSON);			
+			dslContext.newRecord(PERSON);			
 			person.setDomain(domainId);
 			person.setRegistry(registry.getId());
 			person.setName(names[0]);
 			person.setFirstSurname(names[1]);
 			person.setSecondSurname(names[2]);
 			person.setSocialSecurityNum(contract.getNaf());
-			getDSLContext()
+			dslContext
 			.insertInto(PERSON)
 			.set(person)
 			.execute()
@@ -309,15 +330,15 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		
 	}
 	
-	private Optional<EnterpriseRecord> getEnterprise(PDFContract contract) {
+	private Optional<EnterpriseRecord> getEnterprise(DSLContext dslContext, PDFContract contract) {
 		try {
-			return getDSLContext()
+			return dslContext
 			.select()
 			.from(ENTERPRISE)
 			.innerJoin(REGISTRY).onKey()
 			.innerJoin(DOMAIN).onKey(REGISTRY.DOMAIN)
 			.where(REGISTRY.DOCUMENT.eq(contract.getCif()))
-			.and(DOMAIN.PARENT.eq(parentDomain.getId()))
+			.and(DOMAIN.PARENT.eq(getParentDomain(dslContext).getId()))
 			.fetchOptionalInto(ENTERPRISE)
 			;
 		} catch ( TooManyRowsException  e) {
@@ -325,21 +346,23 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		}
 	}
 	
-	private EnterpriseRecord newEnterprise(PDFContract contract) {
+	private EnterpriseRecord newEnterprise(DSLContext dslContext, PDFContract contract) {
 		try {
 			return
-			getDSLContext()
+			dslContext
 			.select()
 			.from(ENTERPRISE)
 			.innerJoin(REGISTRY).onKey()
 			.innerJoin(DOMAIN).onKey(REGISTRY.DOMAIN)
 			.where(REGISTRY.DOCUMENT.eq(contract.getCif()))
-			.and(DOMAIN.PARENT.eq(parentDomain.getId()))
+			.and(DOMAIN.PARENT.eq(getParentDomain(dslContext).getId()))
 			.fetchOptionalInto(ENTERPRISE)
 			.orElseGet(() -> {
+				
+				DomainRecord parentDomain = getParentDomain(dslContext);
 								
 				DomainRecord domain = 
-				getDSLContext().newRecord(DOMAIN);
+				dslContext.newRecord(DOMAIN);
 				domain.setCreationUser(creationUser);
 				domain.setParent(parentDomain.getId());
 				domain.setOwner(parentDomain.getOwner());
@@ -347,14 +370,14 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 				domain.setScope(parentDomain.getScope());
 				domain.setDescription(contract.getEnterpriseName());
 				domain.setCreationDate(new Timestamp(System.currentTimeMillis()));
-				domain.setName(String.format("%s-%s-%s", domainNamePreffix, contract.getCif(), parentDomainName));
+				domain.setName(String.format("%s%s-%s", domainNamePreffix, contract.getCif(), parentDomainName));
 				domain.insert();
 
 				String nationality =  "ES";
 				Byte documentType = Utils.getType(contract.getCif());
 
 				RegistryRecord r3gistry = 
-				getDSLContext().newRecord(REGISTRY);			
+				dslContext.newRecord(REGISTRY);			
 				r3gistry.setType(type(RegistryType.LEGAL));
 				r3gistry.setDomain(domain.getId());
 				r3gistry.setNationality(nationality);
@@ -366,7 +389,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 				r3gistry.insert();	
 								
 				EnterpriseRecord enterprise = 
-				getDSLContext().newRecord(ENTERPRISE);
+				dslContext.newRecord(ENTERPRISE);
 				enterprise.setDomain(domain.getId());
 				enterprise.setRegistry(r3gistry.getId());
 				enterprise.setScope(parentDomain.getScope());
@@ -383,8 +406,8 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		}
 	}
 
-	private Optional<EnterpriseCccRecord> getEnterpriseCCC(PDFContract contract) {
-		return getDSLContext()
+	private Optional<EnterpriseCccRecord> getEnterpriseCCC(DSLContext dslContext, PDFContract contract) {
+		return dslContext
 		.select()
 		.from(ENTERPRISE_CCC)
 		.innerJoin(ENTERPRISE_ACTIVITY).onKey()
@@ -396,11 +419,11 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		;
 	}
 	
-	private EnterpriseCccRecord newEnterpriseCCC(PDFContract contract, EnterpriseRecord enterprise) {
+	private EnterpriseCccRecord newEnterpriseCCC(DSLContext dslContext, PDFContract contract, EnterpriseRecord enterprise) {
 		
 		
 		EnterpriseActivityRecord enterpriseActivity =
-		getDSLContext()
+		dslContext
 		.select()
 		.from(ENTERPRISE_ACTIVITY)
 		.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(enterprise.getRegistry()))
@@ -408,7 +431,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.orElseGet(() -> {
 			
 			EnterpriseActivityRecord activity =
-			getDSLContext()
+			dslContext
 			.newRecord(ENTERPRISE_ACTIVITY);
 			activity.setPrincipal((byte) 1);
 			activity.setDomain(enterprise.getDomain());
@@ -422,7 +445,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		});
 		
 		EnterpriseCccRecord enterpriseCcc =
-		getDSLContext()
+		dslContext
 		.newRecord(ENTERPRISE_CCC);
 		enterpriseCcc.setType(type(CCCType.PRINCIPAL)); 
 		enterpriseCcc.setDomain(enterprise.getDomain());
@@ -433,8 +456,8 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		return enterpriseCcc;
 	}
 	
-	private Optional<PayrollWorkplaceRecord> getWorkplace(PDFContract contract, int domainId) {
-		return getDSLContext()
+	private Optional<PayrollWorkplaceRecord> getWorkplace(DSLContext dslContext, PDFContract contract, int domainId) {
+		return dslContext
 		.select()
 		.from(PAYROLL_WORKPLACE)
 		.innerJoin(WORKPLACE).onKey()
@@ -445,17 +468,17 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.orderBy(PAYROLL_WORKPLACE.ID).limit(1).fetchOptionalInto(PAYROLL_WORKPLACE) ;
 	}
 	
-	private PayrollWorkplaceRecord newWorkplace(PDFContract contract, EnterpriseRecord enterprise, EnterpriseCccRecord enterpriseCcc, Salary salary) {
+	private PayrollWorkplaceRecord newWorkplace(DSLContext dslContext, PDFContract contract, EnterpriseRecord enterprise, EnterpriseCccRecord enterpriseCcc, Salary salary) {
 		
 		RaddressRecord raddress =
-		getDSLContext()
+		dslContext
 		.select()
 		.from(RADDRESS)
 		.where(RADDRESS.REGISTRY.eq(enterprise.getRegistry()))
 		.orderBy(RADDRESS.ID).limit(1).fetchOptionalInto(RADDRESS)
 		.orElseGet(() -> {
 			
-			RaddressRecord raddr3ss = getDSLContext().newRecord(RADDRESS);
+			RaddressRecord raddr3ss = dslContext.newRecord(RADDRESS);
 			raddr3ss.setType(type(AddressType.MAIN));
 			raddr3ss.setRegistry(enterprise.getRegistry());
 			raddr3ss.setDomain(enterprise.getDomain());
@@ -467,7 +490,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		});		
 
 		WorkplaceRecord workplace = 
-		getDSLContext()
+		dslContext
 		.select()
 		.from(WORKPLACE)
 		.where(WORKPLACE.ENTERPRISE.eq(enterprise.getRegistry()))
@@ -475,7 +498,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.orElseGet(() ->{
 			
 			WorkplaceRecord workplac3 =
-			getDSLContext().newRecord(WORKPLACE);
+			dslContext.newRecord(WORKPLACE);
 			workplac3.setDescription("PRINCIPAL");
 			workplac3.setDomain(enterprise.getDomain());
 			workplac3.setEnterprise(enterprise.getRegistry());
@@ -489,7 +512,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		
 		
 		PayrollWorkplaceRecord payrollWorkplace =
-		getDSLContext().newRecord(PAYROLL_WORKPLACE);
+		dslContext.newRecord(PAYROLL_WORKPLACE);
 		payrollWorkplace.setWorkplace(workplace.getId());
 		payrollWorkplace.setDomain(enterprise.getDomain());		
 		payrollWorkplace.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
@@ -499,10 +522,10 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		return payrollWorkplace;
 	}
 	
-	private ContractRecord newContract(EnterpriseCccRecord enterpriseCcc, RegistryRecord person, PayrollWorkplaceRecord workplace, Salary salary ) {
+	private ContractRecord newContract(DSLContext dslContext, EnterpriseCccRecord enterpriseCcc, RegistryRecord person, PayrollWorkplaceRecord workplace, Salary salary ) {
 		
 		ContractRecord contract  =
-		getDSLContext().newRecord(CONTRACT);		
+		dslContext.newRecord(CONTRACT);		
 		contract.setDomain(enterpriseCcc.getDomain());
 		contract.setPerson(person.getId());
 		contract.setWorkplace(workplace.getWorkplace());
@@ -511,8 +534,8 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 //		contract.setStartDate(toSqlDate(salary.getSeniorityDate()));
 //		if ( !isLastDayOfMonth(salary.getEndDate()) )
 //			contract.setEndDate(toSqlDate(salary.getEndDate()));
-		contract.setStartDate(getContractStartDate(salary));
-		contract.setEndDate(getContractEndDate(salary));
+		contract.setStartDate(getContractStartDate(dslContext, salary));
+		contract.setEndDate(getContractEndDate(dslContext, salary));
 		contract.setSeniorityDate(toSqlDate(salary.getSeniorityDate()));
 		contract.setRegistration(salary.getRegistration());
 		contract.setCategoryDescription(salary.getCategory());
@@ -520,7 +543,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		contract.insert();
 		
 		ContractDataRecord quoteGroupData = 
-		getDSLContext().newRecord(CONTRACT_DATA);
+		dslContext.newRecord(CONTRACT_DATA);
 		quoteGroupData.setDomain(contract.getDomain());
 		quoteGroupData.setContract(contract.getId());
 		quoteGroupData.setName(ContextVariable.QUOTE_GROUP.getName());
@@ -533,49 +556,9 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		
 	}
 	
-	
-	
-	private void mark4Delete(Salary salary) {
-		getDSLContext()
-		.update(SALARY)
-		.set(SALARY.REGISTRATION, deleteMark)
-		.where(SALARY.CONTRACT.eq(salary.getContract().getId()))
-		.and(SALARY.START_DATE.eq(toSqlDate(salary.getStartDate())))
-		.and(SALARY.END_DATE.eq(toSqlDate(salary.getEndDate())))
-		.execute()
-		;
-//		SelectConditionStep<Record1<Integer>> condition = 
-//			DSL.select(SALARY.ID).from(SALARY)
-//			.where(SALARY.CONTRACT.eq(salary.getContract().getId()))
-//			.and(SALARY.START_DATE.eq(toSqlDate(salary.getStartDate())))
-//			.and(SALARY.END_DATE.eq(toSqlDate(salary.getEndDate())));
-//		
-//		getDSLContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(condition)).execute();
-//		getDSLContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(condition)).execute();
-//		getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(condition)).execute();
-//		getDSLContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(condition)).execute();
-//		getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(condition)).execute();
-//		getDSLContext().delete(SALARY).where(SALARY.ID.in(condition)).execute();
-		
-	}
-	
-	private int  delete() {
-		SelectConditionStep<Record1<Integer>> condition = 
-		DSL.select(SALARY.ID).from(SALARY).where(SALARY.REGISTRATION.eq(deleteMark));
-		
-		getDSLContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(condition)).execute();
-		return getDSLContext().delete(SALARY).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
-		
-	}
-
-	private java.sql.Date getContractStartDate(Salary salary) {
+	private java.sql.Date getContractStartDate(DSLContext dslContext, Salary salary) {
 		return 
-		getDSLContext()
+		dslContext
 		.select(
 		DSL.max(CONTRACT.END_DATE))
 		.from(CONTRACT)
@@ -590,13 +573,13 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.orElse(toSqlDate(salary.getSeniorityDate()));		
 	}
 	
-	private java.sql.Date getContractEndDate(Salary salary) {
+	private java.sql.Date getContractEndDate(DSLContext dslContext, Salary salary) {
 		
 		if ( !isLastDayOfMonth(salary.getEndDate()))
 			return toSqlDate(salary.getEndDate());
 		
 		return 
-		getDSLContext()
+		dslContext
 		.select(
 		DSL.min(CONTRACT.START_DATE))
 		.from(CONTRACT)
@@ -608,6 +591,10 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.fetchOptional(DSL.min(CONTRACT.START_DATE))
 		.map( d -> AonDateUtils.add(d, Calendar.DAY_OF_MONTH, -1))
 		.orElse(null);		
+	}
+	
+	private DomainRecord getParentDomain(DSLContext dslContext) {
+		return dslContext.select().from(DOMAIN).where(DOMAIN.NAME.eq(parentDomainName)).fetchOneInto(DOMAIN);	
 	}
 
 	private String getMessage(PDFContract contract) {
@@ -622,19 +609,47 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		contract.getEndDate());
 
 	}
-	
-	
-	private DSLContext getDSLContext() {
-		return getJooqSalaryBuilder().getDSLContext();
+
+	private void mark4Delete(Salary salary) {
+		UpdateConditionStep<SalaryRecord> mark4DeleteUpdate = 
+		DSL
+		.update(SALARY)
+		.set(SALARY.REGISTRATION, deleteMark)
+		.where(SALARY.EMPLOYEE_DOCUMENT.eq(salary.getEmployeeDocument()))
+		.and(SALARY.CCC.eq(salary.getCcc()))
+		.and(SALARY.START_DATE.eq(toSqlDate(salary.getStartDate())))
+		.and(SALARY.END_DATE.eq(toSqlDate(salary.getEndDate())))
+		;
+		
+		mark4DeleteUpdates.add(mark4DeleteUpdate);
 	}
 	
-	private JooqSalaryBuilder<Salary> getJooqSalaryBuilder(){
+	private void mark4Delete(DSLContext dslContext) {
+		mark4DeleteUpdates.forEach(dslContext::execute);
+	}
+	private int  delete(DSLContext dslContext) {
+		SelectConditionStep<Record1<Integer>> condition = 
+		DSL.select(SALARY.ID).from(SALARY).where(SALARY.REGISTRATION.eq(deleteMark));
+		
+		dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(condition)).execute();
+		dslContext.delete(SALARY_COST).where(SALARY_COST.SALARY.in(condition)).execute();
+		dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(condition)).execute();
+		dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(condition)).execute();
+		dslContext.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(condition)).execute();
+		dslContext.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(condition)).execute();
+		return dslContext.delete(SALARY).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		
+	}
+
+	private DSLSalaryBuilder<Salary> getDSLSalaryBuilder(){
 		return getLazySalaryBuilder().getSalaryBuilder();
 	}
 	
-	private LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary> getLazySalaryBuilder(){
-		return (LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>) getBuilders()[0];
+	private LazySalaryBuilder<DSLSalaryBuilder<Salary>, Salary> getLazySalaryBuilder(){
+		return (LazySalaryBuilder<DSLSalaryBuilder<Salary>, Salary>) getBuilders()[0];
 	}
+	
+	
 
 	protected static boolean isLastDayOfMonth(Date date) {
 		return getMax(date, DAY_OF_MONTH) == get(date, DAY_OF_MONTH);
@@ -647,4 +662,11 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	protected static <E extends Enum<?>> byte type(E constant) {
 		return (byte) constant.ordinal();
 	}
-}
+	
+	protected static <T> List<T> merge(List<T> l1, List<T> l2) {
+		List<T> l = new LinkedList<>();
+		l.addAll(l1);
+		l.addAll(l2);
+		return l;
+	}
+} 
