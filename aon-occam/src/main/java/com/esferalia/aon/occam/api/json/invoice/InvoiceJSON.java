@@ -42,6 +42,12 @@ public class InvoiceJSON {
 		JSONObject addressJSON = JsonUtils.getJSONObject(registryJSON, IJsonNames.ADDRESS);
 		RegistryAddress raddress = RegistryAddressJSON.fromJSON(addressJSON);
 		if(raddress.getRegistry() == null) raddress.setRegistry(registry.getId());
+		JSONObject rectificationInvoiceJSON = JsonUtils.getJSONObject(json, IJsonNames.RECTIFICATION_INVOICE);
+		RectificationType rtype = getRectificationType(json);
+		Invoice rectificationInvoice = new Invoice();
+		if(RectificationType.NORMAL_RECTIFIER.equals(rtype) 
+			 || RectificationType.SPECIAL_RECTIFIER.equals(rtype))
+			rectificationInvoice = getRectificationInvoice(rectificationInvoiceJSON);
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -58,10 +64,13 @@ public class InvoiceJSON {
 				.setWithholdingFarmer(json.optBoolean(IJsonNames.WITHHOLDING_FARMER))
 				.setVatAccrualPayment(json.optBoolean(IJsonNames.VAT_ACCRUAL_PAYMENT))
 				.setSurcharge(json.optBoolean(IJsonNames.SURCHARGE))
-				.setRectificationType(json.optBoolean(IJsonNames.RECTIFIED) ? RectificationType.RECTIFIED : RectificationType.NONE)
+				.setRectificationType(rtype)
 				.setComments(json.optString(IJsonNames.COMMENTS))
 				.setRemarks(json.optString(IJsonNames.REMARKS))
-				.setRectificationInvoice(JsonUtils.getInteger(json, IJsonNames.RECTIFICATION_INVOICE))	
+				.setRectificationInvoice(rectificationInvoice.getId())
+				.setRectificationInvoiceSeries(rectificationInvoice.getSeries())
+				.setRectificationInvoiceNumber(rectificationInvoice.getNumber())
+				.setRectificationInvoiceDate(rectificationInvoice.getIssueDate())
 				.setTotal(JsonUtils.getdouble(json, IJsonNames.TOTAL))
 				.setRegistryData(registry)
 				.setRegistry(registry.getId())
@@ -78,6 +87,22 @@ public class InvoiceJSON {
 				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY));
 	}
 
+	private static RectificationType getRectificationType(JSONObject json) {
+		if(json.optBoolean(IJsonNames.RECTIFIER)) {
+			return RectificationType.NORMAL_RECTIFIER;
+		} else if(json.optBoolean(IJsonNames.RECTIFIED)) {
+			return RectificationType.RECTIFIED;
+		} else return RectificationType.NONE;
+	}
+	
+	private static Invoice getRectificationInvoice(JSONObject json) {
+		return new Invoice()
+				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+				.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
+				.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
+				.setIssueDate(JsonUtils.getDate(json, IJsonNames.DATE));
+	}
+	
 	public static JSONArray toJSON(List<Invoice> invoices) {
 		JSONArray array = new JSONArray();
 		invoices.stream().forEach(invoice -> array.put(toJSON(invoice)));
@@ -108,6 +133,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, invoice.isVatAccrualPayment())
 			.put(IJsonNames.SURCHARGE, invoice.isSurcharge())
 			.put(IJsonNames.RECTIFIED, invoice.isRectified())
+			.put(IJsonNames.RECTIFIER, invoice.isRectifier())
 			//.put(IJsonNames.COMMENTS, invoice.getComments())
 			.put(IJsonNames.TOTAL, invoice.getTotal())
 			.put(IJsonNames.SENDER,RegistryJSON.toJSON(invoice.getRegistryData()))

@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries, 
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
@@ -709,22 +709,8 @@ export class AonInvoice extends AonElement {
 			});
 			serie.readonly = this.invoice.isReadonly();
 			serie.value = this.invoice.serie;
-			serie.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setSerie(serie.value);
-				if(this.invoice.isInbox()) {
-					let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
-					this.getElement(this.NUMBER).readonly = !enabled;
-					this.getElement(this.NUMBER).disabled = !enabled;
-					if(!enabled) {
-						this.invoice.number = '';
-						this.getElement(this.NUMBER).value = '';
-					} else {
-						this.invoice.number = '1';
-						this.getElement(this.NUMBER).value = '1';
-					}
-				}
-				if(this.autosave) this.save();
-			});
+			serie.addEventListener(EVENT.CHANGE, () => this.onChangeSerie(serie.value));
+			serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
 			// ----- NUMBER
 
@@ -891,6 +877,23 @@ export class AonInvoice extends AonElement {
 		}).catch(e => {
 			console.error(e);
 		});
+	}
+
+	onChangeSerie(value) {	
+		this.invoice.setSerie(value);
+		if(this.invoice.isInbox()) {
+			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
+			this.getElement(this.NUMBER).readonly = !enabled;
+			this.getElement(this.NUMBER).disabled = !enabled;
+			if(!enabled) {
+				this.invoice.number = '';
+				this.getElement(this.NUMBER).value = '';
+			} else {
+				this.invoice.number = '1';
+				this.getElement(this.NUMBER).value = '1';
+			}
+		}
+		if(this.autosave) this.save();
 	}
 
 	buildTaxCard(parent) {
@@ -1371,6 +1374,7 @@ export class AonInvoice extends AonElement {
 
 	onChangeDetailVat(detail, value, i, dialog) {
 		detail.percentage = value;
+		detail.vat = value;
 		this.invoice.setDetail(detail, i);
 		this.onChangeDetail(detail, i, dialog);
 	}
@@ -1455,7 +1459,7 @@ export class AonInvoice extends AonElement {
 			vat.options = JSON.stringify(TaxIVAPercentage);
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
-			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailDiscount(detail, vat.value, i));
+			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailVat(detail, vat.value, i));
 			let td6 = table.addCell(vat);
 			td6.style.verticalAlign = "bottom";
 			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
@@ -2379,9 +2383,9 @@ export class AonInvoice extends AonElement {
 			let mail = this.getElement('sendInvoicesMail');
 			let message = {
 				to: mail.value,
-				invoices: [this.invoice]
+				invoice: this.invoice
 			};
-			sendInvoiceMail(message).then(() => {});
+			sendInvoice2Mail(message).then(() => {});
 		});
 		d.open();
 	}
