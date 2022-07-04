@@ -709,22 +709,8 @@ export class AonInvoice extends AonElement {
 			});
 			serie.readonly = this.invoice.isReadonly();
 			serie.value = this.invoice.serie;
-			serie.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setSerie(serie.value);
-				if(this.invoice.isInbox()) {
-					let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
-					this.getElement(this.NUMBER).readonly = !enabled;
-					this.getElement(this.NUMBER).disabled = !enabled;
-					if(!enabled) {
-						this.invoice.number = '';
-						this.getElement(this.NUMBER).value = '';
-					} else {
-						this.invoice.number = '1';
-						this.getElement(this.NUMBER).value = '1';
-					}
-				}
-				if(this.autosave) this.save();
-			});
+			serie.addEventListener(EVENT.CHANGE, () => this.onChangeSerie(serie.value));
+			serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
 			// ----- NUMBER
 
@@ -891,6 +877,23 @@ export class AonInvoice extends AonElement {
 		}).catch(e => {
 			console.error(e);
 		});
+	}
+
+	onChangeSerie(value) {	
+		this.invoice.setSerie(value);
+		if(this.invoice.isInbox()) {
+			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
+			this.getElement(this.NUMBER).readonly = !enabled;
+			this.getElement(this.NUMBER).disabled = !enabled;
+			if(!enabled) {
+				this.invoice.number = '';
+				this.getElement(this.NUMBER).value = '';
+			} else {
+				this.invoice.number = '1';
+				this.getElement(this.NUMBER).value = '1';
+			}
+		}
+		if(this.autosave) this.save();
 	}
 
 	buildTaxCard(parent) {
