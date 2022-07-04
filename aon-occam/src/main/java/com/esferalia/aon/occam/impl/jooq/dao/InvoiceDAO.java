@@ -892,6 +892,9 @@ public class InvoiceDAO {
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
 		invoice = insert(ctx, aonCtx, invoice);
 		FinanceDAO.insertFinances(ctx, invoice.getFinances());
+		if(invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
+			updateRectifiedInvoice(ctx, invoice);
+		}
 		if(rawdocId != null) {
 			Rawdoc rawdoc = RawdocDAO.getFull(ctx, rawdocId);
 			if(rawdoc.getData() != null) {
@@ -908,6 +911,14 @@ public class InvoiceDAO {
 			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
 		}
 		return invoice;
+	}
+	
+	private static void updateRectifiedInvoice(AONContext ctx, Invoice rectifierInvoice) {
+		ctx.getDslContext().update(INVOICE)
+		.set(INVOICE.RECTIFICATION_TYPE, RectificationType.RECTIFIED.value())
+		.set(INVOICE.RECTIFICATION_INVOICE, rectifierInvoice.getId())
+		.where(INVOICE.ID.eq(rectifierInvoice.getRectificationInvoice()))
+		.execute();
 	}
 	
 	public static Invoice save(AONContext ctx, Invoice invoice) {
