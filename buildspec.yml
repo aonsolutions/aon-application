@@ -99,15 +99,14 @@ phases:
         {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:snapshot"}
         ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotsolutionsimgdef.json
       - cat snapshotsolutionsimgdef.json
-      - |
-        cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll-aws-lambda.jar
+      - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
       # - command
 artifacts:
   files:
+    - aon-in-payroll.jar
     - snapshotimgdef.json
     - snapshotsolutionsimgdef.json
-    - aon-in-payroll-aws-lambda.jar
     # - location
   #name: $(date +%Y-%m-%d)
   #discard-paths: yes

@@ -42,8 +42,6 @@ phases:
         {"name":"%s","imageUri":"%s/aon-application:%s"}
         ]' ${TAG^^} $REPOSITORY_URI  $TAG > testimgdef.json
       - cat testimgdef.json
-      - |
-        cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll-aws-lambda.jar
       #- |
       # printf '[
       # {"name":"TEST-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
