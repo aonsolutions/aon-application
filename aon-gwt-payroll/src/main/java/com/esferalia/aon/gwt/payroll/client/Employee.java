@@ -456,7 +456,7 @@ public abstract class Employee extends ResizeComposite {
 			onContractTypeChange(null);
 		else {
 			Integer contractTypeInt = Integer.parseInt(contractTypeStr);
-			if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0))
+			if(AonNumberUtils.between(contractTypeInt, 200, 400) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0))
 				showPartialTimeContract();
 			else
 				showElementsFullTimeContract();
