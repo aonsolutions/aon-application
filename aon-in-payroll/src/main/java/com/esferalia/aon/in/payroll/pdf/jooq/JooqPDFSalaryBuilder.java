@@ -65,7 +65,6 @@ import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.api.services.calendar.Calendar.Freebusy.Query;
 
 public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> implements SalaryPDFBuilder<Salary>  {
 	
