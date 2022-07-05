@@ -966,12 +966,17 @@ const openDialogDailyTracking = ()=> {
     note.height = "100px";
 
     dialog.addSendAction(async()=>{
+      application.startLoading();
+
       const jobValue = jobType.value;
       const trackingValue = trackingDuration.value;
-      application.startLoading();
+     
+
+      let dailyTracking = undefined;
+
       if(jobValue && trackingValue){
 
-        let dailyTracking = new DailyTracking()
+        dailyTracking = new DailyTracking()
         .setDomain(task.domain)
         .setTask(task.id)
         .setTrackingDate(AonDateUtils.formatDateOrigin(new Date()))
@@ -980,11 +985,12 @@ const openDialogDailyTracking = ()=> {
         .setTrackingDuration(parseTimeToDouble(trackingValue))
         .setComments(note.value)
         ;
-
-        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, null, dailyTracking); 
-
-        dialog.close();
       }
+
+      await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, null, dailyTracking); 
+
+      dialog.close();
+      
       application.stopLoading();
     }, MSG.ACCEPT);
   });
