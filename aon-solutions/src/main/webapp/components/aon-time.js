@@ -1,7 +1,7 @@
 import { CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js";
 import { AonElement } from "./AonElement.js";
 
-import '../css/aon-autosize-textarea.css';
+import '../css/aon-time.css';
 
 export class AonTime extends AonElement {
 
