@@ -1,10 +1,8 @@
 package com.esferalia.aon.in.payroll.aws.lambda;
 
-import java.util.Arrays;
 import java.util.Properties;
 
 import javax.mail.Address;
-import javax.mail.IllegalWriteException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -83,6 +81,7 @@ public class SESSMTPSender {
         msg.addRecipient(Message.RecipientType.CC, new InternetAddress(TO2));
         msg.setSubject(SUBJECT);
         msg.setContent(String.format(BODY_FORMAT, args),"text/html");
+        
         
         // Add a configuration set header. Comment or delete the 
         // next line if you are not using a configuration set

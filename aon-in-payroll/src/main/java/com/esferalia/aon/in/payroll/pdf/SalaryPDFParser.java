@@ -131,11 +131,11 @@ public class SalaryPDFParser {
 				try {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
-//					System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
 //					System.out.println(text);
 					return template;
 				} catch ( UnknownPDFException e ) {
-//					System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
 //					System.err.println(text);
 				}
 			}
@@ -145,6 +145,7 @@ public class SalaryPDFParser {
 			try {
 				return pdfTemplate.parse(text, salaryBuilder);
 			} catch ( SalaryPDFException e ) {
+				System.err.println(e.getMessage());
 				//System.err.println(text);
 				return pdfTemplate;
 			}
