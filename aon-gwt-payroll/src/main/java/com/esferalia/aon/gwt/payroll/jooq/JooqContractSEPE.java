@@ -147,7 +147,7 @@ public class JooqContractSEPE {
 	
 	private static void getContractIDE(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
 		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("IDE"))
+				.where(CONTRACT_DATA.NAME.eq("SEPE_ID"))
 				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.fetch();
 		
@@ -282,14 +282,14 @@ public class JooqContractSEPE {
 			Date endDate, String ide) {
 		
 		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("IDE"))
+			.where(CONTRACT_DATA.NAME.eq("SEPE_ID"))
 			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
 			.execute();
 		
 		if(AonStringUtils.isNotBlank(ide)) {
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "IDE")
+				.set(CONTRACT_DATA.NAME, "SEPE_ID")
 				.set(CONTRACT_DATA.CONTRACT, contractId)
 				.set(CONTRACT_DATA.EXPRESSION, ide)
 				.set(CONTRACT_DATA.START_DATE, startDate)

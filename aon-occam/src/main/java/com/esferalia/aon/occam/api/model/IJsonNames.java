@@ -380,9 +380,10 @@ public final class IJsonNames {
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";
 	public static final String RECTIFICATION = "rectification";
-	public static final String RECTIFICATION_INVOICE = "rectification_invoice";
+	public static final String RECTIFICATION_INVOICE = "rectificationInvoice";
 	public static final String RECTIFICATION_TYPE = "rectificationType";
 	public static final String RECTIFIED = "rectified";
+	public static final String RECTIFIER = "rectifier";
 	public static final String REFERENCE_CODE = "referenceCode";
 	public static final String REFERENCE = "reference";
 	public static final String REG_CONTABLE_DATE = "regContableDate";

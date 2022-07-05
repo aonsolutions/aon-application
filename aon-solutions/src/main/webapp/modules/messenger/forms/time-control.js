@@ -8,8 +8,7 @@ import { setAttributes } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../timecontrol/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
-
+import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 
 /**
  * 
@@ -45,14 +44,14 @@ const createDataForm = (form, aonMessengerChat) => {
     form.appendChild( taskHolder );
    
     let times = setAttributes(new AonSelect(),{ title: "Seleccione registro a modificar", id:"timeId", name:"timeId"});
-    createDivGrid(form, times, {classes:[CSS.AON_COL_XS_12]})
+    TaskCreationUtils.createDivGrid(form, times, {classes:[CSS.AON_COL_XS_12]})
 
     fillTimeControl(times, data.timeId, taskHolderId);
     if(data.timeId)
         times.setDisabled(CONSTANT.TRUE);
 
     let date = setAttributes(new AonDate(),{ title: `Nueva ${MSG.DATE}`, id:"date", name:"date"});
-    createDivGrid(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.date) date.setDate(new Date(data.date));
 
     let time = setAttributes(new AonInput(), {
@@ -62,7 +61,7 @@ const createDataForm = (form, aonMessengerChat) => {
         description: `Nueva ${MSG.HOUR}`,
         value: data.time ?  data.time : ""
     });
-    createDivGrid(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    TaskCreationUtils.createDivGrid(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
         if(detail.date){
@@ -72,17 +71,17 @@ const createDataForm = (form, aonMessengerChat) => {
     });
 
     //OBSERVATION
-    const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
-    createDivGrid(form, observation, {classes:[CSS.AON_COL_XS_12]});
+    const observation = TaskCreationUtils.createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
+    TaskCreationUtils.createDivGrid(form, observation, {classes:[CSS.AON_COL_XS_12]});
 
     let dur = aonMessengerChat.getDur();
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isTimecontrolManager() && aonMessengerChat.getDur().isTimecontrolPortal())){
 
-        let btnAccept = createBtnAccept();
+        let btnAccept = TaskCreationUtils.createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat) );
          
-        createDivGrid(form, btnAccept, {
+        TaskCreationUtils.createDivGrid(form, btnAccept, {
             styles:{
                 textAlign: "center"
             }

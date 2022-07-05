@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.accounting;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.mvel2.MVEL;
 
@@ -16,7 +17,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public abstract class AccSctiptMVELContext extends HashMap<String, Object> {
+public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 
 	private static final long serialVersionUID = 2589312117223760204L;
 	
@@ -99,10 +100,6 @@ public abstract class AccSctiptMVELContext extends HashMap<String, Object> {
 		}
 	}
 	
-	public AccSctiptMVELContext(AccountEntry accountEntry) {
-		this.accountEntry = accountEntry;
-	}
-	
 	private ScriptContext fillConcept(ScriptContext sc) {
 		Object ret = MVEL.eval( sc.getAede().getConceptExpression() , this , this);
 		return sc.setConcept(ret == null? null : ret.toString());
@@ -118,7 +115,12 @@ public abstract class AccSctiptMVELContext extends HashMap<String, Object> {
 			:sc.setDebit(amount);
 	}
 
-	public AccountEntry fillDetails(AONContext ctx, AccountEntryDetailExpressionScript script) {
+	public AccountEntry fillDetails(AONContext ctx, T t, AccountEntryDetailExpressionScript<T> script) {
+		if (isEmpty()) fillContext();
+		if (this.accountEntry == null) this.accountEntry = fillAccountEntry( t );
+		
+		if (this.accountEntry == null)
+			throw new IllegalStateException("No se ha rellenado una cabecera de apunte");
 		script
 			.getDetails()
 			.stream()
@@ -128,21 +130,41 @@ public abstract class AccSctiptMVELContext extends HashMap<String, Object> {
 			.map( this::fillConcept )
 			.map( this::fillAmount )
 			.filter( sc -> sc.hasAmount() )
-			.forEach(sc -> this.accountEntry.addDetail(sc.getAed()));
+			.forEach(sc -> addDetail(this.accountEntry, sc.getAed()));
 			;
 		return this.accountEntry;
 	}
 	
+	private AccountEntry addDetail(AccountEntry ae, AccountEntryDetail aed) {
+		AccountEntryDetail added =  ae.getDetails()
+			.stream()
+			.filter(Objects::nonNull)
+			.filter(det -> AonNumberUtils.equals(det.getAccount(), aed.getAccount()))
+			.map(det -> det.addDebit(aed.getDebit()))
+			.map(det -> det.addCredit(aed.getCredit()))
+			.findFirst()
+			.orElse(null);
+		return (added == null) ? ae.addDetail(aed) : ae;
+	}
+
+	public abstract AccountEntry fillAccountEntry(T t);
 	public abstract void fillContext();
 	
 
 	// ******************************************
 	// **********************  EXPRESSION METHODS
 	// ******************************************
+	public double abs(double value) {
+		return AonMathUtils.absRounded(value);
+	}
 	
 	public boolean esComplementaria(FiscalModel model) {
-		return model.isComplementary() || model.isReplacement();
+		return model.isComplementary();
 	}
+	public boolean esSustitutiva(FiscalModel model) {
+		return model.isReplacement();
+	}
+	
 	public boolean aIngresar(FiscalModel model) {
 		return FiscalModelDeclarationType.isToDeposit(model.getDeclarationResultType());
 	}

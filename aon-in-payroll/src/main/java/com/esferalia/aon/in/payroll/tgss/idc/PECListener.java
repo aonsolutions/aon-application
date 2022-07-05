@@ -78,6 +78,8 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, Collection<DeductionProvider>> DEDUCTION_QUOTA_PROVIDER_MAP = new HashMap<String, Collection<DeductionProvider>>() {
 		{
 			put("08", REMOVE_ALL_DEDUCTIONS);
+			put("12", collection(
+					newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)));
 			put("53", collection(
 					newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
 					newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)));
@@ -98,6 +100,9 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, Collection<CostProvider>> COST_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<CostProvider>>() {
 		{
 			put("01", REMOVE_ALL_COSTS );
+			put("12", collection(
+					newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE),
+					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE)));
 			put("53", collection(
 					newRemoveCost(ContextVariable.FP_ENTERPRISE),
 					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE),

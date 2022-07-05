@@ -43,7 +43,8 @@ public class LocationDAO {
 	
 	private static Location insert(AONContext ctx, Location lc) {
 		ctx.checkWrite();
-		Integer id = ctx.getDslContext().insertInto(LOCATION)
+		Integer id = ctx.getDslContext()
+				.insertInto(LOCATION)
 				.set(LOCATION.DOMAIN, lc.getDomain().getId())
 				.set(LOCATION.DESCRIPTION, lc.getDescription())
 				.set(LOCATION.RADIO, lc.getRadio())

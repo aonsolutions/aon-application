@@ -5,11 +5,13 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { checkFilesAddEventClick, downChat, setContentMessageChat } from "./utils.js";
+import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { checkFilesAddEventClick, downChat, setContentMessageChat, parseTimeToDouble, parseDoubleToTime } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { sendTaskHistoricEmail, getTaskOne } from "../../../services/taskService.js";
+import { sendTaskHistoricEmail, getTaskOne, getJobType, getDailyTrackingByTask } from "../../../services/taskService.js";
 import { AonMessengerChat } from "../aon-messeger-chat.js";
+import { DailyTracking } from "../../../models/task/DailyTracking.js";
+import { sortBy } from "../../../services/utils.js";
 
 /**
  * 
@@ -18,7 +20,7 @@ import { AonMessengerChat } from "../aon-messeger-chat.js";
  * @param {Object} properties 
  * @returns 
  */
- export const createDivGrid = (parent, child, properties)=> {
+const createDivGrid = (parent, child, properties)=> {
 
   const div = newComponent({ type: TAG.DIV, ...properties }).element;
 
@@ -29,7 +31,7 @@ import { AonMessengerChat } from "../aon-messeger-chat.js";
   return div;
 }
 
-export const createDivGridBefore = (parent, child, properties)=> {
+const createDivGridBefore = (parent, child, properties)=> {
 
   const div = newComponent({ type: TAG.DIV, ...properties }).element;
 
@@ -40,20 +42,21 @@ export const createDivGridBefore = (parent, child, properties)=> {
   return div;
 }
 
-export const createBtnAccept = () => {
+const createBtnAccept = () => {
   let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
   btnAccept.className = CSS.AON_BUTTON;
   btnAccept.textContent = "Procesar";
   return btnAccept;
 }
+
 // ----------------------------------------------------
 // MAIN VIEW
 // ----------------------------------------------------
-export const createMainView = (aonMessengerChat) =>{
+const createMainView = (parent) =>{
   const div = document.createElement(TAG.DIV);
   div.className = CSS.AON_SUB_CONTENT;
   div.style.width = "100%";
-  aonMessengerChat.appendChild(div);
+  parent.appendChild(div);
   const mainView = newComponent({
     type: TAG.DIV,
     classes: [CSS.FLEX_JUSTIFY_BETWEEN], // CSS.NO_COPY
@@ -72,10 +75,9 @@ export const createMainView = (aonMessengerChat) =>{
   div.appendChild(mainView);
 
   return mainView;
-  
 } 
 
-export const createMobileMainView = () => newComponent({
+const createMobileMainView = () => newComponent({
   type: TAG.DIV,
   classes: [CSS.FLEX_COLUMN], //  CSS.NO_COPY
   styles: {
@@ -90,7 +92,7 @@ export const createMobileMainView = () => newComponent({
 }).element;
 
 
-export const createDivEditable = (parent, title, value, id, placeholder) => {
+const createDivEditable = (parent, title, value, id, placeholder) => {
   const div = createStartJustifiedColumn();
   if(parent) parent.appendChild(div.element);
   let span = setStyles(document.createElement(TAG.SPAN),{
@@ -126,7 +128,7 @@ export const createDivEditable = (parent, title, value, id, placeholder) => {
   return div.element;
 }
 
-export const createTitle = (title) => newComponent({
+const createTitle = (title) => newComponent({
   type: "text",
   text: title ? title : "",
   styles: {
@@ -140,7 +142,7 @@ export const createTitle = (title) => newComponent({
 }).element;
 
 
-export const createReceiverDiv = () => newComponent({
+const createReceiverDiv = () => newComponent({
   type: TAG.DIV,
   classes: [
     CSS.FLEX_ROW,
@@ -151,7 +153,6 @@ export const createReceiverDiv = () => newComponent({
     width: "100%"
   },
 });
-
 
 // ----------------------------------------------------
 // MESSAGE COMPONENT
@@ -230,7 +231,7 @@ const createCommentContent = (properties) => newComponent({
  * @param {String} submessage optional submessage
  * @returns 
  */
-export const createAction = (icon, message, submessage, margin=true) => {
+const createAction = (icon, message, submessage, margin=true) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
@@ -296,19 +297,18 @@ export const createAction = (icon, message, submessage, margin=true) => {
  * @param {object} styles 
  * @returns 
  */
-export const createStartJustifiedRow = (styles) => newComponent({
+const createStartJustifiedRow = (styles) => newComponent({
     classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: styles
 });
 
-export const createStartJustifiedColumn = () =>newComponent({
+const createStartJustifiedColumn = () =>newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: {
       width : "100%", 
       marginBottom: "5px"
     }
 });
-
 
 /**
  * Create a text 
@@ -349,7 +349,7 @@ const createMaterialIcon = (properties) => newComponent({
  * @param {object} properties 
  * @returns 
  */
- export const createOutlinedMaterialIcon = (properties) => {
+const createOutlinedMaterialIcon = (properties) => {
   return newComponent({
       type: 'i',
       text: properties.name,
@@ -363,7 +363,7 @@ const createMaterialIcon = (properties) => newComponent({
       }
   });
 
- } 
+} 
 
 /**
  * Check the properties of the comment
@@ -392,22 +392,21 @@ const checkProperties = (properties) => {
 }
 
 //----------------TYPE REQUEST CAU 
-export const createSelectCau = (name, id, title) => setAttributes( new AonSelect(),{
+const createSelectCau = (name, id, title) => setAttributes( new AonSelect(),{
   name,
   id,
   title,
 });
 
 //----------------TYPE REQUEST   
-export const createRequestType = () =>setAttributes( new AonSelect(),{
+const createRequestType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.SOURCE_TASK,
   name: MESSENGER_IDS.SOURCE_TASK,
   title: MSG.TYPE_REQUEST
 });
 
-
 //----------------WORKGROUP   
-export const createWorkgroup = () =>setAttributes( new AonSelect(),{
+const createWorkgroup = () =>setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.WORKGROUP,
     name: MESSENGER_IDS.WORKGROUP,
     title: MSG.WORKGROUP,
@@ -415,29 +414,29 @@ export const createWorkgroup = () =>setAttributes( new AonSelect(),{
 });
 
 //----------------PROCESS
-export const createProcessType = () =>setAttributes( new AonSelect(),{
+const createProcessType = () =>setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.PROCESS_TYPE,
     name: MESSENGER_IDS.PROCESS_TYPE,
     title: MSG.PROCESS_TYPE
 });
 
  //-----------------TASK HOLDER
- export const createTaskHolder = () => setAttributes( new AonSelect(),{
+ const createTaskHolder = () => setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.TASKHOLDER,
     name: MESSENGER_IDS.TASKHOLDER,
-    title: "Asignar a",
+    title: "Asignar a", // TODO
     autocomplete:true
 });
 
  //-----------------TAG
- export const createTaskTag = () => setAttributes( new AonSelect(),{
+ const createTaskTag = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.TASKTAG,
   name: MESSENGER_IDS.TASKTAG,
   title: MSG.TAG
 });
 
  //-----------------CUSTOMER
- export const createCustomer = () => setAttributes( new AonSelect(),{
+ const createCustomer = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
   title: MSG.CUSTOMER,
@@ -446,24 +445,23 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
 });
 
  //-----------------PROJECT
- export const createProject = () => setAttributes( new AonSelect(),{
+ const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
-  title: "Receptor",
+  title: "Receptor", // TODO
   autocomplete: CONSTANT.OFF
 });
 
  //-----------------ADVISORY
- export const createAdvisory = () => setAttributes( new AonSelect(),{
+ const createAdvisory = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.ADVISORY_TASK,
   name: MESSENGER_IDS.ADVISORY_TASK,
-  title: "Asesoria",
+  title: "Asesoria", // TODO
   autocomplete: CONSTANT.OFF
 });
 
-
 //-------------TEXT AREA COMMENT
-export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
+const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
     name:MESSENGER_IDS.COMMENT_TASK,
     placeholder: placeholder || MSG.COMMENT+"..."
 });
@@ -521,7 +519,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
         message.classList.add(CSS.MESSAGE_AFTER, me ? "colorMe" : "colorOther");
       } 
 
-      setStyles(iconSend, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 });
+      setStyles(iconSend, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "14px", zIndex: "1" });
 
       if(me){
         setStyles(iconSend, { right: "17px", cursor: "pointer" });
@@ -538,12 +536,15 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
       iconEdit.id = MESSENGER_IDS.ICON_EDIT_WORKFLOW;
       message.appendChild(iconEdit);
       iconEdit.title = MSG.EDIT;
-      setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 , right: "17px", cursor: "pointer" });
+      setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: "1" , right: "17px", cursor: "pointer" });
       iconEdit.addEventListener(EVENT.CLICK, ()=> {
         setContentMessageChat(task, parseInt(message.dataset.id))
       });
 
-      if(iconSend) iconSend.style.right = "41px";
+      if(iconSend){
+        iconSend.style.right = "41px";
+      }
+        
     }
     //-------------------icon edit
   }
@@ -554,7 +555,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
  * @param {*} properties 
  * @returns 
  */
- export const createMessageOpen = (properties, chat) => {
+ const createMessageOpen = (properties, chat) => {
   properties = checkProperties(properties);
 
   const message = createMessageBox(properties);
@@ -578,7 +579,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
  * @param {*} properties 
  * @returns 
  */
- export const createChatMessageNew = (properties, chat) => {
+ const createChatMessageNew = (properties, chat) => {
   properties = checkProperties(properties);
 
   let parentElement = chat;
@@ -634,7 +635,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
  * @param {HTMLElement} div div append
  * @returns Object divs
  */
-export const createSectionComment = (div) => {
+const createSectionComment = (div) => {
 
     const divWrite = setStyles(document.createElement(TAG.DIV),{ width: "100%", display: "flex", flexDirection: "column" });
     div.appendChild(divWrite);
@@ -694,7 +695,7 @@ export const createSectionComment = (div) => {
     }
   }
 
-export const createChat = () => newComponent({
+const createChat = () => newComponent({
     type: MESSENGER_COMPONENTS.CHAT,
     id: MESSENGER_IDS.MESSENGER_CHAT,
     classes: ["continueLined", CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
@@ -717,7 +718,7 @@ export const createChat = () => newComponent({
  * @param {String} title 
  * @returns 
  */
-export const createCardMessenger = (id, title) =>{
+const createCardMessenger = (id, title) =>{
   const aonCard = new AonCard();
   aonCard.title = title;
   aonCard.id = id;
@@ -725,20 +726,19 @@ export const createCardMessenger = (id, title) =>{
   return aonCard;
 }
 
-export const createInputContact = () =>  setAttributes(new AonInput(),{
+const createInputContact = () => setAttributes(new AonInput(),{
   name:MESSENGER_IDS.GTASK_ID_TASK,
   id: MESSENGER_IDS.GTASK_ID_TASK,
   description: `${MSG.CONTACT} (${MSG.OPTIONAL})`
 });
 
-export const createInputTitle = () =>  setAttributes(new AonInput(),{
+const createInputTitle = () => setAttributes(new AonInput(),{
   name:MESSENGER_IDS.TITLE_TASK,
   id: MESSENGER_IDS.TITLE_TASK,
   description: MSG.ISSUE
 });
 
-
-export const createLabelFileText = () => {
+const createLabelFileText = () => {
   const label = setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
   const span  = setStyles(document.createElement(TAG.SPAN),{ margin:"0 5px"});
   span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
@@ -746,14 +746,14 @@ export const createLabelFileText = () => {
   return label;
 }
 
-export const createAonSwitch = (title) => {
+const createAonSwitch = (title) => {
   let btn = new AonSwitch();
   btn.id = MESSENGER_IDS.EXTERNAL_TASK;
   btn.title = title;
   return btn;
 }
 
-export const createNoMessage = ()=>  newComponent({
+const createNoMessage = ()=>  newComponent({
   type : MESSENGER_COMPONENTS.ADVICE,
   id : MESSENGER_IDS.NO_MESSAGES,
   text : 'No hay mensajes en esta solicitud',
@@ -770,7 +770,7 @@ export const createNoMessage = ()=>  newComponent({
  * @param {Function} fn click
  * @returns 
  */
-export const appendTaskTag = ( tag, parent, fn) =>{
+const appendTaskTag = ( tag, parent, fn) =>{
   
   const divOne = createTagHtml(tag, parent);
   
@@ -790,7 +790,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   return divTwo;
 }
 
-export const createTagHtml = (tag, parent) => {
+const createTagHtml = (tag, parent) => {
   const tagName = tag.name;
   const tagColor = tag.color;
   
@@ -810,8 +810,7 @@ export const createTagHtml = (tag, parent) => {
   return divOne;
 }
 
-
-export const openDialogBranch = ()=> {
+const openDialogBranch = ()=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
 
@@ -860,7 +859,7 @@ export const openDialogBranch = ()=> {
    });
 
   const noteId = "sendHistoricId";
-  const note = createAonTextArea("Escriba una nota...");
+  const note = createAonTextArea(`${MSG.WRITE_A_COMMENT} (Opcional)...`);
   note.id = noteId;
   note.name = noteId;
   div.appendChild(note);
@@ -902,8 +901,99 @@ export const openDialogBranch = ()=> {
   dialog.open();
 }
 
+// TODO
+const openDialogDailyTracking = ()=> {
+  const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  const application = aonMessengerChat.getApplication();
+  const task = aonMessengerChat.task;
+  const myTaskHolder = aonMessengerChat.MY_TASKHOLDER;
+
+  const dialog = application.getDialog();
+
+  if (!application.isMobile()) {
+    dialog.width = '40%';
+  }
+
+  dialog.clear();
+  dialog.setTitle(MSG.ESTIMATED_TIME);
+
+  dialog.open();
+
+  getDailyTrackingByTask({task:task.id}).then(resp=>{
+    const trackingTotal = resp.reduce((acc, obj)=> acc + obj.tracking_duration, 0);
+    const lastJobType = resp.reduce((acc, obj)=> obj.job_type > acc ? obj.job_type : acc, 0);
+
+    const form = document.createElement(TAG.FORM);
+    form.onsubmit = () => false;
+    dialog.setContent(form);
+
+    if(trackingTotal){
+      const div = setStyles(document.createElement(TAG.DIV),{
+        marginLeft: "4px",
+        color:CSS.variable(COLORS.GRAYSON)
+      });
+   
+      div.innerHTML = `<p><b>${MSG.HOURS} empleadas</b>: ${parseDoubleToTime(trackingTotal)}</p>`; // TODO
+      form.appendChild(div);
+    }
+ 
+
+    const jobType = createSelectCau("jobType", "jobTypeRandom", MSG.TYPE_JOB);
+    form.appendChild(jobType);
+    getJobType().then(opts=>{
+      let options = sortBy(opts.map(op => ({...op, value:op.id, name:op.description })), 'description');
+      jobType.setOptions(options);
+      if(lastJobType) {
+        jobType.value = lastJobType;
+      }
+    });
+
+    const durationId = "durationtDailyTracking";
+    const trackingDuration = setAttributes(new AonInput(),{
+      name:durationId,
+      id: durationId,
+      type:"time",
+      description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+    });
+
+    form.appendChild(trackingDuration);
+
+    const noteId = "commentDailyTracking";
+    const note   = createAonTextArea(`${MSG.WRITE_A_COMMENT} (${MSG.OPTIONAL})...`);
+    note.id = noteId;
+    note.name = noteId;
+    form.appendChild(note);
+    note.height = "100px";
+
+    dialog.addSendAction(async()=>{
+      const jobValue = jobType.value;
+      const trackingValue = trackingDuration.value;
+      application.startLoading();
+      if(jobValue && trackingValue){
+
+        let dailyTracking = new DailyTracking()
+        .setDomain(task.domain)
+        .setTask(task.id)
+        .setTrackingDate(AonDateUtils.formatDateOrigin(new Date()))
+        .setTaskHolder(myTaskHolder)
+        .setJobType(jobValue)
+        .setTrackingDuration(parseTimeToDouble(trackingValue))
+        .setComments(note.value)
+        ;
+
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, null, dailyTracking); 
+
+        dialog.close();
+      }
+      application.stopLoading();
+    }, MSG.ACCEPT);
+  });
+    
+}
+
+
 // create section rating
-export const createSectionRating = (parent, isMobile)=> {
+const createSectionRating = (parent, isMobile)=> {
   const div = setStyles(document.createElement(TAG.DIV),{
     display: 'flex',
     justifyContent: 'center',
@@ -913,9 +1003,7 @@ export const createSectionRating = (parent, isMobile)=> {
   parent.appendChild(div);
 
   if(isMobile){
-    div.style.position = "absolute";
-    div.style.bottom   = "5px";
-    // div.style.border   = "0";
+    setStyles(div,{ position: "absolute", bottom  : "5px" });
   }
 
   const second = newComponent({
@@ -932,34 +1020,73 @@ export const createSectionRating = (parent, isMobile)=> {
   return second;
 }
 
-export const createIconEvaluation = (img, active = false) => {
-  let label = document.createElement(TAG.LABEL);
+const createIconEvaluation = (img, active = false) => {
+  let label = setStyles(document.createElement(TAG.LABEL),{
+    padding: "5px 3px",
+    fontSize: "32px",
+    opacity: "0.7",
+    filter: "grayscale(1)",
+    cursor: "pointer"
+  });
   label.classList.add("rating");
-  label.style = `
-    padding: 5px 3px;
-    font-size: 32px;
-    opacity: 0.7;
-    filter: grayscale(1);
-    cursor: pointer;
-  `;
-  let i = document.createElement(TAG.I);
-  i.style = `
-    background-image: url(${img});
-    height: 1em;
-    width: 1em;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    display: inline-block;
-    vertical-align: middle;
-  `;
+
+  let i = setStyles(document.createElement(TAG.I),{
+    backgroundImage: `url(${img})`,
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "contain",
+    display: "inline-block",
+    verticalAlign: "middle",
+    height: "1em",
+    width: "1em",
+  });
+
   label.appendChild(i);
 
   if(active){
-    label.style.filter = "grayscale(0)";
-    label.style.opacity = "1";
-    label.style.transform = "scale(1.1)";
+    setStyles(label,{ filter:"grayscale(0)", opacity:"1", transform:"scale(1.1)" });
   }
 
   return label;
 }
+
+export const TaskCreationUtils = {
+  createDivGrid,
+  createDivGridBefore,
+  createBtnAccept,
+  createMainView,
+  createMobileMainView,
+  createDivEditable,
+  createTitle,
+  createReceiverDiv,
+  createAction,
+  createStartJustifiedRow,
+  createStartJustifiedColumn,
+  createOutlinedMaterialIcon,
+  createSelectCau,
+  createRequestType,
+  createWorkgroup,
+  createProcessType,
+  createTaskHolder,
+  createTaskTag,
+  createCustomer,
+  createProject,
+  createAdvisory,
+  createAonTextArea,
+  createMessageOpen,
+  createChatMessageNew,
+  createSectionComment,
+  createChat,
+  createCardMessenger,
+  createInputContact,
+  createInputTitle,
+  createLabelFileText,
+  createAonSwitch,
+  createNoMessage,
+  appendTaskTag,
+  createTagHtml,
+  openDialogBranch,
+  openDialogDailyTracking,
+  createSectionRating,
+  createIconEvaluation
+};

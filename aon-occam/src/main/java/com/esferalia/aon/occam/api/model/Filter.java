@@ -240,6 +240,16 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface DailyTrackingFilter{
+		Filter filter(DailyTrackingProperties properties);
+	}
+		
+	@FunctionalInterface
+	public interface JobTypeFilter{
+		Filter filter(JobTypeProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface TaskTagFilter{
 		Filter filter(TaskTagProperties properties);
 	}

@@ -24,6 +24,8 @@ export const acceptInvoice = (data) => put(`${API_URL}/invoice/accept`, data);
 
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
 
+export const sendInvoice2Mail = (data) => post(`${API_URL}/send_mail/invoice2`, data);
+
 export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_download/invoice?json=${data}`);
 export const downloadInvoiceExcel = (data) => openFileUrl(`${API_URL}/downloadInvoiceExcel?json=${data}`);
 

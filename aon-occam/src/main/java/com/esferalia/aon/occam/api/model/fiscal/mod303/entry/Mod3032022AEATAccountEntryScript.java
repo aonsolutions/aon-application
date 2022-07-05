@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
-public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressionScript {
+public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
 	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo(model)";
 
 	private static final long serialVersionUID = 2085902232416480013L;
@@ -24,7 +24,7 @@ public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressi
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
 				.setExpression("C45"));  		// CREDIT
 		// Cuotas a compensar de periodos anteriores aplicadas en este periodo
-		details.add(new AccountEntryDetailExpression( false )
+		details.add(new AccountEntryDetailExpression( true )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
 				.setExpression("C78")); 			// DEBIT
@@ -47,7 +47,7 @@ public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressi
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?0.0:C71")); // DEBIT
+				.setExpression("aIngresar(model)?0.0:abs(C71)")); // DEBIT
 	}
 
 	@Override

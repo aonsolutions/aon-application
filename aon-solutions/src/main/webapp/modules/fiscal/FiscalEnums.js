@@ -12,7 +12,9 @@ export const FiscalOptions = {
 
 export const FISCAL_VIEWS = {
   AON_TAX:"aonTax",
-  AON_FISCAL: "aonFiscal"
+  AON_FISCAL: "aonFiscal",
+  VAT_PANEL: "vatPanel",
+  IRPF_REPORT: "irpfReport",
 }
 
 const TAX_MODEL_NUMBER  = {

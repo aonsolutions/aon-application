@@ -35,4 +35,7 @@ public interface Mod303Service extends RemoteService {
 	Mod303 markAsCustomerCheck(Occam occam, Mod303 mod303) throws AonCoreException;
 	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 	
+	Mod303 doRecord(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 unrecord(Occam occam, Mod303 mod303) throws AonCoreException;
+	
 }

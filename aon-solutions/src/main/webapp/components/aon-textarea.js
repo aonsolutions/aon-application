@@ -211,7 +211,7 @@ export class AonTextArea extends AonElement {
 		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
-		return userSelection;eqweqweqwe
+		return userSelection;
 	} 
 
 	getSelectionForAdd(){
@@ -467,7 +467,7 @@ export class AonTextArea extends AonElement {
     }
 
 	getValue() {
-		return this.value && this.value === 'true';
+		return this.value && this.value === CONSTANT.TRUE;
 	}
 
 	async addFiles(files, parent=undefined) {
@@ -497,17 +497,20 @@ export class AonTextArea extends AonElement {
 				element.src = url;
 				element.className = CSS.AON_IMG_COMMENT;
 			} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
-				element = document.createElement("video");
+				element = setStyles(document.createElement("video"),{
+					width: "100%",
+					minHeight: "184px",
+					maxHeight: "184px",
+				});
 				element.controls = true;
-				element.style.width = "100%";
-				element.style.minHeight = element.style.maxHeight = "184px";
+		
 				const source = document.createElement("source");
 				source.src = url;
 				source.type = reader.contentType;
 				element.appendChild(source);
 			} else {
 				element = document.createElement(TAG.A);
-				element.target = "_blank";
+				element.target = "_system";
 				element.className = CSS.AON_LINK;
 				element.href = url;
 				element.textContent = reader.name;
@@ -551,12 +554,13 @@ export class AonTextArea extends AonElement {
 	}
 
 	addLabelTextEnd(){
-		let label = document.createElement(TAG.LABEL);
-		label.style.color = "grey";
-		label.style.width = "100%";
-		label.style.cursor = "pointer";
-		label.style.borderTop = "1px dotted grey";
-		label.style.fontSize = "10px";
+		let label = setStyles(document.createElement(TAG.LABEL),{
+			color: "grey",
+			width: "100%",
+			cursor: "pointer",
+			borderTop: "1px dotted grey",
+			fontSize: "10px"
+		});
 
 		let span = document.createElement(TAG.SPAN);
 		span.style.margin = "0px 5px";
@@ -648,21 +652,6 @@ export class AonTextArea extends AonElement {
 		for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
 		let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
 		return URL.createObjectURL(file);
-	}
-
-	async getBase64FromUrl(url){
-		const data = await fetch(url,{
-			headers: { 'Content-Type': 'image/jpeg'}
-		});
-		const blob = await data.blob();
-		return new Promise((resolve) => {
-		  const reader = new FileReader();
-		  reader.readAsDataURL(blob); 
-		  reader.onloadend = () => {
-			const base64data = reader.result;   
-			resolve(base64data);
-		  }
-		});
 	}
 }
 if(!window.customElements.get('aon-textarea')){

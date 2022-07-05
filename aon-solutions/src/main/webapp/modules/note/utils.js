@@ -16,7 +16,7 @@ export const appendNote = (ul, note) => {
     let li = document.createElement(TAG.LI);
     ul.insertBefore(li, ul.firstChild);
     
-    const idRand =  Math.random().toString(36).substring(7);
+    const idRand = Math.random().toString(36).substring(7);
     let div = setStyles(document.createElement(TAG.DIV),{ borderRadius : "10px",  border : "1px solid #dadce0", margin : "3px 10px" });
     div.id ="div"+idRand;
     div.classList.add(CSS.NOTE_BOX_SHADOW);

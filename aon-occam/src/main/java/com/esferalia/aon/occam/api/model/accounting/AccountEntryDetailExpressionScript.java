@@ -3,9 +3,7 @@ package com.esferalia.aon.occam.api.model.accounting;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-
-public abstract class AccountEntryDetailExpressionScript implements Serializable {
+public abstract class AccountEntryDetailExpressionScript<T> implements Serializable {
 	
 	private static final long serialVersionUID = -1280419601669765944L;
 	
@@ -65,7 +63,7 @@ public abstract class AccountEntryDetailExpressionScript implements Serializable
 	}
 
 	public abstract LinkedList<AccountEntryDetailExpression> getDetails();
-	public abstract boolean accept(Mod303 mod);
+	public abstract boolean accept(T accepter);
 
 }
 

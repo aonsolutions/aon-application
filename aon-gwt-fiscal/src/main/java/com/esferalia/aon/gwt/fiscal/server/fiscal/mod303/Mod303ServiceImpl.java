@@ -25,7 +25,6 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return new Mod303ServiceImpl();
 	}
 	
-	// ---------------------------------------------------------------MODELO 303
 	@Override
 	public Mod303 getMod303(Occam occam, int id) throws AonCoreException {
 		return MODEL303.get(occam, id);
@@ -108,4 +107,12 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getInvoice(occam, invoiceId);
 	}
 	
+	@Override
+	public Mod303 doRecord(Occam occam, Mod303 mod303) throws AonCoreException {
+		return MODEL303.doRecord(occam, mod303);
+	}
+	@Override
+	public Mod303 unrecord(Occam occam, Mod303 mod303) throws AonCoreException {
+		return MODEL303.unrecord(occam, mod303);
+	}
 }

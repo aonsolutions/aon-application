@@ -4837,9 +4837,10 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		//@formatter:off
 		Assert.assertEquals(
-				1000.00 / 30 * 24 * 1.10, 
+				1000.00 / 30 * ( monthDays - 6 ) * 1.10, 
 				salary.getTotalPayment() 
 				
 				, DELTA);
