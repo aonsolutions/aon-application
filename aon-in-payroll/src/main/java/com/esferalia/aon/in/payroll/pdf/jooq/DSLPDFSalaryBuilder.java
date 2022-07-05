@@ -237,7 +237,9 @@ public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalary
 			
 		});
 		} catch ( TooManyRowsException e ) {
-			throw new SalaryPDFException("ERROR: [DUPLICATE EMPLOYEE] %s", getMessage(contract));
+			System.err.printf("ERROR: [DUPLICATE EMPLOYEE] %s\r\n", getMessage(contract));
+			return Optional.empty();
+			//throw new SalaryPDFException("ERROR: [DUPLICATE EMPLOYEE] %s", getMessage(contract));
 		}
 	}
 	
