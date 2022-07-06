@@ -350,7 +350,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			TaskUtils.setCauInfo(api, task);
 		}
 	
-		if(!edit) {
+		if(edit) {
+			TaskUtils.checkFilesAndSave(api, task);
+		} else {
 			setWgAndThDefault(api, task);
 		}
 
@@ -536,22 +538,23 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject deleteTask(AonApiData api) {
-		Task task = TaskJSON.fromJSON(api.getData());
-		AON_SOLUTIONS.deleteTask(task.getDomain(), api.getUser(), task.getId());
+		Task task     = TaskJSON.fromJSON(api.getData());
+		Domain domain = task.getDomain();
+		AON_SOLUTIONS.deleteTask(domain, api.getUser(), task.getId());
 		return new JSONObject();
 	}
 	
 	private JSONObject deleteTaskWorkflow(AonApiData api) {
 		JSONObject params = api.getData();
 		Domain domain     = DomainJSON.fromJSON(params.optJSONObject(IJsonNames.DOMAIN));
-		Integer id        = params.optInt(IJsonNames.ID);
+		Integer workflow  = params.optInt(IJsonNames.WORKFLOW);
 		
-		AON_SOLUTIONS.deleteTaskWorkflow(domain, api.getUser(), id);
+		AON_SOLUTIONS.deleteTaskWorkflow(domain, api.getUser(), workflow);
 		return new JSONObject();
 	}
 	
 	private JSONObject deleteTaskTag(AonApiData api) {
-		AON.deleteTag(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),TagJSON.fromJSON(api.getData()));
+		AON.deleteTag(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), TagJSON.fromJSON(api.getData()));
 		return new JSONObject();
 	}
 	

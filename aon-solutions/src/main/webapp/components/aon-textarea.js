@@ -5,6 +5,7 @@ import { newComponent, setAttributes, setStyles} from '../services/utilsComponen
 import { AonElement } from './AonElement.js';
 import '../css/aon-textarea.css';
 import '../css/aon-css-utils.css';
+import { WORKFLOW_TYPES } from '../modules/messenger/MessengerEnums.js';
 
 export class AonTextArea extends AonElement {
 
@@ -13,19 +14,10 @@ export class AonTextArea extends AonElement {
 	LEFT;
 	RIGHT;
 	FILES;
-	// COMPILE;
 
 	static get observedAttributes() {
-		return [CONSTANT.VALUE, "height"];
+		return [CONSTANT.VALUE, CONSTANT.DISABLED, "height"];
 	}
-
-	// get compile(){
-	// 	return this.COMPILE;
-	// }
-
-	// set compile(fn){
-	// 	this.COMPILE = () => fn(this);
-	// }
 
 	get height() {
 		return this.getAttribute("height");
@@ -59,13 +51,6 @@ export class AonTextArea extends AonElement {
 		this.setAttribute("placeholder", value);
 	}
 
-	// get textarea(){
-	// 	return this.TEXTAREA;
-	// }
-
-	// set textarea(value){
-	// 	this.TEXTAREA = value;
-	// }
 
 	get toolbar(){
 		return this.TOOLBAR;
@@ -99,10 +84,6 @@ export class AonTextArea extends AonElement {
 	set value(value) {
 		this.setAttribute(CONSTANT.VALUE, value);
 	}
-
-	// get compiledValue() {
-	// 	return this.COMPILE();
-	// }
 	
 	get visible() {
 		return this.getAttribute(CONSTANT.VISIBLE);
@@ -119,17 +100,25 @@ export class AonTextArea extends AonElement {
 	set disabled(disabled) {
 		this.setAttribute(CONSTANT.DISABLED, disabled);
 	}
+	
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
 			let textAreaDiv = this.getTextArea();
-			if(textAreaDiv)
+			if(textAreaDiv){
 				textAreaDiv.innerHTML = newValue;
+			}
+		} else if(CONSTANT.DISABLED === name){
+			let textAreaDiv = this.getTextArea();
+			if(textAreaDiv){
+				const disabled = newValue == "true";
+				textAreaDiv.contentEditable = !disabled;
+			}
 		} else if("height" === name){
 			let textAreaDiv = this.getTextArea();
 			if(textAreaDiv){
 				this.style.minHeight = textAreaDiv.style.minHeight = newValue;
 			}
-		}
+		} 
 	}
 
 	constructor () {
@@ -477,53 +466,75 @@ export class AonTextArea extends AonElement {
 	}
 
 	async addFile(file, parent=undefined) {
-		let div = parent || this.getSelectionForAdd();
+		this.loading(true);
+		try {
+			let div = parent || this.getSelectionForAdd();
 
-		const reader = await getReader(file).catch(()=>null);
-		if(reader) {
-			
-			const fileId = Math.random().toString(36).substring(7);
+			const reader = await getReader(file).catch(()=>null);
+			if(reader) {
+				
+				const fileId = Math.random().toString(36).substring(7);
 
-			this.FILES.push({
-				contentType: reader.contentType,
-				content: reader.content,
-				id:fileId
-			});
-
-			const url = this.convertBase64Url(reader.content, reader.contentType);
-			let element = null;
-			if(reader.contentType && reader.contentType.indexOf("image")>-1){
-				element = document.createElement(TAG.IMG);
-				element.src = url;
-				element.className = CSS.AON_IMG_COMMENT;
-			} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
-				element = setStyles(document.createElement("video"),{
-					width: "100%",
-					minHeight: "184px",
-					maxHeight: "184px",
+				this.FILES.push({
+					contentType: reader.contentType,
+					content: reader.content,
+					id:fileId
 				});
-				element.controls = true;
-		
-				const source = document.createElement("source");
-				source.src = url;
-				source.type = reader.contentType;
-				element.appendChild(source);
-			} else {
-				element = document.createElement(TAG.A);
-				element.target = "_system";
-				element.className = CSS.AON_LINK;
-				element.href = url;
-				element.textContent = reader.name;
-			}
-			element.dataset.id = fileId;
-			element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
-			element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-			div.appendChild(element);
-			div.appendChild(document.createElement(TAG.BR));
 
-			this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+				const url = this.convertBase64Url(reader.content, reader.contentType);
+				if(url){
+					let element = null;
+					if(reader.contentType && reader.contentType.indexOf("image")>-1){
+						element = document.createElement(TAG.IMG);
+						element.src = url;
+						element.className = CSS.AON_IMG_COMMENT;
+					} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
+						element = setStyles(document.createElement("video"),{
+							width: "100%",
+							minHeight: "184px",
+							maxHeight: "184px",
+						});
+						element.controls = true;
+				
+						const source = document.createElement("source");
+						source.src = url;
+						source.type = reader.contentType;
+						element.appendChild(source);
+					} else {
+						element = document.createElement(TAG.A);
+						element.target = "_system";
+						element.className = CSS.AON_LINK;
+						element.href = url;
+						element.textContent = reader.name;
+					}
+					element.dataset.id = fileId;
+					element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
+					element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
+					div.appendChild(element);
+					div.appendChild(document.createElement(TAG.BR));
+	
+					this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+				}
+			}
+		} catch (error) {
+			console.log(error);
 		}
+
+		this.loading(false);
 	}
+
+	getFiles(){
+        this.checkFiles();
+        return this.FILES;
+    }
+
+	checkFiles() {
+		let textArea = this.getTextArea();
+		if(textArea){
+			let filesIds = [...textArea.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`)].map(el => el.dataset.id);
+			this.FILES = this.FILES.filter(f => (filesIds || []).includes(f.id));
+		}
+    }
 
 	getToolbar(){
 		return this.getElement(this.TOOLBAR);
@@ -640,6 +651,24 @@ export class AonTextArea extends AonElement {
 		// this.setValueHtml(newValue)
 	}
 
+	async checkFileBase64() {
+		let textArea = this.getTextArea();
+		if(textArea){
+			const elements = textArea.querySelectorAll(`img[src*=";base64"]`);
+			if(elements.length){
+				for await (const el of elements) {
+					let parent = document.createElement(TAG.DIV);
+					let blob = this.getBlobBySrc(el.src);
+					if(blob){
+						await this.addFile(blob, parent);
+					}
+					if(el.parentNode){
+						el.parentNode.replaceChild(parent, el);
+					}
+				}
+			}
+		}
+	}	
 	/**
 	 * 
 	 * @param {String} base64Str base64 file
@@ -647,11 +676,79 @@ export class AonTextArea extends AonElement {
 	 * @returns {String} url
 	 */
 	convertBase64Url(base64Str, contentType) {
+		try {
+			let blob = this.getBlob(base64Str, contentType);
+			return URL.createObjectURL(blob);
+		} catch (error) {
+			console.error("error getContentFileBase64", error);
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param {String} src 
+	 * @returns 
+	 */
+	getBlobBySrc(src){
+		try {
+			// base64 encoded data doesn't contain commas    
+			const base64ContentArray = src.split(",")     
+			
+			// base64 content cannot contain whitespaces but nevertheless skip if there are!
+			const contentType = base64ContentArray[0].match(/[^:\s*]\w+\/[\w-+\d.]+(?=[;| ])/)[0];
+			
+			// base64 encoded data - pure
+			const base64Str = base64ContentArray[1];
+
+			return this.getBlob(base64Str, contentType);
+		} catch (error) {
+			console.error("error getContentFileBase64", error);
+		}
+		return null;
+	}
+
+	getBlob(base64Str, contentType=undefined) {
 		let byteCharacters = atob(base64Str);
 		let byteNumbers = new Array(byteCharacters.length);
-		for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-		let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
-		return URL.createObjectURL(file);
+
+		for (let i = 0; i < byteCharacters.length; i++) {
+			byteNumbers[i] = byteCharacters.charCodeAt(i);
+		}
+
+		return  new Blob([new Uint8Array(byteNumbers)], { type: `${contentType}` });
+	}
+
+	loading(b){
+		let id = this.id+"Loading";
+		let div = this.getElement(id);
+		if (b && !div) {
+		  div = setStyles(this.createElement(TAG.DIV),{
+			textAlign: "center",
+			position: "absolute",
+			left: "0",
+			right: "0",
+			top: "0",
+			bottom: "0",
+			margin: "auto",
+			background: "grey",
+			opacity: "0.1"
+		  })
+		  div.id = id;
+		  this.appendChild(div);
+
+		  let icon = setStyles(this.createElement(TAG.I),{
+			position: "absolute",
+			top: "0",
+			bottom: "0",
+			margin: "auto"
+		  });
+		  icon.classList.add(CSS.AON_LOADER);
+		  div.appendChild(icon);
+	
+		} else if (!b && div) {
+		  div.remove();
+		}
 	}
 }
 if(!window.customElements.get('aon-textarea')){
