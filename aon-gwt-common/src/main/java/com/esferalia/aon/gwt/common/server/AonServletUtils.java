@@ -121,9 +121,9 @@ public class AonServletUtils {
 		}
 	}
 
-	public static String getDomainName(String domain) throws SQLException {
-		return getDomainName(Integer.parseInt(domain));
-	}
+//	public static String getDomainName(String domain) throws SQLException {
+//		return getDomainName(Integer.parseInt(domain));
+//	}
 
 	public static String getDomainName(Integer domain) throws SQLException {
 		try {
