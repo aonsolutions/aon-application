@@ -96,18 +96,20 @@ public class ContractServlet extends HttpServlet{
 					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
 						Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
 						Date end2 = (h.getEndDate() != null && h.getEndDate().compareTo(end) < 0) ? AonDateUtils.addDays(h.getEndDate(),1) : end;
-						Long a = AonDateUtils.getDaysBetweenDates(start2, end2);
-						String b = h.getExpression().substring(1,2);
-						if(b.equals("1") || b.equals("2") || b.equals("3")){
-							fixedDoubleList.add(coef * a.doubleValue());
-						} else {
-							unfixedDoubleList.add(coef * a.doubleValue());
-						}
-						if(end2.compareTo(ejFinalDate) >= 0){
+						if (end2.compareTo(start2) >= 0) {
+							Long a = AonDateUtils.getDaysBetweenDates(start2, end2);
+							String b = h.getExpression().substring(1,2);
 							if(b.equals("1") || b.equals("2") || b.equals("3")){
-								endFixed[0] = 1.0;
+								fixedDoubleList.add(coef * a.doubleValue());
 							} else {
-								endUnfixed[0] = 1.0;
+								unfixedDoubleList.add(coef * a.doubleValue());
+							}
+							if(end2.compareTo(ejFinalDate) >= 0){
+								if(b.equals("1") || b.equals("2") || b.equals("3")){
+									endFixed[0] = 1.0;
+								} else {
+									endUnfixed[0] = 1.0;
+								}
 							}
 						}
 					});
