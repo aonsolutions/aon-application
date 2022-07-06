@@ -1892,6 +1892,35 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 	}
 	
+	@Test
+	public void TestHorasTrabajadas() throws Exception {
+
+		if (!isDisplayed("tiempo_parcial,_horas"))
+			open("horas_trabajadas");
+
+
+		wait4Id("tiempo_parcial,_horas");
+
+		draft("TIEMPO COMPLETO, ORDINARIO");
+		assertDisplay("employeeWorkedDaysLabel", true);
+		assertDisplay("employeeWorkedHoursLabel", false);
+		assertDisplay("employeePartialFactorLabel", false);
+		
+		draft("TIEMPO PARCIAL, HORAS");
+		assertDisplay("employeeWorkedDaysLabel", false);
+		assertDisplay("employeeWorkedHoursLabel", true);
+		assertDisplay("employeePartialFactorLabel", false);
+
+		draft("TIEMPO PARCIAL, ORDINARIO");
+		assertDisplay("employeeWorkedDaysLabel", false);
+		assertDisplay("employeeWorkedHoursLabel", false);
+		assertDisplay("employeePartialFactorLabel", false);
+		assertDisplay("editor-coeficiente_parcialidad", true);
+		
+		
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{

@@ -5564,9 +5564,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date end = Period.min(dataEnd, endDate);
 
 
-		Date leaveStart = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
-		Date leaveEnd = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
-		
 		
 		if ( name.equals(DIRECT_PAY_START.getName())  ) {
 			try {
@@ -5579,13 +5576,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( Period.compare(end, start) < 0)
 			return;
 		
+		Date leaveStart = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
+		Date leaveEnd = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
+		
 		try {
 			List<ITimedResult<Number>> factors = ctx.addExpression(expr, start, end, Number.class);
 			
 			for ( ITimedResult<Number> factor: factors ) {
-				Period period = new Period(
-						Period.max(leaveStart, factor.getPeriod().getStart()), 
-						Period.min(leaveEnd, factor.getPeriod().getEnd()));
+				Date periodStart = Period.max(leaveStart, factor.getPeriod().getStart());
+				Date periodEnd = Period.min(leaveEnd, factor.getPeriod().getEnd());
+				if ( Period.compare(periodStart,periodEnd) > 0 )
+					continue;
+				Period period = new Period(periodStart,periodEnd);
 				
 				double workDayHours  = getWorkDayHours(ctx, period.getStart(), period.getEnd());
 				
