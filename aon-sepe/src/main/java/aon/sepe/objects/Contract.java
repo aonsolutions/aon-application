@@ -34,13 +34,15 @@ public class Contract {
 	private String durationTypeCvnMin;
 	private String interinidad;
 	private String titulacion;
-	
-	private DiscontinuoReason discontinuoReason; // solo para transformaciones
-	
+
 	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
 	private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
-	private Date oldDateIniContract; // Para las transformaciones
+	
+	 // Para las transformaciones
+	private DiscontinuoReason discontinuoReason; 
+	private Date oldDateIniContract; 
+	private Date oldDateFinContract;
 	
 	public String getSepeId() {
 		return sepeId;
@@ -132,6 +134,10 @@ public class Contract {
 	
 	public Date getOldDateIniContract() {
 		return oldDateIniContract;
+	}
+	
+	public Date getOldDateFindContract() {
+		return oldDateFinContract;
 	}
 
 	public Date getDateFinContract() {
@@ -226,7 +232,12 @@ public class Contract {
 		private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 		private boolean previsible; // ¿El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
 		private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
-		private Date oldDateIniContract; // Para la transformacion
+		
+		// Para la transformacion
+		private Date oldDateIniContract; 
+		private Date oldDateFinContract;
+		
+		public ContractBuilder() { /* TODO document why this constructor is empty */ }
 		
 		public ContractBuilder setCifEnterprise(String cifEnterprise) {
 			this.cifEnterprise = cifEnterprise;
@@ -333,6 +344,11 @@ public class Contract {
 			this.oldDateIniContract = oldDateIniContract;
 			return this;
 		}
+		
+		public ContractBuilder setOldDateFinContract(Date oldDateFinContract) {
+			this.oldDateFinContract = oldDateFinContract;
+			return this;
+		}
 
 		public ContractBuilder setDateFinContract(Date dateFinContract) {
 			this.dateFinContract = dateFinContract;
@@ -405,9 +421,6 @@ public class Contract {
 			return this;
 		}
 
-		public ContractBuilder() {
-		}
-
 		public Contract build() {
 			Contract contract = new Contract();
 			contract.cifEnterprise = this.cifEnterprise;
@@ -443,6 +456,7 @@ public class Contract {
 			contract.discontinuo = this.discontinuo;
 			contract.previsible = this.previsible;
 			contract.oldDateIniContract = this.oldDateIniContract;
+			contract.oldDateFinContract = this.oldDateFinContract;
 			contract.titulacion = this.titulacion;
 			contract.certificateProfessional = this.certificateProfessional;
 			return contract;
@@ -538,8 +552,14 @@ public class Contract {
 				+ ", lastSurname=" + lastSurname + ", codNationality=" + codNationality + ", codPaisDom=" + codPaisDom
 				+ ", codMunDom=" + codMunDom + ", codFormativo=" + codFormativo + ", codOccupation=" + codOccupation
 				+ ", codPaisWork=" + codPaisWork + ", codMunWork=" + codMunWork + ", codContract=" + codContract
-				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", oldDateIniContract=" + oldDateIniContract + ", dateBirth="
-				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType + ", discontinuoReason=" + discontinuoReason
+				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract 
+				+ ", oldDateIniContract=" + oldDateIniContract 
+				+ ", oldDateFinContract=" + oldDateFinContract 
+				+ ", dateBirth="+ dateBirth 
+				+ ", dateComContract=" + dateComContract 
+				+ ", offer=" + offer 
+				+ ", jndType=" + jndType 
+				+ ", discontinuoReason=" + discontinuoReason
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
 				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad
 				+  ", titulacion=" + titulacion
