@@ -443,11 +443,8 @@ public class ContractServlet extends AonApiHttpServlet {
 
 	private JSONObject addContract(AonApiData api) throws Exception{
 		JSONObject params = api.getData();
-
-		Domain domain = new Domain();
 		
-		domain.setId(params.optInt("domain"));
-		domain.setName(AonServletUtils.getDomainName(domain.getId()));		
+		Domain domain = api.getDomain();
 
 		String doc = params.optString("ipf");
 		String nss = params.optString("nss");

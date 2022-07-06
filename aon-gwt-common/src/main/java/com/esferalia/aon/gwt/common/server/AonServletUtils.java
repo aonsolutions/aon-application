@@ -121,22 +121,6 @@ public class AonServletUtils {
 		}
 	}
 
-//	public static String getDomainName(String domain) throws SQLException {
-//		return getDomainName(Integer.parseInt(domain));
-//	}
-
-	public static String getDomainName(Integer domain) throws SQLException {
-		try {
-			Map<String, Integer> map = ConnectionInfo.getDefaultConnectionInfo().getDomainMap();
-			for ( Entry<String, Integer> entry: map.entrySet() )
-				if ( entry.getValue().equals(domain) ) 
-					return entry.getKey();
-			throw new SQLException();
-		} catch (AonConnectionException e) {
-			throw new SQLException(e.getMessage(), e);
-		}
-	}
-
 	public static Integer getDomainID(String domainName) throws SQLException {
 		try(Connection connection = getConnection(domainName)) {
 			AONContext aonContext = new AONContext(connection);
