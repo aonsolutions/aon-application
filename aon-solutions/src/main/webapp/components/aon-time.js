@@ -237,6 +237,7 @@ export class AonTime extends AonElement {
         this.#max = this.DEFAULT_MAX;
         this.#min = this.DEFAULT_MIN;
         this.#disabled = false;
+        this.style.width = "10%";
     }
 
     connectedCallback() {
@@ -254,7 +255,6 @@ export class AonTime extends AonElement {
         this.className = "aon-time";
         this.tabIndex = 0;
         this.style.display = "block";
-        this.style.width = "10%";
         this.style.borderBottom = `1px solid ${this.COLORS.detailColor}`;
         this.buildLabel();
         this.buildTime();
