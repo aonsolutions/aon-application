@@ -1400,7 +1400,7 @@ public class InvoiceImport {
 		} else if( serie == null && number != null) {
 			snBool = number.equals(iic.getNumber());
 		}
-		return snBool || (reference != null && reference.equals(iic.getRef()));
+		return snBool || (AonStringUtils.isNotBlank(reference) && reference.equals(iic.getRef()));
 	}
 
 	public static boolean isSales(InvoiceImportClass ant, InvoiceImportClass act) {

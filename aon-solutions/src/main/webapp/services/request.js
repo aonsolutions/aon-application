@@ -230,8 +230,10 @@ export const openFileDesktop = (url) => {
   try {
       const openWindow =  window.open(url, '_blank');
       if(openWindow) return openWindow;
-  } catch (error) {}
-  throw new  Error(MSG.BLOCKED_POPUP);
+  } catch (error) {
+    console.log(error);
+  }
+  throw new Error(MSG.BLOCKED_POPUP);
 }
 
 //if true is mobile APP

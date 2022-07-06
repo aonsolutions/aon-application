@@ -14,7 +14,7 @@ import { setStyles } from "../../../services/utilsComponents.js";
 import { firstLetters, StringTwoLetters } from "../../timecontrol/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_VIEWS, TAG_TYPE, TASK_STATUS } from "../MessengerEnums.js";
-import { createTagHtml } from "./creationUtils.js";
+import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { getIconJson, taskNumberParse } from "./utils.js";
 
 // ------------DESKTOP
@@ -55,7 +55,7 @@ const getTitleHtmlDesktop = (res) => {
   divFlex.appendChild(divTwo);
 
   getTagsLabel(res.tags).forEach((tag) => {
-    setStyles(createTagHtml(tag, divTwo), {
+    setStyles(TaskCreationUtils.createTagHtml(tag, divTwo), {
       margin: "0",
       textAlign: "center",
     });
@@ -94,7 +94,7 @@ const getSubTitleHtml = (res, doc, documentTh) => {
   if (description) {
     const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, " ");
     let span = setStyles(document.createElement(TAG.SPAN), {
-      color: "grey",
+      color:  CSS.variable(COLORS.AON_GRAY),
       marginLeft: "3px",
     });
     span.textContent = dText;
@@ -121,7 +121,7 @@ const getTitleMobile = (res, doc, documentTh) => {
   div.appendChild(senderDiv);
 
   const dateDiv = setStyles(document.createElement(TAG.DIV), {
-    color: "grey",
+    color: CSS.variable(COLORS.AON_GRAY),
     marginLeft: "auto",
     fontSize: "14px",
     fontWeight: "500",
@@ -129,15 +129,13 @@ const getTitleMobile = (res, doc, documentTh) => {
 
   div.appendChild(dateDiv);
 
-  const date = AonDateUtils.getDayMonthOrFull(res.date);
-
-  dateDiv.innerText = date;
+  dateDiv.innerText = AonDateUtils.getDayMonthOrFull(res.date);
 
   return div.outerHTML;
 };
 
 const getSubtitleMobileOne = (res) => {
-  const div = setStyles(document.createElement(TAG.DIV), { color: "black" });
+  const div = setStyles(document.createElement(TAG.DIV), { color: CSS.variable(COLORS.AON_BLACK), overflow:"hidden", textOverflow:"ellipsis" });
   div.innerText = res.title || "Sin asunto";
   return div.outerHTML;
 };
@@ -162,7 +160,7 @@ const getSubtitleMobileTwo = (res) => {
   div.appendChild(divTwo);
 
   getTagsLabel(res.tags).forEach((tag) => {
-    setStyles(createTagHtml(tag, divTwo), {
+    setStyles(TaskCreationUtils.createTagHtml(tag, divTwo), {
       margin: "0",
       textAlign: "center",
       padding: "1px 4px",
@@ -214,7 +212,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
 
       const div = setStyles(document.createElement(TAG.DIV), {
         top: `${top}px`,
-        color: "grey",
+        color: CSS.variable(COLORS.AON_GRAY),
         display: "flex",
         position: "absolute",
         left: "0",
@@ -226,6 +224,7 @@ const addTaskChilds = (task, row, documents, isCau) => {
         transition: "opacity .5s linear",
         opacity: "1",
       });
+
       div.dataset.taskId = task.id;
 
       div.dataset.taskChild = t.id;
@@ -275,11 +274,10 @@ const addTaskChilds = (task, row, documents, isCau) => {
     }
 
     // CHANGE COLORS ALL BRANCH CLOSES
-    const length = childs.length;
-    if (length > 0) {
-      let tasksClosed = childs.filter(({ status, parent:p }) => p && status === TASK_STATUS.FINISHED);
-      if (tasksClosed.length === length) {
-        let iconParent = document.querySelector(`span[data-task-id='${task.id}']`);
+    if ([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && childs.length) {
+      const isChildPending = childs.some(({ status, parent:p }) => p && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status));
+      if (!isChildPending) {
+        const iconParent = document.querySelector(`${TAG.SPAN}[data-task-id='${task.id}']`);
         if (iconParent) {
           iconParent.style.color = CSS.variable(COLORS.MATERIAL_RED);
         }
@@ -414,8 +412,8 @@ const getAssignedHtml = (res, domainId) => {
 
   if (!workgroupDescription && !person) {
     const divOne = setStyles(document.createElement(TAG.DIV), {
-      border: `2px solid #f44336`,
-      color: `#f44336`,
+      border: `2px solid ${CSS.variable(COLORS.MATERIAL_RED)}`,
+      color: CSS.variable(COLORS.MATERIAL_RED),
       borderRadius: "29px",
       height: "23px",
       lineHeight: "21px",
@@ -509,9 +507,9 @@ const getDateParseNew = ({ gtask_id, date }) => {
   const email = gtask_id;
 
   const style = {
-    position: "absolute",
     left: 0,
     right: 0,
+    position: "absolute",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     overflow: "hidden",
@@ -532,7 +530,7 @@ const getDateParseNew = ({ gtask_id, date }) => {
 
   if (email) {
     const divThree = setStyles(document.createElement(TAG.DIV), {
-      color: "grey",
+      color: CSS.variable(COLORS.AON_GRAY),
       position: "absolute",
       top: "4px",
       ...style

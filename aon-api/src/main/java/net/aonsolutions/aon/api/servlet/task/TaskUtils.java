@@ -294,28 +294,29 @@ public class TaskUtils {
 	}
 	
 	private static void changeStatusTask(AonApiData api, Task task, TaskWorkflow workflow) {
+		Domain domain = task.getDomain();
 		List<Byte> types = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
 		if(task.isChild()) {
 			
-			Task parent = AON_SOLUTIONS.getTask(task.getDomain(), api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+			Task parent = AON_SOLUTIONS.getTask(domain, api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
 			
 			if(parent!=null && parent.getId()!=null) {
 				
-				List<Task> childs = AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
+				List<Task> childs = AON_SOLUTIONS.getTaskStream(domain, api.getUser(), 
 					f-> f.getParentProperty().eq(task.getParent())
 					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
 				).collect(Collectors.toList());
-				
-				TaskStatus status = childs.isEmpty() ? TaskStatus.PENDING : TaskStatus.IN_PROGRESS;
-				AON_SOLUTIONS.saveTask(task.getDomain(), api.getUser(), parent.setStatus(status));
+
+				parent.setStatus(childs.isEmpty() ? TaskStatus.PENDING : TaskStatus.IN_PROGRESS);
+				AON_SOLUTIONS.saveTask(domain, api.getUser(), parent);
 			}
 		} else { // IS PARENT
 			
 //			workflow.setId(null).setTask(task.getId()).setType(TaskWorkflowType.CLOSE);
 			
-//			AON_SOLUTIONS.saveTaskWorkflow(task.getDomain(), new User(), workflow); /// SAVE WORKFLOW
+//			AON_SOLUTIONS.saveTaskWorkflow(domain, new User(), workflow); /// SAVE WORKFLOW
 			
-			AON_SOLUTIONS.getTaskStream(task.getDomain(), api.getUser(), 
+			AON_SOLUTIONS.getTaskStream(domain, api.getUser(), 
 				f-> f.getParentProperty().eq(task.getId())
 				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
 			)

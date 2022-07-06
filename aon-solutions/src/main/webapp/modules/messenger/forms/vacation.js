@@ -2,13 +2,13 @@
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { AonDate } from "../../../components/aon-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
-import { TAG, EVENT, MSG, MATERIAL_ICONS, CSS } from "../../../environments/environments.js";
+import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { saveVacation } from "../../../services/contractService.js";
 import { serializeForm } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
+import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 
 /**
  * 
@@ -51,13 +51,13 @@ import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/cre
     div.appendChild(addButton);
 
     //OBSERVATION
-    createDivEditable(form, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
+    TaskCreationUtils.createDivEditable(form, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
-        let btnAccept = createBtnAccept();
+        let btnAccept = TaskCreationUtils.createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
            
-        createDivGrid(form, btnAccept, {
+        TaskCreationUtils.createDivGrid(form, btnAccept, {
             styles:{
                 textAlign: "center"
             }
@@ -100,7 +100,9 @@ const addDates = (table, i, data={}) =>{
     });
 
     dataDelete.addEventListener(EVENT.CLICK, () => {
-        if(table.getRowsCount() > 1) table.removeRow(rowIndex);
+        if(table.getRowsCount() > 1) {
+            table.removeRow(rowIndex);
+        }
     });
     table.addCell(dataDelete);
 }
@@ -116,10 +118,11 @@ export const getFormVacationJson = ()=>{
         //DATES
         let dates = [];
         [...form.querySelectorAll("table tr")].map(tr=>{
-            let startDate = tr.querySelector("[id*=startDate]");
-            let endDate = tr.querySelector("[id*=endDate]");
-            if(startDate && endDate && startDate.value && endDate.value)
+            const startDate = tr.querySelector("[id*=startDate]");
+            const endDate = tr.querySelector("[id*=endDate]");
+            if(startDate && endDate && startDate.value && endDate.value){
                 dates.push({startDate: startDate.value, endDate: endDate.value});
+            }
         })
 
         const formSerialize = serializeForm(form);
@@ -131,7 +134,7 @@ export const getFormVacationJson = ()=>{
 
 
 const processAccept = async (aonMessengerChat) => {
-    let application = aonMessengerChat.getApplication();
+    const application = aonMessengerChat.getApplication();
     application.startLoading();
     try {
         const task = aonMessengerChat.task;

@@ -479,8 +479,11 @@ public class TaskDAO {
 	
 	public static class TaskFiller extends Filler implements Function<Record, Task> {
 
-		@Override
 		public Task apply(Record r) {
+			return build(r);
+		}
+				
+		public static Task build(Record r) {
 			return new Task()
 				.setId(r.getValue(TASK.ID))
 				.setDomain(checkField(r, DOMAIN.ID)

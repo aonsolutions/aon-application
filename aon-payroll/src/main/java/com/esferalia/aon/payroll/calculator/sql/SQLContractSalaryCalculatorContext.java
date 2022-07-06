@@ -5065,14 +5065,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
-
-					Double workedHours =  p.daysStream()
-							.filter(day -> !isHoliday(day))
-							.filter(day -> getDayType(day) != DayType.HOLIDAY)
-							.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),
-									day.getTime(), Number.class))
-							.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
-							.collect(Collectors.summingDouble(hours -> hours.doubleValue()));
+					
+					List<Calendar> workedList = p.daysStream()
+					.filter(day -> !isHoliday(day))
+					.filter(day -> getDayType(day) != DayType.HOLIDAY)
+					.collect(Collectors.toList());
+					
+					if ( workedList.isEmpty() )
+						return 0.00;
+					
+					Double workedHours =  
+						workedList.stream()
+						.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),day.getTime(), Number.class))
+						.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
+						.collect(Collectors.summingDouble(Number::doubleValue));
 					
 					for ( ContextVariable ereFactorVar : ContextVariable.ERE_FACTORS ) {
 						Number ereFactor =  ctx.getVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);

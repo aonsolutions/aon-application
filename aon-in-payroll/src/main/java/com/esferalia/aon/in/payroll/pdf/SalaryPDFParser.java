@@ -8,20 +8,26 @@ import java.util.Arrays;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-//import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.esferalia.aon.in.payroll.pdf.template.A3PDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.AplifisaPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.DSIPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.OmegaPDFTemplate;
-import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
+//import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryPDFParser {
 	
-	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, A3PDFTemplate.A3_PDF_TEMPLATE, DSIPDFTemplate.DSI_PDF_TEMPLATE, AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE, OmegaPDFTemplate.OMEGA_PDF_TEMPLATE};
+	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {
+			AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, 
+			A3PDFTemplate.A3_PDF_TEMPLATE, 
+			DSIPDFTemplate.DSI_PDF_TEMPLATE, 
+			AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE, 
+			OmegaPDFTemplate.OMEGA_PDF_TEMPLATE
+			};
 	
 	
 	public static void parse( File file , ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
@@ -59,7 +65,7 @@ public class SalaryPDFParser {
 		
 		PDFTextStripper stripper= new PDFTextStripper();
 		stripper.setWordSeparator("    ");
-		//stripper.setSortByPosition(true);
+		stripper.setSortByPosition(true);
 		
 		SalaryPDFTemplate template = null;
 		
@@ -92,7 +98,7 @@ public class SalaryPDFParser {
 		org.apache.pdfbox.text.PDFTextStripper stripper= new org.apache.pdfbox.text.PDFTextStripper();
 		stripper.setSortByPosition(true);
 		stripper.setWordSeparator("    ");
-//		stripper.setSortByPosition(true);
+		stripper.setSortByPosition(true);
 		
 		SalaryPDFTemplate template = null;
 		
@@ -125,11 +131,11 @@ public class SalaryPDFParser {
 				try {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
-//					System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
 //					System.out.println(text);
 					return template;
 				} catch ( UnknownPDFException e ) {
-//					System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
 //					System.err.println(text);
 				}
 			}
@@ -139,6 +145,7 @@ public class SalaryPDFParser {
 			try {
 				return pdfTemplate.parse(text, salaryBuilder);
 			} catch ( SalaryPDFException e ) {
+				System.err.println(e.getMessage());
 				//System.err.println(text);
 				return pdfTemplate;
 			}

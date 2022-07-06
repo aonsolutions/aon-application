@@ -588,8 +588,9 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptions(title, options, newButton) {
+    let tmp = undefined;
     if (options && options.length > 0) {
-      this.addSidenavOptionsTitle(
+      tmp = this.addSidenavOptionsTitle(
         {
           id: title,
           name: title,
@@ -604,6 +605,7 @@ export class AonApplication extends AonElement {
         options
       );
     }
+    return tmp;
   }
 
   addSidenavOptions2(data, options, newButton) {
@@ -722,6 +724,11 @@ export class AonApplication extends AonElement {
       span.appendChild(aonIconButton);
       this.appendChild(span);
       aonIconButton.addEventListener(EVENT.CLICK, fn);
+
+      const btn = aonIconButton.getButton();
+      if(btn){
+        btn.style.boxShadow = "0px 1px 8px rgb(0 0 0 / 43%)";
+      }
     }
 
     return aonIconButton;

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,11 +13,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Salary;
-import com.esferalia.aon.occam.api.model.type.DeductionType;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.google.gson.GsonBuilder;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.TestCalculationQuery;
@@ -207,14 +203,6 @@ public class SLDSalariesTestCase {
 	}
 	
 	
-	private static String toJson(Salary salary) {
-		return
-		new GsonBuilder()
-		.setPrettyPrinting()
-		.setDateFormat("dd/MM/YYYY")
-		.create()
-		.toJson(salary, Salary.class);
-	}
 	
     public static void assertEquals(String message, Double expected,
             Double actual ) {

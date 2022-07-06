@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -139,6 +140,10 @@ public class AonApiHttpServlet extends HttpServlet{
 			}
 		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
+		}
+		if(user.getAuth().isEmpty() && !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			user.setAuth(AON_SOLUTIONS.getAuth(aonToken.getAuth()));
 		}
 		if(user.getLogin() == null) user.setLogin("");
 		return user;

@@ -25,11 +25,16 @@ class CompositeConnectionInfo extends ConnectionInfo {
 
 		synchronized (ConnectionInfoImpl.DEFAULT_CONFIG_FILE) {
 			if (defaultConnectionInfo == null) {
-				defaultConnectionInfo = getConnectionInfo(new File(ConnectionInfoImpl.DEFAULT_CONFIG_FILE));
+				defaultConnectionInfo = newConnectionInfo(new File(ConnectionInfoImpl.DEFAULT_CONFIG_FILE));
 			}
 			
 			return defaultConnectionInfo;
 		}
+	}
+
+	static final CompositeConnectionInfo getCompositeConnectionInfo(File configFile)
+			throws AonConnectionException{
+		return newConnectionInfo(configFile);
 	}
 
 	private Map<String, String> domainsMap;
@@ -197,7 +202,7 @@ class CompositeConnectionInfo extends ConnectionInfo {
 		ConnectionInfoImpl.TIMEZONE_PROPERTY + suffix);
 	}
 	
-	private static CompositeConnectionInfo getConnectionInfo(File file) throws AonConnectionException {
+	private static CompositeConnectionInfo newConnectionInfo(File file) throws AonConnectionException {
 		try(FileInputStream is = new FileInputStream(file)) {
 			return getConnectionInfo(is);
 		} catch ( IOException e ) {

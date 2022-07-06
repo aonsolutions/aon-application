@@ -3406,6 +3406,58 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testIdcAsimilados() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcAsimilados.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.MAY);
+
+			Date may012020 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( may012020 , pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.MONTH,Calendar.NOVEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date november = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(c -> System.out.println("DEDUCTION :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			
+			salary.getSalaryCosts().forEach(c -> {
+					if ( AonStringUtils.equalsIgnoreCase("DESMPL_E", c.getName()) ) 
+						fail("DESEMPLEO must be excluded");
+					if ( AonStringUtils.equalsIgnoreCase("FOGASA_E", c.getName()) ) 
+						fail("FOGASA must be excluded");
+			});
+			
+			salary.getSalaryDeductions().forEach(c -> {
+				if ( AonStringUtils.equalsIgnoreCase("DESMPL", c.getName()) ) 
+					fail("DESEMPLEO must be excluded");
+			});
+
+			//assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			//assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
 	public static final DomainRecord newDomain(AONContext aonContext, String name ) {
 		return aonContext.getDslContext()
 				.insertInto(DOMAIN)

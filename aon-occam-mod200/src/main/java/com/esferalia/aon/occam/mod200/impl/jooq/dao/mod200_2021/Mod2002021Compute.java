@@ -305,7 +305,7 @@ public class Mod2002021Compute {
 					}
 				}
 				
-				COMPUTE_EXPRESSION_MAP.put(key.getIncrease(), "computeD1004(" + detailKeys + ")");
+				COMPUTE_EXPRESSION_MAP.put(key.getIncrease(), detailKeys);
 				
 				if (detailIncrease[0] != null)
 					dc2305 = dc2305 + (dc2305.isEmpty()?"":"+")+detailIncrease[0].toString(); 
@@ -334,8 +334,8 @@ public class Mod2002021Compute {
 						detailKeys = detailKeys + key2.toString();
 					}
 				}
-				if (key.getIncrease() == Mod2002021Key.D1004) {
-					COMPUTE_EXPRESSION_MAP.put(key.getIncrease(), "computeD1004(" + detailKeys + ")");
+				if (key.getDecrease() == Mod2002021Key.D1004) {
+					COMPUTE_EXPRESSION_MAP.put(key.getDecrease(), "computeD1004(" + detailKeys + ")");
 				} else {
 					COMPUTE_EXPRESSION_MAP.put(key.getDecrease(), detailKeys);
 				}

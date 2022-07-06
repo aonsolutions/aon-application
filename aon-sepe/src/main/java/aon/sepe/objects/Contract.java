@@ -33,11 +33,13 @@ public class Contract {
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
 	private String interinidad;
+	private String titulacion;
 	
 	private DiscontinuoReason discontinuoReason; // solo para transformaciones
 	
 	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
+	private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
 	private Date oldDateIniContract; // Para las transformaciones
 	
 	public String getSepeId() {
@@ -107,6 +109,10 @@ public class Contract {
 	public Integer getCodFormativo() {
 		return codFormativo;
 	}
+	
+	public Optional<String> getTitulacion() {
+		return Optional.ofNullable(titulacion);
+	}
 
 	public String getCodOccupation() {
 		return codOccupation;
@@ -168,6 +174,11 @@ public class Contract {
 		return previsible;
 	}
 	
+	public boolean getCertificateProfessional() {
+		return certificateProfessional;
+	}
+	
+	
 	public boolean getDiscontinuo() {
 		return discontinuo;
 	}
@@ -210,9 +221,11 @@ public class Contract {
 		private String durationTypeCvnHour;
 		private String durationTypeCvnMin;
 		private String interinidad;
+		private String titulacion;
 		
 		private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 		private boolean previsible; // ¿El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
+		private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
 		private Date oldDateIniContract; // Para la transformacion
 		
 		public ContractBuilder setCifEnterprise(String cifEnterprise) {
@@ -251,6 +264,11 @@ public class Contract {
 			return this;
 		}
 
+		public ContractBuilder setTitulacion(String titulacion) {
+			this.titulacion = titulacion;
+			return this;
+		}
+		
 		public ContractBuilder setRegimen(String regimen) {
 			this.regimen = regimen;
 			return this;
@@ -381,7 +399,11 @@ public class Contract {
 			this.previsible = previsible;
 			return this;
 		}
-
+		
+		public ContractBuilder setCertificateProfessional(boolean certificateProfessional) {
+			this.certificateProfessional = certificateProfessional;
+			return this;
+		}
 
 		public ContractBuilder() {
 		}
@@ -421,6 +443,8 @@ public class Contract {
 			contract.discontinuo = this.discontinuo;
 			contract.previsible = this.previsible;
 			contract.oldDateIniContract = this.oldDateIniContract;
+			contract.titulacion = this.titulacion;
+			contract.certificateProfessional = this.certificateProfessional;
 			return contract;
 		}
 	}
@@ -517,7 +541,10 @@ public class Contract {
 				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", oldDateIniContract=" + oldDateIniContract + ", dateBirth="
 				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType + ", discontinuoReason=" + discontinuoReason
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
-				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+  ", previsible=" + previsible+"]";
+				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad
+				+  ", titulacion=" + titulacion
+				+  ", certificateProfessional=" + certificateProfessional
+				+  ", previsible=" + previsible+"]";
 	}
 	
 	

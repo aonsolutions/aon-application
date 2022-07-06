@@ -22,6 +22,7 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -117,6 +118,14 @@ public class Model303 extends MainEntryPoint {
 			tabLayout.selectTab(INFORMATION_TAB);
 			breakdownPanel.setWidget(widget);
 			breakdownPanel.scrollToTop();
+		}
+		
+		public HasWidgets getNewTabWidget(String tabLabel) {
+			SimpleLayoutPanel container = new SimpleLayoutPanel();
+			tabLayout.add(container, tabLabel);
+			tabLayout.selectTab(tabLayout.getWidgetCount() - 1);
+			openFootPanelIfNeeded();
+			return container;
 		}
 		
 		@Override

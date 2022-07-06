@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, CSS, MSG } from "../../environments/environments.js";
-import {  APP_PARAMS_REQUEST, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
+import { APP_PARAMS_REQUEST, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
 import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, sendTaskHistoric, deleteTaskWorkflow, updateTaskWorkflow} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
@@ -8,7 +8,7 @@ import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkButtonsToolbar, checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
 import { getFormVacationJson } from "./forms/vacation.js";
-import { fillChat } from "./shared/fill.js";
+import { TaskFill } from "./shared/TaskFill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
 import { getFormTimeJson } from "./forms/time-control.js";
 import { getOfficeProjects } from "../../services/projectService.js";
@@ -16,6 +16,7 @@ import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
 import { getTastHoldersWorkGroup } from "../../services/taskHolderService.js";
 import {getDomainLogin} from '../../services/localStorageService.js';
+import { TaskCreationUtils } from "./shared/TaskCreationUtils.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -200,28 +201,29 @@ export class AonMessengerChat extends AonElement {
    * @param {String} status 
    * @param {String} comment Optional 
    */
-  async updateTaskStatus(status, comment){
-    // this.applicationEl.confirmDialog(MSG.CONFIRM, "Estas seguro?", async()=>{
-      this.task.setStatus(status);
-      let type = undefined;
-      switch(status){
-        case TASK_STATUS.PENDING:
-          type = WORKFLOW_TYPES.REOPEN;
-        break;
-        case TASK_STATUS.DELETED:
-          type = WORKFLOW_TYPES.DELETE;
-        break;
-        case TASK_STATUS.FINISHED:
-          type = WORKFLOW_TYPES.CLOSE;
-          await this.saveComment();
-        break;
-      }
-
-      
-      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment, auth:this.getAuth()});
+  async updateTaskStatus(status, comment, dailyTracking = undefined) {
+    this.task.setStatus(status);
+    let type = undefined;
+    switch(status){
+      case TASK_STATUS.PENDING:
+        type = WORKFLOW_TYPES.REOPEN;
+      break;
+      case TASK_STATUS.DELETED:
+        type = WORKFLOW_TYPES.DELETE;
+      break;
+      case TASK_STATUS.FINISHED:
+        type = WORKFLOW_TYPES.CLOSE;
+        await this.saveComment();
+      break;
+    }
+    
+    try {
+      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment, auth:this.getAuth(), dailyTracking});
       await this.save();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-    // });
+    } catch (error) {
+      this.showError(error);
+    }
   }
 
   async getTaskWorkflow(task) {
@@ -231,17 +233,20 @@ export class AonMessengerChat extends AonElement {
       checkButtonsToolbar(this, task.id);
 
       let params = { task:taskId, domainId:task.domain.id, domainName:task.domain.name };
+      
       if(task.parent){
         params.parent = task.parent;
       }
+
       if(this.isCau() && this.getAuth().email){
         params.email =  this.getAuth().email;
       }
+
       let workflows = await getTaskWorkflow(params);
 
       const taskHolderId = this.MY_TASKHOLDER ? this.MY_TASKHOLDER.id : null;
 
-      fillChat(task, taskHolderId, workflows);
+      TaskFill.fillChat(task, taskHolderId, workflows);
       
       this.applicationParentEl.markReadNotification(taskId);
     } catch (error) {
@@ -255,10 +260,11 @@ export class AonMessengerChat extends AonElement {
     this.autoCompleteTask();
 
     try {
-      if(this.task.source === TASK_SOURCE.REQUEST)
+      if(this.task.source === TASK_SOURCE.REQUEST){
         await this.saveSourceRequest();
-      else 
+      } else {
         await this.saveSourceQuery();
+      }
 
       success = true;
 
@@ -314,6 +320,16 @@ export class AonMessengerChat extends AonElement {
     }
   }
 
+  closeTask(){
+    if(this.isCau()){
+    this.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
+      this.updateTaskStatus(TASK_STATUS.FINISHED); 
+    });
+    } else {
+      TaskCreationUtils.openDialogDailyTracking();
+    }
+  }
+
   getCauInfo(){
     let cauInfo = this.applicationParentEl.cauInfo;
     let login = getDomainLogin();
@@ -340,7 +356,7 @@ export class AonMessengerChat extends AonElement {
   deleteTask(){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-        await deleteTask({task:this.task.id});
+        await deleteTask(this.task);
         this.showToast({message:MSG.DELETED_DATA});
         this.applicationParentEl.updateCount();
         this.back();
@@ -353,7 +369,7 @@ export class AonMessengerChat extends AonElement {
   deleteTaskWorkflow(id){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-        await deleteTaskWorkflow({id});
+        await deleteTaskWorkflow({id, domain:this.task.domain});
         this.showToast({message:MSG.DELETED_DATA});
         const element = document.querySelector(`[data-id='${id}']`);
         if(element) element.remove();
@@ -408,16 +424,16 @@ export class AonMessengerChat extends AonElement {
     const processType = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
     if(processType){
       this.task.title = processType.getText();
-    
-      if("1" === processType.value )
+      const type = processType.value;
+      if("1" === type){
         json = getFormVacationJson();
-      else if("2" === processType.value )
+      } else if("2" === type){
         json = getFormMovJson();
-      else if("3" === processType.value )
+      } else if("3" === type){
         json = getFormTimeJson();
+      }
   
-      if(json){
-        //TAGS
+      if(json){//TAGS
         let descriptionJson = this.task.getDescriptionJson();
         if(descriptionJson.tags) json.tags = descriptionJson.tags;
 

@@ -20,8 +20,10 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
+import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
@@ -52,6 +54,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.DailyTracking;
+import com.esferalia.aon.occam.api.model.task.JobType;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskCounts;
@@ -890,6 +894,45 @@ public class AON_SOLUTIONS {
 	public static void deleteTaskAttach(Domain domain, User user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			getTask2().deleteTaskAttach(ctx, id);
+		}
+	}
+	
+	//------ DAILY_TRACKING-------
+	public static DailyTracking getDailyTracking(Domain domain, User user, DailyTrackingFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getDailyTracking(ctx, filter);
+		}
+	}
+	
+	public static Stream<DailyTracking> getDailyTrackingStream(Domain domain, User user, DailyTrackingFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getDailyTrackingStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<DailyTracking> getDailyTrackingStream(Domain domain, User user, DailyTrackingFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getDailyTrackingStream(ctx, filter, page, perPage);
+		}
+	}
+
+	public static DailyTracking saveDailyTracking(Domain domain, User user, DailyTracking dailyTracking) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().saveDailyTracking(ctx, dailyTracking);
+		}
+	}
+	
+	public static void deleteDailyTracking(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
+			getTask2().deleteDailyTracking(ctx, id);
+		}
+	}
+	
+	//----JOB_TYPE
+	
+	public static Stream<JobType> getJobTypeStream(Domain domain, User user, JobTypeFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getJobTypeStream(ctx, filter);
 		}
 	}
 	

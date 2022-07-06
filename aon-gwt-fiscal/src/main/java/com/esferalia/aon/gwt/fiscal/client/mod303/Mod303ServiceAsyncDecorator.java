@@ -125,4 +125,15 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 	}
 
 
+	@Override
+	public void doRecord(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback) {
+		AON.start();
+		fsa.doRecord(occam, mod303, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void unrecord(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback) {
+		AON.start();
+		fsa.unrecord(occam, mod303, new AsyncCallbackWrapper<>(callback));
+	}
 }

@@ -2535,7 +2535,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					String.format("I.T.: %.2f %%", Double.parseDouble(data.getExpression())), 
 					data.getExpression()));
 				break;
+			case IT_PERCENT:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("I.T.: %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
 			case IMS_RATE:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("I.M.S.: %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
+			case IMS_PERCENT:
 				pecs.add(newSSPECData(
 					null,
 					data.getStartDate(), 
@@ -2559,10 +2575,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					String.format("DESEMPLEO EMPRESA:  %.2f %%", Double.parseDouble(data.getExpression())), 
 					data.getExpression()));
 				break;
+			case FOGASA_ENTERPRISE_PERCENT:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("FOGASA:  %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
 			default:
 				break;
 			}
 		}
+		
+		pecs.forEach(pec -> System.out.println(pec.getDescription() + " - " + pec.getFormula() + " (" + pec.getStartDate() + " / " + pec.getEndDate() + ")"));
 		
 		return pecs;
 	}

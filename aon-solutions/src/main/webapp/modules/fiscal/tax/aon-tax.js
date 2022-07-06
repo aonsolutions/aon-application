@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { formatNumber, isEmptyObject, serializeForm, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
-import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
-import { CONST_FISCAL, TAX_ENUMS } from "../FiscalEnums.js";
+import { isEmptyObject, serializeForm, waitEl, disabledForm, formatNumber } from "../../../services/utils.js";
+import { setModelStatus } from "../../../services/service.js";
+import { CONST_FISCAL } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
@@ -9,10 +9,10 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { EVENT, TAG,  MSG, CONSTANT } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { FiscalUtils } from "../FiscalUtils.js";
 
 export class AonTax extends AonElement {
   TABLE_ID;
-  BANKS;
   DIALOG_CHECKBOX;
   searchFilter;
   _list;
@@ -44,7 +44,6 @@ export class AonTax extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.DIALOG_CHECKBOX = this.id+"CheckBox";
     this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Impuestos");
     this._list = [];
   }
@@ -53,7 +52,7 @@ export class AonTax extends AonElement {
     this.paintView();
     this.buildToolbar();
     await this.getTable();
-    this.getBanks();
+    this.getApplicationParent().getBanks();
   }
 
   paintView() {
@@ -63,32 +62,32 @@ export class AonTax extends AonElement {
   }
 
   buildToolbar() {
-    this.applicationEl.removeToolbarOptions();
-    this.buildToolbarSearch();
+    // this.applicationEl.removeToolbarOptions();
+    // this.buildToolbarSearch();
     // this.searchValueDefault();
   }
 
-  buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
+  // buildToolbarSearch(){
+    // let btnSearch = this.applicationEl.addSearchOption();
     
-    const searchFn = ({detail}) => {
-      this.searchFilter = detail;
-      this.search();
-    }
+    // const searchFn = ({detail}) => {
+    //   this.searchFilter = detail;
+    //   this.search();
+    // }
     
-    const searchValueFn = ({detail})=>{
-      this._list = [];
-      if(detail) console.log(detail);
-    }
+    // const searchValueFn = ({detail})=>{
+    //   this._list = [];
+    //   if(detail) console.log(detail);
+    // }
 
-    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    // btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+    // btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
 
     // btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
 
-    let buttonSearchAccept = btnSearch.querySelector("div>button");
-    if(buttonSearchAccept) buttonSearchAccept.disabled = true;
-  }
+    // let buttonSearchAccept = btnSearch.querySelector("div>button");
+    // if(buttonSearchAccept) buttonSearchAccept.disabled = true;
+  // }
 
   // searchValueDefault(){
   //   let periodEl = this.getElement("period");
@@ -108,10 +107,11 @@ export class AonTax extends AonElement {
 
   async getTable() {
     this.applicationEl = await waitEl("#aonFiscal");
-    this.applicationEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
-    this.applicationEl.stopLoader();
+    if (this.isMobile()) {
+      await this.getTableMobile();
+    } else {
+      await this.getTableDesk();
+    }
   }
 
   async getTableDesk() {
@@ -127,9 +127,20 @@ export class AonTax extends AonElement {
       try {
         const resp = await this.getData();
         aonTable.removeRows();
-        resp.map((res) => {
-          aonTable.addRow(res, () => this.openDialog(res));
-        });
+
+        if(resp.length){
+          resp.forEach((res) => 
+            aonTable.addRow(res, () => this.openDialog(res))
+          );
+
+          let row = aonTable.addRow({
+            statusText:"Total",
+            resultFormat:this.getTotal(resp)
+          });
+          row.style.fontWeight = "600";
+        } else {
+          aonTable.empty();
+        }
       } catch (e) {
         console.log(e);
       }
@@ -142,7 +153,7 @@ export class AonTax extends AonElement {
       try {
         const resp = await this.getData();
         aonTable.removeAllLi();
-        resp.map((res, idx) => {
+        resp.forEach((res, idx) => {
           let options = {
             iconHtmlCustom: /*html*/ `${res.lettersHtml}<span style="float: right;color: black;font-weight: 500; margin-top: 10px;">${res.resultFormat}</span>`,
             title: `${res.model}`,
@@ -150,16 +161,49 @@ export class AonTax extends AonElement {
           };
           aonTable.addLi(options, idx, () => this.openDialog(res));
         });
+
+        aonTable.addLi({
+          title:"Total",
+          iconHtmlCustom: /*html*/ `<span style="float: right;color: black;font-weight: 600; margin-top: 10px;">${this.getTotal(resp)}</span>`,
+        });
       } catch (e) {
         console.log(e);
       }
     }
   }
 
+  async getData() {
+    const applicationParent = this.getApplicationParent();
+    let filter = applicationParent._filter;
+    let datos = await applicationParent.getModelsFiscal();
+
+    if(filter.year){
+      datos = datos.filter(({year})=> year==filter.year );
+    } 
+
+    if(filter.period){
+      datos = datos.filter(({period})=> period==filter.period );
+    } 
+
+    if(filter.model){
+      datos = datos.filter(({model})=> model==filter.model );
+    }
+  
+    return datos;
+  }
+
+
+  getTotal(models){
+    let total = models.reduce((t, model) => t + model.result, 0);
+    return formatNumber(total, 2, "EUR");
+  }
+
   openDialog(resp) {
     const dialog = this.applicationEl.getDialog();
     dialog.clear();
-    if (!this.isMobile()) dialog.width = "500px";
+    if (!this.isMobile()){ 
+      dialog.width = "500px";
+    }
 
     dialog.setContent(this.getDialogHtml(resp));
 
@@ -176,15 +220,12 @@ export class AonTax extends AonElement {
   getDialogHtml(resp){
     const div = this.createElement(TAG.DIV);
     const divImg = this.createElement(TAG.DIV);
-    divImg.style.fontSize= 18;
-    const imgAeat = this.createElement(TAG.IMG);
-    imgAeat.id = "imgAeat";
-    imgAeat.src = this.getPathImg(resp.administration);
-    divImg.appendChild(imgAeat);
+    divImg.style.fontSize = 18;
+    divImg.appendChild(FiscalUtils.createImgAdmin(resp.administration));
 
     const spanTextImg =  this.createElement(TAG.SPAN);
     spanTextImg.style.marginLeft = 3;
-    spanTextImg.textContent = `Modelo ${resp.newModel} (${resp.modelText})`;
+    spanTextImg.textContent = `${MSG.MODEL} ${resp.newModel} (${resp.modelText})`;
     divImg.appendChild(spanTextImg);
     div.appendChild(divImg);
 
@@ -205,10 +246,10 @@ export class AonTax extends AonElement {
 
     if(resp.typeText){
       const divK =  this.createElement(TAG.DIV);
-      divK.className = "aonFlexBetween colorGrey aonFontWeight-700";
+      divK.classList.add("onFlexBetween", "colorGrey", "aonFontWeight-700");
       divK.style.margin = "20px 0";
       const divT =  this.createElement(TAG.DIV);
-      divT.innerHTML = `Tipo: <span style="color:black;"> ${resp.typeText}</span>`;
+      divT.innerHTML = `${MSG.TYPE}: <span style="color:black;"> ${resp.typeText}</span>`;
       divK.appendChild(divT);
       div.appendChild(divK);
     }
@@ -278,68 +319,36 @@ export class AonTax extends AonElement {
     checkBox.id = this.DIALOG_CHECKBOX;
     checkBox.description = span.outerHTML;
     checkBox.addEventListener(EVENT.CHANGE, ({target})=>{
-      if(target.checked) buttonAccept.disabled = false;
-      else buttonAccept.disabled = true;
+      buttonAccept.disabled = target.checked ? false : true;
     })
     div.appendChild(checkBox);
     divAction.insertBefore(div, buttonAccept);
     buttonAccept.disabled = true;
   }
 
-  async getData() {
-    let data = [];
-      if(this._list.length){
-        data = this._list;
-      } else {
-        try {
-          const datos = await getModelsFiscal();
-          if (datos) {
-            data = sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((resp) => {
-              let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
-              let color = "";
-              if("PENDING"===resp.status)       color = "fin";
-              else if("FINISHED"===resp.status) color = "in";
-  
-              const lettersHtml = /*html*/`<div class="profile-letters size ${color}">${
-                TAX_ENUMS.TAX_MODEL_NUMBER[resp.model]
-              }</div>`;
-              return {
-                ...resp,
-                lettersHtml,
-                resultFormat: !isNaN(resp.result) ? formatNumber(resp.result, 2, "EUR") : null,
-                periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
-                statusText: TAX_ENUMS.TAX_STATUS[resp.status],
-                modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
-                typeText:  TAX_ENUMS.TAX_TYPE[resp.type],
-                newModel
-              }
-            });
-          }
-          this._list = data;
-          if(this.searchFilter) data = this.filterSearch(["periodText", "statusText", "modelText", "newModel", "model"], data);
-        } catch (error) {
-          this.showError(error);
-        }
-    }
-    return data;
-  }
-
   eventData(resp){
     this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
         let nrc = this.getElement("nrc");
-        if(nrc) nrc.disabled = !target.checked;
-        if(!target.checked) nrc.value ="";
+        if(nrc) {
+          nrc.disabled = !target.checked;
+        }
+        if(!target.checked) {
+          nrc.value ="";
+        }
     });
 
     const iban = this.getElement('iban');
-    this.getBanks().then(result=>{
+    this.getApplicationParent()
+    .getBanks().then(result=>{
       if(result){
         let options = result.map(r=> ({
           name: `${r.bankAccount} - ${r.alias}`,
           value: `${this.replaceAllPoint(r.bankAccount)}`
         }));
         iban.options = JSON.stringify(options);
-        if(resp.iban) iban.value = resp.iban;
+        if(resp.iban) {
+          iban.value = resp.iban;
+        }
       }
     })
   }
@@ -349,44 +358,16 @@ export class AonTax extends AonElement {
   }
 
   getFormValues() {
+      let banks = this.getApplicationParent().BANKS;
       let formObj = serializeForm(this.getElement(`${this.id}Form`));
-      if(!isEmptyObject(this.BANKS) && formObj.iban){
-        const bankObj = this.BANKS.find(bank =>  this.replaceAllPoint(bank.bankAccount) === formObj.iban);
+      if(!isEmptyObject(banks) && formObj.iban){
+        const bankObj = banks.find(bank =>  this.replaceAllPoint(bank.bankAccount) === formObj.iban);
         if(bankObj){
           formObj["bankAlias"] = bankObj.alias;
           formObj["bankBic"] = bankObj.bic;
         }
       }
       return formObj;
-  }
-
-  async getBanks(){
-    if(isEmptyObject(this.BANKS)){
-      let result = await getCompanyBanks().catch(e=>null);
-      if(result) this.BANKS = result;
-    }
-    return this.BANKS;
-  }
-
-  getPathImg(administration){
-      const path = "assets/img/";
-      const {TAX_ADMIN} = TAX_ENUMS;
-      let src = "aeat.png";
-      switch(administration){
-        case TAX_ADMIN.ALAVA:
-          src = "aeat_alava.png";
-          break;
-        case TAX_ADMIN.BIZKAIA:
-          src = "aeat_biskaia.png";
-          break;
-        case TAX_ADMIN.GIPUZKOA:
-          src = "aeat_gipuzcoa.png";
-          break;
-        case TAX_ADMIN.NAVARRA:
-          src = "aeat_navarra.png";
-          break;
-      }
-      return path+src;
   }
 
   visibleFields({type}){
@@ -417,11 +398,11 @@ export class AonTax extends AonElement {
       await this.getTable();
       this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
     } catch (error) {
+      console.error(error);
       this.showToast(error);
     }
     this.applicationEl.stopLoading();
   }
-
 
   search(){
     this._list = this.filterSearch(["periodText", "statusText", "modelText", "newModel", "model"], this._list);
@@ -435,7 +416,6 @@ export class AonTax extends AonElement {
     }
     return list;
   }
-
 }
 
 window.customElements.define("aon-tax", AonTax);
