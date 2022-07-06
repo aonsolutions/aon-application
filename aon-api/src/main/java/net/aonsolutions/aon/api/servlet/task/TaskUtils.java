@@ -163,10 +163,10 @@ public class TaskUtils {
 		Domain domain = api.getDomain();
 		 for (int i = 0 ; i < files.length(); i++) {
 			try {
-			    JSONObject file = files.getJSONObject(i);
-			    String     dataId =  file.optString(IJsonNames.ID);
+			    JSONObject file    = files.getJSONObject(i);
+			    String     dataId  = file.optString(IJsonNames.ID);
 			    Matcher    matcher = regexFile(task.getDescription(), dataId);
-				String     base64 = null;
+				String     base64  = null;
 				String     contentType = null;
 				
 			    if(matcher!=null) {

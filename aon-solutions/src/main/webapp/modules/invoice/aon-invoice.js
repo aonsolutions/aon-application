@@ -1393,10 +1393,11 @@ export class AonInvoice extends AonElement {
 			if(description.value.length > 2) {
 				let data = { value: description.value};
 				getItems(data).then(r => {
-					description.buildOptions(r.map(r => {return {
-						name: r.name,
-						value: r.id,
-						item: r};}));
+					description.buildOptions(r.map(r => {
+						return {
+							name: r.description && r.description !== '' ? r.description : r.name,
+							value: r.id,
+							item: r};}));
 				}).catch(e => this.showError(e));
 			  }
 		});

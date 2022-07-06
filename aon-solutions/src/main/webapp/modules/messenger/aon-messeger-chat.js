@@ -366,12 +366,12 @@ export class AonMessengerChat extends AonElement {
     });
   }
 
-  deleteTaskWorkflow(id){
+  deleteTaskWorkflow(workflow){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-        await deleteTaskWorkflow({id, domain:this.task.domain});
+        await deleteTaskWorkflow({workflow, domain:this.task.domain});
         this.showToast({message:MSG.DELETED_DATA});
-        const element = document.querySelector(`[data-id='${id}']`);
+        const element = document.querySelector(`[data-id='${workflow}']`);
         if(element) element.remove();
       } catch (error) {
         this.showError(error);

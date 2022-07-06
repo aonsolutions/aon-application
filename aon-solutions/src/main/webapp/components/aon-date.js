@@ -66,9 +66,11 @@ export class AonDate extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
       let input = this.getElement(this.INPUT);
-      if(newValue && input)
+      if(newValue && input){
         input.value = AonDateUtils.setDate(newValue);
-      else if(input && newValue === '') input.value = '';
+      } else if(input && newValue === '') {
+        input.value = '';
+      }
    }
   }
 	constructor () {
@@ -371,8 +373,8 @@ export class AonDate extends AonElement {
 
   previousMonth() {
     if(this.month === 0) {
-       this.month = 11;
-       this.year = this.year- 1;
+      this.month = 11;
+      this.year = this.year- 1;
     } else {
       this.month = this.month- 1;
     }
@@ -383,8 +385,8 @@ export class AonDate extends AonElement {
 
   nextMonth() {
     if(this.month === 11) {
-       this.month = 0;
-       this.year = this.year+ 1;
+      this.month = 0;
+      this.year = this.year+ 1;
     } else {
       this.month = this.month + 1;
     }
@@ -402,26 +404,6 @@ export class AonDate extends AonElement {
       datePicker.classList.add('is-mobile');
     }
   }
-
-  // datePickerMobile(){
-  //   new Rolldate({
-  //     el: '#'+this.INPUT,
-  //     format: 'DD/MM/YYYY',
-  //     beginYear: 1950,
-  //     endYear: new Date().getFullYear(),
-  //     lang: { 
-  //       title: 'Elige una fecha', 
-  //       cancel: 'Cancelar', 
-  //       confirm: 'Confirmar'
-  //     },
-  //     confirm: (date)=> {
-  //       console.log('confirm', date);
-  //     },
-  //     cancel: () => {
-  //       console.log('cancel');
-  //     }
-  //   })
-  // }
 
   closeDatepicker() {
     let div = this.getElement(this.DATEPICKER);
@@ -458,8 +440,7 @@ export class AonDate extends AonElement {
   }
 
   addZero(d){
-    if (d <= 9) d = d.toString().padStart(2, "0");
-    return d;
+    return d.toString().padStart(2, "0");
   }
 
   focus() {
