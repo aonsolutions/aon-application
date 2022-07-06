@@ -325,6 +325,7 @@ public enum ContextVariable implements IResourceable {
 	CRA_0010("CRA_0010", VariableType.INTEGER),
 	CRA_0008("CRA_0008", VariableType.INTEGER),
 
+	HOURLY_BASE("BASE_HORARIA", VariableType.BOOLEAN, false)
 	;
 
 	public static final String ALL = "_P";

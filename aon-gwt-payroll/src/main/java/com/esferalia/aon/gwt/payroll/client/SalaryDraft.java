@@ -3627,9 +3627,11 @@ public class SalaryDraft extends ResizeComposite
 		dbEmployeeGroupLabel.setText(getDbValueOf("GRUPO_COTIZACION"));
 		setDbStyleName(dbEmployeeGroupLabel, employeeGroupLabel);
 		
+		boolean hoursBase = getValuesOf("BASE_HORARIA").anyMatch(Boolean::valueOf);
+
 		double workHours = getValuesOf("HORAS_TRABAJADAS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedHoursLabel.setText(formatValue(workHours));
-		employeeWorkedHoursLabel.setVisible(isSalary() && workHours > 0);
+		employeeWorkedHoursLabel.setVisible(isSalary() && hoursBase );
 		employeeWorkedHoursTitle.setVisible(employeeWorkedHoursLabel.isVisible());
 		employeeWorkedHoursButton.setVisible(employeeWorkedHoursLabel.isVisible() );
 		double dbWorkHours = getDbValuesOf("HORAS_TRABAJADAS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
@@ -3647,17 +3649,17 @@ public class SalaryDraft extends ResizeComposite
 
 		employeePartialFactorWidget.removeFromParent();
 		employeePartialFactorWidget = (partialFactor != 1.00  && partialFactorsVars.length == 1) ? getVariableWidget(partialFactorsVars[0], partialFactorsVars[0].getScope(), true ): new Label();
-		employeePartialFactorWidget.setVisible(isSalary() && workHours == 0 && partialFactor != 1.00 && partialFactorsVars.length == 1); 
+		employeePartialFactorWidget.setVisible(isSalary() && !hoursBase  && partialFactor != 1.00 && partialFactorsVars.length == 1); 
 		employeeHoursFactorDaysPanel.add(employeePartialFactorWidget);
 		
 		employeePartialFactorLabel.setText(formatValue(partialFactor));
-		employeePartialFactorLabel.setVisible(isSalary() && workHours == 0 && partialFactor != 1.00 && partialFactorsVars.length > 1 );
+		employeePartialFactorLabel.setVisible(isSalary() && !hoursBase  && partialFactor != 1.00 && partialFactorsVars.length > 1 );
 		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
 		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
 		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
-		employeeWorkedDaysLabel.setVisible(isSalary() && workHours == 0 && partialFactor == 1.00 && workDays > 0 );
+		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && partialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
 		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
 		double dbWorkDays = getDbValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
