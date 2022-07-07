@@ -458,7 +458,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			.setData(fileData)
 			.setMimetype(MimeType.get(contentType));
 			
-			json = TaskAttachJSON.toJSON(AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach));
+			json = TaskAttachJSON.toJSON(TaskUtils.saveTaskAttach(domain, api.getUser(), taskAttach));
 			json.put("domain_name", domain.getName());
 			json.put("attach_type", "task");
 		}
