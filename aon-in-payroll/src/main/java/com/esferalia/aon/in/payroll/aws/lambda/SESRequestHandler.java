@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.aws.lambda;
 
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 
+import java.io.File;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +57,8 @@ import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class SESRequestHandler implements RequestHandler<Object, String> {
 	
+	static final String DEFAULT_CONFIG_FILE = "/mnt/aon-aio/connection";
+
 	private static final String DOMAIN_NAME_PATTERN = "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$";
 
 	
@@ -310,14 +313,14 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 		
-		return DSL.using(connection, SQLDialect.MARIADB, settings);
+		return DSL.using(connection, SQLDialect.MYSQL, settings);
     }
     
 	private static Connection getConnection(String domain) throws SQLException, AonConnectionException, ClassNotFoundException {
 		
 		System.out.println("getConnection (" + domain + ") {");
 		
-    	ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+    	ConnectionInfo ci = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
     	String schema = ci.getDomainDatabase(domain);
     	
 		System.out.println("schema = " + schema + ";");

@@ -39,9 +39,9 @@ export class Invoice {
   withholdingFarmer; // boolean | regimen agrario
   vatAccrualPayment; // boolean | criterio de caja
   surcharge; // boolean | recargo de equivalencia
-
-  rectified; // boolean | rectificativa
-  rectification_invoice;
+  rectifier; // boolean | rectificativa
+  rectified; // boolean | rectificada
+  rectificationInvoice;
 
   creation_user;
 
@@ -115,7 +115,8 @@ export class Invoice {
       this.vatAccrualPayment = invoice.vatAccrualPayment;// boolean | criterio de caja
       this.surcharge = invoice.surcharge;
       this.rectified = invoice.rectified || false;
-      this.rectification_invoice = invoice.rectification_invoice || undefined;
+      this.rectifier = invoice.rectifier || false;
+      this.rectificationInvoice = invoice.rectificationInvoice || undefined;
       this.documentNumber = invoice.documentNumber || undefined;
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
       this.tbai = invoice.tbai || false;
@@ -370,13 +371,27 @@ export class Invoice {
     return this;
   }
 
+  isRectifier() {
+    return this.rectifier && this.rectifier != CONSTANT.FALSE;
+  }
+
+  setRectifier(rectifier) {
+    this.rectifier = rectifier;
+    return this;
+  }
+
   getRectificationInvoice() {
-    return this.rectification_invoice;
+    return this.rectificationInvoice;
   }
 
   setRectificationInvoice(invoice) {
-    this.setRectified(true);
-    this.rectification_invoice = invoice.id;
+    this.setRectifier(true);
+    this.rectificationInvoice = {
+      id: invoice.id,
+      serie: invoice.serie,
+      number: invoice.number,
+      date: invoice.date
+    };
     return this;
   }
 

@@ -191,14 +191,23 @@ public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalary
 		pdfContractsMap.forEach((contractId, pdfContract) -> {
 			SQLSalaryProxy salaryProxy = 
 			getSQLSalaryProxy(dslContext, pdfContract).orElseGet(() -> newSQLSalaryProxy(dslContext, pdfContract));
-			setContract( contractId, salaryProxy);
+			setContract( contractId, salaryProxy, pdfContract);
 		});
 	}
 	
 	
-	private void setContract(int contractId, SQLSalaryProxy salaryProxy) {
+	private void setContract(int contractId, SQLSalaryProxy salaryProxy,PDFContract pdfContract) {
 		SalaryRecord salaryRecord = 
 		getDSLSalaryBuilder().getSalaryRecord(r -> AonNumberUtils.equals(r.getContract(), contractId));
+		
+		if ( salaryRecord == null )
+			salaryRecord = 
+			getDSLSalaryBuilder().getSalaryRecord(r -> AonStringUtils.equals(r.getEmployeeDocument(), pdfContract.getNif()));
+	
+		if ( salaryRecord == null )
+			salaryRecord = 
+			getDSLSalaryBuilder().getSalaryRecord(r -> AonStringUtils.equals(r.getSocialSecurityNumber(), pdfContract.getNaf()));
+
 		salaryRecord.setDomain(salaryProxy.getDomainId());
 		salaryRecord.setContract(salaryProxy.getContractId());
 	}
@@ -228,7 +237,9 @@ public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalary
 			
 		});
 		} catch ( TooManyRowsException e ) {
-			throw new SalaryPDFException("ERROR: [DUPLICATE EMPLOYEE] %s", getMessage(contract));
+			System.err.printf("ERROR: [DUPLICATE EMPLOYEE] %s\r\n", getMessage(contract));
+			return Optional.empty();
+			//throw new SalaryPDFException("ERROR: [DUPLICATE EMPLOYEE] %s", getMessage(contract));
 		}
 	}
 	

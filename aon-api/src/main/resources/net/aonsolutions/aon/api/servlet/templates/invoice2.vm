@@ -1,0 +1,101 @@
+<html>
+<head>
+	<style>
+	
+		.diva {
+			background-color: #f1f1f1;
+			padding-top: 20px;
+			padding-bottom: 20px;
+		}
+	
+		
+		.divb {
+			margin: 0px auto;
+			max-width: 600px;
+			background-color: white;
+			border-radius: 5px;
+		}
+		
+		.tableA {
+			width: 100%;
+			padding-top: 10px;
+		}
+		
+		.invoiceTable {
+			border: 1px solid #bbb;
+			border-radius: 5px;
+			width: 565px;
+		    margin: 15px;
+		}
+		
+		
+		.invoiceText {
+			font-size: 14px;
+		    margin: 20px;
+		}
+		
+		.label {
+			font-size: 12px;
+			margin-bottom: 0px;
+			color: rgba(0,0,0,.54);
+		}
+		
+	</style>
+</head>
+<body>
+
+	<div class="diva">
+		<div class="divb">
+			<table class="tableA">
+				<tr>
+					<td><a href="https://aon.solutions/" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;" ><img src="$company.getLogo()" style="cursor: pointer;" width="300px"></a></td>
+					<td></td>
+				</tr>
+				
+	
+				<tr>
+    				<td>
+        				<hr>
+    				</td>
+				</tr>
+				
+				<tr>
+    				<td style="padding-left:20px">
+						Estimado Cliente:<br><br>
+						Le adjuntamos copia de la factura $invoice.getReference() emitida el $invoice.getDate() a su nombre.
+						<br><br>
+						Pulse aquí para <a href="$invoice.getUrl()" target="_blank" alt="AON SOLUTIONS">Descargar Factura</a>.
+						<br><br>
+						Para cualquier aclaración sobre el documento adjunto póngase en contacto con nosotros.
+						<br><br>
+						Un Saludo,
+						<br><br>
+						$company.getName()
+						<br>
+						$company.getAddress()
+						<br>
+						$company.getMedias()
+						<br>
+						$company.getEmail()
+						
+    				</td>
+				</tr>
+				
+				<tr>
+    				<td>
+        				<hr>
+    				</td>
+				</tr>
+				
+				<tr class="label">
+					<td>
+						<div style="text-align:center; margin: 0 0 1em 0;" >Copyright 2022 AON SOLUTIONS, S.L.</div>
+						<div style="text-align:center" >Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a este correo.</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</body>
+</html>
