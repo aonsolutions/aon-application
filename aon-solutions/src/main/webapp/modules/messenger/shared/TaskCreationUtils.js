@@ -971,7 +971,6 @@ const openDialogDailyTracking = ()=> {
       const jobValue = jobType.value;
       const trackingValue = trackingDuration.value;
      
-
       let dailyTracking = undefined;
 
       if(jobValue && trackingValue){

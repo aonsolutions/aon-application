@@ -399,7 +399,7 @@ public class TaskFilter {
 		.or(f.getTagNameProperty().like(search))
 		.or(f.getGtaskIdProperty().like(search))
 		.or(f.getCommentsWorkflowProperty().like(search))
-		.or(f.getCommentsWorkflowProperty().like(search));
+		.or(f.getTaskHolderNameProperty().like(search));
 		
 		Integer numberSearch = 0;
 		

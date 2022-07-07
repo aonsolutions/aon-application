@@ -173,15 +173,15 @@ export const MessengerSidenav = {
 };
 
 export const TASK_FILTER = [
-    // {
-    //   type: "select",
-    //   id: "registry",
-    //   name: "registry",
-    //   title: MSG.CUSTOMER,
-    //   autocomplete: true,
-    //   default:true,
-    //   emptyclear:true
-    // },
+    {
+      type: "select",
+      id: "registry",
+      name: "registry",
+      title: MSG.CUSTOMER,
+      autocomplete: true,
+      default:true,
+      emptyclear:true
+    },
     {
         type: "select",
         id: "senderFilter",

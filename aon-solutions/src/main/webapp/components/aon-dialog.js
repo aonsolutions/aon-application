@@ -269,18 +269,21 @@ export class AonDialog extends AonElement {
 		if(title) this.getElement(this.TITLE).innerHTML = title;
 	}
 
-	addCancelAction(fn) {
+	addCancelAction(fn, close=true) {
 		let cancel = this.createElement('button');
 		cancel.id = this.CANCEL;
 		cancel.className = 'aonButton';
 		cancel.style.backgroundColor="grey";
 		cancel.style.marginRight = "10px";
 		cancel.innerHTML = MSG.CANCEL;
-		cancel.addEventListener('click', () => {
-			fn();
-			this.close();
+		cancel.addEventListener('click', (ev) => {
+			fn(ev);
+			if(close){
+				this.close();
+			}
 		});
 		this.getElement(this.ACTION).appendChild(cancel);
+		return cancel;
 	}
 
 	addAcceptAction(fn) {
@@ -300,7 +303,7 @@ export class AonDialog extends AonElement {
 		btn.style.marginLeft= "auto";
 		let divAction = this.getElement(this.ACTION);
 		divAction.style.display = "flex";
-		divAction.style.justifyContent= "space-between";
+		divAction.style.justifyContent = "space-between";
 		divAction.appendChild(btn);
 		return btn;
 	}
