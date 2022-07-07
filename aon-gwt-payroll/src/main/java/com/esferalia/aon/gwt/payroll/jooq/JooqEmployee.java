@@ -788,7 +788,9 @@ public class JooqEmployee {
 		
 		contractData.setContractId(contract);
 		contractData.setStartDate(contractTable.get(CONTRACT.START_DATE));
+		// Set default old dates
 		contractData.setOriginalStartDate(contractTable.get(CONTRACT.START_DATE));
+		contractData.setOriginalEndDate(contractTable.get(CONTRACT.END_DATE));
 		contractData.setEndDate(contractTable.get(CONTRACT.END_DATE));
 		contractData.setSeniorityDate(contractTable.get(CONTRACT.SENIORITY_DATE));
 		contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
@@ -975,6 +977,14 @@ public class JooqEmployee {
 					contractData.setOriginalStartDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
 				} catch (ParseException e) {
 					contractData.setOriginalStartDate(contractTable.get(CONTRACT.START_DATE));
+					e.printStackTrace();
+				}
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "ORIGINAL_END_DATE")) {
+				contractData.setHasTransformation(true);
+				try {
+					contractData.setOriginalEndDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+				} catch (ParseException e) {
+					contractData.setOriginalEndDate(contractTable.get(CONTRACT.END_DATE));
 					e.printStackTrace();
 				}
 			}
