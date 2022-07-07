@@ -1923,7 +1923,7 @@ public class JooqEmployee {
 			.execute();
 //		}
 		
-		if(!contractJourneyDuration.isEmpty()){
+		if(!contractJourneyDuration.isEmpty() && (null != contractData.getJourneyType() && contractData.getJourneyType() == 0)){
 		 
 			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
 				 for(JourneyDuration journey : entry.getValue()) {
