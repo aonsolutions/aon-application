@@ -129,6 +129,17 @@ public class JooqContractTransform {
 			.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
 			.execute();
 		
+		// Save old contract end date
+		
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
+			.set(CONTRACT_DATA.NAME, "ORIGINAL_END_DATE")
+			.set(CONTRACT_DATA.CONTRACT, newContractId)
+			.set(CONTRACT_DATA.EXPRESSION, formatDate.format(oldEndDateContract))
+			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
+			.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+			.execute();
+		
 		// Copy contract data
 		
 		dslContext.insertInto(CONTRACT_DATA)

@@ -7183,6 +7183,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
+		builder.setOldDateFinContract(employeeContractInfo.getContractInfo().getOriginalEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
 		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setOffer(OfferType.NO);
