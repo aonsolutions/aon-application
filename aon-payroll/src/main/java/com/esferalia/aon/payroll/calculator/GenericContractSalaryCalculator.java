@@ -791,7 +791,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double additionalBase = quoteCalculator.getAdditionalBase();
 			if (additionalBase != null)
 				cgcBase += additionalBase;
-			salaryBuilder.setCgcBase(cgcBase);
 			
 			addVars(expressionContext, CGC_BASE,  ADDITIONAL_BASE);
 
@@ -799,7 +798,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, ADDITIONAL_BASE, CGC_BASE);
 //			if (cgcBase != null)
 //				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
-			
+
+			salaryBuilder.setCgcBase(cgcBase);
 
 			Double rawCgpbase = quoteCalculator.getRawCgpBase();
 
@@ -823,7 +823,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += maternityBase;
 			if (additionalBase != null)
 				cgpBase += additionalBase;
-			salaryBuilder.setCgpBase(cgpBase);
 
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
@@ -832,6 +831,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			//copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
+
+			salaryBuilder.setCgpBase(cgpBase);
 
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
