@@ -809,7 +809,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
-				setRectificationNumber(number);
+				setRectificationNumber(number < 0 ? number : -1);
 			}
 			rectifier = manager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
 													getRectificationCause(), getRectificationSettleFinance(), isTbai());
@@ -957,7 +957,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				String domainName = AonUtil.getDomainName();
 				Integer domainId = DomainManager.getCurrentDomain();
 				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getDuplicationSeries());
-				setDuplicationNumber(number);
+				setDuplicationNumber(number < 0 ? number : -1);
 	        }
 		}
 		this.getManagerBean().restoreNullSubPOJOs(to);
