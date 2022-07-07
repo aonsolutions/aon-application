@@ -5178,6 +5178,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				endDate, 
 				new HashMap<String, String>() {
 					{
+						put("HORAS_NOMINA", "66.00");
 						put("HORAS_COMPLEMENTARIAS", "10.00");
 						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
 					}
@@ -5195,6 +5196,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 			throw new AssertionError();
 		});
 
+		
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("01"))
+		.forEach(d -> {
+			Assert.assertEquals("66", d.getValor());
+		});
 	}
 
 	@Test
