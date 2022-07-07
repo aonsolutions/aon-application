@@ -41,6 +41,8 @@
 .aon_icon_visibility { background-image: iconVisibility;}
 @url iconVisibilityOff aonIconVisibilityOff;
 .aon_icon_visibility_off { background-image: iconVisibilityOff;}
+@url iconStart aonIconStart;
+.aon_icon_start { background-image: iconStart;}
 @url iconSave aonIconSave;
 .aon_icon_save { background-image: iconSave;}
 @url iconDelete aonIconDelete;
