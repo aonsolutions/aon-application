@@ -130,6 +130,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 				String iban = JsonUtils.getString(params, IJsonNames.IBAN);
 				String bankAlias = JsonUtils.getString(params, IJsonNames.BANK_ALIAS);
 				String bankBIC = JsonUtils.getString(params, IJsonNames.BIC);
+				String reasonReject = params.optString("reasonReject");
+				boolean reject = !reasonReject.isEmpty();
 				
 				FiscalModelType modelType = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
 	
@@ -144,7 +146,12 @@ public class FiscalServlet extends AonApiHttpServlet{
 							model.getFinance().setBankAlias(bankAlias);
 							model.getFinance().setBic(bankBIC);
 						}
-						Mod111DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod111DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							Mod111DAO.markAsFinished(ctx, model); 
+						}
+					
 					}
 					
 					@Override
@@ -155,7 +162,11 @@ public class FiscalServlet extends AonApiHttpServlet{
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod115DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod115DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							Mod115DAO.markAsFinished(ctx, model); 
+						}
 					}
 
 					@Override
@@ -166,35 +177,40 @@ public class FiscalServlet extends AonApiHttpServlet{
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod123DAO.markAsFinished(ctx, model); 
+						if(reject) {
+							Mod123DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							Mod123DAO.markAsFinished(ctx, model); 
+						}
 					}
 
 					@Override
 					public void visitM130() {
 						Mod130 model = Mod130DAO.getMod130(ctx, id);	
-						model.setDeclarationType(declarationType);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
+	
 						Mod130DAO.markAsFinished(ctx, model); 
 					}
 
 					@Override
 					public void visitM131() {
 						Mod131 model = Mod131DAO.getMod131(ctx, id);	
-						model.setDeclarationType(declarationType);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod131DAO.markAsFinished(ctx, model); 
+						Mod131DAO.markAsFinished(ctx, model);
 					}
 
 					@Override
 					public void visitM202() {
 						Mod202 model = Mod202DAO.getMod202(ctx, id);	
-						model.setDeclarationType(declarationType);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
@@ -210,7 +226,11 @@ public class FiscalServlet extends AonApiHttpServlet{
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod303DAO.markAsFinished(ctx, model);
+						if(reject) {
+							Mod303DAO.markAsCustomerRejected(ctx, model, reasonReject);
+						} else {
+							Mod303DAO.markAsFinished(ctx, model);
+						}
 					}
 					
 					@Override public void visitM347() {}

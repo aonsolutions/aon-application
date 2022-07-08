@@ -915,7 +915,7 @@ const openDialogDailyTracking = ()=> {
   }
 
   dialog.clear();
-  dialog.setTitle(MSG.ESTIMATED_TIME);
+  dialog.setTitle(`${MSG.ESTIMATED_TIME} (${MSG.OPTIONAL})`);
 
   dialog.open();
 
@@ -937,9 +937,10 @@ const openDialogDailyTracking = ()=> {
       form.appendChild(div);
     }
  
-
-    const jobType = createSelectCau("jobType", "jobTypeRandom", MSG.TYPE_JOB);
+    const jobId = MESSENGER_IDS.JOB_TYPE;
+    const jobType = createSelectCau(jobId, jobId, MSG.TYPE_JOB);
     form.appendChild(jobType);
+
     getJobType().then(opts=>{
       let options = sortBy(opts.map(op => ({...op, value:op.id, name:op.description })), 'description');
       jobType.setOptions(options);
@@ -948,17 +949,16 @@ const openDialogDailyTracking = ()=> {
       }
     });
 
-    const durationId = "durationtDailyTracking";
+    const durationId = MESSENGER_IDS.DAILY_TRACKING;
     const trackingDuration = setAttributes(new AonInput(),{
       name:durationId,
       id: durationId,
       type:"time",
       description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
     });
-
     form.appendChild(trackingDuration);
 
-    const noteId = "commentDailyTracking";
+    const noteId = MESSENGER_IDS.COMMENT_DAILY_TRACKING;
     const note   = createAonTextArea(`${MSG.WRITE_A_COMMENT} (${MSG.OPTIONAL})...`);
     note.id = noteId;
     note.name = noteId;
