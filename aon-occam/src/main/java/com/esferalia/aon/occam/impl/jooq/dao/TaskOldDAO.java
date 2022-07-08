@@ -207,6 +207,8 @@ public class TaskOldDAO {
 		@Override public Property<Integer> getTagIdProperty() {return null;}
 		@Override public Property<String> getTagNameProperty() {return null;}
 		@Override public Property<String> getCommentsWorkflowProperty() {return null;}
+
+		@Override public Property<String> getTaskHolderNameProperty() {return null;}
 	}
 	
 	public static OldTask getTask(AONContext ctx, TaskFilter filter){
