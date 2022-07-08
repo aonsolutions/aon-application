@@ -35,7 +35,7 @@ const getModelNew = (model)=> {
   const statusText = TAX_ENUMS.TAX_STATUS[model.status];
   let color = "";
 
-  if("PENDING" === model.status)  {
+  if(["PENDING", "CUSTOMER_CHECK"].includes(model.status))  {
     color = "fin";
   } else if("FINISHED" === model.status) {
     color = "in";

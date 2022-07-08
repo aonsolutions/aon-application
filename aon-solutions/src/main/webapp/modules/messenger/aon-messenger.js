@@ -15,6 +15,7 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { sortBy, waitEl } from '../../services/utils.js';
 import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
+import { getCustomers } from '../../services/registryService.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -264,10 +265,10 @@ export class AonMessenger extends AonElement {
 		// let statusEl = this.getElement("status");
 		// let workgroup = this.getElement("workgroup");
 
-		// let registryEl = this.getElement("registry");
-		// getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
-		//   registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
-		// });
+		let registryEl = this.getElement("registry");
+		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
+		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+		});
 	
 		// registryEl.addEventListener(EVENT.INPUT,async({target})=>{
 		// 	const value = target.value;

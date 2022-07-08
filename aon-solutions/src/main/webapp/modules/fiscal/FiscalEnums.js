@@ -7,8 +7,7 @@ export const AON_TAX = {
 
 export const FiscalOptions = {
     AON_TAX
-  };
-
+};
 
 export const FISCAL_VIEWS = {
   AON_TAX:"aonTax",
@@ -74,6 +73,7 @@ const TAX_STATUS = {
   SENT:"Presentado",
   MISSING:"Desconocido",
   CUSTOMER_CHECK:"Envio a cliente",
+  CUSTOMER_REJECTED:"Rechazado por el cliente"
 }
 
 const TAX_TYPE = {

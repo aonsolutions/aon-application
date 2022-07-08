@@ -1921,6 +1921,26 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestHorasComplementarias() throws Exception {
+
+		if (!isDisplayed("base_minima_horas,_pactadas"))
+			open("horas_complementarias");
+
+
+		wait4Id("base_minima_horas,_pactadas");
+
+		draft("BASE MÍNIMA HORAS, PACTADAS");
+		//assertDisplay("employeeWorkedDaysLabel", true);
+		assertValue("quote-label-2", 7.03 * 10.00);
+		assertValue("quote-label-3", 1166.70 * 0.5 - 50.00);
+		assertValue("cgcBaseLabel", 1166.70 * 0.5 + 7.03 * 10.00);
+		
+		
+		
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
@@ -1963,4 +1983,5 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals(hidden, display.matcher(el.getAttribute("style")).find());
 		
 	}
+
 }

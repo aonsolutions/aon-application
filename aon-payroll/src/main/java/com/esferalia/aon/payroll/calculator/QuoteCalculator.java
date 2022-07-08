@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
@@ -10,12 +11,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERES;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -45,12 +42,9 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ExpressionVariable;
-import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -120,6 +114,8 @@ public abstract class QuoteCalculator {
 	public abstract Double getMaternityBase() throws AonException;
 
 	public abstract Double getDirectPayBase() throws AonException;
+
+	public abstract Double getAdditionalBase() throws AonException;
 
 	public abstract List<ITimedResult<Double>> quote(IContractPayment payment,
 			Date start, Date end, double amount) throws AonException;
@@ -254,6 +250,11 @@ public abstract class QuoteCalculator {
 		public Double getDirectPayBase() throws AonException {
 			return null;
 		}
+		
+		@Override
+		public Double getAdditionalBase() throws AonException {
+			return null;
+		}
 
 		private static QuoteCalculator SINGLETON = new NonQuote();
 
@@ -333,6 +334,12 @@ public abstract class QuoteCalculator {
 		public Double getDirectPayBase() throws AonException {
 			return bases.containsKey(DIRECT_PAY.getName())
 					? bases.get(DIRECT_PAY.getName()) : 0.00;
+		}
+
+		@Override
+		public Double getAdditionalBase() throws AonException {
+			return bases.containsKey(ADDITIONAL.getName())
+					? bases.get(ADDITIONAL.getName()) : 0.00;
 		}
 
 		protected double getQuote(IContractPayment payment, Date start,
@@ -415,7 +422,16 @@ public abstract class QuoteCalculator {
 				context.containsVariable("BASE_" + PREST_IT, start,end))
 				return quotesImpl;
 			
+
 			String name = payment.getName();
+
+			if (payment.getType() == PaymentType.CRA_0057 
+					|| payment.getType() == PaymentType.CRA_0058
+					|| AonStringUtils.equals(ADDITIONAL.getName(), name) ) {
+				bases.put(name, quote + bases.getOrDefault(name, 0.00));
+				add(String.format("BASE_%s", name), quote, context, start, end);
+				return quotesImpl;
+			}
 
 			if (!StringUtils.isBlank(name)) {
 				bases.put(name, quote +bases.getOrDefault(name, 0.00));
@@ -762,6 +778,14 @@ public abstract class QuoteCalculator {
 			for (GeneralQuote calculator : calculators)
 				directPayBase += calculator.getDirectPayBase();
 			return directPayBase;
+		}
+		
+		@Override
+		public Double getAdditionalBase() throws AonException {
+			double additionalBase = 0.00;
+			for (GeneralQuote calculator : calculators)
+				additionalBase += calculator.getAdditionalBase();
+			return additionalBase;
 		}
 		
 		@Override
