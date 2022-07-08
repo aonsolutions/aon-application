@@ -34,7 +34,7 @@
 
 .aonAutosizeTextareaTitle {
     display: block;
-    width: 100%;
+    width: 95%;
     color: var(--aon-color-ink-medium-contrast);
     overflow: hidden;
     text-overflow: ellipsis;

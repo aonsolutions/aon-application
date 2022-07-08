@@ -2076,7 +2076,11 @@ public class Bases {
 						UnMatchedVariableException {
 					try {
 						Period p = new Period(toDate(desde), toDate(hasta));
-						return get(ContextVariable.ADDITIONAL_HOURS.getName(),salary,  p);
+						Double base = get(ADDITIONAL_BASE.getName(), salary, p);
+						if ( AonNumberUtils.isValid(base) && base > 0 )
+							return get(ContextVariable.ADDITIONAL_HOURS.getName(),salary,  p);
+						else 
+							return 0.00;
 					} catch (NoSuchVariableException e) {
 					}
 
