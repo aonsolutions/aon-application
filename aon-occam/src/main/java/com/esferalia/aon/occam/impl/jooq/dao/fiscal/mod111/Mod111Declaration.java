@@ -234,7 +234,7 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
-		if (getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT) {
+		if (mustApplyReplacementSearch(mod111)) {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
 		} else {
 			stream = IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);	
@@ -256,7 +256,7 @@ public abstract class Mod111Declaration {
 		}
 	}
 
-  protected boolean mustApplyReplacementSearch( Mod111 mod111 ) {
+	protected boolean mustApplyReplacementSearch( Mod111 mod111 ) {
 		return (mod111.isReplacement()
 			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
