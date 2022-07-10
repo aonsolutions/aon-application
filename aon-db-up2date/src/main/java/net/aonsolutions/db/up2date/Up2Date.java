@@ -27,6 +27,7 @@ import net.aonsolutions.db.up2date.tgss.ArtistPartialFactorFix;
 import net.aonsolutions.db.up2date.tgss.AssimilatedInsert;
 import net.aonsolutions.db.up2date.tgss.Bases2022FixHourly;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFix;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursFixII;
 
 public class Up2Date {
 
@@ -251,7 +252,8 @@ public class Up2Date {
     		//AgriculturalBases2022UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//CnoUpdate.CNOUPDATE,
     		//AssimilatedInsert.ASSIMILATEDINSERT
-    		Bases2022FixHourly.BASES2022FIXHOURLY
+    		//Bases2022FixHourly.BASES2022FIXHOURLY
+    		SalaryHoursFixII.SALARYHOURSFIXII
     };
     
 
