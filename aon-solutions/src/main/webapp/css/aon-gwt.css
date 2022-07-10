@@ -312,6 +312,7 @@
     background-image: none;
     background-color: #fff;
     border-bottom: 1px solid #ddd;	
+    height: auto;
 }
 
 .aon-dataTable,

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.DailyTrackingJSON;
+import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.JobTypeJSON;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
@@ -349,7 +350,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			TaskUtils.setCauInfo(api, task);
 		}
 	
-		if(!edit) {
+		if(edit) {
+			TaskUtils.checkFilesAndSave(api, task);
+		} else {
 			setWgAndThDefault(api, task);
 		}
 
@@ -408,10 +411,10 @@ public class TaskServlet extends AonApiHttpServlet{
 		JSONObject params = api.getData();
 		
 		Integer taskId   = params.optInt(IJsonNames.TASK);
-		Integer workflow = params.getInt(IJsonNames.WORKFLOW);
+		Integer workflow = params.optInt(IJsonNames.WORKFLOW);
 		String comment   = params.optString(IJsonNames.COMMENT);
 		
-		if(!comment.isEmpty()) {
+		if(workflow!=0 && !comment.isEmpty()) {
 			TaskWorkflow data = AON_SOLUTIONS.getTaskWorkflow(
 				api.getDomain(), new User(), 
 				f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getTaskProperty().eq(taskId)).and(f.getIdProperty().eq(workflow))
@@ -438,22 +441,24 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject saveTaskAttach(AonApiData api) {
-		Domain domain = api.getDomain();
 		JSONObject params = api.getData();
-		Integer task = api.getData().optInt(IJsonNames.TASK);
-		JSONObject json = new JSONObject();
+		JSONObject json   = new JSONObject();
+		Task task         = TaskJSON.fromJSON(params.optJSONObject(IJsonNames.TASK));
+		Domain domain     = task.getDomain();
+
 		if(params.opt(IJsonNames.FILE)!= null) { 
-			JSONObject file  = params.optJSONObject(IJsonNames.FILE);
-			String base64 = file.optString(IJsonNames.CONTENT);
+			JSONObject file    = params.optJSONObject(IJsonNames.FILE);
+			String base64      = file.optString(IJsonNames.CONTENT);
 			String contentType = file.optString(IJsonNames.CONTENT_TYPE);
-			byte[] fileData = Base64.getDecoder().decode(base64);
+			byte[] fileData    = Base64.getDecoder().decode(base64);
+			
 			TaskAttach taskAttach = new TaskAttach()
 			.setDomain(domain.getId())
-			.setTask(task)
+			.setTask(task.getId())
 			.setData(fileData)
 			.setMimetype(MimeType.get(contentType));
 			
-			json = TaskAttachJSON.toJSON(AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach));
+			json = TaskAttachJSON.toJSON(TaskUtils.saveTaskAttach(domain, api.getUser(), taskAttach));
 			json.put("domain_name", domain.getName());
 			json.put("attach_type", "task");
 		}
@@ -533,26 +538,30 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject deleteTask(AonApiData api) {
-		Integer task = api.getData().optInt(IJsonNames.TASK);
-		AON_SOLUTIONS.deleteTask(api.getDomain(), api.getUser(), task);
+		Task task     = TaskJSON.fromJSON(api.getData());
+		Domain domain = task.getDomain();
+		AON_SOLUTIONS.deleteTask(domain, api.getUser(), task.getId());
 		return new JSONObject();
 	}
 	
 	private JSONObject deleteTaskWorkflow(AonApiData api) {
-		Integer id = api.getData().optInt(IJsonNames.ID);
-		AON_SOLUTIONS.deleteTaskWorkflow(api.getDomain(), api.getUser(), id);
+		JSONObject params = api.getData();
+		Domain domain     = DomainJSON.fromJSON(params.optJSONObject(IJsonNames.DOMAIN));
+		Integer workflow  = params.optInt(IJsonNames.WORKFLOW);
+		
+		AON_SOLUTIONS.deleteTaskWorkflow(domain, api.getUser(), workflow);
 		return new JSONObject();
 	}
 	
 	private JSONObject deleteTaskTag(AonApiData api) {
-		AON.deleteTag(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),TagJSON.fromJSON(api.getData()));
+		AON.deleteTag(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), TagJSON.fromJSON(api.getData()));
 		return new JSONObject();
 	}
 	
 	private JSONArray sendTaskHistoric(AonApiData api) {
 		 JSONObject params = api.getData();
 		 
-		 Integer taskId = params.optInt("task");
+		 Integer taskId = params.optInt(IJsonNames.TASK);
 		 Integer workflowId = params.optInt("workflowId");
 		 
 		 JSONArray json = new JSONArray();

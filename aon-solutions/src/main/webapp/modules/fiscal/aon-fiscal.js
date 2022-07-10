@@ -80,10 +80,9 @@ export class AonFiscal extends AonElement {
     }
 
     this.getModelsFiscal().then(mdls=>{
-    let firstYear = this.getFirstYear(mdls);
+      let firstYear = this.getFirstYear(mdls);
       if(firstYear){
         this._filter.year = firstYear;
-        this.showView(FISCAL_VIEWS.AON_TAX);
       }
 
       let ejercicios = this.getDataForKey(mdls, 'year')
@@ -134,6 +133,8 @@ export class AonFiscal extends AonElement {
       }));
 
       application.addSidenavOptions("Modelo", models);
+
+      this.showView(FISCAL_VIEWS.AON_TAX);
     })
   }
 
@@ -142,9 +143,12 @@ export class AonFiscal extends AonElement {
       try {
         const datos = await getModelsFiscal();
         if (datos) {
-          this.MODELS = sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((model) => FiscalUtils.getModelNew(model));
+          this.MODELS = sortBy(datos,'year','desc')
+          .filter(({status})=>status!=="PENDING")
+          .map((model) => FiscalUtils.getModelNew(model));
         }
       } catch (error) {
+        console.error(error);
         this.showError(error);
       }
     }
@@ -176,7 +180,7 @@ export class AonFiscal extends AonElement {
   }
 
   getModelsNoRepeat(models){
-    return models.filter((v,i,a)=>a.findIndex(v2=>(v2.model===v.model))===i)
+    return models.filter((v,i)=>models.findIndex(v2=> v2.model===v.model)===i)
   }
 
   addBackgroundSidenav(){

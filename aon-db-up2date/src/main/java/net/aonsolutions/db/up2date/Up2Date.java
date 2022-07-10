@@ -19,12 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AlterContractBonus;
-import net.aonsolutions.db.up2date.payroll.CnoUpdate;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateII;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateIII;
-import net.aonsolutions.db.up2date.tgss.ArtistPartialFactorFix;
-import net.aonsolutions.db.up2date.tgss.AssimilatedInsert;
+import net.aonsolutions.db.up2date.config.InsertIAE863;
 import net.aonsolutions.db.up2date.tgss.Bases2022FixHourly;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFix;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFixII;
@@ -247,12 +242,15 @@ public class Up2Date {
     		//TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII,
     		//TaskAddEvaluation.TASK_ADD_EVALUATION,
     		//AlterContractBonus.ALTERCONTRACTBONUS,
-    		//SalaryHoursFix.SALARYHOURSFIX
+    		//SalaryHoursFix.SALARYHOURSFIX,
     		//ArtistPartialFactorFix.ARTISTPARTIALFACTORFIX,
     		//AgriculturalBases2022UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//CnoUpdate.CNOUPDATE,
     		//AssimilatedInsert.ASSIMILATEDINSERT
     		//Bases2022FixHourly.BASES2022FIXHOURLY
+    		//AssimilatedInsert.ASSIMILATEDINSERT,
+    		//Bases2022FixHourly.BASES2022FIXHOURLY,
+    		InsertIAE863.INSERT_IAE_863,
     		SalaryHoursFixII.SALARYHOURSFIXII
     };
     

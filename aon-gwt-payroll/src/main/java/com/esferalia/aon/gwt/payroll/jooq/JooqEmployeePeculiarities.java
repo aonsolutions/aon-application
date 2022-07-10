@@ -6,7 +6,10 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -17,6 +20,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities.Peculiarity;
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeePeculiarities {
@@ -126,7 +130,7 @@ public class JooqEmployeePeculiarities {
 					
 					peculiaritiesStrech.add(peculiarity);
 					
-					System.out.println(peculiarity.getName() + " -> " + peculiarity.getValue() + "(" + pDate.get(CONTRACT_DATA.START_DATE) + ")");
+//					System.out.println(peculiarity.getName() + " -> " + peculiarity.getValue() + "(" + pDate.get(CONTRACT_DATA.START_DATE) + ")");
 				}
 				
 				peculiarities.getPeculiarities().put(pDate.get(CONTRACT_DATA.START_DATE), peculiaritiesStrech);
@@ -134,6 +138,8 @@ public class JooqEmployeePeculiarities {
 			}
 		
 		}
+		
+//		peculiarities.getPeculiarities().entrySet().forEach(entry -> entry.getValue().forEach(pec -> System.out.println(pec.getName() + " - " + pec.getValue() + " (" + entry.getKey() + ")")));
 		
 		return peculiarities;
 	}
@@ -150,6 +156,8 @@ public class JooqEmployeePeculiarities {
 
 	private static String setPeculiaritiesDB(String domainName, Integer contractId, Peculiarities peculiarities, DSLContext dslContext) {
 		
+		List<Date> deletedDates = getDeletedDates(dslContext, contractId, peculiarities);
+		
 		//Peculiarities Names
 		ArrayList<String> peculiaritiesNames = new ArrayList<>();
 		peculiaritiesNames.add("PORCENTAJE_CGC");
@@ -161,16 +169,27 @@ public class JooqEmployeePeculiarities {
 		peculiaritiesNames.add("PORCENTAJE_FOGASA");
 		peculiaritiesNames.add("PORCENTAJE_FP_E");
 		peculiaritiesNames.add("PORCENTAJE_DESMPL_E");
+		peculiaritiesNames.add("TARIFA_CGC");
+		peculiaritiesNames.add("TARIFA_DESMPL");
+		peculiaritiesNames.add("TARIFA_FP");
+		peculiaritiesNames.add("TARIFA_CGC_E");
+		peculiaritiesNames.add("TARIFA_IT");
+		peculiaritiesNames.add("TARIFA_IMS");
+		peculiaritiesNames.add("TARIFA_FOGASA");
+		peculiaritiesNames.add("TARIFA_FP_E");
+		peculiaritiesNames.add("TARIFA_DESMPL_E");
 		
 		//Delete old records
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 			.and(CONTRACT_DATA.NAME.in(peculiaritiesNames))
+			.and(CONTRACT_DATA.START_DATE.in(deletedDates))
 			.execute();
 		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 			.and(CONTRACT_DATA.NAME.eq("PECULIARITY_TYPE"))
+			.and(CONTRACT_DATA.START_DATE.in(deletedDates))
 			.execute();
 		
 		//Get domain id
@@ -186,21 +205,39 @@ public class JooqEmployeePeculiarities {
 				if(Boolean.TRUE.equals(peculiarity.isChecked())) {
 					Date date = new Date(entry.getKey().getTime());
 					if(notTarifaExist(dslContext, contractId, peculiarity.getName(), date)) {
-						dslContext.insertInto(CONTRACT_DATA)
-							.set(CONTRACT_DATA.DOMAIN, domainId)
-							.set(CONTRACT_DATA.NAME, peculiarity.getName())
-							.set(CONTRACT_DATA.CONTRACT, contractId)
-							.set(CONTRACT_DATA.EXPRESSION, peculiarity.getValue())
-							.set(CONTRACT_DATA.START_DATE, date)
-							.set(CONTRACT_DATA.END_DATE, (Date) null)
-							.execute();
+						ContractDataRecord peculiarityRecord = dslContext.selectFrom(CONTRACT_DATA)
+							.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							.and(CONTRACT_DATA.NAME.eq(peculiarity.getName()))
+							.and(CONTRACT_DATA.START_DATE.eq(date))
+							.fetchOne();
 						
-						insert = true;
+						if(null == peculiarityRecord) {
+							dslContext.insertInto(CONTRACT_DATA)
+								.set(CONTRACT_DATA.DOMAIN, domainId)
+								.set(CONTRACT_DATA.NAME, peculiarity.getName())
+								.set(CONTRACT_DATA.CONTRACT, contractId)
+								.set(CONTRACT_DATA.EXPRESSION, peculiarity.getValue())
+								.set(CONTRACT_DATA.START_DATE, date)
+								.set(CONTRACT_DATA.END_DATE, (Date) null)
+								.execute();
+							
+							insert = true;
+						} else
+							dslContext.update(CONTRACT_DATA)
+								.set(CONTRACT_DATA.EXPRESSION, peculiarity.getValue())
+								.where(CONTRACT_DATA.ID.eq(peculiarityRecord.getId()))
+								.execute();
 					}
 				}
 			}
 			
-			if(!entry.getValue().isEmpty() && insert)
+			ContractDataRecord peculiarityTypeRecord = dslContext.selectFrom(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.eq("PECULIARITY_TYPE"))
+					.and(CONTRACT_DATA.START_DATE.eq(new Date(entry.getKey().getTime())))
+					.fetchOne();
+			
+			if(!entry.getValue().isEmpty() && insert && null == peculiarityTypeRecord)
 				dslContext.insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, domainId)
 					.set(CONTRACT_DATA.NAME, "PECULIARITY_TYPE")
@@ -212,6 +249,52 @@ public class JooqEmployeePeculiarities {
 		}
 		
 		return "";
+	}
+
+	private static List<Date> getDeletedDates(DSLContext dslContext, Integer contractId, Peculiarities peculiarities) {
+		//Peculiarities Names
+		ArrayList<String> peculiaritiesNames = new ArrayList<>();
+		peculiaritiesNames.add("PORCENTAJE_CGC");
+		peculiaritiesNames.add("PORCENTAJE_DESMPL");
+		peculiaritiesNames.add("PORCENTAJE_FP");
+		peculiaritiesNames.add("PORCENTAJE_CGC_E");
+		peculiaritiesNames.add("PORCENTAJE_IT");
+		peculiaritiesNames.add("PORCENTAJE_IMS");
+		peculiaritiesNames.add("PORCENTAJE_FOGASA");
+		peculiaritiesNames.add("PORCENTAJE_FP_E");
+		peculiaritiesNames.add("PORCENTAJE_DESMPL_E");
+		peculiaritiesNames.add("TARIFA_CGC");
+		peculiaritiesNames.add("TARIFA_DESMPL");
+		peculiaritiesNames.add("TARIFA_FP");
+		peculiaritiesNames.add("TARIFA_CGC_E");
+		peculiaritiesNames.add("TARIFA_IT");
+		peculiaritiesNames.add("TARIFA_IMS");
+		peculiaritiesNames.add("TARIFA_FOGASA");
+		peculiaritiesNames.add("TARIFA_FP_E");
+		peculiaritiesNames.add("TARIFA_DESMPL_E");
+		
+		//Peculiarities
+		List<Date> deletedDates = new ArrayList<>();
+		
+		//Find peculiarities DB
+		Result<Record1<Date>> peculiaritiesDatesRecords = dslContext.selectDistinct(CONTRACT_DATA.START_DATE).from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.in(peculiaritiesNames))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_DATA.START_DATE)
+				.fetch();
+		
+		if(peculiaritiesDatesRecords.isNotEmpty()) 
+			for(Record1<Date> r : peculiaritiesDatesRecords)
+				deletedDates.add(r.get(CONTRACT_DATA.START_DATE));
+		
+		Set<java.util.Date> currentDates = peculiarities.getPeculiarities().keySet();
+		
+		deletedDates = deletedDates.stream().filter(o -> !currentDates.contains(o)).collect(Collectors.toList());;
+		
+		System.out.println(deletedDates.toString());
+		
+		return deletedDates;
+			
 	}
 
 	private static boolean notTarifaExist(DSLContext dslContext, Integer contractId, String name, Date date) {

@@ -1,15 +1,13 @@
 package net.aonsolutions.aon.api.servlet;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,20 +20,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
 @WebServlet(name = "SendMailServlet-API", urlPatterns =	{	"/ms/api/send_mail/*",
 															"/aon_gwt_aio/ms/api/send_mail/*"})
-public class SendMailServlet extends HttpServlet{
+public class SendMailServlet extends AonApiHttpServlet{
 
 	/**
 	 * 
@@ -50,36 +52,39 @@ public class SendMailServlet extends HttpServlet{
 	}
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("SendMailServlet-API - POST METHOD");
-		String token = req.getHeader("session_id");
-		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
-		String domainName = req.getHeader("domain_name");
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		User user = AON_SOLUTIONS.getUser(domain, token);
+		AonApiData api = initialize(req);		
 		
-		
-		JSONObject json = Utils.getRequestJSON(req);
-		String to = json.optString("to");
-		String body = json.opt("body") != null ? json.optString("body") : "";
+		String to = api.getData().optString("to");
+		String body = api.getData().opt("body") != null ? api.getData().optString("body") : "";
 		String subject = "";
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
+
+		CompanyFull cp = AON.getCompanyFull(api.getDomain().getName(), api.getDomain().getId(), "");
 		if(pathInfo != null) {
 			if("invoice".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Facturas";
-				body = invoiceContent(domain, user.getLogin(), json.optJSONArray("invoices"));
+				body = invoiceContent(api, api.getData().optJSONArray("invoices"));
+			}
+			
+			if("invoice2".equalsIgnoreCase(pathInfo[1])) {
+				subject = "Factura";
+				body = invoice2Content(api, cp);
 			}
 			
 			if("document".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Documentos";
-				body = documentContent(domain, user.getLogin(), json.optJSONArray("documents"));				
+				body = documentContent(api, api.getData().optJSONArray("documents"));				
 			}
 		}
 		
-		Company cp = AON.getCompany(domainName, domainId, "", f -> f.getDomainProperty().eq(domainId));
+		String bcc = api.getUser().getAuth().getEmail();
 		SESMessage msg = new SESMessage()
 				.setTo(to)
-				.setAlias(cp.getName())
+				.setBcc(bcc != null ? bcc : "")
+				.setReplyTo(bcc != null ? bcc : "")
+				.setAlias(cp.getRegistry().getName())
 				.setSubject(subject)
 				.setBody(body);
 		
@@ -91,7 +96,57 @@ public class SendMailServlet extends HttpServlet{
 	}
 		
 	
-	private String invoiceContent(Domain domain, String login, JSONArray invoiceArray) {
+	private String invoice2Content(AonApiData api, CompanyFull company) {
+		JSONObject inv = JsonUtils.getJSONObject(api.getData(), "invoice");
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		Date date = JsonUtils.getDate(inv, "date");
+		InvoiceMail im = new InvoiceMail();
+		im.setReference(inv.opt("reference") != null ? inv.getString("reference"): "");
+		im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : "");
+		im.setDate(AonDateUtils.format(date, "dd/MM/yyyy"));
+		im.setUrl(inv.opt("file") != null 
+				? ("https://" + api.getDomain().getName() + "/" + inv.optJSONObject("file").optString("url")) 
+				: getInvoiceUrl(api.getDomain(), api.getUser().getLogin(), inv));
+
+		StringBuilder medias = new StringBuilder();
+		company.getMedias().stream().filter(f -> MediaType.FIXED_PHONE.equals(f.getMedia()) || MediaType.CELLULAR.equals(f.getMedia()))
+		.forEach(r -> {
+			medias.append(" " + r.getValue());
+		});
+		
+		String web = company.getMedias().stream().filter(f -> MediaType.WEB.equals(f.getMedia())).map(r -> r.getValue()).findFirst().orElse("");
+		medias.append(AonStringUtils.isBlank(web) ? web : " /" + web);
+		String email = api.getUser().getAuth().getEmail() != null 
+				?api.getUser().getAuth().getEmail() : "";
+		CompanyMail cm = new CompanyMail();
+		cm.setAddress(company.getMainAddress().getFullAddress());
+		cm.setName(company.getRegistry().getName());
+		cm.setMedias(medias.toString());
+		cm.setEmail(email);
+		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getAttachModuleProperty().eq(company.getId())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+		cm.setLogo(!attach.isEmpty()
+				? "https://" + company.getRegistry().getDomain().getName() + "/aonDocuments/company.logo"	
+				: "https://aon.solutions/assets/aon-logo.png");
+
+		
+		VelocityContext context = new VelocityContext();
+		context.put("invoice", im);
+		context.put("company", cm);		
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/invoice2.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private String invoiceContent(AonApiData api, JSONArray invoiceArray) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -104,8 +159,8 @@ public class SendMailServlet extends HttpServlet{
 			im.setReference(inv.opt("reference") != null ? inv.getString("reference"): "");
 			im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : "");
 			im.setUrl(inv.opt("file") != null 
-					? ("https://" + domain.getName() + "/" + inv.optJSONObject("file").optString("url")) 
-					: getInvoiceUrl(domain, login, inv));
+					? ("https://" + api.getDomain().getName() + "/" + inv.optJSONObject("file").optString("url")) 
+					: getInvoiceUrl(api.getDomain(), api.getUser().getLogin(), inv));
 			list.add(im);
 		}
 		
@@ -119,7 +174,8 @@ public class SendMailServlet extends HttpServlet{
 
 		return writer.toString();
 	}
-	private String documentContent(Domain domain, String login, JSONArray documentArray) {
+	
+	private String documentContent(AonApiData api, JSONArray documentArray) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -131,7 +187,7 @@ public class SendMailServlet extends HttpServlet{
 			DocumentMail dm = new DocumentMail();
 			dm.setDate(doc.opt("date") != null ? doc.optString("date"): "");
 			dm.setTitle(doc.opt("title") != null ? doc.optString("title") : "");
-			dm.setUrl(getDocumentUrl(domain, login, doc));
+			dm.setUrl(getDocumentUrl(api.getDomain(), api.getUser().getLogin(), doc));
 			list.add(dm);
 		}
 		
@@ -177,10 +233,59 @@ public class SendMailServlet extends HttpServlet{
 	    return "https://" +domain.getName() +"/ms/download_attachment/"  + domain.getName() + "/" + login + "/" +  result;
 	}
 	
+	public class CompanyMail {
+		String name;
+		String address;
+		String email;
+		String logo;
+		String medias;
+		
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public String getAddress() {
+			return address;
+		}
+		
+		public void setAddress(String address) {
+			this.address = address;
+		}
+		
+		public String getEmail() {
+			return email;
+		}
+		
+		public void setEmail(String email) {
+			this.email = email;
+		}
+		
+		public String getLogo() {
+			return logo;
+		}
+		
+		public void setLogo(String logo) {
+			this.logo = logo;
+		}
+		
+		public String getMedias() {
+			return medias;
+		}
+		
+		public void setMedias(String medias) {
+			this.medias = medias;
+		}
+	}
+	
 	public class InvoiceMail {
 		String reference;
 		String total;
 		String url; 
+		String date;
 		
 		public String getReference() {
 			return reference;
@@ -204,6 +309,14 @@ public class SendMailServlet extends HttpServlet{
 
 		public void setUrl(String url) {
 			this.url = url;
+		}
+		
+		public String getDate() {
+			return date;
+		}
+		
+		public void setDate(String date) {
+			this.date = date;
 		}
 	}
 	

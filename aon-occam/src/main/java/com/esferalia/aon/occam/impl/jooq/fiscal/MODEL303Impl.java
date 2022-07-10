@@ -112,4 +112,14 @@ public class MODEL303Impl implements IMODEL303 {
 			configuration -> Mod303DAO.aeatPresentation(ctx, mod303, aeatResponse));
 	}
 
+	@Override
+	public Mod303 doRecord(AONContext ctx, Mod303 mod303){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod303DAO.doRecord(ctx, mod303));		
+	}
+	@Override
+	public Mod303 unrecord(AONContext ctx, Mod303 mod303){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod303DAO.unrecord(ctx, mod303));		
+	}
 }

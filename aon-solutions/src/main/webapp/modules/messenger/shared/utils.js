@@ -194,7 +194,7 @@ export const sendMessage = async (text, task) => {
     let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
 
     if(!text){
-        await checkFilesAndSend(textArea, task); //CHECK FILES COMMENT AND SEND
+        await checkFilesAndSave(task, textArea); //CHECK FILES COMMENT AND SEND
         value = textArea.value;
         textArea.clear();
     }
@@ -241,10 +241,11 @@ export const sendMessage = async (text, task) => {
 
 /**
  * 
+ * @param {Task} task task
  * @param {HTMLElement} textArea htmlElement textArea
  * check files and send uploadFile(taskAttach) 
  */
-const checkFilesAndSend = async (textArea, task)=>{
+const checkFilesAndSave = async (task, textArea)=>{
     const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
 
     if(btnSend){
@@ -252,8 +253,8 @@ const checkFilesAndSend = async (textArea, task)=>{
     }
 
     try {
-        await checkFileBase64(textArea);
-        await checkFileAonFile(task, textArea);
+        await textArea.checkFileBase64();
+        await saveFiles(task, textArea);
     } catch (error) { console.log(error); }
 
     if(btnSend) {
@@ -261,84 +262,40 @@ const checkFilesAndSend = async (textArea, task)=>{
     }
 }
 
-const checkFileAonFile = async(task, textArea)=> {
+const saveFiles = async(task, textArea)=> {
 
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
 
-    const textAreaDiv = textArea.getTextArea();
+    const files = textArea.getFiles();
+    for await (const file of files) {
+        const attach = await aonMessengerChat.uploadFile({ file, task });
+        if(attach){
+            const json = {
+                domain_name: attach.domain_name,
+                attach_type: attach.attach_type,
+                domain_id:attach.domain,
+                id:attach.id
+            };
 
-    const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
-    const {id:taskId} = task;
-    const files = textArea.FILES;
-    for await (const el of elements) {
-        const fileId = el.dataset.id;
-        const file = files.find(({id})=> id == fileId);
-        if(file){
-            const attach = await aonMessengerChat.uploadFile({ file, task:taskId });
-            if(attach){
-                const json = {
-                    domain_name: attach.domain_name,
-                    attach_type: attach.attach_type,
-                    domain_id:attach.domain,
-                    id:attach.id
-                };
+            const jsonBase64 = btoa( JSON.stringify(json) );
+            
+            let linkTmp = `/${API_URL}/file/${jsonBase64}`;
 
-                const jsonBase64 = btoa( JSON.stringify(json) );
-                
-                let linkTmp = `/${API_URL}/file/${jsonBase64}`;
+            if(aonMessengerChat.isCau()){
+                linkTmp = SIG_URL+linkTmp;
+            }
 
-                if(aonMessengerChat.isCau()){
-                    linkTmp = SIG_URL+linkTmp;
-                }
-
+            const element = document.querySelector(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}][data-id='${file.id}']`);
+            if(element){
                 if(file.contentType.indexOf("image")>=0){
-                    el.src = linkTmp;
+                    element.src = linkTmp;
                 } else {
-                    el.href = linkTmp;
+                    element.href = linkTmp;
                 } 
             }
         }
     }
 }
-
-const checkFileBase64 = async(textArea)=> {
-    const elements = textArea.getTextArea().querySelectorAll(`img[src*=";base64"]`);
-
-    for await (const el of elements) {
-        let parent = document.createElement(TAG.DIV);
-        let blob = getBlobBySrc(el.src);
-        if(blob){
-            await textArea.addFile(blob, parent);
-        }
-        el.parentNode.replaceChild(parent, el);
-    }
-}
-
-const getBlobBySrc = (src)=>{
-    try {
-        // base64 encoded data doesn't contain commas    
-        const base64ContentArray = src.split(",")     
-        
-        // base64 content cannot contain whitespaces but nevertheless skip if there are!
-        const contentType = base64ContentArray[0].match(/[^:\s*]\w+\/[\w-+\d.]+(?=[;| ])/)[0]
-        
-        // base64 encoded data - pure
-        const base64Str = base64ContentArray[1]
-
-        let byteCharacters = atob(base64Str);
-        let byteNumbers = new Array(byteCharacters.length);
-
-        for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-
-        return new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
-    } catch (error) {
-        console.log("error getContentFileBase64", error);
-    }
-    return null;
-}
-
-
-
 
 /**
  * 
@@ -834,8 +791,14 @@ const addTaskDescription = (aonMessengerChat) => {
         label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
     
         aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
-          task.setFiles(target.FILES);
-          if(target.value) task.setDescriptionJson({observation:target.value})
+          if(target.value) {
+            task.setDescriptionJson({observation:target.value});
+          }
+          
+          target.checkFileBase64()
+          .then(()=> {
+            task.setFiles(target.getFiles());
+          });
         });
         checkFilesAddEventDescription(task);//check files description
         
@@ -1181,9 +1144,9 @@ export const parseTimeToDouble = (time)=>{
 
 export const parseDoubleToTime = (value)=>{
     if(value){
-        const hours = Math.floor(value);
-        const minutes = Math.round((value - hours) * 60);
-        return `${hours}:${minutes}`;
+        const h = Math.floor(value);
+        const m = Math.round((value - h) * 60);
+        return `${h.toString().padStart(2, 0)}:${m.toString().padStart(2, 0)}`;
     }
     return null;
 }

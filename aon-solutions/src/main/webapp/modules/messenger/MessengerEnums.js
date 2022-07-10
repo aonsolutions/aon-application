@@ -88,7 +88,10 @@ export const MESSENGER_IDS = {
     SELECT_APP: "selectApp",
     AON_TAB: "aonTabMessenger",
     TOOLBAR_BRANCH: "toolbarBranch",
-    TOOLBAR_LABELS: "toolbarLabels"
+    TOOLBAR_LABELS: "toolbarLabels",
+    DAILY_TRACKING: "dailyTracking",
+    COMMENT_DAILY_TRACKING: "commentDailyTracking",
+    JOB_TYPE: "jobType"
 }
 
 export const WORKFLOW_TYPES = {
@@ -173,15 +176,15 @@ export const MessengerSidenav = {
 };
 
 export const TASK_FILTER = [
-    // {
-    //   type: "select",
-    //   id: "registry",
-    //   name: "registry",
-    //   title: MSG.CUSTOMER,
-    //   autocomplete: true,
-    //   default:true,
-    //   emptyclear:true
-    // },
+    {
+      type: "select",
+      id: "registry",
+      name: "registry",
+      title: MSG.CUSTOMER,
+      autocomplete: true,
+      default:true,
+      emptyclear:true
+    },
     {
         type: "select",
         id: "senderFilter",

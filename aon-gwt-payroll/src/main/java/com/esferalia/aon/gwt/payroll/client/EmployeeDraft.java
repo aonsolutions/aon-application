@@ -870,7 +870,7 @@ public abstract class EmployeeDraft extends Composite {
 		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
 			try {
 				contractTypeInt = Integer.parseInt(contractData.getContractType());
-				if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+				if(AonNumberUtils.between(contractTypeInt, 200, 400) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 					employee.showPartialTimeContract();
 					if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
 						employee.createJourneyDurationWarning();
@@ -914,6 +914,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		setSelectedValueLB(employee.journeyType, null != contractData.getJourneyType() && contractData.getJourneyType() == (byte)1 ? "true" : "false");
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType);
 		
 		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
 			Double partialityCoef = contractData.getPartialityCoef();

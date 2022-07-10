@@ -153,6 +153,7 @@ public enum ContextVariable implements IResourceable {
 	QUOTE_GROUP("GRUPO_COTIZACION", VariableType.QUOTE_GROUP_DROP, false),
 	FREE_IPREM("EXENTO_IPREM", VariableType.DOUBLE, false), FREE_IPREM_SHORT("XIPREM", VariableType.DOUBLE, false),
 	IT_RATE("TARIFA_IT", VariableType.DOUBLE, false), IMS_RATE("TARIFA_IMS", VariableType.DOUBLE, false),
+	IT_PERCENT("PORCENTAJE_IT", VariableType.DOUBLE, false), IMS_PERCENT("PORCENTAJE_IMS", VariableType.DOUBLE, false),
 	SHORT_CONTRACT("CONTRATO_CORTA_DURACION", VariableType.BOOLEAN, false),
 	SENIORITY("AÑOS_ANTIGUEDAD", VariableType.DOUBLE, false),
 	QUOTE_PECULIARITY_COLLECTIVE("COLECT_PECULIAR_COTIZACION", VariableType.INTEGER, false),

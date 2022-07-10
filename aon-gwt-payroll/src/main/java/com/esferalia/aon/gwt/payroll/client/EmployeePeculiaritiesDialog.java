@@ -29,6 +29,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -577,12 +578,14 @@ public abstract class EmployeePeculiaritiesDialog extends AonCustomDialog {
 		initListBox();
 		
 		if(!this.dateList.isEmpty()) {
-			if(null == this.startDatePeculiarity.getValue() || this.dateList.size() == 1 ) {
+			if(this.dateList.size() == 1 ) {
 				initFirstToggleButton();
 				this.startDatePeculiarity.setValue(this.dateList.get(0));
 				initPeculiaritiesTable(this.dateList.get(0));
-			}else {
-				Date dateAux = this.startDatePeculiarity.getValue();
+			} else {
+				this.dateList.sort((o1, o2) -> o1.compareTo(o2));
+				Date dateAux = this.dateList.get(dateList.size() - 1);
+				this.startDatePeculiarity.setValue(dateAux);
 				selectTab(formatDate.format(dateAux));
 				initPeculiaritiesTable(dateAux);
 			}

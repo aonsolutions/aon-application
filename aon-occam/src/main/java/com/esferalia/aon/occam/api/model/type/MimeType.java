@@ -47,7 +47,8 @@ public enum MimeType implements Serializable {
     JSON("application/json","json"),
     PKCS12("application/x-pkcs12","p12"),
     JKS("application/x-java-keystore","jks"),
-    SVG ("image/svg+xml", "svg")
+    SVG ("image/svg+xml", "svg"),
+    WEBM("video/webm","webm")
     ;
     
 	private String name;

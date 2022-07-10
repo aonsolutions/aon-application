@@ -10,6 +10,7 @@ import { EVENT, TAG,  MSG, CONSTANT } from "../../../environments/environments.j
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
+import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 
 export class AonTax extends AonElement {
   TABLE_ID;
@@ -205,15 +206,19 @@ export class AonTax extends AonElement {
       dialog.width = "500px";
     }
 
-    dialog.setContent(this.getDialogHtml(resp));
+    let div = this.getDialogHtml(resp);
+    dialog.setContent(div);
 
     if("CUSTOMER_CHECK"===resp.status){
-      this.createFooterDialog(resp, dialog);
+      this.createFooterDialog(resp, dialog, div);
     } else {
       disabledForm(`${this.id}Form`, 'aon-switch');
     }
+
     dialog.open();
+
     this.visibleFields(resp);
+    
     this.eventData(resp);
   }
 
@@ -238,15 +243,15 @@ export class AonTax extends AonElement {
     divOne.appendChild(divTextOne);
 
     const divTextTwo =  this.createElement(TAG.DIV);
-    divTextTwo.style.textAlign="end";
-    divTextTwo.style.color="black";
+    divTextTwo.style.textAlign = "end";
+    divTextTwo.style.color = "black";
     divTextTwo.textContent = resp.resultFormat;
     divOne.appendChild(divTextTwo);
     div.appendChild(divOne);
 
     if(resp.typeText){
       const divK =  this.createElement(TAG.DIV);
-      divK.classList.add("onFlexBetween", "colorGrey", "aonFontWeight-700");
+      divK.classList.add("aonFlexBetween", "colorGrey", "aonFontWeight-700");
       divK.style.margin = "20px 0";
       const divT =  this.createElement(TAG.DIV);
       divT.innerHTML = `${MSG.TYPE}: <span style="color:black;"> ${resp.typeText}</span>`;
@@ -302,30 +307,57 @@ export class AonTax extends AonElement {
     return div;
   }
 
-  createFooterDialog(resp, dialog){
-    const buttonAccept = dialog.addSendAction(() =>{
-      this.save(resp).then(()=>{
-        dialog.close();
-      });
-    });
-    const divAction = this.getElement(dialog.ACTION);
+  createFooterDialog(resp, dialog, divMain){
+
+    let textArea = undefined;
+    let buttonAccept = undefined;
+
     const div = this.createElement(TAG.DIV);
+    div.style.textAlign = "right";
     const checkBox = new AonCheckbox();
     const span = this.createElement(TAG.SPAN);
     span.style.color = "grey";
-    span.style.fontSize = "12px";
-    span.style.fontWeight= 500;
+    span.style.fontSize  = "12px";
+    span.style.fontWeight= "500";
     span.textContent = "Acepto los datos reflejados";
     checkBox.id = this.DIALOG_CHECKBOX;
     checkBox.description = span.outerHTML;
     checkBox.addEventListener(EVENT.CHANGE, ({target})=>{
       buttonAccept.disabled = target.checked ? false : true;
     })
-    div.appendChild(checkBox);
-    divAction.insertBefore(div, buttonAccept);
-    buttonAccept.disabled = true;
-  }
 
+    div.appendChild(checkBox);
+    divMain.appendChild(div);
+
+    const buttonCancel = dialog.addCancelAction(() =>{
+      this.visibleFields({type:"d"})
+      div.innerHTML = "";
+      textArea = new AonAutosizeTextarea();
+      textArea.name = "reasonReject";
+      textArea.title = "Motivo del rechazo";
+      this.getElement(`${this.id}Form`).appendChild(textArea);
+
+      buttonCancel.remove();
+      buttonAccept.disabled = false;
+
+    }, false);
+
+    buttonCancel.innerHTML = "Rechazar";
+
+    buttonAccept = dialog.addSendAction(() =>{
+
+      if(textArea){
+        const value = textArea.value;
+        if(!value) return false;
+      } 
+      this.save(resp).then(()=>{
+        dialog.close();
+      });
+    });
+
+    buttonAccept.disabled = true;
+    buttonCancel.style.padding = buttonAccept.style.padding = "0.5rem 1rem";
+  }
 
   eventData(resp){
     this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
@@ -343,8 +375,8 @@ export class AonTax extends AonElement {
     .getBanks().then(result=>{
       if(result){
         let options = result.map(r=> ({
-          name: `${r.bankAccount} - ${r.alias}`,
-          value: `${this.replaceAllPoint(r.bankAccount)}`
+          name: `${r.bank_account} - ${r.alias}`,
+          value: `${this.replaceAllPoint(r.bank_account)}`
         }));
         iban.options = JSON.stringify(options);
         if(resp.iban) {
@@ -395,13 +427,19 @@ export class AonTax extends AonElement {
     this.applicationEl.startLoading();
     try {
       const form = {...resp,...this.getFormValues()};
+      this.clearModels();
       await setModelStatus(form);
       await this.getTable();
       this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
     } catch (error) {
+      console.error(error);
       this.showToast(error);
     }
     this.applicationEl.stopLoading();
+  }
+
+  clearModels(){
+    this.getApplicationParent().MODELS = [];
   }
 
   search(){
