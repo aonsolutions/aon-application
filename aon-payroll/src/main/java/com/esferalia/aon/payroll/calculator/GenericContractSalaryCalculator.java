@@ -792,6 +792,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (additionalBase != null)
 				cgcBase += additionalBase;
 			
+			evalVar(ctx, SALARY_HOURS);
+			
 			addVars(expressionContext, CGC_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
@@ -823,7 +825,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += maternityBase;
 			if (additionalBase != null)
 				cgpBase += additionalBase;
-
+			
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
@@ -1688,7 +1690,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 		});
 	}
-
+	
+	private void evalVar(IContractSalaryCalculatorContext ctx, ContextVariable var ) {
+		try {
+			ctx.getExpressionContext().eval(SALARY_HOURS.getName(), ctx.getStartDate(), ctx.getEndDate());
+		} catch ( Exception e ) {
+		}
+	}
+	
+	
 	// -------------------------------------------------------------- Protected
 
 	protected static boolean allAgreementConstants(Map<String, ITimedVariable<?>> context) {
@@ -1874,7 +1884,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		adds.stream().filter(v -> v.getValue(v.getPeriod()) != null )
 		.forEach( v -> addResult(expressionContext, dest, v.getPeriod().getStart(), v.getPeriod().getEnd(), v.getValue(v.getPeriod()).doubleValue()));
 	}
-
+	
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";
