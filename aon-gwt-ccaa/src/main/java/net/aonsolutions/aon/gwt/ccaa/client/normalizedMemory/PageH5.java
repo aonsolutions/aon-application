@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageH5 extends PageAbs {
 
@@ -26,7 +27,7 @@ public class PageH5 extends PageAbs {
 	@UiField CheckBox IMA8099010;
 	@UiField TabPanel tabPanel;
 
-	public PageH5(Deposit deposit) {
+	public PageH5(Deposit2 deposit) {
 		super(deposit);
 		
 		LMA8099000 = new Label(); 

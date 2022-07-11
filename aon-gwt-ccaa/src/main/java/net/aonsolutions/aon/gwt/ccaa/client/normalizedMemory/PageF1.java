@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageF1 extends PageAbs {
 
@@ -21,7 +22,7 @@ public class PageF1 extends PageAbs {
 
 	String codeAux;
 	
-	public PageF1(Deposit deposit) {
+	public PageF1(Deposit2 deposit) {
 		super(deposit);
 		
 		A18009050 = new CheckBox();

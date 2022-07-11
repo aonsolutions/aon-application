@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageH6 extends PageAbs {
 
@@ -44,7 +45,7 @@ public class PageH6 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	public PageH6(Deposit deposit) {
+	public PageH6(Deposit2 deposit) {
 		super(deposit);
 		IDA01010 = new TextBox();
 		IDA01020 = new TextBox(); 

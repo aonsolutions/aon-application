@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageH4 extends PageAbs {
 	
@@ -55,7 +56,7 @@ public class PageH4 extends PageAbs {
 	@UiField FlexTable table1;
 	@UiField TabPanel tabPanel;
 
-	public PageH4(Deposit deposit) {
+	public PageH4(Deposit2 deposit) {
 		super(deposit);
 		
 		Widget ui = pageBinder.createAndBindUi(this);

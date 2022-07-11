@@ -77,6 +77,7 @@ public class AonMenu extends HTMLPanel{
 		chapter.getElement().getStyle().setDisplay(Display.FLEX);
 		AonIcon icon = new AonIcon("arrow_right");
 		if(!subItem.getItems().isEmpty()) {
+			chapter.getElement().getStyle().setCursor(Cursor.POINTER);
 			chapter.add(icon);
 		}
 		Label label = new Label(subItem.getTitle());

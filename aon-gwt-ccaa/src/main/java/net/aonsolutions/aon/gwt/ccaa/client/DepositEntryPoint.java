@@ -22,10 +22,10 @@ public class DepositEntryPoint implements EntryPoint {
 	
 	public void onModuleLoad(String entryPoint){
 		if("deposit_new".equals(entryPoint)) {
-//			AON.ensureInjected();
-//			RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-//			root.add(new Deposit2());
-			new Deposit(getAonData()).onModuleLoad();
+			AON.ensureInjected();
+			RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+			root.add(new Deposit2(getAonData()));
+//			new Deposit(getAonData()).onModuleLoad();
 		} else if("deposit_text_mode".equals(entryPoint)){
 			new DepositTextMode(getAonData()).onModuleLoad();
 		}

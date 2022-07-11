@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageF1G extends PageAbs {
 
@@ -35,7 +36,7 @@ public class PageF1G extends PageAbs {
 
 	String codeAux;
 	
-	public PageF1G(Deposit deposit) {
+	public PageF1G(Deposit2 deposit) {
 		super(deposit);
 		
 		Widget ui = pageBinder.createAndBindUi(this);

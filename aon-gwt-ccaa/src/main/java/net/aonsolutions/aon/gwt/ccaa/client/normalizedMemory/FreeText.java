@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 import net.aonsolutions.aon.gwt.ccaa.client.DepositTextMode;
 
 public class FreeText extends PageAbs {
@@ -35,7 +36,7 @@ public class FreeText extends PageAbs {
 	private static final FreeTextBinder binder = GWT
 			.create(FreeTextBinder.class);
 
-	public FreeText(Deposit deposit, String pageHeader, String part, Boolean textMode) {
+	public FreeText(Deposit2 deposit, String pageHeader, String part, Boolean textMode) {
 		super(deposit);
 		
 		this.part = part;

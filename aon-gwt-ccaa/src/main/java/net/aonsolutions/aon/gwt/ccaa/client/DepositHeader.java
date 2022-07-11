@@ -15,7 +15,14 @@ public class DepositHeader extends SimpleLayoutPanel {
 	
 	public static final int HEIGTH = 60;
 	
-	public DepositHeader(String type, Integer year) {
+	Label yearLabel;
+	Label typeLabel;
+	
+	public DepositHeader(Label type, Integer year) {
+		build(type, year);
+	}
+	
+	private void build(Label type, Integer year) {
 		AonDisplayTable header = new AonDisplayTable();
 		header.addStyleName(AON.CSS.aonBlockCenter());
 		header.getElement().getStyle().setWidth(98, Unit.PCT);
@@ -38,8 +45,6 @@ public class DepositHeader extends SimpleLayoutPanel {
 		
 		// Administration LOGO
 
-		
-		
 		Image logo = new Image(AON.AON_RESOURCES.aonRegistroMercantilImage().getSafeUri());
 		logo.getElement().getStyle().setHeight(HEIGTH - 15.0, Unit.PX);
 		AonDisplayTableCell logoCell = row.addCell();
@@ -67,12 +72,15 @@ public class DepositHeader extends SimpleLayoutPanel {
 		AonDisplayTableCell yearPeriodCell = row.addCell( styles);
 		yearPeriodCell.getElement().getStyle().setProperty("border-radius", "8px");
 		yearPeriodCell.getElement().getStyle().setWidth(80, Unit.PX);
-		Label modelYear = new Label(year != null ? AonNumberUtils.toString(year) : "20XX");
-		yearPeriodCell.add(modelYear);
-		Label modelPeriod = new Label(type);
-		yearPeriodCell.add(modelPeriod);
+		yearLabel = new Label(year != null ? AonNumberUtils.toString(year) : "20XX");
+		yearPeriodCell.add(yearLabel);
+		typeLabel = type;
+		yearPeriodCell.add(typeLabel);
 		
 		setWidget(header);
 	}
 	
+	public void refresh(Label type, Integer year) {
+		build(type, year);
+	}
 }

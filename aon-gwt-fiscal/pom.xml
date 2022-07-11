@@ -148,7 +148,15 @@
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon.in.payroll</artifactId>
         	</exclusion>
-        </exclusions>
+        	<exclusion>
+        		<groupId>asm</groupId>
+        		<artifactId>asm-attrs</artifactId>
+        	</exclusion>
+        	<exclusion>
+        		<groupId>asm</groupId>
+        		<artifactId>asm</artifactId>
+        	</exclusion>
+      	</exclusions>
 	</dependency>
 	
 	<dependency>
