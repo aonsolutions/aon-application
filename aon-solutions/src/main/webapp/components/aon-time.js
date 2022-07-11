@@ -1,7 +1,7 @@
 import { CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js";
 import { AonElement } from "./AonElement.js";
 
-import '../css/aon-time.css';
+// import '../css/aon-time.css';
 
 export class AonTime extends AonElement {
 
@@ -94,6 +94,14 @@ export class AonTime extends AonElement {
         return this.getAttribute(CONSTANT.NAME);
     }
 
+    set title(title) {
+        this.setAttribute(CONSTANT.TITLE, title);
+    }
+
+    get title() {
+        return this.getAttribute(CONSTANT.TITLE);
+    }
+
     set disabled(disabled) {
         if (typeof(disabled) === "boolean") {
             this.#disabled = disabled;
@@ -110,7 +118,7 @@ export class AonTime extends AonElement {
     }
 
     static get observedAttributes() {
-        return [CONSTANT.MIN, CONSTANT.MAX, CONSTANT.DISABLED, CONSTANT.NAME];
+        return [CONSTANT.MIN, CONSTANT.MAX, CONSTANT.DISABLED, CONSTANT.NAME, CONSTANT.TITLE];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -139,6 +147,11 @@ export class AonTime extends AonElement {
             case CONSTANT.NAME:
                 if (this.HIDDEN_INPUT) {
                     this.HIDDEN_INPUT.name = newValue;
+                }
+                break;
+            case CONSTANT.TITLE:
+                if (this.LABEL) {
+                    this.LABEL.innerText = newValue;
                 }
                 break;
         }
@@ -199,9 +212,8 @@ export class AonTime extends AonElement {
             let minuteStr = this.MINUTE_INPUT.value;
             let hour = Number.parseInt(hourStr);
             let minute = Number.parseInt(minuteStr);
-            if (hour && minute) {
-
-                let val = `${hour > 9 ? hour : `0${hour}`}:${minute > 9 ? minute : `0${minute}`}`;
+            if (hour >= 0 && minute >= 0) {
+                let val = `${`${hour}`.padStart(2, "0")}:${`${minute}`.padStart(2, "0")}`;
                 if (this.HIDDEN_INPUT) {
                     this.HIDDEN_INPUT.value = val;
                 }
@@ -216,7 +228,7 @@ export class AonTime extends AonElement {
             let obj = this.numberifyDate(value);
             let hours = obj.hour;
             let mins = obj.minute;
-            if (hours && mins) {
+            if (hours >= 0 && mins >= 0) {
                 let maxtime = this.numberifyDate(this.#max);
                 let mintime = this.numberifyDate(this.#min);
     
@@ -237,7 +249,6 @@ export class AonTime extends AonElement {
         this.#max = this.DEFAULT_MAX;
         this.#min = this.DEFAULT_MIN;
         this.#disabled = false;
-        this.style.width = "10%";
     }
 
     connectedCallback() {
@@ -270,13 +281,12 @@ export class AonTime extends AonElement {
     buildLabel() {
         this.LABEL = document.createElement("div");
         this.LABEL.style.width = "100%";
-        this.LABEL.style.paddingLeft = ".5rem"
-        this.LABEL.style.height = "1rem";
+        this.LABEL.style.paddingLeft = ".5rem";
         this.LABEL.style.margin = "3px auto 3px auto";
         this.LABEL.style.overflow = "hidden";
         this.LABEL.style.textOverflow = "ellipsis";
         this.LABEL.style.color = this.COLORS.detailColor;
-        this.LABEL.innerText = "Prueba";
+        this.LABEL.innerText = this.getAttribute(CONSTANT.TITLE);
     }
 
     buildTime() {
@@ -332,6 +342,7 @@ export class AonTime extends AonElement {
        this.MINUTE_INPUT.id = this.MINUTE_INPUT_ID;
 
        this.changeTime();
+       this.setMinMax();
     }
 
     changeTime() {
@@ -341,9 +352,9 @@ export class AonTime extends AonElement {
             }
             let numDate = this.numberifyDate(this.#value);
             if (this.MINUTE_INPUT && this.HOUR_INPUT) {
-                 this.MINUTE_INPUT.value = numDate.minute > 9 ? numDate.minute : `0${numDate.minute}`;
-                 this.HOUR_INPUT.value = numDate.hour > 9 ? numDate.hour : `0${numDate.hour}`;
-                 this.setMinMax();
+                 this.MINUTE_INPUT.value = `${numDate.minute}`.padStart(2, "0");
+                 this.HOUR_INPUT.value = `${numDate.hour}`.padStart(2, "0");
+                //  this.setMinMax();
             }
         }
     }
@@ -368,7 +379,6 @@ export class AonTime extends AonElement {
                 inputEl.addEventListener(event, (ev) => {
                     ev.target.style.backgroundColor = this.COLORS.backgroundColorHover;
                     this.applyActiveStyle();
-                    this.#value = this.getValue();
                 });
             });
     
@@ -376,8 +386,16 @@ export class AonTime extends AonElement {
                 inputEl.addEventListener(event, (ev) => {
                     ev.target.style.backgroundColor = this.COLORS.backgroundColor;
                     this.applyInactiveStyle();
-                    this.#value = this.getValue();
                 });
+            });
+
+            inputEl.addEventListener("keydown", (ev) => {
+                if (inputEl.value === "" && (ev.which === 40 || ev.which === 38)) {
+                    if (inputEl.min == 0) {
+                        ev.preventDefault();
+                        inputEl.value = "00";
+                    }
+                }
             });
 
             inputEl.addEventListener("keypress", (ev) => {
@@ -411,14 +429,22 @@ export class AonTime extends AonElement {
                     hvalue = Number.parseInt(value);
                     if (!isNaN(hvalue)) {
                         if (hvalue === maxtime.hour && mvalue > maxtime.minute) {
-                            this.MINUTE_INPUT.value = maxtime.minute > 9 ? maxtime.minute : "0" + maxtime.minute;
+                            this.MINUTE_INPUT.value = `${maxtime.minute}`.padStart(2, "0");
                         } else if (hvalue === mintime.hour && mvalue < maxtime.minute) {
-                            this.MINUTE_INPUT.value = mintime.minute > 9 ? mintime.minute : "0" + mintime.minute;
+                            this.MINUTE_INPUT.value = `${mintime.minute}`.padStart(2, "0");
                         }
                     }
                 }
             }
+
+            value = this.HOUR_INPUT.value;
+            hvalue = Number.parseInt(value);
+            if (!isNaN(hvalue)) {
+                this.HOUR_INPUT.value = `${hvalue}`.padStart(2, "0");
+            }
+            
             this.setMinMax();
+            this.#value = this.getValue();
         });
 
         this.HOUR_INPUT.addEventListener("focusout", (ev) => {
@@ -433,12 +459,8 @@ export class AonTime extends AonElement {
             if (!isNaN(hvalue)) {
                 if (hvalue > maxtime.hour) {
                     this.HOUR_INPUT.value = maxtime.hour;
-                    // this.MINUTE_INPUT.focus();
                 } else if (hvalue < mintime.hour) {
                     this.HOUR_INPUT.value = mintime.hour;
-                    // this.MINUTE_INPUT.focus();
-                } else if (hvalue === maxtime.hour || hvalue === mintime.hour) {
-                    // this.MINUTE_INPUT.focus();
                 }
 
                 value = this.HOUR_INPUT.value;
@@ -446,13 +468,12 @@ export class AonTime extends AonElement {
 
                 if (!isNaN(hvalue)) {
                     if (hvalue === maxtime.hour && mvalue > maxtime.minute) {
-                        this.MINUTE_INPUT.value = maxtime.minute > 9 ? maxtime.minute : "0" + maxtime.minute;
+                        this.MINUTE_INPUT.value = `${maxtime.minute}`.padStart(2, "0");
                     } else if (hvalue === mintime.hour && mvalue < maxtime.minute) {
-                        this.MINUTE_INPUT.value = mintime.minute > 9 ? mintime.minute : "0" + mintime.minute;
+                        this.MINUTE_INPUT.value = `${mintime.minute}`.padStart(2, "0");
                     }
-
                     if (hvalue < 10) {
-                        this.HOUR_INPUT.value = `0${hvalue}`;
+                        this.HOUR_INPUT.value = `${hvalue}`.padStart(2, "0");
                     }
                 }
             }
@@ -470,23 +491,21 @@ export class AonTime extends AonElement {
 
             if (!isNaN(hvalue) && mins !== "0") {
                 if (hvalue === maxtime.hour && mvalue > maxtime.minute) {
-                    this.MINUTE_INPUT.value = maxtime.minute > 9 ? maxtime.minute : "0" + maxtime.minute;
+                    this.MINUTE_INPUT.value = `${maxtime.minute}`.padStart(2, "0");
                 } else if (hvalue === mintime.hour && mvalue < mintime.minute) {
-                    this.MINUTE_INPUT.value = mintime.minute > 9 ? mintime.minute : "0" + mintime.minute;
+                    this.MINUTE_INPUT.value = `${mintime.minute}`.padStart(2, "0");
                 }
             }
 
             if (!isNaN(mvalue)) {
                 if (mvalue > 59) {
                     this.MINUTE_INPUT.value = 59;
-                } else if (mvalue > 9) {
-                    this.MINUTE_INPUT.value = mvalue;
                 } else {
-                    this.MINUTE_INPUT.value = "0" + mvalue;
+                    this.MINUTE_INPUT.value = `${mvalue}`.padStart(2, "0");
                 }
 
             }
-
+            this.#value = this.getValue();
         });
     }
 

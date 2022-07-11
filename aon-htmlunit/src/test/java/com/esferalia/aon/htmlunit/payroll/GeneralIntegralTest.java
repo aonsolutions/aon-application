@@ -673,8 +673,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");
 		calculate(Calendar.JUNE,2022);
 		double cgcBase = getValue("cgcBaseLabel");
-		salaryHours = getValue("db-amount-label-2");
-		assertTrue((salaryHours * 7.03 ) <  cgcBase  ) ;
+		salaryHours = getValue("db-amount-label-6");
+		assertTrue((salaryHours * 7.03 ) <  ( cgcBase * 0.5 ) ) ;
 
 	}
 
