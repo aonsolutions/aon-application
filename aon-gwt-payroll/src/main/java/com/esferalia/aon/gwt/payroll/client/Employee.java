@@ -901,6 +901,7 @@ public abstract class Employee extends ResizeComposite {
 		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00d3N PREVISIBLES", "968");
 		
 		// TIPO DE JORNADA
+		this.journeyType.addItem("-", "");
 		this.journeyType.addItem("Tiempo Completo", "true");
 		this.journeyType.addItem("Tiempo Parcial", "false");
 		

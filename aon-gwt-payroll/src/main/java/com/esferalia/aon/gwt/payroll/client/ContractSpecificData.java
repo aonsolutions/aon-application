@@ -1603,7 +1603,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		journeyTypeLB.clear();
 		journeyTypeLB.addItem("-","");
 		
-		if(AonStringUtils.equalsIgnoreCase(contractType, "300"))
+		if(AonStringUtils.equalsIgnoreCase(contractType, "300") || AonStringUtils.equalsIgnoreCase(contractType, "309") ||
+				AonStringUtils.equalsIgnoreCase(contractType, "330") || AonStringUtils.equalsIgnoreCase(contractType, "339") ||
+						AonStringUtils.equalsIgnoreCase(contractType, "350") || AonStringUtils.equalsIgnoreCase(contractType, "389"))
 			journeyTypeLB.addItem("JORNADA ANUAL","A");
 		else {
 			journeyTypeLB.addItem("JORNADA ANUAL","A");
