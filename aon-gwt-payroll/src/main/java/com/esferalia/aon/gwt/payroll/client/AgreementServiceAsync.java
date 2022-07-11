@@ -39,7 +39,7 @@ public interface AgreementServiceAsync {
 			int levelId, Salary.Type type, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void saveAgreementDraft(String domain, String userLogin, AgreementDraft agreementDraft,
+	void saveAgreementDraft(String domain, AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException;
 
@@ -50,7 +50,7 @@ public interface AgreementServiceAsync {
 	void getChanges(String domain, Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
 			throws IllegalArgumentException;
 
-	void checkAndUpdateServiAgreement(String domain, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear, AsyncCallback<Date> asyncCallback) throws IllegalArgumentException;
+	void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear, AsyncCallback<Date> asyncCallback) throws IllegalArgumentException;
 
 	
 }

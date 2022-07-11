@@ -20,7 +20,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertIAE863;
-import net.aonsolutions.db.up2date.payroll.AlterAgreement4Log;
 import net.aonsolutions.db.up2date.tgss.Bases2022FixHourly;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFix;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFixII;
@@ -252,9 +251,7 @@ public class Up2Date {
     		//AssimilatedInsert.ASSIMILATEDINSERT,
     		//Bases2022FixHourly.BASES2022FIXHOURLY,
     		InsertIAE863.INSERT_IAE_863,
-    		AlterAgreement4Log.ALTERAGREEMENTLOG,
     		SalaryHoursFixII.SALARYHOURSFIXII
-
     };
     
 

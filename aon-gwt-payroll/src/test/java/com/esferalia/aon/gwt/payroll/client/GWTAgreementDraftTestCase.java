@@ -469,7 +469,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void checkAndUpdateServiAgreement(String domain, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear,
+		public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear,
 				AsyncCallback<Date> asyncCallback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
@@ -581,7 +581,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
 
 		final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-				6969, "TODO: Domain Name", "TODO: User Login", agreementDraft, new AbstractEmployeesServiceAsync() {
+				6969, "TODO: Domain Name", agreementDraft, new AbstractEmployeesServiceAsync() {
 
 					@Override
 					public void getContext(
@@ -1011,7 +1011,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void checkAndUpdateServiAgreement(String domain, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear,
+					public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear,
 							AsyncCallback<Date> asyncCallback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
@@ -1126,7 +1126,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		EmployeesServiceAsync employeesService= GWT
 				.create(EmployeesService.class);
 		final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-				6969, "TODO: Domain Name", "TODO: User Login", agreementDraft, employeesService);
+				6969, "TODO: Domain Name", agreementDraft, employeesService);
 
 		AgreementDraft agreementDraftWidget = new AgreementDraft();
 		// agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);

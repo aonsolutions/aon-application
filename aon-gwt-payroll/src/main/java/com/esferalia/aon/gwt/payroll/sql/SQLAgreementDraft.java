@@ -638,18 +638,18 @@ public class SQLAgreementDraft {
 	}
 
 	public static void save(Connection conn, AgreementDraft draft,
-			Integer domain, Integer parentDomain, String userLogin) throws SQLException {
+			Integer domain, Integer parentDomain) throws SQLException {
 
 		if (draft.getId() < 0)
-			insert(conn, draft, domain, parentDomain, userLogin);
+			insert(conn, draft, domain, parentDomain);
 		else
-			update(conn, draft, domain, parentDomain, userLogin);
+			update(conn, draft, domain, parentDomain);
 	}
 
 	public static void insert(Connection conn, AgreementDraft draft,
-			Integer domainId, Integer parentDomain, String userLogin) throws SQLException {
+			Integer domainId, Integer parentDomain) throws SQLException {
 
-		int agreementId = insertAgreement(conn, domainId, draft, userLogin);
+		int agreementId = insertAgreement(conn, domainId, draft);
 		draft.setId(agreementId);
 		
 		SalaryTable salaryTable = draft.getDraftSalaryTable();
@@ -666,7 +666,7 @@ public class SQLAgreementDraft {
 
 			// Salary Table
 			for (Variable variable : salaryTable.getVariables(levelId))
-				insertLevelData(conn, domainId, levelId, variable, userLogin);
+				insertLevelData(conn, domainId, levelId, variable);
 			// Categories
 			Set<String> draftCategories = draftCategoriesMap.get(level.getId());
 
@@ -678,7 +678,7 @@ public class SQLAgreementDraft {
 			if (!isRemove(payment)) {
 				// Warning, we update payment id, it's a potential risk.
 				int paymentId = JooqAgreement.insertPayment(conn, domainId,
-						draft.getId(), payment, userLogin);
+						draft.getId(), payment);
 				syncExtra(draft.getDraftExtras(), payment.getId(), paymentId);
 				payment.setId(paymentId);
 			}
@@ -692,9 +692,9 @@ public class SQLAgreementDraft {
 	}
 
 	public static void update(Connection conn, AgreementDraft draft,
-			Integer domainId, Integer parentDomain, String userLogin) throws SQLException {
+			Integer domainId, Integer parentDomain) throws SQLException {
 
-		updateAgreement(conn, domainId, draft, userLogin);
+		updateAgreement(conn, domainId, draft);
 
 		Set<Level> draftLevels = draft.getDraftLevels();
 		SalaryTable salaryTable = draft.getDraftSalaryTable();
@@ -719,7 +719,7 @@ public class SQLAgreementDraft {
 				updateLevel(conn, level);
 
 			for (Variable variable : salaryTable.getVariables(draftId)) {
-				updateLevelData(conn, domainId, dbId, variable, userLogin);
+				updateLevelData(conn, domainId, dbId, variable);
 			}
 
 			if (draftCategoriesMap.containsKey(draftId)) {
@@ -746,7 +746,7 @@ public class SQLAgreementDraft {
 				continue;
 
 			for (Variable variable : salaryTable.getVariables(levelId)) {
-				updateLevelData(conn, domainId, levelId, variable, userLogin);
+				updateLevelData(conn, domainId, levelId, variable);
 			}
 
 			if (draftCategoriesMap.containsKey(levelId))
@@ -760,14 +760,14 @@ public class SQLAgreementDraft {
 				if (!isRemove(payment)) {
 					// Warning, we update payment id, it's a potential risk.
 					int paymentId = JooqAgreement.insertPayment(conn, domainId,
-							draft.getId(), payment, userLogin);
+							draft.getId(), payment);
 					syncExtra(draft.getDraftExtras(), payment.getId(),
 							paymentId);
 					payment.setId(paymentId);
 				}
 			} else {
 				if (!isRemove(payment)) {
-					updatePayment(conn, domainId, draft.getId(), payment, userLogin);
+					updatePayment(conn, domainId, draft.getId(), payment);
 				} else {
 					removePayment(conn, domainId, draft.getId(), payment);
 				}
@@ -803,7 +803,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static int insertAgreement(Connection conn, Integer domainId,
-			Agreement draft, String userLogin) throws SQLException {
+			Agreement draft) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -813,20 +813,13 @@ public class SQLAgreementDraft {
 					+ SQLConstants.AGREEMENT + " ( " + AgreementColumns.DOMAIN
 					+ ", " + AgreementColumns.DESCRIPTION 
 					+ ", " + AgreementColumns.SS_NUMBER 
-					+ ", " + AgreementColumns.OWNER 
-					+ ", " + AgreementColumns.CREATION_USER
-					+ ", " + AgreementColumns.CREATION_DATE
-					+ ")"
+					+ ", " + AgreementColumns.OWNER + ")"
 					+ " VALUES ( ?,?,?,?)", new String[] { AgreementColumns.ID });
 			// @formatter:on
-			java.sql.Date creationDate = new java.sql.Date(new Date().getTime());
-			
 			stmt.setInt(1, domainId);
 			stmt.setString(2, draft.getDescription());
 			stmt.setString(3, draft.getSSNumber());
 			stmt.setByte(4, null == draft.getOwner() || draft.getOwner() == AgreementOwner.AONSOLUTIONS ? (byte)0 : (byte)1);
-			stmt.setString(5, userLogin);
-			stmt.setDate(6, creationDate);
 			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();
 			rs.next();
@@ -841,26 +834,20 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updateAgreement(Connection conn, Integer domainId,
-			AgreementDraft draft, String userLogin) throws SQLException {
+			AgreementDraft draft) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 
 			// @formatter:off
-			java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
-			
 			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT
-					+ " SET " + AgreementColumns.DESCRIPTION + " = ?" 
-					+ " ," + AgreementColumns.SS_NUMBER + " = ? "
-					+ " ," + AgreementColumns.MODIFICATION_USER + " = ? "
-					+ " ," + AgreementColumns.MODIFICATION_DATE + " = ? "
+					+ " SET " + AgreementColumns.DESCRIPTION + " = ?" + " ,"
+					+ AgreementColumns.SS_NUMBER + " = ? "
 					+ " WHERE " + AgreementColumns.ID + " = ? ");
 			// @formatter:on
 			stmt.setString(1, draft.getDescription());
 			stmt.setString(2, draft.getSSNumber());
-			stmt.setString(3, userLogin);
-			stmt.setDate(4, modificationDate);
-			stmt.setInt(5, draft.getId());
+			stmt.setInt(3, draft.getId());
 			stmt.executeUpdate();
 			stmt.close();
 
@@ -1028,7 +1015,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static int insertLevelData(Connection conn, Integer domainId,
-			Integer levelId, Variable variable, String userLogin) throws SQLException {
+			Integer levelId, Variable variable) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -1040,10 +1027,7 @@ public class SQLAgreementDraft {
 					+ AgreementLevelDataColumns.NAME + ", "
 					+ AgreementLevelDataColumns.EXPRESSION + ", "
 					+ AgreementLevelDataColumns.START_DATE + ", "
-					+ AgreementLevelDataColumns.END_DATE 
-					+ AgreementLevelDataColumns.CREATION_USER
-					+ AgreementLevelDataColumns.CREATION_DATE
-					+ ")"
+					+ AgreementLevelDataColumns.END_DATE + ")"
 					+ " VALUES (?,?,?,?,?,?)",
 					new String[] { AgreementLevelDataColumns.ID });
 			// @formatter:on
@@ -1060,11 +1044,6 @@ public class SQLAgreementDraft {
 //				stmt.setNull(6, Types.DATE);
 			
 			stmt.setNull(6, Types.DATE);
-			
-			java.sql.Date creationDate = new java.sql.Date(new Date().getTime());
-			stmt.setString(7, userLogin);
-			stmt.setDate(8, creationDate);
-			
 			stmt.executeUpdate();
 
 			rs = stmt.getGeneratedKeys();
@@ -1151,7 +1130,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updateLevelData(Connection conn, Integer domainId,
-			Integer levelId, Variable variable, String userLogin) throws SQLException {
+			Integer levelId, Variable variable) throws SQLException {
 
 //		} else {
 //			if (AonStringUtils.isNotBlank(variable.getExpression())) {
@@ -1183,17 +1162,17 @@ public class SQLAgreementDraft {
 				continue;
 			} else if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
 				// Update date Level Data
-				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), userLogin);
+				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
 				continue;
 			}else if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
 				// Update new value for level data
-				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), variable, userLogin);
+				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), variable);
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && AonStringUtils.isBlank(variable.getExpression())) {
 				removeLevelData(conn, dbVariable.getId());
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
-				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), userLogin);
+				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
 				continue;
 			}
 
@@ -1212,7 +1191,7 @@ public class SQLAgreementDraft {
 		
 		if(null == variable.getId()) {
 			if (AonStringUtils.isNotBlank(variable.getExpression())) {
-				insertLevelData(conn, domainId, levelId, variable, userLogin);
+				insertLevelData(conn, domainId, levelId, variable);
 			}
 		}
 		
@@ -1365,9 +1344,9 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updatePayment(Connection conn, Integer domainId,
-			Integer agreementId, Payment payment, String userLogin) throws SQLException {
+			Integer agreementId, Payment payment) throws SQLException {
 
-		JooqAgreement.updatePayment(conn, domainId, agreementId, payment, userLogin);
+		JooqAgreement.updatePayment(conn, domainId, agreementId, payment);
 	}
 
 	private static void removePayment(Connection conn, Integer domainId,
@@ -1976,27 +1955,22 @@ public class SQLAgreementDraft {
 	}
 	
 	private static void updateLevelData(Connection conn, Integer dataId,
-			Date startDate, String userLogin) throws SQLException {
+			Date startDate) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			// @formatter:off
-			java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
-			
 			stmt = conn.prepareStatement("UPDATE "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + " SET "
-					+ AgreementLevelDataColumns.START_DATE + " = ? " 
-					+ ", " + AgreementLevelDataColumns.END_DATE + " = ? " 
-					+ ", " + AgreementLevelDataColumns.MODIFICATION_USER + " = ? " 
-					+ ", " + AgreementLevelDataColumns.MODIFICATION_DATE + " = ? " 
-					+ " WHERE "
+					+ AgreementLevelDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementLevelDataColumns.END_DATE + " = ? " + " WHERE "
 					+ AgreementLevelDataColumns.ID + "= ? ");
 			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(startDate.getTime()));
+			
 			stmt.setNull(2, Types.DATE);
-			stmt.setString(3, userLogin);
-			stmt.setDate(4, modificationDate);
-			stmt.setInt(5, dataId);
+
+			stmt.setInt(3, dataId);
 
 			stmt.executeUpdate();
 
@@ -2008,29 +1982,25 @@ public class SQLAgreementDraft {
 	}
 	
 	private static void updateLevelData(Connection conn, Integer dataId,
-			Date startDate, Variable variable, String userLogin) throws SQLException {
+			Date startDate, Variable variable) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			// @formatter:off
-			java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
-			
 			stmt = conn.prepareStatement("UPDATE "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + " SET "
 					+ AgreementLevelDataColumns.START_DATE + " = ? " + ", "
-					+ AgreementLevelDataColumns.END_DATE + " = ? " 
-					+ ", " + AgreementLevelDataColumns.EXPRESSION + "= ? " 
-					+ ", " + AgreementLevelDataColumns.MODIFICATION_USER + "= ? " 
-					+ ", " + AgreementLevelDataColumns.MODIFICATION_DATE + "= ? " 
-					+ " WHERE "
+					+ AgreementLevelDataColumns.END_DATE + " = ? " + ", " 
+					+ AgreementLevelDataColumns.EXPRESSION + "= ? " + " WHERE "
 					+ AgreementLevelDataColumns.ID + "= ? ");
 			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(startDate.getTime()));
+			
 			stmt.setNull(2, Types.DATE);
+			
 			stmt.setString(3, variable.getExpression());
-			stmt.setString(4, userLogin);
-			stmt.setDate(5, modificationDate);
-			stmt.setInt(6, dataId);
+
+			stmt.setInt(4, dataId);
 
 			stmt.executeUpdate();
 

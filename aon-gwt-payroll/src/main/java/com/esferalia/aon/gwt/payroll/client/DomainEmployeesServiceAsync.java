@@ -167,7 +167,7 @@ public class DomainEmployeesServiceAsync {
 
 	public void saveAgreementDraft(AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {
-		employeesServiceAsync.saveAgreementDraft(getCurrentDomainName(), getCurrentUser(), agreementDraft, callback);
+		employeesServiceAsync.saveAgreementDraft(getCurrentDomainName(), agreementDraft, callback);
 	}
 
 	public void calculateAgreementDraft(AgreementDraft agreementDraft,

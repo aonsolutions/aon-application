@@ -1404,13 +1404,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public AgreementDraft saveAgreementDraft(String domain, String userLogin, AgreementDraft agreementDraft) throws IllegalArgumentException {
+	public AgreementDraft saveAgreementDraft(String domain, AgreementDraft agreementDraft)
+			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
 			disableAutoCommit(conn);
-			SQLAgreementDraft.save(conn, agreementDraft, agreementDraft.getDomain(),
-					AonServletUtils.getParentDomainID(conn, agreementDraft.getDomain()), userLogin);
+			SQLAgreementDraft.save(conn, agreementDraft, agreementDraft.getDomain(), // AonServletUtils.getDomainID(domain),
+					AonServletUtils.getParentDomainID(conn, agreementDraft.getDomain()));
 			commit(conn);
 			return agreementDraft;
 		} catch (Throwable t) {
@@ -7214,11 +7215,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public Date checkAndUpdateServiAgreement(String domainName, String userLogin, Integer agreementId, String ssNumber,
+	public Date checkAndUpdateServiAgreement(String domainName, Integer agreementId, String ssNumber,
 			Integer lastDateYear) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, userLogin, agreementId, ssNumber,
+			return AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, agreementId, ssNumber,
 					lastDateYear);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);

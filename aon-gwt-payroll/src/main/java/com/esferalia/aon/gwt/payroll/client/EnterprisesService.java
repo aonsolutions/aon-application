@@ -277,8 +277,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
-	int getServiAgreement(String currentDomainName, String userLogin, String serviAgreementCode,
-			List<Integer> selectedDates);
+	int getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates);
 	
 	List<Integer> getServiAgreementDates(String serviAgreementCode) throws IllegalArgumentException;
 

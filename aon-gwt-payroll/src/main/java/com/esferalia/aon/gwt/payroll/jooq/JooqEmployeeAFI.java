@@ -62,7 +62,6 @@ public class JooqEmployeeAFI {
 	private static final String TC2 = "TC2";
 	private static final String PARTIALITY = "COEFICIENTE_PARCIALIDAD";
 	private static final String OCUPATION = "OCUPACION";
-	private static final String EMPLOYEECOLECTIVE = "COLECTIVO_TRABAJADORES";
 	
 	public static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
@@ -384,12 +383,6 @@ public class JooqEmployeeAFI {
 				.orderBy(CONTRACT_DATA.START_DATE.desc())
 				.fetch();
 		
-		Result<Record> contractDataEmployeeColectiveRecord = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq(EMPLOYEECOLECTIVE))
-				.orderBy(CONTRACT_DATA.START_DATE.desc())
-				.fetch();
-		
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON)
 				.where(PERSON.REGISTRY.in(
 						dslContext.select(CONTRACT.PERSON).from(CONTRACT)
@@ -403,8 +396,7 @@ public class JooqEmployeeAFI {
 		String quoteGruop = parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partiality = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
-		String employeeColective = contractDataEmployeeColectiveRecord.isEmpty() ? null : parseContractData(contractDataEmployeeColectiveRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
-		
+				
 		//FAB
 		fab.put("action", "MA");
 		fab.put("situation", "1");
@@ -414,8 +406,8 @@ public class JooqEmployeeAFI {
 		fab.put("quoteGroup", quoteGruop);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", partiality);
-		fab.put("employeeColective", employeeColective);
-		fab.put("gender", gender);
+		fab.put("employeeColective", null);
+		fab.put("gender", gender+1);
 		
 		//OTD
 		String endDate = null;
@@ -479,12 +471,6 @@ public class JooqEmployeeAFI {
 				.orderBy(CONTRACT_DATA.START_DATE.desc())
 				.fetch();
 		
-		Result<Record> contractDataEmployeeColectiveRecord = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq(EMPLOYEECOLECTIVE))
-				.orderBy(CONTRACT_DATA.START_DATE.desc())
-				.fetch();
-		
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON)
 				.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
 				.fetchOne(PERSON.GENDER);
@@ -514,7 +500,6 @@ public class JooqEmployeeAFI {
 		String quoteGroup = parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partialityCoef = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
-		String employeeColective = contractDataEmployeeColectiveRecord.isEmpty() ? null : parseContractData(contractDataEmployeeColectiveRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
 		if(holidaysDataRecords.isNotEmpty()) {
 			Calendar holidyaEndDateCalendar = Calendar.getInstance();
@@ -535,7 +520,7 @@ public class JooqEmployeeAFI {
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", partialityCoef == null ? "" : parseCoefLengnt(partialityCoef));
-		fab.put("employeeColective", employeeColective);
+		fab.put("employeeColective", null);
 		fab.put("gender", gender);
 		
 		//DAM -> All reserved
@@ -581,12 +566,6 @@ public class JooqEmployeeAFI {
 				.orderBy(CONTRACT_DATA.START_DATE.desc())
 				.fetch();
 		
-		Result<Record> contractDataEmployeeColectiveRecord = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq(EMPLOYEECOLECTIVE))
-				.orderBy(CONTRACT_DATA.START_DATE.desc())
-				.fetch();
-		
 		Result<Record> contractDataOcupationRecord = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.eq(OCUPATION))
@@ -620,7 +599,6 @@ public class JooqEmployeeAFI {
 		String quoteGroup =  contractDataQuoteRecord.isEmpty() ? null : parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partialityCoef = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
-		String employeeColective = contractDataEmployeeColectiveRecord.isEmpty() ? null : parseContractData(contractDataEmployeeColectiveRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
 		//FAB
 		fab.put("action", "MC");
@@ -631,7 +609,7 @@ public class JooqEmployeeAFI {
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", null == partialityCoef ? "" : parseCoefLengnt(partialityCoef));
-		fab.put("employeeColective", employeeColective);
+		fab.put("employeeColective", null);
 		fab.put("gender", gender);
 		
 		String ocupation = parseContractData(contractDataOcupationRecord.isEmpty() ? "" : contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
