@@ -65,7 +65,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 
 		EmployeesServiceHelper.calculate(connection,
 				draft, domain.getId(), null);
-		SQLAgreementDraft.save(connection, draft, domain.getId(), null, null);
+		SQLAgreementDraft.save(connection, draft, domain.getId(), null);
 		
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
@@ -99,7 +99,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
@@ -117,7 +117,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 		
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
@@ -143,7 +143,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
@@ -168,7 +168,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		EmployeesServiceHelper.calculate(connection,
 				draft, agreement.getDomain(), null);
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 
 		draft.clearDrafts();
 		EmployeesServiceHelper.calculate(connection,
@@ -217,7 +217,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draft.addDraftLevel(level);
 		draft.addDraftCategories(level, categories);
 
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 	}
 
 	@Test
@@ -254,7 +254,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draftExtra.setIssueDate("REMOVE()");
 		draft.addDraftExtra(draftExtra);
 
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 	}
 
 	@Test
@@ -282,7 +282,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draftPayment.setSalaryType(com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARY);
 		draft.addDraftPayment(draftPayment);
 		
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 		
 		Calendar epoch = Calendar.getInstance();
 		epoch.setTimeInMillis(0);
@@ -313,7 +313,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draftPayment.setStartDate(getLastDayOfMonth(getToday()));
 		draft.addDraftPayment(draftPayment);
 		
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 		
 		paymentRecords = getAgreementPayments(aonContext, agreement.getId());
 		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
@@ -341,7 +341,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draftPayment.setStartDate(getFirstDayOfYear(getToday()));
 		draftPayment.setStartDate(getLastDayOfMonth(getToday()));
 		
-		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null, null);
+		SQLAgreementDraft.save(connection, draft, agreement.getDomain(), null);
 		paymentRecords = getAgreementPayments(aonContext, agreement.getId());
 		Assert.assertEquals(0, paymentRecords.length);
 		
@@ -373,7 +373,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draftPayment.setSalaryType(com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARY);
 		draft.addDraftPayment(draftPayment);
 		
-		SQLAgreementDraft.save(connection, draft, domain.getId(), null, null);
+		SQLAgreementDraft.save(connection, draft, domain.getId(), null);
 		
 		Calendar epoch = Calendar.getInstance();
 		epoch.setTimeInMillis(0);
@@ -429,7 +429,7 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		draftPayment.setSalaryType(com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARY);
 		draft.addDraftPayment(draftPayment);
 		
-		SQLAgreementDraft.save(connection, draft, domain.getId(), null, null);
+		SQLAgreementDraft.save(connection, draft, domain.getId(), null);
 		
 		Calendar epoch = Calendar.getInstance();
 		epoch.setTimeInMillis(0);

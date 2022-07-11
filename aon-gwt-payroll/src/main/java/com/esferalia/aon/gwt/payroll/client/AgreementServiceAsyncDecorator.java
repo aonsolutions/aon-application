@@ -42,11 +42,11 @@ public class AgreementServiceAsyncDecorator implements AgreementServiceAsync {
 
 
 	@Override
-	public void saveAgreementDraft(String domain, String userLogin, AgreementDraft agreementDraft,
+	public void saveAgreementDraft(String domain, AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		agreementServiceAsync.saveAgreementDraft(domain, userLogin, agreementDraft,
+		agreementServiceAsync.saveAgreementDraft(domain, agreementDraft,
 				new AsyncCallbackWrapper<AgreementDraft>(callback));
 	}
 
@@ -113,10 +113,10 @@ public class AgreementServiceAsyncDecorator implements AgreementServiceAsync {
 	}
 
 	@Override
-	public void checkAndUpdateServiAgreement(String domain, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear, AsyncCallback<Date> callback)
+	public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear, AsyncCallback<Date> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		agreementServiceAsync.checkAndUpdateServiAgreement(domain, userLogin, agreementId, ssNumber, lastDateYear, new AsyncCallbackWrapper<Date>(callback));
+		agreementServiceAsync.checkAndUpdateServiAgreement(domain, agreementId, ssNumber, lastDateYear, new AsyncCallbackWrapper<Date>(callback));
 	}
 
 }

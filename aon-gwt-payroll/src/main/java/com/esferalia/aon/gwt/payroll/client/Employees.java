@@ -988,7 +988,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
 				enterprise.getDomain(),
 				Wnd.getCurrentDomainNameURL(),
-				Wnd.getCurrentUser(),
 				agreementDraft, employeesService);
 
 		employeesService.getChanges(
@@ -1198,7 +1197,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
 					enterprise.getDomain(),
 					Wnd.getCurrentDomainNameURL(),
-					Wnd.getCurrentUser(),
 					categoryDraft, 
 					employeesService);
 

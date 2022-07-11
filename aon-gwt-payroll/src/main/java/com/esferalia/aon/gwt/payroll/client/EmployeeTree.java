@@ -2324,7 +2324,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			new CategoryDraftObject(
 					enterprise.getDomain(),
 					Wnd.getCurrentDomainNameURL(),
-					Wnd.getCurrentUser(),
 					categoryDraft, 
 					DomainEmployeesServiceAsync.newInstance());			
 		}

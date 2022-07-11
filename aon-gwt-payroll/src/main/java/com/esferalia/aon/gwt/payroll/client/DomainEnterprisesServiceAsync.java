@@ -483,7 +483,7 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	public void getServiAgreement(String serviAgreementCode, List<Integer> selectedDates, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), getCurrentUser(), serviAgreementCode, selectedDates, asyncCallback);
+		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, selectedDates, asyncCallback);
 	}
 	
 	public void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> asyncCallback) throws IllegalArgumentException {

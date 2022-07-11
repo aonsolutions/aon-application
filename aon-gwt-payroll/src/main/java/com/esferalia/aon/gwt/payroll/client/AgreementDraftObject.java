@@ -250,7 +250,6 @@ public class AgreementDraftObject {
 
 	private Integer draftDomain;
 	private String draftDomainName;
-	private String draftUserLogin;
 
 	private int nextDraftLevelId = 0;
 	private int nextDraftExtraId = 0;
@@ -269,7 +268,6 @@ public class AgreementDraftObject {
 	public AgreementDraftObject(
 			Integer draftDomain,
 			String draftDomainName,
-			String draftUserLogin,
 			AgreementDraft agreementDraft,
 			AgreementServiceAsync employeesServiceAsync) {
 		this.oldAgreementDraft = null;
@@ -278,7 +276,6 @@ public class AgreementDraftObject {
 		this.shownVariables = new HashSet<String>();
 		this.draftDomain = draftDomain;
 		this.draftDomainName = draftDomainName;
-		this.draftUserLogin = draftUserLogin;
 		this.newDatesChanges = new ArrayList<>();
 		this.deleteDatesChanges = new ArrayList<>();
 		this.agreementsServiceAsync = employeesServiceAsync;
@@ -287,10 +284,9 @@ public class AgreementDraftObject {
 	public AgreementDraftObject(
 			Integer draftDomain,
 			String draftDomainName,
-			String draftUserLogin,
 			AgreementDraft agreementDraft,
 			DomainEmployeesServiceAsync employeesServiceAsync) {
-		this(draftDomain, draftDomainName, draftUserLogin, agreementDraft, employeesServiceAsync.asAgreementServiceAsync());
+		this(draftDomain, draftDomainName, agreementDraft, employeesServiceAsync.asAgreementServiceAsync());
 	}
 	
 	public DomainEmployeesServiceAsync getEmployeesService() {
@@ -703,7 +699,7 @@ public class AgreementDraftObject {
 		agreementDraft.setDatesWithChanges(getDatesWithChanges());
 		
 		checkFixLevelCategories();
-		agreementsServiceAsync.saveAgreementDraft(draftDomainName, draftUserLogin, agreementDraft,
+		agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 
 					@Override
@@ -771,7 +767,7 @@ public class AgreementDraftObject {
 	
 	public void checkAndUpdateServiAgreement(Consumer<Date> success, Consumer<Throwable> failure) {
 		Integer lastDateYear = DateUtils.getYear(getDatesWithChanges().last());
-		agreementsServiceAsync.checkAndUpdateServiAgreement(draftDomainName, draftUserLogin, getId(), getSSNumber(), lastDateYear, new AsyncCallback<Date>() {
+		agreementsServiceAsync.checkAndUpdateServiAgreement(draftDomainName, getId(), getSSNumber(), lastDateYear, new AsyncCallback<Date>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1353,7 +1349,6 @@ public class AgreementDraftObject {
 		return new AgreementDraftObject(
 				draftDomain
 				, draftDomainName
-				, draftUserLogin
 				, agreementDraft 
 				, agreementsServiceAsync);
 	}

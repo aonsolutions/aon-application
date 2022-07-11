@@ -140,7 +140,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 			agreementDraftObject = new AgreementDraftObject(
 					getDomain(),
 					Wnd.getCurrentDomainNameURL(),
-					Wnd.getCurrentUser(),
 					draft,
 					agreements.agreementsTree.getEmployeesService()) {
 				@Override

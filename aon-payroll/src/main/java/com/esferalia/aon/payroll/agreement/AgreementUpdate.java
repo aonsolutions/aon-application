@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll.agreement;
 
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
@@ -123,7 +122,7 @@ public class AgreementUpdate {
 
 	// ---------------------------------------------------------- Get Agreement
 
-	public static Date checkAndUpdateServiAgreement(Connection connection, Integer domainIdIn, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
+	public static Date checkAndUpdateServiAgreement(Connection connection, Integer domainIdIn, Integer agreementId, String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
 		domainId = domainIdIn;
 		
 		String agreementCode = getServiAgreementCode(ssNumber, ServiAgreementsFilter.getServiAgreementsMap(true));
@@ -499,15 +498,6 @@ public class AgreementUpdate {
 			
 			VariablesMap variablesMap = new VariablesMap();
 			
-			String userLogin = "ServiConvenios";
-			java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
-			
-			dslContext.update(AGREEMENT)
-				.set(AGREEMENT.MODIFICATION_USER, userLogin)
-				.set(AGREEMENT.MODIFICATION_DATE, modificationDate)
-				.where(AGREEMENT.ID.eq(agreementId))
-				.execute();
-			
 			// Agreement Level / Agreement Level Category / Agreement Level Data
 			
 			String oldLevelDescription = null;
@@ -571,8 +561,6 @@ public class AgreementUpdate {
 							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, lvlData.getValue())
 							.set(AGREEMENT_LEVEL_DATA.START_DATE, parseDateToSql(lvlData.getStartDate()))
 							.set(AGREEMENT_LEVEL_DATA.END_DATE, parseDateToSql(lvlData.getEndDate()))
-							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
-							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 							.execute();
 					} else {
 						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
@@ -643,8 +631,6 @@ public class AgreementUpdate {
 							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
 							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
 							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
-							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 							.returning(AGREEMENT_PAYMENT.ID)
 							.fetchOne();
 					
@@ -749,8 +735,6 @@ public class AgreementUpdate {
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
-						.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
-						.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 						.returning(AGREEMENT_PAYMENT.ID)
 						.fetchOne();
 					
@@ -782,8 +766,6 @@ public class AgreementUpdate {
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
-						.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
-						.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 						.returning(AGREEMENT_PAYMENT.ID)
 						.fetchOne();
 					

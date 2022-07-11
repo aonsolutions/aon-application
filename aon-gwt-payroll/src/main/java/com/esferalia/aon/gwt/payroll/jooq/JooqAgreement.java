@@ -122,12 +122,12 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	}
 
-	public static void updatePayment(Connection conn, Integer domainId, Integer agreementId, Payment payment, String userLogin)
+	public static void updatePayment(Connection conn, Integer domainId, Integer agreementId, Payment payment)
 			throws SQLException {
-		updatePayment(DSL.using(conn, getDefaultSettings()), domainId, agreementId, payment, userLogin);
+		updatePayment(DSL.using(conn, getDefaultSettings()), domainId, agreementId, payment);
 	}
 
-	public static void updatePayment(DSLContext dslContext, Integer domainId, Integer agreementId, Payment payment, String userLogin)
+	public static void updatePayment(DSLContext dslContext, Integer domainId, Integer agreementId, Payment payment)
 			throws SQLException {
 		if (payment.getConceptId() != null && payment.getConceptId() < 0) {
 			updatePaymentConcept(dslContext, payment);
@@ -137,14 +137,13 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					payment.getSalaryType(), 
 					payment.getMonth(),
 					EPOCH, 
-					null,
-					userLogin);
+					null);
 		} else {
 			// Esto se puede subir al primer if quitando que sea menor 0 (comentar con Julio)
 //			if(AonStringUtils.isNotBlank(payment.getName()) && null != payment.getConceptId() && payment.getConceptId() > 0)
 //				updatePaymentConcept(dslContext, payment);
 				
-			updateAgreementPayment(dslContext, payment, userLogin);
+			updateAgreementPayment(dslContext, payment);
 		}
 		
 		updateContractPayments(dslContext, agreementId, payment);
@@ -312,13 +311,13 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	}
 
 	public static int insertPayment(Connection conn, Integer domainId,
-			Integer agreementId, Payment payment, String userLogin) throws SQLException {
+			Integer agreementId, Payment payment) throws SQLException {
 		return insertPayment(DSL.using(conn, getDefaultSettings()), domainId,
-				agreementId, payment, userLogin);
+				agreementId, payment);
 	}
 
 	public static int insertPayment(DSLContext dslContext, Integer domainId,
-			Integer agreementId, Payment payment, String userLogin) throws SQLException {
+			Integer agreementId, Payment payment) throws SQLException {
 
 		int paymentId = max(dslContext, AGREEMENT_PAYMENT.getIdentity()) + 1;
 
@@ -333,11 +332,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					payment.getSalaryType(),
 					payment.getMonth(), 
 					payment.getStartDate(),
-					payment.getEndDate(),
-					userLogin);
+					payment.getEndDate());
 		} else {
 			insertAgreementPayment(dslContext, domainId, agreementId,
-					paymentId, payment, userLogin);
+					paymentId, payment);
 		}
 
 		return paymentId;
@@ -1520,11 +1518,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	private static void insertAgreementPayment(DSLContext dslContext,
 			Integer domainId, Integer agreementId, Integer paymentId,
-			Payment payment, String userLogin) throws SQLException {
+			Payment payment) throws SQLException {
 
 		// @formatter:off
-		java.sql.Date creationDate = new java.sql.Date(new Date().getTime());
-		
 		dslContext
 				.insertInto(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.ID, paymentId)
@@ -1547,19 +1543,15 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						payment.getType() != null ? (byte) payment.getType()
 								.ordinal() : null)
 				.set(AGREEMENT_PAYMENT.END_DATE,SQL_FOREVER)
-				.set(AGREEMENT_PAYMENT.CREATION_USER,userLogin)
-				.set(AGREEMENT_PAYMENT.CREATION_DATE,creationDate)
 				.execute();
 		// @formatter:on
 
 	}
 
 	private static void updateAgreementPayment(DSLContext dslContext,
-			Payment payment, String userLogin) throws SQLException {
+			Payment payment) throws SQLException {
 
 		// @formatter:off
-		java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
-		
 		dslContext
 				.update(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
@@ -1578,8 +1570,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 								.ordinal() : null)
 				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
 				.set(AGREEMENT_PAYMENT.END_DATE, SQL_FOREVER)
-				.set(AGREEMENT_PAYMENT.MODIFICATION_USER, userLogin)
-				.set(AGREEMENT_PAYMENT.MODIFICATION_DATE, modificationDate)
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 		// @formatter:on
 
@@ -1587,12 +1577,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	private static void insertAgreementPayment(DSLContext dslContext,
 			int domainId, int agreementId, int conceptId, int paymentId,
-			Salary.Type salaryType, Short month, Date startDate, Date endDate, String userLogin)
+			Salary.Type salaryType, Short month, Date startDate, Date endDate)
 			throws SQLException {
 
 		// @formatter:off
-		java.sql.Date creationDate = new java.sql.Date(new Date().getTime());
-		
 		dslContext
 				.insertInto(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.ID, paymentId)
@@ -1604,8 +1592,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						month != null ? month.byteValue() : null)
 				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
 				.set(AGREEMENT_PAYMENT.END_DATE,SQL_FOREVER)
-				.set(AGREEMENT_PAYMENT.CREATION_USER,userLogin)
-				.set(AGREEMENT_PAYMENT.CREATION_DATE,creationDate)
 				.execute();
 		// @formatter:on
 
@@ -1613,11 +1599,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	private static void updateAgreementPayment(DSLContext dslContext,
 			int paymentId, String description, String expression, Salary.Type salaryType, Short month, Date startDate,
-			Date endDate, String userLogin) throws SQLException {
+			Date endDate) throws SQLException {
 
 		// @formatter:off
-		java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
-		
 		dslContext
 				.update(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal())
@@ -1630,8 +1614,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_PAYMENT.END_DATE,
 						endDate != null ? new java.sql.Date(endDate.getTime())
 								: null)
-				.set(AGREEMENT_PAYMENT.MODIFICATION_USER,userLogin)
-				.set(AGREEMENT_PAYMENT.MODIFICATION_DATE,modificationDate)
 				.where(AGREEMENT_PAYMENT.ID.eq(paymentId)).execute();
 
 		// @formatter:on
