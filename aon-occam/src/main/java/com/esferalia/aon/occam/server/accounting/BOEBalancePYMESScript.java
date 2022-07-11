@@ -64,7 +64,7 @@ public class BOEBalancePYMESScript extends BalanceScript {
 			,PNCIV (1,LEAF,"IV","Pasivos por impuesto diferido","sab({479})",null)
 			,PNCV  (1,LEAF,"V","Periodificaciones a largo plazo","sab({181})",null)
 			
-		,PC(0,HEADER0,"C)","PASIVO CORRIENTE",null,"PCI+PCII+PCIII+PCIV+PCV")
+		,PC(0,HEADER0,"C)","PASIVO CORRIENTE",null,"PCI+PCII+PCIII+PCIV+PCV+PCVI")
 			,PCI(1,LEAF,"II","Provisiones a corto plazo","sab({499,529})",null)
 			,PCII(1,HEADER1,"III","Deudas a corto plazo",null,"PCII1+PCII2+PCII3")
 				,PCII1(2,LEAF,"1","Deudas con entidades de cr\u00E9dito","sab({5105,520,527})",null)
@@ -74,7 +74,9 @@ public class BOEBalancePYMESScript extends BalanceScript {
 			,PCIV(1,HEADER1,"V","Acreedores comerciales y otras cuentas a pagar",null,"PCIV1+PCIV2")
 				,PCIV1(2,LEAF,"1","Proveedores","sab({400,401,405})-sdb({406})",null)
 				,PCIV2(2,LEAF,"2","Otros acreedores","sab({41,438,465,466,475,476,477})",null)
-			,PCV(1,LEAF,"VI","Periodificaciones a corto plazo","sab({485,568})",null)
+			,PCV (1, LEAF, "VI","Periodificaciones a corto plazo","sab({485,568})",null)
+			,PCVI(1, LEAF, "VII","Deuda con caracter\u00EDsticas especiales a corto plazo","sab({502,507,199})",null)
+
 		,BP00252(0,TOTAL0,"(A+B+C)","TOTAL PATRIMONIO NETO Y PASIVO",null,"PN+PNC+PC")
 	 	;
 	

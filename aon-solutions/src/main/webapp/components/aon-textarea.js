@@ -6,6 +6,7 @@ import { AonElement } from './AonElement.js';
 import '../css/aon-textarea.css';
 import '../css/aon-css-utils.css';
 import { WORKFLOW_TYPES } from '../modules/messenger/MessengerEnums.js';
+import { downscaleImage } from '../services/compressImg.js';
 
 export class AonTextArea extends AonElement {
 
@@ -467,21 +468,30 @@ export class AonTextArea extends AonElement {
 
 	async addFile(file, parent=undefined) {
 		this.loading(true);
+
 		try {
 			let div = parent || this.getSelectionForAdd();
 
-			const reader = await getReader(file).catch(()=>null);
+			let reader = await getReader(file).catch(()=>null);
 			if(reader) {
+
+ 				// compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+				if (reader.contentType && reader.contentType.indexOf("image") >= 0) {
+                    reader = await downscaleImage(reader, 1024, undefined, Infinity);
+                } 
 				
 				const fileId = Math.random().toString(36).substring(7);
 
 				this.FILES.push({
 					contentType: reader.contentType,
 					content: reader.content,
+					size: reader.size,
+					name: reader.name,
 					id:fileId
 				});
 
 				const url = this.convertBase64Url(reader.content, reader.contentType);
+
 				if(url){
 					let element = null;
 					if(reader.contentType && reader.contentType.indexOf("image")>-1){

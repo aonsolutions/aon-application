@@ -673,8 +673,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");
 		calculate(Calendar.JUNE,2022);
 		double cgcBase = getValue("cgcBaseLabel");
-		salaryHours = getValue("db-amount-label-2");
-		assertTrue((salaryHours * 7.03 ) <  cgcBase  ) ;
+		salaryHours = getValue("db-amount-label-6");
+		assertTrue((salaryHours * 7.03 ) <  ( cgcBase * 0.5 ) ) ;
 
 	}
 
@@ -1892,6 +1892,55 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 	}
 	
+	@Test
+	public void TestHorasTrabajadas() throws Exception {
+
+		if (!isDisplayed("tiempo_parcial,_horas"))
+			open("horas_trabajadas");
+
+
+		wait4Id("tiempo_parcial,_horas");
+
+		draft("TIEMPO COMPLETO, ORDINARIO");
+		assertDisplay("employeeWorkedDaysLabel", true);
+		assertDisplay("employeeWorkedHoursLabel", false);
+		assertDisplay("employeePartialFactorLabel", false);
+		
+		draft("TIEMPO PARCIAL, HORAS");
+		assertDisplay("employeeWorkedDaysLabel", false);
+		assertDisplay("employeeWorkedHoursLabel", true);
+		assertDisplay("employeePartialFactorLabel", false);
+
+		draft("TIEMPO PARCIAL, ORDINARIO");
+		assertDisplay("employeeWorkedDaysLabel", false);
+		assertDisplay("employeeWorkedHoursLabel", false);
+		assertDisplay("employeePartialFactorLabel", false);
+		assertDisplay("editor-coeficiente_parcialidad", true);
+		
+		
+		
+	}
+
+	@Test
+	public void TestHorasComplementarias() throws Exception {
+
+		if (!isDisplayed("base_minima_horas,_pactadas"))
+			open("horas_complementarias");
+
+
+		wait4Id("base_minima_horas,_pactadas");
+
+		draft("BASE MÍNIMA HORAS, PACTADAS");
+		//assertDisplay("employeeWorkedDaysLabel", true);
+		assertValue("quote-label-2", 7.03 * 10.00);
+		assertValue("quote-label-3", 1166.70 * 0.5 - 50.00);
+		assertValue("cgcBaseLabel", 1166.70 * 0.5 + 7.03 * 10.00);
+		
+		
+		
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
@@ -1934,4 +1983,5 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals(hidden, display.matcher(el.getAttribute("style")).find());
 		
 	}
+
 }

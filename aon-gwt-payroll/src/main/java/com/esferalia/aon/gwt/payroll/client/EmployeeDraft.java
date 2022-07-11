@@ -914,6 +914,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		setSelectedValueLB(employee.journeyType, null != contractData.getJourneyType() && contractData.getJourneyType() == (byte)1 ? "true" : "false");
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType);
 		
 		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
 			Double partialityCoef = contractData.getPartialityCoef();

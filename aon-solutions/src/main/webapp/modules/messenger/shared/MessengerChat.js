@@ -277,7 +277,11 @@ const addTextAreaChat = (wrapper, task) => {
 const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();
   dialog.clear();
-  if (!aonMessengerChat.isMobile()) dialog.width = "600px";
+
+  if (!aonMessengerChat.isMobile()) {
+    dialog.width = "600px";
+  }
+  
   const textarea = setStyles(TaskCreationUtils.createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
     height: '100%',
     maxHeight: '300px',

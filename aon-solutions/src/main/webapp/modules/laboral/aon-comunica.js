@@ -215,6 +215,14 @@ export class AonComunica extends AonElement {
     });
   }
 
+  goContractDesk(){
+    this.getApplication().removeToolbarOptions();
+
+    this.loadGwt(GWT.MAIN_CONTRATA);
+
+    this.getApplication().closeSidenav();
+  }
+
   loadGwt(module){
 
     let application = this.getApplication();
@@ -250,6 +258,9 @@ export class AonComunica extends AonElement {
             this.loadGwt(GWT.MAIN_CCC);
           }
           break;
+      case PAYROLL_VIEWS.AON_CONTRACT_LIST:
+        this.goContractDesk();
+        break;
       case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
           aonView = new AonMovementsList();
           break;

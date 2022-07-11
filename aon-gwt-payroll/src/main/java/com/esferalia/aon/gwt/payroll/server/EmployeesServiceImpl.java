@@ -7183,6 +7183,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
+		builder.setOldDateFinContract(employeeContractInfo.getContractInfo().getOriginalEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
 		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setOffer(OfferType.NO);
@@ -7245,34 +7246,37 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 						.or(f.getIsDelayProperty().eq(true))
 						.or(f.getIsSettlementProperty().eq(true))
 					)
-			).sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
+			)
+			.sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
 			.forEach(salary -> {				
-						salary.getContextData()
-						.entrySet()
-						.stream()
-						.filter(d-> d.getKey().equals("DIAS_COTIZADOS"))
-						.map(d-> d.getValue())
-						.flatMap(Collection::stream)
-						.distinct()
-						.forEach(dt->{
-							Date start = dt.getStartDate();
-							Date end = dt.getEndDate();
-							System.out.println("startDate:"+dt.getStartDate()+" endDate:"+dt.getEndDate()+" value:"+dt.getExpression());
-							
-							Double baseCgc   = salary.getContextData("BASE_CGC", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
-							Double baseCgp   = salary.getContextData("BASE_CGP", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
-							Double quoteDays = salary.getContextData("DIAS_COTIZADOS", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+				salary.getContextData()
+				.entrySet()
+				.stream()
+				.filter(d-> d.getKey().equals("DIAS_COTIZADOS"))
+				.map(d-> d.getValue())
+				.flatMap(Collection::stream)
+				.distinct()
+				.sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
+				.forEach(dt->{
+					Date start = dt.getStartDate();
+					Date end = dt.getEndDate();
+					
+					Double baseCgc   = salary.getContextData("BASE_CGC", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+					Double baseCgp   = salary.getContextData("BASE_CGP", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+					Double quoteDays = salary.getContextData("DIAS_COTIZADOS", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
 
-							if (quoteDays != null && quoteDays > 0) {
-								Certifica2Info cert = new Certifica2Info();
-								cert.setStartDate(salary.getStartDate());
-								cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
-								cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
-								cert.setSettleQuoteDays(quoteDays.intValue());
-								certs.add(cert);
-							}
-						});
-					});
+					if (quoteDays != null && quoteDays > 0) {
+						Certifica2Info cert = new Certifica2Info();
+						cert.setStartDate(start);
+						cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
+						cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
+						cert.setSettleQuoteDays(quoteDays.intValue());
+						certs.add(cert);
+					}
+					
+					System.out.println("startDate:"+dt.getStartDate()+" endDate:"+dt.getEndDate()+" value:"+dt.getExpression());
+				});
+			});
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);

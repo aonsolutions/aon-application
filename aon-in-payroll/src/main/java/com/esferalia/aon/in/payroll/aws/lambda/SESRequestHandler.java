@@ -313,7 +313,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 		
-		return DSL.using(connection, SQLDialect.MARIADB, settings);
+		return DSL.using(connection, SQLDialect.MYSQL, settings);
     }
     
 	private static Connection getConnection(String domain) throws SQLException, AonConnectionException, ClassNotFoundException {

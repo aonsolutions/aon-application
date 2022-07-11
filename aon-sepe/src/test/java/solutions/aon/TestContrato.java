@@ -13,6 +13,7 @@ import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
+import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.CopyBasic;
 import aon.sepe.objects.CopyBasic.FirmType;
 import solutions.aon.sepe.Sepe;
@@ -58,6 +59,31 @@ public class TestContrato {
 
 			String ide = Sepe.sendContract(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, bd.build());
 			System.out.println("ide: "+ide);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void sendContractExtension() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
+			@SuppressWarnings("deprecation")
+			Date startDate = new Date("2022/07/01");
+			@SuppressWarnings("deprecation")
+			Date endDate = new Date("2022/09/30");
+			ContractExtension bd = new ContractExtension()
+			.setRegime("0111")
+			.setCtaCti("48118939540")
+			.setCif("16533681Q")
+			.setSepeId("xxx")
+			.setStartDate(startDate)
+			.setEndDate(endDate)
+			;
+//			bd.setInterinidad("H");
+
+
+			Sepe.sendContractExtension(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, bd);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -26,6 +26,7 @@ public class ContractInfo implements Serializable{
 	private String completeCCC;
 	private String startDate;
 	private String originalStartDate; // For trasnformations
+	private String originalEndDate; // For trasnformations
 	private String endDate;
 	private String seniorityDate;
 	private Integer activityId;
@@ -105,6 +106,7 @@ public class ContractInfo implements Serializable{
 		this.completeCCC = null;
 		this.startDate = null;
 		this.originalStartDate = null;
+		this.originalEndDate = null;
 		this.endDate = null;
 		this.seniorityDate = null;
 		this.activityId = null;
@@ -265,6 +267,14 @@ public class ContractInfo implements Serializable{
 
 	public void setOriginalStartDate(Date originalStartDate) {
 		this.originalStartDate = format(originalStartDate);
+	}
+	
+	public Date getOriginalEndDate() {
+		return parse(originalEndDate);
+	}
+
+	public void setOriginalEndDate(Date originalEndDate) {
+		this.originalEndDate = format(originalEndDate);
 	}
 
 	public Date getEndDate() {

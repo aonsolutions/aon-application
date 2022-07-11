@@ -616,6 +616,7 @@ public interface Properties {
 		Property<Integer> getTagIdProperty();
 		Property<String> getTagNameProperty();
 		Property<String> getCommentsWorkflowProperty();
+		Property<String> getTaskHolderNameProperty();
 	}
 	
 	public interface DailyTrackingProperties{
