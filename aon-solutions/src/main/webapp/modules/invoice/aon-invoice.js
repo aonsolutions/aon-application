@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -373,6 +373,10 @@ export class AonInvoice extends AonElement {
 				let sign = ACTION.SIGN_INVOICE;
 				sign.fn = () => this.signInvoice();
 				moreActions.push(sign);
+
+				let face = ACTION.FACTURAE;
+				face.fn = () => this.facturae();
+				moreActions.push(face);
 			}
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
@@ -2393,6 +2397,15 @@ export class AonInvoice extends AonElement {
 
 	signInvoice() {
 		signInvoice(this.invoice.id).then(r => {});
+	}
+
+	facturae() {
+		let data = {
+			id: this.invoice.id,
+			domainName: LS.getDomainName(),
+			domainId: LS.getDomainId()
+		}
+		downloadFacturae(data).then(r => {});
 	}
 
 	duplicateInvoice() {
