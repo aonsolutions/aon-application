@@ -301,7 +301,8 @@ public class Model2002021 extends DockLayoutPanel {
 		});
 		toolbarPanel.add(cancelButton);
 		
-		initializeButton = new AonToolbarButton(AON.MSG.continueAction(), AON.CSS.aonIconSave());
+		initializeButton = new AonToolbarButton(AON.MSG.continueAction(), AON.CSS.aonIconStart());
+		initializeButton.setText(AON.MSG.continueAction());
 		initializeButton.addClickHandler(event -> {
 			mod200Callback.cleanErrorPanel();
 			popup.center();

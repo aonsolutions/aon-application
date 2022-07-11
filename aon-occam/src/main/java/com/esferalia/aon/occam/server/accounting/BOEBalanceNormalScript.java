@@ -126,7 +126,7 @@ public class BOEBalanceNormalScript extends BalanceScript {
 			,PNCIV		(1, LEAF, "IV", "Pasivos por impuesto diferido", "sab({479})", null)
 			,PNCV		(1, LEAF, "V", "Periodificaciones a largo plazo", null, null)
 		
-		,PC			(0,HEADER0, "C)", "PASIVO CORRIENTE", null, "PCI+PCII+PCIII+PCIV+PCV+PCVI")
+		,PC			(0,HEADER0, "C)", "PASIVO CORRIENTE", null, "PCI+PCII+PCIII+PCIV+PCV+PCVI+PCVII")
 			,PCI		(1, LEAF, "I", "Pasivos vinculados con activos no corr. mantenidos para la venta","sab({585,586,587,588,589})", null)
 			,PCII		(1, LEAF, "II", "Provisiones a corto plazo", "sab({499,529})", null)
 			,PCIII		(1, HEADER1, "III", "Deudas a corto plazo", null, "PCIII1+PCIII2+PCIII3+PCIII4+PCIII5")
@@ -144,7 +144,8 @@ public class BOEBalanceNormalScript extends BalanceScript {
 				,PCV5		(2, LEAF, "5", "Pasivos por impuesto corriente", "sab({4752})", null)
 				,PCV6		(2, LEAF, "6", "Otras deudas con las Administraciones p\u00FAblicas", "sab({4750,4751,4758,476,477})",null)
 				,PCV7		(2, LEAF, "7", "Anticipos de clientes", "sab({438})", null)
-			,PCVI		(1, LEAF, "VI", "Periodificaciones a corto plazo", "sab({485,568})", null)
+			,PCVI		(1, LEAF, "VI" ,"Periodificaciones a corto plazo", "sab({485,568})", null)
+			,PCVII		(1, LEAF, "VII","Deuda con caracter\u00EDsticas especiales a corto plazo","sab({502,507,199})",null)
 		
 		,TOTAL		(0,TOTAL0, "(A+B+C)", "TOTAL PATRIMONIO NETO Y PASIVO", null, "PN+PNC+PC")
 		;

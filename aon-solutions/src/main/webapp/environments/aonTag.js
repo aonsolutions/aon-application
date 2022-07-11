@@ -119,5 +119,5 @@ export const AON_BANK = 'aon-bank';
 export const AON_MARKETPLACE = 'aon-marketplace';
 export const AON_MARKETPLACE_PANEL = 'aon-marketplace-panel';
 
-export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH].join(", ");
+export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA].join(", ");
 

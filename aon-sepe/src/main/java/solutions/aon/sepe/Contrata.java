@@ -494,9 +494,9 @@ public class Contrata {
 			}
 			
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
-			
+			handleSepeExceptions(htmlPage);
+	
 			form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		
 			{// DATA TRANSFORMATION
@@ -536,7 +536,17 @@ public class Contrata {
 						form.getInputByName("horas").setValueAttribute(hours);
 						form.getInputByName("minutos").setValueAttribute(min);
 						form.getInputByName("duracjornada").setValueAttribute(hours+min);
+						
+//						DomNode duracConvenio = form.querySelector("select[name=duracconvenio]");
+//						if(duracConvenio!=null) {
+//							((HtmlInput) duracConvenio).setValueAttribute(hours+min);
+//						}
 					}
+					
+//					DomNode pregunta = form.querySelector("select[name=pregunta]");// El periodo de actividad es sin fecha cierta?
+//					if(pregunta!=null) {
+//						((HtmlSelect)pregunta).setSelectedAttribute("S", true); // "S", "N" 
+//					}
 				}
 			}
 			
@@ -550,11 +560,15 @@ public class Contrata {
 				      ((HtmlTextArea)areadeTexto).setText(copyBasic.getRestContract());
 				}
 			}
-
-			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-			handleSepeExceptions(htmlPage);
+			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
+			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+			
+			handleSepeExceptions(htmlPage);
+			
+			handleSepeAlert(alertHandler.getCollectedAlerts());
+
 	        String message = getSuccessMessage(htmlPage);
 			if(message!=null && message.contains("se ha realizado correctamente")) {				
 				System.out.println(message);

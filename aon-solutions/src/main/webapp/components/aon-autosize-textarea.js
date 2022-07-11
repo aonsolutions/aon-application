@@ -133,8 +133,7 @@ export class AonAutosizeTextarea extends AonElement {
         } else if (CONSTANT.VALUE === name) {
             if (this.TEXTAREA) {
                 this.TEXTAREA.value = newValue;
-                this.TEXTAREA.style.height = "auto";
-                this.TEXTAREA.style.height = this.TEXTAREA.scrollHeight + "px";
+                this.autoAdjustTextarea();
             }
         }
     }
@@ -148,9 +147,16 @@ export class AonAutosizeTextarea extends AonElement {
         this.createOptions();
         this.appendChild(this.TITLE_BAR);
         this.appendChild(this.TEXTAREA);
-        this.appendChild(this.OPTIONS);        
+        this.appendChild(this.OPTIONS);
+
+        this.autoAdjustTextarea();
  
         this.addEventListeners();
+    }
+
+    autoAdjustTextarea() {
+        this.TEXTAREA.style.height = "auto";
+        this.TEXTAREA.style.height = this.TEXTAREA.scrollHeight + "px";
     }
 
     addEventListeners() {

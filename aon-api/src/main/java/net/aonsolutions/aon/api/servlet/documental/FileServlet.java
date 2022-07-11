@@ -75,16 +75,7 @@ public class FileServlet extends AonApiHttpServlet{
 					f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getIdProperty().eq(id)), attachType);
 		} else if(AttachType.TASK == attachType) {
-//			TaskAttach ta = AON_SOLUTIONS.getTaskAttach(api.getDomain(), api.getUser(), 
-//					f -> f.getDomainProperty().eq(api.getDomain().getId())
-//					.and(f.getIdProperty().eq(id)));
 			attach = getTaskAttach(api, id);
-//					new Attach(AttachType.TASK)
-//					.setId(ta.getId())
-//					.setDomain(api.getDomain())
-//					.setMimeType(ta.getMimetype())
-//					.setData(ta.getData())
-//					.setDescription("document");
 		} else {
 			attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 					f -> f.getDomainProperty().eq(api.getDomain().getId())
