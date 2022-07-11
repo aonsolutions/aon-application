@@ -550,6 +550,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			agreementDraftObject = new AgreementDraftObject(
 					agreements.getDomain()
 					, Wnd.getCurrentDomainNameURL()
+					, Wnd.getCurrentUser()
 					, draft 
 					, agreementServiceAsync);
 			

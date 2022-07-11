@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertIAE863;
+import net.aonsolutions.db.up2date.payroll.AlterAgreement4Log;
 import net.aonsolutions.db.up2date.tgss.Bases2022FixHourly;
 
 public class Up2Date {
@@ -246,7 +247,8 @@ public class Up2Date {
     		//CnoUpdate.CNOUPDATE,
     		//AssimilatedInsert.ASSIMILATEDINSERT,
     		Bases2022FixHourly.BASES2022FIXHOURLY,
-    		InsertIAE863.INSERT_IAE_863
+    		InsertIAE863.INSERT_IAE_863,
+    		AlterAgreement4Log.ALTERAGREEMENTLOG
     };
     
 

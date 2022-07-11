@@ -299,7 +299,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public AgreementDraft saveAgreementDraft(String domain, 
+	public AgreementDraft saveAgreementDraft(String domain, String userLogin, 
 			AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -974,7 +974,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Date checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear)
+	public Date checkAndUpdateServiAgreement(String domain, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
