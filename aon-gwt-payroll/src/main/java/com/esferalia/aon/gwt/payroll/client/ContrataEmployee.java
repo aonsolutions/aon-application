@@ -934,6 +934,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private boolean changes = false;
 
 	private boolean isComunica = false;
+	private boolean hasPayroll = false;
 	
 	// PDF Save
 	Integer attachId;
@@ -1043,6 +1044,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void loadWindow(Consumer<Void> finish) {
+		checkPayrollTabs();
 		showLoadingPanel();
 		loadData(s -> {
 			loadToolbar();
@@ -1050,6 +1052,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			finish.accept(null);
 		});
+	}
+
+	private void checkPayrollTabs() {
+		if(hasPayroll) return;
+		
+		tabLayOutPanel.remove(7); // IRPF Tab
+		tabLayOutPanel.remove(6); // Calendar Tab
+		tabLayOutPanel.remove(5); // Nominas Tab
 	}
 
 	private void loadData(Consumer<Void> finish) {
@@ -2328,6 +2338,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	public void setIsComunica(boolean isComunica) {
 		this.isComunica = isComunica;
+	}
+	
+	public void setHasPayroll(boolean hasPayroll) {
+		this.hasPayroll = hasPayroll;
 	}
 
 	// ------------------------------------------------- Delete Message Panel
