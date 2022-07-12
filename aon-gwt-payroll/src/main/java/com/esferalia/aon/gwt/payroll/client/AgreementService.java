@@ -31,7 +31,7 @@ public interface AgreementService extends RemoteService{
 	AgreementDraft calculateAgreementDraft(String domain, AgreementDraft agreementDraft)
 			throws IllegalArgumentException;
 
-	AgreementDraft saveAgreementDraft(String domain, AgreementDraft agreementDraft) throws IllegalArgumentException;
+	AgreementDraft saveAgreementDraft(String domain, String userLogin, AgreementDraft agreementDraft);
 
 	ContextDescriptor getContext(String domain, AgreementDraft agreementDraft, int levelId) throws IllegalArgumentException;
 
@@ -41,6 +41,7 @@ public interface AgreementService extends RemoteService{
 	String getAgreementDraftReceiptHTML(String domain, AgreementDraft agreementDraft, int levelId, Salary.Type type, int zoom)
 			throws IllegalArgumentException;
 
-	Date checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear);
+	Date checkAndUpdateServiAgreement(String domain, String userLogin, Integer agreementId, String ssNumber,
+			Integer lastDateYear);
 
 }
