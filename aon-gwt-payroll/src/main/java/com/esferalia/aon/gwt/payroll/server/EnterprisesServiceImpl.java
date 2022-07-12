@@ -2337,10 +2337,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void setAttachData(String domainName, String login, Integer attachId, byte[] data) throws IllegalArgumentException {
+	public void setAttachData(String domainName, String login, Integer attachId, String base64) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
+			byte[] data = Base64.getDecoder().decode(base64);
 			AON.setAttach(domainName, domainId, login, data, attachId, AttachType.CONTRACT);
 			
 		} catch (Exception e) {
