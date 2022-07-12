@@ -15,7 +15,7 @@ public class FAB {
 	private String condicionDesempleado;
 	private String mujerSubrepresentada;
 	private String coeficienteTiempoParcial;
-	private Integer colectivoTrabajador;
+	private String colectivoTrabajador;
 	private String indicadorImpresion;
 	private Integer categoriaProfesional;
 	private String fechaNacimiento;
@@ -91,10 +91,10 @@ public class FAB {
 	public void setCoeficienteTiempoParcial(String coeficienteTiempoParcial) {
 		this.coeficienteTiempoParcial = coeficienteTiempoParcial;
 	}
-	public Integer getColectivoTrabajador() {
+	public String getColectivoTrabajador() {
 		return colectivoTrabajador;
 	}
-	public void setColectivoTrabajador(Integer colectivoTrabajador) {
+	public void setColectivoTrabajador(String colectivoTrabajador) {
 		this.colectivoTrabajador = colectivoTrabajador;
 	}
 	public String getIndicadorImpresion() {
