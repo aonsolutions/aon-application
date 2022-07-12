@@ -1466,8 +1466,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			contrataEmployeeObject.setEmployeeContract(s -> {
 				showSuccess("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName()
 						+ " ha sido actualizado correctamente");
-				checkStatus(contrataEmployeeObject);
-				checkButtonsToolbar();
+				loadWindow(su -> {
+					checkButtonsToolbar();
+					checkStatus(contrataEmployeeObject);
+				});
 			}, f -> {
 			});
 		else
