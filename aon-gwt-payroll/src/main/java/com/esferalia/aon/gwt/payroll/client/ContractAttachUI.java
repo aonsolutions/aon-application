@@ -525,11 +525,11 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		}, f -> showErrorMessage("Contrato", f.getMessage()));
 	}
 	
-	public void setAttachData(Integer attachId, byte[] data) {
-		if(null == attachId || null == data) return;
+	public void setAttachData(Integer attachId, String base64) {
+		if(null == attachId || null == base64) return;
 		
 		showLoadingMessagePDF("Guardando documento...");
-		impl.setAttachData(attachId, data, new AsyncCallback<Void>() {
+		impl.setAttachData(attachId, base64, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
