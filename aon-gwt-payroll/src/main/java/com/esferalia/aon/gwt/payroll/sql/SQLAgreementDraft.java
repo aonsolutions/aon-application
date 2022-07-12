@@ -817,7 +817,7 @@ public class SQLAgreementDraft {
 					+ ", " + AgreementColumns.CREATION_USER
 					+ ", " + AgreementColumns.CREATION_DATE
 					+ ")"
-					+ " VALUES ( ?,?,?,?)", new String[] { AgreementColumns.ID });
+					+ " VALUES ( ?,?,?,?,?,?)", new String[] { AgreementColumns.ID });
 			// @formatter:on
 			java.sql.Date creationDate = new java.sql.Date(new Date().getTime());
 			
@@ -1044,7 +1044,7 @@ public class SQLAgreementDraft {
 					+ AgreementLevelDataColumns.CREATION_USER
 					+ AgreementLevelDataColumns.CREATION_DATE
 					+ ")"
-					+ " VALUES (?,?,?,?,?,?)",
+					+ " VALUES (?,?,?,?,?,?,?,?)",
 					new String[] { AgreementLevelDataColumns.ID });
 			// @formatter:on
 			stmt.setInt(1, domainId);
