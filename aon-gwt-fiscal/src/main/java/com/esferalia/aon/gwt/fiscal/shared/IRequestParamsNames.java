@@ -138,6 +138,7 @@ public interface IRequestParamsNames {
 	String USER = "user";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
+	String WITHHOLDING_TYPE = "withholdingType";
 	String WORKPLACE_IDS = "workplaceIds";
 	
 }
