@@ -914,7 +914,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 	//LIQUIDO TOTAL A PERCIBIR (A-B)...    1.700,00Firma y Sello de la Empresa
 	//TOTAL SALARIO LIQUIDO........................    1.275,80Firma y Sello de la Empresa
 	private static final Pattern  LIQUID = 
-			Pattern.compile("^\\s*(?:(?!L.QUIDO).)*L.QUIDO.*?\\.{2,}\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?\\s*(?:Firma.*)?$"
+			Pattern.compile("^\\s*(?:(?!L.QUIDO).)*L.QUIDO.*?\\.{2,}\\s*(?<amount>(-\\s*)?\\d[\\d\\.]*,\\d{2})?\\s*(?:Firma.*)?$"
 					, Pattern.CASE_INSENSITIVE);
 	
 	//ZARAGOZA, 31 de marzo de 2021

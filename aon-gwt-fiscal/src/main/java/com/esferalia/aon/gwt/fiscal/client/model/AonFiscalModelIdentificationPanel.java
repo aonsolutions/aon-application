@@ -176,7 +176,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		contactMail.setVisibleLength(40);
 		contactMail.setMaxLength(40);
 		tab.addRow()
-			.addCell(new Label(AON.MSG.contactCellular()),AON.CSS.aonTableLabel())
+			.addCell(new Label(AON.MSG.contactMail()),AON.CSS.aonTableLabel())
 			.addCell(contactMail);
 		
 

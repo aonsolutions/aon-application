@@ -40,7 +40,6 @@ import com.esferalia.aon.in.payroll.pdf.SalaryPDFBuilder;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
-import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -105,7 +104,6 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	@SuppressWarnings("unchecked")
 	public JooqPDFSalaryBuilder(DSLContext dslContext, String parentDomainName) {
 		super(new LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>(new JooqSalaryBuilder<Salary>(dslContext)), new PDFSalaryBuilder());
-		
 		
 		this.filter = (p) -> {};
 		this.enableHeredity = 1;
@@ -494,7 +492,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		payrollWorkplace.setDomain(enterprise.getDomain());		
 		payrollWorkplace.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
 		//workplace.setAddress(value);
-		workplace.insert();
+		//workplace.insert();
 		
 		return payrollWorkplace;
 	}
