@@ -227,7 +227,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void saveAgreementDraft(String domain, AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
+	public void saveAgreementDraft(String domain, String userLogin, AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 

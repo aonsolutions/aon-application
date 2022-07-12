@@ -3044,7 +3044,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public int getServiAgreement(String domainName, String serviAgreementCode, List<Integer> selectedDates) throws IllegalArgumentException  {
+	public int getServiAgreement(String domainName, String userLogin, String serviAgreementCode, List<Integer> selectedDates) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
