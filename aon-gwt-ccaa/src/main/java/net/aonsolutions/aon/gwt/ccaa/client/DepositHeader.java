@@ -15,14 +15,15 @@ public class DepositHeader extends SimpleLayoutPanel {
 	
 	public static final int HEIGTH = 60;
 	
-	Label yearLabel;
-	Label typeLabel;
-	
-	public DepositHeader(Label type, Integer year) {
-		build(type, year);
+	public DepositHeader(String name) {
+		build(null, null, true, name);
 	}
 	
-	private void build(Label type, Integer year) {
+	public DepositHeader(Label type, Integer year) {
+		build(type, year, false, null);
+	}
+	
+	private void build(Label type, Integer year, boolean textMode, String name) {
 		AonDisplayTable header = new AonDisplayTable();
 		header.addStyleName(AON.CSS.aonBlockCenter());
 		header.getElement().getStyle().setWidth(98, Unit.PCT);
@@ -68,19 +69,30 @@ public class DepositHeader extends SimpleLayoutPanel {
 		Label modelName = new Label("Dep\u00f3sito de Cuentas Anuales");
 		modelNameCell.add(modelName);
 		
-		// MODEL NAME
-		AonDisplayTableCell yearPeriodCell = row.addCell( styles);
-		yearPeriodCell.getElement().getStyle().setProperty("border-radius", "8px");
-		yearPeriodCell.getElement().getStyle().setWidth(80, Unit.PX);
-		yearLabel = new Label(year != null ? AonNumberUtils.toString(year) : "20XX");
-		yearPeriodCell.add(yearLabel);
-		typeLabel = type;
-		yearPeriodCell.add(typeLabel);
-		
+		if(textMode) {
+			// MODEL NAME
+			AonDisplayTableCell nameCell = row.addCell( styles);
+			nameCell.getElement().getStyle().setProperty("border-radius", "8px");
+			nameCell.getElement().getStyle().setWidth(80, Unit.PX);
+			Label nameLabel = new Label(name);
+			nameCell.add(nameLabel);			
+		} else {
+			// MODEL NAME
+			AonDisplayTableCell yearPeriodCell = row.addCell( styles);
+			yearPeriodCell.getElement().getStyle().setProperty("border-radius", "8px");
+			yearPeriodCell.getElement().getStyle().setWidth(80, Unit.PX);
+			Label yearLabel = new Label(year != null ? AonNumberUtils.toString(year) : "20XX");
+			yearPeriodCell.add(yearLabel);
+			yearPeriodCell.add(type);
+		}
 		setWidget(header);
 	}
 	
 	public void refresh(Label type, Integer year) {
-		build(type, year);
+		build(type, year, false, null);
+	}
+	
+	public void refresh(String name) {
+		build(null, null, true, name);
 	}
 }

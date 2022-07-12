@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.gwt.ccaa.client;
 
+import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 import net.aonsolutions.aon.gwt.ccaa.shared.DepositMenu;
+import net.aonsolutions.aon.gwt.ccaa.shared.MemoryTemplate;
 
 public class DepositWest extends ScrollPanel{
 
@@ -19,21 +21,48 @@ public class DepositWest extends ScrollPanel{
 	public static final String APARTADO = "Apartado ";
 	public static final String EJERCICIO = "Ejercicio ";
 	
-    Deposit2 parent; 
+	AonMenu aonMenu;
+    Deposit2 parent;
+    DepositTextMode parentTextMode;
+    List<MemoryTemplate> templates;
+    boolean textMode;
 
 	public DepositWest(Deposit2 parent) {
 		super();
 		this.parent = parent;
+		this.textMode = false;
+		init();	
+	}
+	
+	public DepositWest(DepositTextMode parent, List<MemoryTemplate> templates) {
+		super();
+		this.parentTextMode = parent;
+		this.textMode = true;
+		this.templates = templates;
+		init();	
+	}
+	
+	public void reload(List<MemoryTemplate> templates) {
+		this.templates = templates;
 		init();
-		
 	}
 	
 	private void init() {
-		AonMenu aonMenu = new AonMenu();
-		for(Integer y = AonDateUtils.getCurrentYear() - 1; y > 2013 ; y--) {
-			aonMenu.addItem(buildYear(y));
+		aonMenu = new AonMenu();
+		if(textMode) {
+			for(Integer i = 0; i < templates.size(); i++) {
+				aonMenu.addItem(buildTemplate(templates.get(i)));
+			}
+		} else {
+			for(Integer y = AonDateUtils.getCurrentYear() - 1; y > 2013 ; y--) {
+				aonMenu.addItem(buildYear(y));
+			}
 		}
 		setWidget(aonMenu);
+	}
+	
+	public void addTemplate(MemoryTemplate template) {
+		aonMenu.addItem(buildTemplate(template));
 	}
 	
     private ClickHandler menuClickHandler(DepositMenu depositMenu, Integer year) {
@@ -42,6 +71,16 @@ public class DepositWest extends ScrollPanel{
 			@Override
 			public void onClick(ClickEvent event) {
 				menuClick(depositMenu, year);
+			}
+		};
+    }
+    
+    private ClickHandler menuTextModeClickHandler(DepositMenu depositMenu, MemoryTemplate template) {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				menuTextModeClick(depositMenu, template);
 			}
 		};
     }
@@ -66,16 +105,43 @@ public class DepositWest extends ScrollPanel{
 		}
 	}
 
+    private void menuTextModeClick(DepositMenu depositMenu, MemoryTemplate template) {
+    	if(template.getId().equals(parentTextMode.getId())) {
+    		parentTextMode.updatePage(depositMenu);
+		} else {
+			parentTextMode.getUndoStack().clear();
+			parentTextMode.getRedoStack().clear();
+			parentTextMode.setId(template.getId());
+			parentTextMode.setName(template.getName());
+			
+			parentTextMode.getInma().getSchemaTextMode(parentTextMode.getAonData(), parentTextMode.getId(), new AsyncCallback<Map<String, String>>() {
+				@Override
+				public void onSuccess(Map<String, String> result) {
+					parentTextMode.setDeposit(result);
+					parentTextMode.updatePage(depositMenu);
+					parentTextMode.updateHeader();
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
+	}
+    
 	private AonMenuItem buildYear(Integer year) {
 		AonMenuItem item = new AonMenuItem()
 			.setTitle(EJERCICIO + year);
 		
 		item.addItem(new AonMenuItem().setTitle(DepositMenu.HIS.getDescription())
 				.setHandler(menuClickHandler(DepositMenu.HIS, year)));
-		
-    	if(year >= 2016 && year < 2018) {
+				
+    	if(year >= 2016) {
     		item.addItem(new AonMenuItem().setTitle(DepositMenu.AR.getDescription())
     				.setHandler(menuClickHandler(DepositMenu.AR, year)));
+    	}
+    	
+    	if(year >= 2020) {
+    		item.addItem(new AonMenuItem().setTitle(DepositMenu.DC.getDescription())
+    				.setHandler(menuClickHandler(DepositMenu.DC, year)));
     	}
     	
     	if(year >= 2017) {
@@ -240,4 +306,36 @@ public class DepositWest extends ScrollPanel{
 				.setHandler(menuClickHandler(DepositMenu.MA7, year)));
     	return item;
 	}
+	
+	private AonMenuItem buildTemplate(MemoryTemplate memoryTemplate) {
+		AonMenuItem item = new AonMenuItem().setTitle(memoryTemplate.getName());
+		item.addItem(new AonMenuItem().setTitle(DepositMenu.AE.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.AE, memoryTemplate)));
+		item.addItem(new AonMenuItem().setTitle(DepositMenu.BP.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.BP, memoryTemplate)));
+		item.addItem(new AonMenuItem().setTitle(DepositMenu.AR.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.AR_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.NRV.getDescription())
+    			.setHandler(menuTextModeClickHandler(DepositMenu.NRV, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.IMIII.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.IMIII_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.AF.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.AF_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.PF.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.PF_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.FP.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.FP, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.SF.getDescription())
+    			.setHandler(menuTextModeClickHandler(DepositMenu.SF, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.SDL.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.SDL_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.OPV.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.OPV_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.OI.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.OI_TL, memoryTemplate)));
+    	item.addItem(new AonMenuItem().setTitle(DepositMenu.IM.getDescription())
+				.setHandler(menuTextModeClickHandler(DepositMenu.IM_TL, memoryTemplate)));
+    	return item;
+	}
+
 }

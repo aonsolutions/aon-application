@@ -282,7 +282,7 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					new DepositEntryPoint(aonData).onModuleLoad(getToken() != null ? "deposit_new" : getSubEntryPoint());
+					new DepositEntryPoint(aonData).onModuleLoad(getSubEntryPoint());
 				}
 			});		
 			break;
