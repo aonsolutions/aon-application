@@ -35,6 +35,8 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -787,10 +789,57 @@ public class JooqEmployeeAFI {
 			
 			nextIt++;
 		}
+		
+		checkPartialHours(dslContext, contractId, afiChangesMap, dateList);
 	}
-	
+
 	// -------------------------------------------- setEmployeeAFIDB. Auxiliar Methods
 	
+	private static void checkPartialHours(DSLContext dslContext, Integer contractId, AFIChanges afiChangesMap, ArrayList<java.util.Date> dateList) {
+		if(dateList.isEmpty() || dateList.size() < 2) return;
+		
+		dateList.sort((o1, o2) -> o1.compareTo(o2));
+		java.util.Date lastDate = dateList.get(dateList.size()-1);
+		ArrayList<AFIChange> afiChanges = afiChangesMap.getAFIChangessByDate(lastDate);
+		
+		Integer contractType = getContractType(afiChanges);
+		
+		if(null == contractType) return;
+		
+		java.util.Date newEndDate = DateUtils.addDays2Date(lastDate, -1);
+		
+		if(isCompleteJourneyContract(contractType))
+			dslContext.update(CONTRACT_DATA)
+				.set(CONTRACT_DATA.END_DATE, new Date(newEndDate.getTime()))
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(new Date(newEndDate.getTime()))))
+				.and(CONTRACT_DATA.NAME.eq("HORAS_LUNES")
+					.or(CONTRACT_DATA.NAME.eq("HORAS_MARTES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_MIERCOLES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_JUEVES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_VIERNES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_SABADO"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_DOMINGO"))
+					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD"))
+					.or(CONTRACT_DATA.NAME.eq("TIEMPO_COMPLETO"))
+				).execute();
+		
+	}
+	
+	private static boolean isCompleteJourneyContract(Integer contractTypeCode) {
+		ContractType contractTypeObj = new ContractType();
+		ContractTypeRecord contractType = contractTypeObj.getContractType(contractTypeCode);
+		return AonStringUtils.equalsIgnoreCase(contractType.getJourneyType(), "C");
+	}
+
+	private static Integer getContractType(ArrayList<AFIChange> afiChanges) {
+		for(AFIChange afiChange : afiChanges)
+			if(AonStringUtils.equalsIgnoreCase(afiChange.getName(), "TC2"))
+				return Integer.parseInt(afiChange.getValue());
+		
+		return null;
+	}
+
 	private static Date getEndDate(ArrayList<java.util.Date> dateList, Integer nextIt, Date contractEndDate) {
 		Date endDate = null;
 		
