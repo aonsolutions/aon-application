@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -22,6 +21,8 @@ import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -36,14 +37,7 @@ import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -51,6 +45,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -62,8 +58,22 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class IRPFReport extends MainEntryPoint {
 
-	private static CommonServiceAsync commonService;
-	private static AccountingReportServiceAsync SERVICE;
+	private static final String ALL_OPTIONS = "-- Todas --";
+
+	private static final String IRPF_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/IrpfReportExcelPrint";
+	private static final String IRPF_PDF_REPORT_PRINT = "/aon_gwt_fiscal/roms/IrpfReportPDFPrint";
+
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
+
+	private static final AccountingReportServiceAsync SERVICE;
+	static {
+		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
+		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
+	}
 	
 	private String currentDomainName;
 	private int currentDomain;
@@ -89,6 +99,12 @@ public class IRPFReport extends MainEntryPoint {
 	private ListBox rectificationType;
 	private ListBox orderBy;
 	private ListBox groupByNif;
+	
+	FormPanel diskForm;
+	Hidden irpfParamsHidden;
+	Hidden domainIdHidden;
+	Hidden domainNameHidden;
+	Hidden userHidden;
 	
 	private NumberFormat formatter;
 	
@@ -118,12 +134,6 @@ public class IRPFReport extends MainEntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
-		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
-		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
-		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -132,7 +142,7 @@ public class IRPFReport extends MainEntryPoint {
 		formatter = NumberFormat.getDecimalFormat();
 		formatter.overrideFractionDigits(2, 2);
 		
-		commonService.getAonConfiguration(getDomainName(),
+		COMMON_SERVICE.getAonConfiguration(getDomainName(),
 				getDomain(), getCurrentUser(),
 				new AsyncCallback<AonConfiguration>() {
 					@Override
@@ -143,15 +153,11 @@ public class IRPFReport extends MainEntryPoint {
 						content.setStyleName(AON.AON_CSS.aonSelector());
 						tabLayout = new TabLayoutPanel(26, Unit.PX);
 						tabLayout.setWidth("100%");
-						tabLayout.addSelectionHandler( new SelectionHandler<Integer>() {
-							
-							@Override
-							public void onSelection(SelectionEvent<Integer> event) {
-								if (event.getSelectedItem() == 0 && resultsContent != null) {
-									resultsContent.clear();	
-								} else if (event.getSelectedItem() == 1 && resultsContent.getWidget() == null) {
-									onSearch();	
-								}
+						tabLayout.addSelectionHandler( event -> {
+							if (event.getSelectedItem() == 0 && resultsContent != null) {
+								resultsContent.clear();	
+							} else if (event.getSelectedItem() == 1 && resultsContent.getWidget() == null) {
+								onSearch();	
 							}
 						});
 						
@@ -195,10 +201,32 @@ public class IRPFReport extends MainEntryPoint {
 	private Widget getToolbarPanel() {
 		AonToolbar toolbarPanel = new AonToolbar("Tabla I.R.P.F.");
 		
+		final AonToolbarButton pdf = new AonToolbarButton(AON.MSG.print(), AON.CSS.aonIconPdf());
+		pdf.addClickHandler(event -> submitForm(IRPF_PDF_REPORT_PRINT));
+		toolbarPanel.add(pdf);
+
+		final AonToolbarButton excel = new AonToolbarButton(AON.MSG.export(), AON.CSS.aonIconExcel());
+		excel.addClickHandler(event -> submitForm(IRPF_EXCEL_REPORT_PRINT));
+		toolbarPanel.add(excel);
+
 		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		clean.addClickHandler(event -> initialize());
 		toolbarPanel.add(clean);
 	
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		irpfParamsHidden = new Hidden(IRequestParamsNames.IRPF_PARAMS);
+		formFlowPanel.add(irpfParamsHidden);
+		domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden(IRequestParamsNames.DOMAIN_NAME);
+		formFlowPanel.add(domainNameHidden);
+		userHidden = new Hidden(IRequestParamsNames.USER);
+		formFlowPanel.add(userHidden);
+		toolbarPanel.add(diskForm);
+
 		return toolbarPanel;
 	}
 	
@@ -206,80 +234,42 @@ public class IRPFReport extends MainEntryPoint {
 		year = new IntegerBox();
 		year.setMaxLength(4);
 		year.setVisibleLength(5);
-		year.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				fillDates();
-				onSearch();
-			}
+		year.addValueChangeHandler(event -> {
+			fillDates();
+			onSearch();
 		});
 		
 		period = new PeriodListBox();
-		period.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				fillDates();
-				onSearch();
-			}
+		period.addChangeHandler(event -> {
+			fillDates();
+			onSearch();
 		});
 		
 		fromDate = new DateBoxEx();
-		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch();
-			}
-		});
+		fromDate.addValueChangeHandler(event -> onSearch());
 		toDate = new DateBoxEx();
-		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch();
-			}
-		});
+		toDate.addValueChangeHandler(event -> onSearch());
 		
 		output = new ListBox();
-		output.addItem("-- Todas --");
+		output.addItem(ALL_OPTIONS);
 		output.addItem(AON.MSG.inputInvoices());
 		output.addItem(AON.MSG.outputInvoices());
-		output.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
+		output.addChangeHandler(event -> onSearch());
 		
 		groupByNif = new ListBox();
 		groupByNif.addItem("No", "");
 		groupByNif.setSelectedIndex(0);
 		groupByNif.addItem("S\u00ED");
-		groupByNif.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
+		groupByNif.addChangeHandler(event -> onSearch());
 		
 		withholdingType = new WithholdingTypeListBox("-- Todos --");
 		withholdingType.setWidth("100px");
-		withholdingType.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
+		withholdingType.addChangeHandler(event -> onSearch());
 
 		if (configuration != null && configuration.hasActivities()) {
 			activity = new ListBox();
 			activity.setWidth("120px");
-			activity.addItem("-- Todas --", "");
+			activity.addItem(ALL_OPTIONS, "");
 			activity.setSelectedIndex(0);
 			int i = 1;
 			for (EnterpriseActivity ea : configuration.getActivities()) {
@@ -290,27 +280,16 @@ public class IRPFReport extends MainEntryPoint {
 				i++;
 			}
 			activity.addItem("-- Sin actividad --", "-1");
-			activity.addChangeHandler(new ChangeHandler() {
-				@Override
-				public void onChange(ChangeEvent event) {
-					onSearch();
-				}
-			});
+			activity.addChangeHandler(event -> onSearch());
 		}
 
 		registry = new AccountingRegistryBox(getDomainName(), getDomain(), getCurrentUser()); 
 		registry.setRequired(false);
-		registry.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountingRegistry> event) {
-				onSearch();
-			}
-		});
+		registry.addSelectionHandler(event -> onSearch());
 		
 		rectificationType = new ListBox();
 		rectificationType.setWidth("100px");
-		rectificationType.addItem("-- Todas --");
+		rectificationType.addItem(ALL_OPTIONS);
 		rectificationType.addItem("Ni rectificativa ni rectificada");
 		rectificationType.addItem(RectificationType.NORMAL_RECTIFIER.getDescription());
 		
@@ -318,13 +297,7 @@ public class IRPFReport extends MainEntryPoint {
 		rectificationType.getElement().<SelectElement>cast().getOptions().getItem(3).setDisabled(true);
 		
 		rectificationType.addItem(RectificationType.RECTIFIED.getDescription());
-		rectificationType.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
+		rectificationType.addChangeHandler(event -> onSearch());
 		
 		// Desplegable Ordenar por...
 		orderBy = new ListBox();
@@ -336,13 +309,7 @@ public class IRPFReport extends MainEntryPoint {
 		orderBy.addItem("N\u00famero de Factura");
 		orderBy.addItem("Nombre de Cliente/Proveedor/Acreedor");
 		orderBy.addItem("NIF/DNI de Cliente/Proveedor/Acreedor");
-		orderBy.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
+		orderBy.addChangeHandler(event -> onSearch());
 
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
@@ -510,8 +477,8 @@ public class IRPFReport extends MainEntryPoint {
 		resultsContent.clear();
 		resultsContent.setWidget(new IRPFReportPanel(getDomainName(), getUser(), getDomain(), params, null, null));		
 	}
+	
 	private void refreshSummary(IRPFParams params) {
-		
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
 		summaryContent.setWidget(scroll);
@@ -520,12 +487,11 @@ public class IRPFReport extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(LinkedList<IrpfBreakdown> result) {
-				TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>> map = 
-						new TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>>();
+				TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>> map = new TreeMap<>();
 				for (IrpfBreakdown irpf : result){
 					TreeMap<Double,Pair<IrpfBreakdown,IrpfBreakdown>> block = map.get(irpf.getWithholdingType());
 					if (block == null) {
-						block = new TreeMap<Double, Pair<IrpfBreakdown,IrpfBreakdown>>();
+						block = new TreeMap<>();
 						map.put(irpf.getWithholdingType(), block);
 					}
 					Pair<IrpfBreakdown,IrpfBreakdown> line = block.get(irpf.getPercent());
@@ -570,13 +536,7 @@ public class IRPFReport extends MainEntryPoint {
 					row = paintEmptyRow(tab,row);
 					
 					Label typeLabel = new Label(type.getDescription());
-					typeLabel.addClickHandler(new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							refreshAndSeeResults(getWidgetParams().setWithholdingType(type));
-						}
-					});
+					typeLabel.addClickHandler(event -> refreshAndSeeResults(getWidgetParams().setWithholdingType(type)));
 					tab.setWidget(row,0, typeLabel);
 					int rowspan = map.get(type).values().size();
 					tab.getFlexCellFormatter().setRowSpan(row, 0, rowspan+1);
@@ -600,16 +560,10 @@ public class IRPFReport extends MainEntryPoint {
 						int col = first? 0 : -1;
 						first = false;
 						if (pair.getLeft() != null) {
-							ClickHandler leftClickHandler = new ClickHandler() {
-								
-								@Override
-								public void onClick(ClickEvent event) {
-									refreshAndSeeResults(getWidgetParams()
-										.setWithholdingType(type)
-										.setPercent(pair.getLeft().getPercent())
-										.setOutput(true));
-								}
-							};
+							ClickHandler leftClickHandler = event -> refreshAndSeeResults(getWidgetParams()
+								.setWithholdingType(type)
+								.setPercent(pair.getLeft().getPercent())
+								.setOutput(true));
 							typeOutputBase = typeOutputBase + pair.getLeft().getBase();
 							typeOutputQuota = typeOutputQuota + pair.getLeft().getQuota();
 							
@@ -635,16 +589,10 @@ public class IRPFReport extends MainEntryPoint {
 							typeInputBase = typeInputBase + pair.getRight().getBase();
 							typeInputQuota = typeInputQuota + pair.getRight().getQuota();
 							typeInputDeductibleQuota = typeInputDeductibleQuota + pair.getRight().getDeductibleQuota();
-							ClickHandler rightClickHandler = new ClickHandler() {
-								
-								@Override
-								public void onClick(ClickEvent event) {
-									refreshAndSeeResults(getWidgetParams()
-										.setWithholdingType(type)
-										.setPercent(pair.getRight().getPercent())
-										.setOutput(false));
-								}
-							};
+							ClickHandler rightClickHandler = event -> refreshAndSeeResults(getWidgetParams()
+								.setWithholdingType(type)
+								.setPercent(pair.getRight().getPercent())
+								.setOutput(false));
 							Label baseLabel = addCell(tab, row, (col+5) , formatter.format( pair.getRight().getBase()));
 							tab.getCellFormatter().addStyleName(row, (col+5), AON.AON_CSS.aonClickableBlock());
 							baseLabel.addClickHandler(rightClickHandler);
@@ -680,8 +628,7 @@ public class IRPFReport extends MainEntryPoint {
 				}
 				row = paintEmptyRow(tab, row);
 				row = paintTotal( tab, row,null,outputBase,outputQuota,inputBase,inputQuota,inputDeductibleQuota);
-				row = paintEmptyRow(tab, row);
-				 
+				paintEmptyRow(tab, row);
 				scroll.setWidget( tab );		
 			}
 			@Override
@@ -703,14 +650,10 @@ public class IRPFReport extends MainEntryPoint {
 				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonSimpleBorder());
 				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonClickableBlock());
 				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonBackgroundDisabled());
-				outputLabel.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						IRPFParams params = getWidgetParams();
-						params.setOutput(true);
-						refreshAndSeeResults(params);
-					}
+				outputLabel.addClickHandler(event -> {
+					IRPFParams params1 = getWidgetParams();
+					params1.setOutput(true);
+					refreshAndSeeResults(params1);
 				});
 				
 				Label inputLabel = new Label( AON.MSG.inputInvoices() );
@@ -722,14 +665,10 @@ public class IRPFReport extends MainEntryPoint {
 				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonSimpleBorder());
 				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonClickableBlock());
 				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonBackgroundDisabled());
-				inputLabel.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						IRPFParams params = getWidgetParams();
-						params.setOutput(false);
-						refreshAndSeeResults(params);
-					}
+				inputLabel.addClickHandler(event -> {
+					IRPFParams params1 = getWidgetParams();
+					params1.setOutput(false);
+					refreshAndSeeResults(params1);
 				});
 	
 				Label outputBaseLabel = new Label( AON.MSG.taxableBase() );
@@ -808,25 +747,13 @@ public class IRPFReport extends MainEntryPoint {
 			private int paintTotal(FlexTable tab, int row, WithholdingType type,double typeOutputBase, double typeOutputQuota,
 					double typeInputBase, double typeInputQuota, double typeInputDeductibleQuota) {
 				int col = type==null?1:0;
-				ClickHandler leftClickHandler = new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						refreshAndSeeResults(getWidgetParams().setWithholdingType(type).setOutput(true));
-					}
-				}; 
+				ClickHandler leftClickHandler = event -> refreshAndSeeResults(getWidgetParams().setWithholdingType(type).setOutput(true)); 
 				Label obl = addCell(tab, row, col+0 , formatter.format( typeOutputBase));
 				obl.addClickHandler(leftClickHandler);
 				Label oql = addCell(tab, row, col+2 , formatter.format( typeOutputQuota));
 				oql.addClickHandler(leftClickHandler);
 				
-				ClickHandler rightClickHandler = new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						refreshAndSeeResults(getWidgetParams().setWithholdingType(type).setOutput(false));
-					}
-				}; 
+				ClickHandler rightClickHandler = event -> refreshAndSeeResults(getWidgetParams().setWithholdingType(type).setOutput(false)); 
 				Label ibl = addCell(tab, row, col+4 , formatter.format( typeInputBase));
 				ibl.addClickHandler(rightClickHandler);
 				Label iql = addCell(tab, row, col+6 , formatter.format( typeInputQuota));
@@ -849,4 +776,14 @@ public class IRPFReport extends MainEntryPoint {
 			
 		});		
 	}
+	
+	private void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		irpfParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
+		diskForm.submit();
+	}
+	
 }

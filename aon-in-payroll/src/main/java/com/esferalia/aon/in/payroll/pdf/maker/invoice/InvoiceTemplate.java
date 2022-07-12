@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,6 +88,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
@@ -306,7 +306,9 @@ public class InvoiceTemplate {
 	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, PrintInvoiceThemeConfiguration theme) throws IOException {
 		float firstY = y;
 		if (invoice.isRectifier() && (invoice.getRectificationInvoiceNumber() != null || !AonStringUtils.isEmpty(invoice.getRectificationInvoiceSeries()))) {
-			String message = getMsg().rectifies() + " " + (invoice.getRectificationInvoiceNumber() != null ? invoice.getRectificationInvoiceNumber() : "") + " / " + AonStringUtils.trimToEmpty(invoice.getRectificationInvoiceSeries());
+			String rn = AonStringUtils.trimToEmpty(AonNumberUtils.toString(invoice.getRectificationInvoiceNumber()));
+			String rectNum = !AonStringUtils.isBlank(rn) ? AonStringUtils.leftPad(rn, 6, '0') : "";
+			String message = getMsg().rectifies() + " " + AonStringUtils.trimToEmpty(invoice.getRectificationInvoiceSeries()) + " / " + rectNum;
 			drawText(contents, message, 50f, y, theme.getTitleTextColor(), boldFont, 10);
 			y-=20;
 		}

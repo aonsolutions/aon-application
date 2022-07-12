@@ -6,13 +6,12 @@ import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -166,6 +165,8 @@ public class JooqContractTransform {
 		Result<Record> contractDataRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(oldContractId))
 				.and(CONTRACT_DATA.NAME.ne("TC2"))
+				.and(CONTRACT_DATA.NAME.ne("SEPE_ID"))
+				.and(CONTRACT_DATA.NAME.ne("COMUNICATION_DATE"))
 				.and(CONTRACT_DATA.END_DATE.isNull()
 						.or(CONTRACT_DATA.END_DATE.gt(parseDateToSQL(newStartDateContract)))
 				).fetch();

@@ -61,10 +61,10 @@ public class IRPFDAO {
 	// ********************************************************************
 	// ******************************************************* [INVOICES]
 	// ********************************************************************
-	private static SelectConditionStep<? extends Record> getInvoiceIrpBreakdownSelectWhere(final AONContext ctx, final FiscalModel fm) {
-		return getInvoiceIrpBreakdownSelectWhere(getInvoiceIrpBreakdownSelect(ctx),fm); 	
+	private static SelectConditionStep<? extends Record> getInputInvoiceIrpBreakdownSelectWhere(final AONContext ctx, final FiscalModel fm) {
+		return getInputInvoiceIrpBreakdownSelectWhere(getInvoiceIrpBreakdownSelect(ctx),fm); 	
 	}
-	private static SelectConditionStep<? extends Record> getInvoiceIrpBreakdownSelectWhere(SelectOnConditionStep<? extends Record> select, final FiscalModel fm) {
+	private static SelectConditionStep<? extends Record> getInputInvoiceIrpBreakdownSelectWhere(SelectOnConditionStep<? extends Record> select, final FiscalModel fm) {
 		return select
 			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
 			.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
@@ -104,7 +104,7 @@ public class IRPFDAO {
 	}
 
 	public static Stream<IrpfBreakdown> getInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
-		return getInvoiceIrpBreakdownSelectWhere(ctx,fm)
+		return getInputInvoiceIrpBreakdownSelectWhere(ctx,fm)
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
@@ -155,7 +155,7 @@ public class IRPFDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.asTable("modelInvoice")
 		;
-		return getInvoiceIrpBreakdownSelectWhere(
+		return getInputInvoiceIrpBreakdownSelectWhere(
 			getInvoiceIrpBreakdownSelect(ctx)
 				.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID)),fm)
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
