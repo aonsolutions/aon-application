@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
 import com.esferalia.aon.payroll.enumeration.OffType;
@@ -75,6 +76,25 @@ public class AonConstants {
 	public static PaymentType CRA_0010 = PaymentType.CRA_0010;
 	@Variable(ContextVariable.CRA_0008)
 	public static PaymentType CRA_0008 = PaymentType.CRA_0008;
+
+	@Variable(ContextVariable.HOME)
+	public static CCCType HOME = CCCType.HOME_EMPLOYEES;
+	@Variable(ContextVariable.GENERAL)
+	public static CCCType GENERAL = CCCType.PRINCIPAL;
+	@Variable(ContextVariable.ARTISTS)
+	public static CCCType ARTISTS = CCCType.ARTIST;
+	@Variable(ContextVariable.AGRARIAN)
+	public static CCCType AGRARIAN = CCCType.AGRICULTURAL;
+	@Variable(ContextVariable.FELLOWS)
+	public static CCCType FELLOWS = CCCType.FELLOWS;
+	@Variable(ContextVariable.LEARNING)
+	public static CCCType LEARNING = CCCType.LEARNING;
+	@Variable(ContextVariable.TRAINING)
+	public static CCCType TRAINING = CCCType.TRAINING;
+	@Variable(ContextVariable.REPRESENTATIVES)
+	public static CCCType REPRESENTATIVES = CCCType.TRADE_REPRESENTATIVE;
+	@Variable(ContextVariable.ASSIMILATE)
+	public static CCCType ASSIMILATE = CCCType.ASSIMILATEDS;
 
 	// ------------------------------------------------------------------------
 	// 
