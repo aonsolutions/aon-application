@@ -610,9 +610,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void setAttachData(String currentDomainName, String login, Integer attachId, byte[] dataURI, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void setAttachData(String currentDomainName, String login, Integer attachId, String base64, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.setAttachData(currentDomainName, login, attachId, dataURI, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.setAttachData(currentDomainName, login, attachId, base64, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	

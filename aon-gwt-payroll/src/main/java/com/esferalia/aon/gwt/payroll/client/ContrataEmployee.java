@@ -60,7 +60,6 @@ import com.google.gwt.user.client.ui.Widget;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public abstract class ContrataEmployee extends ResizeComposite {
-
 	// ------------------------------------------------- UiBinder
 
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
@@ -239,7 +238,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			pdfViewer.open(dataURI);
 			idcDateListBox.setVisible(false);
 			idcMonthListBox.setVisible(false);
-//			saveDocument.setVisible(true);
+			saveDocument.setVisible(true);
 			
 		}
 
@@ -1395,7 +1394,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		toolbarPDFViewer.add(closePDF);
 		
 		saveDocument = new AonToolbarButton("Guardar documento", AON.CSS.aonIconSave());
-		saveDocument.addClickHandler(e -> contractAttachUI.setAttachData(attachId, pdfViewer.getData()));
+		
+		saveDocument.addClickHandler(e -> {
+			pdfViewer.getData(base64->{
+				contractAttachUI.setAttachData(attachId, base64);
+			});
+		});
+		
 		toolbarPDFViewer.add(saveDocument);
 		
 		idcMonthListBox = new MonthListBox();

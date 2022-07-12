@@ -304,7 +304,6 @@ public class Contrata {
 			}
 			
 			{//DATA CONTRACT
-				
 				form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
 				
 				if(cto.getDateIniContract()!=null) {
@@ -339,10 +338,13 @@ public class Contrata {
 			
 			{//OTHERS DATA CONTRACT (OPTIONAL)
 				if(cto.getDateFinContract()!=null) {
-					String[] dateFinContract = Toolkit.dateString(cto.getDateFinContract());
-					form.getInputByName("diafechafin").setValueAttribute(dateFinContract[0]);
-					form.getInputByName("mesfechafin").setValueAttribute(dateFinContract[1]);
-					form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
+					DomNode endDay = form.querySelector("[name=\"diafechafin\"]");
+					if(endDay!=null) {
+						String[] dateFinContract = Toolkit.dateString(cto.getDateFinContract());
+						((HtmlInput)endDay).setValueAttribute(dateFinContract[0]);
+						form.getInputByName("mesfechafin").setValueAttribute(dateFinContract[1]);
+						form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
+					}
 				}
 
 				if(cto.getJndType()!=null) {
