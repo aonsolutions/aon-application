@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.code.aon.facturae.nuevo.FacturaeWriter2;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -77,8 +76,8 @@ public class FaceServlet extends AonApiHttpServlet {
 						.and(f.getActiveProperty().eq((byte)1)));
 			}
 
-			FacturaeWriter2 facturae = new FacturaeWriter2(domain, user, company, workplace, invoice);
-			byte[] data = facturae.generate();
+//			FacturaeWriter2 facturae = new FacturaeWriter2(domain, user, company, workplace, invoice);
+			byte[] data = null; //facturae.generate();
 			responseFile(resp, "FACTURAE", data, MimeType.XML);
 		} catch (IOException e) {
 			error(req, resp, e);
