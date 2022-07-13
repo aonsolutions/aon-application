@@ -86,7 +86,8 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency_cost", "47,28");
 		assertText("unemployment_cost", "64,17");
 		assertText("fogasa_cost", "3,59");
-//		assertText("job_training_cost", "1,38");
+		assertText("it_cost", "3,64");
+		assertText("ims_cost", "2,87");
 		
 		//costsCheck-input
 
@@ -101,11 +102,16 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "8,49");
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertText("common_contingency", "9,10");
-
-		//assertValue("cgcBaseLabel", "858,60");
-		//assertValue("cgpBaseLabel", "858,60");
+		calculate(Calendar.JANUARY, 2022);
+		assertText("common_contingency", "9,43");
+		
+		if ( !isDisplayed("it_cost") )
+			click("costsCheck-input");
+		wait4Id("it_cost");
+		assertText("it_cost", "3,64");
+		assertText("ims_cost", "2,87");
 		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "45,63");
+		assertText("common_contingency_cost", "47,28");
 
 		draft("FORMACION Y APRENDIZAJE, IT");
 		calculate(Calendar.OCTOBER, 2018);
