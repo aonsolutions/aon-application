@@ -373,10 +373,11 @@ export class AonInvoice extends AonElement {
 				let sign = ACTION.SIGN_INVOICE;
 				sign.fn = () => this.signInvoice();
 				moreActions.push(sign);
-
-				let face = ACTION.FACTURAE;
-				face.fn = () => this.facturae();
-				moreActions.push(face);
+				if(this.isBeta()){
+					let face = ACTION.FACTURAE;
+					face.fn = () => this.facturae();
+					moreActions.push(face);
+				}
 			}
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
