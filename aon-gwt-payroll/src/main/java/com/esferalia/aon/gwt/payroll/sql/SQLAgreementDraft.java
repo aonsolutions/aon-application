@@ -1040,8 +1040,8 @@ public class SQLAgreementDraft {
 					+ AgreementLevelDataColumns.NAME + ", "
 					+ AgreementLevelDataColumns.EXPRESSION + ", "
 					+ AgreementLevelDataColumns.START_DATE + ", "
-					+ AgreementLevelDataColumns.END_DATE 
-					+ AgreementLevelDataColumns.CREATION_USER
+					+ AgreementLevelDataColumns.END_DATE + ", "
+					+ AgreementLevelDataColumns.CREATION_USER + ", "
 					+ AgreementLevelDataColumns.CREATION_DATE
 					+ ")"
 					+ " VALUES (?,?,?,?,?,?,?,?)",
