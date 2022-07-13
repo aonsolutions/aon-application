@@ -5269,6 +5269,10 @@ public class AON {
 		}
  	}
 
+	public static RegistryAddress getRegistryAddress(Domain domain, User user, RegistryAddressFilter filter) {
+		return get(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
 	public static RegistryAddress get(Domain domain, User user, RegistryAddressFilter filter) {
 		return get(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}

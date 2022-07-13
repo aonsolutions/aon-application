@@ -1318,6 +1318,7 @@ public class InvoiceImport {
 	}
 	
 	private static InvoiceType getInvoiceType(String account) {
+		if(AonStringUtils.isBlank(account)) return InvoiceType.EXPENSES;
 		if("7".equals(account.substring(0, 1)) || "5600".equals(account.substring(0, 4))) {
 			return InvoiceType.SALES;
 		} else if("60".equals(account.substring(0, 2)) || "5660".equals(account.substring(0, 4))) {

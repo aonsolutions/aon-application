@@ -4,6 +4,7 @@ public enum DepositMenu {
 
 	HIS("Hoja Identificativa de la Sociedad"),
 	ITR("Identificador del titular real"),
+	DC("Declaraci\u00F3n Covid 19"),
 	SRA("Documento Sobre Servicios a Terceros"),
 	BS("Balance de Situaci\u00F3n"),
 	CPG("Cuenta de P\u00e9rdidas y Ganancias"),

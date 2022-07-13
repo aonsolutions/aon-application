@@ -1,11 +1,11 @@
 package net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory;
 
 
-import com.esferalia.aon.gwt.common.client.AON;
+import java.util.Date;
+
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -15,19 +15,16 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
-public class PageH6 extends PageAbs {
+public class PageH7 extends PageAbs {
 
 	@UiField TextBox IDA01010; // document 
 	@UiField TextBox IDA01020; // Enterprise name
@@ -35,17 +32,39 @@ public class PageH6 extends PageAbs {
 	@UiField TextBox IDA01023; // Municipio
 	@UiField ListBox IDA01025; // Province Name
 	@UiField TextBox year; // YEAR
-	@UiField CheckBox SRP8080831; // YEAR
-	@UiField TextBox SRP831001;
-	@UiField TextArea SRP831002;
-	@UiField TextArea SRP831003;
-	@UiField CheckBox SRP831004;
-	interface PageBinder extends UiBinder<Widget, PageH6> {
+	
+	@UiField CheckBox CVA8220000;
+	@UiField ListBox CVA8220010;
+	@UiField ListBox CVA8220020;
+	@UiField DoubleBox CVA8220030;
+	@UiField DoubleBox CVA8220035;
+	@UiField DateBox CVA8220040;
+	@UiField DateBox CVA8220050;
+	
+	@UiField DoubleBox CVA8220060;
+	@UiField DoubleBox CVA8220065;
+	@UiField DoubleBox CVA8220070;
+	
+	@UiField ListBox CVA8220080;
+	@UiField CheckBox CVA8220090;
+	@UiField CheckBox CVA8220100;
+
+	@UiField DoubleBox CVA8220110;
+	@UiField DoubleBox CVA8220120;
+
+	@UiField TextArea CVA8220130;
+
+	@UiField CheckBox CVA8220140;
+	@UiField CheckBox CVA8220150;
+	@UiField CheckBox CVA8220160;
+	@UiField CheckBox CVA8220170;
+	
+	interface PageBinder extends UiBinder<Widget, PageH7> {
 	}
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 
-	public PageH6(Deposit2 deposit) {
+	public PageH7(Deposit2 deposit) {
 		super(deposit);
 		IDA01010 = new TextBox();
 		IDA01020 = new TextBox(); 
@@ -53,12 +72,33 @@ public class PageH6 extends PageAbs {
 		IDA01023 = new TextBox(); 
 		IDA01025 = new ListBox();
 		this.year = new TextBox();
-		SRP8080831 = new CheckBox();
 		
-		SRP831001 = new TextBox();
-		SRP831002 = new TextArea();
-		SRP831003 = new TextArea();
-		SRP831004 = new CheckBox();
+		CVA8220000 = new CheckBox();
+		CVA8220010 = new ListBox();
+		CVA8220020 = new ListBox();
+		
+		CVA8220030 = new DoubleBox();
+		CVA8220035 = new DoubleBox();
+		CVA8220040 = new DateBox();
+		CVA8220050 = new DateBox();
+		CVA8220060 = new DoubleBox();
+		CVA8220065 = new DoubleBox();
+		CVA8220070 = new DoubleBox();
+		
+		CVA8220080 = new ListBox();
+		CVA8220090 = new CheckBox();
+		CVA8220100 = new CheckBox();
+		
+		CVA8220110 = new DoubleBox();
+		CVA8220120 = new DoubleBox();
+		
+		CVA8220130 = new TextArea();
+		
+		CVA8220140 = new CheckBox();
+		CVA8220150 = new CheckBox();
+		CVA8220160 = new CheckBox();
+		CVA8220170 = new CheckBox();
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		initializeTable();
@@ -67,8 +107,31 @@ public class PageH6 extends PageAbs {
 	private void listBoxItemAdd(ListBox lb) {
 		for(Integer i = 0; i< D2DepositConstants.PROVINCES.length; i++){
 			Provinces p = D2DepositConstants.PROVINCES[i];
-			lb.addItem(p.getName());
+			lb.addItem(p.getName(), p.getId());
 		}
+	}
+	
+	private void listBoxItemAdd2(ListBox lb) {
+		lb.addItem("", "");
+		lb.addItem("Por causa de fuerza mayor", "1");
+		lb.addItem("Por causas t\u00e9cnicas-econ\u00f3micas-organizativas", "2");
+		lb.addItem("Otras causas", "3");
+	}
+	
+	private void listBoxItemAdd3(ListBox lb) {
+		lb.addItem("", "");
+		lb.addItem("Suspensi\u00f3n de contratos", "1");
+		lb.addItem("Reducci\u00f3n de jornada", "2");
+		lb.addItem("Ambos", "3");
+	}
+	
+	private void listBoxItemAdd4(ListBox lb) {
+		lb.addItem("", "");
+		lb.addItem("No aplica", "0");
+		lb.addItem("Rebaja de rentas a los arrendatarios", "1");
+		lb.addItem("Reestructuraci\u00f3n de deudas", "2");
+		lb.addItem("Ambos", "3");
+		lb.addItem("Ninguno de los anteriores", "4");
 	}
 
 	private void init(){
@@ -79,17 +142,40 @@ public class PageH6 extends PageAbs {
 		keyExe("1023", IDA01023, "text", false);
 		listBoxItemAdd(IDA01025);
 		keyExe("1025", IDA01025, "list", false);
-		keyExe("8080831", SRP8080831, "check", true);
-		keyExe("831001", SRP831001, "text", true);
-		keyExe("831002", SRP831002, "area", true);
-		keyExe("831003", SRP831003, "area", true);
-		keyExe("831004", SRP831004, "check", true);	
+		
+		keyExe("8220000", CVA8220000, "check", true);
+		listBoxItemAdd2(CVA8220010);
+		keyExe("8220010", CVA8220010, "list", true);
+		listBoxItemAdd3(CVA8220020);
+		keyExe("8220020", CVA8220020, "list", true);
+		keyExe("8220030", CVA8220030, "double", true);
+		keyExe("8220035", CVA8220035, "double", true);
+
+		keyExe("8220040", CVA8220040, "date", true);
+		keyExe("8220050", CVA8220050, "date", true);
+
+		keyExe("8220060", CVA8220060, "double", true);
+		keyExe("8220065", CVA8220065, "double", true);
+		keyExe("8220070", CVA8220070, "double", true);
+
+		listBoxItemAdd4(CVA8220080);
+		keyExe("8220080", CVA8220080, "list", true);
+		keyExe("8220090", CVA8220090, "check", true);
+		keyExe("8220100", CVA8220100, "check", true);
+		
+		keyExe("8220110", CVA8220110, "double", true);
+		keyExe("8220120", CVA8220120, "double", true);
+		keyExe("8220130", CVA8220130, "area", true);
+		
+		keyExe("8220140", CVA8220140, "check", true);		
+		keyExe("8220150", CVA8220150, "check", true);
+		keyExe("8220160", CVA8220160, "check", true);
+		keyExe("8220170", CVA8220170, "check", true);
 	}
 	
 	@Override
 	protected void initializeTable() {
 		init();		
-		defineTable(table,"",D2PDepositConstants.SRP_KEYS);
 	}
 	
 	String key2Aux;
@@ -153,7 +239,7 @@ public class PageH6 extends PageAbs {
 				String key2 = key2Aux;
 				@Override
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					onEdit(key2, event.getValue()?"1":"0");
+					onEdit(key2, event.getValue()?"1":"2");
 				}
 			});
 		}
@@ -164,15 +250,9 @@ public class PageH6 extends PageAbs {
 			if(getMap().containsKey(key2)){
 				
 				String value = getMap().get(key2);
-				String value2 ="";
-				for (Integer i = 0 ; i< D2DepositConstants.PROVINCES.length; i++){
-		
-					if(D2DepositConstants.PROVINCES[i].getId().equals(value)){
-						value2 = D2DepositConstants.PROVINCES[i].getName();
-					}
-				}
+				
 				for (Integer i = 0; i< lb.getItemCount(); i++) {
-					if(lb.getItemText(i).equals(value2)){
+					if(lb.getValue(i).equals(value)){
 						lb.setSelectedIndex(i);
 					}
 				}
@@ -184,16 +264,7 @@ public class PageH6 extends PageAbs {
 				ListBox lb = lbAux;
 				@Override
 				public void onChange(ChangeEvent event) {
-					String value ="";
-					for(Integer i = 0; i< D2DepositConstants.PROVINCES.length;i++){
-						Provinces p = D2DepositConstants.PROVINCES[i];
-						if(lb.getSelectedItemText().equals(p.getName())){
-							value = p.getId(); 
-						}
-					}
-					onEdit(key2, value);
-					
-					
+					onEdit(key2, lb.getSelectedValue());
 				}
 			});
 		}
@@ -216,64 +287,28 @@ public class PageH6 extends PageAbs {
 				}
 			});
 		}
-	}
-	
-	protected void defineTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
-		Integer col = 0;
-		Integer row = 0;
-		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidthAuto());
-		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonNowrap());
-		col++;
-		tab.getFlexCellFormatter().setColSpan(row, col, 2);
-		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
-		tab.setWidget(row, col, new Label("Volumen de negocio"));	
-		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
-	
-		row++;
 		
-		String current_ej = AON.MSG.fiscalYear() + " " + getYear(); 
-		String ant_ej = AON.MSG.fiscalYear() + " " + (getYear() -1);
-		
-		tab.setWidth("100%");
-		tab.setCellSpacing(0);
-		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
-		tab.getColumnFormatter().addStyleName(1, AON.AON_CSS.aonWidth130());
-		tab.getColumnFormatter().addStyleName(2, AON.AON_CSS.aonWidth140());
-		tab.getColumnFormatter().addStyleName(3, AON.AON_CSS.aonWidth140());
-
-		tab.setWidget(row, 0, new Label(title));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
-		tab.setWidget(row, 1, new Label(current_ej));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextRight());
-		tab.setWidget(row, 2, new Label(ant_ej));
-		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextRight());
-		tab.setWidget(row, 3, new Label("N\u00famero de Operaciones"));
-		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
-		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextRight());
-		++row;
-
-		for (D2DepositHeaderKey[] innerKeys : keys) {
-			row = paintKey(tab, innerKeys , row);
+		if(type.equals("date")) {
+			DateBox date = (DateBox) w;
+			date.setEnabled(enable);
+			if(getMap().containsKey(key2)){
+				String dStr = getMap().get(key2);
+				Date d = AonDateUtils.parse("dd.MM.yyyy", dStr);
+				if(d != null) date.setValue(d);		
+			}
+			date.addValueChangeHandler(new ValueChangeHandler<Date>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					String value = AonDateUtils.format("dd.MM.yyyy", date.getValue());
+					onEdit(key2, value);
+				}
+			});
+			
 		}
 	}
 	
-	protected int paintKey(FlexTable tab, D2DepositHeaderKey[] keys,  int row) {
-		paintKeyDescription(tab, keys[0], row, 0);
-		paintKeyField(tab,keys[0], row, 1, false);
-		paintKeyField(tab,keys[1],row,2,false);
-		paintKeyField(tab,keys[2],row,3,false);
-		return  ++row;
-	}
-	
+
 	protected void onEdit(String key, String value) {
 		onEdit(key, value, false);
 	}

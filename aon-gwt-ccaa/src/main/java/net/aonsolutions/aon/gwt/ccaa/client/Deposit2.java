@@ -1,23 +1,25 @@
 package net.aonsolutions.aon.gwt.ccaa.client;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.api.client.API;
-import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.fiscal.JsDepositConfiguration;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
-import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import com.esferalia.aon.gwt.common.client.widget.Toolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,15 +29,12 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.vaadin.polymer.Polymer;
-import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.paper.PaperIconButtonElement;
-import com.vaadin.polymer.vaadin.VaadinUploadElement;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
-import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.ConfigurationPanel;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.FreeText;
-import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.ImportPanel;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.MemoryDocuments;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageF1;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageF1A;
@@ -54,6 +53,7 @@ import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageH3;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageH4;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageH5;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageH6;
+import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageH7;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageITR;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageM10;
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageM11_2;
@@ -68,17 +68,15 @@ import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.PageM7_2;
 import net.aonsolutions.aon.gwt.ccaa.shared.DepositMenu;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryItem;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryTemplate;
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 
 
-public class Deposit extends AonTemplate2 {
-	
+public class Deposit2 extends DockLayoutPanel {
+
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 
 	DockLayoutPanel d2Content;
-	FlexTable header;
+	DepositHeader header;
 	ScrollPanel page;
 	
 	API API;
@@ -86,110 +84,119 @@ public class Deposit extends AonTemplate2 {
 	Company company;
 	Map<String, String> deposit;
 	Integer year;
+	String type;
 	DepositMenu depositMenu;
+	List<MemoryTemplate> memoryTemplates;
+	
+	AonToolbarButton undoButton;
+	AonToolbarButton redoButton;
+	AonToolbarButton exportButton;
+	AonToolbarButton importButton;
+	AonToolbarButton importMemoryButton;
+	AonToolbarButton downloadButton;
+	AonToolbarButton resetButton;
 	
 	Stack<Map<String, String>> undoStack = new Stack<Map<String, String>>();
 	Stack<Map<String, String>> redoStack = new Stack<Map<String, String>>();
 	
-	Deposit thiz = this;
+	Deposit2 thiz = this;
 	
-	public Deposit(AonData aonData) {
-		this.aonData = aonData;
-		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
-	}
-	
-	@Override
-	public void onModuleLoad() {
-		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				PaperIconButtonElement.SRC,
-				AonComboBoxElement.SRC,
-				VaadinUploadElement.SRC
-		));
-		
-		Polymer.whenReady(o -> {
-			super.onModuleLoad();
-			inma.getCompany(getAonData(), new AsyncCallback<Company>() {
-				
-				@Override
-				public void onSuccess(Company result) {
-					setCompany(result);
-					startApplication();
-				}
-				
-				@Override public void onFailure(Throwable caught) {}
-			});
-			return null;
+	public Deposit2(AonData aonData) {
+		super(Unit.PX);
+		setAonData(aonData);
+		init();
+		inma.getCompany(getAonData(), new AsyncCallback<Company>() {
+			
+			@Override
+			public void onSuccess(Company result) {
+				setCompany(result);
+				getInma().getDepositTemplates(getAonData(), new AsyncCallback<Vector<MemoryTemplate>>() {
+					
+					@Override
+					public void onSuccess(Vector<MemoryTemplate> result) {
+						setMemoryTemplates(result);
+						startApplication();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
 		});
 	}
 	
+	private void init() {
+		setYear(AonDateUtils.getCurrentYear() - 1);
+		setType("Abreviado");
+	}
+	
 	private void startApplication() {
-		toolbar();
-		westContent();
-		content();
-	}
-	
-	private void toolbar() {
-		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Cuentas Anuales");
-		toolbar.addButton("Deshacer","aon-icon-undo").addClickHandler(undoClickHandler());
-		toolbar.addButton("Rehacer","aon-icon-redo").addClickHandler(redoClickHandler());
-		toolbar.addButton("Exportar","aon-icon-registradores").addClickHandler(exportClickHandler());
-		toolbar.addButton("Importar","aon-icon-file-upload").addClickHandler(importClickHandler());
-		toolbar.addButton("Descargar",AON.AON_CSS.aonIconExcel()).addClickHandler(downloadClickHandler());
-		toolbar.addButton("Resetear", "aon-icon-refresh").addClickHandler(resetClickHandler());
-		setToolbar(toolbar);
-	}
-	
-	private void westContent() {
-		getDockLayoutPanel().setWidgetSize(getWestContent(), 300);
-		setWestContent(new ConfigurationPanel(thiz));
-	}
-    
-	private void content() {
- 		setYear(AonDateUtils.getCurrentYear() - 1);
-		header();
-		deposit();
-		setD2Content(new DockLayoutPanel(Unit.PX));
-		getD2Content().addNorth(getHeader(), 55);
-		getD2Content().add(getPage());
-		setContent(getD2Content());
-	}
-	
-	private void header() {
-		setHeader(new FlexTable());
-		getHeader().setStyleName(AON.AON_CSS.aonFiscalModelTable());
+		addNorth(header(), DepositHeader.HEIGTH);
+		addNorth(toolbar(), AonToolbar.HEIGTH);
+		addWest(menu(), DepositWest.WIDTH);
+		add(content());
 		
-		Label image = new Label("");
-		image.setStyleName(AON.AON_CSS.aonRegistroMercantilImage());
+	}
+	private Widget menu() {
+		return new DepositWest(thiz);
+	}
+	
+	private Widget toolbar() {
+		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(getCompany().getDocument(),AonStringUtils.SPACE, getCompany().getName()));
+		
+		undoButton = new AonToolbarButton("Deshacer", AON.CSS.aonIconUndo());
+		undoButton.addClickHandler(undoClickHandler());
+		toolbarPanel.add(undoButton);
 
-		getHeader().setWidget(0, 0, image);
-		getHeader().getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
-		getHeader().getFlexCellFormatter().setRowSpan(0, 0, 2);
+		redoButton = new AonToolbarButton("Anular", AON.CSS.aonIconRedo());
+		redoButton.addClickHandler(redoClickHandler());
+		toolbarPanel.add(redoButton);
 		
-		getHeader().setWidget(0, 1, new Label("Cuentas Anuales"));
-		getHeader().getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		getHeader().getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonFiscalRegistroMercantil2());
-		getHeader().getFlexCellFormatter().setRowSpan(0, 1, 2);
+		exportButton = new AonToolbarButton("Exportar", AON.CSS.aonIconDownload());
+		exportButton.addClickHandler(exportClickHandler());
+		toolbarPanel.add(exportButton);
 		
-		Label typeLabel = new Label("Tipo");
+		importButton = new AonToolbarButton("Importar D2", AON.CSS.aonIconUpload());
+		importButton.addClickHandler(importClickHandler());
+		toolbarPanel.add(importButton);
+		
+		importMemoryButton = new AonToolbarButton("Importar Memoria", AON.CSS.aonIconImport());
+		importMemoryButton.addClickHandler(importMemoryClickHandler());
+		importMemoryButton.setVisible(!getMemoryTemplates().isEmpty());
+		toolbarPanel.add(importMemoryButton);
+		
+		downloadButton = new AonToolbarButton("Descargar Excel", AON.CSS.aonIconExcel());
+		downloadButton.addClickHandler(downloadClickHandler());
+		toolbarPanel.add(downloadButton);
+		
+		resetButton = new AonToolbarButton("Resetear", AON.CSS.aonIconRefresh());
+		resetButton.addClickHandler(resetClickHandler());
+		toolbarPanel.add(resetButton);
+		
+		return toolbarPanel;
+	}
+	
+	private Widget content() {
+		deposit();
+		return getPage();
+	}
+	
+	private Widget header() {
+		Label typeLabel = new Label(getType());
+		typeLabel.getElement().getStyle().setCursor(Cursor.POINTER);
 		typeLabel.addClickHandler(changeTypeClickHandler());
-		getHeader().setWidget(0, 2, typeLabel);
-		getHeader().getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-		getHeader().getFlexCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonFiscalRegistroMercantil2());
-		
-		getHeader().setWidget(1, 0, new Label("20XX"));
-		getHeader().getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-		getHeader().getFlexCellFormatter().addStyleName(1, 0, AON.AON_CSS.aonFiscalRegistroMercantil2());
+		setHeader(new DepositHeader(typeLabel, getYear()));
+		return getHeader();
 	}
 	
 	public void updateHeader(String type, Integer year) {
+		setType(type);
 		Label typeLabel = new Label(type);
+		typeLabel.getElement().getStyle().setCursor(Cursor.POINTER);
 		typeLabel.addClickHandler(changeTypeClickHandler());
-		getHeader().setWidget(0, 2, typeLabel);
-		getHeader().setWidget(1, 0, new Label(year.toString()));
+		getHeader().refresh(typeLabel, year);
 	}
 	
 	private void updateType(String type) {
@@ -197,7 +204,7 @@ public class Deposit extends AonTemplate2 {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {
-				Map<String, String> m = new HashMap<String, String>();
+				Map<String, String> m = new HashMap<>();
 				for (String k : getDeposit().keySet()) {
 					m.put(k, getDeposit().get(k));
 				}
@@ -234,61 +241,63 @@ public class Deposit extends AonTemplate2 {
 	
 	public void updatePage(DepositMenu depositMenu) {
 		setDepositMenu(depositMenu);
-//		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
-//		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
-//		if(DepositMenu.SRA.equals(depositMenu)) getPage().setWidget(new PageH6(thiz));
-//		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
-//		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
-//		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));
-//		if(DepositMenu.ECPN.equals(depositMenu)) getPage().setWidget(new PageH4(thiz));
-//		if(DepositMenu.DM.equals(depositMenu)) getPage().setWidget(new PageH5(thiz));
-//		
-//		// MEMORIA
-//		if(DepositMenu.AE.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT1", false));
-//		if(DepositMenu.BP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT2", false));
-//		if(DepositMenu.AR_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT3", false));
-//		if(DepositMenu.AR_CN.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
-//		if(DepositMenu.NRV.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT4", false));
-//		if(DepositMenu.IMIII_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT5", false));
-//		if(DepositMenu.IMIII_CN.equals(depositMenu)) getPage().setWidget(new PageM5_2(thiz));
-//		if(DepositMenu.AF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT6", false));
-//		if(DepositMenu.AF_CN.equals(depositMenu)) getPage().setWidget(new PageM6_2(thiz));
-//		if(DepositMenu.PF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT7", false));
-//		if(DepositMenu.PF_CN.equals(depositMenu)) getPage().setWidget(new PageM7_2(thiz));
-//		if(DepositMenu.FP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT8", false));
-//		if(DepositMenu.SF.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT9", false));
-//		if(DepositMenu.IG.equals(depositMenu)) getPage().setWidget(new PageM10(thiz));
-//		if(DepositMenu.SDL_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT11", false));
-//		if(DepositMenu.SDL_CN.equals(depositMenu)) getPage().setWidget(new PageM11_2(thiz));
-//		if(DepositMenu.OPV_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT12", false));
-//		if(DepositMenu.OPV_CN.equals(depositMenu)) getPage().setWidget(new PageM12_2(thiz));
-//		if(DepositMenu.OI_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT13", false));
-//		if(DepositMenu.OI_CN.equals(depositMenu)) getPage().setWidget(new PageM13_2(thiz));
-//		if(DepositMenu.IM_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT14", false));
-//		if(DepositMenu.IM_CN.equals(depositMenu)) getPage().setWidget(new PageM14_2(thiz));
-//		if(DepositMenu.IA.equals(depositMenu)) getPage().setWidget(new PageM15(thiz));
-//		
-//		if(DepositMenu.D.equals(depositMenu)) getPage().setWidget(new MemoryDocuments(thiz));
-//		
-//		// TODO MODELO AUTOCARTERA
-//		if(DepositMenu.MA.equals(depositMenu)) getPage().setWidget(new PageF1(thiz));
-//		if(DepositMenu.MA1.equals(depositMenu)) getPage().setWidget(new PageF1A(thiz));
-//		if(DepositMenu.MA11.equals(depositMenu)) getPage().setWidget(new PageF1B(thiz));
-//		if(DepositMenu.MA2.equals(depositMenu)) getPage().setWidget(new PageF1C(thiz));
-//		if(DepositMenu.MA3.equals(depositMenu)) getPage().setWidget(new PageF1D(thiz));
-//		if(DepositMenu.MA4.equals(depositMenu)) getPage().setWidget(new PageF1E(thiz));
-//		if(DepositMenu.MA5.equals(depositMenu)) getPage().setWidget(new PageF1F(thiz));
-//		if(DepositMenu.MA6.equals(depositMenu)) getPage().setWidget(new PageF1G(thiz));
-//		if(DepositMenu.MA7.equals(depositMenu)) getPage().setWidget(new PageF1H(thiz));
-//		
-//		if(DepositMenu.IP.equals(depositMenu)) getPage().setWidget(new PageF2(thiz));
-//		if(DepositMenu.CHD.equals(depositMenu)) getPage().setWidget(new PageF3(thiz));		
+		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
+		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
+		if(DepositMenu.SRA.equals(depositMenu)) getPage().setWidget(new PageH6(thiz));
+		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
+		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
+		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));
+		if(DepositMenu.ECPN.equals(depositMenu)) getPage().setWidget(new PageH4(thiz));
+		if(DepositMenu.DM.equals(depositMenu)) getPage().setWidget(new PageH5(thiz));
+		if(DepositMenu.DC.equals(depositMenu)) getPage().setWidget(new PageH7(thiz));
+		
+		// MEMORIA
+		if(DepositMenu.AE.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT1", false));
+		if(DepositMenu.BP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT2", false));
+		if(DepositMenu.AR_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT3", false));
+		if(DepositMenu.AR_CN.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
+		if(DepositMenu.NRV.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT4", false));
+		if(DepositMenu.IMIII_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT5", false));
+		if(DepositMenu.IMIII_CN.equals(depositMenu)) getPage().setWidget(new PageM5_2(thiz));
+		if(DepositMenu.AF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT6", false));
+		if(DepositMenu.AF_CN.equals(depositMenu)) getPage().setWidget(new PageM6_2(thiz));
+		if(DepositMenu.PF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT7", false));
+		if(DepositMenu.PF_CN.equals(depositMenu)) getPage().setWidget(new PageM7_2(thiz));
+		if(DepositMenu.FP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT8", false));
+		if(DepositMenu.SF.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT9", false));
+		if(DepositMenu.IG.equals(depositMenu)) getPage().setWidget(new PageM10(thiz));
+		if(DepositMenu.SDL_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT11", false));
+		if(DepositMenu.SDL_CN.equals(depositMenu)) getPage().setWidget(new PageM11_2(thiz));
+		if(DepositMenu.OPV_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT12", false));
+		if(DepositMenu.OPV_CN.equals(depositMenu)) getPage().setWidget(new PageM12_2(thiz));
+		if(DepositMenu.OI_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT13", false));
+		if(DepositMenu.OI_CN.equals(depositMenu)) getPage().setWidget(new PageM13_2(thiz));
+		if(DepositMenu.IM_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT14", false));
+		if(DepositMenu.IM_CN.equals(depositMenu)) getPage().setWidget(new PageM14_2(thiz));
+		if(DepositMenu.IA.equals(depositMenu)) getPage().setWidget(new PageM15(thiz));
+		
+		if(DepositMenu.D.equals(depositMenu)) getPage().setWidget(new MemoryDocuments(thiz));
+		
+		// TODO MODELO AUTOCARTERA
+		if(DepositMenu.MA.equals(depositMenu)) getPage().setWidget(new PageF1(thiz));
+		if(DepositMenu.MA1.equals(depositMenu)) getPage().setWidget(new PageF1A(thiz));
+		if(DepositMenu.MA11.equals(depositMenu)) getPage().setWidget(new PageF1B(thiz));
+		if(DepositMenu.MA2.equals(depositMenu)) getPage().setWidget(new PageF1C(thiz));
+		if(DepositMenu.MA3.equals(depositMenu)) getPage().setWidget(new PageF1D(thiz));
+		if(DepositMenu.MA4.equals(depositMenu)) getPage().setWidget(new PageF1E(thiz));
+		if(DepositMenu.MA5.equals(depositMenu)) getPage().setWidget(new PageF1F(thiz));
+		if(DepositMenu.MA6.equals(depositMenu)) getPage().setWidget(new PageF1G(thiz));
+		if(DepositMenu.MA7.equals(depositMenu)) getPage().setWidget(new PageF1H(thiz));
+		
+		if(DepositMenu.IP.equals(depositMenu)) getPage().setWidget(new PageF2(thiz));
+		if(DepositMenu.CHD.equals(depositMenu)) getPage().setWidget(new PageF3(thiz));		
 	}
 	
 	private static final String IDA = "Hoja Identificativa de la sociedad";
 	private static final String ITR = "Identificador del titular real";
 	private static final String SRA = "Documento sobre servicios a terceros";
 	private static final String AR = "Aplicaci\u00f3n de resultados";
+	private static final String CVA = "Declaraci\u00f3n Covid";
 	private static final String BS = "Balance de situaci\u00f3n";
 	private static final String PYG = "Cuenta de perdidas y ganancias";
 	private static final String ECPN = "Estado de cambios en el patrimonio neto";
@@ -306,10 +315,17 @@ public class Deposit extends AonTemplate2 {
 		flex_table.setWidget(index, 1, cbIDA);
 		index++;
 		
-		if(year >= 2016 && year < 2018){
+		if(year >= 2016){
 			flex_table.setWidget(index, 0, new Label(AR));
 			CheckBox cbAR = new CheckBox();cbAR.setValue(true);
 			flex_table.setWidget(index, 1, cbAR);
+			index++;
+		}
+		
+		if(year >= 2020){
+			flex_table.setWidget(index, 0, new Label(CVA));
+			CheckBox cbCVA = new CheckBox();cbCVA.setValue(true);
+			flex_table.setWidget(index, 1, cbCVA);
 			index++;
 		}
 		
@@ -387,15 +403,17 @@ public class Deposit extends AonTemplate2 {
 			}
 		});
 		flex_table.setWidget(0, 1, cbALL);
-		AonDialog dialog = new AonDialog("Descargar Deposito", flex_table) {
+		AonDialog dialog = new AonDialog("Descargar Deposito", flex_table);
+		dialog.setAutoHideEnabled(true);
+		dialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			protected void onCancel() {
-				hide();
+			public void onCancel() {
+				dialog.hide();
 			}
 			
 			@Override
-			protected void onAccept() {
+			public void onAccept() {
 				String options = "";
 				for(Integer i = 1; i < flex_table.getRowCount(); i++){
 					CheckBox cb = (CheckBox) flex_table.getWidget(i, 1);
@@ -405,7 +423,7 @@ public class Deposit extends AonTemplate2 {
 				String fileDownloadURL = GWT.getModuleBaseURL() + "/CCAAPrint"
 	                	+ "?schemaId=" + String.valueOf(1)
 	                	+ "&domainId=" + Integer.toString(getAonData().getDomain().getId())
-	                	+ "&domainName=" + getCurrentDomainName()
+	                	+ "&domainName=" + getAonData().getDomain().getName()
 	                	+ "&cif=" + getCompany().getDocument()
 						+ "&razonSocial=" + getCompany().getName()
 						+ "&year=" + String.valueOf(year)
@@ -414,12 +432,9 @@ public class Deposit extends AonTemplate2 {
 						+ "&format=" + format
 						+ "&isMemory=" + false;
 				Window.open( fileDownloadURL, "_blank",null);
-				hide();
+				dialog.hide();
 			}
-		};
-		dialog.setAutoHideEnabled(true);
-		dialog.getElement().getStyle().setWidth(310, Unit.PX);
-		dialog.center();
+		});		
 	}
 	
 	/***** CLICK HANDLER *****/
@@ -428,41 +443,27 @@ public class Deposit extends AonTemplate2 {
 		return new ClickHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				getAPI().getFiscal().getDepositConfiguration(new AsyncCallback<JSON<JsDepositConfiguration>>() {
+			public void onClick(ClickEvent event) {					
+				ListBox acb = new ListBox();
+				acb.addItem("Abreviado");
+				acb.addItem("Pymes");
+				acb.setSelectedIndex("Abreviado".equalsIgnoreCase(getType()) ? 0 : 1);
+						
+			   	AonDialog dialog = new AonDialog("Cambiar Tipo", acb);
+			   	dialog.setAutoHideEnabled(true);
+			   	dialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
-					public void onSuccess(JSON<JsDepositConfiguration> result) {
-						JsDepositConfiguration js = result.getData().get(0);
-						AonComboBox acb = new AonComboBox();
-				       	acb.setItemLabelPath("name");
-				    	acb.setItemValuePath("name");
-				    	acb.setItems(js.getOperationOption());
-				    	acb.setInputElementValue(js.getOperation());
-				    	acb.setStyle("padding-left:20px;padding-right:20px;padding-bottom: 20px; width:250px;");
-				    	acb.setLabel("Tipo Deposito");
-				    	AonDialog dialog = new AonDialog("Cambiar Tipo", acb) {
-							
-							@Override
-							protected void onCancel() {
-								hide();
-							}
-							
-							@Override
-							protected void onAccept() {
-								hide();
-								updateType(acb.getInputElementValue());
-							}
-						};
-						dialog.setAutoHideEnabled(true);
-						dialog.addAutoHidePartner(acb.getElementById("overlay"));
-						dialog.getElement().getStyle().setWidth(310, Unit.PX);
-						dialog.center();
+					public void onCancel() {
+						dialog.hide();
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
-				});
+					public void onAccept() {
+						dialog.hide();
+						updateType(acb.getSelectedItemText());						
+					}
+				}); 		
 			}
 		};
 	}
@@ -527,12 +528,14 @@ public class Deposit extends AonTemplate2 {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				Window.alert("export");
 				inma.getDepositExercises(getAonData(), new AsyncCallback<String[]>() {
 
 					@Override public void onFailure(Throwable caught) {}
 
 					@Override
 					public void onSuccess(String[] result) {
+						Window.alert("export2");
 						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_deposit/"
 				            	+ "?domain_id=" + Integer.toString(getAonData().getDomain().getId())
 				            	+ "&year="+ year;
@@ -558,15 +561,18 @@ public class Deposit extends AonTemplate2 {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AonDialog dialog = new AonDialog("Resetear", new Label("Est\u00e1 seguro de resetear el dep\u00f3sito de cuentas Anuales del ejercicio " + getYear() + ". Se perder\u00e1n todos los datos almacenados hasta ahora.")) {
+				AonDialog dialog = new AonDialog("Resetear", new Label("Est\u00e1 seguro de resetear el dep\u00f3sito de cuentas Anuales del ejercicio " + getYear() + ". Se perder\u00e1n todos los datos almacenados hasta ahora."));
+				dialog.setAutoHideEnabled(true);
+				dialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
-					protected void onCancel() {
-						hide();
+					public void onCancel() {
+						dialog.hide();
 					}
 					
-					@Override protected void onAccept() {
-						hide();
+					@Override
+					public void onAccept() {
+						dialog.hide();
 						getInma().reset(getAonData(), getCompany(), getYear(), new AsyncCallback<Map<String,String>>() {
 							
 							@Override
@@ -584,14 +590,9 @@ public class Deposit extends AonTemplate2 {
 							}
 							
 							@Override public void onFailure(Throwable caught) {}
-						});
-
+						});						
 					}
-				};
-				dialog.setAutoHideEnabled(true);
-				dialog.getElement().getStyle().setWidth(310, Unit.PX);
-				dialog.center();
-				
+				});
 			}
 		};
 	}
@@ -601,39 +602,110 @@ public class Deposit extends AonTemplate2 {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				getInma().getDepositTemplates(getAonData(), new AsyncCallback<Vector<MemoryTemplate>>() {
-					
+				VaadinUpload upload = new VaadinUpload();
+				String dataRequest = "?domain_name="+ getAonData().getDomain().getName() 
+						+ "&domain_id="+ getAonData().getDomain().getId()
+						+ "&login="+ getAonData().getUser().getLogin()
+						+ "&year="+ getYear();
+						
+				upload.setTarget(GWT.getModuleBaseURL() + "uploadD2" + dataRequest);
+				AonDialog dialog = new AonDialog("Importar", upload);
+				dialog.setAutoHideEnabled(true);
+				dialog.confirm(new AonAcceptDialogCallback() {
+							
 					@Override
-					public void onSuccess(Vector<MemoryTemplate> result) {
-//						ImportPanel ip = new ImportPanel(thiz, result);
-//						AonDialog dialog = new AonDialog("Importar", ip) {
-//							
-//							@Override
-//							protected void onCancel() {
-//								hide();
-//							}
-//							
-//							@Override
-//							protected void onAccept() {
-//								hide();
-//								ip.action();
-//							}
-//						};
-//						dialog.setAutoHideEnabled(true);
-//						dialog.addAutoHidePartner(ip.getMemoryBox().getElementById("overlay"));
-//						dialog.addAutoHidePartner(ip.getYearBox().getElementById("overlay"));
-//						dialog.addAutoHidePartner(ip.getSocBox().getElementById("overlay"));
-//						dialog.getElement().getStyle().setWidth(310, Unit.PX);
-//						dialog.center();
+					public void onCancel() {
+						dialog.hide();
 					}
-					
-					@Override public void onFailure(Throwable caught) {}
+						
+					@Override
+					public void onAccept() {
+						dialog.hide();
+						getInma().getSchema(getAonData(), getCompany(), getYear(), false, new AsyncCallback<Map<String, String>>() {
+
+							@Override public void onFailure(Throwable caught) {}
+
+							@Override 
+							public void onSuccess(Map<String, String> result) {
+								Map<String, String> m = new HashMap<String, String>();
+								for (String k : getDeposit().keySet()) {
+									m.put(k, getDeposit().get(k));
+								}
+								getUndoStack().push(m);
+								getRedoStack().clear();
+								
+								setDeposit(result);
+								refreshPage();	
+							}
+						});
+					}
 				});
 			}
 		};
 	}
 	
-	
+	private ClickHandler importMemoryClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				ListBox list = new ListBox();
+				for (Integer i = 0 ; i < getMemoryTemplates().size(); i++) {
+					MemoryTemplate memoryTemplate = getMemoryTemplates().get(i);
+					list.addItem(memoryTemplate.getName(), memoryTemplate.getId() + "");
+				}
+								
+				AonDialog dialog = new AonDialog("Importar Memoria", list);
+				dialog.setAutoHideEnabled(true);
+				dialog.confirm(new AonAcceptDialogCallback() {
+						
+					@Override
+					public void onCancel() {
+						dialog.hide();
+					}
+						
+					@Override
+					public void onAccept() {
+						dialog.hide();
+						String idStr = list.getSelectedValue();
+						Integer id = Integer.parseInt(idStr);
+				    	MemoryTemplate m = null;
+				    	for(MemoryTemplate mt : getMemoryTemplates()) {	
+				    		if(mt.getId().equals(id) || mt.getId() == id) m = mt;
+				    	}
+				    	if(m != null)
+					    	
+				    	getInma().updateTexts(getAonData(),m, getDeposit(), new AsyncCallback<Map<String, String>>() {
+
+				    		@Override public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(Map<String, String> result) {
+								Map<String, String> m = new HashMap<String, String>();
+								for (String k : getDeposit().keySet()) { 
+									m.put(k, getDeposit().get(k));
+								}
+								getUndoStack().push(m);
+								getRedoStack().clear();
+								
+								setDeposit(result);
+								getInma().saveDeposit(getAonData(), getDeposit(), getYear(), new AsyncCallback<Void>() {
+										
+									@Override
+									public void onSuccess(Void result) {
+										refreshPage();
+									}
+									
+									@Override public void onFailure(Throwable caught) {}
+								});
+							}
+						});
+							
+					}
+				});
+			}
+		};
+	}
 	
 	/***** GETTERS & SETTERS *****/
 	
@@ -661,6 +733,16 @@ public class Deposit extends AonTemplate2 {
 		this.company = company;
 	}
 	
+	public List<MemoryTemplate> getMemoryTemplates() {
+		if(memoryTemplates == null) 
+			memoryTemplates = new LinkedList<>();
+		return memoryTemplates;
+	}
+	
+	public void setMemoryTemplates(List<MemoryTemplate> memoryTemplates) {
+		this.memoryTemplates = memoryTemplates;
+	}
+	
 	public Map<String, String> getDeposit() {
 		return deposit;
 	}
@@ -677,11 +759,11 @@ public class Deposit extends AonTemplate2 {
 		this.d2Content = d2Content;
 	}
 	
-	public FlexTable getHeader() {
+	public DepositHeader getHeader() {
 		return header;
 	}
 	
-	public void setHeader(FlexTable header) {
+	public void setHeader(DepositHeader header) {
 		this.header = header;
 	}
 	
@@ -699,6 +781,14 @@ public class Deposit extends AonTemplate2 {
 	
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+	
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	public DepositMenu getDepositMenu() {
