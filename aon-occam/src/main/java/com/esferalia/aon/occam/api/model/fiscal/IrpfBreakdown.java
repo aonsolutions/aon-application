@@ -281,6 +281,15 @@ public class IrpfBreakdown implements Serializable {
 	public boolean isSales() {
 		return getInvoiceType() == InvoiceType.SALES;
 	}
+	public boolean isPurchase() {
+		return (invoiceType == InvoiceType.PURCHASE);
+	}
+	public boolean isExpenses() {
+		return (invoiceType == InvoiceType.EXPENSES || invoiceType == InvoiceType.UNDEDUCTIBLE);
+	}
+	public boolean isInput() {
+		return isPurchase() || isExpenses();
+	}
 	
 }
 

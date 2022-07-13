@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.payroll.enumeration;
 
 import java.text.DateFormat;
@@ -274,6 +275,17 @@ public enum ContextVariable implements IResourceable {
 
 	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN),
 
+	REGIME("REGIMEN", VariableType.UNKNOWN),
+	HOME("HOGAR", VariableType.UNKNOWN),
+	GENERAL("GENERAL", VariableType.UNKNOWN),
+	ARTISTS("ARTISTAS", VariableType.UNKNOWN),
+	AGRARIAN("AGRARIO", VariableType.UNKNOWN),
+	FELLOWS("BECARIOS", VariableType.UNKNOWN),
+	TRAINING("FORMACION", VariableType.UNKNOWN),
+	LEARNING("APRENDIZAJE", VariableType.UNKNOWN),
+	ASSIMILATE("ASMILADOS", VariableType.UNKNOWN),
+	REPRESENTATIVES("REPRESENTANTES", VariableType.UNKNOWN),
+	
 	CCC_TYPE("CCC_TYPE", VariableType.INTEGER),
 	
 	SLD_C737("BONIFICACION_TUTORIA", VariableType.DOUBLE, false),
