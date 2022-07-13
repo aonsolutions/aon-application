@@ -1,6 +1,7 @@
 import { AonCard } from "../../../components/aon-card.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
+import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
@@ -957,6 +958,14 @@ const openDialogDailyTracking = ()=> {
       description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
     });
     form.appendChild(trackingDuration);
+
+    // const trackingDuration = setAttributes(new AonTime(),{
+    //   name:durationId,
+    //   id: durationId,
+    //   max:"300:00",
+    //   title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+    // });
+    // form.appendChild(trackingDuration);
 
     const noteId = MESSENGER_IDS.COMMENT_DAILY_TRACKING;
     const note   = createAonTextArea(`${MSG.WRITE_A_COMMENT} (${MSG.OPTIONAL})...`);
