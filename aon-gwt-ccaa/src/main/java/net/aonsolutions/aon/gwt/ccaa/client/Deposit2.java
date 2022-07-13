@@ -297,6 +297,7 @@ public class Deposit2 extends DockLayoutPanel {
 	private static final String ITR = "Identificador del titular real";
 	private static final String SRA = "Documento sobre servicios a terceros";
 	private static final String AR = "Aplicaci\u00f3n de resultados";
+	private static final String CVA = "Declaraci\u00f3n Covid";
 	private static final String BS = "Balance de situaci\u00f3n";
 	private static final String PYG = "Cuenta de perdidas y ganancias";
 	private static final String ECPN = "Estado de cambios en el patrimonio neto";
@@ -314,10 +315,17 @@ public class Deposit2 extends DockLayoutPanel {
 		flex_table.setWidget(index, 1, cbIDA);
 		index++;
 		
-		if(year >= 2016 && year < 2018){
+		if(year >= 2016){
 			flex_table.setWidget(index, 0, new Label(AR));
 			CheckBox cbAR = new CheckBox();cbAR.setValue(true);
 			flex_table.setWidget(index, 1, cbAR);
+			index++;
+		}
+		
+		if(year >= 2020){
+			flex_table.setWidget(index, 0, new Label(CVA));
+			CheckBox cbCVA = new CheckBox();cbCVA.setValue(true);
+			flex_table.setWidget(index, 1, cbCVA);
 			index++;
 		}
 		

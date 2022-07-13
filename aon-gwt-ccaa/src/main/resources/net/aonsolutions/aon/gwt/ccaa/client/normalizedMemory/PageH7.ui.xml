@@ -19,7 +19,7 @@
 						<td>
 							<div class="{aonResources.css.aonGroup}">
 								<div class="{aonResources.css.aonGroupTitle}">
-									<g:InlineLabel text="Declaraci\u00f3n Covid 19" />
+									<g:InlineLabel text="Declaración Covid 19" />
 								</div>
 								<div class="{aonResources.css.aonGroupBody}">
 									<table class="{aonResources.css.aonWidthAll}">

@@ -14,7 +14,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -113,21 +112,24 @@ public class PageH7 extends PageAbs {
 	}
 	
 	private void listBoxItemAdd2(ListBox lb) {
+		lb.addItem("", "");
 		lb.addItem("Por causa de fuerza mayor", "1");
-		lb.addItem("Por causas tecnicas-economicas-organizativas", "2");
+		lb.addItem("Por causas t\u00e9cnicas-econ\u00f3micas-organizativas", "2");
 		lb.addItem("Otras causas", "3");
 	}
 	
 	private void listBoxItemAdd3(ListBox lb) {
-		lb.addItem("Suspension de contratos", "1");
-		lb.addItem("Reduccion de jornada", "2");
+		lb.addItem("", "");
+		lb.addItem("Suspensi\u00f3n de contratos", "1");
+		lb.addItem("Reducci\u00f3n de jornada", "2");
 		lb.addItem("Ambos", "3");
 	}
 	
 	private void listBoxItemAdd4(ListBox lb) {
+		lb.addItem("", "");
 		lb.addItem("No aplica", "0");
 		lb.addItem("Rebaja de rentas a los arrendatarios", "1");
-		lb.addItem("Reestructuracion de deudas", "2");
+		lb.addItem("Reestructuraci\u00f3n de deudas", "2");
 		lb.addItem("Ambos", "3");
 		lb.addItem("Ninguno de los anteriores", "4");
 	}
