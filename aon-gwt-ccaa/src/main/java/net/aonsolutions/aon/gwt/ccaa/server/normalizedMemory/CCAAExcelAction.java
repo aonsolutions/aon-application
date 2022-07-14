@@ -923,8 +923,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			String milesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09002.getCode());
 			String millonesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09003.getCode());
 			
-			idaRow(1, new String[]{"Euros " + getBoolText(euros) + " Miles de euros " + getBoolText(milesEuros)
-				+" Millones de euros " + getBoolText(millonesEuros)});	
+			String unit = "Euros";
+			if(getBool(milesEuros)) unit = "Miles de Euros";
+			else if(getBool(millonesEuros)) unit = "Millones de Euros";
+			
+			idaRow(1, new String[]{unit});	
 		}else{
 			ssHeader("Microempresas", pageMaxNumber);
 			row = sheet.createRow(rowCount++);cellCount = 0;
@@ -1125,7 +1128,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		idacell("Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)" + CVA8220040 , 0, 7);
+		idacell("Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)", 0, 7);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -61,10 +62,21 @@ public abstract class CCAAPdfAction {
 			if(d2Deposit.getYear() >= 2016){
 				if(options.substring(index, index+1).equals("T")) AP3();index++;
 			}
+			if(d2Deposit.getYear() >= 2020) {
+				if(options.substring(index, index+1).equals("T"))  CVA();index++;
+			}
+			
+	    	if(d2Deposit.getYear() >= 2017) {
+	    		if(options.substring(index, index+1).equals("T")) ITR();index++;
+	    	}
+	    	
+	    	if(d2Deposit.getYear() >= 2018) {
+	    		if(options.substring(index, index+1).equals("T")) SRA();index++;
+	    	}
 			if(options.substring(index, index+1).equals("T")) BA();index++;
 			if(options.substring(index, index+1).equals("T")) PYG();index++;
 			if(d2Deposit.getYear() < 2016){
-		// TODO		if(options.substring(index, index+1).equals("T")) ECPN();index++;
+				if(options.substring(index, index+1).equals("T")) ECPN();index++;
 			}
 			if(options.substring(index, index+1).equals("T")) DM();index++;
 			
@@ -73,11 +85,10 @@ public abstract class CCAAPdfAction {
 					if(options.substring(index, index+1).equals("T")) actionMemory(d2Deposit.getYear(), pos);index++;
 				}
 			}
-	/*
+	
 			if(options.substring(index, index+1).equals("T")) MA();index++;
 			if(options.substring(index, index+1).equals("T")) IP();index++;
-			if(options.substring(index, index+1).equals("T")) CHD();
-	*/	
+			if(options.substring(index, index+1).equals("T")) CHD();	
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -121,7 +132,11 @@ public abstract class CCAAPdfAction {
 		String sl = d2Deposit.getMap().get(D2DepositHeaderKey.IDA01012.getCode());
 		String other = d2Deposit.getMap().get(D2DepositHeaderKey.IDA01013.getCode());
 		if(other == null || other.equalsIgnoreCase("null")) other = "";
-		identification.addCell(tableCell("SA " + getBoolText(sa) + " SL " + getBoolText(sl) + " Otras " + other, 4));
+		String str = "SA";
+		if(getBool(sl)) str = "SL";
+		else if(AonStringUtils.isNotBlank((other))) str = "Otras " + other;
+		
+		identification.addCell(tableCell(str, 4));
 		
 		if(d2Deposit.getYear() >= 2015){
 			identification.addCell(tableCell("LEI", 1));
@@ -276,8 +291,10 @@ public abstract class CCAAPdfAction {
 			String milesEuros = d2Deposit.getMap().get(D2DepositHeaderKey.IDA09002.getCode());
 			String millonesEuros = d2Deposit.getMap().get(D2DepositHeaderKey.IDA09003.getCode());
 			
-			unity.addCell(tableCell("Euros " + getBoolText(euros) + " Miles de euros " + getBoolText(milesEuros)
-				+" Millones de euros " + getBoolText(millonesEuros), 8));
+			String unit = "Euros";
+			if(getBool(milesEuros)) unit = "Miles de Euros";
+			else if(getBool(millonesEuros)) unit = "Millones de Euros";
+			unity.addCell(tableCell(unit, 8));
 
 			document.add(new Paragraph(" "));
 			document.add(unity);
@@ -294,6 +311,328 @@ public abstract class CCAAPdfAction {
 			document.add(new Paragraph(" "));
 			document.add(microEnterprise);
 		}
+		document.newPage();
+	}
+	
+	public void CVA() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		
+		PdfPTable cva1 = new PdfPTable(8);
+		cva1.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		cva1.setWidthPercentage(100);
+  
+		cva1.addCell(tableHeader("Declaraci\u00f3n Covid 19", 8, 10));
+		cva1.addCell(tableCell("Sociedad: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01020.getCode()), 4));
+		cva1.addCell(tableCell("NIF: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01010.getCode()), 4));
+		cva1.addCell(tableCell("Domicilio Social: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01022.getCode()), 8));
+		cva1.addCell(tableCell("Municipio: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01023.getCode()), 4));
+		cva1.addCell(tableCell("Provincia: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01025.getCode()), 4));
+		document.add(new Paragraph(" "));
+		document.add(cva1);
+		
+		PdfPTable cva2 = new PdfPTable(8);
+		cva2.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		cva2.setWidthPercentage(100);
+  
+		cva2.addCell(tableHeader("Medidas laborales aplicadas a la empresa", 8, 10));
+		String CVA8220000 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220000.getCode());
+		cva2.addCell(tableCell("Solicitud de ERTE durante el ejercicio y motivado por la pandemia: " + getBoolText(CVA8220000), 8));
+	
+		String CVA8220010 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220010.getCode());
+		String CVA8220010Str = "";
+		if("1".equals(CVA8220010)) CVA8220010Str = "Por causa de fuerza mayor";
+		else if("2".equals(CVA8220010)) CVA8220010Str = "Por causas técnicas-económicas-organizativas";
+		else if("3".equals(CVA8220010)) CVA8220010Str = "Otras causas";
+		cva2.addCell(tableCell("Ha sido motivado: " + CVA8220010Str, 4));
+
+ 		String CVA8220020 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220020.getCode());
+		String CVA8220020Str = "";
+		if("1".equals(CVA8220020)) CVA8220020Str = "Suspensión de contratos";
+		else if("2".equals(CVA8220020)) CVA8220020Str = "Reducción de jornada";
+		else if("3".equals(CVA8220020)) CVA8220020Str = "Ambos";
+		cva2.addCell(tableCell("Ha determinado: " + CVA8220020Str, 4));
+
+		String CVA8220030 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220030.getCode());
+		cva2.addCell(tableCell("Número de trabajadores en plantilla antes del ERTE: " + CVA8220030, 4));
+		
+		String CVA8220035 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220035.getCode());
+		cva2.addCell(tableCell("Número de trabajadores afectados por el ERTE: " + CVA8220035, 4));
+
+		String CVA8220040 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220040.getCode());
+		cva2.addCell(tableCell("Fecha Inicio: " + CVA8220040, 4));
+		
+		String CVA8220050 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220050.getCode());
+		cva2.addCell(tableCell("Fecha Fin: " + CVA8220050, 4));
+
+		cva2.addCell(tableCell("Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)", 8));
+		
+		String CVA8220060 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220060.getCode());
+		cva2.addCell(tableCell("Porcentaje de personal acogido a permiso retribuido recuperable: " + CVA8220060, 4));
+		
+		String CVA8220065 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220065.getCode());
+		cva2.addCell(tableCell("Duración (Número de días): " + CVA8220065, 4));
+
+		cva2.addCell(tableCell("Baja Laboral por el CORONAVIRUS", 4));
+		String CVA8220070 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220070.getCode());
+		cva2.addCell(tableCell("Porcentaje de personal fijo afectado: " + CVA8220070, 4));
+		
+		document.add(new Paragraph(" "));
+		document.add(cva2);
+
+		
+		PdfPTable cva3 = new PdfPTable(8);
+		cva3.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		cva3.setWidthPercentage(100);
+  
+		cva3.addCell(tableHeader("Alquileres (artículos 1 al 15 Real Decreto-Ley11/2020)", 8, 10));
+			
+		String CVA8220080 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220080.getCode());
+		String CVA8220080Str = "";
+		if("0".equals(CVA8220080)) CVA8220080Str = "No aplica";
+		else if("1".equals(CVA8220080)) CVA8220080Str = "Rebaja de rentas a los arrendatarios";
+		else if("2".equals(CVA8220080)) CVA8220080Str = "Reestructuración de deudas";
+		else if("3".equals(CVA8220080)) CVA8220080Str = "Ambos";
+		else if("4".equals(CVA8220080)) CVA8220080Str = "Ninguno de los anteriores";
+		cva3.addCell(tableCell("Alquileres a terceros (Grandes arrendadores). Ha concedido: " + CVA8220080Str, 8));
+
+		String CVA8220090 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220090.getCode());
+		cva3.addCell(tableCell("Pequeños arrendadores. Ha concedido moratorias voluntarias a los arrendatarios: " + getBoolText(CVA8220090), 8));
+
+		String CVA8220100 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220100.getCode());
+		cva3.addCell(tableCell("Ha recibido ayudas financieras públicas(incluidos avales) al alquiler del local de negocios: " + getBoolText(CVA8220100), 8));
+
+		document.add(new Paragraph(" "));
+		document.add(cva3);
+		
+		PdfPTable cva4 = new PdfPTable(8);
+		cva4.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		cva4.setWidthPercentage(100);
+  
+		cva4.addCell(tableHeader("Avales ICO", 8, 10));
+		cva4.addCell(tableCell("Importe del aval concedido por el ICO en aplicación de los establecido en los articulos 29 y 30 del Real Decreto-Ley 8/2020, de 17 de marzo", 8));
+
+		String CVA8220110 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220110.getCode());
+		cva4.addCell(tableCell("Cantidad: " + CVA8220110, 8));
+
+		String CVA8220120 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220120.getCode());
+		cva4.addCell(tableCell("¿Que porcentaje representa el importe concedido sobre el importe total solicitado? " + CVA8220120, 8));
+		
+		document.add(new Paragraph(" "));
+		document.add(cva4);
+		
+
+		PdfPTable cva5 = new PdfPTable(8);
+		cva5.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		cva5.setWidthPercentage(100);
+ 
+		cva5.addCell(tableHeader("Ayudas públicas", 8, 10));
+		cva5.addCell(tableCell("Describir el plan o programa al que se acoge, el concedente y el sistema(avales, moratoria, aplazamiento, interés bonificado etc.)", 8));
+
+		document.add(new Paragraph(" "));
+		document.add(cva5);
+
+		String CVA8220130 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220130.getCode());
+
+		document.add(new Paragraph(CVA8220130));
+
+		PdfPTable cva6 = new PdfPTable(8);
+		cva6.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		cva6.setWidthPercentage(100);
+  
+		String CVA8220140 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220140.getCode());
+		cva6.addCell(tableCell("Moratoria hipotecaria (artículos 16 a 19 Real Decreto-Ley 11/2020): " + getBoolText(CVA8220140), 8));
+		
+		String CVA8220150 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220150.getCode());
+		cva6.addCell(tableCell("Moratoria no hipotecaria (artículo 18, 21 a 26 Real Decreto-Ley 11/2020): " + getBoolText(CVA8220150), 8));
+
+		String CVA8220160 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220160.getCode());
+		cva6.addCell(tableCell("Se ha solicitado flexifibilización y suspensión de suministros(artículos 42 a 44 Real Decreto-Ley 11/2020): " + getBoolText(CVA8220160), 8));
+
+		String CVA8220170 = d2Deposit.getMap().get(D2DepositHeaderKey.CVA8220170.getCode());
+		cva6.addCell(tableCell("Se ha acogido a las medidas de apoyo del sector del Turismo de los artículos 12 y 13 del Real Decreto-Ley 7/2020, de 12 de marzo: " + getBoolText(CVA8220170), 8));
+
+		document.add(new Paragraph(" "));
+		document.add(cva6);
+		document.newPage();
+	}
+	
+	public void ITR() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		
+		PdfPTable itr1 = new PdfPTable(8);
+		itr1.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		itr1.setWidthPercentage(100);
+  
+		itr1.addCell(tableHeader("Identificador del Titular Real", 8, 10));
+		String ITR8080829 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8080829.getCode());
+		itr1.addCell(tableCell("La entidad está sujeta a la obligación de identificar al titular real proque no cotiza en mercados regulados: " + getBoolText(ITR8080829), 8));
+
+		document.add(new Paragraph(" "));
+		document.add(itr1);
+		
+		PdfPTable itr0 = new PdfPTable(7);
+		itr0.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		itr0.setWidthPercentage(100);
+  
+		itr0.addCell(tableHeader("Titular real persona física con porcentaje de participación superior al 25%", 8, 10));
+		itr0.addCell(tableHeader("Nombre y Apellidos", 1, 10));
+		itr0.addCell(tableHeader("DNI / Código de Identificación Extranjero", 1, 10));
+		itr0.addCell(tableHeader("Fecha de Nacimiento", 1, 10));
+		itr0.addCell(tableHeader("Nacionalidad", 1, 10));
+		itr0.addCell(tableHeader("Pais de Residencia", 1, 10));
+		itr0.addCell(tableHeader("% Participación Directa", 1, 10));
+		itr0.addCell(tableHeader("% Participación Indirecta", 1, 10));
+		
+		for(Integer i = 0; i< D2DepositConstants.ITR_KEYS_1.length; i+=7){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_1[i],
+					D2DepositConstants.ITR_KEYS_1[i+1],
+					D2DepositConstants.ITR_KEYS_1[i+2],
+					D2DepositConstants.ITR_KEYS_1[i+3],
+					D2DepositConstants.ITR_KEYS_1[i+4],
+					D2DepositConstants.ITR_KEYS_1[i+5],
+					D2DepositConstants.ITR_KEYS_1[i+6]
+			};
+
+			
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = d2Deposit.getMap().get(d2[j].getCode());
+				itr0.addCell(tableCell(txt, 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr0);
+		
+		PdfPTable itr2 = new PdfPTable(5);
+		itr2.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		itr2.setWidthPercentage(100);
+  
+		itr2.addCell(tableHeader("Titular real persona física con porcentaje de participación superior al 25%", 8, 10));
+		itr2.addCell(tableHeader("Nombre y Apellidos", 1, 10));
+		itr2.addCell(tableHeader("DNI / Código de Identificación Extranjero", 1, 10));
+		itr2.addCell(tableHeader("Fecha de Nacimiento", 1, 10));
+		itr2.addCell(tableHeader("Nacionalidad", 1, 10));
+		itr2.addCell(tableHeader("Pais de Residencia", 1, 10));
+		
+		for(Integer i = 0; i< D2DepositConstants.ITR_KEYS_2.length; i+=5){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_2[i],
+					D2DepositConstants.ITR_KEYS_2[i+1],
+					D2DepositConstants.ITR_KEYS_2[i+2],
+					D2DepositConstants.ITR_KEYS_2[i+3],
+					D2DepositConstants.ITR_KEYS_2[i+4]
+			};
+			
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = d2Deposit.getMap().get(d2[j].getCode());
+				itr2.addCell(tableCell(txt, 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr2);
+		
+		PdfPTable itr3 = new PdfPTable(7);
+		itr3.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		itr3.setWidthPercentage(100);
+		
+		itr3.addCell(tableHeader("Detalle de las sociedades intervinientes en la cadena de control", 8, 10));
+		itr3.addCell(tableHeader("DNI / Código de Identificación Extranjero", 1, 10));
+		itr3.addCell(tableHeader("Nivel en la cadena de control", 1, 10));
+		itr3.addCell(tableHeader("Denominacion Social", 1, 10));
+		itr3.addCell(tableHeader("NIF / Código de Identificación Extranjero", 1, 10));
+		itr3.addCell(tableHeader("Nacionalidad", 1, 10));
+		itr3.addCell(tableHeader("Domicilio Social", 1, 10));
+		itr3.addCell(tableHeader("Datos Registrales / LEI", 1, 10));
+		
+		for(Integer i = 0; i< D2DepositConstants.ITR_KEYS_3.length; i+=7){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_3[i],
+					D2DepositConstants.ITR_KEYS_3[i+1],
+					D2DepositConstants.ITR_KEYS_3[i+2],
+					D2DepositConstants.ITR_KEYS_3[i+3],
+					D2DepositConstants.ITR_KEYS_3[i+4],
+					D2DepositConstants.ITR_KEYS_3[i+5],
+					D2DepositConstants.ITR_KEYS_3[i+6]
+			};
+			
+			for (Integer j = 0; j < d2.length ;j++) {
+				String txt = d2Deposit.getMap().get(d2[j].getCode());
+				itr3.addCell(tableCell(txt, 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr3);
+		
+		document.newPage();
+	}
+
+	public void SRA() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		
+		PdfPTable sra1 = new PdfPTable(8);
+		sra1.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		sra1.setWidthPercentage(100);
+  
+		sra1.addCell(tableHeader("Documento Sobre Servicios a Terceros", 8, 10));
+		sra1.addCell(tableCell("Sociedad: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01020.getCode()), 4));
+		sra1.addCell(tableCell("NIF: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01010.getCode()), 4));
+		sra1.addCell(tableCell("Domicilio Social: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01022.getCode()), 8));
+		sra1.addCell(tableCell("Municipio: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01023.getCode()), 4));
+		sra1.addCell(tableCell("Provincia: " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01025.getCode()), 4));
+		String value = getBoolText(d2Deposit.getMap().get(D2DepositHeaderKey.SRP8080831.getCode()));
+		sra1.addCell(tableCell("Esta hoja SÓLO debe rellenarse si la sociedad ha realizado, durante el presente ejercicio, alguna operación de prestación de servicios a terceros de los contemplados en el articulo 2.1 o) de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo. ¿Rellenar hoja?" + value, 8));
+		
+		sra1.addCell(tableCell("Ámbito territorial de operaciones: ", 4));
+		sra1.addCell(tableCell(getValue(D2DepositHeaderKey.SRP831001), 4));
+		sra1.addCell(tableCell("Municipios donde realiza operaciones:", 4));
+		sra1.addCell(tableCell(getValue(D2DepositHeaderKey.SRP831002), 4));
+		sra1.addCell(tableCell("Provincias donde realiza operaciones:", 4));
+		sra1.addCell(tableCell(getValue(D2DepositHeaderKey.SRP831003), 4));
+		sra1.addCell(tableCell("¿Ha prestado servicios a no residentes?", 4));
+		sra1.addCell(tableCell(getBoolText(getValue(D2DepositHeaderKey.SRP831004)), 4));
+
+		document.add(new Paragraph(" "));
+		document.add(sra1);
+		three("Servicios por cuenta de terceros",  D2PDepositConstants.SRP_KEYS, 
+				null, null, "Ejercicio " + d2Deposit.getYear(), "Ejercicio " + (d2Deposit.getYear()-1),
+				"Número de Operaciones", 10);
+
+		document.newPage();
+	}
+	
+	private String getValue(D2DepositHeaderKey key) {
+		String str = d2Deposit.getMap().get(key.getCode());
+		if(str == null || str.equalsIgnoreCase("null")) return "";
+		return str;
+	}
+	
+	public void ECPN() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		document.newPage();
+	}
+	
+	public void MA() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		document.newPage();
+	}
+	
+	public void IP() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		document.newPage();
+	}
+	
+	public void CHD() throws BadElementException, MalformedURLException, DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
 		document.newPage();
 	}
 	
@@ -685,7 +1024,7 @@ public abstract class CCAAPdfAction {
 		Paragraph p = new Paragraph(text, getFont1(size));
 		p.setAlignment(Element.ALIGN_CENTER);
 		PdfPCell cell = new PdfPCell(p);
-		cell.setBackgroundColor(new BaseColor(Integer.valueOf("fa", 16 ),Integer.valueOf("58", 16 ),Integer.valueOf("58", 16 )));
+		cell.setBackgroundColor(new BaseColor(Integer.valueOf("c4", 16 ),Integer.valueOf("12", 16 ),Integer.valueOf("30", 16 )));
 		cell.setBorder(PdfPCell.NO_BORDER);
 		cell.setColspan(colspan);
 		return cell;
@@ -738,7 +1077,7 @@ public abstract class CCAAPdfAction {
 		p.setAlignment(Element.ALIGN_CENTER);
 		PdfPCell cell = new PdfPCell(p);
 		cell.setBorder(PdfPCell.NO_BORDER);
-		cell.setBackgroundColor(new BaseColor(Integer.valueOf("fa", 16 ),Integer.valueOf("58", 16 ),Integer.valueOf("58", 16 )));
+		cell.setBackgroundColor(new BaseColor(Integer.valueOf("c4", 16 ),Integer.valueOf("12", 16 ),Integer.valueOf("30", 16 )));
 		return cell;
 	}
 
@@ -812,6 +1151,11 @@ public abstract class CCAAPdfAction {
 			return desc.substring(0, pos) + (d2Deposit.getYear()-1) + desc.substring(pos+1);
 
 		}else return desc;	
+	}
+	
+	private boolean getBool(String a) {
+		return a != null && !a.equalsIgnoreCase("null")
+				&& (a.equals("1") || a.equalsIgnoreCase("true"));
 	}
 	
 	private String getBoolText(String a) {
