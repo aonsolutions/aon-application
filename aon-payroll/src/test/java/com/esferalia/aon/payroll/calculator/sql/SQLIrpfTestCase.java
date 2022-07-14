@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
@@ -27,6 +28,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 import org.junit.Test;
@@ -53,9 +55,12 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
+import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Discapacidad;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -2478,6 +2483,141 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 			}
 			System.out.println(e.getCause().getMessage());
 		}
+
+	}
+
+	@Test
+	public void testDisabilityLevel() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.PRINCIPAL, 
+				getFirstDayOfYear(getToday()),
+				null,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), C401.getValue());
+						put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+					}
+				}, new String[] { 
+						"2000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+						new String[] {
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
+				}
+				, null
+				,null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+			}
+		});
+		double nullIrpf = ctx.getIrpf();
+
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA)
+		.set(IRPF_DATA.DOMAIN, contract.getDomain())
+		.set(IRPF_DATA.CONTRACT, contract.getId())
+		.set(IRPF_DATA.START_DATE, endDate)
+		.set(IRPF_DATA.START_DATE, startDate)
+		.set(IRPF_DATA.ISSUE_DATE, startDate)
+		.set(IRPF_DATA.FAMILY_SITUATION, (byte) FamilySituation.OTHER.ordinal())
+		.set(IRPF_DATA.DISABILITY_LEVEL, (byte) DisabilityLevel.GT_EQ_33_LT_65.ordinal())
+		.execute()
+		;
+
+		
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println("DISCAPACIDAD = " + irpfOutcome.getIrpfData().getDisabilityLevel().getName(new Locale("es")) );
+				org.junit.Assert.assertEquals(DisabilityLevel.GT_EQ_33_LT_65, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+			}
+		});
+		
+		double gtEq33Lt65Irpf = ctx.getIrpf();
+		
+		System.out.println( gtEq33Lt65Irpf + " < " + nullIrpf);
+		org.junit.Assert.assertTrue(gtEq33Lt65Irpf < nullIrpf);
+
+		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
+		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA)
+		.set(IRPF_DATA.DOMAIN, contract.getDomain())
+		.set(IRPF_DATA.CONTRACT, contract.getId())
+		.set(IRPF_DATA.START_DATE, endDate)
+		.set(IRPF_DATA.START_DATE, startDate)
+		.set(IRPF_DATA.ISSUE_DATE, startDate)
+//		.set(IRPF_DATA.DEPENDENCE, (byte) 1)
+		.set(IRPF_DATA.FAMILY_SITUATION, (byte) FamilySituation.OTHER.ordinal())
+		.set(IRPF_DATA.DISABILITY_LEVEL, (byte) DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE.ordinal())
+		.execute()
+		;
+
+		
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println("DISCAPACIDAD = " + irpfOutcome.getIrpfData().getDisabilityLevel().getName(new Locale("es")) );
+				org.junit.Assert.assertEquals(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+			}
+		});
+		
+		gtEq33Lt65Irpf = ctx.getIrpf();
+		
+		System.out.println( gtEq33Lt65Irpf + " < " + nullIrpf);
+		org.junit.Assert.assertTrue(gtEq33Lt65Irpf < nullIrpf);
+
+		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
+		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+		
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA)
+		.set(IRPF_DATA.DOMAIN, contract.getDomain())
+		.set(IRPF_DATA.CONTRACT, contract.getId())
+		.set(IRPF_DATA.START_DATE, endDate)
+		.set(IRPF_DATA.START_DATE, startDate)
+		.set(IRPF_DATA.ISSUE_DATE, startDate)
+		.set(IRPF_DATA.FAMILY_SITUATION, (byte) FamilySituation.OTHER.ordinal())
+		.set(IRPF_DATA.DISABILITY_LEVEL, (byte) DisabilityLevel.GT_EQ_65.ordinal())
+		.execute()
+		;
+
+		
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println("DISCAPACIDAD = " + irpfOutcome.getIrpfData().getDisabilityLevel().getName(new Locale("es")) );
+				org.junit.Assert.assertEquals(DisabilityLevel.GT_EQ_65, irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+			}
+		});
+		
+		double gtEq65Irpf = ctx.getIrpf();
+		
+		System.out.println( gtEq65Irpf + " < " + nullIrpf);
+		org.junit.Assert.assertTrue(gtEq65Irpf < nullIrpf);
 
 	}
 
