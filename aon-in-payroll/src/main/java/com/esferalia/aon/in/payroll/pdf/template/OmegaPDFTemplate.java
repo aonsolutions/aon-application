@@ -403,7 +403,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 			
 			while (!matcher.matches()) {
 				matcher = BASE_IT_ALT.matcher(line);
-				if (matcher.matches()) {
+				if (baseIt == null && matcher.matches()) {
 					baseIt = str2Double(string(matcher, "base"));
 				} else {
 					matcher = TOTAL_CC_ALT.matcher(line);
