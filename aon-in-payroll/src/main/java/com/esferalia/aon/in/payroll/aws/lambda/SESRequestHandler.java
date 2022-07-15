@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.aws.lambda;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -301,7 +303,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     	return true ;
     }
  
-    private static boolean handlePDF( InputStream is, Callback callback, ISalaryBuilder<?> salaryBuilder) throws Exception {    	
+    private static boolean handlePDF( InputStream is, Callback callback, ISalaryBuilder<?> salaryBuilder) throws Exception {
     	SalaryPDFParser.parse(is, salaryBuilder);
     	return true ;
     }
@@ -399,44 +401,37 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 	}
 
 	private static String getContentType(ZipEntry zipEntry) {
-		return new MimetypesFileTypeMap().getContentType(zipEntry.getName());	
+		return new MimetypesFileTypeMap().getContentType(zipEntry.getName().toLowerCase());	
 	}
 	
-//    public static void main(String[] args) throws Exception {
-//
-//    	DSLPDFSalaryBuilder dslpdfSalaryBuilder = new DSLPDFSalaryBuilder();
-//		Connection connection = getConnection("payroll-test.aonsolutions.org");
-//		DSLContext dslContext = getDSLContext(connection);
-//    	
-//		SalaryPDFParser.parse(new File("/home/rtrepiana/Downloads/nominas noviembre.PDF"), dslpdfSalaryBuilder);
-//		
-//		dslpdfSalaryBuilder.execute(dslContext, "payroll-test.aonsolutions.org");
-//    	
-//	try (
-//		Connection connection = getConnection("ayudat.aonsolutions.net");
-//		DSLContext dslContext = getDSLContext(connection);
-//		FileInputStream is = new FileInputStream(args[0]);
-//		){	
-//		
-//		JooqPDFSalaryBuilder  salaryBuilder = 
-//		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net")
-//		;
-//		dslContext.transaction((c)->{			
-//			MimeMessage mimeMessage =
-//			handleMIME(
-//					is, 
-//					new MimeCallback(),
-//	   				SESRequestHandler::handleZIP, 
-//    				SESRequestHandler.handlePDF(salaryBuilder)
-//					);
-//		salaryBuilder.execute();
-//		SESSMTPSender.send(getTo(mimeMessage), salaryBuilder.getInserted());
-//		//throw new RuntimeException();
-//		});
-//	} catch (Exception e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//    }
-    
+	public static void main(String[] args) throws Exception {
+		
+		try ( FileInputStream is = new FileInputStream(args[0])){
+		
+    		MimeCallback callback = new MimeCallback();
+    		DSLPDFSalaryBuilder  salaryBuilder = 
+    		new DSLPDFSalaryBuilder();
+			MimeMessage mimeMessage = handleMIME(
+					is , 
+					callback, 
+					SESRequestHandler::handleZIP, 
+					SESRequestHandler.handlePDF(salaryBuilder));
+			
+			String domain = getDomain(mimeMessage);
+    		try (Connection connection = getConnection(domain);){
+    			DSLContext dslContext = getDSLContext(connection);
+	    		dslContext.transaction(c->{	
+		    		salaryBuilder.execute( dslContext, domain);
+		    		try {
+		    			Address[] to = getTo(mimeMessage);		    			
+		    			SESSMTPSender.send(to, salaryBuilder.getInserted());
+		    		} catch ( Exception e ) {
+		    			System.out.println("ERROR:" + e.getMessage());
+		    		}
+	    		
+	    		});
+	    	} 
+		}
+		
+	}
 }
