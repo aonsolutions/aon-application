@@ -1722,7 +1722,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				new String[]{"", current, previous, current, previous, current, previous}, keys,3, 2, 4);
 		sheet.createRow(rowCount++);
 		// 8
-		general(pageMaxNumber, 4, new String[]{"Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito"
+		general(pageMaxNumber, 4, new String[]{"Valoración y variaciones de valor de inversiones financieras valoradas a valor razonable"
 				, "Activos a valor razonable con cambios en p\u00e9rdidas y ganancias", "Activos mantenidos para negociar"
 				, "Activos disponibles para la venta", "TOTAL"}, keys2, 8, 4, null);
 		sheet.createRow(rowCount++);

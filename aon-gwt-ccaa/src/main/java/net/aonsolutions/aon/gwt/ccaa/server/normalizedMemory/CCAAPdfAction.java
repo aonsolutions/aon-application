@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositDescription;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
@@ -108,8 +109,8 @@ public abstract class CCAAPdfAction {
 		case MemoryItem.SITUACION_FISCAL: AP9();break;
 	/*	case MemoryItem.INGRESOS_GASTOS: AP10();break;
 		case MemoryItem.SUBVENCIONES: AP11();break;
-		case MemoryItem.PARTES_VINCULANTES: AP12();break;
-	*/	case MemoryItem.OTRA_INFORMACION: AP13();break;
+	*/	case MemoryItem.PARTES_VINCULANTES: AP12();break;
+		case MemoryItem.OTRA_INFORMACION: AP13();break;
 	/*	case MemoryItem.MEDIOAMBIENTE: AP14();break;
 		case MemoryItem.APLAZAMIENTOS: AP15();break;
 	*/	default: break; 
@@ -599,9 +600,9 @@ public abstract class CCAAPdfAction {
 
 		document.add(new Paragraph(" "));
 		document.add(sra1);
-		three("Servicios por cuenta de terceros",  D2PDepositConstants.SRP_KEYS, 
-				null, null, "Ejercicio " + d2Deposit.getYear(), "Ejercicio " + (d2Deposit.getYear()-1),
-				"Número de Operaciones", 10);
+		String[] columns = { "Ejercicio " + d2Deposit.getYear(), 
+				"Ejercicio " + (d2Deposit.getYear()-1), "Número de Operaciones"};
+		numberTable("Servicios por cuenta de terceros", columns, D2PDepositConstants.SRP_KEYS, null, null, 10);
 
 		document.newPage();
 	}
@@ -633,6 +634,28 @@ public abstract class CCAAPdfAction {
 	public void CHD() throws BadElementException, MalformedURLException, DocumentException, IOException {
 		document.add(header());
 		document.add(subHeader());
+		
+		PdfPTable chd = new PdfPTable(8);
+		chd.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		chd.setWidthPercentage(100);
+		chd.addCell(tableHeader("Certificación de huella digital", 8, 10));
+		
+		document.add(new Paragraph(" "));
+		document.add(chd);
+		
+		PdfPTable chd2 = new PdfPTable(8);
+		chd2.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		chd2.setWidthPercentage(100);
+		chd2.addCell(tableHeader("Nombre de las personas que expiden la certificación", 8, 10));
+		
+		D2DepositFooterKey[] keys = D2DepositConstants.H_ABREVIATE_KEYS;
+		for (D2DepositFooterKey d2DepositFooterKey : keys) {
+			String text = d2Deposit.getMap().get(d2DepositFooterKey.getCode());
+			chd2.addCell(tableCell(text, 8));
+		}
+		document.add(new Paragraph(" "));
+		document.add(chd2);
+		
 		document.newPage();
 	}
 	
@@ -723,6 +746,9 @@ public abstract class CCAAPdfAction {
 		dm.addCell(tableCell((a ? TIC : "-"), 1));
 		dm.addCell(tableCell(text2, 1));
 		dm.addCell(tableCell((b ? TIC : "-"), 1));
+		
+		document.add(new Paragraph(" "));
+		document.add(dm);
 		document.newPage();
 	}
 	
@@ -804,13 +830,52 @@ public abstract class CCAAPdfAction {
 	
 	public void AP6() throws BadElementException, MalformedURLException, DocumentException, IOException{
 		AP6A();
-		// TODO
-//		if(d2Deposit.getYear() < 2016) AP6B();
-//		AP6C();
+// TODO	if(d2Deposit.getYear() < 2016) AP6B();
+		AP6C();
 	}
 	
 	public void AP6A() throws BadElementException, MalformedURLException, DocumentException, IOException{
 		freeText("Apartado " + (d2Deposit.getYear() < 2016 ? "6" : "5") + " - Activos financieros", D2DepositKey.MAT69069001);
+	}
+	
+	public void AP6C() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		document.add(header());
+		document.add(subHeader());
+		document.setPageSize(PageSize.A4_LANDSCAPE);
+		
+		D2DepositKey[][] keys, keys2;
+		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
+			keys = D2PDepositConstants.MRN6_PYMES_KEYS_4;
+			keys2 = D2PDepositConstants.MRN6_PYMES_KEYS_5;
+		}
+		else{
+			keys = D2DepositConstants.MRN6_ABREVIATE_KEYS_4;
+			keys2 = D2DepositConstants.MRN6_ABREVIATE_KEYS_5;		
+		}
+		D2DepositKey[][] keys3 = D2DepositConstants.MRN6_ABREVIATE_KEYS_6;
+		
+		String current = "Largo plazo";
+		String previous = "Corto plazo";
+		
+		String title = "Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito";
+		String[] columns = {"Valores representativos de deuda", "Créditos, derivados y otros (3)", "TOTAL"};
+		String[] subcolumns = {current, previous, current, previous, current, previous};
+		
+		general(title, columns, subcolumns, keys, 10);
+
+		String title2 = "Valoración y variaciones de valor de inversiones financieras valoradas a valor razonable";
+		String[] columns2 = { "Activos a valor razonable con cambios en p\u00e9rdidas y ganancias", "Activos mantenidos para negociar", "Activos disponibles para la venta", "TOTAL"};
+		
+		general(title2, columns2, null, keys2, 10);
+
+		String title3 = "Correcciones valorativas por deterioro registradas en las distintas participaciones";
+		String[] columns3 = {"P\u00e9rdidas por deteriodo al final del ejercicio X", "(+/-) Variaci\u00f3n deteriodo a p\u00e9rdidas y ganancias",
+				"(+) Variaci\u00f3n contra patrimonio neto", "(-) Salidas y reducciones", "(+/-) Traspasos y otras variaciones (combinaciones de negocio, etc.)",
+				"P\u00e9rdida por deteriodo al final del ejercicio Y"};
+		
+		general(title3, columns3, null, keys3, 10);
+
+		document.newPage();
 	}
 	
 	public void AP7() throws BadElementException, MalformedURLException, DocumentException, IOException{
@@ -826,42 +891,17 @@ public abstract class CCAAPdfAction {
 		document.add(header());
 		document.add(subHeader());
 		document.setPageSize(PageSize.A4_LANDSCAPE);
-		D2DepositKey[][] keys, keys2, keys3;
-		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
-			keys = D2PDepositConstants.MRN7_PYMES_KEYS_1;
-			keys2 = D2PDepositConstants.MRN7_PYMES_KEYS_2;
-			keys3 = D2PDepositConstants.MRN7_PYMES_KEYS_3;
-		} else {
-			keys = D2DepositConstants.MRN7_ABREVIATE_KEYS_1;
-			keys2 = D2DepositConstants.MRN7_ABREVIATE_KEYS_2;
-			keys3 = D2DepositConstants.MRN7_ABREVIATE_KEYS_3;
-		}
-		D2DepositKey[][] keys4 = D2DepositConstants.MRN7_ABREVIATE_KEYS_4;
+		D2DepositKey[][] keys = d2Deposit.getType().equalsIgnoreCase("PYMES")
+			? D2PDepositConstants.MRN7_PYMES_KEYS_3 : D2DepositConstants.MRN7_ABREVIATE_KEYS_3;
 
-	/*	if(d2Deposit.getYear() < 2016){
-			// 3 2
-			special(2, pageMaxNumber, 8, new String[]{"Pasivos financieros a largo plazo", "Deudas con entidades de cr\u00e9dito",
-				"Obligaciones y otros valores negociables", "Derivados y otros", "TOTAL"},
-				new String[]{"", current, previous, current, previous, current, previous, current, previous}, keys, 3, 2, 4);
-			sheet.createRow(rowCount++);
-		
-			// 3 2
-			special(2, pageMaxNumber, 8, new String[]{"Pasivos financieros a corto plazos", "Deudas con entidades de cr\u00e9dito",
-				"Obligaciones y otros valores negociables", "Derivados y otros", "TOTAL"},
-				new String[]{"", current, previous, current, previous, current, previous, current, previous}, keys2, 3, 2, 4);
-			sheet.createRow(rowCount++);
-		}
-		// 1
-		general(pageMaxNumber, 7, new String[]{"Vencimiento de las deudas al cierre del ejercicio"+getD2Deposit().getYear(),
-				"Uno", "Dos", "Tres", "Cuatro", "Cinco", "M\u00e1s de 5", "TOTAL"}, keys3, 1, 4, null);
-		sheet.createRow(rowCount++);
-		// 3
-		if(d2Deposit.getYear() < 2016){
-			general(pageMaxNumber, 3, new String[]{"Lineas de descuento y p\u00f3lizas al cierre del ejercicio"+ getD2Deposit().getYear(),
-				"L\u00edï¿½mite concedido", "Dispuesto", "Disponible"},keys4, 3, 4, null);
-		}
-*/
+		String title = "Vencimientos de las deudas al cierre del ejercicio 2021";
+		String[] columns = {"Uno", "Dos", "Tres", "Cuatro", "Cinco", "Más de 5", "TOTAL"};
+
+		general(title, columns, null, keys, 10);
+	
+		document.newPage();
 	}
+
 	
 	public void AP8() throws BadElementException, MalformedURLException, DocumentException, IOException{
 		freeText("Apartado " + (d2Deposit.getYear() < 2016 ? "8" : "7") + " - Fondos propios", D2DepositKey.MAT89089001);	
@@ -869,6 +909,137 @@ public abstract class CCAAPdfAction {
 	
 	public void AP9() throws BadElementException, MalformedURLException, DocumentException, IOException{
 		freeText("Apartado " + (d2Deposit.getYear() < 2016 ? "9" : "8") + " - Situaci\u00f3n fiscal", D2DepositKey.MAT99099001);	
+	}
+
+	public void AP12() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		AP12A();
+		AP12B();
+		AP12C();
+		AP12D();
+		AP12E();
+		AP12F();
+	}
+	
+	public void AP12A() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		freeText("Apartado " + (d2Deposit.getYear() < 2016 ? "12" : "9") + " - Otra informaci\u00f3n", D2DepositKey.MAT139139001);	
+	}
+	
+	public void AP12B() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		document.add(header());
+		document.add(subHeader());
+
+		D2DepositKey[][] keys =  d2Deposit.getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1 : D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1_2016;
+
+		String title = "Operaciones con partes vinculadas en el ejercicio " + d2Deposit.getYear();
+		if(d2Deposit.getYear() < 2016){
+			String[] columns = {"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"};
+			general(title, columns, null, keys, 10);
+		} else {
+			String[] columns = {"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+				"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"};
+			general(title, columns, null, keys, 10);
+		}
+		
+		document.newPage();
+	}
+	
+	public void AP12C() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		document.add(header());
+		document.add(subHeader());
+		
+		D2DepositKey[][] keys =  d2Deposit.getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2 : D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2_2016;
+
+		String title = "Operaciones con partes vinculadas en el ejercicio " + (d2Deposit.getYear() - 1);
+		if(d2Deposit.getYear() < 2016){
+			String[] columns = {"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"};
+			general(title, columns, null, keys, 10);
+		} else {
+			String[] columns = {"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+				"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"};
+			general(title, columns, null, keys, 10);
+		}
+		document.newPage();
+	}
+	
+	public void AP12D() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		document.add(header());
+		document.add(subHeader());
+		
+		D2DepositKey [][] keys;
+		if (d2Deposit.getType().equalsIgnoreCase("PYMES"))
+			 keys =  d2Deposit.getYear() < 2016 ? D2PDepositConstants.MRN12_PYMES_KEYS_3 :  D2PDepositConstants.MRN12_PYMES_KEYS_3_2016;
+		else keys =  d2Deposit.getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_KEYS_3 : D2DepositConstants.MRN12_ABREVIATE_KEYS_3_2016;
+
+		String title = "Saldos pendientes con partes vinculadas en el ejercicio " + d2Deposit.getYear();
+		if(d2Deposit.getYear() < 2016){
+			String[] columns = {"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"};
+			general(title, columns, null, keys, 10);
+		} else {
+			String[] columns = {"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"};
+			general(title, columns, null, keys, 10);
+		}
+		document.newPage();
+	}
+	
+	public void AP12E() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		document.add(header());
+		document.add(subHeader());
+
+		D2DepositKey [][] keys;
+		if (d2Deposit.getType().equalsIgnoreCase("PYMES"))
+			keys = d2Deposit.getYear() < 2016 ? D2PDepositConstants.MRN12_PYMES_KEYS_4 : D2PDepositConstants.MRN12_PYMES_KEYS_4_2016;
+		else keys = d2Deposit.getYear() < 2016 ? D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4 : D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4_2016;
+
+		String title = "Saldos pendientes con partes vinculadas en el ejercicio " + (d2Deposit.getYear()-1);
+		if(d2Deposit.getYear() < 2016){
+			String[] columns = {"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Personal clave de la direcci\u00f3 de la empresa o de la entidad dominante", "Otras partes vinculadas"};
+			general(title, columns, null, keys, 10);
+		} else {
+			String[] columns = {"Entidad Dominante", "Empresas Dependientes", "Negocios conjuntos en los que la empresa sea uno de los participantes",
+					"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
+					"Miembros de los \u00f3rganos de administraci\u00f3n y personal clave de la direcci\u00f3n de la empresa"};
+			general(title, columns, null, keys, 10);
+		}
+		document.newPage();
+	}
+	
+	public void AP12F() throws BadElementException, MalformedURLException, DocumentException, IOException{
+		document.add(header());
+		document.add(subHeader());
+
+		D2DepositKey [][] keys, keys2;
+		if(d2Deposit.getYear() < 2016){
+			if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
+				keys = D2PDepositConstants.MRN12_PYMES_KEYS_5;
+				keys2 = D2PDepositConstants.MRN12_PYMES_KEYS_6;
+			}
+			else{
+				keys = D2DepositConstants.MRN12_ABREVIATE_KEYS_5;
+				keys2 = D2DepositConstants.MRN12_ABREVIATE_KEYS_6;		
+			}
+		} else {
+			keys = D2DepositConstants.MRN12_ABREVIATE_KEYS_5_2016;
+			keys2 = D2DepositConstants.MRN12_ABREVIATE_KEYS_6_2016;		
+		}
+		String title = "Importes recibidos por el personal de alta direcci\u00f3n";
+		two(title, keys, 10);
+		
+		String title2 = "Importes recibidos por los miembros de los \u00f3rganos de administraci\u00f3n";
+		two(title2, keys2, 10);
+		
+		document.newPage();
 	}
 	
 	public void AP13() throws BadElementException, MalformedURLException, DocumentException, IOException{
@@ -892,6 +1063,7 @@ public abstract class CCAAPdfAction {
 		}
 
 		two("N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)", keys, 8);
+		document.newPage();
 	}
 	
 	private void one(String title, D2DepositKey[][] keys, String column, Integer size) throws DocumentException {
@@ -982,6 +1154,103 @@ public abstract class CCAAPdfAction {
 				table.addCell(tableCell(d2Deposit.getMap().get(innerKeys[2].getCode()), 1));
 				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[0].getCode())), 1));
 				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[1].getCode())), 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(table);
+	}
+	
+	private void general(String title, String[] columns, String[] subcolumns, D2DepositKey[][] keys, Integer size) throws DocumentException {
+		boolean hasSubcolums = subcolumns != null && subcolumns.length > 0;
+		Integer columnLength = hasSubcolums ? subcolumns.length : columns.length; 
+		PdfPTable table = new PdfPTable(columnLength + 4);
+		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		table.setWidthPercentage(100);
+
+		if(hasSubcolums) {
+			table.addCell(tableHeader("", 4, size));
+			Integer dif = subcolumns.length / columns.length;
+			for(Integer i = 0; i < columns.length; i++) {
+				table.addCell(tableHeader(columns[i], dif, size));
+			}
+			table.addCell(tableHeader(title, 3, size));
+			table.addCell(tableHeader("", 1, size));
+			for(Integer i = 0; i < subcolumns.length; i++) {
+				table.addCell(tableHeader(subcolumns[i], 1, size));
+			}
+			
+			if(keys != null) {
+				for (D2DepositKey[] innerKeys : keys) {
+					String description = getDescription(D2DepositDescription.DESCRIPTION_MAP.get(innerKeys[0]));
+					table.addCell(tableCell(description, 3));
+					table.addCell(tableCell(innerKeys[0].getCode(), 1));
+					for(Integer j = 0; j < subcolumns.length; j++) {
+						table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[j].getCode())), 1));
+					}
+				}
+			}
+
+		} else {
+			table.addCell(tableHeader(title, 3, size));
+			table.addCell(tableHeader("", 1, size));
+			for(Integer i = 0; i < columns.length; i++) {
+				table.addCell(tableHeader(columns[i], 1, size));
+			}
+			
+			if(keys != null) {
+				for (D2DepositKey[] innerKeys : keys) {
+					String description = getDescription(D2DepositDescription.DESCRIPTION_MAP.get(innerKeys[0]));
+					table.addCell(tableCell(description, 3));
+					table.addCell(tableCell(innerKeys[0].getCode(), 1));
+					for(Integer j = 0; j < columns.length; j++) {
+						table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[j].getCode())), 1));
+					}
+				}
+			}
+
+		}
+		
+		document.add(new Paragraph(" "));
+		document.add(table);
+	}
+	
+	private void numberTable(String title, String[] columns, D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2, 
+			D2DepositKey[][] keys3, Integer size) throws DocumentException {
+		PdfPTable table = new PdfPTable(8);
+		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+		table.setWidthPercentage(100);
+		Integer titleWidth = 8 - columns.length;
+		table.addCell(tableHeader(title, titleWidth, size));
+		for(Integer i = 0; i < columns.length; i++) {
+			table.addCell(tableHeader(columns[i], 1, size));
+		}
+
+		if(keys != null) {
+			for (D2DepositHeaderKey[] innerKeys : keys) {
+				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
+				table.addCell(tableCell(description, titleWidth));
+				for(Integer i = 0; i < columns.length; i++) {
+					table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[i].getCode())), 1));
+				}
+			}
+		}
+		if(keys2 != null) {
+			for (D2DepositHeaderKey[] innerKeys : keys2) {
+				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
+				table.addCell(tableCell(description, titleWidth));
+				for(Integer i = 0; i < columns.length; i++) {
+					table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[i].getCode())), 1));
+				}
+			}
+		}
+		if(keys3 != null) {
+			for (D2DepositKey[] innerKeys : keys3) {
+				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
+				table.addCell(tableCell(description, titleWidth));
+				for(Integer i = 0; i < columns.length; i++) {
+					table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[i].getCode())), 1));
+				}
 			}
 		}
 
