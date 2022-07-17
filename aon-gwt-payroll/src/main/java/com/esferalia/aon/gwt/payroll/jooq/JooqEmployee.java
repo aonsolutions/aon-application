@@ -1035,9 +1035,14 @@ public class JooqEmployee {
 			contractData.setRetaId(contractInfoTable.get(CONTRACT_INFO.ID));
 		
 		ContractType contractTypeObj = new ContractType();
-		ContractTypeRecord contractTypeRecord = contractTypeObj.getContractType(Integer.parseInt(contractData.getContractType()));
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			contractTypeRecord = contractTypeObj.getContractType(Integer.parseInt(contractData.getContractType()));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
-		if(AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P")) {
+		if(canHaveHoursAviable(contractData.getJourneyType(), contractTypeRecord)) {
 		
 			Result<Record> journiesDB = dslContext.select().from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.NAME.like("HORAS%"))
@@ -1143,6 +1148,10 @@ public class JooqEmployee {
 		employeeContractInfo.setContractInfo(contractData);
 		
 		return employeeContractInfo;
+	}
+
+	private static boolean canHaveHoursAviable(Byte journeyType, ContractTypeRecord contractTypeRecord) {
+		return (journeyType != null && journeyType == (byte) 0) || (null != contractTypeRecord && AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P"));
 	}
 
 	private static ArrayList<ContractSalaryInfo> createSalariesInfo(ContractInfo contractData, Result<Record> salaryRecords) {
