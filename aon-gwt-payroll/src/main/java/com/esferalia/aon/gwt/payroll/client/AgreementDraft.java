@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EmptyStringException;
@@ -37,6 +38,8 @@ import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.client.MainAgreement.AgreementChangesCallback;
+import com.esferalia.aon.gwt.payroll.client.MainAgreement.DraftObjectListener;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Event;
@@ -121,6 +124,7 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -139,6 +143,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -287,6 +292,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private class ExtraEditor {
 		Extra extra;
 		
+		Button editButton;
 		Button deleteButton;
 		List<Button> buttons;
 		ListBox paymentListBox;
@@ -314,7 +320,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			});
 			this.buttons = new LinkedList<Button>();
 		}
-
+		
+		String getPaymentExpression() {
+			Payment payment = getExtraPayment(extra);
+			return null == payment ? null : payment.getExpression();
+		}
+		
 		void setReadOnly(boolean readOnly) {
 			if ( this.deleteButton != null )
 				this.deleteButton.setEnabled(!readOnly);
@@ -330,6 +341,27 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				button.setEnabled(!readOnly);
 		}
 
+		void setInheritReadOnly(boolean readOnly) {
+			if ( this.editButton != null )
+				this.editButton.setVisible(!readOnly);
+			if ( this.deleteButton != null )
+				this.deleteButton.setVisible(!readOnly);
+			if ( this.endDateBox != null )
+				this.endDateBox.setReadOnly(readOnly);
+			if ( this.startDateBox != null )
+				this.startDateBox.setReadOnly(readOnly);
+			if ( this.issueDateBox != null )
+				this.issueDateBox.setReadOnly(readOnly);
+			if ( paymentListBox != null ) 
+				AgreementDraft.this.setReadOnly(paymentListBox, readOnly);
+			for ( Button button: buttons )
+				button.setEnabled(!readOnly);
+		}
+
+		void setEditButton(Button button) {
+			this.editButton = button;
+		}
+		
 		void setDeleteButton(Button button) {
 			this.deleteButton = button;
 			this.deleteButton.addClickHandler(new ClickHandler() {
@@ -688,6 +720,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			this.var = var;
 			this.level = level;
 		}
+		
+		String getExpression() {
+			return var.getExpression();
+		}
 
 		void setExpressionTextBox(TextBox textBox) {
 			this.expressionBox = textBox;
@@ -774,6 +810,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private class PaymentEditor {
 		Payment payment;
+		Button editButton;
 		Button deleteButton;
 		TextBox expressionBox;
 		Button enableDisableButton;
@@ -791,6 +828,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				if (StringUtils.equals(payment.getName(), concept.getName()))
 					return concept;
 			return null;
+		}
+		
+		String getPaymentExpression() {
+			return payment.getExpression();
 		}
 
 		// --------------------------------------------------------------------
@@ -810,9 +851,23 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			//	AgreementDraft.this.setReadOnly(typeListBox, readOnly);
 			
 		}
+		
+		void setInheritReadOnly(boolean readOnly) {
+			if ( this.editButton != null )
+				this.editButton.setEnabled(!readOnly);
+			if ( this.deleteButton != null )
+				this.deleteButton.setEnabled(!readOnly);
+			if ( this.enableDisableButton != null )
+				this.enableDisableButton.setEnabled(readOnly);
+			if ( this.expressionBox != null )
+				this.expressionBox.setReadOnly(readOnly);
+			if ( this.descriptionBox != null )
+				descriptionBox.setReadOnly(readOnly);
+		}
 
 		void setEditButton(Button button) {
-
+			this.editButton = button;
+			
 			class EditHandler implements ClickHandler, PaymentDialog.Callback {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -2194,9 +2249,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 		
 		checkTypeOfExistingExtra();
+		checkInheritExtras();
 		
 		// ServiAgreements Buttons
 		boolean isServiAgreement = this.agreementDraftObject.isServiAgreement();
+		ssNumberTextBox.setReadOnly(isServiAgreement);
 		setVisible(serviAgreementPanel.getElement(), isServiAgreement);
 		setVisible(serviAgreementUpdateButton.getElement(), isServiAgreement);
 		
@@ -2237,7 +2294,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						this.payPeriod.setSelectedIndex(0);
 						this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
 						break;
-					}else {
+					} else {
 						this.payPeriod.setSelectedIndex(1);
 						this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
 						break;
@@ -2245,6 +2302,19 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				}
 			}
 		}
+	}
+	
+	private void checkInheritExtras() {
+		boolean hasInheritPayments = false;
+		for(Payment payment : agreementDraftObject.getPayments()) {
+			if(payment.getType() != Payment.Type.CRA_0004)
+				continue;
+			
+			if(AonStringUtils.containsIgnoreCase(payment.getExpression(), "inherit"))
+				hasInheritPayments = true;
+		}
+		
+		if(hasInheritPayments) deckPanelExtras.showWidget(1);
 	}
 
 	// ------------------------------------------
@@ -2346,11 +2416,24 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		for ( IFocusableEditor editor: salaryTableEditors)
 			if(null != editor ) editor.setReadOnly(readOnly);
 		
-		for ( PaymentEditor editor: paymentEditors)
-			editor.setReadOnly(readOnly);
+		for ( PaymentEditor editor: paymentEditors) {
+			if(AonStringUtils.containsIgnoreCase(editor.getPaymentExpression(), "inherit"))
+				editor.setInheritReadOnly(true);
+			else
+				editor.setReadOnly(readOnly);
+		}
 		
-		for ( ExtraEditor editor: extraEditors)
-			editor.setReadOnly(readOnly);
+		for ( ExtraEditor editor: extraEditors) {
+			if(AonStringUtils.containsIgnoreCase(editor.getPaymentExpression(), "inherit"))
+				editor.setInheritReadOnly(true);
+			else
+				editor.setReadOnly(readOnly);
+		}
+		
+		for ( IFocusableEditor editor: salaryTableEditors)
+			if(editor instanceof VariableEditor && 
+					AonStringUtils.containsIgnoreCase(((VariableEditor)editor).getExpression(), "inherit")) 
+				editor.setReadOnly(true);
 		
 		fxButton.setEnabled(!readOnly);
 		undoButton.setEnabled(!readOnly);
@@ -2384,6 +2467,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 			descriptionTextBox.setText(level.getDescription());
 			descriptionTextBox.setVisibleLength(5);
+			descriptionTextBox.setEnabled(false);
 			levelEditor.setDescriptionTextBox(descriptionTextBox);
 			return descriptionTextBox;
 		}
@@ -2481,6 +2565,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryTableEditors.addAll(dumpSalaryTable());
 		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
 		initSalaryTableFrozenColsAndRows();
+		setReadOnly(!agreementDraftObject.isMine());
 	}
 
 	private void setDescription() {
@@ -2986,6 +3071,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionTextBox.getElement().getStyle().setTextIndent(17, Unit.PX);
 		}
 		
+		if(AonStringUtils.containsIgnoreCase(var.getExpression(), "inherit"))
+			expressionTextBox.setEnabled(false);
+		
 		expressionTextBox.ensureDebugId("textBox_" + var.getName()+ "_" + level.getDescription() );
 
 		return variableEditor;
@@ -3168,6 +3256,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentListBox.addItem("-", (String) null);
 
 		Payment extraPayment = getExtraPayment(extra);
+		
 		if (extraPayment != null) {
 			paymentListBox.addItem(extraPayment.getDescription(), String.valueOf(extraPayment.getId()));
 			paymentListBox.setSelectedIndex(1);
@@ -3189,6 +3278,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		formatExtraRow(row);
 
 		ExtraEditor editor = new ExtraEditor(extra);
+		editor.setEditButton(editButton);
 		editor.setEndDateBox(endDateBox);
 		editor.setButtonFor(endButton, endDateBox);
 		editor.setStartDateBox(startDateBox);
@@ -3270,7 +3360,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentEditor.setDescriptionTextBox(descriptionBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
 		paymentEditor.setEnableDisableButton(enableDisableButton);
-
+		
 		if (isDraftPayment(payment)) {
 			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
 			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
@@ -3301,6 +3391,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		HorizontalPanel descriptionHPanel = new HorizontalPanel();
 		descriptionHPanel.setWidth("100%");
 		descriptionHPanel.getElement().getStyle().setPaddingRight(3.00, Unit.PX);
+		descriptionHPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		descriptionBox.setWidth("100%");
 		descriptionHPanel.add(descriptionBox);
@@ -3547,6 +3638,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			}
 		}
 		
+		if(AonStringUtils.containsIgnoreCase(payment.getExpression(), "inherit") && issueValue instanceof TextBox) {
+			String value = ((TextBox)issueValue).getValue();
+			issueValue = new Label(value);
+		}
+			
+			
 		descriptionHPanel.add(issueValue);
 		issueValue.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
 		issueValue.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
@@ -5005,7 +5102,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							AgreementDraftObject agreementDraftObjectNew = agreementDraftObject.createAgreementDraftObject();
 							agreementDraftObject.getChanges(
 									agreementDraftObjectNew, 
-									s -> {
+									result -> {
+										if (!CollectionUtils.isEmpty(result)) {
+											Date lastChange = result.last();
+											agreementDraftObjectNew.setStartDate(lastChange);
+											agreementDraftObjectNew.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
+										}
 										this.setAgreementDraftObject(agreementDraftObjectNew);
 										calculate();
 									}, f -> {});
