@@ -623,7 +623,6 @@ public class AgreementParser {
 			Map<String, String> mapVarNotInsert = new TreeMap<>();
 			
 			// Agreement
-			
 			AgreementRecord agreementRecord = dslContext.insertInto(AGREEMENT)
 				.set(AGREEMENT.DOMAIN, domainId)
 				.set(AGREEMENT.DESCRIPTION, parseDescription(agreement.getAgreementDescription()))
@@ -702,7 +701,7 @@ public class AgreementParser {
 							.set(AGREEMENT_LEVEL_DATA.DOMAIN, domainId)
 							.set(AGREEMENT_LEVEL_DATA.NAME, realName)
 							.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, agreementLevelId)
-							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, lvlData.getValue())
+							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "/*inherit*/" + lvlData.getValue() + "/**/")
 							.set(AGREEMENT_LEVEL_DATA.START_DATE, parseDateToSql(lvlData.getStartDate()))
 							.set(AGREEMENT_LEVEL_DATA.END_DATE, parseDateToSql(lvlData.getEndDate()))
 							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
@@ -778,7 +777,7 @@ public class AgreementParser {
 							.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 							.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
-							.set(AGREEMENT_PAYMENT.EXPRESSION, agreementPayment.getExpression())
+							.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + agreementPayment.getExpression() + "/**/")
 							.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getNormalizeName())
 							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
@@ -878,7 +877,7 @@ public class AgreementParser {
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 					.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE")
+					.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
 					.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
@@ -911,7 +910,7 @@ public class AgreementParser {
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 					.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE")
+					.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
 					.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
