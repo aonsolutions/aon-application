@@ -251,6 +251,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showLoadingMessagePDF(String message) {
 			showLoadingPDF(message);
 		}
+
+		@Override
+		protected void onSelectionAttachChange(boolean isSomethingSelected) {
+			sendAttachEmail.setEnabled(isSomethingSelected);
+		}
 	}
 
 	// ------------------------------------------------- EmployeeIrpfImpl
@@ -914,6 +919,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// EmployeeAttach
 	private HTMLPanel employeeAttachButtons;
+	private AonToolbarButton sendAttachEmail;
 
 	// EmployeeSalary
 	private HTMLPanel employeeSalaryButtons;
@@ -2038,6 +2044,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		};
 		hPanel.add(pdfAttachment);
+		
+		sendAttachEmail = new AonToolbarButton("Email Documento", AON.CSS.aonIconEmail());
+		sendAttachEmail.addClickHandler(e -> contractAttachUI.sendAttachEmail());
+		sendAttachEmail.setEnabled(false);
+		hPanel.add(sendAttachEmail);
 		
 		return hPanel;
 	}

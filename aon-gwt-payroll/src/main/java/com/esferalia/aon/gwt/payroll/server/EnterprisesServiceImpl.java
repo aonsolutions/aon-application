@@ -2041,9 +2041,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getPayrollEmailSendTo(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, Integer enterpriseID) {
+	public String getPayrollEmailSendTo(String domainName) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqMail.getPayrollEmailSendTo(connection, type, enterpriseID);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqMail.getPayrollEmailSendTo(connection, domainId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2347,6 +2348,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void sendAttachEmail(String domainName, String login, MailAccount emailFrom, String emailTo, List<String> ccTo, List<String> bccTo, String subject, String emailBody, List<Integer> attachIds) throws IllegalArgumentException {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqMail.sendAttachEmail(domainName, domainId, login, emailFrom, emailTo, ccTo, bccTo, subject, emailBody, attachIds);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -3365,11 +3376,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public EnterpriseContext getEnterpriseContext(String domainName) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			
 			EnterpriseContext enterpriseContext = new EnterpriseContext();
 			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
-			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId));
+			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId));
 			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
 			
