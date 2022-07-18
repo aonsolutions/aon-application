@@ -308,7 +308,7 @@ public class InvoiceTemplate {
 		if (invoice.isRectifier() && (invoice.getRectificationInvoiceNumber() != null || !AonStringUtils.isEmpty(invoice.getRectificationInvoiceSeries()))) {
 			String rn = AonStringUtils.trimToEmpty(AonNumberUtils.toString(invoice.getRectificationInvoiceNumber()));
 			String rectNum = !AonStringUtils.isBlank(rn) ? AonStringUtils.leftPad(rn, 6, '0') : "";
-			String message = getMsg().rectifies() + " " + AonStringUtils.trimToEmpty(invoice.getRectificationInvoiceSeries()) + " / " + rectNum;
+			String message = getMsg().rectifies() + " " + AonStringUtils.trimToEmpty(invoice.getRectificationInvoiceSeries()) + "/" + rectNum;
 			drawText(contents, message, 50f, y, theme.getTitleTextColor(), boldFont, 10);
 			y-=20;
 		}

@@ -393,11 +393,44 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 			matcher = find(reader, BASE_IT);
 			Double baseIt = str2Double(string(matcher, "base"));
 			
-			matcher = find(reader, TOTAL_CC);
-			Double baseCC = str2Double(string(matcher, "base"));
-			Double nbaseCC = str2Double(string(matcher, "nbase"));
-			Double percentCC = str2Double(string(matcher, "percent"));
-			Double amountCC = str2Double(string(matcher, "amount"));
+			line = reader.readLine();
+			matcher = TOTAL_CC.matcher(line);
+			
+			Double baseCC = null;
+			Double nbaseCC = null;
+			Double percentCC = null;
+			Double amountCC = null;
+			
+			while (!matcher.matches()) {
+				matcher = BASE_IT_ALT.matcher(line);
+				if (baseIt == null && matcher.matches()) {
+					baseIt = str2Double(string(matcher, "base"));
+				} else {
+					matcher = TOTAL_CC_ALT.matcher(line);
+					if (matcher.matches()) {
+						baseCC = str2Double(string(matcher, "base"));
+						nbaseCC = str2Double(string(matcher, "nbase"));
+						percentCC = str2Double(string(matcher, "percent"));
+						amountCC = str2Double(string(matcher, "amount"));
+					}
+				}
+				
+				line = reader.readLine();
+				matcher = TOTAL_CC.matcher(line);
+			}
+			
+			if (baseCC == null) {				
+				baseCC = str2Double(string(matcher, "base"));
+			}
+			if (nbaseCC == null) {				
+				nbaseCC = str2Double(string(matcher, "nbase"));
+			}
+			if (percentCC == null) {				
+				percentCC = str2Double(string(matcher, "percent"));
+			}
+			if (amountCC == null) {				
+				amountCC = str2Double(string(matcher, "amount"));
+			}
 			
 			if (amountCC != null) {
 				costs.put(
@@ -936,12 +969,21 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 	
 	//Base incapacidad temporal.....................................................................     
 	private static final Pattern  BASE_IT = 
-			Pattern.compile("^\\s*Base\\s*incapacidad\\s*temporal\\.{2,}\\s*(?<base>\\d[\\d\\.]*,\\d{2})?\\s*$"
+			Pattern.compile("^\\s*Base\\s*incapacidad\\s*temporal\\.{2,}\\s*(?<base>(-\\s*)?\\d[\\d\\.]*,\\d{2})?\\s*$"
+					, Pattern.CASE_INSENSITIVE);
+
+	//1.250,03     
+	private static final Pattern  BASE_IT_ALT = 
+			Pattern.compile("^\\s*(?<base>(-\\s*)?\\d[\\d\\.]*,\\d{2})?\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 	
 	//TOTAL..............    1.643,58    1.643,58    23,60%    387,88
 	private static final Pattern  TOTAL_CC = 
 			Pattern.compile("^\\s*TOTAL\\.{2,}\\s*(?<base>\\d[\\d\\.]*,\\d{2})?\\s*(?<nbase>\\d[\\d\\.]*,\\d{2})?\\s*((?<percent>\\d{1,2},\\d{2})?%?)\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?\\s*$"
+					, Pattern.CASE_INSENSITIVE);
+	//1.438,22    1.438,22    23,60%    339,42
+	private static final Pattern  TOTAL_CC_ALT = 
+			Pattern.compile("^\\s*(?<base>\\d[\\d\\.]*,\\d{2})?\\s*(?<nbase>\\d[\\d\\.]*,\\d{2})?\\s*((?<percent>\\d{1,2},\\d{2})?%?)\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 	
 	//AT y EP.....................    3,90%    64,10

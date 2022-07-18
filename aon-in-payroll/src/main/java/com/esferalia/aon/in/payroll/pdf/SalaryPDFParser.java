@@ -117,7 +117,7 @@ public class SalaryPDFParser {
 				
 			try {
 				template = parseOmega(template, text, salaryBuilder);
-			} catch (UnknownPDFException e) {
+			} catch (UnknownPDFException e) {					
 				System.err.println(text);
 				continue;
 			}

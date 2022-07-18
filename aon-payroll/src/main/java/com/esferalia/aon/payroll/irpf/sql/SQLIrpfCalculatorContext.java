@@ -51,6 +51,7 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -71,6 +72,7 @@ import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
@@ -784,7 +786,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return false;
 		}
 		try {
-			return irpfDataRs.getBoolean(IrpfDataColumns.DEPENDENCE);
+			return irpfDataRs.getBoolean(IrpfDataColumns.LABOUR_PROLONGATION);
 		} catch (SQLException e) {
 			return rethrow(e);
 		}
@@ -795,9 +797,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		if (irpfDataRs == null) {
 			return Discapacidad.GRADO0;
 		}
+
 		try {
-			int ordinal = irpfDataRs.getInt(IrpfDataColumns.DISABILITY_LEVEL);
-			return getByOrdinal(ordinal, Discapacidad.class);
+			Integer disabilityLevel = 
+			irpfDataRs.getObject(IrpfDataColumns.DISABILITY_LEVEL, Integer.class);
+			return getDiscapacidadByDisabilityLevel(disabilityLevel);
+			
 		} catch (SQLException e) {
 			return rethrow(e);
 		}
@@ -809,7 +814,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return false;
 		}
 		try {
-			return irpfDataRs.getBoolean(IrpfDataColumns.DEPENDENCE);
+			if ( irpfDataRs.getBoolean(IrpfDataColumns.DEPENDENCE) )
+				return true;
+			Integer disabilityLevel = 
+			irpfDataRs.getObject(IrpfDataColumns.DISABILITY_LEVEL, Integer.class);
+			return AonNumberUtils.equals(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE.ordinal(), disabilityLevel);
+			
 		} catch (SQLException e) {
 			return rethrow(e);
 		}
@@ -1412,6 +1422,26 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		.filter( d -> AonStringUtils.equals(ctxVariable.getName(), d.getName()) )
 		.map( d -> Double.parseDouble(d.getExpression() ))
 		.findAny().orElse(def);
+	}
+
+	private static Discapacidad getDiscapacidadByDisabilityLevel(Integer ordinal) {
+		if ( ordinal == null ) {
+			return Discapacidad.GRADO0;
+		} 
+		
+		DisabilityLevel disabilityLevel = getByOrdinal(ordinal, DisabilityLevel.class );
+		if ( disabilityLevel == null ) {
+			return Discapacidad.GRADO0;
+		} 
+		switch (disabilityLevel) {
+		case GT_EQ_65:
+			return Discapacidad.GRADO2;
+		case GT_EQ_33_LT_65:
+		case GT_EQ_33_LT_65_DEPENDENCE:
+			return Discapacidad.GRADO1;
+		default:
+			return Discapacidad.GRADO0;
+		}
 	}
 
 }

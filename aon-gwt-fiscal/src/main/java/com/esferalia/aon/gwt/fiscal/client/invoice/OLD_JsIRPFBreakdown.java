@@ -6,11 +6,11 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class JsIRPFBreakdown extends JavaScriptObject {
+public class OLD_JsIRPFBreakdown extends JavaScriptObject {
 	
 	private static DateTimeFormat DATE_FORMAT = null;
 
-	protected JsIRPFBreakdown() {
+	protected OLD_JsIRPFBreakdown() {
 	}
 	
 	private DateTimeFormat getDateTimeFormat() {

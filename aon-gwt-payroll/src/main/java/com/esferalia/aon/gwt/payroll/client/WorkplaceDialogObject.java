@@ -35,32 +35,29 @@ public class WorkplaceDialogObject {
 	// ------------------------------------------------- DataBase Methods
 	
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(true, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				agreements = getActiveAgreements(result);
+		if(agreements.isEmpty())
+			enterprisesService.getAgreements(true, new AsyncCallback<List<Agreement>>() {
 				
-				getEnterpriseAddresses(
-						s -> success.accept(result),
-						f ->{}
-				);	
-			}
-			
-			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
-				List<Agreement> activeAgreements = new ArrayList<>();
-				for(Agreement agreement : agreements)
-					if(agreement.getId() > 0)
-						activeAgreements.add(agreement);
-				
-				return activeAgreements;
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});	
+				@Override
+				public void onSuccess(List<Agreement> result) {
+					agreements = getActiveAgreements(result);
+					
+					getEnterpriseAddresses(
+							s -> success.accept(result),
+							f ->{}
+					);	
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
+			});	
+		else
+			getEnterpriseAddresses(
+					s -> success.accept(agreements),
+					f ->{}
+			);	
 	}
 	
 	private void getEnterpriseAddresses(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
@@ -114,6 +111,19 @@ public class WorkplaceDialogObject {
 			}
 		});
 		
+	}
+	
+	public void setAgreements(List<Agreement> agreementsContext) {
+		agreements = getActiveAgreements(agreementsContext);
+	}
+	
+	private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
+		List<Agreement> activeAgreements = new ArrayList<>();
+		for(Agreement agreement : agreements){
+			if(agreement.getId() > 0)
+				activeAgreements.add(agreement);
+		}
+		return activeAgreements;
 	}
 	
 	// ------------------------------------------------- Getters / Setters

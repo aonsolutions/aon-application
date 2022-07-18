@@ -131,10 +131,14 @@ public class AonNumberUtils {
 		return true;
 	}
 
+	public static Double nullIfZero(Double value) {
+		return (value != null && AonMathUtils.isZero(value)?null:value);
+	}
+
 	public static double zeroIfNull(Double value) {
 		return (value==null?0:value);
 	}
-	
+
 	public static int zeroIfNull(Integer value) {
 		return (value==null?0:value);
 	}

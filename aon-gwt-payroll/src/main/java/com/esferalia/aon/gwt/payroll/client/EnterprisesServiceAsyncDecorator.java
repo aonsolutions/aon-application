@@ -497,9 +497,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID, AsyncCallback<String> callback) {
+	public void getPayrollEmailSendTo(String currentDomainName, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.getPayrollEmailSendTo(currentDomainName, type, enterpriseID, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.getPayrollEmailSendTo(currentDomainName, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
@@ -615,6 +615,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.setAttachData(currentDomainName, login, attachId, base64, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void sendAttachEmail(String currentDomainName, String login, MailAccount emailFrom, String emailTo, List<String> ccTo, List<String> bccTo, String subject, String emailBody, List<Integer> attachIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.sendAttachEmail(currentDomainName, login, emailFrom, emailTo, ccTo, bccTo, subject, emailBody, attachIds, new AsyncCallbackWrapper<Void>(callback));
+	}
 	
 	// ------------------------------------------------ Contract Clauses
 	

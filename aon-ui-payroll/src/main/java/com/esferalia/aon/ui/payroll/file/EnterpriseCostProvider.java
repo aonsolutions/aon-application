@@ -130,7 +130,7 @@ public class EnterpriseCostProvider implements Serializable {
 			
 			for (Record salaryPayment : salaryPaymentRecords) {
 				Integer salaryId = salaryPayment.getValue(SALARY_PAYMENT.SALARY);
-				Integer type = salaryPayment.getValue(SALARY_PAYMENT.TYPE).intValue();
+				Integer type = salaryPayment.getValue(SALARY_PAYMENT.TYPE) != null ? salaryPayment.getValue(SALARY_PAYMENT.TYPE).intValue() : null;
 				Double amount = salaryPayment.getValue(SALARY_PAYMENT.AMOUNT);
 				if(salaryConceptsMap.containsKey(type + "_" + salaryId)){
 					salaryConceptsMap.put(type + "_" + salaryId, ((Double)salaryConceptsMap.get(type + "_" + salaryId)) + amount);

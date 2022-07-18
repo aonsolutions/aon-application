@@ -198,7 +198,7 @@ public final class IJsonNames {
 	public static final String FULL_ADDRESS = "fullAddress";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	public static final String GLOBAL = "global";
-	public static final String GROUP_BY_NIF = "groupByNif";
+	public static final String GROUPED_BY = "groupedBy";
 	// ---------------------------------------------------------------------------------------------	[H]
 	public static final String HAS_BEFORE_PERIOD_AMOUNTS = "hasBeforePeriodAmounts";
 	public static final String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";

@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.io.File;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,14 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -32,8 +25,12 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.aws.ses.SES;
@@ -106,17 +103,20 @@ public class JooqMail {
 	
 	// ---------------------------------------------- SendTo
 	
-	public static String getPayrollEmailSendTo(Connection connection, Type type, Integer enterpriseID) {
-		return getPayrollEmailSendToDB(DSL.using(connection, getDefaultSettings()), type, enterpriseID);
+	public static String getPayrollEmailSendTo(Connection connection, Integer domainId) {
+		return getPayrollEmailSendToDB(DSL.using(connection, getDefaultSettings()), domainId);
 	}
 	
-	private static String getPayrollEmailSendToDB(DSLContext dslContext, Type type, Integer enterpriseID) {
+	private static String getPayrollEmailSendToDB(DSLContext dslContext, Integer domainId) {
 		String sendTo = "";
 		
 		Record enterpriseEmailRecord = dslContext.select().from(ENTERPRISE_DATA)
-				.where(ENTERPRISE_DATA.ENTERPRISE.eq(enterpriseID)
-				.and(ENTERPRISE_DATA.NAME.eq("PAY_salarySending_email_PAY"))
-				).fetchOne();
+				.where(ENTERPRISE_DATA.ENTERPRISE.eq(
+						dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
+							.where(ENTERPRISE.DOMAIN.eq(domainId))
+							.fetchOne(ENTERPRISE.REGISTRY)
+				).and(ENTERPRISE_DATA.NAME.eq("PAY_salarySending_email_PAY")))
+				.fetchOne();
 		
 		if(null != enterpriseEmailRecord)
 			sendTo = enterpriseEmailRecord.get(ENTERPRISE_DATA.EXPRESSION);
@@ -486,6 +486,38 @@ public class JooqMail {
 				.setSubject("ServiConvenios Logs")
 				.setBody(body);
 		SES.sendEmail(msg);
+	}
+
+	public static void sendAttachEmail(String domainName, Integer domainId, String login, MailAccount emailFrom, String emailTo, List<String> ccTo, List<String> bccTo, String subject, String emailBody, List<Integer> attachIds) {
+		List<File> files = createAttachFiles(domainName, domainId, login, attachIds);
+		SESMessage msg = new SESMessage()
+				.setAlias(emailFrom.getName())
+				.setReplyTo(emailFrom.getEmail())
+				.setTo(emailTo)
+				.setCc(ccTo)
+				.setBcc(bccTo)
+				.setSubject(subject)
+				.setBody(emailBody)
+				.setFiles(files);
+		SES.sendEmail(msg);
+	}
+
+	private static List<File> createAttachFiles(String domainName, Integer domainId, String login,
+			List<Integer> attachIds) {
+		List<File> files = new ArrayList<>();
+		
+		attachIds.forEach(attachId -> {
+			try {
+				Attach attach = AON.getAttach(domainName, domainId, login, f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT, true);
+				File file = File.createTempFile( attach.getDescription(), "." + attach.getMimeType().getExtension() );
+				AonFileUtils.writeByteArrayToFile(file, attach.getData());
+				files.add(file);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		});
+		
+		return files;
 	}
 
 }

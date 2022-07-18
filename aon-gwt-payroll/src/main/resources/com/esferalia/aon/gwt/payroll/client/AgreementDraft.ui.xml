@@ -324,7 +324,7 @@
 			width: 40px;
 			text-align: center;
 			font-size: 10px;
-			padding: 2px;
+			padding-right: 5px;
 		}
 		
 		.issueTextBox{
@@ -452,8 +452,7 @@
 										<g:Label ui:field="payPeriodLabel"></g:Label>
 									</g:DeckPanel>
 								</g:HTMLPanel>
-								<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
-								styleName="aon-dataTable {style.edit-rows}" />
+								<g:FlexTable debugId='extrasTable' ui:field='extrasTable' styleName="aon-dataTable {style.edit-rows}" />
 								<g:HTML styleName="{style.vertical-space}" />
 							</g:DeckPanel>
 						</g:VerticalPanel>

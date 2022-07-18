@@ -170,6 +170,7 @@ public class FinanceUtils {
 		return prop;
 	}
 
+	@Deprecated
 	public static Filter getIRPFFilter(IRPFProperties p, IRPFParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if(params.getInvoices() != null){
