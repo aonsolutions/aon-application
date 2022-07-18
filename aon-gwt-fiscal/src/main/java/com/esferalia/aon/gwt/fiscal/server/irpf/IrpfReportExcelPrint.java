@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -28,8 +30,7 @@ public class IrpfReportExcelPrint extends HttpServlet {
 	private static final long serialVersionUID = 2782900860290220524L;
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		try {
 			String irpfParams = req.getParameter( IRequestParamsNames.IRPF_PARAMS );
@@ -37,20 +38,24 @@ public class IrpfReportExcelPrint extends HttpServlet {
 			params.setDomain(Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID)));
 			params.setUser(req.getParameter(IRequestParamsNames.USER));
 			params.setDomainName(req.getParameter(IRequestParamsNames.DOMAIN_NAME));
+			Occam occam = new Occam()
+				.setDomainName(params.getDomainName())
+				.setDomain(params.getDomain())
+				.setUser(params.getUser());
 			
 			ExcelAction action = new ExcelAction( );
-			action.initialize("IVA");
-			FISCAL.getIrpfBreakdown(params.getDomainName(), params.getUser(), params.getDomain(), params)
+			action.initialize("IRPF");
+			FISCAL.getIrpfBreakdown(occam, params)
 				.forEach(action)						
 			;
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"IVA."+ MimeType.MS_EXCEL.getExtension()+ "\";");
+			resp.setHeader("Content-disposition", "attachment; filename=\"IRPF."+ MimeType.MS_EXCEL.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			
 			resp.flushBuffer();
 			
-		} catch (Throwable e) {
-			throw new ServletException(e);
+		} catch (ParseException | java.text.ParseException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -95,7 +100,7 @@ public class IrpfReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "BASE IMP.", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
 
-			CellUtil.createCell(row, cellCount, "% IVA", headerCellStyle);
+			CellUtil.createCell(row, cellCount, "% IRPF", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
 
 			CellUtil.createCell(row, cellCount, "CUOTA", headerCellStyle);
