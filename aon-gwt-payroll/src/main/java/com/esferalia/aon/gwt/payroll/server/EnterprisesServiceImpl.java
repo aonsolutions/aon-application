@@ -3376,11 +3376,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public EnterpriseContext getEnterpriseContext(String domainName) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			
 			EnterpriseContext enterpriseContext = new EnterpriseContext();
 			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
-			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId));
+			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId));
 			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
 			
