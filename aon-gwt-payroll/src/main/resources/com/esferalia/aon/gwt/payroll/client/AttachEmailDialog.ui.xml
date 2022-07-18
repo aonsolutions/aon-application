@@ -1,0 +1,80 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
+
+	<ui:Style type="com.esferalia.aon.gwt.payroll.client.AttachEmailDialog.MyStyle">
+		
+		.widthAll{
+			width: 100%;
+		}
+
+		.flexColumn{
+			padding: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+		}
+		
+		.flex{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: .5rem;
+		}
+		
+		.label{
+			min-width: 40px;
+			font-weight: bold;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.sendButton{
+			background-attachment: scroll;
+			background-clip: border-box;
+			background-color: inherit;
+			background-position: 1px -2px;
+			background-repeat: no-repeat;
+			background-size: auto auto;
+			border: 1px solid #aaa;
+			cursor: pointer;
+			height: 24px;
+			overflow: visible;
+			padding-left: 30px;
+			text-align: left;
+			text-transform: uppercase;
+			width: auto;
+		}
+		
+	</ui:Style>
+
+
+	<g:HTMLPanel styleName="{style.flexColumn}">
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.label}" text="De:" />
+			<g:ListBox ui:field="mailAccountsListBox" styleName="aon-selectOneMenu {style.widthAll}" />
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.label}" text="Para:" />
+			<g:TextBox ui:field="sendTo" styleName='aon-inputText {style.widthAll}' />
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.label}" text="CC:" />
+			<g:TextBox ui:field="ccTo" styleName='aon-inputText {style.widthAll}' />
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.label}" text="CCO:" />
+			<g:TextBox ui:field="bccTo" styleName='aon-inputText {style.widthAll}' />
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.label}" text="Asunto:" />
+			<g:TextBox ui:field="subject" styleName='aon-inputText {style.widthAll}' />
+		</g:HTMLPanel>
+		<g:HTMLPanel ui:field="textAreaPanel" />
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+	</g:HTMLPanel>
+
+</ui:UiBinder>

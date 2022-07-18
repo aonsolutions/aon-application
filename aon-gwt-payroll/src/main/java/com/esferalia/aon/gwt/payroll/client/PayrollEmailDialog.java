@@ -139,7 +139,7 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 					mailAccountsListBox.addItem(mailAccount.getName() + " - ( " + mailAccount.getEmail() + " )");
 				}
 				
-				impl.getPayrollEmailSendTo(type, Integer.valueOf(params.get("enterprise")), new AsyncCallback<String>() {
+				impl.getPayrollEmailSendTo(new AsyncCallback<String>() {
 
 					@Override
 					public void onFailure(Throwable caught) { }
