@@ -375,7 +375,7 @@
 									text="VARIABLES NO DEFINIDAS" checked="false" />
 								<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="CONCEPTOS NO ACTIVOS" checked="true" />
+									text="CONCEPTOS NO ACTIVOS" checked="false" />
 								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="DIFERENCIAS" checked="false" />

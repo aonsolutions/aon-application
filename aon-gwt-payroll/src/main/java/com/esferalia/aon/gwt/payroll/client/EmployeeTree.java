@@ -885,7 +885,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			String tipo = dialog.getType();
 			Date fromMonth = dialog.getFromMonth();
 			Date toMonth = dialog.getToMonth();
-			Date ctrlMonth = dialog.getToMonth();
+			//TODO: Check.
+			Date ctrlMonth = dialog.getCtrlMonth();
 			int desdeMes = fromMonth.getMonth() + 1;
 			int desdeAnyo = fromMonth.getYear() + 1900;
 			int hastaMes = toMonth.getMonth() + 1;
