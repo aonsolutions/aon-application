@@ -94,6 +94,7 @@ public class Deposit2 extends DockLayoutPanel {
 	AonToolbarButton importButton;
 	AonToolbarButton importMemoryButton;
 	AonToolbarButton downloadButton;
+	AonToolbarButton downloadPdfButton;
 	AonToolbarButton resetButton;
 	
 	Stack<Map<String, String>> undoStack = new Stack<Map<String, String>>();
@@ -170,6 +171,10 @@ public class Deposit2 extends DockLayoutPanel {
 		downloadButton = new AonToolbarButton("Descargar Excel", AON.CSS.aonIconExcel());
 		downloadButton.addClickHandler(downloadClickHandler());
 		toolbarPanel.add(downloadButton);
+		
+		downloadPdfButton = new AonToolbarButton("Descargar Pdf", AON.CSS.aonIconPdf());
+		downloadPdfButton.addClickHandler(downloadPdfClickHandler());
+		toolbarPanel.add(downloadPdfButton);
 		
 		resetButton = new AonToolbarButton("Resetear", AON.CSS.aonIconRefresh());
 		resetButton.addClickHandler(resetClickHandler());
@@ -552,6 +557,16 @@ public class Deposit2 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				download("excel");
+			}
+		};
+	}
+	
+	private ClickHandler downloadPdfClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				download("pdf");
 			}
 		};
 	}

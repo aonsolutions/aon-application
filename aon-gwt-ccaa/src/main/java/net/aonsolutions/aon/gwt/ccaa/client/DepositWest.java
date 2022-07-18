@@ -287,7 +287,8 @@ public class DepositWest extends ScrollPanel{
 	}
 	
 	private AonMenuItem buildMa(Integer year) {
-		AonMenuItem item = new AonMenuItem().setTitle(DepositMenu.MA.getDescription());
+		AonMenuItem item = new AonMenuItem().setTitle(DepositMenu.MA.getDescription())
+				.setHandler(menuClickHandler(DepositMenu.MA, year));
 		item.addItem(new AonMenuItem().setTitle(DepositMenu.MA1.getDescription())
 				.setHandler(menuClickHandler(DepositMenu.MA1, year)));
 		item.addItem(new AonMenuItem().setTitle(DepositMenu.MA11.getDescription())

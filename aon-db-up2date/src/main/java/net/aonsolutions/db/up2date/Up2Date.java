@@ -18,7 +18,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
+import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
 import net.aonsolutions.db.up2date.tgss.FellowsITIMS2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Fix;
 
@@ -252,7 +252,9 @@ public class Up2Date {
     		//SalaryHoursFixII.SALARYHOURSFIXII
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
-    		FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII
+    		FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
+	   		JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
+
     };
     
 

@@ -923,8 +923,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			String milesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09002.getCode());
 			String millonesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09003.getCode());
 			
-			idaRow(1, new String[]{"Euros " + getBoolText(euros) + " Miles de euros " + getBoolText(milesEuros)
-				+" Millones de euros " + getBoolText(millonesEuros)});	
+			String unit = "Euros";
+			if(getBool(milesEuros)) unit = "Miles de Euros";
+			else if(getBool(millonesEuros)) unit = "Millones de Euros";
+			
+			idaRow(1, new String[]{unit});	
 		}else{
 			ssHeader("Microempresas", pageMaxNumber);
 			row = sheet.createRow(rowCount++);cellCount = 0;
@@ -1125,7 +1128,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		idacell("Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)" + CVA8220040 , 0, 7);
+		idacell("Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)", 0, 7);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -1719,7 +1722,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				new String[]{"", current, previous, current, previous, current, previous}, keys,3, 2, 4);
 		sheet.createRow(rowCount++);
 		// 8
-		general(pageMaxNumber, 4, new String[]{"Correcciones por deterioro del valor originadas por el riesgo de cr\u00e9dito"
+		general(pageMaxNumber, 4, new String[]{"Valoración y variaciones de valor de inversiones financieras valoradas a valor razonable"
 				, "Activos a valor razonable con cambios en p\u00e9rdidas y ganancias", "Activos mantenidos para negociar"
 				, "Activos disponibles para la venta", "TOTAL"}, keys2, 8, 4, null);
 		sheet.createRow(rowCount++);
@@ -2250,12 +2253,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "Causa de la baja", "% sobre capital"}, 4, 2);
 
-		for(Integer i = 0; i< D2DepositConstants.A3_ABREVIATE_KEYS.length; i+=4){
+		for(Integer i = 0; i< D2DepositConstants.A4_ABREVIATE_KEYS.length; i+=4){
 			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
-					D2DepositConstants.A3_ABREVIATE_KEYS[i],
-					D2DepositConstants.A3_ABREVIATE_KEYS[i+1],
-					D2DepositConstants.A3_ABREVIATE_KEYS[i+2],
-					D2DepositConstants.A3_ABREVIATE_KEYS[i+3]
+					D2DepositConstants.A4_ABREVIATE_KEYS[i],
+					D2DepositConstants.A4_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A4_ABREVIATE_KEYS[i+2],
+					D2DepositConstants.A4_ABREVIATE_KEYS[i+3]
 			};
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
@@ -2574,19 +2577,23 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080809.getCode());
-		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080823.getCode());
-		c1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080821.getCode());
-		d1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080811.getCode());
-		idacell(getBoolText(a1) + " Modelo de autocartera", 0, 1);
-		idacell(getBoolText(b1) + " Anuncios de convocatoria", 2, 3);
-		idacell(getBoolText(c1) + " Certificado SICAV", 4, 5);
-		idacell(getBoolText(d1) + " Certificaci\u00f3n acuerdo", 6, 7);
+		String a2 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080809.getCode());
+		String b2 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080825.getCode());
+		String c2 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080827.getCode());		
+		String d2 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080823.getCode());
+		idacell(getBoolText(a2) + " Modelo de autocartera", 0, 1);
+		idacell(getBoolText(b2) + " Informe sobre información no financiera", 2, 3);
+		idacell(getBoolText(c2) + " Declaración de identificación del titular real", 4, 5);
+		idacell(getBoolText(d2) + " Anuncios de convocatoria", 6, 7);
 		
+		String a3 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080821.getCode());
+		String b3 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080811.getCode());
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		idacell("- Otros Documentos", 0, 1);
-		idacell("NÂº ", 2, 3);
+		idacell(getBoolText(a3) + " Certificado SICAV", 0, 1);
+		idacell(getBoolText(b3) + " Certificación acuerdo", 2, 3);
+		idacell("- Otros Documentos", 4, 5);
+		idacell("Nº", 6, 7);
 	
 		if(getD2Deposit().getYear() > 2014){
 			row = sheet.createRow(rowCount++);
