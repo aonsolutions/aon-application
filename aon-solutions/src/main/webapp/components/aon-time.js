@@ -280,7 +280,7 @@ export class AonTime extends AonElement {
 
     buildLabel() {
         this.LABEL = document.createElement("div");
-        this.LABEL.style.width = "100%";
+        this.LABEL.style.width = "calc(100% - .5rem)";
         this.LABEL.style.paddingLeft = ".5rem";
         this.LABEL.style.margin = "3px auto 3px auto";
         this.LABEL.style.overflow = "hidden";
@@ -295,7 +295,8 @@ export class AonTime extends AonElement {
 
        this.HOUR_INPUT = document.createElement("input");
        this.HOUR_INPUT.type = "number";
-       this.HOUR_INPUT.style.width = "30%";
+       this.HOUR_INPUT.style.width = "50px";
+       this.HOUR_INPUT.style.maxWidth = "calc(40% - .2rem)";
        this.HOUR_INPUT.placeholder = "--";
        this.HOUR_INPUT.style.border = "none";
        this.HOUR_INPUT.style.textAlign = "center";
@@ -309,7 +310,8 @@ export class AonTime extends AonElement {
        this.MINUTE_INPUT.max = "59";
        this.MINUTE_INPUT.placeholder = "--";
        this.MINUTE_INPUT.style.border = "none";
-       this.MINUTE_INPUT.style.width = "30%";
+       this.MINUTE_INPUT.style.width = "50px";
+       this.MINUTE_INPUT.style.maxWidth = "calc(40% - .2rem)";
        this.MINUTE_INPUT.style.textAlign = "center";
        this.MINUTE_INPUT.style.outline = "none";
        this.MINUTE_INPUT.style.backgroundColor = this.COLORS.backgroundColor;
@@ -319,13 +321,15 @@ export class AonTime extends AonElement {
        this.TIME_PANEL.style.justifyContent = "flex-start";
        this.TIME_PANEL.style.alignItems = "center";
        this.TIME_PANEL.style.flexDirection = "row";
-       this.TIME_PANEL.style.width = "5rem";
+       this.TIME_PANEL.style.width = "125px";
+       this.TIME_PANEL.style.maxWidth = "calc(100% - .5rem)";
        this.TIME_PANEL.style.marginTop = "3px";
        this.TIME_PANEL.style.marginBottom = "3px";
        this.TIME_PANEL.style.marginLeft = ".5rem";
 
        let timeDiv = document.createElement("div");
        timeDiv.innerText = ":";
+       timeDiv.style.maxWidth = "calc(10% - .1rem)";
 
        this.HIDDEN_INPUT = document.createElement("input");
        this.HIDDEN_INPUT.type = "hidden";
@@ -478,6 +482,30 @@ export class AonTime extends AonElement {
                 }
             }
             this.setMinMax();
+        });
+
+        [this.MINUTE_INPUT, this.HOUR_INPUT].forEach((element) => {
+            element.addEventListener("paste", (ev) => {
+                let paste = (ev.clipboardData || window.clipboardData).getData('text');
+                if (/^\d+$/.test(paste)) {
+    
+                    let minimum = Number.parseInt(ev.currentTarget.min);
+                    let maximum = Number.parseInt(ev.currentTarget.max);
+    
+                    let pasteNumber = Number.parseInt(paste);
+    
+                    if (pasteNumber > maximum) {
+                        ev.preventDefault();
+                        ev.currentTarget.value = `${maximum}`.padStart(2, '0');
+                    } else if (pasteNumber < minimum) {
+                        ev.preventDefault();
+                        ev.currentTarget.value = `${minimum}`.padStart(2, '0');
+                    }
+                } else {
+                    ev.preventDefault();
+                }
+    
+            });
         });
 
         this.MINUTE_INPUT.addEventListener("input", (ev) => {
