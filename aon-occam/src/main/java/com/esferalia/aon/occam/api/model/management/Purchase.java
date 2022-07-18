@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Purchase implements Serializable {
 	
@@ -385,5 +386,13 @@ public class Purchase implements Serializable {
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	
+	public String getReferenceCode() {
+    	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		if (!AonStringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
 }
 

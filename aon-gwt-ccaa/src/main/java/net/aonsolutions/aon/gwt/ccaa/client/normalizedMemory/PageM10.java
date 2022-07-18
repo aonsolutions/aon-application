@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageM10 extends PageAbs {
 
@@ -23,7 +24,7 @@ public class PageM10 extends PageAbs {
 
 	@UiField TabPanel tabPanel;
 	
-	public PageM10(Deposit deposit) {
+	public PageM10(Deposit2 deposit) {
 		super(deposit);
 
 		Widget ui = pageBinder.createAndBindUi(this);

@@ -19,11 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.config.InsertIAE863;
-import net.aonsolutions.db.up2date.payroll.AlterAgreement4Log;
-import net.aonsolutions.db.up2date.tgss.Bases2022FixHourly;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursFix;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursFixII;
+import net.aonsolutions.db.up2date.tgss.FellowsITIMS2022UpdateII;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Fix;
 
 public class Up2Date {
 
@@ -251,10 +248,11 @@ public class Up2Date {
     		//Bases2022FixHourly.BASES2022FIXHOURLY
     		//AssimilatedInsert.ASSIMILATEDINSERT,
     		//Bases2022FixHourly.BASES2022FIXHOURLY,
-    		InsertIAE863.INSERT_IAE_863,
-    		AlterAgreement4Log.ALTERAGREEMENTLOG,
-    		SalaryHoursFixII.SALARYHOURSFIXII
-
+    		//InsertIAE863.INSERT_IAE_863,
+    		//SalaryHoursFixII.SALARYHOURSFIXII
+    		//AlterAgreement4Log.ALTERAGREEMENTLOG,
+    		RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
+    		FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII
     };
     
 

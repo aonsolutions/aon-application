@@ -212,7 +212,10 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText( AON.MSG.accept());
 		
-		acceptButton.addClickHandler(event -> callback.onAccept(model));
+		acceptButton.addClickHandler(event -> {
+			acceptButton.setVisible(false);
+			callback.onAccept(model);
+		});
 		buttonsPanel.add(acceptButton);
 		Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());

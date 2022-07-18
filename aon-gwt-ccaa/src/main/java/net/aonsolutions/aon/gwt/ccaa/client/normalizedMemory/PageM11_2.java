@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageM11_2 extends PageAbs {
 
@@ -24,7 +25,7 @@ public class PageM11_2 extends PageAbs {
 	@UiField(provided = true) FlexTable table1;
 	@UiField TabPanel tabPanel;
 
-	public PageM11_2(Deposit deposit) {
+	public PageM11_2(Deposit2 deposit) {
 		super(deposit);
 
 		table1 = new FlexTable();

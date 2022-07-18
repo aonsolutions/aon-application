@@ -55,8 +55,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		this.d2Deposit = d2Deposit;
 	}
 
-	protected static final XSSFColor REGISTRADORES = new XSSFColor(new java.awt.Color(Integer.valueOf("fa", 16 )
-			,Integer.valueOf("58", 16 ),Integer.valueOf("58", 16 )));
+	protected static final XSSFColor REGISTRADORES = new XSSFColor(new java.awt.Color(Integer.valueOf("c4", 16 )
+			,Integer.valueOf("12", 16 ),Integer.valueOf("30", 16 )));
 
 	protected  static final String[] IMAGES = new String[] {
 		"/com/esferalia/aon/gwt/common/client/css/images/aon-registro-mercantil-image.png"
@@ -781,7 +781,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			}
 		}
 	}
-
 	
 	public void IDA() {
 		Integer pageMaxNumber = 5;
@@ -793,8 +792,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		String sl = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01012.getCode());
 		String other = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01013.getCode());
 		if(other == null || other.equalsIgnoreCase("null")) other = "";
-		idaRow(2, new String[]{"N.I.F. " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01010.getCode()),
-				"SA " + getBoolText(sa) + " SL " + getBoolText(sl) + " Otras " + other});
+		String str = "SA";
+		if(getBool(sl)) str = "SL";
+		else if(AonStringUtils.isNotBlank((other))) str = "Otras " + other;
+		
+		idaRow(2, new String[]{"N.I.F. " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01010.getCode()), str});
 		
 		if(getD2Deposit().getYear() >= 2015){
 			row = sheet.createRow(rowCount++);cellCount=0;
@@ -1049,6 +1051,183 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				macell(txt, j, j);
 			}
 		}
+	}
+	
+	public void CVA() {
+		addSheet("Declaración Covid 19");
+		header(5);
+
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		CellUtil.createCell(row, 0, "Declaración Covid 19", headerCellStyle);
+		row = sheet.createRow(rowCount++);		
+		cellCount = 0;
+		idacell("Sociedad: " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01020.getCode()), 0, 3);
+		idacell("NIF: " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01010.getCode()), 4, 7);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+ 		idacell("Domicilio Social: " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01022.getCode()), 0, 7);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Municipio: " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01023.getCode()) , 0, 3);
+		idacell("Provincia: " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01025.getCode()), 4, 7);
+
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		CellUtil.createCell(row, 0, "Medidas laborales aplicadas a la empresa", headerCellStyle);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220000 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220000.getCode());
+		idacell("Solicitud de ERTE durante el ejercicio y motivado por la pandemia: " + getBoolText(CVA8220000), 0, 7);
+
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		
+		String CVA8220010 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220010.getCode());
+		String CVA8220010Str = "";
+		if("1".equals(CVA8220010)) CVA8220010Str = "Por causa de fuerza mayor";
+		else if("2".equals(CVA8220010)) CVA8220010Str = "Por causas técnicas-económicas-organizativas";
+		else if("3".equals(CVA8220010)) CVA8220010Str = "Otras causas";
+ 		idacell("Ha sido motivado: " + CVA8220010Str, 0, 3);
+
+ 		String CVA8220020 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220020.getCode());
+		String CVA8220020Str = "";
+		if("1".equals(CVA8220020)) CVA8220020Str = "Suspensión de contratos";
+		else if("2".equals(CVA8220020)) CVA8220020Str = "Reducción de jornada";
+		else if("3".equals(CVA8220020)) CVA8220020Str = "Ambos";
+ 		idacell("Ha determinado: " + CVA8220020Str, 4, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220030 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220030.getCode());
+		idacell("Número de trabajadores en plantilla antes del ERTE: " + CVA8220030, 0, 3);
+		
+		String CVA8220035 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220035.getCode());
+		idacell("Número de trabajadores afectados por el ERTE: " + CVA8220035, 4, 7);
+
+		Integer height0 = row.getHeight() * 2;
+		row.setHeight(height0.shortValue());
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220040 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220040.getCode());
+		idacell("Fecha Inicio: " + CVA8220040, 0, 3);
+		
+		String CVA8220050 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220050.getCode());
+		idacell("Fecha Fin: " + CVA8220050, 4, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)" + CVA8220040 , 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220060 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220060.getCode());
+		idacell("Porcentaje de personal acogido a permiso retribuido recuperable: " + CVA8220060, 0, 3);
+		
+		String CVA8220065 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220065.getCode());
+		idacell("Duración (Número de días): " + CVA8220065, 4, 7);
+		row.setHeight(height0.shortValue());
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Baja Laboral por el CORONAVIRUS", 0, 3);
+		
+		String CVA8220070 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220070.getCode());
+		idacell("Porcentaje de personal fijo afectado: " + CVA8220070, 4, 7);
+				
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		CellUtil.createCell(row, 0, "Alquileres (artículos 1 al 15 Real Decreto-Ley11/2020)", headerCellStyle);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220080 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220080.getCode());
+		String CVA8220080Str = "";
+		if("0".equals(CVA8220080)) CVA8220080Str = "No aplica";
+		else if("1".equals(CVA8220080)) CVA8220080Str = "Rebaja de rentas a los arrendatarios";
+		else if("2".equals(CVA8220080)) CVA8220080Str = "Reestructuración de deudas";
+		else if("3".equals(CVA8220080)) CVA8220080Str = "Ambos";
+		else if("4".equals(CVA8220080)) CVA8220080Str = "Ninguno de los anteriores";
+		idacell("Alquileres a terceros (Grandes arrendadores). Ha concedido: " + CVA8220080Str, 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+
+		String CVA8220090 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220090.getCode());
+		idacell("Pequeños arrendadores. Ha concedido moratorias voluntarias a los arrendatarios: " + getBoolText(CVA8220090), 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220100 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220100.getCode());
+		idacell("Ha recibido ayudas financieras públicas(incluidos avales) al alquiler del local de negocios: " + getBoolText(CVA8220100), 0, 7);
+				
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		CellUtil.createCell(row, 0, "Avales ICO", headerCellStyle);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Importe del aval concedido por el ICO en aplicación de los establecido en los articulos 29 y 30 del Real Decreto-Ley 8/2020, de 17 de marzo", 0, 7);
+		Integer height = row.getHeight() * 2;
+		row.setHeight(height.shortValue());
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220110 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220110.getCode());
+		idacell("Cantidad: " + CVA8220110, 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220120 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220120.getCode());
+		idacell("¿Que porcentaje representa el importe concedido sobre el importe total solicitado? " + CVA8220120, 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		CellUtil.createCell(row, 0, "Ayudas públicas", headerCellStyle);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Describir el plan o programa al que se acoge, el concedente y el sistema(avales, moratoria, aplazamiento, interés bonificado etc.)", 0, 7);
+		Integer height2 = row.getHeight() * 2;
+		row.setHeight(height2.shortValue());
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220130 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220130.getCode());
+		idacell(CVA8220130, 0, 7);
+		Integer height3 = row.getHeight() * 3;
+		row.setHeight(height3.shortValue());
+		
+		rowCount++;
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220140 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220140.getCode());
+		idacell("Moratoria hipotecaria (artículos 16 a 19 Real Decreto-Ley 11/2020): " + getBoolText(CVA8220140), 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220150 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220150.getCode());
+		idacell("Moratoria no hipotecaria (artículo 18, 21 a 26 Real Decreto-Ley 11/2020): " + getBoolText(CVA8220150), 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220160 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220160.getCode());
+		idacell("Se ha solicitado flexifibilización y suspensión de suministros(artículos 42 a 44 Real Decreto-Ley 11/2020): " + getBoolText(CVA8220160), 0, 7);
+		row.setHeight(height0.shortValue());
+
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String CVA8220170 = getD2Deposit().getMap().get(D2DepositHeaderKey.CVA8220170.getCode());
+		idacell("Se ha acogido a las medidas de apoyo del sector del Turismo de los artículos 12 y 13 del Real Decreto-Ley 7/2020, de 12 de marzo: " + getBoolText(CVA8220170), 0, 7);
+		row.setHeight(height0.shortValue());
 	}
 	
 	public void SRA() {
@@ -2529,6 +2708,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			return desc.substring(0, pos) + (getD2Deposit().getYear()-1) + desc.substring(pos+1);
 
 		}else return desc;	
+	}
+	
+	private boolean getBool(String a) {
+		return a != null && !a.equalsIgnoreCase("null")
+				&& (a.equals("1") || a.equalsIgnoreCase("true"));
 	}
 	
 	private String getBoolText(String a) {

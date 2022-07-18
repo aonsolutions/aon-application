@@ -11,6 +11,9 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DATE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -659,6 +662,57 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	}
 	
 	
+	@Test
+	public void testRegime() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		ContractRecord general = newContract(
+				aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.PRINCIPAL, 
+				firstDayOfMonth, 
+				Collections.emptyMap(), 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, general).getExpressionContext()
+		.eval(ContextVariable.REGIME.getName(), firstDayOfMonth, lastDayOfMonth)
+		.forEach(r -> assertEquals(CCCType.PRINCIPAL, r.getValue()));
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, general).getExpressionContext()
+		.eval(ContextVariable.REGIME.getName() + " == " +ContextVariable.GENERAL.getName() , firstDayOfMonth, lastDayOfMonth, Boolean.class)
+		.forEach(r -> assertTrue(r.getValue()));
+
+		ContractRecord artists = newContract(
+				aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.ARTIST, 
+				firstDayOfMonth, 
+				Collections.emptyMap(), 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, artists).getExpressionContext()
+		.eval(ContextVariable.REGIME.getName(), firstDayOfMonth, lastDayOfMonth)
+		.forEach(r -> assertEquals(CCCType.ARTIST, r.getValue()));
+
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, artists).getExpressionContext()
+		.eval(ContextVariable.REGIME.getName() + " == " +ContextVariable.ARTISTS.getName() , firstDayOfMonth, lastDayOfMonth, Boolean.class)
+		.forEach(r -> assertTrue(r.getValue()));
+
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, artists).getExpressionContext()
+		.eval("[AGRARIO:true,ARTISTAS:true,HOGAR:true]["+ ContextVariable.REGIME.getName() + "]" , firstDayOfMonth, lastDayOfMonth, Boolean.class)
+		.forEach(r -> assertTrue(r.getValue()));
+		
+}
 	
 
 	// ------------------------------------------------------------------------

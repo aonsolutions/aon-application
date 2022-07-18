@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryFiles;
 
 public class MemoryDocuments extends PageAbs {
@@ -49,7 +50,7 @@ public class MemoryDocuments extends PageAbs {
 //	TreeNode<Enterprise> memory;
 //	TreeNode<Enterprise> autocartera;
 	
-	public MemoryDocuments(Deposit deposit) {
+	public MemoryDocuments(Deposit2 deposit) {
 		super(deposit);
 		
 //		this.memory = memory;

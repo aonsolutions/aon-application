@@ -40,5 +40,6 @@ export const recordSelfconta = (data) => post(`${API_URL}/invoice/selfconta_reco
 export const getPaymethods = () => get(`${API_URL}/paymethod`, {});
 
 export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
-
+export const downloadFacturae = (data) => 
+    openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});

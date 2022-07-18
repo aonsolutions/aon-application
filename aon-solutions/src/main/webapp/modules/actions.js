@@ -42,6 +42,12 @@ export const SIGN_INVOICE = {
     icon: 'draw'
 };
 
+export const FACTURAE = {
+    id: 'Facturae',
+    name: 'Facturae' ,
+    icon: 'draw'
+};
+
 export const REMARKS = {
     id: CONSTANT.REMARKS.initCap(),
     name: MSG.ADD_REMARKS,

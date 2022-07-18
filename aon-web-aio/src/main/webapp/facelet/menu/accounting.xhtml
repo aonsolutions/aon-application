@@ -403,11 +403,21 @@
 										value="#{bundle.accounting_book_module}" />
 								</aon:div>
 
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_deposit_new" action="gwt_deposit_new"
-										title="#{bundle.accounting_annual_financial_statements_module}"
-										value="#{bundle.accounting_annual_financial_statements_module}" />
-								</aon:div>
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_deposit_new" action="gwt_deposit_new"
+											title="#{bundle.accounting_annual_financial_statements_module}"
+											value="#{bundle.accounting_annual_financial_statements_module}" />
+									</aon:div>
+								</aon:if>
+								
+								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_deposit_text_mode" action="gwt_deposit_text_mode"
+											title="#{bundle.accounting_annual_financial_statements_module}"
+											value="#{bundle.accounting_annual_financial_statements_module}" />
+									</aon:div>
+								</aon:if>					
 							</aon:div>
 						</aon:panelGrid>
 					</aon:if>

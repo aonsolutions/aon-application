@@ -11,6 +11,8 @@ public class IRPFParams implements Serializable {
 	private static final long serialVersionUID = 2683060057390169937L;
 	
 	private int domain;
+	private String domainName;
+	private String user;	
 	private Integer registry;
 	private Integer activity;
 	private Date fromDate;
@@ -39,6 +41,21 @@ public class IRPFParams implements Serializable {
 	}
 	public IRPFParams setDomain(int domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public IRPFParams setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
+	public String getUser() {
+		return user;
+	}
+	public IRPFParams setUser(String user) {
+		this.user = user;
 		return this;
 	}
 	public Integer getRegistry() {

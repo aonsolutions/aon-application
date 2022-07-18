@@ -234,55 +234,55 @@ public class Deposit extends AonTemplate2 {
 	
 	public void updatePage(DepositMenu depositMenu) {
 		setDepositMenu(depositMenu);
-		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
-		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
-		if(DepositMenu.SRA.equals(depositMenu)) getPage().setWidget(new PageH6(thiz));
-		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
-		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
-		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));
-		if(DepositMenu.ECPN.equals(depositMenu)) getPage().setWidget(new PageH4(thiz));
-		if(DepositMenu.DM.equals(depositMenu)) getPage().setWidget(new PageH5(thiz));
-		
-		// MEMORIA
-		if(DepositMenu.AE.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT1", false));
-		if(DepositMenu.BP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT2", false));
-		if(DepositMenu.AR_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT3", false));
-		if(DepositMenu.AR_CN.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
-		if(DepositMenu.NRV.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT4", false));
-		if(DepositMenu.IMIII_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT5", false));
-		if(DepositMenu.IMIII_CN.equals(depositMenu)) getPage().setWidget(new PageM5_2(thiz));
-		if(DepositMenu.AF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT6", false));
-		if(DepositMenu.AF_CN.equals(depositMenu)) getPage().setWidget(new PageM6_2(thiz));
-		if(DepositMenu.PF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT7", false));
-		if(DepositMenu.PF_CN.equals(depositMenu)) getPage().setWidget(new PageM7_2(thiz));
-		if(DepositMenu.FP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT8", false));
-		if(DepositMenu.SF.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT9", false));
-		if(DepositMenu.IG.equals(depositMenu)) getPage().setWidget(new PageM10(thiz));
-		if(DepositMenu.SDL_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT11", false));
-		if(DepositMenu.SDL_CN.equals(depositMenu)) getPage().setWidget(new PageM11_2(thiz));
-		if(DepositMenu.OPV_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT12", false));
-		if(DepositMenu.OPV_CN.equals(depositMenu)) getPage().setWidget(new PageM12_2(thiz));
-		if(DepositMenu.OI_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT13", false));
-		if(DepositMenu.OI_CN.equals(depositMenu)) getPage().setWidget(new PageM13_2(thiz));
-		if(DepositMenu.IM_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT14", false));
-		if(DepositMenu.IM_CN.equals(depositMenu)) getPage().setWidget(new PageM14_2(thiz));
-		if(DepositMenu.IA.equals(depositMenu)) getPage().setWidget(new PageM15(thiz));
-		
-		if(DepositMenu.D.equals(depositMenu)) getPage().setWidget(new MemoryDocuments(thiz));
-		
-		// TODO MODELO AUTOCARTERA
-		if(DepositMenu.MA.equals(depositMenu)) getPage().setWidget(new PageF1(thiz));
-		if(DepositMenu.MA1.equals(depositMenu)) getPage().setWidget(new PageF1A(thiz));
-		if(DepositMenu.MA11.equals(depositMenu)) getPage().setWidget(new PageF1B(thiz));
-		if(DepositMenu.MA2.equals(depositMenu)) getPage().setWidget(new PageF1C(thiz));
-		if(DepositMenu.MA3.equals(depositMenu)) getPage().setWidget(new PageF1D(thiz));
-		if(DepositMenu.MA4.equals(depositMenu)) getPage().setWidget(new PageF1E(thiz));
-		if(DepositMenu.MA5.equals(depositMenu)) getPage().setWidget(new PageF1F(thiz));
-		if(DepositMenu.MA6.equals(depositMenu)) getPage().setWidget(new PageF1G(thiz));
-		if(DepositMenu.MA7.equals(depositMenu)) getPage().setWidget(new PageF1H(thiz));
-		
-		if(DepositMenu.IP.equals(depositMenu)) getPage().setWidget(new PageF2(thiz));
-		if(DepositMenu.CHD.equals(depositMenu)) getPage().setWidget(new PageF3(thiz));		
+//		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
+//		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
+//		if(DepositMenu.SRA.equals(depositMenu)) getPage().setWidget(new PageH6(thiz));
+//		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
+//		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
+//		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));
+//		if(DepositMenu.ECPN.equals(depositMenu)) getPage().setWidget(new PageH4(thiz));
+//		if(DepositMenu.DM.equals(depositMenu)) getPage().setWidget(new PageH5(thiz));
+//		
+//		// MEMORIA
+//		if(DepositMenu.AE.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT1", false));
+//		if(DepositMenu.BP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT2", false));
+//		if(DepositMenu.AR_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT3", false));
+//		if(DepositMenu.AR_CN.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
+//		if(DepositMenu.NRV.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT4", false));
+//		if(DepositMenu.IMIII_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT5", false));
+//		if(DepositMenu.IMIII_CN.equals(depositMenu)) getPage().setWidget(new PageM5_2(thiz));
+//		if(DepositMenu.AF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT6", false));
+//		if(DepositMenu.AF_CN.equals(depositMenu)) getPage().setWidget(new PageM6_2(thiz));
+//		if(DepositMenu.PF_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT7", false));
+//		if(DepositMenu.PF_CN.equals(depositMenu)) getPage().setWidget(new PageM7_2(thiz));
+//		if(DepositMenu.FP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT8", false));
+//		if(DepositMenu.SF.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT9", false));
+//		if(DepositMenu.IG.equals(depositMenu)) getPage().setWidget(new PageM10(thiz));
+//		if(DepositMenu.SDL_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT11", false));
+//		if(DepositMenu.SDL_CN.equals(depositMenu)) getPage().setWidget(new PageM11_2(thiz));
+//		if(DepositMenu.OPV_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT12", false));
+//		if(DepositMenu.OPV_CN.equals(depositMenu)) getPage().setWidget(new PageM12_2(thiz));
+//		if(DepositMenu.OI_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT13", false));
+//		if(DepositMenu.OI_CN.equals(depositMenu)) getPage().setWidget(new PageM13_2(thiz));
+//		if(DepositMenu.IM_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, depositMenu.getDescription(), "MAT14", false));
+//		if(DepositMenu.IM_CN.equals(depositMenu)) getPage().setWidget(new PageM14_2(thiz));
+//		if(DepositMenu.IA.equals(depositMenu)) getPage().setWidget(new PageM15(thiz));
+//		
+//		if(DepositMenu.D.equals(depositMenu)) getPage().setWidget(new MemoryDocuments(thiz));
+//		
+//		// TODO MODELO AUTOCARTERA
+//		if(DepositMenu.MA.equals(depositMenu)) getPage().setWidget(new PageF1(thiz));
+//		if(DepositMenu.MA1.equals(depositMenu)) getPage().setWidget(new PageF1A(thiz));
+//		if(DepositMenu.MA11.equals(depositMenu)) getPage().setWidget(new PageF1B(thiz));
+//		if(DepositMenu.MA2.equals(depositMenu)) getPage().setWidget(new PageF1C(thiz));
+//		if(DepositMenu.MA3.equals(depositMenu)) getPage().setWidget(new PageF1D(thiz));
+//		if(DepositMenu.MA4.equals(depositMenu)) getPage().setWidget(new PageF1E(thiz));
+//		if(DepositMenu.MA5.equals(depositMenu)) getPage().setWidget(new PageF1F(thiz));
+//		if(DepositMenu.MA6.equals(depositMenu)) getPage().setWidget(new PageF1G(thiz));
+//		if(DepositMenu.MA7.equals(depositMenu)) getPage().setWidget(new PageF1H(thiz));
+//		
+//		if(DepositMenu.IP.equals(depositMenu)) getPage().setWidget(new PageF2(thiz));
+//		if(DepositMenu.CHD.equals(depositMenu)) getPage().setWidget(new PageF3(thiz));		
 	}
 	
 	private static final String IDA = "Hoja Identificativa de la sociedad";
@@ -605,26 +605,26 @@ public class Deposit extends AonTemplate2 {
 					
 					@Override
 					public void onSuccess(Vector<MemoryTemplate> result) {
-						ImportPanel ip = new ImportPanel(thiz, result);
-						AonDialog dialog = new AonDialog("Importar", ip) {
-							
-							@Override
-							protected void onCancel() {
-								hide();
-							}
-							
-							@Override
-							protected void onAccept() {
-								hide();
-								ip.action();
-							}
-						};
-						dialog.setAutoHideEnabled(true);
-						dialog.addAutoHidePartner(ip.getMemoryBox().getElementById("overlay"));
-						dialog.addAutoHidePartner(ip.getYearBox().getElementById("overlay"));
-						dialog.addAutoHidePartner(ip.getSocBox().getElementById("overlay"));
-						dialog.getElement().getStyle().setWidth(310, Unit.PX);
-						dialog.center();
+//						ImportPanel ip = new ImportPanel(thiz, result);
+//						AonDialog dialog = new AonDialog("Importar", ip) {
+//							
+//							@Override
+//							protected void onCancel() {
+//								hide();
+//							}
+//							
+//							@Override
+//							protected void onAccept() {
+//								hide();
+//								ip.action();
+//							}
+//						};
+//						dialog.setAutoHideEnabled(true);
+//						dialog.addAutoHidePartner(ip.getMemoryBox().getElementById("overlay"));
+//						dialog.addAutoHidePartner(ip.getYearBox().getElementById("overlay"));
+//						dialog.addAutoHidePartner(ip.getSocBox().getElementById("overlay"));
+//						dialog.getElement().getStyle().setWidth(310, Unit.PX);
+//						dialog.center();
 					}
 					
 					@Override public void onFailure(Throwable caught) {}

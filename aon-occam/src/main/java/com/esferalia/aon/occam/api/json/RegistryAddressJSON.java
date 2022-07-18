@@ -62,6 +62,7 @@ public class RegistryAddressJSON {
 			.put(IJsonNames.DOMAIN, address.getDomain())
 			.put(IJsonNames.REGISTRY, address.getRegistry())
 			.put(IJsonNames.MAIN, address.isMain())
+			.put(IJsonNames.ALIAS, address.getAlias())
 			.put(IJsonNames.STREET_TYPE, address.getStreetType() != null ? address.getStreetType().getIneCode() : "")
 			.put(IJsonNames.ADDRESS, address.getAddress() != null ? address.getAddress() : "")
 			.put(IJsonNames.NUMBER, address.getNumber() != null ? address.getNumber() : "")
