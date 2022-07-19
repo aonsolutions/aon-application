@@ -222,29 +222,27 @@ public class TaskNotification {
 	 * @param workflow
 	 */
 	public static void onCloseEmail(AonApiData api, Task task, TaskWorkflow workflow){		
+		LOGGER.info("onCloseEmail");	
 		boolean isExternal = TaskUtils.isExternal(task, api.getDomain());
-		if(isExternal) {
-			Optional<String> gtaskId = task.getGtaskId();
-			if(
+		Optional<String> gtaskId = task.getGtaskId();
+		
+		if(isExternal || gtaskId.isPresent() ) {
+
+			if( 
 				gtaskId.isPresent() && gtaskId.get().contains("@") && 
 				workflow.getEmail()!=null && !workflow.getEmail().equals(gtaskId.get()) 
 			) {
 				
-				if(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) ) {
-					LOGGER.info("onCloseEmail External");
-					//TODO
-				}  
-				// EVALUATION
-				if(
-						//TODO NOT EXIST EVALUATION
-						isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EMAIL_RATING ) 
-				 ) {
-					LOGGER.info("onCloseEmail External Evaluation");
-					Auth auth = AON_SOLUTIONS.getAuth(gtaskId.get());
+				Auth auth = AON_SOLUTIONS.getAuth(gtaskId.get());
+				if(!auth.getEmail().isEmpty()) {	
 					
-					if(!auth.getEmail().isEmpty()) {						
-						sendEmailWorkflow(api, task, workflow, Optional.of(auth), true); // true
-					}
+					if( isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EMAIL_RATING ) ) {
+						LOGGER.info("External Evaluation");					
+						sendEmailWorkflow(api, task, workflow, Optional.of(auth), true);
+					} else if(isAllowed(api, task, AppParamsRequest.APP_REQUESTS_EXT_EMAIL_CLOSED ) ) {
+						LOGGER.info("External");
+						sendEmailWorkflow(api, task, workflow, Optional.of(auth), false);
+					}  
 				}
 			}
 		} else {
@@ -252,7 +250,7 @@ public class TaskNotification {
 				isAllowed(api, task, AppParamsRequest.APP_REQUESTS_INT_EMAIL_CLOSED ) &&
 				task.getParent()!=null && task.getParent()>0 && task.getSender()!=null && task.getSender().getUserId()!=null
 			) {
-				LOGGER.info("onCloseEmail Internal");
+				LOGGER.info("Internal");
 				TaskUtils.getAuthForTaskHolder(api, task.getSender())
 				.ifPresent(a->
 					sendEmailWorkflow(api, task, workflow, Optional.of(a), false)
