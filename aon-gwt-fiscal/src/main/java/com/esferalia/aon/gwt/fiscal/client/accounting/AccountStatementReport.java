@@ -144,6 +144,8 @@ public class AccountStatementReport extends MainEntryPoint {
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
+				private static final long serialVersionUID = -4973164342320754303L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

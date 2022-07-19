@@ -125,8 +125,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		String getCurrentDomainName();
 		int getCurrentDomainId();
 		String getCurrentUser();
-		AccountEntryModuleTEDI getModule();
 		AonConfiguration getConfiguration();
+		AccountEntryModuleTEDI getModule();
 		AccountEntryModuleOptions getModuleOptions();
 	}
 

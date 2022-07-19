@@ -212,6 +212,8 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 			.setPreviewTabVisible(true)
 			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback(new ModuleCallback() {
+				private static final long serialVersionUID = 5460140629592097267L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
