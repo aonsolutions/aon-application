@@ -467,6 +467,7 @@ public class InvoiceImport {
 		
 		if(isPorcentajeRetencion(title)) {
 			Double percent = Utils.parseDouble(o);
+			if(percent == null) percent = 0.0;
 			if(percent > 0 && percent < 1)
 				percent = percent * 100;
 			inv.setRetentionPercentage(percent);
