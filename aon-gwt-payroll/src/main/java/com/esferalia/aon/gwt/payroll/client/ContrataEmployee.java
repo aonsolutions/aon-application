@@ -60,7 +60,6 @@ import com.google.gwt.user.client.ui.Widget;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public abstract class ContrataEmployee extends ResizeComposite {
-
 	// ------------------------------------------------- UiBinder
 
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
@@ -239,7 +238,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			pdfViewer.open(dataURI);
 			idcDateListBox.setVisible(false);
 			idcMonthListBox.setVisible(false);
-//			saveDocument.setVisible(true);
+			saveDocument.setVisible(true);
 			
 		}
 
@@ -251,6 +250,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void showLoadingMessagePDF(String message) {
 			showLoadingPDF(message);
+		}
+
+		@Override
+		protected void onSelectionAttachChange(boolean isSomethingSelected) {
+			sendAttachEmail.setEnabled(isSomethingSelected);
 		}
 	}
 
@@ -915,6 +919,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// EmployeeAttach
 	private HTMLPanel employeeAttachButtons;
+	private AonToolbarButton sendAttachEmail;
 
 	// EmployeeSalary
 	private HTMLPanel employeeSalaryButtons;
@@ -934,6 +939,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private boolean changes = false;
 
 	private boolean isComunica = false;
+	private boolean hasPayroll = false;
 	
 	// PDF Save
 	Integer attachId;
@@ -1043,6 +1049,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void loadWindow(Consumer<Void> finish) {
+		checkPayrollTabs();
 		showLoadingPanel();
 		loadData(s -> {
 			loadToolbar();
@@ -1050,6 +1057,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 			finish.accept(null);
 		});
+	}
+
+	private void checkPayrollTabs() {
+		if(hasPayroll) return;
+		
+		tabLayOutPanel.remove(7); // IRPF Tab
+		tabLayOutPanel.remove(6); // Calendar Tab
+		tabLayOutPanel.remove(5); // Nominas Tab
 	}
 
 	private void loadData(Consumer<Void> finish) {
@@ -1385,7 +1400,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		toolbarPDFViewer.add(closePDF);
 		
 		saveDocument = new AonToolbarButton("Guardar documento", AON.CSS.aonIconSave());
-		saveDocument.addClickHandler(e -> contractAttachUI.setAttachData(attachId, pdfViewer.getData()));
+		
+		saveDocument.addClickHandler(e -> {
+			pdfViewer.getData(base64->{
+				contractAttachUI.setAttachData(attachId, base64);
+			});
+		});
+		
 		toolbarPDFViewer.add(saveDocument);
 		
 		idcMonthListBox = new MonthListBox();
@@ -1456,8 +1477,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			contrataEmployeeObject.setEmployeeContract(s -> {
 				showSuccess("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName()
 						+ " ha sido actualizado correctamente");
-				checkStatus(contrataEmployeeObject);
-				checkButtonsToolbar();
+				loadWindow(su -> {
+					checkButtonsToolbar();
+					checkStatus(contrataEmployeeObject);
+				});
 			}, f -> {
 			});
 		else
@@ -2022,6 +2045,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		};
 		hPanel.add(pdfAttachment);
 		
+		sendAttachEmail = new AonToolbarButton("Email Documento", AON.CSS.aonIconEmail());
+		sendAttachEmail.addClickHandler(e -> contractAttachUI.sendAttachEmail());
+		sendAttachEmail.setEnabled(false);
+		hPanel.add(sendAttachEmail);
+		
 		return hPanel;
 	}
 
@@ -2328,6 +2356,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	public void setIsComunica(boolean isComunica) {
 		this.isComunica = isComunica;
+	}
+	
+	public void setHasPayroll(boolean hasPayroll) {
+		this.hasPayroll = hasPayroll;
 	}
 
 	// ------------------------------------------------- Delete Message Panel

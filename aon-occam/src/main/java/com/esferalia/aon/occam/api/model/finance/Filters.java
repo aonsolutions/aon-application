@@ -7,17 +7,13 @@ import com.esferalia.aon.occam.api.model.finance.Properties.VATProperties;
 
 public class Filters {
 	
-	@FunctionalInterface
-	public static interface VATFilter{
-		
-		Filter filter(VATProperties properties);
-
+	private Filters() {
 	}
 	
 	@FunctionalInterface
-	public static interface IRPFFilter{
-		
-		Filter filter(IRPFProperties properties);
-
+	public static interface VATFilter{
+		Filter filter(VATProperties properties);
 	}
+	
+	
 }

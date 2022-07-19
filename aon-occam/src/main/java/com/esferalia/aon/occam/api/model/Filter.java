@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.Properties.*;
+import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 
 public interface Filter extends Serializable{
 	
@@ -652,4 +653,10 @@ public interface Filter extends Serializable{
 	public interface InvestAssetFilter{
 		Filter filter(InvestAssetProperties properties);
 	}
+	
+	@FunctionalInterface
+	public static interface IRPFFilter{
+		Filter filter(IRPFProperties properties);
+	}
+	
 }

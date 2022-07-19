@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageF3 extends PageAbs {
 
@@ -25,7 +26,7 @@ public class PageF3 extends PageAbs {
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
 	
-	public PageF3(Deposit deposit) {
+	public PageF3(Deposit2 deposit) {
 		super(deposit);
 		
 		Widget ui = pageBinder.createAndBindUi(this);

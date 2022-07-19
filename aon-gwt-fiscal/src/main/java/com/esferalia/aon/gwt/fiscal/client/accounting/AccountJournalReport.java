@@ -219,9 +219,9 @@ public class AccountJournalReport extends MainEntryPoint {
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
+				private static final long serialVersionUID = 1171969461316863713L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

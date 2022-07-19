@@ -11,6 +11,8 @@ public class IRPFParams implements Serializable {
 	private static final long serialVersionUID = 2683060057390169937L;
 	
 	private int domain;
+	private String domainName;
+	private String user;	
 	private Integer registry;
 	private Integer activity;
 	private Date fromDate;
@@ -24,7 +26,7 @@ public class IRPFParams implements Serializable {
 	private Boolean investment;
 	private Boolean service;
 	private Integer orderBy;
-	private Integer groupByNif;
+	private Integer groupedBy;
 	
 	Integer[] invoices;
 	
@@ -39,6 +41,21 @@ public class IRPFParams implements Serializable {
 	}
 	public IRPFParams setDomain(int domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public IRPFParams setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
+	public String getUser() {
+		return user;
+	}
+	public IRPFParams setUser(String user) {
+		this.user = user;
 		return this;
 	}
 	public Integer getRegistry() {
@@ -76,6 +93,9 @@ public class IRPFParams implements Serializable {
 		this.output = output;
 		return this;
 	}
+	public boolean isOutput() {
+		return output != null && output.booleanValue();
+	}
 	public WithholdingType getWithholdingType() {
 		return type;
 	}
@@ -90,11 +110,11 @@ public class IRPFParams implements Serializable {
 		this.orderBy = orderBy;
 		return this;
 	}
-	public Integer getGroupByNif() {
-		return groupByNif;
+	public Integer getGroupedBy() {
+		return groupedBy;
 	}
-	public IRPFParams setGroupByNif(Integer groupByNif) {
-		this.groupByNif = groupByNif;
+	public IRPFParams setGroupedBy(Integer groupedBy) {
+		this.groupedBy = groupedBy;
 		return this;
 	}
 	public Double getPercent() {
@@ -131,6 +151,9 @@ public class IRPFParams implements Serializable {
 	public IRPFParams setService(Boolean service) {
 		this.service = service;
 		return this;
+	}
+	public boolean isService() {
+		return service != null && service.booleanValue();
 	}
 	
 }

@@ -8,7 +8,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.FrameElement;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Frame;
 
 public class FullViewer extends Frame {
@@ -33,6 +32,7 @@ public class FullViewer extends Frame {
 	}
 	
 	private String dataURI;
+
 	
 	public FullViewer() {
 		this( null, ViewerDefaultScale.AUTO);
@@ -86,14 +86,29 @@ public class FullViewer extends Frame {
 		nativeOpen( this.getElement().cast() ,dataURI);
 	}
 
-	public byte[] getData() {
-		byte [] data = getData(this.getElement().cast());
-		Window.alert("getData : " + data);
-		return data;
+	public void getData(CallbackData callbackData) {
+		getDataWait(this.getElement().cast(), callbackData);
 	}
+	
+	private native void getDataWait(FrameElement el, CallbackData callbackData) /*-{
+			el.contentWindow.PDFViewerApplication.pdfDocument
+			.saveDocument()
+			.then( function(buffer){
+		  		var binary = '';
+			    var bytes = new Uint8Array( buffer );
+			    var len = bytes.byteLength;
+			    for (var i = 0; i < len; i++) {
+			        binary += String.fromCharCode( bytes[ i ] );
+			    }
+			    var base64 = window.btoa( binary );
+				callbackData.@net.aonsolutions.gwt.pdfjs.client.CallbackData::getData(Ljava/lang/String;)(base64);
+			});
+	}-*/;
+
 
 	private native byte[] getData(FrameElement el) /*-{
-		el.contentWindow.PDFViewerApplication.pdfDocument.getData().then(function (data) {
+		el.contentWindow.PDFViewerApplication.pdfDocument.getData()
+		.then(function (data) {
 			console.log("Inner getData : " + data);
 			return data;
 		});
@@ -140,7 +155,6 @@ public class FullViewer extends Frame {
 		var blobUrl = URL.createObjectURL(blob);
       
 		a.href = blobUrl;
-		a.target = '_parent';
 		if ('download' in a) {
 		  a.download = filename;
 		}
@@ -150,4 +164,5 @@ public class FullViewer extends Frame {
     //.catch(downloadByUrl);
 }-*/;
 	
+//			a.target = '_parent';
 }

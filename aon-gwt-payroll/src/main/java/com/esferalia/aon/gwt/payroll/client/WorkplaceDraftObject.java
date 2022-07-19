@@ -52,7 +52,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 				workplaceInfo = result;
 				workplaceInfoOld = new WorkplaceInfo(result);
 				
-				getAgreements(
+				getEnterpriseAddresses(
 						r -> success.accept(result),
 						f -> {}
 				);
@@ -64,35 +64,6 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			}
 		});
 		
-	}
-	
-	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(true, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				agreements = getActiveAgreements(result);
-				
-				getEnterpriseAddresses(
-						s -> success.accept(result),
-						f -> {}
-				);
-			}
-			
-			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
-				List<Agreement> activeAgreements = new ArrayList<>();
-				for(Agreement agreement : agreements)
-					if(agreement.getId() > 0)
-						activeAgreements.add(agreement);
-				
-				return activeAgreements;
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});	
 	}
 	
 	private void getEnterpriseAddresses(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
@@ -147,6 +118,19 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			}
 		});
 		
+	}
+	
+	public void setAgreements(List<Agreement> agreementsContext) {
+		agreements = getActiveAgreements(agreementsContext);
+	}
+	
+	private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
+		List<Agreement> activeAgreements = new ArrayList<>();
+		for(Agreement agreement : agreements){
+			if(agreement.getId() > 0)
+				activeAgreements.add(agreement);
+		}
+		return activeAgreements;
 	}
 	
 	// ------------------------------------------------- Getters Methods

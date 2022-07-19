@@ -4314,6 +4314,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		});
 
+		this.implicitExpressionContext.putVariable(ContextVariable.REGIME, new LazyTimedConstant<CCCType>() {
+			@Override
+			public CCCType create() {
+				return getCCCType();
+			}
+		});
+
 		this.implicitExpressionContext.putVariable(FULL_TIME, new ActiveTimedVariable<Boolean>() {
 			@Override
 			public Boolean getValue(Period period) {

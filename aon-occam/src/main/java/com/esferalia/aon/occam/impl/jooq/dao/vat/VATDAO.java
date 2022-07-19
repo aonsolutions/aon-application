@@ -207,6 +207,7 @@ public class VATDAO  {
 	public static Stream<VatContext> getNotInModelAccrualVatBreakdown(final AONContext ctx, final FiscalModel mod) {
 		int prevYear = mod.getYear() - 1;
 		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
+		java.sql.Date modYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(mod.getYear()) );
 		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
@@ -218,7 +219,8 @@ public class VATDAO  {
 		return getAccrualSelect(ctx)
 			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
 			.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(FINANCE_TRACKING.TRACKING_DATE.between( getStartDate(mod), getEndDate(mod)))
+//			.and(FINANCE_TRACKING.TRACKING_DATE.between( getStartDate(mod), getEndDate(mod)))
+			.and(FINANCE_TRACKING.TRACKING_DATE.ge( modYearFirstDay ))
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))

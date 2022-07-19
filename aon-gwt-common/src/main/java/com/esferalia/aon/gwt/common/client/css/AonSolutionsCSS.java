@@ -1092,6 +1092,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_navarra_background_color")
 	String aonNavarraBackgroundColor();
 	
+	@ClassName("aon_ccaa_background_color")
+	String aonCcaaBackgroundColor();
+	
 	@ClassName("aon_cards")
 	String aonCards();
 	

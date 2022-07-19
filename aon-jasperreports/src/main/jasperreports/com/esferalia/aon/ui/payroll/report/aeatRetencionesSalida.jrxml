@@ -152,12 +152,12 @@
 					<textFieldExpression><![CDATA[$F{irpfData}.getFamilySituation().getValue()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="9986619a-f12f-47a9-9411-22a70b76f8de" style="label" x="5" y="44" width="89" height="15"/>
+					<reportElement uuid="9986619a-f12f-47a9-9411-22a70b76f8de" style="label" x="5" y="44" width="70" height="15"/>
 					<textElement/>
 					<text><![CDATA[Discapacidad ..............]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="7e6648b2-434b-492e-878e-dac5967aa319" style="value_box" x="94" y="44" width="166" height="13"/>
+					<reportElement uuid="7e6648b2-434b-492e-878e-dac5967aa319" style="value_box" x="75" y="44" width="185" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{irpfData}.getDisabilityLevel() == null ? "NO" : $F{irpfData}.getDisabilityLevel().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>

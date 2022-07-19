@@ -20,11 +20,11 @@ import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
-import com.esferalia.aon.gwt.fiscal.client.invoice.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
@@ -181,7 +181,11 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.report.OperationReport.run();
 			}
 		},
-		;
+		IRPFReport {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.invoice.irpf.IRPFReport.run();
+			}
+		};
 		abstract void run();
 	}
 
@@ -204,7 +208,6 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
-	private static final String FS_IRPF_REPORT_ENTRY_POINT = "IRPFReport";
 	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
 	
 	//
@@ -438,21 +441,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					VatReport vatReport = new VatReport();
 					vatReport.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_IRPF_REPORT_ENTRY_POINT)) {
-			GWT.runAsync(IRPFReport.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					IRPFReport irpfReport = new IRPFReport(getCurrentDomainName(),getCurrentDomain(),getCurrentUser());
-					irpfReport.onModuleLoad();
 				}
 				
 			});

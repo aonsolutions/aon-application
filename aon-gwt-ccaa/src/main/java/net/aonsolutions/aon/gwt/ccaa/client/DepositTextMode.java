@@ -1,49 +1,44 @@
 package net.aonsolutions.aon.gwt.ccaa.client;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import com.esferalia.aon.gwt.common.client.widget.Toolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.vaadin.polymer.Polymer;
-import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.iron.widget.IronIcon;
-import com.vaadin.polymer.paper.PaperIconButtonElement;
-import com.vaadin.polymer.paper.widget.PaperInput;
-import com.vaadin.polymer.paper.widget.PaperItem;
-import com.vaadin.polymer.vaadin.VaadinUploadElement;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.aon.gwt.ccaa.client.normalizedMemory.FreeText;
 import net.aonsolutions.aon.gwt.ccaa.shared.DepositMenu;
 import net.aonsolutions.aon.gwt.ccaa.shared.MemoryTemplate;
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
 
 
 
-public class DepositTextMode extends AonTemplate2 {
+public class DepositTextMode extends DockLayoutPanel {
 	
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 
 	DockLayoutPanel d2Content;
-	FlexTable header;
+	DepositHeader header;
 	ScrollPanel page;
 	
 	API API;
@@ -53,6 +48,14 @@ public class DepositTextMode extends AonTemplate2 {
 	Integer id;
 	String name;
 	DepositMenu depositMenu;
+	DepositWest depositWest;
+	
+	List<MemoryTemplate> memoryTemplates;
+	AonToolbar toolbarPanel;
+	AonToolbarButton undoButton;
+	AonToolbarButton redoButton;
+	AonToolbarButton newButton;
+	AonToolbarButton removeButton;
 	
 	Stack<Map<String, String>> undoStack = new Stack<Map<String, String>>();
 	Stack<Map<String, String>> redoStack = new Stack<Map<String, String>>();
@@ -60,187 +63,78 @@ public class DepositTextMode extends AonTemplate2 {
 	DepositTextMode thiz = this;
 	
 	public DepositTextMode(AonData aonData) {
+		super(Unit.PX);
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());
-	}
-	
-	@Override
-	public void onModuleLoad() {
-		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				PaperIconButtonElement.SRC,
-				AonComboBoxElement.SRC,
-				VaadinUploadElement.SRC
-		));
-		
-		Polymer.whenReady(o -> {
-			super.onModuleLoad();
-			getInma().getTemplates(getAonData(), new AsyncCallback<Vector<MemoryTemplate>>() {
-				
-				@Override
-				public void onSuccess(Vector<MemoryTemplate> result) {
-					if(result.size()> 0) {
-						setId(result.get(0).getId());
-						setName(result.get(0).getName());
-					}
-					startApplication(result);
+		init();
+		getInma().getTemplates(getAonData(), new AsyncCallback<Vector<MemoryTemplate>>() {
+			
+			@Override
+			public void onSuccess(Vector<MemoryTemplate> result) {
+				setMemoryTemplates(result);
+				if(!result.isEmpty()) {
+					setId(result.get(0).getId());
+					setName(result.get(0).getName());
 				}
-				
-				@Override public void onFailure(Throwable caught) {}
-			});
-			return null;
+				startApplication();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
 		});
 	}
 	
-	private void startApplication(Vector<MemoryTemplate> result) {
-		toolbar();
-		westContent(result);
-		content();
+	private void init() {
+		setName("");
 	}
 	
-	private void toolbar() {
-		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Cuentas Anuales");
-		toolbar.addButton("Deshacer","aon-icon-undo").addClickHandler(undoClickHandler());
-		toolbar.addButton("Rehacer","aon-icon-redo").addClickHandler(redoClickHandler());
-		toolbar.addButton("Nuevo",AON.AON_CSS.aonIconReset()).addClickHandler(createClickHandler());
-		toolbar.addButton("Borrar",AON.AON_CSS.aonIconDelete()).addClickHandler(deleteClickHandler());
-		setToolbar(toolbar);
+	private void startApplication() {
+		addNorth(header(), DepositHeader.HEIGTH);
+		addNorth(toolbar(), AonToolbar.HEIGTH);
+		addWest(menu(), DepositWest.WIDTH);
+		add(content());
 	}
 	
-	private void westContent(Vector<MemoryTemplate> result) {
-		getDockLayoutPanel().setWidgetSize(getWestContent(), 300);
-		setWestContent(menu(result));
-	}
-  
-
-	private VerticalPanel menu(Vector<MemoryTemplate> templates) {
-		VerticalPanel vp = new VerticalPanel();
-		vp.setWidth("100%");
-		Boolean first = true;
-		for(MemoryTemplate mt : templates) {
-			PaperItem ej = buildItem(mt.getName(), first ? "arrow-drop-down":"arrow-drop-up", true);
-			VerticalPanel ejContent = buildSubEjercicio(first, mt.getId(), mt.getName());
-			ej.addClickHandler(submenuClickHandler(ej, ejContent));
-			vp.add(ej);
-			vp.add(ejContent);
-			if(first) first = false;
-		}
-
-		return vp;
+	private Widget header() {
+		setHeader(new DepositHeader("Plantillas"));
+		return getHeader();
 	}
 	
-	public PaperItem buildItem(String text, String icon, Boolean title){
-		PaperItem pi = new PaperItem();
-		pi.setTitle(text);
-		if(icon != null) {
-			IronIcon ironIcon = new IronIcon();
-			ironIcon.setIcon(icon);
-			ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
-			pi.add(ironIcon);
-		}
-		pi.add(new Label(text));
-		pi.setStyle("min-height:24px;font-size:12px;padding:0px;cursor:pointer;" + (title ? "font-weight:bold;" : "")); 
-		return pi;
-	}
+	private Widget toolbar() {
+		toolbarPanel = new AonToolbar(getName());
+		
+		undoButton = new AonToolbarButton("Deshacer", AON.CSS.aonIconUndo());
+		undoButton.addClickHandler(undoClickHandler());
+		toolbarPanel.add(undoButton);
 
+		redoButton = new AonToolbarButton("Anular", AON.CSS.aonIconRedo());
+		redoButton.addClickHandler(redoClickHandler());
+		toolbarPanel.add(redoButton);
+		
+		newButton = new AonToolbarButton("Nuevo", AON.CSS.aonIconAdd());
+		newButton.addClickHandler(createClickHandler());
+		toolbarPanel.add(newButton);
+		
+		removeButton = new AonToolbarButton("Borrar", AON.CSS.aonIconDelete());
+		removeButton.addClickHandler(deleteClickHandler());
+		toolbarPanel.add(removeButton);
+		
+		return toolbarPanel;
+	}
+	
+	private Widget menu() {
+		depositWest = new DepositWest(thiz, getMemoryTemplates());
+		return depositWest;
+	}
+	
+	private void addMenuTemplate(MemoryTemplate template) {
+		depositWest.addTemplate(template);
+	}
 	    
-    public VerticalPanel buildSubEjercicio(Boolean visible, Integer id, String name){
-    	VerticalPanel vp = new VerticalPanel();
-	    	
-    	PaperItem ae = buildItem(DepositMenu.AE.getDescription(), null, false);
-    	ae.addClickHandler(menuClickHandler(DepositMenu.AE, id, name));
-    	vp.add(ae);
-    	
-    	PaperItem bp = buildItem(DepositMenu.BP.getDescription(), null, false);
-    	bp.addClickHandler(menuClickHandler(DepositMenu.BP, id, name));
-    	vp.add(bp);
-    	
-    	PaperItem ar = buildItem(DepositMenu.AR.getDescription(), null, false);
-    	ar.addClickHandler(menuClickHandler(DepositMenu.AR_TL, id, name));
-    	vp.add(ar);
-    	
-    	PaperItem nrv = buildItem(DepositMenu.NRV.getDescription(), null, false);
-    	nrv.addClickHandler(menuClickHandler(DepositMenu.NRV, id, name));
-    	vp.add(nrv);
-    	
-    	PaperItem imiii = buildItem(DepositMenu.IMIII.getDescription(), null, false);
-    	imiii.addClickHandler(menuClickHandler(DepositMenu.IMIII_TL, id, name));
-    	vp.add(imiii);
-    	
-    	PaperItem af = buildItem(DepositMenu.AF.getDescription(), null, false);
-    	af.addClickHandler(menuClickHandler(DepositMenu.AF_TL, id, name));
-    	vp.add(af);
-    
-    	PaperItem pf = buildItem(DepositMenu.PF.getDescription(), null, false);
-    	pf.addClickHandler(menuClickHandler(DepositMenu.PF_TL, id, name));
-    	vp.add(pf);
-    	
-    	PaperItem fp = buildItem(DepositMenu.FP.getDescription(), null, false);
-    	fp.addClickHandler(menuClickHandler(DepositMenu.FP, id, name));
-    	vp.add(fp);
-    	
-    	PaperItem sf = buildItem(DepositMenu.SF.getDescription(), null, false);
-    	sf.addClickHandler(menuClickHandler(DepositMenu.SF, id, name));
-    	vp.add(sf);
-    	
-    	PaperItem sdl = buildItem(DepositMenu.SDL.getDescription(), null, false);
-    	sdl.addClickHandler(menuClickHandler(DepositMenu.SDL_TL, id, name));
-    	vp.add(sdl);
-    	
-    	PaperItem opv = buildItem(DepositMenu.OPV.getDescription(), null, false);
-    	opv.addClickHandler(menuClickHandler(DepositMenu.OPV_TL, id, name));
-    	vp.add(opv);
-    	
-    	PaperItem oi = buildItem(DepositMenu.OI.getDescription(), null, false);
-    	oi.addClickHandler(menuClickHandler(DepositMenu.OI_TL, id, name));
-    	vp.add(oi);
-    	
-    	PaperItem im = buildItem(DepositMenu.IM.getDescription(), null, false);
-    	im.addClickHandler(menuClickHandler(DepositMenu.IM_TL, id, name));
-    	vp.add(im);
-
-    	vp.setVisible(visible);
-    	vp.setWidth("100%");
-    	vp.getElement().getStyle().setMarginLeft(25, Unit.PX);
-    	return vp;	
-    }
-	
-	private void content() {
-		header();
+	private Widget content() {
 		deposit();
-		setD2Content(new DockLayoutPanel(Unit.PX));
-		getD2Content().addNorth(getHeader(), 55);
-		getD2Content().add(getPage());
-		setContent(getD2Content());
-	}
-	
-	private void header() {
-		setHeader(new FlexTable());
-		getHeader().setStyleName(AON.AON_CSS.aonFiscalModelTable());
-		
-		Label image = new Label("");
-		image.setStyleName(AON.AON_CSS.aonRegistroMercantilImage());
-
-		getHeader().setWidget(0, 0, image);
-		getHeader().getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
-		getHeader().getFlexCellFormatter().setRowSpan(0, 0, 2);
-		
-		getHeader().setWidget(0, 1, new Label("Cuentas Anuales"));
-		getHeader().getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		getHeader().getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonFiscalRegistroMercantil2());
-		getHeader().getFlexCellFormatter().setRowSpan(0, 1, 2);
-		
-		Label typeLabel = new Label("Plantilla");
-		getHeader().setWidget(0, 2, typeLabel);
-		getHeader().getFlexCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-		getHeader().getFlexCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonFiscalRegistroMercantil2());
-		
-		getHeader().setWidget(1, 0, new Label(getName()));
-		getHeader().getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
-		getHeader().getFlexCellFormatter().addStyleName(1, 0, AON.AON_CSS.aonFiscalRegistroMercantil2());
+		return getPage();
 	}
 	
 	private void deposit() {
@@ -261,11 +155,12 @@ public class DepositTextMode extends AonTemplate2 {
 	}
 	
 	public void updateHeader() {
-		getHeader().setWidget(1, 0, new Label(getName()));
+		toolbarPanel.setTitle(getName());
 	}
 	
 	public void updatePage(DepositMenu depositMenu) {
 		setDepositMenu(depositMenu);
+		if(depositMenu == null) getPage().setWidget(new Label("No existe Ninguna plantilla"));
 		if(DepositMenu.AE.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, DepositMenu.AE.getDescription(), "MAT1", true));
 		if(DepositMenu.BP.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, DepositMenu.BP.getDescription(), "MAT2", true));
 		if(DepositMenu.AR_TL.equals(depositMenu)) getPage().setWidget(new FreeText(thiz, DepositMenu.AR.getDescription(), "MAT3", true));
@@ -306,18 +201,6 @@ public class DepositTextMode extends AonTemplate2 {
 						@Override public void onFailure(Throwable caught) {}
 					});
 				}
-			}
-		};
-	}
-	
-	private ClickHandler submenuClickHandler(PaperItem item, VerticalPanel content) {
-		return new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				content.setVisible(!content.isVisible());
-				IronIcon ironIcon = (IronIcon) item.getWidget(0);
-				ironIcon.setIcon(content.isVisible() ? "arrow-drop-down" : "arrow-drop-up");
 			}
 		};
 	}
@@ -379,38 +262,37 @@ public class DepositTextMode extends AonTemplate2 {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				PaperInput name = new PaperInput();
+				TextBox name = new TextBox();
 				name.setTitle("Nombre");
-				name.setLabel("Nombre");
-				AonDialog dialog = new AonDialog("Crear Plantilla", name) {
+				AonDialog dialog = new AonDialog("Crear Plantilla", name);
+				dialog.setAutoHideEnabled(true);
+				dialog.confirm(new AonAcceptDialogCallback() {
 					
-					@Override 
-					protected void onCancel() {
-						hide();
+					@Override
+					public void onCancel() {
+						dialog.hide();
 					}
 					
 					@Override
-					protected void onAccept() {
-						hide();
+					public void onAccept() {
+						dialog.hide();
 						getInma().createSchemaTextMode(getAonData(), name.getValue(), new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								setId(result);
-								setName(name.getValue());
+								MemoryTemplate template = new MemoryTemplate()
+								.setId(result)
+								.setName(name.getValue());
+								memoryTemplates.add(template);
+								setId(template.getId());
+								setName(template.getName());
 								getInma().getSchemaTextMode(getAonData(), getId(), new AsyncCallback<Map<String, String>>() {
 									@Override
 									public void onSuccess(Map<String, String> result) {
 										setDeposit(result);
 										updateHeader();
 										updatePage(DepositMenu.AE);
-
-										PaperItem ej = buildItem(getName(), "arrow-drop-down", true);
-										VerticalPanel ejContent = buildSubEjercicio(true, getId(), getName());
-										ej.addClickHandler(submenuClickHandler(ej, ejContent));
-										VerticalPanel vp = (VerticalPanel) getWestContent().getWidget();
-										vp.add(ej);
-										vp.add(ejContent);
+										addMenuTemplate(template);
 									}
 									
 									@Override public void onFailure(Throwable caught) {}
@@ -419,12 +301,9 @@ public class DepositTextMode extends AonTemplate2 {
 							}
 							
 							@Override public void onFailure(Throwable caught) {}
-						});
+						});	
 					}
-				};
-				dialog.setAutoHideEnabled(true);
-				dialog.getElement().getStyle().setWidth(310, Unit.PX);
-				dialog.center();
+				});
 			}
 		};
 	}
@@ -434,17 +313,18 @@ public class DepositTextMode extends AonTemplate2 {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				AonDialog dialog = new AonDialog("Borrar Plantilla", new Label("Estas seguro de borrar la plantilla.")) {
+				AonDialog dialog = new AonDialog("Borrar Plantilla", new Label("Estas seguro de borrar la plantilla " + getId() + " " + getName() + "."));
+				dialog.setAutoHideEnabled(true);
+				dialog.confirm(new AonAcceptDialogCallback() {
 					
-					@Override 
-					protected void onCancel() {
-						hide();
+					@Override
+					public void onCancel() {
+						dialog.hide();
 					}
 					
 					@Override
-					protected void onAccept() {
-						hide();
+					public void onAccept() {
+						dialog.hide();
 						getInma().deleteSchemaTextMode(getAonData(), getId(), new AsyncCallback<Void>() {
 							
 							@Override
@@ -453,13 +333,29 @@ public class DepositTextMode extends AonTemplate2 {
 									
 									@Override
 									public void onSuccess(Vector<MemoryTemplate> result) {
-										if(result.size()> 0) {
+										setMemoryTemplates(result);
+										if(!result.isEmpty()){
 											setId(result.get(0).getId());
 											setName(result.get(0).getName());
+											getInma().getSchemaTextMode(getAonData(), getId(), new AsyncCallback<Map<String, String>>() {
+												@Override
+												public void onSuccess(Map<String, String> result) {
+													setDeposit(result);
+													updateHeader();
+													updatePage(DepositMenu.AE);
+													depositWest.reload(getMemoryTemplates());
+												}
+												
+												@Override public void onFailure(Throwable caught) {}
+											});
+										} else {
+											setId(null);
+											setName("");
+											setDeposit(new HashMap<>());
+											updateHeader();
+											updatePage(null);
+											depositWest.reload(getMemoryTemplates());
 										}
-										updateHeader();
-										updatePage(DepositMenu.AE);
-										westContent(result);
 									}
 								
 									@Override public void onFailure(Throwable caught) {}
@@ -469,10 +365,7 @@ public class DepositTextMode extends AonTemplate2 {
 							@Override public void onFailure(Throwable caught) {}
 						});
 					}
-				};
-				dialog.setAutoHideEnabled(true);
-				dialog.getElement().getStyle().setWidth(310, Unit.PX);
-				dialog.center();
+				});
 			}
 		};
 	}
@@ -528,11 +421,11 @@ public class DepositTextMode extends AonTemplate2 {
 		this.d2Content = d2Content;
 	}
 	
-	public FlexTable getHeader() {
+	public DepositHeader getHeader() {
 		return header;
 	}
 	
-	public void setHeader(FlexTable header) {
+	public void setHeader(DepositHeader header) {
 		this.header = header;
 	}
 	
@@ -550,6 +443,14 @@ public class DepositTextMode extends AonTemplate2 {
 	
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	public List<MemoryTemplate> getMemoryTemplates() {
+		return memoryTemplates;
+	}
+	
+	public void setMemoryTemplates(List<MemoryTemplate> memoryTemplates) {
+		this.memoryTemplates = memoryTemplates;
 	}
 	
 	public DepositMenu getDepositMenu() {

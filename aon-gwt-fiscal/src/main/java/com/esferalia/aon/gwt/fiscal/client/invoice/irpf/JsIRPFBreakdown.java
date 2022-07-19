@@ -36,13 +36,13 @@ public class JsIRPFBreakdown extends JavaScriptObject {
 		return this.issueDate;
 	}-*/;
 	public final Date getIssueDate() {
-		return new Date( Long.valueOf(getIssueDateString()));
+		return getIssueDateString() == null ? null : new Date( Long.valueOf(getIssueDateString()));
 	}
 	public final native String getTaxDateString() /*-{
 		return this.taxDate;
 	}-*/;
 	public final Date getTaxDate() {
-		return new Date( Long.valueOf(getTaxDateString()));
+		return getTaxDateString() == null ? null : new Date( Long.valueOf(getTaxDateString()));
 	}
 	public final native boolean isFromSalary() /*-{
 		return this.fromSalary;
@@ -98,9 +98,18 @@ public class JsIRPFBreakdown extends JavaScriptObject {
 	public final native String getCity() /*-{
 		return this.city;
 	}-*/;
+	public final native boolean isValid( int number) /*-{
+		return !isNaN(number);
+	}-*/;
 	
 	public final String getDocumentNumber() {
-		return FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(getInvoiceType()), getSeries(), getNumber());
+		InvoiceType it = InvoiceType.safeValueOf(getInvoiceType());
+		return ( it != null && isValid( getNumber() )) 
+				?FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(getInvoiceType()), getSeries(), getNumber())
+				:null;
+	}
+	public final boolean isSales() {
+		return (getInvoiceType() == InvoiceType.SALES.ordinal());
 	}
 	
 }

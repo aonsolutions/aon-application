@@ -119,7 +119,7 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<Void> asyncCallback);
 	void getEmployeeAFIChanges(String currentDomainName, Integer contractId, AsyncCallback<AFIChanges> asyncCallback);
 	void getDomainMailAccounts(String currentDomainName, String currentUser, AsyncCallback<List<MailAccount>> asyncCallback);
-	void getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID, AsyncCallback<String> asyncCallback);
+	void getPayrollEmailSendTo(String currentDomainName, AsyncCallback<String> asyncCallback);
 	void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback);
 	void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML,
 			AsyncCallback<String> asyncCallback);
@@ -145,7 +145,8 @@ public interface EnterprisesServiceAsync {
 	void getContractAttachments(String currentDomainName, String login, Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException;
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getAttachData(String currentDomainName, String currentUser, Integer attachId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
-	void setAttachData(String currentDomainName, String currentUser, Integer attachId, byte[] dataURI, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void setAttachData(String currentDomainName, String currentUser, Integer attachId, String base64, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void sendAttachEmail(String currentDomainName, String login, MailAccount emailFrom, String emailTo, List<String> ccTo, List<String> bccTo, String subject, String emailBody, List<Integer> attachIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------ Contract Caluses
 	

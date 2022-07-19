@@ -273,5 +273,8 @@ public class MainContrataContractObject {
 		return this.domainUserRoles.isComunica();
 	}
 
+	public boolean hasPayroll() {
+		return this.domainUserRoles.hasPayroll();
+	}
 }
 		

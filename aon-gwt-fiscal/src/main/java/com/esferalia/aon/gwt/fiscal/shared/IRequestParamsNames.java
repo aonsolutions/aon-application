@@ -60,7 +60,7 @@ public interface IRequestParamsNames {
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
-	String GROUP_BY_NIF = "groupByNif";
+	String GROUPED_BY = "groupedBy";
 	String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
 	String HEADER_TEXT = "headerText";
 	String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
@@ -138,6 +138,7 @@ public interface IRequestParamsNames {
 	String USER = "user";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
+	String WITHHOLDING_TYPE = "withholdingType";
 	String WORKPLACE_IDS = "workplaceIds";
 	
 }

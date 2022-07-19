@@ -102,8 +102,11 @@ public class CCAAPrint extends HttpServlet {
 		action.initialize();
 		Integer index = 0;
 		if(options.substring(index, index+1).equals("T")) action.IDA();index++;
-		if(d2Deposit.getYear() >= 2016 && d2Deposit.getYear() < 2018){
+		if(d2Deposit.getYear() >= 2016){
 			if(options.substring(index, index+1).equals("T")) action.AP3();index++;
+		}
+		if(d2Deposit.getYear() >= 2020) {
+			if(options.substring(index, index+1).equals("T"))  action.CVA();index++;
 		}
 		
     	if(d2Deposit.getYear() >= 2017) {

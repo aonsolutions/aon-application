@@ -159,7 +159,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		@Override
 		public String getQuoteExpression() {
-			return String.format("isdef %s ? %s * %s : _P" , 
+			return String.format("isdef %s ? MAX(%s * %s,_P) : _P" , 
 					ContextVariable.CGC_BASE_MIN_HOUR ,
 					ContextVariable.CGC_BASE_MIN_HOUR , 
 					ContextVariable.ADDITIONAL_HOURS);

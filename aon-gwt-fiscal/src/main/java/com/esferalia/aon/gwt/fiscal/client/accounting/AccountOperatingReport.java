@@ -189,6 +189,8 @@ public class AccountOperatingReport extends MainEntryPoint {
 			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback(new ModuleCallback() {
 			
+				private static final long serialVersionUID = -4140483727955443789L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

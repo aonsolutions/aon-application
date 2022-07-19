@@ -194,7 +194,7 @@ public class DomainUserRoles implements Serializable {
 	// PAYROLL - LABORAL
 	
 	public boolean hasPayroll() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PAYROLL);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PAYROLL) || hasOldModule(Module.PAYROLL) || hasOldModule(Module.PAYROLL_PORTAL);
 	}
 	
 	public boolean isPayroll() {

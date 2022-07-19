@@ -221,6 +221,8 @@ public class AccountConsolidatedBalanceReport extends MainEntryPoint {
 				.setJournalTabVisible(false)
 				.setExtraInfoTabVisible(false)
 				.setExternalCallback(new ModuleCallback() {
+					private static final long serialVersionUID = 7564085228697769896L;
+
 					@Override
 					public void onRemove(IAccountEntryWrapper removed) {
 						entryDialog.hide();

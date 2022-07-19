@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 import net.aonsolutions.aon.gwt.ccaa.client.DepositTextMode;
 
 public abstract class PageAbs extends ResizeComposite {
@@ -46,10 +47,10 @@ public abstract class PageAbs extends ResizeComposite {
 	protected static final int MEMORY_NOTE_VISIBLE_LENGTH = 8;
 	protected static final int NUMERIC_VISIBLE_LENGTH = 10;
 	
-	private Deposit deposit;
+	private Deposit2 deposit;
 	private DepositTextMode depositTextMode;
 	
-	public Deposit getDeposit() {
+	public Deposit2 getDeposit() {
 		return deposit;
 	}
 	
@@ -99,7 +100,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	
-	public PageAbs(Deposit deposit) {
+	public PageAbs(Deposit2 deposit) {
 		table = new FlexTable();
 		this.deposit = deposit;
 	}

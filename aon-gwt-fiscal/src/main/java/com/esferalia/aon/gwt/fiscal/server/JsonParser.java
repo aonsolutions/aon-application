@@ -18,12 +18,14 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -696,4 +698,94 @@ public class JsonParser {
 		return params;
 	}
 
+	public static IRPFParams parseIRPFParams(String irpfParams) throws ParseException, java.text.ParseException {
+		IRPFParams params = new IRPFParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(irpfParams);
+		
+
+		// ******************* DOMAIN ******************* 
+		Object dom = jsonParams.get(IRequestParamsNames.DOMAIN);
+		if (dom == null) {
+			throw new IllegalArgumentException("NULL DOMAIN!");
+		}
+		if (dom instanceof Long) {
+			Long domain = (Long) dom; 
+			params.setDomain(domain.intValue());
+		} else if (dom instanceof String) {
+			Integer domain = AonNumberUtils.toInteger((String) dom);
+			if (domain == null) {
+				throw new IllegalArgumentException("NULL DOMAIN!");
+			}
+			params.setDomain(domain);
+		}
+
+		// ******************* ACTIVITY ******************* 
+		Long registry = (Long) jsonParams.get(IRequestParamsNames.REGISTRY);
+		if (registry != null) {
+			params.setRegistry(registry.intValue());	
+		}
+		// ******************* ACTIVITY ******************* 
+		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
+		if (activity != null) {
+			params.setActivity(activity.intValue());	
+		}
+		// ******************* FROMDATE ******************* 
+		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
+		if (AonStringUtils.isNotBlank(fromDate)) {
+			params.setFromDate( FORMATTER.parse(fromDate));			
+		}
+		// ******************* TODATE ******************* 
+		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
+		if (AonStringUtils.isNotBlank(toDate)) {
+			params.setToDate( FORMATTER.parse(toDate));			
+		}
+		// *******************  OUTPUT ******************* 
+		Long outputEnabled  = (Long) jsonParams.get(IRequestParamsNames.OUTPUT);
+		if (outputEnabled != null) {
+			params.setOutput(outputEnabled==1);
+		}
+		// ******************* WithholdingType ******************* 
+		Long withholdingType = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE);
+		if (withholdingType != null) {
+			params.setWithholdingType(WithholdingType.safeValueOf( withholdingType.intValue() ));
+		}
+		// ******************* PERCENT *******************
+		Number percent = (Number) jsonParams.get(IRequestParamsNames.PERCENT);
+		if (percent != null) {
+			params.setPercent(percent.doubleValue());	
+		}
+		// ******************* RECTIFICATION ******************* 
+		Long rectification = (Long) jsonParams.get(IRequestParamsNames.RECTIFICATION);
+		if (rectification != null) {
+			params.setRectificationType(RectificationType.safeValueOf( rectification.intValue() ));
+		}
+		
+		// ******************* ACCRUAL_REGIME ******************* 
+		Long accrualRegime = (Long) jsonParams.get(IRequestParamsNames.ACCRUAL_REGIME);
+		if (accrualRegime != null) {
+			params.setAccrualRegime(accrualRegime==1);
+		}
+		// ******************* INVESTMENT ******************* 
+		Long investment = (Long) jsonParams.get(IRequestParamsNames.INVESTMENT);
+		if (investment != null) {
+			params.setInvestment(investment==1);
+		}
+		// ******************* SERVICE ******************* 
+		Long service = (Long) jsonParams.get(IRequestParamsNames.SERVICE);
+		if (service != null) {
+			params.setService(service==1);
+		}
+		// ******************* ACTIVITY ******************* 
+		Long orderBy = (Long) jsonParams.get(IRequestParamsNames.ORDER_BY);
+		if (orderBy != null) {
+			params.setOrderBy(orderBy.intValue());	
+		}
+		// ******************* ACTIVITY ******************* 
+		Long groupedBy = (Long) jsonParams.get(IRequestParamsNames.GROUPED_BY);
+		if (groupedBy != null) {
+			params.setGroupedBy(groupedBy.intValue());	
+		}
+		return params;
+	}
 }

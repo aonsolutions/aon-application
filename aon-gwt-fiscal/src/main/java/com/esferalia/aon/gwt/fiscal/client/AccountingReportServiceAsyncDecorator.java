@@ -11,8 +11,6 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountingReportServiceAsyncDecorator implements AccountingReportServiceAsync {
@@ -64,16 +62,4 @@ public class AccountingReportServiceAsyncDecorator implements AccountingReportSe
 
 	}
 
-	// --------------------------------------------------------------- IRPF
-	@Override
-	public void getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
-		AON.start();
-		fsa.getIrpfBreakdownSummary(domainName, user, domain, params, new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
-	}
-
-	@Override
-	public void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
-		AON.start();
-		fsa.getIrpfBreakdown(domainName, user, domain, params, new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
-	}
 }
