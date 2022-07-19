@@ -443,8 +443,7 @@ public class InvoiceImport {
 		}
 		if(isPorcentajeImpuesto(title)) {
 			Double percent = Utils.parseDouble(o);
-			if(percent > 0 && percent < 1)
-				percent = percent * 100;
+			if(percent == null) percent = 0.0;
 			inv.setPercentage(percent);
 			return;
 		}
@@ -454,8 +453,7 @@ public class InvoiceImport {
 		}
 		if(isPorcentajeRe(title)) {
 			Double percent = Utils.parseDouble(o);
-			if(percent > 0 && percent < 1)
-				percent = percent * 100;
+			if(percent == null) percent = 0.0;
 			inv.setRePercentage(percent);
 			return;
 		}
@@ -468,8 +466,6 @@ public class InvoiceImport {
 		if(isPorcentajeRetencion(title)) {
 			Double percent = Utils.parseDouble(o);
 			if(percent == null) percent = 0.0;
-			if(percent > 0 && percent < 1)
-				percent = percent * 100;
 			inv.setRetentionPercentage(percent);
 			return;
 		}
