@@ -11,7 +11,14 @@ const getImage = (dataUrl) => {
     });
   };
   
-  //return base64
+/**
+ * 
+ * @param {File} file 
+ * @param {Number} maxSize kb
+ * @param {Double} quality 
+ * @param {Number} maxResolution 
+ * @returns File
+ */
   export const downscaleImage = async (
       file, 
       maxSize = Infinity,
@@ -27,24 +34,16 @@ const getImage = (dataUrl) => {
     const oldHeight = image.naturalHeight;
     const newMaxSize = maxSize*1024;
 
-    console.log("dims", oldWidth, oldHeight);
-    console.log(fileSize, newMaxSize);
-
     const longestDimension = oldWidth > oldHeight ? "width" : "height";
     const currentRes = longestDimension == "width" ? oldWidth : oldHeight;
-    console.log("longest dim", longestDimension, currentRes);
   
     if (currentRes > maxResolution || (fileSize > newMaxSize) ) {
       console.log("need to resize...");
   
       // Calculate new dimensions
-      const newSize = longestDimension == "width" 
-          ? Math.floor((oldHeight / oldWidth) * maxResolution)
-          : Math.floor((oldWidth / oldHeight) * maxResolution);
-          
-      const newWidth = longestDimension == "width" ? maxResolution : newSize;
+      const newSize   = longestDimension == "width"  ? Math.floor((oldHeight / oldWidth) * maxResolution) : Math.floor((oldWidth / oldHeight) * maxResolution);
+      const newWidth  = longestDimension == "width"  ? maxResolution : newSize;
       const newHeight = longestDimension == "height" ? maxResolution : newSize;
-      console.log("new width / height", newWidth, newHeight);
   
       // Create a temporary canvas to draw the downscaled image on.
       const canvas = document.createElement("canvas");
@@ -60,8 +59,11 @@ const getImage = (dataUrl) => {
       file.content = contentBase64;
       file.size = sizeNew;
 
+      console.log("new width", newWidth, "height", newHeight);
       console.warn(`oldSize:${(fileSize/(1024*1024)).toFixed(2)}mb - newSize:${(sizeNew/(1024*1024)).toFixed(2)}mb`);
-    } 
+    }  else {
+      console.log("not need to resize!");
+    }
 
     return file;
 };

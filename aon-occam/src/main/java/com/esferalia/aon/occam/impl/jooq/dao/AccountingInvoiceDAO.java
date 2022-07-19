@@ -375,7 +375,8 @@ public class AccountingInvoiceDAO {
 				INVOICE_TAX.PERCENTAGE,
 				INVOICE_TAX.QUOTA,
 				INVOICE_TAX.SURCHARGE,
-				INVOICE_TAX.SURCHARGE_QUOTA
+				INVOICE_TAX.SURCHARGE_QUOTA,
+				INVOICE_TAX.WITHHOLDING_TYPE
 					) 
 		.from( INVOICE_DETAIL )
 		.innerJoin( INVOICE_TAX ).on( INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
@@ -389,7 +390,8 @@ public class AccountingInvoiceDAO {
 			.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
 			.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
 			.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
-			.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA)))
+			.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
+			.setWithholdingType(WithholdingType.safeValueOf(tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE) )))
 		.forEach( br -> {
 			boolean added = false;
 			for (InvoiceBreakdown invBr : invoice.getBreakdown()) {

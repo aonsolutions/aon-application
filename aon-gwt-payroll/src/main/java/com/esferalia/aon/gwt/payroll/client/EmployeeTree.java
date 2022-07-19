@@ -61,7 +61,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Up2Date;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -111,7 +110,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -248,6 +246,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public void execute() {
 			WorkplaceDialog workplaceDialog = new WorkplaceDialog();
 			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise);
+			workplaceDialogObject.setAgreements(employees.getEnterpriseContext().getAgreements());
 			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 			enterpriseContextMenu.hide();
 		}
@@ -886,7 +885,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			String tipo = dialog.getType();
 			Date fromMonth = dialog.getFromMonth();
 			Date toMonth = dialog.getToMonth();
-			Date ctrlMonth = dialog.getToMonth();
+			//TODO: Check.
+			Date ctrlMonth = dialog.getCtrlMonth();
 			int desdeMes = fromMonth.getMonth() + 1;
 			int desdeAnyo = fromMonth.getYear() + 1900;
 			int hastaMes = toMonth.getMonth() + 1;
@@ -2324,6 +2324,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			new CategoryDraftObject(
 					enterprise.getDomain(),
 					Wnd.getCurrentDomainNameURL(),
+					Wnd.getCurrentUser(),
 					categoryDraft, 
 					DomainEmployeesServiceAsync.newInstance());			
 		}
@@ -2845,6 +2846,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	public void onWorkplaceSelected(Workplace workplace) {
 
 		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace);
+		employeeNewDraftObject.setAgreements(employees.getEnterpriseContext().getAgreements());
 
 		employeeDetail.setWidget(getWorkplacePanel());
 		getWorkplacePanel().setWorkplace(workplace);

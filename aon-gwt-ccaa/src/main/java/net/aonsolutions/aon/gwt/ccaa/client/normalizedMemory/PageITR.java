@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageITR extends PageAbs {
 
@@ -47,7 +48,7 @@ public class PageITR extends PageAbs {
 	
 	String codeAux;
 	
-	public PageITR(Deposit deposit) {
+	public PageITR(Deposit2 deposit) {
 		super(deposit);
 		
 		table2 = new FlexTable();

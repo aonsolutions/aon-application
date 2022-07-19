@@ -38,9 +38,9 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFBuilder;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
+import com.esferalia.aon.in.payroll.pdf.jooq.check.CheckSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
-import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -104,9 +104,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 
 	@SuppressWarnings("unchecked")
 	public JooqPDFSalaryBuilder(DSLContext dslContext, String parentDomainName) {
-		super(new LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>(new JooqSalaryBuilder<Salary>(dslContext)), new PDFSalaryBuilder());
-		
-		
+		super(new CheckSalaryBuilder<LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>, Salary>(new LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>(new JooqSalaryBuilder<Salary>(dslContext))), new PDFSalaryBuilder());
 		this.filter = (p) -> {};
 		this.enableHeredity = 1;
 		this.creationUser = "altai2aon";
@@ -494,7 +492,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		payrollWorkplace.setDomain(enterprise.getDomain());		
 		payrollWorkplace.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
 		//workplace.setAddress(value);
-		workplace.insert();
+		//workplace.insert();
 		
 		return payrollWorkplace;
 	}
@@ -633,7 +631,10 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	}
 	
 	private LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary> getLazySalaryBuilder(){
-		return (LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>) getBuilders()[0];
+		
+		CheckSalaryBuilder<LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>, Salary> builder = (CheckSalaryBuilder<LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>, Salary>)getBuilders()[0];
+		return (LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>)builder.getBuilder();
+//		return (LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>) getBuilders()[0];
 	}
 
 	protected static boolean isLastDayOfMonth(Date date) {

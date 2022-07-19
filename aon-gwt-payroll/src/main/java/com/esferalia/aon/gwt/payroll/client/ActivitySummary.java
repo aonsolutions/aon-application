@@ -290,6 +290,7 @@ public class ActivitySummary extends MainEntryPoint {
 	void exportButton(ClickEvent event){
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_activitySummary/"
             + "?domainId=" + domainId
+            + "&domainName=" + domainName
             + "&parentDomainId=" + parentDomainId
 	        + "&startDate=" + startDate.getValue().getTime()
 	        + "&endDate=" + endDate.getValue().getTime()

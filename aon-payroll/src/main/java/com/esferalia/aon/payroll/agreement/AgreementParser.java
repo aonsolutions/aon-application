@@ -150,11 +150,15 @@ public class AgreementParser {
 		Pair<Integer,Map<String, String>> insertResult = new Pair<>(-1, new HashMap<>());
 		
 		InputStream is = null;
+		String userLogin = null;
 		
-		if(AonStringUtils.contains(agreementCode, 'a'))
+		if(AonStringUtils.contains(agreementCode, 'a')) {
 			is = AgreementParser.class.getResourceAsStream(agreementCode + ".xml");
-		else
+			userLogin = "AonSolutions";
+		}else {
 			is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
+			userLogin = "ServiConvenios";
+		}
 		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder documentBuilder;
@@ -180,7 +184,7 @@ public class AgreementParser {
 			agreement = parseAgreement(agreement);
 
 			// Insert Agreement to DataBase
-			insertResult = insertAgreementDB(dslContext, agreement, agreementCode, selectedDates);
+			insertResult = insertAgreementDB(dslContext, agreement, agreementCode, selectedDates, userLogin);
 
 			Map<String, String> varNotInsertMap = insertResult.getSecond();
 			
@@ -597,8 +601,9 @@ public class AgreementParser {
 	
 	// ------------------------------------------------------------ INSERT AGREEMENT 
 
-	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode, List<Integer> selectedDates) {
+	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode, List<Integer> selectedDates, String userLogin) {
 		Pair<Integer,Map<String, String>> result = new Pair<>(-1, new HashMap<>());
+		java.sql.Date creationDate = new java.sql.Date(new Date().getTime());
 		
 		dslContext.transaction(t -> {
 		
@@ -618,11 +623,12 @@ public class AgreementParser {
 			Map<String, String> mapVarNotInsert = new TreeMap<>();
 			
 			// Agreement
-			
 			AgreementRecord agreementRecord = dslContext.insertInto(AGREEMENT)
 				.set(AGREEMENT.DOMAIN, domainId)
 				.set(AGREEMENT.DESCRIPTION, parseDescription(agreement.getAgreementDescription()))
 				.set(AGREEMENT.SS_NUMBER, agreement.getSSCode())
+				.set(AGREEMENT.CREATION_USER, userLogin)
+				.set(AGREEMENT.CREATION_DATE, creationDate)
 				.returning(AGREEMENT.ID)
 				.fetchOne();
 			
@@ -695,9 +701,11 @@ public class AgreementParser {
 							.set(AGREEMENT_LEVEL_DATA.DOMAIN, domainId)
 							.set(AGREEMENT_LEVEL_DATA.NAME, realName)
 							.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, agreementLevelId)
-							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, lvlData.getValue())
+							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "/*inherit*/" + lvlData.getValue() + "/**/")
 							.set(AGREEMENT_LEVEL_DATA.START_DATE, parseDateToSql(lvlData.getStartDate()))
 							.set(AGREEMENT_LEVEL_DATA.END_DATE, parseDateToSql(lvlData.getEndDate()))
+							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
+							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, creationDate)
 							.execute();
 					} else {
 						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
@@ -769,13 +777,15 @@ public class AgreementParser {
 							.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 							.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
-							.set(AGREEMENT_PAYMENT.EXPRESSION, agreementPayment.getExpression())
+							.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + agreementPayment.getExpression() + "/**/")
 							.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getNormalizeName())
 							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
 							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
 							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+							.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
+							.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
 							.returning(AGREEMENT_PAYMENT.ID)
 							.fetchOne();
 					
@@ -867,7 +877,7 @@ public class AgreementParser {
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 					.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE")
+					.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
 					.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
@@ -875,6 +885,8 @@ public class AgreementParser {
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+					.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
+					.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
 					.returning(AGREEMENT_PAYMENT.ID)
 					.fetchOne();
 				
@@ -898,7 +910,7 @@ public class AgreementParser {
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 					.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE")
+					.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
 					.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
@@ -906,6 +918,8 @@ public class AgreementParser {
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+					.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
+					.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
 					.returning(AGREEMENT_PAYMENT.ID)
 					.fetchOne();
 				

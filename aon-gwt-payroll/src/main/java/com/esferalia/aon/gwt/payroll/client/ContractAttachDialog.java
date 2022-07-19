@@ -348,7 +348,7 @@ public abstract class ContractAttachDialog extends AonCustomDialog {
 		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonIconSave());
 		acceptBtnDialog.addStyleName(style.footerButton());
-		acceptBtnDialog.setText(this.attach.getId() == null ? "Crear documento" : "Guardar");
+		acceptBtnDialog.setText(this.attach.getId() == null ? "Guardar documento" : "Guardar");
 		acceptBtnDialog.addClickHandler(e -> form.submit());
 		
 		buttonsPanel.add(acceptBtnDialog);

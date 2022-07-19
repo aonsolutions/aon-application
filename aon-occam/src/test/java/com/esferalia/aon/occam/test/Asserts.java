@@ -725,12 +725,12 @@ public class Asserts {
 			assertEquals("withholdingType", expected.getWithholdingType(), actual.getWithholdingType()); 
 			assertEquals("regime", expected.getIRPFRegime(), actual.getIRPFRegime());
 			assertEquals("inKind", expected.isInKind(), actual.isInKind());
-			assertEquals("base", expected.getBase(), actual.getBase());
+			assertEqualsDouble("base", expected.getBase(), actual.getBase());
 			assertEqualsDouble("percent", expected.getPercent(), actual.getPercent());
 			assertEqualsDouble("quota", expected.getQuota(), actual.getQuota());
 			assertEqualsDouble("deductiblePercent", expected.getDeductiblePercent(), actual.getDeductiblePercent());
 			assertEqualsDouble("deductibleQuota", expected.getDeductibleQuota(), actual.getDeductibleQuota());
-			assertEquals("groupByNif", expected.getGroupByNif(), actual.getGroupByNif());
+			assertEquals("groupByNif", expected.getGroupedBy(), actual.getGroupedBy());
 			assertEquals("zip", expected.getZip(), actual.getZip());
 			assertEquals("city", expected.getCity(), actual.getCity());
 		}

@@ -181,7 +181,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<MailAccount> getDomainMailAccounts(String currentDomainName, String currentUser);
 
-	String getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID);
+	String getPayrollEmailSendTo(String currentDomainName);
 
 	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params);
 
@@ -216,7 +216,10 @@ public interface EnterprisesService extends RemoteService {
 
 	String getAttachData(String currentDomainName, String currentUser, Integer attachId) throws IllegalArgumentException;
 
-	void setAttachData(String currentDomainName, String currentUser, Integer attachId, byte[] dataURI);
+	void setAttachData(String currentDomainName, String currentUser, Integer attachId, String base64);
+
+	void sendAttachEmail(String currentDomainName, String login, MailAccount emailFrom, String emailTo,
+			List<String> ccTo, List<String> bccTo, String subject, String emailBody, List<Integer> attachIds);
 
 	// ------------------------------------------------ Contract Clauses
 	
@@ -277,7 +280,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
-	int getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates);
+	int getServiAgreement(String currentDomainName, String userLogin, String serviAgreementCode,
+			List<Integer> selectedDates);
 	
 	List<Integer> getServiAgreementDates(String serviAgreementCode) throws IllegalArgumentException;
 

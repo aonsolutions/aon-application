@@ -7,7 +7,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
@@ -61,9 +60,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -73,7 +72,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ConversionException;
-import org.mvel2.ast.IsDef;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -157,6 +155,42 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			add("GARANTIZADO");
 			add("MEJORA");
 		}
+	};
+	
+	private static final String[] FILL_DATA = new String[] { 
+		TC2.getName(), 
+		MONTH_DAYS.getName(), 
+		QUOTE_DAYS.getName(), 
+		QUOTE_GROUP.getName(),
+		CGC_BASE.getName(), 
+		CGP_BASE.getName(),
+		WORKED_DAYS.getName(), 
+		CGC_BASE_ENTERPRISE.getName(), 
+		CGP_BASE_ENTERPRISE.getName(),
+		DIRECT_BASE.getName(), 
+		MATERNITY_BASE.getName(), 
+		ADDITIONAL_BASE.getName(), 
+		STRUCTURAL_OVERTIME_BASE.getName(),
+		NON_STRUCTURAL_OVERTIME_BASE.getName(), 
+		SALARY_HOURS.getName(),
+		//WORKED_HOURS.getName(),
+		ADDITIONAL_HOURS.getName(),
+	
+		MONDAY_HOURS.getName(),
+		TUESDAY_HOURS.getName(),
+		WEDNESDAY_HOURS.getName(),
+		THURSDAY_HOURS.getName(),
+		FRIDAY_HOURS.getName(),
+		SATURDAY_HOURS.getName(),
+		SUNDAY_HOURS.getName(),
+		
+		ContextVariable.SLD_C737.getName(),
+		ContextVariable.SLD_H06.getName(),
+		ContextVariable.SLD_H03.getName(),
+		ContextVariable.SLD_H04.getName(),
+	
+		PREST_IT,
+		GUARENTEED,
 	};
 	
 	
@@ -790,16 +824,20 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double maternityBase = quoteCalculator.getMaternityBase();
 			if (maternityBase != null)
 				cgcBase += maternityBase;
-//			Double directPayBase = quoteCalculator.getDirectPayBase();
-//			if (directPayBase != null)
-//				cgcBase += directPayBase;
-			salaryBuilder.setCgcBase(cgcBase);
+			Double additionalBase = quoteCalculator.getAdditionalBase();
+			if (additionalBase != null)
+				cgcBase += additionalBase;
 			
+			evalVar(ctx, SALARY_HOURS);
+			
+			addVars(expressionContext, CGC_BASE,  ADDITIONAL_BASE);
+
 			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, ADDITIONAL_BASE, CGC_BASE);
 //			if (cgcBase != null)
 //				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
-			
+
+			salaryBuilder.setCgcBase(cgcBase);
 
 			Double rawCgpbase = quoteCalculator.getRawCgpBase();
 
@@ -821,15 +859,18 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += ereBase;
 			if (maternityBase != null)
 				cgpBase += maternityBase;
-//			if (directPayBase != null)
-//				cgpBase += directPayBase;
-			salaryBuilder.setCgpBase(cgpBase);
+			if (additionalBase != null)
+				cgpBase += additionalBase;
+			
+			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
-			addVars(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, CGP_BASE);
+			addVars(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, ADDITIONAL_BASE, CGP_BASE);
 			//copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
+
+			salaryBuilder.setCgpBase(cgpBase);
 
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
@@ -1546,8 +1587,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 				for (ITimedResult<Double> quoteResult : quoteResults) {
 					try {
-						for (Entry<String, ITimedVariable<?>> entry : quoteResult.getContext().entrySet())
-							salaryBuilder.addData(entry.getKey(), entry.getValue());
+						for (Entry<String, ITimedVariable<?>> entry : quoteResult.getContext().entrySet()) {
+							if ( !isFillData(entry.getKey())) {
+								salaryBuilder.addData(entry.getKey(), entry.getValue());
+							}
+						}
 					} catch (ExpressionExceptionWrapper e) {
 						if (e.getCause() instanceof UndefinedVariablesException)
 							onInvalidData(((UndefinedVariablesException) e.getCause()).getVariableNames());
@@ -1685,7 +1729,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 		});
 	}
-
+	
+	private void evalVar(IContractSalaryCalculatorContext ctx, ContextVariable var ) {
+		try {
+			ctx.getExpressionContext().eval(SALARY_HOURS.getName(), ctx.getStartDate(), ctx.getEndDate());
+		} catch ( Exception e ) {
+		}
+	}
+	
+	
 	// -------------------------------------------------------------- Protected
 
 	protected static boolean allAgreementConstants(Map<String, ITimedVariable<?>> context) {
@@ -1723,6 +1775,32 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 		return false;
 	}
+
+	protected static void copyResults(ExpressionContext expressionContext, ContextVariable dest, ContextVariable ...srcs ) {
+		for (ContextVariable src : srcs)
+			copyResults(expressionContext, src.getName(), dest.getName());
+		
+	}
+
+	protected static void copyResults(ExpressionContext expressionContext, ContextVariable src, ContextVariable dest) {
+		copyResults(expressionContext, src.getName(), dest.getName());
+	}
+
+	protected static void copyResults(ExpressionContext expressionContext, INamedContractPayment namedContractPayment) {
+		copyResults(expressionContext, namedContractPayment.getName(), namedContractPayment.getSurName());
+	}
+	protected static void copyResults(ExpressionContext expressionContext, String name, String surName) {
+		if (StringUtils.isBlank(surName))
+			return;
+		if (StringUtils.equals(name, surName))
+			return;
+		if (StringUtils.isBlank(name))
+			name = ALL;
+		for (ITimedVariable<Object> var : expressionContext.getVariables(name)) {
+			expressionContext.putVariable(surName, var);
+		}
+	}
+
 
 	// ---------------------------------------------------------------- Private
 	
@@ -1836,31 +1914,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return new Period(valueStart, valueEnd ).daysStream().count();
 	}
 
-	private static void copyResults(ExpressionContext expressionContext, ContextVariable dest, ContextVariable ...srcs ) {
-		for (ContextVariable src : srcs)
-			copyResults(expressionContext, src.getName(), dest.getName());
-		
-	}
-
-	private static void copyResults(ExpressionContext expressionContext, ContextVariable src, ContextVariable dest) {
-		copyResults(expressionContext, src.getName(), dest.getName());
-	}
-
-	private static void copyResults(ExpressionContext expressionContext, INamedContractPayment namedContractPayment) {
-		copyResults(expressionContext, namedContractPayment.getName(), namedContractPayment.getSurName());
-	}
-	private static void copyResults(ExpressionContext expressionContext, String name, String surName) {
-		if (StringUtils.isBlank(surName))
-			return;
-		if (StringUtils.equals(name, surName))
-			return;
-		if (StringUtils.isBlank(name))
-			name = ALL;
-		for (ITimedVariable<Object> var : expressionContext.getVariables(name)) {
-			expressionContext.putVariable(surName, var);
-		}
-	}
-
 	private static void addVars(ExpressionContext expressionContext, ContextVariable dest, ContextVariable ...adds) {
 		for (ContextVariable add : adds) {
 			addVar(expressionContext, dest.getName(), add.getName());
@@ -1871,7 +1924,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		adds.stream().filter(v -> v.getValue(v.getPeriod()) != null )
 		.forEach( v -> addResult(expressionContext, dest, v.getPeriod().getStart(), v.getPeriod().getEnd(), v.getValue(v.getPeriod()).doubleValue()));
 	}
-
+	
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";
@@ -1945,44 +1998,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		return total;
 	}
-
+	
+	
 	protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
-		fillData(ctx, 
-				new String[] { 
-				TC2.getName(), 
-				MONTH_DAYS.getName(), 
-				QUOTE_DAYS.getName(), 
-				QUOTE_GROUP.getName(),
-				CGC_BASE.getName(), 
-				CGP_BASE.getName(),
-				WORKED_DAYS.getName(), 
-				CGC_BASE_ENTERPRISE.getName(), 
-				CGP_BASE_ENTERPRISE.getName(),
-				DIRECT_BASE.getName(), 
-				MATERNITY_BASE.getName(), 
-				ADDITIONAL_BASE.getName(), 
-				STRUCTURAL_OVERTIME_BASE.getName(),
-				NON_STRUCTURAL_OVERTIME_BASE.getName(), 
-				SALARY_HOURS.getName(),
-				//WORKED_HOURS.getName(),
-				ADDITIONAL_HOURS.getName(),
-
-				MONDAY_HOURS.getName(),
-				TUESDAY_HOURS.getName(),
-				WEDNESDAY_HOURS.getName(),
-				THURSDAY_HOURS.getName(),
-				FRIDAY_HOURS.getName(),
-				SATURDAY_HOURS.getName(),
-				SUNDAY_HOURS.getName(),
-				
-				ContextVariable.SLD_C737.getName(),
-				ContextVariable.SLD_H06.getName(),
-				ContextVariable.SLD_H03.getName(),
-				ContextVariable.SLD_H04.getName(),
-
-				PREST_IT,
-				GUARENTEED,
-				});
+		fillData(ctx, FILL_DATA);
 		fillData(ctx, ERE_BASES);
 		
 		ctx.getSalaryType().accept(new SalaryTypeVisitor<Void>() {
@@ -2339,6 +2358,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 	private static boolean isNotAdvance(IContractDeduction d) {
 		return ! isAdvance(d); 
+	}
+	
+	private static boolean isFillData(String name) {
+		return Arrays.stream(FILL_DATA).anyMatch(data -> AonStringUtils.equals(data, name));
 	}
 
 }

@@ -78,45 +78,34 @@ public class FISCAL {
 	}
 	
 		
-		public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,IRPFParams params) {
-			CloseableAONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domain, user);
-				return getFiscal().getIrpfBreakdownSummary(ctx, params);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
+	public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(Occam occam, IRPFParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFiscal().getIrpfBreakdownSummary(ctx, params);
 		}
+	}
 
-		public static Stream<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain,IRPFParams params) {
-			CloseableAONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domain, user);
-				return getFiscal().getIrpfBreakdown(ctx, params);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
+	public static Stream<IrpfBreakdown> getIrpfBreakdown(Occam occam, IRPFParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFiscal().getIrpfBreakdown(ctx, params);
 		}
+	}
 		
-		@Deprecated
-		public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, OperationParams params) {
-			CloseableAONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domain, user);
-				return getFiscal().getOperationBreakdown(ctx, domain, params);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
+	@Deprecated
+	public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, OperationParams params) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFiscal().getOperationBreakdown(ctx, domain, params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
+	}
 
-		public static LinkedList<InvoiceFiscalModels> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
-			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-				return getFiscal().getInvoicesModels(ctx, params);
-			}
+	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFiscal().getInvoicesModels(ctx, params);
 		}
-		
+	}
 		
 }

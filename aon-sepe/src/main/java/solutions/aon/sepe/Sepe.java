@@ -10,6 +10,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract;
+import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.CopyBasic;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -130,6 +131,11 @@ public class Sepe {
 	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SepeException{
 		Contrata.validateCert(certificateInputStream, certificatePassword, certificateType);
+	}
+	
+	public static void sendContractExtension(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, ContractExtension contractExtension) throws SepeException  {
+		Contrata.sendContrataExtension(certificateInputStream, certificatePassword, certificateType, contractExtension);
 	}
 	
 	public static void main(String[] args)

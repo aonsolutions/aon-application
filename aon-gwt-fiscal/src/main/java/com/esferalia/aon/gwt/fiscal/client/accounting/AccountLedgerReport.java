@@ -215,10 +215,10 @@ public class AccountLedgerReport extends MainEntryPoint {
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
 				
+				private static final long serialVersionUID = -9134436013079669206L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

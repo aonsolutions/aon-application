@@ -73,6 +73,7 @@ public class TaskDAO {
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 
 	protected static class TaskPropertiesDAO implements TaskProperties {
+		
 		protected Select<Record> build(SelectJoinStep<Record> select, TaskFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
@@ -83,6 +84,7 @@ public class TaskDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
+		
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK.DOMAIN);}
 		@Override public Property<Integer> getActivityTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK.ACTIVITY_TYPE);}
@@ -112,9 +114,11 @@ public class TaskDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_DATE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PARENT);}
+		
 		@Override public Property<Integer> getTagIdProperty(){return new FilterDAO.PropertyDAO<>(TAG.ID);}
 		@Override public Property<String> getTagNameProperty(){return new FilterDAO.PropertyDAO<>(TAG.NAME);}
 		@Override public Property<String> getCommentsWorkflowProperty(){return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.COMMENT);}
+		@Override public Property<String> getTaskHolderNameProperty(){return new FilterDAO.PropertyDAO<>(TH_REGISTRY.NAME);}
 	}
 	
 	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	

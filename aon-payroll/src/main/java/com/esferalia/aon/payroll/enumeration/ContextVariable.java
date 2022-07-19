@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.payroll.enumeration;
 
 import java.text.DateFormat;
@@ -108,9 +109,12 @@ public enum ContextVariable implements IResourceable {
 	// Bases
 	CGC_BASE("BASE_CGC", VariableType.DOUBLE, false), 
 	CGP_BASE("BASE_CGP", VariableType.DOUBLE, false),
-	IRPF_BASE("BASE_IRPF", VariableType.DOUBLE), IPREM_BASE("BASE_IPREM", VariableType.DOUBLE),
-	IPREM_BASE_SHORT("BIPREM", VariableType.DOUBLE), CGC_BASE_MIN("BASE_CGC_MIN", VariableType.DOUBLE),
+	IRPF_BASE("BASE_IRPF", VariableType.DOUBLE), 
+	IPREM_BASE("BASE_IPREM", VariableType.DOUBLE),
+	IPREM_BASE_SHORT("BIPREM", VariableType.DOUBLE), 
+	CGC_BASE_MIN("BASE_CGC_MIN", VariableType.DOUBLE),
 	CGC_BASE_MAX("BASE_CGC_MAX", VariableType.DOUBLE),
+	CGC_BASE_MIN_HOUR("BASE_CGC_MIN_HORA", VariableType.DOUBLE),
 
 	CGP_BASE_MIN("BASE_CGP_MIN", VariableType.DOUBLE), CGP_BASE_MAX("BASE_CGP_MAX", VariableType.DOUBLE),
 	SENIOR_BASE("BASE_ANTIGUEDAD", VariableType.DOUBLE), STRUCTURAL_OVERTIME_BASE("BASE_ESTR", VariableType.DOUBLE),
@@ -189,8 +193,10 @@ public enum ContextVariable implements IResourceable {
 
 
 	// Salary Type
-	SALARY("NOMINA", VariableType.BOOLEAN), DELAY("ATRASOS", VariableType.BOOLEAN),
-	SETTLE("FINIQUITO", VariableType.BOOLEAN), EXTRA_PAY("EXTRA", VariableType.BOOLEAN),
+	SALARY("NOMINA", VariableType.BOOLEAN), 
+	DELAY("ATRASOS", VariableType.BOOLEAN),
+	SETTLE("FINIQUITO", VariableType.BOOLEAN), 
+	EXTRA_PAY("EXTRA", VariableType.BOOLEAN),
 
 	// Results
 	TOTAL_LIQUID("TOTAL_LIQUIDO", VariableType.DOUBLE), 
@@ -269,6 +275,17 @@ public enum ContextVariable implements IResourceable {
 
 	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN),
 
+	REGIME("REGIMEN", VariableType.UNKNOWN),
+	HOME("HOGAR", VariableType.UNKNOWN),
+	GENERAL("GENERAL", VariableType.UNKNOWN),
+	ARTISTS("ARTISTAS", VariableType.UNKNOWN),
+	AGRARIAN("AGRARIO", VariableType.UNKNOWN),
+	FELLOWS("BECARIOS", VariableType.UNKNOWN),
+	TRAINING("FORMACION", VariableType.UNKNOWN),
+	LEARNING("APRENDIZAJE", VariableType.UNKNOWN),
+	ASSIMILATE("ASMILADOS", VariableType.UNKNOWN),
+	REPRESENTATIVES("REPRESENTANTES", VariableType.UNKNOWN),
+	
 	CCC_TYPE("CCC_TYPE", VariableType.INTEGER),
 	
 	SLD_C737("BONIFICACION_TUTORIA", VariableType.DOUBLE, false),
@@ -326,6 +343,10 @@ public enum ContextVariable implements IResourceable {
 	CRA_0010("CRA_0010", VariableType.INTEGER),
 	CRA_0008("CRA_0008", VariableType.INTEGER),
 
+	ADDITIONAL("HORAS_COMPL", VariableType.DOUBLE, false),
+
+	HOURLY_BASE("BASE_HORARIA", VariableType.BOOLEAN, false)
+	
 	;
 
 	public static final String ALL = "_P";

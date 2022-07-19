@@ -19,10 +19,11 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
+
 public class FiscalImpl implements IFiscal {
 
 	// -------------------------------------------------- FISCAL PANEL
@@ -68,20 +69,12 @@ public class FiscalImpl implements IFiscal {
 		// ---------------------------------------------------- [IRPF]
 		@Override
 		public Stream<IrpfBreakdown> getIrpfBreakdownSummary(AONContext ctx, IRPFParams params) {
-			return IRPFDAO.getIRPFSummary(ctx 
-					,params.getFromDate()
-					,params.getToDate()
-					,p -> FinanceUtils.getIRPFFilter(p, params))
-					.stream();
+			return IRPFDAO.getIRPFSummary( ctx, params );
 		}
 		
 		@Override
 		public Stream<IrpfBreakdown> getIrpfBreakdown(AONContext ctx, IRPFParams params) {
-			return IRPFDAO.getIRPFBreakdown(ctx 
-					,params.getFromDate()
-					,params.getToDate()
-					,params.getGroupByNif()==1?1:0
-					,p -> FinanceUtils.getIRPFFilter(p, params));
+			return  IRPFDAO.getInvoicesIrpfBreakdown(ctx,params);
 		}
 		
 		// ---------------------------------------------------- [Operation]

@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.agreement;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
@@ -122,7 +123,7 @@ public class AgreementUpdate {
 
 	// ---------------------------------------------------------- Get Agreement
 
-	public static Date checkAndUpdateServiAgreement(Connection connection, Integer domainIdIn, Integer agreementId, String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
+	public static Date checkAndUpdateServiAgreement(Connection connection, Integer domainIdIn, String userLogin, Integer agreementId, String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
 		domainId = domainIdIn;
 		
 		String agreementCode = getServiAgreementCode(ssNumber, ServiAgreementsFilter.getServiAgreementsMap(true));
@@ -131,11 +132,6 @@ public class AgreementUpdate {
 			throw new IllegalArgumentException("No se ha podido localizar el convenio que se desea actualizar");
 		
 		List<Integer> agreementYears = getAgreementYears(agreementCode);
-		Integer lastServiAgreementYear = agreementYears.get(agreementYears.size() - 1);
-		
-		// TODO: comento esto por que asi se puede actualizar el ultimo año insertado
-//		if(lastDateYear.equals(lastServiAgreementYear))
-//			return null;
 		
 		List<Integer> agreementImportYears = getAgreementImportYears(lastDateYear, agreementYears);
 		
@@ -178,10 +174,7 @@ public class AgreementUpdate {
 			
 			return new Date(agreementImportYears.get(0)-1900, 0, 1);
 
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
-		} catch (ParserConfigurationException | IOException | SAXException e) {
+		} catch (IllegalArgumentException | ParserConfigurationException | IOException | SAXException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
 		}
@@ -498,6 +491,15 @@ public class AgreementUpdate {
 			
 			VariablesMap variablesMap = new VariablesMap();
 			
+			String userLogin = "ServiConvenios";
+			java.sql.Date modificationDate = new java.sql.Date(new Date().getTime());
+			
+			dslContext.update(AGREEMENT)
+				.set(AGREEMENT.MODIFICATION_USER, userLogin)
+				.set(AGREEMENT.MODIFICATION_DATE, modificationDate)
+				.where(AGREEMENT.ID.eq(agreementId))
+				.execute();
+			
 			// Agreement Level / Agreement Level Category / Agreement Level Data
 			
 			String oldLevelDescription = null;
@@ -558,9 +560,11 @@ public class AgreementUpdate {
 							.set(AGREEMENT_LEVEL_DATA.DOMAIN, domainId)
 							.set(AGREEMENT_LEVEL_DATA.NAME, realName)
 							.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, agreementLevelId)
-							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, lvlData.getValue())
+							.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "/*inherit*/" + lvlData.getValue() + "/**/")
 							.set(AGREEMENT_LEVEL_DATA.START_DATE, parseDateToSql(lvlData.getStartDate()))
 							.set(AGREEMENT_LEVEL_DATA.END_DATE, parseDateToSql(lvlData.getEndDate()))
+							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
+							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 							.execute();
 					} else {
 						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
@@ -580,12 +584,14 @@ public class AgreementUpdate {
 			
 			Date auxEndDate = null;
 			
+			removeServiAgreementPayments(dslContext, agreementId);
+			
 			for(String agreementConceptName : agreement.getAgreementConcepts()) {
 				AgreementPayment agreementPayment = AgreementPayment.safeValueOf(agreementConceptName);
 				
-				boolean existPayment = existPayment(dslContext, agreementId, agreementPayment.getNormalizeName());
+//				boolean existPayment = existPayment(dslContext, agreementId, agreementPayment.getNormalizeName());
 				
-				if(null != agreementPayment && !existPayment) {
+				if(null != agreementPayment /*&& !existPayment*/) {
 					
 //					System.out.println(agreementPayment.getConceptCode());
 					
@@ -624,13 +630,15 @@ public class AgreementUpdate {
 							.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 							.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
-							.set(AGREEMENT_PAYMENT.EXPRESSION, agreementPayment.getExpression())
+							.set(AGREEMENT_PAYMENT.EXPRESSION,  "/*inherit*/" + agreementPayment.getExpression() + "/**/")
 							.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getNormalizeName())
 							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
 							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
 							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
+							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 							.returning(AGREEMENT_PAYMENT.ID)
 							.fetchOne();
 					
@@ -711,23 +719,23 @@ public class AgreementUpdate {
 				}
 			}
 			
-			boolean existSummenrExtra = existPayment(dslContext, agreementId, "[90] PAGA VERANO");
-			boolean existWinterExtra = existPayment(dslContext, agreementId, "[91] PAGA NAVIDAD");
+//			boolean existSummenrExtra = existPayment(dslContext, agreementId, "[90] PAGA VERANO");
+//			boolean existWinterExtra = existPayment(dslContext, agreementId, "[91] PAGA NAVIDAD");
 			
-			if(!existSummenrExtra || !existWinterExtra) {
+//			if(!existSummenrExtra || !existWinterExtra) {
 			
 				Integer paymentConceptId = insertOrGetPaymentConceptExtraPay(dslContext);
 				AgreementPaymentRecord agreementPaymentRecord = null;
 				Integer agreementPaymentId = null;
 				
-				if(!hasSummerPay && !existSummenrExtra) {
+				if(!hasSummerPay /*&& !existSummenrExtra*/) {
 				
 					agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 						.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 						.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-						.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE")
+						.set(AGREEMENT_PAYMENT.EXPRESSION,  "/*inherit*/" + "SALARIO_BASE" + "/**/")
 						.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
 						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
@@ -735,6 +743,8 @@ public class AgreementUpdate {
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
+						.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 						.returning(AGREEMENT_PAYMENT.ID)
 						.fetchOne();
 					
@@ -751,14 +761,14 @@ public class AgreementUpdate {
 					
 				}
 				
-				if(!hasWinterPay && !existWinterExtra) {
+				if(!hasWinterPay /*&& !existWinterExtra*/) {
 				
 					agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 						.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 						.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-						.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE")
+						.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 						.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
 						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
@@ -766,6 +776,8 @@ public class AgreementUpdate {
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
+						.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 						.returning(AGREEMENT_PAYMENT.ID)
 						.fetchOne();
 					
@@ -782,12 +794,31 @@ public class AgreementUpdate {
 					
 				}
 			
-			}
+//			}
 		
 		});
 		
 	}
 	
+	private static void removeServiAgreementPayments(DSLContext dslContext, Integer agreementId) {
+		// Remove agreement extra
+		dslContext.delete(AGREEMENT_EXTRA)
+		.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreementId))
+		.and(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.in(
+			dslContext.select(AGREEMENT_PAYMENT.ID).from(AGREEMENT_PAYMENT)
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreementId))
+				.and(AGREEMENT_PAYMENT.EXPRESSION.contains("inherit"))
+				.fetch(AGREEMENT_PAYMENT.ID)
+		)).execute();
+		
+		// Remove agreement payment
+		dslContext.delete(AGREEMENT_PAYMENT)
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreementId))
+			.and(AGREEMENT_PAYMENT.EXPRESSION.contains("inherit"))
+			.execute();
+		
+	}
+
 	private static Integer insertOrGetPaymentConceptExtraPay(DSLContext dslContext) {
 		
 		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT)

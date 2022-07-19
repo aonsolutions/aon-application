@@ -157,6 +157,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return ContextVariable.ADDITIONAL_BASE.getName().replace("BASE_", "");
 		}
 		
+		@Override
+		public String getQuoteExpression() {
+			return String.format("isdef %s ? MAX(%s * %s,_P) : _P" , 
+					ContextVariable.CGC_BASE_MIN_HOUR ,
+					ContextVariable.CGC_BASE_MIN_HOUR , 
+					ContextVariable.ADDITIONAL_HOURS);
+		}
+		
 	}
 
 	private static class PRORATIONContractPayment extends DelegateContractPayment{
@@ -408,6 +416,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public Double getDirectPayBase() throws AonException {
 			return delegate.getDirectPayBase();
 		}
+		
+		@Override
+		public Double getAdditionalBase() throws AonException {
+			return delegate.getAdditionalBase();
+		}
 
 		public List<ITimedResult<Double>> quote(IContractPayment payment, Date start, Date end, double amount)
 				throws AonException {
@@ -486,7 +499,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 			if ( type == PaymentType.CRA_0057 
 				|| type == PaymentType.CRA_0058 ) {				
-				payment = new AdditionalHoursContractPayment(payment);
+				return delegate.quote(new AdditionalHoursContractPayment(payment), start, end, amount);
 			}
 
 			if ( type.isBBCCIncluded() 
@@ -1684,7 +1697,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 							quoteCalculator.quote(new DelegateContractPayment(contractPayment) {
 								@Override
 								public String getQuoteExpression() {
-									// TODO Auto-generated method stub
 									return Double.toString(periodQuote);
 								}
 							}, 
@@ -1693,6 +1705,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 							periodQuote);
 						}
 						
+						DelegateContractPayment extraContrcatPayment = 
+						new DelegateContractPayment(contractPayment) {
+							public String getExpression() {
+								return payment.getExpression();
+							};
+						};
+						
 						salaryBuilder.addPayment(
 								periodAmount, 
 								periodQuote, 
@@ -1700,7 +1719,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 								payment.getDescription(), 
 								activePeriod.getStart(), 
 								activePeriod.getEnd(), 
-								contractPayment, 
+								extraContrcatPayment, 
 								payment.getContext());
 						
 					}

@@ -4,16 +4,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -25,6 +29,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -35,7 +40,9 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
 
 public abstract class ContractAttachUI extends ResizeComposite {
 
@@ -65,6 +72,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private EmployeeContractInfo employeeContractInfo;
+	
+	private MultiSelectionModel<Attach> selectionModel;
 	
 	private List<Attach> contractAttachList;
 
@@ -97,6 +106,9 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		// Set the message to display when the table is empty.
 		contractAttachDG.setEmptyTableWidget(new Label(("No existen documentos").toUpperCase()));
 		
+		this.selectionModel = new MultiSelectionModel<>(Attach.KEY_PROVIDER);
+		contractAttachDG.setSelectionModel(this.selectionModel, DefaultSelectionEventManager.<Attach> createCheckboxManager());
+		
 		// Initialize the columns.
 	    addContractAttachColumns();
 	    
@@ -105,6 +117,31 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	}
 	
 	private void addContractAttachColumns() {
+		selectionModel.addSelectionChangeHandler(e -> onSelectionAttachChange(!selectionModel.getSelectedSet().isEmpty()));
+	    
+		Column<Attach, Boolean> checkColumn = new Column<Attach, Boolean>(new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(Attach attach) {
+				return selectionModel.isSelected(attach);
+			}
+	    };
+    
+	    CheckboxCell selectAllHeaderCB = new CheckboxCell(true,true);
+	    Header<Boolean> selectAllHeader = new Header<Boolean>(selectAllHeaderCB) {
+	    	@Override
+	    	public Boolean getValue() {
+	    		if(null == contractAttachList) return false;
+	    		return selectionModel.getSelectedSet().size() == contractAttachList.size();
+	    	}
+	    	
+	    };
+	    
+	    selectAllHeader.setUpdater(value -> contractAttachList.forEach(attach -> selectionModel.setSelected(attach, value)));
+	    
+	    contractAttachDG.addColumn(checkColumn,selectAllHeader);
+	    contractAttachDG.setColumnWidth(checkColumn, 5, Unit.PCT);
+	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
 		// Edit column.
 	    ActionCell<Attach> editActionCell = new ActionCell<>("", selectedAttach -> openDialog(selectedAttach));
 	    
@@ -525,11 +562,11 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		}, f -> showErrorMessage("Contrato", f.getMessage()));
 	}
 	
-	public void setAttachData(Integer attachId, byte[] data) {
-		if(null == attachId || null == data) return;
+	public void setAttachData(Integer attachId, String base64) {
+		if(null == attachId || null == base64) return;
 		
 		showLoadingMessagePDF("Guardando documento...");
-		impl.setAttachData(attachId, data, new AsyncCallback<Void>() {
+		impl.setAttachData(attachId, base64, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -542,6 +579,38 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			}
 			
 		});
+	}
+	
+	public void sendAttachEmail() {
+		new AttachEmailDialog() {
+			
+			@Override
+			protected void onSendEmail() {
+				showLoadingMessage("Enviando email ...");
+				
+				List<Integer> attachIds = selectionModel.getSelectedSet().stream().map(attach -> attach.getId()).collect(Collectors.toList());
+				MailAccount emailFrom = getFromMAilAccount();
+				String emailTo = getSendTo();
+				List<String> ccTo = getCCTo();
+				List<String> bccTo = getBCCTo();
+				String subject = getSubject();
+				String emailBody = getBody();
+				
+				impl.sendAttachEmail(emailFrom, emailTo, ccTo, bccTo, subject, emailBody, attachIds, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage("Erro mail", caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						showSuccessMessage("Mail documentos", "El email se ha enviado correctamente");
+					}
+					
+				});
+			}
+		};
 	}
 
 	// ------------------------------------------------------ Abstract Methods
@@ -559,6 +628,14 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	protected abstract void showLoadingMessage(String message);
 	
 	protected abstract void showLoadingMessagePDF(String message);
+	
+	protected abstract void onSelectionAttachChange(boolean isSomethingSelected);
+	
+	// ------------------------------------------ Setter Methods
+	
+	public Set<Attach> getSelectedSalaries() {
+		return this.selectionModel.getSelectedSet();
+	}
 
 	// ------------------------------------------------------ Refresh table
 

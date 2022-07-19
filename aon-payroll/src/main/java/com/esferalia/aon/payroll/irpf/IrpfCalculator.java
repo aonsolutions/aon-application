@@ -282,7 +282,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 		// DATOS ECONOMICOS
 		irpfResult.setAnnualRemuneration(toDouble(retenidoSalida2013
@@ -456,7 +456,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -650,7 +650,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -846,7 +846,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -1043,7 +1043,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -1240,7 +1240,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -1436,7 +1436,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -1632,7 +1632,7 @@ public class IrpfCalculator {
 				.getSituacionFamiliar()));
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
-		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad()));
+		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -1930,10 +1930,12 @@ public class IrpfCalculator {
 
 	}
 
-	private static DisabilityLevel toDisabilityLevel(Discapacidad discapacidad) {
+	private static DisabilityLevel toDisabilityLevel(Discapacidad discapacidad, boolean movilidadReducida) {
 		switch (discapacidad) {
 		case GRADO1:
-			return DisabilityLevel.GT_EQ_33_LT_65;
+			return movilidadReducida ? 
+					DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE 
+					:  DisabilityLevel.GT_EQ_33_LT_65;
 		case GRADO2:
 			return DisabilityLevel.GT_EQ_65;
 		default:

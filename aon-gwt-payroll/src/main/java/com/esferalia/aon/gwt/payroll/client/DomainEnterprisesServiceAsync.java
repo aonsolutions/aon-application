@@ -305,8 +305,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getDomainMailAccounts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 
-	public void getPayrollEmailSendTo(Type type, Integer enterpriseID, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.getPayrollEmailSendTo(getCurrentDomainName(), type, enterpriseID, asyncCallback);
+	public void getPayrollEmailSendTo(AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getPayrollEmailSendTo(getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getPayrollEmailBody(Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback) {
@@ -378,8 +378,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getAttachData(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
 	
-	public void setAttachData(Integer attachId, byte[] dataURI, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.setAttachData(getCurrentDomainName(), getCurrentUser(), attachId, dataURI, asyncCallback);
+	public void setAttachData(Integer attachId, String base64, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.setAttachData(getCurrentDomainName(), getCurrentUser(), attachId, base64, asyncCallback);
+	}
+	
+	public void sendAttachEmail(MailAccount emailFrom, String emailTo, List<String> ccTo, List<String> bccTo, String subject, String emailBody, List<Integer> attachIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.sendAttachEmail(getCurrentDomainName(), getCurrentUser(), emailFrom, emailTo, ccTo, bccTo, subject, emailBody, attachIds, asyncCallback);
 	}
 	
 	// ------------------------------------------------ Contract Clauses
@@ -483,7 +487,7 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	public void getServiAgreement(String serviAgreementCode, List<Integer> selectedDates, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, selectedDates, asyncCallback);
+		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), getCurrentUser(), serviAgreementCode, selectedDates, asyncCallback);
 	}
 	
 	public void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> asyncCallback) throws IllegalArgumentException {

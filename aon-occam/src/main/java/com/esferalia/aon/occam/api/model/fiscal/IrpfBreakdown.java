@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class IrpfBreakdown implements Serializable {
 	
@@ -40,7 +41,7 @@ public class IrpfBreakdown implements Serializable {
 	private double quota;
 	private double deductiblePercent;
 	private double deductibleQuota;
-	private Integer groupByNif;
+	private Integer groupedBy;
 	private String zip;
 	private String city;
 	
@@ -181,7 +182,7 @@ public class IrpfBreakdown implements Serializable {
 		this.regime = regime;
 		return this;
 	}
-	public Double getBase() {
+	public double getBase() {
 		return base;
 	}
 	public IrpfBreakdown setBase(double base) {
@@ -216,11 +217,11 @@ public class IrpfBreakdown implements Serializable {
 		this.deductibleQuota = deductibleQuota;
 		return this;
 	}
-	public Integer getGroupByNif() {
-		return groupByNif;
+	public Integer getGroupedBy() {
+		return groupedBy;
 	}
-	public IrpfBreakdown setGroupByNif(Integer groupByNif) {
-		this.groupByNif = groupByNif;
+	public IrpfBreakdown setGroupedBy(Integer groupedBy) {
+		this.groupedBy= groupedBy;
 		return this;
 	}
 	public String getZip() {
@@ -281,6 +282,25 @@ public class IrpfBreakdown implements Serializable {
 	public boolean isSales() {
 		return getInvoiceType() == InvoiceType.SALES;
 	}
+	public boolean isPurchase() {
+		return (invoiceType == InvoiceType.PURCHASE);
+	}
+	public boolean isExpenses() {
+		return (invoiceType == InvoiceType.EXPENSES || invoiceType == InvoiceType.UNDEDUCTIBLE);
+	}
+	public boolean isInput() {
+		return isPurchase() || isExpenses();
+	}
+	public String getNifGroupedKey() {
+		return (getWithholdingType()==null?"NULL": getWithholdingType().toString()) 
+				+ "-"
+				+ getRegistryDocument();
+	}
+	public String getInvoiceGroupedKey() {
+		return AonNumberUtils.toString( getInvoice());
+	}
 	
+	
+
 }
 

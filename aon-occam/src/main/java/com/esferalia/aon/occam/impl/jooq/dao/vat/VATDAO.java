@@ -218,7 +218,10 @@ public class VATDAO  {
 		return getAccrualSelect(ctx)
 			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
 			.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(FINANCE_TRACKING.TRACKING_DATE.between( getStartDate(mod), getEndDate(mod)))
+			
+//			.and(FINANCE_TRACKING.TRACKING_DATE.between( getStartDate(mod), getEndDate(mod)))
+			
+			
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
@@ -318,7 +321,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 					.and(ALCATRAZ.FS_MODEL.eq(mod.getId()))
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
-					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
+//					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()

@@ -41,6 +41,8 @@
 .aon_icon_visibility { background-image: iconVisibility;}
 @url iconVisibilityOff aonIconVisibilityOff;
 .aon_icon_visibility_off { background-image: iconVisibilityOff;}
+@url iconStart aonIconStart;
+.aon_icon_start { background-image: iconStart;}
 @url iconSave aonIconSave;
 .aon_icon_save { background-image: iconSave;}
 @url iconDelete aonIconDelete;
@@ -1167,12 +1169,12 @@
 }
 .aon_custom_dialog_header {
 	margin: 0px;
-	padding: .2em .9em;
-	/*height: 22px;*/
+	padding-top: 15px;
+	padding-left: 20px;
 	width: auto;
 	display: flex;
 	align-items: center;
-	border-bottom: solid #c4c4c4 1px;
+	border-bottom: none;
 }
 
 .aon_custom_dialog_title {
@@ -1692,6 +1694,7 @@
 .aon_bizkaia_background_color { background-color: #D70004;}
 .aon_gipuzkoa_background_color { background-color: #A1C031;}
 .aon_navarra_background_color { background-color: #da002a;}
+.aon_ccaa_background_color { background-color: #C41230;}
 
 /* CONFIRM DIALOG  */
 .aon_cards {

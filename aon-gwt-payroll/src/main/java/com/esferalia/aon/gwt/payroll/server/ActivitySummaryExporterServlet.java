@@ -50,6 +50,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 			HttpServletResponse response) throws IOException {
 
 		String _domainId = request.getParameter("domainId");
+		String _domainName = request.getParameter("domainName");
 		String _parentDomainId = request.getParameter("parentDomainId");
 		String _startDate = request.getParameter("startDate");
 		String _endDate = request.getParameter("endDate");
@@ -77,8 +78,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 		
 
 		try {
-			String domainName = AonServletUtils.getDomainName(_domainId);
-			
+			String domainName = _domainName;
 			
 			boolean isParentDomain = !NumberUtils.isNumber(_parentDomainId);
 
@@ -104,8 +104,6 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 			}
 
 			response.flushBuffer();
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (ReportException e) {
 			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (IOException e) {

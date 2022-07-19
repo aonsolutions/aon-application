@@ -338,7 +338,7 @@ public class AFIWriter implements Serializable {
 			fab.setCoeficienteTiempoParcial( autoComplete(percentValue, 3, "0", false) );
 		}
 		// TODO ColectivoTrabajador
-		fab.setColectivoTrabajador(null);
+		fab.setColectivoTrabajador(autoComplete(String.valueOf(obtainEmployeeColective(detail.getContract())), 3, "0", true));
 		/*
 		IndicadorImpresion. Sus posibles valores son: 
 		Espacio=no impresión 
@@ -763,6 +763,34 @@ public class AFIWriter implements Serializable {
 			// NADA
 		}
 		return strikeFactor;
+	}
+	
+	private Integer obtainEmployeeColective(Contract contract) {
+		Integer employeeColective = 0;
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COLECTIVO_TRABAJADORES");
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty()) {
+				String expression = parseContractData(((ContractData)list.get(0)).getExpression());
+				employeeColective = Integer.valueOf(expression);
+			}	
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		System.out.println("employeeColective : " + employeeColective);
+		return employeeColective;
+	}
+
+	private String parseContractData(String exp){
+		if(null == exp)
+			return null;
+		
+		return exp.split("\"")[1];
 	}
 	
 	private boolean isAfiTestEnvironmentActive() {

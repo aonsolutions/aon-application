@@ -1,5 +1,8 @@
 package net.aonsolutions.aon.api.servlet.task;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -39,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.utils.ZipUtils;
 
 public class TaskUtils {
 	
@@ -163,10 +167,10 @@ public class TaskUtils {
 		Domain domain = api.getDomain();
 		 for (int i = 0 ; i < files.length(); i++) {
 			try {
-			    JSONObject file = files.getJSONObject(i);
-			    String     dataId =  file.optString(IJsonNames.ID);
+			    JSONObject file    = files.getJSONObject(i);
+			    String     dataId  = file.optString(IJsonNames.ID);
 			    Matcher    matcher = regexFile(task.getDescription(), dataId);
-				String     base64 = null;
+				String     base64  = null;
 				String     contentType = null;
 				
 			    if(matcher!=null) {
@@ -182,7 +186,7 @@ public class TaskUtils {
 					.setData(fileData)
 					.setMimetype(MimeType.get(contentType));
 										
-					taskAttach = AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach);
+					taskAttach = saveTaskAttach(domain, api.getUser(), taskAttach);
 					
 					JSONObject jsonFile = new JSONObject(); 
 					jsonFile.put("domain_name", domain.getName());
@@ -251,14 +255,14 @@ public class TaskUtils {
 			}		
 		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ // SEND WORKGROUP ASSIGNED
 			AON.getTaskHolderWorkgroupStream(
-					domain, api.getUser(), 
-					f-> f.getIdProperty().isNotNull().and(
-							workflow.getTaskHolder().getId()!=null ?
-							f.getIdProperty().ne(workflow.getTaskHolder().getId()) :
-							f.getIdProperty().isNotNull()
-					)
-					.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))),
-					task.getWorkgroup().getId()
+				domain, api.getUser(), 
+				f-> f.getIdProperty().isNotNull().and(
+						workflow.getTaskHolder().getId()!=null ?
+						f.getIdProperty().ne(workflow.getTaskHolder().getId()) :
+						f.getIdProperty().isNotNull()
+				)
+				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))),
+				task.getWorkgroup().getId()
 			)
 			.forEach(th ->{
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
@@ -277,6 +281,32 @@ public class TaskUtils {
 			return Optional.of(auth);
 		}
 		return Optional.empty();
+	}
+	
+	public static TaskAttach saveTaskAttach(Domain domain, User user, TaskAttach attach) {
+	
+		try {
+			MimeType mimeType = attach.getMimetype();
+			if(!mimeType.isImage() && !mimeType.equals(MimeType.ZIP)) {
+				String fileName = "doc."+attach.getMimetype().getExtension();
+			    File file = convertByteToFile(attach.getData(), fileName);
+			    
+				attach.setData(ZipUtils.compress(file))
+				.setMimetype(MimeType.ZIP);
+			}
+		} catch (Exception e) {} // TODO: handle exception
+	
+		return AON_SOLUTIONS.saveTaskAttach(domain, user, attach);
+	}
+	
+	private static File convertByteToFile(byte[] bytes, String name) {
+		File file = new File(name);
+		try( FileOutputStream fos = new FileOutputStream(file) ) {
+		    fos.write(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
 	}
 	
 	private static Matcher regexFile(String str, String dataId) {

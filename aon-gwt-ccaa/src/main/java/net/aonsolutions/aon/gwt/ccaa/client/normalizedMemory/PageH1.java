@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageH1 extends PageAbs {
 
@@ -99,9 +100,12 @@ public class PageH1 extends PageAbs {
 
 	private static final Header1Binder header1Binder = GWT.create(Header1Binder.class);
 
-	public PageH1(Deposit deposit) {
+	public PageH1(Deposit2 deposit) {
 		super(deposit);
-		
+		initialize();
+	}
+	
+	private void initialize() {
 		IDA01009 = new TextBox();
 		IDA01010 = new DocumentTextBox();
 		IDA01011 = new CheckBox(); 
