@@ -717,6 +717,17 @@ public class JooqEmployee {
 			employeeData.setRbankId(null);
 			employeeData.setAccount(null);
 			employeeData.setBic(null);
+			
+			Result<Record> rbankRecords = dslContext.select().from(RBANK)
+					.where(RBANK.REGISTRY.eq(personTable.get(PERSON.REGISTRY)))
+					.orderBy(RBANK.ID.desc())
+					.fetch();
+			
+			if(rbankRecords.isNotEmpty()) {
+				employeeData.setRbankId(rbankRecords.get(0).get(RBANK.ID));
+				employeeData.setAccount(rbankRecords.get(0).get(RBANK.BANK_ACCOUNT));
+				employeeData.setBic(rbankRecords.get(0).get(RBANK.BIC));
+			}
 		}else {
 			Record rPayMethodRecord = rPayMethodRecords.get(0);
 			
