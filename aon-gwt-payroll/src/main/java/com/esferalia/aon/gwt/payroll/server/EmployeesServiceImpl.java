@@ -5507,10 +5507,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public WorkplaceEmployees getWorkplaceEmployees(String domainName, Workplace workplace) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
 
 			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
-			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainID));
+			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId));
 			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
 			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));

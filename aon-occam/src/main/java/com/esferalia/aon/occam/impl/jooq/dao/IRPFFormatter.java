@@ -385,12 +385,12 @@ public class IRPFFormatter {
 		out.print(']');
 		out.flush();
 	}
-	public static void formatGroupedInvoices(final PrintWriter out, Stream<IrpfBreakdown> stream, String title, String subtitle) {
-		out.print('[');
-		stream.forEach( vat -> writeToGroupedJSON(out,vat) );
-		out.print(']');
-		out.flush();
-	}
+//	public static void formatGroupedInvoices(final PrintWriter out, Stream<IrpfBreakdown> stream, String title, String subtitle) {
+//		out.print('[');
+//		stream.forEach( vat -> writeToGroupedJSON(out,vat) );
+//		out.print(']');
+//		out.flush();
+//	}
 
 	private static void writeToJSON(final PrintWriter out,IrpfBreakdown irpf) {
 		out.print('{');
@@ -434,19 +434,19 @@ public class IRPFFormatter {
 		out.flush();
 	}
 
-	private static void writeToGroupedJSON(final PrintWriter out,IrpfBreakdown irpf) {
-		out.print('{');
-		if (irpf.getActivity() != null) out.printf(",\"activity\":\"%d\"", irpf.getActivity());
-		if (AonStringUtils.isNotBlank( irpf.getActivityDescription())) out.printf(",\"activityDescription\":\"%s\"", irpf.getActivityDescription());
-		if (AonStringUtils.isNotBlank( irpf.getRegistryDocument())) out.printf("\"registryDocument\":\"%s\"", irpf.getRegistryDocument());
-		if (irpf.getRegistryDocumentType()!=null) out.printf(",\"registryDocumentType\":\"%d\"", irpf.getRegistryDocumentType().ordinal());
-		if (irpf.getRegistryDocumentCountry()!=null) out.printf(",\"registryDocumentCountry\":\"%s\"", irpf.getRegistryDocumentCountry().getIso2());
-		out.printf("," + JSONObject.toString("name", irpf.getName()) );
-		out.printf(",\"base\":%s", Double.toString( irpf.getBase()));
-		out.printf(",\"quota\":%s", Double.toString( irpf.getQuota()));
-		if (AonStringUtils.isNotBlank(Double.toString( irpf.getDeductibleQuota()))) out.printf(",\"deductibleQuota\":%s", Double.toString( irpf.getDeductibleQuota()));
-		out.print('}');
-		out.print(',');
-		out.flush();
-	}
+//	private static void writeToGroupedJSON(final PrintWriter out,IrpfBreakdown irpf) {
+//		out.print('{');
+//		if (irpf.getActivity() != null) out.printf(",\"activity\":\"%d\"", irpf.getActivity());
+//		if (AonStringUtils.isNotBlank( irpf.getActivityDescription())) out.printf(",\"activityDescription\":\"%s\"", irpf.getActivityDescription());
+//		if (AonStringUtils.isNotBlank( irpf.getRegistryDocument())) out.printf("\"registryDocument\":\"%s\"", irpf.getRegistryDocument());
+//		if (irpf.getRegistryDocumentType()!=null) out.printf(",\"registryDocumentType\":\"%d\"", irpf.getRegistryDocumentType().ordinal());
+//		if (irpf.getRegistryDocumentCountry()!=null) out.printf(",\"registryDocumentCountry\":\"%s\"", irpf.getRegistryDocumentCountry().getIso2());
+//		out.printf("," + JSONObject.toString("name", irpf.getName()) );
+//		out.printf(",\"base\":%s", Double.toString( irpf.getBase()));
+//		out.printf(",\"quota\":%s", Double.toString( irpf.getQuota()));
+//		if (AonStringUtils.isNotBlank(Double.toString( irpf.getDeductibleQuota()))) out.printf(",\"deductibleQuota\":%s", Double.toString( irpf.getDeductibleQuota()));
+//		out.print('}');
+//		out.print(',');
+//		out.flush();
+//	}
 }

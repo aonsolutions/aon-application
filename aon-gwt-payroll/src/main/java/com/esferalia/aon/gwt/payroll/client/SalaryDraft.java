@@ -5143,7 +5143,7 @@ public class SalaryDraft extends ResizeComposite
 		for ( String style: iconStyles ) 
 			isCost |= "_cost".equals(style);
 		
-		String name =  item.getType() == null ? "unknown" : item.getType().name().toLowerCase();
+		String name =  getDebugId(item);
 		
 		amountLabel.ensureDebugId(name + ( isCost ? "_cost"  : "" ) );
 
@@ -7866,5 +7866,19 @@ public class SalaryDraft extends ResizeComposite
 		return obj.toString();
 	}
 	
+	private static String getDebugId(Item<?> item) {
+		Enum<?> type = item.getType();
+		if ( type == null )
+			return "unknown";
+		
+		String name = item.getName();
+		if ( AonStringUtils.equalsIgnoreCase(name, "IT_E"))
+			return "it";
+		if ( AonStringUtils.equalsIgnoreCase(name, "IMS_E"))
+			return "ims";
+		
+		return type.name().toLowerCase();
+	}
+
 	
 }

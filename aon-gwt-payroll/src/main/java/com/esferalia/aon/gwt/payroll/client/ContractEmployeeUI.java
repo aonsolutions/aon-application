@@ -454,7 +454,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	// ------------------------------------------------- Initialize Existing employee
 	
-	public void initExistingEmployee( boolean hasPayroll){
+	public void initExistingEmployee(boolean hasPayroll){
 		fillExistingEmployee();
 		fillExistingContract();
 		if(hasPayroll) {

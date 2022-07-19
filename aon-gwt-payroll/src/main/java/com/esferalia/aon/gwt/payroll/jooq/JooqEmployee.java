@@ -68,6 +68,8 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -925,6 +927,7 @@ public class JooqEmployee {
 			}else
 				contractDataTable = dslContext.select().from(CONTRACT_DATA)
 						.where(CONTRACT_DATA.CONTRACT.eq(contract))
+						.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(currentDate)))
 						.orderBy(CONTRACT_DATA.START_DATE.asc())
 						.fetch();
 			
@@ -1031,45 +1034,57 @@ public class JooqEmployee {
 		else
 			contractData.setRetaId(contractInfoTable.get(CONTRACT_INFO.ID));
 		
-		Result<Record> journiesDB = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.like("HORAS%"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contract))
-				.orderBy(CONTRACT_DATA.START_DATE)
-				.fetch();
-		
-		Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
-		
-		if(null != journiesDB && !journiesDB.isEmpty()) {
-			Date iterableDate = journiesDB.get(0).get(CONTRACT_DATA.START_DATE);
-			ArrayList<JourneyDuration> journeyList = new ArrayList<>();
-			for(Record r : journiesDB) {
-				if(r.get(CONTRACT_DATA.START_DATE).equals(iterableDate)) {
-					JourneyDuration journey = new JourneyDuration();
-					journey.setStartDate(r.get(CONTRACT_DATA.START_DATE));
-					journey.setEndDate(r.get(CONTRACT_DATA.END_DATE));
-					journey.setName(r.get(CONTRACT_DATA.NAME));
-					journey.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
-					
-					journeyList.add(journey);
-				}else {
-					journies.put(iterableDate, journeyList);
-					journeyList = new ArrayList<>();
-					
-					iterableDate = r.get(CONTRACT_DATA.START_DATE);
-					
-					JourneyDuration journey = new JourneyDuration();
-					journey.setStartDate(r.get(CONTRACT_DATA.START_DATE));
-					journey.setEndDate(r.get(CONTRACT_DATA.END_DATE));
-					journey.setName(r.get(CONTRACT_DATA.NAME));
-					journey.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
-					
-					journeyList.add(journey);
-				}
-			}
-			journies.put(iterableDate, orderByWeekDay(journeyList));
+		ContractType contractTypeObj = new ContractType();
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			contractTypeRecord = contractTypeObj.getContractType(Integer.parseInt(contractData.getContractType()));
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		
-		contractData.setContractJourneyDuration(journies);
+		if(canHaveHoursAviable(contractData.getJourneyType(), contractTypeRecord)) {
+		
+			Result<Record> journiesDB = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.NAME.like("HORAS%"))
+					.and(CONTRACT_DATA.CONTRACT.eq(contract))
+					.orderBy(CONTRACT_DATA.START_DATE)
+					.fetch();
+			
+			Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
+			
+			if(null != journiesDB && !journiesDB.isEmpty()) {
+				Date iterableDate = journiesDB.get(0).get(CONTRACT_DATA.START_DATE);
+				ArrayList<JourneyDuration> journeyList = new ArrayList<>();
+				for(Record r : journiesDB) {
+					if(r.get(CONTRACT_DATA.START_DATE).equals(iterableDate)) {
+						JourneyDuration journey = new JourneyDuration();
+						journey.setStartDate(r.get(CONTRACT_DATA.START_DATE));
+						journey.setEndDate(r.get(CONTRACT_DATA.END_DATE));
+						journey.setName(r.get(CONTRACT_DATA.NAME));
+						journey.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+						
+						journeyList.add(journey);
+					}else {
+						journies.put(iterableDate, journeyList);
+						journeyList = new ArrayList<>();
+						
+						iterableDate = r.get(CONTRACT_DATA.START_DATE);
+						
+						JourneyDuration journey = new JourneyDuration();
+						journey.setStartDate(r.get(CONTRACT_DATA.START_DATE));
+						journey.setEndDate(r.get(CONTRACT_DATA.END_DATE));
+						journey.setName(r.get(CONTRACT_DATA.NAME));
+						journey.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+						
+						journeyList.add(journey);
+					}
+				}
+				journies.put(iterableDate, orderByWeekDay(journeyList));
+			}
+			
+			contractData.setContractJourneyDuration(journies);
+		
+		}
 		
 		// ---------------------------------------------- CheckSettle and Certifica2
 		
@@ -1133,6 +1148,10 @@ public class JooqEmployee {
 		employeeContractInfo.setContractInfo(contractData);
 		
 		return employeeContractInfo;
+	}
+
+	private static boolean canHaveHoursAviable(Byte journeyType, ContractTypeRecord contractTypeRecord) {
+		return (journeyType != null && journeyType == (byte) 0) || (null != contractTypeRecord && AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P"));
 	}
 
 	private static ArrayList<ContractSalaryInfo> createSalariesInfo(ContractInfo contractData, Result<Record> salaryRecords) {
@@ -1924,40 +1943,48 @@ public class JooqEmployee {
 			}
 		}
 		
-		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-//		if(contractJourneyDuration.isEmpty()) {
-		//ACTUALIZAR DURACION JORNADA
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.like("HORAS%"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-			.execute();
-//		}
+		Integer contractType = AonStringUtils.isBlank(contractData.getContractType()) ? null : Integer.parseInt(contractData.getContractType());
 		
-		if(!contractJourneyDuration.isEmpty() && (null != contractData.getJourneyType() && contractData.getJourneyType() == 0)){
-		 
-			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-				 for(JourneyDuration journey : entry.getValue()) {
-					 java.util.Date endDateAux = journey.getEndDate();
-					  
-					 if(null != journey.getExpression() && "NL" != journey.getExpression()) {
-						 String expression = journey.getExpression();
-						 expression = expression.replace(",", ".");
-						
-						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-								.values(domain, journey.getName(), contractData.getContractId(), expression, 
-										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-								.execute();
-					 } else {
-						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-								.values(domain, journey.getName(), contractData.getContractId(), null, 
-										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-								.execute();
+		if(!isCompleteJourneyContract(contractType)) {
+			
+			TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
+//			if(contractJourneyDuration.isEmpty()) {
+			//ACTUALIZAR DURACION JORNADA
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.like("HORAS%"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+				.execute();
+//			}
+			
+			if(!contractJourneyDuration.isEmpty() && (null != contractData.getJourneyType() && contractData.getJourneyType() == 0)){
+			 
+				for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+					 for(JourneyDuration journey : entry.getValue()) {
+						 java.util.Date endDateAux = journey.getEndDate();
+						  
+						 if(null != journey.getExpression() && "NL" != journey.getExpression()) {
+							 String expression = journey.getExpression();
+							 expression = expression.replace(",", ".");
+							
+							 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+										CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+									.values(domain, journey.getName(), contractData.getContractId(), expression, 
+											new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+									.execute();
+						 } else {
+							 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+										CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+									.values(domain, journey.getName(), contractData.getContractId(), null, 
+											new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+									.execute();
+						 }
 					 }
-				 }
+				}
 			}
+			
 		}
+		
+		checkPartialHours(dslContext, contractData.getContractId(), contractData.getContractType(), contractData.getEndDate());
 		
 
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
@@ -2073,6 +2100,36 @@ public class JooqEmployee {
 
 	// --------------------------------------- AUX METHODS -----------------------------
 	
+	private static void checkPartialHours(DSLContext dslContext, Integer contractId, String contractTypeValue, java.util.Date contractEndDate) {
+		Integer contractType = AonStringUtils.isBlank(contractTypeValue) ? null : Integer.parseInt(contractTypeValue);
+		
+		if(null == contractType) return;
+		
+		Date endDateSQL = null == contractEndDate ? null : new Date(contractEndDate.getTime());
+		
+		if(isCompleteJourneyContract(contractType))
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("HORAS_LUNES")
+					.or(CONTRACT_DATA.NAME.eq("HORAS_MARTES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_MIERCOLES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_JUEVES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_VIERNES"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_SABADO"))
+					.or(CONTRACT_DATA.NAME.eq("HORAS_DOMINGO"))
+					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD"))
+					.or(CONTRACT_DATA.NAME.eq("TIEMPO_COMPLETO"))
+				).and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.eq(endDateSQL)))
+				.execute();
+		
+	}
+	
+	private static boolean isCompleteJourneyContract(Integer contractTypeCode) {
+		ContractType contractTypeObj = new ContractType();
+		ContractTypeRecord contractType = contractTypeObj.getContractType(contractTypeCode);
+		return AonStringUtils.equalsIgnoreCase(contractType.getJourneyType(), "C");
+	}
+
 	private static String getCCCRegimeCode(Byte cccRegime) {
 		switch (cccRegime) {
 		case 0:

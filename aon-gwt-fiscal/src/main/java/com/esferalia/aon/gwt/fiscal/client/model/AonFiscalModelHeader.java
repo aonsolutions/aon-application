@@ -39,10 +39,10 @@ public class AonFiscalModelHeader extends SimpleLayoutPanel {
 		
 		// Administration LOGO
 		Image logo = new Image( FiscalModelUtils.getAdministrationIconDataResource(m.getAdministration()).getSafeUri() );
-		logo.getElement().getStyle().setHeight(HEIGTH - 15, Unit.PX);
+		logo.getElement().getStyle().setHeight(HEIGTH - 15.0, Unit.PX);
 		AonDisplayTableCell logoCell = row.addCell();
 		logoCell.addStyleName(AON.CSS.aonTextCenter());
-		logoCell.getElement().getStyle().setWidth(HEIGTH - 20, Unit.PX);
+		logoCell.getElement().getStyle().setWidth(HEIGTH - 20.0, Unit.PX);
 		logoCell.add(logo);
 
 		

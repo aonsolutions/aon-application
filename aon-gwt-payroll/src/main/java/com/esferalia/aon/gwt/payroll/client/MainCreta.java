@@ -1741,7 +1741,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			String tipo = dialog.getType();
 			Date fromMonth = dialog.getFromMonth();
 			Date toMonth = dialog.getToMonth();
-			Date ctrlMonth = dialog.getToMonth();
+			Date ctrlMonth = dialog.getCtrlMonth();
 			int desdeMes = fromMonth.getMonth() + 1;
 			int desdeAnyo = fromMonth.getYear() + 1900;
 			int hastaMes = toMonth.getMonth() + 1;
@@ -1763,7 +1763,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cccCopy.setGeozone(ccc.getGeozone());
 			dialog.getSelectedData().forEach(e -> cccCopy.addEmployee(e));
 			
-			send(autorizado, 
+			super.send(autorizado, 
 				desdeMes, 
 				desdeAnyo, 
 				hastaMes, 

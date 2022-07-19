@@ -509,6 +509,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			partialityCoef.getElement().getStyle().setDisplay(Display.NONE);
 		}
 	}
+	
+	private boolean isPartialContract(Integer contractType) {
+		return AonNumberUtils.between(contractType, 200, 300) || AonNumberUtils.between(contractType, 500, 599) || AonNumberUtils.equals(contractType, 0);
+	}
 
 	// ------------------------------------------------- Auxiliar Methods
 
@@ -566,6 +570,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		else {
 			afiChangesMap.addAFIChangeByDate(selectedDate, "TC2", tc2.getSelectedItemText().split(" -")[0]);
 			checkPartialityVisibility(Integer.parseInt(tc2.getSelectedValue()));
+			if(!isPartialContract(Integer.parseInt(tc2.getSelectedValue())))
+					afiChangesMap.addAFIChangeByDate(selectedDate, "COEFICIENTE_PARCIALIDAD", null);
 		}
 	}
 

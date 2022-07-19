@@ -1,0 +1,265 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+				<table class="{aonResources.css.aonWidthAll}">
+					<tr>
+						<td>
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="Declaración Covid 19" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<table class="{aonResources.css.aonWidthAll}">
+										<tr>
+											<td>
+												<g:Label text="Sociedad" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01020" styleName="{aonResources.css.aonInputText}"/>
+											</td>
+											<td>
+												<g:Label text="NIF" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01010" visibleLength="9" maxLength="9" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										<tr> 
+											<td>
+												<g:Label text="Domicilio Social" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01022" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										
+										<tr> 
+											<td>
+												<g:Label text="Municipio" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01023"
+													styleName="{aonResources.css.aonInputText}" />
+											</td>
+											<td>
+												<g:Label text="Provincia" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:ListBox ui:field="IDA01025"
+													styleName="{aonResources.css.aonInputText}" />
+											</td>
+											<td>
+												<g:Label text="Ejercicio" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="year"
+													styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+									</table>
+				
+									<div class="{aonResources.css.aonGroup}">
+										<div class="{aonResources.css.aonGroupTitle}">
+											<g:InlineLabel text="Medidas laborales aplicadas a la empresa" />
+										</div>
+										<div class="{aonResources.css.aonGroupBody}">
+											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<tr> 
+													<td>
+														<g:CheckBox ui:field="CVA8220000" 
+															text="Solicitud de ERTE durante el ejercicio y motivado por la pandemia"
+															value="false" />
+													</td>
+												</tr>
+											</table>
+											
+											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<tr>
+													<td>
+														<g:Label text="Ha sido motivado" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:ListBox ui:field="CVA8220010"
+															styleName="{aonResources.css.aonInputText}" />
+													</td>
+													<td>
+														<g:Label text="Ha determinado" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:ListBox ui:field="CVA8220020"
+															styleName="{aonResources.css.aonInputText}" />
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label text="Número de trabajadores en plantilla antes del ERTE" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220030"  />
+													</td>
+													<td>
+														<g:Label text="Número de trabajadores afectados por el ERTE" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220035"  />
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label text="Fecha Inicio" styleName="{aonResources.css.aonInnerLabel}" />
+														<d:DateBox ui:field="CVA8220040" styleName="{aonResources.css.aonInputText}" />
+													</td>
+													<td>
+														<g:Label text="Fecha Fin" styleName="{aonResources.css.aonInnerLabel}" />
+														<d:DateBox ui:field="CVA8220050" styleName="{aonResources.css.aonInputText}" />
+													</td>
+												</tr>
+												
+												<tr>
+													<td>
+														<g:Label text="Permiso retribuido recuperable (Real Decreto-Ley 10/2020, de 29 de marzo)" styleName="{aonResources.css.aonInnerLabel}" />
+													</td>
+													<td>
+													
+													</td>
+												</tr>
+												
+												<tr>
+													<td>
+														<g:Label text="Porcentaje de personal acogido a permiso retribuido recuperable" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220060"  />
+													</td>
+													<td>
+														<g:Label text="Duración (Número de días)" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220065"  />
+													</td>
+												</tr>
+												
+												<tr>
+													<td>
+														<g:Label text="Baja Laboral por el CORONAVIRUS" styleName="{aonResources.css.aonInnerLabel}" />
+													</td>
+													<td>
+														<g:Label text="Porcentaje de personal fijo afectado" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220070"  />
+													</td>
+												</tr>
+											</table>
+											
+										</div>
+									</div>
+									
+									<div class="{aonResources.css.aonGroup}">
+										<div class="{aonResources.css.aonGroupTitle}">
+											<g:InlineLabel text="Alquileres (art\u00edculos 1 al 15 Real Decreto-Ley11/2020)" />
+										</div>
+										<div class="{aonResources.css.aonGroupBody}">
+											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<tr>
+													<td>
+														<g:Label text="Alquileres a terceros (Grandes arrendadores). Ha concedido" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:ListBox ui:field="CVA8220080"
+															styleName="{aonResources.css.aonInputText}" />
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:CheckBox ui:field="CVA8220090" 
+															text="Pequeños arrendadores. Ha concedido moratorias voluntarias a los arrendatarios"
+															value="false" />
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:CheckBox ui:field="CVA8220100" 
+															text="Ha recibido ayudas financieras públicas(incluidos avales) al alquiler del local de negocios"
+															value="false" />
+													</td>
+												</tr>
+											</table>												
+										</div>
+									</div>
+									
+									<div class="{aonResources.css.aonGroup}">
+										<div class="{aonResources.css.aonGroupTitle}">
+											<g:InlineLabel text="Avales ICO" />
+										</div>
+										<div class="{aonResources.css.aonGroupBody}">
+											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<tr>
+													<td>
+														<g:Label text="Importe del aval concedido por el ICO en aplicación de los establecido en los articulos 29 y 30 del Real Decreto-Ley 8/2020, de 17 de marzo" styleName="{aonResources.css.aonInnerLabel}" />
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label text="Cantidad" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220110"  />
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label text="¿Que porcentaje representa el importe concedido sobre el importe total solicitado?" styleName="{aonResources.css.aonInnerLabel}" />
+														<aon:DoubleBox ui:field="CVA8220120"  />
+													</td>
+												</tr>
+											</table>			
+										</div>
+									</div>
+									
+									<div class="{aonResources.css.aonGroup}">
+										<div class="{aonResources.css.aonGroupTitle}">
+											<g:InlineLabel text="Ayudas públicas" />
+										</div>
+										<div class="{aonResources.css.aonGroupBody}">
+										<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<tr>
+													<td>
+														<g:Label text="Describir el plan o programa al que se acoge, el concedente y el sistema(avales, moratoria, aplazamiento, interés bonificado etc.)" styleName="{aonResources.css.aonInnerLabel}" ></g:Label>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:TextArea ui:field="CVA8220130" ></g:TextArea>
+													</td>
+												</tr>
+											</table>		
+										</div>
+									</div>
+
+									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+										<tr>
+											<td>
+												<g:CheckBox ui:field="CVA8220140" 
+													text="Moratoria hipotecaria (artículos 16 a 19 Real Decreto-Ley 11/2020)"
+													value="false" />
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<g:CheckBox ui:field="CVA8220150" 
+													text="Moratoria no hipotecaria (artículo 18, 21 a 26 Real Decreto-Ley 11/2020)"
+													value="false" />
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<g:CheckBox ui:field="CVA8220160" 
+													text="Se ha solicitado flexifibilización y suspensión de suministros(artículos 42 a 44 Real Decreto-Ley 11/2020)"
+													value="false" />
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<g:CheckBox ui:field="CVA8220170" 
+													text="Se ha acogido a las medidas de apoyo del sector del Turismo de los artículos 12 y 13 del Real Decreto-Ley 7/2020, de 12 de marzo"
+													value="false" />
+											</td>
+										</tr>
+									</table>	
+									<g:FlexTable ui:field="table" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginTop}" />
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+
+
+</ui:UiBinder>

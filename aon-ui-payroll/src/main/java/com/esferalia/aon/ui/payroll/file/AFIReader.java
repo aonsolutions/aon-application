@@ -123,7 +123,7 @@ public class AFIReader {
 					fab.setCondicionDesempleado(currentLine.substring(24, 25));
 					fab.setMujerSubrepresentada(currentLine.substring(25, 26));
 					fab.setCoeficienteTiempoParcial(currentLine.substring(26, 29));
-					fab.setColectivoTrabajador(Integer.parseInt(currentLine.substring(29, 32)));
+					fab.setColectivoTrabajador(currentLine.substring(29, 32));
 					fab.setIndicadorImpresion(currentLine.substring(32, 33));
 					fab.setCategoriaProfesional(Integer.parseInt(currentLine.substring(33, 40)));
 					fab.setFechaNacimiento(currentLine.substring(40, 48));

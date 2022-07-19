@@ -112,6 +112,79 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testBaseOK()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.PARTIAL_FACTOR.getName(), "0.50");
+						put(ContextVariable.TC2.getName(), ContractCode.C200.getValue());
+						put(ContextVariable.CGP_BASE_MIN.getName(), ContextVariable.CGC_BASE_MIN.getName());
+						put(ContextVariable.CGC_BASE_MIN.getName(),"1166.70 * 0.50" );
+						put("BASE_CGC_MIN_HORA","7.03" );
+						
+					}
+				});
+		
+		
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"SALARIO_BASE", 
+				"100.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001, 
+				SalaryType.SALARY);
+
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"HORAS_COMPL", 
+				"10.03 * HORAS_COMPLEMENTARIAS", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0057, 
+				SalaryType.SALARY);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		addData(aonContext, contract, startDate, endDate, ContextVariable.ADDITIONAL_HOURS, 10.00);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() ;
+		calculator.setSalaryBuilder(getSalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		for ( com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
+			System.out.println(payment.getExpression() + "= " + payment.getAmount() + "," + payment.getQuote());
+		
+		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, salary.getProfessionalBase(), DELTA);
+		//Assert.assertEquals(100.00 * 0.5 + 4.03 * 10.00, salary.getRawCommonBase(), DELTA);
+		
+		String cgcBase = salary.getSalaryData(ContextVariable.CGC_BASE.getName());
+		salary.getSalaryDatas().stream().filter( e -> e.getName().equals(ContextVariable.CGC_BASE.getName())).forEach( e -> System.out.println(e.getName() + " = " + e.getExpression() + ", " + e.getStartDate() +"," + e.getEndDate()));
+		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, Double.parseDouble(cgcBase), DELTA);
+
+		String cgpBase = salary.getSalaryData(ContextVariable.CGP_BASE.getName());
+		salary.getSalaryDatas().stream().filter( e -> e.getName().equals(ContextVariable.CGP_BASE.getName())).forEach( e -> System.out.println(e.getName() + " = " + e.getExpression() + ", " + e.getStartDate() +"," + e.getEndDate()));
+		Assert.assertEquals(1166.70 * 0.5 + 10.03 * 10.00, Double.parseDouble(cgpBase), DELTA);
+
+	}
 	
 	protected ISalaryBuilder<Salary> getSalaryBuilder() {
 		return new SalaryBuilder();

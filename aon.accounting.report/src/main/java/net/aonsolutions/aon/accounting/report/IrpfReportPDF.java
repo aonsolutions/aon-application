@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
@@ -34,11 +35,12 @@ public class IrpfReportPDF {
 
 	public void printReport(OutputStream outputStream, IRPFParams params) throws DocumentException {
 		
-		String domainName = params.getDomainName();
-		String user = params.getUser();
-		int domainId = params.getDomain();
+		Occam occam = new Occam()
+			.setDomainName(params.getDomainName())
+			.setDomain(params.getDomain())
+			.setUser(params.getUser());
 		
-		AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
+		AonConfiguration config = AON.getConfiguration(occam);
 		Company company = config.getCompany();
 		String companyName = company == null ? "" : company.getName();
 		
@@ -85,7 +87,7 @@ public class IrpfReportPDF {
 
 		table.setHeaderRows(1);
 	    
-		Stream<IrpfBreakdown> stream = FISCAL.getIrpfBreakdown(domainName, user, domainId, params);
+		Stream<IrpfBreakdown> stream = FISCAL.getIrpfBreakdown(occam, params);
 		stream.forEach(action);
 		stream.close();
 	    

@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
+import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageF2 extends PageAbs {
 
@@ -79,7 +80,7 @@ public class PageF2 extends PageAbs {
 	@UiField TextBox ROAC; // ROAC
 	@UiField Label ROACLabel; // ROAC
 	
-	public PageF2(Deposit deposit) {
+	public PageF2(Deposit2 deposit) {
 		super(deposit);
 		
 		IDA01010 = new Label();

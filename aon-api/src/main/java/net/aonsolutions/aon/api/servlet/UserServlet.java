@@ -562,6 +562,8 @@ public class UserServlet extends AonApiHttpServlet {
 			th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
 			if(th != null && th.getId() != null) {
 				th.setActive(true);
+				if(th.getUserId() == null)  
+					th.setUserId(userId);
 			} else {
 				th = new TaskHolder().copy(r)
 					.setActive(true)

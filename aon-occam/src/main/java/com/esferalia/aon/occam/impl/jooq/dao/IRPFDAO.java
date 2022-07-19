@@ -21,8 +21,8 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.IRPFFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.finance.Filters.IRPFFilter;
 import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
