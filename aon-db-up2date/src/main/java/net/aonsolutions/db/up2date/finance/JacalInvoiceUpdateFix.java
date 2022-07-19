@@ -87,7 +87,7 @@ public class JacalInvoiceUpdateFix implements Update {
 			.fetch().stream().map(r -> r.getValue(Domain.DOMAIN.NAME))
 			.findFirst().orElse(null);
 		
-		return domainName != null && "despacho-jacal.aibanez.net".equalsIgnoreCase(domainName);
+		return domainName != null && "despacho-jacal.aonsolutions.net".equalsIgnoreCase(domainName);
 	}
 	
 	private void fix(DSLContext dslContext, Integer oldNumber, Integer newNumber) {
