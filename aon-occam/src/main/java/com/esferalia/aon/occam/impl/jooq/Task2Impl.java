@@ -44,17 +44,18 @@ public class Task2Impl implements ITask2 {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			TaskDAO.getStream(ctx, filter, page, perPage));	
 	}
+	
 
 	@Override
-	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter) {
+	public Stream<Task> getTaskParentStream(AONContext ctx, TaskFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			TaskDAO.getList(ctx, filter));
+		TaskDAO.getParentStream(ctx, filter));	
 	}
 	
 	@Override
-	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+	public Stream<Task> getTaskParentStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			TaskDAO.getList(ctx, filter, page, perPage));
+			TaskDAO.getParentStream(ctx, filter, page, perPage));	
 	}
 
 	@Override

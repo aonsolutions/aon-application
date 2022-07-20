@@ -799,15 +799,15 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static LinkedList<Task> getTaskList(Domain domain, User user, TaskFilter filter) {
+	public static Stream<Task> getTaskParentStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskList(ctx, filter);
+			return getTask2().getTaskParentStream(ctx, filter, page, perPage);
 		}
 	}
 	
-	public static LinkedList<Task> getTaskList(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+	public static Stream<Task> getTaskParentStream(Domain domain, User user, TaskFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskList(ctx, filter, page, perPage);
+			return getTask2().getTaskParentStream(ctx, filter);
 		}
 	}
 	

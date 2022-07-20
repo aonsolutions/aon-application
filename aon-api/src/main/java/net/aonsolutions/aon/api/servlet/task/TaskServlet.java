@@ -180,20 +180,15 @@ public class TaskServlet extends AonApiHttpServlet{
 		JSONObject params = api.getData();
 		Integer page = params.optInt(IJsonNames.PAGE);
 		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
-		
+		boolean isReceived = params.isNull(IJsonNames.SENDER) && !params.isNull(IJsonNames.TASK_HOLDER);
+		boolean isSent     = !params.isNull(IJsonNames.SENDER) && params.isNull(IJsonNames.TASK_HOLDER);
+		boolean all = !isReceived && !isSent;
+
 		List<Task> tasks = new ArrayList<>(); 
 		
 		if(TaskUtils.isCau(params) && params.optString(IJsonNames.EMAIL).isEmpty()) {
 			throw new AonApiException("Auth inexistente");
 		}
-		
-		//GET TASK DOMAIN
-		tasks.addAll(
-			AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
-				f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
-			)
-			.collect(Collectors.toList())
-		);
 		
 		if(page==1) {	//GET TASK ALL DOMAIN
 			List<Task> listOffice = getTasksOffice(api);
@@ -202,63 +197,29 @@ public class TaskServlet extends AonApiHttpServlet{
 			}
 		}
 		
-		List<Task> list = tasks
-				.stream()
-				.filter(TaskUtils.distinctByKey(Task::getId))
-				.collect(Collectors.toList());
-		
-		//---------------------------GET ADITIONAL----------------------
-		List<Task> aditionals  = new ArrayList<>();
-		aditionals.addAll(list);
-		
-		List<Integer> allIdList = new ArrayList<>();
-		List<Integer> parentIdList = new ArrayList<>();
-		List<Integer> childIdList = new ArrayList<>();
-		
-		list.forEach(t->{
-			allIdList.add(t.getId());
-			if(t.isChild()) {
-				childIdList.add(t.getParent());
-			} else {
-				parentIdList.add(t.getId());
-			}
-		});
+		if(all) {
+			tasks.addAll(
+				AON_SOLUTIONS.getTaskParentStream(api.getDomain(), api.getUser(), 
+					f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
+				)
+				.collect(Collectors.toList())
+			);
+		} else {
+			tasks.addAll(TaskUtils.getTasksNotAll(api));
+		} 
 
-		AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
-			f-> f.getIdProperty().notIn(allIdList.toArray(Integer[]::new))
-			.and(
-				f.getParentProperty().in(parentIdList.toArray(Integer[]::new))
-				.or(f.getIdProperty().in(childIdList.toArray(Integer[]::new)))
-			)
-		)
-		.forEach(aditionals::add);
+		JSONArray array = new JSONArray();
 		
-		JSONArray arr = new JSONArray();
-		
-		list.forEach(task->{
-			JSONObject json  = TaskJSON.toJSON(task);
-			if(task.isChild()) {
-				aditionals
-				.stream()
-				.filter(t-> !t.isChild() && t.getId().equals(task.getParent()))
-				.findFirst()
-				.ifPresent(t->
-					json.put("parentObj",  TaskJSON.toJSON(t))
-				);
-			} else {
-				List<Task> chids = aditionals
-				.stream()
-				.filter(t-> t.isChild() && t.getParent().equals(task.getId()))
-				.sorted(Comparator.comparing(Task::getId))
-				.collect(Collectors.toList());
-				
-				json.put("childs",  TaskJSON.toJSON(chids));
+		tasks.forEach(t ->{
+			JSONObject json = TaskJSON.toJSON(t);
+			if(t.getParentObj()!=null) {
+				json.put("parentObj", TaskJSON.toJSON(t.getParentObj()));
 			}
-			
-			arr.put(json);
+
+			array.put(json);
 		});
 		
-		return arr;
+		return array;
 	}
 
 	private JSONObject getTask(AonApiData api) {
@@ -282,13 +243,13 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(!TaskUtils.isCau(params)) {
 			if(task.isChild()) {
 				
-				Task parent = AON_SOLUTIONS.getTask(domain, user, f-> f.getIdProperty().eq(task.getParent()) );
+				Task parent = AON_SOLUTIONS.getTask(domain, user, f-> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(task.getParent())) );
 				if(parent.getId()!=null) {
 					json.put("parentObj", TaskJSON.toJSON(parent));
 				}
 
 			} else {
-				List<Task> chids = AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getParentProperty().eq(task.getId()) )
+				List<Task> chids = AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getDomainProperty().eq(domain.getId()).and(f.getParentProperty().eq(task.getId())) )
 				.sorted(Comparator.comparing(Task::getId)).collect(Collectors.toList());
 				json.put("childs", TaskJSON.toJSON(chids) );
 			}
@@ -683,7 +644,7 @@ public class TaskServlet extends AonApiHttpServlet{
 							f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument()))
 					);
 				
-					AON_SOLUTIONS.getTaskStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+					AON_SOLUTIONS.getTaskParentStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
 					.forEach(tasks::add);
 				} catch (Exception e) {
 					e.printStackTrace();

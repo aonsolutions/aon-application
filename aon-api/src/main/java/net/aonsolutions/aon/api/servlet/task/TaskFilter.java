@@ -28,6 +28,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 
 public class TaskFilter {
 	
+	private static final Byte[] PENDING = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new);
+	
 	private TaskFilter() {
 	    throw new IllegalStateException("Utility class");
 	}
@@ -38,15 +40,15 @@ public class TaskFilter {
 		String search      = params.optString(IJsonNames.SEARCH);
 		String status      = params.optString(IJsonNames.STATUS);
 		String source      = params.optString(IJsonNames.SOURCE);
-		Integer tag        = params.optInt(IJsonNames.TAG);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
+		Integer tag        = params.optInt(IJsonNames.TAG);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
 		if(!status.isEmpty() && !TaskStatus.safeValueOf(status).equals(TaskStatus.PENDING) ) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
-		} else {			
-			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		} else {	
+			filter = filter.and(f.getStatusProperty().in(PENDING));
 		}
 		
 //		if("pending".equalsIgnoreCase(status) || ( status.isEmpty() && customer!=null && customer.getId()!=null) ) 
@@ -79,9 +81,7 @@ public class TaskFilter {
 			if(workgroup !=0) {
 				filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
 			} else {
-//				if(Boolean.FALSE.equals(api.getDur().isMessengerManager())) 
-//				filter = filter.and(f.getGtaskIdProperty().eq(email));
-	
+
 				if(taskHolder!=0 && sender!=0) {
 				} else if(taskHolder!=0) { //----------RECIBIDAS
 					filter = filter.and( f.getSenderProperty().isNotNull());
@@ -102,10 +102,7 @@ public class TaskFilter {
 	
 	public static Filter taskWorkgroupCount(TaskProperties f, AonApiData api, Domain domain) {
 		JSONObject params = api.getData();
-
-		Filter filter = f.getDomainProperty().eq(domain.getId()).and(
-			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
-		);
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().in(PENDING));
 		
 		if(TaskUtils.isCau(params)) {
 			filter = filter.and(getFilterCau(api, f));
@@ -129,9 +126,7 @@ public class TaskFilter {
 		String tagStr      = params.optString(IJsonNames.TAG);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 
-		Filter filter = f.getDomainProperty().eq(domain.getId()).and(
-			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
-		);
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().in(PENDING));
 		
 		if(!source.isEmpty()) {			
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
@@ -171,11 +166,8 @@ public class TaskFilter {
 		String email       = params.optString(IJsonNames.EMAIL);
 
 		boolean isCau = TaskUtils.isCau(params);
-		
-		Filter filter = f.getDomainProperty().eq(domain.getId()).and(
-			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value())
-			.or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
-		);
+	
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().in(PENDING));
 		
 		if(isCau) {
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
@@ -185,7 +177,9 @@ public class TaskFilter {
 		} else if(taskHolder!=0) {
 			filter = filter.and(
 				f.getSenderProperty().eq(taskHolder)
-				.and(f.getTaskHolderProperty().ne(taskHolder))
+				.and(
+					f.getTaskHolderProperty().ne(taskHolder).or(f.getTaskHolderProperty().isNull())
+				)
 			);
 		} 
 
@@ -200,9 +194,7 @@ public class TaskFilter {
 		
 		boolean isCau = TaskUtils.isCau(params);
 		
-		Filter filter = f.getDomainProperty().eq(domain.getId()).and(
-			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
-		);
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().in(PENDING));
 		
 		if(isCau) {
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
@@ -354,7 +346,11 @@ public class TaskFilter {
 					)
 				);
 			} else if(sender!=0) {
-				filter = filter.and(f.getSenderProperty().eq(sender).and(f.getTaskHolderProperty().ne(sender)));
+				filter = filter.and(f.getSenderProperty().eq(sender)
+					.and(
+						f.getTaskHolderProperty().ne(sender).or(f.getTaskHolderProperty().isNull())
+					)
+				);
 			} else {
 				filter = filter.and(f.getWorkgroupProperty().in(workgroupList.toArray(Integer[]::new)));
 			} 
@@ -369,7 +365,7 @@ public class TaskFilter {
 			} else if(taskHolder!=0) {
 				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
 			} else if(sender!=0) {
-				filter = filter.and(f.getSenderProperty().eq(sender).and(f.getTaskHolderProperty().ne(sender)));
+				filter = filter.and(f.getSenderProperty().eq(sender).and(f.getTaskHolderProperty().ne(sender).or(f.getTaskHolderProperty().isNull())));
 			}
 		 }
 	
@@ -403,9 +399,8 @@ public class TaskFilter {
 		
 		Integer numberSearch = 0;
 		
-		try { 
-			numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); 
-		} catch(NumberFormatException e){}
+		try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); } 
+		catch(NumberFormatException e){}
 		
 		if(numberSearch!=0) {
 			filter = filter.or(f.getNumberProperty().like(numberSearch));
@@ -441,7 +436,7 @@ public class TaskFilter {
 				String[] str = newStr.split(",");
 		
 				for(int i=0; i<str.length; i++) {
-					workgroupList.add(Integer.parseInt(str[i]) );
+					workgroupList.add( Integer.parseInt(str[i]) );
 				}
 			}
 		}

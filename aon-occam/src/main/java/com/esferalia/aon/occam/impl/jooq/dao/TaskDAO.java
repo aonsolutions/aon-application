@@ -10,13 +10,15 @@ import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +31,7 @@ import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -121,8 +124,8 @@ public class TaskDAO {
 		@Override public Property<String> getTaskHolderNameProperty(){return new FilterDAO.PropertyDAO<>(TH_REGISTRY.NAME);}
 	}
 	
-	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = ctx.getDslContext()
+	private static SelectOnConditionStep<Record> select(AONContext ctx) {
+			return ctx.getDslContext()
 			.select()
 			.from(TASK)
 			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
@@ -134,8 +137,12 @@ public class TaskDAO {
 			.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 			.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
 			.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
-			.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID))
-			.where(TASK_PROPERTIES.getConditions(filter));
+			.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID));
+	}
+	
+	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
+		SelectConditionStep<Record> condition = select(ctx)
+		.where(TASK_PROPERTIES.getConditions(filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
 			Integer per = perPage.get();
@@ -156,6 +163,42 @@ public class TaskDAO {
 		return taskMaps.keySet().stream();
 	}
 	
+	private static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
+		SelectConditionStep<Record> condition = select(ctx)
+		.where(whereCondition(ctx, filter));
+	
+		if(page.isPresent() && perPage.isPresent()) {
+			Integer per = perPage.get();
+			Integer p = page.get();
+			condition.limit(per).offset(per * (p -1));
+		}
+		
+		Map<Task, List<Tag>> taskMaps = condition
+	   .groupBy(TASK.ID, TAG.ID)
+	   .orderBy(TASK.CREATION_DATE.desc())
+	   .fetchGroups( 
+			new TaskFiller()::apply,
+			new TagFiller()::apply
+		);
+		
+		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
+
+		List<Task> tasks = taskMaps.keySet().stream().filter(distinctByKey(Task::getId)).collect(Collectors.toList());
+		
+		Integer[] parentsId  = tasks.stream().map(Task::getId).toArray(Integer[]::new);
+
+		List<Task> childsAll = getStream(ctx,  f-> f.getParentProperty().in(parentsId) ).collect(Collectors.toList());
+
+		tasks.forEach(task->{
+			childsAll.stream()
+			.filter(t-> t.isChild() && t.getParent().equals(task.getId()))
+			.sorted(Comparator.comparing(Task::getId))
+			.forEach(task::addChild);
+		});
+
+		return tasks.stream();
+	}
+	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
 		return getStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
@@ -164,18 +207,18 @@ public class TaskDAO {
 		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
-	public static LinkedList<Task> getList(AONContext ctx, TaskFilter filter){	
-		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+	public static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter){	
+		return getParentStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
 	
-	public static LinkedList<Task> getList(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
+	public static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
+		return getParentStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
 	public static Task get(AONContext ctx, TaskFilter filter) {
 		ctx.checkRead();
 
-		Task task =  getStream(ctx, filter).findFirst().orElse(new Task());
+		Task task = getStream(ctx, filter).findFirst().orElse(new Task());
 		if(task.getId() != null) {
 			task.setWorkflows(TaskWorkflowDAO.getList(ctx, f -> f.getTaskProperty().eq(task.getId())));
 		}
@@ -340,8 +383,9 @@ public class TaskDAO {
 				.set(TAG.DOMAIN, task.getDomain().getId())
 				.set(TAG.NAME, tag.getName())
 				.set(TAG.TYPE, tag.getTagType().value());
-				if(tag.getColor()!=null) 
+				if(tag.getColor()!=null) {					
 					condition.set(TAG.COLOR, tag.getColor());
+				}
 				
 				tagId = condition.returning(TAG.ID).fetchOne().getId();
 			}
@@ -374,7 +418,7 @@ public class TaskDAO {
 		HashMap<String, Integer> map = new HashMap<>();
 		
 		//SENDER
-		sd = selectCount(ctx, sender).fetchOne(0, Integer.class);
+		sd  = selectCount(ctx, sender).fetchOne(0, Integer.class);
 		
 		//RECEIVED
 		rv  = selectCount(ctx, receiver).fetchOne(0, Integer.class);
@@ -396,9 +440,10 @@ public class TaskDAO {
 			ctx.getDslContext()
 			.select(DSL.count(TASK.ID).as(DSL.name(count)), TASK.STATUS)
 			.from(TASK)
+//			.where(whereCondition(ctx, filter))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TASK.STATUS)
-			.fetch().stream().forEach(r->{
+			.groupBy(TASK.STATUS).fetch().stream()
+			.forEach(r->{
 				taskCounts.addStatus(TaskStatus.safeValueOf(r.get(TASK.STATUS)), (Integer) r.get(DSL.name(count)));
 			});
 		});
@@ -407,9 +452,10 @@ public class TaskDAO {
 			ctx.getDslContext()
 			.select(DSL.count(TASK.ID).as(DSL.name(count)), TASK.WORKGROUP)
 			.from(TASK)
+//			.where(whereCondition(ctx, filter))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TASK.WORKGROUP)
-			.fetch().stream().forEach(r->  {
+			.groupBy(TASK.WORKGROUP).fetch().stream()
+			.forEach(r->  {
 				String wg = r.get(TASK.WORKGROUP)!= null ? r.get(TASK.WORKGROUP).toString() : "true";
 				taskCounts.addWorkgroup(wg, (Integer) r.get(DSL.name(count)));
 			});
@@ -421,10 +467,9 @@ public class TaskDAO {
 			.from(TASK)
 			.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 			.join(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+//			.where(whereCondition(ctx, filter))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TAG.ID)
-			.fetch()
-			.stream()
+			.groupBy(TAG.ID).fetch().stream()
 			.forEach(r->  {
 				if(r.get(TAG.ID)!=null) {
 					taskCounts.addTag(r.get(TAG.ID).toString(), (Integer) r.get(DSL.name(count)));
@@ -436,12 +481,33 @@ public class TaskDAO {
 	}
 	
 	private static SelectConditionStep<Record1<Integer>> selectCount(AONContext ctx, TaskFilter filter) {
-		return ctx.getDslContext().selectCount().from(TASK).where(TASK_PROPERTIES.getConditions(filter));
+		return ctx.getDslContext().selectCount().from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter))
+//				.where(whereCondition(ctx, filter))
+				;
 	}	
 	
 	private static void deleteTags(AONContext ctx, Task task) {
 		Integer[] idsTag = task.getTags().stream().map(Tag::getId).toArray(Integer[]::new);
 		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(task.getId()).and(f.getTagProperty().notIn(idsTag)) );
+	}
+	
+	private static Condition whereCondition(AONContext ctx, TaskFilter filter) {
+		Condition combined = DSL.trueCondition();
+		for (Condition condition : TASK_PROPERTIES.getConditions(filter)) {			  
+			combined = combined.and(condition);
+		}
+
+		return combined.and(TASK.PARENT.isNull())
+		.or(
+			TASK.ID.in(
+				ctx.getDslContext()
+				.select(TASK.PARENT)
+				.from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
+			)
+		)
+		;
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
@@ -536,5 +602,10 @@ public class TaskDAO {
 					.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)))
 			;
 		}
+	}
+	
+	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
+		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 }
