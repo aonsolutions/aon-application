@@ -126,7 +126,8 @@ export const TASK_STATUS = {
 	PENDING:"pending",
 	IN_PROGRESS: "in_progress",
 	FINISHED:"finished",
-	FAQ:"faq"
+	FAQ:"faq",
+    DUPLICATE:"duplicate"
 } 
 
 export const TAG_TYPE = {

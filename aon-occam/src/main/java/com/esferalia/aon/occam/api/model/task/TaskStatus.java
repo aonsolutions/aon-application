@@ -8,7 +8,8 @@ public enum TaskStatus {
 	PENDING,
 	IN_PROGRESS,
 	FINISHED,
-	FAQ;
+	FAQ,
+	DUPLICATE;
 
 	public String getName() {
     	return this.toString().toLowerCase();

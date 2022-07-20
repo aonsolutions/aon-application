@@ -49,6 +49,7 @@ public class TaskJSON {
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
 			.setTags( TagJSON.fromJSON(JsonUtils.getJSONArray(json, "tags")) )
+			.setChilds( TaskJSON.fromJSON(JsonUtils.getJSONArray(json, "childs")) )
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			;
 	}
@@ -58,16 +59,19 @@ public class TaskJSON {
 	}
 	
 	public static JSONArray toJSON(List<Task> tasks) {
-		return toJSON(tasks.stream());
+		JSONArray array = new JSONArray();
+		tasks.forEach(t -> array.put(toJSON(t)));
+		return array;
 	}
 	
 	public static JSONArray toJSON(Stream<Task> tasks) {
 		JSONArray array = new JSONArray();
-		tasks.forEach(task -> array.put(toJSON(task)));
+		tasks.forEach(t -> array.put(toJSON(t)));
 		return array;
 	}
 	
 	public static JSONObject toJSON(Task task) {
+		if(task==null) return new JSONObject();
 		return new JSONObject()
 			.put(IJsonNames.ID, task.getId())
 			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(task.getDomain()))
@@ -88,12 +92,13 @@ public class TaskJSON {
 			.put(IJsonNames.DUE_DATE, task.getDueDate()!=null ?  task.getDueDate().getTime() : null)
 			.put(IJsonNames.START_DATE, task.getStartDate()!=null ?  task.getStartDate().getTime() : null)
 			.put(IJsonNames.END_DATE, task.getEndDate()!=null ?  task.getEndDate().getTime() : null)
-			.put("gtask_id", task.getGtaskId().isPresent() ? task.getGtaskId().get() : null)
 			.put(IJsonNames.PARENT, task.getParent())
-			.put("evaluation",  task.getEvaluation()!=null ? task.getEvaluation().getName() : null)
-			.put("tags", TagJSON.toJSON(task.getTags()))
 			.put(IJsonNames.CREATION_USER, task.getCreationUser())
 			.put(IJsonNames.CREATION_DATE, task.getCreationDate()!=null ? task.getCreationDate().getTime() : null)
+			.put("gtask_id", task.getGtaskId().isPresent() ? task.getGtaskId().get() : null)
+			.put("evaluation", task.getEvaluation()!=null ? task.getEvaluation().getName() : null)
+			.put("tags", TagJSON.toJSON(task.getTags()))
+			.put("childs", toJSON(task.getChilds()))
 //			.put(IJsonNames.MODIFICATION_USER, task.getModificationUser())
 //			.put(IJsonNames.MODIFICATION_DATE, task.getModificationDate())
 			;
