@@ -653,68 +653,29 @@ public class ContractInfo implements Serializable{
 		return false;
 	}
 
-
-	public String toString(){
-		String result = "";
-		
-		result += "---------------- CONTRACT INFO ---------------- \n";
-		
-		if(ssRegimen == null || ssRegimen == (byte)3)
-			result += toStringFreelancerContract();
-		else
-			result += toStringContract();
-		
-		result += "\n";
-		
-		return result;
-		
-	}
-
-	private String toStringFreelancerContract() {
-		String result = "";
-		
-		result += "SS Regimen : " + ssRegimen + "\n";
-		result += "Workplace Id : " + workplaceId + "\n";
-		result += "Start Date : " + startDate + "\n";
-		result += "End Date : " + endDate + "\n";
-		result += "Seniority Date : " + seniorityDate + "\n";
-		result += "Agreement Id : " + agreementId + "\n";
-		result += "Agreement Colective : " + colectiveAgreement + "\n";
-		result += "Employees Colective : " + colectiveEmployees + "\n";
-		result += "Agreement Level Id : " + agreementLevelId + "\n";
-		result += "Agreement Category : " + agreementCategory + "\n";
-		result += "Journey Type : " + journeyType + "\n";
-		
-		return result;
-	}
-	
-	private String toStringContract() {
-		String result = "";
-		
-		result += "SS Regimen : " + ssRegimen + "\n";
-		result += "Activity Id : " + activityId + "\n";
-		result += "CCC Id : " + cccId + "\n";
-		result += "CCC Type : " + cccType + "\n";
-		
-		if(cccType == (byte) 7) result += "MdCTZ : " + mdCtz + "\n";
-		
-		result += "Workplace Id : " + workplaceId + "\n";
-		result += "ContractType : " + contractType + "\n";
-		result += "Contract Modality : " + contractModel + "\n";
-		result += "Start Date : " + startDate + "\n";
-		result += "Original Start Date : " + originalStartDate + "\n";
-		result += "End Date : " + endDate + "\n";
-		result += "Seniority Date : " + seniorityDate + "\n";
-		result += "Agreement Id : " + agreementId + "\n";
-		result += "Agreement Colective : " + colectiveAgreement + "\n";
-		result += "Employees Colective : " + colectiveEmployees + "\n";
-		result += "Agreement Level Id : " + agreementLevelId + "\n";
-		result += "Agreement Category : " + agreementCategory + "\n";
-		result += "Quote Group : " + quoteGroup + "\n";
-		result += "Ocupation : " + ocupation + "\n";
-		result += "Partiality Coef : " + partialityCoef + "\n";
-		
-		return result;
+	@Override
+	public String toString() {
+		return "ContractInfo [contractId=" + contractId + ", workplaceId=" + workplaceId + ", workplaceName="
+				+ workplaceName + ", workplaceZIP=" + workplaceZIP + ", workplaceFullAddress=" + workplaceFullAddress
+				+ ", cccId=" + cccId + ", completeCCC=" + completeCCC + ", startDate=" + startDate
+				+ ", originalStartDate=" + originalStartDate + ", originalEndDate=" + originalEndDate + ", endDate="
+				+ endDate + ", seniorityDate=" + seniorityDate + ", activityId=" + activityId + ", enterpriseCIF="
+				+ enterpriseCIF + ", ssRegimen=" + ssRegimen + ", agreementCategory=" + agreementCategory
+				+ ", agreementLevelId=" + agreementLevelId + ", agreementId=" + agreementId + ", cccType=" + cccType
+				+ ", contracttypeId=" + contracttypeId + ", contractType=" + contractType + ", quotegroupId="
+				+ quotegroupId + ", quoteGroup=" + quoteGroup + ", quoteGroupIdxMonthId=" + quoteGroupIdxMonthId
+				+ ", quoteGroupIdxMonth=" + quoteGroupIdxMonth + ", ocupationId=" + ocupationId + ", ocupation="
+				+ ocupation + ", rlceId=" + rlceId + ", rlce=" + rlce + ", journeytypeId=" + journeytypeId
+				+ ", journeyType=" + journeyType + ", contractmodelId=" + contractmodelId + ", contractModel="
+				+ contractModel + ", retaId=" + retaId + ", contractJourneyDuration=" + contractJourneyDuration
+				+ ", oldStartDate=" + oldStartDate + ", oldEndDate=" + oldEndDate + ", hasPayroll=" + hasPayroll
+				+ ", payrollDate=" + payrollDate + ", colectiveAgreement=" + colectiveAgreement
+				+ ", colectiveEmployees=" + colectiveEmployees + ", mdCtzId=" + mdCtzId + ", mdCtz=" + mdCtz
+				+ ", partialityCoefId=" + partialityCoefId + ", partialityCoef=" + partialityCoef + ", salariesCount="
+				+ salariesCount + ", contractSalariesInfo=" + contractSalariesInfo + ", settleReason=" + settleReason
+				+ ", hasSettle=" + hasSettle + ", holidaysDate=" + holidaysDate + ", hasCertifica2=" + hasCertifica2
+				+ ", isTGSSActive=" + isTGSSActive + ", sepeId=" + sepeId + ", hasExtension=" + hasExtension
+				+ ", hasTransformation=" + hasTransformation + ", hasCto=" + hasCto + ", hasCbc=" + hasCbc + "]";
 	}
 
 }
