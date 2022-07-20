@@ -1071,7 +1071,10 @@ public abstract class EmployeeDraft extends Composite {
 		Map<String, String> messageMap = employee.checkSaveAndGetErrors();
 		if(messageMap.isEmpty())
 			employeeDraftObject.updateEmployee(
-					r -> saved(), 
+					r -> {
+						saved();
+						setEmployeeDraftObject(employeeDraftObject);
+					}, 
 					t -> {}
 			);
 		else
