@@ -795,11 +795,11 @@ public class AggregatedAnnualSummary {
 	
 	private static int assignNumber (String str) {
 		
-		if (str.equals(CRA1_CONCEPT_ORDER[0]))
+		if (CRA1_CONCEPT_ORDER[0].equals(str))
 			return 1;
-		else if (str.equals(CRA1_CONCEPT_ORDER[1]))
+		else if (CRA1_CONCEPT_ORDER[1].equals(str))
 			return 2;
-		else if (str.equals(CRA1_CONCEPT_ORDER[2]))
+		else if (CRA1_CONCEPT_ORDER[2].equals(str))
 			return 3;
 		else {
 			try {
@@ -896,10 +896,14 @@ public class AggregatedAnnualSummary {
 			payments.stream()
 			.filter(Objects::nonNull)
 			.map(p -> {
-				if (p.getPaymentType() != null) {
-					return choosePaymentName(p);
-				} else
-					return p.getName();
+				return choosePaymentName(p);
+//				if (p.getPaymentType() != null) {
+//					return choosePaymentName(p);
+//				} else if (p.getName() != null) {					
+//					return p.getName();
+//				} else {
+//					return "Otros conceptos";
+//				}
 			})
 			.forEach(paymentConceptsSet::add);
 		});
@@ -919,7 +923,11 @@ public class AggregatedAnnualSummary {
 			}
 		} else if (payment.getPaymentType() != null) {
 			return payment.getPaymentType().name();
-		}
+		} /*else if (payment.getName() != null) {		//DESCOMENTAR PARA QUE EN PONGA NOMBRE O DESC EN VEZ DE "OTROS CONCEPTOS"
+			return payment.getName();
+		} else if (payment.getDescription() != null) {
+			return payment.getDescription();
+		}*/
 		return "Otros conceptos";
 	}
 
@@ -1197,7 +1205,7 @@ public class AggregatedAnnualSummary {
 		totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		cell = row.createCell(0);
 		cell.setCellType(CellType.STRING);
-		if (field.contains("CRA_00") || AonArrayUtils.constainsIgnoreCase(CRA1_CONCEPT_ORDER, field)) {
+		if (field != null && (AonStringUtils.contains(field, "CRA_00") || AonArrayUtils.constainsIgnoreCase(CRA1_CONCEPT_ORDER, field))) {
 			cell.setCellValue(getDefinitivePaymentConcept(field));
 		} else {
 			cell.setCellValue(removeUnderscore(field));				
