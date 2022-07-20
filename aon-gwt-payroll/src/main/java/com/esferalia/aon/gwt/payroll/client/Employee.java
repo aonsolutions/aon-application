@@ -1057,7 +1057,7 @@ public abstract class Employee extends ResizeComposite {
 		// PAY METHODS
 		payMethod.addItem("-", "-1");
 		for(Entry<String, String> entry : payMethods.entrySet()) {
-			payMethod.addItem(entry.getKey(), entry.getValue());
+			payMethod.addItem(entry.getValue(), entry.getKey());
 		}
 	}
 	

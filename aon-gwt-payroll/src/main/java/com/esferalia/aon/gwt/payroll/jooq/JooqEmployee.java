@@ -1928,35 +1928,35 @@ public class JooqEmployee {
 			}
 		}
 		
-		if(null == contractData.getJourneytypeId()){
-			if(null != contractData.getJourneyType()){
-				ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-						CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-					.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
-							startDate, endDate)
-					.returning(CONTRACT_DATA.ID)
-					.fetchOne();
-				
-				contractData.setJourneytypeId(journeyRecord.getId());
-			}
-		}else{
-			if(null == contractData.getJourneyType()){
-				dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
-				contractData.setJourneytypeId(null);
-				contractData.setJourneyType(null);
-			}else{
-				dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
-					.set(CONTRACT_DATA.START_DATE, startDate)
-					.set(CONTRACT_DATA.END_DATE, endDate)
-					.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
-					.execute();
-			}
-		}
-		
 		Integer contractType = AonStringUtils.isBlank(contractData.getContractType()) ? null : Integer.parseInt(contractData.getContractType());
 		
 		if(!isCompleteJourneyContract(contractType)) {
+			
+			if(null == contractData.getJourneytypeId()){
+				if(null != contractData.getJourneyType()){
+					ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
+								startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setJourneytypeId(journeyRecord.getId());
+				}
+			} else{
+				if(null == contractData.getJourneyType()){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
+					contractData.setJourneytypeId(null);
+					contractData.setJourneyType(null);
+				}else{
+					dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
+						.execute();
+				}
+			}
 			
 			TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
 //			if(contractJourneyDuration.isEmpty()) {
