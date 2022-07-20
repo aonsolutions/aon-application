@@ -164,7 +164,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     }
     
 	private static Optional<String> getOptionalDomain(String ccc, String cif) throws AonConnectionException, SQLException {
-		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+		ConnectionInfo connectionInfo = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
 		for ( String schema : connectionInfo.getSchemas() ) {
 			Connection connection = connectionInfo.getConnection(schema);
 			Optional<String> domain = getOptionalDomain(connection, ccc, cif );
