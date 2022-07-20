@@ -400,6 +400,7 @@ public class TaskDAO {
 		TaskOldDAO.deleteTaskEvent(ctx, f -> f.getTaskProperty().eq(id));
 		TaskOldDAO.deleteTaskComment(ctx, f -> f.getTaskProperty().eq(id));
 		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(id));
+		DailyTrackingDAO.delete(ctx, f -> f.getTaskProperty().eq(id));
 		delete(ctx, f -> f.getIdProperty().eq(id).or(f.getParentProperty().eq(id)));
 		ctx.log().debug("DELETE TASK id:" + id);
 	}
