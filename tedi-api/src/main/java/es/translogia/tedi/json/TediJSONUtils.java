@@ -2,6 +2,7 @@ package es.translogia.tedi.json;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -36,6 +37,7 @@ public class TediJSONUtils {
 			return (date == null || "".equals(date.trim())) ? null : format.parse(date);
 		} catch (ParseException e) {
 			System.err.printf( "ERROR: UNABLE to parse '"+date+"' date.\n");
+			Arrays.stream(e.getStackTrace()).skip(2).limit(10).forEach( t -> System.err.println("\tat " + t ));
 			return null;
 		}
 	}
@@ -46,6 +48,10 @@ public class TediJSONUtils {
 
 	public static String format(Date date, SimpleDateFormat format) {
 		return (date == null) ? null : format.format(date);
+	}
+	
+	public static void main(String[] args) {
+		parseDate("Fri May 13 00:00:00 CEST 2022");
 	}
 
 }

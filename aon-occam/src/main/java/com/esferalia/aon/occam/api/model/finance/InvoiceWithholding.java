@@ -16,6 +16,7 @@ public class InvoiceWithholding implements Serializable {
 	private String accountCode;
 	private String accountDescription;
 	
+	private boolean quotaEdited;
 
 	public double getBase() {
 		return base;
@@ -79,4 +80,13 @@ public class InvoiceWithholding implements Serializable {
 		this.accountDescription = accountDescription;
 		return this;
 	}
+	
+	public boolean isQuotaEdited() {
+		return quotaEdited;
+	}
+	public InvoiceWithholding setQuotaEdited(boolean quotaEdited) {
+		this.quotaEdited = quotaEdited;
+		return this;
+	}
+	
 }

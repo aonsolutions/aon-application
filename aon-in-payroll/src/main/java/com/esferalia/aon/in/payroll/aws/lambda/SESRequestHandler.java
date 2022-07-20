@@ -94,8 +94,6 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 
 		@Override
 		public void startFile(String filename) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -105,6 +103,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 
 		@Override
 		public void exception(String fileName, Exception e) {
+			System.err.println(fileName + ":" + e.getMessage() );
 			paragraphs.add(String.format("<p style=\"text-align:justify; color:red\">%s...ERROR (%s)</p>\n", fileName, e.getMessage()));
 		}
 		
@@ -123,7 +122,12 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		boolean handle(String contentType, InputStream is, Callback l, Handler handlers []) throws Exception;
 	}
 	
-	
+	private static class DomainNotFoundException extends Exception {
+		
+		public DomainNotFoundException(String message) {
+			super(message);
+		}
+	}
 	
 	
     @Override
@@ -160,7 +164,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     }
     
 	private static Optional<String> getOptionalDomain(String ccc, String cif) throws AonConnectionException, SQLException {
-		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+		ConnectionInfo connectionInfo = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
 		for ( String schema : connectionInfo.getSchemas() ) {
 			Connection connection = connectionInfo.getConnection(schema);
 			Optional<String> domain = getOptionalDomain(connection, ccc, cif );
@@ -252,6 +256,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 					return;
 				}
 			} catch ( Exception e ) {
+				System.err.println(e.getMessage());
 			}
 		}
 		
@@ -353,7 +358,8 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     
     	SalaryPDFParser.parse(is, salaryBuilder);
     	
-		String domain = getOptionalDomain(salaryBuilder.enterpriseCcc, salaryBuilder.enterpriseCif).orElseThrow(NoSuchElementException::new);
+		String domain = getOptionalDomain(salaryBuilder.enterpriseCcc, salaryBuilder.enterpriseCif)
+				.orElseThrow(() -> new DomainNotFoundException( String.format("Can't find out domain for %s (%s,%s)", salaryBuilder.enterpriseName, salaryBuilder.enterpriseCcc, salaryBuilder.enterpriseCif )));
 		
 		System.out.println( salaryBuilder.enterpriseName + "[" + salaryBuilder.enterpriseCcc +"/" + salaryBuilder.enterpriseCif  +"] : " + domain  );
 		
@@ -407,7 +413,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     	
     	return 
 		dslContext
-		.select()
+		.selectDistinct(PARENT_DOMAIN.NAME)
     	.from(ENTERPRISE_CCC)
     	.innerJoin(DOMAIN).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
     	.innerJoin(PARENT_DOMAIN).on(DOMAIN.PARENT.eq(PARENT_DOMAIN.ID))
@@ -415,7 +421,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     	.fetchOptional(PARENT_DOMAIN.NAME)
     	.or( () ->
     		dslContext
-			.select()
+    		.selectDistinct(PARENT_DOMAIN.NAME)
 	    	.from(REGISTRY)
 	    	.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
 	    	.innerJoin(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
@@ -424,14 +430,14 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 	    	.fetchOptional(PARENT_DOMAIN.NAME)
 	    	.or( () -> 
 				dslContext
-				.select()
+				.selectDistinct(DOMAIN.NAME)
 		    	.from(ENTERPRISE_CCC)
 		    	.innerJoin(DOMAIN).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
 		    	.where(ENTERPRISE_CCC.CCC.eq(ccc))
 		    	.fetchOptional(DOMAIN.NAME)
 		    	.or( () ->
 		    		dslContext
-					.select()
+		    		.selectDistinct(DOMAIN.NAME)
 			    	.from(REGISTRY)
 			    	.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
 			    	.innerJoin(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
