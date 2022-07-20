@@ -243,7 +243,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 
 	@Override
-	public String refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+	public Boolean refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		Company company = AON.getCompanyForDomain(domainName, domainId, user);
 		Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
@@ -251,20 +251,18 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		tbaiConfiguration.setCertificate(cert);
 		LROE140_1_1 lroe = new LROE140_1_1();
-		lroe.consulta(tbaiConfiguration, person, invoice);
-		return null;
+		return lroe.consulta(tbaiConfiguration, person, invoice);
 	}
 
 	@Override
-	public String refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+	public Boolean refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		Company company = AON.getCompanyForDomain(domainName, domainId, user);
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		tbaiConfiguration.setCertificate(cert);
 		LROE240_1_1 lroe = new LROE240_1_1();
-		lroe.consulta(tbaiConfiguration, company, invoice);	
-		return null;
+		return lroe.consulta(tbaiConfiguration, company, invoice);	
 	}
 	
 
