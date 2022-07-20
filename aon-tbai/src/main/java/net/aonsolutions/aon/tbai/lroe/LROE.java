@@ -23,6 +23,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -33,7 +34,6 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultarespuesta_v1_0_1.LROEPJ240FacturasEmitidasConSGConsultaRespuesta;
 import net.aonsolutions.aon.tbai.TbaiUri;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
@@ -289,9 +289,26 @@ public class LROE implements Serializable {
 		return new LROEResponse(responseJSON);
 	}
 	
+	@Deprecated
 	protected Object unmarshal(Class clazz, String response) throws JAXBException {
 		Unmarshaller unmar =  JAXBContext.newInstance(clazz.getPackage().getName()).createUnmarshaller();
 		JAXBElement o = (JAXBElement) unmar.unmarshal(new StringReader(response));
 		return o.getValue();
+	}
+
+	protected byte[] marshall(Class clazz, Object object) throws JAXBException {
+		final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+		final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		jaxbMarshaller.marshal(object, bos);
+		return bos.toByteArray();
+	}
+	
+	protected Object unmarshall(Class clazz, String response) throws JAXBException {
+		Unmarshaller unmar =  JAXBContext.newInstance(clazz.getPackage().getName()).createUnmarshaller();
+		return unmar.unmarshal(new StringReader(response));
 	}
 }

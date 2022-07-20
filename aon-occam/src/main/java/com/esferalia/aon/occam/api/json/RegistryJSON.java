@@ -31,6 +31,7 @@ public class RegistryJSON {
 	}
 	
 	public static JSONObject toJSON(Registry registry) {
+		if(registry == null || registry.isEmpty()) return new JSONObject();
 		return new JSONObject()
 			.put(IJsonNames.ID, registry.getId())
 			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(registry.getDomain()))

@@ -576,9 +576,9 @@ public class SaleInvoiceController extends InvoiceController {
 				invoice.setNumber(number);
 				invoice.setReferenceCode(null);
 				invoice.setIssueDate(new Date());
-				invoice.setTaxDate(new Date());
+				invoice.setTaxDate(invoice.getTaxDate() != null && invoice.getTaxDate().after(new Date()) ? invoice.getTaxDate() : new Date());
 				inv.setIssueDate(new Date());
-				inv.setTaxDate(new Date());
+				inv.setTaxDate(invoice.getTaxDate() != null && invoice.getTaxDate().after(new Date()) ? invoice.getTaxDate() : new Date());
 				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			}
 
