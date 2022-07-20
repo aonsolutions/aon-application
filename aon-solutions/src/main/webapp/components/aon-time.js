@@ -473,7 +473,7 @@ export class AonTime extends AonElement {
                 if (!isNaN(hvalue)) {
                     if (hvalue === maxtime.hour && mvalue > maxtime.minute) {
                         this.MINUTE_INPUT.value = `${maxtime.minute}`.padStart(2, "0");
-                    } else if (hvalue === mintime.hour && mvalue < maxtime.minute) {
+                    } else if (hvalue === mintime.hour && mvalue < mintime.minute) {
                         this.MINUTE_INPUT.value = `${mintime.minute}`.padStart(2, "0");
                     }
                     if (hvalue < 10) {
