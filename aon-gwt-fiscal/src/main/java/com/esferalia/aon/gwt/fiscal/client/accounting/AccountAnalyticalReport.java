@@ -189,10 +189,10 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
 			
+				private static final long serialVersionUID = 2306124174254741930L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

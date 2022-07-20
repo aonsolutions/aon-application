@@ -782,11 +782,10 @@ public class JsonParser {
 			params.setOrderBy(orderBy.intValue());	
 		}
 		// ******************* ACTIVITY ******************* 
-		Long groupByNif = (Long) jsonParams.get(IRequestParamsNames.GROUP_BY_NIF);
-		if (groupByNif != null) {
-			params.setGroupByNif(groupByNif.intValue());	
+		Long groupedBy = (Long) jsonParams.get(IRequestParamsNames.GROUPED_BY);
+		if (groupedBy != null) {
+			params.setGroupedBy(groupedBy.intValue());	
 		}
-		
 		return params;
 	}
 }

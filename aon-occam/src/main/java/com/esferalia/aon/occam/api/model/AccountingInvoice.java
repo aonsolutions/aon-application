@@ -31,7 +31,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private Attach attach;
 	private String manualConcept;
 
-	private InvoiceWithholding withholdingData;
+	private InvoiceWithholding privWithholdingData;
 	private LinkedList<Account> suggestedAccounts;
 	private LinkedList<InvoiceVAT> vats;
 	private LinkedList<AccountEntry> accountEntries;
@@ -50,7 +50,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private String payAccountCode;
 	private String payAccountDescription;
 	
-	private LinkedList<TediError> messages = new LinkedList<TediError>();
+	private LinkedList<TediError> messages = new LinkedList<>();
 	private LinkedList<AccountingRegistry> posibleRegistries;
 
 	public boolean isTediParsed() {
@@ -136,14 +136,16 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return this;
 	}
 	public boolean hasWithholdingData() {
-		return (withholdingData != null); 
+		return (privWithholdingData != null); 
 	}
 	public InvoiceWithholding getWithholdingData() {
-		ensureWithholdingData();
-		return withholdingData;
+		if (this.privWithholdingData == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+		return privWithholdingData;
 	}
 	public AccountingInvoice setWithholdingData(InvoiceWithholding withholdingData) {
-		this.withholdingData = withholdingData;
+		this.privWithholdingData = withholdingData;
 		return this;
 	}
 	
@@ -167,7 +169,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	public AccountingInvoice addVat(InvoiceVAT vat) {
 		if (getVats() == null) {
-			setVats(new LinkedList<InvoiceVAT>());
+			setVats(new LinkedList<>());
 		}
 		getVats().add(vat);
 		return this;
@@ -263,37 +265,31 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return invoice != null && invoice.isOutputVatEnabled();
 	}
 	public void setWithholdingAccount(Account acc) {
-		ensureWithholdingData();
 		getWithholdingData().setAccountId(acc.getId())
 			.setAccountCode(acc.getCode())
 			.setAccountDescription(acc.getDescription());
 	}	
 	public void setWithholdingBase(Double base) {
-		ensureWithholdingData();
 		getWithholdingData().setBase(base);
-		//getWithholdingData().setQuota(AonMathUtils.round(base * getWithholdingData().getPercentage() / 100));
 	}
 	public void setWithholdingPercent(Double percent) {
-		ensureWithholdingData();
 		getWithholdingData().setPercentage(percent);
-		//getWithholdingData().setQuota(AonMathUtils.round(getWithholdingData().getBase() * percent / 100));
 	}
 	public void setWithholdingQuota(Double quota) {
-		ensureWithholdingData();
 		getWithholdingData().setQuota(quota);
 	}
 	public void setWithholdingType(WithholdingType type) {
-		ensureWithholdingData();
 		getWithholdingData().setWithholdingType(type);
 	}
-	
+	public boolean isWithholdingQuotaEdited() {
+		return getWithholdingData().isQuotaEdited();
+	}
+	public void setWithholdingQuotaEdited(boolean edited) {
+		getWithholdingData().setQuotaEdited(edited);
+	}
+
 	public InvoiceVAT getFirstVat() {
 		return getVats().get(0);
-	}
-	private void ensureWithholdingData() {
-		if (this.withholdingData == null) {
-			setWithholdingData( new InvoiceWithholding() );
-		}
 	}
 	public boolean hasPrepayments() {
 		return prepayments;
@@ -383,11 +379,11 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public boolean isImportable() {
-		TediLevel level = getMoreSeriousLevel();;
+		TediLevel level = getMoreSeriousLevel();
 		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
 	public void clearMessages() {
-		this.messages = new LinkedList<TediError>();		
+		this.messages = new LinkedList<>();		
 	}
 	
 	public boolean isVatImportationAvailable() {

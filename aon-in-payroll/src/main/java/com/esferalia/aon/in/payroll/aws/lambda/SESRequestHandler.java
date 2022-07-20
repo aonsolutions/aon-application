@@ -1,9 +1,13 @@
 package com.esferalia.aon.in.payroll.aws.lambda;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,11 +19,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,7 +55,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFParser;
 import com.esferalia.aon.in.payroll.pdf.jooq.DSLPDFSalaryBuilder;
-import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -66,17 +73,27 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		void startFile(String filename);
 		void endFile(String fileName);
 		void exception( String filename , Exception e );
+		void deleted( String filename , int deleted);
+		void inserted( String filename , int inserted);
 	}
 	
 	
 	private static class MimeCallback implements Callback {
 		
+		Map<String, Integer> deletedMap = new HashMap<>();
+		Map<String, Integer> insertedMap = new HashMap<>();
 		List<String> paragraphs = new LinkedList<String>();
 		
+		public Integer getDeleted() {
+			return deletedMap.values().stream().collect(Collectors.summingInt(i -> i));
+		}
+		
+		public Integer getInserted() {
+			return insertedMap.values().stream().collect(Collectors.summingInt(i -> i));
+		}
+
 		@Override
 		public void startFile(String filename) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -86,16 +103,31 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 
 		@Override
 		public void exception(String fileName, Exception e) {
+			System.err.println(fileName + ":" + e.getMessage() );
 			paragraphs.add(String.format("<p style=\"text-align:justify; color:red\">%s...ERROR (%s)</p>\n", fileName, e.getMessage()));
 		}
 		
+		@Override
+		public void deleted(String filename, int deleted) {
+			deletedMap.compute(filename, (k,v)-> v == null ? deleted : v + deleted);
+		}
+		
+		@Override
+		public void inserted(String filename, int inserted) {
+			insertedMap.compute(filename, (k,v)-> v == null ? inserted : v + inserted);
+		}
 	}
 	
 	private static interface Handler {
 		boolean handle(String contentType, InputStream is, Callback l, Handler handlers []) throws Exception;
 	}
 	
-	
+	private static class DomainNotFoundException extends Exception {
+		
+		public DomainNotFoundException(String message) {
+			super(message);
+		}
+	}
 	
 	
     @Override
@@ -110,45 +142,40 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 			System.out.println("messageId: " + messageId );
 	    	String key = String.format("laboral@aon.solutions/%s", messageId);
     		MimeCallback callback = new MimeCallback();
-    		DSLPDFSalaryBuilder  salaryBuilder = 
-    		new DSLPDFSalaryBuilder();
-			Optional<MimeMessage> mimeMessage =
+    		Optional<MimeMessage> mimeMessage = 
     		handleMessage(
 			bucket, 
 			key, 
 			callback, 
 			SESRequestHandler::handleZIP, 			   					
-			//SESRequestHandler::handleText,
-			SESRequestHandler.handlePDF(salaryBuilder)
+			SESRequestHandler::handlePDF
 			);
 			
-			String domain = mimeMessage.map( SESRequestHandler::getDomain ).orElse(null);
-			
-    		try (
-			Connection connection = getConnection(domain);
-	      	){
-    			DSLContext dslContext = getDSLContext(connection);
-	    		dslContext.transaction(c->{	
-		    		salaryBuilder.execute( dslContext, domain);
-		    		try {
-		    			
-		    			Address[] to = mimeMessage.map( SESRequestHandler::getTo ).orElse( new Address[] {});		    			
-		    			SESSMTPSender.send(to, salaryBuilder.getInserted());
-		    		} catch ( Exception e ) {
-		    			System.out.println("ERROR:" + e.getMessage());
-		    		}
-	    		
-	    		});
-	    	} catch (Exception e) {
-				e.printStackTrace();
-			}
-
+    		try {
+    			
+    			Address[] to = mimeMessage.map( SESRequestHandler::getTo ).orElse( new Address[] {});		    			
+    			SESSMTPSender.send(to, callback.getInserted());
+    		} catch ( Exception e ) {
+    			System.out.println("ERROR:" + e.getMessage());
+    		}
 
 		}
         return "That's all Folks!";
     }
     
-    private static String getDomain(MimeMessage mimeMessage) {
+	private static Optional<String> getOptionalDomain(String ccc, String cif) throws AonConnectionException, SQLException {
+		ConnectionInfo connectionInfo = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
+		for ( String schema : connectionInfo.getSchemas() ) {
+			Connection connection = connectionInfo.getConnection(schema);
+			Optional<String> domain = getOptionalDomain(connection, ccc, cif );
+			if ( domain.isPresent() )
+				return domain;
+		}
+		return Optional.empty();
+	}
+    
+
+	private static String getDomain(MimeMessage mimeMessage) {
     	try {
     		System.out.println("Subject: " + mimeMessage.getSubject() );
 			return findDomain(mimeMessage.getSubject());
@@ -173,7 +200,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 			return new Address[] {};
 		} 
 	}
-    
+	
     @SuppressWarnings("unchecked")
 	private static List<String> getMessageIds(Object input) {
         
@@ -229,6 +256,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 					return;
 				}
 			} catch ( Exception e ) {
+				System.err.println(e.getMessage());
 			}
 		}
 		
@@ -250,12 +278,11 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		&& handleZIP(is, callback, handlers);
     }
 
-    private static Handler handlePDF(ISalaryBuilder<?> salaryBuilder) {
-    	return (contentType,is,callback, handlers) -> {
-    		return isMimeType(contentType, "application/pdf") && handlePDF(is, callback, salaryBuilder);
-    	};
+    private static boolean handlePDF( String contentType, InputStream is, Callback callback, Handler handlers []) throws Exception {
+    	return 
+		isMimeType(contentType, "application/pdf") 
+		&& handlePDF(is, callback, handlers);
     }
-
 
     private static boolean handleURL(String spec, Callback callback,Handler handlers []) {
 		URL url = null;
@@ -301,11 +328,57 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     	return true ;
     }
  
-    private static boolean handlePDF( InputStream is, Callback callback, ISalaryBuilder<?> salaryBuilder) throws Exception {    	
+    private static boolean handlePDF( InputStream is, Callback callback, Handler handlers []) throws Exception {
+    	class MyDSLPDFSalaryBuilder extends DSLPDFSalaryBuilder {
+        	
+    		String enterpriseCcc ; 
+        	String enterpriseCif ; 
+        	String enterpriseName;
+
+        	@Override
+    		public void setCcc(String ccc) {
+    			super.setCcc(ccc);
+    			this.enterpriseCcc  = ccc;
+    		}
+
+    		@Override
+    		public void setEnterpriseDocument(String enterpriseDocument) {
+    			super.setEnterpriseDocument(enterpriseDocument);
+    			this.enterpriseCif  = enterpriseDocument;
+    		}
+    		
+    		@Override
+    		public void setEnterpriseName(String enterpriseName) {
+    			super.setEnterpriseName(enterpriseName);
+    			this.enterpriseName = enterpriseName;
+    		}
+    		
+    	};
+    	MyDSLPDFSalaryBuilder salaryBuilder = new MyDSLPDFSalaryBuilder();
+    
+    	SalaryPDFParser.parse(is, salaryBuilder);
+    	
+		String domain = getOptionalDomain(salaryBuilder.enterpriseCcc, salaryBuilder.enterpriseCif)
+				.orElseThrow(() -> new DomainNotFoundException( String.format("Can't find out domain for %s (%s,%s)", salaryBuilder.enterpriseName, salaryBuilder.enterpriseCcc, salaryBuilder.enterpriseCif )));
+		
+		System.out.println( salaryBuilder.enterpriseName + "[" + salaryBuilder.enterpriseCcc +"/" + salaryBuilder.enterpriseCif  +"] : " + domain  );
+		
+		try (Connection connection = getConnection(domain);){
+			DSLContext dslContext = getDSLContext(connection);
+    		dslContext.transaction(c-> salaryBuilder.execute( dslContext, domain));
+    	} catch ( Exception e) {
+    		System.err.println("ERROR:" + e.getMessage());
+    	}
+    	
+		return true ;
+    }
+
+    private static boolean handlePDF( InputStream is, Callback callback, ISalaryBuilder<?> salaryBuilder) throws Exception {
     	SalaryPDFParser.parse(is, salaryBuilder);
     	return true ;
     }
     
+
     private static DSLContext getDSLContext (Connection connection) throws SQLException {
 
 		Settings settings;
@@ -318,13 +391,10 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     
 	private static Connection getConnection(String domain) throws SQLException, AonConnectionException, ClassNotFoundException {
 		
-		System.out.println("getConnection (" + domain + ") {");
 		
     	ConnectionInfo ci = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
     	String schema = ci.getDomainDatabase(domain);
     	
-		System.out.println("schema = " + schema + ";");
-
 		Class.forName(ci.getDriverClass(schema));
 
         Properties properties = new Properties();
@@ -333,34 +403,54 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
         properties.setProperty("useSSL", ci.getUseSSL(schema));
         properties.setProperty("serverTimezone", ci.getTimeZone(schema));
         
-        properties.forEach((k,v)-> System.out.println( k + " = " + v + ";" ) );
-
-        
-		System.out.println("}");
-		
         return DriverManager.getConnection(ci.getSchemaUrl(schema), properties);
     }
 
-    private static Optional<Connection> getOptionalConnection(String ccc) throws SQLException, AonConnectionException {
-    	ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
-    	for ( String schema : connectionInfo.getSchemas() ) {
-    		Connection connection = connectionInfo.getConnection(schema);
-    		if ( getEnterpriseCCC(connection, ccc).isPresent() ) 
-    			return Optional.of(connection);
-    		connection.close();
-    	}
-    	return Optional.empty();
-    }
-    
-    private static Optional<EnterpriseCccRecord> getEnterpriseCCC(Connection connection, String ccc ) throws SQLException{
-		return 
-		getDSLContext(connection).select()
+    private static Optional<String> getOptionalDomain(Connection connection, String ccc, String cif ) throws SQLException{
+		
+    	DSLContext dslContext = getDSLContext(connection);
+    	Domain PARENT_DOMAIN = DOMAIN.as("parent_domain");
+    	
+    	return 
+		dslContext
+		.selectDistinct(PARENT_DOMAIN.NAME)
     	.from(ENTERPRISE_CCC)
+    	.innerJoin(DOMAIN).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
+    	.innerJoin(PARENT_DOMAIN).on(DOMAIN.PARENT.eq(PARENT_DOMAIN.ID))
     	.where(ENTERPRISE_CCC.CCC.eq(ccc))
-    	.fetchOptionalInto(ENTERPRISE_CCC)
-    	;
+    	.fetchOptional(PARENT_DOMAIN.NAME)
+    	.or( () ->
+    		dslContext
+    		.selectDistinct(PARENT_DOMAIN.NAME)
+	    	.from(REGISTRY)
+	    	.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+	    	.innerJoin(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
+	    	.innerJoin(PARENT_DOMAIN).on(DOMAIN.PARENT.eq(PARENT_DOMAIN.ID))
+	    	.where(REGISTRY.DOCUMENT.eq(cif))
+	    	.fetchOptional(PARENT_DOMAIN.NAME)
+	    	.or( () -> 
+				dslContext
+				.selectDistinct(DOMAIN.NAME)
+		    	.from(ENTERPRISE_CCC)
+		    	.innerJoin(DOMAIN).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
+		    	.where(ENTERPRISE_CCC.CCC.eq(ccc))
+		    	.fetchOptional(DOMAIN.NAME)
+		    	.or( () ->
+		    		dslContext
+		    		.selectDistinct(DOMAIN.NAME)
+			    	.from(REGISTRY)
+			    	.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+			    	.innerJoin(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
+			    	.where(REGISTRY.DOCUMENT.eq(cif))
+			    	.fetchOptional(DOMAIN.NAME)
+		    	)
+	    	)
+	    	
+    	);
+
+		
     }
-    
+
     private static String convert(InputStream inputStream, Charset charset) throws IOException {
     	 
     	try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
@@ -399,44 +489,29 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 	}
 
 	private static String getContentType(ZipEntry zipEntry) {
-		return new MimetypesFileTypeMap().getContentType(zipEntry.getName());	
+		return new MimetypesFileTypeMap().getContentType(zipEntry.getName().toLowerCase());	
 	}
 	
-//    public static void main(String[] args) throws Exception {
-//
-//    	DSLPDFSalaryBuilder dslpdfSalaryBuilder = new DSLPDFSalaryBuilder();
-//		Connection connection = getConnection("payroll-test.aonsolutions.org");
-//		DSLContext dslContext = getDSLContext(connection);
-//    	
-//		SalaryPDFParser.parse(new File("/home/rtrepiana/Downloads/nominas noviembre.PDF"), dslpdfSalaryBuilder);
-//		
-//		dslpdfSalaryBuilder.execute(dslContext, "payroll-test.aonsolutions.org");
-//    	
-//	try (
-//		Connection connection = getConnection("ayudat.aonsolutions.net");
-//		DSLContext dslContext = getDSLContext(connection);
-//		FileInputStream is = new FileInputStream(args[0]);
-//		){	
-//		
-//		JooqPDFSalaryBuilder  salaryBuilder = 
-//		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net")
-//		;
-//		dslContext.transaction((c)->{			
-//			MimeMessage mimeMessage =
-//			handleMIME(
-//					is, 
-//					new MimeCallback(),
-//	   				SESRequestHandler::handleZIP, 
-//    				SESRequestHandler.handlePDF(salaryBuilder)
-//					);
-//		salaryBuilder.execute();
-//		SESSMTPSender.send(getTo(mimeMessage), salaryBuilder.getInserted());
-//		//throw new RuntimeException();
-//		});
-//	} catch (Exception e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//    }
-    
+	public static void main(String[] args) throws Exception {
+		
+		try ( FileInputStream is = new FileInputStream(args[0])){
+		
+    		MimeCallback callback = new MimeCallback();
+    		MimeMessage mimeMessage = 
+    		handleMIME(
+			is , 
+			callback, 
+			SESRequestHandler::handleZIP, 
+			SESRequestHandler::handlePDF);
+			
+    		try {
+    			
+    			Address[] to = getTo(mimeMessage);		    			
+    			SESSMTPSender.send(to, callback.getInserted());
+    		} catch ( Exception e ) {
+    			System.out.println("ERROR: " +  callback.getInserted() + " Nóminas insertadas. " + e.getMessage());
+    		}
+		}
+		
+	}
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsyncDecorat
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryPanel.AccountingRegistryPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -121,7 +122,9 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		}
 		
 	}
-	
+	public AccountingRegistryBox(Occam occam) {
+		this(occam.getDomainName(),occam.getDomain(),occam.getUser(),null,true);
+	}
 	public AccountingRegistryBox(final String domainName, final int domain,final String user) {
 		this(domainName,domain,user,null,true);
 	}

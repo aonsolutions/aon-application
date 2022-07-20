@@ -540,7 +540,7 @@ export class Invoice {
   setTax(tax, i) {
     this.taxes[i] = this.calculateTax(tax);
     this.calculateWithholdingFromTax();
-    this.calculateTotalFromTax();
+    this.calculateTotal();
     return this;
   }
 
@@ -655,6 +655,12 @@ export class Invoice {
         }
       });
     }     
+  }
+
+  calculateTotal() {
+    if(this.details && this.details.length >= 1) {
+      this.calculateTotalFromDetail();
+    } else this.calculateTotalFromTax();
   }
 
   calculateTotalFromTax() {
@@ -799,7 +805,7 @@ export class Invoice {
   }
 
   calculateTaxFromDetail() {
-    this.taxes = []
+    this.taxes = this.isWithholding() ? [this.getWitholdingTax()] : [];
     
     this.details.forEach( (detail, i) => {
       if(!detail.prepayment || detail.prepayment === CONSTANT.FALSE) {

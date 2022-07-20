@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-import net.aonsolutions.aon.gwt.ccaa.client.Deposit;
 import net.aonsolutions.aon.gwt.ccaa.client.Deposit2;
 
 public class PageITR extends PageAbs {
@@ -327,6 +326,15 @@ public class PageITR extends PageAbs {
 		text.setTitle(codeId);
 		text.setStyleName(AON.AON_CSS.aonInputText());
 		codeAux = codeId;
+		text.addDomHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				if(text.getValue() == null) {
+					onEdit(codeId, "");	
+				}
+			}
+		}, ChangeEvent.getType());
 		text.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			String code = codeAux;
 

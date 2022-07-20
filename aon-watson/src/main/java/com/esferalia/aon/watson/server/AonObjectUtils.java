@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -93,6 +94,10 @@ public class AonObjectUtils {
         return object != null ? object : defaultValue;
     }
 
+    public static <T> T computeIfTrue(boolean condition, T object, UnaryOperator<T> operator) {
+        return condition ? object : operator.apply(object);
+    }
+    
     /**
      * <p>Returns the first value in the array which is not {@code null}.
      * If all the values are {@code null} or the array is {@code null}
