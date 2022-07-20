@@ -800,7 +800,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		try {
 			Integer disabilityLevel = 
-			irpfDataRs.getObject(IrpfDataColumns.DISABILITY_LEVEL, Integer.class);
+			(Integer) irpfDataRs.getObject(IrpfDataColumns.DISABILITY_LEVEL);
 			return getDiscapacidadByDisabilityLevel(disabilityLevel);
 			
 		} catch (SQLException e) {
@@ -817,7 +817,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			if ( irpfDataRs.getBoolean(IrpfDataColumns.DEPENDENCE) )
 				return true;
 			Integer disabilityLevel = 
-			irpfDataRs.getObject(IrpfDataColumns.DISABILITY_LEVEL, Integer.class);
+			(Integer) irpfDataRs.getObject(IrpfDataColumns.DISABILITY_LEVEL);
 			return AonNumberUtils.equals(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE.ordinal(), disabilityLevel);
 			
 		} catch (SQLException e) {
