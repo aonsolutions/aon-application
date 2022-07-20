@@ -37,7 +37,7 @@ public class TediJSONUtils {
 			return (date == null || "".equals(date.trim())) ? null : format.parse(date);
 		} catch (ParseException e) {
 			System.err.printf( "ERROR: UNABLE to parse '"+date+"' date.\n");
-			Arrays.stream(e.getStackTrace()).skip(2).limit(10).forEach( t -> System.err.println("\tat " + t ));
+			Arrays.stream(e.getStackTrace()).skip(2).limit(30).forEach( t -> System.err.println("\tat " + t ));
 			return null;
 		}
 	}
