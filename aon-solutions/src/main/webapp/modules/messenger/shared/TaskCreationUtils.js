@@ -951,21 +951,22 @@ const openDialogDailyTracking = ()=> {
     });
 
     const durationId = MESSENGER_IDS.DAILY_TRACKING;
-    const trackingDuration = setAttributes(new AonInput(),{
-      name:durationId,
-      id: durationId,
-      type:"time",
-      description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
-    });
-    form.appendChild(trackingDuration);
 
-    // const trackingDuration = setAttributes(new AonTime(),{
+    // const trackingDuration = setAttributes(new AonInput(),{
     //   name:durationId,
     //   id: durationId,
-    //   max:"300:00",
-    //   title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+    //   type:"time",
+    //   description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
     // });
     // form.appendChild(trackingDuration);
+
+    const trackingDuration = setAttributes(new AonTime(),{
+      name:durationId,
+      id: durationId,
+      max:"300:59",
+      title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+    });
+    form.appendChild(trackingDuration);
 
     const noteId = MESSENGER_IDS.COMMENT_DAILY_TRACKING;
     const note   = createAonTextArea(`${MSG.WRITE_A_COMMENT} (${MSG.OPTIONAL})...`);
@@ -979,7 +980,6 @@ const openDialogDailyTracking = ()=> {
 
       const jobValue = jobType.value;
       const trackingValue = trackingDuration.value;
-     
       let dailyTracking = undefined;
 
       if(jobValue && trackingValue){

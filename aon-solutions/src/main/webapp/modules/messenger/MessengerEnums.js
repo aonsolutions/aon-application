@@ -126,8 +126,7 @@ export const TASK_STATUS = {
 	PENDING:"pending",
 	IN_PROGRESS: "in_progress",
 	FINISHED:"finished",
-	FAQ:"faq",
-    DUPLICATE:"duplicate"
+	FAQ:"faq"
 } 
 
 export const TAG_TYPE = {
@@ -157,7 +156,8 @@ export const TASK_SOURCE = {
 	CAU:"cau",
 	GITHUB:"github",
     QUERY: "query",
-	REQUEST: "request"
+	REQUEST: "request",
+    DUPLICATE:"duplicate"
 } 
 
 export const TASK_EVALUATION = {
