@@ -68,6 +68,7 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -1106,7 +1107,17 @@ public class JooqEmployee {
 				.fetch();
 		
 		contractData.setHasSettle(settlementRecords.isNotEmpty());
-		if(settlementRecords.isNotEmpty()) contractData.setHolidaysDate(settlementRecords.get(0).get(SALARY.END_DATE));
+		if(settlementRecords.isNotEmpty()) {
+			Record settlementRecord = settlementRecords.get(0);
+			contractData.setHolidaysDate(settlementRecord.get(SALARY.END_DATE));
+			
+			Result<SalaryDataRecord> holidayRecords = dslContext.selectFrom(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(settlementRecord.get(SALARY.ID)))
+					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+					.fetch();
+			
+			contractData.setSAA(holidayRecords.isNotEmpty() ? "001" : "015");
+		}
 		
 		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)

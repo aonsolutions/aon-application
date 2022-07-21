@@ -230,6 +230,13 @@ public class JooqEmployeeAFI {
 			conf.put("staticLines", "4");
 			conf.put("employeeLines", "4");
 			conf.put("numEmployees", contSeg+"");
+			conf.put("settleHolidaysLine", "0");
+			// Check if exist FCT line
+			JSONObject mbObj = (JSONObject) employeeAFIJSON.get("MB");
+			if(mbObj != null) {
+				JSONObject fctObj = (JSONObject) ((JSONObject) employeeAFIJSON.get("MB")).get("FCT");
+				if (null != fctObj) conf.put("settleHolidaysLine", "1");
+			}
 			employeeAFIJSON.put("CONF", conf);
 			
 		
@@ -521,9 +528,9 @@ public class JooqEmployeeAFI {
 		if(holidaysDataRecords.isNotEmpty()) {
 			Calendar holidyaEndDateCalendar = Calendar.getInstance();
 			holidyaEndDateCalendar.setTime(holidaysDataRecords.get(0).get(SALARY_DATA.END_DATE));
-			fct.put("dayHoliday", endDateCalendar.get(Calendar.DAY_OF_MONTH));
-			fct.put("monthHoliday", endDateCalendar.get(Calendar.MONTH) + 1);
-			fct.put("yearHoliday", endDateCalendar.get(Calendar.YEAR));
+			fct.put("dayHoliday", holidyaEndDateCalendar.get(Calendar.DAY_OF_MONTH));
+			fct.put("monthHoliday", holidyaEndDateCalendar.get(Calendar.MONTH) + 1);
+			fct.put("yearHoliday", holidyaEndDateCalendar.get(Calendar.YEAR));
 		}
 		
 		//FAB

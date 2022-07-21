@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
@@ -7044,6 +7045,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setFrb(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setFrv(employeeContractInfo.getContractInfo().getHolidaysDate());
+		if(null != employeeContractInfo.getContractInfo().getHolidaysDate())
+			builder.setAsociativeSA(employeeContractInfo.getContractInfo().getSAA());
 		builder.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
 		builder.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));
