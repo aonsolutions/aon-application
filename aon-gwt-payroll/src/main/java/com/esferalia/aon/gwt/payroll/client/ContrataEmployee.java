@@ -1488,11 +1488,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onAFIChanges() {
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getContractType(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
 				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
+				this.contrataEmployeeObject.getContractData().hasSettle(),
 				this.contrataEmployeeObject.getContractData().isHasTransformation(),
 				false) {
 
@@ -1536,11 +1537,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onComunicateAFI() {
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getContractType(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
 				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
+				this.contrataEmployeeObject.getContractData().hasSettle(),
 				this.contrataEmployeeObject.getContractData().isHasTransformation(),
 				true) {
 

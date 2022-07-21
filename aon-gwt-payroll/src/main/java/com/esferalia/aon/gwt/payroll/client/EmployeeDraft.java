@@ -880,7 +880,7 @@ public abstract class EmployeeDraft extends Composite {
 				Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
 				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
 					employee.showEmployeesColective();
-					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
+					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
 				} else {
 					employee.hideEmployeesColective();
 					contractData.setEmployeesColective(null);
@@ -1100,6 +1100,7 @@ public abstract class EmployeeDraft extends Composite {
 	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				employee.startDate.getValue(),
+				employee.endDate.getValue(),
 				employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
@@ -1107,6 +1108,7 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
+				this.employeeDraftObject.getContractData().hasSettle(),
 				this.employeeDraftObject.getContractData().isHasTransformation(),
 				false){
 
@@ -1259,11 +1261,12 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void onComunicateAFI() {
-		new EmployeeAFIDialog(employee.startDate.getValue(), employee.contractTypeLB.getSelectedValue(),
+		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
 				this.employeeDraftObject.getContractData().getWorkplaceId(), 
+				this.employeeDraftObject.getContractData().hasSettle(),
 				this.employeeDraftObject.getContractData().isHasTransformation(),
 				true) {
 
