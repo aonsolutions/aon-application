@@ -972,7 +972,6 @@ export class AonMessenger extends AonElement {
 			waitEl(selectors).then(()=>{
 				document.querySelectorAll(selectors)
 				.forEach(span=>{
-
 					let badge = this.createSpanBadgeUnread(false);
 					badge.style.left  = "21px";
 					badge.style.top   = "22px";

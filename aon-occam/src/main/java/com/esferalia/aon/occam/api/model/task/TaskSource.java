@@ -10,7 +10,8 @@ public enum TaskSource {
 	CAU,
 	GITHUB,
 	QUERY,
-	REQUEST;
+	REQUEST,
+	DUPLICATE;
 
 	public String getName() {
     	return this.toString().toLowerCase();

@@ -1,6 +1,7 @@
 import { AonCard } from "../../../components/aon-card.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
+import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
@@ -950,11 +951,20 @@ const openDialogDailyTracking = ()=> {
     });
 
     const durationId = MESSENGER_IDS.DAILY_TRACKING;
-    const trackingDuration = setAttributes(new AonInput(),{
+
+    // const trackingDuration = setAttributes(new AonInput(),{
+    //   name:durationId,
+    //   id: durationId,
+    //   type:"time",
+    //   description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+    // });
+    // form.appendChild(trackingDuration);
+
+    const trackingDuration = setAttributes(new AonTime(),{
       name:durationId,
       id: durationId,
-      type:"time",
-      description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+      max:"300:59",
+      title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
     });
     form.appendChild(trackingDuration);
 
@@ -970,7 +980,6 @@ const openDialogDailyTracking = ()=> {
 
       const jobValue = jobType.value;
       const trackingValue = trackingDuration.value;
-     
       let dailyTracking = undefined;
 
       if(jobValue && trackingValue){
