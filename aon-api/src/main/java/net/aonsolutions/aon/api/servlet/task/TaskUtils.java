@@ -53,7 +53,6 @@ public class TaskUtils {
 	    throw new IllegalStateException("Utility class");
 	}
 	
-	
 	public static List<Task> getTasksNotAll(AonApiData api){
 		JSONObject params = api.getData();
 		Integer page = params.optInt(IJsonNames.PAGE);
@@ -339,16 +338,13 @@ public class TaskUtils {
 	}
 	
 	public static Optional<Auth> getAuthForTaskHolder(AonApiData api, TaskHolder th) {
-		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
+		Domain domain = api.getDomain();
+		User user = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-		if(auth.getEmail()!=null && !auth.getEmail().isEmpty()) {
-			return Optional.of(auth);
-		}
-		return Optional.empty();
+		return auth.getEmail()!=null && !auth.getEmail().isEmpty() ? Optional.of(auth) : Optional.empty();
 	}
 	
 	public static TaskAttach saveTaskAttach(Domain domain, User user, TaskAttach attach) {
-	
 		try {
 			MimeType mimeType = attach.getMimetype();
 			if(!mimeType.isImage() && !mimeType.equals(MimeType.ZIP)) {
@@ -359,7 +355,6 @@ public class TaskUtils {
 				.setMimetype(MimeType.ZIP);
 			}
 		} catch (Exception e) {} // TODO: handle exception
-	
 		return AON_SOLUTIONS.saveTaskAttach(domain, user, attach);
 	}
 	

@@ -348,6 +348,10 @@ public class Task  implements Serializable{
 		return parent!=null && parent>0;
 	}
 	
+	public boolean isParent() {
+		return parent==null;
+	}
+	
 	public Optional<String> getTmp() {
 		return Optional.ofNullable(tmp);
 	}

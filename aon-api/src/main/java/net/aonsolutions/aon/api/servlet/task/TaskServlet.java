@@ -215,7 +215,6 @@ public class TaskServlet extends AonApiHttpServlet{
 			if(t.getParentObj()!=null) {
 				json.put("parentObj", TaskJSON.toJSON(t.getParentObj()));
 			}
-
 			array.put(json);
 		});
 		
@@ -249,9 +248,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				}
 
 			} else {
-				List<Task> chids = AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getDomainProperty().eq(domain.getId()).and(f.getParentProperty().eq(task.getId())) )
+				List<Task> childs = AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getDomainProperty().eq(domain.getId()).and(f.getParentProperty().eq(task.getId())) )
 				.sorted(Comparator.comparing(Task::getId)).collect(Collectors.toList());
-				json.put("childs", TaskJSON.toJSON(chids) );
+				json.put("childs", TaskJSON.toJSON(childs) );
 			}
 		}
 		
@@ -378,7 +377,9 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(workflow!=0 && !comment.isEmpty()) {
 			TaskWorkflow data = AON_SOLUTIONS.getTaskWorkflow(
 				api.getDomain(), new User(), 
-				f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getTaskProperty().eq(taskId)).and(f.getIdProperty().eq(workflow))
+				f-> f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getTaskProperty().eq(taskId))
+				.and(f.getIdProperty().eq(workflow))
 			);
 			data.setComment(comment);
 			
@@ -556,11 +557,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject sendTaskHistoricEmail(AonApiData api) {
-		
 		JSONObject params = api.getData();
-		
 		Domain domain = api.getDomain();
-		
 		User user     = api.getUser();
 		String login  = user.getLogin();
 		Integer id    = params.optInt(IJsonNames.TASK);
@@ -579,14 +577,15 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 		Task taskParent = AON_SOLUTIONS.getTask(domain, userReceiver, f-> f.getIdProperty().eq(id) );
 		
-		boolean isChild = taskParent.isChild();
+	   boolean isChild = taskParent.isChild();
 		
-		Integer taskId = isChild ? taskParent.getParent() : taskParent.getId();
-		if(!isChild) {
+	   Integer taskId = isChild ? taskParent.getParent() : taskParent.getId();
+	   
+	   if(!isChild) {
 			 taskParent.setStatus(TaskStatus.IN_PROGRESS);
-		}
+	   }
 
-		AON_SOLUTIONS.saveTask(api.getDomain(), user, taskParent);
+	   AON_SOLUTIONS.saveTask(api.getDomain(), user, taskParent);
 		
 	   taskParent.setTaskHolder(receiver);
 	   taskParent.setWorkgroup(workgroup);
@@ -637,7 +636,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(!DomainType.CONSULTANCY.equals(api.getDomain().getDomainType())) {
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			
-			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream()
+			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin())
 			.forEach(domain -> {
 				try {
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", 
