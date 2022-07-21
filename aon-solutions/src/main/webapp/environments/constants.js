@@ -53,6 +53,7 @@ export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
+export const COMPOSITION = 'composition';
 export const COMUNICA = 'comunica';
 export const CONCEPTS = 'concepts';
 export const CONFIGURATION = 'configuration';
@@ -90,6 +91,7 @@ export const DUPLICATE_INVOICE = 'duplicateInvoice';
 
 export const EDIT = 'edit';
 export const EDIT_FILE = 'editFile';
+export const ELABORATION = 'elaboration';
 export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
@@ -164,6 +166,7 @@ export const OPTIONS = 'options';
 
 // ----- P
 
+export const PACKAGING = 'packaging';
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
@@ -243,9 +246,11 @@ export const SURNAME = 'surname';
 // ----- T
 
 export const TABLE = 'table';
+export const TABS = 'tabs';
 export const TEXT = 'text';
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
+export const TOOLBAR = 'toolbar';
 export const TOOLS = 'tools';
 export const TOTAL = 'total';
 export const TRANSACTION_TYPE = 'transactionType';
@@ -272,7 +277,7 @@ export const VAT_ACCRUAL_PAYMENT = 'vatAccrualPayment';
 export const VISIBLE = 'visible';
 
 // ----- W
-
+export const WAREHOUSE = 'warehouse';
 export const WITHHOLDING = 'withholding';
 export const WITHHOLDING_FARMER = 'withholdingFarmer';
 export const WORKPLACE = 'workplace';

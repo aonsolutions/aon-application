@@ -369,6 +369,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 // ----- W
 
+export const WAREHOUSE = 'Warehouse';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';

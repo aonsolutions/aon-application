@@ -368,6 +368,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 // ----- W
 
+export const WAREHOUSE = 'Biltegia';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Atxikipen';
 export const WORKGROUP = 'Lan Taldea';

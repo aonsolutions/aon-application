@@ -1,4 +1,5 @@
-export const COMPANY = `ms/api/company`;
+export const API = 'ms/api';
+export const COMPANY = `${API}/company`;
 export const COMPANY_ONE = `${COMPANY}/one`;
 export const COMPANY_APP = `${COMPANY}/app`;
 export const COMPANY_BOOKING = `${COMPANY}/booking`;
@@ -9,3 +10,5 @@ export const COMPANY_BANKS = `${COMPANY}/banks`;
 export const COMPANY_ACTIVITIES = `${COMPANY}/activities`;
 export const COMPANY_APPROLES = `${COMPANY}/approles`;
 export const COMPANY_HEADER = `${COMPANY}/header`;
+export const ELABORATION = `${API}/elaboration`;
+

@@ -37,4 +37,5 @@ export const AON_SALTRA = 'aon_saltra';
 export const AON_ENTERPRISE = 'aon_enterprise';
 export const AON_KIT_DIGITAL = 'aon_kitdigital';
 export const AON_BRANCH = 'aon_branch';
+export const AON_WAREHOUSE = 'aon_warehouse';
 

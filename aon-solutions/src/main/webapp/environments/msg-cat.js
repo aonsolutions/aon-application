@@ -368,6 +368,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 // ----- W
 
+export const WAREHOUSE = 'Magatzem';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retenció';
 export const WORKGROUP = 'Grup de treball';

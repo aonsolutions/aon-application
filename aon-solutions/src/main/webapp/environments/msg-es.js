@@ -369,8 +369,10 @@ export const USERS = 'Usuarios';
 export const VAT = 'IVA';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
+
 // ----- W
 
+export const WAREHOUSE = 'Almacén';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de trabajo';

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Elaboration implements Serializable {
 
@@ -35,9 +36,6 @@ public class Elaboration implements Serializable {
 	private String modificationUser;
 	private Date modificationDate;
 		  
-		
-	
-	
 	public Integer getId() {
 		return id;
 	}
@@ -56,17 +54,30 @@ public class Elaboration implements Serializable {
 	public String getSeries() {
 		return series;
 	}
+	
 	public Elaboration setSeries(String series) {
 		this.series = series;
 		return this;
 	}
+	
 	public int getNumber() {
 		return number;
 	}
+	
 	public Elaboration setNumber(int number) {
 		this.number = number;
 		return this;
 	}
+	
+	public String getReferenceCode() {
+		String reference = "";
+		if(!AonStringUtils.isBlank(getSeries())) {
+			reference = reference + getSeries() + "/";
+		}
+		reference = reference + AonStringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		return reference;
+	}
+	
 	public Date getDate() {
 		return date;
 	}
@@ -98,7 +109,7 @@ public class Elaboration implements Serializable {
 		this.warehouse = warehouse;
 		return this;
 	}
-	public double getQuantity() {
+	public Double getQuantity() {
 		return quantity;
 	}
 	public Elaboration setQuantity(double quantity) {
