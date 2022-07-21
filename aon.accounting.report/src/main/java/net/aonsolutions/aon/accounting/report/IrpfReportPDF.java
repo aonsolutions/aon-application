@@ -194,7 +194,6 @@ public class IrpfReportPDF {
 						?AonStringUtils.SPACE
 						:DATE_FORMATTER.format(irpf.getIssueDate())) );
 				table.addCell(getBodyCell(irpf.getRegistryDocument()));
-				System.out.println( irpf.getName() );
 				table.addCell(getBodyCell(irpf.getName()));			
 			} else {
 				table.addCell(getBodyCell(AonStringUtils.SPACE));
