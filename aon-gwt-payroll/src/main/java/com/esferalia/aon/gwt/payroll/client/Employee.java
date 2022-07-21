@@ -463,7 +463,6 @@ public abstract class Employee extends ResizeComposite {
 			
 			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
 				showEmployeesColective();
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employeesColective);
 			} else {
 				hideEmployeesColective();
 				onContractEmployeesColectiveChange(null);
