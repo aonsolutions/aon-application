@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -239,34 +240,39 @@ public class TaskDAO {
 	
 	public static Task update(AONContext ctx, Task task) {
 		UpdateSetMoreStep<TaskRecord> sets = ctx.getDslContext()
-			.update(TASK)
-			.set(TASK.DESCRIPTION, task.getTitle())
-			.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
-			.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
-			.set(TASK.PRIORITY, task.getPriority().value())
-			.set(TASK.STATUS, task.getStatus().value())
-			.set(TASK.PERCENT, task.getPercent())
-			.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
-			.set(TASK.WORKGROUP, task.getWorkgroup().getId())
-			.set(TASK.SOURCE, task.getSource().value())
-			.set(TASK.SOURCE_ID, task.getSourceId())
-			.set(TASK.PROJECT, task.getProject().getId())
-			.set(TASK.REGISTRY, task.getRegistry().getId())
-			.set(TASK.ACTIVITY_TYPE, task.getActivityType())
-			.set(TASK.SENDER, task.getSender().getId())
-			.set(TASK.COMMENTS, task.getDescription())
-			.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
-			.set(TASK.GTASK_ID, task.getGtaskId().isPresent() ? task.getGtaskId().get() : null)
-			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
-			.set(TASK.PARENT, task.getParent())
-			.set(TASK.MODIFICATION_USER, ctx.getUser())
-			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()));
+		.update(TASK)
+		.set(TASK.DESCRIPTION, task.getTitle())
+		.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
+		.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
+		.set(TASK.PRIORITY, task.getPriority().value())
+		.set(TASK.STATUS, task.getStatus().value())
+		.set(TASK.PERCENT, task.getPercent())
+		.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
+		.set(TASK.WORKGROUP, task.getWorkgroup().getId())
+		.set(TASK.SOURCE, task.getSource().value())
+		.set(TASK.SOURCE_ID, task.getSourceId())
+		.set(TASK.PROJECT, task.getProject().getId())
+		.set(TASK.REGISTRY, task.getRegistry().getId())
+		.set(TASK.ACTIVITY_TYPE, task.getActivityType())
+		.set(TASK.SENDER, task.getSender().getId())
+		.set(TASK.COMMENTS, task.getDescription())
+		.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
+		.set(TASK.GTASKLIST_ID, task.getGtasklistId())
+		.set(TASK.PARENT, task.getParent())
+		.set(TASK.MODIFICATION_USER, ctx.getUser())
+		.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()));
 		
+		task.getGtaskId().ifPresent(d-> sets.set(TASK.GTASK_ID, d));
+
 		if(task.getEvaluation()!=null) {
 			sets.set(TASK.EVALUATION, task.getEvaluation().value());
 		}
 			
 		sets.where(TASK.ID.eq(task.getId())).execute();
+
+		if(task.isParent()) {
+			updateParent(ctx, task);			
+		}
 		
 		ctx.log().debug("UPDATE TASK id: " + task.getId());		
 		return task;
@@ -274,39 +280,45 @@ public class TaskDAO {
 	
 	public static Task insert(AONContext ctx, Task task) {
 		Record r  = ctx.getDslContext().insertInto(
-					 TASK,
-					 TASK.ACTIVITY_TYPE, 
-					 TASK.COMMENTS, 
-					 TASK.DESCRIPTION, 
-					 TASK.DOMAIN, 
-					 TASK.DUE_DATE, 
-					 TASK.END_DATE, 
-					 TASK.GTASK_ID, 
-					 TASK.GTASKLIST_ID, 
-					 TASK.PERCENT, 
-					 TASK.PARENT, 
-					 TASK.PRIORITY,
-					 TASK.PROJECT,
-					 TASK.REGISTRY,
-					 TASK.REPEAT_PERIOD,
-					 TASK.SENDER,
-					 TASK.SOURCE,
-					 TASK.SOURCE_ID,
-					 TASK.START_DATE,
-					 TASK.STATUS,
-					 TASK.TASK_HOLDER,
-					 TASK.WORKGROUP,
-					 TASK.CREATION_USER,
-					 TASK.CREATION_DATE,
-					 TASK.MODIFICATION_USER,
-					 TASK.MODIFICATION_DATE,
-					 TASK.NUMBER
-				 ).select(getLastTaskNumber(task, ctx))
-			.returning(TASK.ID, TASK.SOURCE, TASK.NUMBER).fetchOne();
+			 TASK,
+			 TASK.ACTIVITY_TYPE, 
+			 TASK.COMMENTS, 
+			 TASK.DESCRIPTION, 
+			 TASK.DOMAIN, 
+			 TASK.DUE_DATE, 
+			 TASK.END_DATE, 
+			 TASK.GTASK_ID, 
+			 TASK.GTASKLIST_ID, 
+			 TASK.PERCENT, 
+			 TASK.PARENT, 
+			 TASK.PRIORITY,
+			 TASK.PROJECT,
+			 TASK.REGISTRY,
+			 TASK.REPEAT_PERIOD,
+			 TASK.SENDER,
+			 TASK.SOURCE,
+			 TASK.SOURCE_ID,
+			 TASK.START_DATE,
+			 TASK.STATUS,
+			 TASK.TASK_HOLDER,
+			 TASK.WORKGROUP,
+			 TASK.CREATION_USER,
+			 TASK.CREATION_DATE,
+			 TASK.MODIFICATION_USER,
+			 TASK.MODIFICATION_DATE,
+			 TASK.NUMBER
+		)
+		.select(getLastTaskNumber(task, ctx))
+		.returning(TASK.ID, TASK.SOURCE, TASK.NUMBER).fetchOne();
+		
 		task.setId(r.getValue(TASK.ID));
 		task.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)));
 		task.setNumber(r.getValue(TASK.NUMBER));
-		
+
+		if(task.isParent()) {
+			updateParent(ctx, task);			
+		}
+	
 		ctx.log().debug("INSERT TASK id: " + task.getId());	
 		return task;
 	}	
@@ -502,13 +514,22 @@ public class TaskDAO {
 		return combined.and(TASK.PARENT.isNull())
 		.or(
 			TASK.ID.in(
-				ctx.getDslContext()
-				.select(TASK.PARENT)
-				.from(TASK)
-				.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
-			)
-		)
-		;
+	    			ctx.getDslContext()
+	    			.select(TASK.PARENT)
+	    			.from(TASK)
+	    			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
+	    			.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+	    			.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+	    			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
+	    			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
+	    			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
+	    			.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+	    			.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
+	    			.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
+	    			.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID))
+	    			.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
+	    	)
+		);
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
@@ -546,6 +567,32 @@ public class TaskDAO {
 				  )
 				 .from(TASK)
 				 .where(TASK.DOMAIN.eq(task.getDomain().getId()));
+	}
+	
+	private static void updateParent(AONContext ctx, Task parent) {
+		
+		List<Task> childsOld = getStream(ctx,  f-> f.getParentProperty().eq(parent.getId()) ).collect(Collectors.toList());
+		List<Task> childsNew = parent.getChilds();
+
+		updateParent(ctx, null, childsOld);
+		
+		updateParent(ctx, parent.getId(), childsNew);
+	}
+	
+	private static void updateParent(AONContext ctx, Integer parentId, List<Task> childs) {
+		if(!childs.isEmpty()) {
+			Integer[] childsInt = childs.stream().map(Task::getId).toArray(Integer[]::new);
+			
+			ctx.getDslContext()
+			.update(TASK)
+			.set(TASK.PARENT, parentId)
+			.set(TASK.MODIFICATION_USER, ctx.getUser())
+			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.where(TASK.ID.in(childsInt))
+			.execute();
+			
+			ctx.log().debug("UPDATE PARENT ids: " + Arrays.toString(childsInt));	
+		}
 	}
 	
 	public static class TaskFiller extends Filler implements Function<Record, Task> {

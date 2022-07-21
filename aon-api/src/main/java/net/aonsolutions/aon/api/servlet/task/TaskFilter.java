@@ -42,6 +42,7 @@ public class TaskFilter {
 		String source      = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer tag        = params.optInt(IJsonNames.TAG);
+		boolean isParent = params.optBoolean(IJsonNames.PARENT);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
@@ -49,6 +50,11 @@ public class TaskFilter {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		} else {	
 			filter = filter.and(f.getStatusProperty().in(PENDING));
+		}
+		
+		if(isParent) {
+			filter = filter.and(f.getParentProperty().isNull());
+			return filter;
 		}
 		
 //		if("pending".equalsIgnoreCase(status) || ( status.isEmpty() && customer!=null && customer.getId()!=null) ) 
@@ -369,7 +375,6 @@ public class TaskFilter {
 			}
 		 }
 	
-		 
 		return filter;
 	}
 	
