@@ -12,11 +12,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
@@ -48,6 +53,10 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 	private float y;
 	//-----------------------
 	
+	//-------- FORM ---------
+	PDAcroForm form;
+	//-----------------------
+	
 	//x -> 595, y -> 841
 	public ContractModificationFormTemplate(ModificationForm modificationForm) throws CanNotCreatePdfException {
 		if (modificationForm == null) {
@@ -61,6 +70,13 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 			this.contents = new PDPageContentStream(this.document, this.page);
 			this.x = 0;
 			this.y = 841;
+			
+			this.form = new PDAcroForm(this.document);
+			this.document.getDocumentCatalog().setAcroForm(form);
+			PDResources resources = new PDResources();
+			resources.put(COSName.getPDFName("DEFAULT_FONT"), DEFAULT_FONT);
+			resources.put(COSName.getPDFName("DEFAULT_BOLD_FONT"), DEFAULT_BOLD_FONT);
+			form.setDefaultResources(resources);
 			
 			//DEFAULTS
 			if (AonStringUtils.isBlank(modificationForm.getModificationTitle())) {
@@ -119,13 +135,30 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 	private void drawTitle() throws IOException {
 		if (this.modificationForm.getModificationTitle() != null) {
 			String modificationTitle = upperCase(trimToEmpty(this.modificationForm.getModificationTitle()));
-			PDFToolkit.drawTextCenter(contents,
-					new PDRectangle(MARGIN_LEFT, this.y, getPageWidth() - MARGIN_LEFT * 2, TITLE_FONT_SIZE),
-					modificationTitle,
-					Color.BLACK,
-					DEFAULT_BOLD_FONT,
-					TITLE_FONT_SIZE,
-					0);
+			PDTextField textField = new PDTextField(this.form);
+			textField.setPartialName("TitleField");
+			String defaultAppearance = "/DEFAULT_BOLD_FONT " + TITLE_FONT_SIZE + " Tf 0 g";
+			textField.setDefaultAppearance(defaultAppearance);
+			textField.setQ(PDTextField.QUADDING_CENTERED);
+			
+			this.form.getFields().add(textField);
+			
+			PDAnnotationWidget widget = textField.getWidgets().get(0);
+			PDRectangle rect = new PDRectangle(MARGIN_LEFT, this.y, getPageWidth() - MARGIN_LEFT * 2, TITLE_FONT_SIZE + 4);
+			widget.setRectangle(rect);
+			widget.setPage(this.page);
+			
+			widget.setPrinted(true);
+			page.getAnnotations().add(widget);
+			textField.setValue(modificationTitle);
+			
+//			PDFToolkit.drawTextCenter(contents,
+//					new PDRectangle(MARGIN_LEFT, this.y, getPageWidth() - MARGIN_LEFT * 2, TITLE_FONT_SIZE),
+//					modificationTitle,
+//					Color.BLACK,
+//					DEFAULT_BOLD_FONT,
+//					TITLE_FONT_SIZE,
+//					0);
 		}
 	}
 	// ---------------------------
@@ -303,10 +336,10 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 	
 	//----- CLIENT INFO ELEMENTS -----
 	
-	@FunctionalInterface
-	private static interface EmployeeFieldValueCallback<T> {
-		public T getValue(ModificationForm.ClientData employeeData);
-	}
+//	@FunctionalInterface
+//	private static interface EmployeeFieldValueCallback<T> {
+//		public T getValue(ModificationForm.ClientData employeeData);
+//	}
 	
 //	private void drawEmployeeInfoValue(float titleWidth, EmployeeFieldValueCallback<String> callback) throws IOException {
 //		if (this.modificationForm.getCompanyData() != null) {
@@ -378,17 +411,36 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 				DATA_FONT_SIZE,
 				0);
 		
-		y -= lineSeparation + 10;
+		y -= lineSeparation /*+ 10*/;
+		
 		
 		String clauses = this.modificationForm.getClauses() != null ? this.modificationForm.getClauses() : "";
-		
+
+		float clausesHeight = y - SIGNATURE_Y - DATA_FONT_SIZE;
 		float clausesMaxWidth = getPageWidth() - MARGIN_LEFT - MARGIN_RIGHT;
-		List<String> lines = PDFToolkit.getLinesRespectOriginal(clauses, clausesMaxWidth, DEFAULT_FONT, clausesValueFontSize);
 		
-		for (String line : lines) {
-			PDFToolkit.drawText(contents, line, MARGIN_LEFT, y, Color.BLACK, DEFAULT_FONT, clausesValueFontSize);
-			this.y -= clausesValueFontSize + 2;
-		}
+		PDTextField textField = new PDTextField(this.form);
+		textField.setPartialName("ClauseField");
+		String defaultAppearance = "/DEFAULT_FONT " + clausesValueFontSize + " Tf 0 g";
+		textField.setDefaultAppearance(defaultAppearance);
+		textField.setQ(PDTextField.QUADDING_LEFT);
+		textField.setMultiline(true);
+		textField.setRichText(true);
+		this.form.getFields().add(textField);
+		PDAnnotationWidget widget = textField.getWidgets().get(0);
+		PDRectangle rect = new PDRectangle(MARGIN_LEFT, this.y, clausesMaxWidth, -clausesHeight);
+		widget.setRectangle(rect);
+		widget.setPage(this.page);
+		widget.setPrinted(true);
+		page.getAnnotations().add(widget);
+		textField.setValue(clauses);
+		
+//		List<String> lines = PDFToolkit.getLinesRespectOriginal(clauses, clausesMaxWidth, DEFAULT_FONT, clausesValueFontSize);
+//		
+//		for (String line : lines) {
+//			PDFToolkit.drawText(contents, line, MARGIN_LEFT, y, Color.BLACK, DEFAULT_FONT, clausesValueFontSize);
+//			this.y -= clausesValueFontSize + 2;
+//		}
 		
 	}
 	private void drawSignature() throws IOException {
