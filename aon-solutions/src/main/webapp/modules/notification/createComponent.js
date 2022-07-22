@@ -63,7 +63,7 @@ export const createDivFooter1 = (text) => createDiv({
 export const createAonNotification = (id) =>createDiv({
   id,
   styles:{
-    margin: "64px auto auto",
+    margin: "auto",
     width: "80%",
   }
 });

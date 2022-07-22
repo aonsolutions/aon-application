@@ -118,6 +118,7 @@ export const COMPANY = MSG.COMPANY;
 export const COMPANY_COSTS = MSG.COMPANY_COSTS;
 export const COMPANY_MANAGEMENT = MSG.COMPANY_MANAGEMENT;
 export const COMPONENTS = MSG.COMPONENTS;
+export const COMPOSITION = 'Composición';
 export const COMUNICA = "Comunic@";// TODO
 export const CONFIRM = "Confirmar";// TODO
 export const CONCEPT = MSG.CONCEPT;
@@ -187,6 +188,8 @@ export const EDIT_FILE = MSG.EDIT_FILE;
 export const EDIT_FILES = MSG.EDIT_FILES;
 export const EDIT_TAG = MSG.EDIT_TAG;
 export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
+export const ELABORATION = "Elaboración"
+export const ELABORATIONS = "Elaboraciones"
 export const EMAIL = MSG.EMAIL;
 export const EMPLOYEE = MSG.EMPLOYEE;
 export const END_DATE = MSG.END_DATE;
@@ -301,6 +304,7 @@ export const MAILBOX = "Buzón";//TODO
 export const NAME = MSG.NAME;
 export const NEW = MSG.NEW;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
+export const NEW_ELABORATION = 'Nueva Elaboración';
 export const NEW_EXPENSE = MSG.NEW_EXPENSE;
 export const NEW_INVEST_ASSET = 'Nuevo Bien Afecto'; //TODO
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
@@ -327,6 +331,7 @@ export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 
 // ----- P
 
+export const PACKAGING = 'Empaquetado';
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
 export const PAYROLL = "Laboral";//TODO
@@ -346,6 +351,7 @@ export const POSTAL_CODE = MSG.POSTAL_CODE;
 export const POSTAL_CODE_MIN = MSG.POSTAL_CODE_MIN;
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;
+export const PRINT = MSG.PRINT;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;
 export const PROCESSED_MOVEMENT  = MSG.PROCESSED_MOVEMENT;
 export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//TODO
@@ -511,6 +517,8 @@ export const VIEW = "Ver"; // TODO
 export const VOLUME = "Tomo";
 
 // ----- W
+
+export const WAREHOUSE = MSG.WAREHOUSE;
 export const WEB = MSG.WEB;
 export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
