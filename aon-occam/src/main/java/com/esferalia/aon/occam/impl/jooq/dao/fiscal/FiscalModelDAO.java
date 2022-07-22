@@ -683,6 +683,8 @@ p ->
 			.forEach(rec -> ctx.getDslContext()
 				.update(FS_MODEL)
 				.setNull(FS_MODEL.ACCOUNT_ENTRY)
+				.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
+				.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.where(FS_MODEL.ID.eq(rec.getValue(FS_MODEL.ID )))
 				.execute()
 			);
@@ -692,6 +694,8 @@ p ->
 		ctx.getDslContext()
 			.update(FS_MODEL)
 			.set(FS_MODEL.ACCOUNT_ENTRY, accountEntryId)
+			.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
+			.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FS_MODEL.ID.eq(modelId))
 			.execute()
 			;

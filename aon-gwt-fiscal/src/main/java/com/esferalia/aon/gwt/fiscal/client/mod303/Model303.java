@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -22,12 +23,10 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model303 extends MainEntryPoint {
@@ -52,7 +51,7 @@ public class Model303 extends MainEntryPoint {
 	private AonLayoutPanel aonLayout;
 	private SplitLayoutPanel splitLayoutPanel;
 	private SimpleLayoutPanel declarationContainer;
-	private TabLayoutPanel tabLayout;
+	private AonTabLayoutPanel tabLayout;
 	private AonMinimizePanel footPanel;
 	private ScrollPanel breakdownPanel;
 	private Model303ModuleOptions options;
@@ -120,14 +119,18 @@ public class Model303 extends MainEntryPoint {
 			breakdownPanel.scrollToTop();
 		}
 		
-		public HasWidgets getNewTabWidget(String tabLabel) {
-			SimpleLayoutPanel container = new SimpleLayoutPanel();
-			tabLayout.add(container, tabLabel);
-			tabLayout.selectTab(tabLayout.getWidgetCount() - 1);
-			openFootPanelIfNeeded();
+		public Widget getTabWidget(String tabLabel) {
+			SimpleLayoutPanel container = (SimpleLayoutPanel) tabLayout.getOrCreateWidget(tabLabel, SimpleLayoutPanel::new);
+			tabLayout.selectTab( container );
+			maximizeFootPanel();
 			return container;
 		}
 		
+		public void removeTabWidget(String tabLabel) {
+			tabLayout.remove(tabLabel);
+			closeFootPanel();
+		}
+
 		@Override
 		public void cleanInfoPanel() {
 			Widget w = breakdownPanel.getWidget();
@@ -150,6 +153,7 @@ public class Model303 extends MainEntryPoint {
 		public Model303ModuleOptions getOptions() {
 			return Model303.this.getOptions();
 		}
+
 	}
 	
 	@Override
@@ -319,16 +323,17 @@ public class Model303 extends MainEntryPoint {
 			openFootPanel();
 		}
 	}
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
+		splitLayoutPanel.animate(500);
+	}
 	
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
 		footPanel.addMinimizeHandler( event -> closeFootPanel() );
-		footPanel.addMaximizeHandler( event -> {
-			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
-			splitLayoutPanel.animate(500);
-		});
+		footPanel.addMaximizeHandler( event -> maximizeFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout = new AonTabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
 		footPanel.add(tabLayout);
 		

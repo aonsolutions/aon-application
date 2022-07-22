@@ -6,9 +6,9 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 
 public interface ModuleCallback extends Serializable {
 	
-	void onChange(IAccountEntryWrapper changed);
-	void onRemove(IAccountEntryWrapper removed);
-	void onExit();
-	void onFailure(Throwable caught);
+	default void onChange(IAccountEntryWrapper changed) { }
+	default void onRemove(IAccountEntryWrapper removed) { }
+	default void onExit() { }
+	default void onFailure(Throwable caught) { }
 	
 }

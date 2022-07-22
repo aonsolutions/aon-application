@@ -3431,6 +3431,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Previsualizar asiento")
 	String previewAccountEntry();
  	
+ 	@DefaultMessage("Editar asiento")
+	String editAccountEntry();
+
  	@DefaultMessage("Ver asiento")
 	String viewAccountEntry();
 

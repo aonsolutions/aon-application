@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
@@ -584,6 +585,10 @@ public class AccountEntryDAO {
 	private static void beforeRemove(final AONContext ctx,final AccountEntry entry) {
 		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
 			
+			@Override
+			public void visitTax(AccountEntry entry) {
+				FiscalModelDAO.unrecord(ctx, entry.getId());
+			}
 			@Override
 			public void visitReturnedPayment(AccountEntry entry) {
 				removeFinance(entry);

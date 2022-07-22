@@ -8,6 +8,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
 public class Mod303DefaultAccountEntryScript {
 	
+	private Mod303DefaultAccountEntryScript() {
+		
+	}
+	
 	private static final LinkedList<AccountEntryDetailExpressionScript<Mod303>> SCRIPTS = new LinkedList<>();
 	static {
 		SCRIPTS.add(new Mod3032022AEATAccountEntryScript());

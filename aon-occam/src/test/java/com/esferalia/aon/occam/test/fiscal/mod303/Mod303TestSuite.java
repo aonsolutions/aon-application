@@ -67,6 +67,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
 	Mod303SentTest.class,					// Presentado
 	
+//	Mod303RecordTest.class,					// Contabilizar
+//	Mod303UnrecordTest.class,				// Descontabilizar
 })
 
 public class Mod303TestSuite {
