@@ -191,9 +191,8 @@ public class printContractMediaList extends HttpServlet{
 
 		for(Integer i = 0 ; i < array.length(); i++){
 			JSONObject contract = array.getJSONObject(i);
-			
-			table.addCell(stringCell(contract.getString("document")));
-			table.addCell(stringCell(contract.getString("name")));
+			table.addCell(stringCell(contract.optString("document")));
+			table.addCell(stringCell(contract.optString("name")));
 			table.addCell(stringCell(
 					contract.opt("category") != null &&
 					contract.getJSONObject("category").opt("name") != null ?
