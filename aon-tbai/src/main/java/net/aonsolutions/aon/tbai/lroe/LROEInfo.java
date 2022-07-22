@@ -78,6 +78,8 @@ public class LROEInfo {
 			return InvoiceCommunicationOperation.MODIFICATION;
 		} else if(OperacionEnum.AN_0.equals(getOperacion())) {
 			return InvoiceCommunicationOperation.ANNULMENT;
+		} else if(OperacionEnum.C_00.equals(getOperacion())) {
+			return InvoiceCommunicationOperation.CONSULTATION;
 		}
 		return null;
 	}
@@ -105,6 +107,8 @@ public class LROEInfo {
 		} else if(OperacionEnum.M_00.equals(getOperacion())
 				|| OperacionEnum.M_01.equals(getOperacion())) {
 			return "Modificación";
+		} else if(OperacionEnum.C_00.equals(getOperacion())) {
+			return "Consulta";
 		}
 		return "";
 	}
@@ -112,6 +116,10 @@ public class LROEInfo {
 	public boolean isAlta() {
 		return OperacionEnum.A_00.equals(getOperacion())
 				|| OperacionEnum.A_01.equals(getOperacion());
+	}
+	
+	public boolean isConsulta() {
+		return OperacionEnum.C_00.equals(getOperacion());
 	}
 	
 	public boolean isAnulacion() {

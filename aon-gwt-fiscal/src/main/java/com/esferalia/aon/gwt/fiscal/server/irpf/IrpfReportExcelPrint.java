@@ -118,29 +118,33 @@ public class IrpfReportExcelPrint extends HttpServlet {
 		}
 
 		@Override
-		public void accept(IrpfBreakdown vat) {
+		public void accept(IrpfBreakdown irpf) {
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
-			addCell(vat.getInvoiceType().getDescription());
-			addCell(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.EMPTY));
-			addCell(vat.getDocumentNumber());
-			addCell(vat.getRegistryDocumentCountry());
-			addCell(vat.getRegistryDocument());
-			addCell(vat.getName());
-			addCell(vat.getIssueDate());
-			addCell(vat.getTaxDate());
-			addCell(vat.getWithholdingType()!=null?vat.getWithholdingType().getDescription():AonStringUtils.SPACE);
-			addCell(vat.getBase());
-			addCell(vat.getPercent());
-			addCell(vat.getQuota());
-			if (vat.isSales()) {
+			addCell(irpf.getInvoiceType().getDescription());
+			addCell(AonStringUtils.defaultIfBlank(irpf.getEpigraph()));
+			if ( irpf.getNumber() != null) {
+				addCell(irpf.getDocumentNumber());
+			} else {
+				addCell(AonStringUtils.EMPTY);
+			}
+			addCell(irpf.getRegistryDocumentCountry());
+			addCell(irpf.getRegistryDocument());
+			addCell(irpf.getName());
+			addCell(irpf.getIssueDate());
+			addCell(irpf.getTaxDate());
+			addCell(irpf.getWithholdingType()!=null?irpf.getWithholdingType().getDescription():AonStringUtils.SPACE);
+			addCell(irpf.getBase());
+			addCell(irpf.getPercent());
+			addCell(irpf.getQuota());
+			if (irpf.isSales()) {
 				addCell(AonStringUtils.EMPTY);
 				addCell(AonStringUtils.EMPTY);
 			} else {
-				addCell(vat.getDeductiblePercent());
-				addCell(vat.getDeductibleQuota());
+				addCell(irpf.getDeductiblePercent());
+				addCell(irpf.getDeductibleQuota());
 			}
-			addCell(vat.getReferenceCode());
+			addCell(AonStringUtils.defaultIfBlank(irpf.getReferenceCode()));
 		}
 	}
 }

@@ -238,6 +238,10 @@ public class ACCOUNTING {
 		}
 	}
 	
+	public static AccountEntry getAccountEntry(Occam occam, Integer id) {
+		return getAccountEntry(occam.getDomainName(),occam.getDomain(),occam.getUser(),id); 
+	}
+	
 	public static AccountEntry getAccountEntry(String domainName, int domain,String user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			LinkedList<AccountEntry> list = getAccountEntries(ctx, p -> p.getIdProperty().eq(id), 0, 1)

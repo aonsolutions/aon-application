@@ -43,7 +43,7 @@ public enum AonApp implements Serializable{
 	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
 	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
 	API_SERVICE(getEmptyModules(), "Servicio API"),
-	WAREHOUSE(getEmptyModules(), "Almacén")
+	WAREHOUSE(getWarehouseModules(), "Almacén")
 	;
 	
 	LinkedList<Module> modules;
@@ -149,6 +149,12 @@ public enum AonApp implements Serializable{
 	private static LinkedList<Module> getMessengerModules() {
 		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.CALL_CENTER);
+		return list;
+	}
+	
+	private static LinkedList<Module> getWarehouseModules() {
+		LinkedList<Module> list = new LinkedList<>();
+		list.add(Module.WAREHOUSE);
 		return list;
 	}
 	

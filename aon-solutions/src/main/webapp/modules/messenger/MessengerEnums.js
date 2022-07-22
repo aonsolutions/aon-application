@@ -156,7 +156,8 @@ export const TASK_SOURCE = {
 	CAU:"cau",
 	GITHUB:"github",
     QUERY: "query",
-	REQUEST: "request"
+	REQUEST: "request",
+    DUPLICATE:"duplicate"
 } 
 
 export const TASK_EVALUATION = {

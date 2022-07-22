@@ -3,7 +3,7 @@ import { Apps} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
 
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import { CSS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, MSG, TAG } from '../environments/environments.js';
 import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from './documental/aon-documental.js';
 import { AonSaltra } from'./laboral/aon-saltra.js';
@@ -16,6 +16,7 @@ import './messenger/aon-messenger.js';
 import './fiscal/aon-fiscal.js';
 import './accounting/aon-accounting.js';
 import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
+import { AonWarehouse } from './warehouse/aon-warehouse.js';
 
 
 export class AonApps extends AonElement {
@@ -145,6 +146,9 @@ export class AonApps extends AonElement {
 			case Apps.AON_SALTRA.app:
 				this.rootPanel(new AonSaltra());
 				break;
+			case Apps.WAREHOUSE.app:
+				this.rootPanel(new AonWarehouse());
+				break;
 		}
 	}
 
@@ -171,6 +175,8 @@ export class AonApps extends AonElement {
 			return this.getDur().isMessenger();
 		else if(Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
+		else if(Apps.WAREHOUSE.app === app.app)
+			return this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		else 
 			return false;
 	}

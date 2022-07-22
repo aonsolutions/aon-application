@@ -138,6 +138,12 @@ export const PREVIOUS = {
     icon: MATERIAL_ICONS.KEYBOARD_ARROW_LEFT
 };
 
+export const PRINT = {
+    id: CONSTANT.PRINT.initCap(),
+    name: MSG.PRINT,
+    icon: MATERIAL_ICONS.PRINT
+};
+
 export const RECTIFY = {
     id: CONSTANT.RECTIFY.initCap(),
     name: MSG.RECTIFY,

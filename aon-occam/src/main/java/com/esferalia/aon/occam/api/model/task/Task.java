@@ -49,6 +49,7 @@ public class Task  implements Serializable{
 	private List<TaskWorkflow> workflows; 
 	
 	private List<Tag> tags;
+	private List<Task> childs;
 
 	// GOOGLE TASK IDS
 	
@@ -63,11 +64,14 @@ public class Task  implements Serializable{
 	private Date modificationDate;
 	
 	
+	private Task parentObj;
+	
 	//TMP
 	private String tmp;
 	
 	public Task() { 
 		this.tags = new ArrayList<>();
+		this.childs = new ArrayList<>();
 	}
 
 	public Integer getId() {
@@ -344,6 +348,10 @@ public class Task  implements Serializable{
 		return parent!=null && parent>0;
 	}
 	
+	public boolean isParent() {
+		return parent==null;
+	}
+	
 	public Optional<String> getTmp() {
 		return Optional.ofNullable(tmp);
 	}
@@ -364,6 +372,28 @@ public class Task  implements Serializable{
 	
 	public void addTag(Tag tag) {
 		this.tags.add(tag);
+	}
+
+	public List<Task> getChilds() {
+		return childs;
+	}
+	
+	public void addChild(Task task) {
+		this.childs.add(task);
+	}
+	
+	public Task setChilds(List<Task> childs) {
+		this.childs = childs;
+		return this;
+	}
+	
+	public Task getParentObj() {
+		return parentObj;
+	}
+	
+	public Task setParentObj(Task parentObj) {
+		this.parentObj = parentObj;
+		return this;
 	}
 
 	@Override

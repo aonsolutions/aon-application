@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpression
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
 public class Mod3032022NAVARRAAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
-	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo(model)";
 
 	private static final long serialVersionUID = 2085902232416480013L;
 	
@@ -32,12 +31,12 @@ public class Mod3032022NAVARRAAccountEntryScript extends AccountEntryDetailExpre
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("475000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?C63:0.0")); 
+				.setExpression("aIngresar()?C63:0.0")); 
 		// Resultado a devolver/compensar DEBIT
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?0.0:abs(C63)"));
+				.setExpression("aIngresar()?0.0:abs(C63)"));
 	}
 
 	@Override

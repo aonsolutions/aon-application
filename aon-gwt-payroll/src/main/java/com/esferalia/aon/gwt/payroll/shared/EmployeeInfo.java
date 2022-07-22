@@ -462,32 +462,21 @@ public class EmployeeInfo implements Serializable{
 		this.agreementId = agreementId;
 	}
 
-	public String toString(){
-		String result = "";
-		
-		result += "---------------- EMPLOYEE INFO ---------------- \n";
-		result += "Document : " + document + "\n";
-		result += "Nationality : " + nationality + "\n";
-		result += "SS Number : " + ssNumber + "\n";
-		result += "Name : " + name + "\n";
-		result += "Surname : " + surName + "\n";
-		result += "Second Surname : " + secondSurName + "\n";
-		result += "Birth Date : " + birthdate + "\n";
-		result += "Gender : " + gender + "\n";
-		result += "Civil Status : " + civilStatus + "\n";
-		result += "Street Type : " + streetType + "\n";
-		result += "Address : " + address + "\n";
-		result += "Address Number : " + addresNum + "\n";
-		result += "Address Zip : " + addressZip + "\n";
-		result += "Address Province : " + addressProvinces + "\n";
-		result += "Address City : " + addressCity + "\n";
-		result += "Mobile : " + mobile + "\n";
-		result += "Phone : "+ phone + "\n";
-		result += "Emai : " + email + "\n";
-		result += "Pay Method Id : " + paymethodId + "\n";
-		result += "Account : " + account + "\n";
-		result += "Bic : " + bic + "\n\n";
-		
-		return result;
+	@Override
+	public String toString() {
+		return "EmployeeInfo [domain=" + domain + ", contractId=" + contractId + ", isContractActive="
+				+ isContractActive + ", isFullTime=" + isFullTime + ", employeeId=" + employeeId + ", birthdate="
+				+ birthdate + ", gender=" + gender + ", civilStatus=" + civilStatus + ", ssNumber=" + ssNumber
+				+ ", name=" + name + ", surName=" + surName + ", secondSurName=" + secondSurName + ", document="
+				+ document + ", documentType=" + documentType + ", nationality=" + nationality + ", raddressId="
+				+ raddressId + ", streetType=" + streetType + ", address=" + address + ", addresNum=" + addresNum
+				+ ", addressInfo=" + addressInfo + ", addressZip=" + addressZip + ", addressCity=" + addressCity
+				+ ", geozoneId=" + geozoneId + ", addressProvinces=" + addressProvinces + ", mobileId=" + mobileId
+				+ ", mobile=" + mobile + ", phoneId=" + phoneId + ", phone=" + phone + ", emailId=" + emailId
+				+ ", email=" + email + ", rpaymethodId=" + rpaymethodId + ", paymethodId=" + paymethodId
+				+ ", payMethodType=" + payMethodType + ", payMethodTypeB=" + payMethodTypeB + ", rbankId=" + rbankId
+				+ ", account=" + account + ", bic=" + bic + ", bankAlias=" + bankAlias + ", rbanks=" + rbanks
+				+ ", agreementId=" + agreementId + "]";
 	}
+
 }

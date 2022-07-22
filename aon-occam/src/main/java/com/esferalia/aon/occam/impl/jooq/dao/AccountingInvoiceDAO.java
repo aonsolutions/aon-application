@@ -1176,6 +1176,9 @@ public class AccountingInvoiceDAO {
 
 	private static LinkedList<InvoiceDetail> generateDetails(AccountingInvoice accInvoice) {
 		short line = 1;
+		double withholdingTotalQuota = accInvoice.getWithholdingData().isQuotaEdited()
+				?accInvoice.getWithholdingData().getQuota()
+				:0;
 		LinkedList<InvoiceDetail> details = new LinkedList<>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
 			
@@ -1220,6 +1223,12 @@ public class AccountingInvoiceDAO {
 						base = vat.getBase();
 					}
 					double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
+					if (accInvoice.getWithholdingData().isQuotaEdited()) {
+						withholdingTotalQuota = AonMathUtils.round(withholdingTotalQuota -  quota);
+						if (line == accInvoice.getVats().size() && AonMathUtils.isNotZero(withholdingTotalQuota)) {
+							quota = AonMathUtils.round(quota + withholdingTotalQuota);
+						}
+					}
 					detail.addInvoiceTax(new InvoiceTax()
 						.setTaxType(TaxType.RETENTION)
 						.setBase(base)

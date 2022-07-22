@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
@@ -5507,9 +5508,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public WorkplaceEmployees getWorkplaceEmployees(String domainName, Workplace workplace) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			
 			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
-			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId));
+			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId));
 			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
 			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
@@ -7043,6 +7045,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setFrb(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setFrv(employeeContractInfo.getContractInfo().getHolidaysDate());
+		if(null != employeeContractInfo.getContractInfo().getHolidaysDate())
+			builder.setAsociativeSA(employeeContractInfo.getContractInfo().getSAA());
 		builder.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
 		builder.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));

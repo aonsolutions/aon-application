@@ -252,6 +252,7 @@ export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
 export const PRICE = 'Preu';
+export const PRINT = 'Imprimir';
 export const PRINT_INVOICE = 'Imprimir Factura';
 export const PROCESSED_MOVEMENT = "El alta se ha procesado correctamente";
 export const PRODUCT = 'Producte';
@@ -368,6 +369,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 // ----- W
 
+export const WAREHOUSE = 'Magatzem';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retenció';
 export const WORKGROUP = 'Grup de treball';

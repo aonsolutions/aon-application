@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import org.jooq.impl.DSL;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -2619,6 +2620,33 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		System.out.println( gtEq65Irpf + " < " + nullIrpf);
 		org.junit.Assert.assertTrue(gtEq65Irpf < nullIrpf);
 
+		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
+		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+		
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA)
+		.set(IRPF_DATA.DOMAIN, contract.getDomain())
+		.set(IRPF_DATA.CONTRACT, contract.getId())
+		.set(IRPF_DATA.START_DATE, endDate)
+		.set(IRPF_DATA.START_DATE, startDate)
+		.set(IRPF_DATA.ISSUE_DATE, startDate)
+		.set(IRPF_DATA.FAMILY_SITUATION, (byte) FamilySituation.OTHER.ordinal())
+		.set(IRPF_DATA.DISABILITY_LEVEL, DSL.castNull(IRPF_DATA.DISABILITY_LEVEL))
+		.execute()
+		;
+
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+			}
+		});
+		
+		double irpf = ctx.getIrpf();
+		
+		System.out.println( irpf + " == " + nullIrpf);
+		org.junit.Assert.assertTrue(irpf == nullIrpf);
 	}
 
 	// ------------------------------------------------------------------------

@@ -145,7 +145,7 @@ public class DailyTrackingDAO {
 		ctx.log().debug("DELETE DAILY_TRACKING id:" + id);
 	}
 	
-	private static void delete(AONContext ctx, DailyTrackingFilter filter) {
+	public static void delete(AONContext ctx, DailyTrackingFilter filter) {
 		ctx.getDslContext()
 			.delete(DAILY_TRACKING)
 			.where(DAILY_TRACKING_PROPERTIES.getConditions(filter))

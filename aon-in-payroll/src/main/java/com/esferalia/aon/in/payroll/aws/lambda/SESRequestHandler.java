@@ -163,10 +163,10 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
         return "That's all Folks!";
     }
     
-	private static Optional<String> getOptionalDomain(String ccc, String cif) throws AonConnectionException, SQLException {
-		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+	private static Optional<String> getOptionalDomain(String ccc, String cif) throws AonConnectionException, SQLException, ClassNotFoundException {
+		ConnectionInfo connectionInfo = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
 		for ( String schema : connectionInfo.getSchemas() ) {
-			Connection connection = connectionInfo.getConnection(schema);
+			Connection connection = getSchemaConnection(schema);
 			Optional<String> domain = getOptionalDomain(connection, ccc, cif );
 			if ( domain.isPresent() )
 				return domain;
@@ -363,7 +363,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		
 		System.out.println( salaryBuilder.enterpriseName + "[" + salaryBuilder.enterpriseCcc +"/" + salaryBuilder.enterpriseCif  +"] : " + domain  );
 		
-		try (Connection connection = getConnection(domain);){
+		try (Connection connection = getDomainConnection(domain);){
 			DSLContext dslContext = getDSLContext(connection);
     		dslContext.transaction(c-> salaryBuilder.execute( dslContext, domain));
     	} catch ( Exception e) {
@@ -389,11 +389,19 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		return DSL.using(connection, SQLDialect.MYSQL, settings);
     }
     
-	private static Connection getConnection(String domain) throws SQLException, AonConnectionException, ClassNotFoundException {
+	private static Connection getDomainConnection(String domain) throws SQLException, AonConnectionException, ClassNotFoundException {
 		
 		
     	ConnectionInfo ci = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
     	String schema = ci.getDomainDatabase(domain);
+    	
+        return getSchemaConnection(schema);
+    }
+
+	private static Connection getSchemaConnection(String schema) throws SQLException, AonConnectionException, ClassNotFoundException {
+		
+		
+    	ConnectionInfo ci = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
     	
 		Class.forName(ci.getDriverClass(schema));
 
@@ -406,7 +414,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
         return DriverManager.getConnection(ci.getSchemaUrl(schema), properties);
     }
 
-    private static Optional<String> getOptionalDomain(Connection connection, String ccc, String cif ) throws SQLException{
+	private static Optional<String> getOptionalDomain(Connection connection, String ccc, String cif ) throws SQLException{
 		
     	DSLContext dslContext = getDSLContext(connection);
     	Domain PARENT_DOMAIN = DOMAIN.as("parent_domain");

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -23,6 +24,11 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet implements AccountEntryService {
 
 	private static final long serialVersionUID = 8791955004212947200L;
+
+	@Override
+	public AccountEntry getAccountEntry(Occam occam, int id) throws AonCoreException {
+		return ACCOUNTING.getAccountEntry(occam, id);
+	}
 
 	@Override
 	public LinkedList<AccountEntry> getAccountEntries(String domainName, int domain, String user, final AccountEntryParams params, int offset, int limit) throws AonCoreException {

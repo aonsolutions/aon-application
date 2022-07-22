@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceCalculator {
@@ -36,7 +37,9 @@ public class InvoiceCalculator {
 			}
 		}
 		double wp = ai.getWithholdingData().getPercentage();
-		double rt = AonMathUtils.round(wb * wp / 100);
+		double rt =  (ai.getWithholdingData().isQuotaEdited())
+			?ai.getWithholdingData().getQuota()
+			:AonMathUtils.round(wb * wp / 100);
 		double t = AonMathUtils.round(tb + vt - rt);
 		ai.getWithholdingData().setBase(wb);
 		ai.getWithholdingData().setQuota(rt);
@@ -134,6 +137,13 @@ public class InvoiceCalculator {
 				);
 	}
 
+	public static double getQuotaGap(InvoiceWithholding invoiceWitholding, Double quota) {
+		if (quota == null) quota = 0.0;
+		return AonMathUtils.round(quota - getQuota(invoiceWitholding)); 		
+	}
+	public static double getQuota(InvoiceWithholding invoiceWitholding) {
+		return AonMathUtils.round(invoiceWitholding.getBase() * invoiceWitholding.getPercentage() / 100 );		
+	}
 	public static double getQuota(InvoiceVAT vat) {
 		return AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 );		
 	}

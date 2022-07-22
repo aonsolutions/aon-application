@@ -165,7 +165,10 @@ public class LroeModel140 extends DockLayoutPanel {
 				boolean visible = !selFiles.isEmpty();
 				sendButton.setVisible(visible);
 				bajaButton.setVisible(visible);
-//				refreshButton.setVisible(visible);
+				
+				refreshButton.setVisible(selFiles.size() == 1
+					&& !selFiles.getFirst().getInvoiceInfo().isAccepted()
+					&& !selFiles.getFirst().getInvoiceInfo().isAcceptedWithErrors());
 			}
 		};
 	
@@ -502,20 +505,34 @@ public class LroeModel140 extends DockLayoutPanel {
 				@Override
 				protected void onAccept( AEATParams params) {
 					hide();
+					getModel140().openFootPanelIfNeeded();
+					VerticalPanel vp = new VerticalPanel();
+					getModel140().getBreakdownPanel().setWidget(vp);
 					selectedInvoices.stream().forEach(invoice -> {
-						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<String>() {
+						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<Boolean>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
-					
+								
 							}
 
 							@Override
-							public void onSuccess(String result) {
-					
+							public void onSuccess(Boolean result) {
+								if(result) { 	
+									String message = "La factura " + invoice.getReferenceCode() + " est\u00e1 en el registro y se ha actualizado correctamente.";
+									vp.add(getOkMessage(message));
+								} else {
+									String message = "La factura " + invoice.getReferenceCode() + " no est\u00e1 en el registro.";
+									vp.add(getErrorMessage(message));
+								}
+								
+								if(selectedInvoices.size() >= vp.getWidgetCount()) {
+									invoiceGrid.setFilterParams(getFilterParams());
+								}
 							}
 						});
 					});
+					
 				}
 		};
 		certPopup.center();

@@ -1,32 +1,42 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 
-public class SessionLog extends ScrollPanel 
-		implements HasSelectionHandlers<IAccountEntryWrapper> {
+public class SessionLog extends ScrollPanel implements HasSelectionHandlers<IAccountEntryWrapper> {
+	private static final AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
+	static {
+		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
+		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
+	}
 	
-	private static String PREVIEW = "PREVISUALIAZACI\u00D3N"; 
-	private static String SUSPENDED = "APARCADO"; 
-	private static String DELETED = "BORRADO"; 
-	private static String SAVED = "GUARDADO"; 
+	private static final String PREVIEW = "PREVISUALIAZACI\u00D3N"; 
+	private static final String SUSPENDED = "APARCADO"; 
+	private static final String DELETED = "BORRADO"; 
+	private static final String SAVED = "GUARDADO"; 
 	
 	FlowPanel root;	
 	public SessionLog() {
@@ -36,6 +46,29 @@ public class SessionLog extends ScrollPanel
 		root = new FlowPanel();
 		setWidget(root);
 	}
+	public SessionLog( AccountEntryModuleOptions options, Integer accountEntryId ) {
+		this();
+		ACCOUNT_ENTRY_SERVICE.getAccountEntry(options.getOccam(), accountEntryId, new AsyncCallback<AccountEntry>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (options.getExternalCallback() != null) {
+					options.getExternalCallback().onFailure(caught);
+				} else {
+					Window.alert("Error al mostrar el apunte. [" + caught.getMessage() + "]");
+				}
+			}
+
+			@Override
+			public void onSuccess(AccountEntry result) {
+				SessionLog.this.addSaved( new AccountEntryWrapper(result) );
+			}
+			
+		});
+	}
+	
+	
+	@Override
 	public void clear( ) {
 		root.clear();
 	}
@@ -109,13 +142,7 @@ public class SessionLog extends ScrollPanel
 		// -----------------------------------------------------------
 		
 		entryPanel.setWidget(panel);
-		entryPanel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				 SelectionEvent.<IAccountEntryWrapper>fire(SessionLog.this, wrapper);
-			}
-		});
+		entryPanel.addClickHandler(event -> SelectionEvent.<IAccountEntryWrapper>fire(SessionLog.this, wrapper));
 		root.insert(entryPanel,0);
 		entryPanel.addStyleName(AON.CSS.aonValueChanged());
 		new Timer() {
@@ -128,7 +155,7 @@ public class SessionLog extends ScrollPanel
 	}
 	
 	private String toString(AccountEntry entry, String status) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(AON.MSG.date());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);

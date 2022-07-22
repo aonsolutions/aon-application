@@ -84,7 +84,7 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 	
 	protected ModificationPDFDialog(Integer contractId) {
 		
-		setCaption("Modificaci\u00f3n");
+		setCaption("Notificaci\u00f3n laboral");
 		setWidget(binder.createAndBindUi(this));
 		
 		showCloseButton(true);

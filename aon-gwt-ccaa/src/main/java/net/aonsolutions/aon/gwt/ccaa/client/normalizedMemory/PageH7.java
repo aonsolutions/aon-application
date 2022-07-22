@@ -234,6 +234,8 @@ public class PageH7 extends PageAbs {
 			if(getMap().containsKey(key2)){
 				c.setValue(getMap().get(key2).equals("1")); 
 				c.setEnabled(enable);
+			} else {
+				onEdit(key2, "1");
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 				String key2 = key2Aux;

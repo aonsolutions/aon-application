@@ -26,7 +26,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// Casillas necesarias para el calculo de la prorrata definitiva.
 	,CM_070("303-CM070",false,null,"Importe anual de entregas de bienes y prestaciones de servicios que dan derecho a deducci\u00F3n, sin incluir el IVA (incluye operaciones con inversi\u00F3n del sujeto pasivo, exportaciones, y entregas intracomunitarias)")
 	,CM_071("303-CM071",false,null,"Importe anual total de las entregas de bienes y prestaciones de servicios (incluidas las que no dan derecho a deducir)")
-	,CM_072("303-CM072",false,null,"Importe acumulado de las casillas prorratables. Para calculo de regulariacon.")
+	,CM_072("303-CM072",false,null,"Importe acumulado de las casillas prorrateables. Para calculo de regulariacon.")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  AEAT -------

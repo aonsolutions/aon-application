@@ -9,12 +9,11 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -100,7 +99,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		dataTable.add(dataRow);
 		
 		if (callback.getConfiguration().getWithholdingTaxes() != null 
-			&& callback.getConfiguration().getWithholdingTaxes().size() > 0) {
+			&& !callback.getConfiguration().getWithholdingTaxes().isEmpty()) {
 			withholdingTaxs = new ListBox();
 			withholdingTaxs.addStyleName(AON.CSS.aonMarginLeftSep());
 			withholdingTaxs.setWidth("100px");
@@ -108,34 +107,30 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 			for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
 				withholdingTaxs.addItem(tax.getName(),AonNumberUtils.toString( tax.getId()));
 			}
-			withholdingTaxs.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
-						if ( AonNumberUtils.equals( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()),tax.getId())  ) {
-							
-							Account taxAccount = ai.isSales()
-									?tax.getSalesAccount()
-									:tax.getPurchaseAccount();
-							if (taxAccount == null) {
-								taxAccount = ai.isSales()
-									?callback.getConfiguration().accounting().getDefaultPaidRetAccount()
-									:callback.getConfiguration().accounting().getDefaultChargedRetAccount();
-							}
-							ai.getWithholdingData().setPercentage(tax.getPercentage());
-							ai.getWithholdingData().setWithholdingType(tax.getWithholdingType());
-							if (taxAccount != null) {
-								ai.getWithholdingData().setAccountId(taxAccount.getId());
-								ai.getWithholdingData().setAccountCode(taxAccount.getCode());
-								ai.getWithholdingData().setAccountDescription(taxAccount.getDescription());
-							} else {
-								ai.getWithholdingData().setAccountId(null);
-								ai.getWithholdingData().setAccountCode(null);
-								ai.getWithholdingData().setAccountDescription(null);
-							}
-							ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
+			withholdingTaxs.addChangeHandler(event -> {
+				for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
+					if ( AonNumberUtils.equals( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()),tax.getId())  ) {
+						
+						Account taxAccount = ai.isSales()
+								?tax.getSalesAccount()
+								:tax.getPurchaseAccount();
+						if (taxAccount == null) {
+							taxAccount = ai.isSales()
+								?callback.getConfiguration().accounting().getDefaultPaidRetAccount()
+								:callback.getConfiguration().accounting().getDefaultChargedRetAccount();
 						}
+						ai.getWithholdingData().setPercentage(tax.getPercentage());
+						ai.getWithholdingData().setWithholdingType(tax.getWithholdingType());
+						if (taxAccount != null) {
+							ai.getWithholdingData().setAccountId(taxAccount.getId());
+							ai.getWithholdingData().setAccountCode(taxAccount.getCode());
+							ai.getWithholdingData().setAccountDescription(taxAccount.getDescription());
+						} else {
+							ai.getWithholdingData().setAccountId(null);
+							ai.getWithholdingData().setAccountCode(null);
+							ai.getWithholdingData().setAccountDescription(null);
+						}
+						ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 					}
 				}
 			});
@@ -151,42 +146,45 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		withholdingPercent = new AonDoubleBox(6,2);
 		withholdingPercent.setVisibleLength(3);
 		withholdingPercent.addStyleName(AON.AON_CSS.aonMarginLeft5());
-		withholdingPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				ai.setWithholdingPercent( event.getValue() );
-				InvoiceCalculator.calculate(ai);
-				setValue(ai.getWithholdingData());
-				ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
-			}
+		withholdingPercent.addValueChangeHandler(event -> {
+			ai.setWithholdingPercent( event.getValue() );
+			InvoiceCalculator.calculate(ai);
+			setValue(ai.getWithholdingData());
+			ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 		});
 		dataRow.add(getCell(withholdingPercent));
 		
 		withholdingQuota = new AonDoubleBox(8,2);
-		withholdingQuota.setEnabled(false);
 		withholdingQuota.setVisibleLength(5);
+		
+
+		withholdingQuota.addValueChangeHandler(event -> {
+			ai.setWithholdingQuotaEdited(AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(ai.getWithholdingData(), withholdingQuota.getValue())));
+			if (ai.isWithholdingQuotaEdited()) {
+				withholdingQuota.setTitle("Cuota de IRPF modificada. Deber\u00EDa ser: " + InvoiceCalculator.getQuota(ai.getWithholdingData()));
+			} else {
+				withholdingQuota.setTitle(null);
+			}
+			ai.setWithholdingQuota(event.getValue() );
+			setValue(ai.getWithholdingData());
+			InvoiceCalculator.calculate(ai);
+			ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
+		});
+
 		dataRow.add(getCell(withholdingQuota));
 		
 		withholdingAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
-		withholdingAccount.addSelectionHandler(new SelectionHandler<Account>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				ai.setWithholdingAccount( event.getSelectedItem() );
-				SelectionEvent.<Account>fire(InvoiceWithholdingPanel.this, event.getSelectedItem());
-			}
+		withholdingAccount.addSelectionHandler(event -> {
+			ai.setWithholdingAccount( event.getSelectedItem() );
+			SelectionEvent.<Account>fire(InvoiceWithholdingPanel.this, event.getSelectedItem());
 		});
 		dataRow.add(getCell(withholdingAccount));
 		
 		withholdingType = new WithholdingTypeListBox();
 		withholdingType.addStyleName(AON.AON_CSS.aonMarginLeft5());
-		withholdingType.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				ai.setWithholdingType( withholdingType.getValue() );
-				ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
-			}
+		withholdingType.addChangeHandler(event -> {
+			ai.setWithholdingType( withholdingType.getValue() );
+			ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 		});
 		dataRow.add(getCell(withholdingType));
 		
@@ -217,6 +215,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 			withholdingAccount.setValue(data.getAccountId()
 					,data.getAccountCode()
 					,data.getAccountDescription(),false);
+			decorateQuota(data);
 		}
 	}
 	@Override
@@ -250,5 +249,25 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		return cell;
 	}
 	
+	private void decorateQuota(InvoiceWithholding invoiceWithholding) {
+		double quota = InvoiceCalculator.getQuota(invoiceWithholding);
+		double gap = InvoiceCalculator.getQuotaGap(invoiceWithholding, withholdingQuota.getValue());
+		decorateEditableQuota(gap, quota, withholdingQuota);
+	}
+	private void decorateEditableQuota(double gap, double quota, AonDoubleBox editableBox) {
+		editableBox.removeStyleName(AON.CSS.aonChanged());
+		editableBox.removeStyleName(AON.CSS.aonInputError());
+		if (AonMathUtils.isNotZero( gap )) {
+			if (gap > 1) {
+				editableBox.addStyleName(AON.CSS.aonInputError());
+				editableBox.setTitle( AON.MSG.editedValueWarning(quota, gap) );
+			} else {
+				editableBox.addStyleName(AON.CSS.aonChanged());
+				editableBox.setTitle( AON.MSG.editedValue(quota) );
+			}
+		} else {
+			editableBox.setTitle(null);
+		}
+	}
 
 }

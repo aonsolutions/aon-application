@@ -43,17 +43,16 @@ export class AonMessengerList extends AonElement {
     this.build();
   }
 
+
   disconnectedCallback() {
-    if (this.AON_TABLE) {
-      this.AON_TABLE.removeEventListener(EVENT.MORE, () =>this.loadMore(false));
-    }
+    // if (this.AON_TABLE)  this.AON_TABLE.removeEventListener(EVENT.MORE, () =>this.loadMore(false));
   }
 
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_LIST;
     this.TOOLBAR = this.id + "Toolbar";
     this.INDEX = 0;
-    this.MORE = true;
+    this.MORE  = true;
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
@@ -90,7 +89,11 @@ export class AonMessengerList extends AonElement {
       this.AON_TABLE.addColumn("Asignado", "html", "assigned", "5%");
       this.AON_TABLE.addColumn(MSG.DATE, "html", "dateParse", "14%");
     }
-    this.AON_TABLE.addEventListener(EVENT.MORE,() =>this.loadMore(false));
+    
+    this.AON_TABLE.addEventListener(EVENT.MORE,() =>{
+      if(this.MORE)
+        this.loadMore(false)
+    });
 
     await this.loadMore(true);
   }
@@ -146,7 +149,7 @@ export class AonMessengerList extends AonElement {
             dateParse: TaskListUtils.getDateParseNew(res),
             newTitle: this.getTitleDesktop(res, documents.document, documents.documentTh),
             assigned: TaskListUtils.getAssignedHtml(res, documents.domainId),
-            lettersHtml: TaskListUtils.getIcon(res, isCau),
+            lettersHtml: TaskListUtils.getIcon(res),
           },
           () => this.goMessengerChat(res, idx)
         );
@@ -196,8 +199,9 @@ export class AonMessengerList extends AonElement {
       this.setFilter(filter);
       let tasks = await getTasks(filter);
 
-      if (tasks.length == 0) this.MORE = false;
-      else {
+      if (tasks.length == 0) {
+        this.MORE = false;
+      } else {
         data = tasks
           .filter((v, idx) => tasks.findIndex((m) => m.id === v.id) === idx)
           .map((task) => ({
