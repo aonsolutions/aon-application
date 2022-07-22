@@ -69,8 +69,6 @@ public class Page11 extends PageAbs {
 
 	public Page11( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 	
 	@Override
@@ -143,7 +141,8 @@ public class Page11 extends PageAbs {
 	}
 	
 	private void paintFilmPanel() {
-				
+		
+		otherInputs.clear();
 		filmPanel.clear();
 		
 		filmPanel.add(getTitle("Informaci\u00F3n adicional producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo"));
@@ -168,6 +167,7 @@ public class Page11 extends PageAbs {
 				callback.getMod200Object().getMod200().getFilmProductions().set(idx, document.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(document);
 			
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -176,6 +176,7 @@ public class Page11 extends PageAbs {
 				paintFilmPanel();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 
 			tab.addRow()
 				.addCell(document)
@@ -189,7 +190,8 @@ public class Page11 extends PageAbs {
 			callback.getMod200Object().getMod200().getFilmProductions().add(new String());
 			paintFilmPanel();
 		});
-		tab.addRow().addCell(addButton);		
+		tab.addRow().addCell(addButton);
+		otherInputs.add(addButton);
 
 	}
 	
@@ -296,8 +298,8 @@ public class Page11 extends PageAbs {
 		
 	}
 	
-	@Override
-	protected void populate() {		
-	}
+//	@Override
+//	protected void populate() {		
+//	}
 	
 }

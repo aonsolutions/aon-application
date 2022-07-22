@@ -122,8 +122,6 @@ public class Page07 extends PageAbs {
 
 	public Page07( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();		
 	}
 
 	@Override
@@ -187,7 +185,6 @@ public class Page07 extends PageAbs {
 						if (key != null) {
 							AonBoxLabel code = new AonBoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 							panel.add(code);
-//							getLabels().put(key, code);
 							
 							final AonDoubleBox text = new AonDoubleBox(8);
 							text.addChangeHandler(new ChangeHandler() {
@@ -209,9 +206,9 @@ public class Page07 extends PageAbs {
 							text.setValue(callback.getMod200Object().getDoubleValue(key));
 							text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 							text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-							text.setEnabled( !isDisabled(key) );
+							text.setEnabled(isEditable(key));
 							text.setTabIndex((tableCol * 100 + row));
-							getInputs().put(key, text);
+							inputs.put(key, text);
 							panel.add(text);
 							table.setWidget(row, tableCol, panel);
 						} else {
@@ -227,8 +224,8 @@ public class Page07 extends PageAbs {
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 	
-	@Override
-	protected void populate() {}
+//	@Override
+//	protected void populate() {}
 	
 	@Override
 	protected boolean isAvailable() {

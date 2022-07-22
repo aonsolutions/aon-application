@@ -12,8 +12,6 @@ public class Page04 extends PageAbs {
 
 	public Page04( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();		
 	}
 	
 	@Override
@@ -23,10 +21,8 @@ public class Page04 extends PageAbs {
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 
-	@Override
-	protected void populate() {
-		// Nothing
-	}	
+//	@Override
+//	protected void populate() {	}	
 	
 	@Override	
 	protected boolean isDisabled(IMod200Key key) {

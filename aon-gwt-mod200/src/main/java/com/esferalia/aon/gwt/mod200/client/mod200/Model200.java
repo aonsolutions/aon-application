@@ -172,7 +172,7 @@ public class Model200 extends MainEntryPoint {
 
 	public class Model200Callback implements IFiscalModelCallback<Mod200, Model200ModuleOptions> {
 		
-		// LO PONGO POR AHORA PARA COMPILAR LOS Model200*
+		// LO PONGO POR AHORA PARA COMPILAR LOS Model200xxxx
 		public void canceled() {
 			cleanErrorMessage();
 			declarationContainer.setWidget(model200Table);

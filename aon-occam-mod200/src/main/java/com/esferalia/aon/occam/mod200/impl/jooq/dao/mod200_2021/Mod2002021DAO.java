@@ -574,6 +574,7 @@ public class Mod2002021DAO  {
 		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
 		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
+		 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte(mod200.getStatus()))
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -711,6 +712,7 @@ public class Mod2002021DAO  {
 		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry()));
 		mod200.setUltimateName(record.getUltimateName());
 		mod200.setUltimateCountry(Country.safeValueOf(record.getUltimateCountry()));
+		mod200.setStatus(FiscalStatus.safeValueOf(record.getStatus()));
 		return mod200;
 	}
 	
@@ -998,11 +1000,8 @@ public class Mod2002021DAO  {
 			}
 			
 			// Actualmente las casillas calculadas solo son de Mod2002021Key
-//			Date ini = new Date();
-//			System.out.println("***** COMPUTE INI " + ini);
 			DoubleVariableEx v = null;
 			for (Mod2002021Key k : Mod2002021Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
-//				System.out.println("COMPUTE KEY="+k.toString()+"="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.get(k));
 				String stringKey = k.toString();
 				DoubleVariableEx existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
@@ -1022,28 +1021,32 @@ public class Mod2002021DAO  {
 					}
 				}
 			}
-//			Date fin = new Date();			
-//			System.out.println("***** COMPUTE FIN. TIME "+ (fin.getTime()-ini.getTime()) + "ms. TOTAL REGISTROS MAP="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.size());
 			
+			// Grabar Importe a ingresar o devolver (amount) y tipo de ingreso o devolucion (result_type, dev_type y pay_type)  
 			v = mod200.getVariable(Mod2002021Key.BN621);
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
+				// Cuota cero
 				mod200.setResultType("N");
 				mod200.setAmount( 0.0 );
 				mod200.setDevType(null);
 				mod200.setPayType(null);
 			} else if (AonMathUtils.round(v.getValue()) < 0.0) {
+				// Devolución
 				mod200.setResultType("D");
 				mod200.setAmount( AonMathUtils.round( v.getValue() * -1));
 				mod200.setDevType(AonStringUtils.isEmpty(mod200.getDevType())?"D":mod200.getDevType());
 				mod200.setPayType(null);
 			} else {
+				// Ingreso
 				mod200.setResultType("I");
 				mod200.setAmount( v.getValue() );
 				mod200.setPayType(AonStringUtils.isEmpty(mod200.getPayType())?"H":mod200.getPayType());
 				mod200.setDevType(null);
 			}
+			
 			return mod200;
+			
 		} catch (Throwable e) {
 			System.out.println( "*** ERROR " + e.getMessage());
 			throw new AonCoreException(e);

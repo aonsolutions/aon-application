@@ -19,8 +19,6 @@ public class Page13 extends PageAbs {
 	
 	public Page13( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 	
 	@Override
@@ -73,8 +71,8 @@ public class Page13 extends PageAbs {
 		
 	}
 	
-	@Override
-	protected void populate() {}
+//	@Override
+//	protected void populate() {}
 	
 	@Override
 	protected boolean isAvailable() {

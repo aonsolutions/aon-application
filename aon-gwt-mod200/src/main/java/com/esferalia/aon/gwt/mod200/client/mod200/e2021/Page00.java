@@ -19,18 +19,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -129,53 +125,40 @@ public class Page00 extends PageAbs {
 		Mod2002021Key.C0074
 	};
 	
-	private Map<Mod2002021Key, CheckBox> inputs = new HashMap<Mod2002021Key, CheckBox>();
+	private Map<Mod2002021Key, CheckBox> inputsCheckBox;
 	
-	private AonDocumentTextBox nif = new AonDocumentTextBox();
-	private AonTextBox companyName = new AonTextBox();
-	private AonTextBox phone1 = new AonTextBox();
-	private AonTextBox phone2 = new AonTextBox();
-	private AonTextBox cnae = new AonTextBox();
-	private InlineLabel cnaeLabel = new InlineLabel();
-	private CheckBox complementary = new CheckBox();
-	private AonTextBox complementaryReceipt = new AonTextBox();
-	private ListBox periodType = new ListBox();
-	private FlowPanel periodPanel = new FlowPanel();
-	private AonDateBox periodStart = new AonDateBox();
-	private AonDateBox periodEnd = new AonDateBox();
-	private ListBox balanceSheetType = new ListBox();
-	private ListBox ecpnType = new ListBox();
-	private ListBox profitAndLossType = new ListBox();
-	private AonDoubleBox c041 = new AonDoubleBox();
-	private AonDoubleBox c042 = new AonDoubleBox();	
+	private AonDocumentTextBox nif;
+	private AonTextBox companyName;
+	private AonTextBox phone1;
+	private AonTextBox phone2;
+	private AonTextBox cnae;
+	private InlineLabel cnaeLabel;
+	private AonTableButton cnaeButton;
+	private CheckBox complementary;
+	private AonTextBox complementaryReceipt;
+	private ListBox periodType;
+	private FlowPanel periodPanel;
+	private AonDateBox periodStart;
+	private AonDateBox periodEnd;
+	private ListBox balanceSheetType;
+	private ListBox ecpnType;
+	private ListBox profitAndLossType;
+	private AonDoubleBox c041;
+	private AonDoubleBox c042;	
 	
 	public Page00( Model200PageCallback callback ) {
-		super(callback);
-		addBasePanel();
-		initializeTable();
-		
-		callback.getMod200Object().register( new IMod200ChangeListener() {
-			
-			@Override
-			public void mod200Changed(Mod2002021 mod200) {
-				DoubleVariableEx sv = mod200.getVariable(Mod2002021Key.C0027);
-				if (sv != null && inputs.containsKey( Mod2002021Key.C0027 )) {
-					inputs.get( Mod2002021Key.C0027 ).setValue( AonMathUtils.equals(sv.getValue() , 1.0) );
-				}
-			}
-		});
+		super(callback);		
 	}
 	
 	@Override
 	public void dump() {
-		super.dump();
+		
 		nif.setValue(callback.getMod200Object().getMod200().getDocument());
 		companyName.setValue(callback.getMod200Object().getMod200().getName());
 		phone1.setValue(callback.getMod200Object().getMod200().getEnterprisePhone1());
 		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
 		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
 		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
-		complementaryReceipt.setEnabled(complementary.getValue());
 		periodType.setSelectedIndex(callback.getMod200Object().getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
 		periodStart.setValue(callback.getMod200Object().getMod200().getPeriodStart() );
@@ -187,157 +170,107 @@ public class Page00 extends PageAbs {
 		index = callback.getMod200Object().getMod200().getPygType().ordinal();
 		profitAndLossType.setSelectedIndex(index);
 		
-		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002021Key.C0041);
-		Double value = 0.0;
-		if (dv != null) {
-			value = dv.getValue();
-		}
-		c041.setValue(value);
-		
-		dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002021Key.C0042);
-		value = 0.0;
-		if (dv != null) {
-			value = dv.getValue();
-		}
-		c042.setValue(value);
-		
-		for (CheckBox check : inputs.values()) {
-			check.setValue(false);
-		}
-		
-		for (Mod2002021Key key : CHARACTERS_KEYS) {
-			DoubleVariableEx sv = callback.getMod200Object().getMod200().getKeysMap().get(key);
-			if (sv != null && inputs.containsKey( key )) {
-				boolean checked = AonMathUtils.equals(sv.getValue() , 1.0);
-				inputs.get( key ).setValue( checked);
-			}
-		}
-		
 		cnaeLabel.setText(null);
 		cnae.setValue(callback.getMod200Object().getMod200().getCnae());
 		if (!AonStringUtils.isEmpty(callback.getMod200Object().getMod200().getCnae())) {
 			CNAE2009 cnae = CNAE2009.valueOfCode(callback.getMod200Object().getMod200().getCnae());
-			cnaeLabel.setText(cnae==null?null:cnae.getDescription());	
+			cnaeLabel.setText(cnae == null ? null : cnae.getDescription());	
 		}
 		
-	}
-
-	@Override
-	protected void populate() {
-		callback.getMod200Object().getMod200().setDocument(nif.getValue());
-		callback.getMod200Object().getMod200().setName(companyName.getValue());
-		callback.getMod200Object().getMod200().setEnterprisePhone1(phone1.getValue());
-		callback.getMod200Object().getMod200().setEnterprisePhone2(phone2.getValue());
-		callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
-		callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());
-		callback.getMod200Object().getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
-		callback.getMod200Object().getMod200().setPeriodStart( periodStart.getValue() );
-		callback.getMod200Object().getMod200().setPeriodEnd( periodEnd.getValue() );
-		callback.getMod200Object().getMod200().setBalanceType( balanceSheetType.getSelectedIndex() );
-		callback.getMod200Object().getMod200().setEcpnType( ecpnType.getSelectedIndex() );
-		callback.getMod200Object().getMod200().setPygType( profitAndLossType.getSelectedIndex() );
-		callback.getMod200Object().getMod200().setCnae(cnae.getValue());
+		for (Mod2002021Key key : inputsCheckBox.keySet()) {
+			inputsCheckBox.get(key).setValue(callback.getMod200Object().getMod200().getBooleanValue(key));			
+		}	
 		
-		DoubleVariableEx bv = null;
-		for (Mod2002021Key key : inputs.keySet()) {
-			bv = new DoubleVariableEx( key );
-			bv.setValue(inputs.get(key).getValue());
-			callback.getMod200Object().getMod200().addVariable(bv);
+		// El valor del caracter [00027] puede estar en draftMap, pues se modifica durante el cálculo del modelo
+		DoubleVariableEx sv = callback.getMod200Object().getMod200().getVariable(Mod2002021Key.C0027);
+		if (sv != null && inputsCheckBox.containsKey(Mod2002021Key.C0027)) {
+			inputsCheckBox.get(Mod2002021Key.C0027).setValue(AonMathUtils.equals(sv.getValue(), 1.0));
 		}
 		
-		bv = new DoubleVariableEx( Mod2002021Key.C0050 );
-		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0051 );
-		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0052 );
-		bv.setValue((callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0075 );
-		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.NORMAL));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0076 );
-		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.ABREVIADO));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0077 );
-		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.PYMES));
-		callback.getMod200Object().getMod200().addVariable(bv);
-					
-		bv = new DoubleVariableEx( Mod2002021Key.C0053 );
-		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0054 );
-		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.ABREVIADO));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0055 );
-		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.PYMES));
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
-		bv = new DoubleVariableEx( Mod2002021Key.C0041 );
-		bv.setValue( c041.getValue() );
-		callback.getMod200Object().getMod200().addVariable(bv);
-
-		bv = new DoubleVariableEx( Mod2002021Key.C0042 );
-		bv.setValue( c042.getValue() );
-		callback.getMod200Object().getMod200().addVariable(bv);
-		
+		// Hago la llamada despues, porque para setEnabled(), necesito que algunos campos ya contengan el valor
+		super.dump();		
+				
 	}
+	
+    @Override
+    protected void setEnabled() {
+    	
+    	super.setEnabled();
+    	
+    	complementaryReceipt.setEnabled(isEditable() && complementary.getValue());
+		
+		// Determinados campos y los caracteres, se desabilitan si ya está inicializado el modelo
+		boolean enabled = !callback.getMod200Object().isInitialized();
+		
+		periodType.setEnabled(enabled);
+		balanceSheetType.setEnabled(enabled);
+		ecpnType.setEnabled(enabled);
+		profitAndLossType.setEnabled(enabled);
+		for (CheckBox check : inputsCheckBox.values()) {
+			check.setEnabled(enabled);
+		}	
+		if (enabled)
+			for (Mod2002021Key key : CHARACTERS_KEYS) {
+				if (inputsCheckBox.containsKey( key ) && inputsCheckBox.get( key ).getValue()) {
+					changeAvailability(key);
+				}
+			}
+		
+		// El caracter [00027] siempre está deshabilitado
+		if (inputsCheckBox.containsKey(Mod2002021Key.C0027)) {
+			inputsCheckBox.get(Mod2002021Key.C0027).setEnabled(false);
+		}
+		
+    }
+
+//	@Override
+//	protected void populate() {
+//		
+////		DoubleVariableEx bv = null;
+////		for (Mod2002021Key key : inputsCheckBox.keySet()) {
+////			bv = new DoubleVariableEx( key );
+////			bv.setValue(inputsCheckBox.get(key).getValue());
+////			callback.getMod200Object().getMod200().addVariable(bv);
+////		}
+//		
+////		bv = new DoubleVariableEx( Mod2002021Key.C0075 );
+////		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.NORMAL));
+////		callback.getMod200Object().getMod200().addVariable(bv);
+////		
+////		bv = new DoubleVariableEx( Mod2002021Key.C0076 );
+////		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.ABREVIADO));
+////		callback.getMod200Object().getMod200().addVariable(bv);
+////		
+////		bv = new DoubleVariableEx( Mod2002021Key.C0077 );
+////		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.PYMES));
+////		callback.getMod200Object().getMod200().addVariable(bv);
+////					
+////		bv = new DoubleVariableEx( Mod2002021Key.C0053 );
+////		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL));
+////		callback.getMod200Object().getMod200().addVariable(bv);
+////		
+////		bv = new DoubleVariableEx( Mod2002021Key.C0054 );
+////		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.ABREVIADO));
+////		callback.getMod200Object().getMod200().addVariable(bv);
+////		
+////		bv = new DoubleVariableEx( Mod2002021Key.C0055 );
+////		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.PYMES));
+////		callback.getMod200Object().getMod200().addVariable(bv);
+//		
+//	}
 
 	@Override
 	protected void initializeTable() {
 		paint();
 	}
 
-	private void changeAvailability(Mod2002021Key key) {
-		boolean enabled = inputs.get(key).getValue();
-		if (CHARACTER_INCOMPATIBILITY_MAP.get(key) != null) {
-			for (Mod2002021Key incompatible : CHARACTER_INCOMPATIBILITY_MAP.get(key)) {
-				CheckBox check = inputs.get(incompatible);
-				if (check != null) {
-					check.setEnabled(!enabled);
-					if (enabled) {
-						check.setValue(!enabled);
-					}
-				}
-			}
-		}
-		if (enabled && CHARACTER_ALSO_CHECK_MAP.get(key) != null) {
-			for (Mod2002021Key alsoCheck : CHARACTER_ALSO_CHECK_MAP.get(key)) {
-				CheckBox check = inputs.get(alsoCheck);
-				if (check != null) {
-					check.setValue(true);	
-				}
-			}
-		}
-	}
-
-	protected void enableCharacters( boolean enabled) {
-		periodType.setEnabled(enabled);
-		balanceSheetType.setEnabled(enabled);
-		ecpnType.setEnabled(enabled);
-		profitAndLossType.setEnabled(enabled);
-		for (CheckBox check : inputs.values()) {
-			check.setEnabled(enabled);
-		}		
-		for (Mod2002021Key key : CHARACTERS_KEYS) {
-			if (inputs.containsKey( key ) && inputs.get( key ).getValue()) {
-				changeAvailability(key);
-			}
-		}
-	}
-	
 	private void paint() {
 		
-		// IDENTIFICACION 
+		otherInputs.clear();
+		basePanel.clear();
 		
+		// IDENTIFICACION
+
 		basePanel.add(getTitle(AON.MSG.identification()));
 		
 		AonDisplayTable tab = new AonDisplayTable();
@@ -345,37 +278,48 @@ public class Page00 extends PageAbs {
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab);
 		
+		nif = new AonDocumentTextBox();
 		nif.setVisibleLength(9);
 		nif.setMaxLength(9);
 		nif.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setDocument(nif.getValue());
 			callback.markAsDirty();
 		});		
+		otherInputs.add(nif);
 		
+		companyName = new AonTextBox();
 		companyName.setVisibleLength(45);
 		companyName.setMaxLength(45);
 		companyName.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setName(companyName.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(companyName);
 		
+		phone1 = new AonTextBox();
 		phone1.setVisibleLength(9);
 		phone1.setMaxLength(9);
-		phone2.setVisibleLength(9);
-		phone2.setMaxLength(9);
-		
-		FlowPanel phones = new FlowPanel(); 
-		phones.add(phone1);
-		phones.add(phone2);
-		
 		phone1.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setEnterprisePhone1(phone1.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(phone1);
+		
+		phone2 = new AonTextBox();
+		phone2.setVisibleLength(9);
+		phone2.setMaxLength(9);
 		phone2.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setEnterprisePhone2(phone2.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(phone2);
+		
+		FlowPanel phones = new FlowPanel(); 
+		phones.add(phone1);
+		phones.add(phone2);
+				
+		cnae = new AonTextBox();
+		cnaeLabel = new InlineLabel();
 		
 		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();		
 		cnae2009Panel.addSelectionHandler(event -> {
@@ -390,10 +334,11 @@ public class Page00 extends PageAbs {
 		cnae.setMaxLength(5);
 		cnae.setReadOnly(true);
 		
-		AonTableButton cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(),AON.CSS.aonIconSearch());
+		cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(),AON.CSS.aonIconSearch());
 		cnaeButton.addStyleName(AON.CSS.aonMarginLeft());
-		cnaeButton.setTitle(AON.MSG.mainActivityCNAE());		
+		cnaeButton.setTitle(AON.MSG.mainActivityCNAE());
 		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
+		otherInputs.add(cnaeButton);
 		
 		cnaeLabel.setStyleName(AON.CSS.aonMarginLeft());
 
@@ -402,42 +347,48 @@ public class Page00 extends PageAbs {
 		cnaePanel.add(cnaeButton);
 		cnaePanel.add(cnaeLabel);
 
+		periodType = new ListBox();
 		periodType.addItem(AON.MSG.periodType1());
 		periodType.addItem(AON.MSG.periodType2());
 		periodType.addItem(AON.MSG.periodType3());
 		periodType.addChangeHandler( event -> {
 			periodPanel.setVisible(periodType.getSelectedIndex() != 0);
+			callback.getMod200Object().getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
 			callback.markAsDirty();
 		});
-		
+		otherInputs.add(periodType);
+
+		periodStart = new AonDateBox();
 		periodStart.addStyleName(AON.CSS.aonMarginLeft());
 		periodStart.addValueChangeHandler( event -> {
 			callback.getMod200Object().getMod200().setPeriodStart(periodStart.getValue());			
 			callback.markAsDirty();
 		});
+		otherInputs.add(periodStart);
 		
+		periodEnd = new AonDateBox();
 		periodEnd.addStyleName(AON.CSS.aonMarginLeft());
 		periodEnd.addValueChangeHandler( event -> {
 			callback.getMod200Object().getMod200().setPeriodEnd(periodEnd.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(periodEnd);
 		
 		InlineLabel fromLabel = new InlineLabel(AON.MSG.periodLabel());
 		fromLabel.setStyleName(AON.CSS.aonMarginLeft());
 		
 		InlineLabel toLabel = new InlineLabel(AON.MSG.to());
 		toLabel.setStyleName(AON.CSS.aonMarginLeft());
-		
+
+		periodPanel = new FlowPanel();
 		periodPanel.add(fromLabel);
 		periodPanel.add(periodStart);
 		periodPanel.add(toLabel);
 		periodPanel.add(periodEnd);
 	
 		FlowPanel complementaryPanel = new FlowPanel();
-		complementaryReceipt.addStyleName(AON.CSS.aonMarginLeft());
-		complementaryReceipt.setVisibleLength(13);
-		complementaryReceipt.setMaxLength(13);
 		
+		complementary = new CheckBox();
 		complementary.addClickHandler(event -> {
 			complementaryReceipt.setEnabled(complementary.getValue());
 			if (!complementary.getValue()) {
@@ -446,6 +397,12 @@ public class Page00 extends PageAbs {
 			callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(complementary);
+		
+		complementaryReceipt = new AonTextBox();
+		complementaryReceipt.addStyleName(AON.CSS.aonMarginLeft());
+		complementaryReceipt.setVisibleLength(13);
+		complementaryReceipt.setMaxLength(13);
 		complementaryReceipt.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());			
 			callback.markAsDirty();
@@ -475,27 +432,45 @@ public class Page00 extends PageAbs {
 		tab2.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab2);
 		
+		balanceSheetType = new ListBox();
 		balanceSheetType.addItem("Modalidad Normal");
 		balanceSheetType.addItem("Modalidad Abreviada");
-		balanceSheetType.addItem("Modalidad PYMES");		
+		balanceSheetType.addItem("Modalidad PYMES");
 		balanceSheetType.addChangeHandler( event -> {
+			callback.getMod200Object().getMod200().setBalanceType(balanceSheetType.getSelectedIndex());
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0050, (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.NORMAL));
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0051, (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.ABREVIADO));
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0052, (callback.getMod200Object().getMod200().getBalanceType() == BalanceType.PYMES));
 			callback.markAsDirty();
-		});		
+		});
+		otherInputs.add(balanceSheetType);
 		
+		ecpnType = new ListBox();
 		ecpnType.addItem("Modalidad Normal");
 		ecpnType.addItem("Modalidad Abreviado (voluntario)");
 		ecpnType.addItem("Modalidad PYMES (voluntario)");
 		ecpnType.addItem("No consta");
 		ecpnType.addChangeHandler( event -> {
+			callback.getMod200Object().getMod200().setEcpnType(ecpnType.getSelectedIndex());
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0075, (callback.getMod200Object().getMod200().getEcpnType() == EcpnType.NORMAL));
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0076, (callback.getMod200Object().getMod200().getEcpnType() == EcpnType.ABREVIADO));
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0077, (callback.getMod200Object().getMod200().getEcpnType() == EcpnType.PYMES));
 			callback.markAsDirty();
 		});
+		otherInputs.add(ecpnType);
 		
+		profitAndLossType = new ListBox();
 		profitAndLossType.addItem("Modalidad Normal");
 		profitAndLossType.addItem("Modalidad Abreviada");
 		profitAndLossType.addItem("Modalidad PYMES");
 		profitAndLossType.addChangeHandler( event -> {
+			callback.getMod200Object().getMod200().setPygType(profitAndLossType.getSelectedIndex());
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0053, (callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL));
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0054, (callback.getMod200Object().getMod200().getPygType() == BalanceType.ABREVIADO));
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0055, (callback.getMod200Object().getMod200().getPygType() == BalanceType.PYMES));
 			callback.markAsDirty();
-		});		
+		});	
+		otherInputs.add(profitAndLossType);
 				
 		tab2.addLabelWidgetRow(AON.MSG.balanceSheet(), balanceSheetType)
 		    .addLabelWidgetRow(AON.MSG.ecpn(), ecpnType)
@@ -510,36 +485,40 @@ public class Page00 extends PageAbs {
 		tab3.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab3);
 		
+		c041 = new AonDoubleBox();
 		c041.setMaxLength(8);
-		c041.setVisibleLength(8);		
+		c041.setVisibleLength(8);
+		c041.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002021Key.C0041));
 		c041.addValueChangeHandler(event -> {			
-			DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.C0041);
-			dv.setValue(c041.getValue());
-			callback.getMod200Object().getMod200().addVariable(dv);
+			callback.getMod200Object().getMod200().setDoubleValue(Mod2002021Key.C0041, c041.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(c041);
 		
+		c042 = new AonDoubleBox();	
 		c042.setMaxLength(8);
-		c042.setVisibleLength(8);		
+		c042.setVisibleLength(8);	
+		c042.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002021Key.C0042));
 		c042.addValueChangeHandler(event -> {
-			DoubleVariableEx dv = new DoubleVariableEx(Mod2002021Key.C0042);
-			dv.setValue(c042.getValue());
-			callback.getMod200Object().getMod200().addVariable(dv);
+			callback.getMod200Object().getMod200().setDoubleValue(Mod2002021Key.C0042, c042.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(c042);
 		
 		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
 	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
 		
 		// CARACTERES DE LA DECLARACION
 		
+		inputsCheckBox = new HashMap<Mod2002021Key, CheckBox>();
+		
 		FlexTable charactersTable1 = new FlexTable();
 		FlexTable charactersTable2 = new FlexTable();
 		FlexTable charactersTable3 = new FlexTable();
 		
-		initializeTable(charactersTable1, DECLARATION_CHARACTERS_BLOCK1);
-		initializeTable(charactersTable2, DECLARATION_CHARACTERS_BLOCK2);
-		initializeTable(charactersTable3, DECLARATION_CHARACTERS_BLOCK3);
+		initializeCharactersTable(charactersTable1, DECLARATION_CHARACTERS_BLOCK1);
+		initializeCharactersTable(charactersTable2, DECLARATION_CHARACTERS_BLOCK2);
+		initializeCharactersTable(charactersTable3, DECLARATION_CHARACTERS_BLOCK3);
 		
 		FlexTable tab4 = new FlexTable();
 		tab4.addStyleName(AON.CSS.aonWidthAll());
@@ -562,7 +541,7 @@ public class Page00 extends PageAbs {
 				
 	}
 	
-	private void initializeTable(FlexTable table, Mod2002021Key[] declarationCharatersBlock) {
+	private void initializeCharactersTable(FlexTable table, Mod2002021Key[] declarationCharactersBlock) {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
 		ColumnFormatter cf = table.getColumnFormatter();
@@ -571,29 +550,58 @@ public class Page00 extends PageAbs {
 		
 		int row = 0;
 		
-		for (final Mod2002021Key key : declarationCharatersBlock ) {
+		for (final Mod2002021Key key : declarationCharactersBlock ) {
 			if (key != Mod2002021Key.C0012R) {
 			   AonBoxLabel l = new AonBoxLabel( key.getCode() , BOX_LENGTH );
 			   table.setWidget(row, 0, l);
 			}
 			
 			final CheckBox check = new CheckBox(key.getDescription() + (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
-			check.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
-						AonMessageDialog.error(AON.MSG.unsupportedCharacter(key.getDescription()));
-						check.setValue(false);
-					} else {
-						changeAvailability(key);
-						callback.markAsDirty();
-					}
-				}				
+			check.addClickHandler( event -> {
+				if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
+					AonMessageDialog.error(AON.MSG.unsupportedCharacter(key.getDescription()));
+					check.setValue(false);
+				} else {
+					callback.getMod200Object().getMod200().setBooleanValue(key, check.getValue());
+					changeAvailability(key);
+					callback.markAsDirty();
+				}
 			});
-			inputs.put(key, check);
+			
+			inputsCheckBox.put(key, check);
 			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
 			table.setWidget(row, 1, check);
 			row++;
+		}
+	}
+	
+	private void changeAvailability(Mod2002021Key key) {
+		
+		boolean enabled = inputsCheckBox.get(key).getValue();
+		
+		// Comprobar incompatibilidad de otros caracteres, si este está marcado
+		if (CHARACTER_INCOMPATIBILITY_MAP.get(key) != null) {
+			for (Mod2002021Key incompatible : CHARACTER_INCOMPATIBILITY_MAP.get(key)) {
+				CheckBox check = inputsCheckBox.get(incompatible);
+				if (check != null) {
+					check.setEnabled(!enabled);
+					if (enabled) {
+						check.setValue(!enabled);
+						callback.getMod200Object().getMod200().setBooleanValue(incompatible, check.getValue());
+					}
+				}
+			}
+		}
+		
+		// Comprobar caracteres que se marcan automaticamente, si este está marcado
+		if (enabled && CHARACTER_ALSO_CHECK_MAP.get(key) != null) {
+			for (Mod2002021Key alsoCheck : CHARACTER_ALSO_CHECK_MAP.get(key)) {
+				CheckBox check = inputsCheckBox.get(alsoCheck);
+				if (check != null) {
+					check.setValue(true);
+					callback.getMod200Object().getMod200().setBooleanValue(alsoCheck, check.getValue());
+				}
+			}
 		}
 	}
 	

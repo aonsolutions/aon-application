@@ -36,7 +36,7 @@ public class Mod2002021Object implements Serializable {
 		
 		this.options = options;
 		this.mod200 = mod200;
-		initialized = mod200.getId() !=null;
+		initialized = (mod200.getId() != null);
 	}
 
 	public Integer getId() {

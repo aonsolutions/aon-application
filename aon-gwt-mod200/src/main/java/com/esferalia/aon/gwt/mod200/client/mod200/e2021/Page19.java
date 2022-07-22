@@ -17,11 +17,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page19 extends PageAbs {
 
-	
 	public Page19( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();		
 	}
 
 	@Override
@@ -29,14 +26,9 @@ public class Page19 extends PageAbs {
 		paint();
 	}
 
-	@Override
-	protected void dump() {
-		super.dump();
-	}
-	
-	@Override
-	protected void populate() {
-	}
+//	@Override
+//	protected void populate() {
+//	}
 	
 	@Override
 	protected boolean isAvailable() {
@@ -74,6 +66,7 @@ public class Page19 extends PageAbs {
 				callback.getMod200Object().getMod200().getGroupEntities().get(idx).setDocument(document.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(document);
 			
 			CountryListBox country = new CountryListBox();
 			country.setWidth("140px");
@@ -85,6 +78,7 @@ public class Page19 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(country);
 			
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -93,6 +87,7 @@ public class Page19 extends PageAbs {
 				paint();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 
 			tab2.addRow()
 				.addCell(document)
@@ -107,6 +102,7 @@ public class Page19 extends PageAbs {
 			callback.getMod200Object().getMod200().getGroupEntities().add(new GroupEntitie());
 			paint();
 		});
+		otherInputs.add(addButton2);
 		tab2.addRow().addCell(addButton2);
 		
 		paintFooterNote(basePanel, "(*) Grupos mercantiles con entidad dominante residente en territorio espa\u00F1ol; s\u00F3lo deber\u00E1 cumplimentar el cuadro dicha entidad dominante.");
@@ -136,6 +132,7 @@ public class Page19 extends PageAbs {
 				callback.getMod200Object().getMod200().getEstablishments().set(idx, document.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(document);
 			
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -144,6 +141,7 @@ public class Page19 extends PageAbs {
 				paint();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 
 			tab4.addRow()
 				.addCell(document)
@@ -157,6 +155,7 @@ public class Page19 extends PageAbs {
 			callback.getMod200Object().getMod200().getEstablishments().add(new String());
 			paint();
 		});
+		otherInputs.add(addButton4);
 		tab4.addRow().addCell(addButton4);		
 		
 		paintFooterNote(basePanel, "(*) NIF de los establecimientos permanentes, en caso de entidad titular (excepto el del establecimiento permanente al que se refiere esta declaraci\u00F3n).");

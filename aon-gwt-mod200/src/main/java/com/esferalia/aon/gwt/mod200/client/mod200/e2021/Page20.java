@@ -1,18 +1,19 @@
 // DOCUMENTO DE INGRESO O DEVOLUCION
 package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
+import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -28,6 +29,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.Widget;
 
 public class Page20 extends PageAbs {
 
@@ -49,20 +51,14 @@ public class Page20 extends PageAbs {
 	
 	public Page20( Model200PageCallback callback ) {
 		super(callback);
-	    addBasePanel();
-		initializeTable();
-		
-//		callback.getMod200Object().register( new IMod200ChangeListener() {
-//			
-//			@Override
-//			public void mod200Changed(Mod2002021 mod200) {
-//				dumpPay(mod200);
-//			}
-//		});		
 	}
 
 	@Override
 	protected void initializeTable() {
+		paint();
+	}
+	
+	private void paint() {
 		
 		basePanel.clear();
 		
@@ -98,6 +94,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(devTypeR);
 
 		devTypeD = new RadioButton("devTypeButton");
 		devTypeD.addStyleName(AON.CSS.aonMarginLeft());
@@ -110,6 +107,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(devTypeD);
 
 		devTypeV = new RadioButton("devTypeButton");
 		devTypeV.addStyleName(AON.CSS.aonMarginLeft());
@@ -122,6 +120,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(devTypeV);
 		
 		devPanel1.add(devTypeR);
 		devPanel1.add(devTypeD);
@@ -159,7 +158,10 @@ public class Page20 extends PageAbs {
 				}
 				callback.markAsDirty();
 			}
-		});
+		});		
+		otherInputs.add(ibanD);
+		addValueChangeHandlerIban(ibanD);
+		
 		devPanel3.add(ibanD);
 		devPanel.add(devPanel3);
 		
@@ -184,6 +186,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(payTypeI);
 		
 		payTypeH = new RadioButton("devTypeButton");
 		payTypeH.addStyleName(AON.CSS.aonMarginLeft());
@@ -196,6 +199,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(payTypeH);
 		
 		payTypeU = new RadioButton("devTypeButton");
 		payTypeU.addStyleName(AON.CSS.aonMarginLeft());
@@ -208,6 +212,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(payTypeU);
 		
 		payTypeG = new RadioButton("devTypeButton");
 		payTypeG.addStyleName(AON.CSS.aonMarginLeft());
@@ -220,6 +225,7 @@ public class Page20 extends PageAbs {
 				callback.markAsDirty();				
 			}
 		});
+		otherInputs.add(payTypeG);
 		
 		payPanel1.add(payTypeI);
 		payPanel1.add(payTypeH);
@@ -254,27 +260,31 @@ public class Page20 extends PageAbs {
 					callback.getMod200Object().getMod200().setIban(ibanP.getValue());
 					callback.getMod200Object().getMod200().setBic(ibanP.getBic());
 				} else {
-					ibanP.setValue(suggestion.getReplacementString());	
+					ibanP.setValue(suggestion.getReplacementString());
 				}
 				callback.markAsDirty();
 			}
 		});		
-		
+		otherInputs.add(ibanP);
+		addValueChangeHandlerIban(ibanP);		
+	
 		payPanel3.add(ibanP);
 		payPanel.add(payPanel3);
 		
 		basePanel.add(payPanel);
 		
 		// Abono / Compensación
-		
 		FlexTable table2 = addTable("Abono / Compensaci\u00F3n");
 		paintDescription(table2, "Abono por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)", 0, 0, true);
-		paintKeyField(table2, Mod2002021Key.BN1020, 0, 1, true, "A");
+		paintKeyField(table2, Mod2002021Key.BN1020, 0, 1, true, "A", false);
 		paintDescription(table2, "Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)", 1, 0, true);
-		paintKeyField(table2, Mod2002021Key.BN1021, 1, 1, true, "C");		
-		paintKey(table2, Mod2002021Key.LQ3318, 2);
-		paintKey(table2, Mod2002021Key.LQ2490, 3);
-		paintKey(table2, Mod2002021Key.LQ2493, 4);
+		paintKeyField(table2, Mod2002021Key.BN1021, 1, 1, true, "C", false);		
+		paintDescription(table2, Mod2002021Key.LQ3318.getDescription(), 2, 0, false);
+		paintKeyField(table2, Mod2002021Key.LQ3318, 2, 1, true, "3318", false);
+		paintDescription(table2, Mod2002021Key.LQ2490.getDescription(), 3, 0, false);
+		paintKeyField(table2, Mod2002021Key.LQ2490, 3, 1, true, "2490", false);
+		paintDescription(table2, Mod2002021Key.LQ2493.getDescription(), 4, 0, false);
+		paintKeyField(table2, Mod2002021Key.LQ2493, 4, 1, true, "2493", false);
 		
 		// Cuota Cero
 		
@@ -286,6 +296,29 @@ public class Page20 extends PageAbs {
 		
 		zeroPanel.add(zeroQuota);
 		basePanel.add(zeroPanel);
+				
+	}
+	
+	private void addValueChangeHandlerIban(AonIbanTextBox iban) {
+		
+		// Controlar posible modificación manual de los campos del IBAN (excepto el primero que no veo forma de modificarlo manualmente) y el BIC 
+		Iterator<Widget> arrayOfWidgets = iban.iterator();
+		while (arrayOfWidgets.hasNext()){
+		  Widget ch = arrayOfWidgets.next();
+		  if (ch instanceof FlowPanel) {
+			  Iterator<Widget> iterator = ((FlowPanel) ch).iterator();
+			  while (iterator.hasNext()){
+				  Widget w = iterator.next();
+				  if (w instanceof AonTextBox) {					  
+					  ((AonTextBox) w).addValueChangeHandler(event -> {
+							callback.getMod200Object().getMod200().setIban(iban.getValue());
+							callback.getMod200Object().getMod200().setBic(iban.getBic());
+							callback.markAsDirty();
+						});
+				  }
+			  }
+		  }
+		}		
 		
 	}
 
@@ -340,47 +373,47 @@ public class Page20 extends PageAbs {
 		}
 	}
 
-	@Override
-	public void populate() {
-		DoubleVariableEx dv =  callback.getMod200Object().getMod200().getVariable(Mod2002021Key.BN621);
-		Double value = dv==null?0.0:dv.getValue();
-		if (AonMathUtils.round(value) == 0.0) {
-			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
-			callback.getMod200Object().getMod200().setResultType("N");
-			callback.getMod200Object().getMod200().setDevType(null);	
-			callback.getMod200Object().getMod200().setPayType(null);
-			callback.getMod200Object().getMod200().setIban(null);
-			callback.getMod200Object().getMod200().setBic(null);
-		} else if (AonMathUtils.round(value) < 0.0) {
-			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value * -1));
-			callback.getMod200Object().getMod200().setResultType("D");
-			if (devTypeR.getValue()) {
-				callback.getMod200Object().getMod200().setDevType("R");
-			}else if (devTypeV.getValue()) {
-				callback.getMod200Object().getMod200().setDevType("V");
-			} else {
-				callback.getMod200Object().getMod200().setDevType("D");	
-			}
-			callback.getMod200Object().getMod200().setPayType(null);
-			callback.getMod200Object().getMod200().setIban(ibanD.getValue());
-			callback.getMod200Object().getMod200().setBic(ibanD.getBic());
-		} else {
-			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
-			callback.getMod200Object().getMod200().setResultType("I");
-			callback.getMod200Object().getMod200().setDevType(null);
-			if (payTypeH.getValue()) {
-				callback.getMod200Object().getMod200().setPayType("H");
-			} else if (payTypeI.getValue()) {
-				callback.getMod200Object().getMod200().setPayType("I");
-			} else if (payTypeG.getValue()) {
-				callback.getMod200Object().getMod200().setPayType("G");
-			} else {
-				callback.getMod200Object().getMod200().setPayType("U");	
-			}
-			callback.getMod200Object().getMod200().setIban(ibanP.getValue());
-			callback.getMod200Object().getMod200().setBic(ibanP.getBic());
-		}
-	}
+//	@Override
+//	public void populate() {
+////		DoubleVariableEx dv =  callback.getMod200Object().getMod200().getVariable(Mod2002021Key.BN621);
+////		Double value = dv==null?0.0:dv.getValue();
+////		if (AonMathUtils.round(value) == 0.0) {
+//////			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
+//////			callback.getMod200Object().getMod200().setResultType("N");
+//////			callback.getMod200Object().getMod200().setDevType(null);	
+//////			callback.getMod200Object().getMod200().setPayType(null);
+////			callback.getMod200Object().getMod200().setIban(null);
+////			callback.getMod200Object().getMod200().setBic(null);
+////		} else if (AonMathUtils.round(value) < 0.0) {
+//////			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value * -1));
+//////			callback.getMod200Object().getMod200().setResultType("D");
+//////			if (devTypeR.getValue()) {
+//////				callback.getMod200Object().getMod200().setDevType("R");
+//////			}else if (devTypeV.getValue()) {
+//////				callback.getMod200Object().getMod200().setDevType("V");
+//////			} else {
+//////				callback.getMod200Object().getMod200().setDevType("D");	
+//////			}
+//////			callback.getMod200Object().getMod200().setPayType(null);
+////			callback.getMod200Object().getMod200().setIban(ibanD.getValue());
+////			callback.getMod200Object().getMod200().setBic(ibanD.getBic());
+////		} else {
+//////			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
+//////			callback.getMod200Object().getMod200().setResultType("I");
+//////			callback.getMod200Object().getMod200().setDevType(null);
+//////			if (payTypeH.getValue()) {
+//////				callback.getMod200Object().getMod200().setPayType("H");
+//////			} else if (payTypeI.getValue()) {
+//////				callback.getMod200Object().getMod200().setPayType("I");
+//////			} else if (payTypeG.getValue()) {
+//////				callback.getMod200Object().getMod200().setPayType("G");
+//////			} else {
+//////				callback.getMod200Object().getMod200().setPayType("U");	
+//////			}
+////			callback.getMod200Object().getMod200().setIban(ibanP.getValue());
+////			callback.getMod200Object().getMod200().setBic(ibanP.getBic());
+////		}
+//	}
 
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
 		@Override
@@ -410,6 +443,15 @@ public class Page20 extends PageAbs {
 	
 	private SuggestOracle getSuggestOracle() {
 		return new EnterpriseSuggestOracle();
+	}
+	
+	@Override
+	protected boolean isEditable(IMod200Key k) {
+		// Caso especial algunas casillas de la página 20 que siempre van deshabilitadas
+		if (k == Mod2002021Key.BN1020 || k == Mod2002021Key.BN1021	|| k == Mod2002021Key.LQ3318 || k == Mod2002021Key.LQ2490 || k ==  Mod2002021Key.LQ2493)
+			return false;
+		else
+			return super.isEditable(k);
 	}
 
 }
