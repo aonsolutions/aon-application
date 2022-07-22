@@ -183,6 +183,7 @@ export const PEOPLE = 'people';
 // ----- Q
 
 export const QR_CODE_2 = 'qr_code_2';
+export const QR_CODE_SCANNER = 'qr_code_scanner';
 
 // ----- R
 

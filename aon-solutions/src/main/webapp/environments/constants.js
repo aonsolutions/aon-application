@@ -176,6 +176,7 @@ export const PREPAYMENT = 'prepayment';
 export const PREVIOUS = 'previous';
 export const PRICE = 'price';
 export const PRIMARY = 'primary';
+export const PRINT = 'print';
 export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
 

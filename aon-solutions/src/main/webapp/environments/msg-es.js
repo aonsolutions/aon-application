@@ -256,6 +256,7 @@ export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
 export const PRICE = 'Precio';
+export const PRINT = 'Imprimir';
 export const PRINT_INVOICE = 'Imprimir Factura';
 export const PROCESSED_MOVEMENT = "El alta se ha procesado correctamente";
 export const PRODUCT = 'Producto';

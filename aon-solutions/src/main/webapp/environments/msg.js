@@ -351,6 +351,7 @@ export const POSTAL_CODE = MSG.POSTAL_CODE;
 export const POSTAL_CODE_MIN = MSG.POSTAL_CODE_MIN;
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;
+export const PRINT = MSG.PRINT;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;
 export const PROCESSED_MOVEMENT  = MSG.PROCESSED_MOVEMENT;
 export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//TODO

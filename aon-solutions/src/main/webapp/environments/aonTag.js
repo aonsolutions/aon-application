@@ -125,6 +125,7 @@ export const AON_MOBILE_ELABORATION_LIST = 'aon-mobile-elaboration_list';
 
 export const AON_MOBILE_PACKAGE_LIST = 'aon-mobile-package-list';
 export const AON_MOBILE_PACKAGE = 'aon-mobile-package';
+export const AON_MOBILE_PACKAGING = 'aon-mobile-packaging';
 
 export const AON_WAREHOUSE = 'aon-warehouse';
 

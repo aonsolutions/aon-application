@@ -252,6 +252,7 @@ export const POSTAL_CODE = 'Posta-kodea';
 export const POSTAL_CODE_MIN = 'P.K.';
 export const PREVIOUS = 'Aurrekoa';
 export const PRICE = 'Prezioa';
+export const PRINT = 'Inprimatu';
 export const PRINT_INVOICE = 'Faktura Inprimatu';
 export const PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
 export const PRODUCT = 'Produktua';
