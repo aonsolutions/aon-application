@@ -54,7 +54,7 @@ public class BOEBalancePYMESScript extends BalanceScript {
 				,PNA1VIII(2,LEAF,"VIII","(Dividendo a cuenta)","sab({557})",null)
 			,PNA2(1,LEAF,"A-2)","Subvenciones, donaciones y legados recibidos","sab({130,131,132})",null)
 			
-		,PNC(0,HEADER0,"B)","PASIVO NO CORRIENTE",null,"PNCI+PNCII+PNCIII+PNCIV+PNCV")
+		,PNC(0,HEADER0,"B)","PASIVO NO CORRIENTE",null,"PNCI+PNCII+PNCIII+PNCIV+PNCV+PNCVI")
 			,PNCI (1,LEAF,"I","Provisiones a largo plazo","sab({14})",null)
 			,PNCII(1,HEADER1,"II","Deudas a largo plazo",null,"PNCII1+PNCII2+PNCII3")
 				,PNCII1(2,LEAF,"1","Deudas con entidades de cr\u00E9dito","sab({1605,170})",null)
@@ -63,6 +63,7 @@ public class BOEBalancePYMESScript extends BalanceScript {
 			,PNCIII(1,LEAF,"III","Deudas con empresas del grupo y asociadas a largo plazo","sab({1603,1604,1613,1614,1623,1624,1633,1634})",null)
 			,PNCIV (1,LEAF,"IV","Pasivos por impuesto diferido","sab({479})",null)
 			,PNCV  (1,LEAF,"V","Periodificaciones a largo plazo","sab({181})",null)
+			,PNCVI (1, LEAF, "VI", "Deudas con caracter\u00EDsticas especiales a largo plazo", "sab({150})", null)
 			
 		,PC(0,HEADER0,"C)","PASIVO CORRIENTE",null,"PCI+PCII+PCIII+PCIV+PCV+PCVI")
 			,PCI(1,LEAF,"II","Provisiones a corto plazo","sab({499,529})",null)
