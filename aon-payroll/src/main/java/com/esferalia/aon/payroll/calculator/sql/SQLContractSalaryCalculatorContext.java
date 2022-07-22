@@ -1573,7 +1573,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@Override
 	public SSRegimeType getSSRegime() {
 		int ordinal = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
-		return SSRegimeType.values()[ordinal];
+		return getSSsRegimeType(ordinal);
 	}
 
 	@Override
@@ -6495,6 +6495,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		
 		return joined.stream().collect(Collectors.toList());
+	}
+	
+	private SSRegimeType getSSsRegimeType(int ordinal ) {
+		SSRegimeType [] ssRegimeTypes = SSRegimeType.values();
+		if ( ordinal < 0 ) 
+			return SSRegimeType.GENERAL;
+		if ( ordinal >= ssRegimeTypes.length ) 
+			return SSRegimeType.GENERAL;
+		
+		SSRegimeType ssRegimeType = ssRegimeTypes[ordinal];
+		switch (ssRegimeType) {
+		case ARTIST:
+		case AGRICULTURAL:
+			return SSRegimeType.GENERAL;
+		default:
+			return ssRegimeType;
+		}
 	}
 	
 
