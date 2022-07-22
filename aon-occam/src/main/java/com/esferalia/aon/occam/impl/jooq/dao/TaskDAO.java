@@ -33,6 +33,8 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSeekStep1;
+import org.jooq.SelectSelectStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -125,24 +127,23 @@ public class TaskDAO {
 		@Override public Property<String> getTaskHolderNameProperty(){return new FilterDAO.PropertyDAO<>(TH_REGISTRY.NAME);}
 	}
 	
-	private static SelectOnConditionStep<Record> select(AONContext ctx) {
-			return ctx.getDslContext()
-			.select()
-			.from(TASK)
-			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
-			.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
-			.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
-			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
-			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
-			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
-			.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-			.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
-			.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
-			.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID));
+	private static <T extends Record> SelectOnConditionStep<T> select(SelectSelectStep<T> select) {
+		return select
+		.from(TASK)
+		.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
+		.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+		.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+		.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
+		.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
+		.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
+		.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+		.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
+		.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
+		.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID));
 	}
 	
 	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = select(ctx)
+		SelectConditionStep<Record> condition = select(ctx.getDslContext().select()) 
 		.where(TASK_PROPERTIES.getConditions(filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -165,7 +166,7 @@ public class TaskDAO {
 	}
 	
 	private static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = select(ctx)
+		SelectConditionStep<Record> condition = select(ctx.getDslContext().select())
 		.where(whereCondition(ctx, filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -174,10 +175,13 @@ public class TaskDAO {
 			condition.limit(per).offset(per * (p -1));
 		}
 		
-		Map<Task, List<Tag>> taskMaps = condition
+	   SelectSeekStep1<Record, Timestamp> query = condition
 	   .groupBy(TASK.ID, TAG.ID)
-	   .orderBy(TASK.CREATION_DATE.desc())
-	   .fetchGroups( 
+	   .orderBy(TASK.CREATION_DATE.desc());
+		
+//	   System.out.println(query.getSQL());
+		
+		Map<Task, List<Tag>> taskMaps = query.fetchGroups( 
 			new TaskFiller()::apply,
 			new TagFiller()::apply
 		);
@@ -270,9 +274,9 @@ public class TaskDAO {
 			
 		sets.where(TASK.ID.eq(task.getId())).execute();
 
-		if(task.isParent()) {
-			updateParent(ctx, task);			
-		}
+//		if(task.isParent()) {
+//			updateParent(ctx, task);			
+//		}
 		
 		ctx.log().debug("UPDATE TASK id: " + task.getId());		
 		return task;
@@ -315,9 +319,9 @@ public class TaskDAO {
 		task.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)));
 		task.setNumber(r.getValue(TASK.NUMBER));
 
-		if(task.isParent()) {
-			updateParent(ctx, task);			
-		}
+//		if(task.isParent()) {
+//			updateParent(ctx, task);			
+//		}
 	
 		ctx.log().debug("INSERT TASK id: " + task.getId());	
 		return task;
@@ -514,20 +518,8 @@ public class TaskDAO {
 		return combined.and(TASK.PARENT.isNull())
 		.or(
 			TASK.ID.in(
-	    			ctx.getDslContext()
-	    			.select(TASK.PARENT)
-	    			.from(TASK)
-	    			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
-	    			.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
-	    			.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
-	    			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
-	    			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
-	    			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
-	    			.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-	    			.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
-	    			.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
-	    			.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID))
-	    			.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
+				select(ctx.getDslContext().select(TASK.PARENT))
+    			.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
 	    	)
 		);
 	}
