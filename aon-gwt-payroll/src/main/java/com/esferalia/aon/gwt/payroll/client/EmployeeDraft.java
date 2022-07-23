@@ -867,7 +867,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.contractTypeLB);
+		employee.contractFireEventsWithOutValue();
 		
 		if(!isCompleteJourneyContract(contractData.getContractType())) {
 			employee.showPartialTimeContract();
