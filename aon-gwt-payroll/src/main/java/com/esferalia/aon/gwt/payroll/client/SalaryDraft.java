@@ -262,6 +262,7 @@ public class SalaryDraft extends ResizeComposite
 	private List<Scope> SCOPE_STEPS = Arrays.asList(Scope.CONTRACT, Scope.AGREEMENT, Scope.SYSTEM);
 
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
+	private static final String PORCENTAJE_CGC = "PORCENTAJE_CGC";
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
 	private static final String PORCENTAJE_FOGASA = "PORCENTAJE_FOGASA";
 	private static final String PORCENTAJE_SHORT = "PORCENTAJE_CORTA_DURACION";
@@ -6114,6 +6115,8 @@ public class SalaryDraft extends ResizeComposite
 			return newPercentLabel("");
 		case UNEMPLOYMENT:
 			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
+		case COMMON_CONTINGENCY:
+			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject));
 		default:
 			return newPercentLabel(deduction, percent, getPercentVariable(type));
 		}
@@ -7296,10 +7299,11 @@ public class SalaryDraft extends ResizeComposite
 	
 
 	private static Widget newPercentLabel(Item<?> item, Double percent, Variable percentVar) {
+		info(item.getExpression() + ", " + percent + ", " +(percentVar != null  ? percentVar.getName() : "NULL"));
 		if (NumberUtils.isNotValid(percent))
 			return newPercentLabel(percentVar == null ? formatPercent(0.00) : formatPercent(percentVar.getValue()));
 		else
-			return newPercentLabel(formatPercent(percent));
+			return newPercentLabel(percentVar == null ? formatPercent(percent) : formatPercent(percentVar.getValue()) );
 	}
 
 	private static boolean isSystemVariable(Variable var) {
