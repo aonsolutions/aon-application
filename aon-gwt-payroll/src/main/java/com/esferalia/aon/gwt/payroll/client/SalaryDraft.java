@@ -370,7 +370,9 @@ public class SalaryDraft extends ResizeComposite
 			"JORNADAS_TEORICAS",
 			
 			"BONIFICACION_TUTORIA",
-			"BONIFICACION_FORMACION_CONTINUA"
+			"BONIFICACION_FORMACION_CONTINUA",
+			
+			"MODELO_COTIZACION_AGRARIO"
 			
 			
 	};
