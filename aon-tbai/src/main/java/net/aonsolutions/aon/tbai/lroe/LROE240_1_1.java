@@ -1,6 +1,9 @@
 package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -16,6 +19,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.EstadoRegistroConsultaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasEmitidasConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleEmitidaConSGCodificadoType;
@@ -29,9 +33,15 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_factu
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultapeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultarespuesta_v1_0_1.LROEPJ240FacturasEmitidasConSGConsultaRespuesta;
+import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.TbaiBlockchain;
+import net.aonsolutions.aon.tbai.TbaiData;
+import net.aonsolutions.aon.tbai.TbaiUri;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
+import net.aonsolutions.aon.tbai.responses.TbaiResponse;
+import net.aonsolutions.aon.tbai.sign.TbaiSign;
 
 public class LROE240_1_1 extends LROE240 {
 	
@@ -118,7 +128,7 @@ public class LROE240_1_1 extends LROE240 {
 		}
 	}
 	
-	public void consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+	public boolean consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.C_00);
 			LROEPJ240FacturasEmitidasConSGConsultaPeticion lroe = buildConsulta(company, invoice, info);
@@ -134,11 +144,57 @@ public class LROE240_1_1 extends LROE240 {
 			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
 		
 			LROEPJ240FacturasEmitidasConSGConsultaRespuesta resp = (LROEPJ240FacturasEmitidasConSGConsultaRespuesta) 
-					unmarshal(LROEPJ240FacturasEmitidasConSGConsultaRespuesta.class, response.getResponseDataStr());
-			System.out.println(resp.getResultadoConsulta().getExistenRegistros());
+					unmarshall(LROEPJ240FacturasEmitidasConSGConsultaRespuesta.class, response.getResponseDataStr());
+			
+			if(SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros())) {
+				saveTbai(tbaiConfiguration, company, invoice, resp);
+				DataRequest request = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, data);
+				response.setDataRequest(request);
+				LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, response, info);
+			}
+			
+			return SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros());
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
+	}
+	
+	private void saveTbai(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice, LROEPJ240FacturasEmitidasConSGConsultaRespuesta resp) {
+		TbaiSign tbaiSign = new TbaiSign();
+		String signature = resp.getFacturasEmitidas().getFacturaEmitida().get(0).getTicketBai().getSignature();
+		String date = resp.getFacturasEmitidas().getFacturaEmitida().get(0).getTicketBai().getFactura().getCabeceraFactura().getFechaExpedicionFactura();
+		String emisor = resp.getFacturasEmitidas().getFacturaEmitida().get(0).getTicketBai().getSujetos().getEmisor().getNIF();
+		String tbai = "";
+		try {
+			tbai = tbaiSign.buildTbaiId(date, emisor, signature);
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		TbaiResponse tresp = new TbaiResponse().setResponseStatus("pending").setSign(signature)
+			.setTbaiId(tbai);
+
+		TbaiBlockchain bc = new TbaiBlockchain().setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
+				.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())
+				.setSignature(signature);
+
+		String tbaiId = URLEncoder.encode(tresp.getTbaiId());
+	
+		String total = resp.getFacturasEmitidas().getFacturaEmitida().get(0).getTicketBai().getFactura().getDatosFactura().getImporteTotalFactura();
+
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
+			+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
+			+ total;
+		
+		try {
+			String crc = CRC8.calculate(qrUrl);
+			qrUrl = qrUrl + "&cr=" + crc;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		TbaiData.getInstance(tbaiConfiguration)
+			.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, tresp,
+			bc, new DataRequest(), qrUrl);
 	}
 	
 	private LROEPJ240FacturasEmitidasConSGConsultaPeticion buildConsulta(Company company, Invoice invoice, LROEInfo info) {

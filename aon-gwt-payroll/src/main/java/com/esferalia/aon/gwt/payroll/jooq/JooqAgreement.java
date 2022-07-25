@@ -551,25 +551,24 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		
 		// @formatter:off
 		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
-				.where(AGREEMENT.DOMAIN.in(domains))
-				.or(AGREEMENT.ID.in(
-						dslContext
-						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
-						.from(APP_PARAM)
-						.where(APP_PARAM.DOMAIN.in(domains))
-						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
-				))
-				.or(AGREEMENT.ID.in(
-						dslContext
-						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
-						.from(APP_PARAM)
-						.where(APP_PARAM.DOMAIN.equal(0))
-						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
-				))
-				.or(AGREEMENT.ID.eq(0))
-				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
-				.fetchInto(AGREEMENT);
-		// @formatter:on
+			.where(AGREEMENT.DOMAIN.in(domains))
+			.or(AGREEMENT.ID.in(
+					dslContext
+					.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
+					.from(APP_PARAM)
+					.where(APP_PARAM.DOMAIN.in(domains))
+					.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
+			))
+			.or(AGREEMENT.ID.in(
+					dslContext
+					.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
+					.from(APP_PARAM)
+					.where(APP_PARAM.DOMAIN.equal(0))
+					.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
+			))
+			.or(AGREEMENT.ID.eq(0))
+			.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
+			.fetchInto(AGREEMENT);
 
 		List<Agreement> agreements = new ArrayList<Agreement>();
 		for (AgreementRecord record : result) {

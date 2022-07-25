@@ -290,11 +290,12 @@ export class AonTime extends AonElement {
     }
 
     buildTime() {
+       const inputType = this.isMobile() ? "tel" : "number";
        this.TIME_CONTAINER = document.createElement("div");
        this.TIME_CONTAINER.style.width = "100%";
 
        this.HOUR_INPUT = document.createElement("input");
-       this.HOUR_INPUT.type = "number";
+       this.HOUR_INPUT.type = inputType;
        this.HOUR_INPUT.style.width = "50px";
        this.HOUR_INPUT.style.maxWidth = "calc(40% - .2rem)";
        this.HOUR_INPUT.placeholder = "--";
@@ -305,7 +306,7 @@ export class AonTime extends AonElement {
        this.HOUR_INPUT.min = "0";
 
        this.MINUTE_INPUT = document.createElement("input");
-       this.MINUTE_INPUT.type = "number";
+       this.MINUTE_INPUT.type = inputType;
        this.MINUTE_INPUT.min = "0";
        this.MINUTE_INPUT.max = "59";
        this.MINUTE_INPUT.placeholder = "--";
@@ -434,7 +435,7 @@ export class AonTime extends AonElement {
                     if (!isNaN(hvalue)) {
                         if (hvalue === maxtime.hour && mvalue > maxtime.minute) {
                             this.MINUTE_INPUT.value = `${maxtime.minute}`.padStart(2, "0");
-                        } else if (hvalue === mintime.hour && mvalue < maxtime.minute) {
+                        } else if (hvalue === mintime.hour && mvalue < mintime.minute) {
                             this.MINUTE_INPUT.value = `${mintime.minute}`.padStart(2, "0");
                         }
                     }
@@ -473,7 +474,7 @@ export class AonTime extends AonElement {
                 if (!isNaN(hvalue)) {
                     if (hvalue === maxtime.hour && mvalue > maxtime.minute) {
                         this.MINUTE_INPUT.value = `${maxtime.minute}`.padStart(2, "0");
-                    } else if (hvalue === mintime.hour && mvalue < maxtime.minute) {
+                    } else if (hvalue === mintime.hour && mvalue < mintime.minute) {
                         this.MINUTE_INPUT.value = `${mintime.minute}`.padStart(2, "0");
                     }
                     if (hvalue < 10) {

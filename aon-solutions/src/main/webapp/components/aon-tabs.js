@@ -11,6 +11,9 @@ export class AonTabs extends AonElement {
   INDICATOR_POSITION;
   DIV_ICON;
   POSITION;
+
+  backgroundColor;
+
   get id() {
     return this.getAttribute(CONSTANT.ID);
   }
@@ -21,15 +24,21 @@ export class AonTabs extends AonElement {
 
   constructor() {
     super();
+  }
+
+  initialize() {
     this.id = this.id || "aonTabs";
     this.DIV_ICON = this.id + "DivIcon";
     this.ACTIVE_CLASS = "active";
     this.POSITION = 0;
+    this.backgroundColor = this.backgroundColor || '#f1f1f1';
   }
 
   connectedCallback() {
+    this.initialize();
     let nav = this.createElement("nav");
     nav.className = "tabs-box";
+    nav.style.backgroundColor = this.backgroundColor;
     let div = this.createElement(TAG.DIV);
     div.className = "tabs-menu js-tabs-menu";
     div.role = "tablist";
@@ -42,7 +51,7 @@ export class AonTabs extends AonElement {
         this.TABS_MENU = tabsMenu;
         const total = options.length || 1;
         options.map(option => this.paintButtons(option, total));   
-        this.initialize();
+        this.init();
     })
   }
 
@@ -86,7 +95,11 @@ export class AonTabs extends AonElement {
       this.TABS_MENU.appendChild(button);
   }
 
-  initialize(){
+  setBackgrounColor(backgroundColor) {
+    this.backgroundColor = backgroundColor;
+  }
+
+  init(){
     this.INDICATOR = this.createElement(TAG.SPAN);
     this.INDICATOR.className = "tab-indicator js-tab-indicator";
     this.TABS_MENU.appendChild(this.INDICATOR);
@@ -149,7 +162,7 @@ export class AonTabs extends AonElement {
     const x = e.pageX - e.currentTarget.getBoundingClientRect().left;
     const y = e.pageY - e.currentTarget.getBoundingClientRect().top;
 
-    span.classList.add("tab-button__ripple");
+    // span.classList.add("tab-button__ripple");
     e.currentTarget.appendChild(span);
     span.style.left = `${x}px`;
     span.style.top = `${y}px`;

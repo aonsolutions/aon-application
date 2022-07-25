@@ -110,7 +110,7 @@ public class BOEBalanceNormalScript extends BalanceScript {
 				,PNA2V		(2, LEAF, "V", "Otros", "sab({137})", null)
 			,PNA3		(1, LEAF, "A-3)", "Subvenciones, donaciones y legados recibidos", "sab({130,131,132})", null)
 		
-		,PNC		(0,HEADER0, "B)", "PASIVO NO CORRIENTE", null, "PNCI+PNCII+PNCIII+PNCIV+PNCV")
+		,PNC		(0,HEADER0, "B)", "PASIVO NO CORRIENTE", null, "PNCI+PNCII+PNCIII+PNCIV+PNCV+PNCVI")
 			,PNCI		(1, HEADER1, "I", "Provisiones a largo plazo", null, "PNCI1+PNCI2+PNCI3+PNCI4")
 				,PNCI1		(2, LEAF, "1", "Obligaciones por prestaciones a largo plazo al personal", "sab({140})", null)
 				,PNCI2		(2, LEAF, "2", "Actuaciones medioambientales", "sab({145})", null)
@@ -125,6 +125,7 @@ public class BOEBalanceNormalScript extends BalanceScript {
 			,PNCIII		(1, HEADER1, "III", "Deudas con empresas del grupo y asociadas a largo plazo","sab({1603,1604,1613,1614,1623,1624,1633,1634})", null)
 			,PNCIV		(1, LEAF, "IV", "Pasivos por impuesto diferido", "sab({479})", null)
 			,PNCV		(1, LEAF, "V", "Periodificaciones a largo plazo", null, null)
+			,PNCVI		(1, LEAF, "VI", "Deudas con caracter\u00EDsticas especiales a largo plazo", "sab({150})", null)
 		
 		,PC			(0,HEADER0, "C)", "PASIVO CORRIENTE", null, "PCI+PCII+PCIII+PCIV+PCV+PCVI+PCVII")
 			,PCI		(1, LEAF, "I", "Pasivos vinculados con activos no corr. mantenidos para la venta","sab({585,586,587,588,589})", null)

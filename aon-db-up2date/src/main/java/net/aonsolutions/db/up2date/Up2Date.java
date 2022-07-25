@@ -246,18 +246,17 @@ public class Up2Date {
     		//ArtistPartialFactorFix.ARTISTPARTIALFACTORFIX,
     		//AgriculturalBases2022UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//CnoUpdate.CNOUPDATE,
-    		//AssimilatedInsert.ASSIMILATEDINSERT
-    		//Bases2022FixHourly.BASES2022FIXHOURLY
+    		//AssimilatedInsert.ASSIMILATEDINSERT,
+    		//Bases2022FixHourly.BASES2022FIXHOURLY,
     		//AssimilatedInsert.ASSIMILATEDINSERT,
     		//Bases2022FixHourly.BASES2022FIXHOURLY,
     		//InsertIAE863.INSERT_IAE_863,
-    		//SalaryHoursFixII.SALARYHOURSFIXII
+    		//SalaryHoursFixII.SALARYHOURSFIXII,
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		//RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
 	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
     		AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX
-
     };
     
 

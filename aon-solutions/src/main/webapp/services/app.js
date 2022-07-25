@@ -162,6 +162,18 @@ export const DOCUMENTAL = {
     },
   ],
   price: " ", // '-',
+  disabled: true
+};
+
+
+export const WAREHOUSE = {
+  app: CONSTANT.WAREHOUSE,
+  title: MSG.WAREHOUSE,
+  description: MSG.WAREHOUSE,
+  tag: MSG_ES.WAREHOUSE,
+  icon: AON_ICONS.AON_WAREHOUSE,
+  color: "#002469",
+  price: " ", // '-',
   disabled: true,
   options: {
     menu: false,
@@ -170,6 +182,7 @@ export const DOCUMENTAL = {
     stat: false,
   },
 };
+
 
 export const INVOICE = {
   app: CONSTANT.INVOICE,
@@ -392,6 +405,7 @@ export const MobileMenuApps = [
   COMUNICA,
   FISCAL,
   ACCOUNTING,
+  WAREHOUSE
 ];
 
 export const EmployeeApps = [
@@ -430,6 +444,7 @@ export const Apps = {
   MESSENGER,
   NOTES,
   AON_SALTRA,
+  WAREHOUSE
 };
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
@@ -450,7 +465,8 @@ export const AllApps = {
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA
+  AON_SALTRA,
+  WAREHOUSE
 };
 
 export const getApp = (name) => {
@@ -1160,7 +1176,7 @@ export const PROFESSIONAL_MANAGEMENT = {
   title: "Profesional",
   subtitle: " Gestión Estándar | Expedientes | Almacén ",
   color: "#002469",
-  apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT],
+  apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE],
   price: " ",
 };
 

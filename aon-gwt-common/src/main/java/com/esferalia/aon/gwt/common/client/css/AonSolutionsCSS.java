@@ -501,10 +501,19 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_diff")
 	String aonIconDiff();
 
+	@ClassName("aon_icon_accounting")
+	String aonIconAccounting();
+
+	@ClassName("aon_icon_accounting_record")
+	String aonIconAccountingRecord();
+
+	@ClassName("aon_icon_accounting_unrecord")
+	String aonIconAccountingUnrecord();
+
 	@ClassName("aon_icon_bullet")
 	String aonIconBullet();
-
-	/* BASICS */
+	
+/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
 

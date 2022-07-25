@@ -332,9 +332,11 @@ public class JooqWorkplace {
 		
 		for(Record r : payMethodRecords) {
 			Integer payMethodId = r.get(PAY_METHOD.ID);
+			Integer payMethodDomain = r.get(PAY_METHOD.DOMAIN);
 			String payMethodDescription = r.get(PAY_METHOD.NAME);
 			
-			payMethods.put(payMethodDescription, payMethodId.toString());
+			if(null == payMethods.get(payMethodId.toString()))
+				payMethods.put(payMethodId.toString(), payMethodDescription + (payMethodDomain.equals(domainId) ? "" : " (dp)"));
 		}
 		
 		return payMethods;

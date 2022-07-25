@@ -171,14 +171,28 @@ public class IrpfReportPDF {
 
 		@Override
 		public void accept(IrpfBreakdown irpf) {
-			if (!AonNumberUtils.equals(this.oldId, irpf.getInvoice())) {
+			if (irpf.getInvoice() == null || !AonNumberUtils.equals(this.oldId, irpf.getInvoice())) {
 				setOldId( irpf.getInvoice() );
-				table.addCell(getBodyCell( irpf.isInput()?"Recb.":"Emit."));
-				table.addCell(getBodyCell( irpf.getWithholdingType()==null?"":irpf.getWithholdingType().getDescription()));
-				table.addCell(getBodyCell(DATE_FORMATTER.format(irpf.getTaxDate())) );
-				table.addCell(getBodyCell(irpf.getDocumentNumber()));
-				table.addCell(getBodyCell(irpf.getReferenceCode()));
-				table.addCell(getBodyCell(DATE_FORMATTER.format(irpf.getIssueDate())) );
+				if (irpf.getInvoiceType() != null) {
+					table.addCell(getBodyCell(irpf.isInput()?"Recb.":"Emit."));
+				} else {
+					table.addCell(getBodyCell(AonStringUtils.SPACE));
+				}
+				table.addCell(getBodyCell( irpf.getWithholdingType()==null
+					?AonStringUtils.SPACE
+					:irpf.getWithholdingType().getDescription()));
+				table.addCell(getBodyCell(irpf.getTaxDate() == null
+					?AonStringUtils.SPACE
+					:DATE_FORMATTER.format(irpf.getTaxDate())) );
+				if ( irpf.getNumber() != null) {
+					table.addCell(getBodyCell(irpf.getDocumentNumber()));
+				} else {
+					table.addCell(getBodyCell(AonStringUtils.SPACE));
+				}
+				table.addCell(getBodyCell(AonStringUtils.defaultIfBlank(irpf.getReferenceCode())));
+				table.addCell(getBodyCell(irpf.getTaxDate() == null
+						?AonStringUtils.SPACE
+						:DATE_FORMATTER.format(irpf.getIssueDate())) );
 				table.addCell(getBodyCell(irpf.getRegistryDocument()));
 				table.addCell(getBodyCell(irpf.getName()));			
 			} else {

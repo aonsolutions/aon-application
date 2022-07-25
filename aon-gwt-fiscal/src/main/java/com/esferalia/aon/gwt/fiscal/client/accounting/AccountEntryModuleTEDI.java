@@ -558,6 +558,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			canEdit = (isNew() || (!isNew() && wizardContent.isUpdatable()));
 		}
 		
+		if (!getOptions().isDeleteButtonVisible()) {
+			canRemove = false;
+		}
+
 		// Populate header values
 		period.select(wizardContent.getMainEntry().getPeriod());
 		entryDate.setValue(wizardContent.getMainEntry().getEntryDate());

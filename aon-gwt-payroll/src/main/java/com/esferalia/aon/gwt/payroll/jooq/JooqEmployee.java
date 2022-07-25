@@ -68,6 +68,7 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -717,6 +718,17 @@ public class JooqEmployee {
 			employeeData.setRbankId(null);
 			employeeData.setAccount(null);
 			employeeData.setBic(null);
+			
+			Result<Record> rbankRecords = dslContext.select().from(RBANK)
+					.where(RBANK.REGISTRY.eq(personTable.get(PERSON.REGISTRY)))
+					.orderBy(RBANK.ID.desc())
+					.fetch();
+			
+			if(rbankRecords.isNotEmpty()) {
+				employeeData.setRbankId(rbankRecords.get(0).get(RBANK.ID));
+				employeeData.setAccount(rbankRecords.get(0).get(RBANK.BANK_ACCOUNT));
+				employeeData.setBic(rbankRecords.get(0).get(RBANK.BIC));
+			}
 		}else {
 			Record rPayMethodRecord = rPayMethodRecords.get(0);
 			
@@ -1095,7 +1107,17 @@ public class JooqEmployee {
 				.fetch();
 		
 		contractData.setHasSettle(settlementRecords.isNotEmpty());
-		if(settlementRecords.isNotEmpty()) contractData.setHolidaysDate(settlementRecords.get(0).get(SALARY.END_DATE));
+		if(settlementRecords.isNotEmpty()) {
+			Record settlementRecord = settlementRecords.get(0);
+			contractData.setHolidaysDate(settlementRecord.get(SALARY.END_DATE));
+			
+			Result<SalaryDataRecord> holidayRecords = dslContext.selectFrom(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(settlementRecord.get(SALARY.ID)))
+					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+					.fetch();
+			
+			contractData.setSAA(holidayRecords.isNotEmpty() ? "001" : "015");
+		}
 		
 		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)
@@ -1917,35 +1939,35 @@ public class JooqEmployee {
 			}
 		}
 		
-		if(null == contractData.getJourneytypeId()){
-			if(null != contractData.getJourneyType()){
-				ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-						CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-					.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
-							startDate, endDate)
-					.returning(CONTRACT_DATA.ID)
-					.fetchOne();
-				
-				contractData.setJourneytypeId(journeyRecord.getId());
-			}
-		}else{
-			if(null == contractData.getJourneyType()){
-				dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
-				contractData.setJourneytypeId(null);
-				contractData.setJourneyType(null);
-			}else{
-				dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
-					.set(CONTRACT_DATA.START_DATE, startDate)
-					.set(CONTRACT_DATA.END_DATE, endDate)
-					.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
-					.execute();
-			}
-		}
-		
 		Integer contractType = AonStringUtils.isBlank(contractData.getContractType()) ? null : Integer.parseInt(contractData.getContractType());
 		
 		if(!isCompleteJourneyContract(contractType)) {
+			
+			if(null == contractData.getJourneytypeId()){
+				if(null != contractData.getJourneyType()){
+					ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
+								startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setJourneytypeId(journeyRecord.getId());
+				}
+			} else{
+				if(null == contractData.getJourneyType()){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
+					contractData.setJourneytypeId(null);
+					contractData.setJourneyType(null);
+				}else{
+					dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
+						.execute();
+				}
+			}
 			
 			TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
 //			if(contractJourneyDuration.isEmpty()) {

@@ -335,6 +335,12 @@
 .aon_icon_diff { background-image: iconDiff;}
 @url iconBullet aonIconBullet;
 .aon_icon_bullet { background-image: iconBullet;}
+@url iconAccounting aonIconAccounting;
+.aon_icon_accounting { background-image: iconAccounting;}
+@url iconAccountingRecord aonIconAccountingRecord;
+.aon_icon_accounting_record { background-image: iconAccountingRecord;}
+@url iconAccountingUnrecord aonIconAccountingUnrecord;
+.aon_icon_accounting_unrecord { background-image: iconAccountingUnrecord;}
 
 
 /* BASICS */

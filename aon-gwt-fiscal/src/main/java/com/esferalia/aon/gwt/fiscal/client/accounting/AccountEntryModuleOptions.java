@@ -23,6 +23,7 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 	private boolean trialBalanceFromPreviewEnabled = true;
 	private boolean journalTabVisible = true;
 	private boolean extraInfoTabVisible = true;
+	private boolean deleteButtonVisible = true;
 
 	public Integer getAccountEntryId() {
 		return accountEntryId;
@@ -132,4 +133,13 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 		this.extraInfoTabVisible = extraInfoTabVisible;
 		return this;
 	}
+	
+	public boolean isDeleteButtonVisible() {
+		return deleteButtonVisible;
+	}
+	public AccountEntryModuleOptions setDeleteButtonVisible(boolean deleteButtonVisible) {
+		this.deleteButtonVisible = deleteButtonVisible;
+		return this;
+	}
+
 }

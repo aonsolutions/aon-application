@@ -112,12 +112,22 @@ export const AON_INVOICE_PRINT = 'aon-invoice-print';
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';
 
-
 export const AON_BANK_LIST = 'aon-bank-list';
 export const AON_BANK = 'aon-bank';
 
 export const AON_MARKETPLACE = 'aon-marketplace';
 export const AON_MARKETPLACE_PANEL = 'aon-marketplace-panel';
+
+export const AON_ELABORATION = 'aon-elaboration';
+export const AON_ELABORATION_LIST = 'aon-elaboration-list';
+export const AON_MOBILE_ELABORATION = 'aon-mobile-elaboration';
+export const AON_MOBILE_ELABORATION_LIST = 'aon-mobile-elaboration_list';
+
+export const AON_MOBILE_PACKAGE_LIST = 'aon-mobile-package-list';
+export const AON_MOBILE_PACKAGE = 'aon-mobile-package';
+export const AON_MOBILE_PACKAGING = 'aon-mobile-packaging';
+
+export const AON_WAREHOUSE = 'aon-warehouse';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA].join(", ");
 

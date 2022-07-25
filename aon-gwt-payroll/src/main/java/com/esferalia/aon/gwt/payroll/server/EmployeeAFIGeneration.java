@@ -920,7 +920,9 @@ public final class EmployeeAFIGeneration {
 		Integer staticLines = Integer.parseInt(confJson.get("staticLines").toString());
 		Integer employeeLines = Integer.parseInt(confJson.get("employeeLines").toString());
 		Integer numEmployees = Integer.parseInt(confJson.get("numEmployees").toString());
-		Integer totalLines = numEmployees * employeeLines + staticLines;
+		String settleHolidaysLine = confJson.get("settleHolidaysLine").toString();
+		Integer holidaysLine = AonStringUtils.isBlank(settleHolidaysLine) ? 0 : Integer.parseInt(settleHolidaysLine);
+		Integer totalLines = numEmployees * employeeLines + staticLines + holidaysLine;
 				
 		//ETF
 		JSONObject etfJson = (JSONObject) employeeData.get("ETF");

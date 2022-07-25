@@ -32,6 +32,16 @@ public class TbaiSign {
     	return tbaiId + crc;
     }
     
+    public String buildTbaiId(String dateStr, String emisor, String sign) throws UnsupportedEncodingException {
+    	Date date = AonDateUtils.parse(dateStr, "dd-MM-yyyy");
+    	String tbaiId = "TBAI-" + emisor
+    		+ "-" + AonDateUtils.format(date, "ddMMyy")
+    		+ "-" + sign.substring(0, 13) 
+    		+ "-";
+    	String crc = CRC8.calculate(tbaiId);
+    	return tbaiId + crc;
+    }
+    
     public String getSign(byte[] data) throws ParserConfigurationException, SAXException, IOException {
 		Document doc = getDocument(data);
 		return doc.getElementsByTagName("ds:SignatureValue").item(0).getTextContent();

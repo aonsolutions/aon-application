@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -48,6 +51,66 @@ public class TaskUtils {
 	
 	private TaskUtils() {
 	    throw new IllegalStateException("Utility class");
+	}
+	
+	public static List<Task> getTasksNotAll(AonApiData api){
+		JSONObject params = api.getData();
+		Integer page = params.optInt(IJsonNames.PAGE);
+		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
+		
+		List<Task> tasks = AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
+			f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
+		)
+		.collect(Collectors.toList());
+	
+			
+		List<Task> list = tasks.stream().filter(TaskUtils.distinctByKey(Task::getId)).collect(Collectors.toList());
+		
+		//---------------------------GET ADITIONAL----------------------
+		List<Task> aditionals  = new ArrayList<>();
+		aditionals.addAll(list);
+		
+		List<Integer> allIdList    = new ArrayList<>();
+		List<Integer> parentIdList = new ArrayList<>();
+		List<Integer> childIdList  = new ArrayList<>();
+		
+		list.forEach(t->{
+			allIdList.add(t.getId());
+			if(t.isChild()) {
+				childIdList.add(t.getParent());
+			} else {
+				parentIdList.add(t.getId());
+			}
+		});
+
+		AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
+			f-> f.getIdProperty().notIn(allIdList.toArray(Integer[]::new))
+			.and(
+				f.getParentProperty().in(parentIdList.toArray(Integer[]::new))
+				.or(f.getIdProperty().in(childIdList.toArray(Integer[]::new)))
+			)
+		)
+		.forEach(aditionals::add);
+
+		list.forEach(task->{
+			if(task.isChild()) {
+				aditionals
+				.stream()
+				.filter(t-> !t.isChild() && t.getId().equals(task.getParent()))
+				.findFirst()
+				.ifPresent(task::setParentObj)
+				;
+			} else {
+				aditionals
+				.stream()
+				.filter(t-> t.isChild() && t.getParent().equals(task.getId()))
+				.sorted(Comparator.comparing(Task::getId))
+				.forEach(task::addChild)
+				;
+			}
+		});
+		
+		return list;
 	}
 	
 	public static void onNotification(AonApiData api, TaskWorkflow workflow) {
@@ -76,7 +139,7 @@ public class TaskUtils {
 						//TODO
 						break;
 					case REOPEN:
-						//TODO
+						changeStatusTask(api, task, workflow);
 						break;
 					case CONNECTED:
 						//TODO
@@ -275,16 +338,13 @@ public class TaskUtils {
 	}
 	
 	public static Optional<Auth> getAuthForTaskHolder(AonApiData api, TaskHolder th) {
-		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
+		Domain domain = api.getDomain();
+		User user = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-		if(auth.getEmail()!=null && !auth.getEmail().isEmpty()) {
-			return Optional.of(auth);
-		}
-		return Optional.empty();
+		return auth.getEmail()!=null && !auth.getEmail().isEmpty() ? Optional.of(auth) : Optional.empty();
 	}
 	
 	public static TaskAttach saveTaskAttach(Domain domain, User user, TaskAttach attach) {
-	
 		try {
 			MimeType mimeType = attach.getMimetype();
 			if(!mimeType.isImage() && !mimeType.equals(MimeType.ZIP)) {
@@ -295,7 +355,6 @@ public class TaskUtils {
 				.setMimetype(MimeType.ZIP);
 			}
 		} catch (Exception e) {} // TODO: handle exception
-	
 		return AON_SOLUTIONS.saveTaskAttach(domain, user, attach);
 	}
 	
@@ -325,33 +384,35 @@ public class TaskUtils {
 	
 	private static void changeStatusTask(AonApiData api, Task task, TaskWorkflow workflow) {
 		Domain domain = task.getDomain();
-		List<Byte> types = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
-		if(task.isChild()) {
+		
+		boolean isReopen = workflow.getType().equals(TaskWorkflowType.REOPEN);
+		
+		Byte[] pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new);
+		
+		if(task.isChild()) {// IS CHILD
 			
 			Task parent = AON_SOLUTIONS.getTask(domain, api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
 			
 			if(parent!=null && parent.getId()!=null) {
 				
-				List<Task> childs = AON_SOLUTIONS.getTaskStream(domain, api.getUser(), 
+				Task child = AON_SOLUTIONS.getTask(domain, api.getUser(), 
 					f-> f.getParentProperty().eq(task.getParent())
-					.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
-				).collect(Collectors.toList());
+					.and(f.getStatusProperty().in(pending))
+				);
+				
+				boolean childIsOpen = child!=null && child.getId()!=null;
 
-				parent.setStatus(childs.isEmpty() ? TaskStatus.PENDING : TaskStatus.IN_PROGRESS);
+				parent.setStatus(childIsOpen || isReopen ? TaskStatus.IN_PROGRESS : TaskStatus.PENDING);
 				AON_SOLUTIONS.saveTask(domain, api.getUser(), parent);
 			}
 		} else { // IS PARENT
-			
-//			workflow.setId(null).setTask(task.getId()).setType(TaskWorkflowType.CLOSE);
-			
-//			AON_SOLUTIONS.saveTaskWorkflow(domain, new User(), workflow); /// SAVE WORKFLOW
-			
+
 			AON_SOLUTIONS.getTaskStream(domain, api.getUser(), 
 				f-> f.getParentProperty().eq(task.getId())
-				.and(f.getStatusProperty().in(types.toArray(Byte[]::new)))
+				.and(f.getStatusProperty().in(pending))
 			)
 			.forEach(t->{
-				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus(TaskStatus.FINISHED));
+				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus( isReopen ? TaskStatus.PENDING : TaskStatus.FINISHED));
 			});
 		}
 	}

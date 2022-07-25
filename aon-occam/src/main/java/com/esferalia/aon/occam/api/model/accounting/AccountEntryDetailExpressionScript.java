@@ -9,7 +9,8 @@ public abstract class AccountEntryDetailExpressionScript<T> implements Serializa
 	
 	protected static final boolean DEBIT = true; 
 	protected static final boolean CREDIT= false;
-
+	protected static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo()";
+	
 	public static class AccountEntryDetailExpression implements Serializable {
 		
 		private static final long serialVersionUID = -2876540340281580397L;

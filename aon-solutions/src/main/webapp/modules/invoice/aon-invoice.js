@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
+	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
 	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
@@ -46,6 +46,7 @@ export class AonInvoice extends AonElement {
 	FILE;
 	fileOpened;
 
+	company;
 	rbanks;
 	series;
 	configuration;
@@ -88,7 +89,7 @@ export class AonInvoice extends AonElement {
 			const registry = this.getInvoice().isEmitida()
 				? this.getInvoice().getRegistry().id 
 				: company.id;
-
+			this.company = company;
 			this.getInvoice().surcharge = this.getInvoice().surcharge || company.surcharge;
 			this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || company.vatAccrualPayment;
 			if(registry) {
@@ -1947,6 +1948,7 @@ export class AonInvoice extends AonElement {
 		paymethod.id = this.FINANCE_PAYMETHOD + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
+		paymethod.setAlias("id", "name");
 		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
@@ -1954,13 +1956,18 @@ export class AonInvoice extends AonElement {
 			finance.paymethod = paymethod.value;
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
+			const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
+			if(pm.type === 'BANK_TRANSFER') {
+				getRegistryBanks(this.company.id).then(r => {
+					this.getElement(this.FINANCE_BANK_ACCOUNT + i).value = r[0] ? r[0].bank_account : "";
+				});	
+			}
 		});
 		let paymethodCell = table.addCell(paymethod);
 		paymethodCell.style.width = '25%';
 
 		getPaymethods({}).then(paymethods => {
-			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-			paymethod.options = JSON.stringify(pms);
+			paymethod.setOptions(paymethods);
 			paymethod.value = finance.paymethod;
 		});
 

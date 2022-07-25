@@ -254,15 +254,13 @@ const addTaskChilds = (task, row, documents, isCau) => {
 
       if (assigned) {
         const spanTwo = document.createElement(TAG.SPAN);
-        spanTwo.innerText = `Asignada a ${assigned}`;
+        const wg = workgroupDescription && assigned != workgroupDescription  ? `<b>${workgroupDescription}</b>`  : "";
+        spanTwo.innerHTML = `${wg} Asignada a <b>${assigned}</b>`;
         div.appendChild(spanTwo);
       }
 
-      let spanThree = document.createElement(TAG.SPAN);
-      spanThree.innerText =
-        firstLetters(AonDateUtils.setFullDate(t.creation_date)) +
-        " " +
-        AonDateUtils.setTime(t.creation_date);
+      const spanThree = document.createElement(TAG.SPAN);
+      spanThree.innerText = firstLetters(AonDateUtils.setFullDate(t.creation_date)) + " " +AonDateUtils.setTime(t.creation_date);
       div.appendChild(spanThree);
     });
     

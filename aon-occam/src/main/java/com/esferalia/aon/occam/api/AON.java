@@ -4295,6 +4295,12 @@ public class AON {
 	}
 	
 	// ------------------ ELABORATION
+
+	// ---------- ELABORATION STREAM
+		
+	public static Stream<Elaboration> getElaborationStream(Occam occam, ElaborationFilter filter) {
+		return getElaborationStream(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter);
+	}
 	
 	public static Stream<Elaboration> getElaborationStream(Domain domain, User user, ElaborationFilter filter) {
 		return getElaborationStream(domain.getName(), domain.getId(), user.getLogin(), filter);
@@ -4303,10 +4309,30 @@ public class AON {
 	public static Stream<Elaboration> getElaborationStream(Domain domain, String login, ElaborationFilter filter) {
 		return getElaborationStream(domain.getName(), domain.getId(), login, filter);
 	}
-	
+		
 	public static Stream<Elaboration> getElaborationStream(String domainName, Integer domainId, String login, ElaborationFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getWarehouse().getElaborationStream(ctx, filter);
+		}
+	}
+		
+	// ---------- ELABORATION LIST
+		
+	public static List<Elaboration> getElaborationList(Occam occam, ElaborationFilter filter, Options... options) {
+		return getElaborationList(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter, options);
+	}
+		
+	public static List<Elaboration> getElaborationList(Domain domain, User user, ElaborationFilter filter, Options... options) {
+		return getElaborationList(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+
+	public static List<Elaboration> getElaborationList(Domain domain, String login, ElaborationFilter filter, Options... options) {
+		return getElaborationList(domain.getName(), domain.getId(), login, filter, options);
+	}
+		
+	public static List<Elaboration> getElaborationList(String domainName, Integer domainId, String login, ElaborationFilter filter, Options... options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().getElaborationList(ctx, filter, options);
 		}
 	}
 	

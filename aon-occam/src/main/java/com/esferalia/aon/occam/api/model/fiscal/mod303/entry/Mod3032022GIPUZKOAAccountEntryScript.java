@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpression
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
 public class Mod3032022GIPUZKOAAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
-	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo(model)";
 
 	private static final long serialVersionUID = 2085902232416480013L;
 	
@@ -32,22 +31,22 @@ public class Mod3032022GIPUZKOAAccountEntryScript extends AccountEntryDetailExpr
 		details.add(new AccountEntryDetailExpression( true )
 				.setAccount("475000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("esComplementaria(model)?C41:0.0"));
+				.setExpression("esComplementaria()?C41:0.0"));
 		// A deducir.(exclusivamente en caso de autoliquidación complementaria) CREDIT	
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("esComplementaria(model)?C42:0.0"));
+				.setExpression("esComplementaria()?C42:0.0"));
 		// Resultado a pagar CREDIT
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("475000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?C43:0.0")); 
+				.setExpression("aIngresar()?C43:0.0")); 
 		// Resultado a devolver/compensar DEBIT
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?0.0:abs(C43)"));
+				.setExpression("aIngresar()?0.0:abs(C43)"));
 	}
 
 	@Override
