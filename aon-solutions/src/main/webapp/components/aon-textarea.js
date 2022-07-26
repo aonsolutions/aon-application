@@ -473,11 +473,11 @@ export class AonTextArea extends AonElement {
 			let div = parent || this.getSelectionForAdd();
 
 			let reader = await getReader(file).catch(()=>null);
+			
 			if(reader) {
-
  				// compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
 				if (reader.contentType && reader.contentType.indexOf("image") >= 0) {
-                    reader = await downscaleImage(reader, 1024, undefined, Infinity);
+                    reader = await downscaleImage(reader, 1024);
                 } 
 				
 				const fileId = Math.random().toString(36).substring(7);
