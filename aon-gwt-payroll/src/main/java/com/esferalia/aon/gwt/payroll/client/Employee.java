@@ -475,6 +475,29 @@ public abstract class Employee extends ResizeComposite {
 			onContractTypeChange(contractTypeStr);
 		}
 	}
+	
+	public void contractFireEventsWithOutValue() {
+		String contractTypeStr = String.valueOf(this.contractTypeLB.getSelectedValue());
+		
+		if(!AonStringUtils.equalsIgnoreCase(contractTypeStr, "-1")) {
+			Integer contractTypeInt = Integer.parseInt(contractTypeStr);
+			if(AonNumberUtils.between(contractTypeInt, 200, 400) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0))
+				showPartialTimeContract();
+			else
+				showElementsFullTimeContract();
+			
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				showEmployeesColective();
+			} else {
+				hideEmployeesColective();
+				onContractEmployeesColectiveChange(null);
+			}
+			
+			checkContracts401And501(contractTypeInt);
+			
+			updateModality(contractTypeInt);
+		}
+	}
 
 	@UiHandler("modality")
 	void onContractModelChangeValue(ChangeEvent event) {
