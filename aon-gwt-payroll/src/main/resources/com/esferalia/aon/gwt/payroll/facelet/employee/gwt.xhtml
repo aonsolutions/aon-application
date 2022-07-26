@@ -46,8 +46,7 @@
         //<![CDATA[
         	
         /* LOADS 'CLEAN.CSS' IF IT HAS BEEN REMOVED */
-        let styleSheets = [...document.styleSheets];
-        if (styleSheets.filter(sts => /^.*clean\/clean\.css$/.test(sts.href)) < 1) {
+        if ([...document.styleSheets].filter(sts => /^.*clean\/clean\.css$/.test(sts.href)).length < 1) {
             let head  = document.getElementsByTagName('head')[0];
             let link  = document.createElement('link');
             link.rel  = 'stylesheet';
