@@ -129,7 +129,7 @@ public class JooqContractPDF {
 	private static String getSepeIde(DSLContext dslContext, Integer contractId) {
 		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("IDE"))
+				.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
 				.fetch();
 		
 		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION);

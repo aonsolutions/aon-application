@@ -876,19 +876,6 @@ public abstract class EmployeeDraft extends Composite {
 			else
 				employee.createJourneyDurationInfo(contractData.getContractJourneyDuration().getJourneyText());
 			
-			try {
-				Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
-				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
-					employee.showEmployeesColective();
-					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
-				} else {
-					employee.hideEmployeesColective();
-					contractData.setEmployeesColective(null);
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			
 			if(null != contractData.getJourneyType()) {
 				setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
@@ -907,6 +894,19 @@ public abstract class EmployeeDraft extends Composite {
 			
 		} else
 			employee.showElementsFullTimeContract();
+		
+		try {
+			Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				employee.showEmployeesColective();
+				setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
+			} else {
+				employee.hideEmployeesColective();
+				contractData.setEmployeesColective(null);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		

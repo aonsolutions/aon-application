@@ -555,7 +555,7 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("SMI");
 		filterSet.add("HIDE");
 		filterSet.add("TODO");
-		filterSet.add("SEPE_IDE");
+		filterSet.add("SEPE_ID");
 		filterSet.add("IDE");
 		filterSet.add("COMUNICATION_DATE");
 		filterSet.add("ORIGINAL_START_DATE");
