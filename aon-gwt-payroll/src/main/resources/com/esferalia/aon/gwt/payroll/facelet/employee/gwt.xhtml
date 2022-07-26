@@ -31,7 +31,7 @@
 			margin: 0;
 		}
 	</style>
-
+	
 	<ui:include
 		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 
@@ -41,9 +41,22 @@
 		src="/com/esferalia/aon/gwt/payroll/facelet/employee/jsf.xhtml">
 		<ui:param name="edit" value="#{edit}" />
 	</ui:include>
-
+	
 	<script type="text/javascript">
         //<![CDATA[
+        	
+        /* LOADS 'CLEAN.CSS' IF IT HAS BEEN REMOVED */
+        let styleSheets = [...document.styleSheets];
+        if (styleSheets.filter(sts => /^.*clean\/clean\.css$/.test(sts.href)) < 1) {
+            let head  = document.getElementsByTagName('head')[0];
+            let link  = document.createElement('link');
+            link.rel  = 'stylesheet';
+            link.type = 'text/css';
+            link.href = '/aon_gwt_payroll/gwt/clean/clean.css';
+            link.media = 'all';
+            head.appendChild(link);
+        }
+        	
 		localStorage.removeItem('rootPanel');
 		localStorage.removeItem('aon_solutions');
 	    localStorage.removeItem('aon_session_id');
@@ -81,7 +94,7 @@
                         var parent = iframe.parentNode;
                         parent.removeChild(iframe);
                 }
-        }       
+        }
         
         //]]>
     </script>
