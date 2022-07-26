@@ -115,7 +115,7 @@ public class JooqActivitySummary {
 					.select()
 					.from(DOMAIN)
 					.where(DOMAIN.PARENT.eq(domain))
-					.and(DOMAIN.SCOPE.in(userScopes))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))
 					.fetchArray(DOMAIN.ID);
 	}
 

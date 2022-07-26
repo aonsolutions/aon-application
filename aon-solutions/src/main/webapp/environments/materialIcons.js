@@ -133,7 +133,8 @@ export const GROUP_OFF = 'group_off';
 export const GROUPS = 'groups';
 
 // ----- H
-export const SCHEDULE = 'schedule';
+export const HIGHLIGHT_OFF = 'highlight_off';
+
 // ----- I
 
 export const INBOX = 'inbox';
@@ -195,6 +196,7 @@ export const ROOM = 'room';
 // ----- S
 
 export const SAVE = 'save';
+export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';
