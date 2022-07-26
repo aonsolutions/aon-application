@@ -27,6 +27,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 
@@ -65,6 +68,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 				.getParameter("itOccupationalDisease");
 		String _itMaternity = request.getParameter("itMaternity");
 		String _itOther = request.getParameter("itOther");
+		String _user = request.getParameter("user");
 
 		Date startDate = null;
 		Date endDate = null;
@@ -81,9 +85,21 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 			String domainName = _domainName;
 			
 			boolean isParentDomain = !NumberUtils.isNumber(_parentDomainId);
+			
+			Integer user = null;
+			
+			try {				
+				User usr = AON.getUser(_domainName, AonNumberUtils.toint(_domainId), _user);
+				if (usr != null) {
+					user = usr.getId() > 0 ? usr.getId() : null;
+				}
+			} catch (Exception e) {
+				//user remains null
+			}
+			
 
 			List<ActivitySummaryObject> list = JooqActivitySummary
-					.getActivitySummary(null, domainName, isParentDomain, NumberUtils
+					.getActivitySummary(user, domainName, isParentDomain, NumberUtils
 							.toInt(_domainId), startDate, endDate, new Boolean(
 							_starts), new Boolean(_ends), new Boolean(_salary),
 							new Boolean(_salaryExtra), new Boolean(_salarySettle),
