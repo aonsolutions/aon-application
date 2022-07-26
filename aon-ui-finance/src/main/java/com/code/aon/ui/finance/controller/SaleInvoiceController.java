@@ -612,16 +612,16 @@ public class SaleInvoiceController extends InvoiceController {
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 				tbaiValidation(invoice);
 				
-				Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+				Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};				
 				if(invoice.getNumber() < 1) {
 					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
-					inv.setNumber(number);
 					invoice.setIssueDate(new Date());
-					invoice.setTaxDate(new Date());
+					invoice.setTaxDate(invoice.getTaxDate() != null && invoice.getTaxDate().after(new Date()) ? invoice.getTaxDate() : new Date());
+					inv.setNumber(number);
 					inv.setIssueDate(new Date());
-					inv.setTaxDate(new Date());
+					inv.setTaxDate(invoice.getTaxDate() != null && invoice.getTaxDate().after(new Date()) ? invoice.getTaxDate() : new Date());
 				}
 			
 				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
