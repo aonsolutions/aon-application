@@ -5,6 +5,7 @@ import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-l
 import Apps from '../../services/app.js';
 import * as OPTION from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
+import * as ACTION from '../actions.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -63,10 +64,23 @@ export class AonWarehouse extends AonElement {
 	}
 
 	aonElaboration() {
+		this.getApplication().removeFloatOption();
+		this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
 		this.getApplication().setContent(new AonMobileElaborationList());
+	}
+	
+	addElaboration(){
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile())d.width = '400px';
+		d.setTitle(MSG.NEW_ELABORATION);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
 	}
 
 	aonPackaging() {
+		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(new AonMobilePackaging());
 	}
 
