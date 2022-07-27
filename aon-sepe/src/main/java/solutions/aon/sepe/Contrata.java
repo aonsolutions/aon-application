@@ -665,7 +665,7 @@ public class Contrata {
 	
 	private static void sendContrataExtensionImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
 			ContractExtension contractExtension) 
-			throws SepeException, FailingHttpStatusCodeException, InterruptedException, MalformedURLException, IOException {
+			throws SepeException, FailingHttpStatusCodeException, InterruptedException, IOException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -686,7 +686,7 @@ public class Contrata {
 	        
 	        String cifTypeStr = Toolkit.getIdentityType(contractExtension.getCif()); 
 	        
-	        Integer cifType   = 0; 
+	        Integer cifType  = 0; 
 	        
 	        if( cifTypeStr.equals("1") ) {
 	        	cifType = 1;
@@ -730,7 +730,6 @@ public class Contrata {
 			form.getInputByName("cuentacotizacion2pro").setValueAttribute(ccc.substring(0,9));
 			form.getInputByName("cuentacotizacion3pro").setValueAttribute(ccc.substring(9));
 			
-			
 			String[] startDate = Toolkit.dateString(contractExtension.getStartDate());
 			form.getInputByName("diainiciopro").setValueAttribute(startDate[0]);
 			form.getInputByName("mesiniciopro").setValueAttribute(startDate[1]);
@@ -761,6 +760,7 @@ public class Contrata {
 		        String message = getSuccessMessage(htmlPage);
 				if(message!=null && message.contains("se ha realizado correctamente")) {
 					System.out.println(message);
+					return;
 				}
 	    	} else {
 	    		messageError = exist.get();
@@ -846,8 +846,9 @@ public class Contrata {
 		        handleSepeExceptions(htmlPage);
 		        
 		        String message = getSuccessMessage(htmlPage);
-				if(message!=null && message.contains("se ha realizado correctamente"))
+				if(message!=null && message.contains("se ha realizado correctamente")) {
 				     return message;
+				}
 	    	} else {
 	    		messageError = exist.get();
 	    	}
@@ -950,8 +951,9 @@ public class Contrata {
 		        handleSepeExceptions(htmlPage);
 		        
 		        String message = getSuccessMessage(htmlPage);
-				if(message!=null && message.contains("se ha realizado correctamente"))
-				     return message;
+				if(message!=null && message.contains("se ha realizado correctamente")) {					
+					return message;
+				}
 	    	} else {
 	    		messageError = exist.get();
 	    	}
