@@ -431,6 +431,7 @@ export const EnterpriseApps = [
   "bidoq",
   "selfconta",
   "saltra",
+  "bank"
 ];
 
 export const Apps = {
