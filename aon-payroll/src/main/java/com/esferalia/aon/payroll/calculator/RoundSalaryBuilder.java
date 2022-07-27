@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,7 +20,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.velocity.runtime.parser.node.GetExecutor;
 
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
@@ -36,12 +41,14 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 	
-
+	private static final BigDecimal THIRTY = BigDecimal.valueOf(30.00);
+	
 	private static class Deductions {
 		
 		private static class Deduction{
@@ -143,9 +150,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private static class Bonuses {
 		
 		private static class Bonus{
-			private BigDecimal amount;
+			private String name;
 			private Date endDate;
 			private Date startDate;
+			private BigDecimal amount;
 		}
 		
 		private ArrayList<Bonus> bonuses = new ArrayList<>();
@@ -155,18 +163,25 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			.map(d -> f.apply(d.amount)).reduce(ZERO, RoundSalaryBuilder::add);
 		}
 
-		private void addBonus(Date startDate, Date endDate, BigDecimal amount) {
-			getBonus(startDate, endDate)
+		private BigDecimal getTotal(String name, UnaryOperator<BigDecimal> f) {
+			return bonuses.stream()
+			.filter(d -> AonStringUtils.equals(d.name, name))
+			.map(d -> f.apply(d.amount)).reduce(ZERO, RoundSalaryBuilder::add);
+		}
+
+		private void addBonus(String name, Date startDate, Date endDate, BigDecimal amount) {
+			getBonus(name, startDate, endDate)
 			.ifPresentOrElse( 
 			bonus -> bonus.amount = add(bonus.amount,amount), 
-			() -> bonuses.add(newBonus(startDate, endDate, amount))
+			() -> bonuses.add(newBonus(name, startDate, endDate, amount))
 			)
 			;
 		}
 		
-		private Bonus newBonus(Date startDate, Date endDate, BigDecimal amount) {
+		private Bonus newBonus(String name, Date startDate, Date endDate, BigDecimal amount) {
 			
 			Bonus bonus = new Bonus();
+			bonus.name = name;
 			bonus.amount = amount;
 			bonus.endDate = endDate;
 			bonus.startDate = startDate;
@@ -174,9 +189,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		}
 
 
-		private Optional<Bonus> getBonus(Date startDate, Date endDate) {
+		private Optional<Bonus> getBonus(String name, Date startDate, Date endDate) {
 			for (Bonus bonus : bonuses) {
-				if (AonUtils.equals(bonus.endDate,endDate)
+				if (AonStringUtils.equals(bonus.name, name)
+					&& AonUtils.equals(bonus.endDate,endDate)
 					&& AonUtils.equals(bonus.startDate,startDate)
 					)
 					return Optional.of(bonus);
@@ -656,8 +672,28 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	@Override
 	public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
-		bonuses.addBonus(startDate, endDate, bigDecimalValue(amount));
-		BigDecimal rounded = f.apply(bigDecimalValue(amount));
+		String name = getName(bonus);
+		
+		BigDecimal value = bigDecimalValue(amount);
+
+		try {
+			if ( isLastDayOfMonth(endDate) ) {
+				BigDecimal constant = getConstant(bonus);
+				if ( constant != null  ) {
+					BigDecimal previous  = bonuses.getTotal(name, f);
+					BigDecimal calculated = f.apply(constant.divide(THIRTY, MathContext.DECIMAL128)).multiply(THIRTY);
+					if ( previous.add(value).compareTo(calculated) == 0 ){
+						value = constant.subtract(previous);
+					}
+				}
+			}
+		} catch ( Exception e ) {
+			
+		}
+
+		bonuses.addBonus(name, startDate, endDate, value);
+		
+		BigDecimal rounded = f.apply(value);
 		salaryBuilder.addBonus(doubleValue(rounded), description, startDate, endDate, bonus, context);
 	}
 
@@ -990,5 +1026,35 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		return irpfQuotasMap;
 	}
+	
+	private static String getName(IBonus bonus) {
+		String name = bonus.getName();
+		if ( AonStringUtils.isNotBlank(name))
+			return AonStringUtils.trim(name);
+		
+		return AonStringUtils.trim(bonus.getExpression());
+	}
+	
+	private static BigDecimal getConstant(IBonus bonus) {
+		String description = bonus.getDescription();
+		if ( AonStringUtils.isBlank(description) )
+			return null;
+		Pattern constantPattern = Pattern.compile("BON\\.P\\.F\\.EMPL\\.CUANTIA\\s*\\(\\s*(?<amount>[0-9,]+)\\s*\\)", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = constantPattern.matcher(description);
+		if ( !matcher.matches() )
+			return null;
+		
+		String amount = matcher.group("amount");
+		amount = AonStringUtils.replace(amount, ".", "");
+		amount = AonStringUtils.replace(amount, ",", ".");
+		return new BigDecimal(amount);
+	}
+	
+	private static boolean isLastDayOfMonth(Date date) {
+		int dayOfMonth = AonDateUtils.get(date, Calendar.DAY_OF_MONTH);
+		int lastDayOfMonth = AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH);
+		return dayOfMonth == lastDayOfMonth;
+	}
+	
 
 }
