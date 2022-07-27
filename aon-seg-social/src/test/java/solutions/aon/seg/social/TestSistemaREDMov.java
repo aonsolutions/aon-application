@@ -133,7 +133,7 @@ public class TestSistemaREDMov {
 	@Ignore
 	public void testCambioGrupCtz() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
-		    SistemaREDMov.cambioGrupCtz(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "03", new Date());
+		    SistemaREDMov.updateQuoteGroup(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "03", new Date());
 //		    "011101105360062"
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -144,7 +144,7 @@ public class TestSistemaREDMov {
 	@Ignore
 	public void testCambioOcupacion() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
-		    SistemaREDMov.cambioOcupacion(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "G", new Date());
+		    SistemaREDMov.updateOccupation(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "G", new Date());
 //		    "011101105360062"
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,7 +156,8 @@ public class TestSistemaREDMov {
 	@Ignore
 	public void testDeleteAltaConsolidada() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
-		    SistemaREDMov.altaConsolidadaDelete(certificateInputStream, "jg@FNMT", "pkcs12", null, "0111", "01105360062", "010022757387");
+		    SistemaREDMov.removeMovConsolidated(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, SituationType.ALTA, 
+		    		"0111", "01105360062", "010022757387", "16262835H", new Date());
 //		    "011101105360062"
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -169,7 +170,7 @@ public class TestSistemaREDMov {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
 			Date fecha=c.getTime();
-			SistemaREDMov.cambioContratoCoef(certificateInputStream,"jg@FNMT", "pkcs12", 
+			SistemaREDMov.updateContractCoef(certificateInputStream,"jg@FNMT", "pkcs12", 
 					"16262835H", //IPF
 					"0111", //REGIMEN
 					"01105360062", //CCC
