@@ -94,10 +94,6 @@ public class Model200 extends MainEntryPoint {
 //	private TabLayoutPanel tabLayout;
 //	private ScrollPanel breakdownPanel;
 	
-//	Model200Table table;
-//	DeckLayoutPanel deckPanel;
-//	SimpleLayoutPanel container;
-
 	public static Mod2002021ServiceAsync getMod2002021Service() {
 		if (mod2002021Service == null) {
 			Mod2002021ServiceAsync mod2002021ServiceRaw = GWT.create(Mod2002021Service.class);
@@ -172,7 +168,7 @@ public class Model200 extends MainEntryPoint {
 
 	public class Model200Callback implements IFiscalModelCallback<Mod200, Model200ModuleOptions> {
 		
-		// LO PONGO POR AHORA PARA COMPILAR LOS Model200*
+		// LO PONGO POR AHORA PARA COMPILAR LOS Model200xxxx anteriores
 		public void canceled() {
 			cleanErrorMessage();
 			declarationContainer.setWidget(model200Table);
@@ -249,11 +245,6 @@ public class Model200 extends MainEntryPoint {
 //			}
 		}
 
-//		public void onSelect(Model200ModuleOptions options, Mod200 mod200) {
-////			select(mod200, selectedIndexDeclared, selectedIndexAsset, tabPanelIndex);
-//			changeView(options, mod200);
-//		}
-		
 		public void reset(Model200ModuleOptions options, Mod200 mod200) {
 			// El botón inicializar, se utiliza a partir del 2020
 			if (mod200.getYear() == 2020)
@@ -371,7 +362,7 @@ public class Model200 extends MainEntryPoint {
 	
 	private void onSelect(Model200ModuleOptions options, Integer id ) {
 		LOGGER.info("OnSelect Model200 with a ID: " + options.getFiscalModelId());
-		MOD200_SERVICE.getMod200(options.getOccam(), id , new AsyncCallback<Mod200>() {
+		MOD200_SERVICE.getMod200(options.getOccam(), id, new AsyncCallback<Mod200>() {
 			@Override
 			public void onSuccess(Mod200 selected) {
 				if (selected == null) {

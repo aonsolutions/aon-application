@@ -22,8 +22,6 @@ public class Page17 extends PageAbs {
 
 	public Page17( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();		
-		initializeTable();		
 	}
 
 	@Override
@@ -152,7 +150,5 @@ public class Page17 extends PageAbs {
 		table.setWidget(0, 0, desc);
 		table.getFlexCellFormatter().setColSpan(0, 0, 4);
 	}
-	
-	@Override
-	protected void populate() {}
+
 }

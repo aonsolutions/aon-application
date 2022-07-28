@@ -254,7 +254,7 @@ public class Mod2002016Writer {
 			rpte = mod200.getUteParticipations().get(index).getRepresenStr();
 			fj = mod200.getUteParticipations().get(index).getEntity();
 			
-			// FALTA - Campo para R/X Residente/No residente, que se utiliza cuando se marca la casilla 013
+			// Campo para R/X Residente/No residente: No se utiliza
 			//rx = mod200.getDoubleValue(Mod2002016Key.C0014)==1?mod200.getUteParticipations().get(index).get
 			
 			name = mod200.getUteParticipations().get(index).getName();			
@@ -2610,7 +2610,7 @@ public class Mod2002016Writer {
 				,(line,mod200, label) -> line.append(" ")
 				,(line,mod200, label) -> {
 					
-					// [...] FALTA - NO ESTA EN EL MODELO - Operaciones fusión, escisión, canje de valores.
+					// [...] NO ESTA EN EL MODELO - Operaciones fusión, escisión, canje de valores.
 					for (int i=0;i<5;i++) {
 						line.append(AonFiscalFileUtils.spaces( 1)); 
 						line.append(AonFiscalFileUtils.spaces( 9)); 
@@ -2692,7 +2692,7 @@ public class Mod2002016Writer {
 				}
 			})
 		
-		// [...] FALTA - NO ESTA EN EL MODELO - Página 25: Régimen especial de transparencia fiscal internacional
+		// [...] NO ESTA EN EL MODELO - Página 25: Régimen especial de transparencia fiscal internacional
 		
 		,PAG26 ("T20026000", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
@@ -2883,7 +2883,7 @@ public class Mod2002016Writer {
 	
 	public static void fillWriter(Mod2002016 mod200, Writer line) throws IOException {
 		
-		// FALTA - Hay una incoherencia en el formato del fichero, la etiqueta la pone
+		// Hay una incoherencia en el formato del fichero, la etiqueta la pone
 		// de longitud 17, pero la etiqueta que especifica solo tiene 16, el año pasado
 		// llevaba un cero detras del año y este año no lo lleva, pero no han actualizado
 		// la longitud del campo
@@ -2892,7 +2892,7 @@ public class Mod2002016Writer {
 		for (Pages2016 page : Pages2016.values()) {     			
 			page.fillPage(mod200, line);			
 		}
-		// FALTA - IDEM etiqueta de inicio
+		// IDEM etiqueta de inicio
 		//line.append("</T2000"+mod200.getYear()+"0A0000>");  // Etiqueta fin de fichero
 		line.append("</T2000"+mod200.getYear()+"0A0000>");  // Etiqueta fin de fichero
 		line.append(AonStringUtils.CR_LF); // Fin de registro. Constante CRLF

@@ -12,8 +12,6 @@ public class Page06 extends PageAbs {
 	
 	public Page06( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();		
 	}
 	
 	@Override
@@ -22,9 +20,6 @@ public class Page06 extends PageAbs {
 		paintFooterNote(basePanel,"(*) El estado de cambios en el patrimonio neto ser\u00E1 de cumplimentaci\u00F3n voluntaria si se utiliza el modelo abreviado o PYMES del PGC.");
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
-	
-	@Override
-	protected void populate() {}
 	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {

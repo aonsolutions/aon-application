@@ -5,13 +5,8 @@ import static com.esferalia.aon.jooq.tables.FsModel200Detail.FS_MODEL200_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsModel200Registry.FS_MODEL200_REGISTRY;
 import static com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021Initialization.INITIALIZE_EXPRESSION_MAP;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.jooq.Result;
 
@@ -53,8 +48,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2020.Mod2002020DAO;
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.jaxb.MOD2002021;
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.jaxb.Mod2002021toMOD2002021;
 import com.esferalia.aon.occam.mod200.server.format.Mod2002021Import2020;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -66,7 +59,7 @@ public class Mod2002021DAO  {
 	
 	@FunctionalInterface
 	private static interface IPopulater {
-		boolean populate(Mod2002021 mod,FsModel200RegistryRecord reg);
+		boolean populate(Mod2002021 mod, FsModel200RegistryRecord reg);
 	}
 
 	private static enum Mod2002021RegistryType {
@@ -98,7 +91,6 @@ public class Mod2002021DAO  {
 				.setOtherAmounts(reg.getOtherAmounts())
 				.setResult(reg.getResult())
 				))
-		        
 		,PARTICPATION_IN( 
 			(mod,reg) -> mod.getParticipationsIn().add(new Mod200CompanyParticipation()				
 				.setDocument(reg.getDocument())
@@ -151,6 +143,7 @@ public class Mod2002021DAO  {
 		;
 		
 		private IPopulater populater;
+		
 		private Mod2002021RegistryType( IPopulater populater){
 			this.populater = populater;
 		}
@@ -158,6 +151,7 @@ public class Mod2002021DAO  {
 		private boolean accept(FsModel200RegistryRecord reg) {
 			return reg.getType() == this.ordinal();
 		}
+
 		private void _populate(Mod2002021 mod,FsModel200RegistryRecord reg) {
 			if ( accept(reg) ) {
 				this.populater.populate(mod, reg);
@@ -175,6 +169,7 @@ public class Mod2002021DAO  {
 			if (i == null) return null;
 			return safeValueOf( i.intValue() ); 
 		}
+		
 		private static Mod2002021RegistryType safeValueOf( Integer i ) {
 			if (i == null) return null;
 			if (i < 0 || i >= Mod2002021RegistryType.values().length) return null;
@@ -574,6 +569,7 @@ public class Mod2002021DAO  {
 		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
 		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
+		 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte(mod200.getStatus()))
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -619,7 +615,7 @@ public class Mod2002021DAO  {
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
-		Mod2002021 mod200 =  populateMod200(ctx,record);
+		Mod2002021 mod200 = populateMod200(ctx,record);
 		initializeActiveMap(mod200);
 		return mod200;
 	}
@@ -711,6 +707,7 @@ public class Mod2002021DAO  {
 		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry()));
 		mod200.setUltimateName(record.getUltimateName());
 		mod200.setUltimateCountry(Country.safeValueOf(record.getUltimateCountry()));
+		mod200.setStatus(FiscalStatus.safeValueOf(record.getStatus()));
 		return mod200;
 	}
 	
@@ -998,11 +995,8 @@ public class Mod2002021DAO  {
 			}
 			
 			// Actualmente las casillas calculadas solo son de Mod2002021Key
-//			Date ini = new Date();
-//			System.out.println("***** COMPUTE INI " + ini);
 			DoubleVariableEx v = null;
 			for (Mod2002021Key k : Mod2002021Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
-//				System.out.println("COMPUTE KEY="+k.toString()+"="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.get(k));
 				String stringKey = k.toString();
 				DoubleVariableEx existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
@@ -1022,28 +1016,32 @@ public class Mod2002021DAO  {
 					}
 				}
 			}
-//			Date fin = new Date();			
-//			System.out.println("***** COMPUTE FIN. TIME "+ (fin.getTime()-ini.getTime()) + "ms. TOTAL REGISTROS MAP="+Mod2002021Compute.COMPUTE_EXPRESSION_MAP.size());
 			
+			// Grabar Importe a ingresar o devolver (amount) y tipo de ingreso o devolucion (result_type, dev_type y pay_type)  
 			v = mod200.getVariable(Mod2002021Key.BN621);
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
+				// Cuota cero
 				mod200.setResultType("N");
 				mod200.setAmount( 0.0 );
 				mod200.setDevType(null);
 				mod200.setPayType(null);
 			} else if (AonMathUtils.round(v.getValue()) < 0.0) {
+				// Devolución
 				mod200.setResultType("D");
 				mod200.setAmount( AonMathUtils.round( v.getValue() * -1));
 				mod200.setDevType(AonStringUtils.isEmpty(mod200.getDevType())?"D":mod200.getDevType());
 				mod200.setPayType(null);
 			} else {
+				// Ingreso
 				mod200.setResultType("I");
 				mod200.setAmount( v.getValue() );
 				mod200.setPayType(AonStringUtils.isEmpty(mod200.getPayType())?"H":mod200.getPayType());
 				mod200.setDevType(null);
 			}
+			
 			return mod200;
+			
 		} catch (Throwable e) {
 			System.out.println( "*** ERROR " + e.getMessage());
 			throw new AonCoreException(e);
@@ -1106,22 +1104,9 @@ public class Mod2002021DAO  {
 		ctx.put(Mod2002021Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
-	public static String dumpAEAT(Mod2002021 mod200)  {
-		try {
-			MOD2002021 mod = Mod2002021toMOD2002021.getMOD2002021(mod200);
-			StringWriter writer = new StringWriter();
-			JAXBContext context = JAXBContext.newInstance(Mod2002021.class);
-			Marshaller um = context.createMarshaller();
-			um.setProperty("jaxb.encoding", "ISO-8859-1");
-			um.marshal(mod,writer);
-			return writer.toString();
-		} catch (JAXBException e) {
-			throw new AonCoreException(e.getMessage(),e);
-		}				
-	}
-
 	public static Mod2002021 importMod2002020(AONContext ctx, Mod2002021 mod200) {
 		Mod2002020 old = Mod2002020DAO.getByYear(ctx, 2020);
 		return Mod2002021Import2020.import2020(old);
-	}	
+	}
+	
 }

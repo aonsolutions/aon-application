@@ -13,8 +13,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -23,37 +21,38 @@ import com.google.gwt.user.client.ui.Widget;
 public class ParticipationPanel extends AonCustomDialog {
 	
 	public static interface ParticipationPanelCallback {
-		void onAccept(int index, Mod200CompanyParticipation cp);
+		void onAccept(int index, Mod200CompanyParticipation cp, boolean modified);
 		void onCancel();
 		default void onClose() {
 			this.onCancel();
 		}
 	}
 	
-	private AonDocumentTextBox document = new AonDocumentTextBox();
-	private AonTextBox name = new AonTextBox();
-	private ProvinceCountryListBox province = new ProvinceCountryListBox();
-	private AonDoubleBox percent = new AonDoubleBox();
-	private AonDoubleBox nominalValue = new AonDoubleBox();
-	private AonDoubleBox bookValue = new AonDoubleBox();
-	private AonDoubleBox incomes = new AonDoubleBox();
-	private AonDoubleBox aValue = new AonDoubleBox(); // a) Corrección de valor incluida en pérdidas y ganancias del período                        
-	private AonDoubleBox bValue = new AonDoubleBox(); // b) Eliminación del deterioro contable incluido en P y G                                
-	private AonDoubleBox cValue = new AonDoubleBox(); // c) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
-	private AonDoubleBox dValue = new AonDoubleBox(); // d) Ajuste por la disminución de valor originada por criterio de valor razonable        
-	private AonDoubleBox eValue = new AonDoubleBox(); // e) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d)         
-	private AonDoubleBox fValue = new AonDoubleBox(); // f) Saldo de correcciones fiscales                                                      
-	private AonDoubleBox capital = new AonDoubleBox();
-	private AonDoubleBox reserve = new AonDoubleBox();
-	private AonDoubleBox otherAmounts = new AonDoubleBox();
-	private AonDoubleBox result = new AonDoubleBox();
+	private AonDocumentTextBox document;
+	private AonTextBox name;
+	private ProvinceCountryListBox province;
+	private AonDoubleBox percent;
+	private AonDoubleBox nominalValue;
+	private AonDoubleBox bookValue;
+	private AonDoubleBox incomes;
+	private AonDoubleBox aValue; // a) Corrección de valor incluida en pérdidas y ganancias del período                        
+	private AonDoubleBox bValue; // b) Eliminación del deterioro contable incluido en P y G                                
+	private AonDoubleBox cValue; // c) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
+	private AonDoubleBox dValue; // d) Ajuste por la disminución de valor originada por criterio de valor razonable        
+	private AonDoubleBox eValue; // e) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d)         
+	private AonDoubleBox fValue; // f) Saldo de correcciones fiscales                                                      
+	private AonDoubleBox capital;
+	private AonDoubleBox reserve;
+	private AonDoubleBox otherAmounts;
+	private AonDoubleBox result;
 	
 	private ParticipationPanelCallback callback;
 	private int index;
+	private boolean modified; 
 	
 	private FlowPanel rootPanel = new FlowPanel();
 
-	public ParticipationPanel( ParticipationPanelCallback callback) {
+	public ParticipationPanel(ParticipationPanelCallback callback) {
 		this.callback = callback;		
 		setWidth("900px");
 		setVisible(false);
@@ -64,10 +63,23 @@ public class ParticipationPanel extends AonCustomDialog {
 		paint();
 	}
 
-	public void dump(int index, Mod200CompanyParticipation companyParticipation) {
+	public boolean isModified() {
+		return modified;
+	}
+
+	public void setModified(boolean modified) {
+		this.modified = modified;		
+	}
+
+	public void dump(int index, Mod200CompanyParticipation companyParticipation, boolean isEnabled) {
+		
 		this.index = index;
+		setModified(false);
+		
+		// Asignar valores
 		this.document.setValue(companyParticipation.getDocument());
 		this.name.setValue(companyParticipation.getName());
+		this.province.setSelectedIndex(0);
 		int idx = companyParticipation.getProvince();
 		if (idx > 0 && idx < Province.values().length) {
 			this.province.setSelectedIndex(idx);
@@ -91,6 +103,26 @@ public class ParticipationPanel extends AonCustomDialog {
 		this.reserve.setValue(companyParticipation.getReserve());
 		this.otherAmounts.setValue(companyParticipation.getOtherAmounts());
 		this.result.setValue(companyParticipation.getResult());
+		
+		// Habilitar/Deshabilitar 
+		this.document.setEnabled(isEnabled);
+		this.name.setEnabled(isEnabled);
+		this.province.setEnabled(isEnabled);
+		this.percent.setEnabled(isEnabled);
+		this.nominalValue.setEnabled(isEnabled);
+		this.bookValue.setEnabled(isEnabled);
+		this.incomes.setEnabled(isEnabled);
+		this.aValue.setEnabled(isEnabled);
+		this.bValue.setEnabled(isEnabled);
+		this.cValue.setEnabled(isEnabled);
+		this.dValue.setEnabled(isEnabled);
+		this.eValue.setEnabled(false); // e = a + b + c + d
+		this.fValue.setEnabled(isEnabled);
+		this.capital.setEnabled(isEnabled);
+		this.reserve.setEnabled(isEnabled);
+		this.otherAmounts.setEnabled(isEnabled);
+		this.result.setEnabled(isEnabled);
+		
 	}
 
 	@Override
@@ -99,18 +131,25 @@ public class ParticipationPanel extends AonCustomDialog {
 	}
 	
 	public void onCancel() {
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.cancelAction(), new AonConfirmDialogCallback() {
-			
-			@Override
-			public void onCancel() {}
-			
-			@Override
-			public void onAccept() {
-				callback.onCancel();
-				hide();
-			}
-		});
+		
+		if (isModified()) {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm(AON.MSG.cancelAction(), new AonConfirmDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					callback.onCancel();
+					hide();
+				}
+			});
+		} else {
+			callback.onCancel();
+			hide();
+		}
+		
 	}
 	
 	public void onAccept() {
@@ -132,7 +171,6 @@ public class ParticipationPanel extends AonCustomDialog {
 		companyParticipation.setAccountingElimination(this.bValue.getValue());
 		companyParticipation.setValuesElimination(this.cValue.getValue());
 		companyParticipation.setAdjustmentDecrease(this.dValue.getValue());
-		//companyParticipation.setCorrectionEffect(this.eValue.getValue());
 		companyParticipation.setCorrectionEffect(this.aValue.getValue()+this.bValue.getValue()+this.cValue.getValue()+this.dValue.getValue());
 		companyParticipation.setCorrectionsBalance(this.fValue.getValue());
 		
@@ -140,7 +178,8 @@ public class ParticipationPanel extends AonCustomDialog {
 		companyParticipation.setReserve(this.reserve.getValue());
 		companyParticipation.setOtherAmounts(this.otherAmounts.getValue());
 		companyParticipation.setResult(this.result.getValue());
-		callback.onAccept(index,companyParticipation);
+		
+		callback.onAccept(index, companyParticipation, isModified());
 		this.hide();
 	}
 	
@@ -163,10 +202,24 @@ public class ParticipationPanel extends AonCustomDialog {
 		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab1.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab1);
-
+		
+		document = new AonDocumentTextBox();
 		document.setVisibleLength(9);
+		document.addValueChangeHandler(event -> {
+			setModified(true);
+		});
+		
+		name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(30);
+		name.addValueChangeHandler(event -> {
+			setModified(true);
+		});
+		
+		province = new ProvinceCountryListBox();
+		province.addChangeHandler(event -> {
+			setModified(true);
+		});		
 		
 		addRow(tab1, AON.MSG.nif(), document);
 		addRow(tab1, AON.MSG.companyName(), name);
@@ -181,58 +234,71 @@ public class ParticipationPanel extends AonCustomDialog {
 		tab2.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab2);
 		
+		percent = new AonDoubleBox();
 		percent.setMaxLength(6);
+		percent.addValueChangeHandler(event -> {
+			setModified(true);
+		});
+		
+		nominalValue = new AonDoubleBox();
+		nominalValue.addValueChangeHandler(event -> {
+			setModified(true);
+		});
+		
+		bookValue = new AonDoubleBox();
+		bookValue.addValueChangeHandler(event -> {
+			setModified(true);
+		});
+		
+		incomes = new AonDoubleBox();
+		incomes.addValueChangeHandler(event -> {
+			setModified(true);
+		});		
 		
 		addRow(tab2, AON.MSG.partMsg4(), percent);
 		addRow(tab2, Mod2002021Key.P1501.getDescription(), nominalValue);
 		addRow(tab2, Mod2002021Key.P1502.getDescription(), bookValue);
 		addRow(tab2, Mod2002021Key.P1503.getDescription()+" (*)", incomes);
 		
-		String text = "(*) Deben incluirse tambi\u00E9n los datos correspondientes a los dividendos de sociedades que a fin de per\u00EDodo no cumplan el m\u00EDnimo de participaci\u00F3n (5% \u00F3 1% si cotizan), pero que s\u00ED lo alcanzaban cuando se percibi\u00F3 el dividendo.";
-		addSmallLabel(text);
+		addSmallLabel("(*) Deben incluirse tambi\u00E9n los datos correspondientes a los dividendos de sociedades que a fin de per\u00EDodo no cumplan el m\u00EDnimo de participaci\u00F3n (5% \u00F3 1% si cotizan), pero que s\u00ED lo alcanzaban cuando se percibi\u00F3 el dividendo.");
 		
 		// Correcciones valorativas por deterioro y cambio de valor razonable
 		
 		rootPanel.add(getSubtitle(AON.MSG.partMsg8()));
 		
-		text = "(Cumplimente este apartado para todas las participaciones en las que se haya tenido un porcentaje superior al 5% -\u00F3 al 1% si cotizan- a lo largo del per\u00EDodo, y cuyo valor nominal supere los 100.000 euros, incluyendo por tanto las participaciones transmitidas en el ejercicio. DT 16 LIS)";
-		addSmallLabel(text);
+		addSmallLabel("(Cumplimente este apartado para todas las participaciones en las que se haya tenido un porcentaje superior al 5% -\u00F3 al 1% si cotizan- a lo largo del per\u00EDodo, y cuyo valor nominal supere los 100.000 euros, incluyendo por tanto las participaciones transmitidas en el ejercicio. DT 16 LIS)");
 		
 		AonDisplayTable tab3 = new AonDisplayTable();
 		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab3.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab3);
 		
-		aValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
-			}
+		aValue = new AonDoubleBox();                         
+		aValue.addValueChangeHandler(event -> {
+			eValueCompute();
 		});
-		bValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
-			}
-		});
-		cValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
-			}
-		});
-		dValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
-			}
-		});		
 		
-		eValue.setEnabled(false); // e = a + b + c + d
+		bValue = new AonDoubleBox();                                 
+		bValue.addValueChangeHandler(event -> {
+			eValueCompute();
+		});
+
+		cValue = new AonDoubleBox(); 
+		cValue.addValueChangeHandler(event -> {
+			eValueCompute();
+		});
+		
+		dValue = new AonDoubleBox();         
+		dValue.addValueChangeHandler(event -> {
+			eValueCompute();
+		});
+		
+		eValue = new AonDoubleBox();          
+
+		fValue = new AonDoubleBox();                                                       
+		fValue.addValueChangeHandler(event -> {
+			setModified(true);
+		});	
 		
 		addRow(tab3, Mod2002021Key.P1504.getDescription()+" (**)", aValue);
 		addRow(tab3, Mod2002021Key.P1506.getDescription(), bValue);
@@ -241,21 +307,40 @@ public class ParticipationPanel extends AonCustomDialog {
 		addRow(tab3, Mod2002021Key.P1507.getDescription(), eValue);
 		addRow(tab3, Mod2002021Key.P1508.getDescription(), fValue);
 		
-		text = "(**) Incluya la variaci\u00F3n del deterioro y, en general, los cambios valorativos con efectos sobre el resultado del per\u00EDodo, con el signo con que opere en el c\u00E1lculo del resultado. "
-				+ "Incluya tambi\u00E9n, en su caso, el efecto sobre el \"resultado por enajenaci\u00F3n de participaciones\" por la aplicaci\u00F3n de los deterioros acumulados (y de los cambios valorativos acumulados, en general). "
-				+ "Ponga el signo con que opere en la cuenta de P y G: (-) = deterioro; (+) = reversi\u00F3n del deterioro o aplicaci\u00F3n del deterioro por transmisi\u00F3n de la participaci\u00F3n. En el caso de cambios de valor positivos, signos opuestos a los indicados.";
+		String text = "(**) Incluya la variaci\u00F3n del deterioro y, en general, los cambios valorativos con efectos sobre el resultado del per\u00EDodo, con el signo con que opere en el c\u00E1lculo del resultado. "
+					+ "Incluya tambi\u00E9n, en su caso, el efecto sobre el \"resultado por enajenaci\u00F3n de participaciones\" por la aplicaci\u00F3n de los deterioros acumulados (y de los cambios valorativos acumulados, en general). "
+					+ "Ponga el signo con que opere en la cuenta de P y G: (-) = deterioro; (+) = reversi\u00F3n del deterioro o aplicaci\u00F3n del deterioro por transmisi\u00F3n de la participaci\u00F3n. En el caso de cambios de valor positivos, signos opuestos a los indicados.";
 		addSmallLabel(text);		
 		
 		// Datos adicionales de la participada
 		
 		rootPanel.add(getSubtitle(AON.MSG.partMsg13()));
-		text = "(S\u00F3lo se deber\u00E1 cumplimentar obligatoriamente este apartado si la entidad participada es extranjera y el deterioro sufrido se determina en relaci\u00F3n al patrimonio neto de la entidad participada)";
-		addSmallLabel(text);
+		addSmallLabel("(S\u00F3lo se deber\u00E1 cumplimentar obligatoriamente este apartado si la entidad participada es extranjera y el deterioro sufrido se determina en relaci\u00F3n al patrimonio neto de la entidad participada)");
 		
 		AonDisplayTable tab4 = new AonDisplayTable();
 		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab4.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(tab4);
+		
+		capital = new AonDoubleBox();
+		capital.addValueChangeHandler(event -> {
+			setModified(true);
+		});
+		
+		reserve = new AonDoubleBox();
+		reserve.addValueChangeHandler(event -> {
+			setModified(true);
+		});		
+
+		otherAmounts = new AonDoubleBox();
+		otherAmounts.addValueChangeHandler(event -> {
+			setModified(true);
+		});		
+
+		result = new AonDoubleBox();
+		result.addValueChangeHandler(event -> {
+			setModified(true);
+		});		
 		
 		addRow(tab4, AON.MSG.partMsg14(), capital);
 		addRow(tab4, AON.MSG.partMsg15(), reserve);
@@ -292,6 +377,11 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 	}
 	
+	private void eValueCompute() {
+		eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
+		setModified(true);
+	}
+	
 	private Label getSubtitle(String text) {
 		Label subtitle = new Label(text);
 		subtitle.setStyleName(AON.CSS.aonMarginTop());
@@ -302,7 +392,7 @@ public class ParticipationPanel extends AonCustomDialog {
 		return subtitle;
 	}
 	
-	public void addRow(AonDisplayTable tab, String label, Widget widget) {
+	private void addRow(AonDisplayTable tab, String label, Widget widget) {
 		tab.addRow()
 			.addCell(new Label(label), AON.CSS.aonWidth600(), AON.CSS.aonBorderBottom())
 			.addCell(widget);
@@ -315,6 +405,5 @@ public class ParticipationPanel extends AonCustomDialog {
 		label.addStyleName(AON.CSS.aonBlockCenter());
 		rootPanel.add(label);
     }
-    
 
 }

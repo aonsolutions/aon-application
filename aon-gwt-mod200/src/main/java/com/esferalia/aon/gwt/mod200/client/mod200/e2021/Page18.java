@@ -37,8 +37,6 @@ public class Page18 extends PageAbs {
 
 	public Page18( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 		
 		callback.getMod200Object().register( new IMod200ChangeListener() {
 			
@@ -53,15 +51,6 @@ public class Page18 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		paint();		
-	}
-	
-	@Override
-	protected void dump() {
-		super.dump();
-	}
-	
-	@Override
-	protected void populate() {
 	}
 	
 	@Override
@@ -143,6 +132,7 @@ public class Page18 extends PageAbs {
 				callback.getMod200Object().getMod200().getUteBases().get(idx).setBase(base.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(base);
 			
 			AonDoubleBox percent = new AonDoubleBox();
 			percent.setMaxLength(6);
@@ -152,6 +142,7 @@ public class Page18 extends PageAbs {
 				callback.getMod200Object().getMod200().getUteBases().get(idx).setPercent(percent.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(percent);
 			
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -160,6 +151,7 @@ public class Page18 extends PageAbs {
 				paintB6Panel();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 
 			tabB6.addRow()
 				.addCell(base)
@@ -175,6 +167,7 @@ public class Page18 extends PageAbs {
 			paintB6Panel();
 		});
 		tabB6.addRow().addCell(addButtonB6);
+		otherInputs.add(addButtonB6);
 		
 		panelB6.add(tabB6);
 		
@@ -206,6 +199,7 @@ public class Page18 extends PageAbs {
 				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setDocument(document.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(document);
 			
 			CheckBox rep = new CheckBox();
 			rep.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).isRepresentative());
@@ -216,6 +210,7 @@ public class Page18 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(rep);
 			
 			AonTextBox name = new AonTextBox();
 			name.setMaxLength(30);
@@ -225,6 +220,7 @@ public class Page18 extends PageAbs {
 				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setName(name.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(name);
 			
 			ProvinceCountryListBox provinceCountry = new ProvinceCountryListBox();
 			provinceCountry.setSelectedIndex(0);
@@ -235,7 +231,7 @@ public class Page18 extends PageAbs {
 				provinceCountry.setSelectedIndex(p);				
 			} else if (c != null) {				
 				provinceCountry.setSelectedIndex(Province.values().length + c.ordinal());
-			}			
+			}	
 			provinceCountry.addChangeHandler(new ChangeHandler() {			
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -250,6 +246,7 @@ public class Page18 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(provinceCountry);
 			
 			Label nominal = new Label();
 			nominal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
@@ -271,6 +268,7 @@ public class Page18 extends PageAbs {
 	    		nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
 				callback.markAsDirty();
 			});
+			otherInputs.add(percent);
 			
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -279,6 +277,7 @@ public class Page18 extends PageAbs {
 				paintB11Panel();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 	
 			tabB11.addRow()
 				.addCell(document)
@@ -298,6 +297,7 @@ public class Page18 extends PageAbs {
 			callback.getMod200Object().getMod200().getUteParticipations().add(new UteParticipation());
 			paintB11Panel();
 		});
+		otherInputs.add(addButtonB11);
 		
 		panelB11.add(tabB11);
 		panelB11.add(addButtonB11);

@@ -18,8 +18,6 @@ public class Page15 extends PageAbs {
 
 	public Page15( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 
 	@Override
@@ -91,10 +89,6 @@ public class Page15 extends PageAbs {
 		paintFooterNote(basePanel, FOOTER_538_1, FOOTER_538_2);
 		
 	}
-	
-	@Override
-	protected void populate() {}
-	
 	
 	@Override
 	protected boolean isAvailable() {
