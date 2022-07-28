@@ -15,7 +15,7 @@
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
-
+	
 	<style>
 		body {
 			margin: 0;
@@ -31,6 +31,18 @@
 
 	<script type="text/javascript">
 	<![CDATA[
+		
+		/* LOADS 'CLEAN.CSS' IF IT HAS BEEN REMOVED */
+        if ([...document.styleSheets].filter(sts => /^.*clean\/clean\.css$/.test(sts.href)).length < 1) {
+            let head  = document.getElementsByTagName('head')[0];
+            let link  = document.createElement('link');
+            link.rel  = 'stylesheet';
+            link.type = 'text/css';
+            link.href = '/aon_gwt_fiscal/gwt/clean/clean.css';
+            link.media = 'all';
+            head.appendChild(link);
+        }
+		
 	 	function getCurrentDomain() {
 			return #{gwtDomain};
 		}

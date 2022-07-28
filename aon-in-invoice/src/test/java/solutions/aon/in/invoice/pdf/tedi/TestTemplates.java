@@ -292,6 +292,13 @@ public enum TestTemplates {
 			@Override public Integer getAmountNumber(){ return 3; }
 			@Override public Double getTotal(){ return 25.41; }
 		},
+		MODELOS_EMAR ("/solutions/aon/in/invoice/pdf/ModelosEMAR.pdf") {
+			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2021, 02, 01, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+			@Override public int getDocumentsNumber(){ return 2; }
+			@Override public int getDatesNumber(){ return 1; }
+			@Override public Integer getAmountNumber(){ return 3; }
+			@Override public Double getTotal(){ return 25.41; }
+		},
 				
 		;
 

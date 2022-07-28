@@ -11,6 +11,9 @@ import static com.esferalia.aon.occam.api.model.type.DeductionType.BONUS;
 import static com.esferalia.aon.occam.api.model.type.DeductionType.JOB_TRAINING;
 import static com.esferalia.aon.occam.api.model.type.DeductionType.UNEMPLOYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -55,6 +58,8 @@ import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.jooq.tables.ContractCost;
+import com.esferalia.aon.jooq.tables.records.ContractCostRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
@@ -1620,6 +1625,236 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(341.66, totalBonus, DELTA);
 
 			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcplnssVIIBonusWithATEPI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssVII.pdf") ){
+			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+			calendar.set(Calendar.YEAR,2021);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01022021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,28);
+			Date _28022021 = calendar.getTime();
+
+			ssBonuses.stream().forEach(b -> {
+				assertEquals(b.getDescription(),_01022021, b.getStartDate());
+				assertEquals(b.getDescription(),_28022021, b.getEndDate());
+			});
+
+			ssBonuses.stream().forEach(b -> {
+				System.out.println(b.getFormula());
+			});
+
+			java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(_01022021));
+			java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(_01022021));
+
+			Connection connection = getConnection();
+			AONContext aonContext = new AONContext(connection);
+			ContractRecord contract = newContract(aonContext, toSQL(startDate) , ssBonuses, Collections.emptyList());
+			PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
+			addPayment(aonContext, contract, prestIT, 
+					String.format("BASE_REGULADORA * 0.75 * %s * (isdef %s ? %s : 1.00)",  OCCUPATIONAL_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
+					String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+					);
+			ContractCostRecord atepCost = 
+			addCost(aonContext, contract, startDate, endDate, 
+					"-1 * DIAS_ENFERMEDAD_PROFESIONAL * BASE_REGULADORA * 0.75", "PREST. IT A CARGO DEL INSS", "ATEP_E");
+			atepCost.setType((byte)8);
+			atepCost.update();
+			
+			java.sql.Date startItDate = add(startDate, Calendar.DAY_OF_MONTH, 5); 
+			java.sql.Date endItDate = add(startItDate, Calendar.DAY_OF_MONTH, 14); 
+			addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startItDate, endItDate, 1500.00 / 30.00 );
+			
+			
+			ISQLContractSalaryCalculatorContext ctx = 
+			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			RoundSalaryBuilder<Salary> salaryBuilder = 
+			new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP));
+			
+			SmartContractSalaryCalculator<Salary> builder = 
+			new SmartContractSalaryCalculator<Salary>(salaryBuilder);
+			Salary salary = builder.calculate(ctx);
+			
+			
+			
+			//salary.getSalaryPayments().forEach( p -> System.out.println( "PAYMENT :" +  p.getName() +" : " + p.getAmount()));
+
+			//salary.getSalaryCosts().forEach( c -> System.out.println( "COST :" +  c.getName() +" : " + c.getAmount()));
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),3, salaryData.length);
+
+				assertEquals(var.getName(),startDate, salaryData[0].getStartDate());
+
+				assertEquals(var.getName(),startItDate, salaryData[1].getStartDate());
+
+				assertEquals(var.getName(),endDate, salaryData[2].getEndDate());
+
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(3, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(341.66, totalBonus, DELTA);
+
+			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcplnssVIIBonusWithATEPII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssVII.pdf") ){
+			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+			calendar.set(Calendar.YEAR,2021);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01022021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,28);
+			Date _28022021 = calendar.getTime();
+
+			ssBonuses.stream().forEach(b -> {
+				assertEquals(b.getDescription(),_01022021, b.getStartDate());
+				assertEquals(b.getDescription(),_28022021, b.getEndDate());
+			});
+
+			ssBonuses.stream().forEach(b -> {
+				System.out.println(b.getFormula());
+			});
+
+			java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(_01022021));
+			java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(_01022021));
+
+			Connection connection = getConnection();
+			AONContext aonContext = new AONContext(connection);
+			ContractRecord contract =  
+			newContract(
+			aonContext
+			, startDate
+			, ssBonuses
+			, Collections.emptyList()
+			, new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+			}
+			);
+			PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
+			addPayment(aonContext, contract, prestIT, 
+					String.format("BASE_REGULADORA * 0.75 * %s * (isdef %s ? %s : 1.00)",  OCCUPATIONAL_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
+					String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+					);
+			ContractCostRecord atepCost = 
+			addCost(aonContext, contract, startDate, endDate, 
+					"-1 * DIAS_ENFERMEDAD_PROFESIONAL * BASE_REGULADORA * 0.75", "PREST. IT A CARGO DEL INSS", "ATEP_E");
+			atepCost.setType((byte)8);
+			atepCost.update();
+			
+			java.sql.Date startItDate = add(startDate, Calendar.DAY_OF_MONTH, 5); 
+			java.sql.Date endItDate = add(startItDate, Calendar.DAY_OF_MONTH, 14); 
+			addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startItDate, endItDate, 1000.00 / 30.00 );
+			
+			
+			ISQLContractSalaryCalculatorContext ctx = 
+			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+			RoundSalaryBuilder<Salary> salaryBuilder = 
+			new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP));
+			
+			SmartContractSalaryCalculator<Salary> builder = 
+			new SmartContractSalaryCalculator<Salary>(salaryBuilder);
+			Salary salary = builder.calculate(ctx);
+			
+			
+			
+			//salary.getSalaryPayments().forEach( p -> System.out.println( "PAYMENT :" +  p.getName() +" : " + p.getAmount()));
+
+			//salary.getSalaryCosts().forEach( c -> System.out.println( "COST :" +  c.getName() +" : " + c.getAmount()));
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),3, salaryData.length);
+
+				assertEquals(var.getName(),startDate, salaryData[0].getStartDate());
+
+				assertEquals(var.getName(),startItDate, salaryData[1].getStartDate());
+
+				assertEquals(var.getName(),endDate, salaryData[2].getEndDate());
+
+			}
+			
+			double atep = 0.00;
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				if ( "ATEP_E".equalsIgnoreCase(cost.getName()) )
+					atep += cost.getAmount();
+				else 
+					totalCost += cost.getAmount();
+				
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(3, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCost, totalBonus, DELTA);
+
+			assertEquals(-1 * 1000.00 / 30 * 0.75 * 15, salary.getTotalEnterprise(), DELTA);
 		}
 	}
 

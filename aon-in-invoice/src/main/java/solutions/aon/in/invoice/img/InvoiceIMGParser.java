@@ -53,6 +53,12 @@ public class InvoiceIMGParser {
 
 
 	private static String extract(Document doc) {
+		if (doc != null 
+			&& doc.getBytes() != null 
+			&& (doc.getBytes().position() + doc.getBytes().remaining()) > (5*1024*1024)) {
+			throw new InvoiceIMGException("Las imagenes a analizar, no pueden superar los 5MB de tamaño");		
+		}
+
 		AmazonTextract client = AmazonTextractClientBuilder.defaultClient();
 		DetectDocumentTextRequest detectDocumentTextRequest = 
 		new DetectDocumentTextRequest().withDocument(doc);

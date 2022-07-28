@@ -47,6 +47,20 @@ public enum TestTemplates {
 		@Override public int getAmountNumber(){ return -1; }
 		@Override public Double getTotal(){ return 40.8; } 
 	},
+	MODELOS_EMAR_JPG ("/solutions/aon/in/invoice/img/ModelosEMAR.jpg") {
+		@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2022, 6, 24, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+		@Override public int getDocumentsNumber(){ return 2; } 
+		@Override public int getDatesNumber(){ return 2; } 
+		@Override public int getAmountNumber(){ return -1; }
+		@Override public Double getTotal(){ return 1802.90; } 
+	},
+	MODELOS_EMAR_PNG ("/solutions/aon/in/invoice/img/ModelosEMAR.png") {
+		@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2022, 6, 24, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+		@Override public int getDocumentsNumber(){ return 2; } 
+		@Override public int getDatesNumber(){ return 2; } 
+		@Override public int getAmountNumber(){ return -1; }
+		@Override public Double getTotal(){ return 1802.90; } 
+	},
 	;
 
 		private String file;

@@ -547,6 +547,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 //		expressionContext.setVariable(ENTERPRISE_QUOTA, totalCost, start, end);
 		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
 
+		totalCost += fillItCompensations(contractSalaryCalculatorContext);
+
 		Double totalEnterprise = totalCost - totalBonus;
 		salaryBuilder.setTotalEnterprise(totalEnterprise);
 
@@ -1091,6 +1093,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected Double fillCosts(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillCosts(ctx, GenericContractSalaryCalculator::notITCompesation );
+	}
+
+	protected Double fillItCompensations(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		return fillCosts(ctx, GenericContractSalaryCalculator::isITCompesation );
+	}
+
+	protected Double fillCosts(IContractSalaryCalculatorContext ctx, Predicate<IContractCost> filter) throws SalaryException {
 		double total = 0.00; // TODO; mejor null ???
 		try {
 
@@ -1102,7 +1112,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 
 			for (IContractCost contractCost : contractCosts) {
-
+				
+				if ( !filter.test(contractCost) )
+					continue;
+				
 				Date costStart = Period.max(contractCost.getStartDate(), start);
 				Date costEnd = Period.min(contractCost.getEndDate(), end);
 
@@ -2363,6 +2376,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static boolean isFillData(String name) {
 		return Arrays.stream(FILL_DATA).anyMatch(data -> AonStringUtils.equals(data, name));
 	}
+	
+	private static boolean isITCompesation(IContractCost cost) {
+		return cost.getType() == DeductionType.IN_KIND;
+	}
 
+	private static boolean notITCompesation(IContractCost cost) {
+		return !isITCompesation(cost);
+	}
 }
 

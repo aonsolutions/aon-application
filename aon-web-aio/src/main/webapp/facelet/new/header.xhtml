@@ -1515,6 +1515,10 @@
 	</style>
 
 	<script type="text/javascript">
+	
+			selected = -1;
+		    helpTooltipTimeout = null;
+			
 			function showSearchResults(){
 				if ( #{rich:element('smartFilter')}.value ) {
 					#{rich:element('smartFilterTableContainer')}.classList.add("show");
@@ -1528,7 +1532,6 @@
 				}, 200);
 			}
 			
-			let selected = -1;
 			
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
@@ -1624,7 +1627,6 @@
 				}, 300);
 			}
 
-			let helpTooltipTimeout;
 			
 			/**
 			* 	Show help tooltip
@@ -1841,7 +1843,7 @@
 			/**
 			* SONAR : Keep session alive  
 			*/
-			const sonar = new XMLHttpRequest();
+			sonar = new XMLHttpRequest();
 			sonar.onload = function() {
 				console.log(this.responseText);
 			}

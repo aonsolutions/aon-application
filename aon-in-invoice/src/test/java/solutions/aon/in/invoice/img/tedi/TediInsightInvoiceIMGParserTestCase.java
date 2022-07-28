@@ -3,6 +3,7 @@ package solutions.aon.in.invoice.img.tedi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import es.translogia.tedi.ewok.TediInsightInvoice;
 import solutions.aon.in.invoice.UnknownInvoiceException;
+import solutions.aon.in.invoice.img.InvoiceIMGException;
 import solutions.aon.in.invoice.img.InvoiceIMGParser;
 import solutions.aon.in.invoice.tedi.TediInsightInvoiceBuilder;
 
@@ -45,6 +47,18 @@ public class TediInsightInvoiceIMGParserTestCase {
 	@Test
 	public void testT_06_PUERTA_DE_BILBAO() throws IOException, UnknownInvoiceException, ClassNotFoundException {
 		testTemplate(TestTemplates.T_06_PUERTA_DE_BILBAO);
+	}
+	
+	@Test
+	public void testMODELOS_EMAR_JPG() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate(TestTemplates.MODELOS_EMAR_JPG);
+	}
+	
+ 	@Test
+	public void testMODELOS_EMAR_PNG() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+ 		InvoiceIMGException e = assertThrows(InvoiceIMGException.class, () -> testTemplate(TestTemplates.MODELOS_EMAR_PNG) );
+ 		String msg = e.getMessage();
+ 		assertEquals( true, msg.contains("5MB") );
 	}
 
 	public void testTemplate(TestTemplates template) throws IOException, UnknownInvoiceException {

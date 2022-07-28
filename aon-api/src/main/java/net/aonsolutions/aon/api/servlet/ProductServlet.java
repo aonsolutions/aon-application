@@ -172,6 +172,11 @@ public class ProductServlet extends AonApiHttpServlet {
 			filter = filter.and(valueFilter);
 		}
 		
+		if(api.getData().opt("type") !=null) {
+			ProductType type = ProductType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE));
+			filter = filter.and(f.getTypeProperty().eq(type.value()));
+		}
+		
 		return filter;
 	}
 	
@@ -190,6 +195,10 @@ public class ProductServlet extends AonApiHttpServlet {
 					.or(f.getProductCodeProperty().like("%" + value + "%"))
 					.or(f.getProductNameProperty().like("%" + value + "%"))
 			);
+		}
+		
+		if(api.getData().opt(IJsonNames.SERIAL_NUMBER) != null) {
+			filter = filter.and(f.getSerialNumberProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.SERIAL_NUMBER)));
 		}
 		
 		return filter;

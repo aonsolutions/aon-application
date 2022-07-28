@@ -430,7 +430,11 @@ public class SettlementTemplate extends PdfFile {
 				.horizontalAlignment(ALIGNMENT.CENTER);
 
 		PdfImage signImg = new PdfImage(x(), 80, width, 50, ALIGNMENT.CENTER, contents, doc, signature);
-		signImg.draw();
+		try {
+			signImg.draw();
+		} catch (Exception e) {
+			// No se dibuja
+		}
 	
 		
 		PdfText enterpriseSign = builder.build();

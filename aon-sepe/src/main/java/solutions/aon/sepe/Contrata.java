@@ -566,9 +566,7 @@ public class Contrata {
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-			
 			handleSepeExceptions(htmlPage);
-			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 
 	        String message = getSuccessMessage(htmlPage);
@@ -1214,6 +1212,7 @@ public class Contrata {
 	        handleSepeExceptions(htmlPage);
 	        
 	        htmlPage = lastPageRemove(htmlPage, ide);
+
 	        String message = getSuccessMessage(htmlPage);
 			if(message!=null && message.contains("se ha realizado correctamente")){
 				System.out.println(message);
@@ -1247,6 +1246,11 @@ public class Contrata {
 		formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
 		formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
 		
+		DomNode ideEl = formDatos.querySelector("[name=\"idcomunicacion\"]");
+		if(ideEl!=null) {
+			((HtmlInput)ideEl).setValueAttribute(ide);
+		}
+	
 		HtmlElement inputSubmit = formDatos.querySelector("input[value=aceptar]");
 		htmlPage = (HtmlPage)inputSubmit.click();
 		handleSepeExceptions(htmlPage);
@@ -1265,11 +1269,10 @@ public class Contrata {
 	}
 	
 	private static HtmlPage pageContracOrCopybasic(HtmlPage htmlPage, Date startDate, Date endDate, String ipf) throws InterruptedException, IOException, SepeException  {
-    	String[] fri = Toolkit.formatDate(startDate);
-    	String[] fre = Toolkit.formatDate(endDate);
-	    Integer ident  = 0; //NIF DEFAULT
-	    if(Toolkit.getIdentityType(ipf).equals("6")) ident = 1; // NIE
-	    
+    	String[] fri  = Toolkit.formatDate(startDate);
+    	String[] fre  = Toolkit.formatDate(endDate);
+	    Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; // 1 NIE, 0 NIF //NIF DEFAULT
+
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodoc2]>option").get(ident);				
 		option.click();
@@ -1386,12 +1389,14 @@ public class Contrata {
 	private static void setOccupation(Contract cto, HtmlForm form) {
 		if(cto.getCodOccupation()!=null) {
 			DomNode ocupacion = form.querySelector("[name=\"ocupacion\"]");
-			if(ocupacion!=null) 
+			if(ocupacion!=null) {
 				((HtmlInput) ocupacion).setValueAttribute(cto.getCodOccupation());
+			}
 			
 			DomNode cocupacion = form.querySelector("[name=\"cocupacion\"]");
-			if(cocupacion!=null) 
+			if(cocupacion!=null) {
 				((HtmlInput) cocupacion).setValueAttribute(cto.getCodOccupation());
+			}
 		}
 	}
 	
@@ -1506,6 +1511,7 @@ public class Contrata {
 	}
 
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
+//		Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 		try {
 			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
 			if(error!=null && !error.getVisibleText().isEmpty()) {

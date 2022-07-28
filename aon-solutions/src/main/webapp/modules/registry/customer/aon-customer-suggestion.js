@@ -65,6 +65,7 @@ export class AonCustomerSuggestion extends AonElement {
     this.OPTIONS_LI = this.OPTIONS + 'Li';
     this.DOCUMENT = this.id + 'Document';
     this.NAME = this.id + 'Name';
+    this.REMOVE_REGISTRY = this.id + 'RemoveRegistry';
     this.TABLE = this.id + 'Table';
     this.ADDRESS= this.id + 'Address';
     this.ADDRESS_DIV = this.ADDRESS + 'Div';
@@ -88,14 +89,22 @@ export class AonCustomerSuggestion extends AonElement {
       additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
     };
     getCustomer(data).then(r => {
-      this.updateCustomer(r);
+      if(r.id) {
+        this.updateCustomer(customer);
+      } else {
+        if(!this.customer) this.customer = {};
+        this.customer.document = document;
+      }
       this.buildAddress();
       this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     });
   }
 
-  onChangeName() {
-      
+  onChangeName(name) {
+    if(!this.customer) this.customer = {};
+    this.customer.name = name;
+    this.buildAddress();
+    this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
   }
 
   onKeyupDocument(event, value) {
@@ -167,6 +176,7 @@ export class AonCustomerSuggestion extends AonElement {
     document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
     document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
     span1.appendChild(document);
+    if(this.customer.id) document.disabled = true;
 
     let span2 = this.createElement(TAG.SPAN);
     span2.style.width="75%";
@@ -178,7 +188,29 @@ export class AonCustomerSuggestion extends AonElement {
     name.value = this.customer.name;
     name.readonly = this.isReadonly();
     name.addEventListener(EVENT.KEYUP, (e) => this.onKeyupName(e, name.value));
+    name.addEventListener(EVENT.CHANGE, () => this.onChangeName(name.value));
     span2.appendChild(name);
+    if(this.customer.id) name.disabled = true;
+
+    let removeRegistry = new AonIconButton();
+    removeRegistry.id = this.REMOVE_REGISTRY;
+    removeRegistry.title = MSG.DELETE;
+    removeRegistry.icon = MATERIAL_ICONS.HIGHLIGHT_OFF;
+    removeRegistry.style.paddingTop = '13px';
+    removeRegistry.style.marginRight = '3px';
+    removeRegistry.style.marginLeft = '4px';
+    removeRegistry.style.display = !this.isReadonly() && this.customer.id ? 'block' : 'none';
+    removeRegistry.addEventListener(EVENT.CLICK, () => {
+      this.customer = {};
+      name.value = '';
+      name.disabled = false;
+      document.value = '';
+      document.disabled = false;
+      removeRegistry.style.display = 'none';
+      this.clearAddress();
+      this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
+    });
+    div.appendChild(removeRegistry);
 
     let options = this.createElement(TAG.DIV);
 		options.id = this.OPTIONS;
@@ -186,6 +218,16 @@ export class AonCustomerSuggestion extends AonElement {
     options.style.width = div.clientWidth;
     options.style.marginTop = "-16px";
 		this.appendChild(options);
+  }
+
+  clearAddress() {
+    let div = this.getElement(this.ADDRESS_DIV);
+      if(!div) {
+        div = this.createElement(TAG.DIV);
+        div.id = this.ADDRESS_DIV;
+        this.appendChild(div);
+      }
+      this.clearElement(div);
   }
 
   buildAddress() {
@@ -306,7 +348,6 @@ export class AonCustomerSuggestion extends AonElement {
   }
 
   isShowAddress() {
-    console.log(this.customer);
     return this.showAddress && this.customer && this.customer.name && this.customer.document;
   }
 
@@ -323,12 +364,20 @@ export class AonCustomerSuggestion extends AonElement {
       if(name) name.value = registry.name;
       if(registry.global){
         let data = {registry: registry.id, global: registry.global};
+        doc.disabled = true;
+        name.disabled = true;
+        let rr = this.getElement(this.REMOVE_REGISTRY);
+        if(rr) rr.style.display = 'block';
         getRegistryAddress(data).then(ra => {
             this.customer.address = ra;          
             this.buildAddress();
             this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
         });
       } else if(registry.id) {
+        doc.disabled = true;
+        name.disabled = true;
+        let rr = this.getElement(this.REMOVE_REGISTRY);
+        if(rr) rr.style.display = 'block';
         let data = {
           id: registry.id,
           additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
