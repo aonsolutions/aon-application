@@ -592,11 +592,14 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         try {
             const resp = await sendAlta(this.getContract());
-            if(resp && resp.file){
-                openFileBase64(resp.file, "application/pdf");
-            }
-            this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
+
             this.applicationParentEl._movements = [];
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
+
+            if(resp && resp.file){
+                openFileBase64(resp.file, "application/pdf").catch(console.error);
+            }
+
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -618,12 +621,16 @@ export class AonAltaDirecta extends AonElement {
                 frv: frv.value ? frv.value : undefined, 
                 asociativeSA: asociativeSA && asociativeSA.value ? asociativeSA.value : undefined
             });
-            if(resp && resp.file){
-                openFileBase64(resp.file, "application/pdf");
-            }
-            this.applicationEl.getOptionDialog().close();
-            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
+
             this.applicationParentEl._movements = [];
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
+
+            this.applicationEl.getOptionDialog().close();
+
+            if(resp && resp.file){
+                openFileBase64(resp.file, "application/pdf").catch(console.error);
+            }
+
             this.back();
         } catch (error) {
             this.showToast(error);
