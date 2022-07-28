@@ -183,7 +183,7 @@ public class Page07 extends PageAbs {
 						panel.setStyleName(AON.AON_CSS.aonNowrap());
 						final Mod2002021Key key = Page7Row.values()[row].getKeys()[col - 1];
 						if (key != null) {
-							AonBoxLabel code = new AonBoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
+							AonBoxLabel code = new AonBoxLabel(key.getCode( callback.getMod200Object().getMod200().getAdministration() ));
 							panel.add(code);
 							
 							final AonDoubleBox text = new AonDoubleBox(8);
@@ -223,9 +223,6 @@ public class Page07 extends PageAbs {
 		paintFooterNote(basePanel,"(*) El estado de cambios en el patrimonio neto ser\u00E1 de cumplimentaci\u00F3n voluntaria si se utiliza el modelo abreviado o PYMES del PGC.");
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
-	
-//	@Override
-//	protected void populate() {}
 	
 	@Override
 	protected boolean isAvailable() {

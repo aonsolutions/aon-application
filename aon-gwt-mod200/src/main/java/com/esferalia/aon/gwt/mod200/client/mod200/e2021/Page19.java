@@ -26,10 +26,6 @@ public class Page19 extends PageAbs {
 		paint();
 	}
 
-//	@Override
-//	protected void populate() {
-//	}
-	
 	@Override
 	protected boolean isAvailable() {
 		boolean av = super.isAvailable() && 

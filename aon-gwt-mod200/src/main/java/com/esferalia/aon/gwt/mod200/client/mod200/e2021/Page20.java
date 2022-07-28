@@ -373,48 +373,6 @@ public class Page20 extends PageAbs {
 		}
 	}
 
-//	@Override
-//	public void populate() {
-////		DoubleVariableEx dv =  callback.getMod200Object().getMod200().getVariable(Mod2002021Key.BN621);
-////		Double value = dv==null?0.0:dv.getValue();
-////		if (AonMathUtils.round(value) == 0.0) {
-//////			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
-//////			callback.getMod200Object().getMod200().setResultType("N");
-//////			callback.getMod200Object().getMod200().setDevType(null);	
-//////			callback.getMod200Object().getMod200().setPayType(null);
-////			callback.getMod200Object().getMod200().setIban(null);
-////			callback.getMod200Object().getMod200().setBic(null);
-////		} else if (AonMathUtils.round(value) < 0.0) {
-//////			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value * -1));
-//////			callback.getMod200Object().getMod200().setResultType("D");
-//////			if (devTypeR.getValue()) {
-//////				callback.getMod200Object().getMod200().setDevType("R");
-//////			}else if (devTypeV.getValue()) {
-//////				callback.getMod200Object().getMod200().setDevType("V");
-//////			} else {
-//////				callback.getMod200Object().getMod200().setDevType("D");	
-//////			}
-//////			callback.getMod200Object().getMod200().setPayType(null);
-////			callback.getMod200Object().getMod200().setIban(ibanD.getValue());
-////			callback.getMod200Object().getMod200().setBic(ibanD.getBic());
-////		} else {
-//////			callback.getMod200Object().getMod200().setAmount(AonMathUtils.round(value));
-//////			callback.getMod200Object().getMod200().setResultType("I");
-//////			callback.getMod200Object().getMod200().setDevType(null);
-//////			if (payTypeH.getValue()) {
-//////				callback.getMod200Object().getMod200().setPayType("H");
-//////			} else if (payTypeI.getValue()) {
-//////				callback.getMod200Object().getMod200().setPayType("I");
-//////			} else if (payTypeG.getValue()) {
-//////				callback.getMod200Object().getMod200().setPayType("G");
-//////			} else {
-//////				callback.getMod200Object().getMod200().setPayType("U");	
-//////			}
-////			callback.getMod200Object().getMod200().setIban(ibanP.getValue());
-////			callback.getMod200Object().getMod200().setBic(ibanP.getBic());
-////		}
-//	}
-
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
 		@Override
 		public void requestSuggestions(final Request request,

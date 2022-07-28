@@ -75,7 +75,6 @@ public abstract class PageAbs extends ResizeComposite {
 
 	}
 	
-//	protected abstract void populate();
 	protected abstract void initializeTable();
 	
 	protected void dump() {		
@@ -195,7 +194,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyField(FlexTable tab, final IMod200Key key, int row, int col, boolean padding) {
-		String code = key.getCode(callback.getMod200Object().getAdministration());
+		String code = key.getCode(callback.getMod200Object().getMod200().getAdministration());
 		paintKeyField(tab, key, row, col, padding, code, isEditable(key));
 	}
 	
@@ -204,7 +203,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeyField(FlexTable tab, final IMod200Key k, int row, int col, int visibleLength, boolean padding) {
-		String code = k.getCode(callback.getMod200Object().getAdministration());
+		String code = k.getCode(callback.getMod200Object().getMod200().getAdministration());
 		paintKeyField(tab, k, row, col, visibleLength, padding, code);
 	}
 	

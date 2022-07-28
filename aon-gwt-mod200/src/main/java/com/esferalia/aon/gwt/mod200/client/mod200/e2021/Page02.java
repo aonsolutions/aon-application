@@ -66,10 +66,6 @@ public class Page02 extends PageAbs {
 		paint();
 	}
 
-//	@Override
-//	public void populate() {
-//	}
-	
 	private void paint() {
 		
 		otherInputs.clear();

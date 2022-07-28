@@ -40,10 +40,6 @@ public class Page01 extends PageAbs {
 		super(callback);
 	}
 
-//	@Override
-//	public void populate() {
-//	}
-
 	@Override
 	protected void initializeTable() {
 		paint();
@@ -406,6 +402,5 @@ public class Page01 extends PageAbs {
 		basePanel.add(addButton2);
 		
 	}
-	
 	
 }

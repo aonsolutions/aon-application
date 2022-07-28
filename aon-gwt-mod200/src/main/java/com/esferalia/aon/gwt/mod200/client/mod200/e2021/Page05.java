@@ -20,9 +20,6 @@ public class Page05 extends PageAbs {
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
 	
-//	@Override
-//	protected void populate() {}
-	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {
 		if (callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL) {

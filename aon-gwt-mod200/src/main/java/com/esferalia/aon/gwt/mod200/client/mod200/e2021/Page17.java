@@ -151,7 +151,4 @@ public class Page17 extends PageAbs {
 		table.getFlexCellFormatter().setColSpan(0, 0, 4);
 	}
 
-//	@Override
-//	protected void populate() {}
-	
 }

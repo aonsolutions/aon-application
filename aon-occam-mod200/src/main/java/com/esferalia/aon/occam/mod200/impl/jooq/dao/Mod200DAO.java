@@ -41,7 +41,7 @@ public class Mod200DAO {
 				;
 	}
 	
-	public static class Mod200Filler  implements Function<Record,Mod200> {
+	public static class Mod200Filler implements Function<Record,Mod200> {
 
 		@Override
 		public Mod200 apply(Record record) {
@@ -51,9 +51,7 @@ public class Mod200DAO {
 				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setYear(record.getValue(FS_MODEL200.YEAR))
 				.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
-				
-				// TODO - Support
-				.setStatus( FiscalStatus.PENDING )
+				.setStatus(FiscalStatus.safeValueOf(record.getValue(FS_MODEL200.STATUS)))
 				
 				// TODO - Support
 				.setFinance(null)

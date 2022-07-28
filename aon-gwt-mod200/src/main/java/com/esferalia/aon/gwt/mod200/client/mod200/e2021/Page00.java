@@ -223,42 +223,6 @@ public class Page00 extends PageAbs {
 		
     }
 
-//	@Override
-//	protected void populate() {
-//		
-////		DoubleVariableEx bv = null;
-////		for (Mod2002021Key key : inputsCheckBox.keySet()) {
-////			bv = new DoubleVariableEx( key );
-////			bv.setValue(inputsCheckBox.get(key).getValue());
-////			callback.getMod200Object().getMod200().addVariable(bv);
-////		}
-//		
-////		bv = new DoubleVariableEx( Mod2002021Key.C0075 );
-////		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.NORMAL));
-////		callback.getMod200Object().getMod200().addVariable(bv);
-////		
-////		bv = new DoubleVariableEx( Mod2002021Key.C0076 );
-////		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.ABREVIADO));
-////		callback.getMod200Object().getMod200().addVariable(bv);
-////		
-////		bv = new DoubleVariableEx( Mod2002021Key.C0077 );
-////		bv.setValue((callback.getMod200Object().getMod200().getEcpnType() == EcpnType.PYMES));
-////		callback.getMod200Object().getMod200().addVariable(bv);
-////					
-////		bv = new DoubleVariableEx( Mod2002021Key.C0053 );
-////		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.NORMAL));
-////		callback.getMod200Object().getMod200().addVariable(bv);
-////		
-////		bv = new DoubleVariableEx( Mod2002021Key.C0054 );
-////		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.ABREVIADO));
-////		callback.getMod200Object().getMod200().addVariable(bv);
-////		
-////		bv = new DoubleVariableEx( Mod2002021Key.C0055 );
-////		bv.setValue((callback.getMod200Object().getMod200().getPygType() == BalanceType.PYMES));
-////		callback.getMod200Object().getMod200().addVariable(bv);
-//		
-//	}
-
 	@Override
 	protected void initializeTable() {
 		paint();

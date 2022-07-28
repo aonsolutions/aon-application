@@ -198,10 +198,6 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
-//	@Override
-//	protected void populate() {
-//	}
-	
 	@Override
 	public void dump() {
 		super.dump();

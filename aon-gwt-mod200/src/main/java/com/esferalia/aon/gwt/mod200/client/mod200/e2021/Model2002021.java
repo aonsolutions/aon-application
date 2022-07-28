@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -29,7 +28,6 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -61,10 +59,11 @@ public class Model2002021 extends DockLayoutPanel {
 	
 	AonToast commentsToast = null;
 
-	AonToolbarButton markAsFinishedButton;
-	AonToolbarButton markAsSentButton;
-	AonToolbarButton markAsPendingButton;
-	Label statusLabel;
+	// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022 
+//	AonToolbarButton markAsFinishedButton;
+//	AonToolbarButton markAsSentButton;
+//	AonToolbarButton markAsPendingButton;
+//	Label statusLabel;
 
 	SimpleLayoutPanel pageContainer = new SimpleLayoutPanel();
 	
@@ -116,7 +115,7 @@ public class Model2002021 extends DockLayoutPanel {
 		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(mod200);
 		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
 		addNorth(getToolbar(), AonToolbar.HEIGTH);
-		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH); 
+//		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH); // Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
 		addWest(getLinksPanel(), 300);
 		add(pageContainer);		
 		
@@ -167,7 +166,9 @@ public class Model2002021 extends DockLayoutPanel {
 	private void refreshButtonsVisibility() {
 		
 		boolean isNotNew = !mod200Object.getMod200().isNew();
-		FiscalStatus status = mod200Object.getMod200().getStatus();
+		
+		// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+//		FiscalStatus status = mod200Object.getMod200().getStatus();
 		
 		initializeButton.setVisible(!mod200Object.isInitialized());
 		importAccountingButton.setVisible(mod200Object.isInitialized() && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
@@ -175,34 +176,30 @@ public class Model2002021 extends DockLayoutPanel {
 		removeButton.setVisible(isNotNew && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		resetButton.setVisible(isNotNew && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		aeatAccountingFileButton.setVisible(isNotNew);		
-		aeatFileButton.setVisible(isNotNew && mod200Object.getMod200().isFinished());		
+		//aeatFileButton.setVisible(isNotNew && mod200Object.getMod200().isFinished());
+		aeatFileButton.setVisible(isNotNew); // El estado se empezará a usar a partir del 2022, por eso ahora este botón aparece siempre aunque esté pendient
 		aeatPrintButton.setVisible(isNotNew);		
 		commentsButton.setVisible(isNotNew);
 		
-		markAsFinishedButton.setVisible(isNotNew &&
-				(status == FiscalStatus.PENDING || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(isNotNew && (status == FiscalStatus.FINISHED));
-		markAsPendingButton.setVisible(isNotNew &&
-				(status == FiscalStatus.FINISHED || status == FiscalStatus.BATCHED || status == FiscalStatus.SENT || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.BLOCKED));
+		// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+//		markAsFinishedButton.setVisible(isNotNew &&
+//				(status == FiscalStatus.PENDING || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.MISSING));
+//		markAsSentButton.setVisible(isNotNew && (status == FiscalStatus.FINISHED));
+//		markAsPendingButton.setVisible(isNotNew &&
+//				(status == FiscalStatus.FINISHED || status == FiscalStatus.BATCHED || status == FiscalStatus.SENT || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.BLOCKED));
 		
 		saveButton.setEnabled(true);
 		aeatAccountingFileButton.setEnabled(!isDirty());
 		aeatFileButton.setEnabled(!isDirty());
 		aeatPrintButton.setEnabled(!isDirty());
-		markAsFinishedButton.setEnabled(!isDirty());
-		markAsSentButton.setEnabled(!isDirty());
-		markAsPendingButton.setEnabled(!isDirty());
 		
-		styleStatusLabel();
+		// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022		
+//		markAsFinishedButton.setEnabled(!isDirty());
+//		markAsSentButton.setEnabled(!isDirty());
+//		markAsPendingButton.setEnabled(!isDirty());
+//		styleStatusLabel();
 		
 	}
-	
-//	private void populatePages() {
-//		for (PageAbs page : PAGES) {
-//			if (page != null) 
-//				page.populate();
-//		}
-//	}
 	
 	private void submitForm(String action) {
 		
@@ -319,7 +316,10 @@ public class Model2002021 extends DockLayoutPanel {
 	}
 	
 	private Widget getToolbar() {
-		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(mod200Object.getMod200().getDocument(),AonStringUtils.SPACE, mod200Object.getMod200().getFullName()));
+		
+		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(mod200Object.getMod200().getDocument(), AonStringUtils.SPACE, mod200Object.getMod200().getFullName()));
+		
+		// Cancelar (botón para volver atrás)
 		
 		AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(), AON.CSS.aonIconBack() );
 		if (mod200Callback.getOptions().isBackButtonVisible() && mod200Callback.getOptions().hasExternalCallback()) {
@@ -338,12 +338,13 @@ public class Model2002021 extends DockLayoutPanel {
 		});
 		toolbarPanel.add(cancelButton);
 		
+		// Continuar (es el botón que sale al añadir el modelo)
+		
 		initializeButton = new AonToolbarButton(AON.MSG.continueAction(), AON.CSS.aonIconStart());
 		initializeButton.setText(AON.MSG.continueAction());		
 		initializeButton.addClickHandler(event -> {
 			mod200Callback.cleanErrorPanel();
 			popup.center();
-//			getPage(P00).populate();
 			mod200Object.initializeMod200(new AsyncCallback<Mod2002021>() {
 				@Override
 				public void onSuccess(Mod2002021 result) {
@@ -360,6 +361,8 @@ public class Model2002021 extends DockLayoutPanel {
 			});
 		});
 		toolbarPanel.add(initializeButton);
+		
+		// Guardar
 		
 		saveButton = new AonToolbarButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveButton.addClickHandler(event -> {
@@ -386,7 +389,6 @@ public class Model2002021 extends DockLayoutPanel {
 			};
 			popup.center();
 			callback.setPopup(popup);
-//			populatePages();
 			try {
 				mod200Object.save(callback);
 			} catch (IllegalArgumentException e) {
@@ -396,6 +398,8 @@ public class Model2002021 extends DockLayoutPanel {
 			}
 		});
 		toolbarPanel.add(saveButton);
+		
+		// Borrar 
 		
 		removeButton = new AonToolbarButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 		removeButton.addClickHandler(event -> {
@@ -434,6 +438,8 @@ public class Model2002021 extends DockLayoutPanel {
 			});
 		});
 		toolbarPanel.add(removeButton);
+		
+		// Inicializar modelo
 		
 		resetButton = new AonToolbarButton(AON.MSG.resetAction(), AON.CSS.aonIconRefresh());
 		resetButton.addClickHandler(event -> {
@@ -594,7 +600,8 @@ public class Model2002021 extends DockLayoutPanel {
 		});
 		toolbarPanel.add(aeatPrintButton);
 		
-		// Comentarios		
+		// Comentarios
+		
 		commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 		commentsButton.addClickHandler( event -> {
 			if (commentsToast == null || commentsToast.getParent() == null) {
@@ -684,69 +691,14 @@ public class Model2002021 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(20,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
 		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()));		
 
-		// FALTA - PAGINA AGENCIA TRIBUTARIA CON INFO, FICHERO Y BORRADOR - POR AHORA SE PONEN 
+		// PAGINA AGENCIA TRIBUTARIA CON INFO, FICHERO Y BORRADOR - POR AHORA SE PONEN 
 		// LOS BOTONES COMO ESTABAN ANTES, PUES EN LOS OTROS MODELOS SE ESTA LLAMANDO A UNA CLASE
 		// DE AON-GWT-FISCAL LA CUAL LLAMA A VARIAS CLASES DEL MISMO PROYECTO, ADEMAS SE REQUIERE
-		// QUE YA ESTE DESARROLLADO LO DEL ESTADO DEL MODELO (FINALIZADO, ENVIADO, ETC..) QUE SE HARA 
-		// EN EL MODELO 200 DE 2021
+		// QUE YA ESTE DESARROLLADO LO DEL ESTADO DEL MODELO (FINALIZADO, ENVIADO, ETC..)
 		
 		scrollPanel.add(linkContainer);
 		return scrollPanel;
 		
-	}
-	
-	private AonToolbar getDeclarationToolbarPanel() {
-		AonToolbar decToolbar = new AonToolbar();
-				
-		// Botón "Finalizar"
-		
-		markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
-		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
-		markAsFinishedButton.addClickHandler(event -> {
-			markAsFinishedButton.setEnabled(false);
-			changeStatus(FiscalStatus.FINISHED);
-		});
-		decToolbar.add(markAsFinishedButton);
-
-		// Botón "Marcar como Presentado"
-		
-		markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
-		markAsSentButton.setText(markAsSentButton.getTitle());
-		markAsSentButton.addClickHandler(event -> {
-			markAsSentButton.setEnabled(false);
-			changeStatus(FiscalStatus.SENT);
-		});
-		decToolbar.add(markAsSentButton);
-		
-		// Botón "Reabrir"
-		
-		markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
-		markAsPendingButton.setText(markAsPendingButton.getTitle());
-		markAsPendingButton.addClickHandler(event -> {
-			markAsPendingButton.setEnabled(false);
-			changeStatus(FiscalStatus.PENDING);
-		});
-		decToolbar.add(markAsPendingButton);
-		
-		// Label "Estado"
-		
-		statusLabel = new Label();
-		
-		decToolbar.setTitle(statusLabel);
-		return decToolbar;
-	}
-	
-	private void changeStatus(FiscalStatus newStatus) {
-		try {
-			mod200Object.getMod200().setStatus(newStatus);
-			saveButton.click();			
-		} finally {
-			refreshButtonsVisibility();
-			for (PageAbs page : PAGES) 						
-				if (page != null) {
-					page.setEnabled();
-				}			
-		}		
 	}
 	
 	protected void styleDirtyLabel() {
@@ -765,16 +717,72 @@ public class Model2002021 extends DockLayoutPanel {
 		refreshButtonsVisibility();
 	}
 	
-	protected void styleStatusLabel() {
-		statusLabel.setText(mod200Object.getMod200().getStatus().getName());
-		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200Object.getMod200().getStatus()));
-		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200Object.getMod200().getStatus()));
-		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
-		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
-		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
-		statusLabel.addStyleName(AON.CSS.aonTextCenter());
-		statusLabel.addStyleName(AON.CSS.aonBorder());
-		statusLabel.addStyleName(AON.CSS.aonNowrap());
-	}
+// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+	
+//	private AonToolbar getDeclarationToolbarPanel() {
+//		AonToolbar decToolbar = new AonToolbar();
+//				
+//		// Botón "Finalizar"
+//		
+//		markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
+//		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
+//		markAsFinishedButton.addClickHandler(event -> {
+//			markAsFinishedButton.setEnabled(false);
+//			changeStatus(FiscalStatus.FINISHED);
+//		});
+//		decToolbar.add(markAsFinishedButton);
+//
+//		// Botón "Marcar como Presentado"
+//		
+//		markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
+//		markAsSentButton.setText(markAsSentButton.getTitle());
+//		markAsSentButton.addClickHandler(event -> {
+//			markAsSentButton.setEnabled(false);
+//			changeStatus(FiscalStatus.SENT);
+//		});
+//		decToolbar.add(markAsSentButton);
+//		
+//		// Botón "Reabrir"
+//		
+//		markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
+//		markAsPendingButton.setText(markAsPendingButton.getTitle());
+//		markAsPendingButton.addClickHandler(event -> {
+//			markAsPendingButton.setEnabled(false);
+//			changeStatus(FiscalStatus.PENDING);
+//		});
+//		decToolbar.add(markAsPendingButton);
+//		
+//		// Label "Estado"
+//		
+//		statusLabel = new Label();
+//		
+//		decToolbar.setTitle(statusLabel);
+//		return decToolbar;
+//	}
+	
+//	private void changeStatus(FiscalStatus newStatus) {
+//		try {
+//			mod200Object.getMod200().setStatus(newStatus);
+//			saveButton.click();			
+//		} finally {
+//			refreshButtonsVisibility();
+//			for (PageAbs page : PAGES) 						
+//				if (page != null) {
+//					page.setEnabled();
+//				}			
+//		}		
+//	}
+	
+//	protected void styleStatusLabel() {
+//		statusLabel.setText(mod200Object.getMod200().getStatus().getName());
+//		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200Object.getMod200().getStatus()));
+//		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200Object.getMod200().getStatus()));
+//		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
+//		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
+//		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
+//		statusLabel.addStyleName(AON.CSS.aonTextCenter());
+//		statusLabel.addStyleName(AON.CSS.aonBorder());
+//		statusLabel.addStyleName(AON.CSS.aonNowrap());
+//	}
 
 }

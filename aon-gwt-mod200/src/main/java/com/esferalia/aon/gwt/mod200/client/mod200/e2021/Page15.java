@@ -90,10 +90,6 @@ public class Page15 extends PageAbs {
 		
 	}
 	
-//	@Override
-//	protected void populate() {}
-	
-	
 	@Override
 	protected boolean isAvailable() {
 		boolean av = super.isAvailable()
