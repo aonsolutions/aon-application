@@ -4158,7 +4158,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		paymentsTable.getColumnFormatter().setWidth(0, "2%");
-		paymentsTable.getColumnFormatter().setWidth(1, "12%"); // CUANTIA
+		paymentsTable.getColumnFormatter().setWidth(1, "14%"); // CUANTIA
 		// 2 ...
 		paymentsTable.getColumnFormatter().setWidth(3, "18%"); // DEVENGO
 		paymentsTable.getColumnFormatter().setWidth(4, "12%"); // DEDUCCION
@@ -6224,6 +6224,24 @@ public class SalaryDraft extends ResizeComposite
 		Variable irpfPercentVar = getContextVariable(PORCENTAJE_IRPF);
 		if (irpfPercentVar == null) {
 			irpfPercentVar = newStringVariable(PORCENTAJE_IRPF);
+		}
+
+		try {
+			InlineLabel dbIrpfLabel = new InlineLabel();
+			String dbPercent = getDbValueOf(PORCENTAJE_IRPF);
+			dbIrpfLabel.setText(formatPercent(AonStringUtils.isBlank(dbPercent) ? "0.00" : dbPercent));
+			dbIrpfLabel.setVisible(salaryDraftObject.hasDbSalary());
+			dbIrpfLabel.addStyleName(AON.AON_TEXT_RIGHT);
+
+			setDbStyleName(dbIrpfLabel, irpfPercentTexTBox.getText(), dbIrpfLabel.getText());
+		
+			irpfPercentPanel.add(dbIrpfLabel);
+
+			VisibilityImpl dbWidget = new VisibilityImpl(dbIrpfLabel.getElement().getParentElement());
+			dbWidget.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
+			addDbWidget(dbWidget);
+		} catch ( Exception e ) {
+			info(e.getMessage());
 		}
 
 		if (isSystemVariable(irpfPercentVar)) {
