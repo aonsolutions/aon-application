@@ -41,22 +41,22 @@ public class Sepe {
 	
 	public static byte[] getContratoPdf( final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String sepeId) throws SepeException {
-		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.ofNullable(sepeId));
 	}
 	
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String sepeId) throws SepeException {
-			return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+			return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.ofNullable(sepeId));
 	}
 	
 	public static byte[] getTransformationPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String sepeId) throws SepeException {
-			return Contrata.getTransformationPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+			return Contrata.getTransformationPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.ofNullable(sepeId));
 	}
 	
 	public static byte[] getTransformationCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String sepeId) throws SepeException {
-			return Contrata.getTransformationCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+			return Contrata.getTransformationCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.ofNullable(sepeId));
 	}
 
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream, final String certificatePassword,
@@ -126,6 +126,11 @@ public class Sepe {
 	public static Contract getContractData(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
 		return Contrata.getContractData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+	}
+	
+	public static Contract getTransformationData(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
+		return Contrata.getTransformationData(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
 	}
 	
 	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
