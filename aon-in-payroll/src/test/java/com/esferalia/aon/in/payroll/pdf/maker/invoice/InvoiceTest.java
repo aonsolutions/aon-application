@@ -249,10 +249,10 @@ public class InvoiceTest {
 		financeFour.setPayMethodType(PayMethodType.NEGOTIABLE_DOCUMENT);
 		financeFour.setDueDate(new Date());
 		
-		finances.add(financeOne);
-		finances.add(financeOne);
-		finances.add(financeOne);
-		finances.add(financeOne);
+//		finances.add(financeOne);
+//		finances.add(financeOne);
+//		finances.add(financeOne);
+//		finances.add(financeOne);
 		finances.add(financeOne);
 		finances.add(financeOne);
 		finances.add(financeOne);
@@ -602,6 +602,15 @@ public class InvoiceTest {
 		detailX.setQuantity(781212783);
 		detailX.setTaxableBase(712382113);
 		
+		InvoiceDetail specialDetail = new InvoiceDetail();
+		specialDetail.setAccountCode("0192831010");
+		specialDetail.setDescription("ALTO SUPLIDO");
+		specialDetail.setPrice(10);
+		specialDetail.setDiscountExpression("0");
+		specialDetail.setQuantity(1);
+		specialDetail.setTaxableBase(10);
+		specialDetail.setItem(new Item().setProduct(new Product().setType(ProductType.PREPAYMENT)));
+		
 		details.add(detailX);
 		details.add(detailOne);
 		details.add(detailTwo);
@@ -609,6 +618,9 @@ public class InvoiceTest {
 		details.add(detailThreeAndAHalf);
 //		details.add(detailFour);
 //		details.add(detailFive);
+		details.add(specialDetail);
+//		details.add(specialDetail);
+		details.add(specialDetail);
 		
 		
 //		details.add(shortDetail1);
@@ -1475,6 +1487,17 @@ public class InvoiceTest {
 		detailX.setQuantity(781212783);
 		detailX.setTaxableBase(712382113);
 		
+		InvoiceDetail specialDetail = new InvoiceDetail();
+		specialDetail.setAccountCode("0192831010");
+		specialDetail.setDescription("ALTO SUPLIDO");
+		specialDetail.setPrice(10);
+		specialDetail.setDiscountExpression("0");
+		specialDetail.setQuantity(1);
+		specialDetail.setTaxableBase(10);
+		specialDetail.setItem(new Item().setProduct(new Product().setType(ProductType.PREPAYMENT)));
+		
+		
+		
 		details2.add(detailX);
 		details.add(detailX);
 		details.add(detailOne);
@@ -1483,6 +1506,8 @@ public class InvoiceTest {
 		details.add(detailThreeAndAHalf);
 		details.add(detailFour);
 		details.add(detailFive);
+//		details.add(specialDetail);
+//		details.add(specialDetail);
 		
 		
 //		details.add(shortDetail1);
