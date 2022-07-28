@@ -96,7 +96,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
 			+ " BETWEEN   ? AND  ?  "
-			+ " AND " + SalaryColumns.TYPE + " <  4 " 
+			+ " AND " + SalaryColumns.TYPE + " IN  (0,1,2,3,7) " 
 			+ " ORDER BY " + SalaryColumns.END_DATE 
 			+ " ASC" + ", " + SalaryColumns.TYPE + " ASC";
 
