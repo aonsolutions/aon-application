@@ -226,6 +226,32 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
   });
 });
 
+export const openFileBase64 = async (base64Str, contentType) => new Promise(async (resolve, reject) => {
+  if (webkitRequestMobile()){
+      //------------ IS MOBILE APP---------
+    const base64Data = `data:${contentType},${base64Str}`;
+    const obj = objFileMobile(base64Data);
+    await actionRequestMobile(obj);
+  } else {
+    // ------------IS DESKTOP---------------
+    try {
+      let byteCharacters = atob(base64Str);
+      let byteNumbers = new Array(byteCharacters.length);
+  
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+  
+      const blob = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType}` });
+      const newUrl = URL.createObjectURL(blob);
+      openFileDesktop(newUrl);
+    } catch (e) {
+      reject({message:e.message, type:CONSTANT.ERROR});
+    }
+  }
+  resolve(true);
+});
+
 export const openFileDesktop = (url) => {
   try {
       const openWindow =  window.open(url, '_blank');

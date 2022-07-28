@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,6 +49,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.utils.ZipUtils;
 
 public class TaskUtils {
+	
+	private static final Logger LOGGER  = Logger.getLogger(TaskUtils.class.getName());
 	
 	private TaskUtils() {
 	    throw new IllegalStateException("Utility class");
@@ -295,7 +298,7 @@ public class TaskUtils {
 		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			
 			getAuthForTaskHolder(api, task.getSender()).ifPresent(list::add);
-			System.out.println("SENDER ID:"+ task.getSender().getId());
+			LOGGER.info("SENDER ID:"+ task.getSender().getId());
 			
 		} else if(gtaskId.isPresent() && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
 			
@@ -303,7 +306,7 @@ public class TaskUtils {
 			
 			if( authSender!=null && authSender.getEmail()!=null &&  !Arrays.equals(user.getAuth().getAuth(), authSender.getAuth())) {
 				list.add(authSender);
-				System.out.println("SENDER EMAIL:"+ authSender.getEmail());
+				LOGGER.info("SENDER EMAIL:"+ authSender.getEmail());
 			}
 		}
 		
@@ -314,7 +317,7 @@ public class TaskUtils {
 				
 				if(usr!=null) list.add(usr.getAuth());
 				
-				System.out.println("TASKHOLDER ID:"+ task.getTaskHolder().getId());
+				LOGGER.info("TASKHOLDER ID:"+ task.getTaskHolder().getId());
 			}		
 		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ // SEND WORKGROUP ASSIGNED
 			AON.getTaskHolderWorkgroupStream(
@@ -331,7 +334,7 @@ public class TaskUtils {
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 				if(usr!=null) list.add(usr.getAuth());
 			});
-			System.out.println("WORKGROUP ID:"+ task.getWorkgroup().getId());
+			LOGGER.info("WORKGROUP ID:"+ task.getWorkgroup().getId());
 		}
 		
 		return list;
@@ -432,7 +435,8 @@ public class TaskUtils {
 		return !task.getDomain().getId().equals(domain.getId()) ||
 		(
 			domain.getDomainType().equals(DomainType.OFFICE) && 
-			task.getRegistry()!=null && task.getRegistry().getId()!=null &&
+			task.getRegistry()!=null && 
+			task.getRegistry().getId()!=null &&
 			!(task.getSender()!=null && task.getSender().getId()!=null)
 		);
 	}
@@ -445,8 +449,8 @@ public class TaskUtils {
 //	    while (matcher.find()) {
 //	    	String contentType = matcher.group("datatype");
 //	    	String base64 = matcher.group("base64");
-//	    	System.out.println(contentType);
-//	    	System.out.println(base64);
+//	    	LOGGER.info(contentType);
+//	    	LOGGER.info(base64);
 //		}
 //	    return matcher;
 //	}

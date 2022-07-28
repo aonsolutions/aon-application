@@ -566,9 +566,7 @@ public class Contrata {
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-			
 			handleSepeExceptions(htmlPage);
-			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 
 	        String message = getSuccessMessage(htmlPage);
@@ -617,7 +615,7 @@ public class Contrata {
 	        htmlPage = pageContracOrCopybasic(htmlPage, startDate, endDate, ipf);
 
 	    	HtmlForm form = htmlPage.querySelector("form[name=datos]");
-	    	DomNodeList<DomNode> data =form.querySelectorAll("fieldset > div > div[class*=titulo]");
+	    	DomNodeList<DomNode> data = form.querySelectorAll("fieldset > div > div[class*=titulo]");
 	    	
 			ContractBuilder builder = new ContractBuilder();
 
@@ -626,35 +624,36 @@ public class Contrata {
 				String titleStr = Toolkit.removeNBSP(title.getVisibleText()).trim();
 				DomNode valueNode = Toolkit.getNextSibling(title);
 				if(titleStr.length()>0 && valueNode!=null) {
+					titleStr = titleStr.toLowerCase();
 					String valueStr = Toolkit.removeNBSP(valueNode.getVisibleText().trim());
 					if(valueStr.length() > 0) {
-						if(titleStr.indexOf("CIF")>=0) { 
+						if(titleStr.contains("cif")) { 
 							builder.setCifEnterprise(valueStr); 
-						} else if(titleStr.indexOf("Cuenta de Cotizaci\u00F3n :")>=0) { 
+						} else if(titleStr.contains("cuenta de cotizaci\u00F3n")) { 
 							String newStr = Toolkit.noSpaces(valueStr);
 							builder.setRegimen(newStr.substring(0,4));
 							builder.setCtaCti(newStr.substring(4));
-						} else if(titleStr.indexOf("NIF/NIE :")>=0) { 
+						} else if(titleStr.contains("nif/nie")) { 
 							builder.setIpf(valueStr); 
-						} else if(titleStr.indexOf("Fecha de Nacimiento :")>=0) { 
+						} else if(titleStr.contains("fecha de nacimiento")) { 
 							builder.setDateBirth(Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
-						} else if(titleStr.indexOf("Nombre / Apellidos :")>=0) { 
+						} else if(titleStr.contains("nombre / apellidos")) { 
 							builder.setName(valueStr); 
-						} else if(titleStr.indexOf("Sexo :")>=0) {
-							if(valueStr.indexOf("HOM")>=0) {
+						} else if(titleStr.contains("sexo")) {
+							if(valueStr.contains("HOM")) {
 								builder.setSex(SexType.HOMBRE);
-							} else if(valueStr.indexOf("MUJ")>=0) {
+							} else if(valueStr.contains("MUJ")) {
 								builder.setSex(SexType.MUJER);
 							}
-						} else if(titleStr.indexOf("N\u00FCmero de afiliación SS :")>=0) { 
+						} else if(titleStr.contains("n\u00FCmero de afiliaci\u00F3n ss")) { 
 							builder.setNss(valueStr); 
-						} else if(titleStr.indexOf("Identificador del contrato :")>=0) {
-							builder.setSepeId(valueStr.trim().replace("-", "").substring(1)); 
-						} else if(titleStr.indexOf("Fecha de inicio del contrato :")>=0) { 
+						} else if(titleStr.contains("identificador del contrato")) {
+							builder.setSepeId(Toolkit.noSpaces(valueStr.replace("-", "").substring(1))); 
+						} else if(titleStr.contains("fecha de inicio del contrato")) { 
 							builder.setDateIniContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
-						} else if(titleStr.indexOf("Fecha Fin del Contrato :")>=0) { 
+						} else if(titleStr.contains("fecha fin del contrato")) { 
 							builder.setDateFinContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
-						} else if(titleStr.indexOf("Fecha en que se comunica :")>=0) { 
+						} else if(titleStr.contains("fecha en que se comunica")) { 
 							builder.setDateComContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
 						}
 					}
@@ -665,9 +664,84 @@ public class Contrata {
 		} 
 	}
 	
+	public static Contract getTransformationData(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
+			try {
+				return getTransformationDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
+			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
+			return null;
+	}
+	
+	private static Contract getTransformationDataImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	webClient.getOptions().setUseInsecureSSL(true);
+	    	
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
+			
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
+	        handleSepeExceptions(htmlPage);
+	        
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=").click();
+	        handleSepeExceptions(htmlPage);
+	        
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaTransformacion?pagina=entrada").click();
+	        handleSepeExceptions(htmlPage);
+
+	        htmlPage = getPageContracByStartDate(htmlPage, ipf, cif, oldDateIniContract, sepeId);
+
+	    	HtmlForm form = htmlPage.querySelector("form[name=datos]");
+	    	DomNodeList<DomNode> data = form.querySelectorAll("fieldset > div > div[class*=titulo]");
+	    	
+			ContractBuilder builder = new ContractBuilder();
+	
+			//DATOS DE CONSULTA
+			data.forEach(title->{
+				String titleStr = Toolkit.removeNBSP(title.getVisibleText()).trim();
+				DomNode valueNode = Toolkit.getNextSibling(title);
+				if(titleStr.length()>0 && valueNode!=null) {
+					titleStr = titleStr.toLowerCase();
+					String valueStr = Toolkit.removeNBSP(valueNode.getVisibleText().trim());
+					if(valueStr.length() > 0) {
+						if(titleStr.contains("cif")) { 
+							builder.setCifEnterprise(valueStr); 
+						} else if(titleStr.contains("cuenta de cotizaci\u00F3n")) { 
+							String newStr = Toolkit.noSpaces(valueStr);
+							builder.setRegimen(newStr.substring(0,4));
+							builder.setCtaCti(newStr.substring(4));
+						} else if(titleStr.contains("nif/nie")) { 
+							builder.setIpf(valueStr); 
+						}  else if(titleStr.contains("nombre / apellidos")) { 
+							builder.setName(valueStr); 
+						} else if(titleStr.contains("identificador de la transformaci\u00F3n")) {
+							builder.setSepeId(Toolkit.noSpaces(valueStr.replace("-", "").substring(1))); 
+						} else if(titleStr.contains("fecha inicio :")) { 
+							builder.setOldDateIniContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} else if(titleStr.contains("fecha fin :")) { 
+							builder.setOldDateFinContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} else if(titleStr.contains("fecha comunicaci\u00F3n")) { 
+							builder.setDateComContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} else if(titleStr.contains("fecha de inicio de la transformaci\u00F3n :")) { 
+							builder.setDateIniContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} 
+					}
+				}
+			});
+			
+	        return builder.build();
+		} 
+	}
+	
 	private static void sendContrataExtensionImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
 			ContractExtension contractExtension) 
-			throws SepeException, FailingHttpStatusCodeException, InterruptedException, MalformedURLException, IOException {
+			throws SepeException, FailingHttpStatusCodeException, InterruptedException, IOException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -688,7 +762,7 @@ public class Contrata {
 	        
 	        String cifTypeStr = Toolkit.getIdentityType(contractExtension.getCif()); 
 	        
-	        Integer cifType   = 0; 
+	        Integer cifType  = 0; 
 	        
 	        if( cifTypeStr.equals("1") ) {
 	        	cifType = 1;
@@ -732,7 +806,6 @@ public class Contrata {
 			form.getInputByName("cuentacotizacion2pro").setValueAttribute(ccc.substring(0,9));
 			form.getInputByName("cuentacotizacion3pro").setValueAttribute(ccc.substring(9));
 			
-			
 			String[] startDate = Toolkit.dateString(contractExtension.getStartDate());
 			form.getInputByName("diainiciopro").setValueAttribute(startDate[0]);
 			form.getInputByName("mesiniciopro").setValueAttribute(startDate[1]);
@@ -763,6 +836,7 @@ public class Contrata {
 		        String message = getSuccessMessage(htmlPage);
 				if(message!=null && message.contains("se ha realizado correctamente")) {
 					System.out.println(message);
+					return;
 				}
 	    	} else {
 	    		messageError = exist.get();
@@ -848,8 +922,9 @@ public class Contrata {
 		        handleSepeExceptions(htmlPage);
 		        
 		        String message = getSuccessMessage(htmlPage);
-				if(message!=null && message.contains("se ha realizado correctamente"))
+				if(message!=null && message.contains("se ha realizado correctamente")) {
 				     return message;
+				}
 	    	} else {
 	    		messageError = exist.get();
 	    	}
@@ -952,8 +1027,9 @@ public class Contrata {
 		        handleSepeExceptions(htmlPage);
 		        
 		        String message = getSuccessMessage(htmlPage);
-				if(message!=null && message.contains("se ha realizado correctamente"))
-				     return message;
+				if(message!=null && message.contains("se ha realizado correctamente")) {					
+					return message;
+				}
 	    	} else {
 	    		messageError = exist.get();
 	    	}
@@ -1214,6 +1290,7 @@ public class Contrata {
 	        handleSepeExceptions(htmlPage);
 	        
 	        htmlPage = lastPageRemove(htmlPage, ide);
+
 	        String message = getSuccessMessage(htmlPage);
 			if(message!=null && message.contains("se ha realizado correctamente")){
 				System.out.println(message);
@@ -1247,6 +1324,11 @@ public class Contrata {
 		formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
 		formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
 		
+		DomNode ideEl = formDatos.querySelector("[name=\"idcomunicacion\"]");
+		if(ideEl!=null) {
+			((HtmlInput)ideEl).setValueAttribute(ide);
+		}
+	
 		HtmlElement inputSubmit = formDatos.querySelector("input[value=aceptar]");
 		htmlPage = (HtmlPage)inputSubmit.click();
 		handleSepeExceptions(htmlPage);
@@ -1265,11 +1347,10 @@ public class Contrata {
 	}
 	
 	private static HtmlPage pageContracOrCopybasic(HtmlPage htmlPage, Date startDate, Date endDate, String ipf) throws InterruptedException, IOException, SepeException  {
-    	String[] fri = Toolkit.formatDate(startDate);
-    	String[] fre = Toolkit.formatDate(endDate);
-	    Integer ident  = 0; //NIF DEFAULT
-	    if(Toolkit.getIdentityType(ipf).equals("6")) ident = 1; // NIE
-	    
+    	String[] fri  = Toolkit.formatDate(startDate);
+    	String[] fre  = Toolkit.formatDate(endDate);
+	    Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; // 1 NIE, 0 NIF //NIF DEFAULT
+
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodoc2]>option").get(ident);				
 		option.click();
@@ -1304,6 +1385,59 @@ public class Contrata {
         return htmlPage;
 	}
 	
+	private static HtmlPage getPageContracByStartDate(HtmlPage htmlPage, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws InterruptedException, IOException, SepeException  {
+    	HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+    	
+    	if(sepeId.isPresent()) { // por identificacion de la comunicacion
+            String ide = sepeId.get();
+    		((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
+
+            formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide.substring(0, 2));
+            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide.substring(2, 6));
+            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide.substring(6));
+    	} else {
+    		
+		    ((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
+	    	
+		    //ENTERPRISE
+		    String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
+		    
+		    if(cifValue!=null && cifValue.isEmpty()) {
+		        String cifTypeStr = Toolkit.getIdentityType(cif); 
+		        Integer cifType = 0; 
+		        if( cifTypeStr.equals("1")) 
+		        	cifType = 1;
+		        else if(cifTypeStr.equals("6")) 
+		        	cifType = 2;
+
+				HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumentoaux]>option").get(cifType);//" " cif, "D" NIF, "E" NIE			
+				option.click();
+
+				formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
+		    }
+
+			
+			//EMPLOYEE
+			Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; //1 NIE, 0 NIF
+			HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);				
+			option.click();
+			
+			formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
+			
+	    	String[] fri = Toolkit.formatDate(oldDateIniContract);
+			formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
+			formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
+			formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+    	}
+ 
+    	
+    	htmlPage = formDatos.getInputByName("aceptar").click();
+		handleSepeExceptions(htmlPage);
+		
+		return htmlPage;
+		
+	}
+	
 	private static byte[] getTransformationPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String cif, Date startDate, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -1320,54 +1454,8 @@ public class Contrata {
 	        handleSepeExceptions(htmlPage);
 	        
 	        HtmlUnitToolkit.manageStatusCode(htmlPage);
-
-	    	HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-	    	
-	    	if(sepeId.isPresent()) { // por identificacion de la comunicacion
-	            String ide = sepeId.get();
-	    		((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
-
-	            formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide.substring(0, 2));
-	            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide.substring(2, 6));
-	            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide.substring(6));
-	    	} else {
-	    		
-			    ((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
-		    	
-			    //ENTERPRISE
-			    String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
-			    
-			    if(cifValue!=null && cifValue.isEmpty()) {
-			        String cifTypeStr = Toolkit.getIdentityType(cif); 
-			        Integer cifType = 0; 
-			        if( cifTypeStr.equals("1")) 
-			        	cifType = 1;
-			        else if(cifTypeStr.equals("6")) 
-			        	cifType = 2;
-
-					HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumentoaux]>option").get(cifType);//" " cif, "D" NIF, "E" NIE			
-					option.click();
-
-					formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
-			    }
-
-				
-				//EMPLOYEE
-				Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; //1 NIE, 0 NIF
-				HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);				
-				option.click();
-				
-				formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
-				
-		    	String[] fri = Toolkit.formatDate(startDate);
-				formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
-				formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
-				formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
-	    	}
-	 
-	    	
-	    	htmlPage = formDatos.getInputByName("aceptar").click();
-			handleSepeExceptions(htmlPage);
+	        
+	        htmlPage = getPageContracByStartDate(htmlPage, ipf, cif, startDate, sepeId);
 			
 	     	Page page = htmlPage.getElementByName("enviar").click();
 			if(page.isHtmlPage()) {
@@ -1386,12 +1474,14 @@ public class Contrata {
 	private static void setOccupation(Contract cto, HtmlForm form) {
 		if(cto.getCodOccupation()!=null) {
 			DomNode ocupacion = form.querySelector("[name=\"ocupacion\"]");
-			if(ocupacion!=null) 
+			if(ocupacion!=null) {
 				((HtmlInput) ocupacion).setValueAttribute(cto.getCodOccupation());
+			}
 			
 			DomNode cocupacion = form.querySelector("[name=\"cocupacion\"]");
-			if(cocupacion!=null) 
+			if(cocupacion!=null) {
 				((HtmlInput) cocupacion).setValueAttribute(cto.getCodOccupation());
+			}
 		}
 	}
 	
@@ -1506,6 +1596,7 @@ public class Contrata {
 	}
 
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
+//		Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 		try {
 			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
 			if(error!=null && !error.getVisibleText().isEmpty()) {
