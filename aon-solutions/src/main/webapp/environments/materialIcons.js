@@ -130,6 +130,7 @@ export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
 export const GROUP_OFF = 'group_off';
+export const GROUP_WORK = 'group_work';
 export const GROUPS = 'groups';
 
 // ----- H

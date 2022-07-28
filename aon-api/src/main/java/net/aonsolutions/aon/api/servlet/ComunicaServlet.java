@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -527,8 +528,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 		Employee employee = builder.build();
 		
-		AonComunica.communicateAlta(employee, certificate);
-		
+		byte[] pdf = AonComunica.communicateAlta(employee, certificate);
+
 		try {AonComunica.addContract(domain, EmployeeParse.toEmployeeOccam(employee), certificate);} 
 		catch (Exception e) {}
 
@@ -536,7 +537,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			sendMovEmailNotification(api, employee, fra, SituationType.ALTA, certificate);
 		}
 		
-		return new JSONObject();
+		String base64 = new String(Base64.getEncoder().encode(pdf));
+		
+		return new JSONObject().put(IJsonNames.FILE, base64);
 	}
 	
 	private JSONObject sendBaja(AonApiData api) throws Exception{
@@ -575,13 +578,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Employee employee = builder.build();
 		
-		SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
+		byte[] pdf = SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
 		
 		if(employee.getName().isPresent()) {
 			sendMovEmailNotification(api, employee, frb, SituationType.BAJA, certificate);
 		}
 		
-		return new JSONObject();
+		String base64 = new String(Base64.getEncoder().encode(pdf));
+		
+		return new JSONObject().put(IJsonNames.FILE, base64);
 	}
 	
 	private JSONObject movDelete(AonApiData api) throws Exception {
