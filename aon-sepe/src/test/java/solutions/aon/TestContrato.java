@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -199,20 +200,12 @@ public class TestContrato {
 	@Ignore
 	public void getTransformationsPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
-			@SuppressWarnings("deprecation")
-			Date fini =  new Date("2021/10/01");
-			String ipf = "71899097Q";
-			String cif = "43443804R";	
-			String sepeId = "3320210207385";
+	
+			String cif = "B72384936";	
+			Date fini =  new Date("2021/04/19");
+			String ipf = "73578385M";
 
-
-//			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
-//					 ipf, cif, fini
-//			);
-
-			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
-					sepeId
-					);
+			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, cif, fini);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -254,6 +247,25 @@ public class TestContrato {
 			String ipf = "16262835H";
 			Contract contract = Sepe.getContractData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, fend);
 			System.out.println(contract.getSepeId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	@SuppressWarnings("deprecation")
+	public void getTransformationData() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
+	
+			String cif = "B72384936";	
+			String ipf = "73578385M";
+			Date oldDateIniContract =  new Date("2021/04/19");
+			Optional<String> sepeId = Optional.empty();
+			
+			Contract contract = Sepe.getTransformationData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, cif, oldDateIniContract, sepeId);
+
+			System.out.println(contract.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
