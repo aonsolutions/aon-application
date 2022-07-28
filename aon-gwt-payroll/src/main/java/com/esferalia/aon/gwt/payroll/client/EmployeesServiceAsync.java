@@ -268,7 +268,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
@@ -327,10 +327,16 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
+	void sendContractExtension(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
 	void removeContractTransform(String currentDomainName, String currentUser, String ide, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date, Integer contractId,
 			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
+	
+	void getSepeTransformComunicationData(String currentDomainName, String currentUser, String document, String enterpriseCif, 
+			Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
+
 	
 	// ------------------------------------------------- SEPE Methods
 	

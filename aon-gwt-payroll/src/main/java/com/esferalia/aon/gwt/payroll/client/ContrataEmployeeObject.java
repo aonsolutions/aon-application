@@ -268,8 +268,8 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (Export Contract)
 	
-	public void saveContractExport(Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.fillContract(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), new AsyncCallback<Void>() {
+	public void saveContractExport(boolean isTransform, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.fillContract(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), isTransform, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
 				success.accept(result);
@@ -317,10 +317,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCto(Consumer<String> success, Consumer<Throwable> failure) {
-		if(contractData.isHasTransformation())
-			downloadCtoTransform(success, failure);
-		else
-			downloadCtoContract(success, failure);
+		downloadCtoContract(success, failure);
 	}
 	
 	public void downloadCtoContract(Consumer<String> success, Consumer<Throwable> failure) {
@@ -420,6 +417,22 @@ public class ContrataEmployeeObject {
 	
 	public void sendContractTransform(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.sendContractTransform(employeeContractData, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void sendContractExtension(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendContractExtension(employeeContractData, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

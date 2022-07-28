@@ -250,7 +250,7 @@ public abstract class ContractAttachDialog extends AonCustomDialog {
 	}
 	
 	private boolean isComunicationCreated(byte attachType) {
-		return attachType == ((byte)98) || attachType == ((byte)99) || attachType == ((byte)101) || attachType == ((byte)102) || attachType == ((byte)103);
+		return attachType == ((byte)98) || attachType == ((byte)99) || attachType == ((byte)101) || attachType == ((byte)102) || attachType == ((byte)103) || attachType == ((byte)108);
 	}
 	
 	private void initTypeListBox() {
@@ -271,6 +271,8 @@ public abstract class ContractAttachDialog extends AonCustomDialog {
 		typeLB.addItem("IDC", "104");
 		typeLB.addItem("IDCPlNss", "105");
 		typeLB.addItem("Notificaci\u00f3n Laboral", "107");
+		typeLB.addItem("Transformaci\u00f3n (Comunicaci\u00f3n SEPE)", "108");
+		typeLB.addItem("Borrador transformaci\u00f3n contrato", "109");
 		typeLB.addItem("Otros", "106");
 	}
 	

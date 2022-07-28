@@ -371,6 +371,10 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				return "Otros";
 			case (byte)107:
 				return "Notificaci\u00f3n Laboral";
+			case (byte)108:
+				return "Transformaci\u00f3n (Comunicaci\u00f3n SEPE)";
+			case (byte)109:
+				return "Borrador trasnformaci\u00f3n contrato";
 			default:
 				return "";
 		}
@@ -555,11 +559,38 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		
 	}
 	
+	public void exportTransformContract() {
+		if(existContractTransform()) {
+			AonDialog confirm = new AonDialog("Generar borrador trasnfromaci\u00f3n contrato", new HTMLPanel("Ya existe un borrador de la transformaci\u00f3n del contrato generado. \u00bfRealmente desea sobreescribirlo\u003f"));
+			confirm.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					exportContractTransformPDF();
+				}
+			});
+		} else
+			exportContractTransformPDF();
+		
+	}
+	
 	private void exportContractPDF() {
 		onExportPDF(e -> {
 			showSuccessMessage("Contrato", "El contrato se ha generado correctamente");
 			refreshPage();
 		}, f -> showErrorMessage("Contrato", f.getMessage()));
+	}
+	
+	private void exportContractTransformPDF() {
+		onExportTransformPDF(e -> {
+			showSuccessMessage("Contrato Transformaci\u00f3n", "El PDF trasformaci\u00f3n contrato se ha generado correctamente");
+			refreshPage();
+		}, f -> showErrorMessage("Contrato Transformaci\u00f3n", f.getMessage()));
 	}
 	
 	public void setAttachData(Integer attachId, String base64) {
@@ -617,6 +648,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 	protected abstract void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 	
+	protected abstract void onExportTransformPDF(Consumer<String> consumer, Consumer<Throwable> failure);
+	
 	protected abstract void showAttachPDf(Integer attachId, String dataURI);
 
 	protected abstract void showErrorMessage(String title, String message);
@@ -661,6 +694,13 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	public boolean existContract() {
 		for (Attach attach : employeeContractInfo.getContractAttachments())
 			if(attach.getType().equals((byte)0))
+				return true;
+		return false;
+	}
+	
+	public boolean existContractTransform() {
+		for (Attach attach : employeeContractInfo.getContractAttachments())
+			if(attach.getType().equals((byte)109))
 				return true;
 		return false;
 	}

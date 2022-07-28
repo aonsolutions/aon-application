@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -19,9 +18,6 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
-import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.model.type.ContractAttachType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 
 public class JooqContractAttach {
 	
@@ -248,6 +244,45 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Basica (SEPE)")
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.TYPE, (byte)102)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+	}
+	
+	// ------------------------------------------ CopyContractTransform
+	
+	public static byte[] getCopyContractTransform(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> copyContractRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)108))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetch();
+		
+		return copyContractRecords.isEmpty() ? null : copyContractRecords.get(0).get(CONTRACT_ATTACH.DATA);
+	}
+	
+	public static void setCopyContractTransform(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)108))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetchOne(CONTRACT_ATTACH.ID);
+		
+		if(null != contractAttachId)
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachId))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Contrato Transformacion (SEPE)")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)108)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
 	}

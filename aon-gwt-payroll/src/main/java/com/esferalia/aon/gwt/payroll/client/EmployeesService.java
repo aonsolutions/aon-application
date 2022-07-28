@@ -251,7 +251,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
+			boolean isTransform);
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
@@ -308,10 +309,16 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 
+	void sendContractExtension(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
+	
 	void removeContractTransform(String currentDomainName, String currentUser, String ide) throws IllegalArgumentException;
 
 	Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
 			Date date, Integer contractId) throws IllegalArgumentException;
+	
+	Map<String, String> getSepeTransformComunicationData(String currentDomainName, String currentUser, String document,
+			String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId);
+
 	
 	// ------------------------------------------------- SEPE Methods
 	

@@ -71,6 +71,15 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	DateBoxEx comunicationDateBx;
 	
 	@UiField
+	VerticalPanel ideTransformTable;
+	
+	@UiField
+	HTMLPanel ideTransformPanel;
+	
+	@UiField
+	DateBoxEx comunicationTransformDateBx;
+	
+	@UiField
 	TableElement otherDataTableElement;
 	
 	@UiField
@@ -355,6 +364,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	private EmployeeContractInfo contractEmployeeInfo;
 	private Map<String, CNO> cnoMap;
 	private TextBox ideTB;
+	private TextBox ideTransformTB;
 	private boolean isComunica;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
@@ -380,6 +390,14 @@ public abstract class ContractSpecificData extends ResizeComposite {
 					isComunica, 
 					contractEmployeeInfo.getEmployeeInfo().getDocument(),
 					contractEmployeeInfo.getContractInfo().getStartDate(),
+					contractEmployeeInfo.getContractInfo().getContractId());
+			createUpdateTransformSepeInfo(
+					contractEmployeeInfo.getContractInfo().isHasTransformation(),
+					isComunica, 
+					contractEmployeeInfo.getEmployeeInfo().getDocument(),
+					contractEmployeeInfo.getContractInfo().getEnterpriseCIF(),
+					contractEmployeeInfo.getContractInfo().getOriginalStartDate(),
+					contractEmployeeInfo.getContractInfo().getSepeId(),
 					contractEmployeeInfo.getContractInfo().getContractId());
 			fillSpecificData();
 			hideMessagePanel();
@@ -424,6 +442,50 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		idePanel.add(updateSepeInfoBtn);
 	}
 	
+	private void createUpdateTransformSepeInfo(boolean isTransform, boolean isComunica, String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) {
+		if(Boolean.FALSE.equals(isTransform)) {
+			ideTransformTable.setVisible(false);
+			return;
+		}
+		
+		// Reiniciar el boton por que se estaban acumulando los click handler
+		ideTransformTable.setVisible(true);
+		ideTransformPanel.clear();
+		this.ideTransformTB = new TextBox();
+		this.ideTransformTB.addStyleName(style.maxWidthTB());
+		this.ideTransformTB.addChangeHandler(e -> contractSpecificData.setTransformIde(ideTransformTB.getValue()));
+		ideTransformPanel.add(ideTransformTB);
+		
+		AonToolbarSmallButton updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n transformaci\u00f3n Sepe", AON.CSS.aonIconCloudImport());
+		if(Boolean.FALSE.equals(isComunica))
+			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
+		else {
+			updateSepeInfoBtn.addClickHandler(e -> {
+				showLoadingMessage("Obteniendo informaci\u00f3 transformaci\u00f3n del Sepe");
+				implEmployee.getSepeTransformComunicationData(document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallback<Map<String,String>>() {
+					@Override
+					public void onSuccess(Map<String, String> sepeData) {
+						ideTransformTB.setValue(sepeData.getOrDefault("trasnformIde", null));
+						String communicationTransformDate = sepeData.getOrDefault("comunicationTransformDate", null);
+						comunicationTransformDateBx.setValue(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
+						showSuccessMessage("Sincronizaci\u00f3n Transformaci\u00f3n Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
+						
+						contractSpecificData.setIde(sepeData.getOrDefault("trasnformIde", null));
+						contractSpecificData.setComunicationDate(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
+						
+						downloadCtoTransformDocument();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage("Error sincronizaci\u00f3n Transformaci\u00f3n Sepe", caught.getMessage());
+					}
+				});
+			});
+		}
+		ideTransformPanel.add(updateSepeInfoBtn);
+	}
+	
 	// --------------------------------------------------------- Abstract Methods --------------------------------------------------
 
 	protected abstract void showErrorMessage(String title, String message);
@@ -431,6 +493,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	protected abstract void showLoadingMessage(String message);
 	protected abstract void hideMessagePanel();
 	protected abstract void downloadCtoDocument();
+	protected abstract void downloadCtoTransformDocument();
 	
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 
@@ -2159,6 +2222,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		
 		ideTB.setValue(this.contractSpecificData.getIde());
 		comunicationDateBx.setValue(this.contractSpecificData.getComunicationDate());
+		
+		ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
+		comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
 		
 		calendarFormativeStartDate.setValue(this.contractSpecificData.getCalendarFormativeStartDate());
 		calendarFormativeEndDate.setValue(this.contractSpecificData.getCalendarFormativeEndDate());
