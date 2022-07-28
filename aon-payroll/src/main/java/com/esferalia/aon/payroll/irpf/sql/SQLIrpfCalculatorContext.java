@@ -67,6 +67,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
@@ -88,10 +89,19 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " AND " + SalaryPaymentColumns.TYPE + " IN (" + PaymentType.CRA_0004.ordinal() + ", " +PaymentType.CRA_0005.ordinal() + ")"
 			;
 			
+	private static final String BONUS_SQL = "SELECT "
+			+ " SUM( " + SalaryPaymentColumns.QUOTE + ")"
+			+ " FROM " + SQLConstants.SALARY_PAYMENT
+			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
+			+ " AND " + SalaryPaymentColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
+			+ " AND (" + SalaryPaymentColumns.AMOUNT + " = 0.00 OR " + SalaryPaymentColumns.AMOUNT + " > " + SalaryPaymentColumns.QUOTE + ")" 
+			+ " AND " + SalaryPaymentColumns.TYPE + " IN (" + PaymentType.CRA_0005.ordinal() + ")"
+			;
 	
 	private static final String SALARY_SQL = "SELECT"
 			+ "  "+ SQLConstants.SALARY + ".*" 
 			+ ", (" + EXTRAS_SQL + ") AS EXTRAS " 
+			+ ", (" + BONUS_SQL + ") AS BONUS " 
 			+ " FROM  " + SQLConstants.SALARY 
 			+ " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
@@ -123,6 +133,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	
 	private static class IrpfSalaryBuilder extends SalaryBuilder {
 		
+		Double prorrated = 0.00;
 		Double monthlyAmount = 0.00 ;
 		
 		@Override
@@ -130,15 +141,37 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			
-			if ( isMonthly(payment))
+			if (!isExtra(payment) 
+				&& isBonus(payment) ) {
+				prorrated += quote - tax ;
+			} else if (isMonthly(payment)) {
 				monthlyAmount += tax;
+			}
+			
+		}
+		
+		public Double getProrrated() {
+			return prorrated;
 		}
 		
 		public Double getMonthlyAmount() {
 			return monthlyAmount;
 		}
 		
+		@Override
+		public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+				Map<String, ITimedVariable<?>> context) {
+			if ( !isExtra(payment) )
+				prorrated += quote;
+			
+			super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+		}
 		
+		
+		private static boolean isExtra(IPayment payment) {
+			return ( PaymentType.CRA_0004 == payment.getType() );  
+		}
+
 		private static boolean isMonthly(IPayment payment) {
 			if ( !(payment instanceof IContractPayment) )
 				return false;
@@ -146,6 +179,14 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			
 			return contractPayment.getEndDate() != null
 			&& AonDateUtils.getMonth(contractPayment.getStartDate()) == AonDateUtils.getMonth(contractPayment.getEndDate());
+		}
+
+		private static boolean isBonus(IPayment payment) {
+			if ( !(payment instanceof IContractPayment) )
+				return false;
+			IContractPayment contractPayment = (IContractPayment) payment;
+			
+			return contractPayment.getMonth() != null;
 		}
 	}
 
@@ -584,6 +625,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Date startDate;
 
+	private double bonus;
 	private double extras;
 	private double totalIrpf;
 	private double irpfBase;
@@ -936,6 +978,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	@Override
 	public BigDecimal getRetribAnuales() {
 		Double retribAnuales = irpfBase;
+		retribAnuales += bonus;
 		retribAnuales -= extras;
 		retribAnuales += proExtBase;
 		retribAnuales += nextIrpfBase;
@@ -1105,6 +1148,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
 		TreeSet<Date> dates = new TreeSet<Date>();
+		bonus = 0.00;
 		extras = 0.00;
 		irpfBase = 0.00;
 		totalIrpf = 0.00;
@@ -1115,13 +1159,15 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			salaryStmt.setInt(1, contractId);
 			salaryRs = salaryStmt.executeQuery();
 			while (salaryRs.next()) {
+				double salaryBonus = salaryRs.getDouble("BONUS");
 				double salaryExtras = salaryRs.getDouble("EXTRAS");
 				double salaryCgcBase = salaryRs.getDouble(SalaryColumns.CGC_BASE);
 				double salaryIrpfBase = salaryRs.getDouble(SalaryColumns.IRPF_BASE);
 				double salaryProExtBase = salaryRs.getDouble(SalaryColumns.PRO_EXT_BASE);
-				extras += salaryExtras;
+				bonus += salaryBonus;
+				extras += salaryExtras;  // for remove 
 				irpfBase += salaryIrpfBase ;
-				irpfBase += Math.max(salaryCgcBase - irpfBase - salaryProExtBase, 0.00);
+				//irpfBase += Math.max(salaryCgcBase - irpfBase - salaryProExtBase, 0.00);
 				
 				proExtBase += salaryProExtBase;
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
@@ -1260,6 +1306,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						( irpfBase )
 						+ ( proration ) 
 						) * size ;
+				nextIrpfBase += builder.getProrrated() * size;
 				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
@@ -1280,6 +1327,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						+ ( proration ) 
 						) * size;
 				
+				nextIrpfBase += builder.getProrrated() * size;
 				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
 				double socialSecurityContributions = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
