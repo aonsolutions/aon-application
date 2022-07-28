@@ -524,8 +524,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
-	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
+	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, isTransform, callback);
 	}
 	
 	void setData(Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback) {
@@ -617,6 +617,10 @@ public class DomainEmployeesServiceAsync {
 	public void sendContractTransform(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
+	
+	public void sendContractExtension(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractExtension(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
+	}
 
 	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, callback);
@@ -624,6 +628,10 @@ public class DomainEmployeesServiceAsync {
 
 	public void getSepeComunicationData(String document, Date fini, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSepeComunicationData(getCurrentDomainName(), getCurrentUser(), document, fini, contractId, callback);
+	}
+	
+	public void getSepeTransformComunicationData(String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSepeTransformComunicationData(getCurrentDomainName(), getCurrentUser(), document, enterpriseCif, originalStartDate, sepeId, contractId, callback);
 	}
 	
 	// ------------------------------------------------- SEPE Methods

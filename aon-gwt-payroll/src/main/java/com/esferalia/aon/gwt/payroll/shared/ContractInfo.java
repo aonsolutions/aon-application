@@ -96,6 +96,8 @@ public class ContractInfo implements Serializable{
 	private boolean hasCto;
 	private boolean hasCbc;
 	
+	private boolean discontinuos;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -151,6 +153,8 @@ public class ContractInfo implements Serializable{
 		
 		this.hasCto = false;
 		this.hasCbc = false;
+		
+		this.discontinuos = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -652,6 +656,14 @@ public class ContractInfo implements Serializable{
 
 	public void setHasCbc(boolean hasCbc) {
 		this.hasCbc = hasCbc;
+	}
+	
+	public boolean isDiscontinuos() {
+		return discontinuos;
+	}
+
+	public void setDiscontinuos(boolean discontinuos) {
+		this.discontinuos = discontinuos;
 	}
 	
 	public boolean isPartial() {

@@ -566,7 +566,7 @@ public class JooqEmployeeCalendarNew {
 				  .where(CONTRACT.ID.eq(contractId))
 				  .fetchOne();
 		
-		Integer calendarId = contractCalendarRecord.get(CONTRACT.CALENDAR);
+		Integer calendarId = null == contractCalendarRecord ? null : contractCalendarRecord.get(CONTRACT.CALENDAR);
 		
 		if(null != calendarId) {
 		

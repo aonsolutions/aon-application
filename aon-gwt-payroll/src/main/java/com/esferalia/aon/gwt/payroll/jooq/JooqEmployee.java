@@ -973,6 +973,8 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "DISCONTINUOS")) {
+				contractData.setDiscontinuos(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? true : false);
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COEFICIENTE_PARCIALIDAD")) {
 				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
 				String partiality = r.get(CONTRACT_DATA.EXPRESSION);
@@ -1164,7 +1166,9 @@ public class JooqEmployee {
 		// ---------------------------------------------- Contract Transform
 		
 		List<Integer> transformDocs = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)19)).fetch(CONTRACT_ATTACH.ID);
-		if(!transformDocs.isEmpty()) contractData.setHasTransformation(true);
+		if(!transformDocs.isEmpty() || 
+				(AonStringUtils.isNotBlank(contractData.getContractType()) && AonStringUtils.equals(contractData.getContractType().substring(contractData.getContractType().length() - 1), "9"))) 
+			contractData.setHasTransformation(true);
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);
