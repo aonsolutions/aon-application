@@ -11,19 +11,10 @@ public class MODEL2002021Impl implements IMODEL2002021 {
 	public Mod2002021 createMod2002021(AONContext ctx, int year) {
 		return Mod2002021DAO.createNewMod200(ctx,year);
 	}
-	@Override
-	public Mod2002021 initializeNewMod2002021(AONContext ctx, Mod2002021 mod200) {
-		return Mod2002021DAO.initializeNewMod200(ctx,mod200);
-	}
 	
 	@Override
 	public Mod2002021 initializeMod2002021(AONContext ctx, Mod2002021 mod200) {
 		return Mod2002021DAO.initializeMod200(ctx,mod200);
-	}
-
-	@Override
-	public Mod2002021 getMod2002021ByYear(AONContext ctx, int year) {
-		return Mod2002021DAO.getByYear(ctx,year);
 	}
 
 	@Override
@@ -44,15 +35,5 @@ public class MODEL2002021Impl implements IMODEL2002021 {
 		ctx.getDslContext().transaction(
 				configuration -> Mod2002021DAO.delete(ctx, id));
 	}
-
-	@Override
-	public String dumpAEATMod2002021(Mod2002021 mod200) {
-		return Mod2002021DAO.dumpAEAT(mod200);
-	}
-
-	@Override
-	public Mod2002021 importMod2002020(AONContext ctx, Mod2002021 mod200) {
-		return Mod2002021DAO.importMod2002020(ctx,mod200);
-	}	
 	
 }

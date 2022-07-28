@@ -4,7 +4,8 @@ import { ToolbarType} from '../../../models/enums.js';
 import {AonToolbar} from "../../../components/aon-toolbar.js";
 import {AonCard} from "../../../components/aon-card.js";
 
-import {CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
+import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
+import { getProducts, getItems, getItem } from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
 import { AonInput } from '../../../components/aon-input.js';
@@ -12,6 +13,7 @@ import { AonSelect } from '../../../components/aon-select.js';
 
 import { AonNumber } from '../../../components/aon-number.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
+import { AonSuggestion } from '../../../components/aon-suggestion.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -22,6 +24,7 @@ export class AonMobilePackaging extends AonElement {
 
 	PACKAGING_CONTAINER;
 	PACKAGING_PRODUCT;
+	PACKAGING_PRODUCT_DESC;
 	PACKAGING_QUANTITY;
 
 	TAG_CARD;
@@ -50,6 +53,7 @@ export class AonMobilePackaging extends AonElement {
 		
 		this.PACKAGING_CONTAINER = this.id + 'Container';
 		this.PACKAGING_PRODUCT = this.id + CONSTANT.PRODUCT.initCap();
+		this.PACKAGING_PRODUCT_DESC = this.PACKAGING_PRODUCT + 'Desc';
 		this.PACKAGING_QUANTITY = this.id + CONSTANT.QUANTITY.initCap();
 
 		this.TAG_CARD = this.id + 'Tag' + CONSTANT.CARD.initCap();
@@ -57,6 +61,8 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	build() {
+		this.getApplication().addFloatOption(ACTION.ADD, () => this.resetPackaging());
+		
 		let toolbar = new AonToolbar();
 		toolbar.id = this.PACKAGING_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
@@ -76,9 +82,14 @@ export class AonMobilePackaging extends AonElement {
 			this.buildTag(div);
 			this.save()
 		});
-		toolbar.addButton2(ACTION.BACK, () => this.back());
+		// toolbar.addButton2(ACTION.BACK, () => this.back());
 
 		this.buildPackaging(div);
+	}
+
+	resetPackaging() {
+		this.clear();
+		this.build();
 	}
 
 	buildPackaging(parent){
@@ -91,17 +102,55 @@ export class AonMobilePackaging extends AonElement {
 
 		table.addRow();
 
-		let container = this.createInput(this.PACKAGING_CONTAINER, "Contenedor");
+		let container = this.createSelect(this.PACKAGING_CONTAINER, "Contenedor");
+		container.setAlias("id", "name");
+		getProducts({type: "AUXILIARY"}).then(products => {
+			container.setOptions(products);
+		});
 		table.addCell(container, 2);
 
 		table.addRow();
 
-		let product = this.createInput(this.PACKAGING_PRODUCT, "Contenido");
+		let product = this.createInput(this.PACKAGING_PRODUCT, "Contenido (Nº Lote)");
 		table.addCell(product);
 		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => alert("Escanear Codigo de barras qr o lo que sea"));
+		// product.addEventListener(EVENT.AON_KEYUP, (e) => {
+		// 	if(product.value.length > 2) {
+		// 		let data = { serialNumber: product.value};
+		// 		getItems(data).then(r => {
+		// 			product.buildOptions(r.map(r => {return {
+		// 				name: r.serialNumber,
+		// 				value: r.id,
+		// 				item: r};}));
+		// 		}).catch(e => this.showError(e));
+		// 	  }
+		// });
+
+		product.addEventListener(EVENT.CHANGE, () => {
+			let data = { serialNumber: product.value};
+			getItem(data).then(r => {
+				let desc = this.getElement(this.PACKAGING_PRODUCT_DESC);
+				let val = r.description || r.name;
+				desc.innerHTML = val || '';
+			}).catch(e => this.showError(e));
+		});
+
+		// product.addEventListener(EVENT.SELECT,(e) => {
+		// 	let desc = this.getElement(this.PACKAGING_PRODUCT_DESC);
+		// 	desc.innerHTML = e.detail.description;
+		// });
+
 
 		let quantity = this.createInput(this.PACKAGING_QUANTITY, MSG.QUANTITY);
 		table.addCell(quantity);
+
+		table.addRow();
+		let span = this.createElement(TAG.SPAN);
+		span.id = this.PACKAGING_PRODUCT_DESC;
+		span.style.fontWeight = 'bold';
+		span.innerHTML = '';
+		table.addCell(span, 2);
+
 	}
 
 	buildTag(parent){
@@ -149,6 +198,13 @@ export class AonMobilePackaging extends AonElement {
 		select.id = id;
 		select.description = title;
 		return select;
+	}
+
+	createSuggestion(id, title) {
+		let suggestion = new AonSuggestion();
+		suggestion.id = id;
+		suggestion.title = title;
+		return suggestion;
 	}
 
 	createNumber(id, title) {

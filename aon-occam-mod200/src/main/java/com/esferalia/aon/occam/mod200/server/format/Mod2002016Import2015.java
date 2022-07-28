@@ -182,7 +182,6 @@ public class Mod2002016Import2015 {
 			})
 			
 		,PAG13 ( new IPropertyFiller[] {
-				// FALTA - Revisar que el tipo de gravamen sea el mismo para el 2016, con respecto al 2015
 			(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ558, mod200old.getDoubleValue(Mod2002015Key.LQ558))  // Tipo de Gravamen				
 			})			
 			

@@ -26,26 +26,10 @@ public class Mod2002021ServiceAsyncDecorator implements Mod2002021ServiceAsync {
 	}
 
 	@Override
-	public void initializeNewMod2002021(Occam occam,
-			Mod2002021 mod200, AsyncCallback<Mod2002021> callback) {
-		AON.start();
-		fsa.initializeNewMod2002021(occam, mod200,
-				new AsyncCallbackWrapper<Mod2002021>(callback));
-	}
-
-	@Override
 	public void initializeMod2002021(Occam occam,
 			Mod2002021 mod200, AsyncCallback<Mod2002021> callback) {
 		AON.start();
 		fsa.initializeMod2002021(occam, mod200,
-				new AsyncCallbackWrapper<Mod2002021>(callback));
-	}
-
-	@Override
-	public void getMod2002021ByYear(Occam occam, int year, 
-			AsyncCallback<Mod2002021> callback) {
-		AON.start();
-		fsa.getMod2002021ByYear(occam, year, 
 				new AsyncCallbackWrapper<Mod2002021>(callback));
 	}
 
@@ -66,14 +50,6 @@ public class Mod2002021ServiceAsyncDecorator implements Mod2002021ServiceAsync {
 	}
 
 	@Override
-	public void dumpAEATMod2002021(Mod2002021 mod200,
-			AsyncCallback<String> callback) {
-		AON.start();
-		fsa.dumpAEATMod2002021(mod200, new AsyncCallbackWrapper<String>(
-				callback));
-	}
-
-	@Override
 	public void getMod2002021ById(Occam occam, int id,
 			AsyncCallback<Mod2002021> callback) {
 		AON.start();
@@ -88,14 +64,6 @@ public class Mod2002021ServiceAsyncDecorator implements Mod2002021ServiceAsync {
 		fsa.saveMod2002021(occam, mod200, 
 				new AsyncCallbackWrapper<Mod2002021>(callback));
 
-	}
-
-	@Override
-	public void importMod2002020(Occam occam,
-			Mod2002021 mod200, AsyncCallback<Mod2002021> callback) {
-		AON.start();
-		fsa.importMod2002020(occam, mod200,
-				new AsyncCallbackWrapper<Mod2002021>(callback));
 	}
 
 	@Override

@@ -30,4 +30,10 @@ public class MODEL200 {
 		}
 	}
 
+	public static Mod200 saveComments(Occam occam, Mod200 mod200) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) { 
+			return getImpl().saveComments(ctx, mod200);
+		}
+	}
+
 }
