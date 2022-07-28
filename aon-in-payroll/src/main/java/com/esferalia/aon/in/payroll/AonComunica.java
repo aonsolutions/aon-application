@@ -116,11 +116,12 @@ public class AonComunica {
 	 * @param certificateType
 	 * @param domain
 	 * @param employee
+	 * @return 
 	 * @throws SegSocialException
 	 * @throws Exception
 	 */
-	public static void communicateAlta(solutions.aon.seg.social.object.Employee employee, Certificate certificate) throws SegSocialException {
-		SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
+	public static byte[] communicateAlta(solutions.aon.seg.social.object.Employee employee, Certificate certificate) throws SegSocialException {
+		return SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
 	}
 	
 	public static Employee addContract(Domain domain, Employee employee) {

@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -501,7 +501,7 @@ public class SistemaRED {
 	}
 	
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws SegSocialException {
 		return SistemaREDMov.ipfxnaf(certificateInputStream, certificatePassword, certificateType, nssList);
 	}
@@ -770,12 +770,12 @@ public class SistemaRED {
 		return SistemaREDMov.getReportAffiliateInMovPrev(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 	}
 	
-	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
-	public static Employee sendAlta(final byte[] certificateData, final String certificatePassword,
+	public static byte[] sendAlta(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
@@ -784,12 +784,12 @@ public class SistemaRED {
 		}
 	}
 	
-	public static Employee sendBaja(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendBaja(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException{
 				return SistemaREDMov.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
-	public static Employee sendBaja(final byte[] certificateData, final String certificatePassword,
+	public static byte[] sendBaja(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException{
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDMov.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);

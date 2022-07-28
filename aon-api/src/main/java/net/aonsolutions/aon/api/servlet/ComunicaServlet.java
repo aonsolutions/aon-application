@@ -575,7 +575,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Employee employee = builder.build();
 		
-		employee = SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
+		SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
 		
 		if(employee.getName().isPresent()) {
 			sendMovEmailNotification(api, employee, frb, SituationType.BAJA, certificate);

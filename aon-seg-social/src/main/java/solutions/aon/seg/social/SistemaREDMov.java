@@ -1,17 +1,18 @@
 
 package solutions.aon.seg.social;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -26,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
@@ -42,16 +44,16 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDMov {
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 	
-	private static final String[] SUCCESS_CODE = new String[]{"3408", "9125", "9086", "0350", "0221", "3251", "3252", "3145", "3083", "3710", "3037"};
-    
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	private static final String MESSAGE_ERROR = "Error: No se acepta la comunicaci\u00f3n";
+	
 	private SistemaREDMov() {
 	    throw new IllegalStateException("Utility class");
 	}
 	 
 	// HANDLE THE EXCEPTIONS OF ALTA METHOD
-	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -120,7 +122,7 @@ class SistemaREDMov {
 	}
 
 	// HANDLE THE EXCEPTIONS OF ALTA METHOD
-	public static Employee sendBaja(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendBaja(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -139,7 +141,7 @@ class SistemaREDMov {
 	}
 
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -277,7 +279,7 @@ class SistemaREDMov {
 		}
 	}	
 	
-	private static Employee sendAltaImpl(
+	private static byte[] sendAltaImpl(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException  {
@@ -351,41 +353,64 @@ class SistemaREDMov {
 			}
 		});
 		
-		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		HtmlUnitToolkit.manageStatusCode(htmlPage);
-
-		DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-		if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-		}
-
-		DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-		if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		
+		//------------GET TA
+		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");
+		if(printDoc!=null) {
+			((HtmlSelect)printDoc).setSelectedAttribute("SI", true);
 		}
 		
-		DomNode msg3 = htmlPage.querySelector("#Frame");
-		if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		DomNode printType = null;
+		if(employee.getRegime().contains("0163")) {
+			printType = form.querySelector("select[name=\"cbo_ListaTipoImpresion\"]");
+		} else {
+			printType = form.querySelector("select[name=\"cbo_ListaTipoImpresion001\"]");
+		}
+
+		if(printType!=null) {
+			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
 		}
 		
-		DomNode message = htmlPage.querySelector("#DIL"); 
-		if(message!=null) {
-			String messageText = message.getTextContent().trim();
-			if( !Arrays.stream(SUCCESS_CODE).anyMatch(messageText::contains) ) {
+
+		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
+			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+			}
+
+			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
+			if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+			
+			DomNode msg3 = htmlPage.querySelector("#Frame");
+			if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+		}
+
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			DomNode message = htmlPage.querySelector("#DIL"); 
+			if(message!=null) {
 				throw new SegSocialException(message.getTextContent().trim());
 			}
 		} else {
-			throw new SegSocialException("Error no aceptada la comunicaci\u00f3n");
+			try {
+				return page.getWebResponse().getContentAsStream().readAllBytes();
+			} catch (Exception e) {
+				throw new InvalidDataException();
+			}
 		}
 
-		return employee;
+		throw new SegSocialException(MESSAGE_ERROR);
 	}
 
-	private static Employee sendBajaImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static byte[] sendBajaImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
 		String situation = employee.getSituacion() != null ? employee.getSituacion() : "93";
 		Integer mov = 1;
@@ -422,38 +447,53 @@ class SistemaREDMov {
 			employee.getAsociativeSA().ifPresent(form.getInputByName("txt_SDFINDSAA")::setValueAttribute); 
 		}
 
-		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		HtmlUnitToolkit.manageStatusCode(htmlPage);
-
-		DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-		if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-		}
-
-		DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-		if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		//------------GET TA
+		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");
+		if(printDoc!=null) {
+			((HtmlSelect)printDoc).setSelectedAttribute("SI", true);
 		}
 		
-		DomNode msg3 = htmlPage.querySelector("#Frame");
-		if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		DomNode printType = form.querySelector("select[name=\"cbo_ListaTipoImpresion001\"]");
+		if(printType!=null) {
+			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
 		}
-		
-		DomNode message = htmlPage.querySelector("#DIL"); 
-		if(message!=null) {
-			String messageText = message.getTextContent().trim();
-			if( !Arrays.stream(SUCCESS_CODE).anyMatch(messageText::contains) ) {
+        
+		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+	
+			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
+			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+			}
+	
+			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
+			if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+			
+			DomNode msg3 = htmlPage.querySelector("#Frame");
+			if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+		}
+					
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			DomNode message = htmlPage.querySelector("#DIL"); 
+			if(message!=null) {
 				throw new SegSocialException(message.getTextContent().trim());
 			}
 		} else {
-			throw new SegSocialException("Error no aceptada la comunicaci\u00f3n");
+			try {
+				return page.getWebResponse().getContentAsStream().readAllBytes();
+			} catch (Exception e) {
+				throw new InvalidDataException();
+			}
 		}
-		
-		return employee;
+			
+		throw new SegSocialException(MESSAGE_ERROR);
 	}
 
 	private static void movPrevDeleteImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -573,7 +613,7 @@ class SistemaREDMov {
 	}
 
 	private static Collection<Employee> ipfxnafImpl(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws Exception {
 
 		if (nssList.size() >= 7) {			
