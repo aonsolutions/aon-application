@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsyncDecorator;

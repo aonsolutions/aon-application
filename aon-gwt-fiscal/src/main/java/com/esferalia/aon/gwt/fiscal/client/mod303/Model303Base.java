@@ -25,7 +25,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfo;
@@ -1180,7 +1180,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		if ( entryContainer instanceof HasWidgets) {
 			HasWidgets tab = (HasWidgets) entryContainer;
 			tab.clear();
-			AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+			AccountEntryModule module = new AccountEntryModule();
 			module.onModuleLoad( new AccountEntryModuleOptions()
 				.setParentWidget( tab )
 				.setDomainName( getCallback().getOptions().getDomainName() )

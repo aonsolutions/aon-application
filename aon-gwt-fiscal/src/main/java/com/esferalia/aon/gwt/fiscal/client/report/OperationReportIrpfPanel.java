@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
@@ -98,7 +98,7 @@ class OperationReportIrpfPanel extends ScrollPanel{
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+		AccountEntryModule module = new AccountEntryModule();
 		module.onModuleLoad(new AccountEntryModuleOptions()
 			.setParentWidget(entryDialog)
 			.setDomainName(options.getDomainName())
