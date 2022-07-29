@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.FsModel200Detail.FS_MODEL200_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsModel200Registry.FS_MODEL200_REGISTRY;
 import static com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021Initialization.INITIALIZE_EXPRESSION_MAP;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -285,9 +286,13 @@ public class Mod2002021DAO  {
 			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
 			 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
+			 .set(FS_MODEL200.CREATION_USER, ctx.getUser())
+			 .set(FS_MODEL200.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
+		mod200.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER));
+		mod200.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE));
 		ctx.log().info("------ MOD 200 INSERTED (" + mod200.getId() + ")");
 		insertDetail(ctx, mod200);	
 		insertRegistry(ctx, mod200);
@@ -528,6 +533,8 @@ public class Mod2002021DAO  {
 	}
 	
 	private static Mod2002021 update(AONContext ctx, Mod2002021 mod200)  {
+        mod200.setModificationUser(ctx.getUser());
+		mod200.setModificationDate(new Timestamp( System.currentTimeMillis()));
 		ctx.getDslContext().update(FS_MODEL200)
 		 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 		 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
@@ -570,6 +577,8 @@ public class Mod2002021DAO  {
 		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
 		 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte(mod200.getStatus()))
+		 .set(FS_MODEL200.MODIFICATION_USER, mod200.getModificationUser())
+		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))		 
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -708,6 +717,10 @@ public class Mod2002021DAO  {
 		mod200.setUltimateName(record.getUltimateName());
 		mod200.setUltimateCountry(Country.safeValueOf(record.getUltimateCountry()));
 		mod200.setStatus(FiscalStatus.safeValueOf(record.getStatus()));
+		mod200.setCreationUser(record.getCreationUser());
+		mod200.setCreationDate(record.getCreationDate());
+		mod200.setModificationUser(record.getModificationUser());
+		mod200.setModificationDate(record.getModificationDate());
 		return mod200;
 	}
 	
