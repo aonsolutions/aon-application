@@ -344,6 +344,7 @@ public class AccountingInvoiceDAO {
 
 	private static void fillNoInvoiceTax(Record accDet, Record det, AccountingInvoice ai) {
 		ai.addVat(new InvoiceVAT()
+			.setInvoiceDetailId(det.getValue(INVOICE_DETAIL.ID))
 			.setBase(det.get( INVOICE_DETAIL.TAXABLE_BASE ))
 			.setExpAccountId(accDet.getValue(EXP_ACCOUNT.ID))
 			.setExpAccountCode(accDet.getValue(EXP_ACCOUNT.CODE))
