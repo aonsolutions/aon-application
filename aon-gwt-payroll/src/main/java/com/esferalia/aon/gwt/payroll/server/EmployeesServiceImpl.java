@@ -37,6 +37,8 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -127,6 +129,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -4576,6 +4579,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			}
 		}
 	}
+	
+	
+	private static String getActualSettleCause(String causeStr) {
+		if (causeStr == null)
+			return "";
+		if (AonStringUtils.equals(ContextVariable.UNFAIR.getName(), causeStr)) {
+			return Dismissal.UNFAIR.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.TEMP_COMPLETE.getName(), causeStr)) {
+			return Dismissal.TEMP_END.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.WORK_COMPLETE.getName(), causeStr)) {
+			return Dismissal.WORK_END.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.CONTRACT_COMPLETE.getName(), causeStr)) {
+			return Dismissal.DEFINITE_END.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.OBJECTIVE.getName(), causeStr)) {
+			return Dismissal.OBJECTIVE.getDescription();
+		}  else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
+			return Dismissal.CONDITIONS_CHANGE.getDescription();
+		}   else if (AonStringUtils.equals(ContextVariable.RETIREMENT.getName(), causeStr)) {
+			return Dismissal.RETIREMENT.getDescription();
+		}
+		return "";
+	}
 
 	/**
 	 * Just transpile Isalary to Settle
@@ -4589,6 +4614,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		ISalary salary = getSalary(domain, draft);
 		Settle settle = new Settle();
 
+		String compCause = "";
+		//GETTING THE SETTLE CAUSE FROM DRAFT CONTEXT
+		if (draft != null && draft.getContext() != null) {
+			compCause = draft.getContext().stream()
+					.filter(variable -> variable != null && AonStringUtils.equals(variable.getName(), ContextVariable.COMPENSATION_CAUSE.getName()))
+					.map(variable -> getActualSettleCause(variable.getExpression()))
+					.findFirst().orElse("");
+		}
+		
 		settle.setEmployeeName(salary.getEmployeeName()).setEmployeeCategory(salary.getCategory())
 				.setEmployeeDocument(salary.getEmployeeDocument()).setEmployeeQuoteGroup(salary.getQuoteGroup())
 				.setEmployeeSeniorityDate(salary.getSeniorityDate()).setEnterpriseAddress(salary.getEnterpriseAddress())
@@ -4599,7 +4633,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				.setTotalIrpf(salary.getTotalIrpf()).setTotalLiquid(salary.getTotalLiquid())
 				.setStartDate(salary.getStartDate());
 
-		settle.setCause("");
+		settle.setCause(compCause != null ? compCause : "");
 
 		try ( CloseableAONContext ctx = AONContext.getAONContext(domain, "") ) {
 			// LinkedList<CompanyAdministrator> dirStaff = CompanyDAO.getDirStaff(ctx,
