@@ -65,12 +65,11 @@ public class Mod200DAO {
 				.setName(record.getValue(FS_MODEL200.NAME))
 				.setResultType(record.getValue(FS_MODEL200.RESULT_TYPE))
 				.setResult(record.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : record.getValue(FS_MODEL200.AMOUNT) )
-				
-				// TODO - Support
-				.setCreationUser(null)
-				.setCreationDate(null)
-				.setModificationUser(null)
-				.setModificationDate(null)
+
+				.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER))
+				.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL200.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL200.MODIFICATION_DATE))				
 			;
 		}
 	}

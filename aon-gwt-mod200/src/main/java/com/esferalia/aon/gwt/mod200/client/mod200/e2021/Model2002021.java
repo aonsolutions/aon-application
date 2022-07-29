@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
@@ -56,6 +57,7 @@ public class Model2002021 extends DockLayoutPanel {
 	AonToolbarButton aeatFileButton;
 	AonToolbarButton aeatPrintButton;
 	AonToolbarButton commentsButton;
+	AonToolbarButton auditButton;
 	
 	AonToast commentsToast = null;
 
@@ -180,6 +182,7 @@ public class Model2002021 extends DockLayoutPanel {
 		aeatFileButton.setVisible(isNotNew); // El estado se empezará a usar a partir del 2022, por eso ahora este botón aparece siempre aunque esté pendient
 		aeatPrintButton.setVisible(isNotNew);		
 		commentsButton.setVisible(isNotNew);
+		auditButton.setVisible(isNotNew);
 		
 		// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
 //		markAsFinishedButton.setVisible(isNotNew &&
@@ -637,6 +640,11 @@ public class Model2002021 extends DockLayoutPanel {
 		toolbarPanel.add(commentsButton);
 		styleCommentsButton();
 		
+		// Auditoria
+		auditButton = new AonToolbarButton(AON.MSG.audit(), AON.CSS.aonIconAudit());
+		auditButton.addClickHandler( event -> audit());
+		toolbarPanel.add(auditButton);
+		
 		// Marca "Cambios sin guardar"
 		
 		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
@@ -715,6 +723,11 @@ public class Model2002021 extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 		refreshButtonsVisibility();
+	}
+	
+	private void audit() {
+		AonAuditDialog dialog = new AonAuditDialog();
+		dialog.show(mod200Object.getMod200());
 	}
 	
 // Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
