@@ -712,7 +712,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 			cto = addMenuItem("Copia Contrato", new CTOCommand(), AON.CSS.aonIconPdf(), "cto");
 			cbc = addMenuItem("Copia B\u00E1sica", new CBCCommand(), AON.CSS.aonIconPdf(), "cbc");
-			cto = addMenuItem("Copia Transformaci\u00f3n Contrato", new CTOTransformCommand(), AON.CSS.aonIconPdf(), "ctoTransform");
+			ctoTransform = addMenuItem("Copia Transformaci\u00f3n Contrato", new CTOTransformCommand(), AON.CSS.aonIconPdf(), "ctoTransform");
 			
 			separatorCertifica = addSeparator();
 

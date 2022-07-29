@@ -2223,8 +2223,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		ideTB.setValue(this.contractSpecificData.getIde());
 		comunicationDateBx.setValue(this.contractSpecificData.getComunicationDate());
 		
-		ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
-		comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
+		if(Boolean.TRUE.equals(contractEmployeeInfo.getContractInfo().isHasTransformation())) {
+			ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
+			comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
+		}
 		
 		calendarFormativeStartDate.setValue(this.contractSpecificData.getCalendarFormativeStartDate());
 		calendarFormativeEndDate.setValue(this.contractSpecificData.getCalendarFormativeEndDate());
