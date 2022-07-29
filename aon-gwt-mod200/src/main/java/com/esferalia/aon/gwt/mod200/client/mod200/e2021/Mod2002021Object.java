@@ -92,7 +92,7 @@ public class Mod2002021Object implements Serializable {
 	}
 	
 	public void delete(final AsyncCallback<Void> callback) {
-		Model200.getMod2002021Service().deleteMod2002021(options.getOccam(), mod200.getId(), new AsyncCallback<Void>() {
+		Model200.getMod2002021Service().deleteMod2002021(options.getOccam(), mod200, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
