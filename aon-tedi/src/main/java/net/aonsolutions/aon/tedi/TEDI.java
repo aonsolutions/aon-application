@@ -40,6 +40,7 @@ public class TEDI {
 			result.clearMessages();
 			if (ctx == null) {
 				fillAONContext( tctx );
+				ctx = tctx.getAONContext();
 			}
 			TediValidator.validateInvoice(ctx,result);
 		} catch (Exception e) {
