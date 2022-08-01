@@ -204,10 +204,22 @@ public class Mod2002021DAO  {
 	public static Mod2002021 save(AONContext ctx, Mod2002021 mod200) {
 		try {
 			ctx.log().info("------ [START] SAVE MOD 200");
+			
+			// Fechas inicio y fin de periodo para tipo de periodo = 1
 			if (mod200.getPeriodType() == 1) {
 				mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2021));
 				mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2021));
 			}
+			
+			// Casillas estados contables (Balance y PYG)
+			mod200.setBooleanValue(Mod2002021Key.C0050, (mod200.getBalanceType() == BalanceType.NORMAL));
+			mod200.setBooleanValue(Mod2002021Key.C0051, (mod200.getBalanceType() == BalanceType.ABREVIADO));
+			mod200.setBooleanValue(Mod2002021Key.C0052, (mod200.getBalanceType() == BalanceType.PYMES));
+			
+			mod200.setBooleanValue(Mod2002021Key.C0053, (mod200.getPygType() == BalanceType.NORMAL));
+			mod200.setBooleanValue(Mod2002021Key.C0054, (mod200.getPygType() == BalanceType.ABREVIADO));
+			mod200.setBooleanValue(Mod2002021Key.C0055, (mod200.getPygType() == BalanceType.PYMES));
+			
 			if ( AonStringUtils.length(mod200.getDocument()) > 9)
 				throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
 			if ( AonStringUtils.length(mod200.getName()) > 45)
