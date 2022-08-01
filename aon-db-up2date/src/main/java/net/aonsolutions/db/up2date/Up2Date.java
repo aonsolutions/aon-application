@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
 import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
 import net.aonsolutions.db.up2date.tgss.AgriculturalMonthlyQuote2022Fix;
@@ -238,7 +239,7 @@ public class Up2Date {
     		//AlterSalaryEmbargo.ALTERSALARYEMBARGO,
     		//Holidays2022Update.HOLIDAYS2022UPDATE,
     		//Art1512022Update.ART1512022UPDATE,
-    		//ContractAttachUpdate.CONTRACTATTACHUPDATE
+    		//ContractAttachUpdate.CONTRACTATTACHUPDATE,
     		//AlterSalaryDeduction.ALTERSALARYDEDUCTION,
     		//TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII,
     		//TaskAddEvaluation.TASK_ADD_EVALUATION,
@@ -256,9 +257,10 @@ public class Up2Date {
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		//RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
-	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
+	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
     		AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
-    		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT
+    		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
+    		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX
     };
     
 
