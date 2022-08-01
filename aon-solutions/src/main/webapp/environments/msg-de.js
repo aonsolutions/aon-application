@@ -253,6 +253,7 @@ export const POSTAL_CODE = 'Postal Code';
 export const POSTAL_CODE_MIN = 'ZIP';
 export const PREVIOUS = 'Previous';
 export const PRICE =  'Price';
+export const PRINT = 'Print';
 export const PRINT_INVOICE = 'Print Invoice';
 export const PROCESSED_MOVEMENT = "The discharge has been processed successfully";
 export const PRODUCT = 'Product';
@@ -369,6 +370,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 // ----- W
 
+export const WAREHOUSE = 'Lagerhaus';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
 export const WORKGROUP = 'Workgroup';

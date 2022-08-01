@@ -21,6 +21,7 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
@@ -124,6 +125,32 @@ public class ElaborationDAO {
 	 * ELABORATION 
 	 */
 	
+	private static SelectConditionStep<Record> select(AONContext ctx, ElaborationFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(ELABORATION)
+			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.eq(ELABORATION.WAREHOUSE))
+			.where(ELABORATION_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Stream<Elaboration> getStream(AONContext ctx, ElaborationFilter filter, Options... options){
+		if(options.length > 0) 
+			return getStream(ctx, filter, options[0]);
+		return select(ctx, filter).fetch().stream().map(new ElaborationFiller());
+	}
+	
+	private static Stream<Elaboration> getStream(AONContext ctx, ElaborationFilter filter, Options options){
+		if(options.isPagination())
+			return getStream(ctx, filter, options.getPage(), options.getPerPage());
+		else return getStream(ctx, filter);
+	}
+	
+	public static Stream<Elaboration> getStream(AONContext ctx, ElaborationFilter filter, Integer page, Integer perPage) {
+		return select(ctx, filter)
+			.orderBy(ELABORATION.DATE.desc())
+			.limit(perPage).offset(perPage * (page -1))
+			.fetch().stream().map(new ElaborationFiller()); 
+	}
+	
 	public static Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter) {
 		ctx.checkRead();
 		SelectConditionStep<Record> select = (SelectConditionStep<Record>) (ELABORATION_PROPERTIES
@@ -132,6 +159,11 @@ public class ElaborationDAO {
 						.on(WAREHOUSE.ID.eq(ELABORATION.WAREHOUSE)), filter));
 		return select.orderBy(ELABORATION.DATE.desc()).fetch().stream()
 				.map(new ElaborationFiller());
+	}
+	
+	public static List<Elaboration> getList(AONContext ctx, ElaborationFilter filter, Options... options) {
+		return getStream(ctx, filter, options)
+			.collect(Collectors.toList());
 	}
 	
 	public static List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter) {

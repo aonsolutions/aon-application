@@ -19,6 +19,8 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBox;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
+import static com.esferalia.aon.watson.util.AonStringUtils.trimToEmpty;
+import static com.esferalia.aon.watson.util.AonStringUtils.upperCase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,6 +33,8 @@ import java.util.ResourceBundle;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfFile;
@@ -47,6 +51,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SettlementTemplate extends PdfFile {
 
@@ -201,11 +206,14 @@ public class SettlementTemplate extends PdfFile {
 	private void drawDeclaration() {
 
 		final String dateFormat = text("DATE FORMAT");
-
+		
 		String[] variables = new String[] { "endDate", "endCause", "textTotal", "totalAmount" };
-		String[] values	   = new String[] { safeString(formatDate(settlement.getEndDate(), dateFormat)),
-				safeString(settlement.endCause()), convertDouble(settlement.total().orElse(0d)).toUpperCase(),
-				toLatinNumber(settlement.total().orElse(null)) };
+		String[] values	   = new String[] {
+				safeString(formatDate(settlement.getEndDate(), dateFormat)),
+				AonStringUtils.isBlank(safeString(settlement.endCause())) ? "" : "por el motivo de " + safeString(settlement.endCause()) + " y",
+				convertDouble(settlement.total().orElse(0d)).toUpperCase(),
+				toLatinNumber(settlement.total().orElse(null))
+		};
 
 		final String declarationTxt = replaceVariables(variables, values, text("DECLARATION"));
 
@@ -213,7 +221,7 @@ public class SettlementTemplate extends PdfFile {
 		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(HELVETICA).fontSize(9f)
 				.lineSpacing(6f).content(declarationTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
-
+		
 		PdfText text = builder.build();
 		drawTextLines(text);
 		down(10);
@@ -430,7 +438,11 @@ public class SettlementTemplate extends PdfFile {
 				.horizontalAlignment(ALIGNMENT.CENTER);
 
 		PdfImage signImg = new PdfImage(x(), 80, width, 50, ALIGNMENT.CENTER, contents, doc, signature);
-		signImg.draw();
+		try {
+			signImg.draw();
+		} catch (Exception e) {
+			// No se dibuja
+		}
 	
 		
 		PdfText enterpriseSign = builder.build();

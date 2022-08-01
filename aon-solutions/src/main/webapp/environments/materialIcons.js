@@ -134,7 +134,8 @@ export const GROUP_WORK = 'group_work';
 export const GROUPS = 'groups';
 
 // ----- H
-export const SCHEDULE = 'schedule';
+export const HIGHLIGHT_OFF = 'highlight_off';
+
 // ----- I
 
 export const INBOX = 'inbox';
@@ -167,6 +168,7 @@ export const NOTIFICATION_ADD = "notification_add";
 
 // ----- P
 
+export const PALLET = 'pallet';
 export const PAYMENT = 'payment';
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
@@ -174,6 +176,7 @@ export const PERSON_ADD = 'person_add';
 export const PERSON_ADD_ALT = 'person_add_alt';
 export const PHONE = 'phone';
 export const PLAYLIST_ADD_CIRCLE = 'playlist_add_circle';
+export const PRECISION_MANUFACTURING = 'precision_manufacturing';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
@@ -182,6 +185,7 @@ export const PEOPLE = 'people';
 // ----- Q
 
 export const QR_CODE_2 = 'qr_code_2';
+export const QR_CODE_SCANNER = 'qr_code_scanner';
 
 // ----- R
 
@@ -193,6 +197,7 @@ export const ROOM = 'room';
 // ----- S
 
 export const SAVE = 'save';
+export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';

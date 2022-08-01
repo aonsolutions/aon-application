@@ -22,7 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
@@ -182,7 +182,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 
 		@Override
-		public AccountEntryModuleTEDI getModule() {
+		public AccountEntryModule getModule() {
 			return invCallback.getModule();
 		}
 

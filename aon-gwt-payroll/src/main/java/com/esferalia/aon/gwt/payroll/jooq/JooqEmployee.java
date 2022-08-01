@@ -68,6 +68,7 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -972,6 +973,8 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "DISCONTINUOS")) {
+				contractData.setDiscontinuos(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? true : false);
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COEFICIENTE_PARCIALIDAD")) {
 				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
 				String partiality = r.get(CONTRACT_DATA.EXPRESSION);
@@ -1106,7 +1109,17 @@ public class JooqEmployee {
 				.fetch();
 		
 		contractData.setHasSettle(settlementRecords.isNotEmpty());
-		if(settlementRecords.isNotEmpty()) contractData.setHolidaysDate(settlementRecords.get(0).get(SALARY.END_DATE));
+		if(settlementRecords.isNotEmpty()) {
+			Record settlementRecord = settlementRecords.get(0);
+			contractData.setHolidaysDate(settlementRecord.get(SALARY.END_DATE));
+			
+			Result<SalaryDataRecord> holidayRecords = dslContext.selectFrom(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(settlementRecord.get(SALARY.ID)))
+					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+					.fetch();
+			
+			contractData.setSAA(holidayRecords.isNotEmpty() ? "001" : "015");
+		}
 		
 		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)
@@ -1153,7 +1166,9 @@ public class JooqEmployee {
 		// ---------------------------------------------- Contract Transform
 		
 		List<Integer> transformDocs = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)19)).fetch(CONTRACT_ATTACH.ID);
-		if(!transformDocs.isEmpty()) contractData.setHasTransformation(true);
+		if(!transformDocs.isEmpty() || 
+				(AonStringUtils.isNotBlank(contractData.getContractType()) && AonStringUtils.equals(contractData.getContractType().substring(contractData.getContractType().length() - 1), "9"))) 
+			contractData.setHasTransformation(true);
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);

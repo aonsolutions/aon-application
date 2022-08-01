@@ -147,6 +147,8 @@ public class InvoiceTemplate {
 	byte[] logo;
 	List<String> legalLines;
 	
+	List<InvoiceDetail> specialTaxes;
+	
 	public InvoiceTemplate(CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
 //		company.getRegistry().getDomain().getDomainType(); DomainType.GARAGE;
 //		Invoice inv = new Invoice();
@@ -169,9 +171,12 @@ public class InvoiceTemplate {
 		try {
 			for (Invoice invoice : invoices) {
 				
+				
 				if (invoice == null)
 					continue;
 				
+				this.specialTaxes = new LinkedList<>();
+				this.manageSupplies(invoice);
 				this.bottomExtra = 0;
 				String clientZip = invoice.getAddress() != null ? invoice.getAddress().getZip() : "";
 				
@@ -196,7 +201,6 @@ public class InvoiceTemplate {
 				
 				this.y -= 10;
 				
-				
 				if (config.isDetailed())
 					this.drawDetailedEntries(document, company, invoice);
 				else
@@ -214,6 +218,17 @@ public class InvoiceTemplate {
 		}
 	}
 	
+	private void manageSupplies(Invoice invoice) {
+		if (invoice != null && invoice.getDetails() != null) {
+			
+			invoice.getDetails().stream()
+			.filter(detail -> detail.getItem() != null &&
+			detail.getItem().getProduct() != null &&
+			ProductType.PREPAYMENT.equals(detail.getItem().getProduct().getType()))
+			.forEach(detail -> this.specialTaxes.add(detail));
+		}
+	}
+	
 	public InvoiceTemplate(CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
 		try {
 			this.document = new PDDocument();
@@ -228,9 +243,12 @@ public class InvoiceTemplate {
 			this.logo = logo;
 			this.bottomExtra = 0;
 			
+			
 			if (invoice == null)
 				throw new CanNotCreatePdfException("No invoice found.");
 			
+			this.specialTaxes = new LinkedList<>();
+			this.manageSupplies(invoice);
 			String clientZip = invoice.getAddress() != null ? invoice.getAddress().getZip() : "";
 			
 			this.addressLanguage = determineStreetTypeLanguage(clientZip, config.getLanguage());
@@ -253,7 +271,6 @@ public class InvoiceTemplate {
 			this.contents = this.drawFirstPage(document, company, invoice, config);
 			
 			this.y -= 10;
-			
 			
 			if (config.isDetailed())
 				this.drawDetailedEntries(document, company, invoice);
@@ -518,6 +535,7 @@ public class InvoiceTemplate {
 		
 		int bottomStuff = invoice.getBreakdown() != null ? invoice.getBreakdown().size() : 0;
 		bottomStuff += invoice.getFinances() != null ? invoice.getFinances().size() : 0;
+		bottomStuff += specialTaxes.size();
 		
 		if (bottomStuff > 8) {
 			bottomExtra = (bottomStuff - 7) * 10;
@@ -1590,7 +1608,7 @@ public class InvoiceTemplate {
 			int i = 0;
 			float initY = y;
 			
-			float bdSize = invoice.getBreakdown().size() * 10 + 10f;
+			float bdSize = (invoice.getBreakdown().size() + this.specialTaxes.size()) * 10 + 10f;
 			
 			if (theme.getBoxBodyBackgroundColor() != null) {				
 				drawBox(contents, 180, y, 80 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor(), opacity);
@@ -1632,8 +1650,36 @@ public class InvoiceTemplate {
 				
 				i++;
 			}
-			if ((invoice.getBreakdown() != null && !invoice.getBreakdown().isEmpty())) {
-				float middle = (invoice.getBreakdown().size() % 2 != 0 ? invoice.getBreakdown().size() / 2f : invoice.getBreakdown().size() / 2f - 0.5f) * 10;
+			
+			for (InvoiceDetail detail : specialTaxes) {
+				
+				String total = (detail.getQuantity() != 0 && detail.getPrice() != 0 && detail.getTaxableBase() != 0) ? toLatinNumber(detail.getTaxableBase()) : "";
+				
+				x = 180;
+				x += 80;
+
+				x += 80;
+				
+				String name = "OTRO";
+				
+				if (detail != null && detail.getItem() != null && detail.getItem().getProduct() != null && detail.getItem().getProduct().getType() != null) {
+					
+					name = AonStringUtils.trimToEmpty(detail.getItem().getProduct().getType().getName());
+				}
+				
+				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), name, theme.getTextColor(), regularFont, 7, -12, i + TAX_TYPE);
+				x += 60;
+				
+				drawTextRight(contents, new PDRectangle(x, y, 49, 15), total, theme.getTextColor(), regularFont, 7, 5, -12, i + TAX_QUOTE);
+				x += 50;
+				
+				y	-= 10;
+				
+				i++;
+			}
+			if ((invoice.getBreakdown() != null && (!invoice.getBreakdown().isEmpty() || !specialTaxes.isEmpty()))) {
+				int totalThings = invoice.getBreakdown().size() + specialTaxes.size();
+				float middle = /*(totalThings % 2 != 0 ? totalThings / 2f -0.5f: totalThings / 2f - 0.5f)*/(totalThings / 2f -0.5f) * 10;
 				middle = initiaruY - middle;
 				drawTextRight(contents, new PDRectangle(x, middle, 99, 8), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), boldFont, 8, 5, -.5f, INVOICE_TOTAL);
 			} else {

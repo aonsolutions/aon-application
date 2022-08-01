@@ -7,7 +7,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.resources.client.DataResource;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -96,6 +95,7 @@ public class FiscalModelUtils {
 	public static String getAdministrationBackgroundStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BACKGROUND_STYLE);
 	}
+	
 
 	@Deprecated
 	public static String getAdministrationBG(Administration admon) {
@@ -130,21 +130,22 @@ public class FiscalModelUtils {
 	 * @return
 	 * @deprecated Use getAdministrationIconStyle
 	 */
-	@Deprecated
-	public static String getAdministrationIcon(Administration adm) {
-		if (adm == Administration.ALAVA) {
-			return AON.AON_CSS.aonIconAraba();
-		} else if (adm == Administration.BIZKAIA) {
-			return AON.AON_CSS.aonIconBizkaia();
-		} else if (adm == Administration.GIPUZKOA) {
-			return AON.AON_CSS.aonIconGipuzkoa();
-		} else if (adm == Administration.NAVARRA) {
-			return AON.AON_CSS.aonIconNavarra();
-		} else if (adm == Administration.UNKNOWN) {
-			return AON.AON_CSS.aonIconQuestion();
-		} 
-		return AON.AON_CSS.aonIconAeat();
-	}
+//	@Deprecated
+//	public static String getAdministrationIcon(Administration adm) {
+//		if (adm == Administration.ALAVA) {
+//			return AON.AON_CSS.aonIconAraba();
+//		} else if (adm == Administration.BIZKAIA) {
+//			return AON.AON_CSS.aonIconBizkaia();
+//		} else if (adm == Administration.GIPUZKOA) {
+//			return AON.AON_CSS.aonIconGipuzkoa();
+//		} else if (adm == Administration.NAVARRA) {
+//			return AON.AON_CSS.aonIconNavarra();
+//		} else if (adm == Administration.UNKNOWN) {
+//			return AON.AON_CSS.aonIconQuestion();
+//		} 
+//		return AON.AON_CSS.aonIconAeat();
+//	}
+	
 	@Deprecated
 	public static String getAdministrationIconBW(Administration adm) {
 		if (adm == Administration.ALAVA) {
@@ -164,21 +165,21 @@ public class FiscalModelUtils {
 	/**
 	 * @deprecated Use getAdministrationIconDataResource
 	 */
-	@Deprecated
-	public static ImageResource getAdministrationIconResource(Administration adm) {
-		if (adm ==Administration.ALAVA) {
-			return AON.AON_RESOURCES.aonIconAraba();	
-		} else if (adm ==Administration.BIZKAIA) {
-			return AON.AON_RESOURCES.aonIconBizkaia();
-		} else if (adm ==Administration.GIPUZKOA) {
-			return AON.AON_RESOURCES.aonIconGipuzkoa();
-		} else if (adm ==Administration.NAVARRA) {
-			return AON.AON_RESOURCES.aonIconNavarra();
-		} else if (adm == Administration.UNKNOWN) {
-			return AON.AON_RESOURCES.aonIconQuestion();
-		} 
-		return AON.AON_RESOURCES.aonAeat();
-	}
+//	@Deprecated
+//	public static ImageResource getAdministrationIconResource(Administration adm) {
+//		if (adm ==Administration.ALAVA) {
+//			return AON.AON_RESOURCES.aonIconAraba();	
+//		} else if (adm ==Administration.BIZKAIA) {
+//			return AON.AON_RESOURCES.aonIconBizkaia();
+//		} else if (adm ==Administration.GIPUZKOA) {
+//			return AON.AON_RESOURCES.aonIconGipuzkoa();
+//		} else if (adm ==Administration.NAVARRA) {
+//			return AON.AON_RESOURCES.aonIconNavarra();
+//		} else if (adm == Administration.UNKNOWN) {
+//			return AON.AON_RESOURCES.aonIconQuestion();
+//		} 
+//		return AON.AON_RESOURCES.aonAeat();
+//	}
 	
 	@Deprecated
 	public static FlowPanel getAnchorPanel(IFiscalModel model, String label, String href) {
@@ -186,7 +187,8 @@ public class FiscalModelUtils {
 		p.setStyleName(AON.AON_CSS.aonPadding2());
 		Anchor a = new Anchor(label,href,"_blank");
 		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(FiscalModelUtils.getAdministrationIcon(model.getAdministration()));
+		//a.addStyleName(FiscalModelUtils.getAdministrationIcon(model.getAdministration()));
+		a.addStyleName(FiscalModelUtils.getAdministrationIconStyle(model.getAdministration()));
 		p.add(a);
 		return p;
 	}

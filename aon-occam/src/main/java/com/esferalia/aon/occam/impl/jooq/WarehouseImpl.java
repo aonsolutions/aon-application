@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
@@ -277,13 +278,18 @@ public class WarehouseImpl implements IWarehouse {
 		ElaborationDAO.getElaborationDetailComposition(ctx, id));
 	}
 
-	
-	
 	@Override
 	public Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getElaborationStream(ctx, filter));
 	}
+	
+	@Override
+	public List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter, Options... options){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.getList(ctx, filter, options));
+	}
+
 	@Override
 	public List<ElaborationDetail> getElaborationDetailList(AONContext ctx, Integer id){
 		return ctx.getDslContext().transactionResult(configuration ->

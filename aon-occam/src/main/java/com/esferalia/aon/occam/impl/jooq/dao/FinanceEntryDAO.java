@@ -36,19 +36,24 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceEntryDAO {
+	
+	private FinanceEntryDAO() {
+		
+	}
 
 	public static Stream<Finance> accountFetch(final AONContext ctx, FinanceFilter filter, int offset, int numberOfRows, FinanceOrder orderBy) {
 		return FinanceDAO.fetch(ctx, filter, offset, numberOfRows,orderBy)
-			.peek(finance -> fillCustomerAcccount(ctx,finance))
-			.peek(finance -> fillSupplierAcccount(ctx,finance))
-			.filter(finance -> 
-					finance.hasInvoice()						// Si viene de factura debe pasar
-																// o
-					|| (!finance.hasInvoice()					// Si no viene de factura, 
-					&& finance.isPayment()			 			// y es un pago 
-					&& finance.getRegistryAccountId() == null))	// y no hay cuenta (el paso anterior no ha rellenado la cuenta)
-			.peek(finance -> fillCreditorAcccount(ctx,finance))
-		;
+			.map(finance -> fillAcccount(ctx,finance));
+//			.map(finance -> fillCustomerAcccount(ctx,finance))
+//			.map(finance -> fillSupplierAcccount(ctx,finance))
+//			.filter(finance -> 
+//					finance.hasInvoice()						// Si viene de factura debe pasar
+//																// o
+//					|| (!finance.hasInvoice()					// Si no viene de factura, 
+//					&& finance.isPayment()			 			// y es un pago 
+//					&& finance.getRegistryAccountId() == null))	// y no hay cuenta (el paso anterior no ha rellenado la cuenta)
+//			.map(finance -> fillCreditorAcccount(ctx,finance))
+//		;
 	}
 
 	public static FinanceEntry getFinanceEntry(final AONContext ctx, Integer accountEntryId) {
@@ -97,9 +102,10 @@ public class FinanceEntryDAO {
 				.fetch()
 				.stream()
 			.map( new FullFinanceFiller() )
-			.peek(finance -> fillCustomerAcccount(ctx,finance))
-			.peek(finance -> fillSupplierAcccount(ctx,finance))
-			.peek(finance -> fillCreditorAcccount(ctx,finance))
+			.map(finance -> fillAcccount(ctx,finance))
+//			.peek(finance -> fillCustomerAcccount(ctx,finance))
+//			.peek(finance -> fillSupplierAcccount(ctx,finance))
+//			.peek(finance -> fillCreditorAcccount(ctx,finance))
 			.forEach( finance -> entry.getTrackings().put(finance.getId(), new FinanceTracking().setFinance(finance)));
 		} else {
 			ctx.getDslContext()
@@ -121,46 +127,74 @@ public class FinanceEntryDAO {
 					.fetch()
 					.stream()
 				.map( new FullFinanceTrackingFiller() )
-				.peek(ft -> ft.setLastTracking(FinanceTrackingDAO.isLastTracking(ctx, ft)))
-				.peek(ft -> fillCustomerAcccount(ctx,ft.getFinance()))
-				.peek(ft -> fillSupplierAcccount(ctx,ft.getFinance()))
-				.peek(ft -> fillCreditorAcccount(ctx,ft.getFinance()))
+				.map(ft -> ft.setLastTracking(FinanceTrackingDAO.isLastTracking(ctx, ft)))
+				.map(ft -> fillAcccount(ctx,ft))
+//				.peek(ft -> fillCustomerAcccount(ctx,ft.getFinance()))
+//				.peek(ft -> fillSupplierAcccount(ctx,ft.getFinance()))
+//				.peek(ft -> fillCreditorAcccount(ctx,ft.getFinance()))
 				.forEach( ft -> entry.getTrackings().put(ft.getFinance().getId(), ft));
 		}
 		return entry;
 	}
+	private static FinanceTracking fillAcccount(AONContext ctx,FinanceTracking ft) {
+		fillAcccount(ctx, ft.getFinance());
+		return ft;
+	}
+	private static Finance fillAcccount(AONContext ctx,Finance finance) {
+		if (finance.hasRegistry()) {
+			Account account = null;
+			if (finance.isFromSalesInvoice()) {
+				account = CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId());	
+			} else if (finance.isFromPurchaseInvoice()) {
+				account = SupplierDAO.getSupplierAccount(ctx,finance.getRegistry().getId());	
+			} else if (finance.isFromExpensesInvoice() || finance.isFromUndeductibleInvoice()) {
+				account = CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());	
+			}
+			if (account == null ) {
+				if (!finance.isPayment()) {
+					account = CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId());	
+				} else {
+					// Se asume acreedor para los pagos.
+					// Los proveedores deberian tener factura.
+					account = CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
+				}
+			}
+			fillRegistryAccountData(finance,account);
+		}
+		return finance;
+	}
 
-	private static Finance fillCustomerAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null	 
-			&& (finance.isFromSalesInvoice()					// Es factura de Venta 
-			|| (!finance.hasInvoice() && !finance.isPayment())) // Cobro sin factura
-			) {
-			Account account = RegistryOldDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
-			fillRegistryAccountData(finance,account);
-		}
-		return finance;
-	}
-	private static Finance fillSupplierAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null 
-			&& (finance.isFromPurchaseInvoice()					// Es factura de Compra 
-			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura
-			) {
-			Account account = RegistryOldDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
-			fillRegistryAccountData(finance,account);
-		}
-		return finance;
-	}
-	private static Finance fillCreditorAcccount(AONContext ctx,Finance finance) {
-		if (finance.getRegistry() != null && 
-			(finance.isFromExpensesInvoice()					// Es factura de Gastos 
-			|| finance.isFromUndeductibleInvoice() 				// Es factura de Gastos No Ded.
-			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura 
-			) {
-			Account account = RegistryOldDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
-			fillRegistryAccountData(finance,account);
-		}
-		return finance;
-	}
+//	private static Finance fillCustomerAcccount(AONContext ctx,Finance finance) {
+//		if (finance.getRegistry() != null	 
+//			&& (finance.isFromSalesInvoice()					// Es factura de Venta 
+//			|| (!finance.hasInvoice() && !finance.isPayment())) // Cobro sin factura
+//			) {
+//			Account account = CustomerDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
+//			fillRegistryAccountData(finance,account);
+//		}
+//		return finance;
+//	}
+//	private static Finance fillSupplierAcccount(AONContext ctx,Finance finance) {
+//		if (finance.getRegistry() != null 
+//			&& (finance.isFromPurchaseInvoice()					// Es factura de Compra 
+//			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura
+//			) {
+//			Account account = SupplierDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
+//			fillRegistryAccountData(finance,account);
+//		}
+//		return finance;
+//	}
+//	private static Finance fillCreditorAcccount(AONContext ctx,Finance finance) {
+//		if (finance.getRegistry() != null && 
+//			(finance.isFromExpensesInvoice()					// Es factura de Gastos 
+//			|| finance.isFromUndeductibleInvoice() 				// Es factura de Gastos No Ded.
+//			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura 
+//			) {
+//			Account account = CreditorDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
+//			fillRegistryAccountData(finance,account);
+//		}
+//		return finance;
+//	}
 	
 	private static void fillRegistryAccountData(Finance finance, Account account) {
 		if (account == null) {
@@ -175,17 +209,17 @@ public class FinanceEntryDAO {
 	}
 
 	public static AccountEntry[] getReturnFinanceEntry(AONContext ctx, FinanceTracking tracking) {
-		return _getFinanceEntry(ctx, tracking,
+		return getEntry(ctx, tracking,
 				tracking.getFinance().isPayment()
 					?AccountEntryType.RETURNED_PAYMENT
 					:AccountEntryType.RETURNED_COLLECTION);	
 	}
 
 	public static AccountEntry[] getPayFinanceEntry(AONContext ctx, FinanceTracking tracking) {
-		return _getFinanceEntry(ctx, tracking, AccountEntryType.FINANCE);	
+		return getEntry(ctx, tracking, AccountEntryType.FINANCE);	
 	}
 
-	private static AccountEntry[] _getFinanceEntry(AONContext ctx, FinanceTracking tracking, AccountEntryType entryType) {
+	private static AccountEntry[] getEntry(AONContext ctx, FinanceTracking tracking, AccountEntryType entryType) {
 		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, tracking.getTrackingDate());
 		if (period == null) {
 			throw new AonCoreException( AonError.WRONG_PERIOD.format( tracking.getTrackingDate() ) );
@@ -221,17 +255,17 @@ public class FinanceEntryDAO {
 				
 				@Override
 				public void visitSales(Invoice invoice) {
-					fill( RegistryOldDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
+					fill( CustomerDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
 				}
 				
 				@Override
 				public void visitPurchase(Invoice invoice) {
-					fill( RegistryOldDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
+					fill( SupplierDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
 				}
 				
 				@Override
 				public void visitExpenses(Invoice invoice) {
-					fill( RegistryOldDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
+					fill( CreditorDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
 				}
 				@Override
 				public void visitUndeductible(Invoice invoice) {
@@ -281,7 +315,7 @@ public class FinanceEntryDAO {
 				}
 			}
 			return financeEntry;
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			ctx.log().info(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {
@@ -306,14 +340,13 @@ public class FinanceEntryDAO {
 								.setPayAccount(financeEntry.getBankAccount())
 								.setDescription(AonStringUtils.abbreviate( 
 									tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
-							;
 						}
 						FinanceTrackingDAO.pay(ctx, tracking , entry);
 					}
 				}
 			}
 			return financeEntry;
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			ctx.log().info(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {

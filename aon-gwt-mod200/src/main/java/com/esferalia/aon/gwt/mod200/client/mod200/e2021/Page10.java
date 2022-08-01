@@ -37,8 +37,6 @@ public class Page10 extends PageAbs {
 	
 	public Page10( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 	
 	@Override
@@ -104,8 +102,5 @@ public class Page10 extends PageAbs {
 		}
 		return super.isDisabled(key);
 	}
-	
-	@Override
-	protected void populate() {}
-	
+
 }

@@ -114,6 +114,7 @@ public class JooqPDFSettlementBuilder {
 		) {
 			 DSLContext ctx = aonContext.getDslContext();
 			SettlementBuilder builder = new SettlementBuilder();
+			
 			Record settlementRecord = ctx.select()
 			.from(SALARY)
 			.innerJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(SALARY.DOMAIN))
@@ -124,7 +125,7 @@ public class JooqPDFSettlementBuilder {
 			.leftJoin(SALARY_DATA).on(SALARY_DATA.SALARY.eq(SALARY.ID).and(SALARY_DATA.NAME.eq(INDEMN_CAUSE)))
 			.where(condition)
 			.and(SALARY.TYPE.eq(toByte(SalaryType.SETTLE.ordinal())))
-			.fetchOne();
+			.fetchAny();
 			
 			if (settlementRecord == null)
 				return null; 

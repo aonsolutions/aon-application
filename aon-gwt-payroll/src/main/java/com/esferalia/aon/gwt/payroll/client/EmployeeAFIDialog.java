@@ -130,6 +130,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private SettleReason settleReason;
 
 	private Date contractStartDate;
+	private Date contractEndDate;
 	private Integer contractId;
 	private Integer domainId;
 	private Integer workplaceId;
@@ -148,11 +149,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	
 	private boolean isComunication = false;
 	private boolean isTransform = false;
+	private boolean hasSettle = false;
 
 	// ------------------------------------------------- Constructor
 
-	protected EmployeeAFIDialog(Date contractStartDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, 
-			Integer contractId, Integer domainId, Integer workplaceId, boolean isTransform, boolean isComunication) {
+	protected EmployeeAFIDialog(Date contractStartDate, Date contractEndDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, 
+			Integer contractId, Integer domainId, Integer workplaceId, boolean hasSettle, boolean isTransform, boolean isComunication) {
 
 		setCaption(isComunication ? "Notificaci\u00f3n TGSS (AFI)" : "Datos AFI");
 
@@ -160,7 +162,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		
 		this.isComunication = isComunication;
 		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
 		this.isTransform = isTransform;
+		this.hasSettle = hasSettle;
 		
 		getButtonsPanel();
 		initToggleButtons();
@@ -249,6 +253,13 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		// Ocupation
 		Occupation.getOccupation().entrySet()
 				.forEach(entry -> this.ocupation.addItem(entry.getKey(), entry.getValue()));
+		
+		// HasSettle then only sendBaja
+		if(Boolean.TRUE.equals(this.hasSettle)) {
+			this.afiTypeLB.setSelectedIndex(2);
+			afiTypeLB.setEnabled(false);
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), afiTypeLB);
+		}
 	}
 	
 	// ------------------------------------------------- Tabs AFI Movs
@@ -383,7 +394,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			picker.addValueChangeHandler(e -> {
 				popup.hide();
 				Date newDate = e.getValue();
-				createNewPeriod(newDate);
+				if(null != contractEndDate && DateUtils.isAfterOrEquals(newDate, contractEndDate)){
+					AonDialog error = new AonDialog("Error fechas", new HTML("No se puede elegir una fecha posterior o igual a la fecha fin de contrato."));
+					error.warning();
+				} else
+					createNewPeriod(newDate);
 			});
 
 			popup.setWidget(picker);

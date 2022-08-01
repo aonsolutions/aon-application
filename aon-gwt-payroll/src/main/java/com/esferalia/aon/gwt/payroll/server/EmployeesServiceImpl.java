@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
@@ -36,6 +37,8 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -126,6 +129,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -4575,6 +4579,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			}
 		}
 	}
+	
+	
+	private static String getActualSettleCause(String causeStr) {
+		if (causeStr == null)
+			return "";
+		if (AonStringUtils.equals(ContextVariable.UNFAIR.getName(), causeStr)) {
+			return Dismissal.UNFAIR.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.TEMP_COMPLETE.getName(), causeStr)) {
+			return Dismissal.TEMP_END.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.WORK_COMPLETE.getName(), causeStr)) {
+			return Dismissal.WORK_END.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.CONTRACT_COMPLETE.getName(), causeStr)) {
+			return Dismissal.DEFINITE_END.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.OBJECTIVE.getName(), causeStr)) {
+			return Dismissal.OBJECTIVE.getDescription();
+		}  else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
+			return Dismissal.CONDITIONS_CHANGE.getDescription();
+		}   else if (AonStringUtils.equals(ContextVariable.RETIREMENT.getName(), causeStr)) {
+			return Dismissal.RETIREMENT.getDescription();
+		}
+		return "";
+	}
 
 	/**
 	 * Just transpile Isalary to Settle
@@ -4588,6 +4614,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		ISalary salary = getSalary(domain, draft);
 		Settle settle = new Settle();
 
+		String compCause = "";
+		//GETTING THE SETTLE CAUSE FROM DRAFT CONTEXT
+		if (draft != null && draft.getContext() != null) {
+			compCause = draft.getContext().stream()
+					.filter(variable -> variable != null && AonStringUtils.equals(variable.getName(), ContextVariable.COMPENSATION_CAUSE.getName()))
+					.map(variable -> getActualSettleCause(variable.getExpression()))
+					.findFirst().orElse("");
+		}
+		
 		settle.setEmployeeName(salary.getEmployeeName()).setEmployeeCategory(salary.getCategory())
 				.setEmployeeDocument(salary.getEmployeeDocument()).setEmployeeQuoteGroup(salary.getQuoteGroup())
 				.setEmployeeSeniorityDate(salary.getSeniorityDate()).setEnterpriseAddress(salary.getEnterpriseAddress())
@@ -4598,7 +4633,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				.setTotalIrpf(salary.getTotalIrpf()).setTotalLiquid(salary.getTotalLiquid())
 				.setStartDate(salary.getStartDate());
 
-		settle.setCause("");
+		settle.setCause(compCause != null ? compCause : "");
 
 		try ( CloseableAONContext ctx = AONContext.getAONContext(domain, "") ) {
 			// LinkedList<CompanyAdministrator> dirStaff = CompanyDAO.getDirStaff(ctx,
@@ -5931,16 +5966,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void fillContract(String domainName, Integer contractId, Integer contractType, String formativeLvl)
+	public void fillContract(String domainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform)
 			throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 
 			byte[] pdfBytes = JooqContractPDF.contractFill(connection, domainId, parentDomainId, contractId,
-					contractType, formativeLvl);
+					contractType, formativeLvl, isTransform);
 
-			JooqContractPDF.saveDraftContract(domainName, domainId, contractId, pdfBytes);
+			if(isTransform) JooqContractPDF.saveDraftContractTransform(domainName, domainId, contractId, pdfBytes);
+			else JooqContractPDF.saveDraftContract(domainName, domainId, contractId, pdfBytes);
+			
 		} catch (SQLException | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -6202,7 +6239,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Copy Contract
-			byte[] pdfBytes = JooqContractAttach.getCopyContract(connection, contractId);
+			byte[] pdfBytes = JooqContractAttach.getCopyContractTransform(connection, contractId);
 			
 			System.out.println("getEmployeeCtoTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
 
@@ -6213,7 +6250,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
-				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
+				JooqContractAttach.setCopyContractTransform(connection, domainId, contractId, pdfBytes);
 			}
 
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
@@ -6745,6 +6782,37 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void sendContractExtension(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+
+			aon.sepe.objects.ContractExtension contractExtension = new aon.sepe.objects.ContractExtension();
+			contractExtension.setSepeId(employeeContractInfo.getContractInfo().getSepeId());
+			contractExtension.setStartDate(employeeContractInfo.getContractInfo().getStartDate());
+			contractExtension.setEndDate(employeeContractInfo.getContractInfo().getEndDate());
+			contractExtension.setCif(employeeContractInfo.getEmployeeInfo().getDocument());
+			contractExtension.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
+			contractExtension.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
+					employeeContractInfo.getContractInfo().getCompleteCCC().length()));
+			contractExtension.setDiscontinuo(employeeContractInfo.getContractInfo().isDiscontinuos());
+			
+			System.out.println(contractExtension.toString());
+			
+			Sepe.sendContractExtension(certificateIS, certificate.getPassword(), certificate.getType(), contractExtension);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void removeContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo)throws IllegalArgumentException {
@@ -6872,6 +6940,35 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			JooqContractSEPE.setSepeIde(connection, domainId, contractId, sepeContractData.getSepeId());
 			JooqContractSEPE.setSepeComunicationDate(connection, domainId, contractId, sepeContractData.getDateComContract());
+
+			return result;
+
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public Map<String, String> getSepeTransformComunicationData(String domainName, String userLogin, String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+
+			aon.sepe.objects.Contract sepeContractData = Sepe.getTransformationData(certificateIS, certificate.getPassword(), certificate.getType(), document, enterpriseCif, originalStartDate, Optional.of(sepeId));
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+			Map<String, String> result = new HashMap<>();
+
+			result.put("ide", sepeContractData.getSepeId());
+			result.put("comunicationDate", dateFormat.format(sepeContractData.getDateComContract()));
+
+			JooqContractSEPE.setSepeTransformIde(connection, domainId, contractId, sepeContractData.getSepeId());
+			JooqContractSEPE.setSepeTransformComunicationDate(connection, domainId, contractId, sepeContractData.getDateComContract());
 
 			return result;
 
@@ -7044,6 +7141,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setFrb(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setFrv(employeeContractInfo.getContractInfo().getHolidaysDate());
+		if(null != employeeContractInfo.getContractInfo().getHolidaysDate())
+			builder.setAsociativeSA(employeeContractInfo.getContractInfo().getSAA());
 		builder.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
 		builder.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));

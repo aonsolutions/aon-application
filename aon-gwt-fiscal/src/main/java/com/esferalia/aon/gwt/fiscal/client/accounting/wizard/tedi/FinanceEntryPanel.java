@@ -5,8 +5,8 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.FinanceSearchPanel.IFinancePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
@@ -392,7 +392,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 
 	private void _paintEntry() {
 		AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(getWrapper());
-		getCallback().getModule().onPreview(AccountEntryModuleTEDI.getWrapperArray (entries));
+		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries));
 	}
 	
 	@Override

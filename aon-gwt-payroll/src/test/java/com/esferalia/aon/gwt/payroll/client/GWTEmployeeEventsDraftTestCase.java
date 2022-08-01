@@ -290,7 +290,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -602,6 +602,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+			
+			
+			
+			@Override
+			public void sendContractExtension(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 
 
 
@@ -667,6 +676,16 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			public void sendContractoCBTransformSEPE(String currentDomainName, String currentUser,
 					EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback)
 					throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getSepeTransformComunicationData(String currentDomainName, String currentUser, String document,
+					String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId,
+					AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

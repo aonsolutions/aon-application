@@ -139,11 +139,20 @@ public class JooqContractExtension {
 				.and(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(contractEndDate)))
 				.execute();
 			
-			// Update CONTRACT_INFO
+			// Update CONTRACT_DATA
 			dslContext.update(CONTRACT_DATA)
 				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
 				.where(CONTRACT_DATA.CONTRACT.eq(contractExtension.getContractId()))
 				.and(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(contractEndDate)))
+				.execute();
+			
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, contractRecord.get(CONTRACT.DOMAIN))
+				.set(CONTRACT_DATA.NAME, "DISCONTINUOS")
+				.set(CONTRACT_DATA.CONTRACT, contractRecord.get(CONTRACT.ID))
+				.set(CONTRACT_DATA.EXPRESSION, contractExtension.getDiscontinuosInd() ? "true" : "false")
+				.set(CONTRACT_DATA.START_DATE, contractRecord.get(CONTRACT.START_DATE))
+				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
 				.execute();
 			
 		} catch (JAXBException e) {
@@ -199,6 +208,11 @@ public class JooqContractExtension {
 					.set(CONTRACT_INFO.END_DATE, parseDateToSQL(newContractEndDate))
 					.where(CONTRACT_INFO.CONTRACT.eq(contractId))
 					.and(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(endDate)))
+					.execute();
+				
+				dslContext.delete(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.eq("DISCONTINUOS"))
 					.execute();
 				
 				// Delete rattach extension

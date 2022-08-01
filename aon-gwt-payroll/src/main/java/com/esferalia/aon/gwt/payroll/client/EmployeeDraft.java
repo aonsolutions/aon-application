@@ -867,7 +867,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.contractTypeLB);
+		employee.contractFireEventsWithOutValue();
 		
 		if(!isCompleteJourneyContract(contractData.getContractType())) {
 			employee.showPartialTimeContract();
@@ -875,19 +875,6 @@ public abstract class EmployeeDraft extends Composite {
 				employee.createJourneyDurationWarning();
 			else
 				employee.createJourneyDurationInfo(contractData.getContractJourneyDuration().getJourneyText());
-			
-			try {
-				Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
-				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
-					employee.showEmployeesColective();
-					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
-				} else {
-					employee.hideEmployeesColective();
-					contractData.setEmployeesColective(null);
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 			
 			if(null != contractData.getJourneyType()) {
 				setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
@@ -907,6 +894,19 @@ public abstract class EmployeeDraft extends Composite {
 			
 		} else
 			employee.showElementsFullTimeContract();
+		
+		try {
+			Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				employee.showEmployeesColective();
+				setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
+			} else {
+				employee.hideEmployeesColective();
+				contractData.setEmployeesColective(null);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		
@@ -1100,6 +1100,7 @@ public abstract class EmployeeDraft extends Composite {
 	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				employee.startDate.getValue(),
+				employee.endDate.getValue(),
 				employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
@@ -1107,6 +1108,7 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
+				this.employeeDraftObject.getContractData().hasSettle(),
 				this.employeeDraftObject.getContractData().isHasTransformation(),
 				false){
 
@@ -1259,11 +1261,12 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void onComunicateAFI() {
-		new EmployeeAFIDialog(employee.startDate.getValue(), employee.contractTypeLB.getSelectedValue(),
+		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
 				this.employeeDraftObject.getContractData().getWorkplaceId(), 
+				this.employeeDraftObject.getContractData().hasSettle(),
 				this.employeeDraftObject.getContractData().isHasTransformation(),
 				true) {
 

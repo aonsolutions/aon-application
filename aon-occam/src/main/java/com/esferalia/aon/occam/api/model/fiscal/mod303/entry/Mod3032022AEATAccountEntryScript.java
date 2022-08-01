@@ -6,7 +6,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpression
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 
 public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressionScript<Mod303> {
-	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo(model)";
+	private static final String MODEL_FULL_NAME_EXPRESSION = "nombreModelo()";
 
 	private static final long serialVersionUID = 2085902232416480013L;
 	
@@ -32,22 +32,30 @@ public class Mod3032022AEATAccountEntryScript extends AccountEntryDetailExpressi
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("475000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("(esComplementaria(model) && C70 > 0)?C70:0.0")); // DEBIT
+				.setExpression("(esComplementaria() && C70 > 0)?C70:0.0")); // DEBIT
 		// A deducir.(exclusivamente en caso de autoliquidación complementaria)	
 		details.add(new AccountEntryDetailExpression( true )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("(esComplementaria(model) && C70 < 0)?C70:0.0")); // CREDIT
+				.setExpression("(esComplementaria() && C70 < 0)?C70:0.0")); // CREDIT
+		
+//		// A deducir.(exclusivamente en caso de autoliquidación complementaria)	
+//		details.add(new AccountEntryDetailExpression( true )
+//				.setAccount("472000000")
+//				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
+//				.setExpression("prorrataIVA()")); // CREDIT
+		
+		
 		// Resultado a pagar
 		details.add(new AccountEntryDetailExpression( true )
 				.setAccount("475000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?C71:0.0")); // CREDIT
+				.setExpression("aIngresar()?C71:0.0")); // CREDIT
 		// Resultado a devolver/compensar
 		details.add(new AccountEntryDetailExpression( false )
 				.setAccount("470000000")
 				.setConceptExpression(MODEL_FULL_NAME_EXPRESSION)
-				.setExpression("aIngresar(model)?0.0:abs(C71)")); // DEBIT
+				.setExpression("aIngresar()?0.0:abs(C71)")); // DEBIT
 	}
 
 	@Override

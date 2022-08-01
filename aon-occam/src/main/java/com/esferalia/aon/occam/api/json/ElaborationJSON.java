@@ -60,6 +60,7 @@ public class ElaborationJSON {
 			.put(IJsonNames.DOMAIN, object.getDomain())
 			.put(IJsonNames.SERIES, object.getSeries())
 			.put(IJsonNames.NUMBER, object.getNumber())
+			.put(IJsonNames.REFERENCE, object.getReferenceCode())
 			.put(IJsonNames.ITEM, ItemJSON.toJSON(object.getItem()))
 			.put(IJsonNames.DESCRIPTION, object.getDescription())
 			.put(IJsonNames.WAREHOUSE, WarehouseJSON.toJSON(object.getWarehouse()))

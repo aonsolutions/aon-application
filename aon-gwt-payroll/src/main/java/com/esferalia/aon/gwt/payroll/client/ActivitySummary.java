@@ -304,6 +304,7 @@ public class ActivitySummary extends MainEntryPoint {
 	        + "&itOccupationalDisease=" + itOccupationalDiseaseChk.getValue()
 	        + "&itMaternity=" + itMaternityChk.getValue()
 	        + "&itOther=" + itOtherChk.getValue()
+	        + "&user=" + Wnd.getCurrentUser()
             ;
 		Window.open(fileDownloadURL, "_blank", null);
 	}

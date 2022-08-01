@@ -43,7 +43,6 @@ public class Mod2002021Compute {
 	// POR ESO SE USA UN LinkedHashMap, PORQUE SE NECESITA QUE PARA EL CALCULO DEL MODELO, SE RECORRA 
 	// EL MAP EXACTAMENTE EN EL ORDEN EN QUE APARECE EN ESTA CLASE
 	
-//	public static EnumMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new EnumMap<Mod2002021Key,String>(Mod2002021Key.class);
 	public static LinkedHashMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<Mod2002021Key,String>();
 		
 	static {
@@ -657,8 +656,8 @@ public class Mod2002021Compute {
 		
 		// Liquido a ingresar o a devolver
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1583, "TR1583");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1585, "TR1585");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN621, "BN611+BN615+BN633+BN617-BN083-BN1042");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.LQ1585, "TR1585");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN621, "LQ1586-LQ1578+LQ1584");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002021Key.BN622, "TR622");
 		
 		// Resultado de la autoliquidación incluido el 1er fraccionamiento del art. 19.1 LIS
@@ -934,9 +933,6 @@ public class Mod2002021Compute {
 			firstRow = false;
 		}		
 	}	
-	
-	
-//---------------------------------------------------------------------------------------------------
 	
 //	public static void main(String[] args) {
 //				

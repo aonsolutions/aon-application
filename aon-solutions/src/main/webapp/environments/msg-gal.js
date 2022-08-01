@@ -255,6 +255,7 @@ export const POSTAL_CODE = 'Código Postal';
 export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
 export const PRICE = 'Prezo';
+export const PRINT = 'Imprimir';
 export const PRINT_INVOICE = 'Imprimir Factura';
 export const PROCESSED_MOVEMENT = 'El alta se ha procesado correctamente';
 export const PRODUCT = 'Produto';
@@ -371,6 +372,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 // ----- W
 
+export const WAREHOUSE = 'Almacén';
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
 export const WORKGROUP = 'Grupo de traballo';

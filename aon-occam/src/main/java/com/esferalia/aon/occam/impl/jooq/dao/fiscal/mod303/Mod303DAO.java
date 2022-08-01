@@ -270,20 +270,30 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod303 unrecord(AONContext ctx, Mod303 mod) {
-		FiscalModelDAO.unrecord(ctx, mod.getAccountEntry());
+		if (mod.isRecorded()) {
+			AccountEntryDAO.delete(ctx, mod.getAccountEntry());
+		}
 		return get(ctx, mod.getId());
 	}
 
 	public static Mod303 doRecord(AONContext ctx, Mod303 mod) {
+		if (mod.isRecorded()) {
+			throw new IllegalArgumentException(MessageFormat.format(
+				"El modelo {0} de {1} ya se encuentra contabilizado"
+				,mod.getModelFullName(),mod.getAdministration().getDescription()));
+		}
 		Optional<AccountEntryDetailExpressionScript<Mod303>> script = Mod303DefaultAccountEntryScript.getScript(mod);
-		if (script.isPresent()) {
-			AccSctiptMVELContext<Mod303> mvel = getAccSctiptMVELContext( ctx, mod );
-			Optional<AccountEntry> optAe = Optional.ofNullable(mvel.fillDetails(ctx, mod, script.get()));
-			if (optAe.isPresent()) {
-				Integer entryId = AccountEntryDAO.save(ctx, optAe.get());
-				FiscalModelDAO.doRecord(ctx, mod.getId(), entryId);
-				mod = get(ctx, mod.getId());
-			}
+		if (!script.isPresent()) {
+			throw new IllegalArgumentException(MessageFormat.format(
+				"No se ha encontrado un script válido para el modelo {0} de {1}"
+				,mod.getModelFullName(),mod.getAdministration().getDescription()));
+		}
+		AccSctiptMVELContext<Mod303> mvel = getAccSctiptMVELContext( ctx, mod );
+		Optional<AccountEntry> optAe = Optional.ofNullable(mvel.fillDetails(ctx, mod, script.get()));
+		if (optAe.isPresent() && !optAe.get().getDetails().isEmpty() ) {
+			Integer entryId = AccountEntryDAO.save(ctx, optAe.get());
+			FiscalModelDAO.doRecord(ctx, mod.getId(), entryId);
+			mod = get(ctx, mod.getId());
 		}
 		return mod;
 	}
@@ -293,7 +303,8 @@ public class Mod303DAO extends FiscalModelDAO {
 			private static final long serialVersionUID = -858390524319034071L;
 			@Override
 			public void fillContext() {
-				put(MODEL,mod);
+				put(MODEL_KEY,mod);
+				put(MODEL_DECLARATION_KEY,Mod303Declaration.getInstance(mod));
 				for (String key : mod.getMap().keySet()) {
 					Mod303Key mod303Key = Mod303Key.getKey(key);
 					if (mod303Key != null) {

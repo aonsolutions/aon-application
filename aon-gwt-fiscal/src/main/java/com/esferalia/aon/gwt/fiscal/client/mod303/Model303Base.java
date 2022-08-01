@@ -25,8 +25,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfo;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfo;
@@ -38,8 +39,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303FinishDeclarationPopup
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -64,6 +65,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -114,9 +116,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
 	
-	protected final AonToolbarButton recordButton = new AonToolbarButton(AON.MSG.record(),AON.CSS.aonIconValid());
-	protected final AonToolbarButton unrecordButton = new AonToolbarButton(AON.MSG.unrecord(),AON.CSS.aonIconInvalid());
-	protected final AonToolbarButton viewEntryButton = new AonToolbarButton(AON.MSG.previewAccountEntry(),AON.CSS.aonIconBook());
+	protected final AonToolbarButton recordButton = new AonToolbarButton(AON.MSG.record(),AON.CSS.aonIconAccountingRecord());
+	protected final AonToolbarButton unrecordButton = new AonToolbarButton(AON.MSG.unrecord(),AON.CSS.aonIconAccountingUnrecord());
+	protected final AonToolbarButton viewEntryButton = new AonToolbarButton(AON.MSG.editAccountEntry(),AON.CSS.aonIconAccounting());
 	
 	private FlowPanel paymentContainer;
 	
@@ -232,12 +234,17 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		unrecordButton.addStyleName(AON.CSS.aonMarginLeft());
 //		toolbarPanel.add(unrecordButton);
 
-		viewEntryButton.addClickHandler( event -> viewEntry());
+		viewEntryButton.addClickHandler( event -> editEntry());
 //		toolbarPanel.add(viewEntryButton);
 		
 		toolbarPanel.add(diskForm);
 
 		return toolbarPanel;
+	}
+	
+	private void doCancel() {
+		getCallback().removeTabWidget(AON.MSG.accountEntry());
+		getCallback().onCancel(getModel());
 	}
 	
 	private void cancel() {
@@ -248,7 +255,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 				@Override
 				public void onAccept() {
-					getCallback().onCancel(getModel());
+					doCancel();
 				}
 				@Override
 				public void onCancel() {
@@ -256,7 +263,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				}
 			});
 		} else {
-			getCallback().onCancel(getModel());
+			doCancel();
 		}
 	}
 
@@ -308,7 +315,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 		// TODO Habiliatr funcion reset
-		//resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		// resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
 		resetButton.setVisible(false);
 		// -----------------------
 		boolean canBeSaved = !getModel().isFinished() && !getModel().isSent() && !getModel().isRecorded(); 
@@ -316,11 +323,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(canBeSaved);
-		recordButton.setVisible( (getModel().isFinished() || getModel().isSent()) && !getModel().isRecorded());
-		
-		unrecordButton.setVisible( (getModel().isFinished() || getModel().isSent()) && getModel().isRecorded());
-		viewEntryButton.setVisible( (getModel().isFinished() || getModel().isSent()) && getModel().isRecorded() 
-				&& viewEntryButton.isEnabled() );
+		recordButton.setVisible( 
+			  (getModel().isFinished() || getModel().isSent()) 
+			&& !getModel().isRecorded()
+			&& !getModel().hasProrate());
+		unrecordButton.setVisible( (getModel().isFinished() || getModel().isSent()) 
+			&& getModel().isRecorded());
+		viewEntryButton.setVisible( (getModel().isFinished() || getModel().isSent()) 
+			&& getModel().isRecorded() 
+			&& viewEntryButton.isEnabled() );
 		
 		deleteButton.setVisible(!getModel().isNew() && canBeSaved);
 		printButton.setVisible(!getModel().isNew());
@@ -1136,29 +1147,71 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 		});
 	}
-	
 	private void viewEntry() {
-		viewEntryButton.setEnabled(false); 
-		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
-		module.onModuleLoad( new AccountEntryModuleOptions()
-			.setParentWidget( getCallback().getNewTabWidget( AON.MSG.accountEntry() ) )
-			.setDomainName( getCallback().getOptions().getDomainName() )
-			.setUser( getCallback().getOptions().getUser() )
-			.setDomain( getCallback().getOptions().getDomain())
-			.setAccountEntryId( getModel() .getAccountEntry())
-			.setSessionLogTabVisible(false)
-			.setJournalTabVisible(false)
-			.setExtraInfoTabVisible(false)
-			.setPreviewTabVisible(false)
-			.setTrialBalanceFromPreviewEnabled(false)
-			.setExternalCallback( new ModuleCallback() {
+		final Widget entryContainer = getCallback().getTabWidget( AON.MSG.accountEntry() );
+		if ( entryContainer instanceof HasWidgets) {
+			HasWidgets tab = (HasWidgets) entryContainer;
+			tab.clear();
+			SessionLog entryLog = new SessionLog(new AccountEntryModuleOptions()
+				.setDomainName( getCallback().getOptions().getDomainName() )
+				.setUser( getCallback().getOptions().getUser() )
+				.setDomain( getCallback().getOptions().getDomain())
+				.setAccountEntryId( getModel() .getAccountEntry())
+				.setTrialBalanceFromPreviewEnabled(false)
+				.setExternalCallback( new ModuleCallback() {
+					private static final long serialVersionUID = -1649058327545857212L;
+					
+					@Override 
+					public void onFailure(Throwable caught) {
+						viewEntryButton.setEnabled(true);
+						getCallback().showError(caught.getMessage());
+					}
+				}),getModel().getAccountEntry());
+			entryLog.addSelectionHandler(wrp -> editEntry());
+			tab.add(entryLog);
+		} else {
+			getCallback().showError("Error interno al mostrar el apunte contable.");
+		}
+		
+	}
+	
+	private void editEntry() {
+		final Widget entryContainer = getCallback().getTabWidget( AON.MSG.accountEntry() );
+		if ( entryContainer instanceof HasWidgets) {
+			HasWidgets tab = (HasWidgets) entryContainer;
+			tab.clear();
+			AccountEntryModule module = new AccountEntryModule();
+			module.onModuleLoad( new AccountEntryModuleOptions()
+				.setParentWidget( tab )
+				.setDomainName( getCallback().getOptions().getDomainName() )
+				.setUser( getCallback().getOptions().getUser() )
+				.setDomain( getCallback().getOptions().getDomain())
+				.setAccountEntryId( getModel() .getAccountEntry())
+				.setSessionLogTabVisible(false)
+				.setJournalTabVisible(false)
+				.setExtraInfoTabVisible(false)
+				.setPreviewTabVisible(false)
+				.setDeleteButtonVisible(false)
+				.setTrialBalanceFromPreviewEnabled(false)
+				.setExternalCallback( new ModuleCallback() {
 			
-				@Override public void onRemove(IAccountEntryWrapper removed) {}
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onExit() {}
-				@Override public void onChange(IAccountEntryWrapper changed) {}
-			})
-		);
+					private static final long serialVersionUID = -1649058327545857212L;
+					
+					@Override public void onExit() {removeTab(); }
+					@Override public void onChange(IAccountEntryWrapper changed) {removeTab();}
+					@Override public void onRemove(IAccountEntryWrapper removed) {removeTab();}
+					
+					private void removeTab() {
+						getCallback().removeTabWidget( AON.MSG.accountEntry() );
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						getCallback().showError(caught.getMessage());
+					}
+					
+				}));
+		}
 	}
 		
 	private void unRecord() {

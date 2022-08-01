@@ -98,14 +98,14 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccountEntryModuleTEDI extends MainEntryPoint {
+public class AccountEntryModule extends MainEntryPoint {
 	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 
-	private static final Logger LOGGER = Logger.getLogger(AccountEntryModuleTEDI.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AccountEntryModule.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -126,7 +126,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		int getCurrentDomainId();
 		String getCurrentUser();
 		AonConfiguration getConfiguration();
-		AccountEntryModuleTEDI getModule();
+		AccountEntryModule getModule();
 		AccountEntryModuleOptions getModuleOptions();
 	}
 
@@ -165,30 +165,30 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 	private IAccountEntryModuleCallback moduleCallback = new IAccountEntryModuleCallback() {
 		@Override
-		public AccountEntryModuleTEDI getModule() {
-			return AccountEntryModuleTEDI.this;
+		public AccountEntryModule getModule() {
+			return AccountEntryModule.this;
 		}
 		@Override
 		public AonConfiguration getConfiguration() {
-			return AccountEntryModuleTEDI.this.getOptions().getConfiguration();
+			return AccountEntryModule.this.getOptions().getConfiguration();
 		};
 		@Override
 		public AccountEntryModuleOptions getModuleOptions() {
-			return AccountEntryModuleTEDI.this.getOptions();
+			return AccountEntryModule.this.getOptions();
 		};
 		@Override
 		public String getCurrentDomainName() {
-			return AccountEntryModuleTEDI.this.getOptions().getDomainName();
+			return AccountEntryModule.this.getOptions().getDomainName();
 		}
 
 		@Override
 		public int getCurrentDomainId() {
-			return AccountEntryModuleTEDI.this.getOptions().getDomain();
+			return AccountEntryModule.this.getOptions().getDomain();
 		}
 
 		@Override
 		public String getCurrentUser() {
-			return AccountEntryModuleTEDI.this.getOptions().getUser();
+			return AccountEntryModule.this.getOptions().getUser();
 		}
 	};
 
@@ -292,7 +292,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
 						LOGGER.info("BLUR entryType ");
-						AccountEntryModuleTEDI.this.getWizardContent().setFocus(true);
+						AccountEntryModule.this.getWizardContent().setFocus(true);
 					}
 				});
 			}
@@ -558,6 +558,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			canEdit = (isNew() || (!isNew() && wizardContent.isUpdatable()));
 		}
 		
+		if (!getOptions().isDeleteButtonVisible()) {
+			canRemove = false;
+		}
+
 		// Populate header values
 		period.select(wizardContent.getMainEntry().getPeriod());
 		entryDate.setValue(wizardContent.getMainEntry().getEntryDate());
@@ -614,10 +618,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		accept.setEnabled(canEdit);
 		specialUpdate.setVisible(!isNew());
 		specialUpdate.setEnabled(!isNew());
-		attachment.setVisible( wizardContent.isAttachmentManagementEnabled() && !wizardContent.hasAttachment() );
-		attachment.setVisible( wizardContent.isAttachmentManagementEnabled() && !wizardContent.hasAttachment() );
-		removeAttachment.setVisible( wizardContent.isAttachmentManagementEnabled() && wizardContent.hasAttachment() );
-		removeAttachment.setVisible( wizardContent.isAttachmentManagementEnabled() && wizardContent.hasAttachment() );
+		attachment.setVisible( !isNew() && wizardContent.isAttachmentManagementEnabled() && !wizardContent.hasAttachment() );
+		removeAttachment.setVisible( !isNew() && wizardContent.isAttachmentManagementEnabled() && wizardContent.hasAttachment() );
 		remove.setVisible(canRemove);
 		remove.setEnabled(canRemove);
 		if (getOptions().isBackButtonVisible()) {
@@ -660,7 +662,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			public void onSuccess(IAccountEntryWrapper result) {
 				base = result.getAccountEntry();
 				if (getOptions().isSessionLogTabVisible()) {
-					sessionLog.addSaved(AccountEntryModuleTEDI.getWrapperArray(result.getAccountEntries()));
+					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result.getAccountEntries()));
 				}
 				reset();
 				
@@ -706,7 +708,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				public void onAnimationComplete() {
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
-							tabLayout.selectTab( AccountEntryModuleTEDI.this.getJournalTabIndex() );
+							tabLayout.selectTab( AccountEntryModule.this.getJournalTabIndex() );
 							journalPanel.setFocus(true);
 						}
 					});
@@ -715,7 +717,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		} else {
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 				public void execute() {
-					tabLayout.selectTab(AccountEntryModuleTEDI.this.getJournalTabIndex());
+					tabLayout.selectTab(AccountEntryModule.this.getJournalTabIndex());
 					journalPanel.setFocus(true);
 				}
 			});
@@ -863,13 +865,13 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		final IContentAttachCallback cbk = new IContentAttachCallback() {
 			@Override
 			public void onAttach() {
-				AccountEntryModuleTEDI.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
+				AccountEntryModule.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
 					
 					@Override
 					public void onSuccess() {
 						Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 							public void execute() {
-								AccountEntryModuleTEDI.this.wizardContent.setFocus(true);
+								AccountEntryModule.this.wizardContent.setFocus(true);
 							}
 						});
 					}
@@ -950,7 +952,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			@Override
 			public void onSelection(SelectionEvent<AccountingInvoice> event) {
 				if (getOptions().isSessionLogTabVisible()) {
-					IWizardContent wc = AccountEntryModuleTEDI.this.wizardContent;
+					IWizardContent wc = AccountEntryModule.this.wizardContent;
 					if (wc != null && wc.getEntryWrapper() != null ) {
 						sessionLog.addSuspended(wc.getEntryWrapper());
 					}
@@ -973,7 +975,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			@Override
 			public void onSelection(AccountEntrySelectionEvent event) {
 				if (getOptions().isSessionLogTabVisible()) {
-					IWizardContent wc = AccountEntryModuleTEDI.this.wizardContent;
+					IWizardContent wc = AccountEntryModule.this.wizardContent;
 					if (wc != null && wc.getEntryWrapper() != null ) {
 						sessionLog.addSuspended(wc.getEntryWrapper());
 					}
@@ -1005,7 +1007,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		final IContentAttachCallback wizardCbk = new IContentAttachCallback() {
 			@Override
 			public void onAttach() {
-				AccountEntryModuleTEDI.this.wizardContent.select(id,wrp,new ISelectionCallback() {
+				AccountEntryModule.this.wizardContent.select(id,wrp,new ISelectionCallback() {
 					
 					@Override
 					public void onSuccess() {
@@ -1452,7 +1454,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				@Override
 				public void onSelection(AccountEntrySelectionEvent event) {
 					final AccountEntry entry = event.getSelectedItem();
-					AccountEntryModuleTEDI.this.selectEntry(entry.getId());
+					AccountEntryModule.this.selectEntry(entry.getId());
 				}
 			});
 			journalPanelContainer.setWidget(journalPanel);

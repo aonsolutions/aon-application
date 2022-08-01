@@ -10,13 +10,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
-import com.esferalia.aon.occam.api.model.type.ContractType;
-import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.animation.client.Animation;
@@ -570,7 +570,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.contractTypeLB);
+		employee.contractFireEventsWithOutValue();
 		
 		if(!isCompleteJourneyContract(contractData.getContractType())) {
 			employee.showPartialTimeContract();
@@ -578,19 +578,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 				employee.createJourneyDurationWarning();
 			else
 				employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
-			
-			try {
-				Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
-				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
-					employee.showEmployeesColective();
-					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
-				} else {
-					employee.hideEmployeesColective();
-					contractData.setEmployeesColective(null);
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 			
 			if(null != contractData.getJourneyType()) {
 				setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
@@ -610,6 +597,19 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			
 		} else
 			employee.showElementsFullTimeContract();
+		
+		try {
+			Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				employee.showEmployeesColective();
+				setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
+			} else {
+				employee.hideEmployeesColective();
+				contractData.setEmployeesColective(null);
+			}
+		} catch (Exception e) {
+			// Nothing to do here
+		}
 		
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		
@@ -631,7 +631,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
-		
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {

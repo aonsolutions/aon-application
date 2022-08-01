@@ -12,17 +12,13 @@ public class Page05 extends PageAbs {
 
 	public Page05( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();		
 	}
 	
+	@Override
 	protected void initializeTable() {
 		addTable(AON.MSG.pyg(), Mod2002021Constants.PYG_KEYS);
 		paintFooterNote(basePanel, ACCOUNTING_STATEMENTS_FOOTER);
 	}
-	
-	@Override
-	protected void populate() {}
 	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {

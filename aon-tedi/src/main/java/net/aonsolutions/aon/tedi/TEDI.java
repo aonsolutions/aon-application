@@ -15,31 +15,36 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import solutions.aon.in.invoice.img.InvoiceIMGException;
 import solutions.aon.in.invoice.img.InvoiceIMGParser;
 import solutions.aon.in.invoice.pdf.InvoicePDFException;
 import solutions.aon.in.invoice.pdf.InvoicePDFParser;
 
 public class TEDI {
-	private static Logger LOGGER = Logger.getLogger(TEDI.class.getName());
+	
+	private static final Logger LOGGER = Logger.getLogger(TEDI.class.getName());
+	
+	private static final String TEDI_CONTEXT_CAN_NOT_BE_NULL = "TediContext can not be null";
+	private static final String TEDI_CONTEXT_USER_CAN_NOT_BE_NULL = "TediContext.user can not be null";
+	private static final String TEDI_CONTEXT_DOMAIN_CAN_NOT_BE_NULL = "TediContext.domain can not be null";
+	private static final String TEDI_CONTEXT_DOMAIN_NAME_CAN_NOT_BE_NULL = "TediContext.domainName can not be null";
 
 	private TEDI() {
 	}
 	
 	public static TediResult validateInvoice(TediContext tctx, TediResult result) throws TediException {
-		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		if (tctx == null) throw new IllegalArgumentException(TEDI_CONTEXT_CAN_NOT_BE_NULL);
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
 			result.clearMessages();
 			if (ctx == null) {
-				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
-				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
-				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
-				ctx = AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser());
+				fillAONContext( tctx );
+				ctx = tctx.getAONContext();
 			}
 			TediValidator.validateInvoice(ctx,result);
-		} catch (Throwable t) {
-			throw new TediException(t.getMessage());
+		} catch (Exception e) {
+			throw new TediException(e.getMessage());
 		} finally {
 			if (ctx != null && mustCloseCtx )
 				(( CloseableAONContext )ctx).close();
@@ -48,14 +53,11 @@ public class TEDI {
 	}
 
 	public static TediResult parse(TediContext tctx, InputStream input, MimeType mimeType) throws TediException {
-		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		if (tctx == null) throw new IllegalArgumentException(TEDI_CONTEXT_CAN_NOT_BE_NULL);
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		try {
-			if (tctx.getAONContext() == null) {
-				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
-				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
-				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
-				tctx.setAONContext(AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser()));
+			if (tctx.getAONContext() == null) { 
+				fillAONContext( tctx );
 			}
 			if (tctx.getAonConfiguration() == null) {
 				tctx.setAonConfiguration( ConfigurationDAO.getConfiguration(tctx.getAONContext()) );
@@ -68,17 +70,16 @@ public class TEDI {
 			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
 			
 			if ( mimeType == null )
-				throw new TediException( String.format("Formato desconocido") ); 
-			if ( mimeType.isPDF() )
+				throw new TediException( "Formato desconocido" ); 
+			else if ( mimeType.isPDF() )
 				InvoicePDFParser.parse(input, tediInvoiceBuilder);
 			else if ( mimeType.isImage() )
 				InvoiceIMGParser.parse(input, tediInvoiceBuilder);
 			else
 				throw new TediException( String.format("Formato, '%s' no soportado", mimeType.getName() ) ); 
 			
-			TediResult result = TediParser.toFullInvoice(tctx.getAONContext(), tctx.getAonConfiguration(), tediInvoiceBuilder.get()); 
-			return result;
-		} catch (InvoicePDFException e) {
+			return TediParser.toFullInvoice(tctx.getAONContext(), tctx.getAonConfiguration(), tediInvoiceBuilder.get()); 
+		} catch (InvoicePDFException | InvoiceIMGException e) {
 			e.printStackTrace();
 			throw new TediException(e.getMessage());
 		} finally {
@@ -89,17 +90,21 @@ public class TEDI {
 		}
 	}
 	
+	private static void fillAONContext(TediContext tctx) {
+		if (tctx.getDomainName() == null) throw new IllegalArgumentException(TEDI_CONTEXT_DOMAIN_NAME_CAN_NOT_BE_NULL);		
+		if (tctx.getDomain() == null) throw new IllegalArgumentException(TEDI_CONTEXT_DOMAIN_CAN_NOT_BE_NULL);
+		if (tctx.getUser() == null) throw new IllegalArgumentException(TEDI_CONTEXT_USER_CAN_NOT_BE_NULL);
+		tctx.setAONContext(AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser()));
+	}
+
 	public static TediResult fromRawdoc(TediContext tctx, int rawdocId) throws TediException {
-		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		if (tctx == null) throw new IllegalArgumentException(TEDI_CONTEXT_CAN_NOT_BE_NULL);
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
 			if (ctx == null) {
-				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
-				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
-				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
-				ctx = AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser());
-				tctx.setAONContext(ctx);
+				fillAONContext(tctx); 
+				ctx = tctx.getAONContext();
 			}
 			if (tctx.getAonConfiguration() == null) {
 				tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(ctx));
@@ -127,7 +132,7 @@ public class TEDI {
 			attach.setAttachURL("RAWDOC");
 			result.getAccountingInvoice().setAttach(attach);
 			return result;
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new TediException(e.getMessage());
 		} finally {

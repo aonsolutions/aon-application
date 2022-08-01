@@ -12,8 +12,10 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript.AccountEntryDetailExpression;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -21,7 +23,8 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 
 	private static final long serialVersionUID = 2589312117223760204L;
 	
-	public static final String MODEL = "model";
+	public static final String MODEL_KEY = "modelo";
+	public static final String MODEL_DECLARATION_KEY = "declaracion";
 	
 	private AccountEntry accountEntry;
 	
@@ -147,6 +150,11 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		return (added == null) ? ae.addDetail(aed) : ae;
 	}
 
+	public Object getOrThrow( String key ) {
+		if ( containsKey(key)) return get(key);
+		throw new IllegalArgumentException(MessageFormat.format("No existe una valor válido para la variable {0}", key));
+	}
+	
 	public abstract AccountEntry fillAccountEntry(T t);
 	public abstract void fillContext();
 	
@@ -154,22 +162,54 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 	// ******************************************
 	// **********************  EXPRESSION METHODS
 	// ******************************************
+	
+		// ***********************************
+		// **********************  MATEMÁTICAS
+		// ***********************************
+	
+	// Devuelve el valor absoluto redondeado a 2 dígitos.
 	public double abs(double value) {
 		return AonMathUtils.absRounded(value);
 	}
+
+		// ********************************
+		// **********************  FISCALES
+		// ********************************
+	public FiscalModel model() {
+		Object obj = getOrThrow( MODEL_KEY );
+		if (obj instanceof FiscalModel) return (FiscalModel) obj;
+		throw new IllegalArgumentException(MessageFormat.format("La variable {0} no es una declaración fiscal válida.", MODEL_KEY));	
+	}
+	public String nombreModelo() {
+		return MessageFormat.format("Mod. {0}",model().getModelFullName());	
+	}
 	
-	public boolean esComplementaria(FiscalModel model) {
-		return model.isComplementary();
+	public boolean esComplementaria() {
+		return model().isComplementary();
 	}
-	public boolean esSustitutiva(FiscalModel model) {
-		return model.isReplacement();
+	public boolean esSustitutiva() {
+		return model().isReplacement();
 	}
 	
-	public boolean aIngresar(FiscalModel model) {
-		return FiscalModelDeclarationType.isToDeposit(model.getDeclarationResultType());
+	public boolean aIngresar() {
+		return FiscalModelDeclarationType.isToDeposit(model().getDeclarationResultType());
 	}
-	public String nombreModelo(FiscalModel model) {
-		return MessageFormat.format("Mod. {0}",model.getModelFullName());	
+		// *******************************************
+		// **********************  FISCALES MODELO 303
+		// *******************************************
+	public Mod303 mod303() {
+		Object obj = get( MODEL_KEY );
+		if (obj instanceof Mod303) return (Mod303) obj;
+		throw new IllegalArgumentException(MessageFormat.format("La variable {0} no es una declaración del modelo 303 válido.", MODEL_KEY));	
+	}
+	public Mod303Declaration declaracion() {
+		Object obj = get( MODEL_DECLARATION_KEY );
+		if (obj instanceof Mod303Declaration ) return (Mod303Declaration) obj;
+		throw new IllegalArgumentException(MessageFormat.format("La variable {0} no es una declaración válida.", MODEL_DECLARATION_KEY));	
+	}
+	
+	public double prorrataIVA() {
+		return 0.0;
 	}
 }
 

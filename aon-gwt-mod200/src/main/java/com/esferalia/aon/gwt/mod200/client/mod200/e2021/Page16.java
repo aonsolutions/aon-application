@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021RIC_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021RIC_2Key;
@@ -13,8 +12,6 @@ public class Page16 extends PageAbs {
 
 	public Page16( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 
 	@Override
@@ -62,19 +59,10 @@ public class Page16 extends PageAbs {
 	} 
 	
 	@Override
-	protected void populate() {
-	}
-	
-	@Override
 	protected boolean isAvailable() {
 		boolean av = super.isAvailable()
   		  && (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0029));
 		return av;
-	}
-	
-	@Override
-	protected boolean isDisabled(IMod200Key key) {
-		return super.isDisabled(key);
 	}
 	
 }

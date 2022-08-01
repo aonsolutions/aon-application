@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountAnalyticalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountConsolidatedBalanceReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountJournalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountLedgerReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountModule;
@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
@@ -223,7 +222,6 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_TRIAL_BALANCE_REPORT_ENTRY_POINT = "AccountTrialBalanceReport";
 	private static final String ACC_OPERATION_ENTRY_POINT = "OperationReport";
 	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT = "AccountEntryModule";
-	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT_TEDI = "AccountEntryModuleTEDI";
 	private static final String ACC_ACCOUNTING_UTILITIES_ENTRY_POINT = "AccountingUtilities";
 	private static final String ACC_ACCOUNTING_BALANCE_REPORT_ENTRY_POINT = "AccountBalanceReport";
 	private static final String ACC_ACCOUNTING_CONSOLIDATED_BALANCE_REPORT_ENTRY_POINT = "AccountConsolidatedBalanceReport";
@@ -474,8 +472,8 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT_TEDI)) {
-			GWT.runAsync(AccountEntryModuleTEDI.class, new RunAsyncCallback() {
+		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT)) {
+			GWT.runAsync(AccountEntryModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -484,8 +482,8 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					AccountEntryModuleTEDI accountEntryModuleTEDI = new AccountEntryModuleTEDI();
-					accountEntryModuleTEDI.onModuleLoad();
+					AccountEntryModule accountEntryModule = new AccountEntryModule();
+					accountEntryModule.onModuleLoad();
 				}
 				
 			});

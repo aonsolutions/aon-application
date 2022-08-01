@@ -839,6 +839,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
+	
+	@DefaultMessage("Referencia")
+	String reference();
 
 	@DefaultMessage("Centro de trabajo")
 	String workplace();
@@ -3431,6 +3434,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Previsualizar asiento")
 	String previewAccountEntry();
  	
+ 	@DefaultMessage("Editar asiento")
+	String editAccountEntry();
+
  	@DefaultMessage("Ver asiento")
 	String viewAccountEntry();
 

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
-import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -21,17 +20,9 @@ import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -50,18 +41,23 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, HasSelectionHandlers<Finance>{
 
-	static FinanceServiceAsync financeService;
+	static final FinanceServiceAsync FINANCE_SERVICE;
+	static {
+		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
+		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
+	}
+	
+	private static final int LIMIT = 100;
 	
 	private String domainName;
 	private int domainId;
 	private String currentUser;
 	private User user;
 	
-	final private int limit = 100;
 	
-	final private MutableInt offset = new MutableInt(0);
-	final private MutableInt moreData = new MutableInt(0);
-	final private MutableInt searchEnabled = new MutableInt( 0 ); 
+	private final MutableInt offset = new MutableInt(0);
+	private final MutableInt moreData = new MutableInt(0);
+	private final MutableInt searchEnabled = new MutableInt( 0 ); 
 
 	private SimpleLayoutPanel northPanel;
 	private SimpleLayoutPanel centerLayoutPanel;
@@ -105,101 +101,44 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
 		
-		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
-		financeService = new FinanceServiceAsyncDecorator(financeServiceRaw);
-		
 		northPanel = new SimpleLayoutPanel();
 
 		amount = new DoubleBox();
 		amount.setVisibleLength(6);
 		amount.setValue(null,false);
-		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> arg0) {
-				search();
-			}
-		});
+		amount.addValueChangeHandler(event -> search());
 		
 		nearbyNumbers = new CheckBox(AON.MSG.nearbyNumbers());
 		nearbyNumbers.setStyleName(AON.AON_CSS.aonPadding2Left());
-		nearbyNumbers.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent arg0) {
-				search();
-			}
-		});
+		nearbyNumbers.addClickHandler(event -> search());
 
 		concept = new TextBox();
 		concept.setStyleName(AON.AON_CSS.aonInputText());
-		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
-			}
-		});
+		concept.addValueChangeHandler(event -> search());
 
 		fromDate = new DateBoxEx();
-		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				search();
-			}
-		});
+		fromDate.addValueChangeHandler(event -> search());
 		
 		toDate = new DateBoxEx();
-		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				search();
-			}
-		});
+		toDate.addValueChangeHandler(event -> search());
 		
 		confidential = new CheckBox( AON.MSG.confidential());
 		confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
-		confidential.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent arg0) {
-				search();
-			}
-		});
+		confidential.addClickHandler(event -> search());
 		
 		referenceCode = new TextBox();
 		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
-		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
-			}
-		});
+		referenceCode.addValueChangeHandler(event -> search());
 
 		registryBox = new AccountingRegistryBox(this.domainName,this.domainId,this.currentUser, null, false);
 		registryBox.setRequired(false);
-		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountingRegistry> arg0) {
-				search();
-			}
-		});
+		registryBox.addSelectionHandler(event -> search());
 
 		payment = new ListBox();
 		payment.addItem(" --- "," --- ");
 		payment.addItem("Pago" ,"Pago");
 		payment.addItem("Cobro", "Cobro");
-		payment.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				search();
-			}
-		});
+		payment.addChangeHandler(event -> search());
 		
 		
 		payMethod = new ListBox();
@@ -210,13 +149,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 				payMethod.addItem( pm.getName(), AonNumberUtils.toString(pm.getId()));
 			}
 		}
-		payMethod.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				search();
-			}
-		});
+		payMethod.addChangeHandler(event -> search());
 
 		order = new ListBox();
 		order.setWidth("150px");
@@ -229,13 +162,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		order.addItem("Fecha creaci\u00F3n, descendente");
 		order.addItem("Fecha modificaci\u00F3n, descendente");
 		order.setSelectedIndex(0);
-		order.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				search();
-			}
-		});
+		order.addChangeHandler(event -> search());
 		
 		
 		FlowPanel flowNorthPanel = new FlowPanel();
@@ -322,22 +249,19 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		centerLayoutPanel.setWidget(centerPanel);
 		add(centerLayoutPanel);
 		
-		centerPanel.addScrollHandler(new ScrollHandler() {
-
-			public void onScroll(ScrollEvent event) {
-				// ------------------------------------ Ignore scroll up.
-				int oldScrollPos = lastScrollPos;
-				lastScrollPos = centerPanel.getVerticalScrollPosition();
-				if (oldScrollPos >= lastScrollPos) {
-					return;
-				}
-				// -----------------------------------------------------
-				if (isSearchEnabled()) {
-					int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
-					if (lastScrollPos >= maxScrollTop) {
-						disableSearch();
-						search(offset.getValue());
-					}
+		centerPanel.addScrollHandler(event -> {
+			// ------------------------------------ Ignore scroll up.
+			int oldScrollPos = lastScrollPos;
+			lastScrollPos = centerPanel.getVerticalScrollPosition();
+			if (oldScrollPos >= lastScrollPos) {
+				return;
+			}
+			// -----------------------------------------------------
+			if (isSearchEnabled()) {
+				int maxScrollTop = centerPanel.getWidget().getOffsetHeight() - centerPanel.getOffsetHeight();
+				if (lastScrollPos >= maxScrollTop) {
+					disableSearch();
+					search(offset.getValue());
 				}
 			}
 		});
@@ -379,7 +303,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 
 	@Override
 	public void setAccessKey(char key) {
-		amount.setAccessKey(key);;
+		amount.setAccessKey(key);
 	}
 
 	@Override
@@ -419,37 +343,13 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			.setOrder(order.getSelectedIndex())
 			;
 		
-		financeService.getAccountFinances(domainName,domainId, currentUser, params, ofs, limit
+		FINANCE_SERVICE.getAccountFinances(domainName,domainId, currentUser, params, ofs, LIMIT
 				, new AsyncCallback<LinkedList<Finance>>() {
 					
 					@Override
 					public void onSuccess(LinkedList<Finance> result) {
 						if (result != null && !result.isEmpty()) {
-							for (final Finance finance : result) {
-								finance.setSelected(callback.isSelected(finance));
-								final FocusPanel financePanel = FinancePrinter.print(finance);
-								financePanel.getElement().getStyle().setPaddingTop(3, Unit.PX);
-								financePanel.setStyleName(AON.AON_CSS.aonClickableBlock());
-								financePanel.addStyleName(finance.isSelected()
-										?AON.AON_CSS.aonIconCheckYes()
-										:AON.AON_CSS.aonIconCheckNo());
-								financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-								container.add(financePanel);
-								financePanel.addClickHandler(new ClickHandler() {
-									@Override
-									public void onClick(ClickEvent event) {
-										finance.setSelected(!finance.isSelected());
-										if (finance.isSelected()) {
-											financePanel.removeStyleName(AON.AON_CSS.aonIconCheckNo());
-											financePanel.addStyleName(AON.AON_CSS.aonIconCheckYes());
-										} else {
-											financePanel.addStyleName(AON.AON_CSS.aonIconCheckNo());
-											financePanel.removeStyleName(AON.AON_CSS.aonIconCheckYes());
-										}
-										SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
-									}
-								});
-							}
+							result.stream().forEach(this::addFinance);
 							offset.setValue(ofs + result.size());
 							enableMoreData();
 						} else {
@@ -462,6 +362,30 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 						enableSearch();
 					}
 					
+
+					private void addFinance(Finance finance) {
+						finance.setSelected(callback.isSelected(finance));
+						final FocusPanel financePanel = FinancePrinter.print(finance);
+						financePanel.getElement().getStyle().setPaddingTop(3, Unit.PX);
+						financePanel.setStyleName(AON.AON_CSS.aonClickableBlock());
+						financePanel.addStyleName(finance.isSelected()
+								?AON.AON_CSS.aonIconCheckYes()
+								:AON.AON_CSS.aonIconCheckNo());
+						financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+						container.add(financePanel);
+						financePanel.addClickHandler(event -> {
+							finance.setSelected(!finance.isSelected());
+							if (finance.isSelected()) {
+								financePanel.removeStyleName(AON.AON_CSS.aonIconCheckNo());
+								financePanel.addStyleName(AON.AON_CSS.aonIconCheckYes());
+							} else {
+								financePanel.addStyleName(AON.AON_CSS.aonIconCheckNo());
+								financePanel.removeStyleName(AON.AON_CSS.aonIconCheckYes());
+							}
+							SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
+						});
+					}
+
 					@Override
 					public void onFailure(Throwable caught) {
 						FlowPanel line = new FlowPanel();

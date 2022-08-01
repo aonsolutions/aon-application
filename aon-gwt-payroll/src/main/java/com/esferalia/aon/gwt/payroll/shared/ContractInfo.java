@@ -84,6 +84,7 @@ public class ContractInfo implements Serializable{
 	private String settleReason;
 	private boolean hasSettle;
 	private Date holidaysDate;
+	private String saa;
 	private boolean hasCertifica2;
 	
 	private boolean isTGSSActive;
@@ -94,6 +95,8 @@ public class ContractInfo implements Serializable{
 	
 	private boolean hasCto;
 	private boolean hasCbc;
+	
+	private boolean discontinuos;
 	
 	public ContractInfo() {
 		super();
@@ -150,6 +153,8 @@ public class ContractInfo implements Serializable{
 		
 		this.hasCto = false;
 		this.hasCbc = false;
+		
+		this.discontinuos = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -588,6 +593,14 @@ public class ContractInfo implements Serializable{
 	public Date getHolidaysDate() {
 		return holidaysDate;
 	}
+	
+	public void setSAA(String saa) {
+		this.saa = saa;
+	}
+	
+	public String getSAA() {
+		return saa;
+	}
 
 	public boolean hasCertifica2() {
 		return hasCertifica2;
@@ -643,6 +656,14 @@ public class ContractInfo implements Serializable{
 
 	public void setHasCbc(boolean hasCbc) {
 		this.hasCbc = hasCbc;
+	}
+	
+	public boolean isDiscontinuos() {
+		return discontinuos;
+	}
+
+	public void setDiscontinuos(boolean discontinuos) {
+		this.discontinuos = discontinuos;
 	}
 	
 	public boolean isPartial() {

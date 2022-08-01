@@ -11,12 +11,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class Mod200DAO {
@@ -39,7 +41,7 @@ public class Mod200DAO {
 				;
 	}
 	
-	public static class Mod200Filler  implements Function<Record,Mod200> {
+	public static class Mod200Filler implements Function<Record,Mod200> {
 
 		@Override
 		public Mod200 apply(Record record) {
@@ -49,9 +51,7 @@ public class Mod200DAO {
 				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setYear(record.getValue(FS_MODEL200.YEAR))
 				.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
-				
-				// TODO - Support
-				.setStatus( FiscalStatus.PENDING )
+				.setStatus(FiscalStatus.safeValueOf(record.getValue(FS_MODEL200.STATUS)))
 				
 				// TODO - Support
 				.setFinance(null)
@@ -65,12 +65,11 @@ public class Mod200DAO {
 				.setName(record.getValue(FS_MODEL200.NAME))
 				.setResultType(record.getValue(FS_MODEL200.RESULT_TYPE))
 				.setResult(record.getValue(FS_MODEL200.AMOUNT) == null? 0.0 : record.getValue(FS_MODEL200.AMOUNT) )
-				
-				// TODO - Support
-				.setCreationUser(null)
-				.setCreationDate(null)
-				.setModificationUser(null)
-				.setModificationDate(null)
+
+				.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER))
+				.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL200.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL200.MODIFICATION_DATE))				
 			;
 		}
 	}
@@ -93,6 +92,23 @@ public class Mod200DAO {
 						.setRepresentative( rec.getValue(RDIR_STAFF.REPRESENTATIVE) == 1 )
 					)
 				.collect(Collectors.toCollection(LinkedList::new ));
+	}
+
+	public static Mod200 saveComments(AONContext ctx, Mod200 mod200) {
+		try {
+			ctx.checkWrite();
+			if (mod200.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL200)
+					.set(FS_MODEL200.COMMENTS,mod200.getComments())
+					.where(FS_MODEL200.ID.equal(mod200.getId()))
+					.execute();
+			}
+			return mod200;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Exception t) {
+			throw new AonCoreException(t.getMessage());
+		}
 	}
 	
 }
