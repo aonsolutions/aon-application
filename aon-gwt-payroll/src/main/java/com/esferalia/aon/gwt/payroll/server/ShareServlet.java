@@ -24,11 +24,10 @@ import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import javax.servlet.annotation.WebServlet;
 
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
@@ -60,6 +59,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 	private static Locale ES = new Locale("es");
 	// REQUEST
 	private static final String BIDOQ_METHOD = "asesor_subir_nomina";
+	private static final String BIDOQ_AYUDAT_METHOD = "upload_payroll";
 	private static final String BIDOQ_SNAPSHOT = "https://dev.mispapeles.es/api/v2/index.php";
 	private static final String BIDOQ = "https://mispapeles.es/api/v2/index.php";
 		
@@ -163,7 +163,18 @@ public class ShareServlet extends HttpServlet implements ShareService {
 					nomina.put("image_size", image_size);
 					arr.put(nomina);
 					
-					String sendData = 
+					String sendData = null;
+					
+					if(AonStringUtils.equalsIgnoreCase(salary.getEnterpriseDocument(), "B72384936"))
+						sendData = 
+							"method=" + BIDOQ_AYUDAT_METHOD
+							+ "&app_code=8"
+							+ "&_token=uNzupDBQEB3FycnhcGML6dDQnEeBsacKNB4MQve7HSp6GAYJSB6dDQnEeB"
+							+ "&usuario_cif=" + salary.getEmployeeDocument()
+							+ "&empleado_cif=" + salary.getEnterpriseDocument()
+							+ "&files=" + arr.toString();
+					else
+						sendData = 
 							"method=" + BIDOQ_METHOD
 							+ "&app_code=8"
 							+ "&_token=uNzupDBQEB3FycnhcGML6dDQnEeBsacKNB4MQve7HSp6GAYJSB6dDQnEeB"
