@@ -157,12 +157,7 @@ export class AonSelect extends AonElement {
         }
       });
   
-      input.addEventListener(EVENT.CLICK, () => {
-        if(!this.isReadonly() && !this.isDisabled()) {
-          const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-          this.buildOptions(optios);
-        }
-      });
+      input.addEventListener(EVENT.CLICK, () => this.showOptions());
 
       const emptyclear = this.hasAttribute("emptyclear");
 
@@ -248,6 +243,8 @@ export class AonSelect extends AonElement {
       let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
       li.innerHTML = option[this.nameAlias];
+      li.setAttribute(CONSTANT.VALUE, option[this.valueAlias]);
+
       li.addEventListener(EVENT.CLICK, () => {
         div.classList.remove('is-visible');
         this.value = option[this.valueAlias];
@@ -270,12 +267,11 @@ export class AonSelect extends AonElement {
     });
   }
 
-  keyboardSelected(ev){
-    let options = this.getElement(this.OPTIONS);
+  keyboardSelected({key}){
+    const options = this.getElement(this.OPTIONS);
     let items = options.querySelectorAll('li');
-    let isVisible = options.classList.contains('is-visible');
-    if (ev.key === "ArrowDown") {//down.
-      if(isVisible){
+
+    if (key === "ArrowDown") {//down.
         let index = -1;
         for(let i = 0; i < items.length; i++){
           if(items[i].classList.contains('is-selected')){
@@ -289,12 +285,11 @@ export class AonSelect extends AonElement {
           }
           let selected = items[index + 1];
           selected.classList.add('is-selected');
+          this.setValue(selected.getAttribute(CONSTANT.VALUE));
           // scroll center smooth
           selected.scrollIntoView({block: "center", behavior: "smooth"});
         }
-      }
-    } else if (ev.key === "ArrowUp") {
-      if(isVisible){
+    } else if (key === "ArrowUp") {
         let index = 0;
         for(let i = 0; i < items.length; i++){
           if(items[i].classList.contains('is-selected')){
@@ -306,20 +301,24 @@ export class AonSelect extends AonElement {
           items[index].classList.remove('is-selected');
           let selected = items[index - 1];
           selected.classList.add('is-selected');
+          this.setValue(selected.getAttribute(CONSTANT.VALUE));
           // scroll center smooth
           selected.scrollIntoView({block: "center", behavior: "smooth"});
         }
-      }
-    } else if (ev.key === "Enter"){
+    } else if (key === "Enter"){
+      const isVisible = options.classList.contains('is-visible');
       if(isVisible){
-        options.classList.remove('is-visible');
-        for(let i = 0; i < items.length; i++){
-          if(items[i].classList.contains('is-selected')){
-            this.setIndexOf(i);
-            break;
-          }
-        }
+        this.closeOptions();
+      } else {
+        this.showOptions();
       }
+    }
+  }
+
+  showOptions(){
+    if(!this.isReadonly() && !this.isDisabled()) {
+      const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+      this.buildOptions(optios);
     }
   }
 
@@ -412,11 +411,29 @@ export class AonSelect extends AonElement {
   }
 
   setIndexOf(idx){
-    let options = this.getOptions();
-    if(options.length){
-      const option = options[idx];
-      if(option)
-        this.value = option.value;
+    if(idx>=0){
+      let options = this.getOptions();
+      if(options.length){
+        const option = options[idx];
+        if(option)
+          this.value = option.value;
+      }
+    } else {
+      this.clear();
+    }
+  }
+  
+  setValue(value){
+    if(value && value!=0){
+      let options = this.getOptions();
+      if(options.length){
+        const option = options.find(opt => opt.value == value);
+        if(option){
+          this.value = option.value;
+        }
+      }
+    } else {
+      this.clear();
     }
   }
 
