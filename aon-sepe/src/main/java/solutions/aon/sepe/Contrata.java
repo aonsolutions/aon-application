@@ -788,9 +788,9 @@ public class Contrata {
 				throw new InvalidDataException("Sepe IDE requerido");
 	    	}
 	    	
-			htmlPage = formDatos.getInputByName("aceptar").click();
+			htmlPage = formDatos.getInputByName("enviar").click();
 			handleSepeExceptions(htmlPage);
-		    
+			
 		    HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		    
 		    String cifValue = form.getInputByName("cifnifempresapro").getValueAttribute();
@@ -1596,7 +1596,6 @@ public class Contrata {
 	}
 
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
-//		Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 		try {
 			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
 			if(error!=null && !error.getVisibleText().isEmpty()) {
