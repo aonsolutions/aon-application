@@ -822,6 +822,44 @@ public class PDFToolkit {
 		}
 	}
 	
+	public static void drawResizedCenteredLogo(PDDocument doc, PDPage page, PDPageContentStream contents, byte[] logo, float x, float y, float maxHeight, float maxWidth, String externalLink) throws IOException {
+		float logoHeigth = 0;
+		float logoWidth = 0;
+		
+		if (logo != null) {
+			BufferedImage bufferedImage = null;
+			bufferedImage = ImageIO.read(new ByteArrayInputStream(logo));
+			logoHeigth = bufferedImage.getHeight();
+			logoWidth = bufferedImage.getWidth();
+			float proportion = logoHeigth/logoWidth;
+			
+			if (logoHeigth > maxHeight) {
+				logoHeigth = maxHeight;
+				logoWidth = logoHeigth / proportion;
+			}
+			if (logoWidth > maxWidth) {
+				logoWidth = maxWidth;
+				logoHeigth = logoWidth * proportion;
+			}
+			
+			float finalX = x + (maxWidth - logoWidth) / 2;
+			float finalY = y + (maxHeight - logoHeigth) / 2;
+			
+			drawImage(doc, contents, logo, finalX, finalY, logoWidth, logoHeigth);
+			
+			if (externalLink != null) {
+				PDRectangle rectangle = new PDRectangle(x, y, logoWidth, logoHeigth);
+				PDAnnotationLink txtLink = new PDAnnotationLink();
+				PDActionURI action = new PDActionURI();
+				action.setURI(externalLink);
+				txtLink.setAction(action);
+				txtLink.setHidden(true);
+				txtLink.setRectangle(rectangle);
+				page.getAnnotations().add(txtLink);
+			}
+		}
+	}
+	
 	public static float getLogoFinalHeight(byte[] logo, float maxHeight, float maxWidth) throws IOException {
 		if (logo == null)
 			return 0;
