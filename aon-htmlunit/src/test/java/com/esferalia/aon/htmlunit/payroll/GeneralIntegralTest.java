@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.esferalia.aon.htmlunit.HtmlUnitIT;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
@@ -1936,6 +1937,57 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("quote-label-3", 1166.70 * 0.5 - 50.00);
 		assertValue("cgcBaseLabel", 1166.70 * 0.5 + 7.03 * 10.00);
 		
+		
+		
+		
+	}
+
+	@Test
+	public void TestIrpfEstatal() throws Exception {
+		
+
+		if (!isDisplayed("irpf,_atrasos"))
+			open("i.r.p.f_-_estatal");
+
+		wait4Id("irpf,_atrasos");
+
+		draft("IRPF, ATRASOS");
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		
+		calendar.set(Calendar.YEAR,2022);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.MONTH,Calendar.JANUARY);
+
+		Date startDate = calendar.getTime();
+
+		calendar.set(Calendar.DAY_OF_MONTH,28);
+		calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+		Date endDate = calendar.getTime();
+				
+		delay(startDate, endDate);
+		assertValue("totalPaymentLabel", 0.00, 0.00);
+		assertValue("totalLiquidLabel", 00.00, 0.00);
+		
+		setValue("db-amount-label-5", "11.11");
+		wait4Value("totalPaymentLabel", 11.11);
+		setValue("db-amount-label-4", "22.22");
+		wait4Value("totalPaymentLabel", 33.33);
+		
+		setValue("irpfPercentTexTBox", "15.00");
+		wait4Text("irpf", "5,00" );
+		
+		click("delayButton");
+		
+		wait4Id("dbSalaryCheck");
+		assertDisplay("dbSalaryCheck", true);
+		assertText("irpf", "5,00" );
+		assertValue("irpfPercentTexTBox", "15,00 %" );
 		
 		
 		
