@@ -900,7 +900,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return false;
 		}
 		try {
-			return irpfDataRs.getBoolean(IrpfDataColumns.DEDUCT_HOME_LOAN);
+			return irpfDataRs.getObject(IrpfDataColumns.DEDUCT_HOME_LOAN) != null ;
 		} catch (SQLException e) {
 			return rethrow(e);
 		}
