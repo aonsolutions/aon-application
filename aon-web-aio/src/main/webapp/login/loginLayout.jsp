@@ -133,6 +133,34 @@ try {
 											<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 										</td>
 									</tr>
+						
+<%
+	if ( false && domainName.endsWith("aonsolutions.org")) {
+%>								
+
+									<tr>
+										<td class="aon-login-box-center">
+											<!-- fnmt -->											
+											<c:url value="/fnmtoauth2" var="certificate_oauth2_url" >
+											</c:url>
+											<button 
+													id="fnmt_btn"   
+													class="aon-login-button"
+													src='onResource/com/code/aon/ui/resources/facelet/login/css/images/icons/fnmt-white.png' 
+													onclick="self.name='<%=domainName%>';window.open('${certificate_oauth2_url}', '_blank', 'width=700,height=800,scrollbars=yes'); return false;" 
+													style="background-image: url('aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/fnmt-background.png'); background-size:contain;background-repeat:round;"
+											2e>Iniciar sesi&oacute;n con Certificado</button>
+
+										</td>
+									</tr>
+									<tr>
+										<td class="aon-login-box-center">
+											<span class="aon-login-help" >O inicia sesi&oacute;n con tu usuario</span>
+										</td>
+									</tr>
+<%
+	}
+%>								
 									<tr>
 										<td class="aon-login-box-center">
 											<input type="text" id="j_username" name="j_username" class="aon-login-input" size="20" maxlength="64" placeholder="<%=commonBundle.getString("aon_login_user")%>" />
@@ -151,8 +179,12 @@ try {
 													onclick="document.getElementById('errorDiv').style.display = 'none';" />
 										</td>
 									</tr>
+<%
+	if ( true || !domainName.endsWith("aonsolutions.org") ) {
+%>								
 									<tr>
 										<td class="aon-login-box-center">
+											
 											<c:url value="/oauth2" var="google_oauth2_url">
 											</c:url>
 											<a id="google-oauth2" href="${google_oauth2_url}" target="_blank" onClick="self.name='<%=domainName%>';window.open(this.href, this.target, 'width=600,height=800,scrollbars=yes'); return false;" >
@@ -178,9 +210,12 @@ try {
 												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/github.png"/>
 											</a>
 											
-														
 										</td>
 									</tr>
+<%
+	}
+%>								
+
 								</table>
 
 								<c:if test="${!(customize.hideTrademark and customize.hideVersion)}">
