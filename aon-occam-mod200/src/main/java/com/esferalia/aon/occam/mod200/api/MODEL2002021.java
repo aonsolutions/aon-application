@@ -44,9 +44,9 @@ public class MODEL2002021 {
 		} 
 	}
 
-	public static void deleteMod2002021(Occam occam, int id) {
+	public static void deleteMod2002021(Occam occam, Mod2002021 mod200) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			getImpl().deleteMod2002021(ctx, id);
+			getImpl().deleteMod2002021(ctx, mod200);
 		} 
 	}
 

@@ -17,7 +17,7 @@ public interface Mod2002021Service extends RemoteService {
 	Mod2002021 createMod2002021(Occam occam, int year) throws AonCoreException;
 	Mod2002021 initializeMod2002021(Occam occam, Mod2002021 mod200);
 	Mod2002021 saveMod2002021(Occam occam, Mod2002021 mod200) throws AonCoreException;
-	void deleteMod2002021(Occam occam, int id) throws AonCoreException;
+	void deleteMod2002021(Occam occam, Mod2002021 mod200) throws AonCoreException;
 	Mod2002021 fillMod2002021AccountingData(Occam occam, Mod2002021 mod200, String data);
 	Mod2002021 calculateMod2002021(Mod2002021 mod200) throws AonCoreException;
 	LinkedList<CompanyBank> getCompanyBanks(Occam occam) throws AonCoreException;

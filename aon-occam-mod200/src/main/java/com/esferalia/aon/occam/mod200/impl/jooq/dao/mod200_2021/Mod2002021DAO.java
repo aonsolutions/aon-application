@@ -255,6 +255,9 @@ public class Mod2002021DAO  {
 	}
 	
 	private static Mod2002021 insert(AONContext ctx, Mod2002021 mod200)  {
+        mod200.setCreationUser(ctx.getUser());
+		mod200.setCreationDate(new Timestamp(System.currentTimeMillis()));        
+//		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); // Se utilizará a partir del ejercicio 2022
 		FsModel200Record record = ctx.getDslContext()
 			.insertInto(FS_MODEL200)
 			 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
@@ -298,8 +301,9 @@ public class Mod2002021DAO  {
 			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
 			 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
-			 .set(FS_MODEL200.CREATION_USER, ctx.getUser())
-			 .set(FS_MODEL200.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			 .set(FS_MODEL200.CREATION_USER, mod200.getCreationUser())
+			 .set(FS_MODEL200.CREATION_DATE, AonDateUtils.toTimestamp(mod200.getCreationDate()))
+			 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
@@ -544,9 +548,10 @@ public class Mod2002021DAO  {
 		ctx.log().info("\t\t MOD 200 DETAIL (" + list.size() + " rows)");
 	}
 	
-	private static Mod2002021 update(AONContext ctx, Mod2002021 mod200)  {
+	private static Mod2002021 update(AONContext ctx, Mod2002021 mod200)  {		
         mod200.setModificationUser(ctx.getUser());
 		mod200.setModificationDate(new Timestamp( System.currentTimeMillis()));
+//		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); // Se utilizará a partir del ejercicio 2022
 		ctx.getDslContext().update(FS_MODEL200)
 		 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 		 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
@@ -590,7 +595,8 @@ public class Mod2002021DAO  {
 		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
 		 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte(mod200.getStatus()))
 		 .set(FS_MODEL200.MODIFICATION_USER, mod200.getModificationUser())
-		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))		 
+		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))
+		 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -615,14 +621,16 @@ public class Mod2002021DAO  {
 		ctx.log().info("\t\t MOD 200 REGISTRY DELETED (" + count + " rows)");
 	}
 	
-	public static void delete(AONContext ctx, int id )  {
+	public static void delete(AONContext ctx, Mod2002021 mod200 )  {
 		try {
+			int id = mod200.getId();
 			ctx.log().info("------ [START] DELETE MOD 200 ["+id+"]");
 			deleteRegistry(ctx, id);
 			deleteDetail(ctx, id);
 			int count = ctx.getDslContext().delete(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id) )
 				.execute();
+//			Mod200DAO.deleteFsModel(ctx, mod200.getFsModel()); // Se utilizará a partir del ejercicio 2022
 			ctx.log().info("------ [END OK] DELETE MOD 200 ["+id+"] (" + count +" rows )");
 		} catch (Throwable t) {
 			ctx.log().info("------ [END FAIL] DELETE MOD 200 [" + t.getMessage() + "]");
@@ -733,6 +741,7 @@ public class Mod2002021DAO  {
 		mod200.setCreationDate(record.getCreationDate());
 		mod200.setModificationUser(record.getModificationUser());
 		mod200.setModificationDate(record.getModificationDate());
+	    mod200.setFsModel(record.getFsModel());
 		return mod200;
 	}
 	
