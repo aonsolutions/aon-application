@@ -227,6 +227,7 @@ export const GROUP_DATA = MSG.GROUP_DATA;
 export const GROUP_MANAGEMENT = MSG.GROUP_MANAGEMENT;
 export const GROUP = MSG.GROUP;
 export const GROUPS = MSG.GROUPS;
+export const GROUPED = "Agrupadas";//TODO
 
 // ----- H
 
