@@ -9,7 +9,6 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -132,20 +131,25 @@ public class Mod123DAO extends FiscalModelDAO {
 	
 	public static Mod123 markAsFinished(AONContext ctx,Mod123 mod123) {
 		FiscalModelValidation.statusChange(mod123, FiscalStatus.FINISHED);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod123);
 		mod123 = FiscalModelDAO.finish(ctx, mod123);
-		return save(ctx, mod123);
+		mod123 = save(ctx, mod123);
+		if (oldFinanceId != null) {
+			FinanceDAO.delete(ctx, oldFinanceId);
+		}
+		return mod123;
 	}
 	
 	public static Mod123 markAsPending(AONContext ctx,Mod123 mod123) {
 		FiscalModelValidation.statusChange(mod123, FiscalStatus.PENDING);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod123);
 		mod123.setStatus(FiscalStatus.PENDING);
 		mod123.setDeclarationResult(null);
 		mod123.setDeclarationResultType(null);
-		Finance finance = mod123.getFinance();
 		mod123.setFinance(null);
 		mod123 = save(ctx, mod123);
-		if (finance != null) {
-			FinanceDAO.delete(ctx, finance.getId());
+		if (oldFinanceId != null) {
+			FinanceDAO.delete(ctx, oldFinanceId);
 		}
 		return mod123;
 	}
@@ -159,9 +163,13 @@ public class Mod123DAO extends FiscalModelDAO {
 	
 	public static Mod123 markAsCustomerCheck(AONContext ctx,Mod123 mod123) {
 		FiscalModelValidation.statusChange(mod123, FiscalStatus.CUSTOMER_CHECK);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod123);
 		mod123 = FiscalModelDAO.finish(ctx, mod123);
 		mod123.setStatus(FiscalStatus.CUSTOMER_CHECK);
 		mod123 = save(ctx, mod123);
+		if (oldFinanceId != null) {
+			FinanceDAO.delete(ctx, oldFinanceId);
+		}
 		return mod123;
 	}
 

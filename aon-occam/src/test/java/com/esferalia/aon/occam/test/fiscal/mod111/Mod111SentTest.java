@@ -14,15 +14,13 @@ public class Mod111SentTest extends AbstractOccamTest {
 	
 	@Test
 	public void testSent() {
-		ctx.getDslContext().transaction( config -> {
-			for (Mod111 model : MODEL111.getMod111s(getOccam()) ) {
-				Mod111 mod111 = MODEL111.get(getOccam(), model.getId());
-				MODEL111.markAsSent(getOccam(), mod111);
-				Mod111 mod111Bis = MODEL111.get(getOccam(), model.getId());
-				assertEquals("Status not SENT", FiscalStatus.SENT, mod111Bis.getStatus());
-				assertNotNull("Mod111. Tipo resultado NULL",mod111Bis.getDeclarationResultType());
-			}
-		});
+		for (Mod111 model : MODEL111.getMod111s(getOccam()) ) {
+			Mod111 mod111 = MODEL111.get(getOccam(), model.getId());
+			MODEL111.markAsSent(getOccam(), mod111);
+			Mod111 mod111Bis = MODEL111.get(getOccam(), model.getId());
+			assertEquals("Status not SENT", FiscalStatus.SENT, mod111Bis.getStatus());
+			assertNotNull("Mod111. Tipo resultado NULL",mod111Bis.getDeclarationResultType());
+		}
 	}
 	
 }
