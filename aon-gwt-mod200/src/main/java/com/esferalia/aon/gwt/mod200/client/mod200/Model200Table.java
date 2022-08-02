@@ -241,5 +241,6 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Mod200> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
+	
 }
 
