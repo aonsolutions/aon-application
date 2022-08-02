@@ -31,9 +31,9 @@ public class MODEL2002021Impl implements IMODEL2002021 {
 				configuration -> Mod2002021DAO.save(ctx, mod200));
 	}
 	@Override
-	public void deleteMod2002021(AONContext ctx, int id) {
+	public void deleteMod2002021(AONContext ctx, Mod2002021 mod200) {
 		ctx.getDslContext().transaction(
-				configuration -> Mod2002021DAO.delete(ctx, id));
+				configuration -> Mod2002021DAO.delete(ctx, mod200));
 	}
 	
 }

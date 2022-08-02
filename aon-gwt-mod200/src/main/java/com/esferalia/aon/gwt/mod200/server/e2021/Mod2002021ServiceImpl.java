@@ -53,9 +53,9 @@ public class Mod2002021ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 
 	@Override
-	public void deleteMod2002021(Occam occam, int id)
+	public void deleteMod2002021(Occam occam, Mod2002021 mod200)
 			throws AonCoreException {
-		MODEL2002021.deleteMod2002021(occam,id);
+		MODEL2002021.deleteMod2002021(occam, mod200);
 	}
 
 	@Override

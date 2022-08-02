@@ -5386,11 +5386,14 @@ CREATE TABLE `fs_model200` (
   `creation_date` DATETIME NULL DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` VARCHAR(16) NULL DEFAULT NULL COMMENT 'Usuario de modificacion' COLLATE 'latin1_spanish_ci',
   `modification_date` DATETIME NULL DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `fs_model` int(4) DEFAULT NULL Comment 'Identificador de fs_model',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
+  KEY `IDX_FS_MODEL200_FS_MODEL` (`fs_model`),
   CONSTRAINT `FK_FS_MODEL200_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_MODEL200_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+  CONSTRAINT `FK_FS_MODEL200_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
+  CONSTRAINT `FK_FS_MODEL200_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuesto sobre sociedades';
 
 #

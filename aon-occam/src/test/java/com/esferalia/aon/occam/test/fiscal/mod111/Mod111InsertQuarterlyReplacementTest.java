@@ -23,16 +23,14 @@ public class Mod111InsertQuarterlyReplacementTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod111InsertMonthlyReplacementTest() {
-		ctx.getDslContext().transaction( config -> {
-			Date today = new Date();
-			for (Period period : Period.values()) {
-				if (period.isQuarterPeriod()) {
-					Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-					Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-					mod111InsertMonthlyReplacement(AonRandom.getRangeDate(start,end));
-				}
+		Date today = new Date();
+		for (Period period : Period.values()) {
+			if (period.isQuarterPeriod()) {
+				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+				mod111InsertMonthlyReplacement(AonRandom.getRangeDate(start,end));
 			}
-		});
+		}
 	}
 	
 	public void mod111InsertMonthlyReplacement(Date date) {

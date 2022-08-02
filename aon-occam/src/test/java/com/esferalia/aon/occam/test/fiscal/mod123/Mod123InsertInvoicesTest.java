@@ -14,13 +14,11 @@ public class Mod123InsertInvoicesTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		ctx.getDslContext().transaction( config -> {
-			System.out.println(MessageFormat.format("\t\t {0} Invoices inserted "
-				,IntStream.range(0 , AonRandom.getInt(1, 50))
-					.mapToObj(i -> AonRandom.getRandomWithholdingType() )
-					.map(wt -> AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration(),wt))
-					.count()));
-		});
+		System.out.println(MessageFormat.format("\t\t {0} Invoices inserted "
+			,IntStream.range(0 , AonRandom.getInt(1, 50))
+				.mapToObj(i -> AonRandom.getRandomWithholdingType() )
+				.map(wt -> AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration(),wt))
+				.count()));
 		Assert.assertTrue( AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
 				.findFirst()
 				.isPresent()

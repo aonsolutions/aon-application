@@ -15,15 +15,13 @@ public class Mod111MarkAsCustomerRejectedTest extends AbstractOccamTest {
 	
 	@Test
 	public void testReopen() {
-		ctx.getDslContext().transaction( config -> {
-			for (Mod111 model : MODEL111.getMod111s(getOccam()) ) {
-				Mod111 mod111 = MODEL111.get(getOccam(), model.getId());
-				MODEL111.markAsCustomerRejected(getOccam(), mod111, AonRandom.string(50, 20));
-				Mod111 mod111Bis = MODEL111.get(getOccam(), model.getId());
-				assertEquals("Status not CUSTOMER_REJECTED", FiscalStatus.CUSTOMER_REJECTED, mod111Bis.getStatus());
-				assertNotNull("Mod111. Tipo resultado NULL",mod111Bis.getDeclarationResultType());
-			}	
-		});
+		for (Mod111 model : MODEL111.getMod111s(getOccam()) ) {
+			Mod111 mod111 = MODEL111.get(getOccam(), model.getId());
+			MODEL111.markAsCustomerRejected(getOccam(), mod111, AonRandom.string(50, 20));
+			Mod111 mod111Bis = MODEL111.get(getOccam(), model.getId());
+			assertEquals("Status not CUSTOMER_REJECTED", FiscalStatus.CUSTOMER_REJECTED, mod111Bis.getStatus());
+			assertNotNull("Mod111. Tipo resultado NULL",mod111Bis.getDeclarationResultType());
+		}	
 	}
 	
 }

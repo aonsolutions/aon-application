@@ -10,7 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod303KeyTest.class,
 	Mod303ExpressionsTest.class,
 	Mod303ScriptTest.class,
-//
+
 	VatContextJSONTest.class,
 	
 	Mod303ReopenTest.class,					// Pendiente
@@ -49,17 +49,17 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyReplacementTest.class,
 	Mod303RoundedAmountsTest.class,
-
-	// Flujo de estados
+//
+//	// Flujo de estados
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303FinishTest.class,					// Finalizado
 	Mod303SentTest.class,					// Presentado
-	// Flujo de estados
+//	// Flujo de estados
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
 	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
 	Mod303SentTest.class,					// Presentado
-	// Flujo de estados 
+//	// Flujo de estados 
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
 	Mod303MarkAsCustomerRejectedTest.class, // Rechazado por cliente

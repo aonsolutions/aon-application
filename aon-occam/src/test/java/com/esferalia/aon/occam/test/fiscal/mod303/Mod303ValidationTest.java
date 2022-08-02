@@ -34,13 +34,11 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setComplementary(true)
 			.setReplacement(false);
 		deleteAllModels();
-		ctx.getDslContext().transaction( config -> {
-			Exception e = assertThrows(AonCoreException.class, () -> {
-				insertModel( params );
-		    });
-			String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-			assertEquals("Wrong Exception", expected, e.getMessage());
-		});
+		Exception e = assertThrows(AonCoreException.class, () -> {
+			insertModel( params );
+	    });
+		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
+		assertEquals("Wrong Exception", expected, e.getMessage());
 	}
 	
 	/**
@@ -52,13 +50,11 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setComplementary(false)
 			.setReplacement(true);
 		deleteAllModels();
-		ctx.getDslContext().transaction( config -> {
-			Exception e = assertThrows(AonCoreException.class, () -> {
-				insertModel( params );
-		    });
-			String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-			assertEquals("Wrong Exception", expected, e.getMessage());
-		});
+		Exception e = assertThrows(AonCoreException.class, () -> {
+			insertModel( params );
+	    });
+		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
+		assertEquals("Wrong Exception", expected, e.getMessage());
 	}
 	
 	/**
@@ -70,14 +66,12 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setComplementary(false)
 			.setReplacement(false);
 		deleteAllModels();
-		ctx.getDslContext().transaction( config -> {
-			Mod303 mod303 = insertModel( params );
-			Exception e = assertThrows(AonCoreException.class, () -> {
-				insertModel( params );
-		    });
-			String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod303.getModelFullName());
-			assertEquals("Wrong Exception", expected, e.getMessage());
-		});
+		Mod303 mod303 = insertModel( params );
+		Exception e = assertThrows(AonCoreException.class, () -> {
+			insertModel( params );
+	    });
+		String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod303.getModelFullName());
+		assertEquals("Wrong Exception", expected, e.getMessage());
 	}
 
 	/**
@@ -89,15 +83,13 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setComplementary(false)
 			.setReplacement(false);
 		deleteAllModels();
-		ctx.getDslContext().transaction( config -> {
-			Mod303 original = insertModel( params );
-			insertModel( params.setComplementary(true) );
-			Exception e = assertThrows(AonCoreException.class, () -> {
-				MODEL303.delete(getOccam(), original);
-		    });
-			String expected = AonError.FISCAL_WRONG_REPLACED_DELETION.getMessage();
-			assertEquals("Wrong Exception", expected, e.getMessage());
-		});
+		Mod303 original = insertModel( params );
+		insertModel( params.setComplementary(true) );
+		Exception e = assertThrows(AonCoreException.class, () -> {
+			MODEL303.delete(getOccam(), original);
+	    });
+		String expected = AonError.FISCAL_WRONG_REPLACED_DELETION.getMessage();
+		assertEquals("Wrong Exception", expected, e.getMessage());
 	}
 
 	/**
@@ -112,27 +104,23 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 
 			private FiscalFakerParams visitRemoved(FiscalStatus status) {
 				deleteAllModels();
-				ctx.getDslContext().transaction( config -> {
-					Mod303 mod = insertModel( params );
-					mod.setStatus( status );
-					MODEL303.delete(getOccam(), mod);
-					Mod303 model = MODEL303.get(getOccam(), mod.getId());
-					assertNull("Modelo no nulo!", model );
-				});
+				Mod303 mod = insertModel( params );
+				mod.setStatus( status );
+				MODEL303.delete(getOccam(), mod);
+				Mod303 model = MODEL303.get(getOccam(), mod.getId());
+				assertNull("Modelo no nulo!", model );
 				return params;
 			}
 			
 			private FiscalFakerParams visitNoRemoved(FiscalStatus status) {
 				deleteAllModels();
-				ctx.getDslContext().transaction( config -> {
-					Mod303 mod = insertModel( params );
-					mod.setStatus(status);
-					Exception e = assertThrows("Status: " + status.getName(), AonCoreException.class, () -> {
-						MODEL303.delete(getOccam(), mod);
-					});
-					String expected = AonError.FISCAL_WRONG_STATUS_DELETION.format(mod.getStatus());
-					assertEquals("Wrong Exception", expected, e.getMessage());
+				Mod303 mod = insertModel( params );
+				mod.setStatus(status);
+				Exception e = assertThrows("Status: " + status.getName(), AonCoreException.class, () -> {
+					MODEL303.delete(getOccam(), mod);
 				});
+				String expected = AonError.FISCAL_WRONG_STATUS_DELETION.format(mod.getStatus());
+				assertEquals("Wrong Exception", expected, e.getMessage());
 				return params;
 			}
 			
@@ -152,15 +140,13 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 	}
 
 	private void  deleteAllModels() {
-		ctx.getDslContext().transaction( config -> {
-			Optional.of(MODEL303.getMod303s(getOccam()))
-			.ifPresent( mods -> 
-			mods.stream()
-				.map( mod -> {
-					return (Mod303) mod.setStatus(FiscalStatus.PENDING);
-				})
-				.forEach( mod -> MODEL303.delete(getOccam(), mod)));
-		});
+		Optional.of(MODEL303.getMod303s(getOccam()))
+		.ifPresent( mods -> 
+		mods.stream()
+			.map( mod -> {
+				return (Mod303) mod.setStatus(FiscalStatus.PENDING);
+			})
+			.forEach( mod -> MODEL303.delete(getOccam(), mod)));
 	}
 
 	private FiscalFakerParams getParams() {

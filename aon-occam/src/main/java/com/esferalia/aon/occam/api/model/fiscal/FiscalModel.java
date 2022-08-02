@@ -118,6 +118,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.finance = finance;
 		return this;
 	}
+	public Integer getFinanceId() {
+		return finance==null?null:finance.getId();
+	}
 	@Override
 	public FiscalModelType getModel() {
 		return model;
