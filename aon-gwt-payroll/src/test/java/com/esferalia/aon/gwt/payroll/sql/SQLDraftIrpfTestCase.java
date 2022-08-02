@@ -333,4 +333,11 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		
 	}
 	
+	@Test
+	@Override
+	public void testDeductHomeLoan() throws ExpressionException, SQLException, SalaryException {
+		
+	}
+
+	
 }
