@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
@@ -1534,14 +1535,19 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<ItemComposition> getItemCompositionList(String domainName, Integer domainId, String login, Integer itemId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItemComposition(ctx, itemId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Stream<ItemComposition> getItemCompositionStream(Domain domain, String login, ItemCompositionFilter filter) {
+		return getItemCompositionStream(domain.getName(), domain.getId(), login, filter);
+	}	
+	
+	public static Stream<ItemComposition> getItemCompositionStream(String domainName, Integer domainId, String login, ItemCompositionFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getProduct().getItemCompositionStream(ctx, filter);
+		}
+	}
+	
+	public static List<ItemComposition> getItemCompositionList(String domainName, Integer domainId, String login, Integer itemId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getProduct().getItemCompositionList(ctx, f -> f.getItemProperty().eq(itemId));
 		}
 	}
 

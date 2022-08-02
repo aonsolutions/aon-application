@@ -820,7 +820,7 @@ public class ProductOldDAO {
 							.values(itemComposition.getDomain(),
 									itemComposition.getItemId(),
 									itemComposition.getCompositionItemId(),
-									(short) itemComposition.getSequence(),
+									itemComposition.getSequence().shortValue(),
 									itemComposition.getDescription(),
 									itemComposition.getQuantity(),
 									itemComposition.getDiscountExpression())
