@@ -48,9 +48,9 @@ public class WarehouseTest {
 				setDescription("SARDINILLA GUISADA RR125 HACENDADO")
 				.setSerialDate(new Date()).setSerialNumber("36B19A17");
 		
-		Optional<InputStream> optLogo = Optional.ofNullable(WarehouseTest.class.getResourceAsStream("kintama.png"));
+		byte[] logo = WarehouseTest.class.getResourceAsStream("kintama.png").readAllBytes();
 		
-		try (WarehouseTemplate wt = new WarehouseTemplate(company, item, optLogo)) {
+		try (WarehouseTemplate wt = new WarehouseTemplate(company, item, logo, "08480000230362", 288d, "(02)08480000230362(37)65(15)231231(10)36B19A", "3842644412021000032")) {
 			wt.save(new FileOutputStream("./WarehouseTest.pdf"));
 		}
 		
@@ -91,50 +91,17 @@ public class WarehouseTest {
 				setDescription(possibleNull(faker.commerce().productName(), 30))
 				.setSerialDate(possibleNull(faker.date().future(1000, TimeUnit.DAYS), 30)).setSerialNumber(possibleNull(faker.idNumber().valid(), 30));
 		
-		Optional<InputStream> optLogo = Optional.ofNullable(possibleNull(WarehouseTest.class.getResourceAsStream("aon-logo.jpg"), 30));
+		byte[] logo = possibleNull(WarehouseTest.class.getResourceAsStream("aon-logo.jpg").readAllBytes(), 30);
 		
-		try (WarehouseTemplate wt = new WarehouseTemplate(company, item, optLogo)) {
+		Double quantity = possibleNull((double) faker.number().numberBetween(0, 200), 30);
+		String sscc = possibleNull(faker.idNumber().valid(), 30);
+		String ean128 = possibleNull(faker.idNumber().valid(), 30);
+		String barcode = possibleNull(faker.idNumber().valid(), 30);
+		
+		try (WarehouseTemplate wt = new WarehouseTemplate(company, item, logo, barcode, quantity, ean128, sscc)) {
 			wt.save(/*new FileOutputStream("./WarehouseRandomTest.pdf")*/OutputStream.nullOutputStream());
 		}
 	}
-	
-//	@Test
-//	public void dbTest() throws CanNotCreatePdfException, IOException {
-//		try (CloseableAONContext ctx = AONContext.getAONContext("paturpat.igonzalez.net", "")) {
-//			Item aitem = AON.getItem(new Domain().setId(ctx.getDomainId()).setName(ctx.getDomainName()), ctx.getUser(), f -> f.getIdProperty().eq(3180903/*3138724*/));
-//			CompanyFull cmp = AON.getCompanyFull(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser());
-//			Optional<InputStream> optLogo = Optional.ofNullable(WarehouseTest.class.getResourceAsStream("aon-logo.jpg"));
-//			try (WarehouseTemplate wt = new WarehouseTemplate(cmp, aitem, optLogo)) {
-//				wt.save(new FileOutputStream("./UdapaTest.pdf"));
-//			}
-//		}
-//	}
-//	
-//	private static byte[] getBytes(Optional<InputStream> optLogo) {
-//		try {
-//			return optLogo.isPresent() ? optLogo.get().readAllBytes() : null;
-//		} catch (IOException e1) {
-//			return null;
-//		}
-//	}
-//	
-//	private static byte[] getLogo(AONContext aonContext) {
-//		// LOGO
-//		Optional<InputStream> optLogo = Optional.empty();
-//		{
-//
-//			Attach attach1 = AON.getAttach(
-//					aonContext.getDomainName(), 
-//					aonContext.getDomainId(), 
-//					aonContext.getUser(),
-//					f -> f.getTypeProperty().eq(LOGO.value()).and(f.getDomainProperty().eq(aonContext.getDomainId())),
-//					REGISTRY
-//				);
-//			if (attach1 != null && attach1.getData() != null)
-//				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
-//		}
-//		return getBytes(optLogo);
-//	}
 
 	private static <T> T possibleNull(T element, double nullProbability) {
 		return (Math.random() * 100 < nullProbability) ? null : element;

@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
@@ -27,6 +25,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
@@ -35,8 +34,6 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 
 public class WarehouseTemplate implements AutoCloseable {
-	
-	//TODO: Por finalizar. Ambos códigos de barras, GTIN, CAJAS, LOTE y SSCC son datos inventados.
 	
 	private static final PDFont DEFAULT_FONT = PdfFonts.HELVETICA;
 	private static final PDFont DEFAULT_BOLD_FONT = PdfFonts.HELVETICA_BOLD;
@@ -61,7 +58,13 @@ public class WarehouseTemplate implements AutoCloseable {
 	private Item item;
 	private byte[] logo;
 	
-	public WarehouseTemplate(CompanyFull company, Item item, Optional<InputStream> optLogo) throws CanNotCreatePdfException {
+	private String barcode;
+	private Double quantity;
+	private String sscc;
+	private String ean128;
+	
+	
+	public WarehouseTemplate(CompanyFull company, Item item, byte[] logo, String barcode /*GTIN*/, Double quantity/*cajas*/, String ean128 /*código de barras*/, String sscc) throws CanNotCreatePdfException {
 		try {
 			if (company == null || company.getRegistry() == null || item == null) {
 				throw new CanNotCreatePdfException("No item or company");
@@ -69,7 +72,12 @@ public class WarehouseTemplate implements AutoCloseable {
 			this.company = company;
 			this.item = item;
 			
-			this.assignLogo(optLogo);
+			this.logo = logo;
+			
+			this.barcode = barcode;
+			this.quantity = quantity;
+			this.ean128= ean128;
+			this.sscc = sscc;
 			
 			this.document = new PDDocument();
 			this.page = new PDPage(PDRectangle.A5);
@@ -85,17 +93,6 @@ public class WarehouseTemplate implements AutoCloseable {
 			this.contents.close();
 		} catch (Exception e) {
 			throw new CanNotCreatePdfException(e);
-		}
-	}
-	
-	private void assignLogo(Optional<InputStream> optLogo) {
-		this.logo = null;
-		try {
-			if (optLogo.isPresent()) {
-				this.logo = optLogo.get().readAllBytes();
-			}
-		} catch (Exception e) {
-			//Logo remains null.
 		}
 	}
 	
@@ -292,11 +289,21 @@ public class WarehouseTemplate implements AutoCloseable {
 		this.y -= 16;
 		this.x = this.nameMargin;
 		
-		this.drawLeftItemInfoLine("GTIN:", "08480000230362", itemInfoFontSize);
+		this.drawLeftItemInfoLine("GTIN:", this.barcode, itemInfoFontSize);
 		this.y -= itemInfoFontSize * 1.75;
-		this.drawLeftItemInfoLine("CAJAS:", "65", itemInfoFontSize);
+		
+		String boxes = "";
+		if (AonNumberUtils.isValid(this.quantity)) {
+			if (this.quantity % 1 == 0) {
+				boxes = AonNumberUtils.toString(AonNumberUtils.toInteger(this.quantity)); 
+			} else {
+				boxes = AonNumberUtils.toString(this.quantity); 				
+			}
+		}
+		
+		this.drawLeftItemInfoLine("CAJAS:", boxes, itemInfoFontSize);
 		this.y -= itemInfoFontSize * 1.75;
-		this.drawLeftItemInfoLine("LOTE:", "36B19A17", itemInfoFontSize);
+		this.drawLeftItemInfoLine("LOTE:", item.getSerialNumber(), itemInfoFontSize);
 	}
 	
 	private void drawConsumptionDate(float bottomY) throws IOException {
@@ -349,10 +356,8 @@ public class WarehouseTemplate implements AutoCloseable {
 		
 		float ssccWidth = this.getPageWidth() - this.nameMargin * 2f;
 		
-		String sscc = "384264412021000032";
-		
-		if (!AonStringUtils.isBlank(sscc)) {
-			String ssccLine = "SSCC: " + AonStringUtils.trimToEmpty(sscc);
+		if (!AonStringUtils.isBlank(this.sscc)) {
+			String ssccLine = "SSCC: " + AonStringUtils.trimToEmpty(this.sscc);
 			
 			PDFToolkit.drawTextCenter(
 					this.contents,
@@ -369,10 +374,14 @@ public class WarehouseTemplate implements AutoCloseable {
 	
 	private void drawBarcodes() throws IOException, WriterException {
 		
-		this.y -= this.heightBarCode + this.heightBarCode * 1/3;
-		this.drawBarcode("(02)08480000230362(37)65(15)231231(10)36B19A");
-		this.y -= this.heightBarCode + this.heightBarCode * 1/3;
-		this.drawBarcode("(00)356021390028214468");
+		if (!AonStringUtils.isBlank(this.ean128)) {			
+			this.y -= this.heightBarCode + this.heightBarCode * 1/3;
+			this.drawBarcode(AonStringUtils.trimToEmpty(this.ean128));
+		}
+		if (!AonStringUtils.isBlank(this.sscc)) {			
+			this.y -= this.heightBarCode + this.heightBarCode * 1/3;
+			this.drawBarcode("(00)" + AonStringUtils.trimToEmpty(this.sscc));
+		}
 		
 	}
 	
@@ -401,9 +410,9 @@ public class WarehouseTemplate implements AutoCloseable {
 		this.x = this.marginBarCode;
 		float maxWidth = this.getPageWidth() - 2 * this.marginBarCode;
 		
-		byte[] barcode = createBarcode(code, (int) maxWidth, (int) this.heightBarCode + 1);
+		byte[] barcodeBytes = createBarcode(code, (int) maxWidth, (int) this.heightBarCode + 1);
 		
-		PDFToolkit.drawImage(this.document, this.contents, barcode, this.x, this.y, maxWidth, this.heightBarCode);
+		PDFToolkit.drawImage(this.document, this.contents, barcodeBytes, this.x, this.y, maxWidth, this.heightBarCode);
 		
 		final float codeFontSize = 12f;
 		this.x = this.marginBarCode;
