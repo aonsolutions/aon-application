@@ -236,7 +236,7 @@ public class Cra {
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(Integer domainId, Integer userId, List<String> cccList, long findingDate, java.util.Date fileNameDate, Connection connection)  {
+	public static JSONObject getMainCRAByCRA(Integer domainId, Integer userId, List<String> cccList, long findingDate, String fileName, Connection connection)  {
 		
 		// Get dslContext for given connection
 		@SuppressWarnings("resource")
@@ -259,8 +259,6 @@ public class Cra {
 			
 		// GET AuthKey from DB
 		String authKey = getAuthKeyFromDomain(dslContext, cccList.get(0));
-		
-		String fileName = dateFormatter.format(fileNameDate);
 		
 		// ETI
 		JSONObject eti = new JSONObject();
