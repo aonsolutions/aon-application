@@ -325,10 +325,12 @@
 									enabled="false" />
 								<g:Button debugId='salaryButton' ui:field='salaryButton'
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR NOMINA" />
-								<g:Button debugId='salaryButton' ui:field='extraButton'
+								<g:Button debugId='extraButton' ui:field='extraButton'
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR EXTRA" visible="false"/>
-								<g:Button debugId='salaryButton' ui:field='settleButton'
+								<g:Button debugId='settleButton' ui:field='settleButton'
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR FINIQUITO" visible="false"/>
+								<g:Button debugId='delayButton' ui:field='delayButton'
+									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR ATRASOS" visible="false"/>
 								<g:Button debugId='fiscalModelsButton' ui:field='fiscalModelsButton'
 									styleName='aon-finding-toolbar-item aon-icon-aeat' text="MODELOS FISCALES" visible="false"/>
 								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
