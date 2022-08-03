@@ -15,7 +15,7 @@ export const getTaskGeneralCount = (data) => isSigGet("task/general/count",data)
 
 export const getTaskNotice = (data) => isSigGet("task/notice",data);
 export const sendTaskHistoric = (data) => isSigPost(`task/historic`,data);
-export const sendTaskHistoricEmail = (data) => isSigPost(`task/historic-email`,data);
+export const saveTaskBranch = (data) => isSigPost(`task/branch`,data);
 export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
 
 //----------------TASK WORKFLOW
@@ -40,7 +40,10 @@ export const getTaskProcess =  (data) => {
         { value:2, name: "Alta de empleado"},
         { value:3, name: "Modificación de fichaje"}
     ];
-    if(data) json = json.find((r) => r.value == data);
+
+    if(data) {
+        json = json.find((r) => r.value == data);
+    }
 
     return json;
 }
