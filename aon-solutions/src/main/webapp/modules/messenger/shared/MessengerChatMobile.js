@@ -2,44 +2,43 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG, MATERIAL_ICONS, AON_ICONS } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
-import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
+import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils} from "./TaskCreationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar, taskNumberParse } from "./utils.js";
 import * as ACTIONS from "../../actions.js";
 /**
  * 
- * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
+ * @param {Task} task 
  */
-export const buildMobile = (aonMessengerChat)=> {
+export const buildMobile = (task)=> {
     const mainView = TaskCreationUtils.createMobileMainView();
-    const task = aonMessengerChat.task;
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     aonMessengerChat.appendChild(mainView);
 
     const wrapper = createFirstDiv(mainView);
 
-    if(task.id){
-        buildSectionHistoric(aonMessengerChat, wrapper);
+    if(task.getId()){
+        buildSectionHistoric(task, wrapper);
     }
 
-    const secondDiv = createSecondDiv(mainView);
+    const secondDiv = createSecondDiv(task, mainView);
 
-    buildForm(secondDiv, aonMessengerChat);
+    buildForm(task, secondDiv);
 
-    if(!task.id){
+    if(!task.getId()){
         showForm(true);
     }
 
 }
-
 
 /**
  VIEW EDIT TASK MOBILE
  * @param {HTMLElement} aonMessengerChat 
  * @param {HTMLElement} wrapper div wrapper
  */
-const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
-    const task = aonMessengerChat.task;
-    buildToolbar(aonMessengerChat, wrapper, false);
+const buildSectionHistoric = (task, wrapper)=>{
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    buildToolbar(task, wrapper, false);
     
     let titleText = task.title;
     if(task.registry && task.registry.name)
@@ -50,7 +49,7 @@ const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
     const title = setStyles(TaskCreationUtils.createTitle(titleText),{
         display : 'block',
         fontSize: '1.3em',
-        padding: "10px 18px",
+        padding: '10px 18px',
         width : '100%',
         borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
     });
@@ -184,16 +183,17 @@ const changeStyleSectionComment = (divs) => {
 
 /**
  * 
- * @param {HTMLElement} aonMessengerChat 
+ * @param {Task} task 
  * @param {HTMLElement} div 
  * @param {Boolean} create form create true or false
  */
-const buildToolbar = (aonMessengerChat, div, create = false) => {
-    const task = aonMessengerChat.task;
+const buildToolbar = (task, div, create = false) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
     /**
      * Building toolbars
      */
-     const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
+     const sourceText =  MSG[task.getSource().toString().toUpperCase()] || task.getSource();
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
         title:sourceText +" " +taskNumberParse(task.number)
@@ -203,16 +203,18 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
     div.appendChild(toolbar);
 
     if(create){
-        const status = task.status;
-        if(task.id){
+        const status = task.getStatus();
+        if(task.getId()){
 
             if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status) ){
-                toolbar.addButton2({
-                    id: MESSENGER_IDS.TOOLBAR_BRANCH,
-                    name: "Crear Rama",
-                    aonIcon: AON_ICONS.AON_BRANCH,
-                  }, (e) =>TaskCreationUtils.openDialogBranch(e));
-
+                if(task.source !== TASK_SOURCE.TASK){
+                    toolbar.addButton2({
+                        id: MESSENGER_IDS.TOOLBAR_BRANCH,
+                        name: "Crear Rama",
+                        aonIcon: AON_ICONS.AON_BRANCH,
+                    }, () =>TaskCreationUtils.openDialogBranch(task));
+                }
+  
                 toolbar.addButton2({
                   ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
                   name: MSG.CLOSE,
@@ -234,12 +236,14 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
         if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status)){
             toolbar.addButton2(ACTIONS.SAVE,() => {
                 aonMessengerChat.save().then((success) =>{
-                    if(success) aonMessengerChat.showMessage();
+                    if(success) {
+                        aonMessengerChat.showMessage();
+                    }
                 });
             });
         }
     } else {
-        if(task.source === TASK_SOURCE.PROCESS){
+        if(task.getSource() === TASK_SOURCE.PROCESS){
             toolbar.addButton2({...ACTIONS.SHOW_FILE, name:MSG.TO_SHOW},() => showForm(true, true));
         }
 
@@ -247,7 +251,7 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
     }
     
     toolbar.addButton2(ACTIONS.BACK,() =>{
-        if(task.id && create) {
+        if(task.getId() && create) {
             showForm(false);
         } else {
             aonMessengerChat.back();
@@ -324,7 +328,7 @@ const createFirstDiv = (mainView) => {
 }
   
 
-const createSecondDiv = (mainView) => {
+const createSecondDiv = (task, mainView) => {
     let div = newComponent({
         type: TAG.DIV,
         id:MESSENGER_IDS.DIV_MAIN_MOBILE,
@@ -341,7 +345,7 @@ const createSecondDiv = (mainView) => {
     });
     div.appendTo(mainView);
 
-    buildToolbar(aonMessengerChat, div, true);
+    buildToolbar(task, div, true);
 
     const secondDiv = document.createElement(TAG.DIV);
     secondDiv.id = MESSENGER_IDS.SECOND_DIV;

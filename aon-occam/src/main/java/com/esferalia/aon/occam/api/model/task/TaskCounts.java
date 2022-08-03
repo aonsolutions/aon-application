@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class TaskCounts  implements Serializable{	
 	
-
 	/**
 	 * 
 	 */
@@ -27,7 +26,6 @@ public class TaskCounts  implements Serializable{
 		this.tags = new ArrayList<>();
 	}
 	
-	
 	public void addStatus(TaskStatus status, Integer count) {
 		GeneralData statusData = new GeneralData();
 		statusData.field = status.getName();
@@ -35,7 +33,6 @@ public class TaskCounts  implements Serializable{
 		addStatus(statusData);
 	}
 	
-
 	public void addWorkgroup(String workgroup, Integer count) {
 		GeneralData workgroupData = new GeneralData();
 		workgroupData.field = workgroup;
@@ -49,7 +46,6 @@ public class TaskCounts  implements Serializable{
 		tagData.count = count;
 		addTag(tagData);
 	}
-	
 	
 	protected void addStatus(GeneralData statusData) {
 		status.add(statusData);
@@ -100,7 +96,6 @@ public class TaskCounts  implements Serializable{
 				jsonTags.put(d.getField(), d.getCount())
 			);
 			json.put(IJsonNames.TAG, jsonTags);
-			
 		}
 		return json;
 	}

@@ -22,6 +22,8 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
 import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
+
+import net.aonsolutions.db.up2date.task.TaskSourceUpdate;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
 import net.aonsolutions.db.up2date.tgss.AgriculturalMonthlyQuote2022Fix;
 import net.aonsolutions.db.up2date.tgss.FellowsITIMS2022UpdateII;
@@ -261,6 +263,7 @@ public class Up2Date {
 	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
     		AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
     		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
+    		TaskSourceUpdate.TASK_SOURCE_UPDATE,
     		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
     		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL
     };

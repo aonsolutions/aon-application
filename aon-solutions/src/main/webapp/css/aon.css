@@ -1272,6 +1272,7 @@ button:disabled, button[disabled]{
 
 .materialScroll::-webkit-scrollbar{
     width: 6px;
+    max-height:4px;
     background-color: transparent;
 }
 

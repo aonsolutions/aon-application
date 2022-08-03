@@ -7,15 +7,16 @@ import { saveVacation } from "../../../services/contractService.js";
 import { serializeForm } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
+import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 
 /**
  * 
  * @param {HTMLElement} card 
+ * @param {Task} task 
  */
- export const createFormVacation = (card, aonMessengerChat) =>{
-    const task = aonMessengerChat.task;
+ export const createFormVacation = (task, card) =>{
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const dur = aonMessengerChat.getDur();
 
     let data = task.id ? JSON.parse(task.description) : {};
@@ -55,7 +56,7 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
         let btnAccept = TaskCreationUtils.createBtnAccept();
-        btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
+        btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(task) );
            
         TaskCreationUtils.createDivGrid(form, btnAccept, {
             styles:{
@@ -133,11 +134,11 @@ export const getFormVacationJson = ()=>{
 
 
 
-const processAccept = async (aonMessengerChat) => {
+const processAccept = async (task) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const application = aonMessengerChat.getApplication();
     application.startLoading();
     try {
-        const task = aonMessengerChat.task;
         const data = getFormVacationJson();
         const registry = task.sender.id; 
         await saveVacation({...data, registry});

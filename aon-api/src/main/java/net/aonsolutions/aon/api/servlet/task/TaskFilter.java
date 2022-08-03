@@ -419,11 +419,16 @@ public class TaskFilter {
 		String document   = params.optString(IJsonNames.DOCUMENT);
 		String email      = params.optString(IJsonNames.EMAIL);
 		
-		Filter filterCau  = f.getGtaskIdProperty().eq(email).and(f.getParentProperty().isNull());
+		Filter filterCau  = f.getGtaskIdProperty().eq(email)
+		;
+		
 		if(!document.isEmpty()) {
 			Registry registry = AON.getRegistry(api.getDomain(), api.getUser(), r->r.getDocumentProperty().eq(document));
 			if(registry!=null && registry.getId()!=null) {					
-				filterCau = filterCau.or(f.getRegistryProperty().eq(registry.getId()).and(f.getParentProperty().isNull()));
+				filterCau = filterCau.or(
+					f.getRegistryProperty().eq(registry.getId())
+					.and( f.getGtaskIdProperty().isNotNull() )
+				);
 			}
 		}
 		return filterCau;

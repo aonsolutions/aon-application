@@ -7,14 +7,15 @@ import { serializeForm, sortBy } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../timecontrol/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
+import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 
 /**
  * 
+ * @param {Task} task 
  * @param {HTMLElement} card 
  */
- export const createFormTimeControl = (card, aonMessengerChat) =>{
+ export const createFormTimeControl = (task, card) =>{
 
     card.flex = "true";
 
@@ -24,7 +25,7 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
     card.setContent(form);
 
     //-----------DATA FORM
-    createDataForm(form, aonMessengerChat);
+    createDataForm(task, form);
     //-----------END DATA ENTERPRISE
 }
 
@@ -33,8 +34,8 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
  * @param {HTMLElement} form 
  * @param {HTMLElement} aon-messenger-chat
  */
-const createDataForm = (form, aonMessengerChat) => {
-    const task = aonMessengerChat.task;
+const createDataForm = (task, form) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     let data = task.getDescriptionJson();
     
     const taskHolderId = data.task_holder || task.myTaskHolder.id;
