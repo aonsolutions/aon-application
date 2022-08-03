@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,6 +49,7 @@ public class JooqCRA {
 	// --------------------------------------------- Variables
 	
 	private static Settings settings = null;
+	private static SimpleDateFormat formatDate = new SimpleDateFormat("ddHHmmss");
 	
 	protected static Settings getDefaultSettings() {
 		if (settings == null) {
@@ -263,7 +265,7 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Set CRA
 
-	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, Date fileNameDate, Connection connection) {
+	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, String fileName, Connection connection) {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		java.util.Date startDate = new java.util.Date(startDateTime);
@@ -331,47 +333,57 @@ public class JooqCRA {
 			System.out.println("RESULTADO FINAL");
 			System.out.println(newCRA);
 			
-			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
+			try {
+			
+				CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
+						.set(CRA_BATCH.DOMAIN, domainId)
+						.set(CRA_BATCH.DATE, new Timestamp(formatDate.parse(fileName).getTime()))
+						.set(CRA_BATCH.STATUS, (byte)1)
+						.set(CRA_BATCH.COMMUNICATION_ID, "R")
+						.set(CRA_BATCH.INCOME_FILE, (byte[])null)
+						.set(CRA_BATCH.OUTCOME_FILE, newCRA.getBytes())
+						.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
+						.returning(CRA_BATCH.ID)
+						.fetchOne();
+					
+				Integer craBatchId = craBatchRecord.getId();
+				
+				for(Integer cccId : cccIdList) {
+					dslContext.insertInto(CRA_BATCH_DETAIL)
+					.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
+					.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
+					.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
+					.execute();
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		} else {
+			
+			try { 
+				CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 					.set(CRA_BATCH.DOMAIN, domainId)
-					.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
+					.set(CRA_BATCH.DATE, new Timestamp(formatDate.parse(fileName).getTime()))
 					.set(CRA_BATCH.STATUS, (byte)1)
-					.set(CRA_BATCH.COMMUNICATION_ID, "R")
+					.set(CRA_BATCH.COMMUNICATION_ID, "N")
 					.set(CRA_BATCH.INCOME_FILE, (byte[])null)
-					.set(CRA_BATCH.OUTCOME_FILE, newCRA.getBytes())
+					.set(CRA_BATCH.OUTCOME_FILE, agrarianAFI.getBytes())
 					.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
 					.returning(CRA_BATCH.ID)
 					.fetchOne();
 				
-			Integer craBatchId = craBatchRecord.getId();
-			
-			for(Integer cccId : cccIdList) {
-				dslContext.insertInto(CRA_BATCH_DETAIL)
-				.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
-				.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
-				.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
-				.execute();
-			}
-		} else {
-			
-			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
-				.set(CRA_BATCH.DOMAIN, domainId)
-				.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
-				.set(CRA_BATCH.STATUS, (byte)1)
-				.set(CRA_BATCH.COMMUNICATION_ID, "N")
-				.set(CRA_BATCH.INCOME_FILE, (byte[])null)
-				.set(CRA_BATCH.OUTCOME_FILE, agrarianAFI.getBytes())
-				.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
-				.returning(CRA_BATCH.ID)
-				.fetchOne();
-			
-			Integer craBatchId = craBatchRecord.getId();
-			
-			for(Integer cccId : cccIdList) {
-				dslContext.insertInto(CRA_BATCH_DETAIL)
-				.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
-				.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
-				.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
-				.execute();
+				Integer craBatchId = craBatchRecord.getId();
+				
+				for(Integer cccId : cccIdList) {
+					dslContext.insertInto(CRA_BATCH_DETAIL)
+					.set(CRA_BATCH_DETAIL.DOMAIN, domainId)
+					.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
+					.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, cccId)
+					.execute();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
 		}
 		

@@ -9,16 +9,15 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
@@ -540,7 +539,7 @@ public class EmployeeSalary extends Composite {
 		publishButton.addClickHandler(e -> onPublish());	
 		toolbar.add(publishButton);
 		
-		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
+		bidoqPublishButton = new AonToolbarButton( "Bidoq", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> onBidoqPublish());	
 		bidoqPublishButton.setVisible(false);
 		toolbar.add(bidoqPublishButton);

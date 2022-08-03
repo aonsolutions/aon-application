@@ -32,13 +32,16 @@ public class Mod200 implements IFiscalModel, HasAudit {
 	private String document;
 	private String surname;
 	private String name;
-	private String resultType;
-	private double result;
+	private String resultType; // Cuota cero (N), Ingreso (I) o Devolución (D)
 
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	
+	private Integer fsModel;
+	
+	private Double amount;	
 	
 	@Override
 	public Integer getId() {
@@ -189,27 +192,17 @@ public class Mod200 implements IFiscalModel, HasAudit {
 	public String getResultType() {
 		return resultType;
 	}
+	public Mod200 setResultType(String resultType) {
+		this.resultType = resultType;
+		return this;
+	}
 	public boolean isPayback() {
 		return AonStringUtils.equalsIgnoreCase(resultType, "D");
 	}
 	public boolean isDeposit() {
 		return AonStringUtils.equalsIgnoreCase(resultType, "I");
 	}
-	public Mod200 setResultType(String resultType) {
-		this.resultType = resultType;
-		return this;
-	}
 	
-	@Override
-	public double getResult() {
-		return result;
-	}
-	public Mod200 setResult(double result) {
-		this.result = result;
-		return this;
-	}
-
-	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
 		return creationUser;
@@ -218,6 +211,7 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		this.creationUser = creationUser;
 		return this;
 	}
+	
 	@Override
 	public Date getCreationDate() {
 		return creationDate;
@@ -226,6 +220,7 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		this.creationDate = creationDate;
 		return this;
 	}
+	
 	@Override
 	public String getModificationUser() {
 		return modificationUser;
@@ -234,6 +229,7 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		this.modificationUser = modificationUser;
 		return this;
 	}
+	
 	@Override
 	public Date getModificationDate() {
 		return modificationDate;
@@ -243,27 +239,54 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	public boolean isNew() {
-		return id==null;
+	public Integer getFsModel() {
+		return fsModel;
+	}
+	public Mod200 setFsModel(Integer fsModel) {
+		this.fsModel = fsModel;
+		return this;
+	}
+	
+	public Double getAmount() {
+		return amount;
+	}
+
+	public Mod200 setAmount(Double amount) {
+		this.amount = amount;
+		return this;
 	}	
 	
-	@Override
-	public IFiscalModelKey getDeclarationTypeKey() {
-		return null; // TODO
+	public boolean isNew() {
+		return id==null;
 	}
 	
 	@Override
 	public Period getPeriod() {
 		return Period.YEAR;
 	}
-
+	
 	@Override
 	public Double getDeclarationResult() {
-		return getResult();
+		// Devuelve el resultado como importe negativo o positivo (recordar que en amount se guarda el importe a ingresar o a devolver, es decir se guarda en valor absoluto)
+		return isPayback() ? amount * (-1) : amount;
 	}
 	
 	@Override
 	public FiscalModelDeclarationType getDeclarationResultType() {
-		return FiscalModelDeclarationType.safeValueOf(getResultType());		
+		// TODO Debería devolver el dato según FiscalModelDeclarationType, si es que realmente se va a usar en algún sitio. En el modelo 200 se usan 3 campos, result_type, dev_type y pay_type
+		return null;
 	}
+	
+	@Deprecated
+	@Override
+	public IFiscalModelKey getDeclarationTypeKey() {
+		return null;
+	}
+	
+	@Deprecated	
+	@Override
+	public double getResult() {
+		return getDeclarationResult();
+	}
+	
 }

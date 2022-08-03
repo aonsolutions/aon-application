@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.product;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -42,7 +44,9 @@ public class Item implements Serializable {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
-
+	
+	private List<ItemComposition> itemComposition;
+ 
 	public Integer getId() { 
 		return id;
 	}
@@ -263,6 +267,16 @@ public class Item implements Serializable {
 	
 	public Item setProduct(Product product) {
 		this.product = product;
+		return this;
+	}
+	
+	public List<ItemComposition> getItemComposition() {
+		if(itemComposition == null) itemComposition = new LinkedList<>();
+		return itemComposition;
+	}
+	
+	public Item setItemComposition(List<ItemComposition> itemComposition) {
+		this.itemComposition = itemComposition;
 		return this;
 	}
 	

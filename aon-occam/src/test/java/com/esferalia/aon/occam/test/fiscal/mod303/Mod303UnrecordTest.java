@@ -16,23 +16,20 @@ public class Mod303UnrecordTest extends AbstractOccamTest {
 	
 	@Test
 	public void testRecord() {
-		ctx.getDslContext().transaction( config -> {
-			for (Mod303 model : MODEL303.getMod303s(getOccam()) ) {
-				System.out.println();
-				System.out.println();
-				FiscalTestSuite.printModel( model );
-				Integer accountEntryId = model.getAccountEntry();
-				model =  Mod303DAO.unrecord(ctx, model);
-				if ( model.isRecorded()) {
-					fail("Modelo no descontabilizado");
-				}
-				AccountEntry ae = AccountEntryDAO.getAccountEntry(ctx, accountEntryId);
-				if ( ae != null) {
-					fail("Apunte no borrado");
-				}
+		for (Mod303 model : MODEL303.getMod303s(getOccam()) ) {
+			System.out.println();
+			System.out.println();
+			FiscalTestSuite.printModel( model );
+			Integer accountEntryId = model.getAccountEntry();
+			model =  Mod303DAO.unrecord(ctx, model);
+			if ( model.isRecorded()) {
+				fail("Modelo no descontabilizado");
 			}
-			
-		});
+			AccountEntry ae = AccountEntryDAO.getAccountEntry(ctx, accountEntryId);
+			if ( ae != null) {
+				fail("Apunte no borrado");
+			}
+		}
 	}
 	
 	

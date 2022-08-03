@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProduct;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -18,6 +20,7 @@ import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 
@@ -187,9 +190,15 @@ public class ProductImpl implements IProduct{
 	}
 	
 	@Override
-	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId) {
+	public Stream<ItemComposition> getItemCompositionStream(AONContext ctx, ItemCompositionFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductOldDAO.getItemComposition(ctx, itemId));
+			ItemCompositionDAO.getStream(ctx, filter));	
+	}
+	
+	@Override
+	public List<ItemComposition> getItemCompositionList(AONContext ctx, ItemCompositionFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ItemCompositionDAO.getList(ctx, filter));
 	}
 	
 //	@Override

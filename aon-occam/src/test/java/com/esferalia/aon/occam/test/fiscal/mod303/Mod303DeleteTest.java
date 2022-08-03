@@ -10,12 +10,10 @@ import com.esferalia.aon.occam.test.Asserts;
 public class Mod303DeleteTest extends AbstractOccamTest {
 	
 	@Test
-	public void test() {
-		ctx.getDslContext().transaction( config -> {
-			for (Mod303 mod303 : MODEL303.getMod303s(getOccam())) {
-				MODEL303.delete(getOccam(), mod303);
-			};
-		});
+	public void testDelete() {
+		for (Mod303 mod303 : MODEL303.getMod303s(getOccam())) {
+			MODEL303.delete(getOccam(), mod303);
+		};
 		Asserts.assertEmptyCollection("Existen modelos después del borrado", MODEL303.getMod303s(getOccam()));
 	}
 		

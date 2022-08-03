@@ -230,7 +230,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			row.addCell(comp, AON.CSS.aonTextCenter()) 															// Complementaria
 			   .addCell(new InlineLabel(mod200.getDocument())) 													// NIF
 			   .addCell(new InlineLabel(mod200.getFullName())) 													// Apellidos y Nombre o Razón Social
-			   .addCell(new InlineLabel(AON.FMT.format(mod200.getResult())), AON.CSS.aonTextRight()) 			// Resultado (Cero, Importe Ingreso o Devolución)
+			   .addCell(new InlineLabel(AON.FMT.format(mod200.getDeclarationResult())), AON.CSS.aonTextRight()) // Resultado (Cero, Importe Ingreso o Devolución)
 			   .addCell(new InlineLabel(resultType)); 															// Tipo Resultado (Cuota Cero, Ingreso o Devolución)
 				
 		}
@@ -241,5 +241,6 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Mod200> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
+	
 }
 

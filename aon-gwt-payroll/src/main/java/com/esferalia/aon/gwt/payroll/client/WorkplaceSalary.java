@@ -559,7 +559,7 @@ public class WorkplaceSalary extends Composite {
 		publishButton.addClickHandler(e -> onPublish());	
 		toolbar.add(publishButton);
 		
-		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
+		bidoqPublishButton = new AonToolbarButton( "Bidoq", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> onBidoqPublish());	
 		bidoqPublishButton.setVisible(false);
 		toolbar.add(bidoqPublishButton);

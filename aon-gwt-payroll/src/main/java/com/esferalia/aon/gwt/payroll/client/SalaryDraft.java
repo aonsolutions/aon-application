@@ -2897,6 +2897,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Button extraButton;
 	@UiField
+	Button delayButton;
+	@UiField
 	Button fiscalModelsButton;
 
 	@UiField
@@ -3050,9 +3052,10 @@ public class SalaryDraft extends ResizeComposite
 	public void onChange(SalarySelect salarySelect) {
 		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
+		delayButton.setVisible(!hasFiscalModels() && isDelay());
 		extraButton.setVisible(!hasFiscalModels() && isExtra());
 		settleButton.setVisible(!hasFiscalModels() && isSettle());
-		salaryButton.setVisible(!hasFiscalModels() && !isSettle() && !isExtra());
+		salaryButton.setVisible(!hasFiscalModels() && isSalary());
 		
 		
 
@@ -3097,9 +3100,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
+		delayButton.setVisible(!hasFiscalModels() && isDelay());
 		extraButton.setVisible(!hasFiscalModels() && isExtra());
 		settleButton.setVisible(!hasFiscalModels() && isSettle());
-		salaryButton.setVisible(!hasFiscalModels() && !isSettle() && !isExtra());
+		salaryButton.setVisible(!hasFiscalModels() && isSalary());
 		
 		showTimeRulePanel();
 		showDbTimeRulePanel();
@@ -3432,9 +3436,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
+		delayButton.setVisible(!hasFiscalModels() && isDelay());
 		extraButton.setVisible(!hasFiscalModels() && isExtra());
 		settleButton.setVisible(!hasFiscalModels() && isSettle());
-		salaryButton.setVisible(!hasFiscalModels() && !isSettle() && !isExtra());
+		salaryButton.setVisible(!hasFiscalModels() && isSalary());
 
 		acceptButton.setEnabled(hasDrafts() && !isAutomatic() );
 	}
@@ -3781,6 +3786,12 @@ public class SalaryDraft extends ResizeComposite
 		;
 	}
 
+	public Stream<Variable> getDraftVariablesOf(String name) {
+		return salaryDraftObject.getDrafContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		;
+	}
+
 	public String getValueOf(String name) {
 		return salaryDraftObject.getContext().stream()
 		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
@@ -4051,43 +4062,37 @@ public class SalaryDraft extends ResizeComposite
 			}
 		});
 			
-//		salaryDraftObject.saveITData(new CalculateCallback() {
-//			@Override
-//			public Calculate getCalculate() {
-//				return SalaryDraft.this.getCalculate();
-//			}
-//
-//			@Override
-//			public void onCalculateSucces(SalaryDraftObject object) {
-//				
-//				salaryDraftObject.save(new CalculateCallback() {
-//
-//					@Override
-//					public Calculate getCalculate() {
-//						return SalaryDraft.this.getCalculate();
-//					}
-//					@Override
-//					public void onCalculateSucces(SalaryDraftObject object) {
-//						SalaryDraft.this.onCalculateSucces(object); // TODO:
-//																	// It's
-//																	// necessary
-//																	// ?
-//						SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
-//					}
-//
-//					@Override
-//					public void onCalculateFailure(Throwable throwable) {
-//						SalaryDraft.this.onCalculateFailure(throwable);
-//					}
-//				});
-//			}
-//
-//			@Override
-//			public void onCalculateFailure(Throwable throwable) {
-//				SalaryDraft.this.onCalculateFailure(throwable);
-//			}
-//		});
 	}
+
+	@UiHandler("delayButton")
+	void onDelayButtonClick(ClickEvent event) {
+		
+		List<Variable> irpfPercentDraftVars =
+		getDraftVariablesOf(PORCENTAJE_IRPF)
+		.collect(Collectors.toList()); 
+		salaryDraftObject.getDrafContext().removeAll(irpfPercentDraftVars);
+		
+		salaryDraftObject.save(new CalculateCallback() {
+
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				//SalaryDraft.this.onCalculateSucces(object);
+				salaryDraftObject.getDrafContext().addAll(irpfPercentDraftVars);
+				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+			}
+
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+			}
+		});
+			
+	}
+
 
 	@UiHandler("tgssCheck")
 	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
@@ -4158,7 +4163,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		paymentsTable.getColumnFormatter().setWidth(0, "2%");
-		paymentsTable.getColumnFormatter().setWidth(1, "14%"); // CUANTIA
+		paymentsTable.getColumnFormatter().setWidth(1, "13%"); // CUANTIA
 		// 2 ...
 		paymentsTable.getColumnFormatter().setWidth(3, "18%"); // DEVENGO
 		paymentsTable.getColumnFormatter().setWidth(4, "12%"); // DEDUCCION
@@ -6185,14 +6190,14 @@ public class SalaryDraft extends ResizeComposite
 				if (irpfPercent != null)
 					irpfPercentTexTBox.setText(irpfPercent.getExpression());
 				else
-					irpfPercentTexTBox.setText(String.valueOf(NumberUtils.isValid(percent) ? 0.00 : percent));
+					irpfPercentTexTBox.setText(String.valueOf(AonNumberUtils.isValid(percent) ? 0.00 : percent));
 			}
 
 			// --------------------------------------------------- Blur Handler
 
 			@Override
 			public void onBlur(BlurEvent event) {
-				irpfPercentTexTBox.setText(formatPercent(NumberUtils.isNotValid(percent) ? 0.00 : percent));
+				irpfPercentTexTBox.setText(formatPercent(AonNumberUtils.isNotValid(percent) ? 0.00 : percent));
 			}
 
 			// ------------------------------------------------- Change Handler
@@ -6201,7 +6206,7 @@ public class SalaryDraft extends ResizeComposite
 
 				StringVariable var = SalaryDraft.this.newStringVariable(PORCENTAJE_IRPF);
 				String value = irpfPercentTexTBox.getValue();
-				var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
+				var.setExpression(AonStringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
 
 				salaryDraftObject.addDraftVariable(var);
 				salaryDraftObject.calculate(SalaryDraft.this);
@@ -6217,6 +6222,8 @@ public class SalaryDraft extends ResizeComposite
 		irpfPercentTexTBox.addBlurHandler(irpfPercentHandler);
 		irpfPercentTexTBox.addFocusHandler(irpfPercentHandler);
 		irpfPercentTexTBox.addChangeHandler(irpfPercentHandler);
+		setEditable(irpfPercentTexTBox, true);
+
 
 		Panel irpfPercentPanel = new HorizontalPanel();
 		irpfPercentPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
@@ -7242,6 +7249,7 @@ public class SalaryDraft extends ResizeComposite
 		return NumberUtils.isNotValid(amount) ? AON.CURRENCY_FORMAT.format(AON.round(0.00)) : AON.CURRENCY_FORMAT.format(AON.round(amount));
 	}
 
+
 	protected static String getSuggestionString( Item item) {
 		String suggestion = item.getDescription();
 		
@@ -7605,6 +7613,10 @@ public class SalaryDraft extends ResizeComposite
 		this.settleButton = settleButton;
 	}
 
+	public void setDelayButton(AonToolbarButton delayButton) {
+		this.delayButton = delayButton;
+	}
+
 	public void setFxButton(AonToolbarButton fxButton) {
 		this.fxButton = fxButton;
 	}
@@ -7675,6 +7687,7 @@ public class SalaryDraft extends ResizeComposite
 			public Calculate getCalculate() {
 				return SalaryDraft.this.getCalculate();
 			}
+			
 			@Override
 			public void onCalculateSucces(SalaryDraftObject object) {
 				SalaryDraft.this.onCalculateSucces(object);

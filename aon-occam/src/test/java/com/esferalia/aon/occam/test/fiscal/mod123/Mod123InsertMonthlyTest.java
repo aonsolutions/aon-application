@@ -21,16 +21,14 @@ public class Mod123InsertMonthlyTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod123InsertMonthlyTest() {
-		ctx.getDslContext().transaction( config -> {
-			Date today = new Date();
-			for (Period period : Period.values()) {
-				if (period.isMonthPeriod()) {
-					Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-					Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-					mod123InsertMonthly(AonRandom.getRangeDate(start,end));
-				}
+		Date today = new Date();
+		for (Period period : Period.values()) {
+			if (period.isMonthPeriod()) {
+				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+				mod123InsertMonthly(AonRandom.getRangeDate(start,end));
 			}
-		});
+		}
 	}
 	
 	public void mod123InsertMonthly(Date date) {

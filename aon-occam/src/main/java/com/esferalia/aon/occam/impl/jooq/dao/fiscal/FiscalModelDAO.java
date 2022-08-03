@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -575,6 +576,22 @@ public class FiscalModelDAO {
 			creditor = conf.fiscal().getAdmonCreditor();	
 		}
 		return creditor;
+	}
+	
+	protected static <T extends FiscalModel> Integer getFinance(AONContext ctx,T fm) {
+		if (fm != null && fm.getId() != null) {
+			return ctx.getDslContext().select( FS_MODEL.FINANCE)
+				.from(FS_MODEL)
+				.where( FS_MODEL.ID.eq(fm.getId()))
+				.fetch()
+				.stream()
+				.map( r -> r.getValue(FS_MODEL.FINANCE))
+				.filter( Objects::nonNull)
+				.findFirst()
+				.orElse(null);
+			
+		}
+		return null;
 	}
 
 	protected static <T extends FiscalModel> T finish(AONContext ctx,T fm) {
