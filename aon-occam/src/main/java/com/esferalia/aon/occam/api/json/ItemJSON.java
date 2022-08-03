@@ -104,6 +104,7 @@ public class ItemJSON {
 				.put(IJsonNames.CREATION_DATE, item.getCreationDate())
 				.put(IJsonNames.MODIFICATION_DATE, item.getModificationDate())
 				.put(IJsonNames.MODIFICATION_USER, item.getModificationUser())
+				.put(IJsonNames.ITEM_COMPOSITION, ItemCompositionJSON.toJSON(item.getItemComposition()))
 				;
 	}
 }

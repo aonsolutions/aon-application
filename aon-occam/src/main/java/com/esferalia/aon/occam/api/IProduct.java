@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -49,7 +51,8 @@ public interface IProduct {
 //	public Item save(AONContext ctx, Item item);
 	
 	// ITEM COMPOSITION
-	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId);
+	public Stream<ItemComposition> getItemCompositionStream(AONContext ctx, ItemCompositionFilter filter);
+	public List<ItemComposition> getItemCompositionList(AONContext ctx, ItemCompositionFilter filter);
 	
 	// BRAND
 	

@@ -20,8 +20,10 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.warehouse.WarehouseTemplate;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 
 public class PdfMaker {
@@ -45,6 +47,15 @@ public class PdfMaker {
 	public static void printInvoice(OutputStream out, CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
 			InvoiceTemplate template = new InvoiceTemplate(company, invoices, config, qrUrl, logo, tbaiId);
+			template.print(out);
+		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public static void printPackaging(OutputStream out, CompanyFull company, Item item, byte[] logo, String barcode, Double quantity, String ean128, String sscc) {
+		try {
+			WarehouseTemplate template = new WarehouseTemplate(company, item, logo, barcode, quantity, ean128, sscc);
 			template.print(out);
 		} catch (CanNotCreatePdfException e) {
 			e.printStackTrace();

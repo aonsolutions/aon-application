@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class WarehouseTemplate implements AutoCloseable {
 	
 	private static final Color DEFAULT_FONT_COLOR = PdfColors.BLACK;
 	
-
+	OutputStream filename;
 	private float marginTop;
 	
 	private float marginBarCode;
@@ -459,4 +461,15 @@ public class WarehouseTemplate implements AutoCloseable {
 			return 0;
 	}
 	
+	public void print(OutputStream os) throws CanNotCreatePdfException {
+		if (os != null)
+			this.filename = os;
+		try {
+			document.save(this.filename);
+			document.close();
+			new OutputStreamWriter(os,StandardCharsets.ISO_8859_1);
+		} catch (IOException e) {
+			throw new CanNotCreatePdfException(e);
+		}
+	}
 }

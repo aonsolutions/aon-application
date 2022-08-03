@@ -85,6 +85,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface ItemCompositionFilter{
+		Filter filter(ItemCompositionProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ItemAddInfoFilter {
 		Filter filter(ItemAddInfoProperties properties);
 	}
