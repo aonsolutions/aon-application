@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -41,7 +42,7 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			Domain domain = new Domain().setName(domainName).setId(domainId);
 			Integer itemId = json.optInt(IJsonNames.ITEM);
 			Integer containerId = json.optInt(IJsonNames.CONTAINER);
-			Integer quantity = json.optInt(IJsonNames.QUANTITY);
+			Double quantity = json.optDouble(IJsonNames.QUANTITY);
 			String barcode = json.optString(IJsonNames.BARCODE);
 			
 			Item item = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(itemId)));
@@ -55,8 +56,8 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 
 			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
 			String sscc = "084370167341234566";
-//			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
-		
+			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, quantity, ean128, sscc);
+			
 			responseFile(resp, "packaging", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);

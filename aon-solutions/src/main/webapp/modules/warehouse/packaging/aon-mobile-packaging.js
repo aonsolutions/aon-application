@@ -12,8 +12,11 @@ import { AonInput } from '../../../components/aon-input.js';
 import { AonSelect } from '../../../components/aon-select.js';
 
 import { AonNumber } from '../../../components/aon-number.js';
+import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonSuggestion } from '../../../components/aon-suggestion.js';
+
+import * as LS from '../../../services/localStorageService.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -173,10 +176,10 @@ export class AonMobilePackaging extends AonElement {
 		let card = this.createCard(this.TAG_CARD, MSG.TAG);
 		parent.appendChild(card);
 
-		let div = this.createElement(TAG.DIV);
+		// let div = this.createElement(TAG.DIV);
 
-		let viewer = new AonViewer();
-		viewer.type = 'application/pdf';			
+		// let viewer = new AonViewer();
+		// viewer.type = 'application/pdf';			
 
 		let json = {
 			item: this.item,
@@ -188,9 +191,19 @@ export class AonMobilePackaging extends AonElement {
 			login: LS.getDomainLogin()
 		};
 
-		viewer.file = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-		viewer.width = fileDiv.offsetWidth;
-		div.appendChild(viewer);
+		// viewer.file = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+
+		// viewer.width = div.offsetWidth;
+
+		// div.appendChild(viewer);
+		// card.setContent(div);
+
+		let w = this.getElement(card.CONTENT).offsetWidth;
+		let type = 'application/pdf';
+		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		card.setContentHTML(`<aon-viewer type="${type}" file="${url}" width="${w}"></aon-viewer>`);
+		// fileCard.cleanSection2();
+		// fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
 	}
 
 	// ACTIONS
