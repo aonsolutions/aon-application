@@ -153,7 +153,7 @@ export class AonMessengerList extends AonElement {
         );
 
         if(rowEl){
-          rowEl.style.padding = "14px 0px 12px";
+          rowEl.style.padding = "14px 0px 7px";
           const firstChild = rowEl.firstChild;
           
           if(firstChild){

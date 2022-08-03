@@ -22,11 +22,11 @@ const getTitleHtmlDesktop = (res) => {
   const title = res.title || "Sin asunto";
   let divParent = setStyles(document.createElement(TAG.DIV), {
     position: "relative",
-    margin:"10px 0"
+    padding: "5px"
   });
 
   let div = setStyles(document.createElement(TAG.DIV), {
-    top: "-15px",
+    top: "-4px",
     position: "absolute",
     left: "0",
     right: "0",
@@ -72,6 +72,13 @@ const getTitleHtmlDesktop = (res) => {
 };
 
 const getSubTitleHtml = (res, doc, documentTh) => {
+
+  let divParent = setStyles(document.createElement(TAG.DIV), {
+    position: "relative",
+    padding:"11px"
+  });
+
+
   const type = getTagType(res.tags) || "";
   // sender
   const sender = getSender(res, doc, documentTh);
@@ -83,14 +90,15 @@ const getSubTitleHtml = (res, doc, documentTh) => {
   } catch (e) {}
 
   let div = setStyles(document.createElement(TAG.DIV), {
-    // position: "absolute",
-    // top: "6px",
-    // left: "0",
-    // right: "0",
+    position: "absolute",
+    top: "6px",
+    left: "0",
+    right: "0",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     overflow: "hidden",
   });
+  divParent.appendChild(div);
 
   let spanOne = document.createElement(TAG.SPAN);
   const subTitle = `${type} ${res.newNumber}`;
@@ -108,7 +116,7 @@ const getSubTitleHtml = (res, doc, documentTh) => {
     span.title = dText;
     div.appendChild(span);
   }
-  return div;
+  return divParent;
 };
 // ------------END DESKTOP
 
