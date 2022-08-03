@@ -20,7 +20,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
-import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
 import net.aonsolutions.db.up2date.payroll.ContractTransfromUnify;
@@ -143,16 +142,16 @@ public class Up2Date {
     		//LocationCreation.LOCATION_CREATION,
     		//TimeControlCreation.TIMECONTROL_CREATION,
     		//CoordinatesUpdate.COORDINATES_UPDATE,
-		//AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
-		//Holidays2021Insert.HOLIDAYS2021INSERT,
-		//AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
-		//AuthDeviceCreation.AUTH_DEVICE_CREATION,
+    		//AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
+    		//Holidays2021Insert.HOLIDAYS2021INSERT,
+    		//AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
+    		//AuthDeviceCreation.AUTH_DEVICE_CREATION,
     		//PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT,
     		//IfDaysInsert.IFDAYSINSERT
     		//Bases2021Update.BASES2021UPDATE
     		//AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
     		// IntegrityFix.INTEGRITYFIX,
-   		//RetirementInsert.RETIREMENTINSERT,
+    		//RetirementInsert.RETIREMENTINSERT,
     		//NotificationCreation.NOTIFICATION_CREATION,
     		//NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,
     		//Bases2021UpdateII.BASES2021UPDATEII,
@@ -257,9 +256,9 @@ public class Up2Date {
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		//RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
-	   	//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
+    		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
     		AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
-    		ContractTransfromUnify.CONTRACTTRANSFORMUNIFY
+    		ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
     		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
     		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
     		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL
