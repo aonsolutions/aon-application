@@ -1575,8 +1575,6 @@ public abstract class ITWidget extends ResizeComposite {
 		contractInfo.setJourneytypeId(jsContractInfo.getJourneytypeId());
 		contractInfo.setContractmodelId(jsContractInfo.getContractmodelId());
 		contractInfo.setRetaId(jsContractInfo.getRetaId());
-		contractInfo.setOldStartDate(parseDate(jsContractInfo.getOldStartDate()));
-		contractInfo.setOldEndDate(parseDate(jsContractInfo.getOldEndDate()));
 		contractInfo.setHasPayroll(jsContractInfo.getHasPayroll());
 		contractInfo.setPayrollDate(parseDate(jsContractInfo.getPayrollDate()));
 		return contractInfo;

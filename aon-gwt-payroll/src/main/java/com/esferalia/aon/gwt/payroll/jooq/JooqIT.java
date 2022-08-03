@@ -861,9 +861,6 @@ public class JooqIT {
 		contractData.setSeniorityDate(contractTable.get(CONTRACT.SENIORITY_DATE));
 		contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
 		
-		contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
-		contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
-		
 		// FECHA ACTUAL
 		java.util.Date actualJavaDate = new java.util.Date();
 		Date actualSQLDate = new Date(actualJavaDate.getTime());

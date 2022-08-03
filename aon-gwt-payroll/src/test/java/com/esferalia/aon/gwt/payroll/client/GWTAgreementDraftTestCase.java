@@ -407,21 +407,35 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void contractExtension(String currentDomainName, ContractExtension contractExtension,
-				AsyncCallback<Void> callback) {
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void deleteContractExtension(String currentDomainName, Integer contractId,
-				AsyncCallback<Void> callback) {
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void contractTransform(String currentDomainName, ContractTransform contractTransform,
-				AsyncCallback<Integer> callback) {
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void deleteContractTransform(String currentDomainName, Integer contractId,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void removeContractTransform(String currentDomainName, Integer contractId,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
@@ -963,21 +977,35 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void contractExtension(String currentDomainName, ContractExtension contractExtension,
-							AsyncCallback<Void> callback) {
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
 					public void deleteContractExtension(String currentDomainName, Integer contractId,
-							AsyncCallback<Void> callback) {
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
 					public void contractTransform(String currentDomainName, ContractTransform contractTransform,
-							AsyncCallback<Integer> callback) {
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void deleteContractTransform(String currentDomainName, Integer contractId,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void removeContractTransform(String currentDomainName, Integer contractId,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}

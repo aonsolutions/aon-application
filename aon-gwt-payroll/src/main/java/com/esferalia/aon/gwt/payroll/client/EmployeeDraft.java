@@ -1098,6 +1098,14 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void onAFIChanges() {
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(employeeDraftObject.getContractData().getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				employee.startDate.getValue(),
 				employee.endDate.getValue(),
@@ -1109,7 +1117,7 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
 				this.employeeDraftObject.getContractData().hasSettle(),
-				this.employeeDraftObject.getContractData().isHasTransformation(),
+				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				false){
 
 					@Override
@@ -1261,13 +1269,21 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void onComunicateAFI() {
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(employeeDraftObject.getContractData().getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
 		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
 				this.employeeDraftObject.getContractData().getWorkplaceId(), 
 				this.employeeDraftObject.getContractData().hasSettle(),
-				this.employeeDraftObject.getContractData().isHasTransformation(),
+				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				true) {
 
 			@Override

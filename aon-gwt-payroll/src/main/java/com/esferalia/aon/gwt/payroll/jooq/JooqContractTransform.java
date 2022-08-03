@@ -25,6 +25,8 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.CIFNIFTYPE;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSCONTRATOTYPE;
@@ -70,156 +72,116 @@ public class JooqContractTransform {
 	
 	// --------------------------------------------- Methods. createContractExtension
 	
-	public static int createContractTransform(Connection conn, ContractTransform contractTransform) {
-		return createContractTransform(DSL.using(conn, getDefaultSettings()), contractTransform);
+	public static void createContractTransform(Connection conn, ContractTransform contractTransform) {
+		createContractTransform(DSL.using(conn, getDefaultSettings()), contractTransform);
 	}
 
-	private static int createContractTransform(DSLContext dslContext, ContractTransform contractTransform) {
-		
+	private static void createContractTransform(DSLContext dslContext, ContractTransform contractTransform) {
 		// Dates
-		Date newStartDateContract = contractTransform.getContractStartDate();
-		Date oldEndDateContract = DateUtils.copyDateOnly(newStartDateContract);
+		Date transformStartDate = contractTransform.getContractStartDate();
+		Date oldEndDateContract = DateUtils.copyDateOnly(transformStartDate);
 		DateUtils.addDays2Date(oldEndDateContract, -1);
 		
-		// Close old contract
+		dslContext.transaction(t -> {
+			// Close old contract
+			
+			Integer contractId = contractTransform.getContractId();
+			
+			// Copy and close contractData & contractInfo
+			
+			copyDataInfo(dslContext, contractId, transformStartDate, contractTransform);
+			
+			// Add contractData transform
+			
+			addDataTransform(dslContext, contractId, transformStartDate);
+			
+			// Create Transform Contrat@ file
+			
+			createTransformFile(dslContext, contractId, transformStartDate, contractTransform);
+		});
 		
-		Integer oldContractId = contractTransform.getContractId();
+	}
+
+	private static void copyDataInfo(DSLContext dslContext, Integer contractId, Date transformStartDate, ContractTransform contractTransform) {
+		ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		Date endDate = contractRecord.getEndDate();
 		
-		dslContext.update(CONTRACT)
-			.set(CONTRACT.END_DATE, parseDateToSQL(oldEndDateContract))
-			.where(CONTRACT.ID.eq(oldContractId))
-			.execute();
+		Date endDateContract = DateUtils.copyDateOnly(transformStartDate);
+		DateUtils.addDays2Date(endDateContract, -1);
 		
-		// Create new contract based on old one
-		
-		Record oldContractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(oldContractId)).fetchOne();
-		
-		Date oldStartDate = oldContractRecord.get(CONTRACT.START_DATE);
-		
-		Integer newContractId = dslContext.insertInto(CONTRACT)
-			.set(CONTRACT.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-			.set(CONTRACT.PERSON, oldContractRecord.get(CONTRACT.PERSON))
-			.set(CONTRACT.WORKPLACE, oldContractRecord.get(CONTRACT.WORKPLACE))
-			.set(CONTRACT.ENTERPRISE_CCC, oldContractRecord.get(CONTRACT.ENTERPRISE_CCC))
-			.set(CONTRACT.START_DATE, parseDateToSQL(newStartDateContract))
-			.set(CONTRACT.END_DATE, DSL.castNull(CONTRACT.END_DATE))
-			.set(CONTRACT.CALENDAR, oldContractRecord.get(CONTRACT.CALENDAR))
-			.set(CONTRACT.DESCRIPTION, oldContractRecord.get(CONTRACT.DESCRIPTION))
-			.set(CONTRACT.SEPE_STATUS, oldContractRecord.get(CONTRACT.SEPE_STATUS))
-			.set(CONTRACT.REGISTRATION, oldContractRecord.get(CONTRACT.REGISTRATION))
-			.set(CONTRACT.SENIORITY_DATE, oldContractRecord.get(CONTRACT.SENIORITY_DATE))
-			.set(CONTRACT.ENTERPRISE_ACTIVITY, oldContractRecord.get(CONTRACT.ENTERPRISE_ACTIVITY))
-			.set(CONTRACT.SS_REGIME, oldContractRecord.get(CONTRACT.SS_REGIME))
-			.set(CONTRACT.MODEL, oldContractRecord.get(CONTRACT.MODEL))
-			.set(CONTRACT.CATEGORY_DESCRIPTION, oldContractRecord.get(CONTRACT.CATEGORY_DESCRIPTION))
-			.set(CONTRACT.SS_STATUS, oldContractRecord.get(CONTRACT.SS_STATUS))
-			.set(CONTRACT.AGREEMENT_LEVEL, oldContractRecord.get(CONTRACT.AGREEMENT_LEVEL))
-			.returning(CONTRACT.ID)
-			.fetchOne().getId();
-		
-		// Save old contract start date
-		
-		dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-			.set(CONTRACT_DATA.NAME, "ORIGINAL_START_DATE")
-			.set(CONTRACT_DATA.CONTRACT, newContractId)
-			.set(CONTRACT_DATA.EXPRESSION, formatDate.format(oldStartDate))
-			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
-			.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-			.execute();
-		
-		// Save old contract end date
-		
-		dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-			.set(CONTRACT_DATA.NAME, "ORIGINAL_END_DATE")
-			.set(CONTRACT_DATA.CONTRACT, newContractId)
-			.set(CONTRACT_DATA.EXPRESSION, formatDate.format(oldEndDateContract))
-			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
-			.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-			.execute();
-		
-		// Copy contract data
-		
-		dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-			.set(CONTRACT_DATA.NAME, "TC2")
-			.set(CONTRACT_DATA.CONTRACT, newContractId)
-			.set(CONTRACT_DATA.EXPRESSION, "\"" + contractTransform.getTc2() + "\"")
-			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
-			.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-			.execute();
-		
-		String cno = contractTransform.getCno();
-		
-		if(AonStringUtils.isNotBlank(cno))
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-				.set(CONTRACT_DATA.NAME, "CNO")
-				.set(CONTRACT_DATA.CONTRACT, newContractId)
-				.set(CONTRACT_DATA.EXPRESSION, "\"" + cno + "\"")
-				.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
-				.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-				.execute();
-		
-		Result<Record> contractDataRecords = dslContext.select().from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(oldContractId))
+		Result<Record> contractDatas = dslContext.selectDistinct().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.ne("TC2"))
 				.and(CONTRACT_DATA.NAME.ne("SEPE_ID"))
 				.and(CONTRACT_DATA.NAME.ne("COMUNICATION_DATE"))
-				.and(CONTRACT_DATA.END_DATE.isNull()
-						.or(CONTRACT_DATA.END_DATE.gt(parseDateToSQL(newStartDateContract)))
-				).fetch();
+				.and(CONTRACT_DATA.NAME.ne("CNO"))
+				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(endDate))))
+				.orderBy(CONTRACT_DATA.ID.desc())
+				.fetch();
 		
-		for(Record contractDataRecord : contractDataRecords)
+		dslContext.update(CONTRACT_DATA)
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(endDateContract))
+			.where(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(endDate))))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+		
+		dslContext.update(CONTRACT_INFO)
+			.set(CONTRACT_INFO.END_DATE, parseDateToSQL(endDateContract))
+			.where(CONTRACT_INFO.END_DATE.isNull().or(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(endDate))))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
+			.execute();
+		
+		contractDatas.forEach(contractData ->
 			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, contractDataRecord.get(CONTRACT_DATA.DOMAIN))
-				.set(CONTRACT_DATA.NAME, contractDataRecord.get(CONTRACT_DATA.NAME))
-				.set(CONTRACT_DATA.CONTRACT, newContractId)
-				.set(CONTRACT_DATA.EXPRESSION, contractDataRecord.get(CONTRACT_DATA.EXPRESSION))
-				.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
-				.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+				.set(CONTRACT_DATA.DOMAIN, contractData.get(CONTRACT_DATA.DOMAIN))
+				.set(CONTRACT_DATA.NAME, contractData.get(CONTRACT_DATA.NAME))
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, contractData.get(CONTRACT_DATA.EXPRESSION))
+				.set(CONTRACT_DATA.START_DATE, parseDateToSQL(transformStartDate))
+				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(endDate))
+				.execute()
+		);
+		
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.get(CONTRACT.DOMAIN))
+			.set(CONTRACT_DATA.NAME, "TC2")
+			.set(CONTRACT_DATA.CONTRACT, contractId)
+			.set(CONTRACT_DATA.EXPRESSION, "\"" + contractTransform.getTc2() + "\"")
+			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(transformStartDate))
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(endDate))
+			.execute();
+	
+		if(AonStringUtils.isNotBlank(contractTransform.getCno()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, contractRecord.get(CONTRACT.DOMAIN))
+				.set(CONTRACT_DATA.NAME, "CNO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, "\"" + contractTransform.getCno() + "\"")
+				.set(CONTRACT_DATA.START_DATE, parseDateToSQL(transformStartDate))
+				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(endDate))
 				.execute();
 		
-		// Create contract info
+	}
+
+	private static void addDataTransform(DSLContext dslContext, Integer contractId, Date transformStartDate) {
+		ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		Date endDate = contractRecord.getEndDate();
+		Integer domainId = contractRecord.getDomain();
 		
-		dslContext.insertInto(CONTRACT_INFO)
-			.set(CONTRACT_INFO.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-			.set(CONTRACT_INFO.CONTRACT, newContractId)
-			.set(CONTRACT_INFO.NAME, "SS_ALTA")
-			.set(CONTRACT_INFO.EXPRESSION, "PENDING")
-			.set(CONTRACT_INFO.START_DATE, parseDateToSQL(newStartDateContract))
-			.set(CONTRACT_INFO.END_DATE, DSL.castNull(CONTRACT_INFO.END_DATE))
-			.set(CONTRACT_INFO.CREATION_USER, "admin")
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, domainId)
+			.set(CONTRACT_DATA.NAME, "TRANSFORM_DATE")
+			.set(CONTRACT_DATA.CONTRACT, contractId)
+			.set(CONTRACT_DATA.EXPRESSION, formatDate.format(transformStartDate))
+			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(transformStartDate))
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(endDate))
 			.execute();
-		
-		dslContext.insertInto(CONTRACT_INFO)
-			.set(CONTRACT_INFO.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-			.set(CONTRACT_INFO.CONTRACT, newContractId)
-			.set(CONTRACT_INFO.NAME, "SEPE_CONTRATO")
-			.set(CONTRACT_INFO.EXPRESSION, "PENDING")
-			.set(CONTRACT_INFO.START_DATE, parseDateToSQL(newStartDateContract))
-			.set(CONTRACT_INFO.END_DATE, DSL.castNull(CONTRACT_INFO.END_DATE))
-			.set(CONTRACT_INFO.CREATION_USER, "admin")
-			.execute();
-		
-		// Copy Old Sepe Data
-		
-		Record oldSepeDataRecord = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(oldContractId)).and(CONTRACT_ATTACH.TYPE.eq((byte)4)).fetchOne();
-		if(null != oldSepeDataRecord)
-			dslContext.insertInto(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
-				.set(CONTRACT_ATTACH.CONTRACT, newContractId)
-				.set(CONTRACT_ATTACH.MIMETYPE, (byte)5)
-				.set(CONTRACT_ATTACH.DESCRIPTION, "CONTRACT - Contrat@")
-				.set(CONTRACT_ATTACH.DATA, oldSepeDataRecord.get(CONTRACT_ATTACH.DATA))
-				.set(CONTRACT_ATTACH.TYPE, (byte)4)
-				.set(CONTRACT_ATTACH.ATTACH_DATE, oldSepeDataRecord.get(CONTRACT_ATTACH.ATTACH_DATE))
-				.execute();
-		
+	}
+
+	private static void createTransformFile(DSLContext dslContext, Integer contractId, Date transformStartDate, ContractTransform contractTransform) {
 		// Enterprise Data
 		Record contractRecord = dslContext.select().from(CONTRACT)
-				.where(CONTRACT.ID.eq(newContractId))
+				.where(CONTRACT.ID.eq(contractId))
 				.fetchOne();
 		
 		Integer enterpriseCCCId = contractRecord.get(CONTRACT.ENTERPRISE_CCC);
@@ -259,7 +221,7 @@ public class JooqContractTransform {
 			// Insert CONTRACT_ATTACH
 			dslContext.insertInto(CONTRACT_ATTACH)
 				.set(CONTRACT_ATTACH.DOMAIN, contractRecord.get(CONTRACT.DOMAIN))
-				.set(CONTRACT_ATTACH.CONTRACT, newContractId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
 				.set(CONTRACT_ATTACH.MIMETYPE, (byte)5)
 				.set(CONTRACT_ATTACH.DESCRIPTION, "TRANSFORM - Contrat@")
 				.set(CONTRACT_ATTACH.DATA, out.toByteArray())
@@ -269,10 +231,10 @@ public class JooqContractTransform {
 			// Inset CONTRACT_INFO
 			dslContext.insertInto(CONTRACT_INFO)
 				.set(CONTRACT_INFO.DOMAIN, contractRecord.get(CONTRACT.DOMAIN))
-				.set(CONTRACT_INFO.CONTRACT, newContractId)
+				.set(CONTRACT_INFO.CONTRACT, contractId)
 				.set(CONTRACT_INFO.NAME, "SEPE_TRANSFORMACION")
 				.set(CONTRACT_INFO.EXPRESSION, "PENDING")
-				.set(CONTRACT_INFO.START_DATE, parseDateToSQL(newStartDateContract))
+				.set(CONTRACT_INFO.START_DATE, parseDateToSQL(transformStartDate))
 				.set(CONTRACT_INFO.END_DATE, DSL.castNull(CONTRACT_INFO.END_DATE))
 				.set(CONTRACT_INFO.CREATION_USER, "admin")
 				.execute();
@@ -280,8 +242,6 @@ public class JooqContractTransform {
 		} catch (JAXBException e) {
 			System.err.println("No se ha podidod Utils.marshal(prorroga, out)");
 		}
-		
-		return newContractId;
 	}
 
 	// --------------------------------------------- Methods. createProrroga
@@ -348,6 +308,98 @@ public class JooqContractTransform {
 			return null;
 		}
 	}
+	
+	// --------------------------------------------- Methods. createContractExtension
+	
+	public static void removeContractTransform(Connection conn, Integer contractId) {
+		removeContractTransform(DSL.using(conn, getDefaultSettings()), contractId);
+	}
+
+	private static void removeContractTransform(DSLContext dslContext, Integer contractId) {
+		ContractDataRecord transformDataRecord = dslContext.selectFrom(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.NAME.eq("TRANSFORM_DATE"))
+			.fetchOne();
+		
+		if(null == transformDataRecord) throw new IllegalArgumentException("Fecha transformaci\u00f3n no encontrada");
+		
+		try {
+			
+			Date transformDate = formatDate.parse(transformDataRecord.getExpression());
+			
+			// Delete transform file
+			
+			deleteTransformFile(dslContext, contractId, transformDate);
+			
+			// Delete data transform
+			
+			deleteDataTransform(dslContext, contractId, transformDate);
+			
+			deleteTransformDataInfo(dslContext, contractId, transformDate);
+			
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	private static void deleteTransformFile(DSLContext dslContext, Integer contractId, Date transformDate) {
+		
+		// Delete CONTRACT_ATTACH
+		
+		dslContext.delete(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+			.and(CONTRACT_ATTACH.TYPE.eq((byte)19))
+			.and(CONTRACT_ATTACH.DESCRIPTION.eq("TRANSFORM - Contrat@"))
+			.and(CONTRACT_ATTACH.MIMETYPE.eq((byte)5))
+			.execute();
+					
+		// Delete CONTRACT_INFO
+		
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+			.and(CONTRACT_INFO.NAME.eq("SEPE_TRANSFORMACION"))
+			.and(CONTRACT_INFO.START_DATE.eq(parseDateToSQL(transformDate)))
+			.execute();
+		
+	}
+	
+	private static void deleteDataTransform(DSLContext dslContext, Integer contractId, Date transformDate) {
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.NAME.eq("TRANSFORM_DATE"))
+			.and(CONTRACT_DATA.START_DATE.eq(parseDateToSQL(transformDate)))
+			.execute();
+	}
+	
+	private static void deleteTransformDataInfo(DSLContext dslContext, Integer contractId, Date transformDate) {
+		ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		Date endDate = contractRecord.getEndDate();
+		
+		Date endDateContract = DateUtils.copyDateOnly(transformDate);
+		DateUtils.addDays2Date(endDateContract, -1);
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.START_DATE.eq(parseDateToSQL(transformDate)))
+			.execute();
+		
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+			.and(CONTRACT_INFO.START_DATE.eq(parseDateToSQL(transformDate)))
+			.execute();
+		
+		dslContext.update(CONTRACT_DATA)
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(endDate))
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(endDateContract)))
+			.execute();	
+		
+		dslContext.update(CONTRACT_INFO)
+			.set(CONTRACT_INFO.END_DATE, parseDateToSQL(endDate))
+			.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+			.and(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(endDateContract)))
+			.execute();	
+	}
 
 	// --------------------------------------------- Auxiliar Methods
 	
@@ -380,17 +432,8 @@ public class JooqContractTransform {
 		if(null == dateJava)
 			return null;
 		
-		DateUtils.resetTime(dateJava);
+//		DateUtils.resetTime(dateJava);
 		return new java.sql.Date(dateJava.getTime());
 	}
 
-	private static java.util.Date parseDateToJava(Date dateSQL) {
-		if(null == dateSQL)
-			return null;
-		
-		java.util.Date dateJava = new java.util.Date(dateSQL.getTime());
-		DateUtils.resetTime(dateJava);
-		
-		return dateJava;
-	}
 }

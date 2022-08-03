@@ -207,12 +207,12 @@ public abstract class ContractTransformDialog extends AonCustomDialog {
 						 .setDiscontinuosInd(isActiveToggleButton(discontinuosInd))
 						 .setCno(getCNO());
 		
-		employeesService.contractTransform(contractTransform, new AsyncCallback<Integer>() {
+		employeesService.contractTransform(contractTransform, new AsyncCallback<Void>() {
 			
 			@Override
-			public void onSuccess(Integer newContractId) {
+			public void onSuccess(Void result) {
 				hide();
-				onTransformDone(newContractId);
+				onTransformDone();
 			}
 			
 			@Override
@@ -227,6 +227,6 @@ public abstract class ContractTransformDialog extends AonCustomDialog {
 	
 	// ------------------------------------------------- Abstract Methods
 	
-	protected abstract void onTransformDone(Integer newContractId);
+	protected abstract void onTransformDone();
 	protected abstract void fireError(Map<String, String> errorMap);
 }

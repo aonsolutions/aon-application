@@ -660,18 +660,27 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- ContractExtension
 	
-	public void contractExtension(ContractExtension contractExtension, AsyncCallback<Void> callback) {
+	public void contractExtension(ContractExtension contractExtension, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.contractExtension(getCurrentDomainName(), contractExtension, callback);
 	}
 	
-	public void deleteContractExtension(Integer contractId, AsyncCallback<Void> callback) {
+	public void deleteContractExtension(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.deleteContractExtension(getCurrentDomainName(), contractId, callback);
 	}
 	
 	// ------------------------------------------------- ContractTransform
 	
-	public void contractTransform(ContractTransform contractTransform, AsyncCallback<Integer> callback) {
+	public void contractTransform(ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.contractTransform(getCurrentDomainName(), contractTransform, callback);
+	}
+	
+	public void deleteContractTransform(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.deleteContractTransform(getCurrentDomainName(), contractId, callback);
+	}
+	
+	
+	public void removeContractTransform(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), contractId, callback);
 	}
 	
 	// ------------------------------------------------- EmployeeIrpf

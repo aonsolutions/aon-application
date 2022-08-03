@@ -8,11 +8,8 @@ import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVI
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,12 +17,13 @@ import javax.xml.bind.JAXBException;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.CIFNIFTYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSCONTRATOTYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSEMPRESATYPE;
@@ -69,6 +67,20 @@ public class JooqContractExtension {
 
 	private static void createContractExtension(DSLContext dslContext, ContractExtension contractExtension) {
 		
+		dslContext.transaction(t -> {
+			// Create extension file
+			
+			createExtensionFile(dslContext, contractExtension);
+			
+			// Create extension data
+			
+			createExtensionData(dslContext, contractExtension);
+		});
+		
+	}
+
+	private static void createExtensionFile(DSLContext dslContext, ContractExtension contractExtension) {
+		
 		// Enterprise Data
 		Record contractRecord = dslContext.select().from(CONTRACT)
 				.where(CONTRACT.ID.eq(contractExtension.getContractId()))
@@ -102,6 +114,7 @@ public class JooqContractExtension {
 			Utils.marshal(prorroga, out);
 			
 			// Insert CONTRACT_ATTACH
+			
 			dslContext.insertInto(CONTRACT_ATTACH)
 				.set(CONTRACT_ATTACH.DOMAIN, contractExtension.getDomainId())
 				.set(CONTRACT_ATTACH.CONTRACT, contractExtension.getContractId())
@@ -112,47 +125,15 @@ public class JooqContractExtension {
 				.execute();
 			
 			// Inset CONTRACT_INFO
-			Date contractEndDate = DateUtils.copyDateOnly(contractExtension.getNewContractStartDate());
-			DateUtils.addDays2Date(contractEndDate, -1);
 			
 			dslContext.insertInto(CONTRACT_INFO)
 				.set(CONTRACT_INFO.DOMAIN, contractExtension.getDomainId())
 				.set(CONTRACT_INFO.CONTRACT, contractExtension.getContractId())
 				.set(CONTRACT_INFO.NAME, "SEPE_PRORROGA")
 				.set(CONTRACT_INFO.EXPRESSION, "PENDING")
-				.set(CONTRACT_INFO.START_DATE, parseDateToSQL(contractExtension.getContractStartDate()))
-				.set(CONTRACT_INFO.END_DATE, parseDateToSQL(contractEndDate))
-				.set(CONTRACT_INFO.CREATION_USER, "admin")
-				.execute();
-			
-			// Update CONTRACT
-			dslContext.update(CONTRACT)
-				.set(CONTRACT.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
-				.where(CONTRACT.ID.eq(contractExtension.getContractId()))
-				.execute();
-			
-			// Update CONTRACT_INFO
-			dslContext.update(CONTRACT_INFO)
+				.set(CONTRACT_INFO.START_DATE, parseDateToSQL(contractExtension.getNewContractStartDate()))
 				.set(CONTRACT_INFO.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
-				.where(CONTRACT_INFO.CONTRACT.eq(contractExtension.getContractId()))
-				.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
-				.and(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(contractEndDate)))
-				.execute();
-			
-			// Update CONTRACT_DATA
-			dslContext.update(CONTRACT_DATA)
-				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
-				.where(CONTRACT_DATA.CONTRACT.eq(contractExtension.getContractId()))
-				.and(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(contractEndDate)))
-				.execute();
-			
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, contractRecord.get(CONTRACT.DOMAIN))
-				.set(CONTRACT_DATA.NAME, "DISCONTINUOS")
-				.set(CONTRACT_DATA.CONTRACT, contractRecord.get(CONTRACT.ID))
-				.set(CONTRACT_DATA.EXPRESSION, contractExtension.getDiscontinuosInd() ? "true" : "false")
-				.set(CONTRACT_DATA.START_DATE, contractRecord.get(CONTRACT.START_DATE))
-				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
+				.set(CONTRACT_INFO.CREATION_USER, "admin")
 				.execute();
 			
 		} catch (JAXBException e) {
@@ -160,72 +141,51 @@ public class JooqContractExtension {
 		}
 	}
 	
-	// --------------------------------------------- Methods. deleteContractExtension
-
-	public static void deleteContractExtension(Connection conn, Integer contractId) {
-		deleteContractExtension(DSL.using(conn, getDefaultSettings()), contractId);
+	private static void createExtensionData(DSLContext dslContext, ContractExtension contractExtension) {
+		ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractExtension.getContractId())).fetchOne();
+		
+		Date originalEndDate = DateUtils.copyDateOnly(contractExtension.getNewContractStartDate());
+		DateUtils.addDays2Date(originalEndDate, -1);
+		
+		// Update CONTRACT
+		dslContext.update(CONTRACT)
+			.set(CONTRACT.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
+			.where(CONTRACT.ID.eq(contractExtension.getContractId()))
+			.execute();
+		
+		// Update CONTRACT_INFO
+		dslContext.update(CONTRACT_INFO)
+			.set(CONTRACT_INFO.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
+			.where(CONTRACT_INFO.CONTRACT.eq(contractExtension.getContractId()))
+			.and(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(originalEndDate)))
+			.execute();
+		
+		// Update CONTRACT_DATA
+		dslContext.update(CONTRACT_DATA)
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
+			.where(CONTRACT_DATA.CONTRACT.eq(contractExtension.getContractId()))
+			.and(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(originalEndDate)))
+			.execute();
+		
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DATA.NAME, "DISCONTINUOS")
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.EXPRESSION, Boolean.TRUE.equals(contractExtension.getDiscontinuosInd()) ? "true" : "false")
+			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(contractExtension.getNewContractStartDate()))
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
+			.execute();
+		
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DATA.NAME, "EXTENSION_DATE")
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.EXPRESSION, formatDate.format(contractExtension.getNewContractStartDate()))
+			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(contractExtension.getNewContractStartDate()))
+			.set(CONTRACT_DATA.END_DATE, parseDateToSQL(contractExtension.getNewContractEndDate()))
+			.execute();
 	}
 	
-	private static void deleteContractExtension(DSLContext dslContext, Integer contractId) {
-		Result<Record> contractExtensions = dslContext.select().from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
-				.and(CONTRACT_ATTACH.TYPE.eq((byte)13))
-				.orderBy(CONTRACT_ATTACH.ID.desc())
-				.fetch();
-		
-		if(contractExtensions.isNotEmpty()) {
-			try {
-				byte[] data = contractExtensions.get(0).get(CONTRACT_ATTACH.DATA);
-				InputStream in = new ByteArrayInputStream(data); 
-				
-				Integer deleteRattachId = contractExtensions.get(0).get(CONTRACT_ATTACH.ID);
-				
-				PRORROGAS prorrogas = Utils.unmarshal(PRORROGAS.class, in);
-				
-				String startDateStr = prorrogas.getPRORROGATIPO().get(0).getDATOSGENERALESPRORROGA().getFECHAINICIO();
-				Date startDate = formatDate.parse(startDateStr);
-				
-				String endDateStr = prorrogas.getPRORROGATIPO().get(0).getDATOSGENERALESPRORROGA().getFECHAFIN();
-				Date endDate = formatDate.parse(endDateStr);
-				
-				Date newContractEndDate = DateUtils.copyDateOnly(startDate);
-				newContractEndDate = DateUtils.addDays2Date(newContractEndDate, -1);
-				
-				// Update contract end date
-				dslContext.update(CONTRACT)
-					.set(CONTRACT.END_DATE, parseDateToSQL(newContractEndDate))
-					.where(CONTRACT.ID.eq(contractId))
-					.execute();
-				
-				// Update end date
-				dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.END_DATE, parseDateToSQL(newContractEndDate))
-					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.and(CONTRACT_DATA.END_DATE.eq(parseDateToSQL(endDate)))
-					.execute();
-				
-				dslContext.update(CONTRACT_INFO)
-					.set(CONTRACT_INFO.END_DATE, parseDateToSQL(newContractEndDate))
-					.where(CONTRACT_INFO.CONTRACT.eq(contractId))
-					.and(CONTRACT_INFO.END_DATE.eq(parseDateToSQL(endDate)))
-					.execute();
-				
-				dslContext.delete(CONTRACT_DATA)
-					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.and(CONTRACT_DATA.NAME.eq("DISCONTINUOS"))
-					.execute();
-				
-				// Delete rattach extension
-				dslContext.delete(CONTRACT_ATTACH)
-					.where(CONTRACT_ATTACH.ID.eq(deleteRattachId))
-					.execute();
-				
-			} catch (JAXBException | ParseException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	// --------------------------------------------- Methods. createProrroga
 
 	private static PRORROGAS createProrroga(String enterpriseCIF, String completeCCC, ContractExtension contractExtension) {
@@ -271,7 +231,88 @@ public class JooqContractExtension {
 		
 		return prorroga;
 	}
+
+	// --------------------------------------------- Methods. deleteContractExtension
+
+	public static void deleteContractExtension(Connection conn, Integer contractId) {
+		deleteContractExtension(DSL.using(conn, getDefaultSettings()), contractId);
+	}
 	
+	private static void deleteContractExtension(DSLContext dslContext, Integer contractId) {
+		
+		dslContext.transaction(t -> {
+			// Delete extension data
+			
+			deleteExtensionData(dslContext, contractId);
+			
+			// Delete extension file
+			
+			deleteExtensionFile(dslContext, contractId);
+		});
+		
+	}
+	
+	private static void deleteExtensionData(DSLContext dslContext, Integer contractId) {
+		ContractDataRecord extensionDataRecord = dslContext.selectFrom(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("EXTENSION_DATE"))
+				.fetchOne();
+		
+		if(null == extensionDataRecord) throw new IllegalArgumentException("Fecha pr\u00f3rroga no encontrada");
+		
+		try {
+		
+			Date extensionStartDate = formatDate.parse(extensionDataRecord.getExpression());
+			java.sql.Date extensionEndDate = extensionDataRecord.getEndDate();
+			
+			Date originalEndDate = DateUtils.copyDateOnly(extensionStartDate);
+			DateUtils.addDays2Date(originalEndDate, -1);
+			
+			// Delete CONTRACT_DATA
+			
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.START_DATE.eq(parseDateToSQL(extensionStartDate)))
+				.execute();
+			
+			// Delete CONTRACT_INFO
+			
+			dslContext.delete(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.START_DATE.eq(parseDateToSQL(extensionStartDate)))
+				.execute();
+			
+			// Update contract end date
+			dslContext.update(CONTRACT)
+				.set(CONTRACT.END_DATE, parseDateToSQL(originalEndDate))
+				.where(CONTRACT.ID.eq(contractId))
+				.execute();
+			
+			dslContext.update(CONTRACT_DATA)
+				.set(CONTRACT_DATA.END_DATE, parseDateToSQL(originalEndDate))
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.END_DATE.eq(extensionEndDate))
+				.execute();
+			
+			dslContext.update(CONTRACT_INFO)
+				.set(CONTRACT_INFO.END_DATE, parseDateToSQL(originalEndDate))
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.END_DATE.eq(extensionEndDate))
+				.execute();
+			
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	private static void deleteExtensionFile(DSLContext dslContext, Integer contractId) {
+		dslContext.delete(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+			.and(CONTRACT_ATTACH.TYPE.eq((byte)13))
+			.and(CONTRACT_ATTACH.DESCRIPTION.eq("EXTENSION - Contrat@"))
+			.execute();
+	}
+
 	// --------------------------------------------- Auxiliar Methods
 	
 	private static String parseRegime(Byte regime) {
@@ -307,13 +348,4 @@ public class JooqContractExtension {
 		return new java.sql.Date(dateJava.getTime());
 	}
 
-	private static java.util.Date parseDateToJava(Date dateSQL) {
-		if(null == dateSQL)
-			return null;
-		
-		java.util.Date dateJava = new java.util.Date(dateSQL.getTime());
-		DateUtils.resetTime(dateJava);
-		
-		return dateJava;
-	}
 }

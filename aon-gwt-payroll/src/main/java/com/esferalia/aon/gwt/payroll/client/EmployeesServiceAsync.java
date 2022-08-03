@@ -354,13 +354,17 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- ContractExtension
 	
-	void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback);
+	void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback);
+	void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------- ContractTransform
 	
-	void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Integer> callback);
+	void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
+	void deleteContractTransform(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void removeContractTransform(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- EmployeeIrpf
 	
