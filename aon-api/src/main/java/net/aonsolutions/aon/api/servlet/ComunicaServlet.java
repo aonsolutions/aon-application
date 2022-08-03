@@ -623,8 +623,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		if(!name.isEmpty()) {
 			SituationType situationType = employee.getEndDate().isEmpty() ? SituationType.ALTA : SituationType.BAJA;
-			String body = "Te informamos que se ha realizado una <b>Eliminaci�n de "+situationType.getName()+"</b> en la Seguridad Social de <b>"
-			+name+"</b> en la Cuenta de Cotizaci�n <b>"+regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
+			String body = "Te informamos que se ha realizado una <b>Eliminaci\u00f3n de "+situationType.getName()+"</b> en la Seguridad Social de <b>"
+			+name+"</b> en la Cuenta de Cotizaci\u00f3n <b>"+regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
 			sendEmail(api, "COMUNIC@ | AON SOLUTIONS", body, new LinkedList<>());
 			sendNotification(api, body);
 		}
@@ -687,8 +687,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
             	json.put("contract_edit", true);
             	
             	if(!name.isEmpty()) {
-        			String body = "Te informamos que se ha realizado un Cambio de ocupaci�n a "
-        					+ "(<b>"+ocup.toUpperCase()+"</b>) en la Seguridad Social de <b>"+ name+"</b> en la Cuenta de Cotizaci�n <b>"
+        			String body = "Te informamos que se ha realizado un Cambio de ocupaci\u00f3n a "
+        					+ "(<b>"+ocup.toUpperCase()+"</b>) en la Seguridad Social de <b>"+ name+"</b> en la Cuenta de Cotizaci\u00f3n <b>"
         					+ regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
         			sendEmail(api, "COMUNIC@ | AON SOLUTIONS", body, new LinkedList<>());
         			sendNotification(api, body);
@@ -715,8 +715,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				 json.put("gc_edit", true);
 				 json.put("contract_edit", true);
             	 if(!name.isEmpty()) {
-        			String body = "Te informamos que se ha realizado un Cambio de Grupo de cotizaci�n a (<b>"+gc+"</b>) en la Seguridad Social de <b>"
-            	 + name+"</b> en la Cuenta de Cotizaci�n <b>"+ regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
+        			String body = "Te informamos que se ha realizado un Cambio de Grupo de Cotizaci\u00f3n a (<b>"+gc+"</b>) en la Seguridad Social de <b>"
+            	 + name+"</b> en la Cuenta de Cotizaci\u00f3n <b>"+ regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
         			sendEmail(api, "COMUNIC@ | AON SOLUTIONS", body, new LinkedList<>());
         			sendNotification(api, body);
         		 }
@@ -759,11 +759,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				String pre =  situation.equals(SituationType.ALTA) ? "el" : "la";
 				Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), user.getLogin());
 				String subject = "TGSS | "+situation.getName()+" de "+employee.getName().get();
-				String body = "La Tesorer�a General de la Seguridad Social ha procedido a reconocer "+pre+" <b>"+situation.getName()+"</b> "
-						+ "en el R�gimen General de D./D�a. <b>"+employee.getName().get()+"</b>, "
-						+ "con n�mero de afiliaci�n <b>"+employee.getNss()+"</b> y DNI/NIE <b>"+employee.getIpf()+"</b>, con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>, "
+				String body = "La Tesorer\u00eda General de la Seguridad Social ha procedido a reconocer "+pre+" <b>"+situation.getName()+"</b> "
+						+ "en el R\u00e9gimen General de D./D\u00f1a. <b>"+employee.getName().get()+"</b>, "
+						+ "con n\u00famero de afiliaci\u00f3n <b>"+employee.getNss()+"</b> y DNI/NIE <b>"+employee.getIpf()+"</b>, con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>, "
 						+ "como trabajador de <b>"+company.getName()+"</b> "
-						+ "con c�digo de cuenta de cotizaci�n <b>"+employee.getRegime()+" "+ employee.getCtaCti().get()+"</b>.";
+						+ "con c\u00f3digo de cuenta de cotizaci\u00f3n <b>"+employee.getRegime()+" "+ employee.getCtaCti().get()+"</b>.";
 			
 				//---------------------------SEND NOTIFICATION
 				sendNotification(api, body); 
