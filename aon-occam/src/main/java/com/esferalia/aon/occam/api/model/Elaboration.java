@@ -202,4 +202,7 @@ public class Elaboration implements Serializable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return getId() == null && AonStringUtils.isBlank(getSeries()) && getItem().isEmpty();
+	}
 }

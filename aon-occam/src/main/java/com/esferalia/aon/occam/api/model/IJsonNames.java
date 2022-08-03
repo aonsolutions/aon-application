@@ -100,6 +100,7 @@ public final class IJsonNames {
 	public static final String CONSOLIDATION = "consolidation";
 	public static final String CONTACT_DATA = "contactData";
 	public static final String CONTAINER = "container";
+	public static final String CONTAINERS = "containers";
 	public static final String CONTENT = "content";
 	public static final String CONTENT_ENCODING = "contentEncoding";
 	public static final String CONTENT_NAME = "contentName";

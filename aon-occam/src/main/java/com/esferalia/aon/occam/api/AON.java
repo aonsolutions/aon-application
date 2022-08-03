@@ -259,6 +259,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -7386,6 +7387,18 @@ public class AON {
 	public static Booking saveBooking(Domain domain, User user, Booking booking) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getSecurity().saveBooking(ctx, booking);
+		}
+	}
+	
+	public static Packaging getPackaging(Domain domain, User user, String barcode) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().getPackaging(ctx, barcode);
+		}
+	}
+	
+	public static Packaging savePackaging(Domain domain, User user, Packaging packaging) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().savePackaging(ctx, packaging);
 		}
 	}
 }

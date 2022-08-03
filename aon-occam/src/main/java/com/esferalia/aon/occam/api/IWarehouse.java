@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -190,4 +191,12 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	Stream<PaturpatQuality> getPaturpatQualityStream(AONContext ctx, Map<String, String[]> map);	
+
+	// 	***********************************************
+	// 	*********************** PATURPAT PACKAGING ****
+	// 	***********************************************
+	
+	Packaging getPackaging(AONContext ctx, String barcode);
+	Packaging savePackaging(AONContext ctx, Packaging packaging);
+	
 }

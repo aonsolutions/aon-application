@@ -9,9 +9,11 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -354,12 +356,10 @@ public class ProductOldValidation {
 	 * El producto tiene que ser inventariable.
 	 */
 	public static BiConsumer<Integer, AONContext> CHECK_INVENTORIABLE = (itemId,ctx) -> {
-		byte inventoriable = ctx.getDslContext().select(PRODUCT.INVENTORIABLE)
-				.from(PRODUCT.leftJoin(ITEM).on(ITEM.PRODUCT.eq(PRODUCT.ID)))
-				.where(ITEM.ID.eq(itemId))
-				.fetchOne(PRODUCT.INVENTORIABLE);
-		if(inventoriable==0)
+		Item item = ItemDAO.get(ctx, f -> f.getIdProperty().eq(itemId));
+		if(!item.getProduct().getInventoriable()) {
 			throw new AonCoreException("El producto no es inventariable");
+		}	
 	};
 	
 	public static void validateItem(AONContext ctx, OldItem i) throws AonCoreException{

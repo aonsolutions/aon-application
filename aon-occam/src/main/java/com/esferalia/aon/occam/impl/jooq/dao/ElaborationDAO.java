@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailCompositionProperties;
 import com.esferalia.aon.occam.api.model.ElaborationDetailProperties;
+import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
@@ -91,6 +92,7 @@ public class ElaborationDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.DOMAIN);}
 		@Override public Property<Integer> getElaborationProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ELABORATION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.TYPE);}
 		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.DATE);}
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ITEM);}
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.QUANTITY);}
@@ -282,7 +284,8 @@ public class ElaborationDAO {
 			AONContext ctx, Integer elaborationId) {
 		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
-				.where(ELABORATION_DETAIL.ELABORATION.eq(elaborationId))
+				.where(ELABORATION_DETAIL.ELABORATION.eq(elaborationId)
+					.and(ELABORATION_DETAIL.TYPE.eq(ElaborationDetailType.ELABORATION.value())))
 				.orderBy(ELABORATION_DETAIL.DATE.desc())
 				.fetchInto(ELABORATION_DETAIL).stream()
 				.map(new FullElaborationDetailFiller())
@@ -300,15 +303,18 @@ public class ElaborationDAO {
 				.map(new FullElaborationDetailFiller())
 				.collect(Collectors.toList());
 	}
-			
-	public static ElaborationDetail getElaborationDetail(AONContext ctx,
-			Integer elaborationDetailId) {
+
+	public static ElaborationDetail getElaborationDetail(AONContext ctx, ElaborationDetailFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
-				.where(ELABORATION_DETAIL.ID.eq(elaborationDetailId)).limit(1)
+				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter)).limit(1)
 				.fetchInto(ELABORATION_DETAIL).stream()
 				.map(new FullElaborationDetailFiller()).findFirst()
 				.orElse(new ElaborationDetail());
+	}
+	
+	public static ElaborationDetail getElaborationDetail(AONContext ctx, Integer elaborationDetailId) {
+		return getElaborationDetail(ctx, f -> f.getIdProperty().eq(elaborationDetailId));
 	}
 	
 	public static int insertElaborationDetail(AONContext ctx,
@@ -323,6 +329,7 @@ public class ElaborationDAO {
 						ELABORATION_DETAIL.QUANTITY,
 						ELABORATION_DETAIL.WAREHOUSE,
 						ELABORATION_DETAIL.ADD_INFO,
+						ELABORATION_DETAIL.TYPE,
 						ELABORATION_DETAIL.CREATION_USER,
 						ELABORATION_DETAIL.CREATION_DATE,
 						ELABORATION_DETAIL.MODIFICATION_USER,
@@ -333,8 +340,8 @@ public class ElaborationDAO {
 						elaborationDetail.getItem().getId(),
 						elaborationDetail.getQuantity(),
 						elaborationDetail.getWarehouse()!=null?elaborationDetail.getWarehouse().getId():null,
-						elaborationDetail.getAddInfo(), ctx.getUser(),
-						now, ctx.getUser(), now)
+						elaborationDetail.getAddInfo(), elaborationDetail.getType().value(), 
+						ctx.getUser(), now, ctx.getUser(), now)
 				.returning(ELABORATION_DETAIL.ID).fetchOne().getId();
 	}
 	
@@ -349,6 +356,7 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL.DOMAIN, ctx.getDomainId())
 				.set(ELABORATION_DETAIL.ELABORATION,
 						elaborationDetail.getElaboration().getId())
+				.set(ELABORATION_DETAIL.TYPE, elaborationDetail.getType().value())
 				.set(ELABORATION_DETAIL.DATE,
 						new Timestamp(elaborationDetail.getDate().getTime()))
 				.set(ELABORATION_DETAIL.ITEM,
@@ -583,6 +591,7 @@ public class ElaborationDAO {
 					.setElaboration(
 							new Elaboration().setId(r
 									.getValue(ELABORATION_DETAIL.ELABORATION)))
+					.setType(ElaborationDetailType.safeValueOf(getValue(r, ELABORATION_DETAIL.TYPE)))
 					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
 					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
 					.setItem(checkField(r, ITEM.ID)
