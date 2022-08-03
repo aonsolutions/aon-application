@@ -15,6 +15,8 @@ import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
@@ -366,6 +368,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	private TextBox ideTB;
 	private TextBox ideTransformTB;
 	private boolean isComunica;
+	private boolean isTransform;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
@@ -378,7 +381,18 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo, boolean isComunica) {
 		this.contractEmployeeInfo = contractEmployeeInfo;
 		this.isComunica = isComunica;
-		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType(), contractEmployeeInfo.getContractInfo().isHasTransformation());
+		
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(contractEmployeeInfo.getContractInfo().getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
+		this.isTransform = null == contractTypeRecord ? false : contractTypeRecord.isTransform();
+		
+		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
 		reloadSepeData();
 	}
 	
@@ -392,7 +406,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 					contractEmployeeInfo.getContractInfo().getStartDate(),
 					contractEmployeeInfo.getContractInfo().getContractId());
 			createUpdateTransformSepeInfo(
-					contractEmployeeInfo.getContractInfo().isHasTransformation(),
+					isTransform,
 					isComunica, 
 					contractEmployeeInfo.getEmployeeInfo().getDocument(),
 					contractEmployeeInfo.getContractInfo().getEnterpriseCIF(),
@@ -1542,7 +1556,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	private void setDefaultView(String contractType, boolean isTransform) {
+	private void setDefaultView(String contractType) {
 		this.cnoSB.setValue("");
 		this.comunicationDateBx.setValue(null);
 		this.formativeLevelLB.setSelectedIndex(0);
@@ -1659,7 +1673,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		createJourneyType(contractType);
 		
 		// Transform
-		showHideTransformRows(isTransform);
+		showHideTransformRows();
 	}
 
 	private void createJourneyType(String contractType) {
@@ -2204,7 +2218,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		older52CBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
-	private void showHideTransformRows(boolean isTransform) {
+	private void showHideTransformRows() {
 		if(isTransform) {
 			otherDataTableElement.getRows().getItem(15).getStyle().clearDisplay();
 			otherDataTableElement.getRows().getItem(16).getStyle().clearDisplay();
@@ -2223,7 +2237,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		ideTB.setValue(this.contractSpecificData.getIde());
 		comunicationDateBx.setValue(this.contractSpecificData.getComunicationDate());
 		
-		if(Boolean.TRUE.equals(contractEmployeeInfo.getContractInfo().isHasTransformation())) {
+		if(Boolean.TRUE.equals(isTransform)) {
 			ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
 			comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
 		}

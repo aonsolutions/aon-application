@@ -336,13 +336,17 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	// ------------------------------------------------- ContractExtension
 	
-	void contractExtension(String currentDomainName, ContractExtension contractExtension);
+	void contractExtension(String currentDomainName, ContractExtension contractExtension) throws IllegalArgumentException;
 
-	void deleteContractExtension(String currentDomainName, Integer contractId);
+	void deleteContractExtension(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 	// ------------------------------------------------- ContractTransform
 	
-	int contractTransform(String currentDomainName, ContractTransform contractTransform);
+	void contractTransform(String currentDomainName, ContractTransform contractTransform) throws IllegalArgumentException;
+	
+	void deleteContractTransform(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+
+	void removeContractTransform(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 	// ------------------------------------------------- EmployeeIrpf
 	

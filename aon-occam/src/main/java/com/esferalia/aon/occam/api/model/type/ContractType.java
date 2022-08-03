@@ -35,13 +35,15 @@ public class ContractType {
 		private List<ModelRecord> models;
 		private String journeyType;			// C=completo, P=parcial, A=ambos
 		private Date expirationDate;
+		private boolean isTransform;
 		
-		public ContractTypeRecord(String description, String shortDrescription, String journeyType, Date expirationDate) {
+		public ContractTypeRecord(String description, String shortDrescription, String journeyType, Date expirationDate, boolean isTransform) {
 			this.drescription = description;
 			this.shortDrescription = shortDrescription;
 			this.models = new ArrayList<>();
 			this.journeyType = journeyType;
 			this.expirationDate = expirationDate;
+			this.isTransform = isTransform;
 		}
 		
 		public void addNewModel(Integer id, String description){
@@ -68,6 +70,10 @@ public class ContractType {
 		public Date getExpirationDate(){
 			return this.expirationDate;
 		}
+		
+		public boolean isTransform() {
+			return this.isTransform;
+		}
 	}
 	
 	private Map<Integer, ContractTypeRecord> contractTypes;
@@ -79,57 +85,57 @@ public class ContractType {
 		this.contractTypes = new HashMap<>();
 		
 		//Initialize static contact type map
-		this.contractTypes.put(000, new ContractTypeRecord("BECARIO", null, null, null));
-		this.contractTypes.put(100, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, ORDINARIO", "Indefinido, TC/Ordinario", "C", null));
-		this.contractTypes.put(109, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TC/Transf. CT-Fomento Contr.", "C", null));
-		this.contractTypes.put(130, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, MINUSVALIDOS", "Indefinido, TC/Discapacitados", "C", null));
-		this.contractTypes.put(139, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, MINUSVALIDOS, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TC/Transf. CT- Discapacitados", "C", null));
-		this.contractTypes.put(150, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido, TC/Fomento Contr. Emp.Estable inicial", "C", null));
-		this.contractTypes.put(189, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TC/Transf. Cto. Temporal", "C", null));
-		this.contractTypes.put(200, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, ORDINARIO", "Indefinido, TP/Ordinario", "P", null));
-		this.contractTypes.put(209, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, TRANSFORMACION CONTRATO TEMPORAL", "ndefinido, TP/Transf. CT Fomento Contr.", "P", null));
-		this.contractTypes.put(230, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, MINUSVALIDOS", "Indefinido, TP/Discapacitados", "P", null));
-		this.contractTypes.put(239, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, MINUSVALIDOS, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TP/Transf. CT Discapacitados", "P", null));
-		this.contractTypes.put(250, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido, TP/Fomento Contr. Emp.Estable inicial", "P", null));
-		this.contractTypes.put(289, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TP/Transf. Cto. Temporal", "P", null));
-		this.contractTypes.put(300, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO", "Indefinido/Fijo-Discontinuo", "A", null));
-		this.contractTypes.put(309, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Transf. CT", "A", null));
-		this.contractTypes.put(330, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, MINUSVALIDOS", "Indefinido/Fijo-Discontinuo Discapacitados", "A", null));
-		this.contractTypes.put(339, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, MINUSVALIDOS, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Discapacitados, Transf.", "A", null));
-		this.contractTypes.put(350, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido/Fijo-Disc. Fomento Contr. Empl.Estable inicial", "A", null));
-		this.contractTypes.put(389, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Transf. CT", "A", null));
-		this.contractTypes.put(401, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, OBRA O SERVICIO DETERMINADO", "Temporal, TC/Obra o Servicio determinado", "C", expirationDate401));
-		this.contractTypes.put(402, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, EVENTUAL POR CIRCUNSTANCIAS DE LA PORDUCCION",  "Temporal, TC/Circunstancia de Produccion", "C", null));
-		this.contractTypes.put(403, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INSERCION", "Temporal, TC/Insercion", "C", null));
-		this.contractTypes.put(404, new ContractTypeRecord("CONTRATO PREDOCTORAL", "Predoctoral", "C", null));
-		this.contractTypes.put(406, new ContractTypeRecord("ADMINISTRACIONES PUBLICAS. PLAN RECUPERACION, TRANSFORMACION Y RESILIENCIA, Y FONDOS UNION EUROPEA. TIEMPO COMPLETO", "Admin. Publica, Plan Recuperacion/Trasnformacion/Resiliencia, Fondos UE", "C", null));
-		this.contractTypes.put(408, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, CARACTER ADMINISTRATIVO", "Temporal, TC/Caracter Admin.", "C", null));
-		this.contractTypes.put(410, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INTERINIDAD", "Temporal, TC/Interinidad", "C", null));
-		this.contractTypes.put(418, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INTERINIDAD, CARACTER ADMINISTRATIVO", "Temporal, TC/Interinidad C.Admin.", "C", null));
-		this.contractTypes.put(420, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, PRACTICAS", "Temporal, TC/Practicas", "C", null));
-		this.contractTypes.put(421, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, FORMACION", "Temporal, TC/Formacion", "C", null));
-		this.contractTypes.put(430, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, MINUSVALIDOS", "Temporal, TC/Discapacitados", "C", null));
-		this.contractTypes.put(441, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, RELEVO", "Temporal, TC/Relevo", "C", null));
-		this.contractTypes.put(450, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, FOMENTO CONTRATACION INDEFINIDA", "Temporal, TC/Fomento Contr. indefinida", "C", null));
-		this.contractTypes.put(452, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, FOMENTO DEL EMPLEO", "Temporal, TC/Desempleados en Emp.Insercion", "C", null));
-		this.contractTypes.put(500, new ContractTypeRecord("TEMPORAL. TIEMPO PARCIAL ORDINARIO", "Temporal, TP Ordinario", "P", null));
-		this.contractTypes.put(501, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO", "Temporal, TP/Obra o Servicio determinado", "P", null));
-		this.contractTypes.put(502, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS", "Temporal, TP/Circunstancia de Produccion", "P", null));
-		this.contractTypes.put(503, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INSERCION", "Temporal, TP/Insercion", "P", null));
-		this.contractTypes.put(506, new ContractTypeRecord("ADMINISTRACIONES PUBLICAS. PLAN RECUPERACION, TRANSFORMACION Y RESILIENCIA, Y FONDOS UNION EUROPEA. TIEMPO PARCIAL", "Admin. Publica, Plan Recuperacion/Trasnformacion/Resiliencia, Fondos UE (TP)", "P", null));
-		this.contractTypes.put(508, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, CARACTER ADMINISTRATIVO", "Temporal, TP/Caracter Admin.", "P", null));
-		this.contractTypes.put(510, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INTERINIDAD", "Temporal, TP/Interinidad", "P", null));
-		this.contractTypes.put(518, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INTERINIDAD, CARACTER ADMINISTRATIVO", "Temporal, TP/Interinidad C.Admin.", "P", null));
-		this.contractTypes.put(520, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, PRACTICAS", "Temporal, TP/Practicas", "P", null));
-		this.contractTypes.put(521, new ContractTypeRecord("TEMPORAL TIEMPO PARCIAL. FORMACION EN ALTERNANCIA", "Temporal, TP/Formacion alternancia", "P", null));
-		this.contractTypes.put(530, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, MINUSVALIDOS", "Temporal, TP/Discapacitados", "P", null));
-		this.contractTypes.put(540, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, JUBILADO PARCIAL", "Temporal, TP/Jubilacion Parcial", "P", null));
-		this.contractTypes.put(541, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, RELEVO", "Temporal, TP/Relevo", "P", null));
-		this.contractTypes.put(550, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO ESTABLE", "Temporal, TP/Fomento Contr. indefinida Empl.Estable", "P", null));
-		this.contractTypes.put(552, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, FOMENTO DEL EMPLEO", "Temporal, TP/Desempleados en Emp.InserciOn", "P", null));
-		this.contractTypes.put(970, new ContractTypeRecord("ADSCRIPCION A COLABORACION SOCIAL", null, null, null));
-		this.contractTypes.put(980, new ContractTypeRecord("JUBILACION ESPECIAL A LOS 64 A\u00D1OS", null, null, null));
-		this.contractTypes.put(990, new ContractTypeRecord("OTROS CONTRATOS", null, null, null));
+		this.contractTypes.put(000, new ContractTypeRecord("BECARIO", null, null, null, false));
+		this.contractTypes.put(100, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, ORDINARIO", "Indefinido, TC/Ordinario", "C", null, false));
+		this.contractTypes.put(109, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TC/Transf. CT-Fomento Contr.", "C", null, true));
+		this.contractTypes.put(130, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, MINUSVALIDOS", "Indefinido, TC/Discapacitados", "C", null, false));
+		this.contractTypes.put(139, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, MINUSVALIDOS, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TC/Transf. CT- Discapacitados", "C", null, true));
+		this.contractTypes.put(150, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido, TC/Fomento Contr. Emp.Estable inicial", "C", null, false));
+		this.contractTypes.put(189, new ContractTypeRecord("INDEFINIDO, TIEMPO COMPLETO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TC/Transf. Cto. Temporal", "C", null, true));
+		this.contractTypes.put(200, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, ORDINARIO", "Indefinido, TP/Ordinario", "P", null, false));
+		this.contractTypes.put(209, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, TRANSFORMACION CONTRATO TEMPORAL", "ndefinido, TP/Transf. CT Fomento Contr.", "P", null, true));
+		this.contractTypes.put(230, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, MINUSVALIDOS", "Indefinido, TP/Discapacitados", "P", null, false));
+		this.contractTypes.put(239, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, MINUSVALIDOS, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TP/Transf. CT Discapacitados", "P", null, true));
+		this.contractTypes.put(250, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido, TP/Fomento Contr. Emp.Estable inicial", "P", null, false));
+		this.contractTypes.put(289, new ContractTypeRecord("INDEFINIDO, TIEMPO PARCIAL, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido, TP/Transf. Cto. Temporal", "P", null, true));
+		this.contractTypes.put(300, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO", "Indefinido/Fijo-Discontinuo", "A", null, false));
+		this.contractTypes.put(309, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Transf. CT", "A", null, true));
+		this.contractTypes.put(330, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, MINUSVALIDOS", "Indefinido/Fijo-Discontinuo Discapacitados", "A", null, false));
+		this.contractTypes.put(339, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, MINUSVALIDOS, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Discapacitados, Transf.", "A", null, true));
+		this.contractTypes.put(350, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, FOMENTO CONTRATACION INDEFINIDA/EMPLEO, INICIAL", "Indefinido/Fijo-Disc. Fomento Contr. Empl.Estable inicial", "A", null, false));
+		this.contractTypes.put(389, new ContractTypeRecord("INDEFINIDO, FIJO/DISCONTINUO, TRANSFORMACION CONTRATO TEMPORAL", "Indefinido/Fijo-Discontinuo Transf. CT", "A", null, true));
+		this.contractTypes.put(401, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, OBRA O SERVICIO DETERMINADO", "Temporal, TC/Obra o Servicio determinado", "C", expirationDate401, false));
+		this.contractTypes.put(402, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, EVENTUAL POR CIRCUNSTANCIAS DE LA PORDUCCION",  "Temporal, TC/Circunstancia de Produccion", "C", null, false));
+		this.contractTypes.put(403, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INSERCION", "Temporal, TC/Insercion", "C", null, false));
+		this.contractTypes.put(404, new ContractTypeRecord("CONTRATO PREDOCTORAL", "Predoctoral", "C", null, false));
+		this.contractTypes.put(406, new ContractTypeRecord("ADMINISTRACIONES PUBLICAS. PLAN RECUPERACION, TRANSFORMACION Y RESILIENCIA, Y FONDOS UNION EUROPEA. TIEMPO COMPLETO", "Admin. Publica, Plan Recuperacion/Trasnformacion/Resiliencia, Fondos UE", "C", null, false));
+		this.contractTypes.put(408, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, CARACTER ADMINISTRATIVO", "Temporal, TC/Caracter Admin.", "C", null, false));
+		this.contractTypes.put(410, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INTERINIDAD", "Temporal, TC/Interinidad", "C", null, false));
+		this.contractTypes.put(418, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO COMPLETO, INTERINIDAD, CARACTER ADMINISTRATIVO", "Temporal, TC/Interinidad C.Admin.", "C", null, false));
+		this.contractTypes.put(420, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, PRACTICAS", "Temporal, TC/Practicas", "C", null, false));
+		this.contractTypes.put(421, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, FORMACION", "Temporal, TC/Formacion", "C", null, false));
+		this.contractTypes.put(430, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, MINUSVALIDOS", "Temporal, TC/Discapacitados", "C", null, false));
+		this.contractTypes.put(441, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, RELEVO", "Temporal, TC/Relevo", "C", null, false));
+		this.contractTypes.put(450, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, FOMENTO CONTRATACION INDEFINIDA", "Temporal, TC/Fomento Contr. indefinida", "C", null, false));
+		this.contractTypes.put(452, new ContractTypeRecord("TEMPORAL, TIEMPO COMPLETO, FOMENTO DEL EMPLEO", "Temporal, TC/Desempleados en Emp.Insercion", "C", null, false));
+		this.contractTypes.put(500, new ContractTypeRecord("TEMPORAL. TIEMPO PARCIAL ORDINARIO", "Temporal, TP Ordinario", "P", null, false));
+		this.contractTypes.put(501, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO", "Temporal, TP/Obra o Servicio determinado", "P", null, false));
+		this.contractTypes.put(502, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS", "Temporal, TP/Circunstancia de Produccion", "P", null, false));
+		this.contractTypes.put(503, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INSERCION", "Temporal, TP/Insercion", "P", null, false));
+		this.contractTypes.put(506, new ContractTypeRecord("ADMINISTRACIONES PUBLICAS. PLAN RECUPERACION, TRANSFORMACION Y RESILIENCIA, Y FONDOS UNION EUROPEA. TIEMPO PARCIAL", "Admin. Publica, Plan Recuperacion/Trasnformacion/Resiliencia, Fondos UE (TP)", "P", null, false));
+		this.contractTypes.put(508, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, CARACTER ADMINISTRATIVO", "Temporal, TP/Caracter Admin.", "P", null, false));
+		this.contractTypes.put(510, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INTERINIDAD", "Temporal, TP/Interinidad", "P", null, false));
+		this.contractTypes.put(518, new ContractTypeRecord("DURACION DETERMINADA, TIEMPO PARCIAL, INTERINIDAD, CARACTER ADMINISTRATIVO", "Temporal, TP/Interinidad C.Admin.", "P", null, false));
+		this.contractTypes.put(520, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, PRACTICAS", "Temporal, TP/Practicas", "P", null, false));
+		this.contractTypes.put(521, new ContractTypeRecord("TEMPORAL TIEMPO PARCIAL. FORMACION EN ALTERNANCIA", "Temporal, TP/Formacion alternancia", "P", null, false));
+		this.contractTypes.put(530, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, MINUSVALIDOS", "Temporal, TP/Discapacitados", "P", null, false));
+		this.contractTypes.put(540, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, JUBILADO PARCIAL", "Temporal, TP/Jubilacion Parcial", "P", null, false));
+		this.contractTypes.put(541, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, RELEVO", "Temporal, TP/Relevo", "P", null, false));
+		this.contractTypes.put(550, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO ESTABLE", "Temporal, TP/Fomento Contr. indefinida Empl.Estable", "P", null, false));
+		this.contractTypes.put(552, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, FOMENTO DEL EMPLEO", "Temporal, TP/Desempleados en Emp.InserciOn", "P", null, false));
+		this.contractTypes.put(970, new ContractTypeRecord("ADSCRIPCION A COLABORACION SOCIAL", null, null, null, false));
+		this.contractTypes.put(980, new ContractTypeRecord("JUBILACION ESPECIAL A LOS 64 A\u00D1OS", null, null, null, false));
+		this.contractTypes.put(990, new ContractTypeRecord("OTROS CONTRATOS", null, null, null, false));
 		
 		//Initialice models of contract
 		this.contractTypes.get(100).addNewModel(0, "INDEFINIDO ORDINARIO");

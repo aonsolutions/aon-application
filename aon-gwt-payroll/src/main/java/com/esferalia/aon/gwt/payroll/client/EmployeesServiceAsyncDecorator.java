@@ -1000,13 +1000,13 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- Contract Extension
 
 	@Override
-	public void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback) {
+	public void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.contractExtension(currentDomainName, contractExtension, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) {
+	public void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.deleteContractExtension(currentDomainName, contractId, new AsyncCallbackWrapper<Void>(callback));
 	}
@@ -1014,9 +1014,21 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- ContractTransform
 
 	@Override
-	public void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Integer> callback) {
+	public void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.contractTransform(currentDomainName, contractTransform, new AsyncCallbackWrapper<Integer>(callback));
+		employeesServiceAsync.contractTransform(currentDomainName, contractTransform, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void deleteContractTransform(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.deleteContractTransform(currentDomainName, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void removeContractTransform(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.removeContractTransform(currentDomainName, contractId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	// ------------------------------------------------- EmployeeIrpf

@@ -276,9 +276,6 @@ public class JooqContrataContract {
 			contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
 			contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
 			
-			contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
-			contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
-			
 			Integer employeeWorkplaceId = contractTable.get(CONTRACT.WORKPLACE);
 			
 			// WORKPLACE TABLE		
@@ -888,9 +885,6 @@ public class JooqContrataContract {
 		contractData.setSeniorityDate(contractTable.get(CONTRACT.SENIORITY_DATE));
 		contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
 		contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
-		
-		contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
-		contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
 		
 		Integer employeWorkplaceId = contractTable.get(CONTRACT.WORKPLACE);
 		
@@ -1518,9 +1512,6 @@ public class JooqContrataContract {
 			contractData.setStartDate(contractTable.get(CONTRACT.START_DATE));
 			contractData.setEndDate(contractTable.get(CONTRACT.END_DATE));
 			contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
-			
-			contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
-			contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
 			
 			Integer employeWorkplaceId = contractTable.get(CONTRACT.WORKPLACE);
 			

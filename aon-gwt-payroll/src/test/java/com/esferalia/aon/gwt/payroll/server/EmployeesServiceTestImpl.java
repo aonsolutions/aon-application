@@ -926,21 +926,33 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void contractExtension(String currentDomainName, ContractExtension contractExtension) {
+	public void contractExtension(String currentDomainName, ContractExtension contractExtension) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteContractExtension(String currentDomainName, Integer contractId) {
+	public void deleteContractExtension(String currentDomainName, Integer contractId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public int contractTransform(String currentDomainName, ContractTransform contractTransform) {
+	public void contractTransform(String currentDomainName, ContractTransform contractTransform) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
-		return 0;
+		
+	}
+
+	@Override
+	public void deleteContractTransform(String currentDomainName, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeContractTransform(String currentDomainName, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
