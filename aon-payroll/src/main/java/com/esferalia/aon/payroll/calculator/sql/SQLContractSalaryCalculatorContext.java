@@ -1023,6 +1023,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			Double workDays = super.getWorkDays(ctx, p);
 			return getDays(workDays, ctx, p);
 		}
+		
+		public void throwGuarenteeException() throws GuarenteeException {
+			if ( guarentees!= null && !guarentees.isEmpty()  ) {
+				throw new GuarenteeException(guarentees);
+			}
+		}
 
 		protected double getGuaranteedDays(ExpressionContext ctx, Period p) {
 
@@ -2683,6 +2689,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		try {
 			calculator.calculate(ctx);
+			throwGuarenteeException(ctx);
 		} catch (GuarenteeException e) {
 			
 			List<ITimedResult<Double>> guarenteeResults = e.getGuarentees(guaranteePeriod);
@@ -2709,13 +2716,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			
 			return onGuarantee(guarenteeResults);
-
+		} catch ( ClassCastException e){
+			e.printStackTrace();
+			//
 		} catch (SalaryException e) {
 			throw new RuntimeException(e);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		return 0.00;
+	}
+
+	protected void throwGuarenteeException(IContractSalaryCalculatorContext ctx) throws GuarenteeException {
+		((SQLNoItContractSalaryCalculatorContext)ctx).throwGuarenteeException();
 	}
 	
 

@@ -1960,6 +1960,14 @@ public class EmployeesServiceHelper {
 				}
 
 			}
+			
+			@Override
+			protected void throwGuarenteeException(IContractSalaryCalculatorContext ctx)
+					throws GuarenteeException {
+				super.throwGuarenteeException(((SQLSalaryDraftCalculatorContext)ctx).getCtx());
+			}
+
+			
 
 		}
 
