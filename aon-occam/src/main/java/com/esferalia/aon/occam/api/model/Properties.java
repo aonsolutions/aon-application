@@ -247,6 +247,17 @@ public interface Properties {
 		Property<String> getProductNameProperty();
 	}
 	
+	public interface ItemCompositionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getItemProperty();
+		Property<Integer> getCompositionItemProperty();
+		Property<Short> getSequenceProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<String> getDiscountExprProperty();
+	}
+	
 	public interface ItemAddInfoProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -104,6 +105,15 @@ public class ItemDAO {
 	
 	public static LinkedList<Item> getList(AONContext ctx, ItemFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Item> getFullList(AONContext ctx, ItemFilter filter) {
+		LinkedList<Item> list = getList(ctx, filter);
+		for (int i = 0; i < list.size(); i++) {
+			Integer id = list.get(i).getId();
+			list.get(i).setItemComposition(ItemCompositionDAO.getList(ctx, f -> f.getItemProperty().eq(id)));
+		}
+		return list;
 	}
 	
 	public static Item save(AONContext ctx, Item item) {

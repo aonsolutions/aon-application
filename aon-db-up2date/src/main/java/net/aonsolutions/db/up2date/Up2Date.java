@@ -19,6 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
+import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
 import net.aonsolutions.db.up2date.payroll.ContractTransfromUnify;
@@ -237,7 +239,7 @@ public class Up2Date {
     		//AlterSalaryEmbargo.ALTERSALARYEMBARGO,
     		//Holidays2022Update.HOLIDAYS2022UPDATE,
     		//Art1512022Update.ART1512022UPDATE,
-    		//ContractAttachUpdate.CONTRACTATTACHUPDATE
+    		//ContractAttachUpdate.CONTRACTATTACHUPDATE,
     		//AlterSalaryDeduction.ALTERSALARYDEDUCTION,
     		//TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII,
     		//TaskAddEvaluation.TASK_ADD_EVALUATION,
@@ -257,10 +259,10 @@ public class Up2Date {
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
 	   	//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
     		AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
-    		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
-    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
     		ContractTransfromUnify.CONTRACTTRANSFORMUNIFY
-
+    		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
+    		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
+    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL
     };
 
     

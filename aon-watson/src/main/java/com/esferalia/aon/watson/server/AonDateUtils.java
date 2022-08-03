@@ -539,6 +539,20 @@ public class AonDateUtils {
 	}
 
 	/**
+	 * Devuelve el dia del año de la fecha indicada.
+	 * 
+	 * @param date
+	 *            La fecha de la que se desea saber el dia del año.
+	 * @return El dia del año.
+	 */
+	public static int getDayOfYear(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.DAY_OF_YEAR);
+	}
+
+	
+	/**
 	 * Devuelve la hora del dia de la fecha indicada.
 	 * 
 	 * @param date
