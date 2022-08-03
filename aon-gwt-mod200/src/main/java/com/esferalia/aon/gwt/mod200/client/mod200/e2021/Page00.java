@@ -159,14 +159,26 @@ public class Page00 extends PageAbs {
 		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
 		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
 		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
+		
 		periodType.setSelectedIndex(callback.getMod200Object().getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
 		periodStart.setValue(callback.getMod200Object().getMod200().getPeriodStart() );
 		periodEnd.setValue(callback.getMod200Object().getMod200().getPeriodEnd() );
+		
+		if (callback.getMod200Object().getMod200().getBalanceType() == null) {
+			callback.getMod200Object().getMod200().setBalanceType(BalanceType.ABREVIADO);
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0051, true);
+		}
 		int index = callback.getMod200Object().getMod200().getBalanceType().ordinal();
 		balanceSheetType.setSelectedIndex(index);
+
 		index = callback.getMod200Object().getMod200().getEcpnType().ordinal();
 		ecpnType.setSelectedIndex(index);
+		
+		if (callback.getMod200Object().getMod200().getPygType() == null) {
+			callback.getMod200Object().getMod200().setPygType(BalanceType.ABREVIADO);
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002021Key.C0054, true);
+		}		
 		index = callback.getMod200Object().getMod200().getPygType().ordinal();
 		profitAndLossType.setSelectedIndex(index);
 		

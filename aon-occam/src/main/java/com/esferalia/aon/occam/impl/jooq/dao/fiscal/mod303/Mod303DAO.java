@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccSctiptMVELContext;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -38,12 +37,12 @@ import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 
 public class Mod303DAO extends FiscalModelDAO {
-	
 	public static Stream<Mod303> getMod303s(AONContext ctx,int domain, FiscalModelFilter filter) {
 		return FiscalModelDAO.getFullFiscalModels(ctx,domain,FiscalModelType.M303,filter, Mod303::new);
 	}
@@ -188,14 +187,14 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	public static Mod303 markAsPending(AONContext ctx,Mod303 mod303) {
 		FiscalModelValidation.statusChange(mod303, FiscalStatus.PENDING);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod303);
 		mod303.setStatus(FiscalStatus.PENDING);
 		mod303.setDeclarationResult(null);
 		mod303.setDeclarationResultType(null);
-		Finance finance = mod303.getFinance();
 		mod303.setFinance(null);
 		mod303 = save(ctx, mod303);
-		if (finance != null) {
-			FinanceDAO.delete(ctx, finance.getId());
+		if (oldFinanceId != null && AonNumberUtils.notEquals(oldFinanceId, mod303.getFinanceId())) {
+			FinanceDAO.delete(ctx, oldFinanceId);
 		}
 		return mod303;
 	}
@@ -209,8 +208,13 @@ public class Mod303DAO extends FiscalModelDAO {
 	
 	public static Mod303 markAsFinished(AONContext ctx,Mod303 mod303) {
 		FiscalModelValidation.statusChange(mod303, FiscalStatus.FINISHED);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod303);
 		mod303 = FiscalModelDAO.finish(ctx, mod303);
-		return save(ctx, mod303);
+		mod303 = save(ctx, mod303);
+		if (oldFinanceId != null && AonNumberUtils.notEquals(oldFinanceId, mod303.getFinanceId())) {
+			FinanceDAO.delete(ctx, oldFinanceId);
+		}
+		return mod303;
 	}
 
 	public static Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {

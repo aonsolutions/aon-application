@@ -25,6 +25,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.IrpfRegularization;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGeozoneIrpf;
+import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
@@ -1633,6 +1634,7 @@ public class IrpfCalculator {
 		irpfData.setLabourProlongation(ctx.getProlongacionLaboral());
 		irpfData.setMovingDate(ctx.getMovilidadGeografica() ? new Date() : null);
 		irpfData.setDisabilityLevel(toDisabilityLevel(ctx.getDiscapacidad(), ctx.getMovilidadReducida()));
+		irpfData.setDeductHomeLoan(toDeductHomeLoan(retenidoSalida2022.getPagoPrestamosVivienda()));
 		irpfOutcome.setIrpfData(irpfData);
 
 		// DATOS ECONOMICOS
@@ -1942,6 +1944,10 @@ public class IrpfCalculator {
 			return null;
 		}
 
+	}
+
+	private static <T> DeductHomeLoan toDeductHomeLoan(T pagoPrestamosdeVivienda) {
+		return pagoPrestamosdeVivienda == null ? null : DeductHomeLoan.AFTER_01_01_2001; 
 	}
 
 	private static IrpfRegularizationReason toIrpfRegularizationReason(int causa) {

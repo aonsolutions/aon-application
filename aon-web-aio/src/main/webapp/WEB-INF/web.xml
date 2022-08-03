@@ -204,6 +204,25 @@
 		<url-pattern>*.contractImage</url-pattern>
 	</servlet-mapping>
 
+	<!-- SignIn with Fnmt Servlet -->
+	<servlet>
+		<servlet-name>OAuth2FnmtServlet</servlet-name>
+		<servlet-class>com.code.aon.oauth2.fnmt.FnmtAuthorizationCodeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuth2FnmtServlet</servlet-name>
+		<url-pattern>/fnmtoauth2/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FnmtLoginCallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.oauth2.fnmt.FnmtLoginCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FnmtLoginCallbackServlet</servlet-name>
+		<url-pattern>/fnmtLoginPopupClose/*</url-pattern>
+	</servlet-mapping>
+
 	<!-- SignIn with Amazon Servlet -->
 	<servlet>
 		<servlet-name>OAuth2AmazonServlet</servlet-name>

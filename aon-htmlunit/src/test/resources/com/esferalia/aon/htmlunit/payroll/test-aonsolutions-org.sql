@@ -7903,6 +7903,8 @@ CREATE TABLE `auth` (
 
 LOCK TABLES `auth` WRITE;
 /*!40000 ALTER TABLE `auth` DISABLE KEYS */;
+INSERT INTO `auth` VALUES
+('åKwﬁÌ∂ÊB¨\0','admin@aonsolutions.org','0DPiKuNIrrVmD8IUCuw1hQxNqZc=','ADMIN','','44679529M','');
 /*!40000 ALTER TABLE `auth` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -12949,7 +12951,7 @@ CREATE TABLE `contract` (
   CONSTRAINT `FK_CONTRACT_ENTERPRISE_CCC` FOREIGN KEY (`enterprise_ccc`) REFERENCES `enterprise_ccc` (`id`),
   CONSTRAINT `FK_CONTRACT_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
   CONSTRAINT `FK_CONTRACT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6049 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
+) ENGINE=InnoDB AUTO_INCREMENT=6052 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -13244,7 +13246,10 @@ INSERT INTO `contract` VALUES
 (6044,8777,8628690,8417,1166,'2022-05-07',NULL,NULL,NULL,0,NULL,'2022-05-07',1447,0,NULL,NULL,0,NULL),
 (6046,8777,8628694,8419,1166,'2022-07-13','2022-07-15',NULL,NULL,0,NULL,'2022-07-13',1447,0,NULL,'ENCARGADO',0,5906),
 (6047,8782,8628695,8375,1179,'2022-07-13','2022-07-15',NULL,NULL,0,NULL,'2022-07-13',1451,0,NULL,'Actores',0,6132),
-(6048,8780,8628696,8367,1168,'2022-07-24',NULL,NULL,NULL,0,NULL,'2022-07-24',1449,0,NULL,NULL,0,NULL);
+(6048,8780,8628696,8367,1168,'2022-07-24',NULL,NULL,NULL,0,NULL,'2022-07-24',1449,0,NULL,NULL,0,NULL),
+(6049,8777,8628697,8362,1166,'2022-07-01',NULL,NULL,NULL,0,NULL,'2022-07-01',1447,0,NULL,NULL,0,NULL),
+(6050,8777,8628698,8362,1166,'2022-01-01',NULL,NULL,NULL,0,NULL,'2022-01-01',1447,0,NULL,'Emperor\'s Royal Guard',0,6084),
+(6051,8777,8628700,8362,1166,'2022-01-01',NULL,NULL,NULL,0,NULL,'2022-01-01',1447,0,NULL,'X-Wing Pilot',0,6084);
 /*!40000 ALTER TABLE `contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -13651,7 +13656,7 @@ CREATE TABLE `contract_data` (
   KEY `IDX_CONTRACT_DATA_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRACT_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57873 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
+) ENGINE=InnoDB AUTO_INCREMENT=57884 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -15526,7 +15531,15 @@ INSERT INTO `contract_data` VALUES
 (57869,8780,'COEFICIENTE_PARCIALIDAD',6048,'1.0','2022-07-24',NULL),
 (57870,8780,'JORNADAS_REALES',6048,'1','2022-07-24',NULL),
 (57871,8780,'TIEMPO_COMPLETO',6048,'false','2022-07-24',NULL),
-(57872,8780,'COTIZACION_MENSUAL',6048,'false','2022-07-24',NULL);
+(57872,8780,'COTIZACION_MENSUAL',6048,'false','2022-07-24',NULL),
+(57873,8777,'TC2',6049,'\"100\"','2022-07-01',NULL),
+(57874,8777,'GRUPO_COTIZACION',6049,'\"03\"','2022-07-01',NULL),
+(57875,8777,'SALARIO_ANUAL',6049,'50000','2022-07-01',NULL),
+(57877,8777,'PAGAS',6049,'12','2022-07-01',NULL),
+(57878,8777,'TC2',6050,'\"100\"','2022-01-01',NULL),
+(57879,8777,'GRUPO_COTIZACION',6050,'\"03\"','2022-01-01',NULL),
+(57882,8777,'TC2',6051,'\"100\"','2022-01-01',NULL),
+(57883,8777,'GRUPO_COTIZACION',6051,'\"03\"','2022-01-01',NULL);
 /*!40000 ALTER TABLE `contract_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -15669,7 +15682,7 @@ CREATE TABLE `contract_info` (
   KEY `IDX_CONTRACT_INFO_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRACT_INFO_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48428 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion temporal del Contrato';
+) ENGINE=InnoDB AUTO_INCREMENT=48437 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion temporal del Contrato';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -16632,7 +16645,16 @@ INSERT INTO `contract_info` VALUES
 (48424,8782,6047,'SEPE_CONTRATO','PENDING','2022-07-13','2022-07-15','admin','2022-07-13 00:06:01',NULL,NULL),
 (48425,8782,6047,'SS_ALTA','PENDING','2022-07-13','2022-07-15','admin','2022-07-13 00:06:01',NULL,NULL),
 (48426,8780,6048,'SEPE_CONTRATO','PENDING','2022-07-24',NULL,'admin','2022-07-24 16:02:33',NULL,NULL),
-(48427,8780,6048,'SS_ALTA','PENDING','2022-07-24',NULL,'admin','2022-07-24 16:02:33',NULL,NULL);
+(48427,8780,6048,'SS_ALTA','PENDING','2022-07-24',NULL,'admin','2022-07-24 16:02:33',NULL,NULL),
+(48428,8777,6049,'OPCION_CONTRATO','\"INDEFINITE_OPT1\"','2022-07-01',NULL,NULL,NULL,NULL,NULL),
+(48429,8777,6049,'SEPE_CONTRATO','PENDING','2022-07-01',NULL,'admin','2022-07-27 23:48:19',NULL,NULL),
+(48430,8777,6049,'SS_ALTA','PENDING','2022-07-01',NULL,'admin','2022-07-27 23:48:19',NULL,NULL),
+(48431,8777,6050,'OPCION_CONTRATO','\"INDEFINITE_OPT1\"','2022-01-01',NULL,NULL,NULL,NULL,NULL),
+(48432,8777,6050,'SEPE_CONTRATO','PENDING','2022-01-01',NULL,'admin','2022-07-29 11:00:00',NULL,NULL),
+(48433,8777,6050,'SS_ALTA','PENDING','2022-01-01',NULL,'admin','2022-07-29 11:00:00',NULL,NULL),
+(48434,8777,6051,'OPCION_CONTRATO','\"INDEFINITE_OPT1\"','2022-01-01',NULL,NULL,NULL,NULL,NULL),
+(48435,8777,6051,'SEPE_CONTRATO','PENDING','2022-01-01',NULL,'admin','2022-08-02 22:19:31',NULL,NULL),
+(48436,8777,6051,'SS_ALTA','PENDING','2022-01-01',NULL,'admin','2022-08-02 22:19:31',NULL,NULL);
 /*!40000 ALTER TABLE `contract_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -16816,7 +16838,7 @@ CREATE TABLE `contract_payment` (
   CONSTRAINT `FK_CONTRACT_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29176 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
+) ENGINE=InnoDB AUTO_INCREMENT=29177 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -17111,7 +17133,8 @@ INSERT INTO `contract_payment` VALUES
 (29171,8777,NULL,5934,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2018-05-01',NULL,'2021-12-31',0),
 (29172,8777,NULL,5934,6179,'SALARIO BASE MENSUAL',0,NULL,NULL,NULL,'2022-01-01',NULL,NULL,0),
 (29173,8777,1,5934,NULL,'SUPLEMENTO BRUTO',0,'/*read-only*/BRUTO(2000.00)/**/','_P','_P','2022-01-01',NULL,NULL,0),
-(29175,8780,1,6048,NULL,'SALARIO BASE',0,'JORNADAS_REALES * 63.92','_P','_P','2022-07-01',NULL,NULL,0);
+(29175,8780,1,6048,NULL,'SALARIO BASE',0,'JORNADAS_REALES * 63.92','_P','_P','2022-07-01',NULL,NULL,0),
+(29176,8777,NULL,6049,6178,' SALARIO BASE ANUAL',0,NULL,NULL,NULL,'2022-07-01',NULL,NULL,0);
 /*!40000 ALTER TABLE `contract_payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18151,8 +18174,8 @@ LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
 INSERT INTO `domain` VALUES
 (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2020-12-09 20:01:33'),
-(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-07-14 23:00:06'),
-(8777,'general-payroll-test.aonsolutions.org','R√âGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-07-14 23:00:12'),
+(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2022-07-28 00:16:25',NULL,'admin','2022-08-02 23:08:09'),
+(8777,'general-payroll-test.aonsolutions.org','R√âGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-08-03 00:38:21'),
 (8778,'trainning-payroll-test.aonsolutions.org','FORMACI√ìN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2022-07-13 21:11:32'),
 (8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),
 (8780,'agrarian-payroll-test.aonsolutions.org','R√âGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2022-06-21 21:35:17'),
@@ -18184,7 +18207,7 @@ CREATE TABLE `domain_app` (
   PRIMARY KEY (`id`),
   KEY `IDX_DOMAIN_APP_DOMAIN` (`domain`),
   CONSTRAINT `FK_DOMAIN_APP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -18194,7 +18217,10 @@ CREATE TABLE `domain_app` (
 LOCK TABLES `domain_app` WRITE;
 /*!40000 ALTER TABLE `domain_app` DISABLE KEYS */;
 INSERT INTO `domain_app` VALUES
-(1,8776,6,0);
+(1,8776,6,0),
+(2,8776,11,0),
+(3,8776,9,0),
+(4,8776,15,1);
 /*!40000 ALTER TABLE `domain_app` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18263,7 +18289,7 @@ CREATE TABLE `domain_application_module` (
   KEY `IDX_DOMAIN_APPLICATION_MODULE_DOMAIN` (`domain`),
   CONSTRAINT `FK_DOMAIN_APPLICATION_MODULE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION` FOREIGN KEY (`domain_application`) REFERENCES `domain_application` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32077 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
+) ENGINE=InnoDB AUTO_INCREMENT=32083 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -18293,7 +18319,13 @@ INSERT INTO `domain_application_module` VALUES
 (32073,8790,10052,23),
 (32074,8776,10038,14),
 (32075,8776,10038,22),
-(32076,8791,10053,23);
+(32076,8791,10053,23),
+(32077,8776,10038,7),
+(32078,8776,10038,24),
+(32079,8776,10038,9),
+(32080,8776,10038,15),
+(32081,8776,10038,6),
+(32082,8776,10038,21);
 /*!40000 ALTER TABLE `domain_application_module` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -30737,7 +30769,7 @@ CREATE TABLE `irpf_data` (
   KEY `IDX_IRPF_DATA_DOMAIN` (`domain`),
   CONSTRAINT `FK_IRPF_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_IRPF_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dator de irpf';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dator de irpf';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -30747,7 +30779,8 @@ CREATE TABLE `irpf_data` (
 LOCK TABLES `irpf_data` WRITE;
 /*!40000 ALTER TABLE `irpf_data` DISABLE KEYS */;
 INSERT INTO `irpf_data` VALUES
-(1,8777,5934,1,'98335497D',1,1,NULL,0,2,'2018-05-30',NULL,0,'2018-05-30',NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,0,0);
+(1,8777,5934,1,'98335497D',1,1,NULL,0,2,'2018-05-30',NULL,0,'2018-05-30',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),
+(2,8777,6051,NULL,NULL,NULL,0,NULL,0,NULL,'2022-01-01',NULL,0,'2022-01-01',NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,0,0);
 /*!40000 ALTER TABLE `irpf_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -32783,7 +32816,10 @@ INSERT INTO `person` VALUES
 (8628693,8777,NULL,2,0,NULL,'INDEFINIDO','ART. 151','CONTRATO'),
 (8628694,8777,NULL,0,5,NULL,'INDEFINIDO','ART. 151','CONTRATO'),
 (8628695,8782,NULL,0,5,NULL,'CORTA DURACION','ART. 151','CONTRATO'),
-(8628696,8780,NULL,0,5,NULL,'CGC','PORCENTAJE','');
+(8628696,8780,NULL,0,5,NULL,'CGC','PORCENTAJE',''),
+(8628697,8777,NULL,0,5,'1234567890','REGULARIZACI√ìN','IRPF',''),
+(8628698,8777,NULL,0,5,NULL,'ATRASOS','IRPF',''),
+(8628700,8777,NULL,0,5,NULL,'VIVIENDA','IRPF','DEDUCCION');
 /*!40000 ALTER TABLE `person` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -34874,7 +34910,7 @@ CREATE TABLE `raddress` (
   CONSTRAINT `FK_RADDRESS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RADDRESS_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`),
   CONSTRAINT `FK_RADDRESS_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7730615 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=7730616 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35133,7 +35169,8 @@ INSERT INTO `raddress` VALUES
 (7730611,8782,8628645,0,NULL,'CL','.','.','','','','',133917,NULL,'28079'),
 (7730612,8790,8628664,0,NULL,'CL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (7730613,8777,8628666,0,NULL,'CL','.','.','','','','',133917,NULL,'28079'),
-(7730614,8791,8628685,0,NULL,'CL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+(7730614,8791,8628685,0,NULL,'CL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(7730615,8777,8628697,0,NULL,'CL','.','.','','','','DENIA',133935,NULL,'46093');
 /*!40000 ALTER TABLE `raddress` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -35171,7 +35208,7 @@ CREATE TABLE `rattach` (
   CONSTRAINT `FK_RATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RATTACH_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_RATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=68241 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=68244 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35223,7 +35260,10 @@ INSERT INTO `rattach` VALUES
 (68236,8790,8628664,NULL,3,'20201209195350','#\n#Wed Dec 09 19:53:50 CET 2020\nparent=payroll-test.aonsolutions.org\nmaxTotalDocumentSize=100\nautoUpdate=true\nnumberOfUsers=0\nname=sistem-red-payroll-test.aonsolutions.org\ndomainManagement=false\ntype=ENTERPRISE\nuser=admin\nmodules=AON_FINANCE\n',12,NULL,0,'2020-12-09',NULL,NULL,'admin','2020-12-09 19:53:50',NULL,NULL),
 (68238,8776,8628387,NULL,3,'20201210155150','#\n#Thu Dec 10 15:51:50 CET 2020\nmaxTotalDocumentSize=100\nnumberOfUsers=1\nname=payroll-test.aonsolutions.org\ndomainManagement=true\ntype=CONSULTANCY\nuser=admin\nmodules=PAYROLL PAYROLL_PORTAL FINANCE_PORTAL\n',12,NULL,0,'2020-12-10',NULL,NULL,'admin','2020-12-10 15:51:50',NULL,NULL),
 (68239,8776,8628665,NULL,36,'TGSSHIDE(jg@FNMT)','0Ä0Ä	*ÜHÜ˜\r†Ä$ÄÇË0Ä0Ä	*ÜHÜ˜\r†Ä$ÄÇË0ÇÑ0ÇÄ*ÜHÜ˜\r\n†Ç˚0Ç˜0)\n*ÜHÜ˜\r0Ø	|eWÀƒånî\r∞€É;\0»\0Ç»ZJœ\"Øp§§ÎNùL≠8q¿í/π}∫#0ÿèÎ⁄»‘\nb™\níí|˙ïp°AQöz\Zjnß–È!Õúî˙⁄ø+˚¢z.mhﬁß‘≥™/\0V\n∏Pœ˝v§ëß7ÄÌπÂ\rÑ\Zº›µï$*,ÔË†Ù\rÏ±˛ÙR≠ÿwd1ÅoY∞	ŒÜ\\í´1YVhﬂËf9Gñy})ÚKÈâÒêá◊∑zwjò∞È\nÿ@,Õıl+_{\ZW˘^Ã#≤êWC˝Ü..¥0aUÃﬂWÂV÷Eè˛2NÁÎ[”“7`hQ<°%‰|¡ﬂ»yärÚ,≥“∑…Ñi∑◊\\Öﬁ1Akı¡\"´±ó•L∏r>—∑¢ÍªGå»ãΩì›s&Iª√ÿ∞˜$i(¡…π˝wO03è˝-æ9“[K≈Ò\ZoâY-‚«I≈≤#Ê;±Æ†öu\0\'„å©ÖaﬂÑ5≤—‘\'dê;∑§#^ﬂ%Há[¢@îRL¯&´ﬁ‰÷NÑ8£ê?6Y}é<—¶%5<’<µê·√√L®I∞‹~Wáâ¢éÀ`ü$ã∑]∑„ì˚Jæ•ï˙=ßRü»ÑD’!gº≥ß≤Jë {k1lÆ≠z§¿@ˆY	≥Ód\n˛˜) ﬂ/†Y˙z’9uk|ÕXtF£õªÈ≈›Ò>x4‘A3î· KS	VßÂì1öuRùÀöO∑≠+P6°êP+√mëõ±B®\Za∫Iª˘[âüF∂‰Nûß*ÍÌ¢˛ÄÃ≈Â÷êÃu‚K|A–_µ™:™\'âc»¢j¨\'d√,∆¢·‰Âß\0PFxaŸ∂VôîÑ≈<&∂Hlj:àó3“óRt!·óæL‰e˙•∂G…bçÇêÿã›¸[ﬁøv4g1é,ﬂN{Ä&Ié≥^H7r@øª!’9<≥⁄ëj;/æ¡bl¡HÑ34ImZPÕAß¬çP4M∫’ÖÕú$	∑.ûJΩ2úY>^ï_zã„∆«Z±ÆpxÌÖs≠\"+1≥rjÜìëß±jøIíB-çeA„2vñ/\r¨~*‡≠ÕÅrZYP(Ó≤uVlx/óL¬	ƒ;	CdËI\"⁄*æ©®≥tU¢Rÿê™∂ªJR\"ÍVõ+	€;í±]SÚúÃûéÇ\rûå{qÀ˚’â5$∂¿äv¡îÌ}uØ‚Ü”Ea O\0ÇË5~\\9È,SÃﬂ\nÏ:T‡6VB~°Ç†;¥‡q˛“A“˜µ∏eÙ›G˘‡‹&´v»ê—Ñ€óß{û7ˇÑ6Ôôvn‹π≥´`îQIÊ∂\'^¢BÌä§:‹çrCÎ[∑O+-I‚’ª¢I~†1Ë_üS`©ìrD#8»Á†Íjê≠•≤∂∏iãÑ`6pyö◊\ZFÁ‰ãb*\Zfü`∑¬B∆·¶Ù€¯D,¢Hõ‚Ó)æ^;íbJØ|~9î¡éLK√¡\ZÈÉ$ÕM“ﬂ˘@\Z‰ßp—pyµçÁl¬Ø9™LéÁÓ[	·Ç7çH%ë=©˝ÃMÕŸ¢Á≤c˝A˙©â0Øë@—Åÿó‘-í™√ˇUCëegÊ{Zuû◊p∫Ì‡«¿è\0¡#‘%ç·™à<\ruÈ≠0H®k§¸.ëoÆ]!•E¶∂1r0#	*ÜHÜ˜\r	1y;£)Iw°(DüÚ%‘‚ßœé0K	*ÜHÜ˜\r	1><\0G\0A\0R\0C\0I\0A\0_\0P\0E\0R\0E\0Z\0_\0J\0U\0L\0I\0O\0_\0_\0_\01\06\02\06\02\08\03\05\0H\0\0\0\0\0\00Ä	*ÜHÜ˜\r†Ä0Ä\00Ä	*ÜHÜ˜\r0)\n*ÜHÜ˜\r0ÙV—ï8Eﬁ–øØﬂZ$˘ám\0»\0†ÄÇËVìD¢÷PyãQ´Í∫sÙAˆZÛ&L)ƒ8◊T6‘LW¸€ ˇª‡≠>i±)Ìljèt°7a·û¸jÜeçk4°ä8ˇl~Æì!«t$üH˘h[¢Bÿ˙3Ú#$AáVÛﬁÑˆ`äXHÆP[Å®ú⁄7∑IìpfûÓ˙ÙLÙπ£U5Û˚DSA,ZªYäÀ¡X0ΩöMÊ<¸IÃΩªJµÈ˜å»î†A .À{p{πØˇÑ¢RpÂ˝Ü’†›G*ˆ•¡‹⁄a¡\"+55Õûx›KéY†5È[xp∞‹mÇ«UM|ìoæ`ÓÖ@îå¶Üç.2˘¢é4=—∏Ì˛¡É∫Èjt’—PYJr¿ë;¢∂öÑëë\Zó,¯Úp¬ #\"¥s≤\"gf·S$/ô7¢[52Å?¶≈ΩLxd›AL‰√~—ÍQßˇüvZí»‚∆ \Z-*Vm\'Xà‘ˆ√Y	;Ì5¯·NΩîùYS◊v‹µ &ãé¬Q·D\'‡˚‚ê`œÎRAÎ– Fn›7˙m‘´Y11mŒ˘ö9`Û1tJ¶U⁄~ÙãZ¯EH&€ ∞»Q^[å;vYT\rïñ˚RÄ9|@•*ﬁ%–vv5S∞rÔ#ï	∏ÇËÇ4\Zà}ÜUÈYP∏Ä≈°æ=0Âx«\Z,—¯ª≠1›{Ë•¨?_¢çø¢o¯≤Ë‹–<•ßË64.,QcWÇætÔ	˘_T`w‡õÇõ4†ØEµb{˚ÌU1¸\Z}£$\"›?®}›´^Û,bNÊø]^…∏/∞\ZÈŒﬂ&.I*v56äπ:˜Sﬂ/Fπ1 ˜Ám4æó&ôPùûÅqúåÅ€7åa⁄úMK)¸&”V≈8‚?û@üÌ*ı…ëœT÷Ù,ÀÁYVØà∆ªÉEæjΩı4m\"êVÉËH ‚TrBÍ¸€˝ÀﬂŸñ>ÊóàÍ;’œaÃîW¡ﬂÙﬁ{Á≠–aÅW<\0”\ZW»€qyÀ⁄”˜\nrÇ1ÖE!ç√\\‰ÄoÍJ—,P∞fá¨∂Åç]kπUI´#˘B‡EmË∑øGXSIíYc˜2≠WÁ4⁄Õ÷N…Õbv¬ç•ò¡Ω~NΩ≈Ø¨ÎDƒX\\øÌ‰>ëºŒ…@Õ–ì´9∞ÃÉ™iZŸ0]|b©\r>#íÉ2^]lËÑ„üí\Z ?x˝¬ãF¡5Uù¿Ÿ°°ıªÒ|ƒÎWXn>\'@[ÇMÎFW´—H ≠O∏e ı…‹ÖSO≤HÁ}u`ˆ6ÍºF€R,\rqÏÁ⁄úKl&≥¬˜6ÚÇ’⁄yq=ƒh¯5<}±-«%WŸPì¬–Ï£V@ª\"≠¶Aw xB~=‡ÇËPåå’iÙæi™QBm?Á±NFÙØ√˝\0¸\\€cM8Ô\\lZÊõÄΩG€EÎÃ;(µXâûDÎ%ùû >T©òÉ®q;£»5Hesf˜,Ìq]E\rq\Z§ÊWq’4ÆBáP‡ 9Åb;<NIRUù£“n«[áIæê≤<QTCnã]%í=\ZõÓëÑfX]Ï◊fájÀ\0éÊ¨[Î˙.dP√˛ë˜Y\n≈ø¿´˝Yïè[à¥.QØñ«\n¢eÕ›ó//⁄⁄Ø∑˝+Fù±îÒ¿	tl‘8,»ˆ¡¿:˘ª)À.ªÄË’8‰˘—ç€ßpÅØDô«\0}\"ò∂É£˘q\0”ì£\rò“©FeSq∫Gr:·˙´ËŸV:Ñ5XJ¢Aì˝œîzá®á” /grÑü¯	ïôılÏ®o\0uOlEzâbFK¯Yì˛Ö¡ÎK¸î¿«‚=§µ_Ö&–û∆}‹»4Nœ{Ï¥éQmPoæí¥v¸MgP¬ñBx≥/ º7¿\'S§pè¨¥ã,\'/f=å2JZÅ|(él>§º›∏BF>ærrìN÷coºö\\ºª•õ˛ì˜\nØ¡£a«ﬁ¡dV\\à»Å∫…a	vÇË_é£:£fñ5ˆ*c?„h±‚ï˘…áÅ\".ÃÒ>¸#hPZ‡ÆPˇégØ0∑Ú“Ó»–ÑÙãYßÕ˚úÙ[bΩGê|ìM‰ ]ÚöAâ£0]^CsÊ⁄xŒ6ä v®ç>#>|Ê|&dµ 	•ô4†ìπ•Ø˛W•lk%ı$Ì@`%ìs∑›|úòÃ-ı≥uÔÏ3Æa7Ö35Üq e±0, Xﬂ«:ñ(x%¶âyVk2áˇ ä)s∞{8Ä;ï{çk% œ⁄qB1¸5!P`~OSÖπçD”xuõò«õHïÔBºÿÜﬁ3õ/3⁄jJGÕw˚iÊ_ë~ÔS√`ë˚m/ã\"¸Ó ˛V˚˙rÌäp¥A+\\øuôm=†)√FÇóù*SÉ$+ßé7_ÎC4c¸ÚêKIÅbÊY*ä\'ö”gôi4yÿvdÄ·ú+∏âÿ¢-p“∞Ú;ø>YxPig69o®Öc$ËÂ„é7Ï≤ÖÍïV˙€6Ú”Ó…G1÷Ä◊˙◊8»ÊÑz˜öàFˆP¯ß=tTS≥™∏≥¸¥π‚›¥—B˘“&\ræk…òäÒ±ã;x:àpÔD©ÎYÂÌàr˜«BéÕ\n”Ñj\nıP¥ﬁÙõAºäâx,ÌiÖŸêÂ‡⁄∏ClvÄç6÷1…È’«ÏΩ·=\'1≤Ò∑lk]hc;6Sπ(CÄ¯˘wÚıìÅ˙∏;–∂ﬁêéÇË√}|Ø¶∞v7ÙAWwÑ.XHˇŸ∆œn∑åÙ]ÇN±Y7‹.õ¬4ﬂŒ9≤å§ã]A~Yô€;{∏,UØÍ∆G{T€ÿÍOæπÏRï≥uõ%h‡óSô÷√÷àÒÍõ‡ñûik_Z¡îk¬E‘Fá∑¶tc\ZÌc ⁄•æi‡V®µì-ƒôëcåÓˇ˛Zé\\K£]Å)\\/Y[†ä*VQç˘5ßˆ¶ΩË©\nCu)≠\\¡5‹œ∞rµx{Ìçº9ŒË$˜2Eü⁄Öv<å@ó°∏§÷jaÁg««Ípô$∑\"`‹íò`ÌV⁄ŒÌƒ±∑\"Óç≤îÎaœ‰óõ|D«1z	ú\'˜+—ºÉ;^—ÎÚﬂ*BˆÏèÏﬂ$\rRV%A\\$&†™ﬂwæK`Ê†Ô1ÏPR˜°Sp”5Æ(›ùúΩÑÛ°-j\nÔıó+àŒ«Tá…bô®Jw}Cˇj;”zõå˛;·«e?A±\"n≤xü2[¡MFÂ≈òdÅÓ·h.∑óÇ˘¥˝—‡ßBXecÉ\0°`µFËÍp–÷◊\Z%5±9k»Ö‰9ü(õ÷\"≥€ÇXaÑ$[2êß7“5eVÎÍësw¨ÁáîÄZöV≈ÊÈ¸ø-ÑÕ≈Ñ:ÇË3G\'[d˙˜d–¥Íø°¶!˚ÅˆO*Ùæ!ˆå^÷‡sﬁ·¡ówÆ«Ãjp˝´\Zœvª•≈π\nf’~†\'¬Özuz4Ö\nÂü<S/fåÒ3¶}1ºf»Ωªdäìêï¥Ö˘•\\ÎiGÄ]3‘‹{@§—o$P˝Èê≥6ÔwwÕk⁄&ïÁÅ¸(kÏ∏ÒƒtÀÂ%_∂‘‡¡⁄Êì5@¿ö	á˘ÛƒeY\'ß2ëw..&MÎ€Í;\nPÌlcæ¿s>ÁÓó,Õc˛Á˚k√i(ÖwîyΩH◊8™†aü-„{ïU··≈&s£¥≠Ê€«ﬂË®o .FPê≤ã4NOÇ‹.w±ESúü®5ì›sÑ˘ΩA√Ê\\µ2)‘ÁÜsrr‰£}eOÄ#v#â•s√x2†ùsª´},Â©∞QÕ…ﬂäA42:I≤2ù?úijûk∫§∫ghËƒô0=≥Ìn_‘∑%äÆÄ∞ä\0©90»ﬂtô}k8“,ıh¿uár—ìŒú›S‹ÎQ\ZLˆîNÁÜl¢gƒgŒ]Á&OÚôødjœYÌµ¶TNÑ†p>Í~JåS‰jS´Uì=î/€zönNÄF‚ T©1»⁄e*¶‡Hƒı´|’ê[≤6Y2ïwÜ˜O˝Lˇ k∂õ|@uVôK—+H\0MF–ôŸ\\ñø”¸7†.s√Îv/F…(:[?®€\ZeRÔÏAníCÇË^\nÊH<ÊsYRçΩÔG]\Z˘ò¢©dX‡Ò	á¶≥ı%ﬂfÛÛ©o˘FZOi±~b#≠˘¿ª…oU\Z\rôg]ç≤Ÿ\\9¿≤âà1—Ñ.Œ≈“Ωv¿◊¯õñÄñéÛœcî2ãAD=1/\\&Ç3ÁS†HÔ”ÍQÒD‘I¿\\ÖÆnë¥˙2_„<ù|O€ë)B+[cä√U‘hO\0Ú„jKÄÒïo˜êå).}–.∑2ˇãz*å√Î\nTŸì{@f§rˇ>%J4N\\≤ )~i±ùπfé†¡YXäkß@)Ø»hÃ˘‚Ä‡	¬@Øãw8±x∂πEº»H≥‡Üâ£Àà¨(:¯Ö≠N\\ıa≠Nø\'<å‹™Ö0˛˚ã—,y¿.ù§Eù¡Öã—˛∏áwD-/ık1€¥3âC∑K\Z´òE9§µ ≥ò‰‘Õ/∂ #’äJjIåVG{£4	-¯è‡iÖ›€\"cfíßFùÌÕOQ~îëçÓ\0üú^ë+ûy£]s˜…™Uì{›l¢4¿vèRÖ∂Åyàà-∂SÒøè#≈Â}gMV›2ZÖX\n~W±p\'…Xc¿©fí7≤kÚ]÷\'ŒuWÇËzÆ(3ÍN-¨<°∞ŒÊ†ﬁi±Ö=˝ö\0Ò·¡+(+íòEÿo∂\Z∂∑±∞ìgYo˘i∑\"ÿ\nª0Ã¨Ù(Úyg^Cû√Yzwp√ ∑çÒùÇˇ$OK˚pË¶@©ñﬁ•Y£ñ˘àﬂz&ØﬁI{áYwh*˙YJÌ’§\r¡–!M:\r7m†n≠†¬#EÑ·\"{P»ÊZ7ôù5oƒ6≤‹z‡ìßúpÄ\r≥∆ÓÈCkx}—}iIáZΩ,ú“e_¿&Ö4Ñ@±√L&RnëU{@ÎÊ\nÄAjÓØÒQs\Z∞*TŒÙTø\ZΩìÕ∏6â<•[á¨®x1~Îk9\ZÚÀ¡⁄|2kKï, #D°D¢⁄÷N¢5ÍMLLΩ‹2ÄW0˙∞\"Hî¡e±qáŸQ–¡ˆ7á]Æ…0Àªw∂±∆Nd…jW~35	8Ø~úQ”Ñ§∏\rìB R\"9ò)ø{T=¢Ú›î∂é≤≥ñª{p≥FPï´ Å2éTˆÛæãV:u+∞«}ü|/z|F3ÿ®EÆ∏ûDö\nœb∏ˆın≤ÌX„≠\0Äõ#\Z/ñnÂ\0K?‡+o2ø´â®éV=}I4ÎU†,i.ê’duŸVœõ„¥V ∏\0·ÄòF{y[Tµ¡I∆ù\0u0ƒZ∂/p)Áz∑‘9v\n™«Ë÷[ ÍbˇÚ@Òœ}⁄iÜfÃu^Ut—A,◊”¬Îë\\>‘‘)ÇË-\rµ]ﬁv£ø8Ûy˜/ﬂ2ÓÉÅ}Wq›kå»É{≤ZN‹Ñl†ö¸S.ÚvRO¶)£|Ùèî+Ê%xçZ eúXØõ—Ò;SÅ¸Ÿ\"¨.<¶›ˇ;(ka:nDuT˜Ÿ,ºCàº«frqä¿x⁄¿ •\'â∏lØÙ±èSø›€Ø–Å ıæ—fXëYák·<ÃèÌÎEVH’7vÜWÕ≠2ÑÏ˙Mq\ZPTñ‚˘µWzkIÚ\"o™–&\ZMU«&≤;O√∞+&¿ööıL√Óπ›‰öD÷ËËÚ¿ g„i÷§ÎËg{D VjdÏ∆\nIÓ≠OG˜ôˆ”Û¿&ètÏfû†kuˇ?›äònÎíC¥/∆ï‡ˆ4ã≥\"òMNåÂ˙9gÉ≥_)’œ)0/†dD_îﬂ˘’˘…ê›Dú•°∞Ô_\Zc%Hˆ)\\õ¯ôËPiçíO∂Jhƒ”	ÂÌgÂÔyÖ+€¶)ÙN≠‰æE9b^ﬁùÀB‹íWO¯aw»˚^©˝ILïPLÏ∂Ï8Ò”†·ƒë¯\rjH&¬Ò¬¡-Etl1°ıó›H∞≈q⁄,›å¬4◊\0Q‡(fx∫\'ß‡¯‚;BÜêÓ\'ô\0 º`w§ïÖÿÇÉ∂`JqéäKåh}â’4åk~ìƒOúh˘«y9Pñ∏ÓuT™€ìW‘≥=”èøË©]∫ó@IìÖË¬ëìAúKx\"™öÔÛ8e%F\0ßSó÷aE≈…PJ5!/`\rπƒ”Œ~‘Î÷L“j(Ã¸≈jhCDÒd¯GH]‘A˝lÄ]+C˜ä	,≥R24wcA•GúgøˆÉÏâ∞¶?!80”åP/Ó\0K3ÆÿpÙ¨Ú\rÙÏA~\0˘\0∏\\∑åyÁ¶À≠3ËjÇhl˝i^Í◊÷Lâ~Ó\'58U˘(I?gDVkÛÚ˙Ωà?«ŒâB(¡¬ÊπG¶áï/ ã≈CLíXﬂp¢À$H¸k !íÏeúç,\'JËJ„ëHä\rBÍê∑kÏ5HcÆ\'ƒß‚SØ¸yÅ}ÎıF¨Ê†¥ﬁ∞§?DwûÕ_>ÜnóöÍÌõ≥Èøˇƒöu˝å!mòSzÆ,>2Åö´KÍ,69ëÊÆíLå\\iQç˜√õ,àÉÎQm’B≤íâéR$X;‡\'æC≈1![€D{x›TféÙ‹«ÈÚ4\'∑‚ÖÕ\Zvwùì*MÒ\\Öj‘≤≠r&íîúÏ<:<î§/(˝ö7`~Ñﬂ)n™7d¢ö-Â\\›àñ ‚Úp!ÿyW©z¯Æyﬂ.¢,(%v’¶˜ÆÄh§ªtp´ﬁÑéN2wESCç\n‡®™ƒ”W¥îHáÇP4FNÙHVgPÙFV!R%/:n©NÛÓ_;Ã‡w÷∏’5VEÎÔúJãûSÖ=h\Zú?bƒ`` c˚ﬂ¸ü=eÑÑóqÁKE–Q9]∏;\rS¿sˇË°[A∏ê(*\'ïF‹=S<TÔÌ>3ﬁî%£›gÒc™î\\Öí¡}≠º`ﬂû!Lx\nÂ‰if.EG„*{pí!ƒéúÇLX∏ª>Çt≤úü˚zWÑ\rtﬂp.˝±O\Z.h!´∞^D«Q˛SÁmıø1 E° ú5ÍñÏK¶h0)HróÆ˚%¨KM,§Ω◊jº/Vì>öSl>[∏hÌiPb	çà¢X=r5b–ù$ﬁÅÊ‘vÄÏçm[Ê◊‰5áºz\'†¯Î+qÈ⁄O·äyíŸ=ˆ∆Óå—9Ûø´ö„£»@Éœ∫yy)ûÉ·è‹\rÚpQ˘O\nπM›Ω\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\00>0!0	+\Z\0œΩ,`ïÏk1E‘‚π9¿{¡˙K5˘ﬁ1\0\\®]_<èDO˜ê\0\0\0',4,NULL,0,'2020-12-09',NULL,NULL,'admin','2021-12-09 19:59:07',NULL,'2020-12-09 19:02:39'),
-(68240,0,216081,NULL,3,'assimilated-payroll-test.aonsolutions.org','#\n#Thu Jun 30 17:19:49 CEST 2022\nparent=payroll-test.aonsolutions.org\nmaxTotalDocumentSize=100\nnumberOfUsers=0\nname=assimilated-payroll-test.aonsolutions.org\ndomainManagement=false\ntype=ENTERPRISE\nuser=admin\nmodules=AON_FINANCE\n',13,NULL,0,'2022-06-30',NULL,NULL,'admin','2022-06-30 17:19:49',NULL,NULL);
+(68240,0,216081,NULL,3,'assimilated-payroll-test.aonsolutions.org','#\n#Thu Jun 30 17:19:49 CEST 2022\nparent=payroll-test.aonsolutions.org\nmaxTotalDocumentSize=100\nnumberOfUsers=0\nname=assimilated-payroll-test.aonsolutions.org\ndomainManagement=false\ntype=ENTERPRISE\nuser=admin\nmodules=AON_FINANCE\n',13,NULL,0,'2022-06-30',NULL,NULL,'admin','2022-06-30 17:19:49',NULL,NULL),
+(68241,8776,8628387,NULL,3,'20220727235237','#\n#Wed Jul 27 23:52:37 CEST 2022\nmaxTotalDocumentSize=100\nnumberOfUsers=1\nname=payroll-test.aonsolutions.org\ndomainManagement=true\ntype=CONSULTANCY\nuser=admin\nmodules=FISCAL PAYROLL PAYROLL_PORTAL FINANCE_PORTAL\n',12,NULL,0,'2022-07-27',NULL,NULL,'admin','2022-07-27 23:52:37',NULL,NULL),
+(68242,8776,8628387,NULL,3,'20220728001625','#\n#Thu Jul 28 00:16:25 CEST 2022\nmaxTotalDocumentSize=100\nnumberOfUsers=1\nname=payroll-test.aonsolutions.org\ndomainManagement=true\ntype=CONSULTANCY\nuser=admin\nmodules=FISCAL PAYROLL SUITE_PORTAL PAYROLL_PORTAL FINANCE_PORTAL\n',12,NULL,0,'2022-07-28',NULL,NULL,'admin','2022-07-28 00:16:25',NULL,NULL),
+(68243,8776,8628387,NULL,3,'20220728001711','#\n#Thu Jul 28 00:17:11 CEST 2022\nmaxTotalDocumentSize=100\nnumberOfUsers=1\nname=payroll-test.aonsolutions.org\ndomainManagement=true\ntype=CONSULTANCY\nuser=admin\napps=PACK_SUITE\n',12,NULL,0,'2022-07-28',NULL,NULL,'admin','2022-07-28 00:17:11','admin','2022-07-28 00:17:11');
 /*!40000 ALTER TABLE `rattach` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -39103,7 +39143,7 @@ CREATE TABLE `registry` (
   KEY `IDX_REGISTRY_DOCUMENT` (`document`),
   KEY `IDX_REGISTRY_DOMAIN` (`domain`),
   CONSTRAINT `FK_REGISTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8628697 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
+) ENGINE=InnoDB AUTO_INCREMENT=8628701 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39419,7 +39459,11 @@ INSERT INTO `registry` VALUES
 (8628693,8777,NULL,0,'ES','ART. 151 CONTRATO, INDEFINIDO',NULL,NULL,'ES',0),
 (8628694,8777,NULL,0,'ES','ART. 151 CONTRATO, INDEFINIDO',NULL,NULL,'ES',0),
 (8628695,8782,NULL,0,'ES','ART. 151 CONTRATO, CORTA DURACION',NULL,NULL,'ES',0),
-(8628696,8780,NULL,0,'ES','PORCENTAJE , CGC',NULL,NULL,'ES',0);
+(8628696,8780,NULL,0,'ES','PORCENTAJE , CGC',NULL,NULL,'ES',0),
+(8628697,8777,'ESPA√ëA',0,'ES','IRPF, REGULARIZACI√ìN','',0,'ES',0),
+(8628698,8777,NULL,0,'ES','IRPF , ATRASOS',NULL,NULL,'ES',0),
+(8628699,8776,'44679529M',0,'ES','ADMIN ','ADMIN',0,'ES',0),
+(8628700,8777,NULL,0,'ES','IRPF DEDUCCION, VIVIENDA',NULL,NULL,'ES',0);
 /*!40000 ALTER TABLE `registry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -40207,7 +40251,7 @@ CREATE TABLE `salary` (
   KEY `IDX_SALARY_DOMAIN` (`domain`),
   CONSTRAINT `FK_SALARY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_SALARY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=532 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
+) ENGINE=InnoDB AUTO_INCREMENT=552 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40521,7 +40565,25 @@ INSERT INTO `salary` VALUES
 (528,8777,0,6027,'2020-11-01','2020-11-30','R√âGIMEN GENERAL','CL. ','','00000000000',0,'ATRASOS REDEFINIDOS, MANUALMENTE',NULL,NULL,'2019-02-03','03','JEFE DE INFORM√ÅTICA',0,30,1027.650,87.700,939.950,332.010,'2020-11-30',1027.650,28.550,0.000,1057.800,1057.800,0.000,0.000,1056.190,1027.650,0.000,1027.650,67.150,20.550,'2020-11-30'),
 (529,8777,0,6027,'2020-12-01','2020-12-31','R√âGIMEN GENERAL','CL. ','','00000000000',0,'ATRASOS REDEFINIDOS, MANUALMENTE',NULL,NULL,'2019-02-03','03','JEFE DE INFORM√ÅTICA',0,30,1027.650,87.700,939.950,332.010,'2020-12-31',1027.650,28.550,0.000,1057.800,1057.800,0.000,0.000,1056.190,1027.650,0.000,1027.650,67.150,20.550,'2020-12-31'),
 (530,8777,0,6027,'2021-01-01','2021-01-31','R√âGIMEN GENERAL','CL. ','','00000000000',0,'ATRASOS REDEFINIDOS, MANUALMENTE',NULL,NULL,'2019-02-03','03','JEFE DE INFORM√ÅTICA',0,30,1027.650,90.930,936.720,348.030,'2021-01-31',1027.650,28.550,0.000,1108.330,1108.330,0.000,0.000,1108.330,1027.650,0.000,1027.650,70.380,20.550,'2021-01-31'),
-(531,8777,0,5934,'2022-01-01','2022-01-31','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'I.R.P.F, 145','','','2018-05-30','03','',0,30,2000.000,127.000,1873.000,628.000,'2022-01-31',2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,2000.000,2000.000,0.000,2000.000,127.000,0.000,'2022-01-31');
+(531,8777,0,5934,'2022-01-01','2022-01-31','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'I.R.P.F, 145','','','2018-05-30','03','',0,30,2000.000,127.000,1873.000,628.000,'2022-01-31',2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,2000.000,2000.000,0.000,2000.000,127.000,0.000,'2022-01-31'),
+(533,8777,7,6049,'2022-01-01','2022-01-31',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN',NULL,NULL,NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-01-31',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,3000.000,0.000,3000.000,0.000,60.000,'2022-01-31'),
+(534,8777,7,6049,'2022-02-01','2022-02-28',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN',NULL,NULL,NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-02-28',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,3000.000,0.000,3000.000,0.000,60.000,'2022-02-28'),
+(535,8777,7,6049,'2022-03-01','2022-03-31',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN',NULL,NULL,NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-03-31',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,3000.000,0.000,3000.000,0.000,60.000,'2022-03-31'),
+(536,8777,7,6049,'2022-04-01','2022-04-30',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN',NULL,NULL,NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-04-30',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,3000.000,0.000,3000.000,0.000,60.000,'2022-04-30'),
+(537,8777,7,6049,'2022-05-01','2022-05-31',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN',NULL,NULL,NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-05-31',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,3000.000,0.000,3000.000,0.000,60.000,'2022-05-31'),
+(538,8777,7,6049,'2022-06-01','2022-06-30',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN',NULL,NULL,NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-06-30',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,3000.000,0.000,3000.000,0.000,60.000,'2022-06-30'),
+(539,8777,7,6049,'2022-01-01','2022-01-31',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN','1234567890','ESPA√ëA',NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-01-31',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,1000.000,0.000,1000.000,0.000,20.000,'2022-01-31'),
+(540,8777,7,6049,'2022-02-01','2022-02-28',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN','1234567890','ESPA√ëA',NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-02-28',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,20.000,'2022-02-28'),
+(541,8777,7,6049,'2022-03-01','2022-03-31',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN','1234567890','ESPA√ëA',NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-03-31',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,20.000,'2022-03-31'),
+(542,8777,7,6049,'2022-04-01','2022-04-30',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN','1234567890','ESPA√ëA',NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-04-30',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,20.000,'2022-04-30'),
+(543,8777,7,6049,'2022-05-01','2022-05-31',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN','1234567890','ESPA√ëA',NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-05-31',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,20.000,'2022-05-31'),
+(544,8777,7,6049,'2022-06-01','2022-06-30',NULL,NULL,NULL,NULL,0,'IRPF , REGULARIZACI√ìN','1234567890','ESPA√ëA',NULL,NULL,NULL,0,30,0.000,0.000,0.000,0.000,'2022-06-30',0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,20.000,'2022-06-30'),
+(545,8777,0,6050,'2022-01-01','2022-01-31','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'IRPF, ATRASOS',NULL,NULL,'2022-01-01','03','Emperor\'s Royal Guard',0,30,1500.000,274.350,1225.650,510.250,'2022-01-31',1500.000,125.000,0.000,1625.000,1625.000,0.000,0.000,1625.000,1500.000,0.000,1500.000,103.200,171.150,'2022-01-31'),
+(546,8777,0,6050,'2022-02-01','2022-02-28','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'IRPF, ATRASOS',NULL,NULL,'2022-01-01','03','Emperor\'s Royal Guard',0,30,1500.000,274.350,1225.650,510.250,'2022-02-28',1500.000,125.000,0.000,1625.000,1625.000,0.000,0.000,1625.000,1500.000,0.000,1500.000,103.200,171.150,'2022-02-28'),
+(547,8777,0,6050,'2022-03-01','2022-03-31','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'IRPF, ATRASOS',NULL,NULL,'2022-01-01','03','Emperor\'s Royal Guard',0,30,1500.000,274.350,1225.650,510.250,'2022-03-31',1500.000,125.000,0.000,1625.000,1625.000,0.000,0.000,1625.000,1500.000,0.000,1500.000,103.200,171.150,'2022-03-31'),
+(548,8777,0,6050,'2022-04-01','2022-04-30','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'IRPF, ATRASOS',NULL,NULL,'2022-01-01','03','Emperor\'s Royal Guard',0,30,1500.000,274.350,1225.650,510.250,'2022-04-30',1500.000,125.000,0.000,1625.000,1625.000,0.000,0.000,1625.000,1500.000,0.000,1500.000,103.200,171.150,'2022-04-30'),
+(549,8777,0,6050,'2022-05-01','2022-05-31','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'IRPF, ATRASOS',NULL,NULL,'2022-01-01','03','Emperor\'s Royal Guard',0,30,1500.000,274.350,1225.650,510.250,'2022-05-31',1500.000,125.000,0.000,1625.000,1625.000,0.000,0.000,1625.000,1500.000,0.000,1500.000,103.200,171.150,'2022-05-31'),
+(550,8777,0,6050,'2022-06-01','2022-06-30','R√âGIMEN GENERAL','CL. - - (-) -','','00000000000',0,'IRPF, ATRASOS',NULL,NULL,'2022-01-01','03','Emperor\'s Royal Guard',0,30,1500.000,274.350,1225.650,510.250,'2022-06-30',1500.000,125.000,0.000,1625.000,1625.000,0.000,0.000,1625.000,1500.000,0.000,1500.000,103.200,171.150,'2022-06-30');
 /*!40000 ALTER TABLE `salary` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -40579,7 +40641,7 @@ CREATE TABLE `salary_cost` (
   KEY `IDX_SALARY_COST_DOMAIN` (`domain`),
   CONSTRAINT `FK_SALARY_COST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_COST_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=786749 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costos';
+) ENGINE=InnoDB AUTO_INCREMENT=786803 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42673,7 +42735,43 @@ INSERT INTO `salary_cost` VALUES
 (786745,8777,531,14.000,NULL,1,'IMS_E'),
 (786746,8777,531,4.000,NULL,10,'FOGASA_E'),
 (786747,8777,531,12.000,NULL,3,'FP_E'),
-(786748,8777,531,110.000,NULL,2,'DESMPL_E');
+(786748,8777,531,110.000,NULL,2,'DESMPL_E'),
+(786755,8777,545,383.500,NULL,0,'CGC_E'),
+(786756,8777,545,13.000,NULL,1,'IT_E'),
+(786757,8777,545,11.380,NULL,1,'IMS_E'),
+(786758,8777,545,3.250,NULL,10,'FOGASA_E'),
+(786759,8777,545,9.750,NULL,3,'FP_E'),
+(786760,8777,545,89.370,NULL,2,'DESMPL_E'),
+(786761,8777,546,383.500,NULL,0,'CGC_E'),
+(786762,8777,546,13.000,NULL,1,'IT_E'),
+(786763,8777,546,11.380,NULL,1,'IMS_E'),
+(786764,8777,546,3.250,NULL,10,'FOGASA_E'),
+(786765,8777,546,9.750,NULL,3,'FP_E'),
+(786766,8777,546,89.370,NULL,2,'DESMPL_E'),
+(786767,8777,547,383.500,NULL,0,'CGC_E'),
+(786768,8777,547,13.000,NULL,1,'IT_E'),
+(786769,8777,547,11.380,NULL,1,'IMS_E'),
+(786770,8777,547,3.250,NULL,10,'FOGASA_E'),
+(786771,8777,547,9.750,NULL,3,'FP_E'),
+(786772,8777,547,89.370,NULL,2,'DESMPL_E'),
+(786773,8777,548,383.500,NULL,0,'CGC_E'),
+(786774,8777,548,13.000,NULL,1,'IT_E'),
+(786775,8777,548,11.380,NULL,1,'IMS_E'),
+(786776,8777,548,3.250,NULL,10,'FOGASA_E'),
+(786777,8777,548,9.750,NULL,3,'FP_E'),
+(786778,8777,548,89.370,NULL,2,'DESMPL_E'),
+(786779,8777,549,383.500,NULL,0,'CGC_E'),
+(786780,8777,549,13.000,NULL,1,'IT_E'),
+(786781,8777,549,11.380,NULL,1,'IMS_E'),
+(786782,8777,549,3.250,NULL,10,'FOGASA_E'),
+(786783,8777,549,9.750,NULL,3,'FP_E'),
+(786784,8777,549,89.370,NULL,2,'DESMPL_E'),
+(786785,8777,550,383.500,NULL,0,'CGC_E'),
+(786786,8777,550,13.000,NULL,1,'IT_E'),
+(786787,8777,550,11.380,NULL,1,'IMS_E'),
+(786788,8777,550,3.250,NULL,10,'FOGASA_E'),
+(786789,8777,550,9.750,NULL,3,'FP_E'),
+(786790,8777,550,89.370,NULL,2,'DESMPL_E');
 /*!40000 ALTER TABLE `salary_cost` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -42697,7 +42795,7 @@ CREATE TABLE `salary_data` (
   KEY `IDX_SALARY_DATA_SALARY` (`salary`),
   CONSTRAINT `FK_SALARY_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_DATA_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1005049 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la nomina';
+) ENGINE=InnoDB AUTO_INCREMENT=1005354 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la nomina';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52770,7 +52868,235 @@ INSERT INTO `salary_data` VALUES
 (1005045,8777,'BASE_CGC_E','2000.00','2022-01-01','2022-01-31',531),
 (1005046,8777,'TARIFA_IMS','0.7','2022-01-01','2022-01-31',531),
 (1005047,8777,'DIAS_TRABAJADOS','30.0','2022-01-01','2022-01-31',531),
-(1005048,8777,'PORCENTAJE_FP','0.1','2022-01-01','2022-01-31',531);
+(1005048,8777,'PORCENTAJE_FP','0.1','2022-01-01','2022-01-31',531),
+(1005080,8777,'PORCENTAJE_IRPF','2.0','2022-01-01','2022-01-31',533),
+(1005081,8777,'PORCENTAJE_IRPF','2.0','2022-02-01','2022-02-28',534),
+(1005082,8777,'PORCENTAJE_IRPF','2.0','2022-03-01','2022-03-31',535),
+(1005083,8777,'PORCENTAJE_IRPF','2.0','2022-04-01','2022-04-30',536),
+(1005084,8777,'PORCENTAJE_IRPF','2.0','2022-05-01','2022-05-31',537),
+(1005085,8777,'PORCENTAJE_IRPF','2.0','2022-06-01','2022-06-30',538),
+(1005086,8777,'PORCENTAJE_IRPF','2.0','2022-01-01','2022-01-31',539),
+(1005087,8777,'PORCENTAJE_IRPF','2.0','2022-02-01','2022-02-28',540),
+(1005088,8777,'PORCENTAJE_IRPF','2.0','2022-03-01','2022-03-31',541),
+(1005089,8777,'PORCENTAJE_IRPF','2.0','2022-04-01','2022-04-30',542),
+(1005090,8777,'PORCENTAJE_IRPF','2.0','2022-05-01','2022-05-31',543),
+(1005091,8777,'PORCENTAJE_IRPF','2.0','2022-06-01','2022-06-30',544),
+(1005092,8777,'DIAS_NOMINA','30.0','2022-01-01','2022-01-31',545),
+(1005093,8777,'PORCENTAJE_DESMPL_E','5.5','2022-01-01','2022-01-31',545),
+(1005094,8777,'DIAS_COTIZADOS','30.0','2022-01-01','2022-01-31',545),
+(1005095,8777,'BASE_CGP_E','1625.00','2022-01-01','2022-01-31',545),
+(1005096,8777,'PORCENTAJE_FOGASA','0.2','2022-01-01','2022-01-31',545),
+(1005097,8777,'HORAS_NOMINA','229.0','2022-01-01','2022-01-31',545),
+(1005098,8777,'PORCENTAJE_FP_E','0.6','2022-01-01','2022-01-31',545),
+(1005099,8777,'CUATRIENIO','FOUR','2022-01-01','2022-01-31',545),
+(1005100,8777,'COEFICIENTE_PARCIALIDAD','1.0','2022-01-01','2022-01-31',545),
+(1005101,8777,'GARANTIZADO','0.0','2022-01-01','2022-01-31',545),
+(1005102,8777,'MODALIDAD_MENSUAL','true','2022-01-01','2022-01-31',545),
+(1005103,8777,'PORCENTAJE_IRPF','11.41','2022-01-31','2022-01-31',545),
+(1005104,8777,'PORCENTAJE_CGC_E','23.6','2022-01-01','2022-01-31',545),
+(1005105,8777,'SALARIO_MENSUAL','1500.0','2022-01-01','2022-01-31',545),
+(1005106,8777,'PORCENTAJE_CGC','4.7','2022-01-01','2022-01-31',545),
+(1005107,8777,'PORCENTAJE_DESMPL','1.55','2022-01-01','2022-01-31',545),
+(1005108,8777,'TARIFA_IT','0.8','2022-01-01','2022-01-31',545),
+(1005109,8777,'TC2','100','2022-01-01','2022-01-31',545),
+(1005110,8777,'BASE_CGP','1625.00','2022-01-01','2022-01-31',545),
+(1005111,8777,'DIAS_NATURALES_MES','31','2022-01-01','2022-01-31',545),
+(1005112,8777,'CRA_0001_IRPF','171.15','2022-01-01','2022-01-31',545),
+(1005113,8777,'BASE_HORARIA','false','2022-01-01','2022-01-31',545),
+(1005114,8777,'GRUPO_COTIZACION','03','2022-01-01','2022-01-31',545),
+(1005115,8777,'DIAS_MES','30','2022-01-01','2022-01-31',545),
+(1005116,8777,'BASE_CGC','1625.00','2022-01-01','2022-01-31',545),
+(1005117,8777,'ANTIGUEDAD','0.0','2022-01-01','2022-01-31',545),
+(1005118,8777,'SMI','1000.0','2022-01-01','2022-01-31',545),
+(1005119,8777,'COEFICIENTE_HUELGA','0.0','2022-01-01','2022-01-31',545),
+(1005120,8777,'A√ëOS_ANTIGUEDAD','0','2022-01-01','2022-01-31',545),
+(1005121,8777,'CRA_0001_BASE','1500.00','2022-01-01','2022-01-31',545),
+(1005122,8777,'PREST_IT','0.0','2022-01-01','2022-01-31',545),
+(1005123,8777,'BASE_CGC_E','1625.00','2022-01-01','2022-01-31',545),
+(1005124,8777,'TARIFA_IMS','0.7','2022-01-01','2022-01-31',545),
+(1005125,8777,'DIAS_TRABAJADOS','30.0','2022-01-01','2022-01-31',545),
+(1005126,8777,'SALARIO_BASE','1500.0','2022-01-01','2022-01-31',545),
+(1005127,8777,'PORCENTAJE_FP','0.1','2022-01-01','2022-01-31',545),
+(1005128,8777,'DIAS_NOMINA','30.0','2022-02-01','2022-02-28',546),
+(1005129,8777,'PORCENTAJE_DESMPL_E','5.5','2022-02-01','2022-02-28',546),
+(1005130,8777,'DIAS_COTIZADOS','30.0','2022-02-01','2022-02-28',546),
+(1005131,8777,'BASE_CGP_E','1625.00','2022-02-01','2022-02-28',546),
+(1005132,8777,'PORCENTAJE_FOGASA','0.2','2022-02-01','2022-02-28',546),
+(1005133,8777,'HORAS_NOMINA','229.0','2022-02-01','2022-02-28',546),
+(1005134,8777,'PORCENTAJE_FP_E','0.6','2022-02-01','2022-02-28',546),
+(1005135,8777,'CUATRIENIO','FOUR','2022-02-01','2022-02-28',546),
+(1005136,8777,'COEFICIENTE_PARCIALIDAD','1.0','2022-02-01','2022-02-28',546),
+(1005137,8777,'GARANTIZADO','0.0','2022-02-01','2022-02-28',546),
+(1005138,8777,'MODALIDAD_MENSUAL','true','2022-02-01','2022-02-28',546),
+(1005139,8777,'PORCENTAJE_IRPF','11.41','2022-02-28','2022-02-28',546),
+(1005140,8777,'PORCENTAJE_CGC_E','23.6','2022-02-01','2022-02-28',546),
+(1005141,8777,'SALARIO_MENSUAL','1500.0','2022-02-01','2022-02-28',546),
+(1005142,8777,'PORCENTAJE_CGC','4.7','2022-02-01','2022-02-28',546),
+(1005143,8777,'PORCENTAJE_DESMPL','1.55','2022-02-01','2022-02-28',546),
+(1005144,8777,'TARIFA_IT','0.8','2022-02-01','2022-02-28',546),
+(1005145,8777,'TC2','100','2022-02-01','2022-02-28',546),
+(1005146,8777,'BASE_CGP','1625.00','2022-02-01','2022-02-28',546),
+(1005147,8777,'DIAS_NATURALES_MES','28','2022-02-01','2022-02-28',546),
+(1005148,8777,'CRA_0001_IRPF','171.15','2022-02-01','2022-02-28',546),
+(1005149,8777,'BASE_HORARIA','false','2022-02-01','2022-02-28',546),
+(1005150,8777,'GRUPO_COTIZACION','03','2022-02-01','2022-02-28',546),
+(1005151,8777,'DIAS_MES','30','2022-02-01','2022-02-28',546),
+(1005152,8777,'BASE_CGC','1625.00','2022-02-01','2022-02-28',546),
+(1005153,8777,'ANTIGUEDAD','0.0','2022-02-01','2022-02-28',546),
+(1005154,8777,'SMI','1000.0','2022-02-01','2022-02-28',546),
+(1005155,8777,'COEFICIENTE_HUELGA','0.0','2022-02-01','2022-02-28',546),
+(1005156,8777,'A√ëOS_ANTIGUEDAD','0','2022-02-01','2022-02-28',546),
+(1005157,8777,'CRA_0001_BASE','1500.00','2022-02-01','2022-02-28',546),
+(1005158,8777,'PREST_IT','0.0','2022-02-01','2022-02-28',546),
+(1005159,8777,'BASE_CGC_E','1625.00','2022-02-01','2022-02-28',546),
+(1005160,8777,'TARIFA_IMS','0.7','2022-02-01','2022-02-28',546),
+(1005161,8777,'DIAS_TRABAJADOS','30.0','2022-02-01','2022-02-28',546),
+(1005162,8777,'SALARIO_BASE','1500.0','2022-02-01','2022-02-28',546),
+(1005163,8777,'PORCENTAJE_FP','0.1','2022-02-01','2022-02-28',546),
+(1005164,8777,'DIAS_NOMINA','30.0','2022-03-01','2022-03-31',547),
+(1005165,8777,'PORCENTAJE_DESMPL_E','5.5','2022-03-01','2022-03-31',547),
+(1005166,8777,'DIAS_COTIZADOS','30.0','2022-03-01','2022-03-31',547),
+(1005167,8777,'BASE_CGP_E','1625.00','2022-03-01','2022-03-31',547),
+(1005168,8777,'PORCENTAJE_FOGASA','0.2','2022-03-01','2022-03-31',547),
+(1005169,8777,'HORAS_NOMINA','229.0','2022-03-01','2022-03-31',547),
+(1005170,8777,'PORCENTAJE_FP_E','0.6','2022-03-01','2022-03-31',547),
+(1005171,8777,'CUATRIENIO','FOUR','2022-03-01','2022-03-31',547),
+(1005172,8777,'COEFICIENTE_PARCIALIDAD','1.0','2022-03-01','2022-03-31',547),
+(1005173,8777,'GARANTIZADO','0.0','2022-03-01','2022-03-31',547),
+(1005174,8777,'MODALIDAD_MENSUAL','true','2022-03-01','2022-03-31',547),
+(1005175,8777,'PORCENTAJE_IRPF','11.41','2022-03-31','2022-03-31',547),
+(1005176,8777,'PORCENTAJE_CGC_E','23.6','2022-03-01','2022-03-31',547),
+(1005177,8777,'SALARIO_MENSUAL','1500.0','2022-03-01','2022-03-31',547),
+(1005178,8777,'PORCENTAJE_CGC','4.7','2022-03-01','2022-03-31',547),
+(1005179,8777,'PORCENTAJE_DESMPL','1.55','2022-03-01','2022-03-31',547),
+(1005180,8777,'TARIFA_IT','0.8','2022-03-01','2022-03-31',547),
+(1005181,8777,'TC2','100','2022-03-01','2022-03-31',547),
+(1005182,8777,'BASE_CGP','1625.00','2022-03-01','2022-03-31',547),
+(1005183,8777,'DIAS_NATURALES_MES','31','2022-03-01','2022-03-31',547),
+(1005184,8777,'CRA_0001_IRPF','171.15','2022-03-01','2022-03-31',547),
+(1005185,8777,'BASE_HORARIA','false','2022-03-01','2022-03-31',547),
+(1005186,8777,'GRUPO_COTIZACION','03','2022-03-01','2022-03-31',547),
+(1005187,8777,'DIAS_MES','30','2022-03-01','2022-03-31',547),
+(1005188,8777,'BASE_CGC','1625.00','2022-03-01','2022-03-31',547),
+(1005189,8777,'ANTIGUEDAD','0.0','2022-03-01','2022-03-31',547),
+(1005190,8777,'SMI','1000.0','2022-03-01','2022-03-31',547),
+(1005191,8777,'COEFICIENTE_HUELGA','0.0','2022-03-01','2022-03-31',547),
+(1005192,8777,'A√ëOS_ANTIGUEDAD','0','2022-03-01','2022-03-31',547),
+(1005193,8777,'CRA_0001_BASE','1500.00','2022-03-01','2022-03-31',547),
+(1005194,8777,'PREST_IT','0.0','2022-03-01','2022-03-31',547),
+(1005195,8777,'BASE_CGC_E','1625.00','2022-03-01','2022-03-31',547),
+(1005196,8777,'TARIFA_IMS','0.7','2022-03-01','2022-03-31',547),
+(1005197,8777,'DIAS_TRABAJADOS','30.0','2022-03-01','2022-03-31',547),
+(1005198,8777,'SALARIO_BASE','1500.0','2022-03-01','2022-03-31',547),
+(1005199,8777,'PORCENTAJE_FP','0.1','2022-03-01','2022-03-31',547),
+(1005200,8777,'DIAS_NOMINA','30.0','2022-04-01','2022-04-30',548),
+(1005201,8777,'PORCENTAJE_DESMPL_E','5.5','2022-04-01','2022-04-30',548),
+(1005202,8777,'DIAS_COTIZADOS','30.0','2022-04-01','2022-04-30',548),
+(1005203,8777,'BASE_CGP_E','1625.00','2022-04-01','2022-04-30',548),
+(1005204,8777,'PORCENTAJE_FOGASA','0.2','2022-04-01','2022-04-30',548),
+(1005205,8777,'HORAS_NOMINA','229.0','2022-04-01','2022-04-30',548),
+(1005206,8777,'PORCENTAJE_FP_E','0.6','2022-04-01','2022-04-30',548),
+(1005207,8777,'CUATRIENIO','FOUR','2022-04-01','2022-04-30',548),
+(1005208,8777,'COEFICIENTE_PARCIALIDAD','1.0','2022-04-01','2022-04-30',548),
+(1005209,8777,'GARANTIZADO','0.0','2022-04-01','2022-04-30',548),
+(1005210,8777,'MODALIDAD_MENSUAL','true','2022-04-01','2022-04-30',548),
+(1005211,8777,'PORCENTAJE_IRPF','11.41','2022-04-30','2022-04-30',548),
+(1005212,8777,'PORCENTAJE_CGC_E','23.6','2022-04-01','2022-04-30',548),
+(1005213,8777,'SALARIO_MENSUAL','1500.0','2022-04-01','2022-04-30',548),
+(1005214,8777,'PORCENTAJE_CGC','4.7','2022-04-01','2022-04-30',548),
+(1005215,8777,'PORCENTAJE_DESMPL','1.55','2022-04-01','2022-04-30',548),
+(1005216,8777,'TARIFA_IT','0.8','2022-04-01','2022-04-30',548),
+(1005217,8777,'TC2','100','2022-04-01','2022-04-30',548),
+(1005218,8777,'BASE_CGP','1625.00','2022-04-01','2022-04-30',548),
+(1005219,8777,'DIAS_NATURALES_MES','30','2022-04-01','2022-04-30',548),
+(1005220,8777,'CRA_0001_IRPF','171.15','2022-04-01','2022-04-30',548),
+(1005221,8777,'BASE_HORARIA','false','2022-04-01','2022-04-30',548),
+(1005222,8777,'GRUPO_COTIZACION','03','2022-04-01','2022-04-30',548),
+(1005223,8777,'DIAS_MES','30','2022-04-01','2022-04-30',548),
+(1005224,8777,'BASE_CGC','1625.00','2022-04-01','2022-04-30',548),
+(1005225,8777,'ANTIGUEDAD','0.0','2022-04-01','2022-04-30',548),
+(1005226,8777,'SMI','1000.0','2022-04-01','2022-04-30',548),
+(1005227,8777,'COEFICIENTE_HUELGA','0.0','2022-04-01','2022-04-30',548),
+(1005228,8777,'A√ëOS_ANTIGUEDAD','0','2022-04-01','2022-04-30',548),
+(1005229,8777,'CRA_0001_BASE','1500.00','2022-04-01','2022-04-30',548),
+(1005230,8777,'PREST_IT','0.0','2022-04-01','2022-04-30',548),
+(1005231,8777,'BASE_CGC_E','1625.00','2022-04-01','2022-04-30',548),
+(1005232,8777,'TARIFA_IMS','0.7','2022-04-01','2022-04-30',548),
+(1005233,8777,'DIAS_TRABAJADOS','30.0','2022-04-01','2022-04-30',548),
+(1005234,8777,'SALARIO_BASE','1500.0','2022-04-01','2022-04-30',548),
+(1005235,8777,'PORCENTAJE_FP','0.1','2022-04-01','2022-04-30',548),
+(1005236,8777,'DIAS_NOMINA','30.0','2022-05-01','2022-05-31',549),
+(1005237,8777,'PORCENTAJE_DESMPL_E','5.5','2022-05-01','2022-05-31',549),
+(1005238,8777,'DIAS_COTIZADOS','30.0','2022-05-01','2022-05-31',549),
+(1005239,8777,'BASE_CGP_E','1625.00','2022-05-01','2022-05-31',549),
+(1005240,8777,'PORCENTAJE_FOGASA','0.2','2022-05-01','2022-05-31',549),
+(1005241,8777,'HORAS_NOMINA','229.0','2022-05-01','2022-05-31',549),
+(1005242,8777,'PORCENTAJE_FP_E','0.6','2022-05-01','2022-05-31',549),
+(1005243,8777,'CUATRIENIO','FOUR','2022-05-01','2022-05-31',549),
+(1005244,8777,'COEFICIENTE_PARCIALIDAD','1.0','2022-05-01','2022-05-31',549),
+(1005245,8777,'GARANTIZADO','0.0','2022-05-01','2022-05-31',549),
+(1005246,8777,'MODALIDAD_MENSUAL','true','2022-05-01','2022-05-31',549),
+(1005247,8777,'PORCENTAJE_IRPF','11.41','2022-05-31','2022-05-31',549),
+(1005248,8777,'PORCENTAJE_CGC_E','23.6','2022-05-01','2022-05-31',549),
+(1005249,8777,'SALARIO_MENSUAL','1500.0','2022-05-01','2022-05-31',549),
+(1005250,8777,'PORCENTAJE_CGC','4.7','2022-05-01','2022-05-31',549),
+(1005251,8777,'PORCENTAJE_DESMPL','1.55','2022-05-01','2022-05-31',549),
+(1005252,8777,'TARIFA_IT','0.8','2022-05-01','2022-05-31',549),
+(1005253,8777,'TC2','100','2022-05-01','2022-05-31',549),
+(1005254,8777,'BASE_CGP','1625.00','2022-05-01','2022-05-31',549),
+(1005255,8777,'DIAS_NATURALES_MES','31','2022-05-01','2022-05-31',549),
+(1005256,8777,'CRA_0001_IRPF','171.15','2022-05-01','2022-05-31',549),
+(1005257,8777,'BASE_HORARIA','false','2022-05-01','2022-05-31',549),
+(1005258,8777,'GRUPO_COTIZACION','03','2022-05-01','2022-05-31',549),
+(1005259,8777,'DIAS_MES','30','2022-05-01','2022-05-31',549),
+(1005260,8777,'BASE_CGC','1625.00','2022-05-01','2022-05-31',549),
+(1005261,8777,'ANTIGUEDAD','0.0','2022-05-01','2022-05-31',549),
+(1005262,8777,'SMI','1000.0','2022-05-01','2022-05-31',549),
+(1005263,8777,'COEFICIENTE_HUELGA','0.0','2022-05-01','2022-05-31',549),
+(1005264,8777,'A√ëOS_ANTIGUEDAD','0','2022-05-01','2022-05-31',549),
+(1005265,8777,'CRA_0001_BASE','1500.00','2022-05-01','2022-05-31',549),
+(1005266,8777,'PREST_IT','0.0','2022-05-01','2022-05-31',549),
+(1005267,8777,'BASE_CGC_E','1625.00','2022-05-01','2022-05-31',549),
+(1005268,8777,'TARIFA_IMS','0.7','2022-05-01','2022-05-31',549),
+(1005269,8777,'DIAS_TRABAJADOS','30.0','2022-05-01','2022-05-31',549),
+(1005270,8777,'SALARIO_BASE','1500.0','2022-05-01','2022-05-31',549),
+(1005271,8777,'PORCENTAJE_FP','0.1','2022-05-01','2022-05-31',549),
+(1005272,8777,'DIAS_NOMINA','30.0','2022-06-01','2022-06-30',550),
+(1005273,8777,'PORCENTAJE_DESMPL_E','5.5','2022-06-01','2022-06-30',550),
+(1005274,8777,'DIAS_COTIZADOS','30.0','2022-06-01','2022-06-30',550),
+(1005275,8777,'BASE_CGP_E','1625.00','2022-06-01','2022-06-30',550),
+(1005276,8777,'PORCENTAJE_FOGASA','0.2','2022-06-01','2022-06-30',550),
+(1005277,8777,'HORAS_NOMINA','229.0','2022-06-01','2022-06-30',550),
+(1005278,8777,'PORCENTAJE_FP_E','0.6','2022-06-01','2022-06-30',550),
+(1005279,8777,'CUATRIENIO','FOUR','2022-06-01','2022-06-30',550),
+(1005280,8777,'COEFICIENTE_PARCIALIDAD','1.0','2022-06-01','2022-06-30',550),
+(1005281,8777,'GARANTIZADO','0.0','2022-06-01','2022-06-30',550),
+(1005282,8777,'MODALIDAD_MENSUAL','true','2022-06-01','2022-06-30',550),
+(1005283,8777,'PORCENTAJE_IRPF','11.41','2022-06-30','2022-06-30',550),
+(1005284,8777,'PORCENTAJE_CGC_E','23.6','2022-06-01','2022-06-30',550),
+(1005285,8777,'SALARIO_MENSUAL','1500.0','2022-06-01','2022-06-30',550),
+(1005286,8777,'PORCENTAJE_CGC','4.7','2022-06-01','2022-06-30',550),
+(1005287,8777,'PORCENTAJE_DESMPL','1.55','2022-06-01','2022-06-30',550),
+(1005288,8777,'TARIFA_IT','0.8','2022-06-01','2022-06-30',550),
+(1005289,8777,'TC2','100','2022-06-01','2022-06-30',550),
+(1005290,8777,'BASE_CGP','1625.00','2022-06-01','2022-06-30',550),
+(1005291,8777,'DIAS_NATURALES_MES','30','2022-06-01','2022-06-30',550),
+(1005292,8777,'CRA_0001_IRPF','171.15','2022-06-01','2022-06-30',550),
+(1005293,8777,'BASE_HORARIA','false','2022-06-01','2022-06-30',550),
+(1005294,8777,'GRUPO_COTIZACION','03','2022-06-01','2022-06-30',550),
+(1005295,8777,'DIAS_MES','30','2022-06-01','2022-06-30',550),
+(1005296,8777,'BASE_CGC','1625.00','2022-06-01','2022-06-30',550),
+(1005297,8777,'ANTIGUEDAD','0.0','2022-06-01','2022-06-30',550),
+(1005298,8777,'SMI','1000.0','2022-06-01','2022-06-30',550),
+(1005299,8777,'COEFICIENTE_HUELGA','0.0','2022-06-01','2022-06-30',550),
+(1005300,8777,'A√ëOS_ANTIGUEDAD','0','2022-06-01','2022-06-30',550),
+(1005301,8777,'CRA_0001_BASE','1500.00','2022-06-01','2022-06-30',550),
+(1005302,8777,'PREST_IT','0.0','2022-06-01','2022-06-30',550),
+(1005303,8777,'BASE_CGC_E','1625.00','2022-06-01','2022-06-30',550),
+(1005304,8777,'TARIFA_IMS','0.7','2022-06-01','2022-06-30',550),
+(1005305,8777,'DIAS_TRABAJADOS','30.0','2022-06-01','2022-06-30',550),
+(1005306,8777,'SALARIO_BASE','1500.0','2022-06-01','2022-06-30',550),
+(1005307,8777,'PORCENTAJE_FP','0.1','2022-06-01','2022-06-30',550);
 /*!40000 ALTER TABLE `salary_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52795,7 +53121,7 @@ CREATE TABLE `salary_deduction` (
   KEY `IDX_SALARY_DEDUCTION_DOMAIN` (`domain`),
   CONSTRAINT `FK_SALARY_DEDUCTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_DEDUCTION_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=209455 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
+) ENGINE=InnoDB AUTO_INCREMENT=209487 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -53823,7 +54149,31 @@ INSERT INTO `salary_deduction` VALUES
 (209451,8777,530,6,'IRPF',NULL,NULL,20.550),
 (209452,8777,531,0,'CGC',NULL,NULL,94.000),
 (209453,8777,531,2,'DESMPL',NULL,NULL,31.000),
-(209454,8777,531,3,'FP',NULL,NULL,2.000);
+(209454,8777,531,3,'FP',NULL,NULL,2.000),
+(209459,8777,545,0,'CGC',NULL,NULL,76.380),
+(209460,8777,545,2,'DESMPL',NULL,NULL,25.190),
+(209461,8777,545,3,'FP',NULL,NULL,1.630),
+(209462,8777,545,6,'IRPF',NULL,NULL,171.150),
+(209463,8777,546,0,'CGC',NULL,NULL,76.380),
+(209464,8777,546,2,'DESMPL',NULL,NULL,25.190),
+(209465,8777,546,3,'FP',NULL,NULL,1.630),
+(209466,8777,546,6,'IRPF',NULL,NULL,171.150),
+(209467,8777,547,0,'CGC',NULL,NULL,76.380),
+(209468,8777,547,2,'DESMPL',NULL,NULL,25.190),
+(209469,8777,547,3,'FP',NULL,NULL,1.630),
+(209470,8777,547,6,'IRPF',NULL,NULL,171.150),
+(209471,8777,548,0,'CGC',NULL,NULL,76.380),
+(209472,8777,548,2,'DESMPL',NULL,NULL,25.190),
+(209473,8777,548,3,'FP',NULL,NULL,1.630),
+(209474,8777,548,6,'IRPF',NULL,NULL,171.150),
+(209475,8777,549,0,'CGC',NULL,NULL,76.380),
+(209476,8777,549,2,'DESMPL',NULL,NULL,25.190),
+(209477,8777,549,3,'FP',NULL,NULL,1.630),
+(209478,8777,549,6,'IRPF',NULL,NULL,171.150),
+(209479,8777,550,0,'CGC',NULL,NULL,76.380),
+(209480,8777,550,2,'DESMPL',NULL,NULL,25.190),
+(209481,8777,550,3,'FP',NULL,NULL,1.630),
+(209482,8777,550,6,'IRPF',NULL,NULL,171.150);
 /*!40000 ALTER TABLE `salary_deduction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53886,7 +54236,7 @@ CREATE TABLE `salary_payment` (
   KEY `IDX_SALARY_PAYMENT_DOMAIN` (`domain`),
   CONSTRAINT `FK_SALARY_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_PAYMENT_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=226322 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
+) ENGINE=InnoDB AUTO_INCREMENT=226367 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55113,7 +55463,49 @@ INSERT INTO `salary_payment` VALUES
 (226318,8777,530,4,'PAGA_EXTRA','[3]PAGA EXTRAORDINARIA JULIO',NULL,0.000,0.000,28.546),
 (226319,8777,530,1,NULL,'COTIZACI√ìN M√çNIMA POR CONTINGENCIAS COMUNES',NULL,0.000,0.000,52.138),
 (226320,8777,531,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1600.000,1600.000,1600.000),
-(226321,8777,531,1,NULL,'SUPLEMENTO BRUTO',NULL,400.000,400.000,400.000);
+(226321,8777,531,1,NULL,'SUPLEMENTO BRUTO',NULL,400.000,400.000,400.000),
+(226323,8777,533,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,3000.000,3000.000,60.000),
+(226324,8777,533,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226325,8777,534,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,3000.000,3000.000,60.000),
+(226326,8777,534,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226327,8777,535,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,3000.000,3000.000,60.000),
+(226328,8777,535,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226329,8777,536,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,3000.000,3000.000,60.000),
+(226330,8777,536,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226331,8777,537,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,3000.000,3000.000,60.000),
+(226332,8777,537,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226333,8777,538,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,3000.000,3000.000,60.000),
+(226334,8777,538,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226335,8777,539,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,1000.000,1000.000,20.000),
+(226336,8777,539,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226337,8777,540,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,0.000,0.000,20.000),
+(226338,8777,540,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226339,8777,541,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,0.000,0.000,20.000),
+(226340,8777,541,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226341,8777,542,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,0.000,0.000,20.000),
+(226342,8777,542,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226343,8777,543,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,0.000,0.000,20.000),
+(226344,8777,543,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226345,8777,544,1,NULL,'RETRIBUCI√ìN NO INCLUIDA OTROS APARTADOS (M190)',NULL,0.000,0.000,20.000),
+(226346,8777,544,13,NULL,'RETRIBUCI√ìN EN ESPECIE (M190)',NULL,0.000,0.000,0.000),
+(226347,8777,545,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1500.000,1500.000,1500.000),
+(226348,8777,545,1,'ANTIGUEDAD','COMPLEMENTO PERSONAL DE ANTIG√úEDAD',NULL,0.000,0.000,0.000),
+(226349,8777,545,4,'PAGA_EXTRA','PAGA EXTRAORDINARIA NAVIDAD',NULL,0.000,0.000,125.000),
+(226350,8777,546,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1500.000,1500.000,1500.000),
+(226351,8777,546,1,'ANTIGUEDAD','COMPLEMENTO PERSONAL DE ANTIG√úEDAD',NULL,0.000,0.000,0.000),
+(226352,8777,546,4,'PAGA_EXTRA','PAGA EXTRAORDINARIA NAVIDAD',NULL,0.000,0.000,125.000),
+(226353,8777,547,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1500.000,1500.000,1500.000),
+(226354,8777,547,1,'ANTIGUEDAD','COMPLEMENTO PERSONAL DE ANTIG√úEDAD',NULL,0.000,0.000,0.000),
+(226355,8777,547,4,'PAGA_EXTRA','PAGA EXTRAORDINARIA NAVIDAD',NULL,0.000,0.000,125.000),
+(226356,8777,548,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1500.000,1500.000,1500.000),
+(226357,8777,548,1,'ANTIGUEDAD','COMPLEMENTO PERSONAL DE ANTIG√úEDAD',NULL,0.000,0.000,0.000),
+(226358,8777,548,4,'PAGA_EXTRA','PAGA EXTRAORDINARIA NAVIDAD',NULL,0.000,0.000,125.000),
+(226359,8777,549,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1500.000,1500.000,1500.000),
+(226360,8777,549,1,'ANTIGUEDAD','COMPLEMENTO PERSONAL DE ANTIG√úEDAD',NULL,0.000,0.000,0.000),
+(226361,8777,549,4,'PAGA_EXTRA','PAGA EXTRAORDINARIA NAVIDAD',NULL,0.000,0.000,125.000),
+(226362,8777,550,1,'SALARIO_BASE','SALARIO BASE MENSUAL',NULL,1500.000,1500.000,1500.000),
+(226363,8777,550,1,'ANTIGUEDAD','COMPLEMENTO PERSONAL DE ANTIG√úEDAD',NULL,0.000,0.000,0.000),
+(226364,8777,550,4,'PAGA_EXTRA','PAGA EXTRAORDINARIA NAVIDAD',NULL,0.000,0.000,125.000);
 /*!40000 ALTER TABLE `salary_payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56481,7 +56873,7 @@ INSERT INTO `system_data` VALUES
 (24392,-107,'PORCENTAJE_EXTR_E','REMOVE()','2014-01-01',NULL,1,NULL),
 (24393,-107,'PORCENTAJE_NEXTR_E','REMOVE()','2014-01-01',NULL,1,NULL),
 (24394,-107,'PORCENTAJE_CORTA_DURACION','REMOVE()','2014-01-01',NULL,1,NULL),
-(24395,-107,'COTIZACION_MENSUAL','true','2014-01-01',NULL,1,NULL),
+(24395,-107,'COTIZACION_MENSUAL','GRUPO_COTIZACION; isdef MODELO_COTIZACION_AGRARIO ? MODELO_COTIZACION_AGRARIO != 2 : VERDADERO()','2014-01-01',NULL,1,NULL),
 (24396,-107,'BASE_CGC_MIN_MES',' [\"01\":1051.50, \"02\":872.10, \"03\":758.70, \"04\":753.00, \"05\":753.00, \"06\":753.00, \"07\":753.00, \"08\":753.00, \"09\":753.00, \"10\":753.00, \"11\":753.00][GRUPO_COTIZACION] * ( DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30 )','2014-01-01','2015-12-31',1,NULL),
 (24397,-107,'BASE_CGC_MIN_DIA',' [\"01\":45.72, \"02\":37.92, \"03\":32.99, \"04\":32.74, \"05\":32.74, \"06\":32.74, \"07\":32.74, \"08\":32.74, \"09\":32.74, \"10\":32.74, \"11\":32.74][GRUPO_COTIZACION]  * JORNADAS_REALES','2014-01-01','2015-12-31',1,NULL),
 (24398,-107,'BASE_CGC_MIN','( COTIZACION_MENSUAL ) ? BASE_CGC_MIN_MES : BASE_CGC_MIN_DIA','2014-01-01',NULL,1,NULL),
@@ -57304,6 +57696,8 @@ CREATE TABLE `task_holder` (
 
 LOCK TABLES `task_holder` WRITE;
 /*!40000 ALTER TABLE `task_holder` DISABLE KEYS */;
+INSERT INTO `task_holder` VALUES
+(8628699,8776,0,1,10248,NULL);
 /*!40000 ALTER TABLE `task_holder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57638,7 +58032,7 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
 (2862,0,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),
-(10248,8776,0,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-07-24 15:52:03',NULL,0),
+(10248,8776,0,'ADMIN','admin',8628387,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-08-03 00:38:12','åKwﬁÌ∂ÊB¨\0',0),
 (10249,8790,0,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -57662,7 +58056,7 @@ CREATE TABLE `user_app_role` (
   KEY `IDX_USER_APP_ROLE_USER` (`user_id`),
   CONSTRAINT `FK_USER_APP_ROLE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_USER_APP_ROLE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Rol del usuario en una aplicacion';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Rol del usuario en una aplicacion';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57672,7 +58066,8 @@ CREATE TABLE `user_app_role` (
 LOCK TABLES `user_app_role` WRITE;
 /*!40000 ALTER TABLE `user_app_role` DISABLE KEYS */;
 INSERT INTO `user_app_role` VALUES
-(1,8790,5,10249,6);
+(1,8790,5,10249,6),
+(4,8776,-1,10248,30);
 /*!40000 ALTER TABLE `user_app_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58338,4 +58733,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-07-25 20:49:48
+-- Dump completed on 2022-08-02 22:40:29
