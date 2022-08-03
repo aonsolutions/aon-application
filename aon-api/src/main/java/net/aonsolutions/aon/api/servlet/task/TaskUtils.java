@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
@@ -61,10 +61,10 @@ public class TaskUtils {
 		Integer page = params.optInt(IJsonNames.PAGE);
 		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
 		
-		List<Task> tasks = AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
+		List<Task> tasks = AON_SOLUTIONS.getTaskAndChildsStream(api.getDomain(), api.getUser(), 
 			f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
 		)
-		.collect(Collectors.toList());
+		.collect(Collectors.toList()); //TODO
 	
 			
 		List<Task> list = tasks.stream().filter(TaskUtils.distinctByKey(Task::getId)).collect(Collectors.toList());
@@ -79,6 +79,9 @@ public class TaskUtils {
 		
 		list.forEach(t->{
 			allIdList.add(t.getId());
+			
+			t.getChilds().forEach(c-> allIdList.add(c.getId())); //TODO
+			
 			if(t.isChild()) {
 				childIdList.add(t.getParent());
 			} else {
@@ -103,14 +106,16 @@ public class TaskUtils {
 				.findFirst()
 				.ifPresent(task::setParentObj)
 				;
-			} else {
-				aditionals
-				.stream()
-				.filter(t-> t.isChild() && t.getParent().equals(task.getId()))
-				.sorted(Comparator.comparing(Task::getId))
-				.forEach(task::addChild)
-				;
-			}
+			} 
+			//TODO
+//			else {
+//				aditionals
+//				.stream()
+//				.filter(t-> t.isChild() && t.getParent().equals(task.getId()))
+//				.sorted(Comparator.comparing(Task::getId))
+//				.forEach(task::addChild)
+//				;
+//			}
 		});
 		
 		return list;
@@ -119,7 +124,7 @@ public class TaskUtils {
 	public static void onNotification(AonApiData api, TaskWorkflow workflow) {
 		Thread newThread = new Thread(() -> {
 			try {
-				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
+				Task task = AON_SOLUTIONS.getTaskAndChilds(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
 				switch (workflow.getType()) {
 					case OPEN:
 						TaskNotification.onOpenNotification(api, task, workflow);
@@ -150,7 +155,6 @@ public class TaskUtils {
 					default:
 						break;
 				}
-				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -388,36 +392,39 @@ public class TaskUtils {
 	private static void changeStatusTask(AonApiData api, Task task, TaskWorkflow workflow) {
 		Domain domain = task.getDomain();
 		
-		boolean isReopen = workflow.getType().equals(TaskWorkflowType.REOPEN);
+		TaskWorkflowType type = workflow.getType();
 		
-		Byte[] pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new);
+		boolean isReopen = type.equals(TaskWorkflowType.REOPEN);
+		boolean isClose  = type.equals(TaskWorkflowType.CLOSE) && task.getStatus().equals(TaskStatus.FINISHED);
 		
-		if(task.isChild()) {// IS CHILD
-			
-			Task parent = AON_SOLUTIONS.getTask(domain, api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+		List<Byte> pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
+		
+		if(task.isChild() && !isClose){
+			Task parent = AON_SOLUTIONS.getTaskAndChilds(domain, api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
 			
 			if(parent!=null && parent.getId()!=null) {
 				
-				Task child = AON_SOLUTIONS.getTask(domain, api.getUser(), 
-					f-> f.getParentProperty().eq(task.getParent())
-					.and(f.getStatusProperty().in(pending))
-				);
-				
-				boolean childIsOpen = child!=null && child.getId()!=null;
+				boolean childIsOpen = parent.getChilds().stream().anyMatch(s-> !s.getId().equals(task.getId()) && pending.contains(s.getStatus().value()));
 
 				parent.setStatus(childIsOpen || isReopen ? TaskStatus.IN_PROGRESS : TaskStatus.PENDING);
 				AON_SOLUTIONS.saveTask(domain, api.getUser(), parent);
 			}
-		} else { // IS PARENT
-
-			AON_SOLUTIONS.getTaskStream(domain, api.getUser(), 
-				f-> f.getParentProperty().eq(task.getId())
-				.and(f.getStatusProperty().in(pending))
-			)
-			.forEach(t->{
-				AON_SOLUTIONS.saveTask(t.getDomain(), new User(), t.setStatus( isReopen ? TaskStatus.PENDING : TaskStatus.FINISHED));
-			});
 		}
+		
+		if(task.childExist()) {
+			task.getChilds()
+			.stream()
+			.filter(s-> pending.contains(s.getStatus().value()) )
+			.forEach(child->{
+				TaskStatus status = isReopen ? TaskStatus.PENDING : TaskStatus.FINISHED;
+				AON_SOLUTIONS.saveTask(child.getDomain(), new User(), child.setStatus(status));
+				
+				if(child.getSource().equals(TaskSource.CAU)) {
+					onNotification(api, workflow.setTask(child.getId()));
+				}
+			});
+		} 
+	
 	}
 	
 	/**

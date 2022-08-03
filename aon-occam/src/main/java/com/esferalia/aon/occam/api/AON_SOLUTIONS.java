@@ -775,6 +775,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Task getTaskAndChilds(Domain domain, User user, TaskFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAndChilds(ctx, filter);
+		}
+	}
+	
 	public static Map<String, Integer> getTaskCount(Domain domain, User user, TaskFilter sender, TaskFilter receiver) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskCount(ctx, sender, receiver);
@@ -799,15 +805,27 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<Task> getTaskParentStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskParentStream(ctx, filter, page, perPage);
+			return getTask2().getTaskParentOrChildStream(ctx, filter, page, perPage);
 		}
 	}
 	
-	public static Stream<Task> getTaskParentStream(Domain domain, User user, TaskFilter filter) {
+	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskParentStream(ctx, filter);
+			return getTask2().getTaskParentOrChildStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<Task> getTaskAndChildsStream(Domain domain, User user, TaskFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAndChildsStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<Task> getTaskAndChildsStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAndChildsStream(ctx, filter, page, perPage);
 		}
 	}
 	
