@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
 import net.aonsolutions.db.up2date.tgss.AgriculturalMonthlyQuote2022Fix;
 import net.aonsolutions.db.up2date.tgss.FellowsITIMS2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Fix;
+import net.aonsolutions.db.up2date.warehouse.ElaborationDetailUpdate;
 
 public class Up2Date {
 
@@ -262,7 +263,8 @@ public class Up2Date {
     		AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
     		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
     		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
-    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL
+    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
+    		ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE
     };
 
     
