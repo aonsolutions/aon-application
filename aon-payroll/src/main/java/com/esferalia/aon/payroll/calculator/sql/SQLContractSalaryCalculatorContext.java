@@ -590,17 +590,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public static class AgreementContextKey {
 
 		private Integer domain;
+		private Integer regime;
 		private Integer agreementId;
 		private Integer agreementLevelId;
 
-		public AgreementContextKey(Integer domain, Integer agreementId, Integer agreementLevelId) {
+		public AgreementContextKey(Integer regime, Integer domain, Integer agreementId, Integer agreementLevelId) {
 			this.domain = domain;
+			this.regime = regime;
 			this.agreementId = agreementId;
 			this.agreementLevelId = agreementLevelId;
 		}
 
 		public Integer getDomain() {
 			return domain;
+		}
+		
+		public Integer getRegime() {
+			return regime;
 		}
 
 		public Integer getAgreementId() {
@@ -614,13 +620,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		@Override
 		public boolean equals(Object obj) {
 			return obj instanceof AgreementContextKey && AonUtils.equals(domain, ((AgreementContextKey) obj).domain)
+					&& AonUtils.equals(regime, ((AgreementContextKey) obj).regime)
 					&& AonUtils.equals(agreementId, ((AgreementContextKey) obj).agreementId)
 					&& AonUtils.equals(agreementLevelId, ((AgreementContextKey) obj).agreementLevelId);
 		}
 
 		@Override
 		public int hashCode() {
-			return AonUtils.hashCode(domain) + AonUtils.hashCode(agreementId) + AonUtils.hashCode(agreementLevelId);
+			return AonUtils.hashCode(domain) + AonUtils.hashCode(regime) + AonUtils.hashCode(agreementId) + AonUtils.hashCode(agreementLevelId);
 		}
 
 	}
@@ -2216,6 +2223,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.agreementContextFactory = null;
 	}
 
+	protected Integer getSSRegimeId() {
+		Object id = getObject(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return id == null ? null : (Integer) id;
+	}
+
 	protected Integer getAgreementId() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		return id == null ? null : (Integer) id;
@@ -2239,11 +2251,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected AgreementKey getAgreementKey() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		Object domain = getObject(SQLConstants.AGREEMENT, AgreementColumns.DOMAIN);
-		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain);
+		Object regime = getObject(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain, (Integer) regime);
 	}
 
 	protected AgreementKey getDefaultAgreementKey() {
-		return new AgreementKey(0, 0);
+		return new AgreementKey(0, 0, 0);
 	}
 
 	protected double getActiveDays(Period p) {
@@ -2350,7 +2363,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected AgreementKey getEnterpriseAgreementKey() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		Object domain = getObject(SQLConstants.ENTERPRISE, EnterpriseColumns.DOMAIN);
-		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain);
+		Object regime = getObject(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain, (Integer) regime);
 	}
 
 	protected List<Period> splitWorkedDays(List<Period> periods) {
@@ -2431,17 +2445,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private ExpressionContext getAgreementContext() throws SQLException, ExpressionException {
 
+		Integer ssRegimeId = getSSRegimeId();
 		Integer agreementId = getAgreementId();
 		Integer agreementLevelId = getAgreementLevel();
 		Integer agreementDomain = getAgreementDomain();
 
-		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(agreementDomain, agreementId,
+		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(ssRegimeId, agreementDomain, agreementId,
 				agreementLevelId);
 
 		ExpressionContext agreementCtx = agreementExpressionContexts.get(agreementAndLevelKey);
 
 		Integer enterpriseDomain = getEnterpriseDomain();
-		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(enterpriseDomain, agreementId,
+		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(ssRegimeId, enterpriseDomain, agreementId,
 				agreementLevelId);
 		ExpressionContext enterpriseCtx = agreementExpressionContexts.get(enterpriseAndLevel);
 
