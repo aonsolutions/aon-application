@@ -107,11 +107,7 @@ public class WarehouseTemplate implements AutoCloseable {
 	}
 	
 	private void referenceBorder() throws IOException {
-		float borderWidth = 1f;
-		PDFToolkit.drawBox(contents, 0, 0, this.getPageWidth(), borderWidth, DEFAULT_FONT_COLOR);
-		PDFToolkit.drawBox(contents, this.getPageWidth() - borderWidth, 0, borderWidth, this.getPageHeight(), DEFAULT_FONT_COLOR);
-		PDFToolkit.drawBox(contents, 0, getPageHeight() - borderWidth, this.getPageWidth(), borderWidth, DEFAULT_FONT_COLOR);
-		PDFToolkit.drawBox(contents, 0, 0, borderWidth, this.getPageHeight(), DEFAULT_FONT_COLOR);
+		PDFToolkit.drawBorderedBox(contents, 0, 0, this.getPageWidth(), this.getPageHeight(), DEFAULT_FONT_COLOR, 1f);
 	}
 	
 	private void drawCompany() throws IOException {
