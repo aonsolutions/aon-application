@@ -92,14 +92,14 @@ public class SQLAgreementPaymentsFactoryTestCase extends AbstractSQLTestCase {
 		SQLAgreementPaymentsFactory factory = new SQLAgreementPaymentsFactory(
 				connection, startDate, endDate);
 		
-		AgreementKey agreementKey = new AgreementKey(parentId, parentId);
+		AgreementKey agreementKey = new AgreementKey(parentId, parentId,0);
 		Collection<ISystemPayment> parentPayments= factory.create(agreementKey);
 		assertEquals(parentPayments.size(), 3);
 		for (IContractPayment contractPayment : parentPayments) {
 			assertEquals( contractPayment.getName() + "_PARENT" , contractPayment.getExpression());
 		}
 
-		agreementKey = new AgreementKey(parentId, overrideId);
+		agreementKey = new AgreementKey(parentId, overrideId,0);
 		Collection<ISystemPayment> overridePayments= factory.create(agreementKey);
 		assertEquals(overridePayments.size(), 2);
 		for (IContractPayment contractPayment : overridePayments) {
