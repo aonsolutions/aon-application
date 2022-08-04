@@ -3,6 +3,7 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
+import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
@@ -733,11 +734,12 @@ const createInputContact = () => setAttributes(new AonInput(),{
   description: `${MSG.CONTACT} (${MSG.OPTIONAL})`
 });
 
-const createInputTitle = () => setAttributes(new AonInput(),{
+const createInputTitle = () => setAttributes(new AonAutosizeTextarea(),{
   name:MESSENGER_IDS.TITLE_TASK,
   id: MESSENGER_IDS.TITLE_TASK,
-  description: MSG.ISSUE
+  title: MSG.ISSUE
 });
+
 
 const createLabelFileText = () => {
   const label = setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});

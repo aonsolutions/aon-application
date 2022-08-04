@@ -138,9 +138,18 @@ public class Sepe {
 		Contrata.validateCert(certificateInputStream, certificatePassword, certificateType);
 	}
 	
-	public static void sendContractExtension(final InputStream certificateInputStream, final String certificatePassword,
+	/**
+	 * 
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param contractExtension
+	 * @return String sepeId prorroga
+	 * @throws SepeException
+	 */
+	public static String sendContractExtension(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, ContractExtension contractExtension) throws SepeException  {
-		Contrata.sendContrataExtension(certificateInputStream, certificatePassword, certificateType, contractExtension);
+		return Contrata.sendContrataExtension(certificateInputStream, certificatePassword, certificateType, contractExtension);
 	}
 	
 	public static void main(String[] args)
