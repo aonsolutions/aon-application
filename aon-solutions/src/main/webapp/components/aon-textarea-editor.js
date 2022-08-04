@@ -2,6 +2,7 @@ import { AonElement } from "./AonElement.js";
 import { getReader } from '../services/utils.js';
 import { openFileUrl } from '../services/fileService.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
+import { KEYDOWN } from "../environments/aonEvent.js";
 import '../css/aon-textarea-editor.css';
 
 export class AonTextareaEditor extends AonElement {
@@ -29,7 +30,7 @@ export class AonTextareaEditor extends AonElement {
 
     #textAreaBackground;
     #textAreaHoverBackground;
-    #placeholder;
+    #defaultValue;
     #disabled;
     #barPosition;
     #barIntegrated;
@@ -169,6 +170,28 @@ export class AonTextareaEditor extends AonElement {
         return this.getAttribute("id");
     }
 
+    set placeholder(placeholder) {
+        this.setAttribute("placeholder", placeholder);
+    }
+
+    get placeholder() {
+        return this.getAttribute("placeholder");
+    }
+
+    set value(value) {
+        this.#defaultValue = value;
+        if (this.textBox) {
+            this.textBox.innerHTML = value;
+        }
+    }
+
+    get value() {
+        if (this.textBox) {
+            return this.#htmlMode ? this.textBox.innerText : this.textBox.innerHTML;
+        }
+        return "";
+    }
+
     constructor() {
         super();
         this.#windowListeners = [];
@@ -240,6 +263,11 @@ export class AonTextareaEditor extends AonElement {
                 }
                 if (this.bar) {
                     this.bar.id = this.barId;
+                }
+                break;
+            case 'placeholder':
+                if (this.textBox) {
+                    this.textBox.setAttribute("placeholder", this.placeholder);
                 }
                 break;
             default:
@@ -357,6 +385,7 @@ export class AonTextareaEditor extends AonElement {
     textBoxElement() {
         let box = document.createElement("div");
         box.id = "textBox";
+        box.classList.add("contentEditable");
         box.contentEditable = true;
         box.style.margin = 0;
         box.style.padding = "5px";
@@ -367,8 +396,14 @@ export class AonTextareaEditor extends AonElement {
         box.style.wordBreak = "break-word";
         box.style.backgroundColor = this.#textAreaBackground;
         box.style.outline = "0px solid transparent";
-
-        box.addEventListener("input", ev => {
+        box.addEventListener(EVENT.KEYDOWN, (ev) => {
+            let charCode = ev.keyCode || ev.which;
+            if (charCode === 8 && box.innerHTML === "<br>") {
+                ev.preventDefault();
+                this.clearElement(box);
+            }
+        });
+        box.addEventListener(EVENT.INPUT, ev => {
             ev.preventDefault();
             ev.stopPropagation();
             this.dispatchEvent(new CustomEvent(EVENT.INPUT));
@@ -391,6 +426,10 @@ export class AonTextareaEditor extends AonElement {
         });
 
         box.id = `${this.id}TextBox`;
+        box.setAttribute("placeholder", this.placeholder);
+        if (this.#defaultValue) {
+            box.innerHTML = this.#defaultValue;
+        }
 
         return box;
     }
