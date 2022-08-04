@@ -170,8 +170,8 @@ public class ShareServlet extends HttpServlet implements ShareService {
 							"method=" + BIDOQ_AYUDAT_METHOD
 							+ "&app_code=8"
 							+ "&_token=uNzupDBQEB3FycnhcGML6dDQnEeBsacKNB4MQve7HSp6GAYJSB6dDQnEeB"
-							+ "&usuario_cif=" + salary.getEmployeeDocument()
-							+ "&empleado_cif=" + salary.getEnterpriseDocument()
+							+ "&usuario_cif=02401400Q"
+							+ "&empleado_cif=" + salary.getEmployeeDocument()
 							+ "&files=" + arr.toString();
 					else
 						sendData = 
