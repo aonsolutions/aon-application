@@ -230,7 +230,10 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 	
 	private int obtainTargetId() throws ManagerBeanException {
-		Integer customerId = ((Customer)getTo()).getId();
+		Customer customer = (Customer)getTo();
+		if(CustomerStatus.BLOCKED.equals(customer.getStatus()))
+			return -1;
+		Integer customerId = customer.getId();
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
