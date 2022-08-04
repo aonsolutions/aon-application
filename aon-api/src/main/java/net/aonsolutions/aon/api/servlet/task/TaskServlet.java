@@ -573,35 +573,32 @@ public class TaskServlet extends AonApiHttpServlet{
 		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(receiver.getUserId()));
 	
 		Task task = AON_SOLUTIONS.getTask(domain, userReceiver, f-> f.getIdProperty().eq(id) );
-		
 
-	   Integer taskId = task.getId();
+	    Integer taskId = task.getId();
 	   
-	   if(task.isChild()) {
-		   task.setStatus(TaskStatus.IN_PROGRESS);
-	   }
+	    task.setStatus(TaskStatus.IN_PROGRESS);
 
-	   AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
+	    AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
 			
-	   task.setTaskHolder(receiver);
-	   task.setWorkgroup(workgroup);
-	   task.setStatus(TaskStatus.PENDING);
-	   task.setSource(TaskSource.TASK);
+	    task.setTaskHolder(receiver);
+	    task.setWorkgroup(workgroup);
+	    task.setStatus(TaskStatus.PENDING);
+	    task.setSource(TaskSource.TASK);
 		   
-	   task.setId(null);
+	    task.setId(null);
 		   
-	   task.setGtaskId(null);
+	    task.setGtaskId(null);
 		   
-	   task.setParent(taskId);
+	    task.setParent(taskId);
 		   
-	   task.setSender(sender);
+	    task.setSender(sender);
 
-	   Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
+	    Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
 		   
-	   // SAVE CONNECTED TASK PARENT
-	   saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
+	    // SAVE CONNECTED TASK PARENT
+	    saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
 		   
-	   //  ASIGNED NEW TASK
+	    //  ASIGNED NEW TASK
 
 	   TaskWorkflow assign = workflow.clone()
        .setTask(newTask.getId())

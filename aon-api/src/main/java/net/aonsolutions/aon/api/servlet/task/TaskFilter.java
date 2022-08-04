@@ -42,7 +42,7 @@ public class TaskFilter {
 		String source      = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer tag        = params.optInt(IJsonNames.TAG);
-		boolean isParent = params.optBoolean(IJsonNames.PARENT);
+		boolean isParent   = params.optBoolean(IJsonNames.PARENT);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
