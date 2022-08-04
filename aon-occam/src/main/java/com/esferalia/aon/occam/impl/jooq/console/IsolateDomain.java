@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
@@ -18,8 +19,6 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
 import java.io.PrintStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -29,25 +28,18 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import org.jooq.DSLContext;
+import org.jooq.AggregateFunction;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SQLDialect;
 import org.jooq.Schema;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
-import org.jooq.conf.ParamType;
-import org.jooq.conf.RenderKeywordCase;
-import org.jooq.conf.RenderQuotedNames;
-import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
@@ -55,6 +47,7 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.DomainValidator;
+import com.esferalia.aon.watson.util.AonChronometer;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -72,26 +65,30 @@ public class IsolateDomain {
 	
 	public static void isolate(ConsoleParams params) throws SQLException {
 		if (params.getDslContext() == null) {
-			params.setDslContext(createDSLContext(params));
+			String msg = "[ERROR]: No se ha definido la connection a la BD";
+			log(params,msg);
+			throw new AonCoreException(msg);
 		}
 		isolateDomain(params);
 	}
 
-	private static DSLContext createDSLContext(ConsoleParams params) throws SQLException {
-		Properties properties = new Properties();
-		properties.setProperty("user", params.getUser());
-		properties.setProperty("password", params.getPassword());
-		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
-		Connection connection = DriverManager.getConnection(params.getUrl(), properties);
-		Settings settings = new Settings();
-		settings.setRenderSchema(false);
-		settings.setRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED);
-		settings.setRenderKeywordCase(RenderKeywordCase.UPPER);
-		settings.setParamType(ParamType.INLINED);
-		return DSL.using(connection, SQLDialect.MYSQL, settings);
-	}
+//	private static DSLContext createDSLContext(ConsoleParams params) throws SQLException {
+//		Properties properties = new Properties();
+//		properties.setProperty("user", params.getUser());
+//		properties.setProperty("password", params.getPassword());
+//		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
+//		Connection connection = DriverManager.getConnection(params.getUrl(), properties);
+//		Settings settings = new Settings();
+//		settings.setRenderSchema(false);
+//		settings.setRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED);
+//		settings.setRenderKeywordCase(RenderKeywordCase.UPPER);
+//		settings.setParamType(ParamType.INLINED);
+//		return DSL.using(connection, SQLDialect.MYSQL, settings);
+//	}
 
 	private static void isolateDomain(ConsoleParams params) {
+		AonChronometer chronometer = new AonChronometer();
+		chronometer.start();
 		Result<Record> result = params.getDslContext().fetch("SELECT DATABASE();");
 		Record rec = result.get(0);
 		String schemaName = (String) rec.get(0);
@@ -126,9 +123,12 @@ public class IsolateDomain {
 				
 				disableForeignKeys(params);
 				log(params,"** Start transaction!");
+				
+
 				params.getDslContext().transaction(conf -> {
 					createTempTable(params);
 					createDomain(params);
+					checkProductIndex( params );
 					if (params.isInhertitanceEnabled()) {
 						passHeritableTables( params );
 					}
@@ -150,7 +150,11 @@ public class IsolateDomain {
 				});
 				log(params,"** Commit!");
 				log(params,"** End domain isolation!");
-				
+			} catch (Exception e) {
+				log(params, e.getMessage() );
+				log(params,"** Rollback!");
+				e.printStackTrace();
+			} finally {
 				if (!params.getErrors().isEmpty()) {
 					log(params, "" );
 					log(params, AonStringUtils.repeat('*',60));
@@ -158,15 +162,35 @@ public class IsolateDomain {
 					params.getErrors().stream().forEach( e -> log(params,e));
 					log(params, AonStringUtils.repeat('*',60));
 				}
-			} catch (Exception e) {
-				log(params,"** Rollback!");
-				e.printStackTrace();
-			} finally {
+				log(params,"** Program ended!");
 				enableForeignKeys(params);
 			}
-		} else
+		} else {
 			log(params,"Schema not present -> database : " + params.getDatabase() + ", domainName : "
 					+ params.getNewDomainName());
+		}
+		chronometer.stop();
+		log(params, "Process time " + chronometer.getMinutes() + " minutes.");
+		
+	}
+
+	private static void checkProductIndex(ConsoleParams params) {
+		if (params.isInhertitanceEnabled()) {
+			AggregateFunction<Integer> count = DSL.count(PRODUCT.ID);
+			params.getDslContext()
+				.select( PRODUCT.CODE, count )
+				.from(PRODUCT)
+				.where(PRODUCT.DOMAIN.in(params.getDomain(),params.getParent()))
+				.groupBy(PRODUCT.CODE)
+				.having(count.gt(1))
+				.fetch()
+				.stream()
+				.forEach( rec -> params.addError("El producto \"" + rec.getValue(PRODUCT.CODE) + "\" se encuentra definido en el padre y en el hijo"));
+			if (params.hasErrors()) {
+				throw new AonCoreException("Productos duplicados");
+			}
+		}
+			
 	}
 
 	private static void passHeritableTables(ConsoleParams params) {
