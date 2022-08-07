@@ -3141,6 +3141,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				}
 
 				@Override
+				public Collection<IContractPayment> getContractPayments() throws AonException {
+					return new FilterCollection<>(p -> p.getMonth() == null , super.getContractPayments());
+				}
+				
+				@Override
 				public Collection<IContractDeduction> getContractDeductions() throws AonException {
 					return Collections.emptyList();
 				}
