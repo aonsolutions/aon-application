@@ -135,7 +135,7 @@ try {
 									</tr>
 						
 <%
-	if ( false && domainName.endsWith("aonsolutions.org")) {
+	if ( domainName.endsWith("aonsolutions.org")) {
 %>								
 
 									<tr>
@@ -180,7 +180,7 @@ try {
 										</td>
 									</tr>
 <%
-	if ( true || !domainName.endsWith("aonsolutions.org") ) {
+	if ( !domainName.endsWith("aonsolutions.org") ) {
 %>								
 									<tr>
 										<td class="aon-login-box-center">
