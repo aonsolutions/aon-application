@@ -821,10 +821,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					exp.setName(EVERYTHING.getName());
 					if (dailyRegBase != null) {
 						//exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
-						exp.setExpression(String.format("%f * %s ", dailyRegBase, GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US, "%f * %s ", dailyRegBase, GUARANTEED_DAYS));
 					} else {
 						//exp.setExpression(String.format("SELF.br(%s) * %d", IT_START, guaranteedDays));
-						exp.setExpression(String.format("SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US,"SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
@@ -3202,10 +3202,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public Object system(String name) throws ExpressionException, SQLException {
 		ExpressionContext systemCtx = agreementContextFactory.getSystemExpressionContext();
-		Object value = systemCtx.getVariable(name, startDate, getEnd(), Object.class);
-		if (value != null)
-			return value;
-		return implicitExpressionContext.getVariable(name, startDate, getEnd(), Object.class);
+		//Object value = systemCtx.getVariable(name, startDate, getEnd(), Object.class);
+		List<ITimedResult<Object>> results = systemCtx.eval(name, startDate, getEnd(), Object.class);
+		return results.stream().map( ITimedResult::getValue )
+				.findAny().orElseGet(() -> implicitExpressionContext.getVariable(name, startDate, getEnd(), Object.class));
 	}
 
 	@Override
