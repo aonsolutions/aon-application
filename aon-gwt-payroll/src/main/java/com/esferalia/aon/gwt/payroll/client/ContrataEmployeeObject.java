@@ -344,7 +344,20 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCtoTransform(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCtoTransform(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCtoTransform(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), contractData.getSepeTransformId(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadCtoExtension(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCtoExtension(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getExtensionDate(), null, contractData.getSepeExtensionId(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);

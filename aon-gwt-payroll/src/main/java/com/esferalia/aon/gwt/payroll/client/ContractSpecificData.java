@@ -82,6 +82,15 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	DateBoxEx comunicationTransformDateBx;
 	
 	@UiField
+	VerticalPanel ideExtensionTable;
+	
+	@UiField
+	HTMLPanel ideExtensionPanel;
+	
+	@UiField
+	DateBoxEx comunicationExtensionDateBx;
+	
+	@UiField
 	TableElement otherDataTableElement;
 	
 	@UiField
@@ -367,8 +376,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	private Map<String, CNO> cnoMap;
 	private TextBox ideTB;
 	private TextBox ideTransformTB;
+	private TextBox ideExtensionTB;
 	private boolean isComunica;
 	private boolean isTransform;
+	private boolean isExtension;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
@@ -391,6 +402,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		}
 		
 		this.isTransform = null == contractTypeRecord ? false : contractTypeRecord.isTransform();
+		this.isExtension = contractEmployeeInfo.getContractInfo().isHasExtension();
 		
 		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
 		reloadSepeData();
@@ -407,6 +419,14 @@ public abstract class ContractSpecificData extends ResizeComposite {
 					contractEmployeeInfo.getContractInfo().getContractId());
 			createUpdateTransformSepeInfo(
 					isTransform,
+					isComunica, 
+					contractEmployeeInfo.getEmployeeInfo().getDocument(),
+					contractEmployeeInfo.getContractInfo().getEnterpriseCIF(),
+					contractEmployeeInfo.getContractInfo().getOriginalStartDate(),
+					contractEmployeeInfo.getContractInfo().getSepeId(),
+					contractEmployeeInfo.getContractInfo().getContractId());
+			createUpdateExtensionSepeInfo(
+					isExtension,
 					isComunica, 
 					contractEmployeeInfo.getEmployeeInfo().getDocument(),
 					contractEmployeeInfo.getContractInfo().getEnterpriseCIF(),
@@ -484,8 +504,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 						comunicationTransformDateBx.setValue(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
 						showSuccessMessage("Sincronizaci\u00f3n Transformaci\u00f3n Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
 						
-						contractSpecificData.setIde(sepeData.getOrDefault("trasnformIde", null));
-						contractSpecificData.setComunicationDate(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
+						contractSpecificData.setTransformIde(sepeData.getOrDefault("trasnformIde", null));
+						contractSpecificData.setComunicationTransformDate(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
 						
 						downloadCtoTransformDocument();
 					}
@@ -500,6 +520,50 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		ideTransformPanel.add(updateSepeInfoBtn);
 	}
 	
+	private void createUpdateExtensionSepeInfo(boolean isTransform, boolean isComunica, String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) {
+		if(Boolean.FALSE.equals(isTransform)) {
+			ideExtensionTable.setVisible(false);
+			return;
+		}
+		
+		// Reiniciar el boton por que se estaban acumulando los click handler
+		ideExtensionTable.setVisible(true);
+		ideExtensionPanel.clear();
+		this.ideExtensionTB = new TextBox();
+		this.ideExtensionTB.addStyleName(style.maxWidthTB());
+		this.ideExtensionTB.addChangeHandler(e -> contractSpecificData.setExtensionIde(ideExtensionTB.getValue()));
+		ideExtensionPanel.add(ideExtensionTB);
+		
+		AonToolbarSmallButton updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n pro\u00f3rroga Sepe", AON.CSS.aonIconCloudImport());
+		if(Boolean.FALSE.equals(isComunica))
+			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
+		else {
+			updateSepeInfoBtn.addClickHandler(e -> {
+				showLoadingMessage("Obteniendo informaci\u00f3 pr\u00f3rroga del Sepe");
+//				implEmployee.getSepeExtensionComunicationData(document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallback<Map<String,String>>() {
+//					@Override
+//					public void onSuccess(Map<String, String> sepeData) {
+//						ideExtensionTB.setValue(sepeData.getOrDefault("extensionIde", null));
+//						String communicationExtensionDate = sepeData.getOrDefault("comunicationExtensionDate", null);
+//						comunicationExtensionDateBx.setValue(AonStringUtils.isBlank(communicationExtensionDate) ? null : formatDate.parse(communicationExtensionDate));
+//						showSuccessMessage("Sincronizaci\u00f3n pro\u00f3rroga Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
+//						
+//						contractSpecificData.setExtensionIde(sepeData.getOrDefault("extensionIde", null));
+//						contractSpecificData.setComunicationExtensionDate(AonStringUtils.isBlank(communicationExtensionDate) ? null : formatDate.parse(communicationExtensionDate));
+//						
+//						downloadCtoExtensionDocument();
+//					}
+//					
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						showErrorMessage("Error sincronizaci\u00f3n Pr\u00f3rroga Sepe", caught.getMessage());
+//					}
+//				});
+			});
+		}
+		ideTransformPanel.add(updateSepeInfoBtn);
+	}
+	
 	// --------------------------------------------------------- Abstract Methods --------------------------------------------------
 
 	protected abstract void showErrorMessage(String title, String message);
@@ -508,6 +572,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	protected abstract void hideMessagePanel();
 	protected abstract void downloadCtoDocument();
 	protected abstract void downloadCtoTransformDocument();
+	protected abstract void downloadCtoExtensionDocument();
 	
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 
@@ -2240,6 +2305,11 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		if(Boolean.TRUE.equals(isTransform)) {
 			ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
 			comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
+		}
+		
+		if(Boolean.TRUE.equals(isExtension)) {
+			ideExtensionTB.setValue(this.contractSpecificData.getExtensionIde());
+			comunicationExtensionDateBx.setValue(this.contractSpecificData.getComunicationExtensionDate());
 		}
 		
 		calendarFormativeStartDate.setValue(this.contractSpecificData.getCalendarFormativeStartDate());

@@ -86,6 +86,8 @@ public class ContractInfo implements Serializable{
 	
 	private boolean isTGSSActive;
 	private String sepeId;
+	private String sepeExtensionId;
+	private String sepeTransformId;
 	
 	private boolean hasExtension;
 	private Date extensionDate;
@@ -605,6 +607,22 @@ public class ContractInfo implements Serializable{
 
 	public void setSepeId(String sepeId) {
 		this.sepeId = sepeId;
+	}
+	
+	public String getSepeTransformId() {
+		return sepeTransformId;
+	}
+
+	public void setSepeTransformId(String sepeTransformId) {
+		this.sepeTransformId = sepeTransformId;
+	}
+
+	public String getSepeExtensionId() {
+		return this.sepeExtensionId;
+	}
+
+	public void setSepeExtensionId(String sepeExtensionId) {
+		this.sepeExtensionId = sepeExtensionId;
 	}
 	
 	public boolean isHasExtension() {

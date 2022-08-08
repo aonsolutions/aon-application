@@ -550,6 +550,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeCtoTransform(getCurrentDomainName(), getCurrentUser(), cif, document, contractId, startDate, sepeIde, callback);
 	}
 	
+	public void getEmployeeCtoExtension(String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getEmployeeCtoExtension(getCurrentDomainName(), getCurrentUser(), enterpriseCIF, document, contractId, extensionDate, extensionNum, sepeExtensionId, callback);
+	}
+	
 	public void getCertifica2PDF(Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), contractId, nif, endDate, callback);
 	}
