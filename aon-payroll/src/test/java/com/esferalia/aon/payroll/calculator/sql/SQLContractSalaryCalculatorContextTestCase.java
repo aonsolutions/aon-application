@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
@@ -44,6 +45,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -65,6 +67,54 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	private static class SuccessException extends Exception {
 		
 	}
+
+	@Test
+	public void testSystemFunction() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+//				put("BASE_CGC_MIN", "( COTIZACION_MENSUAL ) ? BASE_CGC_MIN_MES : BASE_CGC_MIN_DIA");
+//				put("BASE_CGC_MIN_DIA", "[ \"01\":70.84, \"02\":58.75, \"03\":51.10, \"04\":50.73, \"05\":50.73, \"06\":50.73, \"07\":50.73, \"08\":50.73, \"09\":50.73, \"10\":50.73, \"11\":50.73][GRUPO_COTIZACION]  * JORNADAS_REALES");
+//				put("BASE_CGC_MIN_MES", "[ \"01\":1629.30,\"02\":1351.20,\"03\":1175.40,\"04\":1166.70,\"05\":1166.70,\"06\":1166.70,\"07\":1166.70,\"08\":1166.70,\"09\":1166.70,\"10\":1166.70,\"11\":1166.70][GRUPO_COTIZACION] * ( DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30 )");
+				put("COTIZACION_MENSUAL", "GRUPO_COTIZACION; isdef MODELO_COTIZACION_AGRARIO ? MODELO_COTIZACION_AGRARIO != 2 : VERDADERO()");
+			}
+		});
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfMonth
+				, new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"10\"");
+						put("COTIZACION_MENSUAL", "SISTEMA('COTIZACION_MENSUAL')");
+					}
+				}
+				, new String[] {
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"COTIZACION_MENSUAL ? 100.00 : 0.00"
+						
+				}
+				, new String[] {
+						
+				}
+				,null
+				);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder())
+				.calculate(getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract));
+		
+		org.junit.Assert.assertEquals(1100.00, salary.getTotalPayment(), 0.00);
+		//salary.getSalaryDatas().forEach( d -> System.out.println( d.getName() + " : " + d.getExpression() ));
+		
+	}
+
 
 	@Test
 	public void testWorkedFactorOffDays() throws SQLException, AonException {
