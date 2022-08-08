@@ -831,6 +831,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void getEmployeeCtoExtension(String currentDomainName, String user, String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEmployeeCtoExtension(currentDomainName, user, enterpriseCIF, document, contractId, extensionDate, extensionNum, sepeExtensionId, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
 	public void getCertifica2PDF(String currentDomainName, String user, Integer contractId, String nif, Date endDate, 
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();

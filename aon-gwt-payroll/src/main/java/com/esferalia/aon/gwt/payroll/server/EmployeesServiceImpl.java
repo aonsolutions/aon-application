@@ -6270,6 +6270,37 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public String getEmployeeCtoExtension(String domainName, String userLogin, String cif, String ipf, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+
+			byte[] pdfBytes = Sepe.getContractExtensionPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, extensionDate, null == extensionNum ? 1 : extensionNum, sepeExtensionId);
+
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+
 
 	@Override
 	public String getCertifica2PDF(String domainName, String userLogin, Integer contractId, String nif, Date endDate)
@@ -6808,8 +6839,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			System.out.println(contractExtension.toString());
 			
-			Sepe.sendContractExtension(certificateIS, certificate.getPassword(), certificate.getType(), contractExtension);
+			String sepeExtensionId = Sepe.sendContractExtension(certificateIS, certificate.getPassword(), certificate.getType(), contractExtension);
 			
+			// Set Sepe Extension Ide
+			if (AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeExtensionId()) && AonStringUtils.isNotBlank(sepeExtensionId)) {
+				JooqContrataContract.setSepeExtensionId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeExtensionId);
+				employeeContractInfo.getContractInfo().setSepeExtensionId(sepeExtensionId);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());

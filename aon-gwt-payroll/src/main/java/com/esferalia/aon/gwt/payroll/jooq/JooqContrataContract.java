@@ -26,6 +26,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,9 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.ibm.icu.util.Calendar;
 
 public class JooqContrataContract {
+	
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	
 	
 	// ---------------------------------------------------- Constructor
 	
@@ -1629,7 +1633,7 @@ public class JooqContrataContract {
 					.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
 					.fetch();
 			
-			if(sepeIdRecords.isEmpty())
+			if(sepeIdRecords.isEmpty()) {
 				dslContext.insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, domainId)
 					.set(CONTRACT_DATA.NAME, "SEPE_ID")
@@ -1639,6 +1643,15 @@ public class JooqContrataContract {
 					.set(CONTRACT_DATA.CONTRACT, contractId)
 					.execute();
 			
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.NAME, "COMUNICATION_DATE")
+					.set(CONTRACT_DATA.EXPRESSION, dateFormat.format(new java.util.Date()))
+					.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.execute();
+			}
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
 		} 
@@ -1652,6 +1665,66 @@ public class JooqContrataContract {
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
 				.and(CONTRACT_DATA.EXPRESSION.eq(sepeId))
+				.execute();
+			
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
+				.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
+	public static void setSepeExtensionId(String domainName, Integer contractId, String extensionIde) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.eq("SEPE_EXTENSION_ID"))
+					.fetch();
+			
+			if(sepeIdRecords.isEmpty()) {
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.NAME, "SEPE_EXTENSION_ID")
+					.set(CONTRACT_DATA.EXPRESSION, extensionIde)
+					.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.execute();
+			
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.NAME, "COMUNICATION_EXTENSION_DATE")
+					.set(CONTRACT_DATA.EXPRESSION, dateFormat.format(new java.util.Date()))
+					.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.execute();
+			}	
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+
+	public static void removeSepeExtensionId(String domainName, Integer contractId, String sepeExtensionId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("SEPE_EXTENSION_ID"))
+				.and(CONTRACT_DATA.EXPRESSION.eq(sepeExtensionId))
+				.execute();
+			
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_EXTENSION_DATE"))
 				.execute();
 			
 		}catch (SQLException e) {

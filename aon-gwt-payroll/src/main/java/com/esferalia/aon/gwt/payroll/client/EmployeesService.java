@@ -266,6 +266,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
 	
+	String getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId) throws IllegalArgumentException;
+	
 	String getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications

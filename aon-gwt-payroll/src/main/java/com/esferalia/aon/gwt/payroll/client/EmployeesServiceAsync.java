@@ -282,6 +282,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException;
 	
+	void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException;
+	
 	void getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications

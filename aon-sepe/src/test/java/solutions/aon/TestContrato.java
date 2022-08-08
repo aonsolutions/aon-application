@@ -23,7 +23,7 @@ public class TestContrato {
 	
 	private final String CERTIFICATE_PASSWORD = "1234";
 	private final String CERTIFICATE_TYPE = "pkcs12"; 
-	private final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/MARIA_VERA.pfx"; 
+	private final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/MARIA_VERA.p12"; 
 	
 	@Test
 	@Ignore
@@ -236,6 +236,27 @@ public class TestContrato {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	@Test
+	@Ignore
+	public void getContractExtensionPdf() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
+	
+			String cif = "44736467H";	
+			String ipf = "45776588X";
+			Date oldDateIniContract =  new Date("2022/07/30");
+			Integer nprorroga = 1;
+			String sepeId = null;
+
+			byte[] pdf = Sepe.getContractExtensionPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, cif, oldDateIniContract, nprorroga, sepeId);
+			System.out.println( new String(Base64.getEncoder().encode(pdf)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	@Test
 	@Ignore

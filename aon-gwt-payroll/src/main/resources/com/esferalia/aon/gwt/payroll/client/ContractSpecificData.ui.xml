@@ -198,6 +198,40 @@
 				</g:HTMLPanel>
 			</g:VerticalPanel>
 			
+			<!-- SEPE COMUNICATION -->
+			<g:VerticalPanel ui:field="ideExtensionTable" styleName="{style.styleBorder}"> 
+		    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Comunicación Prórroga Sepe</g:Label>
+		    	<g:HTMLPanel>
+					<table ui:field="contractExtensionIDETable" debugId="contractIDETable"
+						style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+						<tbody>
+						    <tr>
+						        <td></td>
+						        <td></td>
+						    </tr>
+						    <tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>IDE Prórroga</g:Label>
+								</td>
+								<td>
+									<g:HTMLPanel styleName="{style.row}">
+										<g:HTMLPanel ui:field="ideExtensionPanel" styleName='{style.row}'/>
+									</g:HTMLPanel>
+								</td>
+							</tr>
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Fecha Comunicación Prórroga</g:Label>
+								</td>
+								<td>
+									<a:DateBoxEx ui:field="comunicationExtensionDateBx" styleName="{style.maxWidthTB} {style.textCenter}" />
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</g:HTMLPanel>
+			</g:VerticalPanel>
+			
 			<!-- SEPE DATA -->
 			<g:VerticalPanel ui:field="otherDataTable" styleName="{style.styleBorder}"> 
 		    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>

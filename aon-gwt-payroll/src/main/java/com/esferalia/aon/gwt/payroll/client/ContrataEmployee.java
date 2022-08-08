@@ -147,6 +147,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void downloadCtoTransformDocument() {
 			downloadCtoTransform(s -> {}, f -> {});
 		}
+		
+		@Override
+		protected void downloadCtoExtensionDocument() {
+			downloadCtoExtension(s -> {}, f -> {});
+		}
 	}
 
 	// ------------------------------------------------- ContractClausesUIImpl
@@ -493,6 +498,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			onCTOTransform();
 		}
 	}
+	
+	class CTOExtensionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCTOExtension();
+		}
+	}
 
 	class Certifica2Command implements ScheduledCommand {
 
@@ -710,6 +723,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem cto;
 		private MenuItem cbc;
 		private MenuItem ctoTransform;
+		private MenuItem ctoExtension;
 		
 		MenuItemSeparator separatorCertifica;
 		
@@ -738,6 +752,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			cto = addMenuItem("Copia Contrato", new CTOCommand(), AON.CSS.aonIconPdf(), "cto");
 			cbc = addMenuItem("Copia B\u00E1sica", new CBCCommand(), AON.CSS.aonIconPdf(), "cbc");
 			ctoTransform = addMenuItem("Copia Transformaci\u00f3n Contrato", new CTOTransformCommand(), AON.CSS.aonIconPdf(), "ctoTransform");
+			ctoExtension = addMenuItem("Copia Pr\u00f3rroga Contrato", new CTOExtensionCommand(), AON.CSS.aonIconPdf(), "ctoExtension");
 			
 			separatorCertifica = addSeparator();
 
@@ -1962,6 +1977,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showError("Error CTO Transformaci\u00f3n", f.getMessage());
 		});
 	}
+	
+	private void onCTOExtension() {
+		showCtoExtension();
+	}
+
+	private void showCtoExtension() {
+		showLoading("Obteniendo CTO Pr\u00f3rroga...");
+		contrataEmployeeObject.downloadCtoExtension(dataURI -> {
+			hideMessage();
+			showPdf();
+			pdfViewer.open(dataURI);
+		}, f -> {
+			showBlakPdf();
+			showError("Error CTO Pr\u00f3rroga", f.getMessage());
+		});
+	}
 
 	private void showCertifica2PDF() {
 		showLoading("Obteniendo Certific@2...");
@@ -2068,6 +2099,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						},
 						f -> {
 							showError("Error obtenci\u00F3n CTO Transformaci\u00f3n", f.getMessage());
+							failure.accept(null);
+						});
+			}
+		};
+		timer.schedule(2500);
+	}
+	
+	private void downloadCtoExtension(Consumer<Void> succes, Consumer<Void> failure) {
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				showLoading("Obteniendo CTO Pr\u00f3rroga....");
+				contrataEmployeeObject.downloadCtoExtension(
+						s -> {
+							showSuccess("CTO", "Se ha descargado el CTO Pr\u00f3rroga del trabajador. El documento se encuentran en el apartado de Documentos");
+							succes.accept(null);
+						},
+						f -> {
+							showError("Error obtenci\u00F3n CTO Pr\u00f3rroga", f.getMessage());
 							failure.accept(null);
 						});
 			}

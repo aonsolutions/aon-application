@@ -712,6 +712,16 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF,
+					String document, Integer contractId, Date extensionDate, Integer extensionNum,
+					String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		};
 		

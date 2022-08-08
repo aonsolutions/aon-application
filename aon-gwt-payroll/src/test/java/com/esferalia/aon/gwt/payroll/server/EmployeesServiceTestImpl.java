@@ -1084,4 +1084,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF,
+			String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
