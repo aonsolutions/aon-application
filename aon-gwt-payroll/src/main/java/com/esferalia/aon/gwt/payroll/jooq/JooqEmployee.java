@@ -983,6 +983,12 @@ public class JooqEmployee {
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
 				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_ID")) {
+				contractData.setSepeId(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_EXTENSION_ID")) {
+				contractData.setSepeExtensionId(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_TRANSFORM_ID")) {
+				contractData.setSepeTransformId(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TRANSFORM_DATE")) {
 				try {
 					contractData.setTransformDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
