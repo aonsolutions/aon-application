@@ -7,18 +7,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PackagingDAO {
 	
@@ -40,11 +44,12 @@ public class PackagingDAO {
 			f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getProductProperty().eq(item.getProduct().getId()))
 			.and(f.getSerialNumberProperty().eq(serialNumber)));
-		if(item2.isEmpty()) {
-			item2 = item;
-			item2.setId(null).setBarcode(null).setSerialNumber(serialNumber).setSerialDate(serialDate)
-			.setDescription(item.getProduct().getName() + " #" + serialNumber);
-			item2 = ItemDAO.save(ctx, item2);
+		if(item2.isEmpty()) {	
+			item2 = item.copy()
+				.setBarcode(null)
+				.setSerialNumber(serialNumber)
+				.setSerialDate(serialDate)
+				.setDescription(item.getProduct().getName() + " #" + serialNumber);
 		}
 		Integer[] items = ItemCompositionDAO.getStream(ctx, f -> 
 			f.getCompositionItemProperty().eq(item.getId()))
@@ -64,6 +69,10 @@ public class PackagingDAO {
 	}
 	
 	public static Packaging save(AONContext ctx, Packaging packaging) {
+		if(packaging.getItem().getId() == null) {
+			Item item = ItemDAO.save(ctx, packaging.getItem());
+			packaging.setItem(item);
+		}
 		Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		Elaboration elaboration = processElaboration(ctx, packaging, warehouse);
 		return processPackaging(ctx, packaging, elaboration, warehouse);
@@ -125,7 +134,7 @@ public class PackagingDAO {
 	}
 	
 	private static Packaging processPackaging(AONContext ctx, Packaging packaging, Elaboration elaboration, Warehouse warehouse) {
-		String sscc = generateSSCC();
+		String sscc = generateSSCC(ctx);
 		
 		Item container = packaging.getContainer();
 		container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date());
@@ -134,6 +143,7 @@ public class PackagingDAO {
 		ElaborationDetail packing = new ElaborationDetail()
 				.setDomain(ctx.getDomainId())
 				.setElaboration(elaboration)
+				.setQuantity(1.0)
 				.setType(ElaborationDetailType.PACKAGING)
 				.setDate(new Date())
 				.setItem(container)
@@ -165,9 +175,37 @@ public class PackagingDAO {
 		return packaging.setContainer(container);
 	}
 	
-	private static String generateSSCC(){
-		// TODO GENERAR SSCC;
-		return "284370167341234560";
+	private static String generateSSCC(AONContext ctx){
+		ApplicationParameter param = AppParamDAO.fetchOne(ctx, AppParam.SSCC_LAST_NUMBER);
+		Integer number = 0;
+		if(param != null) {
+			number = AonNumberUtils.toint(param.getValue());
+			number++;
+		} else {
+			param = new ApplicationParameter()
+					.setDomain(ctx.getDomainId())
+					.setName(AppParam.SSCC_LAST_NUMBER)
+					.setValue(number.toString());
+		}
+		String aonNumber = AonStringUtils.leftPad(number.toString(), 6, "0");
+		AppParamDAO.saveApplicationParameter(ctx, param.setValue(number.toString()));
+
+		String sscc = "08437016734" + aonNumber;
+		String control = calculateSsccControlDigit(sscc);
+		
+		return sscc + control;
+	}
+	
+	private static String calculateSsccControlDigit(String sscc) {
+		char[] array = sscc.toCharArray();
+		Integer sum = 0;
+		for(Integer i = 0; i < array.length; i++) {
+			sum = sum + Character.getNumericValue(array[i]) * (AonNumberUtils.isPar(i) ? 3 : 1);
+		}
+
+		Integer resto = sum % 10;
+		Integer value = resto.equals(0) ? resto : 10 - resto;
+		return value.toString();
 	}
 	
 	private static String calculateSerialNumber(String barcode) {
@@ -177,5 +215,5 @@ public class PackagingDAO {
 	private static Date calculateSerialDate(String barcode) {
 		return new Date();
 	}
-		
+
 }

@@ -11,6 +11,7 @@ import { AonNumber } from '../../../components/aon-number.js';
 import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
+import * as LS from '../../../services/localStorageService.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -24,6 +25,10 @@ export class AonMobilePackage extends AonElement {
 
 	COMPOSITION;
 	COMPOSITION_CARD;
+
+	TAG;
+	TAG_CARD;
+
 
 	packaging;
 
@@ -55,8 +60,11 @@ export class AonMobilePackage extends AonElement {
 		
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
-		
-		this.packaging = new Elaboration(this.packaging);
+
+		this.TAG = this.id + CONSTANT.TAG.initCap();
+		this.TAG_CARD = this.TAG + CONSTANT.CARD.initCap();
+
+		this.packaging = this.packaging || new Elaboration(this.packaging);
 	}
 
 	build() {
@@ -69,6 +77,8 @@ export class AonMobilePackage extends AonElement {
   	buildPackage(parent){
 		this.buildPackageGeneral(parent);
 		this.buildPackageComposition(parent);
+		if(this.packaging.composition.length === 1)
+			this.buildTag(parent);
 	}
 
 	buildPackageGeneral(parent){
@@ -82,17 +92,21 @@ export class AonMobilePackage extends AonElement {
 		table.addRow();
 
 		let product = this.createInput(this.PACKAGE_PRODUCT, MSG.PRODUCT);
+		product.value = this.packaging.item.name;
 		table.addCell(product);
 
 		let quantity = this.createInput(this.PACKAGE_QUANTITY, MSG.QUANTITY);
+		quantity.value = this.packaging.quantity || 0.0;
 		table.addCell(quantity);
 
 		table.addRow();
 
 		let serialNumber = this.createInput(this.PACKAGE_SERIAL_NUMBER, "Nº Lote");
+		serialNumber.value = this.packaging.item.serialNumber;
 		table.addCell(serialNumber);
 
 		let serialDate = this.createInput(this.PACKAGE_SERIAL_DATE, "Fecha Lote");
+		serialDate.value = this.packaging.item.serialDate;
 		table.addCell(serialDate);
 	}
 
@@ -110,6 +124,23 @@ export class AonMobilePackage extends AonElement {
 		div.appendChild(addButton);		
 		
 		card.setContent(div);
+	}
+
+	buildTag(parent){
+		let card = this.createCard(this.TAG_CARD, MSG.TAG);
+		parent.appendChild(card);
+
+		let json = {
+			container: this.packaging.item.id,
+			domain_id: LS.getDomainId(),
+			domain_name: LS.getDomainName(),
+			login: LS.getDomainLogin()
+		};
+
+		let w = this.getElement(card.CONTENT).offsetWidth;
+		let type = 'application/pdf';
+		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		card.setContentHTML(`<aon-viewer type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 	}
 
 	// ACTIONS

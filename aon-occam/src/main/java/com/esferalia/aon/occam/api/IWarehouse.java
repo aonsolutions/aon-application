@@ -157,6 +157,7 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	Elaboration getElaboration(AONContext ctx, Integer id);
+	Elaboration getElaboration(AONContext ctx, ElaborationFilter filter, Options...options);
 	Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter);
 	List<Elaboration> getElaborationList(AONContext ctx, ElaborationFilter filter, Options... options);
 	ElaborationDetail getElaborationDetail(AONContext ctx, Integer id);

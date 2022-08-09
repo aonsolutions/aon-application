@@ -4303,6 +4303,25 @@ public class AON {
 	
 	// ------------------ ELABORATION
 
+	public static Elaboration getElaboration(Occam occam, ElaborationFilter filter, Options...options) {
+		return getElaboration(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter, options);
+	}
+	
+	public static Elaboration getElaboration(Domain domain, User user, ElaborationFilter filter, Options...options) {
+		return getElaboration(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+
+	public static Elaboration getElaboration(Domain domain, String login, ElaborationFilter filter, Options...options) {
+		return getElaboration(domain.getName(), domain.getId(), login, filter, options);
+	}
+		
+	public static Elaboration getElaboration(String domainName, Integer domainId, String login, ElaborationFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().getElaboration(ctx, filter, options);
+		}
+	}
+		
+	
 	// ---------- ELABORATION STREAM
 		
 	public static Stream<Elaboration> getElaborationStream(Occam occam, ElaborationFilter filter) {

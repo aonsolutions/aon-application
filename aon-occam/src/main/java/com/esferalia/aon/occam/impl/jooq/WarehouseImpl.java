@@ -269,6 +269,13 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getElaboration(ctx, id));
 	}
+	
+	@Override
+	public Elaboration getElaboration(AONContext ctx, ElaborationFilter filter, Options...options){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.get(ctx, filter, options));
+	}
+	
 	@Override
 	public ElaborationDetail getElaborationDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->

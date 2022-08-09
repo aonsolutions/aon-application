@@ -12,11 +12,13 @@ import { AonInput } from '../../../components/aon-input.js';
 import { AonSelect } from '../../../components/aon-select.js';
 
 import { AonNumber } from '../../../components/aon-number.js';
+
 import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonSuggestion } from '../../../components/aon-suggestion.js';
 
 import * as LS from '../../../services/localStorageService.js';
+import { AonDate } from '../../../components/aon-date.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -138,9 +140,17 @@ export class AonMobilePackaging extends AonElement {
 		table.addRow();
 
 		let lote = this.createInput(this.PACKAGING_PRODUCT_SERIAL_NUMBER, "Nº Lote");
+		lote.addEventListener(EVENT.CHANGE, (e) => {
+			if(this.packaging.item)
+				this.packaging.item.serialNumber = lote.value;
+		});
 		table.addCell(lote);
 
-		let date = this.createInput(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
+		let date = this.createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
+		date.addEventListener(EVENT.CHANGE, (e) => {
+			if(this.packaging.item)
+				this.packaging.item.serialDate = date.value;
+		});
 		table.addCell(date);
 
 		table.addRow();	
@@ -160,7 +170,7 @@ export class AonMobilePackaging extends AonElement {
 			let data = { barcode: product.value};
 			getPackaging(data).then(r => {
 				this.packaging = r;
-				let val = r.item.description || r.item.name;
+				let val = r.base.description || r.base.name;
 				product.value = val || '';
 				container.setOptions(r.containers);
 				lote.value = r.item.serialNumber;
@@ -244,6 +254,13 @@ export class AonMobilePackaging extends AonElement {
 		select.id = id;
 		select.description = title;
 		return select;
+	}
+
+	createDate(id, title) {
+		let date = new AonDate();
+		date.id = id;
+		date.title = title;
+		return date;
 	}
 
 	createSuggestion(id, title) {

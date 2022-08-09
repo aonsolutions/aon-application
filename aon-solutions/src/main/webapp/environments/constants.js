@@ -248,6 +248,7 @@ export const SURNAME = 'surname';
 
 export const TABLE = 'table';
 export const TABS = 'tabs';
+export const TAG = 'tag';
 export const TEXT = 'text';
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';

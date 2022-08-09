@@ -136,17 +136,21 @@ export class AonMobileElaboration extends AonElement {
 		table.addRow();
 
 		let product = this.createInput(this.ELABORATION_PRODUCT, MSG.PRODUCT);
+		product.value = this.elaboration.detail.item.name;
 		table.addCell(product);
 
 		let quantity = this.createInput(this.ELABORATION_QUANTITY, MSG.QUANTITY);
+		quantity.value = this.elaboration.detail.quantity;
 		table.addCell(quantity);
 
 		table.addRow();
 
 		let serialNumber = this.createInput(this.ELABORATION_SERIAL_NUMBER, "Nº Lote");
+		serialNumber.value = this.elaboration.detail.item.serialNumber;
 		table.addCell(serialNumber);
 
 		let serialDate = this.createInput(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
+		serialDate.value = this.elaboration.detail.item.serialDate;
 		table.addCell(serialDate);
 	}
 
@@ -168,7 +172,9 @@ export class AonMobileElaboration extends AonElement {
 
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
-		div.appendChild(new AonMobilePackageList());
+		let packaging = new AonMobilePackageList();
+		packaging.setElaborationPackages(this.elaboration.packaging);
+		div.appendChild(packaging);
 		parent.appendChild(div);
 	}
 

@@ -4,10 +4,12 @@ import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
 import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -132,6 +134,27 @@ public class ElaborationDAO {
 			.from(ELABORATION)
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.eq(ELABORATION.WAREHOUSE))
 			.where(ELABORATION_PROPERTIES.getConditions(filter));
+	}
+
+	public static Elaboration get(AONContext ctx, ElaborationFilter filter, Options... options){
+		if(options.length > 0 && options[0].isFull())
+			return getFull(ctx, filter);
+		return select(ctx, filter).limit(1).fetch().stream().map(new ElaborationFiller())
+			.findFirst().orElse(new Elaboration());
+	}
+
+	private static Elaboration getFull(AONContext ctx, ElaborationFilter filter){
+		Elaboration elaboration = select(ctx, filter).limit(1).fetch().stream().map(new ElaborationFiller())
+			.findFirst().orElse(new Elaboration());
+		if(!elaboration.isEmpty()) {
+			List<ElaborationDetail> details = getDetailFullStream(ctx, f -> f.getElaborationProperty().eq(elaboration.getId()))
+					.collect(Collectors.toCollection(LinkedList::new));
+			elaboration.setDetail(details.stream().filter(f-> ElaborationDetailType.ELABORATION.equals(f.getType()))
+					.findFirst().orElse(new ElaborationDetail()));
+			elaboration.setPackaging(details.stream().filter(f-> ElaborationDetailType.PACKAGING.equals(f.getType()))
+					.collect(Collectors.toCollection(LinkedList::new)));
+		}
+		return elaboration;
 	}
 	
 	public static Stream<Elaboration> getStream(AONContext ctx, ElaborationFilter filter, Options... options){
@@ -280,6 +303,47 @@ public class ElaborationDAO {
 	 * ELABORATION DETAIL
 	 */
 	
+	private static SelectConditionStep<Record> selectDetail(AONContext ctx, ElaborationDetailFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(ELABORATION_DETAIL)
+			.join(ITEM).on(ITEM.ID.eq(ELABORATION_DETAIL.ITEM))
+			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.join(WAREHOUSE).on(WAREHOUSE.ID.eq(ELABORATION_DETAIL.WAREHOUSE))
+			.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Stream<ElaborationDetail> getDetailStream(AONContext ctx, ElaborationDetailFilter filter, Options... options){
+		if(options.length > 0) 
+			return getDetailStream(ctx, filter, options[0]);
+		return selectDetail(ctx, filter).fetch().stream().map(new ElaborationDetailFiller());
+	}
+	
+	private static Stream<ElaborationDetail> getDetailStream(AONContext ctx, ElaborationDetailFilter filter, Options options){
+		if(options.isFull() && options.isPagination())
+			return getDetailFullStream(ctx, filter, options.getPage(), options.getPerPage());
+		else if(options.isFull())
+			return getDetailFullStream(ctx, filter);
+		else if(options.isPagination())
+			return getDetailStream(ctx, filter, options.getPage(), options.getPerPage());
+		else return getDetailStream(ctx, filter);
+	}
+	
+	public static Stream<ElaborationDetail> getDetailStream(AONContext ctx, ElaborationDetailFilter filter, Integer page, Integer perPage){
+		return selectDetail(ctx, filter)
+			.limit(perPage).offset(perPage * (page -1))
+			.fetch().stream().map(new ElaborationDetailFiller());
+	}
+
+	public static Stream<ElaborationDetail> getDetailFullStream(AONContext ctx, ElaborationDetailFilter filter, Integer page, Integer perPage){
+		return getDetailStream(ctx, filter, page, perPage)
+			.map(r -> r.setComposition(getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
+	}
+	
+	public static Stream<ElaborationDetail> getDetailFullStream(AONContext ctx, ElaborationDetailFilter filter){
+		return getDetailStream(ctx, filter)
+			.map(r -> r.setComposition(getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
+	}
+	
 	public static List<ElaborationDetail> getElaborationDetailList(
 			AONContext ctx, Integer elaborationId) {
 		ctx.checkRead();
@@ -288,7 +352,7 @@ public class ElaborationDAO {
 					.and(ELABORATION_DETAIL.TYPE.eq(ElaborationDetailType.ELABORATION.value())))
 				.orderBy(ELABORATION_DETAIL.DATE.desc())
 				.fetchInto(ELABORATION_DETAIL).stream()
-				.map(new FullElaborationDetailFiller())
+				.map(new ElaborationDetailFiller())
 				.collect(Collectors.toList());
 	}
 
@@ -300,7 +364,7 @@ public class ElaborationDAO {
 				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
 				.orderBy(ELABORATION_DETAIL.DATE.desc())
 				.fetchInto(ELABORATION_DETAIL).stream()
-				.map(new FullElaborationDetailFiller())
+				.map(new ElaborationDetailFiller())
 				.collect(Collectors.toList());
 	}
 
@@ -309,7 +373,7 @@ public class ElaborationDAO {
 		return ctx.getDslContext().select().from(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter)).limit(1)
 				.fetchInto(ELABORATION_DETAIL).stream()
-				.map(new FullElaborationDetailFiller()).findFirst()
+				.map(new ElaborationDetailFiller()).findFirst()
 				.orElse(new ElaborationDetail());
 	}
 	
@@ -371,7 +435,7 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL.MODIFICATION_DATE, modificationDate)
 				.where(ELABORATION_DETAIL.ID.eq(elaborationDetail.getId()))
 				.returning()
-				.fetch().stream().map(new FullElaborationDetailFiller()).findFirst()
+				.fetch().stream().map(new ElaborationDetailFiller()).findFirst()
 				.orElse(null);
 	}
 
@@ -381,7 +445,7 @@ public class ElaborationDAO {
 		return ctx.getDslContext().delete(ELABORATION_DETAIL)
 				.where(ELABORATION_DETAIL_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL.DOMAIN.eq(ctx.getDomainId()))
-				.returning().fetch().stream().map(new FullElaborationDetailFiller()).findFirst().orElse(null);
+				.returning().fetch().stream().map(new ElaborationDetailFiller()).findFirst().orElse(null);
 	}
 
 	public static ElaborationDetail deleteElaborationDetail(AONContext ctx,
@@ -407,7 +471,7 @@ public class ElaborationDAO {
 				.where(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL
 						.eq(elaborationDetailId))
 				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
-				.map(new FullElaborationDetailCompositionFiller())
+				.map(new ElaborationDetailCompositionFiller())
 				.collect(Collectors.toList());
 	}
 	
@@ -418,11 +482,13 @@ public class ElaborationDAO {
 				.getDslContext()
 				.select()
 				.from(ELABORATION_DETAIL_COMPOSITION)
+				.join(ITEM).on(ITEM.ID.eq(ELABORATION_DETAIL_COMPOSITION.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES
 						.getConditions(filter))
 				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
 				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
-				.map(new FullElaborationDetailCompositionFiller())
+				.map(new ElaborationDetailCompositionFiller())
 				.collect(Collectors.toList());
 	}
 	
@@ -438,7 +504,7 @@ public class ElaborationDAO {
 						ELABORATION_DETAIL_COMPOSITION.ID
 								.eq(elaborationDetailCompositionId))).limit(1)
 				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
-				.map(new FullElaborationDetailCompositionFiller()).findFirst()
+				.map(new ElaborationDetailCompositionFiller()).findFirst()
 				.orElse(new ElaborationDetailComposition());
 	}
 	
@@ -500,7 +566,7 @@ public class ElaborationDAO {
 				.where(ELABORATION_DETAIL_COMPOSITION.ID
 						.eq(elaborationDetailComposition.getId()))
 				.returning()
-				.fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst()
+				.fetch().stream().map(new ElaborationDetailCompositionFiller()).findFirst()
 				.orElse(null);
 	}
 	
@@ -513,7 +579,7 @@ public class ElaborationDAO {
 				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES
 						.getConditions(filter))
 				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
-				.returning().fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst().orElse(null);
+				.returning().fetch().stream().map(new ElaborationDetailCompositionFiller()).findFirst().orElse(null);
 	}
 	
 	public static ElaborationDetailComposition deleteElaborationDetailComposition(AONContext ctx,
@@ -523,7 +589,7 @@ public class ElaborationDAO {
 				.getDslContext()
 				.delete(ELABORATION_DETAIL_COMPOSITION)
 				.where(ELABORATION_DETAIL_COMPOSITION.ID.eq(composition.getId()))
-				.returning().fetch().stream().map(new FullElaborationDetailCompositionFiller()).findFirst().orElse(null);
+				.returning().fetch().stream().map(new ElaborationDetailCompositionFiller()).findFirst().orElse(null);
 	}
 		
 	public static int getNextNumber(AONContext ctx, String series ) {
@@ -582,37 +648,31 @@ public class ElaborationDAO {
 		}
 	}
 
-	private static class FullElaborationDetailFiller extends Filler implements Function<Record, ElaborationDetail> {
+	private static class ElaborationDetailFiller extends Filler implements Function<Record, ElaborationDetail> {
 		@Override
 		public ElaborationDetail apply(Record r) {
 			return new ElaborationDetail()
-					.setId(r.getValue(ELABORATION_DETAIL.ID))
-					.setDomain(r.getValue(ELABORATION_DETAIL.DOMAIN))
-					.setElaboration(
-							new Elaboration().setId(r
-									.getValue(ELABORATION_DETAIL.ELABORATION)))
-					.setType(ElaborationDetailType.safeValueOf(getValue(r, ELABORATION_DETAIL.TYPE)))
-					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
-					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
-					.setItem(checkField(r, ITEM.ID)
-							? ItemFiller.build(r)
-							: new Item().setId(getValue(r, ELABORATION_DETAIL.ITEM)))
-					.setWarehouse(
-							new Warehouse().setId(r
-									.getValue(ELABORATION_DETAIL.WAREHOUSE)))
-					.setAddInfo(r.getValue(ELABORATION_DETAIL.ADD_INFO))
-					.setCreationDate(
-							r.getValue(ELABORATION_DETAIL.CREATION_DATE))
-					.setCreationUser(
-							r.getValue(ELABORATION_DETAIL.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION_DETAIL.MODIFICATION_DATE))
-					.setModificationUser(
-							r.getValue(ELABORATION_DETAIL.MODIFICATION_USER));
+				.setId(getValue(r, ELABORATION_DETAIL.ID))
+				.setDomain(getValue(r, ELABORATION_DETAIL.DOMAIN))
+				.setElaboration(new Elaboration().setId(getValue(r, ELABORATION_DETAIL.ELABORATION)))
+				.setType(ElaborationDetailType.safeValueOf(getValue(r, ELABORATION_DETAIL.TYPE)))
+				.setDate(getValue(r, ELABORATION_DETAIL.DATE))
+				.setQuantity(getDouble(r, ELABORATION_DETAIL.QUANTITY))
+				.setItem(checkField(r, ITEM.ID)
+					? ItemFiller.build(r)
+					: new Item().setId(getValue(r, ELABORATION_DETAIL.ITEM)))
+				.setWarehouse(checkField(r, WAREHOUSE.ID)
+					? WarehouseFiller.build(r)
+					: new Warehouse().setId(getValue(r, ELABORATION_DETAIL.WAREHOUSE)))
+				.setAddInfo(r.getValue(ELABORATION_DETAIL.ADD_INFO))
+				.setCreationDate(getValue(r, ELABORATION_DETAIL.CREATION_DATE))
+				.setCreationUser(getValue(r, ELABORATION_DETAIL.CREATION_USER))
+				.setModificationDate(getValue(r, ELABORATION_DETAIL.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, ELABORATION_DETAIL.MODIFICATION_USER));
 		}
 	}
 
-	private static class FullElaborationDetailCompositionFiller extends Filler implements Function<Record, ElaborationDetailComposition> {
+	private static class ElaborationDetailCompositionFiller extends Filler implements Function<Record, ElaborationDetailComposition> {
 		@Override
 		public ElaborationDetailComposition apply(Record r) {
 			return new ElaborationDetailComposition()

@@ -5,7 +5,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.json.DomainJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -357,5 +361,31 @@ public class Item implements Serializable {
 		return getId() == null && getDetail() == null && getDetail2() == null 
 				&& getDetail3() == null && getDescription() == null && getSerialNumber() == null
 				&& getSerialDate() == null && getBarcode() == null;
+	}
+	
+	public Item copy() {
+		return new Item()
+		.setDomain(getDomain())
+		.setDetail(getDetail())
+		.setDetail2(getDetail2())
+		.setDetail3(getDetail3())
+		.setDescription(getDescription())
+		.setSerialNumber(getSerialNumber())
+		.setSerialDate(getSerialDate())
+		.setBarcode(getBarcode())
+		.setStatus(getStatus())
+		.setProduct(getProduct())
+		.setPrice(getPrice())
+		.setExpensesPercent(getExpensesPercent())
+		.setProfitPercent(getProfitPercent())
+		.setPurchasePrice(getPurchasePrice())
+		.setExpensesFixed(getExpensesFixed())
+		.setInternet(isInternet())
+		.setPackFormatTag(getPackFormatTag())
+		.setPackUnits(getPackUnits())
+		.setPackUnitsTag(getPackUnitsTag())
+		.setPackMeasurement(getPackMeasurement())
+		.setPackMeasurementTag(getPackMeasurementTag())
+		.setStockUnitTag(getStockUnitTag());
 	}
 }
