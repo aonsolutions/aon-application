@@ -36,6 +36,9 @@ public class FnmtLoginCallbackServlet extends HttpServlet {
 		req.setAttribute("act", SessionInfo.table.get(key).getAction());
 		req.setAttribute("username", getUsername(dni));
 		req.setAttribute("password", getPassword() );
+		
+		java.util.Collections.list(req.getAttributeNames())
+		.forEach( name -> System.out.println( "[FnmtLoginCallbackServlet] " +  name + " : '" + req.getAttribute(name.toString()) + "'"));
 
 		dispatcher.forward(req, resp);
 

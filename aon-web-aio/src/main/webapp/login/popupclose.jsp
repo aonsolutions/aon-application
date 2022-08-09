@@ -14,13 +14,9 @@
 		<form id="openid-form-login" target="${name}" method="post" action="${act}"  
 		onSubmit>
 
-			<input name="disable-pwd-mgr-1" type="password" id="disable-pwd-mgr-1" style="display: none;" value="disable-pwd-mgr-1" />
-			<input name="disable-pwd-mgr-2" type="password" id="disable-pwd-mgr-2" style="display: none;" value="disable-pwd-mgr-2" />
-			<input name="disable-pwd-mgr-3" type="password" id="disable-pwd-mgr-3" style="display: none;" value="disable-pwd-mgr-3" />
-								
 			<input type="text" id="j_username" name="j_username" value="${username}"/>
 								
-			<input type="password" id="j_password" name="j_password" value="${password}" autocomplete="new-password" />
+			<input type="password" id="j_password" name="j_password" value="${password}"/>
 								
 			<input id="login_btn" name="login_btn" type="submit" />
 
