@@ -1,8 +1,8 @@
-import {AonElement} from '../../../components/AonElement.js';
+import { AonElement } from '../../../components/AonElement.js';
 
-import {AonCard} from "../../../components/aon-card.js";
+import { AonCard } from "../../../components/aon-card.js";
 
-import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 
 import { AonInput } from '../../../components/aon-input.js';
 import { AonSelect } from '../../../components/aon-select.js';
@@ -25,10 +25,12 @@ export class AonMobilePackage extends AonElement {
 
 	COMPOSITION;
 	COMPOSITION_CARD;
-
+	COMPOSITION_TABLE;
+	COMPOSITION_ITEM;
+	COMPOSITION_QUANTITY;
+	
 	TAG;
 	TAG_CARD;
-
 
 	packaging;
 
@@ -60,6 +62,9 @@ export class AonMobilePackage extends AonElement {
 		
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
+		this.COMPOSITION_TABLE = this.COMPOSITION + CONSTANT.TABLE.initCap();
+		this.COMPOSITION_ITEM = this.COMPOSITION + CONSTANT.ITEM.initCap();	
+		this.COMPOSITION_QUANTITY = this.COMPOSITION + CONSTANT.QUANTITY.initCap();
 
 		this.TAG = this.id + CONSTANT.TAG.initCap();
 		this.TAG_CARD = this.TAG + CONSTANT.CARD.initCap();
@@ -115,7 +120,23 @@ export class AonMobilePackage extends AonElement {
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		let table = new AonBasicTable();
+		table.id = this.PACKAGE_COMPOSITION_TABLE;
+		div.appendChild(table);
 		
+		this.packaging.composition.forEach((composition, i) => {
+			table.addRow();
+			let comp1 = this.createInput(this.COMPOSITION_ITEM + i, "Producto");
+			comp1.value = composition.item.description;
+			table.addCell(comp1);
+
+			let comp2 = this.createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
+			comp2.value = composition.quantity;
+			table.addCell(comp2);
+		});
+
 		let addButton = new AonIconButton();
 		addButton.id = this.COMPOSITION_ADD_BUTTON;
 		addButton.title = MSG.ADD;
@@ -123,7 +144,7 @@ export class AonMobilePackage extends AonElement {
 		addButton.addEventListener(EVENT.CLICK, () => alert('Añadir composición'));
 		div.appendChild(addButton);		
 		
-		card.setContent(div);
+		
 	}
 
 	buildTag(parent){

@@ -128,6 +128,7 @@ export const INVOICE = 'invoice';
 export const INVOICE_ISSUED = 'invoiceIssued';
 export const INVOICE_RECEIVED = 'invoiceReceived';
 export const INVOICE_TICKET = 'invoiceTicket'; 
+export const ITEM = 'item';
 
 // ----- J
 

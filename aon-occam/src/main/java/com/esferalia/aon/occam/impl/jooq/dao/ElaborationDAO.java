@@ -339,7 +339,7 @@ public class ElaborationDAO {
 			.map(r -> r.setComposition(getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
 	}
 	
-	public static Stream<ElaborationDetail> getDetailFullStream(AONContext ctx, ElaborationDetailFilter filter){
+	public static Stream<ElaborationDetail> getDetailFullStream(AONContext ctx, ElaborationDetailFilter filter) {
 		return getDetailStream(ctx, filter)
 			.map(r -> r.setComposition(getElaborationDetailCompositionList(ctx, f-> f.getElaborationDetailProperty().eq(r.getId()))));
 	}
@@ -468,6 +468,8 @@ public class ElaborationDAO {
 				.getDslContext()
 				.select()
 				.from(ELABORATION_DETAIL_COMPOSITION)
+				.join(ITEM).on(ITEM.ID.eq(ELABORATION_DETAIL_COMPOSITION.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL
 						.eq(elaborationDetailId))
 				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
@@ -484,10 +486,9 @@ public class ElaborationDAO {
 				.from(ELABORATION_DETAIL_COMPOSITION)
 				.join(ITEM).on(ITEM.ID.eq(ELABORATION_DETAIL_COMPOSITION.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES
-						.getConditions(filter))
+				.where(ELABORATION_DETAIL_COMPOSITION_PROPERTIES.getConditions(filter))
 				.and(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(ctx.getDomainId()))
-				.fetchInto(ELABORATION_DETAIL_COMPOSITION).stream()
+				.fetch().stream()
 				.map(new ElaborationDetailCompositionFiller())
 				.collect(Collectors.toList());
 	}
@@ -499,6 +500,8 @@ public class ElaborationDAO {
 				.getDslContext()
 				.select()
 				.from(ELABORATION_DETAIL_COMPOSITION)
+				.join(ITEM).on(ITEM.ID.eq(ELABORATION_DETAIL_COMPOSITION.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(ELABORATION_DETAIL_COMPOSITION.DOMAIN.eq(
 						ctx.getDomainId()).and(
 						ELABORATION_DETAIL_COMPOSITION.ID
@@ -676,18 +679,14 @@ public class ElaborationDAO {
 		@Override
 		public ElaborationDetailComposition apply(Record r) {
 			return new ElaborationDetailComposition()
-					.setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ID))
-					.setDomain(
-							r.getValue(ELABORATION_DETAIL_COMPOSITION.DOMAIN))
-					.setElaborationDetail(
-							new ElaborationDetail().setId(r
-									.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
-					.setItem(checkField(r, ITEM.ID)
-							? ItemFiller.build(r)
-							: new Item().setId(getValue(r, ELABORATION_DETAIL_COMPOSITION.ITEM)))
-					.setQuantity(
-							r.getValue(ELABORATION_DETAIL_COMPOSITION.QUANTITY))
-					.setWarehouse(
+				.setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ID))
+				.setDomain(r.getValue(ELABORATION_DETAIL_COMPOSITION.DOMAIN))
+				.setElaborationDetail(new ElaborationDetail().setId(r.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
+				.setItem(checkField(r, ITEM.ID)
+					? ItemFiller.build(r)
+					: new Item().setId(getValue(r, ELABORATION_DETAIL_COMPOSITION.ITEM)))
+				.setQuantity(r.getValue(ELABORATION_DETAIL_COMPOSITION.QUANTITY))
+				.setWarehouse(
 							new Warehouse().setId(r
 									.getValue(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE)))
 					.setAddInfo(
