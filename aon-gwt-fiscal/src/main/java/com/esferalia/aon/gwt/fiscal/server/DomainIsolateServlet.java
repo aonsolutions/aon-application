@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,6 +32,8 @@ import net.aonsolutions.core.pool.ConnectionInfo;
 @WebServlet(name = "Console Domain Isolate Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/DomainIsolateServlet" })
 public class DomainIsolateServlet extends HttpServlet {
 
+	private static final Logger LOGGER = Logger.getLogger(DomainIsolateServlet.class.getName());
+	
 	private static final long serialVersionUID = -5703828624659508582L;
 
 	@Override
@@ -42,6 +46,7 @@ public class DomainIsolateServlet extends HttpServlet {
 			String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
 			String user = req.getParameter(IRequestParamsNames.USER);
 			int domain = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
+			LOGGER.log(Level.INFO, "DomainIsolateServlet domain \"{0}\" to \"{1}\"", new String[] {domainName,newDomainName});
 			String schemaName = null;
 			try ( CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 				Result<Record> result = ctx.getDslContext().fetch("SELECT DATABASE();");
@@ -68,8 +73,12 @@ public class DomainIsolateServlet extends HttpServlet {
 						.setDslContext(dslContext)
 						.setPrinter(out);
 				IsolateDomain.isolate(params);
+				
+//				CheckDomainIntegrity.check(params);
 			} else {
-				out.println("[ERROR] Schema not found!");
+				String m = "[ERROR] Schema not found!";
+				out.println(m);
+				LOGGER.log(Level.SEVERE, "DomainIsolateServlet {0}!",m);
 			}
 			resp.flushBuffer();
 		} catch (Exception e) {
@@ -82,6 +91,7 @@ public class DomainIsolateServlet extends HttpServlet {
 					// Nothing
 				}
 			}
+			LOGGER.log(Level.SEVERE, "DomainIsolateServlet {0}!",e.getMessage());
 		} finally {
 			if(out != null) {
 				try {
@@ -92,6 +102,7 @@ public class DomainIsolateServlet extends HttpServlet {
 					// Nothing
 				}
 			}
+			LOGGER.log(Level.INFO, "DomainIsolateServlet finished!");
 		}
 
 	}

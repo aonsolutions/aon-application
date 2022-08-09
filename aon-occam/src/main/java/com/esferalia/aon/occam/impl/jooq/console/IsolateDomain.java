@@ -72,20 +72,6 @@ public class IsolateDomain {
 		isolateDomain(params);
 	}
 
-//	private static DSLContext createDSLContext(ConsoleParams params) throws SQLException {
-//		Properties properties = new Properties();
-//		properties.setProperty("user", params.getUser());
-//		properties.setProperty("password", params.getPassword());
-//		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
-//		Connection connection = DriverManager.getConnection(params.getUrl(), properties);
-//		Settings settings = new Settings();
-//		settings.setRenderSchema(false);
-//		settings.setRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED);
-//		settings.setRenderKeywordCase(RenderKeywordCase.UPPER);
-//		settings.setParamType(ParamType.INLINED);
-//		return DSL.using(connection, SQLDialect.MYSQL, settings);
-//	}
-
 	private static void isolateDomain(ConsoleParams params) {
 		AonChronometer chronometer = new AonChronometer();
 		chronometer.start();
@@ -266,20 +252,52 @@ public class IsolateDomain {
 	private static void duplicateTable(ConsoleParams params, ScriptTable t) {
 		if (hasDomain(t.getTable())) {
 			log(params,MessageFormat.format(" **** Duplicating {0} table:", t.getTableName()));
+			AggregateFunction<Integer> countField = DSL.count();
+			Integer selectCount = params.getDslContext()
+				.select( countField )
+				.from(t.getTable().asTable())
+				.where(getDomainField(t.getTable()).equal(params.getDomain()))
+				.fetch()
+				.stream()
+				.map(rec -> rec.getValue(countField))
+				.findFirst()
+				.orElse(Integer.valueOf(0))
+			;
+			if (selectCount == null) {
+				selectCount = Integer.valueOf(0);
+			}
 			SelectConditionStep<Record> select = params.getDslContext()
 				.select()
 				.from(t.getTable().asTable())
 				.where(getDomainField(t.getTable()).equal(params.getDomain()));
-			t.setRows(  params.getDslContext().fetchCount(select) );
+			t.setRows(  selectCount );
 			t.setCurrentRow(0);
 			t.setPercent(0);
-			select
-				.fetch()
-				.stream()
-				.forEach( rec -> duplicateRow(params, t, rec));
+			log(params,MessageFormat.format(" **** Duplicating {0} table {1} rows", t.getTableName(),selectCount));
+			int offset = 0;
+			int limit = getLimit( t );
+			while (offset < selectCount) {
+				select
+					.offset(offset)
+					.limit(limit)
+					.fetch()
+					.stream()
+					.forEach( rec -> duplicateRow(params, t, rec));
+				offset = offset + limit;
+			}
 		}
 	}
 	
+	private static int getLimit(ScriptTable t) {
+		if (AonStringUtils.contains(t.getTableName(), "attach" )) {
+			return 10;
+		}
+		if (t.getRows() >= 1000) {
+			return 500;
+		}
+		return t.getRows();
+	}
+
 	private static void loopRefInvoice(ConsoleParams params, ScriptTable t) {
 		log(params," **** Loop references at invoice table");
 		params.getDslContext().select()
@@ -363,7 +381,7 @@ public class IsolateDomain {
 						.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
 						.and(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
 						.execute();
-				System.out.println( 
+				log(params, 
 					MessageFormat.format( 
 						"App Param --> Account --> {0} {1} {2} {3}"
 						,i
@@ -440,6 +458,8 @@ public class IsolateDomain {
 	}
 	
 	private static Integer duplicateRow(ConsoleParams params, Table<?> table, Record rec) {
+//		AonChronometer ch = new AonChronometer();
+//		ch.start();
 		TableField<?, Integer> pkField = getPrimaryKey(table);
 		Integer pkOldId = rec.getValue(pkField);
 		if (pkField.getDataType().identity()) {
@@ -451,7 +471,6 @@ public class IsolateDomain {
 			.filter(fk ->  !Keys.FK_INVOICE_INVOICE.getName().equals(fk.getName()) )
 			.filter(fk ->  !Keys.FK_FBATCH_BANK_STATEMENT_LINK.getName().equals(fk.getName()) )
 			.forEach(fk -> duplicateForeignKey(params,fk,rec));
-		
 		if (!APP_PARAM.getName().equals( table.getName()) 
 			&& CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
 			Arrays.stream( CUSTOM_FOREIGN_MAP.get(table.getName()))
@@ -477,6 +496,8 @@ public class IsolateDomain {
 				.execute();
 		}
 		insertId(params, table, pkOldId, pkNewId);
+//		ch.stop();
+//		System.out.println( table.getName() + " --> " + ch.getMilliseconds() );
 		return pkNewId;
 	}
 	
