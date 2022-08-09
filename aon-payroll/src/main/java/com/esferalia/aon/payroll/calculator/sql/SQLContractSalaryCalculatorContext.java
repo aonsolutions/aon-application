@@ -57,6 +57,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -144,6 +145,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
@@ -4815,11 +4817,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		List<Period> quote = contract;
-//		List<Period> strike = ctx.getPeriods(STRIKE_FACTOR);
-//		if (strike != null && !strike.isEmpty()) {
-//			quote = Period.sub(quote, strike);
-//			intersects = Period.sub(intersects, strike);
-//		}
 		
 		for (ITimedVariable<Object> strikeFactor : ctx.getVariables(STRIKE_FACTOR)) {
 			Period period = strikeFactor.getPeriod();
@@ -4842,6 +4839,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		List<Period> offs = ctx.getPeriods(OFF_DAYS);
 		intersects = Period.sub(intersects, offs);
+
+		List<Period> nons = getPeriods(ctx, NON_WORKED_DAYS, v -> v != null && ((Number)v).doubleValue() > 0.00);
+		intersects = Period.sub(intersects, nons);
+		
 
 		// DropDays
 		List<Period> drops = ctx.getPeriods(DROP_FACTOR);
@@ -4897,23 +4898,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		
-		// for (Period period : quote) {
-		// if (!containsVariable(QUOTE_DAYS, period)) {
-		// ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-		// @Override
-		// public Period getPeriod() {
-		// return period;
-		// }
-		//
-		// @Override
-		// public Double getValue(Period p) {
-		// return getDays(ctx, p, 1.00);
-		// }
-		//
-		// };
-		// ctx.putVariable(QUOTE_DAYS, quoteDays);
-		// }
-		// }
 
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
@@ -5323,6 +5307,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		}
 		
+	}
+
+	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var, Predicate<Object>  predicate) {
+		return ctx.getPeriods(var).stream()
+		.flatMap( p -> {
+			try {
+				return ctx.dryEval(var.getName(), p.getStart(), p.getEnd(), Object.class)
+				.stream().filter( r -> predicate.test(r.getValue())).map( ITimedResult::getPeriod);
+			} catch (ExpressionException e) {
+				return Stream.empty();
+			}
+		}).collect(Collectors.toList());
 	}
 
 	private void loadTotalsContextVars(ContractExpressionContext ctx) {

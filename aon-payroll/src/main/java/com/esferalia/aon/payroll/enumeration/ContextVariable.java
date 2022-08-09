@@ -33,7 +33,9 @@ public enum ContextVariable implements IResourceable {
 	NATURAL_MONTH_DAYS("DIAS_NATURALES_MES", VariableType.INTEGER, false),
 	HOLIDAYS("DIAS_VACACIONES", VariableType.INTEGER, false),
 	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
-	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false), WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
+	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false), 
+	NON_WORKED_DAYS("DIAS_NO_TRABAJADOS", VariableType.INTEGER, false), 
+	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
 	CONTRACT_DAYS("DIAS_CONTRATO", VariableType.INTEGER, false),
 	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER, false), PAY_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
 	BONUS_DAYS("DIAS_BONIFICACION", VariableType.INTEGER, false),
@@ -172,6 +174,7 @@ public enum ContextVariable implements IResourceable {
 	WORKED_FACTOR("COEFICIENTE_TRABAJADO", VariableType.STRING, false),
 	LEAVE_FACTOR("COEFICIENTE_IT", VariableType.STRING, false),
 	DROP_FACTOR("COEFICIENTE_AUSENCIA", VariableType.DOUBLE, false),
+	//HOLIDAYS_FACTOR("COEFICIENTE_VACACIONES", VariableType.DOUBLE, false),
 
 	// Bajas, Incapacidad Temporal
 	ERE("ERE", VariableType.BOOLEAN), 
