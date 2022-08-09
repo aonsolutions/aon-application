@@ -70,21 +70,23 @@ public class TestContrato {
 	public void sendContractExtension() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			@SuppressWarnings("deprecation")
-			Date startDate = new Date("2022/07/01");
+			Date startDate = new Date("2022/08/01");
 			@SuppressWarnings("deprecation")
-			Date endDate = new Date("2022/09/30");
+			Date endDate = new Date("2022/08/26");
 			ContractExtension bd = new ContractExtension()
+			.setCif("45360684S")
 			.setRegime("0111")
-			.setCtaCti("48118939540")
-			.setCif("16533681Q")
-			.setSepeId("xxx")
+			.setCtaCti("35122598846")
+			.setSepeId("3520220169060")
 			.setStartDate(startDate)
 			.setEndDate(endDate)
+			.setDiscontinuo(true)
 			;
 //			bd.setInterinidad("H");
 
 
-			Sepe.sendContractExtension(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, bd);
+			String sepeId = Sepe.sendContractExtension(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, bd);
+			System.out.println(sepeId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -247,7 +249,7 @@ public class TestContrato {
 			String ipf = "45776588X";
 			Date oldDateIniContract =  new Date("2022/07/30");
 			Integer nprorroga = 1;
-			String sepeId = null;
+			String sepeId = "352022016907001";
 
 			byte[] pdf = Sepe.getContractExtensionPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, cif, oldDateIniContract, nprorroga, sepeId);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
@@ -285,6 +287,25 @@ public class TestContrato {
 			Optional<String> sepeId = Optional.empty();
 			
 			Contract contract = Sepe.getTransformationData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, cif, oldDateIniContract, sepeId);
+
+			System.out.println(contract.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	@SuppressWarnings("deprecation")
+	public void getContractExtensionData() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
+	
+			String cif = "B72384936";	
+			String ipf = "73578385M";
+			Date oldDateIniContract =  new Date("2021/04/19");
+			Optional<String> sepeId = Optional.of("352022016907001");
+			
+			Contract contract = Sepe.getContractExtensionData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, cif, oldDateIniContract, sepeId);
 
 			System.out.println(contract.toString());
 		} catch (Exception e) {

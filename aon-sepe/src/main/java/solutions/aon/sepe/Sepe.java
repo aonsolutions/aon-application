@@ -138,6 +138,12 @@ public class Sepe {
 		return Contrata.getTransformationData(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
 	}
 	
+	//TODO
+	public static Contract getContractExtensionData(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
+		return Contrata.getContractExtensionData(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
+	}
+	
 	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SepeException{
 		Contrata.validateCert(certificateInputStream, certificatePassword, certificateType);
