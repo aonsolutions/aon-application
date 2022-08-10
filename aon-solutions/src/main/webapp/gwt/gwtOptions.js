@@ -174,6 +174,14 @@ export const INVOICE_STAT = {
   subEntryPoint: 'StatControlPanel'
 }
 
+export const TASK_STAT = {
+  title: MSG.STATISTICS,
+  name: MSG.STATISTICS,
+  module: GWT_AIO,
+  entryPoint: 'issues',
+  subEntryPoint: 'taskStat'
+}
+
 export const CHECKIT = {
   title: MSG.BANKS,
   name: MSG.BANKS,

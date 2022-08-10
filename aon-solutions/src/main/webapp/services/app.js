@@ -250,7 +250,7 @@ export const MESSENGER = {
     menu: false,
     add: true,
     upload: false,
-    stat: false,
+    stat: true,
   },
 };
 
