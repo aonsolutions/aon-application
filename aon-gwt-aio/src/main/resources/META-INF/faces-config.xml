@@ -29,6 +29,13 @@
 			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/issues.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_taskStat</from-outcome>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/task_stat.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- AON GWT STAT -->
 	
