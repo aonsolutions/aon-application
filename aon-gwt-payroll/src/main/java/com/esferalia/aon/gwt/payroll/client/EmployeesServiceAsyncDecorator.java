@@ -966,6 +966,14 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getSepeTransformComunicationData(currentDomainName, currentUser, document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
+	
+	@Override
+	public void getSepeExtensionComunicationData(String currentDomainName, String currentUser, String document,
+			String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId,
+			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getSepeExtensionComunicationData(currentDomainName, currentUser, document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
 
 	
 	// ------------------------------------------------- SEPE Methods

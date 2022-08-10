@@ -319,8 +319,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			Date date, Integer contractId) throws IllegalArgumentException;
 	
 	Map<String, String> getSepeTransformComunicationData(String currentDomainName, String currentUser, String document,
-			String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId);
-
+			String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) throws IllegalArgumentException;
+	
+	Map<String, String> getSepeExtensionComunicationData(String currentDomainName, String currentUser, String document,
+			String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) throws IllegalArgumentException;
 	
 	// ------------------------------------------------- SEPE Methods
 	

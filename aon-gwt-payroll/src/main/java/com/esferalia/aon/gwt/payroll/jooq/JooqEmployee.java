@@ -1847,32 +1847,6 @@ public class JooqEmployee {
 			.where(CONTRACT.ID.eq(contractData.getContractId()))
 			.execute();
 			
-//			if(null == contractData.getJourneytypeId()){
-//				if(null != contractData.getJourneyType()){
-//					ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-//							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-//						.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
-//								startDate, endDate)
-//						.returning(CONTRACT_DATA.ID)
-//						.fetchOne();
-//					
-//					contractData.setJourneytypeId(journeyRecord.getId());
-//				}
-//			}else{
-//				if(null == contractData.getJourneyType()){
-//					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
-//					contractData.setJourneytypeId(null);
-//					contractData.setJourneyType(null);
-//				}else{
-//					dslContext.update(CONTRACT_DATA)
-//						.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
-//						.set(CONTRACT_DATA.START_DATE, startDate)
-//						.set(CONTRACT_DATA.END_DATE, endDate)
-//						.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
-//						.execute();
-//				}
-//			}
-			
 			if(null == contractData.getRetaId()){
 				ContractInfoRecord retaRecord = dslContext.insertInto(CONTRACT_INFO, CONTRACT_INFO.ID, CONTRACT_INFO.DOMAIN, CONTRACT_INFO.CONTRACT, CONTRACT_INFO.NAME, CONTRACT_INFO.EXPRESSION, 
 						CONTRACT_INFO.START_DATE, CONTRACT_INFO.END_DATE, CONTRACT_INFO.CREATION_USER, CONTRACT_INFO.CREATION_DATE, CONTRACT_INFO.MODIFICATION_USER,
@@ -1941,7 +1915,7 @@ public class JooqEmployee {
 		
 		Integer contractType = AonStringUtils.isBlank(contractData.getContractType()) ? null : Integer.parseInt(contractData.getContractType());
 		
-		if(!isCompleteJourneyContract(contractType)) {
+		if(null == contractType || !isCompleteJourneyContract(contractType)) {
 			
 			if(null == contractData.getJourneytypeId()){
 				if(null != contractData.getJourneyType()){

@@ -638,6 +638,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getSepeTransformComunicationData(getCurrentDomainName(), getCurrentUser(), document, enterpriseCif, originalStartDate, sepeId, contractId, callback);
 	}
 	
+	public void getSepeExtensionComunicationData(String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSepeExtensionComunicationData(getCurrentDomainName(), getCurrentUser(), document, enterpriseCif, originalStartDate, sepeId, contractId, callback);
+	}
+	
 	// ------------------------------------------------- SEPE Methods
 	
 	public void getCertifica2Info(Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
