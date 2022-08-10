@@ -54,9 +54,15 @@
 	}
 
 	export const load = (gwtOption, rootPanel) => {
+		if(gwtOption.subEntryPoint) loadEntryPointsFunctions(gwtOption);
+		window.drawChartsCallback = () => {};
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
-	
+
+	const loadEntryPointsFunctions = (gwtOption) => {
+		window.getSubEntryPoint = () => gwtOption.subEntryPoint;
+	}
+
 	const loadDomainFunctions = () => {
 		window.getCurrentDomainNameURL = () => LS.getDomainName();
 		window.getCurrentDomainName = () => LS.getDomainName();

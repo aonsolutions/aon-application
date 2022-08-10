@@ -18,9 +18,12 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 @SuppressWarnings("serial")
@@ -40,14 +43,29 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			String login = json.optString("login");
 			
 			Domain domain = new Domain().setName(domainName).setId(domainId);
-			Integer itemId = json.optInt(IJsonNames.ITEM);
+
 			Integer containerId = json.optInt(IJsonNames.CONTAINER);
 			Double quantity = json.optDouble(IJsonNames.QUANTITY);
 			String barcode = json.optString(IJsonNames.BARCODE);
+	
+			Integer itemId;
+			if(json.opt(IJsonNames.ITEM) == null && containerId != null) {
+				ItemComposition ic = AON.getItemCompositionStream(domain, login, f -> f.getItemProperty().eq(containerId))
+						.findFirst().orElse(new ItemComposition());
+				itemId = ic.getCompositionItemId();
+				quantity = ic.getQuantity();
+			} else itemId =json.optInt(IJsonNames.ITEM);
 			
 			Item item = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(itemId)));
 			Item container = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(containerId)));
 			
+			if(AonStringUtils.isBlank(barcode)) {
+				Item base = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId)
+						.and(f.getProductProperty().eq(item.getProduct().getId()))
+						.and(f.getBarcodeProperty().isNotNull()));
+				barcode = base.getBarcode();
+			}
+
 			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
 			
 			Integer logoId = company.getRegistry().getId();
@@ -55,7 +73,7 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 
 			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
-			String sscc = "084370167341234566";
+			String sscc = container.getSerialNumber();
 			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, quantity, ean128, sscc);
 			
 			responseFile(resp, "packaging", MimeType.PDF);

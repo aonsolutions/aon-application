@@ -243,6 +243,8 @@ public enum AppParam {
 	, TBAI_ACTIVE
 	, TBAI_TEST	
 	, EDI_COMPANY_CODE
+	
+	, SSCC_LAST_NUMBER
 	;
 	
 	public String getValue() {

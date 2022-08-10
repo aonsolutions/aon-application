@@ -4475,6 +4475,7 @@ CREATE TABLE `elaboration_detail` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del detalle',
   `domain` int(4) NOT NULL COMMENT 'Identificador del dominio',
   `elaboration` int(4) NOT NULL COMMENT 'Identificador de la elaboracion',
+  `type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de detalle',
   `date` datetime DEFAULT NULL COMMENT 'Fecha de elaboracion',
   `item` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del articulo no base elaborado',
   `quantity` double(15,3) DEFAULT '0.000' COMMENT 'Cantidad elaborado',

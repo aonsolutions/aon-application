@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -48,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PackagingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
@@ -267,6 +269,13 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ElaborationDAO.getElaboration(ctx, id));
 	}
+	
+	@Override
+	public Elaboration getElaboration(AONContext ctx, ElaborationFilter filter, Options...options){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ElaborationDAO.get(ctx, filter, options));
+	}
+	
 	@Override
 	public ElaborationDetail getElaborationDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration ->
@@ -471,6 +480,18 @@ public class WarehouseImpl implements IWarehouse {
 	public Stream<PaturpatQuality> getPaturpatQualityStream(AONContext ctx, Map<String, String[]> map) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			QualityDAO.getPaturpatQualityStream(ctx, map));
+	}
+
+	@Override
+	public Packaging getPackaging(AONContext ctx, String barcode) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			PackagingDAO.get(ctx, barcode));
+	}
+
+	@Override
+	public Packaging savePackaging(AONContext ctx, Packaging packaging) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			PackagingDAO.save(ctx, packaging));
 	}
 	
 }

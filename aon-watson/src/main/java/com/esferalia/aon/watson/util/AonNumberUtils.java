@@ -311,4 +311,13 @@ public class AonNumberUtils {
         }
         return true;
     }
+    
+    public static boolean isPar(Integer n) {
+		return n % 2 == 0;
+	}
+
+    public static boolean isImpar(Integer n) {
+		return !isPar(n);
+	}
+
 }

@@ -21,11 +21,11 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
-
-import net.aonsolutions.db.up2date.task.TaskSourceUpdate;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
 import net.aonsolutions.db.up2date.payroll.ContractTransfromUnify;
+import net.aonsolutions.db.up2date.task.TaskSourceUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalMonthlyQuote2022Fix;
+import net.aonsolutions.db.up2date.warehouse.ElaborationDetailUpdate;
 
 public class Up2Date {
 
@@ -264,7 +264,8 @@ public class Up2Date {
     		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
     		TaskSourceUpdate.TASK_SOURCE_UPDATE,
     		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
-    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL
+    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
+    		ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE
     };
 
     

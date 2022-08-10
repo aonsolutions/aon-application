@@ -2,26 +2,21 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.Date;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.json.ElaborationJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.SalesJSON;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
-import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -63,7 +58,7 @@ public class ElaborationServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getElaboration(api));
+				response(req, resp, getElaborations(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -105,10 +100,15 @@ public class ElaborationServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONArray getElaboration(AonApiData api) {
-		Stream<Elaboration> stream = AON.getElaborationStream(api.getDomain(), api.getUser(),
-				f -> elaborationFilter(api, f)); //TODO , salesOptions(api));
-		return ElaborationJSON.toJSON(stream);
+	private JSONObject getElaboration(AonApiData api) {
+		Elaboration elaboration = AON.getElaboration(api.getDomain(), api.getUser(),
+				f -> elaborationFilter(api, f), new Options().setFull(true));
+		return ElaborationJSON.toJSON(elaboration);
+	}
+	
+	private Object getElaborations(AonApiData api) {
+		if(api.getData().opt(IJsonNames.ID) != null) return getElaboration(api);
+		return ElaborationJSON.toJSON(AON.getElaborationList(api.getDomain(), api.getUser().getLogin(), f -> elaborationFilter(api, f), elaborationOptions(api)));
 	}
 	
 	private JSONObject saveElaboration(AonApiData api) {
@@ -125,6 +125,11 @@ public class ElaborationServlet extends AonApiHttpServlet {
 	
 	private Filter elaborationFilter(AonApiData api, ElaborationProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		if(id != null) {
+			filter = filter.and(f.getIdProperty().eq(id));
+		}
 		
 		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);
 		if(!AonStringUtils.isBlank(series)) {
@@ -154,7 +159,7 @@ public class ElaborationServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
-	private Options salesOptions(AonApiData api) {
+	private Options elaborationOptions(AonApiData api) {
 		Options options = new Options();
 		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
