@@ -64,6 +64,7 @@ export class AonWarehouse extends AonElement {
 	}
 
 	aonElaboration() {
+		this.getApplication().getToolbar().option = MSG.ELABORATION;
 		this.getApplication().removeFloatOption();
 		this.getApplication().addFloatOption(ACTION.ADD, () => this.addElaboration());
 		this.getApplication().setContent(new AonMobileElaborationList());

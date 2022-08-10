@@ -128,6 +128,7 @@ export const INVOICE = 'invoice';
 export const INVOICE_ISSUED = 'invoiceIssued';
 export const INVOICE_RECEIVED = 'invoiceReceived';
 export const INVOICE_TICKET = 'invoiceTicket'; 
+export const ITEM = 'item';
 
 // ----- J
 
@@ -248,6 +249,7 @@ export const SURNAME = 'surname';
 
 export const TABLE = 'table';
 export const TABS = 'tabs';
+export const TAG = 'tag';
 export const TEXT = 'text';
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';

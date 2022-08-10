@@ -46,6 +46,7 @@ public class WarehouseJSON {
 	}
 	
 	public static JSONObject toJSON(Warehouse object) {
+		if(object == null) return new JSONObject();
 		return new JSONObject()
 			.put(IJsonNames.ID, object.getId())
 			.put(IJsonNames.DOMAIN, object.getDomain())

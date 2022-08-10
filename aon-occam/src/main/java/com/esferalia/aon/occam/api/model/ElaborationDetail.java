@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -21,12 +23,14 @@ public class ElaborationDetail implements Serializable {
 	private double quantity;
 	private Warehouse warehouse;
 	private String addInfo;
+	private ElaborationDetailType type;
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;	
-		
 	
+	private List<ElaborationDetailComposition> composition;
+ 	
 	public Integer getId() {
 		return id;
 	}
@@ -43,6 +47,8 @@ public class ElaborationDetail implements Serializable {
 	}
 
 	public Elaboration getElaboration() {
+		if(elaboration == null) 
+			elaboration = new Elaboration();
 		return elaboration;
 	}
 	public ElaborationDetail setElaboration(Elaboration elaboration) {
@@ -84,6 +90,18 @@ public class ElaborationDetail implements Serializable {
 		this.addInfo = addInfo;
 		return this;
 	}
+	
+	public ElaborationDetailType getType() {
+		if(type == null)
+			type = ElaborationDetailType.ELABORATION;
+		return type;
+	}
+	
+	public ElaborationDetail setType(ElaborationDetailType type) {
+		this.type = type;
+		return this;
+	}
+	
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -91,6 +109,18 @@ public class ElaborationDetail implements Serializable {
 		this.creationDate = creationDate;
 		return this;
 	}
+	
+	public List<ElaborationDetailComposition> getComposition() {
+		if(composition == null)
+			composition = new LinkedList<>();
+		return composition;
+	}
+	
+	public ElaborationDetail setComposition(List<ElaborationDetailComposition> composition) {
+		this.composition = composition;
+		return this;
+	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -112,5 +142,8 @@ public class ElaborationDetail implements Serializable {
 		this.modificationUser = modificationUser;
 		return this;
 	}
-	
+
+	public boolean isEmpty() {
+		return getId() == null && getElaboration().isEmpty();
+	}
 }

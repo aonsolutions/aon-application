@@ -33,6 +33,8 @@ export class AonMobileElaboration extends AonElement {
 
 	COMPOSITION;
 	COMPOSITION_CARD;
+	COMPOSITION_ITEM;
+	COMPOSITION_QUANTITY;
 
 	elaboration;
 
@@ -66,6 +68,8 @@ export class AonMobileElaboration extends AonElement {
 		
 		this.COMPOSITION = this.id + CONSTANT.COMPOSITION.initCap();
 		this.COMPOSITION_CARD = this.COMPOSITION + CONSTANT.CARD.initCap();
+		this.COMPOSITION_ITEM = this.COMPOSITION + CONSTANT.ITEM.initCap();
+		this.COMPOSITION_QUANTITY = this.COMPOSITION + CONSTANT.QUANTITY.initCap();
 		this.ELABORATION_TABS_BUTTON = [
 			{
 				name: MSG.ELABORATION,
@@ -136,17 +140,21 @@ export class AonMobileElaboration extends AonElement {
 		table.addRow();
 
 		let product = this.createInput(this.ELABORATION_PRODUCT, MSG.PRODUCT);
+		product.value = this.elaboration.detail.item.name;
 		table.addCell(product);
 
 		let quantity = this.createInput(this.ELABORATION_QUANTITY, MSG.QUANTITY);
+		quantity.value = this.elaboration.detail.quantity;
 		table.addCell(quantity);
 
 		table.addRow();
 
 		let serialNumber = this.createInput(this.ELABORATION_SERIAL_NUMBER, "Nº Lote");
+		serialNumber.value = this.elaboration.detail.item.serialNumber;
 		table.addCell(serialNumber);
 
 		let serialDate = this.createInput(this.ELABORATION_SERIAL_DATE, "Fecha Lote");
+		serialDate.value = this.elaboration.detail.item.serialDate;
 		table.addCell(serialDate);
 	}
 
@@ -155,20 +163,46 @@ export class AonMobileElaboration extends AonElement {
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		let table = new AonBasicTable();
+		table.id = this.COMPOSITION_TABLE;
+		div.appendChild(table);
 		
+		this.elaboration.detail.composition.forEach((composition, i) => {
+			table.addRow();
+			let comp1 = this.createInput(this.COMPOSITION_ITEM + i, "Producto");
+			comp1.value = composition.item.description;
+			table.addCell(comp1);
+
+			let comp2 = this.createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
+			comp2.value = composition.quantity;
+			table.addCell(comp2);
+		});
+
 		let addButton = new AonIconButton();
 		addButton.id = this.COMPOSITION_ADD_BUTTON;
 		addButton.title = MSG.ADD;
 		addButton.icon = MATERIAL_ICONS.ADD;
-		addButton.addEventListener(EVENT.CLICK, () => alert('Añadir composición'));
+		addButton.addEventListener(EVENT.CLICK, () => this.addComposition());
 		div.appendChild(addButton);		
-		
-		card.setContent(div);
 	}
 
+	addComposition(){
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile())d.width = '400px';
+		d.setTitle(MSG.ADD_COMPOSITION);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+	
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
-		div.appendChild(new AonMobilePackageList());
+		let packaging = new AonMobilePackageList();
+		packaging.setElaborationPackages(this.elaboration.packaging);
+		div.appendChild(packaging);
 		parent.appendChild(div);
 	}
 
@@ -176,13 +210,18 @@ export class AonMobileElaboration extends AonElement {
 	// ACTIONS
 
 	back() {
-
+		this.getApplication().getParent().aonElaboration();
 	}
 
 	save() {
-	
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile())d.width = '400px';
+		d.setTitle(MSG.SAVE);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
 	}
-
 	
 	setElaboration(elaboration) {
 		this.elaboration = new Elaboration(elaboration);

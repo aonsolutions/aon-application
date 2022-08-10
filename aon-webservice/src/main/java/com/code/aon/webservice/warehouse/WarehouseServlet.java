@@ -31,6 +31,7 @@ import com.code.aon.webservice.warehouse.jooq.DBSales;
 import com.code.aon.webservice.warehouse.jooq.DBWarehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
@@ -760,12 +761,15 @@ public class WarehouseServlet extends HttpServlet{
 			
 			AON.getElaborationDetailStream(domain.getName(), domain.getId(), login, f -> 
 				f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(ElaborationDetailType.ELABORATION.value()))
 				.and(f.getElaborationProperty().eq(id))
 				.and(f.getIdProperty().notIn(ids)))
 				.forEach(detail -> array.put(ToJSON.elaborationDetailToJSON(detail)));
 		} else {
 			AON.getElaborationDetailStream(domain.getName(), domain.getId(), login, f -> 
-				f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().notIn(ids)))
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(ElaborationDetailType.ELABORATION.value()))
+				.and(f.getIdProperty().notIn(ids)))
 				.forEach(detail -> array.put(ToJSON.elaborationDetailToJSON(detail)));
 		}
 		return array;

@@ -218,7 +218,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 							SEH1P subPackage = null;
 							
 							// PRODUCT OVER SUB-PACKAGE, IF EXIST
-							List<Integer> level3LineList = new LinkedList<>(level3Map.get((int)level2Detail.getLine()));
+							List<Integer> level3List = level3Map.get((int)level2Detail.getLine());
+							List<Integer> level3LineList = level3List != null
+									? new LinkedList<>(level3List)
+									: new LinkedList<>();
 							for(int level3LineId: level3LineList){
 								DeliveryDetail level3Detail = detailList.get(level3LineId-1);
 								SEH1P p = searchExistingPackage(list, level3Detail, ssccMap.get(level2Key));

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
@@ -35,6 +37,9 @@ public class Elaboration implements Serializable {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	
+	private ElaborationDetail detail;
+	private List<ElaborationDetail> packaging;
 		  
 	public Integer getId() {
 		return id;
@@ -173,6 +178,27 @@ public class Elaboration implements Serializable {
 		return this;
 	}
 	
+	public ElaborationDetail getDetail() {
+		return detail;
+	}
+	
+	public Elaboration setDetail(ElaborationDetail detail) {
+		this.detail = detail;
+		return this;
+	}
+	
+	public List<ElaborationDetail> getPackaging() {
+		if(packaging == null) {
+			packaging = new LinkedList<>();
+		}
+		return packaging;
+	}
+	
+	public Elaboration setPackaging(List<ElaborationDetail> packaging) {
+		this.packaging = packaging;
+		return this;
+	}
+	
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -202,4 +228,7 @@ public class Elaboration implements Serializable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return getId() == null && AonStringUtils.isBlank(getSeries()) && getItem().isEmpty();
+	}
 }

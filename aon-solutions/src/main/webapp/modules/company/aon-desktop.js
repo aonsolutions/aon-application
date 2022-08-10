@@ -710,9 +710,10 @@ export class AonDesktop extends AonElement {
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
+				if(this.isBeta())
+					GWT.load(GWT.TASK_STAT);
 				break;
 			}
-
 	}
 
 	addOption(app, button) {

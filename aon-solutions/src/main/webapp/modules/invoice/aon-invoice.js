@@ -1959,7 +1959,10 @@ export class AonInvoice extends AonElement {
 			const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
 			if(pm.type === 'BANK_TRANSFER') {
 				getRegistryBanks(this.company.id).then(r => {
-					this.getElement(this.FINANCE_BANK_ACCOUNT + i).value = r[0] ? r[0].bank_account : "";
+					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+					ba.value = r[0] ? r[0].bank_account : "";
+					finance.bank_account = ba.value;
+					this.invoice.setFinance(finance, i);
 				});	
 			}
 		});

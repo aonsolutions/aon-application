@@ -10,6 +10,7 @@ public interface ElaborationDetailProperties extends AuditProperties {
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
 	Property<Integer> getElaborationProperty();
+	Property<Byte> getTypeProperty();
 	Property<Timestamp> getDateProperty();
 	Property<Integer> getItemProperty();
 	Property<Double> getQuantityProperty();

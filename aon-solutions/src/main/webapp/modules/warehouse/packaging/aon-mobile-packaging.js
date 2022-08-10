@@ -5,18 +5,20 @@ import {AonToolbar} from "../../../components/aon-toolbar.js";
 import {AonCard} from "../../../components/aon-card.js";
 
 import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
-import { getProducts, getItems, getItem, getPackagingInfo } from '../../../services/service.js';
+import {getPackaging, savePackaging } from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
 import { AonInput } from '../../../components/aon-input.js';
 import { AonSelect } from '../../../components/aon-select.js';
 
 import { AonNumber } from '../../../components/aon-number.js';
+
 import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonSuggestion } from '../../../components/aon-suggestion.js';
 
 import * as LS from '../../../services/localStorageService.js';
+import { AonDate } from '../../../components/aon-date.js';
 
 export class AonMobilePackaging extends AonElement {
 
@@ -34,9 +36,12 @@ export class AonMobilePackaging extends AonElement {
 
 	TAG_CARD;
 
+	VIEWER;
+
 	item;
 	contenedor;
 	barcode;
+	packaging;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -69,6 +74,7 @@ export class AonMobilePackaging extends AonElement {
 
 		this.TAG_CARD = this.id + 'Tag' + CONSTANT.CARD.initCap();
 
+		this.VIEWER = this.id + 'Viewer';
 	}
 
 	build() {
@@ -84,14 +90,13 @@ export class AonMobilePackaging extends AonElement {
 		div.style.width = "100%";
 		this.appendChild(div);
 
-		let print = toolbar.addButton2(ACTION.PRINT, () => alert('Imprimir etiqueta'));
+		let print = toolbar.addButton2(ACTION.PRINT, () => this.print());
 		print.style.display = 'none';
 
 
-		toolbar.addButton2(ACTION.SAVE, () => {
+		toolbar.addButton2(ACTION.SAVE, () =>  {
 			print.style.display = 'block';
-			this.buildTag(div);
-			this.save()
+			this.save(div);
 		});
 		// toolbar.addButton2(ACTION.BACK, () => this.back());
 
@@ -138,9 +143,17 @@ export class AonMobilePackaging extends AonElement {
 		table.addRow();
 
 		let lote = this.createInput(this.PACKAGING_PRODUCT_SERIAL_NUMBER, "Nº Lote");
+		lote.addEventListener(EVENT.CHANGE, (e) => {
+			if(this.packaging.item)
+				this.packaging.item.serialNumber = lote.value;
+		});
 		table.addCell(lote);
 
-		let date = this.createInput(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
+		let date = this.createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
+		date.addEventListener(EVENT.CHANGE, (e) => {
+			if(this.packaging.item)
+				this.packaging.item.serialDate = date.value;
+		});
 		table.addCell(date);
 
 		table.addRow();	
@@ -158,16 +171,19 @@ export class AonMobilePackaging extends AonElement {
 		product.addEventListener(EVENT.CHANGE, () => {
 			this.barcode = product.value;
 			let data = { barcode: product.value};
-			getPackagingInfo(data).then(r => {
-				let val = r.item.description || r.item.name;
+			getPackaging(data).then(r => {
+				this.packaging = r;
+				let val = r.base.description || r.base.name;
 				product.value = val || '';
-				container.setOptions(r.container);
+				container.setOptions(r.containers);
 				lote.value = r.item.serialNumber;
 				date.value = r.item.serialDate;
-				container.value = r.container[0].id;
+				container.value = r.containers[0].id;
 				this.item = r.item.id;
 				this.contenedor = container.value;
-				quantity.value = r.container[0].itemComposition[0].quantity;
+				quantity.value = r.containers[0].itemComposition[0].quantity;
+				this.packaging.container = r.containers[0];
+				this.packaging.quantity = r.containers[0].itemComposition[0].quantity;
 			}).catch(e => this.showError(e));
 		});
 	}
@@ -182,10 +198,10 @@ export class AonMobilePackaging extends AonElement {
 		// viewer.type = 'application/pdf';			
 
 		let json = {
-			item: this.item,
-			container: this.contenedor,
+			item: this.packaging.item.id,
+			container: this.packaging.container.id,
 			quantity: this.getElement(this.PACKAGING_QUANTITY).value,
-			barcode: this.barcode,
+			barcode: this.packaging.base.barcode,
 			domain_id: LS.getDomainId(),
 			domain_name: LS.getDomainName(),
 			login: LS.getDomainLogin()
@@ -201,19 +217,27 @@ export class AonMobilePackaging extends AonElement {
 		let w = this.getElement(card.CONTENT).offsetWidth;
 		let type = 'application/pdf';
 		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-		card.setContentHTML(`<aon-viewer type="${type}" file="${url}" width="${w}"></aon-viewer>`);
+		card.setContentHTML(`<aon-viewer id=${this.VIEWER} type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 		// fileCard.cleanSection2();
 		// fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
 	}
-
+	
 	// ACTIONS
+
+	print() {
+		this.getElement(this.VIEWER).printDocument();
+	}
 
 	back() {
 
 	}
 
-	save() {
-	
+	save(div) {
+		this.packaging.quantity = this.getElement(this.PACKAGING_QUANTITY).value;
+		savePackaging(this.packaging).then(r => {
+			this.packaging = r;
+			this.buildTag(div);
+		})
 	}
 
 	// Create Components
@@ -237,6 +261,13 @@ export class AonMobilePackaging extends AonElement {
 		select.id = id;
 		select.description = title;
 		return select;
+	}
+
+	createDate(id, title) {
+		let date = new AonDate();
+		date.id = id;
+		date.title = title;
+		return date;
 	}
 
 	createSuggestion(id, title) {

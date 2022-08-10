@@ -41,7 +41,10 @@ public class ElaborationJSON {
 			.setComments(JsonUtils.getString(json, IJsonNames.COMMENTS))
 			.setRemarks(JsonUtils.getString(json, IJsonNames.REMARKS))
 			.setSource(ElaborationSource.safeValueOf(JsonUtils.getString(json, IJsonNames.SOURCE)))
-			.setSourceId(JsonUtils.getInteger(json, IJsonNames.SOURCE_ID));
+			.setSourceId(JsonUtils.getInteger(json, IJsonNames.SOURCE_ID))
+			.setDetail(ElaborationDetailJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DETAIL)))
+			.setPackaging(ElaborationDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.PACKAGING)));
+		
 	}
 	
 	public static JSONArray toJSON(List<Elaboration> list) {
@@ -70,6 +73,8 @@ public class ElaborationJSON {
 			.put(IJsonNames.REMARKS, object.getRemarks())
 			.put(IJsonNames.SOURCE, object.getSourceName())
 			.put(IJsonNames.SOURCE_ID, object.getSourceId())
+			.put(IJsonNames.DETAIL, ElaborationDetailJSON.toJSON(object.getDetail()))
+			.put(IJsonNames.PACKAGING, ElaborationDetailJSON.toJSON(object.getPackaging()))
 			.put(IJsonNames.CREATION_USER, object.getCreationUser())
 			.put(IJsonNames.CREATION_DATE, object.getCreationDate())
 			.put(IJsonNames.MODIFICATION_USER, object.getModificationUser())

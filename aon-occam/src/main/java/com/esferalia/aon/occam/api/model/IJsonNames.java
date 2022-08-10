@@ -100,6 +100,7 @@ public final class IJsonNames {
 	public static final String CONSOLIDATION = "consolidation";
 	public static final String CONTACT_DATA = "contactData";
 	public static final String CONTAINER = "container";
+	public static final String CONTAINERS = "containers";
 	public static final String CONTENT = "content";
 	public static final String CONTENT_ENCODING = "contentEncoding";
 	public static final String CONTENT_NAME = "contentName";
@@ -321,6 +322,7 @@ public final class IJsonNames {
 	public static final String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[P] 
 	public static final String PACKAGED = "packaged";
+	public static final String PACKAGING = "packaging";
 	public static final String PACK_FORMAT_TAG = "packFormatTag";
 	public static final String PACK_MEASUREMENT = "packMeasurement";
 	public static final String PACK_MEASUREMENT_TAG = "packMeasurementTag";
