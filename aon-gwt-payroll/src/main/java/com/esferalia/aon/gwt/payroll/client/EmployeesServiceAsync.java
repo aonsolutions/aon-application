@@ -339,7 +339,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getSepeTransformComunicationData(String currentDomainName, String currentUser, String document, String enterpriseCif, 
 			Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
 
-	
+	void getSepeExtensionComunicationData(String currentDomainName, String currentUser, String document, String enterpriseCif, 
+			Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
+
 	// ------------------------------------------------- SEPE Methods
 	
 	void getCertifica2Info(String currentDomainName, String user, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;

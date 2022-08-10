@@ -585,6 +585,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void getSepeExtensionComunicationData(String currentDomainName, String currentUser, String document,
+				String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId,
+				AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
 
 		@Override
 		public void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF,
@@ -1160,6 +1168,15 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void getSepeTransformComunicationData(String currentDomainName, String currentUser,
+							String document, String enterpriseCif, Date originalStartDate, String sepeId,
+							Integer contractId, AsyncCallback<Map<String, String>> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void getSepeExtensionComunicationData(String currentDomainName, String currentUser,
 							String document, String enterpriseCif, Date originalStartDate, String sepeId,
 							Integer contractId, AsyncCallback<Map<String, String>> callback)
 							throws IllegalArgumentException {

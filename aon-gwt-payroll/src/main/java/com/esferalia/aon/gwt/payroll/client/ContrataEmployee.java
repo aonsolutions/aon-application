@@ -661,8 +661,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("Notifici\u00f3n pro\u00F3rroga contrato",
-					new HTML("\u00bfDesea realmente notificar la pro\u00f3rroga del contrato\u003f"));
+			AonDialog dialog = new AonDialog("Notifici\u00f3n pr\u00F3rroga contrato",
+					new HTML("\u00bfDesea realmente notificar la pr\u00f3rroga del contrato\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
 
 				@Override
@@ -672,7 +672,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 				@Override
 				public void onAccept() {
-					showLoading("Notificando pro\u00f3rroga contrato...");
+					showLoading("Notificando pr\u00f3rroga contrato...");
 
 					contrataEmployeeObject.sendContractExtension(
 							s -> {
