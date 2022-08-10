@@ -141,10 +141,18 @@ export class AonMobilePackage extends AonElement {
 		addButton.id = this.COMPOSITION_ADD_BUTTON;
 		addButton.title = MSG.ADD;
 		addButton.icon = MATERIAL_ICONS.ADD;
-		addButton.addEventListener(EVENT.CLICK, () => alert('Añadir composición'));
+		addButton.addEventListener(EVENT.CLICK, () => this.addComposition());
 		div.appendChild(addButton);		
-		
-		
+	}
+
+	addComposition(){
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile())d.width = '400px';
+		d.setTitle(MSG.ADD_COMPOSITION);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
 	}
 
 	buildTag(parent){

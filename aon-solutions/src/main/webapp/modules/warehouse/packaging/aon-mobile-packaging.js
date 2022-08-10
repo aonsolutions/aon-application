@@ -36,6 +36,8 @@ export class AonMobilePackaging extends AonElement {
 
 	TAG_CARD;
 
+	VIEWER;
+
 	item;
 	contenedor;
 	barcode;
@@ -72,6 +74,7 @@ export class AonMobilePackaging extends AonElement {
 
 		this.TAG_CARD = this.id + 'Tag' + CONSTANT.CARD.initCap();
 
+		this.VIEWER = this.id + 'Viewer';
 	}
 
 	build() {
@@ -87,7 +90,7 @@ export class AonMobilePackaging extends AonElement {
 		div.style.width = "100%";
 		this.appendChild(div);
 
-		let print = toolbar.addButton2(ACTION.PRINT, () => alert('Imprimir etiqueta'));
+		let print = toolbar.addButton2(ACTION.PRINT, () => this.print());
 		print.style.display = 'none';
 
 
@@ -214,12 +217,16 @@ export class AonMobilePackaging extends AonElement {
 		let w = this.getElement(card.CONTENT).offsetWidth;
 		let type = 'application/pdf';
 		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-		card.setContentHTML(`<aon-viewer type="${type}" file="${url}" width="${w}"></aon-viewer>`);
+		card.setContentHTML(`<aon-viewer id=${this.VIEWER} type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 		// fileCard.cleanSection2();
 		// fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
 	}
-
+	
 	// ACTIONS
+
+	print() {
+		this.getElement(this.VIEWER).printDocument();
+	}
 
 	back() {
 

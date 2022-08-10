@@ -39,6 +39,7 @@ export const ACTIVITY_SUMMARY = MSG.ACTIVITY_SUMMARY;
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
+export const ADD_COMPOSITION = 'Añadir Composición'; // TODO
 export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_FINANCE = MSG.ADD; // TODO
