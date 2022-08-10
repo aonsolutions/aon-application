@@ -119,13 +119,18 @@ public class Sepe {
 	}
 	
 	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ide) throws SepeException  {
-		Contrata.removeContrato(certificateInputStream, certificatePassword, certificateType, ide);
+			final String certificateType, String sepeId) throws SepeException  {
+		Contrata.removeContrato(certificateInputStream, certificatePassword, certificateType, sepeId);
 	}
 	
 	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType,  String ide) throws SepeException  {
-		Contrata.removeTransformation(certificateInputStream, certificatePassword, certificateType, ide);
+			final String certificateType,  String sepeId) throws SepeException  {
+		Contrata.removeTransformation(certificateInputStream, certificatePassword, certificateType, sepeId);
+	}
+	
+	public static void removeContractExtension(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType,  String sepeId) throws SepeException  {
+		Contrata.removeContractExtension(certificateInputStream, certificatePassword, certificateType, sepeId);
 	}
 	
 	public static Contract getContractData(final InputStream certificateInputStream, final String certificatePassword,
