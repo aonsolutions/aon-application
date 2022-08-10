@@ -183,5 +183,8 @@ public class ConsoleParams {
 		getErrors().add(error);
 		return this;
 	}
+	public boolean hasErrors() {
+		return !getErrors().isEmpty(); 
+	}
 	
 }

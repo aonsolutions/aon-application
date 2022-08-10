@@ -88,6 +88,7 @@ export class AonSimpleList extends AonElement {
       spanHtml = ic.outerHTML;
     } else if (data.iconHtmlCustom) {
       spanHtml = `${data.iconHtmlCustom}`;
+      span.style.display = "flex";
     }
     span.innerHTML = spanHtml;
 
@@ -139,6 +140,8 @@ export class AonSimpleList extends AonElement {
     }
 
     this.getElement(this.UL).appendChild(li);
+
+    return span;
   }
 
   removeAllLi() {

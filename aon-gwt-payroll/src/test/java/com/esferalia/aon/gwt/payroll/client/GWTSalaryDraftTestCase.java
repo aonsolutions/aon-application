@@ -486,7 +486,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void contractExtension(String currentDomainName, ContractExtension contractExtension,
-					AsyncCallback<Void> callback) {
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -495,7 +495,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void deleteContractExtension(String currentDomainName, Integer contractId,
-					AsyncCallback<Void> callback) {
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -504,7 +504,25 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void contractTransform(String currentDomainName, ContractTransform contractTransform,
-					AsyncCallback<Integer> callback) {
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void deleteContractTransform(String currentDomainName, Integer contractId,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void removeContractTransform(String currentDomainName, Integer contractId,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -691,6 +709,16 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			public void getSepeTransformComunicationData(String currentDomainName, String currentUser, String document,
 					String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId,
 					AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF,
+					String document, Integer contractId, Date extensionDate, Integer extensionNum,
+					String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

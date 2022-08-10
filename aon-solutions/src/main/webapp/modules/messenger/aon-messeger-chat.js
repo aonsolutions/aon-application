@@ -86,11 +86,11 @@ export class AonMessengerChat extends AonElement {
     this.setData(data); 
     this.task = new Task(this.getData());
     this.task.onPropertyChanged = (propName, val) => {
-        if(propName == "project"){
-          this.onChangeProject();
-        } else if(propName == "tags"){
-          setTaskTags();
-        }
+      if(propName == "project"){
+        this.onChangeProject();
+      } else if(propName == "tags"){
+        setTaskTags(this.task);
+      }
     }
     
     this.setWhAndTh();
@@ -98,8 +98,7 @@ export class AonMessengerChat extends AonElement {
 
   build() {
     this.paintView();
-    if(this.task && this.task.id){
-      //FILL CHATS WORKFLOW
+    if(this.task && this.task.id){  //FILL CHATS WORKFLOW
       this.getTaskWorkflow(this.task);
     }  
   }
@@ -114,11 +113,11 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintDesktop() {
-    buildDesktop(this);
+    buildDesktop(this.task);
   }
 
   paintMobile() {
-    buildMobile(this);
+    buildMobile(this.task);
   }
 
   /**
@@ -200,9 +199,11 @@ export class AonMessengerChat extends AonElement {
    * 
    * @param {String} status 
    * @param {String} comment Optional 
+   * @param {DailyTracking} dailyTracking Class 
    */
   async updateTaskStatus(status, comment, dailyTracking = undefined) {
-    this.task.setStatus(status);
+    const task = this.task;
+    task.setStatus(status);
     let type = undefined;
     switch(status){
       case TASK_STATUS.PENDING:
@@ -218,9 +219,9 @@ export class AonMessengerChat extends AonElement {
     }
     
     try {
-      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment, auth:this.getAuth(), dailyTracking});
+      await saveTaskWorkflow({...task.getWorkflowTmp(), type, comment, auth:this.getAuth(), dailyTracking});
       await this.save();
-      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
+      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task);
     } catch (error) {
       this.showError(error);
     }
@@ -230,7 +231,7 @@ export class AonMessengerChat extends AonElement {
     try {
       const taskId = task.id;
 
-      checkButtonsToolbar(this, task.id);
+      checkButtonsToolbar(this.task, task.id);
 
       let params = { task:taskId, domainId:task.domain.id, domainName:task.domain.name };
       
@@ -260,7 +261,7 @@ export class AonMessengerChat extends AonElement {
     this.autoCompleteTask();
 
     try {
-      if(this.task.source === TASK_SOURCE.REQUEST){
+      if(this.task.getSource() === TASK_SOURCE.REQUEST){
         await this.saveSourceRequest();
       } else {
         await this.saveSourceQuery();
@@ -326,7 +327,7 @@ export class AonMessengerChat extends AonElement {
       this.updateTaskStatus(TASK_STATUS.FINISHED); 
     });
     } else {
-      TaskCreationUtils.openDialogDailyTracking();
+      TaskCreationUtils.openDialogDailyTracking(this.task);
     }
   }
 
@@ -456,7 +457,7 @@ export class AonMessengerChat extends AonElement {
         //TODO
       }
 
-      if(this.task.source === TASK_SOURCE.CAU && this.isCau()){
+      if(this.task.getSource() === TASK_SOURCE.CAU && this.isCau()){
         this.task.setSender({});
       }
     }
@@ -605,8 +606,9 @@ export class AonMessengerChat extends AonElement {
   }
 
   back(){
-    let parent = this.applicationParentEl;
-    parent.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._listFilter);
+    const parent = this.applicationParentEl;
+    let filter = this.applicationParentEl.getListFilter();
+    parent.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
     parent.getNotifications();
   }
 }

@@ -38,9 +38,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Contract;
-import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.SexType;
+import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.CopyBasic;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
@@ -52,6 +52,8 @@ import solutions.aon.sepe.toolkit.Toolkit;
 public class Contrata {
 	
 	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	
+	private static final String MESSAGE_ERROR = "Error no aceptada la comunicaci\u00f3n";
 	
 	private Contrata() {
 		throw new IllegalStateException("Utility class");
@@ -70,16 +72,17 @@ public class Contrata {
 			return null;
 	}
 	
-	public static void sendContrataExtension(final InputStream certificateInputStream,
+	public static String sendContrataExtension(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, ContractExtension contractExtension) throws SepeException {
 			try {
-				sendContrataExtensionImpl(certificateInputStream, certificatePassword, certificateType, contractExtension);
+				return sendContrataExtensionImpl(certificateInputStream, certificatePassword, certificateType, contractExtension);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (Exception e) {
 				e.printStackTrace();
 				throw new SepeException(e);
 			}
+			return null;
 	}
 	
 	public static void sendTransformation(final InputStream certificateInputStream,
@@ -164,6 +167,21 @@ public class Contrata {
 			final String certificateType, String ipf, String cif, Date startDate, Optional<String> sepeId) throws SepeException {
 			try {
 				return getTransformationPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, startDate, sepeId);
+			}
+			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+			catch (MalformedURLException e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (InterruptedException e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
+	}
+	
+	public static byte[] getContractExtensionPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date startDate, Integer nprorroga, Optional<String> sepeId) throws SepeException {
+			try {
+				return getContractExtensionPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, startDate, nprorroga, sepeId);
 			}
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -417,7 +435,7 @@ public class Contrata {
 				message = message.substring(1);	
 			} else {
 				handleSepeExceptions(htmlPage);
-				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
+				throw new SepeException(MESSAGE_ERROR);
 			}
 			
 			return message;
@@ -573,7 +591,7 @@ public class Contrata {
 			if(message!=null && message.contains("se ha realizado correctamente")) {				
 				System.out.println(message);
 			} else {
-				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
+				throw new SepeException(MESSAGE_ERROR);
 			}
 		} 
 	}
@@ -739,7 +757,7 @@ public class Contrata {
 		} 
 	}
 	
-	private static void sendContrataExtensionImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
+	private static String sendContrataExtensionImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
 			ContractExtension contractExtension) 
 			throws SepeException, FailingHttpStatusCodeException, InterruptedException, IOException {
 		
@@ -774,19 +792,19 @@ public class Contrata {
 		    
 	    	HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 	    	
-	    	if(sepeId.isPresent()) { // por identificacion de la comunicacion
-	            String ide = sepeId.get();
-	    		((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
-	    		String ide1 = ide.substring(0, 2);
-	    		String ide2 = ide.substring(2, 6);
-	    		String ide3 = ide.substring(6);
-	            formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-	            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-	            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
-	            formDatos.getInputByName("idcontrato").setValueAttribute(ide1+"-"+ide2+"-"+ide3);
-	    	} else {
-				throw new InvalidDataException("Sepe IDE requerido");
-	    	}
+	    	if(sepeId.isEmpty()) {
+	    		throw new InvalidDataException("Sepe IDE requerido");
+	    	} 
+	    	
+            String ide = sepeId.get();
+    		((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
+    		String ide1 = ide.substring(0, 2);
+    		String ide2 = ide.substring(2, 6);
+    		String ide3 = ide.substring(6);
+            formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
+            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
+            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
+            formDatos.getInputByName("idcontrato").setValueAttribute(ide1+"-"+ide2+"-"+ide3);
 	    	
 			htmlPage = formDatos.getInputByName("enviar").click();
 			handleSepeExceptions(htmlPage);
@@ -801,11 +819,15 @@ public class Contrata {
 				form.getInputByName("cifnifempresapro").setValueAttribute(contractExtension.getCif());
 		    }
 	    	
-	    	String ccc = contractExtension.getCtaCti();
-			form.getInputByName("cuentacotizacion1pro").setValueAttribute(contractExtension.getRegime());
-			form.getInputByName("cuentacotizacion2pro").setValueAttribute(ccc.substring(0,9));
-			form.getInputByName("cuentacotizacion3pro").setValueAttribute(ccc.substring(9));
-			
+		    HtmlInput ccc1 = form.getInputByName("cuentacotizacion2pro");
+		    String cccValue = ccc1.getValueAttribute();
+		    if(cccValue!=null && cccValue.isEmpty()) {
+		    	String ccc = contractExtension.getCtaCti();
+				form.getInputByName("cuentacotizacion1pro").setValueAttribute(contractExtension.getRegime());
+				ccc1.setValueAttribute(ccc.substring(0,9));
+				form.getInputByName("cuentacotizacion3pro").setValueAttribute(ccc.substring(9));
+		    }
+
 			String[] startDate = Toolkit.dateString(contractExtension.getStartDate());
 			form.getInputByName("diainiciopro").setValueAttribute(startDate[0]);
 			form.getInputByName("mesiniciopro").setValueAttribute(startDate[1]);
@@ -820,24 +842,26 @@ public class Contrata {
 			if(discontinuidad!=null && contractExtension.getDiscontinuo()) { 
 				((HtmlSelect)discontinuidad).setSelectedAttribute("S", true);
 			}
+	
+			form.getInputByName("idprorroga").setValueAttribute(ide1+"-"+ide2+"-"+ide3);
 			
 			Optional<String> exist = htmlPage.querySelectorAll("form[name=\"datos\"] fieldset div[class*=titulo]")
 	    	.stream()
 	    	.filter(e-> !e.getTextContent().isEmpty() && e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
 	    	.map(e -> e.getTextContent().trim()).findFirst();
 	    	
-	    	String messageError = "Error no aceptada la comunicaci\u00f3n";
+	    	String messageError = MESSAGE_ERROR;
 	    	
 	    	if(exist.isEmpty()) {
-		        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
-
+	    	
+		        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=\"enviar\"]")).click();
+		    	handleSepeAlert(alertHandler.getCollectedAlerts());
 		        handleSepeExceptions(htmlPage);
 		        
 		        String message = getSuccessMessage(htmlPage);
-				if(message!=null && message.contains("se ha realizado correctamente")) {
-					System.out.println(message);
-					return;
-				}
+		        if(message!=null && message.indexOf("E")>=0) {
+					return message.substring(1);	
+				} 
 	    	} else {
 	    		messageError = exist.get();
 	    	}
@@ -915,7 +939,7 @@ public class Contrata {
 	    	.filter(e-> !e.getTextContent().isEmpty() && e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
 	    	.map(e -> e.getTextContent().trim()).findFirst();
 	    	
-	    	String messageError = "Error no aceptada la comunicaci\u00f3n";
+	    	String messageError = MESSAGE_ERROR;
 	    	
 	    	if(exist.isEmpty()) {
 		        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
@@ -1020,7 +1044,7 @@ public class Contrata {
 	    	.filter(e-> !e.getTextContent().isEmpty() && e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
 	    	.map(e -> e.getTextContent().trim()).findFirst();
 	    	
-	    	String messageError = "Error no aceptada la comunicaci\u00f3n";
+	    	String messageError = MESSAGE_ERROR;
 	    	
 	    	if(exist.isEmpty()) {
 		        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
@@ -1386,15 +1410,47 @@ public class Contrata {
 	}
 	
 	private static HtmlPage getPageContracByStartDate(HtmlPage htmlPage, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws InterruptedException, IOException, SepeException  {
+		return getPageContracByStartDate(htmlPage, ipf, cif, oldDateIniContract, sepeId, Optional.empty());
+	}
+	
+	private static HtmlPage getPageContracByStartDate(HtmlPage htmlPage, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId, Optional<Integer> nprorroga) throws InterruptedException, IOException, SepeException  {
     	HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
     	
+
     	if(sepeId.isPresent()) { // por identificacion de la comunicacion
             String ide = sepeId.get();
+            String ide1 = ide.substring(0, 2);
+            String ide2 = ide.substring(2, 6);
+            String ide3 = ide.substring(6, 13);
+            String ide4 = ide.substring(13);
+            boolean ide4Exist = ide4!=null && !ide4.isEmpty();
+            
     		((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
 
-            formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide.substring(0, 2));
-            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide.substring(2, 6));
-            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide.substring(6));
+            formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
+            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
+            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
+            
+            DomNode idcomunicacion4Node = formDatos.querySelector("[name=\"idcomunicacion4\"]");
+            if(idcomunicacion4Node!=null && ide4Exist) {
+            	HtmlInput idcomunicacion4 = ((HtmlInput)idcomunicacion4Node);
+            	if(idcomunicacion4.getValueAttribute().isEmpty()) {
+                	idcomunicacion4.setValueAttribute(ide4);
+                }
+            }
+            
+            DomNode idcontratoNode = formDatos.querySelector("[name=\"idcontrato\"]");
+            if(idcontratoNode!=null) {
+            	HtmlInput idcontrato = ((HtmlInput)idcontratoNode);
+            	String contractStr = ide1+"-"+ide2+"-"+ide3;
+            	if(ide4Exist) {
+            		contractStr +="-"+ide4;
+            	}
+            	
+            	idcontrato.setValueAttribute(contractStr);
+            }
+            
+            
     	} else {
     		
 		    ((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
@@ -1405,11 +1461,12 @@ public class Contrata {
 		    if(cifValue!=null && cifValue.isEmpty()) {
 		        String cifTypeStr = Toolkit.getIdentityType(cif); 
 		        Integer cifType = 0; 
-		        if( cifTypeStr.equals("1")) 
+		        if( cifTypeStr.equals("1")) {		        	
 		        	cifType = 1;
-		        else if(cifTypeStr.equals("6")) 
+		        } else if(cifTypeStr.equals("6")){
 		        	cifType = 2;
-
+		        }
+	
 				HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumentoaux]>option").get(cifType);//" " cif, "D" NIF, "E" NIE			
 				option.click();
 
@@ -1428,9 +1485,19 @@ public class Contrata {
 			formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
 			formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
 			formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+			
+			
+			nprorroga.ifPresent(n->{
+				DomNode numprorrogaNode = formDatos.querySelector("[name=\"numprorroga\"]");
+				if(numprorrogaNode!=null) {
+					((HtmlInput)numprorrogaNode).setValueAttribute(n+"");
+				}
+			});
+			
+		
+			
     	}
  
-    	
     	htmlPage = formDatos.getInputByName("aceptar").click();
 		handleSepeExceptions(htmlPage);
 		
@@ -1458,6 +1525,44 @@ public class Contrata {
 	        htmlPage = getPageContracByStartDate(htmlPage, ipf, cif, startDate, sepeId);
 			
 	     	Page page = htmlPage.getElementByName("enviar").click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				handleSepeExceptions(htmlPage);
+			} else {
+				try{
+					return page.getWebResponse().getContentAsStream().readAllBytes();
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
+		} 
+	    return null;
+	}
+	
+	private static byte[] getContractExtensionPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date oldDateIniContract, Integer nprorroga, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			
+			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
+			webClient.setAlertHandler(alertHandler);
+			
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
+		
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
+	        handleSepeExceptions(htmlPage);
+	        
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=").click();
+	        handleSepeExceptions(htmlPage);
+	       
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaProrrogas?pagina=entrada").click();
+	        handleSepeExceptions(htmlPage);
+	        
+	        HtmlUnitToolkit.manageStatusCode(htmlPage);
+	        
+	        htmlPage = getPageContracByStartDate(htmlPage, ipf, cif, oldDateIniContract, sepeId, Optional.ofNullable(nprorroga));
+	    	handleSepeAlert(alertHandler.getCollectedAlerts());
+			
+	     	Page page = htmlPage.getElementByName("Boton_imprimir").click();
 			if(page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
 				handleSepeExceptions(htmlPage);
@@ -1541,7 +1646,7 @@ public class Contrata {
 			boolean b = false;
 			if(pInt > 2 && !pStr.isEmpty()) {
 				String pLowerCase = pStr.toLowerCase();
-				if(pLowerCase.contains("identificador de la comunicaci\u00F3n")) {
+				if(pLowerCase.contains("identificador de la")) {
 					String[] parts = pStr.split(":");
 					if(parts.length > 0) {
 						msg = (parts[1]).trim().replace("-", "");

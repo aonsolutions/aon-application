@@ -43,10 +43,7 @@ export class AonMessengerList extends AonElement {
     this.build();
   }
 
-
-  disconnectedCallback() {
-    // if (this.AON_TABLE)  this.AON_TABLE.removeEventListener(EVENT.MORE, () =>this.loadMore(false));
-  }
+  disconnectedCallback() {}
 
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_LIST;
@@ -85,14 +82,15 @@ export class AonMessengerList extends AonElement {
     } else {
       this.AON_TABLE.removeColumns();
       this.AON_TABLE.addColumn("", "html", "lettersHtml", "2%");
-      this.AON_TABLE.addColumn(MSG.ISSUE, "html", "newTitle", "50%");
+      this.AON_TABLE.addColumn(MSG.ISSUE, "html", "newTitle", "73%");
       this.AON_TABLE.addColumn("Asignado", "html", "assigned", "5%");
-      this.AON_TABLE.addColumn(MSG.DATE, "html", "dateParse", "14%");
+      this.AON_TABLE.addColumn(MSG.DATE, "html", "dateParse", "20%");
     }
     
     this.AON_TABLE.addEventListener(EVENT.MORE,() =>{
-      if(this.MORE)
+      if(this.MORE){
         this.loadMore(false)
+      }
     });
 
     await this.loadMore(true);
@@ -154,7 +152,14 @@ export class AonMessengerList extends AonElement {
           () => this.goMessengerChat(res, idx)
         );
 
-        rowEl.style.padding = "16px 0px";
+        if(rowEl){
+          rowEl.style.padding = "14px 0px 7px";
+          const firstChild = rowEl.firstChild;
+          
+          if(firstChild){
+            firstChild.style.verticalAlign = "top"; //TODO
+          }         
+        }
       });
 
       datos.forEach((t) => {

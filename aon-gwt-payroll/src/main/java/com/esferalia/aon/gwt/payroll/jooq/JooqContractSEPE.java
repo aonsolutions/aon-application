@@ -122,6 +122,8 @@ public class JooqContractSEPE {
 		getContractTransformIDE(dslContext, contractId, contractSpecificData);
 		getContractTransformComunicationDate(dslContext, contractId, contractSpecificData);
 		getContractTransformDisc(dslContext, contractId, contractSpecificData);
+		getContractExtensionIDE(dslContext, contractId, contractSpecificData);
+		getContractExtensionComunicationDate(dslContext, contractId, contractSpecificData);
 		
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
@@ -256,6 +258,34 @@ public class JooqContractSEPE {
 				discReason = discReasonRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
 				contractSpecificData.setDiscReason(discReason);
 			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static void getContractExtensionIDE(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("SEPE_EXTENSION_ID"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(ideRecords.isNotEmpty()) {
+			contractSpecificData.setExtensionIde(ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+		}
+	}
+	
+	private static void getContractExtensionComunicationDate(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
+		Result<Record> comunicateDateRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("COMUNICATION_EXTENSION_DATE"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(comunicateDateRecords.isNotEmpty()) {
+			java.util.Date comunicationDate;
+			try {
+				comunicationDate = dateFormat.parse(comunicateDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+				contractSpecificData.setComunicationExtensionDate(comunicationDate);
+			} catch (IllegalArgumentException | ParseException e) {
 				e.printStackTrace();
 			}
 		}

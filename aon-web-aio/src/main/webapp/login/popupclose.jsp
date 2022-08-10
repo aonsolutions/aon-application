@@ -13,10 +13,10 @@
 	<div style="display:none">
 		<form id="openid-form-login" target="${name}" method="post" action="${act}"  
 		onSubmit>
+
+			<input type="hidden" id="j_username" name="j_username" value="${username}"/>
 								
-			<input type="text" id="j_username" name="j_username" value="${username}"/>
-								
-			<input type="password" id="j_password" name="j_password" value="${password}" />
+			<input type="hidden" id="j_password" name="j_password" value="${password}"/>
 								
 			<input id="login_btn" name="login_btn" type="submit" />
 

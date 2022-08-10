@@ -71,7 +71,6 @@ import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployee {
@@ -810,9 +809,6 @@ public class JooqEmployee {
 		contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
 		contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
 		
-		contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
-		contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
-		
 		Integer workplaceId = contractTable.get(CONTRACT.WORKPLACE);
 		
 		//WORKPLACE TABLE		
@@ -962,8 +958,7 @@ public class JooqEmployee {
 				contractData.setQuotegroupId(r.get(CONTRACT_DATA.ID));
 				contractData.setQuoteGroup(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "DIAS_MES")) {
-				if(AonDateUtils.isSameDay(contractData.getStartDate(), r.get(CONTRACT_DATA.START_DATE)) &&
-						AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.EXPRESSION), "30")) {
+				if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.EXPRESSION), "30")) {
 					contractData.setQuoteGroupIdxMonth(true);
 					contractData.setQuoteGroupIdxMonthId(r.get(CONTRACT_DATA.ID));
 				}
@@ -988,20 +983,23 @@ public class JooqEmployee {
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
 				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
-			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "ORIGINAL_START_DATE")) {
-				contractData.setHasTransformation(true);
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_ID")) {
+				contractData.setSepeId(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_EXTENSION_ID")) {
+				contractData.setSepeExtensionId(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_TRANSFORM_ID")) {
+				contractData.setSepeTransformId(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TRANSFORM_DATE")) {
 				try {
-					contractData.setOriginalStartDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+					contractData.setTransformDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
 				} catch (ParseException e) {
-					contractData.setOriginalStartDate(contractTable.get(CONTRACT.START_DATE));
 					e.printStackTrace();
 				}
-			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "ORIGINAL_END_DATE")) {
-				contractData.setHasTransformation(true);
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "EXTENSION_DATE")) {
+				contractData.setHasExtension(true);
 				try {
-					contractData.setOriginalEndDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+					contractData.setExtensionDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
 				} catch (ParseException e) {
-					contractData.setOriginalEndDate(contractTable.get(CONTRACT.END_DATE));
 					e.printStackTrace();
 				}
 			}
@@ -1012,6 +1010,8 @@ public class JooqEmployee {
 		Result<Record> contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
 			.where(CONTRACT_INFO.CONTRACT.eq(contract))
 			.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+			.and(CONTRACT_INFO.START_DATE.le(currentDate))
+			.and(CONTRACT_INFO.END_DATE.isNull().or(CONTRACT_INFO.END_DATE.ge(currentDate)))
 			.fetch();
 		
 		Record contractInfoTable = null;
@@ -1161,14 +1161,7 @@ public class JooqEmployee {
 			}
 		} catch (NumberFormatException e) {}
 		
-		contractData.setHasExtension(hasExtension);
-		
-		// ---------------------------------------------- Contract Transform
-		
-		List<Integer> transformDocs = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)19)).fetch(CONTRACT_ATTACH.ID);
-		if(!transformDocs.isEmpty() || 
-				(AonStringUtils.isNotBlank(contractData.getContractType()) && AonStringUtils.equals(contractData.getContractType().substring(contractData.getContractType().length() - 1), "9"))) 
-			contractData.setHasTransformation(true);
+		if(Boolean.FALSE.equals(contractData.isHasExtension())) contractData.setHasExtension(hasExtension);
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);
@@ -1587,6 +1580,8 @@ public class JooqEmployee {
 			.execute();
 		
 		if(contractData.getSsRegimen() != 3){ //NO ES RETA
+			ContractType contractType = new ContractType();
+			ContractTypeRecord contractTypeRecord = contractType.getContractType(Integer.parseInt(contractData.getContractType()));
 			
 			dslContext.update(CONTRACT)
 				.set(CONTRACT.ENTERPRISE_CCC, contractData.getCccId())
@@ -1598,10 +1593,10 @@ public class JooqEmployee {
 			if(!contractData.hasPayroll()) {
 				if(null == contractData.getContracttypeId()){
 					if(null != contractData.getContractType()){
-						String contractType = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
+						String contractTypeStr = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
 						ContractDataRecord tc2Record = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\"" + contractType + "\"", 
+							.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\"" + contractTypeStr + "\"", 
 									startDate, endDate)
 							.returning(CONTRACT_DATA.ID)
 							.fetchOne();
@@ -1614,9 +1609,9 @@ public class JooqEmployee {
 						contractData.setContractId(null);
 						contractData.setContractType(null);
 					}else{
-						String contractType = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
+						String contractTypeStr = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
 						dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, "\""+ contractType +"\"")
+							.set(CONTRACT_DATA.EXPRESSION, "\""+ contractTypeStr +"\"")
 							.set(CONTRACT_DATA.START_DATE, startDate)
 							.set(CONTRACT_DATA.END_DATE, endDate)
 							.where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId()))
@@ -1788,10 +1783,11 @@ public class JooqEmployee {
 			}
 			
 			// Employees Colective
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("COLECTIVO_TRABAJADORES"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-				.execute();
+			if(!contractTypeRecord.isTransform())
+				dslContext.delete(CONTRACT_DATA)
+					.where(CONTRACT_DATA.NAME.eq("COLECTIVO_TRABAJADORES"))
+					.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+					.execute();
 			
 			if(AonStringUtils.isNotBlank(contractData.getEmployeesColective())) {
 				dslContext.insertInto(CONTRACT_DATA)

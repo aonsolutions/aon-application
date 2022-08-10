@@ -266,6 +266,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
 	
+	String getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId) throws IllegalArgumentException;
+	
 	String getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
@@ -336,13 +338,17 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	// ------------------------------------------------- ContractExtension
 	
-	void contractExtension(String currentDomainName, ContractExtension contractExtension);
+	void contractExtension(String currentDomainName, ContractExtension contractExtension) throws IllegalArgumentException;
 
-	void deleteContractExtension(String currentDomainName, Integer contractId);
+	void deleteContractExtension(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 	// ------------------------------------------------- ContractTransform
 	
-	int contractTransform(String currentDomainName, ContractTransform contractTransform);
+	void contractTransform(String currentDomainName, ContractTransform contractTransform) throws IllegalArgumentException;
+	
+	void deleteContractTransform(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+
+	void removeContractTransform(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 	// ------------------------------------------------- EmployeeIrpf
 	

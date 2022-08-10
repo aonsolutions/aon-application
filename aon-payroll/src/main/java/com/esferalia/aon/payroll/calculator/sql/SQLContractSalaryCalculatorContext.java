@@ -57,6 +57,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -144,6 +145,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
@@ -590,17 +592,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public static class AgreementContextKey {
 
 		private Integer domain;
+		private Integer regime;
 		private Integer agreementId;
 		private Integer agreementLevelId;
 
-		public AgreementContextKey(Integer domain, Integer agreementId, Integer agreementLevelId) {
+		public AgreementContextKey(Integer regime, Integer domain, Integer agreementId, Integer agreementLevelId) {
 			this.domain = domain;
+			this.regime = regime;
 			this.agreementId = agreementId;
 			this.agreementLevelId = agreementLevelId;
 		}
 
 		public Integer getDomain() {
 			return domain;
+		}
+		
+		public Integer getRegime() {
+			return regime;
 		}
 
 		public Integer getAgreementId() {
@@ -614,13 +622,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		@Override
 		public boolean equals(Object obj) {
 			return obj instanceof AgreementContextKey && AonUtils.equals(domain, ((AgreementContextKey) obj).domain)
+					&& AonUtils.equals(regime, ((AgreementContextKey) obj).regime)
 					&& AonUtils.equals(agreementId, ((AgreementContextKey) obj).agreementId)
 					&& AonUtils.equals(agreementLevelId, ((AgreementContextKey) obj).agreementLevelId);
 		}
 
 		@Override
 		public int hashCode() {
-			return AonUtils.hashCode(domain) + AonUtils.hashCode(agreementId) + AonUtils.hashCode(agreementLevelId);
+			return AonUtils.hashCode(domain) + AonUtils.hashCode(regime) + AonUtils.hashCode(agreementId) + AonUtils.hashCode(agreementLevelId);
 		}
 
 	}
@@ -814,10 +823,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					exp.setName(EVERYTHING.getName());
 					if (dailyRegBase != null) {
 						//exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
-						exp.setExpression(String.format("%f * %s ", dailyRegBase, GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US, "%f * %s ", dailyRegBase, GUARANTEED_DAYS));
 					} else {
 						//exp.setExpression(String.format("SELF.br(%s) * %d", IT_START, guaranteedDays));
-						exp.setExpression(String.format("SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
+						exp.setExpression(String.format(Locale.US,"SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
@@ -1022,6 +1031,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		protected double getWorkDays(ExpressionContext ctx, Period p) {
 			Double workDays = super.getWorkDays(ctx, p);
 			return getDays(workDays, ctx, p);
+		}
+		
+		public void throwGuarenteeException() throws GuarenteeException {
+			if ( guarentees!= null && !guarentees.isEmpty()  ) {
+				throw new GuarenteeException(guarentees);
+			}
 		}
 
 		protected double getGuaranteedDays(ExpressionContext ctx, Period p) {
@@ -2210,6 +2225,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.agreementContextFactory = null;
 	}
 
+	protected Integer getSSRegimeId() {
+		Object id = getObject(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return id == null ? null : (Integer) id;
+	}
+
 	protected Integer getAgreementId() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		return id == null ? null : (Integer) id;
@@ -2233,11 +2253,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected AgreementKey getAgreementKey() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		Object domain = getObject(SQLConstants.AGREEMENT, AgreementColumns.DOMAIN);
-		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain);
+		Object regime = getObject(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain, (Integer) regime);
 	}
 
 	protected AgreementKey getDefaultAgreementKey() {
-		return new AgreementKey(0, 0);
+		return new AgreementKey(0, 0, 0);
 	}
 
 	protected double getActiveDays(Period p) {
@@ -2344,7 +2365,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected AgreementKey getEnterpriseAgreementKey() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		Object domain = getObject(SQLConstants.ENTERPRISE, EnterpriseColumns.DOMAIN);
-		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain);
+		Object regime = getObject(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain, (Integer) regime);
 	}
 
 	protected List<Period> splitWorkedDays(List<Period> periods) {
@@ -2425,17 +2447,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private ExpressionContext getAgreementContext() throws SQLException, ExpressionException {
 
+		Integer ssRegimeId = getSSRegimeId();
 		Integer agreementId = getAgreementId();
 		Integer agreementLevelId = getAgreementLevel();
 		Integer agreementDomain = getAgreementDomain();
 
-		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(agreementDomain, agreementId,
+		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(ssRegimeId, agreementDomain, agreementId,
 				agreementLevelId);
 
 		ExpressionContext agreementCtx = agreementExpressionContexts.get(agreementAndLevelKey);
 
 		Integer enterpriseDomain = getEnterpriseDomain();
-		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(enterpriseDomain, agreementId,
+		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(ssRegimeId, enterpriseDomain, agreementId,
 				agreementLevelId);
 		ExpressionContext enterpriseCtx = agreementExpressionContexts.get(enterpriseAndLevel);
 
@@ -2683,6 +2706,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		try {
 			calculator.calculate(ctx);
+			throwGuarenteeException(ctx);
 		} catch (GuarenteeException e) {
 			
 			List<ITimedResult<Double>> guarenteeResults = e.getGuarentees(guaranteePeriod);
@@ -2709,13 +2733,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			
 			return onGuarantee(guarenteeResults);
-
+		} catch ( ClassCastException e){
+			e.printStackTrace();
+			//
 		} catch (SalaryException e) {
 			throw new RuntimeException(e);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		return 0.00;
+	}
+
+	protected void throwGuarenteeException(IContractSalaryCalculatorContext ctx) throws GuarenteeException {
+		((SQLNoItContractSalaryCalculatorContext)ctx).throwGuarenteeException();
 	}
 	
 
@@ -3113,6 +3143,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				}
 
 				@Override
+				public Collection<IContractPayment> getContractPayments() throws AonException {
+					return new FilterCollection<>(p -> p.getMonth() == null , super.getContractPayments());
+				}
+				
+				@Override
 				public Collection<IContractDeduction> getContractDeductions() throws AonException {
 					return Collections.emptyList();
 				}
@@ -3169,10 +3204,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public Object system(String name) throws ExpressionException, SQLException {
 		ExpressionContext systemCtx = agreementContextFactory.getSystemExpressionContext();
-		Object value = systemCtx.getVariable(name, startDate, getEnd(), Object.class);
-		if (value != null)
-			return value;
-		return implicitExpressionContext.getVariable(name, startDate, getEnd(), Object.class);
+		//Object value = systemCtx.getVariable(name, startDate, getEnd(), Object.class);
+		List<ITimedResult<Object>> results = systemCtx.eval(name, startDate, getEnd(), Object.class);
+		return results.stream().map( ITimedResult::getValue )
+				.findAny().orElseGet(() -> implicitExpressionContext.getVariable(name, startDate, getEnd(), Object.class));
 	}
 
 	@Override
@@ -4782,11 +4817,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		List<Period> quote = contract;
-//		List<Period> strike = ctx.getPeriods(STRIKE_FACTOR);
-//		if (strike != null && !strike.isEmpty()) {
-//			quote = Period.sub(quote, strike);
-//			intersects = Period.sub(intersects, strike);
-//		}
 		
 		for (ITimedVariable<Object> strikeFactor : ctx.getVariables(STRIKE_FACTOR)) {
 			Period period = strikeFactor.getPeriod();
@@ -4809,6 +4839,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		List<Period> offs = ctx.getPeriods(OFF_DAYS);
 		intersects = Period.sub(intersects, offs);
+
+		List<Period> nons = getPeriods(ctx, NON_WORKED_DAYS, v -> v != null && ((Number)v).doubleValue() > 0.00);
+		intersects = Period.sub(intersects, nons);
+		
 
 		// DropDays
 		List<Period> drops = ctx.getPeriods(DROP_FACTOR);
@@ -4864,23 +4898,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		
-		// for (Period period : quote) {
-		// if (!containsVariable(QUOTE_DAYS, period)) {
-		// ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-		// @Override
-		// public Period getPeriod() {
-		// return period;
-		// }
-		//
-		// @Override
-		// public Double getValue(Period p) {
-		// return getDays(ctx, p, 1.00);
-		// }
-		//
-		// };
-		// ctx.putVariable(QUOTE_DAYS, quoteDays);
-		// }
-		// }
 
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
@@ -5290,6 +5307,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		}
 		
+	}
+
+	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var, Predicate<Object>  predicate) {
+		return ctx.getPeriods(var).stream()
+		.flatMap( p -> {
+			try {
+				return ctx.dryEval(var.getName(), p.getStart(), p.getEnd(), Object.class)
+				.stream().filter( r -> predicate.test(r.getValue())).map( ITimedResult::getPeriod);
+			} catch (ExpressionException e) {
+				return Stream.empty();
+			}
+		}).collect(Collectors.toList());
 	}
 
 	private void loadTotalsContextVars(ContractExpressionContext ctx) {

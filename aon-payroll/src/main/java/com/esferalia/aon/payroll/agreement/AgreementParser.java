@@ -799,7 +799,7 @@ public class AgreementParser {
 								.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 								.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 								.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-								.set(AGREEMENT_EXTRA.START_DATE, "01/07 -1")
+								.set(AGREEMENT_EXTRA.START_DATE, "01/01")
 								.set(AGREEMENT_EXTRA.END_DATE, "30/06")
 								.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
 								.execute();
@@ -817,7 +817,7 @@ public class AgreementParser {
 								.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 								.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 								.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-								.set(AGREEMENT_EXTRA.START_DATE, "01/01")
+								.set(AGREEMENT_EXTRA.START_DATE, "01/07")
 								.set(AGREEMENT_EXTRA.END_DATE, "31/12")
 								.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
 								.execute();
@@ -896,7 +896,7 @@ public class AgreementParser {
 					.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 					.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-					.set(AGREEMENT_EXTRA.START_DATE, "01/07 -1")
+					.set(AGREEMENT_EXTRA.START_DATE, "01/01")
 					.set(AGREEMENT_EXTRA.END_DATE, "30/06")
 					.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
 					.execute();
@@ -929,7 +929,7 @@ public class AgreementParser {
 				.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 				.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-				.set(AGREEMENT_EXTRA.START_DATE, "01/01")
+				.set(AGREEMENT_EXTRA.START_DATE, "01/07")
 				.set(AGREEMENT_EXTRA.END_DATE, "31/12")
 				.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
 				.execute();

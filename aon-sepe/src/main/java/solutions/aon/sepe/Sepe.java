@@ -33,6 +33,11 @@ public class Sepe {
 			final String certificateType, String ipf, String cif, Date fini) throws SepeException {
 			return Contrata.getTransformationPdf(certificateInputStream, certificatePassword, certificateType, ipf, cif, fini, Optional.empty());
 	}
+
+	public static byte[] getContractExtensionPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date oldDateIniContract, Integer nprorroga, String sepeId) throws SepeException {
+			return Contrata.getContractExtensionPdf(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, nprorroga, Optional.ofNullable(sepeId));
+	}
 	
 	public static byte[] getTransformationCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String cif, Date fini) throws SepeException {
@@ -138,9 +143,18 @@ public class Sepe {
 		Contrata.validateCert(certificateInputStream, certificatePassword, certificateType);
 	}
 	
-	public static void sendContractExtension(final InputStream certificateInputStream, final String certificatePassword,
+	/**
+	 * 
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param contractExtension
+	 * @return String sepeId prorroga
+	 * @throws SepeException
+	 */
+	public static String sendContractExtension(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, ContractExtension contractExtension) throws SepeException  {
-		Contrata.sendContrataExtension(certificateInputStream, certificatePassword, certificateType, contractExtension);
+		return Contrata.sendContrataExtension(certificateInputStream, certificatePassword, certificateType, contractExtension);
 	}
 	
 	public static void main(String[] args)

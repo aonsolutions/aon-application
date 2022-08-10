@@ -21,6 +21,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -284,7 +286,15 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (SEPE Get files)
 
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
-		if(contractData.isHasTransformation())
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(contractData.getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
+		if(null == contractTypeRecord || contractTypeRecord.isTransform())
 			downloadCbcTransform(success, failure);
 		else
 			downloadCbcContract(success, failure);
@@ -334,7 +344,20 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCtoTransform(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCtoTransform(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCtoTransform(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), contractData.getSepeTransformId(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadCtoExtension(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCtoExtension(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getExtensionDate(), null, contractData.getSepeExtensionId(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -369,7 +392,15 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (SEPE Comunications)
 	
 	public void sendBasicCopy(Consumer<Void> success, Consumer<Throwable> failure) {
-		if(contractData.isHasTransformation())
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(contractData.getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
+		if(null == contractTypeRecord || contractTypeRecord.isTransform())
 			employeesService.sendContractoCBTransformSEPE(employeeContractData, new AsyncCallback<Void>() {
 
 				@Override
@@ -727,6 +758,21 @@ public class ContrataEmployeeObject {
 	
 	public void deleteContractExtension(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.deleteContractExtension(contractData.getContractId(), new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	// ------------------------------------------------- Database Methods (Delete Transform)
+	
+	public void deleteContractTransform(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.deleteContractTransform(contractData.getContractId(), new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
 				success.accept(result);

@@ -7,16 +7,15 @@ import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/en
 import { getCccForActivity } from "../../../services/contractService.js";
 import { serializeForm, sortBy } from "../../../services/utils.js";
 import { setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
+import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType, sendAlta } from "../../../services/comunicaService.js";
 
 /**
- * 
+ * @param {Task} task 
  * @param {HTMLElement} card 
  */
- export const createFormMov = (card, aonMessengerChat) =>{
-    const task = aonMessengerChat.task;
+ export const createFormMov = (task, card) =>{
     card.flex = "true";
     card.getCardTitle().style.marginBottom = 0;
     
@@ -49,7 +48,7 @@ import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType,
     //---------------------END DATA EMPLOYEE
 
     //---------------------DATA CONTRACT
-    createDataContract(form, data, aonMessengerChat);
+    createDataContract(form, data, task);
     //---------------------END DATA CONTRACT
 }
 
@@ -124,11 +123,11 @@ const createDataEnterprise = (form, data) => {
  * 
  * @param {HTMLElement} form 
  * @param {Object} data 
- * @param {HTMLElement} aonMessengerChat aon-messenger-chat 
+ * @param {Task} task 
  */
- const createDataContract = (form, data, aonMessengerChat) => {
+ const createDataContract = (form, data, task) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const dur = aonMessengerChat.getDur();
-    const task = aonMessengerChat.task;
     createTitle(form, `${MSG.DATA} del Contrato`);
 
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});

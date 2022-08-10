@@ -1471,7 +1471,7 @@ public class EmployeesServiceHelper {
 
 				for (Integer domainId : domainIds) {
 					AgreementContextKey levelKey = new AgreementContextKey(
-							domainId, agreementId, level.getId());
+							domainId, agreementId, level.getId(), 0);
 					levelCtx.add(agreementCtxFactory.create(levelKey));
 				}
 
@@ -1960,6 +1960,14 @@ public class EmployeesServiceHelper {
 				}
 
 			}
+			
+			@Override
+			protected void throwGuarenteeException(IContractSalaryCalculatorContext ctx)
+					throws GuarenteeException {
+				super.throwGuarenteeException(((SQLSalaryDraftCalculatorContext)ctx).getCtx());
+			}
+
+			
 
 		}
 

@@ -21,6 +21,12 @@ export const getReader = (file) =>  new Promise((resolve) => {
   };
 });
 
+/**
+ * 
+ * @param {String} url 
+ * @param {String} contentType mimeType
+ * @returns Promise<String>
+ */
 export const getBase64FromUrl = async (url, contentType)=> {
   const data = await fetch(url,{
     headers: {'Content-Type': contentType}
@@ -34,6 +40,30 @@ export const getBase64FromUrl = async (url, contentType)=> {
     }
   });
 }
+
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+export const addHorizontalScroll = (element) => {
+  element.addEventListener("wheel", function (evt) {
+      let maxScroll = element.scrollWidth - element.offsetWidth;
+      let currentScroll = element.scrollLeft + evt.deltaY;
+
+      if (currentScroll > 0 && currentScroll < maxScroll) {
+        evt.preventDefault();
+        element.scrollLeft = currentScroll;
+      }
+      else if (currentScroll <= 0) {
+        element.scrollLeft = 0;
+      }
+      else {
+        element.scrollLeft = maxScroll;
+      }
+  });
+}
+
 
 export const formatBytes = (a,b=2)=>{if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
 
