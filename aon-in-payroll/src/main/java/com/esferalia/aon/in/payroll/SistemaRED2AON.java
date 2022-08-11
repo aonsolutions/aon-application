@@ -1,15 +1,8 @@
 package com.esferalia.aon.in.payroll;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
 import static com.esferalia.aon.salary.expression.Period.max;
 import static com.esferalia.aon.salary.expression.Period.min;
 
@@ -27,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -40,6 +34,7 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.occam.api.AON;
@@ -51,8 +46,6 @@ import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Salary;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -170,20 +163,9 @@ public class SistemaRED2AON {
 					dslContext
 					.select()
 					.from(DOMAIN)
-					.innerJoin(CONTRACT).on(DOMAIN.ID.eq(CONTRACT.DOMAIN))
 					.innerJoin(ENTERPRISE_CCC).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
-					
 					.leftJoin(USER).on(DOMAIN.PARENT.eq(USER.DOMAIN))
-					.leftJoin(REGISTRY).on(USER.REGISTRY.eq(REGISTRY.ID))
-					.leftJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
-					.leftJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
-					.leftJoin(USER_SCOPE).on(USER.ID.eq(USER_SCOPE.USER_ID).and(DOMAIN.SCOPE.eq(USER_SCOPE.SCOPE)))
-					
-					.leftJoin(DATA_ATTACH).on(DOMAIN.PARENT.eq(DATA_ATTACH.DOMAIN), DATA_ATTACH.SOURCE.eq(DataAttachSource.SISTEMA_RED.value()), DATA_ATTACH.TYPE.eq(DataAttachType.DIGITAL_CERTIFICATE.value()) )
-
 					.where(condition)
-					.and(RATTACH.DATA.isNotNull().or(DATA_ATTACH.DATA.isNotNull()))
-					.and(CONTRACT.START_DATE.le(date).and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(date))))
 					.groupBy(ENTERPRISE_CCC.CCC)
 					.orderBy(USER.ID)
 					.fetchStream()
@@ -196,14 +178,11 @@ public class SistemaRED2AON {
 						String ccc = domain.get(ENTERPRISE_CCC.CCC);
 						String regimen = regimeMap.getOrDefault(domain.get(ENTERPRISE_CCC.TYPE), "0111");
 						
-						byte rattachData [] = domain.get(RATTACH.DATA);
-						byte dataAttachData [] = domain.get(DATA_ATTACH.DATA);
-						String raddInfoPassword = domain.get(RADDINFO.VALUE);
-						String dataAttachPassword = domain.get(DATA_ATTACH.DESCRIPTION);
+						Certificate certificate = AON.getCertificate(domainName, domainId, login, userId, "TGSS");	
 						
 						String certificateType = MimeType.PKCS12.name();
-						byte certificateData [] =  Optional.ofNullable(dataAttachData).orElse(rattachData);
-						String certificatePassword =  Optional.ofNullable(dataAttachPassword).orElse(raddInfoPassword);
+						byte [] certificateData=  certificate.getData();
+						String certificatePassword =  certificate.getPassword();
 						
 						java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(date);
 						java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(date);
@@ -279,7 +258,7 @@ public class SistemaRED2AON {
 			String login,
 			String domainName, 
 			Integer domainId,
-			byte certificateData[],
+			byte [] certificateData,
 			String certificatePassword, 
 			String certificateType, 
 			String regimen, 
@@ -312,11 +291,13 @@ public class SistemaRED2AON {
 		
 		
 		allCalcs.forEach((liq, liqCalcs) -> liqCalcs.forEach(( naf, nafCalcs ) -> {
+				
 				employees.get(naf).forEach(employee -> {
 					try {
 						Period period = new Period(employee.getStartDate(), 
 								employee.getEndDate().orElse(null));
-		
+						
+						
 						Salary salary = SLDSalaries.getSalary(liq, ccc, naf, nafCalcs, period);
 						salary.setEmployeeDocument(employee.getDni());
 						
@@ -341,7 +322,7 @@ public class SistemaRED2AON {
 								AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));	
 							} );
 						}
-
+						
 					} catch ( Exception e ) {
 						e.printStackTrace();
 						System.err.println(e.getMessage());
@@ -407,9 +388,8 @@ public class SistemaRED2AON {
 					p -> p.getDomainProperty().eq(domainId) 
 					.and(p.getCCCProperty().eq(ccc))
 					.and(p.getStartDateProperty().le(lastDayOfMonth))
-					.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(firstDayOfMonth)))
-					)
-					.collect(Collectors.toMap(e -> e.getNaf(), e -> Collections.singletonList(e), (l1,l2) -> List.of(l1.get(0), l2.get(0))))
+					.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(firstDayOfMonth))))
+					.collect(Collectors.toMap(Employee::getNaf, Collections::singletonList, (l1,l2) -> Stream.concat(l1.stream(), l2.stream()).collect(Collectors.toList())))
 					;
 		
 		return 
@@ -420,9 +400,8 @@ public class SistemaRED2AON {
 		.and(p.getCCCProperty().eq(ccc))
 		.and(p.getNafProperty().in(nafs))
 		.and(p.getStartDateProperty().le(lastDayOfMonth))
-		.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(firstDayOfMonth)))
-		)
-		.collect(Collectors.toMap(e -> e.getNaf(), e -> Collections.singletonList(e), (l1,l2) -> List.of(l1.get(0), l2.get(0))))
+		.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(firstDayOfMonth))))
+		.collect(Collectors.toMap(Employee::getNaf, Collections::singletonList, (l1,l2) -> Stream.concat(l1.stream(), l2.stream()).collect(Collectors.toList())))
 		;
 	}
 
@@ -483,9 +462,10 @@ public class SistemaRED2AON {
 	
 		com.esferalia.aon.in.payroll.tgss.idc.Idc.parse(data, new com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener() {
 			
+			
 			@Override
-			public void onSSPECs(Collection<PEC> ssPECs) {
-				addPECs(ssPECs, userLogin, domainName, domainId, date, ccc, naf);
+			public void onSSPECs(Date startDate, Date endDate, Collection<PEC> ssPECs) {
+				addPECs(ssPECs, userLogin, domainName, domainId, startDate, endDate, ccc, naf);
 			}
 			
 			@Override
@@ -521,16 +501,26 @@ public class SistemaRED2AON {
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
-			Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> ssBonus = com.esferalia.aon.in.payroll.tgss.idc.Idc.getSSPECs(data);
+			com.esferalia.aon.in.payroll.tgss.idc.Idc.parse(data, new IdcListener() {
+				
+				@Override
+				public void onSSPECs(Date startDate, Date endDate, Collection<PEC> SSPecs) {
+					addPECs(SSPecs, userLogin, domainName, domainId, startDate, endDate, ccc, naf);
+					
+				}
+				
+				@Override
+				public void onContractData(Date startDate, Date endDate, Map<ContextVariable, Object> contractData) {
+				}
+			});
 
-			addPECs(ssBonus, userLogin, domainName, domainId, date, ccc, naf);
 			
 		} catch ( Throwable e ) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void addPECs(Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> pecs, String userLogin, String domainName, Integer domainId, Date date, 
+	public static void addPECs(Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> pecs, String userLogin, String domainName, Integer domainId, Date start, Date end, 
 			String ccc, String  naf) {
 		
 		Bonus bonuses [] =
@@ -548,8 +538,8 @@ public class SistemaRED2AON {
 		.toArray(Bonus[]::new)
 		;
 		
-		Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
-		Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
+		Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(start, (d1,d2) -> max(d1,d2));
+		Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(end, (d1,d2) -> min(d1,d2));
 		
 
 		PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, startDate, endDate, bonuses);					
@@ -570,8 +560,8 @@ public class SistemaRED2AON {
 		.toArray(Deduction[]::new)
 		;
 		
-		startDate = Arrays.stream(deductions).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
-		endDate = Arrays.stream(deductions).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
+		startDate = Arrays.stream(deductions).map(b -> b.getStartDate()).reduce(start, (d1,d2) -> max(d1,d2));
+		endDate = Arrays.stream(deductions).map(b -> b.getEndDate()).reduce(end, (d1,d2) -> min(d1,d2));
 
 		PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, startDate, endDate, deductions);
 		
@@ -591,8 +581,8 @@ public class SistemaRED2AON {
 		.toArray(Cost[]::new)
 		;
 		
-		startDate = Arrays.stream(costs).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
-		endDate = Arrays.stream(costs).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
+		startDate = Arrays.stream(costs).map(b -> b.getStartDate()).reduce(start, (d1,d2) -> max(d1,d2));
+		endDate = Arrays.stream(costs).map(b -> b.getEndDate()).reduce(end, (d1,d2) -> min(d1,d2));
 
 		PAYROLL.setCosts(domainName, domainId, userLogin, ccc, naf, startDate, endDate, costs);
 

@@ -2586,12 +2586,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			
 			
-			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, ccc, naf);
+			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, null, ccc, naf);
 			Cost[] costsI = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", contract.getId());
 			Bonus[] bonusI = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", contract.getId());
 			Deduction [] deductionsI = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", contract.getId());
 			
-			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, ccc, naf);
+			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, null, ccc, naf);
 			Cost[] costsII = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", contract.getId());
 			Bonus[] bonusII = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", contract.getId());
 			Deduction [] deductionsII = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", contract.getId());

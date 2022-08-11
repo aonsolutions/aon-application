@@ -106,8 +106,6 @@ try {
 
 				<td class=" aon-width-auto">			
 					<div class="aon-login-box-internal">
-						<form id="login" method="post" action="j_security_check"
-							onsubmit="document.getElementById('login_btn').disabled = 'disabled';">
 							<div class="aon-login-title">
 								<img class="aon-login-logo"
 									src="<%=customize.getLoginLogo()%>" />
@@ -127,16 +125,16 @@ try {
 <%
 	}
 %>								
+						
+<%
+	if ( domainName.endsWith("aonsolutions.org")) {
+%>								
 								<table class="aon-width-all">
 									<tr>
 										<td class="aon-login-box-center">
 											<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 										</td>
 									</tr>
-						
-<%
-	if ( domainName.endsWith("aonsolutions.org")) {
-%>								
 
 									<tr>
 										<td class="aon-login-box-center">
@@ -144,7 +142,7 @@ try {
 											<c:url value="/fnmtoauth2" var="certificate_oauth2_url" >
 											</c:url>
 											<button 
-													id="fnmt_btn"   
+													id="fnmt_btn"  
 													class="aon-login-button"
 													src='onResource/com/code/aon/ui/resources/facelet/login/css/images/icons/fnmt-white.png' 
 													onclick="self.name='<%=domainName%>';window.open('${certificate_oauth2_url}', '_blank', 'width=700,height=800,scrollbars=yes'); return false;" 
@@ -153,9 +151,25 @@ try {
 
 										</td>
 									</tr>
+								</table>
+									
+							<form id="login" method="post" action="j_security_check"
+								onsubmit="document.getElementById('login_btn').disabled = 'disabled';">
+								<table class="aon-width-all">
 									<tr>
 										<td class="aon-login-box-center">
 											<span class="aon-login-help" >O inicia sesi&oacute;n con tu usuario</span>
+										</td>
+									</tr>
+<%
+	} else {
+%>								
+							<form id="login" method="post" action="j_security_check"
+								onsubmit="document.getElementById('login_btn').disabled = 'disabled';">
+								<table class="aon-width-all">
+									<tr>
+										<td class="aon-login-box-center">
+											<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 										</td>
 									</tr>
 <%
@@ -173,9 +187,11 @@ try {
 									</tr>
 									<tr>
 										<td class="aon-login-box-center">
-											<input id="login_btn" name="login_btn" type="submit" 
-													value="<%=commonBundle.getString("aon_login_validate")%>" 
+											<input id="login_btn" 
+													name="login_btn" 
+													type="submit" 
 													class="aon-login-button"
+													value="<%=commonBundle.getString("aon_login_validate")%>" 
 													onclick="document.getElementById('errorDiv').style.display = 'none';" />
 										</td>
 									</tr>
@@ -217,6 +233,7 @@ try {
 %>								
 
 								</table>
+							</form> 
 
 								<c:if test="${!(customize.hideTrademark and customize.hideVersion)}">
 									<div class="aon-login-info2">	
@@ -255,7 +272,6 @@ try {
 									</div>
 								</c:if>
 							</div>
-						</form> 
 									
 					</div>
 				</td>
