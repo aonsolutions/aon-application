@@ -125,16 +125,16 @@ try {
 <%
 	}
 %>								
+						
+<%
+	if ( domainName.endsWith("aonsolutions.org")) {
+%>								
 								<table class="aon-width-all">
 									<tr>
 										<td class="aon-login-box-center">
 											<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 										</td>
 									</tr>
-						
-<%
-	if ( domainName.endsWith("aonsolutions.org")) {
-%>								
 
 									<tr>
 										<td class="aon-login-box-center">
@@ -159,6 +159,17 @@ try {
 									<tr>
 										<td class="aon-login-box-center">
 											<span class="aon-login-help" >O inicia sesi&oacute;n con tu usuario</span>
+										</td>
+									</tr>
+<%
+	} else {
+%>								
+							<form id="login" method="post" action="j_security_check"
+								onsubmit="document.getElementById('login_btn').disabled = 'disabled';">
+								<table class="aon-width-all">
+									<tr>
+										<td class="aon-login-box-center">
+											<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 										</td>
 									</tr>
 <%
