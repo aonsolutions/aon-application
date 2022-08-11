@@ -51,7 +51,7 @@ public class Idc {
 	}
 
 	public static interface IdcListener{
-		void onSSPECs(Collection<PEC> SSPecs);
+		void onSSPECs(Date startDate, Date endDate, Collection<PEC> SSPecs);
 		void onContractData( Date startDate, Date endDate, Map<ContextVariable,Object> contractData);
 	}
 	
@@ -128,7 +128,7 @@ public class Idc {
 		ContractDataListener contractDataListener = new ContractDataListener();
 		IdcCompositeParserListener idcCompositeParserListener = new IdcCompositeParserListener().add(ssBonusListener).add(contractDataListener);
 		IdcParser.parse(is, idcCompositeParserListener );
-		idcListener.onSSPECs(ssBonusListener.getSSBonuses());
+		idcListener.onSSPECs(contractDataListener.getStartDate(), contractDataListener.getEndDate(), ssBonusListener.getSSBonuses());
 		idcListener.onContractData(contractDataListener.getStartDate(), contractDataListener.getEndDate(), contractDataListener.getContractData());
 	}
 
