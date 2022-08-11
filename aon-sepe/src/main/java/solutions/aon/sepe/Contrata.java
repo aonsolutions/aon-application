@@ -219,6 +219,91 @@ public class Contrata {
 			}
 	}
 	
+	public static Contract getContractData(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate) throws SepeException {
+			try {
+				return getContractDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, startDate, endDate);
+			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
+			return null;
+	}
+	
+	public static Contract getTransformationData(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
+			try {
+				return getTransformationDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
+			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
+			return null;
+	}
+	
+	//TODO
+	public static Contract getContractExtensionData(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType,  String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
+			try {
+				return getContractExtensionDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
+			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
+			return null;
+	}
+	
+	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword, 
+			final String certificateType, String sepeId) throws SepeException {
+		 try { removeContrataImpl(certificateInputStream, certificatePassword, certificateType, sepeId); }
+		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+		catch (MalformedURLException e) {throw new SepeException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SepeException(e);}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new SepeException(e);
+		}
+	}
+	
+	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword, 
+			final String certificateType, String sepeId) throws SepeException{
+		try { removeTransformationImpl(certificateInputStream, certificatePassword, certificateType, sepeId); }
+		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+		catch (MalformedURLException e) {throw new SepeException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SepeException(e);}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new SepeException(e);
+		}
+	}
+	
+	public static void removeContractExtension(final InputStream certificateInputStream, final String certificatePassword, 
+			final String certificateType, String sepeId) throws SepeException {
+		 try { removeContractExtensionImpl(certificateInputStream, certificatePassword, certificateType, sepeId); }
+		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+		catch (MalformedURLException e) {throw new SepeException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SepeException(e);}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new SepeException(e);
+		}
+	}
+		
 	private static String sendContrataImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
 			throws SepeException, FailingHttpStatusCodeException, InterruptedException, MalformedURLException, IOException {
 		
@@ -442,21 +527,6 @@ public class Contrata {
 		}
 	}
 
-	public static Contract getContractData(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate) throws SepeException {
-			try {
-				return getContractDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, startDate, endDate);
-			} 
-			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (Exception e) {
-				e.printStackTrace();
-				throw new SepeException(e.getMessage());
-			}
-			return null;
-	}
-	
 	private static Contract getContractDataImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date startDate, Date endDate) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -526,21 +596,6 @@ public class Contrata {
 			
 	        return builder.build();
 		} 
-	}
-	
-	public static Contract getTransformationData(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
-			try {
-				return getTransformationDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
-			} 
-			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (Exception e) {
-				e.printStackTrace();
-				throw new SepeException(e.getMessage());
-			}
-			return null;
 	}
 	
 	private static void sendTransformationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto, CopyBasic copyBasic) 
@@ -756,22 +811,6 @@ public class Contrata {
 			
 	        return builder.build();
 		} 
-	}
-	
-	//TODO
-	public static Contract getContractExtensionData(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType,  String ipf, String cif, Date oldDateIniContract, Optional<String> sepeId) throws SepeException {
-			try {
-				return getContractExtensionDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, oldDateIniContract, sepeId);
-			} 
-			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (Exception e) {
-				e.printStackTrace();
-				throw new SepeException(e.getMessage());
-			}
-			return null;
 	}
 	
 	private static Contract getContractExtensionDataImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -1161,32 +1200,6 @@ public class Contrata {
 		} 
 	}
 	
-	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword, 
-			final String certificateType, String ide) throws SepeException {
-		 try { removeContrataImpl(certificateInputStream, certificatePassword, certificateType, ide); }
-		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
-		catch (MalformedURLException e) {throw new SepeException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SepeException(e);}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new SepeException(e);
-		}
-	}
-	
-	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword, 
-			final String certificateType, String ide) throws SepeException{
-		try { removeTransformationImpl(certificateInputStream, certificatePassword, certificateType, ide); }
-		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
-		catch (MalformedURLException e) {throw new SepeException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SepeException(e);}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new SepeException(e);
-		}
-	}
-	
 	private static byte[] getContratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -1417,8 +1430,29 @@ public class Contrata {
 	        String message = getSuccessMessage(htmlPage);
 			if(message!=null && message.contains("se ha realizado correctamente")){
 				System.out.println(message);
-			} else 
+			} else {				
 				throw new SepeException("no se ha realizado");
+			}
+		} 
+	}
+	
+    private static void removeContractExtensionImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ide) throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException  {
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
+	    	htmlPage = firstPageRemove(htmlPage);
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initP").click(); 
+	        handleSepeExceptions(htmlPage);
+	        
+	        htmlPage = lastPageRemove(htmlPage, ide);
+
+	        String message = getSuccessMessage(htmlPage);
+			if(message!=null && message.contains("se ha realizado correctamente")){
+				System.out.println(message);
+			} else {
+				throw new SepeException("no se ha realizado");
+			}
 		} 
 	}
 	
