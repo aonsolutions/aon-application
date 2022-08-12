@@ -3203,11 +3203,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public Object system(String name) throws ExpressionException, SQLException {
-		ExpressionContext systemCtx = agreementContextFactory.getSystemExpressionContext();
-		//Object value = systemCtx.getVariable(name, startDate, getEnd(), Object.class);
-		List<ITimedResult<Object>> results = systemCtx.eval(name, startDate, getEnd(), Object.class);
-		return results.stream().map( ITimedResult::getValue )
-				.findAny().orElseGet(() -> implicitExpressionContext.getVariable(name, startDate, getEnd(), Object.class));
+		try {
+			ExpressionContext systemExpressionCtx = agreementContextFactory.getSystemExpressionContext();
+			return systemExpressionCtx.eval(name, startDate, getEnd(), Object.class).stream().map( ITimedResult::getValue ).findAny().orElseThrow(() -> new UndefinedVariablesException(name));
+		} catch ( Exception e ) {
+			return implicitExpressionContext.eval(name, startDate, getEnd(), Object.class).stream().map( ITimedResult::getValue ).findAny().orElseThrow(() -> new UndefinedVariablesException(name));
+		}
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Ignore;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -115,6 +117,43 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		
 	}
 
+	@Test
+	public void testSystemFunctionIrpfPercent() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+			}
+		});
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfMonth
+				, new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"10\"");
+					}
+				}
+				, new String[] {
+					"2000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}
+				, new String[] {
+				}
+				,null
+				);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract);
+		double defaultIrpf = ctx.getExpressionContext().eval("PORCENTAJE_IRPF", firstDayOfMonth, lastDayOfMonth, Double.class ).stream().collect(Collectors.summingDouble( ITimedResult::getValue));
+		double systemIrpf = ctx.getExpressionContext().eval("SISTEMA('PORCENTAJE_IRPF')", firstDayOfMonth, lastDayOfMonth, Double.class ).stream().collect(Collectors.summingDouble( ITimedResult::getValue));
+		
+		org.junit.Assert.assertEquals(defaultIrpf, systemIrpf, 0.00);
+	}
 
 	@Test
 	public void testWorkedFactorOffDays() throws SQLException, AonException {
