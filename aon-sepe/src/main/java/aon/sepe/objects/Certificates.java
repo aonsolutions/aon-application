@@ -21,27 +21,26 @@ public class Certificates {
 	private TypeDuration typeDuration;
 	private PublicPosition publicPosition;
 	private String catProfessional;
-	private String causeSuspension; //01 - 33
+	private String causeSuspension; // 01 - 33
 	private String officePublic;
 	private Integer dedicationPer;
 	private Date fAEd; // Fecha de alta
 	private Date fSTd; // Fecha de suspensión o extinción
-	//DATA VACATION
+	// DATA VACATION
 	private Integer daysCtzVc; // Dias cotizados vacaciones
 	private Double bcccVc; // Base cotizacion vacaciones 0.00
 	private Double bcdVc; // 0.00
 
-	//DATA EMPLOYEE
+	// DATA EMPLOYEE
 	private String employeeName;
 	private String employeeSurname;
 	private String employeeSecondSurname;
 	private String naf;
 
-	
 	private List<QuoteData> quoteData;
-	
+
 	private Integer durationContract; // Duracion contrato (horas)
-	
+
 	public Integer getDurationContract() {
 		return durationContract;
 	}
@@ -78,11 +77,10 @@ public class Certificates {
 		return Optional.ofNullable(cargoManager);
 	}
 
-	
 	public Optional<String> getEmployeeName() {
 		return Optional.ofNullable(employeeName);
 	}
-	
+
 	public Optional<String> getEmployeeSurname() {
 		return Optional.ofNullable(employeeSurname);
 	}
@@ -90,11 +88,10 @@ public class Certificates {
 	public Optional<String> getEmployeeSecondSurname() {
 		return Optional.ofNullable(employeeSecondSurname);
 	}
-	
+
 	public Optional<String> getNaf() {
 		return Optional.ofNullable(naf);
 	}
-
 
 	public String getTypeContract() {
 		return typeContract;
@@ -139,51 +136,36 @@ public class Certificates {
 	public Integer getDaysCtzVc() {
 		return daysCtzVc;
 	}
-	
+
 	public Optional<Double> getBcccVc() {
 		return Optional.ofNullable(bcccVc);
 	}
-	
+
 	public Optional<Double> getBcdVc() {
 		return Optional.ofNullable(bcdVc);
 	}
-	
+
 	public List<QuoteData> getQuoteData() {
 		return quoteData;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Certificates [\n\tregimen=" + regimen + 
-				",\n\tctaCti=" + ctaCti + 
-				",\n\tipf=" + ipf + 
-				",\n\tipfManager=" + ipfManager + 
-				",\n\tnameManager=" + nameManager + 
-				",\n\tsurnameManager=" + surnameManager + 
-				",\n\tlastSurnameManager=" + lastSurnameManager + 
-				",\n\temployeeName=" + employeeName + 
-				",\n\temployeeSurname=" + employeeSurname + 
-				",\n\temployeeSecondSurname=" + employeeSecondSurname + 
-				",\n\tnaf=" + naf + 
-				",\n\tcargoManager=" + cargoManager + 
-				",\n\ttypeContract=" + typeContract + 
-				",\n\tgz=" + gz + 
-				",\n\ttypeDuration=" + typeDuration + 
-				",\n\tpublicPosition=" + publicPosition + 
-				",\n\tcatProfessional=" + catProfessional + 
-				",\n\tcauseSuspension=" + causeSuspension + 
-				",\n\tofficePublic=" + officePublic + 
-				",\n\tdedicationPer=" + dedicationPer + 
-				",\n\tfAEd=" + fAEd + 
-				",\n\tfSTd=" + fSTd + 
-				",\n\tdaysCtzVc=" + daysCtzVc + 
-				",\n\tbcccVc=" + bcccVc + 
-				",\n\tbcdVc=" + bcdVc + 
-				",\n\tdurationContract=" + durationContract+
-				", quoteData=" + quoteData + "\n]";
+		return "Certificates [\n\tregimen=" + regimen + ",\n\tctaCti=" + ctaCti + ",\n\tipf=" + ipf + ",\n\tipfManager="
+				+ ipfManager + ",\n\tnameManager=" + nameManager + ",\n\tsurnameManager=" + surnameManager
+				+ ",\n\tlastSurnameManager=" + lastSurnameManager + ",\n\temployeeName=" + employeeName
+				+ ",\n\temployeeSurname=" + employeeSurname + ",\n\temployeeSecondSurname=" + employeeSecondSurname
+				+ ",\n\tnaf=" + naf + ",\n\tcargoManager=" + cargoManager + ",\n\ttypeContract=" + typeContract
+				+ ",\n\tgz=" + gz + ",\n\ttypeDuration=" + typeDuration + ",\n\tpublicPosition=" + publicPosition
+				+ ",\n\tcatProfessional=" + catProfessional + ",\n\tcauseSuspension=" + causeSuspension
+				+ ",\n\tofficePublic=" + officePublic + ",\n\tdedicationPer=" + dedicationPer + ",\n\tfAEd=" + fAEd
+				+ ",\n\tfSTd=" + fSTd + ",\n\tdaysCtzVc=" + daysCtzVc + ",\n\tbcccVc=" + bcccVc + ",\n\tbcdVc=" + bcdVc
+				+ ",\n\tdurationContract=" + durationContract + ", quoteData=" + quoteData + "\n]";
 	}
 
-	private Certificates() {}
+	private Certificates() {
+	}
+
 	public static class CertificatesBuilder {
 		private String regimen;
 		private String ctaCti;
@@ -198,24 +180,23 @@ public class Certificates {
 		private TypeDuration typeDuration;
 		private PublicPosition publicPosition;
 		private String catProfessional;
-		private String causeSuspension; //01 - 33
+		private String causeSuspension; // 01 - 33
 		private String officePublic;
 		private Integer dedicationPer;
 		private Date fAEd; // fecha de alta de empresa
-		private Date fSTd; // fecha de extension 
-		//data vacation
+		private Date fSTd; // fecha de extension
+		// data vacation
 		private Integer daysCtzVc;
 		private Double bcccVc;
 		private Double bcdVc;
 		private Integer durationContract;
 		private List<QuoteData> quoteData;
-		
-		//DATA EMPLOYEE
+
+		// DATA EMPLOYEE
 		private String employeeName;
 		private String employeeSurname;
 		private String employeeSecondSurname;
 		private String naf;
-
 
 		public CertificatesBuilder setQuoteData(List<QuoteData> quoteData) {
 			this.quoteData = quoteData;
@@ -231,7 +212,7 @@ public class Certificates {
 			this.durationContract = durationContract;
 			return this;
 		}
-		
+
 		public CertificatesBuilder setRegimen(String regimen) {
 			this.regimen = regimen;
 			return this;
@@ -261,8 +242,7 @@ public class Certificates {
 			this.surnameManager = surnameManager;
 			return this;
 		}
-		
-		
+
 		public CertificatesBuilder setEmployeeName(String employeeName) {
 			this.employeeName = employeeName;
 			return this;
@@ -272,12 +252,12 @@ public class Certificates {
 			this.employeeSurname = employeeSurname;
 			return this;
 		}
-		
+
 		public CertificatesBuilder setEmployeeSecondSurname(String employeeSecondSurname) {
 			this.employeeSecondSurname = employeeSecondSurname;
 			return this;
 		}
-		
+
 		public CertificatesBuilder setNaf(String naf) {
 			this.naf = naf;
 			return this;
@@ -343,7 +323,6 @@ public class Certificates {
 			return this;
 		}
 
-
 		public CertificatesBuilder setBcccVc(Double bcccVc) {
 			this.bcccVc = bcccVc;
 			return this;
@@ -353,32 +332,29 @@ public class Certificates {
 			this.bcdVc = bcdVc;
 			return this;
 		}
+
 		@Deprecated
 		public CertificatesBuilder setDataCtz(List<Map<String, String>> dataCtz) {
 			List<QuoteData> quoteDatas = new LinkedList<>();
-			for(Map<String, String> ctz: dataCtz) {
-				quoteDatas.add(
-						new QuoteData()
-						.setAnio( Integer.parseInt(ctz.get("anioCtz")) )
-						.setMonth( Integer.parseInt(ctz.get("monthCtz")) )
-						.setDays( Integer.parseInt(ctz.get("daysCtz")) )
-						.setBccc( Double.parseDouble(ctz.get("bccc")) )
-						.setBcd( Double.parseDouble(ctz.get("bcd")) )
-				);
+			for (Map<String, String> ctz : dataCtz) {
+				quoteDatas.add(new QuoteData().setAnio(Integer.parseInt(ctz.get("anioCtz")))
+						.setMonth(Integer.parseInt(ctz.get("monthCtz"))).setDays(Integer.parseInt(ctz.get("daysCtz")))
+						.setBccc(Double.parseDouble(ctz.get("bccc"))).setBcd(Double.parseDouble(ctz.get("bcd"))));
 			}
 			this.setQuoteData(quoteDatas);
 			return this;
 		}
-		
-		public CertificatesBuilder() {}
-		
+
+		public CertificatesBuilder() {
+		}
+
 		public Certificates build() {
 			Certificates ct = new Certificates();
 			ct.regimen = this.regimen;
 			ct.ctaCti = this.ctaCti;
 			ct.ipf = this.ipf;
 			ct.ipfManager = this.ipfManager;
-			ct.nameManager  = this.nameManager;
+			ct.nameManager = this.nameManager;
 			ct.surnameManager = this.surnameManager;
 			ct.lastSurnameManager = this.lastSurnameManager;
 			ct.cargoManager = this.cargoManager;
@@ -387,11 +363,11 @@ public class Certificates {
 			ct.typeDuration = this.typeDuration;
 			ct.publicPosition = this.publicPosition;
 			ct.catProfessional = this.catProfessional;
-			ct.causeSuspension = this.causeSuspension; 
+			ct.causeSuspension = this.causeSuspension;
 			ct.officePublic = this.officePublic;
 			ct.dedicationPer = this.dedicationPer;
 			ct.fAEd = this.fAEd;
-			ct.fSTd = this.fSTd; 
+			ct.fSTd = this.fSTd;
 			ct.daysCtzVc = this.daysCtzVc;
 			ct.bcccVc = this.bcccVc;
 			ct.bcdVc = this.bcdVc;
@@ -404,41 +380,38 @@ public class Certificates {
 			return ct;
 		}
 	}
-	
+
 	public enum TypeDuration {
-		DIAS("D"), 
-		MESES("M"),
-		ANIOS("A");
-		
+		DIAS("D"), MESES("M"), ANIOS("A");
+
 		private String value;
-		
+
 		public String getValue() {
 			return value;
 		}
-		
+
 		private TypeDuration(String value) {
 			this.value = value;
 		}
 	}
+
 	/**
 	 * 
 	 * Cargo publico o sindical
 	 *
 	 */
 	public enum PublicPosition {
-		ALTO_CARGO_ADM(1), 
-		CARGO_REPRESENTANTE(2),
-		MIEMBRO_DE_CORPORACION(3);
-		
+		ALTO_CARGO_ADM(1), CARGO_REPRESENTANTE(2), MIEMBRO_DE_CORPORACION(3);
+
 		private Integer value;
-		
+
 		public Integer getValue() {
 			return value;
 		}
-		
+
 		private PublicPosition(Integer value) {
 			this.value = value;
 		}
 	}
-	
+
 }
