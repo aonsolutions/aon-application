@@ -43,6 +43,7 @@ export const MESSENGER_VIEWS = {
     AON_MESSENGER: "aonMessenger",
     AON_MESSENGER_LIST: "aonMessengerList",
     AON_MESSENGER_CHAT: "aonMessengerChat",
+    AON_MESSENGER_GRAPHIC: "aonMessengerGraphic"
 }
 
 export const MESSENGER_COMPONENTS = {
@@ -176,7 +177,12 @@ export const MessengerSidenav = {
         name: "Addcomment",
         icon: "add_comment",
         id: "Addcomment",
-    }
+    },
+    GRAPHIC: {
+        name: "GRAPHIC",
+        icon: "bar_chart",
+        id: "bar_chartMessenger",
+    },
 };
 
 export const TASK_FILTER = [

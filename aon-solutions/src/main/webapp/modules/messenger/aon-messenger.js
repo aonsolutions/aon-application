@@ -16,6 +16,7 @@ import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { sortBy, waitEl } from '../../services/utils.js';
 import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
 import { getCustomers } from '../../services/registryService.js';
+import * as GWT from '../../gwt/gwt.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -173,7 +174,6 @@ export class AonMessenger extends AonElement {
 	}
 
 	async buildToolbar(){
-			
 		if(this.isMobile()){
 			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
 			this.applicationEl.addFloatOption(SigninSidenav.ADD, () => 
@@ -188,6 +188,10 @@ export class AonMessenger extends AonElement {
 				this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
 					this.rootPanel(new AonMessenger())
 				);
+
+				// this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
+				// 	this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
+				// );
 			}
 		}
 
@@ -924,6 +928,16 @@ export class AonMessenger extends AonElement {
 		return this.APP_PARAMS;
 	}
 
+	loadGwt(module){
+		let application = this.getApplication();
+		
+		this.clearElementById(application.CONTENT);
+	
+		application.startLoader();
+	
+		GWT.load(module, application.CONTENT);
+	}
+
 	showView(view, data = undefined, filter = undefined){
 		return new Promise(async(resolve)=>{
 			let aonView = undefined;
@@ -933,6 +947,9 @@ export class AonMessenger extends AonElement {
 				break;
 				case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
 					aonView = new AonMessengerChat();
+				break;
+				case MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC:
+					this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
 				break;
 			}
 			if(aonView){
