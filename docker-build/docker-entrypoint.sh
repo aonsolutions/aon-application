@@ -64,6 +64,7 @@ echo
 
 echo "127.0.0.1    payroll-test.aonsolutions.org" >> /etc/hosts
 echo "127.0.0.1    home-payroll-test.aonsolutions.org" >> /etc/hosts
+echo "127.0.0.1    agrarian-payroll-test.aonsolutions.org" >> /etc/hosts
 echo "127.0.0.1    general-payroll-test.aonsolutions.org" >> /etc/hosts
 echo "127.0.0.1    trainning-payroll-test.aonsolutions.org" >> /etc/hosts
 
