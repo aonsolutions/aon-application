@@ -51,8 +51,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
 
-	// Toolkit.buildFile(htmlPage.asXml().getBytes(),
-	// System.getProperty("user.home")+"/Documents/test.html");
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 
 	private static final String MESSAGE_ERROR = "Error no aceptada la comunicaci\u00f3n";
 
@@ -943,7 +942,7 @@ public class Contrata {
 			htmlPage = getPageContracByStartDate(htmlPage, ipf, cif, oldDateIniContract, sepeId, Optional.of(1));
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);
-
+			
 			HtmlForm form = htmlPage.querySelector("form[name=datos]");
 			DomNodeList<DomNode> dataContract = form
 					.querySelectorAll("fieldset[id=fieldset] > div > div[class*=titulo]");
@@ -1044,8 +1043,9 @@ public class Contrata {
 				throw new InvalidDataException("Sepe IDE requerido");
 			}
 
-			String ide = sepeId.get();
 			((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
+			
+			String ide = sepeId.get();
 			String ide1 = ide.substring(0, 2);
 			String ide2 = ide.substring(2, 6);
 			String ide3 = ide.substring(6);
@@ -1103,14 +1103,25 @@ public class Contrata {
 			String messageError = MESSAGE_ERROR;
 
 			if (exist.isEmpty()) {
-
+				
 				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=\"enviar\"]")).click();
 				handleSepeAlert(alertHandler.getCollectedAlerts());
-				handleSepeExceptions(htmlPage);
+				
+				String message = null;
 
-				String message = getSuccessMessage(htmlPage);
+				for (int i = 0; i < 2; i++) {
+					message = getSuccessMessage(htmlPage);
+					if (message == null || (message != null && message.indexOf("E") >= 0)) {
+						break;
+					} else if (message.contains("returnInit")) {
+						htmlPage = sepeReturnInitContractExtension(htmlPage, contractExtension);
+					}
+				}
+
 				if (message != null && message.indexOf("E") >= 0) {
 					return message.substring(1);
+				} else {
+					handleSepeExceptions(htmlPage);
 				}
 			} else {
 				messageError = exist.get();
@@ -1740,6 +1751,7 @@ public class Contrata {
 	private static HtmlPage getPageContracByStartDate(HtmlPage htmlPage, String ipf, String cif,
 			Date oldDateIniContract, Optional<String> sepeId, Optional<Integer> nprorroga)
 			throws InterruptedException, IOException, SepeException {
+		
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
 		if (sepeId.isPresent()) { // por identificacion de la comunicacion
@@ -1760,7 +1772,7 @@ public class Contrata {
 			if (idcomunicacion4Node != null && ide4Exist) {
 				HtmlInput idcomunicacion4 = ((HtmlInput) idcomunicacion4Node);
 				if (idcomunicacion4.getValueAttribute().isEmpty()) {
-					idcomunicacion4.setValueAttribute(ide4);
+					idcomunicacion4.setValueAttribute(Toolkit.fillStringLeft(ide4, "0", 2));
 				}
 			}
 
@@ -1769,9 +1781,8 @@ public class Contrata {
 				HtmlInput idcontrato = ((HtmlInput) idcontratoNode);
 				String contractStr = ide1 + "-" + ide2 + "-" + ide3;
 				if (ide4Exist) {
-					contractStr += "-" + ide4;
+					contractStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 				}
-
 				idcontrato.setValueAttribute(contractStr);
 			}
 
@@ -1809,6 +1820,7 @@ public class Contrata {
 			formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
 			formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
 			formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+			
 
 			nprorroga.ifPresent(n -> {
 				DomNode numprorrogaNode = formDatos.querySelector("[name=\"numprorroga\"]");
@@ -1969,10 +1981,13 @@ public class Contrata {
 		DomNodeList<DomNode> texts = htmlPage.querySelectorAll("#contIzq p");
 		String msg = null;
 
-		final List<String> list = Arrays.asList("sin fecha de t\u00E9rmino", "f\u00EDsica en la base de datos",
-				"igual o inferior a 90", // previsible inferior o igual a 90 dias
-				"convenio colectivo que autoriza", // previsible mayor a 90 dias
-				"certificado de profesionalidad" // indicar si el trabajador tiene Certificado de Profesionalidad
+		final List<String> list = Arrays.asList(
+			"sin fecha de t\u00E9rmino", 
+			"f\u00EDsica en la base de datos",
+			"igual o inferior a 90", // previsible inferior o igual a 90 dias
+			"convenio colectivo que autoriza", // previsible mayor a 90 dias
+			"certificado de profesionalidad", // indicar si el trabajador tiene Certificado de Profesionalidad
+            "seleccionar el campo convenio colectivo"
 		);
 
 		for (DomNode p : texts) {
@@ -2031,6 +2046,35 @@ public class Contrata {
 		}
 
 		htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+
+		return htmlPage;
+	}
+	
+	
+	private static HtmlPage sepeReturnInitContractExtension(HtmlPage htmlPage, ContractExtension contractExtension)
+			throws IOException, InterruptedException {
+		Optional<String> sepeId = contractExtension.getSepeId();
+		String ide  = sepeId.get();
+		String ide1 = ide.substring(0, 2);
+		String ide2 = ide.substring(2, 6);
+		String ide3 = ide.substring(6);
+
+		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("#volver")).click();
+		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+		
+		DomNode convenio = form.querySelector("[name=\"conveniocolectivo\"]");
+		if(convenio!=null) {
+			((HtmlSelect) convenio).setSelectedAttribute(contractExtension.getConvenio() ? "S" : "N", true);
+		}
+		
+		DomNode discontinuidad = form.querySelector("[name=\"discontinuidad\"]");
+		if (discontinuidad != null && contractExtension.getDiscontinuo()) {
+			((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
+		}
+		
+		form.getInputByName("idprorroga").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+		
+		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=\"enviar\"]")).click();
 
 		return htmlPage;
 	}
