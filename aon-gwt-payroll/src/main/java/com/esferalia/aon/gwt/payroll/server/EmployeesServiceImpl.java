@@ -6836,6 +6836,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			contractExtension.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 					employeeContractInfo.getContractInfo().getCompleteCCC().length()));
 			contractExtension.setDiscontinuo(employeeContractInfo.getContractInfo().isDiscontinuos());
+			contractExtension.setConvenio(null != employeeContractInfo.getContractInfo().getAgreementLevelId());
 			
 			System.out.println(contractExtension.toString());
 			
@@ -7026,7 +7027,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 
-			aon.sepe.objects.Contract sepeContractData = Sepe.getContractExtensionData(certificateIS, certificate.getPassword(), certificate.getType(), document, enterpriseCif, originalStartDate, Optional.of(sepeId));
+			aon.sepe.objects.Contract sepeContractData = Sepe.getContractExtensionData(certificateIS, certificate.getPassword(), certificate.getType(), document, enterpriseCif, originalStartDate, Optional.ofNullable(sepeId));
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 			Map<String, String> result = new HashMap<>();
@@ -7034,12 +7035,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			result.put("extensionIde", sepeContractData.getSepeId());
 			result.put("comunicationExtensionDate", dateFormat.format(sepeContractData.getDateComContract()));
 
-			JooqContractSEPE.setSepeTransformIde(connection, domainId, contractId, sepeContractData.getSepeId());
-			JooqContractSEPE.setSepeTransformComunicationDate(connection, domainId, contractId, sepeContractData.getDateComContract());
+			JooqContractSEPE.setSepeExtensionIde(connection, domainId, contractId, sepeContractData.getSepeId());
+			JooqContractSEPE.setSepeExtensionComunicationDate(connection, domainId, contractId, sepeContractData.getDateComContract());
 
 			return result;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
