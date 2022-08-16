@@ -11,8 +11,9 @@ public class ContractExtension {
 	private String ctaCti;
 	private Date startDate;
 	private Date endDate;
-	private boolean discontinuo; // ¿Ha existido un periodo de inactividad conforme a la normativa vigente, que
-									// justifique la discontinuidad?
+	private boolean discontinuo; // ¿Ha existido un periodo de inactividad conforme a la normativa vigente, que justifique la discontinuidad?
+	
+	private boolean convenio; // Existe Convenio Colectivo ?
 
 	public String getCif() {
 		return cif;
@@ -40,6 +41,10 @@ public class ContractExtension {
 
 	public boolean getDiscontinuo() {
 		return discontinuo;
+	}
+	
+	public boolean getConvenio() {
+		return convenio;
 	}
 
 	public ContractExtension setRegime(String regime) {
@@ -76,11 +81,16 @@ public class ContractExtension {
 		this.discontinuo = discontinuo;
 		return this;
 	}
+	
+	public ContractExtension setConvenio(boolean convenio) {
+		this.convenio = convenio;
+		return this;
+	}
 
 	@Override
 	public String toString() {
 		return "ContractExtension [" + "cif=" + cif + ", sepeId=" + sepeId + ", regime=" + regime + ", ctaCti=" + ctaCti
-				+ ", startDate=" + startDate + ", endDate=" + endDate + ", discontinuo=" + discontinuo + "]";
+				+ ", startDate=" + startDate + ", endDate=" + endDate + ", discontinuo=" + discontinuo + ", convenio=" + convenio + "]";
 	}
 
 }
