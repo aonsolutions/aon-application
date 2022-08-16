@@ -431,7 +431,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 					contractEmployeeInfo.getEmployeeInfo().getDocument(),
 					contractEmployeeInfo.getContractInfo().getEnterpriseCIF(),
 					contractEmployeeInfo.getContractInfo().getOriginalStartDate(),
-					contractEmployeeInfo.getContractInfo().getSepeId(),
+					contractEmployeeInfo.getContractInfo().getSepeExtensionId(),
 					contractEmployeeInfo.getContractInfo().getContractId());
 			fillSpecificData();
 			hideMessagePanel();
@@ -539,7 +539,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
 		else {
 			updateSepeInfoBtn.addClickHandler(e -> {
-				showLoadingMessage("Obteniendo informaci\u00f3 pr\u00f3rroga del Sepe");
+				showLoadingMessage("Obteniendo informaci\u00f3n pr\u00f3rroga del Sepe");
 				implEmployee.getSepeExtensionComunicationData(document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallback<Map<String,String>>() {
 					@Override
 					public void onSuccess(Map<String, String> sepeData) {
