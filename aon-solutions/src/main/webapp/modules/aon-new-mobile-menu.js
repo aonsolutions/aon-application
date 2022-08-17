@@ -415,10 +415,6 @@ export class AonNewMobileMenu extends AonElement {
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
 
-  async openBarcode() {
-    await mobileAction({ action: MOBILE_ACTION.BARCODE, selector: 'aon-new-mobile-menu' });
-	}
-
   receiveAppImage(file) {
     if(this.SELECTED == "documental"){
       this.saveDocumentFile(file);
@@ -428,11 +424,6 @@ export class AonNewMobileMenu extends AonElement {
         this.showMessage("Factura registrada");
       });
     }
-	}
-
-  setBarcodeData(barcodeStr) {
-    const barcode = JSON.parse(barcodeStr);
-    alert("test: "+ JSON.stringify(barcode))
 	}
 
   saveDocumentFile(file){

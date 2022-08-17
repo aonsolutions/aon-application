@@ -5,7 +5,7 @@ import {AonToolbar} from "../../../components/aon-toolbar.js";
 import {AonCard} from "../../../components/aon-card.js";
 
 import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
-import {getPackaging, savePackaging } from '../../../services/service.js';
+import {getPackaging, mobileAction, MOBILE_ACTION, savePackaging } from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
 import { AonInput } from '../../../components/aon-input.js';
@@ -120,7 +120,7 @@ export class AonMobilePackaging extends AonElement {
 
 		let product = this.createInput(this.PACKAGING_PRODUCT, "Contenido");
 		table.addCell(product, 2);
-		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => alert("Escanear Codigo de barras qr o lo que sea"));
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
 
 		// product.addEventListener(EVENT.AON_KEYUP, (e) => {
 		// 	if(product.value.length > 2) {
@@ -186,6 +186,22 @@ export class AonMobilePackaging extends AonElement {
 				this.packaging.quantity = r.containers[0].itemComposition[0].quantity;
 			}).catch(e => this.showError(e));
 		});
+	}
+
+	openBarcode() {
+		mobileAction({ action: MOBILE_ACTION.BARCODE, selector: 'aon-mobile-packaging' });
+	}
+
+	setBarcodeData(barcodeStr) {
+		try {
+			const {text, format, cancelled} = JSON.parse(barcodeStr);
+			if(!cancelled) {
+				const product = this.getElement(this.PACKAGING_PRODUCT);
+				product.value = text;
+			}
+		} catch (error) {
+			this.showError(error);
+		}
 	}
 
 	buildTag(parent){
