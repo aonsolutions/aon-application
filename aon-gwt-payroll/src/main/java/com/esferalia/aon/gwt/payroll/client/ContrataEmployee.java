@@ -2113,7 +2113,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showLoading("Obteniendo CTO Pr\u00f3rroga....");
 				contrataEmployeeObject.downloadCtoExtension(
 						s -> {
-							showSuccess("CTO", "Se ha descargado el CTO Pr\u00f3rroga del trabajador. El documento se encuentran en el apartado de Documentos");
+							showSuccess("CTO", "Se ha descargado el CTO Pr\u00f3rroga del trabajador.");
 							succes.accept(null);
 						},
 						f -> {

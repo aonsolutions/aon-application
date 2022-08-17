@@ -357,7 +357,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCtoExtension(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCtoExtension(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getExtensionDate(), null, contractData.getSepeExtensionId(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCtoExtension(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), null, contractData.getSepeExtensionId(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
