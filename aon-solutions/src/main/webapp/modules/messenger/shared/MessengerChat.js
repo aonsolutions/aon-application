@@ -67,10 +67,12 @@ const buildToolbar = (task) => {
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
-    if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
+    const status = task.getStatus();
+
+    if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status) ){
       if(!aonMessengerChat.isCau()){
 
-        if(task.getId() && task.source !== TASK_SOURCE.TASK){
+        if(task.getId()){
           toolbar.addButton2({
             id: MESSENGER_IDS.TOOLBAR_BRANCH,
             name: "Crear Rama",

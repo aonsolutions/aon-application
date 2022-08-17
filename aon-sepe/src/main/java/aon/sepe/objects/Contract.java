@@ -1,6 +1,8 @@
 package aon.sepe.objects;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class Contract {
@@ -45,7 +47,9 @@ public class Contract {
 	private DiscontinuoReason discontinuoReason;
 	private Date oldDateIniContract;
 	private Date oldDateFinContract;
-
+	
+	private List<ContractDetail> details; 
+	
 	public String getSepeId() {
 		return sepeId;
 	}
@@ -193,8 +197,13 @@ public class Contract {
 	public void setDiscontinuo(boolean discontinuo) {
 		this.discontinuo = discontinuo;
 	}
+	
+	public List<ContractDetail> getDetails() {
+		return details;
+	}
 
 	private Contract() {
+		this.details = new ArrayList<>();
 	}
 
 	public static class ContractBuilder {
@@ -239,9 +248,13 @@ public class Contract {
 		// Para la transformacion
 		private Date oldDateIniContract;
 		private Date oldDateFinContract;
+		
+		private List<ContractDetail> details; 
 
 		public ContractBuilder() {
-			/* TODO document why this constructor is empty */ }
+			this.details = new ArrayList<>();
+			/* TODO document why this constructor is empty */ 
+		}
 
 		public ContractBuilder setCifEnterprise(String cifEnterprise) {
 			this.cifEnterprise = cifEnterprise;
@@ -422,6 +435,16 @@ public class Contract {
 			this.certificateProfessional = certificateProfessional;
 			return this;
 		}
+		
+		public ContractBuilder setDetails(List<ContractDetail> details) {
+			this.details = details;
+			return this;
+		}
+		
+		public void addDetail(ContractDetail detail) {
+			this.details.add(detail);
+		}
+		
 
 		public Contract build() {
 			Contract contract = new Contract();
@@ -461,6 +484,7 @@ public class Contract {
 			contract.oldDateFinContract = this.oldDateFinContract;
 			contract.titulacion = this.titulacion;
 			contract.certificateProfessional = this.certificateProfessional;
+			contract.details = this.details;
 			return contract;
 		}
 	}
@@ -535,6 +559,14 @@ public class Contract {
 			return value;
 		}
 	}
+	
+	/**
+	 * PROCEDE DE OFERTA DE EMPLEO?
+	 */
+	public enum DetailType {
+		CONTRATO,TRANSFORMACION,PRORROGA;
+	}
+
 
 	public enum DiscontinuoReason {
 		INCAPACIDAD_TRANSITORIA("I"), PRORROGA_TACITA("P");
@@ -549,7 +581,70 @@ public class Contract {
 			return value;
 		}
 	}
+	
+	public static class ContractDetail {
+		private DetailType type;
+		private String sepeId;
+		private Date startDate;
+		private Date endDate;
+		private Date communicationDate;
+		
+		public ContractDetail() {
+			/* TODO */ 
+		}
+		
+		public ContractDetail setType(DetailType type) {
+			this.type = type;
+			return this;
+		}
 
+		public ContractDetail setSepeId(String sepeId) {
+			this.sepeId = sepeId;
+			return this;
+		}
+
+		public ContractDetail setStartDate(Date startDate) {
+			this.startDate = startDate;
+			return this;
+		}
+		
+		public ContractDetail setEndDate(Date endDate) {
+			this.endDate = endDate;
+			return this;
+		}
+		
+		public ContractDetail setCommunicationDate(Date communicationDate) {
+			this.communicationDate = communicationDate;
+			return this;
+		}
+		
+		public DetailType getType() {
+			return type;
+		}
+		
+		public Optional<String> getSepeId() {
+			return Optional.ofNullable(sepeId);
+		}
+		
+		public Date getCommunicationDate() {
+			return communicationDate;
+		}
+	
+		public Optional<Date> getStartDate() {
+			return Optional.ofNullable(startDate);
+		}
+		
+		public Optional<Date> getEndDate() {
+			return Optional.ofNullable(endDate);
+		}
+		
+		@Override
+		public String toString() {
+			return "ContractDetail [type=" + type + ", sepeId=" + sepeId + ", startDate=" + startDate + ", endDate=" + endDate
+					+ ", communicationDate=" + communicationDate + "]";
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return "Contract [sepeId=" + sepeId + ", cifEnterprise=" + cifEnterprise + ", regimen=" + regimen + ", ctaCti="
@@ -564,7 +659,7 @@ public class Contract {
 				+ durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin + ", durationTypeCvnHour="
 				+ durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin + ", interinidad=" + interinidad
 				+ ", titulacion=" + titulacion + ", certificateProfessional=" + certificateProfessional
-				+ ", previsible=" + previsible + "]";
+				+ ", previsible=" + previsible 
+				+ ", details=" + details +"]";
 	}
-
 }

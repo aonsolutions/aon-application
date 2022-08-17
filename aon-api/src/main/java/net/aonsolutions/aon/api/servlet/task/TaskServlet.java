@@ -572,9 +572,9 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(receiver.getUserId()));
 	
-		Task task = AON_SOLUTIONS.getTask(domain, userReceiver, f-> f.getIdProperty().eq(id) );
+		Task task = AON_SOLUTIONS.getTaskAndChilds(domain, userReceiver, f-> f.getIdProperty().eq(id) );
 
-	    Integer taskId = task.getId();
+	    Integer taskId = task.getSource().equals(TaskSource.TASK) && task.isChild() ? task.getParent() : task.getId();
 	   
 	    task.setStatus(TaskStatus.IN_PROGRESS);
 
