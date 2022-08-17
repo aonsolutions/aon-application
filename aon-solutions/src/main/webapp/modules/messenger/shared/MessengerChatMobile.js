@@ -207,14 +207,15 @@ const buildToolbar = (task, div, create = false) => {
         if(task.getId()){
 
             if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status) ){
-                if(task.source !== TASK_SOURCE.TASK){
+
+                if(!aonMessengerChat.isCau()){
                     toolbar.addButton2({
                         id: MESSENGER_IDS.TOOLBAR_BRANCH,
                         name: "Crear Rama",
                         aonIcon: AON_ICONS.AON_BRANCH,
                     }, () =>TaskCreationUtils.openDialogBranch(task));
                 }
-  
+
                 toolbar.addButton2({
                   ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
                   name: MSG.CLOSE,
@@ -235,7 +236,8 @@ const buildToolbar = (task, div, create = false) => {
     
         if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status)){
             toolbar.addButton2(ACTIONS.SAVE,() => {
-                aonMessengerChat.save().then((success) =>{
+                aonMessengerChat.save()
+                .then((success) =>{
                     if(success) {
                         aonMessengerChat.showMessage();
                     }

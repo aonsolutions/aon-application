@@ -614,13 +614,13 @@ public class TaskDAO {
 	private static void updateChildsGrouped(AONContext ctx, Task task) {
 		if( task.getSource().equals(TaskSource.GROUPED) ) {
 			List<Task> childs = task.getChilds();
-//			if(!childs.isEmpty()) {
+			if(!childs.isEmpty()) {
 				List<Task> childsOld = getStream(ctx,  f-> f.getParentProperty().eq(task.getId()) ).collect(Collectors.toList());
 				
 				updateParentChilds(ctx, null, childsOld);
 
 				updateParentChilds(ctx, task, childs);
-//			}
+			}
 		}
 	}
 	
