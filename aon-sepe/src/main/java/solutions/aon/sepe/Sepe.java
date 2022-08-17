@@ -155,7 +155,6 @@ public class Sepe {
 				oldDateIniContract, sepeId);
 	}
 
-	// TODO
 	public static Contract getContractExtensionData(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String cif,
 			Date oldDateIniContract, Optional<String> sepeId) throws SepeException {

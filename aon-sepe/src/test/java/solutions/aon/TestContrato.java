@@ -235,12 +235,11 @@ public class TestContrato {
 	@SuppressWarnings("deprecation")
 	public void getContractData() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
-			Date fini = new Date("2022/02/18");
-			Date fend = new Date("2022/02/18");
-			String ipf = "16262835H";
+			Date fini = new Date("2019/12/23");
+			String ipf = "45336785J";
 			Contract contract = Sepe.getContractData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
-					ipf, fini, fend);
-			System.out.println(contract.getSepeId());
+					ipf, fini, fini);
+			System.out.println(contract);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
