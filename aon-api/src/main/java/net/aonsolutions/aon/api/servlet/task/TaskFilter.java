@@ -102,7 +102,7 @@ public class TaskFilter {
 		return filter;
 	}	
 	
-	public static Filter taskStatusCount(TaskProperties f, AonApiData api, Domain domain, Customer customer) {
+	public static Filter taskStatusCount(TaskProperties f, AonApiData api, Domain domain) {
 		return taskNotCustomer(api, f, domain);
 	}
 	
@@ -371,7 +371,13 @@ public class TaskFilter {
 			} else if(taskHolder!=0) {
 				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
 			} else if(sender!=0) {
-				filter = filter.and(f.getSenderProperty().eq(sender).and(f.getTaskHolderProperty().ne(sender).or(f.getTaskHolderProperty().isNull())));
+				filter = filter.and(f.getSenderProperty().eq(sender)
+					.and(
+						f.getTaskHolderProperty().ne(sender).or(f.getTaskHolderProperty().isNull())
+					)
+				);
+			} else {
+				filter = filter.and(f.getTaskHolderProperty().eq(-1));
 			}
 		 }
 	
