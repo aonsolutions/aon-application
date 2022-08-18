@@ -468,7 +468,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskStatusCount(AonApiData api) {
 		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
-			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
+			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain()) ),
 			Optional.empty(),
 			Optional.empty()
 		);
@@ -620,7 +620,6 @@ public class TaskServlet extends AonApiHttpServlet{
 	   
 	   TaskUtils.onNotification(api, commentNew.setComment(comment!=null ? comment : "").setType(TaskWorkflowType.ASSIGN));
 
-
 	   return new JSONObject();
     }
 	
@@ -629,28 +628,33 @@ public class TaskServlet extends AonApiHttpServlet{
 		List<Task> tasks = new ArrayList<>();
 		List<String> errors = new ArrayList<>();
 		if(!DomainType.CONSULTANCY.equals(api.getDomain().getDomainType())) {
-			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			
-			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin())
+			boolean isCau     = TaskUtils.isCau(api.getData());
+
+			Company company   = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		
+			String companyDoc = company.getDocument();
+			
+			AON.getDomainOfficeLinked(company)
 			.forEach(domain -> {
 				try {
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", 
-							f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument()))
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(companyDoc))
 					);
 					
-					boolean isCau = TaskUtils.isCau(api.getData());
-					if(isCau) {
-						AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
-						.forEach(tasks::add);
-					} else {
-						AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
-						.forEach(tasks::add);
+					if(customer.getId()!=null) {
+						if(isCau) {
+							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							.forEach(tasks::add);
+						} else {
+							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							.forEach(tasks::add);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					errors.add(e.getMessage());
 				}
-
 			});
 		}
 		return tasks;
