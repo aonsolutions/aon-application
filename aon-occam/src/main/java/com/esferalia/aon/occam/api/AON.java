@@ -7066,8 +7066,12 @@ public class AON {
 	}	
 	
 	public static List<Domain> getDomainOfficeLinked(Domain domain, String login) {
-		LinkedList<Domain> list = new LinkedList<>();
 		Company company = getCompanyForDomain(domain.getName(), domain.getId(), login);
+		return getDomainOfficeLinked(company);
+	}
+	
+	public static List<Domain> getDomainOfficeLinked(Company company) {
+		LinkedList<Domain> list = new LinkedList<>();
 		for(String schema: AONContext.getSchemas()) {
 			String domainName = AONContext.getSchemaFirstDomain(schema);
 			try (CloseableAONContext ctx = AONContext.getAONContext(domainName, 0, "")){

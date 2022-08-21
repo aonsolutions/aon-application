@@ -400,19 +400,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(itDialogObject!=null) {
 			//---ENTERPRISE DATA
 			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
-			String regime = completeCcc.substring(0, 4);
-			String ccc = completeCcc.substring(4, completeCcc.length());
+			if(completeCcc!=null) {
+				String regime = completeCcc.substring(0, 4);
+				String ccc = completeCcc.substring(4, completeCcc.length());
 
-			Label regimeEl = new Label("R\u00e9gimen:");
-			regimeEl.setStyleName(style.subTitle());
-			enterpriseData.add(regimeEl);
-			enterpriseData.add(new Label(regime));
+				Label regimeEl = new Label("R\u00e9gimen:");
+				regimeEl.setStyleName(style.subTitle());
+				enterpriseData.add(regimeEl);
+				enterpriseData.add(new Label(regime));
 
-			Label cccEl = new Label("CCC:");
-			cccEl.setStyleName(style.subTitle());
-			enterpriseData.add(cccEl);
-			enterpriseData.add(new Label(ccc));
-			enterpriseData.getElement().getStyle().clearDisplay();
+				Label cccEl = new Label("CCC:");
+				cccEl.setStyleName(style.subTitle());
+				enterpriseData.add(cccEl);
+				enterpriseData.add(new Label(ccc));
+				enterpriseData.getElement().getStyle().clearDisplay();
+			}
 		}
 	}
 	
@@ -1569,30 +1571,36 @@ public abstract class ITDialog extends AonCustomDialog {
 	//--------------COMMUNICATE IT PART
 	
 	private void printBtnCommunicate(){
-		
-		for(ITPart part : it.getITParts()) 
+		for(ITPart part : it.getITParts()) {			
 			LOGGER.info("PART: "+part.toString());
-		
-		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
-		
-		bjOptional.ifPresent(part-> 
-			buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) )
-		);
-		
-		if(!isPaternity()) {
-			Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
-			altaOptional.ifPresent(part->
-				buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) )
-			);
 		}
-	
+		
+		if(itDialogObject!=null) {
+			//---ENTERPRISE DATA
+			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
+			if(completeCcc!=null) {
+			
+				Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
+				
+				bjOptional.ifPresent(part-> 
+					buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) )
+				);
+				
+				if(!isPaternity()) {
+					Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
+					altaOptional.ifPresent(part->
+						buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) )
+					);
+				}
+			}
+		}
 	}
 	
 	private Optional<AonTableButton> buildBtnPart(ITPart part) {
 		if(it.getId()!=null && part.getId()!=null) {
 			boolean communicated = part.getStatus()!=null && part.getStatus() == (byte)3;
 			String title = communicated ? "Borrar Parte IT comunicada" : "Comunicar parte";
-			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+			String icon  = communicated ? AON.CSS.aonIconSendCancel()  : AON.CSS.aonIconSend();
 		
 			AonTableButton btn = new AonTableButton(title, icon); 
 			btn.addClickHandler(e-> {
@@ -1616,29 +1624,34 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(itDialogObject!=null) {
 			//---ENTERPRISE DATA
 			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
-			String regime = completeCcc.substring(0, 4);
-			String ccc = completeCcc.substring(4, completeCcc.length());
-		
-			EmployeeInfo employeeInfo = itDialogObject.getEmployeeinfo();
+			if(completeCcc!=null) {
+				String regime = completeCcc.substring(0, 4);
+				String ccc = completeCcc.substring(4, completeCcc.length());
+			
+				EmployeeInfo employeeInfo = itDialogObject.getEmployeeinfo();
 
-		 	EmployeeIT employeeIT = new EmployeeIT()
-		 			.setRegime(regime)
-		 			.setCcc(ccc)
-		 			.setNss(employeeInfo.getSsNumber())
-					.setDni(employeeInfo.getDocument())
-					.setStartDate(it.getStartDate())  // fecha de baja
-					.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()));
-			if(it.getEndDate()!=null) 
-				employeeIT.setEndDate(it.getEndDate());
-		
-		 	EmployeeITPart employeeITPart = new EmployeeITPart()
-		 			.setDate(part.getDate())
-		 			.setType(ContractLeaveDetailType.safeValueOf(part.getType()));
-		 	
-		 	ItNotExist ItNotExist = new ItNotExist();
-			ItNotExist.setEmployeeIT(employeeIT);
-		 	ItNotExist.setEmployeeITPart(employeeITPart);
-		 	return ItNotExist;
+			 	EmployeeIT employeeIT = new EmployeeIT()
+			 			.setRegime(regime)
+			 			.setCcc(ccc)
+			 			.setNss(employeeInfo.getSsNumber())
+						.setDni(employeeInfo.getDocument())
+						.setStartDate(it.getStartDate())  // fecha de baja
+						.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()));
+				if(it.getEndDate()!=null) 
+					employeeIT.setEndDate(it.getEndDate());
+			
+			 	EmployeeITPart employeeITPart = new EmployeeITPart()
+			 			.setDate(part.getDate())
+			 			.setType(ContractLeaveDetailType.safeValueOf(part.getType()));
+			 	
+			 	ItNotExist ItNotExist = new ItNotExist();
+				ItNotExist.setEmployeeIT(employeeIT);
+			 	ItNotExist.setEmployeeITPart(employeeITPart);
+			 	return ItNotExist;
+			} else {
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Campos requeridos", "CCC es requerido");
+			}
 	 	}
 		return null;
 	}
