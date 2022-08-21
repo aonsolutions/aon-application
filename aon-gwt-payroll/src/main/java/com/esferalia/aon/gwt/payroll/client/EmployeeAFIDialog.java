@@ -590,11 +590,21 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			ContractTypeRecord contractTypeRecord = contractType.getContractType(Integer.parseInt(tc2.getSelectedValue()));
 			
 			if(contractTypeRecord.isTransform()) {
-				AonDialog dialog = new AonDialog("Transformaci\u00f3n", new HTML("La transformaci\u00f3n del contrato debe hacerse desde la pesta\u00f1a <b>Datos Sepe</b>"));
-				dialog.warning();
 				ArrayList<AFIChange> afiChangeList = afiChangesMap.getAFIChangessByDate(selectedDate);
 				Optional<AFIChange> currectTc2 = afiChangeList.stream().filter(afiChange -> AonStringUtils.equalsIgnoreCase(afiChange.getName(), "TC2")).findFirst();
-				if(currectTc2.isPresent()) setSelectedValueLB(tc2, AonStringUtils.leftPad(currectTc2.get().getValue(), 3, '0'));
+				if(currectTc2.isPresent()) {
+					ContractTypeRecord contractCurrentTypeRecord = contractType.getContractType(Integer.parseInt(currectTc2.get().getValue()));
+					if(contractCurrentTypeRecord.isTransform()) {
+						checkPartialityVisibility(contractTypeRecord);
+						if(!AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P"))
+							afiChangesMap.addAFIChangeByDate(selectedDate, "COEFICIENTE_PARCIALIDAD", null);
+						afiChangesMap.addAFIChangeByDate(selectedDate, "TC2", tc2.getSelectedValue());
+					} else {
+						AonDialog dialog = new AonDialog("Transformaci\u00f3n", new HTML("La transformaci\u00f3n del contrato debe hacerse desde la pesta\u00f1a <b>Datos Sepe</b>"));
+						dialog.warning();
+						setSelectedValueLB(tc2, AonStringUtils.leftPad(currectTc2.get().getValue(), 3, '0'));
+					}	
+				}
 			} else {
 				checkPartialityVisibility(contractTypeRecord);
 				if(!AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P"))
