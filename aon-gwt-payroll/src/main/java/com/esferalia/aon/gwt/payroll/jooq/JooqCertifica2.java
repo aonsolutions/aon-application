@@ -260,7 +260,7 @@ public class JooqCertifica2 {
 		// Certifica2 Periods
 
 		Date seniorityDate = contractRecord.get(CONTRACT.SENIORITY_DATE);
-		getCertifica2Periods(dslContext, certifica2Info, seniorityDate);
+		getCertifica2Periods(dslContext, certifica2Info, seniorityDate, contractId);
 
 		// Certifica2 Holidays
 
@@ -490,7 +490,7 @@ public class JooqCertifica2 {
 	}
 
 	private static void getCertifica2Periods(DSLContext dslContext,
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Date seniorityDate) {
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Date seniorityDate, Integer contractId) {
 
 		List<Certifica2Period> certifica2List = new ArrayList<>();
 		Integer maxDays = 0;
@@ -502,11 +502,15 @@ public class JooqCertifica2 {
 		if (null != seniorityDate)
 			filterDate = filterDate.before(seniorityDate) ? seniorityDate : filterDate;
 
+		// TODO: ¿que casos hay que hacerlo por ssNumber en vez de contractId?
+		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(certifica2Info.getSSNumber()))
 				.and(SALARY.CCC.eq(certifica2Info.getCcc())).and(SALARY.TYPE.eq((byte) 0))
 				.and(SALARY.END_DATE.ge(filterDate))
-				.and(SALARY.END_DATE.le(parseDateToSQL(certifica2Info.getEndDate()))).orderBy(SALARY.END_DATE.desc())
+				.and(SALARY.END_DATE.le(parseDateToSQL(certifica2Info.getEndDate())))
+				.and(SALARY.CONTRACT.eq(contractId))
+				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 
 		// Using for agrarian only
