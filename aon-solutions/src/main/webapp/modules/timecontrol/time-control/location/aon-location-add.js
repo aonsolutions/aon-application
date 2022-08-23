@@ -5,8 +5,8 @@ import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
-import { createCard, createForm, createInput, createToolbar } from "../../../notification/createComponent.js";
 import { AonMap } from "../../../../components/aon-map.js";
+import { CreateComponent } from "../../../../components/CreateComponent.js";
 
 
 export class AonLocationAdd extends AonElement {
@@ -67,10 +67,9 @@ export class AonLocationAdd extends AonElement {
   }
 
   paintView() {
+    CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY}, this);
 
-    createToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY}, this);
-
-    const form = createForm(this.id+"Form");
+    const form = CreateComponent.createForm(this.id+"Form");
     this.appendChild(form.element);
 
     let div = this.createElement(TAG.DIV);
@@ -84,13 +83,13 @@ export class AonLocationAdd extends AonElement {
     div2.classList.add(CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
-    const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
+    const aonCard = CreateComponent.createAonCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
 
     let divG = this.createElement(TAG.DIV);
     divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
     aonCard.appendChild(divG);
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"description",
         id:"description" ,
@@ -103,7 +102,7 @@ export class AonLocationAdd extends AonElement {
     divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
     aonCard.appendChild(divG);
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"radio",
         id:"radio" ,
@@ -117,7 +116,7 @@ export class AonLocationAdd extends AonElement {
     divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
     aonCard.appendChild(divG);
 
-     createInput({
+     CreateComponent.createAonInput({
       attributes:{
         name:"direction",
         id:"direction" ,
@@ -128,7 +127,7 @@ export class AonLocationAdd extends AonElement {
     }, divG);
     
   
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"latitude",
         id:"latitude" ,
@@ -137,7 +136,7 @@ export class AonLocationAdd extends AonElement {
       }
     }, aonCard);
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"longitude",
         id:"longitude" ,
@@ -146,7 +145,7 @@ export class AonLocationAdd extends AonElement {
       }
     }, aonCard);
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"id",
         id:"id" ,
@@ -194,7 +193,7 @@ export class AonLocationAdd extends AonElement {
         this.getElement("direction").value = detail.name
     });
 
-    const cardContentMap = createCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
+    const cardContentMap = CreateComponent.createAonCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
     cardContentMap.appendChild(aonMap);
   }
 

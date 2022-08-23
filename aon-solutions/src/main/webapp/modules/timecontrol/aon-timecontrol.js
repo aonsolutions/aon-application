@@ -107,7 +107,7 @@ export class AonTimecontrol extends AonElement {
       },
       {
         ...THIS_MONTH,
-        fn: (e) => this.setDataFilter({period:THIS_MONTH.id})
+        fn: () => this.setDataFilter({period:THIS_MONTH.id})
       }
     ];
     
@@ -162,7 +162,7 @@ export class AonTimecontrol extends AonElement {
             if(data && data.taskHolderId){
               this.TASK_HOLDER = {id: data.taskHolderId, name: data.name};
             } else {
-              this.TASK_HOLDER = await this.getTaskHolder().catch(e=>null);
+              this.TASK_HOLDER = await this.getTaskHolder().catch(()=>null);
             }
             if(data && data.status && !isEmptyObject(this.TASK_HOLDER)) {this.TASK_HOLDER.status = data.status;}
             this._filter.taskHolderId = this.TASK_HOLDER.id;
@@ -206,7 +206,7 @@ export class AonTimecontrol extends AonElement {
   async getAuth({task_holder}){
     let auth = this.AUTHS.find(d => d.task_holder === task_holder);
     if(!auth){
-      auth = await getAuth({task_holder}).catch(e=>null);
+      auth = await getAuth({task_holder}).catch(()=>null);
       this.AUTHS.push({...auth, task_holder});
     } 
     return auth;

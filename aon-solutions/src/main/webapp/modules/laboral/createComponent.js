@@ -1,17 +1,18 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
+import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
-import { createCard, createDate, createForm, createIconButton, createInput, createNumber, createSelect } from "../notification/createComponent.js";
+import { CreateComponent } from "../../components/CreateComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import '../../css/aon-grid.css';
 import '../../css/aon-css-utils.css';
+
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
     div.style.margin = "0 9px";
     //---FORM------
-    createDate({
+    CreateComponent.createAonDate({
         attributes:{
             name:"fechaBaja",
             id:"fechaBaja",
@@ -19,7 +20,7 @@ export const createBajaDialogContent = () =>{
         }
     }, div);
 
-    const select = createSelect({
+    const select = CreateComponent.createAonSelect({
         attributes:{
             name:"codBaja",
             id:"codBaja",
@@ -28,7 +29,7 @@ export const createBajaDialogContent = () =>{
     }, div);
     select.style.textAlign = "left";
  
-    createNumber({
+    CreateComponent.createAonNumber({
         attributes:{
             name:"dayVacation",
             id: "dayVacation", 
@@ -36,7 +37,7 @@ export const createBajaDialogContent = () =>{
         }
     }, div);
  
-    createDate({
+    CreateComponent.createAonDate({
         attributes:{
             name:"frv",
             id:"frv",
@@ -70,7 +71,7 @@ export const createAsociativeSA = (create)=>{
         divAsociative.innerHTML = "";
     } else if(!select){
         frv.setVisible(false);
-        select = createSelect({
+        select = CreateComponent.createAonSelect({
             attributes:{
                 id,
                 name:id,
@@ -88,7 +89,7 @@ export const createAsociativeSA = (create)=>{
 }
 
 export const createFormComunica = (id, parent) => {
-    const form = createForm(id+"Form");
+    const form = CreateComponent.createForm(id+"Form");
     parent.appendChild(form.element);
 
     const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
@@ -98,15 +99,15 @@ export const createFormComunica = (id, parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12]})
     divC.appendTo(div.element);
-    createCard({id: id+"EmpresaCard", title:"Datos de la empresa"}, divC.element);
+    CreateComponent.createAonCard({id: id+"EmpresaCard", title:"Datos de la empresa"}, divC.element);
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]});
     divC.appendTo(div.element);
-    createCard({id: id+"TrabajadorCard", title:"Datos del trabajador"}, divC.element);
+    CreateComponent.createAonCard({id: id+"TrabajadorCard", title:"Datos del trabajador"}, divC.element);
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]});
     divC.appendTo(div.element);
-    createCard({id: id+"ContratoCard", title:"Datos del contrato"}, divC.element);
+    CreateComponent.createAonCard({id: id+"ContratoCard", title:"Datos del contrato"}, divC.element);
 
     return form.element;
 }
@@ -115,7 +116,7 @@ export const createEnterpriseData = (parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"workplace",
             id:"workplace",
@@ -126,7 +127,7 @@ export const createEnterpriseData = (parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"ctaCti",
             id:"ctaCti",
@@ -144,7 +145,7 @@ export const createEnterpriseData = (parent) => {
     // aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
     // divC.appendChild(aonConvenio);
 
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"regime",
             id:"regime",
@@ -159,7 +160,7 @@ export const createContractData = (parent, isManager) => {
      
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    const dateContract = createDate({
+    const dateContract = CreateComponent.createAonDate({
         attributes:{
             name:"fecha", 
             id:"fecha", 
@@ -169,7 +170,7 @@ export const createContractData = (parent, isManager) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"contract",
             id:"contract",
@@ -180,7 +181,7 @@ export const createContractData = (parent, isManager) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"gc",
             id:"gc",
@@ -190,7 +191,7 @@ export const createContractData = (parent, isManager) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"ocup",
             id:"ocup",
@@ -215,7 +216,7 @@ export const createContractData = (parent, isManager) => {
 
     partTime(divH.element);
 
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"situation",
             id:"situation",
@@ -228,7 +229,7 @@ export const createContractData = (parent, isManager) => {
     if(isManager){
         divC = createDiv({classes:[CSS.AON_COL_XS_12]})
         divC.appendTo(parent);
-        createSelect({
+        CreateComponent.createAonSelect({
             attributes:{
                 name:"rlce",
                 id:"rlce",
@@ -241,7 +242,7 @@ export const createContractData = (parent, isManager) => {
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"collective",
             id:"collective",
@@ -262,7 +263,7 @@ export const createContractDataMdCtz = (parent) => {
 
     parent.insertBefore(divC, div_parcial);
 
-    let select = createSelect({
+    let select = CreateComponent.createAonSelect({
         attributes:{
             name:"md_ctz",
             id:"md_ctz",
@@ -317,13 +318,13 @@ export const createEmployeeData = (parent, id) => {
     let span = document.createElement(TAG.SPAN);
     span.textContent =  MSG.RESTORE;
     divReiniciar.appendChild(span);
-    createIconButton({attributes:{ id: id+"IconReset", icon:"cached"}}, divReiniciar);
+    CreateComponent.createAonIconButton({attributes:{ id: id+"IconReset", icon:"cached"}}, divReiniciar);
 
     divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4] })
     divT.appendTo(parent);
     let divNss = createDiv({ attributes:{id: id+"NssDiv"} });
     divNss.appendTo(divT.element);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"nss",
             id: id+"Nss", 
@@ -336,7 +337,7 @@ export const createEmployeeData = (parent, id) => {
     divT.appendTo(parent);
     let divDni = createDiv({ attributes:{id: id+"DniDiv"} });
     divDni.appendTo(divT.element);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"ipf",
             id: id+"Dni", 
@@ -350,7 +351,7 @@ export const createEmployeeData = (parent, id) => {
     divSurnames.appendTo(parent);
     divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6] })
     divT.appendTo(divSurnames.element);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"apellido1",
             id:"apellido1",
@@ -361,7 +362,7 @@ export const createEmployeeData = (parent, id) => {
     
     divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6] })
     divT.appendTo(divSurnames.element);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"apellido2",
             id:"apellido2",
@@ -372,7 +373,7 @@ export const createEmployeeData = (parent, id) => {
 
     divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_12, CSS.AON_COL_XS_12] })
     divT.appendTo(parent);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"name",
             id:"name",
@@ -404,7 +405,7 @@ const addIconSurname = () => {
 const partTime = (divH) => {
     let divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"tipo_jornada",
             id:"tipo_jornada",
@@ -417,7 +418,7 @@ const partTime = (divH) => {
     let numberC = setAttributes(new AonNumber(),{
         id:"horas_convenio", 
         name:"horas_convenio", 
-        description:"Horas convenio",
+        description:"Hrs/convenio",
         format:CONSTANT.TRUE,
         decimals:"2"
     })

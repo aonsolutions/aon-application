@@ -1,12 +1,12 @@
 import { CSS } from "../../environments/environments.js";
 import { createDiv } from "../../services/utilsComponents.js";
-import { createDate, createForm, createInput, createSelect, createCard } from "../notification/createComponent.js";
+import { CreateComponent } from "../../components/CreateComponent.js";
 
 import '../../css/aon-css-utils.css';
 import '../../css/aon-grid.css';
 
 export const createFormEvent = (id, parent) => {
-    const form = createForm(id+"Form");
+    const form = CreateComponent.createForm(id+"Form");
     parent.appendChild(form.element);
     const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
     const div = createDiv({id: id+"Div",classes:[className]});
@@ -15,11 +15,11 @@ export const createFormEvent = (id, parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12]})
     divC.appendTo(div.element);
-    createCard({id: id+"CardEvent", title:"Datos del evento"}, divC.element);
+    CreateComponent.createAonCard({id: id+"CardEvent", title:"Datos del evento"}, divC.element);
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12]});
     divC.appendTo(div.element);
-    createCard({id: id+"CardCoordinate", title:"Mapa", visible: false}, divC.element);
+    CreateComponent.createAonCard({id: id+"CardCoordinate", title:"Mapa", visible: false}, divC.element);
   
     return form.element;
 }
@@ -29,7 +29,7 @@ export const createCardEvent = (parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
     divC.appendTo(parent);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"name",
             id:"name",
@@ -40,7 +40,7 @@ export const createCardEvent = (parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"status",
             id:"status",
@@ -51,7 +51,7 @@ export const createCardEvent = (parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
     divC.appendTo(parent);
-    createSelect({
+    CreateComponent.createAonSelect({
         attributes:{
             name:"location",
             id:"location",
@@ -62,7 +62,7 @@ export const createCardEvent = (parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
     divC.appendTo(parent);
-    createDate({
+    CreateComponent.createAonDate({
         attributes:{
             name:"date", 
             id:"date", 
@@ -73,7 +73,7 @@ export const createCardEvent = (parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
     divC.appendTo(parent);
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"time",
             id:"time",
@@ -83,7 +83,7 @@ export const createCardEvent = (parent) => {
     }, divC.element);
 
 
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"id",
             id:"id",
@@ -92,7 +92,7 @@ export const createCardEvent = (parent) => {
         }
     }, parent);
 
-    createInput({
+    CreateComponent.createAonInput({
         attributes:{
             name:"coordinates",
             id:"coordinates",
@@ -100,5 +100,4 @@ export const createCardEvent = (parent) => {
             visible:"false"
         }
     }, parent);
-    
 }

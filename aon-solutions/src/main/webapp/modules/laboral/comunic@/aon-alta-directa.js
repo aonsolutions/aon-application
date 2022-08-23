@@ -5,8 +5,8 @@ import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData, createContractDataMdCtz, createQuoteMonthly, createAsociativeSA } from '../createComponent.js';
-import { createToolbar } from '../../notification/createComponent.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
+import { CreateComponent } from '../../../components/CreateComponent.js';
 // import * as LS from '../../../services/localStorageService.js';
 
 export class AonAltaDirecta extends AonElement {
@@ -77,7 +77,8 @@ export class AonAltaDirecta extends AonElement {
     paintView() {
         this.applicationEl.removeToolbarOptions();
 
-        createToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa"}, this);
+        const toolbar = CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa1"});
+        this.appendChild(toolbar);
 
         createFormComunica(this.id, this);
 
