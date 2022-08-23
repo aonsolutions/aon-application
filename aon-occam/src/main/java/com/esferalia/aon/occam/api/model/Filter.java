@@ -436,6 +436,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface NewsFilter{
+		Filter filter(NewsProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface EmployeeFilter{
 		Filter filter(EmployeeProperties properties);
 	}

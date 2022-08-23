@@ -20,11 +20,13 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
+import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.JobTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.NewsFilter;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -47,8 +49,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -63,8 +67,10 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
+import com.esferalia.aon.occam.impl.jooq.CategoryImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
+import com.esferalia.aon.occam.impl.jooq.NewsImpl;
 import com.esferalia.aon.occam.impl.jooq.NoteImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
@@ -123,6 +129,14 @@ public class AON_SOLUTIONS {
 	
 	private static INote getNote() {
 		return new NoteImpl();
+	}
+	
+	private static ICategory getCategory() {
+		return new CategoryImpl();
+	}
+	
+	private static INews getNews() {
+		return new NewsImpl();
 	}
 
 	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
@@ -574,6 +588,70 @@ public class AON_SOLUTIONS {
 	}
 	
 	//----- END NOTE
+	
+	//----------------CATEGORY
+	public static Category getCategory(Domain domain, User user, CategoryFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().getCategory(ctx, filter);
+		}
+	}
+	
+	public static Stream<Category> getCategoryStream(Domain domain, User user, CategoryFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().getCategoryStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<Category> getCategoryStream(Domain domain, User user, CategoryFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().getCategoryStream(ctx, filter, page, perPage);
+		}
+	}
+
+	public static Category saveCategory(Domain domain, User user, Category category) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().saveCategory(ctx, category);
+		}
+	}
+	
+	public static void deleteCategory(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getCategory().deleteCategory(ctx, id);
+		}
+	}
+	// ---END CATEGORY
+	
+	//----------------NEWS
+	public static News getNews(Domain domain, User user, NewsFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNews().getNews(ctx, filter);
+		}
+	}
+	
+	public static Stream<News> getNewsStream(Domain domain, User user, NewsFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNews().getNewsStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<News> getNewsStream(Domain domain, User user, NewsFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNews().getNewsStream(ctx, filter, page, perPage);
+		}
+	}
+
+	public static News saveNews(Domain domain, User user, News news) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNews().saveNews(ctx, news);
+		}
+	}
+	
+	public static void deleteNews(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getNews().deleteNews(ctx, id);
+		}
+	}
+	// ---END NEWS
 	
 	@Deprecated
 	public static void saveUserFinancePortal(Domain domain, String login, Integer userId) {

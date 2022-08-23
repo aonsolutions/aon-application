@@ -71,7 +71,7 @@ public class LocationServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private Object getLocationList(AonApiData api) {
+	private JSONArray getLocationList(AonApiData api) {
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getLocationStream(api.getDomain(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()))
 		.forEach(lc -> array.put(lc.toJSON()));

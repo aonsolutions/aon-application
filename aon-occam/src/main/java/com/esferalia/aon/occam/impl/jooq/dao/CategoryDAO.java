@@ -3,11 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
 import org.jooq.Record;
-
+import org.jooq.SelectConditionStep;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -21,16 +21,15 @@ public class CategoryDAO {
 	
 	private static final CategoryPropertiesDAO CATEGORY_PROPERTIES = new CategoryPropertiesDAO();
 	
-	public static Stream<Category> getStream(AONContext ctx, CategoryFilter filter){
-		ctx.checkRead();
-		return ctx.getDslContext()
-				.select().from(CATEGORY)
-				.where(CATEGORY_PROPERTIES.getConditions(filter))
-				.fetchInto(CATEGORY).stream().map(new CategoryFiller());
+	public static Stream<Category> getStream(AONContext ctx, CategoryFilter filter) {
+		return getStream(ctx, filter, Optional.empty(), Optional.empty());
+	}
+	
+	public static Stream<Category> getStream(AONContext ctx, CategoryFilter filter, Integer page, Integer perPage) {
+		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
 	public static Category get(AONContext ctx, CategoryFilter filter) {
-		ctx.checkRead();
 		return getStream(ctx, filter).findFirst().orElse(null);
 	}
 
@@ -52,6 +51,22 @@ public class CategoryDAO {
 		delete(ctx, f -> f.getIdProperty().eq(id));
 		
 		ctx.log().debug("DELETE CATEGORY id: " + id);	
+	}
+	
+	private static Stream<Category> getStream(AONContext ctx, CategoryFilter filter, Optional<Integer> page, Optional<Integer> perPage){
+		ctx.checkRead();
+		SelectConditionStep<Record> condition = 
+				ctx.getDslContext()
+				.select().from(CATEGORY)
+				.where(CATEGORY_PROPERTIES.getConditions(filter));
+
+		if(page.isPresent() && perPage.isPresent()) {
+			Integer per = perPage.get();
+			Integer p = page.get();
+			condition.limit(per).offset(per * (p -1));
+		}
+		
+		return condition.fetchInto(CATEGORY).stream().map(new CategoryFiller());
 	}
 	
 	private static Category insert(AONContext ctx, Category category){

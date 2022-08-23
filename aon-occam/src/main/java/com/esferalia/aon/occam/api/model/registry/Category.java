@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.CategoryType;
+
 @SuppressWarnings("serial")
 public class Category implements Serializable{
 	
@@ -13,6 +15,8 @@ public class Category implements Serializable{
 	Integer scope;
 	Byte type;
 	String url;
+	
+	private CategoryType categoryType;
 	
 	public String getDescription() {
 		return description;
@@ -56,13 +60,26 @@ public class Category implements Serializable{
 		this.scope = scope;
 		return this;
 	}
+	
+	public CategoryType getCategoryType() {
+		return categoryType;
+	}
+	
+	public Category setCategoryType(CategoryType categoryType) {
+		this.categoryType = categoryType;
+		return this;
+	}
+	
 	public Byte getType() {
 		return type;
 	}
+	
 	public Category setType(Byte type) {
 		this.type = type;
 		return this;
 	}
+	
+	
 	public String getUrl() {
 		return url;
 	}
