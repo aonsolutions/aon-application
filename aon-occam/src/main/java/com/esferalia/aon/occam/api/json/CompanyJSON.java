@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Company;
@@ -15,6 +19,14 @@ public class CompanyJSON {
 			.setWithholding(json.optBoolean(IJsonNames.WITHHOLDING))
 			.setVatAccrualPayment(json.optBoolean(IJsonNames.VAT_ACCRUAL_PAYMENT))
 			.seteInvoice(json.optBoolean(IJsonNames.E_INVOICE));
+	}
+
+	public static List<Company> fromJSON(JSONArray json) {
+		LinkedList<Company> list = new LinkedList<>();
+		for(Integer i = 0; i < json.length(); i++) {
+			list.add(fromJSON(json.getJSONObject(i)));
+		}
+ 		return list;
 	}
 	
 	public static JSONObject toJSON(Company company) {

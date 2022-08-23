@@ -61,27 +61,27 @@ public class DomainDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.ACTIVE);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DOMAIN.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.CREATION_USER);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.DESCRIPTION);}
-		@Override public Property<Byte> getDisabledomainmanagementProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.DISABLEDOMAINMANAGEMENT);}
-		@Override public Property<Byte> getDomainmanagementProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.DOMAINMANAGEMENT);}
-		@Override public Property<Byte> getEnableheredityProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.ENABLEHEREDITY);}
-		@Override public Property<Date> getExpirationdateProperty() {return new FilterDAO.PropertyDAO<Date>(DOMAIN.EXPIRATIONDATE);}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.ID);}
-		@Override public Property<Timestamp> getLastaccessDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DOMAIN.LASTACCESS_DATE);}
-		@Override public Property<String> getLastaccessUserProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.LASTACCESS_USER);}
-		@Override public Property<Integer> getMaxdefinedusersProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.MAXDEFINEDUSERS);}
-		@Override public Property<Integer> getMaxdocumentsizeProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.MAXDOCUMENTSIZE);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DOMAIN.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.MODIFICATION_USER);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.NAME);}
-		@Override public Property<String> getOwnerProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.OWNER);}
-		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.PARENT);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.SCOPE);}
-		@Override public Property<String> getSubdomainsuffixProperty() {return new FilterDAO.PropertyDAO<String>(DOMAIN.SUBDOMAINSUFFIX);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.TYPE);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.ACTIVE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.CREATION_USER);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.DESCRIPTION);}
+		@Override public Property<Byte> getDisabledomainmanagementProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.DISABLEDOMAINMANAGEMENT);}
+		@Override public Property<Byte> getDomainmanagementProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.DOMAINMANAGEMENT);}
+		@Override public Property<Byte> getEnableheredityProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.ENABLEHEREDITY);}
+		@Override public Property<Date> getExpirationdateProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.EXPIRATIONDATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.ID);}
+		@Override public Property<Timestamp> getLastaccessDateProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.LASTACCESS_DATE);}
+		@Override public Property<String> getLastaccessUserProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.LASTACCESS_USER);}
+		@Override public Property<Integer> getMaxdefinedusersProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.MAXDEFINEDUSERS);}
+		@Override public Property<Integer> getMaxdocumentsizeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.MAXDOCUMENTSIZE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.MODIFICATION_USER);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.NAME);}
+		@Override public Property<String> getOwnerProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.OWNER);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.PARENT);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.SCOPE);}
+		@Override public Property<String> getSubdomainsuffixProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.SUBDOMAINSUFFIX);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
 	}
 	public static Domain getDomain(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().select()

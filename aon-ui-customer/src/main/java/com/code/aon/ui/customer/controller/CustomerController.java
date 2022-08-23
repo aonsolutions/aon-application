@@ -2,13 +2,21 @@ package com.code.aon.ui.customer.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.CUSTOMER_REPORT;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +41,12 @@ import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
@@ -49,6 +63,11 @@ public class CustomerController extends CustomerListController implements ICusto
 	
 	public boolean isCeconsulting() {
 		return AonUtil.getDomainName().contains("ceconsulting");
+	}
+	
+	public boolean isSnapshot() {
+		return AonUtil.getDomainName().contains("aonsolutions.org")
+			|| AonUtil.getDomainName().contains("aibanez.net");
 	}
 	
 	public boolean isUpdateCourseAlumn() {
@@ -185,6 +204,63 @@ public class CustomerController extends CustomerListController implements ICusto
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
+	}
+	
+	public void onSigCustomerDomainLink(ActionEvent e) throws IOException{
+		Customer customer = (Customer) this.getTo();
+		
+		String request = "https://aon.solutions/ms/api/company/domain?document=" + customer.getRegistry().getDocument();
+		
+		URL url = new URL(request);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setInstanceFollowRedirects(false);
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("session_id", "AONd95770f269e711eb94390242ac130002");
+		connection.setRequestProperty("charset", "UTF-8");
+	
+		connection.setUseCaches(false);
+		JSONObject json = new JSONObject()
+			.put(IJsonNames.DOCUMENT, customer.getRegistry().getDocument());
+		OutputStream os = connection.getOutputStream();
+		os.write(json.toString().getBytes());
+		os.flush();
+		
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+		String output;	
+		String response = "";
+		while ((output = br.readLine()) != null) {
+			response = output; //.replace("'", "\'");	
+		}	
+		JSONArray array = new JSONArray(response);
+		array.forEach(r -> {
+			JSONObject resp = (JSONObject) r;
+			Company company = CompanyJSON.fromJSON(resp);
+
+			RegistryAddInfo addInfo = new RegistryAddInfo()
+					.setRegistry(customer.getId())
+					.setDomain(customer.getDomain())
+					.setAttribute("AON_DOMAIN_URL")
+					.setValue(company.getDomain().getName());
+			AON.insertRegistryAddInfo(AonUtil.getDomainName(), customer.getDomain(), "", addInfo);
+			
+			RegistryAddInfo addInfo1 = new RegistryAddInfo()
+					.setRegistry(customer.getId())
+					.setDomain(customer.getDomain())
+					.setAttribute("AON_DOMAIN_ID")
+					.setValue(company.getDomain().getId().toString());
+			AON.insertRegistryAddInfo(AonUtil.getDomainName(), customer.getDomain(), "", addInfo1);
+			
+			RegistryAddInfo addInfo2 = new RegistryAddInfo()
+					.setRegistry(customer.getId())
+					.setDomain(customer.getDomain())
+					.setAttribute("AON_DOMAIN_SCHEMA")
+					.setValue(JsonUtils.getString(resp ,IJsonNames.SCHEMA));
+			AON.insertRegistryAddInfo(AonUtil.getDomainName(), customer.getDomain(), "", addInfo2);
+		});
 	}
 
 	public void onLoadInvoicingGroup(ActionEvent event) throws ManagerBeanException {
