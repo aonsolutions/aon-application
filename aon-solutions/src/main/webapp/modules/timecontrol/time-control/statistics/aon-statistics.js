@@ -3,7 +3,7 @@ import { charts } from "./charts";
 import {  CONSTANT } from "../../../../environments/environments.js";
 import { AonElement } from "../../../../components/AonElement.js";
 import { timeHour } from "../utils.js";
-import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
+import { getTaskHoldersUser, getTaskHolder} from "../../../../services/taskHolderService.js";
 import { getTaskHolderTimeControl,
 } from "../../../../services/timeControlService.js";
 import {  setStyles } from "../../../../services/utilsComponents.js";
@@ -11,8 +11,11 @@ import { DAYS } from "../../../../models/enums.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 
 export class AonStatistics extends AonElement {
+  
   TABLE_ID;
   dur;
+  taskHolder;
+
   static get observedAttributes() {
     return [CONSTANT.FILTER, CONSTANT.DATA];
   }
@@ -60,7 +63,11 @@ export class AonStatistics extends AonElement {
   }
 
   build() {
-    this.paintChart();
+    getTaskHolder({reload:true}).then(th => {
+      this.taskHolder = th;
+      this.paintChart();
+    });
+
   }
 
   async paintChart() {
@@ -125,9 +132,8 @@ export class AonStatistics extends AonElement {
       if (!dt.length) {
         const startDate = AonDateUtils.formatDateOrigin( new Date().addDay(-7));
         const endDate = AonDateUtils.formatDateOrigin(new Date());
-        const [taskHolder] = await getTaskHoldersUser();
         dt = await getTaskHolderTimeControl({
-          taskHolderId: taskHolder.id,
+          taskHolderId: this.taskHolder.id,
           group: "DAY",
           startDate,
           endDate,
