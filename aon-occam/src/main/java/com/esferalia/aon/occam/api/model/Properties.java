@@ -1162,6 +1162,24 @@ public interface Properties {
 		Property<Integer> getRattachProperty();
 	}
 	
+	public interface NewsProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getTitleProperty();
+		Property<String> getDescriptionProperty();
+		Property<String> getContentProperty();
+		Property<String> getUrlProperty();
+		Property<Byte> getActiveProperty();
+		Property<Byte> getRssProperty();
+		Property<Timestamp> getInitDateProperty();
+		Property<Timestamp> getEndDateProperty();
+		Property<Integer> getCategoryProperty();
+		Property<Integer> getRattachProperty();
+		Property<Integer> getScopeProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getTemplateProperty();
+	}
+	
 	public interface EmployeeProperties{
 		Property<String> getNafProperty();
 		Property<String> getCCCProperty();

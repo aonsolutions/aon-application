@@ -413,6 +413,7 @@ public final class IJsonNames {
 	public static final String RNAME = "rname";
 	public static final String ROLES = "roles";
 	public static final String ROOT_BAR = "/";
+	public static final String RSS = "rss";
 	// ---------------------------------------------------------------------------------------------	[S] 
 	public static final String SALES  = "sales";
 	public static final String SALES_ACCOUNT  = "salesAccount";
