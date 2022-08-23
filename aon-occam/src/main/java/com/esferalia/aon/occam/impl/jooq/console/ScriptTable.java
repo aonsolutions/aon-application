@@ -2,13 +2,15 @@ package com.esferalia.aon.occam.impl.jooq.console;
 
 import java.util.List;
 
+import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Table;
 import org.jooq.Record;
+import org.jooq.Table;
 
 class ScriptTable {
 	
 	private Table<Record> table;
+	private Field<Integer> primaryKey;
 	private List<ForeignKey<Record,?>> references;
 	private int rows;
 	private int currentRow;
@@ -22,6 +24,13 @@ class ScriptTable {
 	}
 	public String getTableName() {
 		return table.getName();
+	}
+	public Field<Integer> getPrimaryKey() {
+		return primaryKey;
+	}
+	public ScriptTable setPrimaryKey(Field<Integer> primaryKey) {
+		this.primaryKey = primaryKey;
+		return this;
 	}
 	public List<ForeignKey<Record,?>> getReferences() {
 		return references;

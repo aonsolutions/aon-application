@@ -39,7 +39,6 @@ public class CheckDomainIntegrityServlet extends HttpServlet {
 			CheckDomainIntegrity.check(params);
 			resp.flushBuffer();
 		} catch (Exception e) {
-//			e.printStackTrace();
 			try {
 				if(out != null) {
 					out.print(e.getMessage());

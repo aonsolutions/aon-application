@@ -4,17 +4,25 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -26,30 +34,71 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
-public class DomainIsolate extends AonLayoutPanel {
+public class OLD_DomainIsolate extends MainEntryPoint {
 	
 	private static final String DOMAIN_ISOLATE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/DomainIsolateServlet");
 
-	private static final Logger LOGGER = Logger.getLogger(DomainIsolate.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OLD_DomainIsolate.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+	}
+
 	private ConsoleModuleOptions options;
+	private AonLayoutPanel aonLayout;
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
 
 	private String domainName;
 	private String newDomainName;
 
-	public DomainIsolate(ConsoleModuleOptions options) {
+	private ConsoleModuleOptions getOptions() {
+		if (this.options == null) {
+			this.options = new ConsoleModuleOptions();
+		}
+		return this.options;
+	}
+
+	@Override
+	public void onModuleLoad() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser()
+				, new AsyncCallback<AonConfiguration>() {
+				
+				@Override
+				public void onSuccess(AonConfiguration config) {
+					RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+					ConsoleModuleOptions opts = new ConsoleModuleOptions();
+					opts.setParentWidget(root);
+					opts.setDomainName(getCurrentDomainName());
+					opts.setDomain(getCurrentDomain());
+					opts.setUser(getCurrentUser());
+					opts.setConfiguration(config);
+					onModuleLoad( opts );
+				}
+				
+				@Override public void onFailure(Throwable caught) {
+					Window.alert( "Error al cargar el module" );
+				}
+			});
+	}
+	
+	public void onModuleLoad(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
-		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-		this.addNorth(getDataPanel(), 100);
+
+		aonLayout = new AonLayoutPanel();
+		aonLayout.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+		aonLayout.addNorth(getDataPanel(), 200);
 		
 		pageContainer = new SimpleLayoutPanel();
-		this.add(pageContainer);
+		aonLayout.add(pageContainer);
+		getOptions().getParentWidget().add(aonLayout);
+
 	}
 
 	private Widget getDataPanel() {
@@ -134,6 +183,23 @@ public class DomainIsolate extends AonLayoutPanel {
 		return toolbarPanel;
 	}
 	
+	public static void run() {
+		GWT.runAsync(OLD_DomainIsolate.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("DomainIntegrityCheck"));
+			}
+
+			@Override
+			public void onSuccess() {
+				OLD_DomainIsolate domainIntegrityCheck = new OLD_DomainIsolate();
+				domainIntegrityCheck.onModuleLoad();
+			}
+			
+		});
+	}
+	
 	private void doIt() {
 		if (!running && validate()) {
 			running = true;
@@ -193,13 +259,13 @@ public class DomainIsolate extends AonLayoutPanel {
 	}
 	
 	private boolean validate() {
-		this.hideErrorPanel();
+		aonLayout.hideErrorPanel();
 		if (AonStringUtils.isBlank(domainName)) {
-			this.showErrorPanel("El nombre del dominio debe tener valor");			
+			aonLayout.showErrorPanel("El nombre del dominio debe tener valor");			
 			return false;
 		}
 		if (AonStringUtils.isBlank(newDomainName)) {
-			this.showErrorPanel("El nuevo nombre del dominio debe tener valor");			
+			aonLayout.showErrorPanel("El nuevo nombre del dominio debe tener valor");			
 			return false;
 		}
 		
