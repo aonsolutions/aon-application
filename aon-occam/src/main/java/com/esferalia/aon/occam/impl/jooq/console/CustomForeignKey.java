@@ -66,6 +66,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
+		}
+		
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<InvoiceDetailRecord, PurchaseDetailRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_PURCHASE_DETAIL_PRIMARY
@@ -82,6 +87,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<InvoiceDetailRecord,SalesDetailRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_SALES_DETAIL_PRIMARY
@@ -96,6 +106,11 @@ enum CustomForeignKey {
 			return sameByte(rec,INVOICE_DETAIL.SOURCE,3);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<InvoiceDetailRecord,DeliveryDetailRecord> getForeignKey() {
@@ -112,6 +127,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<InvoiceDetailRecord,IncomeDetailRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_INCOME_DETAIL_PRIMARY
@@ -126,6 +146,11 @@ enum CustomForeignKey {
 			return sameByte(rec,INVOICE_DETAIL.SOURCE,8);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<InvoiceDetailRecord,OfferDetailRecord> getForeignKey() {
@@ -143,6 +168,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<InvoiceDetailRecord,ProjectReservationRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_PROJECT_RESERVATION_PRIMARY
@@ -158,6 +188,11 @@ enum CustomForeignKey {
 			return sameByte(rec,BANK_STATEMENT_LINK.SOURCE,0);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<BankStatementLinkRecord,FinanceTrackingRecord> getForeignKey() {
@@ -175,6 +210,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<BankStatementLinkRecord,FbatchRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_FBATCH_PRIMARY
@@ -191,6 +231,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<BankStatementLinkRecord, BankConceptRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_BANK_CONCEPT_PRIMARY
@@ -206,6 +251,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<BankStatementLinkRecord,AccountRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_ACCOUNT_PRIMARY
@@ -218,10 +268,14 @@ enum CustomForeignKey {
 	FINANCE_SALARY {
 		@Override
 		public boolean accept(Table<?> table, Record rec) {
-			 // return sameBoolean(rec, FINANCE.PAYROLL.getName() ,true);
 			return sameByte(rec, FINANCE.PAYROLL , 1);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ FINANCE.PAYROLL };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<FinanceRecord,SalaryRecord> getForeignKey() {
@@ -235,10 +289,14 @@ enum CustomForeignKey {
 	FINANCE_PREPAYMENT {
 		@Override
 		public boolean accept(Table<?> table, Record rec) {
-			// return sameBoolean(rec,FINANCE.PREPAYMENT.getName(), true);
 			return sameByte(rec,FINANCE.PREPAYMENT, 1);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ FINANCE.PREPAYMENT };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<FinanceRecord,PrepaymentRecord> getForeignKey() {
@@ -254,6 +312,12 @@ enum CustomForeignKey {
 		public boolean accept(Table<?> table, Record rec) {
 			return sameByte(rec,ALARM.SOURCE,0);
 		}
+		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ ALARM.SOURCE };
+		}
+		
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<AlarmRecord,NoticeRecord> getForeignKey() {
@@ -269,6 +333,12 @@ enum CustomForeignKey {
 		public boolean accept(Table<?> table, Record rec) {
 			return sameByte(rec,ALARM.SOURCE,1);
 		}
+		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ ALARM.SOURCE };
+		}
+		
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<AlarmRecord, TaskRecord> getForeignKey() {
@@ -284,6 +354,12 @@ enum CustomForeignKey {
 		public boolean accept(Table<?> table, Record rec) {
 			return sameByte(rec,ALARM.SOURCE,3);
 		}
+		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ ALARM.SOURCE };
+		}
+		
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<AlarmRecord, CommercialTrackingRecord> getForeignKey() {
@@ -299,6 +375,12 @@ enum CustomForeignKey {
 		public boolean accept(Table<?> table, Record rec) {
 			return sameByte(rec,ALARM.SOURCE,4);
 		}
+		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ ALARM.SOURCE };
+		}
+		
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<AlarmRecord,MkActionTargetRecord> getForeignKey() {
@@ -316,6 +398,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ PURCHASE_DETAIL.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<PurchaseDetailRecord,ProposalDetailRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_PROPOSAL_DETAIL_PRIMARY
@@ -329,6 +416,11 @@ enum CustomForeignKey {
 		@Override
 		public boolean accept(Table<?> table, Record rec) {
 			return sameByte(rec,PURCHASE_DETAIL.SOURCE,1);
+		}
+
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ PURCHASE_DETAIL.SOURCE };
 		}
 
 		@Override
@@ -348,6 +440,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ PURCHASE_DETAIL.SOURCE };
+		}
+		
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<PurchaseDetailRecord,SalesDetailRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_SALES_DETAIL_PRIMARY
@@ -363,6 +460,11 @@ enum CustomForeignKey {
 			return sameByte(rec,WAREHOUSE_TRANSFER.SOURCE,1);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ WAREHOUSE_TRANSFER.SOURCE };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<WarehouseTransferRecord,InventoryDetailRecord> getForeignKey() {
@@ -380,6 +482,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ WAREHOUSE_TRANSFER.SOURCE };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<WarehouseTransferRecord,PurchaseDetailRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_PURCHASE_DETAIL_PRIMARY
@@ -395,6 +502,11 @@ enum CustomForeignKey {
 			return sameByte(rec,WAREHOUSE_TRANSFER.SOURCE,3);
 		}
 		
+		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ WAREHOUSE_TRANSFER.SOURCE };
+		}
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<WarehouseTransferRecord,InventoryDetailRecord> getForeignKey() {
@@ -416,6 +528,11 @@ enum CustomForeignKey {
 		}
 
 		@Override
+		public Field<?>[] getInvolvedColumns() {
+			return new Field<?>[]{ APP_PARAM.NAME };
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public ForeignKey<AppParamRecord,AccountRecord> getForeignKey() {
 			return new WeakForeignKey<>(KEY_ACCOUNT_PRIMARY
@@ -428,15 +545,11 @@ enum CustomForeignKey {
 	
 	public abstract boolean accept(Table<?> table, Record rec);
 	public abstract <R extends Record, U extends Record> ForeignKey<R,U> getForeignKey();
+	public abstract Field<?>[] getInvolvedColumns();
 	
 	private static boolean sameByte(Record rec, Field<Byte> field, int value) {
 		Byte b = rec.getValue( field );
 		return b != null && (b.byteValue() == Integer.valueOf(value).byteValue());
-	}
-	
-	private static boolean sameBoolean(Record rec, String fieldName, boolean value) {
-		Boolean b = (Boolean) rec.getValue( fieldName );
-		return b != null && (b == Boolean.valueOf(value));
 	}
 	
 }

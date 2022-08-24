@@ -73,8 +73,6 @@ public class DomainIsolateServlet extends HttpServlet {
 						.setDslContext(dslContext)
 						.setPrinter(out);
 				IsolateDomain.isolate(params);
-				
-//				CheckDomainIntegrity.check(params);
 			} else {
 				String m = "[ERROR] Schema not found!";
 				out.println(m);

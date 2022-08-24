@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
-import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
@@ -8,21 +7,17 @@ import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LIN
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +33,6 @@ import org.jooq.Schema;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
@@ -134,6 +128,8 @@ public class IsolateDomain {
 					
 					chronometer.mark();
 					checkProductIndex( params );
+					checkNoticeRecipient( params );
+					
 					System.out.println( " 5.- Product index checked         -->" 
 							+ " " + chronometer.getMarkSeconds() + " seg."
 							+ " - " + chronometer.getCurrentTime());
@@ -230,8 +226,28 @@ public class IsolateDomain {
 				throw new AonCoreException("Productos duplicados");
 			}
 		}
-			
 	}
+	
+	private static void checkNoticeRecipient(ConsoleParams params ) {
+		params.getDslContext()
+			.select( NOTICE.ID,NOTICE.DATE,NOTICE.SUBJECT )
+			.from(NOTICE)
+			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
+			.where(NOTICE.DOMAIN.eq(params.getDomain()))
+			.and(USER.DOMAIN.notIn(params.getDomain(),params.getParent()))
+			.fetch()
+			.stream()
+			.map(rec -> MessageFormat.format("Existe un aviso cuyo destinatario no pertence al dominio. [id: {0}, fecha: \"{1}\", subject: \"{2}\"] "
+				,rec.getValue(NOTICE.ID)
+				,rec.getValue(NOTICE.DATE)
+				,rec.getValue(NOTICE.SUBJECT)) )
+			.forEach( msg -> params.addError(msg));
+		if (params.hasErrors()) {
+			throw new AonCoreException("Avisos incoherentes");
+		}
+	}
+	
+	
 
 	private static void passHeritableTables(ConsoleParams params) {
 		ScriptTable[] tables  = new ScriptTable[] {
@@ -533,8 +549,8 @@ public class IsolateDomain {
 			.filter(fk ->  !Keys.FK_FBATCH_BANK_STATEMENT_LINK.getName().equals(fk.getName()) )
 			.forEach(fk -> duplicateForeignKey(params,fk,rec));
 		if (!APP_PARAM.getName().equals( table.getName()) 
-			&& CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
-			Arrays.stream( CUSTOM_FOREIGN_MAP.get(table.getName()))
+			&& ConsoleUtils.CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
+			Arrays.stream( ConsoleUtils.CUSTOM_FOREIGN_MAP.get(table.getName()))
 				.filter( en -> en.accept(table,rec))
 //				.filter(fk ->  fk != CustomForeignKey.BANK_STATEMENT_LINK_FINANCE_TRACKING)
 //				.filter(fk ->  fk != CustomForeignKey.BANK_STATEMENT_LINK_FBATCH)
@@ -650,7 +666,7 @@ public class IsolateDomain {
 			Table<Record> tab = (Table<Record>) table.asTable();
 			stack.addFirst(table);
 			Stream.concat(
-				Arrays.stream(CUSTOM_FOREIGN_MAP.getOrDefault(table.getName(),new CustomForeignKey[]{}))
+				Arrays.stream(ConsoleUtils.CUSTOM_FOREIGN_MAP.getOrDefault(table.getName(),new CustomForeignKey[]{}))
 					.map( CustomForeignKey::getForeignKey),
 				table.getReferences().stream())
 				.map(fk -> fk.getKey().getTable())
@@ -750,51 +766,6 @@ public class IsolateDomain {
 					.getId());
 		log(params,"Aplicacion de usuario insertada correctamente");
 		log(params,"Perfil de usuario en la aplicación insertada correctamente");
-	}
-	
-
-    static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(UniqueKey<U> key,
-            Table<R> table, String name, TableField<R, ?> field) {
-        return new WeakForeignKey<>(key, table, name, field);
-    }
-	static final HashMap<String, CustomForeignKey[]> CUSTOM_FOREIGN_MAP = new HashMap<>();
-	static {
-		CUSTOM_FOREIGN_MAP.put(INVOICE_DETAIL.getName(), new CustomForeignKey[] {
-			CustomForeignKey.INVOICE_DETAIL_PURCHASE_DETAIL,
-			CustomForeignKey.INVOICE_DETAIL_SALES_DETAIL,
-			CustomForeignKey.INVOICE_DETAIL_DELIVERY_DETAIL,
-			CustomForeignKey.INVOICE_DETAIL_INCOME_DETAIL,
-			CustomForeignKey.INVOICE_DETAIL_OFFER_DETAIL,
-			CustomForeignKey.INVOICE_DETAIL_PROJECT_RESERVATION});
-		CUSTOM_FOREIGN_MAP.put(BANK_STATEMENT_LINK.getName(), new CustomForeignKey[] {
-			CustomForeignKey.BANK_STATEMENT_LINK_FINANCE_TRACKING,
-			CustomForeignKey.BANK_STATEMENT_LINK_FBATCH,
-			CustomForeignKey.BANK_STATEMENT_LINK_BANK_CONCEPT,
-			CustomForeignKey.BANK_STATEMENT_LINK_ACCOUNT
-		});
-		CUSTOM_FOREIGN_MAP.put(FINANCE.getName(), new CustomForeignKey[] {
-			CustomForeignKey.FINANCE_SALARY,
-			CustomForeignKey.FINANCE_PREPAYMENT
-		});
-		CUSTOM_FOREIGN_MAP.put(ALARM.getName(), new CustomForeignKey[] {
-			CustomForeignKey.ALARM_NOTICE,
-			CustomForeignKey.ALARM_TASK,
-			CustomForeignKey.ALARM_COMMERCIAL_TRACKING,
-			CustomForeignKey.ALARM_MK_ACTION_TARGET
-		});
-		CUSTOM_FOREIGN_MAP.put(PURCHASE_DETAIL.getName(), new CustomForeignKey[] {
-			CustomForeignKey.PURCHASE_DETAIL_PROPOSAL_DETAIL,
-			CustomForeignKey.PURCHASE_DETAIL_PURCHASE_DETAIL,
-			CustomForeignKey.PURCHASE_DETAIL_SALES_DETAIL
-		});
-		CUSTOM_FOREIGN_MAP.put(WAREHOUSE_TRANSFER.getName(), new CustomForeignKey[] {
-			CustomForeignKey.WAREHOUSE_TRANSFER_INVENTORY_DETAIL,
-			CustomForeignKey.WAREHOUSE_TRANSFER_PURCHASE_DETAIL,
-			CustomForeignKey.WAREHOUSE_TRANSFER_INVENTORY_DETAIL
-		});
-		CUSTOM_FOREIGN_MAP.put(APP_PARAM.getName(), new CustomForeignKey[] {
-			CustomForeignKey.ACC_APP_PARAM
-		});
 	}
     
 }

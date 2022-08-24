@@ -8,14 +8,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.stream.Stream;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -40,10 +38,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class CheckDomainIntegrity {
 	
 	private static final String DOMAIN_LABEL = "domain";
-	private static final Table<Record> TEMPID = DSL.table("tempId");
-	private static final Field<String> TEMPID_TABLE = DSL.field("tempId.table_name", String.class);
-	private static final Field<Integer> TEMPID_ID = DSL.field("tempId.id", Integer.class);
-
+	
 	private CheckDomainIntegrity() {
 	}
 	
@@ -81,7 +76,7 @@ public class CheckDomainIntegrity {
 		if (schema != null) {
 			Record domainRec = params.getDslContext().select()
 				.from(DOMAIN)
-				.where(DOMAIN.ID.equal(params.getDomain()))
+				.where(DOMAIN.NAME.equal(params.getDomainName()))
 				.fetch()
 				.stream()
 				.findFirst()
@@ -89,14 +84,16 @@ public class CheckDomainIntegrity {
 			if (domainRec == null) {
 				throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getDomainName() + "\"");
 			}
-			params.setParent(domainRec.getValue(DOMAIN.PARENT))
+			params.setDomain(domainRec.getValue(DOMAIN.ID))
+				.setParent(domainRec.getValue(DOMAIN.PARENT))
 				.setInhertitanceEnabled( domainRec.getValue(DOMAIN.ENABLEHEREDITY) == 1)
 				.setScript( new LinkedHashMap<>() )
 				.setSchema(schema);
 			params.getDslContext().transaction(conf -> {
 				
 				fillScript(params);
-				createTempTable(params);
+				
+				log(params,MessageFormat.format("Se van a chequear {0} tables", params.getScript().size()));
 				
 				log(params,"Inicio del proceso de chequeo de integridad de dominios");
 				params.getScript()
@@ -131,69 +128,59 @@ public class CheckDomainIntegrity {
 	// ************* [METHODS  FOR GETTING SCRIPT ] *****************
 	// **************************************************************
 	private static void fillScript(ConsoleParams params) {
-		fillScript(params,new LinkedList<>());
-	}
-	
-	private static void createTempTable(ConsoleParams params) {
-		params.getDslContext().execute("DROP TEMPORARY TABLE IF EXISTS `tempId`");
-		String sql =
-			"CREATE TEMPORARY TABLE `tempId` ("
-				+"`table_name` char(40) NOT NULL,"
-				+"`id` int(4) NOT NULL,"
-				+"PRIMARY KEY (`table_name`,`id`)"
-			+"  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;"
-		;
-		params.getDslContext().execute(sql);
-		log(params,"** IDs Temp table created!");
-	}
-
-	private static boolean isSearched(ConsoleParams params, Table<?> table, Integer fkId) {
-		return (params.getDslContext()
-			.select(TEMPID_ID)
-			.from(TEMPID)
-			.where(TEMPID_TABLE.eq(table.getName()))
-			.and(TEMPID_ID.eq(fkId))
-			.fetch()
-			.stream()
-			.map(r -> r.getValue(TEMPID_ID))
-			.findFirst()
-			.orElse(null) != null);
-	}
-	
-	private static void fillScript(ConsoleParams params, Deque<Table<?>> stack) {
 		List<Table<?>> tables = params.getSchema().getTables();
 		log(params,"** Generating tables script");
 		log(params,"** ------------------------");
 		tables.stream()
-			.filter(t -> t != null )
-			.forEach(t -> addTable(params, t, stack));
+			.filter(Objects::nonNull )
+			.forEach(t -> addTable(params, t));
 		log(params," [DONE!]");
 		log(params,"");
 	}
 
-	private static void addTable(ConsoleParams params, Table<?> table, Deque<Table<?>> stack) {
-		if (!params.getScript().containsKey(table.getName()) && !stack.contains(table)) {
-			@SuppressWarnings("unchecked")
-			Table<Record> tab = (Table<Record>) table.asTable();
-			stack.addFirst(table);
-			Stream.concat(
-				Arrays.stream(IsolateDomain.CUSTOM_FOREIGN_MAP.getOrDefault(table.getName(),new CustomForeignKey[]{}))
-					.map( CustomForeignKey::getForeignKey),
-				table.getReferences().stream())
-				.map(fk -> fk.getKey().getTable())
-				.forEach(t -> addTable(params, t, stack));
-			logf(params,".");
-			params.getScript().put(table.getName(),new ScriptTable(tab).setReferences( tab.getReferences()));
-			stack.removeFirst();
+	private static void addTable(ConsoleParams params, Table<?> table) {
+		@SuppressWarnings("unchecked")
+		Table<Record> tab = (Table<Record>) table.asTable();
+		ScriptTable scriptTable = new ScriptTable(tab)
+				.setReferences( tab.getReferences());
+		if ( tab.getPrimaryKey() != null) {
+			// Arriesgado!! Si la PK no es Integer --> FALLO!!!
+			scriptTable.setPrimaryKey((Field<Integer>) tab.getPrimaryKey().getFields().get(0));
 		}
+		HashSet<Field<?>> columns = new HashSet<>();
+		if (scriptTable.getReferences() != null) {
+			scriptTable
+				.getReferences()
+				.stream()
+				.flatMap( ref -> ref.getFields().stream() )
+				.forEach( columns::add)
+				;
+		}
+		
+		if (ConsoleUtils.CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
+			Arrays.stream( ConsoleUtils.CUSTOM_FOREIGN_MAP.get(table.getName()))
+				.map( CustomForeignKey::getInvolvedColumns )
+				.flatMap( arr -> Arrays.stream( arr ) ) 
+				.forEach(columns::add)
+			;
+			Arrays.stream( ConsoleUtils.CUSTOM_FOREIGN_MAP.get(table.getName()))
+				.map( CustomForeignKey::getForeignKey )
+				.flatMap( ref -> ref.getFields().stream() ) 
+				.forEach(columns::add)
+			;
+		}
+		scriptTable.setReferenceColumns(columns);	
+		params.getScript().put(table.getName(), scriptTable);
+		logf(params,".");
 	}
-
 
 	private static void checkTable(ConsoleParams params, ScriptTable t) {
 		if (hasDomain(t.getTable())) {
 			log(params,MessageFormat.format(" **** Checking {0} table:", t.getTableName()));
+			Field<Integer> pkField = getPrimaryKey(params, t.getTable());
 			SelectConditionStep<Record> select = params.getDslContext()
-				.select()
+				.select( pkField )
+				.select( t.getReferenceColumns() )
 				.from(t.getTable().asTable())
 				.where(getDomainField(t.getTable()).equal(params.getDomain()));
 			t.setRows(  params.getDslContext().fetchCount(select) );
@@ -219,8 +206,8 @@ public class CheckDomainIntegrity {
 			.filter(fk -> !DOMAIN_LABEL.equals(fk.getKey().getName()))
 			.forEach(fk -> checkForeignKey(params,fk,rec));
 		
-		if (IsolateDomain.CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
-			Arrays.stream( IsolateDomain.CUSTOM_FOREIGN_MAP.get(table.getName()))
+		if (ConsoleUtils.CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
+			Arrays.stream( ConsoleUtils.CUSTOM_FOREIGN_MAP.get(table.getName()))
 				.filter( en -> en.accept(table,rec))
 				.map( CustomForeignKey::getForeignKey)
 				.forEach(fk -> checkForeignKey(params,fk,rec)
@@ -245,8 +232,8 @@ public class CheckDomainIntegrity {
 				fkIntegerField = getFKIntegerField( fk );
 				fkIntegerId = rec.getValue(fkIntegerField);
 			}
-			if (fkIntegerId != null && !isSearched(params, toTable , fkIntegerId)) {
-				Field<Integer> toIdField = getPrimaryKey(toTable);
+			if (fkIntegerId != null) {
+				Field<Integer> toIdField = getPrimaryKey(params,toTable);
 				Field<Integer> toDomainField = getDomainField(toTable);
 				Record toRec = params.getDslContext().select(toDomainField)
 						.from(toTable)
@@ -265,22 +252,20 @@ public class CheckDomainIntegrity {
 				} else {
 					Integer toDomain = getDomainValue(toTable,toRec);
 					if (AonNumberUtils.equals(toDomain, params.getDomain())
-							|| (params.isInhertitanceEnabled() && AonNumberUtils.equals(toDomain, params.getParent()))
-							|| AonNumberUtils.equals(0, toDomain)
-							|| toDomain == null) {
+					|| (params.isInhertitanceEnabled() && AonNumberUtils.equals(toDomain, params.getParent()))
+					|| AonNumberUtils.equals(0, toDomain)
+					|| toDomain == null) {
 						
-						params.getDslContext().insertInto(TEMPID)
-						.set(TEMPID_TABLE, toTable.getName() )
-						.set(TEMPID_ID, fkIntegerId )
-						.execute();
+//						Record is fine
+						
 					} else {
 						params.addError(
 								MessageFormat.format("Tabla {0}: columna {1} -({2}) que referecia a la tabla {3} apunta al dominio {4}."
-										,fromTable.getName()
-										,((isStringFK)?fkStringField:fkIntegerField).getName()
-										,AonNumberUtils.toString( fkIntegerId )
-										,toTable.getName()
-										,AonNumberUtils.toString( toDomain))
+									,fromTable.getName()
+									,((isStringFK)?fkStringField:fkIntegerField).getName()
+									,AonNumberUtils.toString( fkIntegerId )
+									,toTable.getName()
+									,AonNumberUtils.toString( toDomain))
 								);
 					}
 				}
@@ -288,10 +273,9 @@ public class CheckDomainIntegrity {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static <T extends Record> TableField<T, Integer> getPrimaryKey(Table<T> table) {
-		TableField<T, ?> tableField = table.getPrimaryKey().getFields().get(0);
-		return (TableField<T, Integer>) tableField;
+	private static <T extends Record> Field<Integer> getPrimaryKey(ConsoleParams params, Table<T> table) {
+		return params.getScript().get(table.getName())
+				.getPrimaryKey();
 	}
 	
 	private static <T extends Record> Integer getDomainValue(Table<T> table, Record rec) {

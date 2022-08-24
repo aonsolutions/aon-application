@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.jooq.Field;
@@ -12,6 +13,7 @@ class ScriptTable {
 	private Table<Record> table;
 	private Field<Integer> primaryKey;
 	private List<ForeignKey<Record,?>> references;
+	private HashSet<Field<?>> referenceColumns;
 	private int rows;
 	private int currentRow;
 	private int percent;
@@ -37,6 +39,14 @@ class ScriptTable {
 	}
 	public ScriptTable setReferences(List<ForeignKey<Record,?>> references) {
 		this.references = references;
+		return this;
+	}
+	
+	public HashSet<Field<?>> getReferenceColumns() {
+		return referenceColumns;
+	}
+	public ScriptTable setReferenceColumns(HashSet<Field<?>> referenceColumns) {
+		this.referenceColumns = referenceColumns;
 		return this;
 	}
 	public int getRows() {

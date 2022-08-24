@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -12,11 +14,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
 public class DomainIntegrityCheck extends AonLayoutPanel {
@@ -31,12 +38,14 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 	private ConsoleModuleOptions options;
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
+	private String domainName;
 
 	public DomainIntegrityCheck(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
 
 		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+		this.addNorth(getDataPanel(), 100);
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
 	}
@@ -52,6 +61,53 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 		return toolbarPanel;
 	}
 	
+	private Widget getDataPanel() {
+		String host = Window.Location.getHost();
+		host = AonStringUtils.substringBefore(host, ":");
+		String mainDomain =  "." + AonStringUtils.substringAfter(host, ".");
+		
+		ScrollPanel scroll = new ScrollPanel();
+		scroll.setStyleName(AON.CSS.aonScrollArea());
+		AonDisplayTable table = new AonDisplayTable();
+		scroll.setWidget(table);
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		
+		FlowPanel firstPanel = new FlowPanel(); 
+		AonTextBox fullDomainName = new AonTextBox();
+		fullDomainName.setVisible(false);
+		fullDomainName.setVisibleLength(50);
+		fullDomainName.addValueChangeHandler( e -> domainName = fullDomainName.getValue());
+		AonTextBox firstDomainName = new AonTextBox();
+		firstDomainName.setVisibleLength(30);
+		firstDomainName.addValueChangeHandler( e -> domainName = firstDomainName.getValue() + mainDomain);
+		
+		InlineLabel secondDomainName = new InlineLabel(mainDomain);
+		secondDomainName.setStyleName(AON.CSS.aonMarginLeft());
+		secondDomainName.addStyleName(AON.CSS.aonBold());
+		firstPanel.add(fullDomainName);
+		firstPanel.add(firstDomainName);
+		firstPanel.add(secondDomainName);
+		
+		table.addRow()
+			.addCell(new Label("Nombre del dominio"))
+			.addCell( firstPanel )	
+		;
+	
+		CheckBox fullViewCheck = new CheckBox("Editar nombres enteros");
+		fullViewCheck.setStyleName(AON.CSS.aonMarginTop() );
+		fullViewCheck.addClickHandler(e -> {
+			boolean visible = fullViewCheck.getValue().booleanValue();
+			fullDomainName.setVisible(visible);
+			firstDomainName.setVisible(!visible);
+			secondDomainName.setVisible(!visible);
+		});
+		table.addRow()
+			.addCell(new Label())
+			.addCell( fullViewCheck )	
+		;
+		return scroll;
+	}
+
 	private void doIt() {
 		if (!running) {
 			running = true;
@@ -72,7 +128,7 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 					}
 				});
 				StringBuilder requestData = new StringBuilder();
-				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + options.getDomainName()  );
+				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + domainName );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
 				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
 				xhreq.send(requestData.toString());
