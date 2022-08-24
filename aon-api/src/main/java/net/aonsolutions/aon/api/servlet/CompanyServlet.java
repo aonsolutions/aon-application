@@ -314,7 +314,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				.forEach(c -> jsArray.put(CompanyJSON.toJSON(c).put(IJsonNames.SCHEMA, schema)));			
 		});
 
-		return new JSONArray();
+		return jsArray;
 	}
 	
 	
