@@ -87,7 +87,7 @@ public class ItemJSON {
 				.put(IJsonNames.PRICE, item.getPrice())
 				.put(IJsonNames.DESCRIPTION, item.getDescription())
 				.put(IJsonNames.SERIAL_NUMBER, item.getSerialNumber())
-				.put(IJsonNames.SERIAL_DATE, AonDateUtils.format(item.getSerialDate(), "dd/MM/yyyy"))
+				.put(IJsonNames.SERIAL_DATE, AonDateUtils.format(item.getSerialDate(), AonDateUtils.DATE_TIME_FORMAT_AUX))
 				.put(IJsonNames.BARCODE, item.getBarcode())
 				.put(IJsonNames.STATUS, item.getStatus() != null ? item.getStatus().name() : "")
 				.put(IJsonNames.PRODUCT, ProductJSON.toJSON(item.getProduct()))
