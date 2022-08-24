@@ -3,7 +3,7 @@ import { setValueName, sortBy, isEmptyObject } from "../../../../services/utils.
 import { setAttributes } from "../../../../services/utilsComponents.js";
 import { getPeriod, getStatus, getTaskHolderTimeControl } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
-import { EVENT_LIST_FILTER, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { EVENT_LIST_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
@@ -15,6 +15,7 @@ import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
+  FN_FILTER;
   static get observedAttributes() {
     return [];
   }
@@ -38,13 +39,23 @@ export class AonEventList extends AonElement {
     this.build();
   }
 
+  disconnectedCallback() {
+    this.applicationParentEl.removeEventListener("filterParent", this.FN_FILTER);
+  }
+
   initialize(){
     this.id = this.id || SIGNIN_VIEWS.AON_EVENT_LIST;
     this.TABLE_ID = this.id + "Table";
     this.TOOLBAR = this.id + "Toolbar";
+
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+
     this.applicationEl.addToolbarTitle("Resumen");
+
+    this.FN_FILTER = ()=> {
+      this.getTable();
+    }
   }
 
    build() {
@@ -52,10 +63,7 @@ export class AonEventList extends AonElement {
     this.buildToolbar();
     this.getTable();
 
-    const filterFn = ()=> {
-      this.getTable();
-    }
-    this.applicationParentEl.addEventListener("filterParent", filterFn);
+    this.applicationParentEl.addEventListener("filterParent", this.FN_FILTER);
   }
 
 
@@ -69,8 +77,13 @@ export class AonEventList extends AonElement {
     
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
+    
     let div = this.createElement(TAG.DIV);
-    if(this.isMobile()) div.className = CSS.AON_MOBILE_SUB_CONTENT;
+
+    if(this.isMobile()) {
+      div.className = CSS.AON_MOBILE_SUB_CONTENT;
+    }
+  
     div.appendChild(aonTable);
     this.appendChild(div);
   }
@@ -93,6 +106,14 @@ export class AonEventList extends AonElement {
       toolbarEl.removeButtons();
       if(!this.applicationParentEl.isEmployee()){
         toolbarEl.addButton2(ACTION.BACK, () => this.back());
+      }
+    }
+
+    if(!this.applicationParentEl.isEmployee()){
+      if(this.isMobile()){
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>this.aonEventAdd());
+      } else {
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>this.aonEventAdd());
       }
     }
 
@@ -336,6 +357,10 @@ export class AonEventList extends AonElement {
     if(newData.end_date) parent.DATE_TMP = {...parent.DATE_TMP, endDate:AonDateUtils.formatDateOrigin(newData.end_date)};
     parent.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, newData);
   }
+
+  aonEventAdd(){
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, {date: new Date()});
+  }  
 
   back(){
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
