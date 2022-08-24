@@ -23,9 +23,11 @@ import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
@@ -83,6 +85,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getCompanies(api));
+				break;
+			case "/domain":
+				response(req, resp, getDomainCompanies(api));
 				break;
 			case "/one":
 				response(req, resp, getCompany(api));
@@ -274,16 +279,16 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONArray getCompanies(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
-		if(api.getData().opt("parent") != null && api.getData().optBoolean("parent")) {
-			AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getDomainParentProperty().eq(api.getDomain().getId()),
+		if((JsonUtils.has(api.getData(), IJsonNames.PARENT) && JsonUtils.getboolean(api.getData(), IJsonNames.PARENT))
+				|| JsonUtils.has(api.getData(), IJsonNames.DOCUMENT)) {
+			AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> companyFilter(api, f),
 				api.getData().optInt(IJsonNames.PAGE), api.getData().optInt(IJsonNames.PER_PAGE))
 			.forEach(c -> jsArray.put(CompanyJSON.toJSON(c)));
 		} else {
 			List<String> schemas = AONContext.getSchemas();
 		
 			for(String schema : schemas) {
-				LinkedList<Integer> ds = new LinkedList<>();
+				LinkedList<Integer> ds = new LinkedList<>();	
 				AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, null, null)
 				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
 						ac -> {
@@ -296,6 +301,40 @@ public class CompanyServlet extends AonApiHttpServlet{
 		}
 		return jsArray;
 	}
+	
+	private JSONArray getDomainCompanies(AonApiData api) {
+		JSONArray jsArray = new JSONArray();
+
+		List<String> schemas = AONContext.getSchemas();
+		
+		schemas.stream().forEach(schema -> {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			AON.getCompanyStream(domain, 0, "", f -> companyFilter(api, f),
+					api.getData().optInt(IJsonNames.PAGE), api.getData().optInt(IJsonNames.PER_PAGE))
+				.forEach(c -> jsArray.put(CompanyJSON.toJSON(c).put(IJsonNames.SCHEMA, schema)));			
+		});
+
+		return new JSONArray();
+	}
+	
+	
+	
+	private Filter companyFilter(AonApiData api, CompanyProperties f) {
+		JSONObject json = api.getData();
+		Filter filter = null;
+
+		if(JsonUtils.has(json, IJsonNames.PARENT) && JsonUtils.getboolean(json, IJsonNames.PARENT)) {
+			filter = f.getDomainParentProperty().eq(api.getDomain().getId());
+		}
+
+		if(JsonUtils.has(json, IJsonNames.DOCUMENT) && AonStringUtils.isNotBlank(JsonUtils.getString(json, IJsonNames.DOCUMENT))) {
+			Filter aux = f.getDocumentProperty().eq(JsonUtils.getString(json, IJsonNames.DOCUMENT));
+			filter = filter != null ? filter.and(aux) : aux;
+		}
+		
+		return filter;
+	}
+	
 	
 	private JSONObject getCompany(AonApiData api) {
 		Company company =  api.getData().opt("id") != null

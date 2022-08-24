@@ -58,14 +58,9 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== CONSOLE
 	//
 	private enum ConsoleEntryPoint {
-		DomainIntegrityCheck {
+		ConsoleModule {
 			void run() {
-				com.esferalia.aon.gwt.fiscal.client.console.DomainIntegrityCheck.run();
-			}
-		},
-		DomainIsolate{
-			void run() {
-				com.esferalia.aon.gwt.fiscal.client.console.DomainIsolate.run();
+				com.esferalia.aon.gwt.fiscal.client.console.ConsoleModule.run();
 			}
 		},
 		;

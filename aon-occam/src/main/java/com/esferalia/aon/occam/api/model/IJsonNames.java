@@ -419,6 +419,7 @@ public final class IJsonNames {
 	public static final String SALES_ACCOUNT  = "salesAccount";
 	public static final String SALES_DETAIL = "salesDetail";
 	public static final String SALES_RATIO = "salesRatio";
+	public static final String SCHEMA = "schema";
 	public static final String SCOPE = "scope";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
