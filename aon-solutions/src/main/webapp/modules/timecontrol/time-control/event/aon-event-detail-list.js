@@ -48,8 +48,10 @@ export class AonEventDetailList extends AonElement {
     this.id = this.id || SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST;
     this.TABLE_ID = this.id + "Table";
     this.TOOLBAR = this.id + "Toolbar";
+
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    
     this.applicationEl.addToolbarTitle("Detalle");
     this.applicationParentEl.periodSideNavDisplay(true);
   }
@@ -272,6 +274,7 @@ export class AonEventDetailList extends AonElement {
   }
 
   aonEvent(el, data) {
+    console.log(data);
     if (el && iconAddLocation === el.target.textContent) {
       this.applicationParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, {coordinates:data.coordinates});
     } else {
