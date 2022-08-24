@@ -17,3 +17,14 @@
     content: attr(placeholder);
     color: #555;
 }
+
+.contentEditable::-webkit-scrollbar {
+    display: none;
+}
+.additionalElementsDropdown::-webkit-scrollbar {
+    display: none;
+}
+
+.additionalElementsDropdown {
+    scrollbar-width: none;
+}

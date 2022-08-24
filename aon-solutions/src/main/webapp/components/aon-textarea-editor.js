@@ -37,6 +37,9 @@ export class AonTextareaEditor extends AonElement {
 
     #htmlMode;
 
+    #extraElements
+    #timeoutResize;
+
     static get observedAttributes() {
         return ['text-area-background', 'text-area-hover-background', 'bar-background', 'placeholder', 'disabled', 'bar-position', 'bar-integrated', "id"];
     }
@@ -283,6 +286,40 @@ export class AonTextareaEditor extends AonElement {
         if (!this.id) {
             this.id = Math.random().toString(36).substring(7);
         }
+
+        this.resizeBar();
+    }
+
+    resizeBar() {
+
+        let remaining = this.bar.querySelector(".additionalElements");
+        if (remaining) {
+            if (this.#extraElements) {
+                let last = this.bar.lastChild;
+                Array.from(this.#extraElements).forEach(elem => this.bar.appendChild(elem));
+                this.bar.appendChild(last);
+            }
+            remaining.remove();
+        }
+
+        let children = Array.from(this.bar.children);
+        
+        if (children.length > 1) {
+            let firstChild = children[0];
+            
+            let rect = firstChild.getBoundingClientRect();
+            let firstY = rect.bottom;
+            for (let i=1; i<children.length - 1; i++) {
+                let element = children[i];
+                rect = element.getBoundingClientRect();
+                let currentY = rect.bottom;
+                if (Math.abs(currentY - firstY) > 10) {
+                    let firstAdditionalElementIndex = i - 1;
+                    this.createAdditionalDropdown(firstAdditionalElementIndex);
+                    break;
+                }
+            }
+        }
     }
 
     disconnectedCallback() {
@@ -387,6 +424,7 @@ export class AonTextareaEditor extends AonElement {
         box.id = "textBox";
         box.classList.add("contentEditable");
         box.contentEditable = true;
+        box.style.minHeight = "2em";
         box.style.margin = 0;
         box.style.padding = "5px";
         box.style.width = "100%";
@@ -462,7 +500,7 @@ export class AonTextareaEditor extends AonElement {
         container.classList.add("material-icons");
         container.style.width = "1em";
         container.style.height = "1em";
-        container.style.margin = `${this.elementMarginY} ${this.elementMarginX}`;
+        // container.style.margin = `${this.elementMarginY} ${this.elementMarginX}`;
         container.style.borderRadius = "5px";
         container.innerHTML = materialIcon;
         container.style.cursor = "pointer";
@@ -590,6 +628,49 @@ export class AonTextareaEditor extends AonElement {
         return dropdown;
     }
 
+    createAdditionalDropdown(firstAdditionalElementIndex) {
+
+
+        let children = Array.from(this.bar.children);
+        let lastChild = children[children.length - 1];
+
+        this.#extraElements = children.slice(firstAdditionalElementIndex, children.length - 1);
+
+        let dropdown = document.createElement("div");
+        dropdown.style.boxShadow = "0 0 10px 0 rgba(0,0,0,0.2)";
+        dropdown.style.zIndex = "999";
+        // dropdown.style.fontFamily = "Arial";
+        dropdown.style.position = "absolute";
+
+        dropdown.style.width = "200%";
+        dropdown.style.display = "flex";
+        dropdown.style.flexWrap = "wrap";
+        dropdown.style.justifyContent = "center";
+        dropdown.style.rowGap = "2px";
+        dropdown.style.padding = "2px 0";
+        dropdown.style.maxHeight = "200px";
+        dropdown.style.overflowY = "scroll";
+        dropdown.style.overflowX = "hidden";
+
+
+        dropdown.style.backgroundColor = "white";
+        dropdown.style.borderRadius = "5px";
+        dropdown.classList.add("additionalElementsDropdown");
+
+
+
+        dropdown.style.bottom = "1.75em";
+
+        this.#extraElements.forEach(elem => dropdown.appendChild(elem));
+
+        let additional = this.commonSelector("", dropdown);
+        additional.classList.add("additionalElements");
+
+        this.bar.appendChild(additional);
+        this.bar.appendChild(lastChild);
+        
+    }
+
     fontFamilyDrop() {
         return this.dropdown({
             "Arial": {name: "Arial", fontFamily: "Arial"},
@@ -625,7 +706,8 @@ export class AonTextareaEditor extends AonElement {
             selector.style.background = "none";
             selector.style.textOverflow = "ellipsis";
             selector.style.height = "1.5em";
-            selector.style.margin = `${this.elementMarginY} ${this.elementMarginX}`;
+            // selector.style.margin = `${this.elementMarginY} ${this.elementMarginX}`;
+            selector.classList.add("commonSelector");
     
             this.unselectable(selector);
             
@@ -639,12 +721,23 @@ export class AonTextareaEditor extends AonElement {
             selector.appendChild(drop);
             let options = dropdownElement;
             
-    
-            selector.addEventListener("click", () => {
+            [icon, drop].forEach(el => el.style.fontSize = "20px");
+
+
+            selector.addEventListener("click", (ev) => {
                 if (options.parentElement !== selector) {
                     selector.appendChild(options);
+                    let selParent = selector.parentElement;
+                    if (selParent.classList.contains("additionalElementsDropdown")) {
+
+                    }
                 } else {
-                    selector.removeChild(options);
+                    let clickedEl = ev.target;
+
+                    if (!(clickedEl.classList.contains("commonSelector") || (clickedEl.parentElement.classList.contains("commonSelector") && clickedEl.parentElement !== selector))) {
+                        selector.removeChild(options);
+                    }
+                    
                 }
             });
 
@@ -661,8 +754,20 @@ export class AonTextareaEditor extends AonElement {
                 event: "click",
                 listener: windowListener
             });
+            let resizeListener = ev => {
+                clearTimeout(this.#timeoutResize);
+                this.#timeoutResize = setTimeout(() => {
+                    if (this.bar) {
+                        this.resizeBar();
+                    }
+                }, 50);
+
+            };
+            window.addEventListener("resize", resizeListener);
+
             return selector;
     }
+
 
     fontSizeSelector() {
         return this.commonSelector("format_size", this.fontSizeDrop());
@@ -1041,17 +1146,21 @@ export class AonTextareaEditor extends AonElement {
     }
 
     appendElements(bar) {
-        if (this.elementFilter.undo) {
-            bar.appendChild(this.ELEMENTS.undoEl);
-        }
-        if (this.elementFilter.redo) {
-            bar.appendChild(this.ELEMENTS.redoEl);
-        }
         if (this.elementFilter.font) {
             bar.appendChild(this.ELEMENTS.fontSel);
         }
         if (this.elementFilter.fontSize) {
             bar.appendChild(this.ELEMENTS.fontSizeSel);
+        }
+        if (this.elementFilter.alignment) {
+            bar.appendChild(this.ELEMENTS.alignmentEl);
+        }
+        if (this.elementFilter.undo) {
+            bar.appendChild(this.ELEMENTS.undoEl);
+        }
+
+        if (this.elementFilter.redo) {
+            bar.appendChild(this.ELEMENTS.redoEl);
         }
         if (this.elementFilter.bold) {
             bar.appendChild(this.ELEMENTS.boldEl);
@@ -1067,9 +1176,6 @@ export class AonTextareaEditor extends AonElement {
         }
         if (this.elementFilter.backgroundColor) {
             bar.appendChild(this.ELEMENTS.backgroundColorEl);
-        }
-        if (this.elementFilter.alignment) {
-            bar.appendChild(this.ELEMENTS.alignmentEl);
         }
         if (this.elementFilter.orderedList) {
             bar.appendChild(this.ELEMENTS.orderedListEl);
@@ -1124,6 +1230,7 @@ export class AonTextareaEditor extends AonElement {
         bar.style.width = "fit-content";
         bar.style.position = "relative";
         bar.style.overflow = this.#disabled ? "hidden" : "";
+        bar.style.columnGap = "3px";
         
         this.unselectable(bar);
         
