@@ -312,6 +312,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	
 	private JSONObject save(AonApiData api, TaskHolder taskHolder) {
 		JSONObject params = api.getData();
+		validateSave(params, taskHolder);
+		
 		Coordinates coordinates = new Coordinates(params.optString("coordinates"));
 	
 		Date date = !params.optString(IJsonNames.DATE).isEmpty() ?  new Date(params.optLong(IJsonNames.DATE)) : new Date();
@@ -328,9 +330,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setCoordinates(coordinates)
 				.setDate(date)
 				.setLocation(lc)
-				.setComments(params.optString("comments"))
+				.setComments(params.optString(IJsonNames.COMMENTS))
 				.setStatus(TimeControlStatus.safeValueOf(params.optString(IJsonNames.STATUS)));
-		
+	
 		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), api.getUser().getLogin(), tcd).toJSON();
 	}
 	
@@ -374,4 +376,11 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return file;
 	}
 	
+	private void validateSave(JSONObject params, TaskHolder taskHolder) {
+		if(params.isNull(IJsonNames.STATUS)) {
+			throw new AonApiException("Estado requerido");
+		} else if( !(taskHolder!=null && taskHolder.getId()!=null) ){
+			throw new AonApiException("Empleado requerido");
+		}
+	}
 }
