@@ -17,7 +17,8 @@ export class AonRssAdd extends AonElement {
   TITLE;
   TOOLBAR;
   START_DATE;
-  nvedAttributes() {
+  news;
+  static get observedAttributes() {
     return [CONSTANT.DATA];
   }
 
@@ -83,9 +84,9 @@ export class AonRssAdd extends AonElement {
   paintView() {
     const {cardOne, cardTwo} = RssAddUtils.createForm(this.id, this);
 
-    RssAddUtils.createRssForm(cardOne.getContent(), this);
+    RssAddUtils.createRssForm(cardOne.getContent(), this.news);
 
-    RssAddUtils.createEditor(cardTwo.getContent(), this);
+    RssAddUtils.createEditor(cardTwo.getContent(), this.news);
   }
 
 
@@ -114,32 +115,27 @@ export class AonRssAdd extends AonElement {
     }
   }
 
-  getForm(){
-    let form = document.getElementById(this.id+"Form");
-    if(form){
-      const formSerialize = serializeForm(form);
-      let content = form.querySelector("#aonTextAreaEditor").value;
-      return { ...formSerialize, content };
-    }
-    return null;
-  }
-
   async openRss(){
     try {
       let rss = await getRss();
       RssAddUtils.openRss(rss);
     } catch (error) {
-      console.log(error);
       this.showError(error);
     }
   }
 
   async save(){
-    let form = this.getForm();
-    if(form){
-      const resp = await saveNews(form);
+    this.applicationEl.startLoading();
+
+    try {
+      const resp = await saveNews(this.news);
       console.log(resp);
+    } catch (error) {
+      console.log(error);
+      this.showError(error);
     }
+
+    this.applicationEl.stopLoading();  
   }
 }
 

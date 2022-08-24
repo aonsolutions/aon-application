@@ -23,23 +23,29 @@ export class News {
 	
     constructor(news) {
         if(news) {
-            this.id = news.id;
-            this.domain = new Domain(news.domain);
-            this.title = news.title;
-            this.description = news.description;
-            this.content = news.content;
-            this.url = news.url;
-            this.active = news.active;
-            this.rss = news.rss;
-            this.initDate = news.initDate;
-            this.endDate = news.endDate;
-            this.category = news.category;
-            this.type = news.type;
-            this.scope = news.scope;
+            this.setNews(news);
         } else {
             this.domain = new Domain();
-            this.type = NewsType.NEWS;
+            this.type   = NewsType.NEWS;
+            this.active = true;
+            this.rss    = false;
         }
+    }
+
+    setNews(news){
+        this.id = news.id;
+        this.domain = new Domain(news.domain);
+        this.title = news.title;
+        this.description = news.description;
+        this.content = news.content;
+        this.url = news.url;
+        this.active = news.active;
+        this.rss = news.rss;
+        this.initDate = news.initDate;
+        this.endDate = news.endDate;
+        this.category = news.category;
+        this.type = news.type;
+        this.scope = news.scope;
     }
 
     getId() {
@@ -48,7 +54,6 @@ export class News {
 
     setId(id) {
         this.id = id; 
-        return this;
     }
 
     getDomain() {
@@ -57,7 +62,6 @@ export class News {
 
     setDomain(domain) {
         this.domain = domain; 
-        return this;
     }
 
     getTitle() {
@@ -66,7 +70,6 @@ export class News {
         
     setTitle(title) {
         this.title = title; 
-        return this;
     }
 
     getDescription(){
@@ -75,7 +78,6 @@ export class News {
 
     setDescription(description){
         this.description = description;
-        return this;
     }
 
     getContent(){
@@ -84,7 +86,6 @@ export class News {
 
     setContent(content){
         this.content = content;
-        return this;
     }
     
     getUrl(){
@@ -93,7 +94,6 @@ export class News {
 
     setUrl(url){
         this.url = url;
-        return this;
     }
 
     getActive(){
@@ -102,7 +102,6 @@ export class News {
 
     setActive(active){
         this.active = active;
-        return this;
     }
 
     getRss(){
@@ -111,7 +110,6 @@ export class News {
 
     setRss(rss){
         this.rss = rss;
-        return this;
     }
 
     getInitDate(){
@@ -120,7 +118,6 @@ export class News {
 
     setInitDate(initDate){
         this.initDate = initDate;
-        return this;
     }
 
     getEndDate(){
@@ -129,7 +126,6 @@ export class News {
 
     setEndDate(endDate){
         this.endDate = endDate;
-        return this;
     }
 
     getCategory(){
@@ -138,7 +134,6 @@ export class News {
 
     setCategory(category){
         this.category = category;
-        return this;
     }
 
     getType(){
@@ -147,7 +142,6 @@ export class News {
 
     setType(type){
         this.type = type;
-        return this;
     }
 
     getScope(){
@@ -156,7 +150,6 @@ export class News {
 
     setScope(scope){
         this.scope = scope;
-        return this;
     }
         
 }

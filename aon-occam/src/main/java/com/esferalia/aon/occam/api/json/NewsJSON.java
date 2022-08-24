@@ -10,8 +10,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.news.NewsType;
-import com.esferalia.aon.occam.api.model.registry.Category;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class NewsJSON {
@@ -34,11 +32,11 @@ public class NewsJSON {
 			.setUrl(json.optString(IJsonNames.URL))
 			.setActive(json.optBoolean(IJsonNames.ACTIVE))
 			.setRss(json.optBoolean(IJsonNames.RSS))
-			.setInitDate(!json.optString("init_date").isEmpty() ? AonDateUtils.parse(json.optString("init_date"), FORMAT_DATE) : null)
-			.setEndDate(!json.optString("end_date").isEmpty() ? AonDateUtils.parse(json.optString("end_date"), FORMAT_DATE) : null)
+			.setInitDate(!json.optString("initDate").isEmpty() ? AonDateUtils.parse(json.optString("initDate"), FORMAT_DATE) : null)
+			.setEndDate(!json.optString("endDate").isEmpty() ? AonDateUtils.parse(json.optString("endDate"), FORMAT_DATE) : null)
 			.setType( NewsType.safeValueOf(json.optString(IJsonNames.TYPE))) 
-			.setCategory(json.optInt(IJsonNames.CATEGORY)!=0 ? new Category().setId(json.optInt(IJsonNames.CATEGORY)) : null)
-			.setScope(json.optInt(IJsonNames.SCOPE)!=0 ? new Scope().setId(json.optInt(IJsonNames.SCOPE)) : null )
+			.setCategory(!json.optString(IJsonNames.CATEGORY).isEmpty() ? CategoryJSON.fromJSON(json.optJSONObject(IJsonNames.CATEGORY)) : null)
+			.setScope(!json.optString(IJsonNames.SCOPE).isEmpty() ? ScopeJSON.fromJSON(json.optJSONObject(IJsonNames.SCOPE))  : null )
 			;
 	}
 	

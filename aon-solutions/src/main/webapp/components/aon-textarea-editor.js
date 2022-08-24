@@ -642,7 +642,7 @@ export class AonTextareaEditor extends AonElement {
         // dropdown.style.fontFamily = "Arial";
         dropdown.style.position = "absolute";
 
-        dropdown.style.width = "200%";
+        dropdown.style.minWidth = "95px";
         dropdown.style.display = "flex";
         dropdown.style.flexWrap = "wrap";
         dropdown.style.justifyContent = "center";

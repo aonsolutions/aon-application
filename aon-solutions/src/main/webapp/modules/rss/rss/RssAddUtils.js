@@ -1,5 +1,5 @@
 import { CreateComponent } from "../../../components/CreateComponent.js";
-import { CONSTANT, CSS, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, CSS, MSG, TAG, EVENT } from "../../../environments/environments.js";
 import { createDiv, setAttributes } from "../../../services/utilsComponents.js";
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { AonTextareaEditor } from "../../../components/aon-textarea-editor.js";
@@ -82,7 +82,7 @@ const buildRssView = (json) => {
         resTexto.innerHTML = item.description;
         resRespuesta.appendChild(resTexto);
 
-        resTitulo.addEventListener("click", ()=>{
+        resTitulo.addEventListener(EVENT.CLICK, ()=>{
             const display = resTexto.style.display;
             resTexto.style.display = display === "none" ? "block" : "none";
         });
@@ -199,13 +199,13 @@ const formatPublishedDateForDateTime = (dateString) => {
     const timestamp = Date.parse(dateString);
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${addLeadingZero(date.getMonth() + 1)}-${date.getDate()}`;
-  };
+};
   
-  const formatPublishedDateForDisplay = (dateString) => {
+const formatPublishedDateForDisplay = (dateString) => {
     const timestamp = Date.parse(dateString);
     const date = new Date(timestamp);
     return `${date.getDate()} ${getMonthStringFromInt(date.getMonth())} ${date.getFullYear()}`;
-  };
+};
   
 
 const addLeadingZero = (num) => {
@@ -259,10 +259,9 @@ const createForm = (id, parent) => {
     }
 }
 
-const createRssForm = (parent, aonRssAdd) => {
-    // const 
+const createRssForm = (parent, news) => {
+   
     let divC;
-
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
     CreateComponent.createAonSelect({
@@ -274,10 +273,11 @@ const createRssForm = (parent, aonRssAdd) => {
             autocomplete: CONSTANT.OFF
         },
         events:{
-            
+            change: ({target}) => {
+                news.setCategory(target.getDetail());
+            }
         }
     }, divC.element);
-
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
@@ -288,9 +288,13 @@ const createRssForm = (parent, aonRssAdd) => {
             title:MSG.SCOPE,
             default:CONSTANT.TRUE,
             autocomplete: CONSTANT.OFF
+        },
+        events:{
+            change: ({target}) => {
+                news.setScope(target.getDetail());
+            }
         }
     }, divC.element);
-
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
@@ -299,9 +303,13 @@ const createRssForm = (parent, aonRssAdd) => {
             name:"title",
             id:"title",
             description:MSG.TITLE,
+        },
+        events:{
+            keyup: ({target}) => {
+                news.setTitle(target.value);
+            }
         }
     }, divC.element);
-
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
@@ -311,7 +319,10 @@ const createRssForm = (parent, aonRssAdd) => {
         title: MSG.DESCRIPTION
     });
     divC.appendChild(descriptionEl);
-  
+    
+    descriptionEl.addEventListener(EVENT.KEYUP, ({target})=>{
+        news.setDescription(target.value);
+    });
 
     divC = createDiv({classes:[CSS.AON_COL_XS_6]})
     divC.appendTo(parent);
@@ -320,6 +331,11 @@ const createRssForm = (parent, aonRssAdd) => {
             name:"init_date", 
             id:"init_date", 
             title:MSG.START_DATE
+        },
+        events:{
+            change: ({target}) => {
+                news.setInitDate(target.value);
+            }
         }
     }, divC.element);
 
@@ -330,18 +346,13 @@ const createRssForm = (parent, aonRssAdd) => {
             name:"end_date", 
             id:"end_date", 
             title:MSG.END_DATE
+        },
+        events:{
+            change: ({target}) => {
+                news.setEndDate(target.value);
+            }
         }
     }, divC.element);
-
-    CreateComponent.createAonInput({
-        attributes:{
-            name:"type",
-            id:"type",
-            value:"news",
-            hidden:true
-        }
-    }, divC.element);
-
 
     divC = createDiv({classes:[CSS.AON_COL_XS_6]})
     divC.appendTo(parent);
@@ -350,6 +361,11 @@ const createRssForm = (parent, aonRssAdd) => {
             name:"active",
             title: MSG.ACTIVE, 
             checked:true
+        },
+        events:{
+            change: ({target}) => {
+                news.setActive(target.checked);
+            }
         }
     }, divC.element);
 
@@ -360,14 +376,24 @@ const createRssForm = (parent, aonRssAdd) => {
             name:"rss",
             title: "Publicar RSS", 
             checked:false
+        }, 
+        events:{
+            change: ({target}) => {
+                news.setRss(target.checked);
+            }
         }
     }, divC.element);
 }
 
-const createEditor = (parent, aonRssAdd) =>{
+const createEditor = (parent, news) =>{
     const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
         id:"aonTextAreaEditor",
         placeholder:MSG.DESCRIPTION,
+    });
+    aonTextAreaEditor.style.height = "8em";
+
+    aonTextAreaEditor.addEventListener(EVENT.KEYUP, ()=>{
+        news.setContent(aonTextAreaEditor.value);
     });
     
     parent.appendChild(aonTextAreaEditor);
