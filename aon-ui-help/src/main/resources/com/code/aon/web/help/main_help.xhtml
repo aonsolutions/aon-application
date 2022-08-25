@@ -219,7 +219,9 @@
 			</aon:div>
 		
 		</aon:div>
-		<ui:include src="./facelet/faqs.xhtml" />	
+		<aon:if test="#{help.getCurrentFaqs().size() > 0}">
+				<ui:include src="./facelet/faqs.xhtml" />
+		</aon:if>	
 	</aon:div>
 
 </ui:composition>
