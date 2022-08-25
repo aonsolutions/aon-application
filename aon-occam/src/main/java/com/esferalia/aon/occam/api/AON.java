@@ -4802,7 +4802,9 @@ public class AON {
 		return getSeller(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
 	// ------------------------------------- CATEGORY
-
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.getCategory
+	 */
 	public static Category getCategory(String domainName, Integer domainId,
 			String login, Integer categoryId) {
 		CloseableAONContext ctx = null;
@@ -4815,6 +4817,9 @@ public class AON {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.getCategoryStream
+	 */
 	public static Stream<Category> getCategoryStream(String domainName, Integer domainId, String login, CategoryFilter filter) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4826,6 +4831,9 @@ public class AON {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.saveCategory
+	 */
 	public static Category insertCategory(String domainName, Integer domainId, String login, Category category ) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4837,7 +4845,9 @@ public class AON {
 		}
 	}
 	
-
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.saveCategory
+	 */
 	public static Category updateCategory(String domainName, Integer domainId, String login, Category category ) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4850,6 +4860,9 @@ public class AON {
 	}
 	
 
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.deleteCategory
+	 */
 	public static Category deleteCategory(String domainName, Integer domainId, String login, Integer categoryId ) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4862,6 +4875,9 @@ public class AON {
 	}
 
 
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.getCategoryStream
+	 */
 	public static LinkedList<Category> getCategoryList(String domainName,
 			Integer domainId, String login) {
 		CloseableAONContext ctx = null;

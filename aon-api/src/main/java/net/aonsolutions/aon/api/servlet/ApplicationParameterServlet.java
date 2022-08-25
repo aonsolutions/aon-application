@@ -145,7 +145,6 @@ public class ApplicationParameterServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {
 		Domain domain = api.getDomain();
 		JSONObject params = api.getData();

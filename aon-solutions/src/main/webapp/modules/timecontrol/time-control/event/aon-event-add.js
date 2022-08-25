@@ -5,7 +5,7 @@ import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import { createFormEvent, createCardEvent } from "../../createComponent.js";
-import { createToolbar } from "../../../notification/createComponent.js";
+import { CreateComponent } from "../../../../components/CreateComponent.js";
 import { AonMessenger } from "../../../messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../../../messenger/MessengerEnums.js";
 import { AON_TAGS } from "../../../../environments/aonTag.js";
@@ -68,9 +68,9 @@ export class AonEventAdd extends AonElement {
   }
 
   paintView() {
-    
-    createToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
 
+    CreateComponent.createAonToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
+  
     createFormEvent(this.id, this);
 
     this.applicationEl.removeToolbarOptions();

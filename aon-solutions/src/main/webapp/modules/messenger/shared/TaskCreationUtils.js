@@ -180,10 +180,11 @@ const createMessageBox = (properties) =>{
       me: properties.direction == MESSENGER_DIRECTION.RIGHT ? true : false
     }
   }).element;
-  if(properties.direction == MESSENGER_DIRECTION.RIGHT)
+  if(properties.direction == MESSENGER_DIRECTION.RIGHT){
     component.style.marginLeft = "auto";
-  else 
+  } else {
     component.style.marginRight = "auto";
+  }
 
   return component;
 } 
@@ -599,7 +600,6 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
     parentElement = action.element;
   }
 
-
   const message = createMessageBox(properties);
   parentElement.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
@@ -681,6 +681,7 @@ const createSectionComment = (div) => {
       overflow:"hidden",
       flex: 1
     });
+    
     aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
     divMain.appendChild(aonTextArea);
     aonTextArea.height = "45px";

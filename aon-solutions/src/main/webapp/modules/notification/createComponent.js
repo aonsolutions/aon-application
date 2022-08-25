@@ -1,12 +1,5 @@
-import { AonCard } from "../../components/aon-card.js";
-import { AonDate } from "../../components/aon-date.js";
-import { AonIconButton } from "../../components/aon-icon-button.js";
-import { AonInput } from "../../components/aon-input.js";
-import { AonNumber } from "../../components/aon-number.js";
-import { AonSelect } from "../../components/aon-select.js";
-import { AonToolbar } from "../../components/aon-toolbar.js";
 import { CSS, TAG } from "../../environments/environments.js";
-import { createDiv, createSpan, newComponent, setAttributes, setClasses, setEvents } from "../../services/utilsComponents.js";
+import { createDiv, createSpan, newComponent } from "../../services/utilsComponents.js";
 
 export const createUl = (id) => newComponent({
   id,
@@ -89,17 +82,6 @@ export const createSpanFloat = () => createSpan({
   }
 });
 
-export const createForm = (id="form") => newComponent({
-  type:TAG.FORM,
-  id,
-  attributes:{
-    action: "#"
-  },
-  events:{
-    submit: (ev)=>  ev.preventDefault()
-  }
-});
-
 export const createBadge = (id) => createSpan({
   id,
   styles:{
@@ -114,94 +96,3 @@ export const createBadge = (id) => createSpan({
     fontWeight: 800,
   }
 });
-
-/**
- * 
- * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
- * @returns 
- */
-export const createSelect = ({attributes, events}, parent) => {
-  
-  if(attributes.options && typeof attributes.options !== "string") {
-    attributes.options = JSON.stringify(attributes.options);
-  }
-
-  let select = setAttributes(new AonSelect(), attributes);
-
-  setClasses(select,[CSS.TRANSITION_CASCADE]);
-
-  if(events) setEvents(select, events);
-  
-  parent.appendChild(select);
-
-  return select;
-}
-
-/**
- * 
- * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
- * @returns 
- */
-export const createInput = ({attributes, events}, parent) => {
-  let input = setAttributes(new AonInput(), attributes);
-  if(events) setEvents(input, events);
-  parent.appendChild(input);
-  return input;
-}
-
-/**
- * 
- * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
- * @returns 
- */
- export const createNumber = ({attributes, events}, parent) => {
-  let input = setAttributes(new AonNumber(), attributes);
-  if(events) setEvents(input, events);
-  parent.appendChild(input);
-  return input;
-}
-
-/**
- * 
- * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
- * @returns 
- */
-export const createIconButton = ({attributes, events}, parent) => {
-  let icon = setAttributes(new AonIconButton(), attributes);
-  if(events) setEvents(icon, events);
-  parent.appendChild(icon);
-  return icon;
-}
-
-/**
- * 
- * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
- * @returns 
- */
- export const createDate = ({attributes, events}, parent) => {
-  let date = setAttributes( new AonDate(), attributes);
-  if(events) setEvents(date, events);
-  parent.appendChild(date);
-  return date;
-}
-
-export const createCard = (attributes, parent) => {
-  const aonCard = setAttributes(new AonCard(), {
-      ...attributes,
-      flex:"true"
-  });
-  parent.appendChild(aonCard);
-  return aonCard;
-}
-
-
-export const createToolbar= (attributes, parent) => {
-  let toolbar = setAttributes( new AonToolbar(), attributes);
-  parent.appendChild(toolbar);
-  return toolbar;
-}

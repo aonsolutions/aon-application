@@ -78,37 +78,41 @@ import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 public class RegistryImpl implements IRegistry{
 	
 	// ------------------------------------- CATEGORY
-	
+	@Deprecated 
 	@Override
 	public Category getCategory(AONContext ctx, Integer categoryId) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getCategory(ctx, categoryId));
 	}
 
+	@Deprecated
 	@Override
 	public Category insertCategory(AONContext ctx, Category category) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertCategory(ctx, category));
 	}
 	
+	@Deprecated
 	@Override
 	public Category updateCategory(AONContext ctx, Category category) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.updateCategory(ctx, category));
 	}
-
+	@Deprecated
 	@Override
 	public Category deleteCategory(AONContext ctx, Integer categoryId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.deleteCategory(ctx, categoryId));
 	}
 	
+	@Deprecated
 	@Override
 	public LinkedList<Category> getCategoryList(AONContext ctx) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getCategoryList(ctx));
 	}
 	
+	@Deprecated
 	@Override
 	public Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter) {
 		return 	ctx.getDslContext().transactionResult(

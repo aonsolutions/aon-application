@@ -169,13 +169,19 @@ public class RegistryOldDAO {
 
 	}
 	
+	
+	/**
+	 * @deprecated  
+	 */
 	public static Category getCategory(AONContext ctx, Integer categoryId){
 		return ctx.getDslContext()
 				.select().from(CATEGORY).where(CATEGORY.ID.eq(categoryId)).limit(1)
 				.fetchInto(CATEGORY).stream().map(new FullCategoryFiller()).findFirst().orElse(new Category());
 	}
 	
-	
+	/**
+	 * @deprecated  
+	 */
 	public static Category insertCategory(AONContext ctx, Category category){
 		CategoryRecord cr = ctx.getDslContext()
 				.insertInto(CATEGORY)
@@ -186,6 +192,9 @@ public class RegistryOldDAO {
 		return new FullCategoryFiller().apply(cr);
 	}
 	
+	/**
+	 * @deprecated  
+	 */
 	public static Category updateCategory(AONContext ctx, Category category){
 		ctx.getDslContext().update(CATEGORY)
 			.set(CATEGORY.NAME, category.getName())
@@ -194,6 +203,9 @@ public class RegistryOldDAO {
 		return category;
 	}
 	
+	/**
+	 * @deprecated  
+	 */
 	public static Category deleteCategory(AONContext ctx, Integer categoryId){
 		Integer nullvalue = null;
 		ctx.getDslContext()
@@ -208,6 +220,9 @@ public class RegistryOldDAO {
 		return new Category();
 	}
 	
+	/**
+	 * @deprecated  
+	 */
 	public static LinkedList<Category> getCategoryList(AONContext ctx){
 		return ctx.getDslContext()
 				.select().from(CATEGORY).where(CATEGORY.DOMAIN.eq(ctx.getDomainId())).limit(1)
@@ -215,6 +230,9 @@ public class RegistryOldDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	/**
+	 * @deprecated  
+	 */
 	public static Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter){
 		return ctx.getDslContext()
 				.select().from(CATEGORY)
@@ -253,6 +271,7 @@ public class RegistryOldDAO {
 		return getRegistryStream(ctx, filter).findFirst().orElse(new Registry());
 	}
 	
+	@Deprecated 
 	private static class FullCategoryFiller implements Function<CategoryRecord, Category> {
 		@Override
 		public Category apply(CategoryRecord r) {

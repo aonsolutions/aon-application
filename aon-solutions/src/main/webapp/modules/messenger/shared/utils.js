@@ -1,4 +1,4 @@
-import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
+import { AON_ICONS, API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
 import { setAttributes, setClasses, setDataset, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
@@ -11,6 +11,7 @@ import { createFormTimeControl } from "../forms/time-control.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import * as ACTIONS from "../../actions.js";
 import { loadTaskGrouped } from "./MessengerChat.js";
+import { AonIcon } from "../../../components/aon-icon.js";
 
 /**
  * Build standard toolbar options 
@@ -89,14 +90,24 @@ export const addIconToolbar = (toolbar, task) => {
     const titleSpan = setClasses(toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` ), [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
     if(titleSpan){
         const iconJson = getIconJson(task);
-        const status = TaskCreationUtils.createOutlinedMaterialIcon({
-          name:  iconJson.icon,
-          color: iconJson.icon_color,
-          size: "20px"
-        });
-        status.style.marginLeft = "10px";
-        status.style.marginTop = "-1px";
-        titleSpan.appendChild(status);
+        let iconEl = null;
+
+        if(task.parent){
+            iconEl = new AonIcon();
+            iconEl.icon = AON_ICONS.AON_BRANCH;
+            iconEl.title = "Branch";
+            iconEl.color = iconJson.icon_color;
+        } else {
+            iconEl = TaskCreationUtils.createOutlinedMaterialIcon({
+                name:  iconJson.icon,
+                color: iconJson.icon_color,
+                size: "20px"
+            });
+            iconEl.style.marginLeft = "10px";
+            iconEl.style.marginTop = "-1px";
+        }
+
+        titleSpan.appendChild(iconEl);
     }
 }
 
@@ -129,14 +140,14 @@ const blockquote = ()=>{
  * @param {Object} message
  * @returns {Object} actionJson message new object
  */
-export const chooseIconMessage = ({type, date, name, comment}) => {
+export const chooseIconMessage = ({type, date, name, comment, number}) => {
     const dateParse = date ? (AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date)) : null;
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,
         type : CONSTANT.MATERIAL_OUTLINED,
         color : CSS.variable(COLORS.MATERIAL_BLUE),
-        comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
+        comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`,
     }
 
     if(WORKFLOW_TYPES.OPEN.includes(type) || WORKFLOW_TYPES.REOPEN.includes(type))
@@ -152,6 +163,18 @@ export const chooseIconMessage = ({type, date, name, comment}) => {
     } else if(WORKFLOW_TYPES.CONNECTED.includes(type)){
         const numberStr = taskNumberParse(comment);
         actionJson.comment = `${WORKFLOW_TYPE(type)} con <b>${numberStr}</b> ${dateParse}`;
+    } 
+
+    if(number){
+        actionJson.icon = MATERIAL_ICONS.FORK_LEFT;
+        actionJson.title = number;
+        //     const fork = TaskCreationUtils.createAction({
+        //         icon:MATERIAL_ICONS.FORK_LEFT,
+        //         color: CSS.variable(COLORS.MATERIAL_BLUE),
+        //         type: CONSTANT.MATERIAL_OUTLINED,
+        //         title: number
+        //     }, undefined, undefined, false).element;
+        //     actionJson.comment = `${fork.outerHTML} ${actionJson.comment}`;
     }
 
     return actionJson;

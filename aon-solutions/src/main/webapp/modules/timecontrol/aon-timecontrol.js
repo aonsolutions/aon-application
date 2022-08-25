@@ -113,7 +113,7 @@ export class AonTimecontrol extends AonElement {
       },
       {
         ...THIS_MONTH,
-        fn: (e) => this.setDataFilter({period:THIS_MONTH.id})
+        fn: () => this.setDataFilter({period:THIS_MONTH.id})
       }
     ];
     
@@ -217,7 +217,7 @@ export class AonTimecontrol extends AonElement {
   async getAuth({task_holder}){
     let auth = this.AUTHS.find(d => d.task_holder === task_holder);
     if(!auth){
-      auth = await getAuth({task_holder}).catch(e=>null);
+      auth = await getAuth({task_holder}).catch(()=>null);
       this.AUTHS.push({...auth, task_holder});
     } 
     return auth;
