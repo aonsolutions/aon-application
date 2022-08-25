@@ -309,8 +309,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		
 		schemas.stream().forEach(schema -> {
 			String domain = AONContext.getSchemaFirstDomain(schema);
-			AON.getCompanyStream(domain, 0, "", f -> companyFilter(api, f),
-					api.getData().optInt(IJsonNames.PAGE), api.getData().optInt(IJsonNames.PER_PAGE))
+			AON.getCompanyStream(domain, 0, "", f -> companyFilter(api, f))
 				.forEach(c -> jsArray.put(CompanyJSON.toJSON(c).put(IJsonNames.SCHEMA, schema)));			
 		});
 

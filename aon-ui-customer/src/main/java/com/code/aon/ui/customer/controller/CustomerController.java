@@ -45,8 +45,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
@@ -209,7 +209,9 @@ public class CustomerController extends CustomerListController implements ICusto
 	public void onSigCustomerDomainLink(ActionEvent e) throws IOException{
 		Customer customer = (Customer) this.getTo();
 		
-		String request = "https://aon.solutions/ms/api/company/domain?document=" + customer.getRegistry().getDocument();
+		String request = "https://aon.solutions/ms/api/company/domain?document=" + customer.getRegistry().getDocument()
+			 + "&page=1&perPage=30";
+	
 		
 		URL url = new URL(request);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -223,7 +225,10 @@ public class CustomerController extends CustomerListController implements ICusto
 	
 		connection.setUseCaches(false);
 		JSONObject json = new JSONObject()
-			.put(IJsonNames.DOCUMENT, customer.getRegistry().getDocument());
+			.put(IJsonNames.DOCUMENT, customer.getRegistry().getDocument())
+			.put(IJsonNames.PAGE, 1)
+			.put(IJsonNames.PER_PAGE, 30);
+		
 		OutputStream os = connection.getOutputStream();
 		os.write(json.toString().getBytes());
 		os.flush();
@@ -235,32 +240,22 @@ public class CustomerController extends CustomerListController implements ICusto
 		while ((output = br.readLine()) != null) {
 			response = output; //.replace("'", "\'");	
 		}	
+		
 		JSONArray array = new JSONArray(response);
-		array.forEach(r -> {
-			JSONObject resp = (JSONObject) r;
+		for(Integer i = 0; i < array.length(); i++) {
+			JSONObject resp = (JSONObject) array.get(i);
 			Company company = CompanyJSON.fromJSON(resp);
 
-			RegistryAddInfo addInfo = new RegistryAddInfo()
+			DomainLinked domainLinked = new DomainLinked()
+					.setId(company.getDomain().getId())
+					.setName(company.getDomain().getName())
+					.setSchema(JsonUtils.getString(resp ,IJsonNames.SCHEMA))
 					.setRegistry(customer.getId())
-					.setDomain(customer.getDomain())
-					.setAttribute("AON_DOMAIN_URL")
-					.setValue(company.getDomain().getName());
-			AON.insertRegistryAddInfo(AonUtil.getDomainName(), customer.getDomain(), "", addInfo);
-			
-			RegistryAddInfo addInfo1 = new RegistryAddInfo()
-					.setRegistry(customer.getId())
-					.setDomain(customer.getDomain())
-					.setAttribute("AON_DOMAIN_ID")
-					.setValue(company.getDomain().getId().toString());
-			AON.insertRegistryAddInfo(AonUtil.getDomainName(), customer.getDomain(), "", addInfo1);
-			
-			RegistryAddInfo addInfo2 = new RegistryAddInfo()
-					.setRegistry(customer.getId())
-					.setDomain(customer.getDomain())
-					.setAttribute("AON_DOMAIN_SCHEMA")
-					.setValue(JsonUtils.getString(resp ,IJsonNames.SCHEMA));
-			AON.insertRegistryAddInfo(AonUtil.getDomainName(), customer.getDomain(), "", addInfo2);
-		});
+					.setIndex(i)
+					.setType(company.getDomain().getDomainType().name());
+
+			AON.saveDomainLinked(AonUtil.getDomainName(), customer.getDomain(), "", domainLinked);
+		}
 	}
 
 	public void onLoadInvoicingGroup(ActionEvent event) throws ManagerBeanException {
@@ -317,6 +312,11 @@ public class CustomerController extends CustomerListController implements ICusto
 		if(list.size()>0)
 			return ((Target)list.get(0)).getId();
 		return -1;
+	}
+	
+	public List<DomainLinked> getDomainLinkedList() {
+		Customer customer = (Customer)getTo();
+		return AON.getDomainLinkedList(AonUtil.getDomainName(), customer.getDomain(), "", customer.getId());
 	}
 	
 }
