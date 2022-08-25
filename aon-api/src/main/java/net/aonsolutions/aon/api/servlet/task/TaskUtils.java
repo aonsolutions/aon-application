@@ -391,13 +391,12 @@ public class TaskUtils {
 	
 	private static void changeStatusTask(AonApiData api, Task task, TaskWorkflow workflow) {
 		Domain domain = task.getDomain();
+		List<Byte> pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
 		
 		TaskWorkflowType type = workflow.getType();
 		
 		boolean isReopen = type.equals(TaskWorkflowType.REOPEN);
-		boolean isClose  = type.equals(TaskWorkflowType.CLOSE) && task.getStatus().equals(TaskStatus.FINISHED);
-		
-		List<Byte> pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
+		boolean isClose  = type.equals(TaskWorkflowType.CLOSE);//&& task.getStatus().equals(TaskStatus.FINISHED);
 		
 		if(task.isChild() && !isClose){
 			Task parent = AON_SOLUTIONS.getTaskAndChilds(domain, api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
@@ -424,7 +423,6 @@ public class TaskUtils {
 				}
 			});
 		} 
-	
 	}
 	
 	/**

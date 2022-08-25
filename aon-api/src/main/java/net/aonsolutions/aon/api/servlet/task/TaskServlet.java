@@ -573,25 +573,25 @@ public class TaskServlet extends AonApiHttpServlet{
 		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(receiver.getUserId()));
 	
 		Task task = AON_SOLUTIONS.getTaskAndChilds(domain, userReceiver, f-> f.getIdProperty().eq(id) );
-
-	    Integer taskId = task.getSource().equals(TaskSource.TASK) && task.isChild() ? task.getParent() : task.getId();
-	   
-	    task.setStatus(TaskStatus.IN_PROGRESS);
+		
+	    Integer taskId = task.getId();
+	    
+		if(task.getSource().equals(TaskSource.TASK) && task.isChild()) {
+			taskId = task.getParent();
+		} else {
+			 task.setStatus(TaskStatus.IN_PROGRESS);
+		}
 
 	    AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
-			
-	    task.setTaskHolder(receiver);
-	    task.setWorkgroup(workgroup);
-	    task.setStatus(TaskStatus.PENDING);
-	    task.setSource(TaskSource.TASK);
 		   
-	    task.setId(null);
-		   
-	    task.setGtaskId(null);
-		   
-	    task.setParent(taskId);
-		   
-	    task.setSender(sender);
+	    task.setId(null) 
+	    .setGtaskId(null)
+	    .setParent(taskId)
+	    .setSender(sender)
+	    .setTaskHolder(receiver)
+	    .setWorkgroup(workgroup)
+	    .setStatus(TaskStatus.PENDING)
+	    .setSource(TaskSource.TASK);
 
 	    Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
 		   
@@ -599,7 +599,6 @@ public class TaskServlet extends AonApiHttpServlet{
 	    saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
 		   
 	    //  ASIGNED NEW TASK
-
 	   TaskWorkflow assign = workflow.clone()
        .setTask(newTask.getId())
 	   .setComment(receiver.getName())
@@ -613,12 +612,12 @@ public class TaskServlet extends AonApiHttpServlet{
 
 	   // SAVE COMMENT
 	   TaskWorkflow commentNew = assign.clone()
-	   .setComment(comment!=null ? comment : "")
+	   .setComment(comment!=null && !comment.isEmpty() ? comment : "")
 	   .setType(TaskWorkflowType.COMMENT);
 	   
 	   saveWorkflow( api, Optional.of(commentNew), false);
 	   
-	   TaskUtils.onNotification(api, commentNew.setComment(comment!=null ? comment : "").setType(TaskWorkflowType.ASSIGN));
+	   TaskUtils.onNotification(api, commentNew.setType(TaskWorkflowType.ASSIGN));
 
 	   return new JSONObject();
     }
