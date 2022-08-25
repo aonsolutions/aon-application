@@ -400,13 +400,15 @@ const fillChat = (task, meId, workflows=[])=>{
                     TaskCreationUtils.createChatMessageNew(message, chat);
                 } else {
                     message.name = userName;
+      
                     const actionJson = chooseIconMessage(message);
+
                     const submessage = message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
                     const action = TaskCreationUtils.createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
 
                     if(WORKFLOW_TYPES.OPEN.includes(type) && message.comment){
-                        TaskCreationUtils.createMessageOpen({comment: message.comment, id:message.id, me, date: message.date, task:message.task }, action.element);
+                        TaskCreationUtils.createMessageOpen({comment: message.comment, id:message.id, me, date: message.date, task:message.task, number:message.number }, action.element);
                     }
                 }
             });
