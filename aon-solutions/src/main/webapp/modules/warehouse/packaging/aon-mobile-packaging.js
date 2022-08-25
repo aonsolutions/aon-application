@@ -168,24 +168,32 @@ export class AonMobilePackaging extends AonElement {
 
 		table.addCell(container, 2);
 
-		product.addEventListener(EVENT.CHANGE, () => {
-			this.barcode = product.value;
-			let data = { barcode: product.value};
-			getPackaging(data).then(r => {
-				this.packaging = r;
-				let val = r.base.description || r.base.name;
-				product.value = val || '';
-				container.setOptions(r.containers);
-				lote.value = r.item.serialNumber;
-				date.value = r.item.serialDate;
-				container.value = r.containers[0].id;
-				this.item = r.item.id;
-				this.contenedor = container.value;
-				quantity.value = r.containers[0].itemComposition[0].quantity;
-				this.packaging.container = r.containers[0];
-				this.packaging.quantity = r.containers[0].itemComposition[0].quantity;
-			}).catch(e => this.showError(e));
-		});
+		product.addEventListener(EVENT.CHANGE, () => this.changeProduct());
+	}
+
+	changeProduct() {
+		const product = this.getElement(this.PACKAGING_PRODUCT);
+		this.barcode = product.value;
+		let data = { barcode: product.value};
+		getPackaging(data).then(r => {
+			const container = this.getElement(this.PACKAGING_CONTAINER);
+			const lote = this.getElement(this.PACKAGING_PRODUCT_SERIAL_NUMBER);
+			const date = this.getElement(this.PACKAGING_PRODUCT_SERIAL_DATE);
+			const quantity = this.getElement(this.PACKAGING_QUANTITY);
+
+			this.packaging = r;
+			let val = r.base.description || r.base.name;
+			product.value = val || '';
+			container.setOptions(r.containers);
+			lote.value = r.item.serialNumber;
+			date.value = r.item.serialDate;
+			container.value = r.containers[0].id;
+			this.item = r.item.id;
+			this.contenedor = container.value;
+			quantity.value = r.containers[0].itemComposition[0].quantity;
+			this.packaging.container = r.containers[0];
+			this.packaging.quantity = r.containers[0].itemComposition[0].quantity;
+		}).catch(e => this.showError(e));
 	}
 
 	openBarcode() {
@@ -198,6 +206,7 @@ export class AonMobilePackaging extends AonElement {
 			if(!cancelled) {
 				const product = this.getElement(this.PACKAGING_PRODUCT);
 				product.value = text;
+				this.changeProduct();
 			}
 		} catch (error) {
 			this.showError(error);

@@ -2077,20 +2077,21 @@
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">
-								
-								<!-- OLD HELP -->
-								<h:outputLink style="font-size:1em;"
-									value="#{aonConfiguration.helpURL}"
-									target="_blank" >
-									<aon:outputText value="#{bundle.aon_help}" />
-								</h:outputLink>
-										
-								
-								<!-- NEW HELP
-								<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
-								</aon:htmlCommandLink>
-								-->
 
+								<aon:if test="#{!domainSwitcher.snapshotVersion}">
+									<!-- OLD HELP -->
+									<h:outputLink style="font-size:1em;"
+										value="#{aonConfiguration.helpURL}"
+										target="_blank" >
+										<aon:outputText value="#{bundle.aon_help}" />
+									</h:outputLink>
+								</aon:if>
+								
+								<aon:if test="#{domainSwitcher.snapshotVersion}">
+									<!-- NEW HELP-->	
+									<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
+									</aon:htmlCommandLink>
+								</aon:if>
 							</aon:menuItem>
 							
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
