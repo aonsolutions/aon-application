@@ -1,10 +1,30 @@
 import {  post, get, remove, put } from "./request.js";
-import { API_URL } from "../environments/environments.js";
+import { API_URL, MSG } from "../environments/environments.js";
 
 export const saveNews = (data) => post(`${API_URL}/news`, data);
 export const deleteNews = (data) => remove(`${API_URL}/news`, data);
 export const getNews = (data) => get(`${API_URL}/news`, data);
 
+export const getNewsType = (data)=>  new Promise((resolve) =>{
+    let json = [
+        { value:"NEWS", name: MSG.NEWS},
+        { value:"MESSAGE", name: MSG.MESSAGE},
+        { value:"COMMUNICATION", name: MSG.COMMUNICATION}
+    ];
+
+    if(data) {
+        json = json.find((r) => r.value == data);
+    }
+
+    resolve(json);
+});
+
+
+export const NewsType ={
+	NEWS: "NEWS",
+	MESSAGE:"MESSAGE",
+	COMMUNICATION:"COMMUNICATION"
+}
 export const getRss = (data) => {
     return new Promise((resolve, reject) =>{
         resolve({

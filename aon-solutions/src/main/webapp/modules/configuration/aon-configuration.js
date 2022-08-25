@@ -206,9 +206,9 @@ export class AonConfiguration extends AonElement {
 
       if(this.isBeta()){
         appOptions.push({
-          id:  "RSS",
-          name: "RSS",
+          id:  "notice",
           icon: "rss_feed",
+          name: MSG.NOTICE,
           fn: () => this.buildRss(),
         });
       }

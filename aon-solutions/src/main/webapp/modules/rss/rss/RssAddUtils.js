@@ -6,6 +6,7 @@ import { AonTextareaEditor } from "../../../components/aon-textarea-editor.js";
 
 import '../../../css/aon-rss.css';
 import { xmlToJson } from "../../../services/xmlToJson.js";
+import { RssEnums } from "../RssEnums.js";
 
 const openRss = async (rss) => {
     // const resElement = buildRss(rss);
@@ -243,13 +244,13 @@ const createForm = (id, parent) => {
     form.appendChild(divParent);
 
     let div;
-    div = createDiv({classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5]});
+    div = createDiv({classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     div.appendTo(divParent);
-    const cardOne = CreateComponent.createAonCard({id: id+"cardOne", title:"Datos RSS"}, div);
+    const cardOne = CreateComponent.createAonCard({id: id+"cardOne", title:"Noticia"}, div);
 
-    div = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_7]});
+    div = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_8]});
     div.appendTo(divParent);
-    const cardTwo = CreateComponent.createAonCard({id: id+"cardTwo", title:MSG.DESCRIPTION}, div);
+    const cardTwo = CreateComponent.createAonCard({id: id+"cardTwo", title:MSG.CONTENT}, div);
 
     createRssViewer();
 
@@ -259,22 +260,29 @@ const createForm = (id, parent) => {
     }
 }
 
-const createRssForm = (parent, news) => {
+const buildFormGeneral = (parent, news) => {
    
     let divC;
+
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
     CreateComponent.createAonSelect({
         attributes:{
-            name:"category",
-            id:"category",
-            title:"Canal",
-            default:CONSTANT.TRUE,
-            autocomplete: CONSTANT.OFF
+            name:"type",
+            id:"type",
+            title:MSG.TYPE
         },
         events:{
             change: ({target}) => {
-                news.setCategory(target.getDetail());
+                news.setType(target.value);
+                if(news.getType() === "NEWS"){
+                    buildNews(parent);
+                } else {
+                    const divNews = document.getElementById("divNews");
+                    if(divNews){
+                        divNews.remove();
+                    }
+                }
             }
         }
     }, divC.element);
@@ -324,7 +332,7 @@ const createRssForm = (parent, news) => {
         news.setDescription(target.value);
     });
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
     CreateComponent.createAonDate({
         attributes:{
@@ -339,58 +347,115 @@ const createRssForm = (parent, news) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
-    CreateComponent.createAonDate({
-        attributes:{
-            name:"end_date", 
-            id:"end_date", 
-            title:MSG.END_DATE
+    CreateComponent.createAonSwitch(
+      {
+        attributes: {
+          name: "active",
+          id: MSG.ACTIVE,
+          title: MSG.ACTIVE,
+          checked: true,
         },
-        events:{
-            change: ({target}) => {
-                news.setEndDate(target.value);
-            }
-        }
-    }, divC.element);
-
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
-    divC.appendTo(parent);
-    CreateComponent.createAonSwitch({
-        attributes:{
-            name:"active",
-            title: MSG.ACTIVE, 
-            checked:true
+        events: {
+          change: ({ target }) => {
+            news.setActive(target.checked);
+          },
         },
-        events:{
-            change: ({target}) => {
-                news.setActive(target.checked);
-            }
-        }
-    }, divC.element);
+      },
+      divC.element
+    );
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
-    divC.appendTo(parent);
-    CreateComponent.createAonSwitch({
-        attributes:{
-            name:"rss",
-            title: "Publicar RSS", 
-            checked:false
-        }, 
-        events:{
-            change: ({target}) => {
-                news.setRss(target.checked);
-            }
-        }
-    }, divC.element);
+  
 }
 
-const createEditor = (parent, news) =>{
+const buildNews = (parent) => {
+    const aonRssAdd = document.getElementById(RssEnums.RSS_VIEWS.AON_RSS_ADD);
+
+    const news = aonRssAdd.news;
+
+    const id = "divNews";
+
+    if(!document.getElementById(id)){
+        const divNews  = createDiv({}).element;
+        divNews.id = "divNews";
+        parent.appendChild(divNews);
+    
+        let divC = createDiv({classes:[CSS.AON_COL_XS_12]}).element;
+        divC.style.margin = "10px auto";
+        divNews.appendChild(divC);
+        CreateComponent.createAonSwitch({
+            attributes:{
+                name:"rss",
+                id:"rss",
+                title: "Publicar RSS", 
+                checked:false
+            }, 
+            events:{
+                change: ({target}) => {
+                    const checked = target.checked;
+                    news.setRss(checked);
+                    if(checked){
+                        buildCategory(divNews);
+                    } else {
+                        document.getElementById('divCategory').remove();
+                    }
+                }
+            }
+        }, divC);
+    
+        const divEndDate = createDiv({classes:[CSS.AON_COL_XS_12]}).element;
+        divNews.appendChild(divEndDate)
+        CreateComponent.createAonDate({
+            attributes:{
+                name:"end_date", 
+                id:"end_date", 
+                title:MSG.END_DATE
+            },
+            events:{
+                change: ({target}) => {
+                    news.setEndDate(target.value);
+                }
+            }
+        }, divEndDate);
+    }
+}
+
+const buildCategory = (parent)=>{
+
+    const aonRssAdd = document.getElementById(RssEnums.RSS_VIEWS.AON_RSS_ADD);
+
+    const news = aonRssAdd.news;
+
+    let divCategory = createDiv({classes:[CSS.AON_COL_XS_12]}).element
+    divCategory.style.marginTop = "8px";
+    divCategory.id = "divCategory";
+    parent.appendChild(divCategory);
+
+    CreateComponent.createAonSelect({
+        attributes:{
+            name:"category",
+            id:"category",
+            title:"Canal",
+            default:CONSTANT.TRUE,
+            autocomplete: CONSTANT.OFF
+        },
+        events:{
+            change: ({target}) => {
+                news.setCategory(target.getDetail());
+            }
+        }
+    }, divCategory);
+
+    aonRssAdd.getCategorys();
+}
+
+const buildEditor = (parent, news) =>{
     const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
         id:"aonTextAreaEditor",
-        placeholder:MSG.DESCRIPTION,
+        placeholder:MSG.CONTENT,
     });
-    aonTextAreaEditor.style.height = "8em";
+    aonTextAreaEditor.style.height = "24em";
 
     aonTextAreaEditor.addEventListener(EVENT.KEYUP, ()=>{
         news.setContent(aonTextAreaEditor.value);
@@ -418,6 +483,6 @@ const createRssViewer = () => {
 export const RssAddUtils = {
     openRss,
     createForm,
-    createRssForm,
-    createEditor
+    buildFormGeneral,
+    buildEditor
 }

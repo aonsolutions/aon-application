@@ -27,7 +27,7 @@ import { AonNumber } from "./aon-number.js";
 
   if(events) setEvents(element, events);
   
-  parent.appendChild(element);
+  if(parent) parent.appendChild(element);
 
   return element;
 }

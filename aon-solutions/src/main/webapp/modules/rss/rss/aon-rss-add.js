@@ -1,11 +1,10 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { CreateComponent } from "../../../components/CreateComponent.js";
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
 import { RssEnums } from "../RssEnums.js";
 import { RssAddUtils } from "./RssAddUtils.js";
-import { getRss, saveNews } from "../../../services/newsService.js";
+import { getRss, saveNews, getNewsType } from "../../../services/newsService.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { serializeForm } from "../../../services/utils.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { CategoryService } from "../../../services/categoryService.js";
 import { News } from "../../../models/news/News.js"
@@ -18,6 +17,7 @@ export class AonRssAdd extends AonElement {
   TOOLBAR;
   START_DATE;
   news;
+  CATEGORYS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -56,11 +56,12 @@ export class AonRssAdd extends AonElement {
   disconnectedCallback() {}
 
   initialize(){
-    this.id = this.id || RssEnums.RSS_VIEWS.AON_RSS_ADD;
+    this.id = RssEnums.RSS_VIEWS.AON_RSS_ADD;
     this.TOOLBAR = this.id + "Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.news = new News();
+    this.CATEGORYS = [];
   }
 
 
@@ -84,16 +85,15 @@ export class AonRssAdd extends AonElement {
   paintView() {
     const {cardOne, cardTwo} = RssAddUtils.createForm(this.id, this);
 
-    RssAddUtils.createRssForm(cardOne.getContent(), this.news);
+    RssAddUtils.buildFormGeneral(cardOne.getContent(), this.news);
 
-    RssAddUtils.createEditor(cardTwo.getContent(), this.news);
+    RssAddUtils.buildEditor(cardTwo.getContent(), this.news);
   }
-
 
   async initGets() {
     await Promise.all([
-        this.getScopes(),
-        this.getCategorys()
+        this.getNewsType(),
+        this.getScopes()
     ]).catch(e=> console.log(e));
   }
 
@@ -106,12 +106,22 @@ export class AonRssAdd extends AonElement {
     }
   }
 
+
+  async getNewsType(){
+    const types = await getNewsType();
+    if(types.length){
+      const options = types;
+      let typeEl = document.getElementById("type");
+      typeEl.setOptions(options);
+    }
+  }
+
   async getCategorys(){
-    const categorys = await CategoryService.getCategorys();
+    const categorys = this.CATEGORYS.length> 0 ? this.CATEGORYS : await CategoryService.getCategorys();
     if(categorys.length){
-      const options = categorys.map(category => ({...category, value:category.id}));
+      this.CATEGORYS = categorys.map(category => ({...category, value:category.id}));
       let categoryEl = document.getElementById("category");
-      categoryEl.setOptions(options);
+      categoryEl.setOptions(this.CATEGORYS);
     }
   }
 

@@ -1,10 +1,5 @@
 import { Domain } from "../Domain.js";
 
-const NewsType = {
-    NEWS:"news",
-    MESSAGE:"message",
-}
-
 export class News {
 
     id;
@@ -26,7 +21,6 @@ export class News {
             this.setNews(news);
         } else {
             this.domain = new Domain();
-            this.type   = NewsType.NEWS;
             this.active = true;
             this.rss    = false;
         }
