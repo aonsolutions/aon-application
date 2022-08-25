@@ -21,41 +21,52 @@ public class Category implements Serializable{
 	public String getDescription() {
 		return description;
 	}
+	
 	public Category setDescription(String description) {
 		this.description = description;
 		return this;
 	}
+	
 	public Integer getDomain() {
 		return domain;
 	}
+	
 	public Category setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
+	
 	public Integer getId() {
 		return id;
 	}
+	
 	public Category setId(Integer id) {
 		this.id = id;
 		return this;
 	}
+	
 	public Integer getRattach() {
 		return rattach;
 	}
+	
 	public Category setRattach(Integer rattach) {
 		this.rattach = rattach;
 		return this;
 	}
+	
 	public String getName() {
 		return name;
 	}
+	
 	public Category setName(String name) {
 		this.name = name;
 		return this;
 	}
+	
 	public Integer getScope() {
 		return scope;
 	}
+	
 	public Category setScope(Integer scope) {
 		this.scope = scope;
 		return this;

@@ -5,7 +5,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public enum NewsType {
 
 	NEWS,
-	MESSAGE;
+	MESSAGE,
+	COMMUNICATION;
 
 	public String getName() {
     	return this.toString().toLowerCase();

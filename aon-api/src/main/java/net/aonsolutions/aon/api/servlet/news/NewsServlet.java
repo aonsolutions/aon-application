@@ -113,9 +113,11 @@ public class NewsServlet extends AonApiHttpServlet{
 
 	
 	private JSONObject saveNew(AonApiData api) {
-		News news = NewsJSON.fromJSON(api.getData());
+		JSONObject params = api.getData();
 		
-		news = AON_SOLUTIONS.saveNews(api.getDomain(), api.getUser(), news);
+		validateSave(params);
+		
+		News news = AON_SOLUTIONS.saveNews(api.getDomain(), api.getUser(), NewsJSON.fromJSON(params));
 		
 		return NewsJSON.toJSON(news);
 	}
@@ -124,5 +126,16 @@ public class NewsServlet extends AonApiHttpServlet{
 		News news     = NewsJSON.fromJSON(api.getData());
 		AON_SOLUTIONS.deleteNews(news.getDomain(), api.getUser(), news.getId());
 		return new JSONObject();
+	}
+	
+	private void validateSave(JSONObject params) {
+		if(params.isNull(IJsonNames.SCOPE)) {
+			throw new AonApiException("Ambito requerido");
+		} else if(params.isNull(IJsonNames.TYPE)) {
+			throw new AonApiException("Tipo requerido");
+		} else if(params.isNull(IJsonNames.TITLE)) {
+			throw new AonApiException("T\u00edtulo requerido");
+		}
+		
 	}
 }
