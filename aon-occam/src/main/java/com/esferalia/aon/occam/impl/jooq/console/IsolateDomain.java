@@ -14,14 +14,13 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
-import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
@@ -47,6 +46,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IsolateDomain {
 	
+	private static final String SEG = " seg.";
+
+	private static final Logger LOGGER = Logger.getLogger(IsolateDomain.class.getName());
+	
 	private static final String DOMAIN_LABEL = "domain";
 	private static final Table<Record> TEMPID = DSL.table("tempId");
 	private static final Field<String> TEMPID_TABLE = DSL.field("tempId.table_name", String.class);
@@ -59,7 +62,7 @@ public class IsolateDomain {
 	public static void isolate(ConsoleParams params) {
 		if (params.getDslContext() == null) {
 			String msg = "[ERROR]: No se ha definido la connection a la BD";
-			log(params,msg);
+			ConsoleUtils.log(params,msg);
 			throw new AonCoreException(msg);
 		}
 		isolateDomain(params);
@@ -78,10 +81,10 @@ public class IsolateDomain {
 			.filter(sc -> sc.getName().equals(schemaName))
 			.findFirst()
 			.orElse(null);
-		System.out.println( " 1.- Schema selected               -->"
+		LOGGER.info( " 1.- Schema selected               -->"
 			+ " " + chronometer.getCurrentTime());
 		if (schema != null) {	
-			log(params,"** Start domain isolation!");
+			ConsoleUtils.log(params,"** Start domain isolation!");
 			try {
 				params.setSchema(schema)
 					.setScript( new LinkedHashMap<>() );
@@ -89,56 +92,56 @@ public class IsolateDomain {
 				DomainValidator domainValidator = DomainValidator.getInstance();
 				if (!domainValidator.isValid(params.getNewDomainName())) {
 					String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getNewDomainName());
-					log(params,msg);
+					ConsoleUtils.log(params,msg);
 					throw new AonCoreException(msg);
 				}
 
 				chronometer.mark();
 				fillScript(params);
-				System.out.println( " 2.- Script filled                 -->" 
-						+ " " + chronometer.getMarkSeconds() + " seg."
+				LOGGER.info( " 2.- Script filled                 -->" 
+						+ " " + chronometer.getMarkSeconds() + SEG
 						+ " - " + chronometer.getCurrentTime());
 				
-				log (params, "Orden de carga:");
+				ConsoleUtils.log (params, "Orden de carga:");
 				MutableInt x = new MutableInt(1);
 				params.getScript().values().stream()
 					.forEach(sc -> {
 						x.add(1);
-						log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
+						ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
 					});
 				
 				disableForeignKeys(params);
-				log(params,"** Start transaction!");
+				ConsoleUtils.log(params,"** Start transaction!");
 				
 
 				params.getDslContext().transaction(conf -> {
 					chronometer.mark();
 					createTempTable(params);
-					System.out.println( " 3.- Temp table created            -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( " 3.- Temp table created            -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					
 					
 					chronometer.mark();
 					createDomain(params);
-					System.out.println( " 4.- Domain created                -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( " 4.- Domain created                -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					chronometer.mark();
 					checkProductIndex( params );
 					checkNoticeRecipient( params );
 					
-					System.out.println( " 5.- Product index checked         -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( " 5.- Product index checked         -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					if (params.isInhertitanceEnabled()) {
 						chronometer.mark();
 						passHeritableTables( params );
-						System.out.println( " 6.- Heritable tables              -->" 
-								+ " " + chronometer.getMarkSeconds() + " seg."
+						LOGGER.info( " 6.- Heritable tables              -->" 
+								+ " " + chronometer.getMarkSeconds() + SEG
 								+ " - " + chronometer.getCurrentTime());
 					}
 					chronometer.mark();
@@ -149,64 +152,64 @@ public class IsolateDomain {
 						.filter(t -> !"session".equals(t.getTable().getName()))
 						.filter(t -> !"action_entry".equals(t.getTable().getName()))
 						.forEach(t -> duplicateTable(params, t));
-					System.out.println( " 7.- Tables duplicated             -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( " 7.- Tables duplicated             -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					chronometer.mark();
 					loopRefInvoice(params,params.getScript().get("invoice"));
-					System.out.println( " 8.- Loop Ref Invoices             -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( " 8.- Loop Ref Invoices             -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					chronometer.mark();
 					loopFBatch(params,params.getScript().get("fbatch"));
-					System.out.println( " 9.- Loop Ref Fbatch               -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( " 9.- Loop Ref Fbatch               -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					chronometer.mark();
 					loopBankStatementLinkFinanceTracking(params,params.getScript().get("bank_statement_link"));
-					System.out.println( "10.- Loop Ref BnkSttme Fin Track   -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( "10.- Loop Ref BnkSttme Fin Track   -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					chronometer.mark();
 					loopAccAppParamAccount(params,params.getScript().get("app_param"));
-					System.out.println( "11.- Loop Ref AccAppParamAccount   -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( "11.- Loop Ref AccAppParamAccount   -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 					chronometer.mark();
 					createLoginUser(params);
-					System.out.println( "12.- User created                   -->" 
-							+ " " + chronometer.getMarkSeconds() + " seg."
+					LOGGER.info( "12.- User created                   -->" 
+							+ " " + chronometer.getMarkSeconds() + SEG
 							+ " - " + chronometer.getCurrentTime());
 					
 				});
-				log(params,"** Commit!");
-				log(params,"** End domain isolation!");
+				ConsoleUtils.log(params,"** Commit!");
+				ConsoleUtils.log(params,"** End domain isolation!");
 			} catch (Exception e) {
-				log(params, e.getMessage() );
-				log(params,"** Rollback!");
+				ConsoleUtils.log(params, e.getMessage() );
+				ConsoleUtils.log(params,"** Rollback!");
 				e.printStackTrace();
 			} finally {
 				if (!params.getErrors().isEmpty()) {
-					log(params, "" );
-					log(params, AonStringUtils.repeat('*',60));
-					log(params,"** Se han producido incidencias!");
-					params.getErrors().stream().forEach( e -> log(params,e));
-					log(params, AonStringUtils.repeat('*',60));
+					ConsoleUtils.log(params, "" );
+					ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+					ConsoleUtils.log(params,"** Se han producido incidencias!");
+					params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
+					ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
 				}
-				log(params,"** Program ended!");
+				ConsoleUtils.log(params,"** Program ended!");
 				enableForeignKeys(params);
 			}
 		} else {
-			log(params,"Schema not present -> database : " + params.getDatabase() + ", domainName : "
+			ConsoleUtils.log(params,"Schema not present -> database : " + params.getDatabase() + ", domainName : "
 					+ params.getNewDomainName());
 		}
 		chronometer.stop();
-		log(params, "Process time " + chronometer.getMinutes() + " minutes.");
+		ConsoleUtils.log(params, "Process time " + chronometer.getMinutes() + " minutes.");
 		
 	}
 
@@ -241,7 +244,7 @@ public class IsolateDomain {
 				,rec.getValue(NOTICE.ID)
 				,rec.getValue(NOTICE.DATE)
 				,rec.getValue(NOTICE.SUBJECT)) )
-			.forEach( msg -> params.addError(msg));
+			.forEach( params::addError);
 		if (params.hasErrors()) {
 			throw new AonCoreException("Avisos incoherentes");
 		}
@@ -271,7 +274,7 @@ public class IsolateDomain {
 				t.setRows(  params.getDslContext().fetchCount(select) );
 				t.setCurrentRow(0);
 				t.setPercent(0);
-				log(params,MessageFormat.format(" **** Parent {0} table:", t.getTableName()));
+				ConsoleUtils.log(params,MessageFormat.format(" **** Parent {0} table:", t.getTableName()));
 				select
 				.fetch()
 				.stream()
@@ -290,7 +293,7 @@ public class IsolateDomain {
 			+"  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;"
 		;
 		params.getDslContext().execute(sql);
-		log(params,"** IDs Temp table created!");
+		ConsoleUtils.log(params,"** IDs Temp table created!");
 	}
 	
 	private static void createDomain(ConsoleParams params) {
@@ -312,7 +315,7 @@ public class IsolateDomain {
 		domRec.store();
 		params.setNewDomain(domRec.getId());
 		insertId(params, DOMAIN,params.getDomain(),params.getNewDomain() );
-		log(params,MessageFormat.format("DOMAIN {0} creado con ID {1}", params.getNewDomainName(), params.getNewDomain()));
+		ConsoleUtils.log(params,MessageFormat.format("DOMAIN {0} creado con ID {1}", params.getNewDomainName(), params.getNewDomain()));
 	}
 
 	private static void insertId(ConsoleParams params, Table<?> table, Integer oldId, Integer newId) {
@@ -325,7 +328,7 @@ public class IsolateDomain {
 
 	private static void duplicateTable(ConsoleParams params, ScriptTable t) {
 		if (hasDomain(t.getTable())) {
-			log(params,MessageFormat.format(" **** Duplicating {0} table:", t.getTableName()));
+			ConsoleUtils.log(params,MessageFormat.format(" **** Duplicating {0} table:", t.getTableName()));
 			AggregateFunction<Integer> countField = DSL.count();
 			Integer selectCount = params.getDslContext()
 				.select( countField )
@@ -347,7 +350,7 @@ public class IsolateDomain {
 			t.setRows(  selectCount );
 			t.setCurrentRow(0);
 			t.setPercent(0);
-			log(params,MessageFormat.format(" **** Duplicating {0} table {1} rows", t.getTableName(),selectCount));
+			ConsoleUtils.log(params,MessageFormat.format(" **** Duplicating {0} table {1} rows", t.getTableName(),selectCount));
 			int offset = 0;
 			int limit = getLimit( t );
 			while (offset < selectCount) {
@@ -373,7 +376,7 @@ public class IsolateDomain {
 	}
 
 	private static void loopRefInvoice(ConsoleParams params, ScriptTable t) {
-		log(params," **** Loop references at invoice table");
+		ConsoleUtils.log(params," **** Loop references at invoice table");
 		params.getDslContext().select()
 			.from(t.getTable())
 			.where(INVOICE.DOMAIN.eq(params.getNewDomain() ) )
@@ -397,7 +400,7 @@ public class IsolateDomain {
 	}
 
 	private static void loopFBatch(ConsoleParams params, ScriptTable t) {
-		log(params," **** Loop references at fbatch table");
+		ConsoleUtils.log(params," **** Loop references at fbatch table");
 		params.getDslContext().select()
 			.from(t.getTable())
 			.where(FBATCH.DOMAIN.eq(params.getNewDomain() ) )
@@ -421,7 +424,7 @@ public class IsolateDomain {
 	}
 	
 	private static void loopBankStatementLinkFinanceTracking(ConsoleParams params, ScriptTable t) {
-		log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
+		ConsoleUtils.log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
 		params.getDslContext().select()
 			.from(t.getTable())
 			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getNewDomain() ) )
@@ -443,7 +446,7 @@ public class IsolateDomain {
 	}
   
 	private static void loopAccAppParamAccount(ConsoleParams params, ScriptTable t) {
-		log(params," **** ACC Params --> Account table");
+		ConsoleUtils.log(params," **** ACC Params --> Account table");
 		params.getDslContext().select()
 			.from(t.getTable())
 			.where(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
@@ -461,7 +464,7 @@ public class IsolateDomain {
 						.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
 						.and(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
 						.execute();
-				log(params, 
+				ConsoleUtils.log(params, 
 					MessageFormat.format( 
 						"App Param --> Account --> {0} {1} {2} {3}"
 						,i
@@ -474,18 +477,15 @@ public class IsolateDomain {
 	private static void disableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=0";
 		params.getDslContext().execute(cmd);
-		log(params,"** Foreign keys disabled");
+		ConsoleUtils.log(params,"** Foreign keys disabled");
 	}
 	
 	private static void enableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=1";
 		params.getDslContext().execute(cmd);
-		log(params,"** Foreign keys enabled");
+		ConsoleUtils.log(params,"** Foreign keys enabled");
 	}
 	
-//	private static <T extends Record> Integer getDomainValue(Table<T> table, Record rec) {
-//		return rec.getValue( getDomainField(table));		
-//	}
 	
 	@SuppressWarnings("unchecked")
 	private static <T extends Record> Field<Integer> getDomainField(Table<T> table) {
@@ -533,7 +533,7 @@ public class IsolateDomain {
 	private static void duplicateRow(ConsoleParams params, ScriptTable scriptTable, Record rec) {
 		Table<?> table = scriptTable.getTable();
 		duplicateRow(params, table, rec);	
-		printInfo( params, scriptTable);
+		ConsoleUtils.printInfo( params, scriptTable);
 	}
 	
 	private static Integer duplicateRow(ConsoleParams params, Table<?> table, Record rec) {
@@ -609,33 +609,6 @@ public class IsolateDomain {
 					} else {
 						rec.setValue(fkIntegerField, fkNewId);
 					}
-//				} else {
-//					Field<Integer> toIdField = getPrimaryKey(params,toTable);
-//					Record toRec = params.getDslContext().select()
-//						.from(toTable)
-//						.where(toIdField.eq(fkOldIntegerId))
-//						.fetch()
-//						.stream()
-//						.findFirst()
-//						.orElse(null);
-//					if (toRec != null
-//						&& getDomainValue(toTable,toRec) != null 
-//						&& params.getParent() != null
-//						&& getDomainValue(toTable,toRec).intValue() == params.getParent().intValue()) {
-//						Integer newID = duplicateRow(params, toTable, toRec);
-//						if (isStringFK) {
-//							rec.setValue(fkStringField, AonNumberUtils.toString( newID ));
-//						} else {
-//							rec.setValue(fkIntegerField, newID);
-//						}
-//					} else {
-//						if (toRec != null && getDomainValue(toTable,toRec) != null && getDomainValue(toTable,toRec).intValue() != 0) {
-//							params.addError(MessageFormat.format("ERROR! [{0}] {1} not found in table \"{2}\""
-//									, fk.getName()
-//									, Integer.toString(fkOldIntegerId)
-//									, toTable.getName()) );
-//						}
-//					}
 				}
 			}
 		}
@@ -651,18 +624,19 @@ public class IsolateDomain {
 	
 	private static void fillScript(ConsoleParams params, Deque<Table<?>> stack) {
 		List<Table<?>> tables = params.getSchema().getTables();
-		log(params,"** Generating tables script");
-		log(params,"** ------------------------");
+		ConsoleUtils.log(params,"** Generating tables script");
+		ConsoleUtils.log(params,"** ------------------------");
 		tables.stream()
 			.filter(t -> t.field(DOMAIN_LABEL) != null )
 			.forEach(t -> addTable(params, t, stack));
-		log(params," [DONE!]");
-		log(params,"");
+		ConsoleUtils.log(params," [DONE!]");
+		ConsoleUtils.log(params,"");
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	private static void addTable(ConsoleParams params, Table<?> table, Deque<Table<?>> stack) {
 		if (!params.getScript().containsKey(table.getName()) && !stack.contains(table)) {
-			@SuppressWarnings("unchecked")
 			Table<Record> tab = (Table<Record>) table.asTable();
 			stack.addFirst(table);
 			Stream.concat(
@@ -671,54 +645,18 @@ public class IsolateDomain {
 				table.getReferences().stream())
 				.map(fk -> fk.getKey().getTable())
 				.forEach(t -> addTable(params, t, stack));
-			logf(params,".");
+			ConsoleUtils.logf(params,".");
 			ScriptTable scriptTable = new ScriptTable(tab)
 				.setReferences( tab.getReferences());
 			if ( tab.getPrimaryKey() != null) {
 				// Arriesgado!! Si la PK no es Integer --> FALLO!!!
-				scriptTable.setPrimaryKey((Field<Integer>) tab.getPrimaryKey().getFields().get(0));
+				scriptTable.setPrimaryKey( (Field<Integer>) tab.getPrimaryKey().getFields().get(0));
 			}
 			params.getScript().put(table.getName(), scriptTable);
 			stack.removeFirst();
 		}
 	}
 
-	// ********************************
-	// ************* [LOG] ************
-	// ********************************
-	
-	private static int x = 0;
-	private static PrintStream getPrinter(ConsoleParams params) {
-		return Objects.requireNonNullElse(params.getPrinter(), new PrintStream(System.out));
-	}
-	private static void log(ConsoleParams params,String msg) {
-		x = 0;
-		getPrinter(params).println(msg);
-		getPrinter(params).flush();
-	}
-	private static void logf(ConsoleParams params,String msg) {
-		if (x == 80) {
-			x = 0;
-			getPrinter(params).println();
-			getPrinter(params).flush();
-		}
-		getPrinter(params).print(msg);
-		getPrinter(params).flush();
-		x++;
-	}
-	private static void printInfo(ConsoleParams params, ScriptTable scriptTable) {
-		scriptTable.setCurrentRow((scriptTable.getCurrentRow() + 1));
-		int percent = (scriptTable.getCurrentRow() * 100 / scriptTable.getRows());
-		if ( percent != scriptTable.getPercent() && percent % 2 == 0) {
-			scriptTable.setPercent( percent );
-			log(params,MessageFormat.format(("\t [" + AonStringUtils.repeat('*', percent/2) + AonStringUtils.repeat(' ', 50 - percent/2) + "] {0}%  ( {1} / {2} )")
-					, percent
-					, Integer.toString(scriptTable.getCurrentRow())
-					, Integer.toString(scriptTable.getRows())));
-		}
-		getPrinter(params).flush();
-	}
-	
 	private static void createLoginUser(ConsoleParams params) {
 		int newUserId = params.getDslContext().insertInto(USER)
 				.set(USER.DOMAIN , params.getNewDomain())
@@ -728,7 +666,7 @@ public class IsolateDomain {
 				.returning(USER.ID)
 				.fetchOne()
 				.getId();
-		log(params,"User insertado correctamente");
+		ConsoleUtils.log(params,"User insertado correctamente");
 		
 		params.getDslContext().select( SCOPE.ID)
 			.from(SCOPE)
@@ -741,7 +679,7 @@ public class IsolateDomain {
 				.set(USER_SCOPE.DOMAIN , params.getNewDomain())
 				.set(USER_SCOPE.SCOPE, scopeId)
 				.execute());
-		log(params,"User Scope insertado correctamente");
+		ConsoleUtils.log(params,"User Scope insertado correctamente");
 
 		params.getDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
@@ -764,8 +702,8 @@ public class IsolateDomain {
 					.returning(DOMAIN_APPLICATION.ID)
 					.fetchOne()
 					.getId());
-		log(params,"Aplicacion de usuario insertada correctamente");
-		log(params,"Perfil de usuario en la aplicación insertada correctamente");
+		ConsoleUtils.log(params,"Aplicacion de usuario insertada correctamente");
+		ConsoleUtils.log(params,"Perfil de usuario en la aplicación insertada correctamente");
 	}
     
 }

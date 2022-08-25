@@ -28,6 +28,12 @@ public class ConsoleParams {
 	private Schema schema;
 	private Map<String,ScriptTable> script;
 	private List<String> errors;
+	
+	private int totalCount;
+	private int totalProgress;
+
+	private int partialCount;
+	private int partialProgress;
 
 	public DSLContext getDslContext() {
 		return dslContext;
@@ -186,5 +192,48 @@ public class ConsoleParams {
 	public boolean hasErrors() {
 		return !getErrors().isEmpty(); 
 	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public ConsoleParams setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+		return this;
+	}
+
+	public int getTotalProgress() {
+		return totalProgress;
+	}
+
+	public ConsoleParams setTotalProgress(int totalProgress) {
+		this.totalProgress = totalProgress;
+		return this;
+	}
+
+	public int getPartialCount() {
+		return partialCount;
+	}
+
+	public ConsoleParams setPartialCount(int partialCount) {
+		this.partialCount = partialCount;
+		return this;
+	}
+
+	public int getPartialProgress() {
+		return partialProgress;
+	}
+
+	public ConsoleParams setPartialProgress(int partialProgress) {
+		this.partialProgress = partialProgress;
+		return this;
+	}
+
+	public int addPartialCount() {
+		this.partialProgress = partialProgress + 1;
+		return this.partialProgress;
+	}
+	
+	
 	
 }

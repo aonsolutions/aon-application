@@ -26,6 +26,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Record;
@@ -66,6 +67,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return INVOICE_DETAIL.as(tableAlias).SOURCE.eq((byte) 1);
+		}
+		
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
 		}
@@ -87,6 +93,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return INVOICE_DETAIL.as(tableAlias).SOURCE.eq((byte) 2);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
 		}
@@ -106,6 +117,11 @@ enum CustomForeignKey {
 			return sameByte(rec,INVOICE_DETAIL.SOURCE,3);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return INVOICE_DETAIL.as(tableAlias).SOURCE.eq((byte) 3);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
@@ -127,6 +143,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return INVOICE_DETAIL.as(tableAlias).SOURCE.eq((byte) 4);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
 		}
@@ -146,6 +167,11 @@ enum CustomForeignKey {
 			return sameByte(rec,INVOICE_DETAIL.SOURCE,8);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return INVOICE_DETAIL.as(tableAlias).SOURCE.eq((byte) 8);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
@@ -168,6 +194,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return INVOICE_DETAIL.as(tableAlias).SOURCE.eq((byte) 9);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ INVOICE_DETAIL.SOURCE };
 		}
@@ -188,6 +219,11 @@ enum CustomForeignKey {
 			return sameByte(rec,BANK_STATEMENT_LINK.SOURCE,0);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return BANK_STATEMENT_LINK.as(tableAlias).SOURCE.eq((byte) 0);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
@@ -210,6 +246,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return BANK_STATEMENT_LINK.as(tableAlias).SOURCE.eq((byte) 1);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
 		}
@@ -231,6 +272,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return BANK_STATEMENT_LINK.as(tableAlias).SOURCE.eq((byte) 2);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
 		}
@@ -250,6 +296,11 @@ enum CustomForeignKey {
 			return sameByte(rec,BANK_STATEMENT_LINK.SOURCE,3);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return BANK_STATEMENT_LINK.as(tableAlias).SOURCE.eq((byte) 3);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ BANK_STATEMENT_LINK.SOURCE };
@@ -272,6 +323,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return FINANCE.as(tableAlias).PAYROLL.eq((byte) 1);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ FINANCE.PAYROLL };
 		}
@@ -292,6 +348,11 @@ enum CustomForeignKey {
 			return sameByte(rec,FINANCE.PREPAYMENT, 1);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return FINANCE.as(tableAlias).PREPAYMENT.eq((byte) 1);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ FINANCE.PREPAYMENT };
@@ -314,6 +375,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return ALARM.as(tableAlias).SOURCE.eq((byte) 0);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ ALARM.SOURCE };
 		}
@@ -334,6 +400,11 @@ enum CustomForeignKey {
 			return sameByte(rec,ALARM.SOURCE,1);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return ALARM.as(tableAlias).SOURCE.eq((byte) 1);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ ALARM.SOURCE };
@@ -356,6 +427,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return ALARM.as(tableAlias).SOURCE.eq((byte) 3);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ ALARM.SOURCE };
 		}
@@ -376,6 +452,11 @@ enum CustomForeignKey {
 			return sameByte(rec,ALARM.SOURCE,4);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return ALARM.as(tableAlias).SOURCE.eq((byte) 4);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ ALARM.SOURCE };
@@ -398,6 +479,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return PURCHASE_DETAIL.as(tableAlias).SOURCE.eq((byte) 0);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ PURCHASE_DETAIL.SOURCE };
 		}
@@ -416,6 +502,11 @@ enum CustomForeignKey {
 		@Override
 		public boolean accept(Table<?> table, Record rec) {
 			return sameByte(rec,PURCHASE_DETAIL.SOURCE,1);
+		}
+
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return PURCHASE_DETAIL.as(tableAlias).SOURCE.eq((byte) 1);
 		}
 
 		@Override
@@ -440,6 +531,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return PURCHASE_DETAIL.as(tableAlias).SOURCE.eq((byte) 2);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ PURCHASE_DETAIL.SOURCE };
 		}
@@ -460,6 +556,11 @@ enum CustomForeignKey {
 			return sameByte(rec,WAREHOUSE_TRANSFER.SOURCE,1);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return WAREHOUSE_TRANSFER.as(tableAlias).SOURCE.eq((byte) 1);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ WAREHOUSE_TRANSFER.SOURCE };
@@ -482,6 +583,11 @@ enum CustomForeignKey {
 		}
 		
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return WAREHOUSE_TRANSFER.as(tableAlias).SOURCE.eq((byte) 2);
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ WAREHOUSE_TRANSFER.SOURCE };
 		}
@@ -502,6 +608,11 @@ enum CustomForeignKey {
 			return sameByte(rec,WAREHOUSE_TRANSFER.SOURCE,3);
 		}
 		
+		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return WAREHOUSE_TRANSFER.as(tableAlias).SOURCE.eq((byte) 3);
+		}
+
 		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ WAREHOUSE_TRANSFER.SOURCE };
@@ -528,6 +639,12 @@ enum CustomForeignKey {
 		}
 
 		@Override
+		protected Condition getCondition( String tableAlias ) {
+			return APP_PARAM.as(tableAlias).NAME.isNotNull()
+				.and(APP_PARAM.as(tableAlias).NAME.like("ACC_%_ACC"));
+		}
+
+		@Override
 		public Field<?>[] getInvolvedColumns() {
 			return new Field<?>[]{ APP_PARAM.NAME };
 		}
@@ -546,6 +663,7 @@ enum CustomForeignKey {
 	public abstract boolean accept(Table<?> table, Record rec);
 	public abstract <R extends Record, U extends Record> ForeignKey<R,U> getForeignKey();
 	public abstract Field<?>[] getInvolvedColumns();
+	protected abstract Condition getCondition(String tableAlias );
 	
 	private static boolean sameByte(Record rec, Field<Byte> field, int value) {
 		Byte b = rec.getValue( field );

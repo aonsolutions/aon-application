@@ -8,13 +8,18 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
+import java.io.PrintStream;
+import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.jooq.ForeignKey;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 class ConsoleUtils {
@@ -66,4 +71,40 @@ class ConsoleUtils {
 		});
 	}
 
+	
+	// ********************************
+	// ************* [LOG] ************
+	// ********************************
+
+	static PrintStream getPrinter(ConsoleParams params) {
+		return Objects.requireNonNullElse(params.getPrinter(), new PrintStream(System.out));
+	}
+	static void log(ConsoleParams params,String msg) {
+		params.setPartialCount(0); 
+		getPrinter(params).println(msg);
+		getPrinter(params).flush();
+	}
+	static void logf(ConsoleParams params,String msg) {
+		if (params.getPartialCount() == 80) {
+			params.setPartialCount(0); 
+			getPrinter(params).println();
+			getPrinter(params).flush();
+		}
+		getPrinter(params).print(msg);
+		getPrinter(params).flush();
+		params.addPartialCount();
+	}
+	static void printInfo(ConsoleParams params, ScriptTable scriptTable) {
+		scriptTable.setCurrentRow((scriptTable.getCurrentRow() + 1));
+		int percent = (scriptTable.getCurrentRow() * 100 / scriptTable.getRows());
+		if ( percent != scriptTable.getPercent() && percent % 2 == 0) {
+			scriptTable.setPercent( percent );
+			log(params,MessageFormat.format(("\t [" + AonStringUtils.repeat('*', percent/2) + AonStringUtils.repeat(' ', 50 - percent/2) + "] {0}%  ( {1} / {2} )")
+					, percent
+					, Integer.toString(scriptTable.getCurrentRow())
+					, Integer.toString(scriptTable.getRows())));
+		}
+		getPrinter(params).flush();
+	}
+	
 }
