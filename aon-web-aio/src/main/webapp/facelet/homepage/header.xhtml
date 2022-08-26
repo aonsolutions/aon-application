@@ -2078,7 +2078,7 @@
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">
 
-								<aon:if test="#{!domainSwitcher.snapshotVersion}">
+								<aon:if test="#{!domainSwitcher.snapshot}">
 									<!-- OLD HELP -->
 									<h:outputLink style="font-size:1em;"
 										value="#{aonConfiguration.helpURL}"
@@ -2087,7 +2087,7 @@
 									</h:outputLink>
 								</aon:if>
 								
-								<aon:if test="#{domainSwitcher.snapshotVersion}">
+								<aon:if test="#{domainSwitcher.snapshot}">
 									<!-- NEW HELP-->	
 									<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
 									</aon:htmlCommandLink>
