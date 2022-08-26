@@ -85,14 +85,14 @@ class ConsoleUtils {
 		getPrinter(params).flush();
 	}
 	static void logf(ConsoleParams params,String msg) {
-		if (params.getPartialCount() == 80) {
-			params.setPartialCount(0); 
+		if (params.getPartialProgress() == 80) {
+			params.setPartialProgress(0); 
 			getPrinter(params).println();
 			getPrinter(params).flush();
 		}
 		getPrinter(params).print(msg);
 		getPrinter(params).flush();
-		params.addPartialCount();
+		params.addPartialProgress();
 	}
 	static void printInfo(ConsoleParams params, ScriptTable scriptTable) {
 		scriptTable.setCurrentRow((scriptTable.getCurrentRow() + 1));

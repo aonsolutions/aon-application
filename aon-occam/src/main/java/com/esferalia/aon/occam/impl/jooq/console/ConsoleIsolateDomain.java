@@ -20,15 +20,13 @@ import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.Schema;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -39,16 +37,11 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.DomainValidator;
-import com.esferalia.aon.watson.util.AonChronometer;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class IsolateDomain {
-	
-	private static final String SEG = " seg.";
-
-	private static final Logger LOGGER = Logger.getLogger(IsolateDomain.class.getName());
+public class ConsoleIsolateDomain {
 	
 	private static final String DOMAIN_LABEL = "domain";
 	private static final Table<Record> TEMPID = DSL.table("tempId");
@@ -56,12 +49,12 @@ public class IsolateDomain {
 	private static final Field<Integer> TEMPID_OLD = DSL.field("tempId.old_id", Integer.class);
 	private static final Field<Integer> TEMPID_NEW = DSL.field("tempId.new_id", Integer.class);
 	
-	private IsolateDomain() {
+	private ConsoleIsolateDomain() {
 	}
 	
 	public static void isolate(ConsoleParams params) {
-		if (params.getDslContext() == null) {
-			String msg = "[ERROR]: No se ha definido la connection a la BD";
+		if (params.getFromConnection() == null || params.getFromConnection().getDslContext() == null) {
+			String msg = "[ERROR]: No se ha definido la conexión origen a la BD";
 			ConsoleUtils.log(params,msg);
 			throw new AonCoreException(msg);
 		}
@@ -69,154 +62,73 @@ public class IsolateDomain {
 	}
 
 	private static void isolateDomain(ConsoleParams params) {
-		AonChronometer chronometer = new AonChronometer();
-		chronometer.start();
-		Result<Record> result = params.getDslContext().fetch("SELECT DATABASE();");
-		Record rec = result.get(0);
-		String schemaName = (String) rec.get(0);
-		chronometer.mark();
-		Schema schema = params.getDslContext().meta()
-			.getSchemas()
-			.stream()
-			.filter(sc -> sc.getName().equals(schemaName))
-			.findFirst()
-			.orElse(null);
-		LOGGER.info( " 1.- Schema selected               -->"
-			+ " " + chronometer.getCurrentTime());
-		if (schema != null) {	
-			ConsoleUtils.log(params,"** Start domain isolation!");
-			try {
-				params.setSchema(schema)
-					.setScript( new LinkedHashMap<>() );
-				
-				DomainValidator domainValidator = DomainValidator.getInstance();
-				if (!domainValidator.isValid(params.getNewDomainName())) {
-					String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getNewDomainName());
-					ConsoleUtils.log(params,msg);
-					throw new AonCoreException(msg);
-				}
-
-				chronometer.mark();
-				fillScript(params);
-				LOGGER.info( " 2.- Script filled                 -->" 
-						+ " " + chronometer.getMarkSeconds() + SEG
-						+ " - " + chronometer.getCurrentTime());
-				
-				ConsoleUtils.log (params, "Orden de carga:");
-				MutableInt x = new MutableInt(1);
-				params.getScript().values().stream()
-					.forEach(sc -> {
-						x.add(1);
-						ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
-					});
-				
-				disableForeignKeys(params);
-				ConsoleUtils.log(params,"** Start transaction!");
-				
-
-				params.getDslContext().transaction(conf -> {
-					chronometer.mark();
-					createTempTable(params);
-					LOGGER.info( " 3.- Temp table created            -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					
-					
-					chronometer.mark();
-					createDomain(params);
-					LOGGER.info( " 4.- Domain created                -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					chronometer.mark();
-					checkProductIndex( params );
-					checkNoticeRecipient( params );
-					
-					LOGGER.info( " 5.- Product index checked         -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					if (params.isInhertitanceEnabled()) {
-						chronometer.mark();
-						passHeritableTables( params );
-						LOGGER.info( " 6.- Heritable tables              -->" 
-								+ " " + chronometer.getMarkSeconds() + SEG
-								+ " - " + chronometer.getCurrentTime());
-					}
-					chronometer.mark();
-					params.getScript()
-						.values()
-						.stream()
-						.filter(t -> !DOMAIN_LABEL.equals(t.getTable().getName()))
-						.filter(t -> !"session".equals(t.getTable().getName()))
-						.filter(t -> !"action_entry".equals(t.getTable().getName()))
-						.forEach(t -> duplicateTable(params, t));
-					LOGGER.info( " 7.- Tables duplicated             -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					chronometer.mark();
-					loopRefInvoice(params,params.getScript().get("invoice"));
-					LOGGER.info( " 8.- Loop Ref Invoices             -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					chronometer.mark();
-					loopFBatch(params,params.getScript().get("fbatch"));
-					LOGGER.info( " 9.- Loop Ref Fbatch               -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					chronometer.mark();
-					loopBankStatementLinkFinanceTracking(params,params.getScript().get("bank_statement_link"));
-					LOGGER.info( "10.- Loop Ref BnkSttme Fin Track   -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					chronometer.mark();
-					loopAccAppParamAccount(params,params.getScript().get("app_param"));
-					LOGGER.info( "11.- Loop Ref AccAppParamAccount   -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-					chronometer.mark();
-					createLoginUser(params);
-					LOGGER.info( "12.- User created                   -->" 
-							+ " " + chronometer.getMarkSeconds() + SEG
-							+ " - " + chronometer.getCurrentTime());
-					
-				});
-				ConsoleUtils.log(params,"** Commit!");
-				ConsoleUtils.log(params,"** End domain isolation!");
-			} catch (Exception e) {
-				ConsoleUtils.log(params, e.getMessage() );
-				ConsoleUtils.log(params,"** Rollback!");
-				e.printStackTrace();
-			} finally {
-				if (!params.getErrors().isEmpty()) {
-					ConsoleUtils.log(params, "" );
-					ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-					ConsoleUtils.log(params,"** Se han producido incidencias!");
-					params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
-					ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-				}
-				ConsoleUtils.log(params,"** Program ended!");
-				enableForeignKeys(params);
+		ConsoleUtils.log(params,"** Start domain isolation!");
+		try {
+			params.setScript( new LinkedHashMap<>() );
+			
+			DomainValidator domainValidator = DomainValidator.getInstance();
+			if (!domainValidator.isValid(params.getNewDomainName())) {
+				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getNewDomainName());
+				ConsoleUtils.log(params,msg);
+				throw new AonCoreException(msg);
 			}
-		} else {
-			ConsoleUtils.log(params,"Schema not present -> database : " + params.getDatabase() + ", domainName : "
-					+ params.getNewDomainName());
+			fillScript(params);
+			ConsoleUtils.log (params, "Orden de carga:");
+			MutableInt x = new MutableInt(1);
+			params.getScript().values().stream()
+				.forEach(sc -> {
+					x.add(1);
+					ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
+				});
+			
+			disableForeignKeys(params);
+			ConsoleUtils.log(params,"** Start transaction!");
+			
+
+			params.getToDslContext().transaction(conf -> {
+				createTempTable(params);
+				createDomain(params);
+				checkProductIndex( params );
+				checkNoticeRecipient( params );
+				if (params.isInhertitanceEnabled()) {
+					passHeritableTables( params );
+				}
+				params.getScript()
+					.values()
+					.stream()
+					.filter(t -> !DOMAIN_LABEL.equals(t.getTable().getName()))
+					.filter(t -> !"session".equals(t.getTable().getName()))
+					.filter(t -> !"action_entry".equals(t.getTable().getName()))
+					.forEach(t -> duplicateTable(params, t));
+				loopRefInvoice(params,params.getScript().get("invoice"));
+				loopFBatch(params,params.getScript().get("fbatch"));
+				loopBankStatementLinkFinanceTracking(params,params.getScript().get("bank_statement_link"));
+				loopAccAppParamAccount(params,params.getScript().get("app_param"));
+				createLoginUser(params);
+			});
+			ConsoleUtils.log(params,"** Commit!");
+			ConsoleUtils.log(params,"** End domain isolation!");
+		} catch (Exception e) {
+			ConsoleUtils.log(params, e.getMessage() );
+			ConsoleUtils.log(params,"** Rollback!");
+			e.printStackTrace();
+		} finally {
+			if (!params.getErrors().isEmpty()) {
+				ConsoleUtils.log(params, "" );
+				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+				ConsoleUtils.log(params,"** Se han producido incidencias!");
+				params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
+				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+			}
+			ConsoleUtils.log(params,"** Program ended!");
+			enableForeignKeys(params);
 		}
-		chronometer.stop();
-		ConsoleUtils.log(params, "Process time " + chronometer.getMinutes() + " minutes.");
-		
 	}
 
 	private static void checkProductIndex(ConsoleParams params) {
 		if (params.isInhertitanceEnabled()) {
 			AggregateFunction<Integer> count = DSL.count(PRODUCT.ID);
-			params.getDslContext()
+			params.getFromDslContext()
 				.select( PRODUCT.CODE, count )
 				.from(PRODUCT)
 				.where(PRODUCT.DOMAIN.in(params.getDomain(),params.getParent()))
@@ -232,7 +144,7 @@ public class IsolateDomain {
 	}
 	
 	private static void checkNoticeRecipient(ConsoleParams params ) {
-		params.getDslContext()
+		params.getFromDslContext()
 			.select( NOTICE.ID,NOTICE.DATE,NOTICE.SUBJECT )
 			.from(NOTICE)
 			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
@@ -267,11 +179,11 @@ public class IsolateDomain {
 		};
 		Arrays.stream(tables)
 			.forEach( t -> {
-				SelectConditionStep<Record> select = params.getDslContext()
+				SelectConditionStep<Record> select = params.getFromDslContext()
 						.select()
 						.from(t.getTable().asTable())
 						.where(getDomainField(t.getTable()).equal(params.getParent()));
-				t.setRows(  params.getDslContext().fetchCount(select) );
+				t.setRows(  params.getFromDslContext().fetchCount(select) );
 				t.setCurrentRow(0);
 				t.setPercent(0);
 				ConsoleUtils.log(params,MessageFormat.format(" **** Parent {0} table:", t.getTableName()));
@@ -283,7 +195,7 @@ public class IsolateDomain {
 	}
 
 	private static void createTempTable(ConsoleParams params) {
-		params.getDslContext().execute("DROP TEMPORARY TABLE IF EXISTS `tempId`");
+		params.getToDslContext().execute("DROP TEMPORARY TABLE IF EXISTS `tempId`");
 		String sql =
 			"CREATE TEMPORARY TABLE `tempId` ("
 				+"`table_name` char(40) NOT NULL,"
@@ -292,21 +204,26 @@ public class IsolateDomain {
 				+"PRIMARY KEY (`table_name`,`old_id`)"
 			+"  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;"
 		;
-		params.getDslContext().execute(sql);
+		params.getToDslContext().execute(sql);
 		ConsoleUtils.log(params,"** IDs Temp table created!");
 	}
 	
 	private static void createDomain(ConsoleParams params) {
-		Record rec = params.getDslContext().select().from(DOMAIN).where(DOMAIN.NAME.equal(params.getDomainName()))
-				.fetch().stream().findFirst().orElse(null);
-		if (rec == null) {
+		Optional<Record> optRec = params.getFromDslContext().select()
+			.from(DOMAIN)
+			.where(DOMAIN.NAME.equal(params.getDomainName()))
+			.fetch()
+			.stream()
+			.findFirst();
+		if (optRec.isEmpty()) {
 			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getDomainName() + "\"");
 		}
-		params.setDomain(rec.getValue(DOMAIN.ID));
-		params.setParent(rec.getValue(DOMAIN.PARENT));
-		params.setInhertitanceEnabled( rec.getValue(DOMAIN.ENABLEHEREDITY) == 1);
+		params.setDomain(optRec.get().getValue(DOMAIN.ID));
+		params.setParent(optRec.get().getValue(DOMAIN.PARENT));
+		params.setInhertitanceEnabled( optRec.get().getValue(DOMAIN.ENABLEHEREDITY) == 1);
 		
-		DomainRecord domRec = rec.into(DOMAIN);
+		DomainRecord domRec = optRec.get().into(DOMAIN);
+		domRec.attach(params.getToDslContext().configuration());
 		domRec.setId(null);
 		domRec.setName(params.getNewDomainName());
 		domRec.setParent(null);
@@ -319,7 +236,7 @@ public class IsolateDomain {
 	}
 
 	private static void insertId(ConsoleParams params, Table<?> table, Integer oldId, Integer newId) {
-		params.getDslContext().insertInto(TEMPID)
+		params.getToDslContext().insertInto(TEMPID)
 			.set(TEMPID_TABLE, table.getName() )
 			.set(TEMPID_OLD, oldId )
 			.set(TEMPID_NEW, newId )
@@ -330,7 +247,7 @@ public class IsolateDomain {
 		if (hasDomain(t.getTable())) {
 			ConsoleUtils.log(params,MessageFormat.format(" **** Duplicating {0} table:", t.getTableName()));
 			AggregateFunction<Integer> countField = DSL.count();
-			Integer selectCount = params.getDslContext()
+			Integer selectCount = params.getFromDslContext()
 				.select( countField )
 				.from(t.getTable().asTable())
 				.where(getDomainField(t.getTable()).equal(params.getDomain()))
@@ -343,7 +260,7 @@ public class IsolateDomain {
 			if (selectCount == null) {
 				selectCount = Integer.valueOf(0);
 			}
-			SelectConditionStep<Record> select = params.getDslContext()
+			SelectConditionStep<Record> select = params.getFromDslContext()
 				.select()
 				.from(t.getTable().asTable())
 				.where(getDomainField(t.getTable()).equal(params.getDomain()));
@@ -377,7 +294,7 @@ public class IsolateDomain {
 
 	private static void loopRefInvoice(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at invoice table");
-		params.getDslContext().select()
+		params.getFromDslContext().select()
 			.from(t.getTable())
 			.where(INVOICE.DOMAIN.eq(params.getNewDomain() ) )
 			.and(INVOICE.RECTIFICATION_INVOICE.isNotNull())
@@ -390,7 +307,7 @@ public class IsolateDomain {
 					.get()
 				,rec))
 			.forEach(rec ->
-				params.getDslContext()
+				params.getToDslContext()
 					.update( INVOICE )
 					.set(INVOICE.RECTIFICATION_INVOICE, rec.getValue(INVOICE.RECTIFICATION_INVOICE))
 					.where(INVOICE.ID.eq(rec.getValue(INVOICE.ID)))
@@ -401,7 +318,7 @@ public class IsolateDomain {
 
 	private static void loopFBatch(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at fbatch table");
-		params.getDslContext().select()
+		params.getFromDslContext().select()
 			.from(t.getTable())
 			.where(FBATCH.DOMAIN.eq(params.getNewDomain() ) )
 			.and(FBATCH.BANK_STATEMENT_LINK.isNotNull())
@@ -414,7 +331,7 @@ public class IsolateDomain {
 					.get()
 				,rec))
 			.forEach(rec ->
-				params.getDslContext()
+				params.getToDslContext()
 					.update( FBATCH )
 					.set(FBATCH.BANK_STATEMENT_LINK, rec.getValue(FBATCH.BANK_STATEMENT_LINK))
 					.where(FBATCH.ID.eq(rec.getValue(FBATCH.ID)))
@@ -425,7 +342,7 @@ public class IsolateDomain {
 	
 	private static void loopBankStatementLinkFinanceTracking(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
-		params.getDslContext().select()
+		params.getFromDslContext().select()
 			.from(t.getTable())
 			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getNewDomain() ) )
 			.and(BANK_STATEMENT_LINK.SOURCE.eq((byte) 0))
@@ -436,7 +353,7 @@ public class IsolateDomain {
 				,CustomForeignKey.BANK_STATEMENT_LINK_FINANCE_TRACKING.getForeignKey()
 				,rec))
 			.forEach(rec ->
-				params.getDslContext()
+				params.getToDslContext()
 					.update( BANK_STATEMENT_LINK )
 					.set(BANK_STATEMENT_LINK.SOURCE_ID, rec.getValue(BANK_STATEMENT_LINK.SOURCE_ID))
 					.where(BANK_STATEMENT_LINK.ID.eq(rec.getValue(BANK_STATEMENT_LINK.ID)))
@@ -447,7 +364,7 @@ public class IsolateDomain {
   
 	private static void loopAccAppParamAccount(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** ACC Params --> Account table");
-		params.getDslContext().select()
+		params.getFromDslContext().select()
 			.from(t.getTable())
 			.where(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
 			.and(APP_PARAM.NAME.like("ACC%ACC"))
@@ -458,31 +375,24 @@ public class IsolateDomain {
 				,CustomForeignKey.ACC_APP_PARAM.getForeignKey()
 				,rec))
 			.forEach(rec -> {
-				int i = params.getDslContext()
-						.update( APP_PARAM )
-						.set(APP_PARAM.VALUE, rec.getValue(APP_PARAM.VALUE))
-						.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
-						.and(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
-						.execute();
-				ConsoleUtils.log(params, 
-					MessageFormat.format( 
-						"App Param --> Account --> {0} {1} {2} {3}"
-						,i
-						,rec.getValue(APP_PARAM.ID)
-						,rec.getValue(APP_PARAM.NAME)
-						,rec.getValue(APP_PARAM.VALUE)));
+				params.getToDslContext()
+					.update( APP_PARAM )
+					.set(APP_PARAM.VALUE, rec.getValue(APP_PARAM.VALUE))
+					.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
+					.and(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
+					.execute();
 			});
 	}
 
 	private static void disableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=0";
-		params.getDslContext().execute(cmd);
+		params.getToDslContext().execute(cmd);
 		ConsoleUtils.log(params,"** Foreign keys disabled");
 	}
 	
 	private static void enableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=1";
-		params.getDslContext().execute(cmd);
+		params.getToDslContext().execute(cmd);
 		ConsoleUtils.log(params,"** Foreign keys enabled");
 	}
 	
@@ -518,7 +428,7 @@ public class IsolateDomain {
 	}
 
 	private static Integer getNewId(ConsoleParams params, Table<?> table, Integer fkOldId) {
-		return params.getDslContext()
+		return params.getToDslContext()
 			.select(TEMPID_NEW)
 			.from(TEMPID)
 			.where(TEMPID_TABLE.eq(table.getName()))
@@ -552,8 +462,6 @@ public class IsolateDomain {
 			&& ConsoleUtils.CUSTOM_FOREIGN_MAP.containsKey(table.getName())) {
 			Arrays.stream( ConsoleUtils.CUSTOM_FOREIGN_MAP.get(table.getName()))
 				.filter( en -> en.accept(table,rec))
-//				.filter(fk ->  fk != CustomForeignKey.BANK_STATEMENT_LINK_FINANCE_TRACKING)
-//				.filter(fk ->  fk != CustomForeignKey.BANK_STATEMENT_LINK_FBATCH)
 				.map( CustomForeignKey::getForeignKey)
 				.forEach(fk -> duplicateForeignKey(params,fk,rec)
 			); 
@@ -562,13 +470,13 @@ public class IsolateDomain {
 		rec.changed(true);
 		Integer pkNewId = rec.getValue(pkField);
 		if (pkField.getDataType().identity()) {
-			pkNewId = params.getDslContext().insertInto(table)
+			pkNewId = params.getToDslContext().insertInto(table)
 				.set(rec)
 				.returning(pkField)
 				.fetchOne()
 				.getValue(pkField);
 		} else {
-			params.getDslContext().insertInto(table)
+			params.getToDslContext().insertInto(table)
 				.set(rec)
 				.execute();
 		}
@@ -623,7 +531,7 @@ public class IsolateDomain {
 	}
 	
 	private static void fillScript(ConsoleParams params, Deque<Table<?>> stack) {
-		List<Table<?>> tables = params.getSchema().getTables();
+		List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
 		ConsoleUtils.log(params,"** Generating tables script");
 		ConsoleUtils.log(params,"** ------------------------");
 		tables.stream()
@@ -636,6 +544,7 @@ public class IsolateDomain {
 	
 	@SuppressWarnings("unchecked")
 	private static void addTable(ConsoleParams params, Table<?> table, Deque<Table<?>> stack) {
+		ConsoleUtils.logf(params,".");
 		if (!params.getScript().containsKey(table.getName()) && !stack.contains(table)) {
 			Table<Record> tab = (Table<Record>) table.asTable();
 			stack.addFirst(table);
@@ -645,7 +554,6 @@ public class IsolateDomain {
 				table.getReferences().stream())
 				.map(fk -> fk.getKey().getTable())
 				.forEach(t -> addTable(params, t, stack));
-			ConsoleUtils.logf(params,".");
 			ScriptTable scriptTable = new ScriptTable(tab)
 				.setReferences( tab.getReferences());
 			if ( tab.getPrimaryKey() != null) {
@@ -658,7 +566,7 @@ public class IsolateDomain {
 	}
 
 	private static void createLoginUser(ConsoleParams params) {
-		int newUserId = params.getDslContext().insertInto(USER)
+		int newUserId = params.getToDslContext().insertInto(USER)
 				.set(USER.DOMAIN , params.getNewDomain())
 				.set(USER.NAME, "DEFAULT USER")
 				.set(USER.LOGIN, "aon")
@@ -666,28 +574,28 @@ public class IsolateDomain {
 				.returning(USER.ID)
 				.fetchOne()
 				.getId();
-		ConsoleUtils.log(params,"User insertado correctamente");
+		ConsoleUtils.log(params,"**** User insertado correctamente");
 		
-		params.getDslContext().select( SCOPE.ID)
+		params.getFromDslContext().select( SCOPE.ID)
 			.from(SCOPE)
 			.where(SCOPE.DOMAIN.eq(params.getNewDomain()))
 			.fetch()
 			.stream()
 			.map( rec -> rec.getValue( SCOPE.ID ))
-			.forEach( scopeId ->params.getDslContext().insertInto(USER_SCOPE)
+			.forEach( scopeId ->params.getToDslContext().insertInto(USER_SCOPE)
 				.set(USER_SCOPE.USER_ID, newUserId)
 				.set(USER_SCOPE.DOMAIN , params.getNewDomain())
 				.set(USER_SCOPE.SCOPE, scopeId)
 				.execute());
-		ConsoleUtils.log(params,"User Scope insertado correctamente");
+		ConsoleUtils.log(params,"**** User Scope insertado correctamente");
 
-		params.getDslContext().select( DOMAIN_APPLICATION.ID)
+		params.getFromDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
 			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getNewDomain()))
 			.fetch()
 			.stream()
 			.map( rec -> rec.getValue( DOMAIN_APPLICATION.ID ))
-			.map( domainApplicationId -> params.getDslContext().insertInto(APPLICATION_USER)
+			.map( domainApplicationId -> params.getToDslContext().insertInto(APPLICATION_USER)
 				.set(APPLICATION_USER.DOMAIN, params.getNewDomain())
 				.set(APPLICATION_USER.USER_ID, newUserId)
 				.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplicationId)
@@ -695,15 +603,15 @@ public class IsolateDomain {
 				.returning(APPLICATION_USER.ID)
 				.fetchOne()
 				.getId())
-			.forEach(applicationUserId -> params.getDslContext().insertInto(APPLICATION_USER_PROFILE)
+			.forEach(applicationUserId -> params.getToDslContext().insertInto(APPLICATION_USER_PROFILE)
 					.set(APPLICATION_USER_PROFILE.DOMAIN, params.getNewDomain())
 					.set(APPLICATION_USER_PROFILE.APPLICATION_USER, applicationUserId)
 					.set(APPLICATION_USER_PROFILE.PROFILE, 71)
 					.returning(DOMAIN_APPLICATION.ID)
 					.fetchOne()
 					.getId());
-		ConsoleUtils.log(params,"Aplicacion de usuario insertada correctamente");
-		ConsoleUtils.log(params,"Perfil de usuario en la aplicación insertada correctamente");
+		ConsoleUtils.log(params,"**** Aplicacion de usuario insertada correctamente");
+		ConsoleUtils.log(params,"**** Perfil de usuario en la aplicación insertada correctamente");
 	}
     
 }
