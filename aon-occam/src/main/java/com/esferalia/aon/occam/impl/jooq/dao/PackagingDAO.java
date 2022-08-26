@@ -16,6 +16,9 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.warehouse.Barcode;
+import com.esferalia.aon.occam.api.model.warehouse.BarcodeType;
+import com.esferalia.aon.occam.api.model.warehouse.GS1128Codes;
 import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -209,10 +212,18 @@ public class PackagingDAO {
 	}
 	
 	private static String calculateSerialNumber(String barcode) {
-		return barcode.contains("(") ? "" : Integer.toString(AonDateUtils.getDayOfYear(new Date()));
+		if(barcode.length() > 14) {
+			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
+			return b.parseGS1128().get(GS1128Codes.CODE_10);
+		}
+		return Integer.toString(AonDateUtils.getDayOfYear(new Date()));
 	}
 	
 	private static Date calculateSerialDate(String barcode) {
+		if(barcode.length() > 14) {
+			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
+			return AonDateUtils.parse(b.parseGS1128().get(GS1128Codes.CODE_15), "yyMMdd");
+		}
 		return new Date();
 	}
 
