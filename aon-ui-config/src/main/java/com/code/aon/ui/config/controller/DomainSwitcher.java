@@ -516,6 +516,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return type == DomainType.CONSULTANCY;
 	}
 	
+	public boolean isSnapshot() {
+		return AonUtil.getDomainName().contains("aonsolutions.org");
+	}
+	
 	public boolean isSnapshotVersion() {
 		CustomizeController customize = (CustomizeController) AonUtil.getRegisteredBean(ICommonConstants.CUSTOMIZE_CONTROLLER_NAME);
 		return customize.isSnapshotVersion();
