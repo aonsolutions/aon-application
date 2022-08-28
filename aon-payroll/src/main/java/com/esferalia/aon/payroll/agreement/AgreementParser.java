@@ -344,7 +344,7 @@ public class AgreementParser {
 	
 	private static void getAgreementConcepts(Document document, Agreement agreement) {
 		NodeList listCPR = document.getElementsByTagName("CATALOGO_CPTOS_RETRIB");
-		
+		System.out.println("----- CONCEPTS -----");
 		for(int i=0; i<listCPR.getLength(); i++) {
 			Node nodeCPR = listCPR.item(i);
 
@@ -365,11 +365,14 @@ public class AgreementParser {
 	    	            
 	    	            String realName = getParseName(name, type);
 	    	            
+	    	            System.out.println(realName);
+	    	            
 	    	            agreement.addAgreementConcept(realName);
 	    	        }
 	            }   
 	        }
 		}
+		System.out.println("----------");
 	}
 
 	private static void getAgreementLevelAndCategory(Document document, Agreement agreement) {
