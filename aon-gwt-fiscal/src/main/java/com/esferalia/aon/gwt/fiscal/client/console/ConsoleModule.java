@@ -95,13 +95,13 @@ public class ConsoleModule extends MainEntryPoint {
 		Label opt1 = new Label(AonStringUtils.BULLET + "Validaci\u00F3n de dominios");
 		opt1.setStyleName(AON.CSS.aonClickableBlock());
 		opt1.addStyleName(AON.CSS.aonPadding());
-		opt1.addClickHandler( e -> content.setWidget( new DomainIntegrityCheck(options) ));
+		opt1.addClickHandler( e -> content.setWidget( new ConsoleDomainCheckIntegrity(options) ));
 		optionsGrid.addRow().addCell(opt1);
 
 		Label opt2 = new Label(AonStringUtils.BULLET + "Extracci\u00F3n de dominios");
 		opt2.setStyleName(AON.CSS.aonClickableBlock());
 		opt2.addStyleName(AON.CSS.aonPadding());
-		opt2.addClickHandler( e -> content.setWidget( new DomainIsolate(options) ));
+		opt2.addClickHandler( e -> content.setWidget( new ConsoleDomainIsolate(options) ));
 		optionsGrid.addRow().addCell(opt2);
 		
 		aonLayout.addWest(sidebar, 275);

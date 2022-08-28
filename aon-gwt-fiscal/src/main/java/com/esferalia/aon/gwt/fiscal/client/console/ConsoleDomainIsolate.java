@@ -26,11 +26,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
-public class DomainIntegrityCheck extends AonLayoutPanel {
+public class ConsoleDomainIsolate extends AonLayoutPanel {
 	
-	private static final String CHECK_DOMAIN_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/CheckDomainIntegrityServlet");
+	private static final String DOMAIN_ISOLATE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainIsolateServlet");
 
-	private static final Logger LOGGER = Logger.getLogger(DomainIntegrityCheck.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainIsolate.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -38,29 +38,20 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 	private ConsoleModuleOptions options;
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
-	private String domainName;
 
-	public DomainIntegrityCheck(ConsoleModuleOptions options) {
+	private String domainName;
+	private String newDomainName;
+
+	public ConsoleDomainIsolate(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
-
 		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		this.addNorth(getDataPanel(), 100);
+		
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
 	}
 
-	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbarPanel = new AonToolbar();
-		toolbarPanel.setTitle("Chequeo integridad de dominios");
-		
-		AonToolbarButton runCommand = new AonToolbarButton( AON.MSG.execute(), AON.CSS.aonIconSend() );
-		runCommand.addClickHandler(event -> doIt());
-		toolbarPanel.add(runCommand);
-
-		return toolbarPanel;
-	}
-	
 	private Widget getDataPanel() {
 		String host = Window.Location.getHost();
 		host = AonStringUtils.substringBefore(host, ":");
@@ -88,11 +79,32 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 		firstPanel.add(firstDomainName);
 		firstPanel.add(secondDomainName);
 		
+		FlowPanel secondPanel = new FlowPanel();
+		AonTextBox fullNewDomainName = new AonTextBox();
+		fullNewDomainName.setVisible(false);
+		fullNewDomainName.setVisibleLength(50);
+		fullDomainName.addValueChangeHandler( e -> newDomainName = fullNewDomainName.getValue());
+		AonTextBox firstNewDomainName = new AonTextBox();
+		firstNewDomainName.setVisibleLength(30);
+		firstNewDomainName.addValueChangeHandler( e -> newDomainName = firstNewDomainName.getValue() + mainDomain);
+		
+		InlineLabel secondNewDomainName = new InlineLabel(mainDomain);
+		secondNewDomainName.setStyleName(AON.CSS.aonMarginLeft());
+		secondNewDomainName.addStyleName(AON.CSS.aonBold());
+		secondPanel.add(fullNewDomainName);
+		secondPanel.add(firstNewDomainName);
+		secondPanel.add(secondNewDomainName);
+		
 		table.addRow()
 			.addCell(new Label("Nombre del dominio"))
 			.addCell( firstPanel )	
 		;
 	
+		table.addRow()
+			.addCell(new Label("Nuevo nombre del dominio"))
+			.addCell( secondPanel )	
+		;
+		
 		CheckBox fullViewCheck = new CheckBox("Editar nombres enteros");
 		fullViewCheck.setStyleName(AON.CSS.aonMarginTop() );
 		fullViewCheck.addClickHandler(e -> {
@@ -100,6 +112,9 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 			fullDomainName.setVisible(visible);
 			firstDomainName.setVisible(!visible);
 			secondDomainName.setVisible(!visible);
+			fullNewDomainName.setVisible(visible);
+			firstNewDomainName.setVisible(!visible);
+			secondNewDomainName.setVisible(!visible);
 		});
 		table.addRow()
 			.addCell(new Label())
@@ -108,14 +123,25 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 		return scroll;
 	}
 
+	private AonToolbar getToolbarPanel() {
+		AonToolbar toolbarPanel = new AonToolbar();
+		toolbarPanel.setTitle("Extracci\u00F3n de dominios");
+		
+		AonToolbarButton runCommand = new AonToolbarButton( AON.MSG.execute(), AON.CSS.aonIconSend() );
+		runCommand.addClickHandler(event -> doIt());
+		toolbarPanel.add(runCommand);
+
+		return toolbarPanel;
+	}
+	
 	private void doIt() {
-		if (!running) {
+		if (!running && validate()) {
 			running = true;
 			try {
 				AonConsoleWidget aonConsole = new AonConsoleWidget();
 				pageContainer.setWidget(aonConsole);
 				XMLHttpRequest xhreq = XMLHttpRequest.create();
-				xhreq.open(FormPanel.METHOD_POST, CHECK_DOMAIN_INTEGRITY_SERVLET);
+				xhreq.open(FormPanel.METHOD_POST, DOMAIN_ISOLATE_SERVLET);
 				xhreq.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 				xhreq.setOnReadyStateChange( xhr -> {
 					int state = xhr.getReadyState();
@@ -129,6 +155,7 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 				});
 				StringBuilder requestData = new StringBuilder();
 				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + domainName );
+				requestData.append("&"+IRequestParamsNames.NEW_DOMAIN_NAME		+"=" + newDomainName );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
 				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
 				xhreq.send(requestData.toString());
@@ -164,4 +191,21 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 		}
 		
 	}
+	
+	private boolean validate() {
+		this.hideErrorPanel();
+		if (AonStringUtils.isBlank(domainName)) {
+			this.showErrorPanel("El nombre del dominio debe tener valor");			
+			return false;
+		}
+		if (AonStringUtils.isBlank(newDomainName)) {
+			this.showErrorPanel("El nuevo nombre del dominio debe tener valor");			
+			return false;
+		}
+		
+		String msg = "Se va a traspasar el dominio ["+domainName+"] a el dominio ["+newDomainName+"]. Continuar?";
+		return Window.confirm(msg);
+	}
+
+	
 }

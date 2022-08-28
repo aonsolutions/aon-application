@@ -2073,27 +2073,21 @@
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
 			                </aon:menuGroup>	
-			                
-							<aon:menuItem submitMode="none" reRender="aonStatus"
-								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
-								iconClass="aon-icon-menu-help">
-
-								<aon:if test="#{!domainSwitcher.snapshotVersion}">
+							<aon:if test="#{domainSwitcher.snapshot}">
+								<aon:menuItem submitMode="none" reRender="aonStatus"
+									rendered="#{!aonConfiguration.properties.hideMenuHelp}"
+									iconClass="aon-icon-menu-help">
+	
 									<!-- OLD HELP -->
-									<h:outputLink style="font-size:1em;"
-										value="#{aonConfiguration.helpURL}"
-										target="_blank" >
-										<aon:outputText value="#{bundle.aon_help}" />
-									</h:outputLink>
-								</aon:if>
-								
-								<aon:if test="#{domainSwitcher.snapshotVersion}">
-									<!-- NEW HELP-->	
+									<!--<h:outputLink style="font-size:1em;"
+											value="#{aonConfiguration.helpURL}"
+											target="_blank" >
+											<aon:outputText value="#{bundle.aon_help}" />
+										</h:outputLink> -->
 									<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
 									</aon:htmlCommandLink>
-								</aon:if>
-							</aon:menuItem>
-							
+								</aon:menuItem>
+							</aon:if>						
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
 								iconClass="aon-icon-about"

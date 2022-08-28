@@ -202,7 +202,12 @@ export class AonMobilePackaging extends AonElement {
 
 	setBarcodeData(barcodeStr) {
 		try {
-			const {text, format, cancelled} = JSON.parse(barcodeStr);
+			
+			if(typeof barcodeStr === 'string') {
+				barcodeStr = JSON.parse(barcodeStr);
+			}
+
+			const {text, format, cancelled} = barcodeStr;
 			if(!cancelled) {
 				const product = this.getElement(this.PACKAGING_PRODUCT);
 				product.value = text;

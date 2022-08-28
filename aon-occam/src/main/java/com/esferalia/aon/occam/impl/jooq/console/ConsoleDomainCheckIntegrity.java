@@ -2,9 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.console;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,125 +9,73 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.TimeZone;
-import java.util.logging.Logger;
 
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.SQLDialect;
-import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.conf.ParamType;
-import org.jooq.conf.RenderKeywordCase;
-import org.jooq.conf.RenderQuotedNames;
-import org.jooq.conf.Settings;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class CheckDomainIntegrity {
+public class ConsoleDomainCheckIntegrity {
 	
-	private static final Logger LOGGER = Logger.getLogger(CheckDomainIntegrity .class.getName());
-
 	private static final String DOMAIN_LABEL = "domain";
 	
-	private CheckDomainIntegrity() {
+	private ConsoleDomainCheckIntegrity() {
 	}
 	
-	public static void check(ConsoleParams params) throws SQLException {
-		if (params.getDslContext() == null) {
-			params.setDslContext(createDSLContext(params));
-		}
- 		checkDomain(params);
-	}
-
-	private static DSLContext createDSLContext(ConsoleParams params) throws SQLException {
-		Properties properties = new Properties();
-		properties.setProperty("user", params.getUser());
-		properties.setProperty("password", params.getPassword());
-		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
-		Connection connection = DriverManager.getConnection(params.getUrl(), properties);
-		Settings settings = new Settings();
-		settings.setRenderSchema(false);
-		settings.setRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED);
-		settings.setRenderKeywordCase(RenderKeywordCase.UPPER);
-		settings.setParamType(ParamType.INLINED);
-		return DSL.using(connection, SQLDialect.MYSQL, settings);
-	}
-
-	private static void checkDomain(ConsoleParams params) {
-		Result<Record> result = params.getDslContext().fetch("SELECT DATABASE();");
-		Record rec = result.get(0);
-		String schemaName = (String) rec.get(0);
-		Schema schema = params.getDslContext().meta()
-			.getSchemas()
+	public static void check(ConsoleParams params) {
+		Record domainRec = params.getFromDslContext().select()
+			.from(DOMAIN)
+			.where(DOMAIN.NAME.equal(params.getDomainName()))
+			.fetch()
 			.stream()
-			.filter(sc -> sc.getName().equals(schemaName))
 			.findFirst()
 			.orElse(null);
-		if (schema != null) {
-			Record domainRec = params.getDslContext().select()
-				.from(DOMAIN)
-				.where(DOMAIN.NAME.equal(params.getDomainName()))
-				.fetch()
-				.stream()
-				.findFirst()
-				.orElse(null);
-			if (domainRec == null) {
-				throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getDomainName() + "\"");
-			}
-			params.setDomain(domainRec.getValue(DOMAIN.ID))
-				.setParent(domainRec.getValue(DOMAIN.PARENT))
-				.setInhertitanceEnabled( domainRec.getValue(DOMAIN.ENABLEHEREDITY) == 1)
-				.setScript( new LinkedHashMap<>() )
-				.setSchema(schema);
-			params.getDslContext().transaction(conf -> {
-				
-				fillScript(params);
-				
-				ConsoleUtils.log(params,MessageFormat.format("Se van a chequear {0} tables", params.getScript().size()));
-				
-				ConsoleUtils.log(params,"Inicio del proceso de chequeo de integridad de dominios");
-				params.getScript()
-					.values()
-					.stream()
-					.forEach(t -> checkTable(params, t));
-			});
-			
-			ConsoleUtils.log(params,"Final del proceso de chequeo de integridad de dominios");
-			
-			if (!params.getErrors().isEmpty()) {
-				ConsoleUtils.log(params, "" );
-				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-				ConsoleUtils.log(params,"** Se han encontrado incidencias!");
-				params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
-				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-			} else {
-				ConsoleUtils.log(params, "" );
-				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-				ConsoleUtils.log(params,"** NO se han encontrado incidencias!");
-				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-			}
-			
-		} else {
-			LOGGER.info("ERROR");
-			params.addError("No se ha encontrado un schema válido");
+		if (domainRec == null) {
+			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getDomainName() + "\"");
 		}
+		params.setDomain(domainRec.getValue(DOMAIN.ID))
+			.setParent(domainRec.getValue(DOMAIN.PARENT))
+			.setInhertitanceEnabled( domainRec.getValue(DOMAIN.ENABLEHEREDITY) == 1)
+			.setScript( new LinkedHashMap<>() );
+		params.getFromDslContext().transaction(conf -> {
+			
+			fillScript(params);
+			
+			ConsoleUtils.log(params,MessageFormat.format("Se van a chequear {0} tables", params.getScript().size()));
+			
+			ConsoleUtils.log(params,"Inicio del proceso de chequeo de integridad de dominios");
+			params.getScript()
+				.values()
+				.stream()
+				.forEach(t -> checkTable(params, t));
+		});
 		
+		ConsoleUtils.log(params,"Final del proceso de chequeo de integridad de dominios");
+		
+		if (!params.getErrors().isEmpty()) {
+			ConsoleUtils.log(params, "" );
+			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+			ConsoleUtils.log(params,"** Se han encontrado incidencias!");
+			params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
+			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+		} else {
+			ConsoleUtils.log(params, "" );
+			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+			ConsoleUtils.log(params,"** NO se han encontrado incidencias!");
+			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+		}
 	}
 	
 	// **************************************************************
 	// ************* [METHODS  FOR GETTING SCRIPT ] *****************
 	// **************************************************************
 	private static void fillScript(ConsoleParams params) {
-		List<Table<?>> tables = params.getSchema().getTables();
+		List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
 		ConsoleUtils.log(params,"** Generating tables script");
 		ConsoleUtils.log(params,"** ------------------------");
 		tables.stream()
@@ -217,7 +162,7 @@ public class CheckDomainIntegrity {
 				Arrays.stream(customFk.getInvolvedColumns())
 					.forEach(f ->  selectFields.add(fromTableSelect.field(f.getName())) );
 			}
-			params.getDslContext()
+			params.getFromDslContext()
 				.select( selectFields )
 				.from(fromTableSelect)
 				.innerJoin(toTableSelect).onKey(fk)
@@ -225,15 +170,14 @@ public class CheckDomainIntegrity {
 				.and(toDomainField.isNotNull())
 				.and(condition)
 				.stream()
-				.forEach( toRec -> {
-					params.addError(
-							MessageFormat.format("Tabla {0}: columna {1} -({2}) que referecia a la tabla {3} apunta al dominio {4}."
-								,fromTable.getName()
-								,fkField.getName()
-								,toRec.getValue(fkField)
-								,toTable.getName()
-								,toRec.getValue(toDomainField))
-							);
+				.forEach( toRec -> {params.addError(
+					MessageFormat.format("Tabla {0}: columna {1} -({2}) que referecia a la tabla {3} apunta al dominio {4}."
+						,fromTable.getName()
+						,fkField.getName()
+						,toRec.getValue(fkField)
+						,toTable.getName()
+						,toRec.getValue(toDomainField))
+					);
 				});
 		}
 	}
