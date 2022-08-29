@@ -18,14 +18,17 @@ import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.StringWebResponse;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -37,8 +40,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.javascript.host.event.MouseEvent;
+import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
-@Ignore("PDF.js Error")
 public class MainAgreementTest {
 
 
@@ -56,7 +59,6 @@ public class MainAgreementTest {
 	public static void setUp() throws Exception {
 		LOGGER.setLevel(Level.WARNING);
 		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
-
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.getOptions().setCssEnabled(false);
@@ -68,6 +70,20 @@ public class MainAgreementTest {
 
 			}
 		});
+		
+		webClient.setWebConnection(new WebConnectionWrapper(webClient) {
+			@Override
+			public WebResponse getResponse(WebRequest request) throws IOException {
+				String file = request.getUrl().getFile();
+		        if (file.toLowerCase().contains("viewer.html")) {
+		            /* Give the program a response, but leave it empty. */
+		            return new StringWebResponse("", request.getUrl());
+		        } else {
+		            return super.getResponse(request); // Pass the responsibility up.
+		        }
+			}
+		});
+		
 		url = System.getProperty(INTEGRATION_PAYROLL_URL);
 		user = System.getProperty(INTEGRATION_BASE_USER);
 		password = System.getProperty(INTEGRATION_BASE_PASSWORD);
