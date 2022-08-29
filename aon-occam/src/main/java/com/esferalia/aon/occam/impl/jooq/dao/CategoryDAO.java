@@ -11,6 +11,7 @@ import org.jooq.SelectConditionStep;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 
 public class CategoryDAO {
@@ -34,7 +35,7 @@ public class CategoryDAO {
 	}
 
 	public static Category save(AONContext ctx, Category category) {
-		return category.getId() !=0 ? update(ctx, category) : insert(ctx, category);
+		return category.getId()!=null && category.getId() !=0 ? update(ctx, category) : insert(ctx, category);
 	}
 	
 	public static void delete(AONContext ctx, Integer id){
@@ -76,6 +77,9 @@ public class CategoryDAO {
 				.insertInto(CATEGORY)
 				.set(CATEGORY.DOMAIN, category.getDomain())
 				.set(CATEGORY.NAME, category.getName())
+				.set(CATEGORY.DESCRIPTION, category.getDescription())
+				.set(CATEGORY.SCOPE, category.getScope())
+				.set(CATEGORY.URL, category.getUrl())
 				.set(CATEGORY.TYPE, category.getType())
 				.returning(CATEGORY.ID).fetchOne().getId();
 		
@@ -89,6 +93,9 @@ public class CategoryDAO {
 		
 		ctx.getDslContext().update(CATEGORY)
 		.set(CATEGORY.NAME, category.getName())
+		.set(CATEGORY.DESCRIPTION, category.getDescription())
+		.set(CATEGORY.SCOPE, category.getScope())
+		.set(CATEGORY.URL, category.getUrl())
 		.where(CATEGORY.ID.eq(category.getId()))
 		.execute();
 		
@@ -118,7 +125,7 @@ public class CategoryDAO {
 					.setName(r.getValue(CATEGORY.NAME))
 					.setRattach(r.getValue(CATEGORY.RATTACH))
 					.setScope(r.getValue(CATEGORY.SCOPE))
-					.setType(r.getValue(CATEGORY.TYPE))
+					.setCategoryType(CategoryType.safeValueOf(r.getValue(CATEGORY.TYPE)))
 					.setUrl(r.getValue(CATEGORY.URL));
 		}
 	}	

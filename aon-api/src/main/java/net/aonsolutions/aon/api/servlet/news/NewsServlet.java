@@ -136,6 +136,5 @@ public class NewsServlet extends AonApiHttpServlet{
 		} else if(params.isNull(IJsonNames.TITLE)) {
 			throw new AonApiException("T\u00edtulo requerido");
 		}
-		
 	}
 }

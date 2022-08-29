@@ -89,7 +89,12 @@ public class CategoryServlet extends AonApiHttpServlet{
 
 	
 	private JSONObject saveCategory(AonApiData api) {
-		Category category = CategoryJSON.fromJSON(api.getData());
+		JSONObject params = api.getData();
+		
+		validateSave(params);
+		
+		Category category = CategoryJSON.fromJSON(params);
+		
 		return CategoryJSON.toJSON(AON_SOLUTIONS.saveCategory(api.getDomain(), api.getUser(), category));
 	}
 
@@ -99,4 +104,15 @@ public class CategoryServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
+	private void validateSave(JSONObject params) {
+		if(params.isNull(IJsonNames.DESCRIPTION)) {
+			throw new AonApiException("Descripci\u00f3n requerido");
+		} else if(params.isNull(IJsonNames.URL)) {
+			throw new AonApiException("Url requerida");
+		} else if(params.isNull(IJsonNames.NAME)) {
+			throw new AonApiException("Nombre requerido");
+		}else if(params.isNull(IJsonNames.TYPE)) {
+			throw new AonApiException("Tipo requerido");
+		}
+	}
 }

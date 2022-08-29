@@ -23,14 +23,14 @@ public class CategoryJSON {
 	
 	public static Category fromJSON(JSONObject json) {
 		return new Category()
-			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-			.setName(JsonUtils.getString(json, IJsonNames.NAME))
+			.setId(JsonUtils.optInteger(json, IJsonNames.ID))
+			.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
+			.setName(JsonUtils.optString(json, IJsonNames.NAME))
 			.setCategoryType( CategoryType.safeValueOf(JsonUtils.optString(json, IJsonNames.TYPE))) 
-			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
-			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-			.setUrl(JsonUtils.getString(json, IJsonNames.URL))
-			.setRattach(JsonUtils.getInteger(json, "rattach"))
+			.setScope(JsonUtils.optInteger(json, IJsonNames.SCOPE))
+			.setDescription(JsonUtils.optString(json, IJsonNames.DESCRIPTION))
+			.setUrl(JsonUtils.optString(json, IJsonNames.URL))
+			.setRattach(JsonUtils.optInteger(json, "rattach"))
 			;
 	}
 	
