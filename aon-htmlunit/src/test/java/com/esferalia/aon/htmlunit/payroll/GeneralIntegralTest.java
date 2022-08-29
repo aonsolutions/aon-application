@@ -293,7 +293,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("description-box-new-payment");
 		
 		DomElement el = getElementById("description-box-new-payment");
-		LOGGER.warning( "description-box-new-payment : " + el  +", " + el.asText()); 
+		LOGGER.warning( "description-box-new-payment : " + el  +", " + el.asNormalizedText()); 
 		
 		HtmlInput input = getElementById("description-box-new-payment");
 		input.focus();

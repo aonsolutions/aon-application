@@ -76,6 +76,11 @@ public abstract class BaseIntegralTestCase {
 		webClient.setJavaScriptErrorListener( new  JavaScriptErrorListener() {
 			
 			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
+				LOGGER.severe("Warn " + message + "" );
+			}
+
+			@Override
 			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {
 				LOGGER.severe("Timeout " + executionTime + "ms" );
 			}
@@ -106,13 +111,13 @@ public abstract class BaseIntegralTestCase {
 		// Payroll Menu
 		HtmlAnchor menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 	
 		// Integral
 		HtmlAnchor gwtEmployeeAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_employee");
-		LOGGER.warning("Cick on: " + gwtEmployeeAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtEmployeeAnchor.asNormalizedText());
 		htmlPage = gwtEmployeeAnchor.click();
 		
 	}

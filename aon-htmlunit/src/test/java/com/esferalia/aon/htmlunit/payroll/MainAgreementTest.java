@@ -75,14 +75,14 @@ public class MainAgreementTest {
 		// Payroll Menu
 		HtmlAnchor menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 
 		
 		// MainAgreement
 		HtmlAnchor gwtAgreementAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement2");
-		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 
 		wait4Id("agreements");
@@ -110,7 +110,7 @@ public class MainAgreementTest {
 
 		HtmlDivision agreementTreeItem =
 				(HtmlDivision)getElementById("estatuto_de_los_trabajadores");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		Pattern hidden = Pattern.compile("display\\s*:\\s*none");
@@ -194,7 +194,7 @@ public class MainAgreementTest {
 
 		HtmlDivision agreementTreeItem =
 				(HtmlDivision)getElementById("star_wars_agreement");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		wait4(htmlPage,
@@ -279,7 +279,7 @@ public class MainAgreementTest {
 
 		HtmlDivision agreementTreeItem =
 				(HtmlDivision)getElementById("mensajes_de_ayuda,_ejemplos");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		wait4(htmlPage,
@@ -297,7 +297,7 @@ public class MainAgreementTest {
 
 		HtmlDivision agreementTreeItem =
 				(HtmlDivision)getElementById("convenio_colectivo_de_oficinas_y_despachos_para_madrid");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		wait4(htmlPage,
@@ -324,7 +324,7 @@ public class MainAgreementTest {
 
 		HtmlDivision agreementTreeItem =
 				(HtmlDivision)getElementById("star_wars_agreement");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		wait4(htmlPage,
@@ -361,17 +361,17 @@ public class MainAgreementTest {
 		// Payroll Menu
 		HtmlAnchor menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 		// MainAgreement
 		HtmlAnchor gwtAgreementAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
-		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 		wait4Id("star_wars_agreement");
 		agreementTreeItem =
 				(HtmlDivision)getElementById("star_wars_agreement");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 		wait4(htmlPage,
 				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
@@ -420,17 +420,17 @@ public class MainAgreementTest {
 		// Payroll Menu
 		menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 		// MainAgreement
 		gwtAgreementAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
-		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 		wait4Id("star_wars_agreement");
 		agreementTreeItem =
 				(HtmlDivision)getElementById("star_wars_agreement");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 		wait4(htmlPage,
 				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
@@ -459,17 +459,17 @@ public class MainAgreementTest {
 		// Payroll Menu
 		menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 		// MainAgreement
 		gwtAgreementAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
-		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 		wait4Id("star_wars_agreement");
 		agreementTreeItem =
 				(HtmlDivision)getElementById("star_wars_agreement");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 		wait4(htmlPage,
 				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
@@ -487,7 +487,7 @@ public class MainAgreementTest {
 
 		HtmlDivision agreementTreeItem =
 				(HtmlDivision)getElementById("pagas_extras_anulaes,_semestrales_y_trimestreales");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		wait4(htmlPage,
