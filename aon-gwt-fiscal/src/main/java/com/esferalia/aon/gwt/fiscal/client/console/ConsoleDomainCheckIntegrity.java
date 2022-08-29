@@ -68,8 +68,19 @@ public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
+		Label descriptionLabel = new Label("Chequea la integridad de la claves referenciales");
+		descriptionLabel.setStyleName(AON.CSS.aonPadding());
+		descriptionLabel.addStyleName(AON.CSS.aonMarginBottom());
+		descriptionLabel.addStyleName(AON.CSS.aonBorder());
+		descriptionLabel.addStyleName(AON.CSS.aonBold());
+		descriptionLabel.addStyleName(AON.CSS.aonFontLarger());
+		descriptionLabel.addStyleName(AON.CSS.aonColorBlue());
+		descriptionLabel.addStyleName(AON.CSS.aonTextCenter());
 		AonDisplayTable table = new AonDisplayTable();
-		scroll.setWidget(table);
+		FlowPanel container = new FlowPanel();
+		container.add(descriptionLabel);
+		container.add(table);
+		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
 		FlowPanel firstPanel = new FlowPanel(); 

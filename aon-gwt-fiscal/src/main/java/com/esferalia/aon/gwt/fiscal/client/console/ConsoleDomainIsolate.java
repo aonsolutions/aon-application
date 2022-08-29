@@ -46,7 +46,7 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		this.options = options;
 		AON.ensureInjected();
 		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-		this.addNorth(getDataPanel(), 100);
+		this.addNorth(getDataPanel(), 135);
 		
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
@@ -59,8 +59,20 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
+		
+		Label descriptionLabel = new Label("Duplica y aplana en su caso un dominio en el mismo esquema");
+		descriptionLabel.setStyleName(AON.CSS.aonPadding());
+		descriptionLabel.addStyleName(AON.CSS.aonMarginBottom());
+		descriptionLabel.addStyleName(AON.CSS.aonBorder());
+		descriptionLabel.addStyleName(AON.CSS.aonBold());
+		descriptionLabel.addStyleName(AON.CSS.aonFontLarger());
+		descriptionLabel.addStyleName(AON.CSS.aonColorBlue());
+		descriptionLabel.addStyleName(AON.CSS.aonTextCenter());
 		AonDisplayTable table = new AonDisplayTable();
-		scroll.setWidget(table);
+		FlowPanel container = new FlowPanel();
+		container.add(descriptionLabel);
+		container.add(table);
+		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
 		FlowPanel firstPanel = new FlowPanel(); 
