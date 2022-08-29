@@ -74,13 +74,13 @@ public class GeneralAgreementTest {
 		// Payroll Menu
 		HtmlAnchor menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 
 		// MainAgreement
 		HtmlAnchor gwtAgreementAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
-		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 		
 		wait4Id("agreements");
@@ -100,7 +100,7 @@ public class GeneralAgreementTest {
 
 		HtmlDivision agreementTreeItem = 
 				(HtmlDivision)getElementById("pagas_anuales_verano_&_navidad");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 		
 		wait4(htmlPage,

@@ -57,13 +57,13 @@ public class MainCalculatorTest {
 		// Payroll Menu
 		HtmlAnchor menuPayrollAnchor = htmlPage
 				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
-		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 
 		// MainCalculator
 		HtmlAnchor gwtCalculatorAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_calculator");
-		LOGGER.warning("Cick on: " + gwtCalculatorAnchor.asText());
+		LOGGER.warning("Cick on: " + gwtCalculatorAnchor.asNormalizedText());
 		htmlPage = gwtCalculatorAnchor.click();
 		
 		wait4(htmlPage,
