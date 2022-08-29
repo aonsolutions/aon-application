@@ -28,7 +28,6 @@ export const buildMobile = (task)=> {
     if(!task.getId()){
         showForm(true);
     }
-
 }
 
 /**

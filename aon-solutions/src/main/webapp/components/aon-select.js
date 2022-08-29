@@ -88,6 +88,13 @@ export class AonSelect extends AonElement {
     this.setAttribute(CONSTANT.READONLY, readonly);
   }
 
+  get required() {
+    return this.getAttribute(CONSTANT.REQUIRED) == CONSTANT.TRUE;
+  }
+
+  set required(required) {
+    this.setAttribute(CONSTANT.REQUIRED, required);
+  }
 
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
@@ -132,6 +139,8 @@ export class AonSelect extends AonElement {
     aonInput.id = this.INPUT;
     aonInput.description = this.title;
     aonInput.autocomplete = "off";
+    if(this.required) aonInput.required = this.required;
+    
     this.appendChild(aonInput);
     this.build();
 	}

@@ -221,5 +221,6 @@ export const VISIBILITY_OFF = 'visibility_off';
 
 
 export const OPEN_IN_FULL = "open_in_full";
+export const OPEN_IN_NEW  = "open_in_new";
 
 export const OUTBOX = "outbox";
