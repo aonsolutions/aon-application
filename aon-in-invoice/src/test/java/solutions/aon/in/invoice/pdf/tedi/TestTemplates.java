@@ -175,42 +175,42 @@ public enum TestTemplates {
 		},
 		MOVISTAR_2 ("/solutions/aon/in/invoice/pdf/MOVISTAR_2.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 9, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
-			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 3; }
 			@Override public Integer getAmountNumber(){ return 7; }
 			@Override public Double getTotal(){ return 100.18; }
 		},
 		MOVISTAR_3 ("/solutions/aon/in/invoice/pdf/MOVISTAR_3.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
-			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 4; }
 			@Override public Integer getAmountNumber(){ return 7; }
 			@Override public Double getTotal(){ return 84.58; }
 		},
 		MOVISTAR_4 ("/solutions/aon/in/invoice/pdf/MOVISTAR_4.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 10, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
-			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 3; }
 			@Override public Integer getAmountNumber(){ return 5; }
 			@Override public Double getTotal(){ return 89.12; }
 		},
 		MOVISTAR_5 ("/solutions/aon/in/invoice/pdf/MOVISTAR_5.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 10, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
-			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 1; }
 			@Override public Integer getAmountNumber(){ return 5; }
 			@Override public Double getTotal(){ return 87.99; }
 		},
 		MOVISTAR_6 ("/solutions/aon/in/invoice/pdf/MOVISTAR_6.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 11, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
-			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 3; }
 			@Override public Integer getAmountNumber(){ return 7; }
 			@Override public Double getTotal(){ return 121.59; }
 		},
 		MOVISTAR_7 ("/solutions/aon/in/invoice/pdf/MOVISTAR_7.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 9, 17, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
-			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 2; }
 			@Override public Integer getAmountNumber(){ return 19; }
 			@Override public Double getTotal(){ return 258.50; }
