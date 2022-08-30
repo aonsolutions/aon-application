@@ -36,10 +36,10 @@ public class PackagingDAO {
 	public static Packaging get(AONContext ctx, String barcode){
 		String serialNumber = calculateSerialNumber(barcode);
 		Date serialDate = calculateSerialDate(barcode);
-		
+		String pBarcode = calculateBarcode(barcode);
 		Item item = ItemDAO.get(ctx,  f ->
 			f.getDomainProperty().eq(ctx.getDomainId())
-			.and(f.getBarcodeProperty().eq(barcode))
+			.and(f.getBarcodeProperty().eq(pBarcode))
 			.and(f.getSerialNumberProperty().isNull()));
 		if(item.isEmpty()) throw new AonCoreException("El producto no existe.");
 
@@ -225,6 +225,14 @@ public class PackagingDAO {
 			return AonDateUtils.parse(b.parseGS1128().get(GS1128Codes.CODE_15), "yyMMdd");
 		}
 		return new Date();
+	}
+	
+	private static String calculateBarcode(String barcode) {
+		if(barcode.length() > 14) {
+			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
+			return b.parseGS1128().get(GS1128Codes.CODE_01);
+		}
+		return barcode;
 	}
 
 }
