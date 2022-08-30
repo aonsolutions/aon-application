@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api.model.type;
 
-import com.esferalia.aon.occam.api.model.news.NewsType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum CategoryType {
@@ -38,7 +37,7 @@ public enum CategoryType {
 	
 	public static CategoryType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i >= NewsType.values().length) return null;
+		if (i < 0 || i >= CategoryType.values().length) return null;
 		return CategoryType.values()[i];
 	}
 	

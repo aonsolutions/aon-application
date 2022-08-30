@@ -6,8 +6,10 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -56,10 +58,9 @@ public class CategoryDAO {
 	
 	private static Stream<Category> getStream(AONContext ctx, CategoryFilter filter, Optional<Integer> page, Optional<Integer> perPage){
 		ctx.checkRead();
-		SelectConditionStep<Record> condition = 
-				ctx.getDslContext()
-				.select().from(CATEGORY)
-				.where(CATEGORY_PROPERTIES.getConditions(filter));
+		SelectConditionStep<Record> condition = ctx.getDslContext()
+		.select().from(CATEGORY)
+		.where(CATEGORY_PROPERTIES.getConditions(filter));
 
 		if(page.isPresent() && perPage.isPresent()) {
 			Integer per = perPage.get();
@@ -122,7 +123,7 @@ public class CategoryDAO {
 					.setId(r.getValue(CATEGORY.ID))
 					.setDescription(r.getValue(CATEGORY.DESCRIPTION))
 					.setDomain(r.getValue(CATEGORY.DOMAIN))
-					.setName(r.getValue(CATEGORY.NAME))
+					.setName(r.getValue(CATEGORY.NAME) ) // (String) r.getValue(DSL.field("title"))
 					.setRattach(r.getValue(CATEGORY.RATTACH))
 					.setScope(r.getValue(CATEGORY.SCOPE))
 					.setCategoryType(CategoryType.safeValueOf(r.getValue(CATEGORY.TYPE)))

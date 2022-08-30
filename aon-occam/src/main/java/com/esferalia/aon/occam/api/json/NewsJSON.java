@@ -62,9 +62,7 @@ public class NewsJSON {
 			.put(IJsonNames.ID, news.getId())
 			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(news.getDomain()))
 			.put(IJsonNames.TITLE, news.getTitle())
-			.put(IJsonNames.DESCRIPTION, news.getDescription())
 			.put(IJsonNames.CONTENT, news.getContent())
-			.put(IJsonNames.URL, news.getUrl())
 			.put(IJsonNames.ACTIVE, news.isActive())
 			.put(IJsonNames.RSS,  news.isRss())
 			.put(IJsonNames.CATEGORY, news.getCategory()!=null ? CategoryJSON.toJSON(news.getCategory()) : null)
@@ -74,6 +72,10 @@ public class NewsJSON {
 		
 		news.getInitDate().ifPresent(d-> json.put("init_date", d.getTime()));
 		news.getEndDate().ifPresent(d-> json.put("end_date", d.getTime()));
+		
+		news.getUrl().ifPresent(d-> json.put(IJsonNames.URL, d));
+		
+		news.getDescription().ifPresent(d-> json.put(IJsonNames.DESCRIPTION, d));
 		
 		return json;
 	}

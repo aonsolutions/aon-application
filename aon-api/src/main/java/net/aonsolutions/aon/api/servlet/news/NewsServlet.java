@@ -85,23 +85,26 @@ public class NewsServlet extends AonApiHttpServlet{
 	
 	private JSONArray getNews(AonApiData api) {
 		JSONObject params = api.getData();
-		Domain domain = api.getDomain();
-		User user    = api.getUser();
-		Integer page = params.optInt(IJsonNames.PAGE);
-		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
+		Domain domain     = api.getDomain();
+		User user         = api.getUser();
+		
+		Integer page      = params.optInt(IJsonNames.PAGE);
+		Integer perPage   = params.optInt(IJsonNames.PER_PAGE);
 		
 		return NewsJSON.toJSON(
 				AON_SOLUTIONS.getNewsStream(domain, user, 
-					f->f.getDomainProperty().eq(domain.getId()),
+					f->NewsFilter.filter(api, f, domain),
 					page, perPage
 				)
 		);
 	}
 
 	private JSONObject getNew(AonApiData api) {
+		JSONObject params = api.getData();
 		Domain domain     = api.getDomain();
 		User user         = api.getUser();
-		JSONObject params = api.getData();
+
+		
 		Integer id        = params.optInt(IJsonNames.ID);
 
 		return NewsJSON.toJSON(
@@ -123,10 +126,15 @@ public class NewsServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject deleteNew(AonApiData api) {
-		News news     = NewsJSON.fromJSON(api.getData());
+		
+		News news = NewsJSON.fromJSON(api.getData());
+		
 		AON_SOLUTIONS.deleteNews(news.getDomain(), api.getUser(), news.getId());
+		
 		return new JSONObject();
 	}
+	
+
 	
 	private void validateSave(JSONObject params) {
 		if(params.isNull(IJsonNames.SCOPE)) {

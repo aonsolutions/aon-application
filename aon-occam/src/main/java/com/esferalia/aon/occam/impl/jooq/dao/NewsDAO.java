@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Properties.NewsProperties;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.news.NewsType;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.impl.jooq.dao.CategoryDAO.CategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
@@ -68,6 +69,9 @@ public class NewsDAO {
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(NEWS.SCOPE);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(NEWS.TYPE);}
 		@Override public Property<Integer> getTemplateProperty() {return new FilterDAO.PropertyDAO<>(NEWS.TEMPLATE);}
+		
+		@Override public Property<String> getCategoryNameProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.NAME);}
+		@Override public Property<String> getScopeNameProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DESCRIPTION);}
 	}
 	
 	public static Stream<News> getStream(AONContext ctx, NewsFilter filter) {
@@ -198,8 +202,8 @@ public class NewsDAO {
 					.setRss(r.getValue(NEWS.RSS) ==(byte)1)
 					.setInitDate(r.getValue(NEWS.INIT_DATE))
 					.setEndDate(r.getValue(NEWS.END_DATE))
-					.setCategory(r.getValue(NEWS.CATEGORY)!=null ? CategoryFiller.build(r) : new Category() )
-					.setScope(ScopeFiller.buildScope(r))
+					.setCategory(checkField(r, CATEGORY.ID) ? CategoryFiller.build(r) : new Category() )
+					.setScope(checkField(r, SCOPE.ID) ? ScopeFiller.buildScope(r) : new Scope())
 					.setType(NewsType.safeValueOf(r.getValue(NEWS.TYPE)))
 					;
 		}

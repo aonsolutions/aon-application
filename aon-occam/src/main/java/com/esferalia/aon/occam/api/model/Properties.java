@@ -1178,6 +1178,9 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 		Property<Byte> getTypeProperty();
 		Property<Integer> getTemplateProperty();
+		
+		Property<String> getScopeNameProperty();
+		Property<String> getCategoryNameProperty();
 	}
 	
 	public interface EmployeeProperties{
