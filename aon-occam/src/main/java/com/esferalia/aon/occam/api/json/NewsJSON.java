@@ -70,8 +70,8 @@ public class NewsJSON {
 			.put(IJsonNames.SCOPE, news.getScope()!=null ? ScopeJSON.toJSON(news.getScope()) : null)
 			;
 		
-		news.getInitDate().ifPresent(d-> json.put("init_date", d.getTime()));
-		news.getEndDate().ifPresent(d-> json.put("end_date", d.getTime()));
+		news.getInitDate().ifPresent(d-> json.put("initDate", d.getTime()));
+		news.getEndDate().ifPresent(d-> json.put("endDate", d.getTime()));
 		
 		news.getUrl().ifPresent(d-> json.put(IJsonNames.URL, d));
 		
