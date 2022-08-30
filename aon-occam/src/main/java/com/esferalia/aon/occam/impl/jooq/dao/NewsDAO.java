@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.News.NEWS;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -16,7 +17,6 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.UpdateSetMoreStep;
 
 import com.esferalia.aon.jooq.tables.records.NewsRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -115,7 +115,7 @@ public class NewsDAO {
 			condition.limit(per).offset(per * (p -1));
 		}
 		
-		return condition.fetchInto(NEWS).stream().map(new NewsFiller());
+		return condition.fetch().stream().map(new NewsFiller());
 	}
 	
 	private static News insert(AONContext ctx, News news){
@@ -152,7 +152,21 @@ public class NewsDAO {
 	private static News update(AONContext ctx, News news) {
 		ctx.checkWrite();
 		
-		UpdateSetMoreStep<NewsRecord> sets = ctx.getDslContext()
+		Integer categoryId = news.getCategory()!=null &&news.getCategory().getId()!=null ? news.getCategory().getId() : null;
+		Optional<Date> initDateOpt = news.getInitDate();
+		Optional<Date> endDateOpt = news.getEndDate();
+		Optional<String> urlOpt = news.getUrl();
+		Optional<String> descriptionOpt = news.getDescription();
+		
+		
+		Timestamp initDate = initDateOpt.isPresent() ? AonDateUtils.toTimestamp(initDateOpt.get()) : null;
+		
+		Timestamp endDate = endDateOpt.isPresent() ? AonDateUtils.toTimestamp(endDateOpt.get()) : null;
+		
+		String url = urlOpt.isPresent() ? urlOpt.get() : null;
+		String description = descriptionOpt.isPresent() ? descriptionOpt.get() : null;
+		
+		ctx.getDslContext()
 		.update(NEWS)
 		.set(NEWS.TITLE, news.getTitle())
 		.set(NEWS.CONTENT, news.getContent())
@@ -160,20 +174,14 @@ public class NewsDAO {
 		.set(NEWS.RSS, (byte)(news.isRss() ? 1:0) )
 		.set(NEWS.SCOPE, news.getScope().getId())
 		.set(NEWS.TYPE, news.getType().value())
+		.set(NEWS.CATEGORY, categoryId)
+		.set(NEWS.INIT_DATE, initDate)
+		.set(NEWS.END_DATE, endDate)
+		.set(NEWS.URL, url)
+		.set(NEWS.DESCRIPTION, description)
+		.where(NEWS.ID.eq(news.getId()))
+		.execute()
 		;
-		
-		news.getDescription().ifPresent(d-> sets.set(NEWS.DESCRIPTION, d));
-		
-		news.getUrl().ifPresent(d-> sets.set(NEWS.URL, d));
-		
-		news.getInitDate().ifPresent(d-> sets.set(NEWS.INIT_DATE, AonDateUtils.toTimestamp(d)));
-		news.getEndDate().ifPresent(d-> sets.set(NEWS.END_DATE, AonDateUtils.toTimestamp(d)));
-		
-		if(news.getCategory()!=null &&news.getCategory().getId()!=null) {
-			sets.set(NEWS.CATEGORY,news.getCategory().getId());
-		}
-		
-		sets.where(NEWS.ID.eq(news.getId())).execute();
 
 		ctx.log().debug("UPDATE NEWS id: " + news.getId());		
 		return news;

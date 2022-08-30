@@ -10,10 +10,9 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.news.NewsType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class NewsJSON {
-	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
+	
 	public static LinkedList<News> fromJSON(JSONArray json) {
 		LinkedList<News> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
@@ -32,8 +31,8 @@ public class NewsJSON {
 			.setUrl(json.optString(IJsonNames.URL))
 			.setActive(json.optBoolean(IJsonNames.ACTIVE))
 			.setRss(json.optBoolean(IJsonNames.RSS))
-			.setInitDate(!json.optString("initDate").isEmpty() ? AonDateUtils.parse(json.optString("initDate"), FORMAT_DATE) : null)
-			.setEndDate(!json.optString("endDate").isEmpty() ? AonDateUtils.parse(json.optString("endDate"), FORMAT_DATE) : null)
+			.setInitDate(JsonUtils.getDate(json, "initDate"))
+			.setEndDate(JsonUtils.getDate(json, "endDate"))
 			.setType( NewsType.safeValueOf(json.optString(IJsonNames.TYPE))) 
 			.setCategory(!json.optString(IJsonNames.CATEGORY).isEmpty() ? CategoryJSON.fromJSON(json.optJSONObject(IJsonNames.CATEGORY)) : null)
 			.setScope(!json.optString(IJsonNames.SCOPE).isEmpty() ? ScopeJSON.fromJSON(json.optJSONObject(IJsonNames.SCOPE))  : null )
@@ -72,7 +71,7 @@ public class NewsJSON {
 		
 		news.getInitDate().ifPresent(d-> json.put("initDate", d.getTime()));
 		news.getEndDate().ifPresent(d-> json.put("endDate", d.getTime()));
-		
+
 		news.getUrl().ifPresent(d-> json.put(IJsonNames.URL, d));
 		
 		news.getDescription().ifPresent(d-> json.put(IJsonNames.DESCRIPTION, d));
