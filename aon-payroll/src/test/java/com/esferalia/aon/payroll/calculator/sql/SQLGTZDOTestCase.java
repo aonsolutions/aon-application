@@ -4634,7 +4634,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double prestIt = br * 0.75 * 30.00;
 		//@formatter:off
 		Assert.assertEquals(
-				1000.00 , 
+				1000.00 
+				+ ((get(startIt, Calendar.DAY_OF_MONTH) == 30.00 && get(endDate, Calendar.DAY_OF_MONTH) == 31.00 ) ? br * 0.75 : 0.00), 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
