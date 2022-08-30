@@ -1,9 +1,10 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { CreateComponent } from "../../../components/CreateComponent.js";
-import { CONSTANT } from "../../../environments/environments.js";
+import { CONSTANT, MSG } from "../../../environments/environments.js";
 import { NewsEnums } from "../NewsEnums.js";
 import { NewsAddUtils } from "./NewsAddUtils.js";
-import { saveNews, getNewsType } from "../../../services/newsService.js";
+import { AonNewsList } from "./aon-news-list.js";
+import { saveNews, getNewsType, deleteNews } from "../../../services/newsService.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { CategoryService } from "../../../services/categoryService.js";
@@ -74,13 +75,18 @@ export class AonNewsAdd extends AonElement {
 
   buildToolbar() {
     const toolbar = CreateComponent.createAonToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
+
     toolbar.removeButtons();
 
+    if(this.news.getId()){
+      toolbar.addButton2(ACTIONS.DELETE, () => this.delete());
+    }
+    
     toolbar.addButton2(ACTIONS.SAVE, () => {
       this.save();
     });
-    
-    // toolbar.addButton2(ACTIONS.BACK, () => {});
+
+    toolbar.addButton2(ACTIONS.BACK, () => this.goBack());
  }
 
   paintView() {
@@ -93,7 +99,7 @@ export class AonNewsAdd extends AonElement {
 
   async initGets() {
     await Promise.all([
-        this.getNewsType(),
+        // this.getNewsType(),
         this.getScopes(),
         this.getCategorys()
     ]).catch(e=> console.log(e));
@@ -102,32 +108,44 @@ export class AonNewsAdd extends AonElement {
   async getScopes(){
     const scopeEl = document.getElementById("scope");
     if(scopeEl){
+      const scopeValue = this.news.getScope();
+
       const scopes = await getScopes();
 
       const options = scopes.map(scope => ({...scope, value:scope.id}));
 
       scopeEl.setOptions(options);
+
+      if(scopeValue && scopeValue.id){
+        scopeEl.value = scopeValue.id;
+      }
     }
   }
 
 
-  async getNewsType(){
-    const typeEl = document.getElementById("type");
-    if(typeEl){
-      const options = await getNewsType();
+  // async getNewsType(){
+  //   const typeEl = document.getElementById("type");
+  //   if(typeEl){
+  //     const options = await getNewsType();
 
-      typeEl.setOptions(options);
-    }
-  }
+  //     typeEl.setOptions(options);
+  //   }
+  // }
 
   async getCategorys(){
     const categoryEl  = document.getElementById("category");
     if(categoryEl){
+      const categoryValue = this.news.getCategory();
+
       const categorys = await CategoryService.getCategorys({type:"ARTICLE"});
     
       const options   = categorys.map(category => ({...category, value:category.id}));
   
       categoryEl.setOptions(options);
+
+      if(categoryValue && categoryValue.id){
+        categoryEl.value = categoryValue.id;
+      }
     }
   }
 
@@ -146,6 +164,22 @@ export class AonNewsAdd extends AonElement {
     }
 
     this.applicationEl.stopLoading();  
+  }
+
+  async delete(){
+    this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+      try {
+        await deleteNews(this.news);
+        this.showToast({message:MSG.DELETED_DATA});
+        this.goBack()
+      } catch (error) {
+        this.showError(error);
+      }
+    });
+  }
+
+  goBack(){
+    this.applicationEl.setContent(new AonNewsList())
   }
 }
 

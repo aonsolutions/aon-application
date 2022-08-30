@@ -178,7 +178,7 @@ export class AonNewsList extends AonElement {
       } else {
         data = news
           .map((n) => {
-            const dateParse = n.init_date ? (AonDateUtils.setFullDate(n.init_date) + " " +AonDateUtils.setTime(n.init_date)) : ""
+            const dateParse = n.initDate ? (AonDateUtils.setFullDate(n.initDate) + " " +AonDateUtils.setTime(n.initDate)) : ""
             return {
               ...n,
               activeStr: n.active ? "Si" : "No",

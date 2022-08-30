@@ -48,7 +48,7 @@ const buildFormGeneral = (parent, news) => {
         },
         events:{
             change: ({target}) => {
-                news.setScope(target.getDetail());
+                news.setScope(target.value ? target.getDetail(): undefined);
             }
         }
     }, divC.element);
@@ -61,7 +61,8 @@ const buildFormGeneral = (parent, news) => {
             name:"title",
             id:"title",
             description:MSG.TITLE,
-            required:true
+            required:true,
+            value: news.getTitle()
         },
         events:{
             keyup: ({target}) => {
@@ -78,6 +79,8 @@ const buildFormGeneral = (parent, news) => {
         title: MSG.DESCRIPTION
     });
     divC.appendChild(descriptionEl);
+
+    descriptionEl.value = news.getDescription();
     
     descriptionEl.addEventListener(EVENT.KEYUP, ({target})=>{
         news.setDescription(target.value);
@@ -85,7 +88,7 @@ const buildFormGeneral = (parent, news) => {
 
     divC = createDiv({classes:[CSS.AON_COL_XS_6]})
     divC.appendTo(parent);
-    CreateComponent.createAonDate({
+    const initDate = CreateComponent.createAonDate({
         attributes:{
             name:"init_date", 
             id:"init_date", 
@@ -98,9 +101,13 @@ const buildFormGeneral = (parent, news) => {
         }
     }, divC.element);
 
+    if(news.getInitDate()){
+        initDate.value = new Date(news.getInitDate())
+    }
+
     divC = createDiv({classes:[CSS.AON_COL_XS_6]})
     divC.appendTo(parent);
-    CreateComponent.createAonDate({
+    const endDate = CreateComponent.createAonDate({
         attributes:{
             name:"end_date", 
             id:"end_date", 
@@ -113,6 +120,10 @@ const buildFormGeneral = (parent, news) => {
         }
     }, divC.element);
 
+    if(news.getEndDate()){
+        endDate.value = new Date(news.getEndDate())
+    }
+
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
     CreateComponent.createAonSwitch(
@@ -121,7 +132,7 @@ const buildFormGeneral = (parent, news) => {
           name: "active",
           id: MSG.ACTIVE,
           title: MSG.ACTIVE,
-          checked: true,
+          checked: news.getActive(),
         },
         events: {
           change: ({ target }) => {
@@ -132,11 +143,9 @@ const buildFormGeneral = (parent, news) => {
       divC.element
     );
 
-
     news.setType("COMMUNICATION");
 
     // buildNews(parent, true);
-  
 }
 
 /**
@@ -156,7 +165,7 @@ const buildCategory = (parent, news) => {
         },
         events:{
             change: ({target}) => {
-                news.setCategory(target.getDetail());
+                news.setCategory(target.value ? target.getDetail(): undefined);
             }
         }
     }, divC.element);
@@ -293,12 +302,17 @@ const buildEditor = (parent, news) =>{
         // "bar-integrated": true
     });
     aonTextAreaEditor.style.height = "24em";
-
+ 
     aonTextAreaEditor.addEventListener(EVENT.KEYUP, ()=>{
         news.setContent(aonTextAreaEditor.value);
     });
     
     parent.appendChild(aonTextAreaEditor);
+
+    if(news.getContent()){
+        aonTextAreaEditor.value = news.getContent();
+    }
+
 } 
 
 export const NewsAddUtils = {
