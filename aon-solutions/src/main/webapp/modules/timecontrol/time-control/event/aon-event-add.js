@@ -5,7 +5,7 @@ import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import { createFormEvent, createCardEvent } from "../../createComponent.js";
-import { createToolbar } from "../../../notification/createComponent.js";
+import { CreateComponent } from "../../../../components/CreateComponent.js";
 import { AonMessenger } from "../../../messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../../../messenger/MessengerEnums.js";
 import { AON_TAGS } from "../../../../environments/aonTag.js";
@@ -14,6 +14,7 @@ import { AonMap } from "../../../../components/aon-map.js";
 import * as ACTION from '../../../actions.js';
 import { setStyles } from "../../../../services/utilsComponents.js";
 import { AonBasicTable } from "../../../../components/aon-basic-table.js";
+import { AonSelect } from "../../../../components/aon-select.js";
 
 
 export class AonEventAdd extends AonElement {
@@ -67,18 +68,21 @@ export class AonEventAdd extends AonElement {
   }
 
   paintView() {
-    
-    createToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
 
+    CreateComponent.createAonToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
+  
     createFormEvent(this.id, this);
 
     this.applicationEl.removeToolbarOptions();
 
     let aonCardEvent = this.getElement(`${this.id}CardEvent`);
     createCardEvent(aonCardEvent.getContent());
+    this.checkTaskHolder();
 
-    if (!isEmptyObject(this.data) && !isEmptyObject(this.data.coordinates)) 
+    if (!isEmptyObject(this.data) && !isEmptyObject(this.data.coordinates)) {
       this.paintViewMap();
+    }
+ 
   }
 
   async paintViewMap() {
@@ -147,7 +151,7 @@ export class AonEventAdd extends AonElement {
     const serialize = serializeForm(this.getElement(`${this.id}Form`));
     return {
       ...serialize,
-      task_holder: this.TASK_HOLDER.id,
+      task_holder: this.TASK_HOLDER ? this.TASK_HOLDER.id : null,
       date: new Date( AonDateUtils.formatDateOrigin(serialize.date) + " " + serialize.time ).getTime(),
     };
   }
@@ -187,12 +191,15 @@ export class AonEventAdd extends AonElement {
       if (!date.isValid()) {date = new Date();}
       data.date = date;
       data.time = AonDateUtils.setTime(date);
-      data.name = this.TASK_HOLDER.name;
+      if(this.TASK_HOLDER){
+        data.name = this.TASK_HOLDER.name;
+        this.getElement("name").disabled = "disabled";
+      }
+ 
       for (const property in data) {
         const value = data[property];
         if (value) setValueName(property, value);
       }
-      this.getElement("name").disabled = "disabled";
     }
     
     if(this.applicationParentEl.isEmployee()) 
@@ -341,6 +348,31 @@ export class AonEventAdd extends AonElement {
       }
       return obj;
     });
+  }
+
+  checkTaskHolder(){
+    if(!this.TASK_HOLDER){
+      let name = document.getElementById("name");
+      if(name){
+        const parent = name.parentNode;
+        name.remove();
+
+        let aonSelect = new AonSelect();
+        aonSelect.id = aonSelect.name = "task_holder";
+        aonSelect.title = MSG.EMPLOYEE;
+        aonSelect.autocomplete = true;
+        parent.appendChild(aonSelect);
+        
+        aonSelect.addEventListener(EVENT.CHANGE, () => {
+          this.TASK_HOLDER = aonSelect.getDetail();
+        });
+
+        this.applicationParentEl.getTaskHoldersEnterprise()
+        .then(ths => {
+          aonSelect.setOptions(ths);
+        });
+      }
+    }
   }
 
   goMessenger(){

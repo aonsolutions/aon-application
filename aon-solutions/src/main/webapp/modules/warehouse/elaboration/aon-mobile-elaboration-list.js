@@ -1,6 +1,6 @@
 import { AonMobileList } from '../../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
-import { getElaborations } from '../../../services/warehouseService.js';
+import { getElaboration, getElaborations } from '../../../services/warehouseService.js';
 import { AonMobileElaboration } from './aon-mobile-elaboration.js';
 
 export class AonMobileElaborationList extends AonMobileList {
@@ -64,9 +64,11 @@ export class AonMobileElaborationList extends AonMobileList {
     }
 
     aonElaboration(elaboration, i) {
-        let aonElaboration = new AonMobileElaboration();
-        aonElaboration.setElaboration(elaboration);
-        this.getApplication().setContent(aonElaboration);
+        getElaboration(elaboration.id).then(el => {
+            let aonElaboration = new AonMobileElaboration();
+            aonElaboration.setElaboration(el);
+            this.getApplication().setContent(aonElaboration);
+        });
     }
     
     getFilter() {

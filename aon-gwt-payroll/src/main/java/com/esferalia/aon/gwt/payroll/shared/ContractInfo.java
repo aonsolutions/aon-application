@@ -61,9 +61,6 @@ public class ContractInfo implements Serializable{
 	//Contract Journey Duration
 	private ContractJourneyDuration contractJourneyDuration;
 	
-	private String oldStartDate;
-	private String oldEndDate;
-	
 	//Has Payroll
 	private Boolean hasPayroll;
 	private String payrollDate;
@@ -89,12 +86,17 @@ public class ContractInfo implements Serializable{
 	
 	private boolean isTGSSActive;
 	private String sepeId;
+	private String sepeExtensionId;
+	private String sepeTransformId;
 	
 	private boolean hasExtension;
-	private boolean hasTransformation;
+	private Date extensionDate;
+	private Date transformDate;
 	
 	private boolean hasCto;
 	private boolean hasCbc;
+	
+	private boolean discontinuos;
 	
 	public ContractInfo() {
 		super();
@@ -133,8 +135,6 @@ public class ContractInfo implements Serializable{
 		this.contractModel = null;
 		this.retaId = null;
 		this.contractJourneyDuration = new ContractJourneyDuration();
-		this.oldStartDate = null;
-		this.oldEndDate = null;
 		this.hasPayroll = false;
 		this.payrollDate = null;
 		
@@ -147,10 +147,13 @@ public class ContractInfo implements Serializable{
 		this.contractSalariesInfo = new ArrayList<>();
 		
 		this.hasExtension = false;
-		this.hasTransformation = false;
+		this.extensionDate = null;
+		this.transformDate = null;
 		
 		this.hasCto = false;
 		this.hasCbc = false;
+		
+		this.discontinuos = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -462,22 +465,6 @@ public class ContractInfo implements Serializable{
 	public void setContractJourneyDuration(Map<Date, ArrayList<JourneyDuration>> journies) {
 		this.contractJourneyDuration.setContractJourneyDuration(journies);
 	}
-	
-	public Date getOldStartDate() {
-		return parse(oldStartDate);
-	}
-
-	public void setOldStartDate(Date oldStartDate) {
-		this.oldStartDate = format(oldStartDate);
-	}
-
-	public Date getOldEndDate() {
-		return parse(oldEndDate);
-	}
-
-	public void setOldEndDate(Date oldEndDate) {
-		this.oldEndDate = format(oldEndDate);
-	}
 
 	public Boolean hasPayroll() {
 		return hasPayroll;
@@ -622,6 +609,22 @@ public class ContractInfo implements Serializable{
 		this.sepeId = sepeId;
 	}
 	
+	public String getSepeTransformId() {
+		return sepeTransformId;
+	}
+
+	public void setSepeTransformId(String sepeTransformId) {
+		this.sepeTransformId = sepeTransformId;
+	}
+
+	public String getSepeExtensionId() {
+		return this.sepeExtensionId;
+	}
+
+	public void setSepeExtensionId(String sepeExtensionId) {
+		this.sepeExtensionId = sepeExtensionId;
+	}
+	
 	public boolean isHasExtension() {
 		return hasExtension;
 	}
@@ -629,13 +632,21 @@ public class ContractInfo implements Serializable{
 	public void setHasExtension(boolean hasExtension) {
 		this.hasExtension = hasExtension;
 	}
-	
-	public boolean isHasTransformation() {
-		return hasTransformation;
+
+	public Date getExtensionDate() {
+		return extensionDate;
 	}
 
-	public void setHasTransformation(boolean hasTransformation) {
-		this.hasTransformation = hasTransformation;
+	public void setExtensionDate(Date extensionDate) {
+		this.extensionDate = extensionDate;
+	}
+
+	public Date getTransformDate() {
+		return transformDate;
+	}
+
+	public void setTransformDate(Date transformDate) {
+		this.transformDate = transformDate;
 	}
 	
 	public boolean hasCto() {
@@ -652,6 +663,14 @@ public class ContractInfo implements Serializable{
 
 	public void setHasCbc(boolean hasCbc) {
 		this.hasCbc = hasCbc;
+	}
+	
+	public boolean isDiscontinuos() {
+		return discontinuos;
+	}
+
+	public void setDiscontinuos(boolean discontinuos) {
+		this.discontinuos = discontinuos;
 	}
 	
 	public boolean isPartial() {
@@ -677,14 +696,15 @@ public class ContractInfo implements Serializable{
 				+ ocupation + ", rlceId=" + rlceId + ", rlce=" + rlce + ", journeytypeId=" + journeytypeId
 				+ ", journeyType=" + journeyType + ", contractmodelId=" + contractmodelId + ", contractModel="
 				+ contractModel + ", retaId=" + retaId + ", contractJourneyDuration=" + contractJourneyDuration
-				+ ", oldStartDate=" + oldStartDate + ", oldEndDate=" + oldEndDate + ", hasPayroll=" + hasPayroll
+				+ ", hasPayroll=" + hasPayroll
 				+ ", payrollDate=" + payrollDate + ", colectiveAgreement=" + colectiveAgreement
 				+ ", colectiveEmployees=" + colectiveEmployees + ", mdCtzId=" + mdCtzId + ", mdCtz=" + mdCtz
 				+ ", partialityCoefId=" + partialityCoefId + ", partialityCoef=" + partialityCoef + ", salariesCount="
 				+ salariesCount + ", contractSalariesInfo=" + contractSalariesInfo + ", settleReason=" + settleReason
 				+ ", hasSettle=" + hasSettle + ", holidaysDate=" + holidaysDate + ", hasCertifica2=" + hasCertifica2
-				+ ", isTGSSActive=" + isTGSSActive + ", sepeId=" + sepeId + ", hasExtension=" + hasExtension
-				+ ", hasTransformation=" + hasTransformation + ", hasCto=" + hasCto + ", hasCbc=" + hasCbc + "]";
+				+ ", isTGSSActive=" + isTGSSActive + ", sepeId=" + sepeId 
+//				+ ", hasExtension=" + hasExtension + ", hasTransformation=" + hasTransformation 
+				+ ", hasCto=" + hasCto + ", hasCbc=" + hasCbc + "]";
 	}
 
 }

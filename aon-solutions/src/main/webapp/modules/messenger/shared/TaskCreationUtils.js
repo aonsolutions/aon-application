@@ -3,16 +3,18 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
+import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat, setContentMessageChat, parseTimeToDouble, parseDoubleToTime } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { sendTaskHistoricEmail, getTaskOne, getJobType, getDailyTrackingByTask } from "../../../services/taskService.js";
+import { saveTaskBranch, getTaskOne, getJobType, getDailyTrackingByTask } from "../../../services/taskService.js";
 import { AonMessengerChat } from "../aon-messeger-chat.js";
 import { DailyTracking } from "../../../models/task/DailyTracking.js";
 import { sortBy } from "../../../services/utils.js";
+import { AonMessengerSimpleList } from "../aon-messenger-simple-list.js";
 
 /**
  * 
@@ -60,6 +62,7 @@ const createMainView = (parent) =>{
   parent.appendChild(div);
   const mainView = newComponent({
     type: TAG.DIV,
+    id:MESSENGER_IDS.MAIN_VIEW,
     classes: [CSS.FLEX_JUSTIFY_BETWEEN], // CSS.NO_COPY
     styles: {
       transition: ".5s",
@@ -153,7 +156,7 @@ const createReceiverDiv = () => newComponent({
   styles: {
     width: "100%"
   },
-});
+}).element;
 
 // ----------------------------------------------------
 // MESSAGE COMPONENT
@@ -177,10 +180,11 @@ const createMessageBox = (properties) =>{
       me: properties.direction == MESSENGER_DIRECTION.RIGHT ? true : false
     }
   }).element;
-  if(properties.direction == MESSENGER_DIRECTION.RIGHT)
+  if(properties.direction == MESSENGER_DIRECTION.RIGHT){
     component.style.marginLeft = "auto";
-  else 
+  } else {
     component.style.marginRight = "auto";
+  }
 
   return component;
 } 
@@ -250,7 +254,8 @@ const createAction = (icon, message, submessage, margin=true) => {
     marginRight : margin ? "1em" : "0",
     background : CSS.variable(COLORS.AON_LIGHT_GRAY),
    }
-  });
+  }).element;
+  comp.element.appendChild(wrapper);
 
   let properties = {
     name :  icon.icon,
@@ -260,9 +265,8 @@ const createAction = (icon, message, submessage, margin=true) => {
   };
 
   const image = icon.type === CONSTANT.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
-  image.appendTo(wrapper.element);
-  wrapper.appendTo(comp.element);
-
+  wrapper.appendChild(image);
+  
   if(message){
     const text = createText({
       text : message,
@@ -299,16 +303,16 @@ const createAction = (icon, message, submessage, margin=true) => {
  * @returns 
  */
 const createStartJustifiedRow = (styles) => newComponent({
-    classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
-    styles: styles
+  classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
+  styles: styles
 });
 
-const createStartJustifiedColumn = () =>newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
-    styles: {
-      width : "100%", 
-      marginBottom: "5px"
-    }
+const createStartJustifiedColumn = () => newComponent({
+  classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
+  styles: {
+    width : "100%", 
+    marginBottom: "5px"
+  }
 });
 
 /**
@@ -317,14 +321,14 @@ const createStartJustifiedColumn = () =>newComponent({
  * @returns 
  */
 const createText = (properties) => newComponent({
-    ...properties,
-    text: properties.text,
-    styles: {
-        color: properties.color,
-        fontSize: properties.fontSize ? properties.fontSize : "1em",
-        fontFamily: properties.fontFamily ? properties.fontFamily : "Roboto",
-        fontWeight: properties.fontWeight ? properties.fontWeight : "500",
-    }
+  ...properties,
+  text: properties.text,
+  styles: {
+      color: properties.color,
+      fontSize: properties.fontSize ? properties.fontSize : "1em",
+      fontFamily: properties.fontFamily ? properties.fontFamily : "Roboto",
+      fontWeight: properties.fontWeight ? properties.fontWeight : "500",
+  }
 });
 
 /**
@@ -333,38 +337,36 @@ const createText = (properties) => newComponent({
  * @returns 
  */
 const createMaterialIcon = (properties) => newComponent({
-    type: 'i',
-    text: properties.name,
-    classes: [CONSTANT.MATERIAL_ICONS],
-    styles: {
-        fontSize: properties.size,
-        color: properties.color
-    },
-    attributes:{
-      title: properties.title || properties.name 
-    }
-});
+  type: 'i',
+  text: properties.name,
+  classes: [CONSTANT.MATERIAL_ICONS],
+  styles: {
+      fontSize: properties.size,
+      color: properties.color
+  },
+  attributes:{
+    title: properties.title || properties.name 
+  }
+}).element;
 
 /**
  * Creates a material icon
  * @param {object} properties 
  * @returns 
  */
-const createOutlinedMaterialIcon = (properties) => {
-  return newComponent({
-      type: 'i',
-      text: properties.name,
-      classes: [CONSTANT.MATERIAL_ICONS_OUTLINED],
-      styles: {
-          fontSize: properties.size ? properties.size : "24px",
-          color: properties.color ? properties.color : "#404040"
-      },
-      attributes:{
-        title: properties.title || properties.name,
-      }
-  });
+const createOutlinedMaterialIcon = (properties) =>  newComponent({
+    type: 'i',
+    text: properties.name,
+    classes: [CONSTANT.MATERIAL_ICONS_OUTLINED],
+    styles: {
+        fontSize: properties.size ? properties.size : "24px",
+        color: properties.color ? properties.color : "#404040"
+    },
+    attributes:{
+      title: properties.title || properties.name,
+    }
+}).element;
 
-} 
 
 /**
  * Check the properties of the comment
@@ -509,7 +511,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
     let iconSend = undefined;
     
     if(iconSendMail){
-      iconSend = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
+      iconSend = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX});
       message.appendChild(iconSend);
   
       iconSend.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
@@ -533,7 +535,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
 
     //-------------------icon edit
     if(!messageSend && me && date){
-      const iconEdit = createOutlinedMaterialIcon({name:MATERIAL_ICONS.EDIT}).element;
+      const iconEdit = createOutlinedMaterialIcon({name:MATERIAL_ICONS.EDIT});
       iconEdit.id = MESSENGER_IDS.ICON_EDIT_WORKFLOW;
       message.appendChild(iconEdit);
       iconEdit.title = MSG.EDIT;
@@ -570,7 +572,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   const description = createCommentContent(properties);
   description.appendTo(message);
 
-  checkFilesAddEventClick(message); //ADD EVENT CLICK
+  checkFilesAddEventClick({id:properties.task}, message); //ADD EVENT CLICK
 
   return message;
 }
@@ -598,11 +600,10 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
     parentElement = action.element;
   }
 
-
   const message = createMessageBox(properties);
   parentElement.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
-  let messageSend = properties.notification_user; // si el mensaje fue enviado
+  const messageSend = properties.notification_user; // si el mensaje fue enviado
  
   createIconMessage(message, messageSend, true, properties);
 
@@ -624,7 +625,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   });
   date.appendTo(name.element);
   
-  checkFilesAddEventClick(message); //ADD EVENT CLICK
+  checkFilesAddEventClick({id: properties.task},message); //ADD EVENT CLICK
 
   downChat();
 
@@ -680,6 +681,7 @@ const createSectionComment = (div) => {
       overflow:"hidden",
       flex: 1
     });
+    
     aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
     divMain.appendChild(aonTextArea);
     aonTextArea.height = "45px";
@@ -733,11 +735,12 @@ const createInputContact = () => setAttributes(new AonInput(),{
   description: `${MSG.CONTACT} (${MSG.OPTIONAL})`
 });
 
-const createInputTitle = () => setAttributes(new AonInput(),{
+const createInputTitle = () => setAttributes(new AonAutosizeTextarea(),{
   name:MESSENGER_IDS.TITLE_TASK,
   id: MESSENGER_IDS.TITLE_TASK,
-  description: MSG.ISSUE
+  title: MSG.ISSUE
 });
+
 
 const createLabelFileText = () => {
   const label = setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
@@ -811,7 +814,7 @@ const createTagHtml = (tag, parent) => {
   return divOne;
 }
 
-const openDialogBranch = ()=> {
+const openDialogBranch = (task)=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
 
@@ -870,7 +873,6 @@ const openDialogBranch = ()=> {
     if(taskHolder.value && workgroup.value){
       application.startLoading();
       try {
-        const task = aonMessengerChat.task;
         const params = {
           ...task.getWorkflowTmp(),
           type: WORKFLOW_TYPES.CONNECTED, 
@@ -879,7 +881,7 @@ const openDialogBranch = ()=> {
           comment: note.value
         };
 
-        await sendTaskHistoricEmail(params);
+        await saveTaskBranch(params);
         aonMessengerChat.showMessage(`Rama creada!`);
 
         const data = await getTaskOne({id:task.id});
@@ -902,11 +904,40 @@ const openDialogBranch = ()=> {
   dialog.open();
 }
 
+const createSimpleList = (title, id, parent) => {
+
+  let div = setStyles(document.createElement(TAG.DIV),{
+    borderBottom: '1px solid #ddd',
+    height: '40px',
+    position: 'relative',
+    backgroundColor:"##eeeeee "
+  });
+
+  let span = setStyles(document.createElement(TAG.SPAN),{
+    position: 'absolute',
+    margin: '16px',
+    fontWeight: '500',
+    color: 'rgb(95, 99, 104)',
+    width: '100%'
+  });
+  span.innerHTML = title;
+
+  div.appendChild(span);
+  
+  parent.appendChild(div);
+  
+  let simpleList = setStyles(new AonMessengerSimpleList(),{ width: "100%" });
+  simpleList.id = id;
+
+  parent.appendChild(simpleList);
+
+  return simpleList;
+}
+
 // TODO
-const openDialogDailyTracking = ()=> {
+const openDialogDailyTracking = (task)=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
-  const task = aonMessengerChat.task;
   const myTaskHolder = aonMessengerChat.MY_TASKHOLDER;
 
   const dialog = application.getDialog();
@@ -1102,5 +1133,6 @@ export const TaskCreationUtils = {
   openDialogBranch,
   openDialogDailyTracking,
   createSectionRating,
-  createIconEvaluation
+  createIconEvaluation,
+  createSimpleList
 };

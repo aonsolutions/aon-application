@@ -421,6 +421,17 @@ public class WarehouseDAO {
 		.fetchInto(STOCK).stream().map(new FullStockFiller());
 	}
 	
+	public static Stock getStock(AONContext ctx, StockFilter filter){
+		return ctx.getDslContext().select().from(STOCK).where(STOCK_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(STOCK).stream().map(new FullStockFiller()).findFirst().orElse(new Stock());
+	}
+	
+	public static Stock saveStock(AONContext ctx, Stock stock) {
+		return stock.getId() != null 
+				? updateStock(ctx, stock).orElse(new Stock())
+				: insertStock(ctx, stock).orElse(new Stock());
+	}
+	
 	public static Optional<Stock> insertStock(AONContext ctx, Stock stock){
 		ctx.checkWrite();
 		ProductOldValidation.validateStocking(ctx, stock.getItem());

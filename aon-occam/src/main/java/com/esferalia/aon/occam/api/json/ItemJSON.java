@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ItemJSON {
@@ -74,6 +75,7 @@ public class ItemJSON {
 	
 	
 	public static JSONObject toJSON(Item item) {
+		if(item == null) return new JSONObject();
 		return new JSONObject()
 				.put(IJsonNames.ID, item.getId())
 				.put(IJsonNames.DOMAIN, DomainJSON.toJSON(item.getDomain()))
@@ -85,7 +87,7 @@ public class ItemJSON {
 				.put(IJsonNames.PRICE, item.getPrice())
 				.put(IJsonNames.DESCRIPTION, item.getDescription())
 				.put(IJsonNames.SERIAL_NUMBER, item.getSerialNumber())
-				.put(IJsonNames.SERIAL_DATE, item.getSerialDate())
+				.put(IJsonNames.SERIAL_DATE, AonDateUtils.format(item.getSerialDate(), AonDateUtils.DATE_TIME_FORMAT_AUX))
 				.put(IJsonNames.BARCODE, item.getBarcode())
 				.put(IJsonNames.STATUS, item.getStatus() != null ? item.getStatus().name() : "")
 				.put(IJsonNames.PRODUCT, ProductJSON.toJSON(item.getProduct()))
@@ -104,6 +106,7 @@ public class ItemJSON {
 				.put(IJsonNames.CREATION_DATE, item.getCreationDate())
 				.put(IJsonNames.MODIFICATION_DATE, item.getModificationDate())
 				.put(IJsonNames.MODIFICATION_USER, item.getModificationUser())
+				.put(IJsonNames.ITEM_COMPOSITION, ItemCompositionJSON.toJSON(item.getItemComposition()))
 				;
 	}
 }

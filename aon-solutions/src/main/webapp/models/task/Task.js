@@ -217,7 +217,7 @@ export class Task {
   }
 
   getSource() {
-    return this.source;
+    return this.getSourceTask(); /**this.source;*/ 
   }
 
   setSource(v) {
@@ -259,6 +259,20 @@ export class Task {
 
   getChilds() {
     return this.childs || [];
+  }
+
+  addChild(child) {
+    const existName = this.childs.find(t=> t.id === child.id);
+    if(!existName) {
+      this.childs.push(child);
+    }
+  
+    this.onPropertyChanged('childs', this.child);
+  }
+
+  removeChild(id) {
+    this.childs = this.childs.filter(t=> t.id != id);
+    this.onPropertyChanged('childs', this.childs);
   }
 
   setParentObj(parentObj) {
@@ -390,6 +404,17 @@ export class Task {
 
   //-----------------------------------------------------AUX------------------------------------------------
   
+  getSourceTask() {
+    let source = this.source;
+    if(this.isChild() && source === TASK_SOURCE.TASK){
+      const parent = this.getParentObj();
+      if(parent && parent.source !== TASK_SOURCE.GROUPED){
+        source = parent.source;
+      }
+    }
+    return source;
+  }
+
   setTaskType(tagType){
     this.tags = this.tags.filter(tag=> tag.tag_type != TAG_TYPE.TASK_TYPE);
     this.addTag(tagType);
@@ -421,13 +446,30 @@ export class Task {
   setWorkflowTmp(workflowTmp){
     this.workflowTmp = workflowTmp;
   }
+
+	isParent() {
+		return this.parent == null;
+	}
+
+  isChild() {
+		return !this.isParent();
+	}
+
+  isTask(){
+    return this.getSource() === TASK_SOURCE.TASK;
+  }
+ 
+  isGrouped(){
+    return this.getSource() === TASK_SOURCE.GROUPED;
+  }
  
   isProject(){
-    return this.project && this.project.id ? true : false;
+    const project = this.getProject();
+    return project && project.id ? true : false;
   }
 
   isExternal(){
-    return !this.isAdvisoryCompany() && this.id && this.isOtherDomain() ? true : false;
+    return !this.isAdvisoryCompany() && this.getId() && this.isOtherDomain() ? true : false;
   }
 
   isOtherDomain(){

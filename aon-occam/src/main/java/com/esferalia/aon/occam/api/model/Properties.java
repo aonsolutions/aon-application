@@ -247,6 +247,17 @@ public interface Properties {
 		Property<String> getProductNameProperty();
 	}
 	
+	public interface ItemCompositionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getItemProperty();
+		Property<Integer> getCompositionItemProperty();
+		Property<Short> getSequenceProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<String> getDiscountExprProperty();
+	}
+	
 	public interface ItemAddInfoProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -1149,6 +1160,24 @@ public interface Properties {
 		Property<String> getDescriptionProperty();
 		Property<String> getUrlProperty();
 		Property<Integer> getRattachProperty();
+	}
+	
+	public interface NewsProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getTitleProperty();
+		Property<String> getDescriptionProperty();
+		Property<String> getContentProperty();
+		Property<String> getUrlProperty();
+		Property<Byte> getActiveProperty();
+		Property<Byte> getRssProperty();
+		Property<Timestamp> getInitDateProperty();
+		Property<Timestamp> getEndDateProperty();
+		Property<Integer> getCategoryProperty();
+		Property<Integer> getRattachProperty();
+		Property<Integer> getScopeProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getTemplateProperty();
 	}
 	
 	public interface EmployeeProperties{

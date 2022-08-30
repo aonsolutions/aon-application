@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -499,17 +499,9 @@ public class SistemaRED {
 		SistemaREDMov.movPrevDelete(certificateInputStream, certificatePassword, certificateType, situationType, regimen,
 				ctaCti, nss, fecha);
 	}
-
-	@Deprecated
-	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String situation, String regimen, String ctaCti, String nss)
-			throws SegSocialException {
-		SistemaREDMov.altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType, situation,
-				regimen, ctaCti, nss);
-	}
 	
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws SegSocialException {
 		return SistemaREDMov.ipfxnaf(certificateInputStream, certificatePassword, certificateType, nssList);
 	}
@@ -524,7 +516,7 @@ public class SistemaRED {
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String grup_ctz,
 			Date fecha) throws SegSocialException {
 
-		SistemaREDMov.cambioGrupCtz(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
+		SistemaREDMov.updateQuoteGroup(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
 				nss, grup_ctz, fecha);
 	}
 
@@ -532,7 +524,7 @@ public class SistemaRED {
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String ocup,
 			Date fecha) throws SegSocialException {
 
-		SistemaREDMov.cambioOcupacion(certificateInputStream, certificatePassword, certificateType, ipf, regimen,
+		SistemaREDMov.updateOccupation(certificateInputStream, certificatePassword, certificateType, ipf, regimen,
 				ctaCti, nss, ocup, fecha);
 	}
 
@@ -540,7 +532,7 @@ public class SistemaRED {
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
 			throws SegSocialException {
 
-		SistemaREDMov.cambioCatProf(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
+		SistemaREDMov.updateCatProf(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
 				nss, cat, fecha);
 	}
 	
@@ -548,14 +540,14 @@ public class SistemaRED {
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio, Optional<String>contract, String coef)
 			throws SegSocialException {
 		
-		SistemaREDMov.cambioContratoCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
+		SistemaREDMov.updateContractCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
 	}
 
 	public static void cambioContratoCoef(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio, Optional<String>contract, String coef)
 					throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDMov.cambioContratoCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
+			SistemaREDMov.updateContractCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -778,12 +770,12 @@ public class SistemaRED {
 		return SistemaREDMov.getReportAffiliateInMovPrev(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 	}
 	
-	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
-	public static Employee sendAlta(final byte[] certificateData, final String certificatePassword,
+	public static byte[] sendAlta(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
@@ -792,12 +784,12 @@ public class SistemaRED {
 		}
 	}
 	
-	public static Employee sendBaja(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendBaja(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException{
 				return SistemaREDMov.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
-	public static Employee sendBaja(final byte[] certificateData, final String certificatePassword,
+	public static byte[] sendBaja(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException{
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return SistemaREDMov.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);

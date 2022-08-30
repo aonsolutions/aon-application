@@ -17,6 +17,9 @@ export class Elaboration {
     source;
     sourceId;
 
+    detail;
+    packaging;
+
 	creationUser;
 	creationDate;
 	modificationUser;
@@ -38,7 +41,8 @@ export class Elaboration {
             this.remarks = elaboration.remarks;
             this.source = elaboration.source;
             this.sourceId = elaboration.sourceId;
-        
+            this.detail = elaboration.detail;
+            this.packaging = elaboration.packaging;
             this.creationUser = elaboration.creationUser;
             this.creationDate = elaboration.creationDate;
             this.modificationUser = elaboration.modificationUser;

@@ -268,7 +268,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
@@ -281,6 +281,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException;
 	
 	void getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException;
+	
+	void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException;
 	
 	void getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
 
@@ -327,11 +329,19 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
+	void sendContractExtension(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
 	void removeContractTransform(String currentDomainName, String currentUser, String ide, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date, Integer contractId,
 			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
 	
+	void getSepeTransformComunicationData(String currentDomainName, String currentUser, String document, String enterpriseCif, 
+			Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
+
+	void getSepeExtensionComunicationData(String currentDomainName, String currentUser, String document, String enterpriseCif, 
+			Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
+
 	// ------------------------------------------------- SEPE Methods
 	
 	void getCertifica2Info(String currentDomainName, String user, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
@@ -348,13 +358,17 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- ContractExtension
 	
-	void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback);
+	void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback);
+	void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------- ContractTransform
 	
-	void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Integer> callback);
+	void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
+	void deleteContractTransform(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void removeContractTransform(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- EmployeeIrpf
 	

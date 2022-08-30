@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
@@ -69,7 +67,7 @@ public class Mod2002021 extends Mod200 {
 	
 	private String devType;
 	private String payType;
-	private Double amount;
+//	private Double amount;
 	private String iban;
 	private String bic;
 
@@ -255,12 +253,12 @@ public class Mod2002021 extends Mod200 {
 	public void setPayType(String payType) {
 		this.payType = payType;
 	}
-	public Double getAmount() {
-		return amount;
-	}
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
+//	public Double getAmount() {
+//		return amount;
+//	}
+//	public void setAmount(Double amount) {
+//		this.amount = amount;
+//	}
 	public String getIban() {
 		return iban;
 	}
@@ -298,16 +296,16 @@ public class Mod2002021 extends Mod200 {
 	public String getDomainName() {
 		return null;
 	}
-	@Override
-	public IFiscalModelKey getDeclarationTypeKey() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public double getResult() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+//	@Override
+//	public IFiscalModelKey getDeclarationTypeKey() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	@Override
+//	public double getResult() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 	
 	public String getDominantIdentificationNumber() {
 		return dominantIdentificationNumber;
@@ -414,7 +412,7 @@ public class Mod2002021 extends Mod200 {
 			return 0.0;
 		}
 		DoubleVariableEx v = keysMap.get(key);
-		if (v==null) {
+		if (v == null) {
 			return 0.0;
 		}
 		Object o = v.getValue();
@@ -422,6 +420,25 @@ public class Mod2002021 extends Mod200 {
 			return (Double) o;
 		}
 		return 0.0;
+	}
+
+	public void setDoubleValue(IMod200Key key, Double value) {
+		if (value == null)
+			value = 0.0;
+		DoubleVariableEx dv = new DoubleVariableEx(key);
+		dv.setValue(value);
+		addVariable(dv);
+	}
+	
+	public Boolean getBooleanValue(IMod200Key key) {
+		return (getDoubleValue(key) == 1.0);
+	}
+	
+	public void setBooleanValue(IMod200Key key, Boolean value) {
+		if (value == null)
+			value = false;
+		double doubleValue = value?1.0:0.0;
+		setDoubleValue(key, doubleValue);
 	}
 	
 	public boolean isChecked(IMod200Key key) {
@@ -435,14 +452,6 @@ public class Mod2002021 extends Mod200 {
 	
 	public boolean isCooperativa() {
 		return isChecked(Mod2002021Key.C0017) || isChecked(Mod2002021Key.C0018) || isChecked(Mod2002021Key.C0019);
-	}
-	@Override
-	public Double getDeclarationResult() {
-		return null;
-	}
-	@Override
-	public FiscalModelDeclarationType getDeclarationResultType() {
-		return null;
 	}
 	
 }

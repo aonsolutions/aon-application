@@ -133,7 +133,7 @@ public class AccountStatementReport extends MainEntryPoint {
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+		AccountEntryModule module = new AccountEntryModule();
 		module.onModuleLoad(new AccountEntryModuleOptions()
 			.setParentWidget(entryDialog)
 			.setDomainName(getCurrentDomainName())

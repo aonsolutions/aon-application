@@ -11,17 +11,15 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page14 extends PageAbs {
 
-	private AonTextBox nrsAnexoIII = new AonTextBox();
-	private AonTextBox justCanarias = new AonTextBox();
-	private AonTextBox nrsAnexoIV = new AonTextBox();
-	private AonTextBox nrsAnexoV = new AonTextBox();
-	private AonTextBox nrsAnexoVric = new AonTextBox();
-	private AonTextBox justActivos = new AonTextBox();
+	private AonTextBox nrsAnexoIII;
+	private AonTextBox justCanarias;
+	private AonTextBox nrsAnexoIV;
+	private AonTextBox nrsAnexoV;
+	private AonTextBox nrsAnexoVric;
+	private AonTextBox justActivos;
 
 	public Page14( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 
 	@Override
@@ -56,48 +54,65 @@ public class Page14 extends PageAbs {
 		
 		// PRESENTACIÓN DE DOCUMENTACIÓN PREVIA EN LA SEDE ELECTRÓNICA
 		
+		nrsAnexoIII = new AonTextBox();
 		nrsAnexoIII.setVisibleLength(22);
 		nrsAnexoIII.setMaxLength(22);
-		nrsAnexoIV.setVisibleLength(22);
-		nrsAnexoIV.setMaxLength(22);
-		nrsAnexoVric.setVisibleLength(22);
-		nrsAnexoVric.setMaxLength(22);
-		nrsAnexoV.setVisibleLength(22);
-		nrsAnexoV.setMaxLength(22);
-		justCanarias.setVisibleLength(22);
-		justCanarias.setMaxLength(13);
-		justActivos.setVisibleLength(22);
-		justActivos.setMaxLength(13);
-		
+		nrsAnexoIII.setValue(callback.getMod200Object().getMod200().getNrsAnexoIII());
 		nrsAnexoIII.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
 			callback.markAsDirty();
 		});
-
+		otherInputs.add(nrsAnexoIII);
+		
+		nrsAnexoIV = new AonTextBox();
+		nrsAnexoIV.setVisibleLength(22);
+		nrsAnexoIV.setMaxLength(22);
+		nrsAnexoIV.setValue(callback.getMod200Object().getMod200().getNrsAnexoIV());
 		nrsAnexoIV.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());			
 			callback.markAsDirty();
 		});
-
+		otherInputs.add(nrsAnexoIV);
+		
+		nrsAnexoVric = new AonTextBox();
+		nrsAnexoVric.setVisibleLength(22);
+		nrsAnexoVric.setMaxLength(22);
+		nrsAnexoVric.setValue(callback.getMod200Object().getMod200().getNrsAnexoVric());
 		nrsAnexoVric.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setNrsAnexoVric(nrsAnexoVric.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(nrsAnexoVric);
 
+		nrsAnexoV = new AonTextBox();
+		nrsAnexoV.setVisibleLength(22);
+		nrsAnexoV.setMaxLength(22);
+		nrsAnexoV.setValue(callback.getMod200Object().getMod200().getNrsAnexoV());
 		nrsAnexoV.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
 			callback.markAsDirty();
 		});
-
+		otherInputs.add(nrsAnexoV);
+		
+		justCanarias = new AonTextBox();
+		justCanarias.setVisibleLength(22);
+		justCanarias.setMaxLength(13);
+		justCanarias.setValue(callback.getMod200Object().getMod200().getJustCanarias());
 		justCanarias.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(justCanarias);
 
+		justActivos = new AonTextBox();
+		justActivos.setVisibleLength(22);
+		justActivos.setMaxLength(13);
+		justActivos.setValue(callback.getMod200Object().getMod200().getJustActivos());
 		justActivos.addValueChangeHandler(event -> {
 			callback.getMod200Object().getMod200().setJustActivos(justActivos.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(justActivos);
 		
 		basePanel.add(getTitle("Presentaci\u00F3n de documentaci\u00F3n previa en la Sede electr\u00F3nica"));		
 
@@ -127,27 +142,6 @@ public class Page14 extends PageAbs {
 		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
 		table2.setWidget(row, 1, justActivos);
 		
-	}
-
-	@Override
-	public void dump() {
-		super.dump();
-		nrsAnexoIII.setValue( callback.getMod200Object().getMod200().getNrsAnexoIII());
-		justCanarias.setValue( callback.getMod200Object().getMod200().getJustCanarias());
-		nrsAnexoIV.setValue( callback.getMod200Object().getMod200().getNrsAnexoIV());
-		nrsAnexoV.setValue( callback.getMod200Object().getMod200().getNrsAnexoV());
-		nrsAnexoVric.setValue( callback.getMod200Object().getMod200().getNrsAnexoVric());
-		justActivos.setValue( callback.getMod200Object().getMod200().getJustActivos());
-	}
-	
-	@Override
-	public void populate() {
-		callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
-		callback.getMod200Object().getMod200().setJustCanarias(justCanarias.getValue());
-		callback.getMod200Object().getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());
-		callback.getMod200Object().getMod200().setNrsAnexoV(nrsAnexoV.getValue());
-		callback.getMod200Object().getMod200().setNrsAnexoVric(nrsAnexoVric.getValue());
-		callback.getMod200Object().getMod200().setJustActivos(justActivos.getValue());
 	}
 
 }

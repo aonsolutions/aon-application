@@ -21,9 +21,13 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadiSeptember2022Insert;
+import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
+import net.aonsolutions.db.up2date.payroll.ContractTransfromUnify;
+import net.aonsolutions.db.up2date.task.TaskSourceUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalMonthlyQuote2022Fix;
-import net.aonsolutions.db.up2date.tgss.FellowsITIMS2022UpdateII;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Fix;
+import net.aonsolutions.db.up2date.warehouse.ElaborationDetailUpdate;
 
 public class Up2Date {
 
@@ -142,16 +146,16 @@ public class Up2Date {
     		//LocationCreation.LOCATION_CREATION,
     		//TimeControlCreation.TIMECONTROL_CREATION,
     		//CoordinatesUpdate.COORDINATES_UPDATE,
-			//AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
-			//Holidays2021Insert.HOLIDAYS2021INSERT,
-			//AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
-			//AuthDeviceCreation.AUTH_DEVICE_CREATION,
+    		//AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
+    		//Holidays2021Insert.HOLIDAYS2021INSERT,
+    		//AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
+    		//AuthDeviceCreation.AUTH_DEVICE_CREATION,
     		//PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT,
     		//IfDaysInsert.IFDAYSINSERT
     		//Bases2021Update.BASES2021UPDATE
     		//AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
     		// IntegrityFix.INTEGRITYFIX,
-   		   	//RetirementInsert.RETIREMENTINSERT,
+    		//RetirementInsert.RETIREMENTINSERT,
     		//NotificationCreation.NOTIFICATION_CREATION,
     		//NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,
     		//Bases2021UpdateII.BASES2021UPDATEII,
@@ -238,7 +242,7 @@ public class Up2Date {
     		//AlterSalaryEmbargo.ALTERSALARYEMBARGO,
     		//Holidays2022Update.HOLIDAYS2022UPDATE,
     		//Art1512022Update.ART1512022UPDATE,
-    		//ContractAttachUpdate.CONTRACTATTACHUPDATE
+    		//ContractAttachUpdate.CONTRACTATTACHUPDATE,
     		//AlterSalaryDeduction.ALTERSALARYDEDUCTION,
     		//TrainingPercentages2022UpdateII.TRAINNINGPERCENTAGES2022UPDATEII,
     		//TaskAddEvaluation.TASK_ADD_EVALUATION,
@@ -258,10 +262,16 @@ public class Up2Date {
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
 	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
     		//AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX
+    		ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
+    		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
+    		TaskSourceUpdate.TASK_SOURCE_UPDATE,
+    		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
+    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
+    		ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
     		IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
     };
-    
 
+    
 	// ------------------------------------------------------------------------
 
 

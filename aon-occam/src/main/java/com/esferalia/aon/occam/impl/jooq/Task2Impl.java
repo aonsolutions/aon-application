@@ -32,6 +32,12 @@ public class Task2Impl implements ITask2 {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			TaskDAO.get(ctx, filter));
 	}
+	
+	@Override
+	public Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			TaskDAO.getTaskAndChilds(ctx, filter));
+	}
 
 	@Override
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter) {
@@ -44,18 +50,29 @@ public class Task2Impl implements ITask2 {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			TaskDAO.getStream(ctx, filter, page, perPage));	
 	}
-	
 
 	@Override
-	public Stream<Task> getTaskParentStream(AONContext ctx, TaskFilter filter) {
+	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-		TaskDAO.getParentStream(ctx, filter));	
+		TaskDAO.getParentOrChildStream(ctx, filter));	
 	}
 	
 	@Override
-	public Stream<Task> getTaskParentStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			TaskDAO.getParentStream(ctx, filter, page, perPage));	
+			TaskDAO.getParentOrChildStream(ctx, filter, page, perPage));	
+	}
+	
+	@Override
+	public Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			TaskDAO.getTaskAndChildsStream(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			TaskDAO.getTaskAndChildsStream(ctx, filter, page, perPage));
 	}
 
 	@Override

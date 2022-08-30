@@ -1,5 +1,5 @@
 package solutions.aon.sepe.exceptions.statusCode;
 
-public class ForbiddenException extends StatusCodeException{
+public class ForbiddenException extends StatusCodeException {
 
 }

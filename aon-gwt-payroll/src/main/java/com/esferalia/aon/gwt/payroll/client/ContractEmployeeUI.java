@@ -579,20 +579,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			else
 				employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
 			
-			try {
-				Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
-				
-				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
-					employee.showEmployeesColective();
-					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
-				} else {
-					employee.hideEmployeesColective();
-					contractData.setEmployeesColective(null);
-				}
-			} catch (Exception e) {
-				// Nothing to do here
-			}
-			
 			if(null != contractData.getJourneyType()) {
 				setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
@@ -611,6 +597,19 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			
 		} else
 			employee.showElementsFullTimeContract();
+		
+		try {
+			Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				employee.showEmployeesColective();
+				setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
+			} else {
+				employee.hideEmployeesColective();
+				contractData.setEmployeesColective(null);
+			}
+		} catch (Exception e) {
+			// Nothing to do here
+		}
 		
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		

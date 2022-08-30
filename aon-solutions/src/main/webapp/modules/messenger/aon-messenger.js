@@ -16,6 +16,7 @@ import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { sortBy, waitEl } from '../../services/utils.js';
 import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
 import { getCustomers } from '../../services/registryService.js';
+import * as GWT from '../../gwt/gwt.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -108,7 +109,7 @@ export class AonMessenger extends AonElement {
 
 				const email = cauInfo.auth.email;
 
-				if(!email){
+				if(!email && this.cau){
 					this.showError({message:"Auth inexistente", type:CONSTANT.ERROR});
 				} else {
 					this.buildToolbar();
@@ -173,7 +174,6 @@ export class AonMessenger extends AonElement {
 	}
 
 	async buildToolbar(){
-			
 		if(this.isMobile()){
 			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
 			this.applicationEl.addFloatOption(SigninSidenav.ADD, () => 
@@ -188,6 +188,10 @@ export class AonMessenger extends AonElement {
 				this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
 					this.rootPanel(new AonMessenger())
 				);
+
+				// this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
+				// 	this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
+				// );
 			}
 		}
 
@@ -478,19 +482,24 @@ export class AonMessenger extends AonElement {
 					name: item.description,
 					icon: MATERIAL_ICONS.PEOPLE_ALT,
 					fn: () => {
-						let filter = {};
-						if(this._filter.workgroup == item.id){
-							this._filter.workgroup  = undefined;
-							this.addListFilter({...this._filter});
-							filter = {...this.getListFilter()};
+
+						let filter = this.getListFilter();
+
+						if(filter.workgroup == item.id){
+							filter.workgroup  = undefined;
 						} else {
-							this._filter.workgroups = undefined;
-							this._filter.workgroup  = item.id;
-							this.addListFilter({...this._filter});
-							filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
+							filter.sender      = undefined;
+							filter.task_holder = undefined;
+							filter.workgroups  = undefined;
+							filter.workgroup   = item.id;
 						}
+
+						this.addListFilter({...filter});
+
 						this.updateStatusCount();
+
 						this.addBackgroundSidenav(filter);
+
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 					}
 				})
@@ -506,9 +515,13 @@ export class AonMessenger extends AonElement {
 						this._filter.sender = undefined;
 						this._filter.workgroup = undefined;
 						this._filter.workgroups = this.getWorkgroupsStr(true);
+
 						this.addListFilter({...this._filter});
+
 						this.updateStatusCount();
+				
 						this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.GROUPS);
+
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 					}
 				});
@@ -634,42 +647,43 @@ export class AonMessenger extends AonElement {
 
 	addBackgroundSidenav(filter){
 		if(filter){
-			this.applicationEl.removeBackgroundSidenavAll();
+			const application = this.getApplication();
+			application.removeBackgroundSidenavAll();
 			if(this.cau){
-				this.applicationEl.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX);
+				application.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX);
 			} else if(filter.workgroup){
-				this.applicationEl.addBackgroundSidenav(filter.workgroup);
+				application.addBackgroundSidenav(filter.workgroup);
 			} else if(filter.sender && filter.task_holder){
-				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+				application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
 			} else if(filter.sender){
-				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
+				application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
 			} else if(filter.task_holder){
-				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
+				application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
 			} else {
-				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+				application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
 			}
 
 			switch (filter.status){
 				case TASK_STATUS.IN_PROGRESS:
-					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
 					break;
 				case TASK_STATUS.FINISHED:
-					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name);
 					break;
 				case TASK_STATUS.DELETED:
-					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.name);
 					break;
 				default:
-					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
+					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
 					break;
 			}
 
 			if(filter.workgroup){
-				this.applicationEl.addBackgroundSidenav(filter.workgroup);
+				application.addBackgroundSidenav(filter.workgroup);
 			}
 
 			if(filter.tag){
-				this.applicationEl.addBackgroundSidenav(filter.tag);
+				application.addBackgroundSidenav(filter.tag);
 			}
 		}
 	}
@@ -914,6 +928,16 @@ export class AonMessenger extends AonElement {
 		return this.APP_PARAMS;
 	}
 
+	loadGwt(module){
+		let application = this.getApplication();
+		
+		this.clearElementById(application.CONTENT);
+	
+		application.startLoader();
+	
+		GWT.load(module, application.CONTENT);
+	}
+
 	showView(view, data = undefined, filter = undefined){
 		return new Promise(async(resolve)=>{
 			let aonView = undefined;
@@ -923,6 +947,9 @@ export class AonMessenger extends AonElement {
 				break;
 				case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
 					aonView = new AonMessengerChat();
+				break;
+				case MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC:
+					this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
 				break;
 			}
 			if(aonView){

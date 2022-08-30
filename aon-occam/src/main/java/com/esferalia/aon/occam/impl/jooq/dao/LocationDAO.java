@@ -5,10 +5,12 @@ import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import java.math.BigDecimal;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
@@ -78,14 +80,8 @@ public class LocationDAO {
 	
 	public static Location get(AONContext ctx, LocationFilter filter) {
 		ctx.checkRead();
-		return  ctx.getDslContext()
-				.select()
-				.from(LOCATION)
-				.where(LOCATION_PROPERTIES.getConditions(filter))
-				.stream()
-				.map( new LocationFiller() )
-				.findFirst()
-				.orElse(null);
+		
+		return getStream(ctx, filter).findFirst().orElse(null);
 	}
 	
 	public static Location getByCoordinates(AONContext ctx, Coordinates coordinates) {

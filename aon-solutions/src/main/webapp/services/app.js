@@ -250,7 +250,7 @@ export const MESSENGER = {
     menu: false,
     add: true,
     upload: false,
-    stat: false,
+    stat: true,
   },
 };
 
@@ -431,6 +431,7 @@ export const EnterpriseApps = [
   "bidoq",
   "selfconta",
   "saltra",
+  "bank"
 ];
 
 export const Apps = {

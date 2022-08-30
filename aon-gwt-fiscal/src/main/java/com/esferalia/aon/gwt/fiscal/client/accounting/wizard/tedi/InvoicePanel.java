@@ -12,8 +12,8 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.TediProblems.ITediProblemsCallback;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
@@ -244,7 +244,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	private void _paintEntry() {
 		AccountEntry[] entries = InvoiceRecorder.recordInvoice(getWrapper());
-		getCallback().getModule().onPreview(AccountEntryModuleTEDI.getWrapperArray (entries) );		
+		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries) );		
 	}
 	
 	private boolean isAccountSource() {
@@ -371,7 +371,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	protected class InvoicePanelCallback implements IInvoicePanelCallback {
 		@Override
-		public AccountEntryModuleTEDI getModule() {
+		public AccountEntryModule getModule() {
 			return getCallback().getModule();
 		}
 		@Override
@@ -694,7 +694,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		  TediProblems scrollPanel = new TediProblems( new ITediProblemsCallback() {
 		    
 		    @Override public AccountEntryModuleOptions getModuleOptions() {return getCallback().getModuleOptions();}
-		    @Override public AccountEntryModuleTEDI getModule() {return getCallback().getModule();}
+		    @Override public AccountEntryModule getModule() {return getCallback().getModule();}
 		    @Override public String getCurrentUser() {return getCallback().getCurrentUser();}
 		    @Override public String getCurrentDomainName() {return getCallback().getCurrentDomainName();}
 		    @Override public int getCurrentDomainId() {return getCallback().getCurrentDomainId();}

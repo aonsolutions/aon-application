@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
@@ -78,6 +79,7 @@ import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
@@ -258,6 +260,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Packaging;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
@@ -1534,14 +1537,19 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<ItemComposition> getItemCompositionList(String domainName, Integer domainId, String login, Integer itemId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItemComposition(ctx, itemId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Stream<ItemComposition> getItemCompositionStream(Domain domain, String login, ItemCompositionFilter filter) {
+		return getItemCompositionStream(domain.getName(), domain.getId(), login, filter);
+	}	
+	
+	public static Stream<ItemComposition> getItemCompositionStream(String domainName, Integer domainId, String login, ItemCompositionFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getProduct().getItemCompositionStream(ctx, filter);
+		}
+	}
+	
+	public static List<ItemComposition> getItemCompositionList(String domainName, Integer domainId, String login, Integer itemId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getProduct().getItemCompositionList(ctx, f -> f.getItemProperty().eq(itemId));
 		}
 	}
 
@@ -4296,6 +4304,25 @@ public class AON {
 	
 	// ------------------ ELABORATION
 
+	public static Elaboration getElaboration(Occam occam, ElaborationFilter filter, Options...options) {
+		return getElaboration(occam.getDomainName(), occam.getDomain(), occam.getUser(), filter, options);
+	}
+	
+	public static Elaboration getElaboration(Domain domain, User user, ElaborationFilter filter, Options...options) {
+		return getElaboration(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+	}
+
+	public static Elaboration getElaboration(Domain domain, String login, ElaborationFilter filter, Options...options) {
+		return getElaboration(domain.getName(), domain.getId(), login, filter, options);
+	}
+		
+	public static Elaboration getElaboration(String domainName, Integer domainId, String login, ElaborationFilter filter, Options...options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getWarehouse().getElaboration(ctx, filter, options);
+		}
+	}
+		
+	
 	// ---------- ELABORATION STREAM
 		
 	public static Stream<Elaboration> getElaborationStream(Occam occam, ElaborationFilter filter) {
@@ -4775,7 +4802,9 @@ public class AON {
 		return getSeller(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
 	// ------------------------------------- CATEGORY
-
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.getCategory
+	 */
 	public static Category getCategory(String domainName, Integer domainId,
 			String login, Integer categoryId) {
 		CloseableAONContext ctx = null;
@@ -4788,6 +4817,9 @@ public class AON {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.getCategoryStream
+	 */
 	public static Stream<Category> getCategoryStream(String domainName, Integer domainId, String login, CategoryFilter filter) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4799,6 +4831,9 @@ public class AON {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.saveCategory
+	 */
 	public static Category insertCategory(String domainName, Integer domainId, String login, Category category ) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4810,7 +4845,9 @@ public class AON {
 		}
 	}
 	
-
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.saveCategory
+	 */
 	public static Category updateCategory(String domainName, Integer domainId, String login, Category category ) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4823,6 +4860,9 @@ public class AON {
 	}
 	
 
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.deleteCategory
+	 */
 	public static Category deleteCategory(String domainName, Integer domainId, String login, Integer categoryId ) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4835,6 +4875,9 @@ public class AON {
 	}
 
 
+	/**
+	 * @deprecated  Replaced by AON_SOLUTIONS.getCategoryStream
+	 */
 	public static LinkedList<Category> getCategoryList(String domainName,
 			Integer domainId, String login) {
 		CloseableAONContext ctx = null;
@@ -7040,8 +7083,12 @@ public class AON {
 	}	
 	
 	public static List<Domain> getDomainOfficeLinked(Domain domain, String login) {
-		LinkedList<Domain> list = new LinkedList<>();
 		Company company = getCompanyForDomain(domain.getName(), domain.getId(), login);
+		return getDomainOfficeLinked(company);
+	}
+	
+	public static List<Domain> getDomainOfficeLinked(Company company) {
+		LinkedList<Domain> list = new LinkedList<>();
 		for(String schema: AONContext.getSchemas()) {
 			String domainName = AONContext.getSchemaFirstDomain(schema);
 			try (CloseableAONContext ctx = AONContext.getAONContext(domainName, 0, "")){
@@ -7380,6 +7427,32 @@ public class AON {
 	public static Booking saveBooking(Domain domain, User user, Booking booking) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getSecurity().saveBooking(ctx, booking);
+		}
+	}
+	
+	public static Packaging getPackaging(Domain domain, User user, String barcode) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().getPackaging(ctx, barcode);
+		}
+	}
+	
+	public static Packaging savePackaging(Domain domain, User user, Packaging packaging) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getWarehouse().savePackaging(ctx, packaging);
+		}
+	}
+	
+	// ---------- DOMAIN LINKED
+
+	public static List<DomainLinked> getDomainLinkedList(String domainName, Integer domainId, String login, Integer registry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getDomainLinkedList(ctx, registry);
+		}
+	}
+	
+	public static DomainLinked saveDomainLinked(String domainName, Integer domainId, String login, DomainLinked domainLinked) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().saveDomainLinked(ctx, domainLinked);
 		}
 	}
 }

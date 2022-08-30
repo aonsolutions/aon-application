@@ -424,7 +424,6 @@ export class AonNewMobileMenu extends AonElement {
         this.showMessage("Factura registrada");
       });
     }
-
 	}
 
   saveDocumentFile(file){

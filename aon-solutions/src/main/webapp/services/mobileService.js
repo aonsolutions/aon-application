@@ -6,6 +6,7 @@ export const mobileAction = (data) => actionRequestMobile(data);
 
 export const MOBILE_ACTION = {
     CAMERA: 'camera', //OPEN CAMERA
+    BARCODE:'barcode', // BARCODE (function barcodeData)
     FILE_DOWNLOAD: 'fileDownload', // DOWNLOAD FILE OR OPEN PARAMS(BASE64, FILENAME, CONTENT_TYPE)
     SET_CURRENT_POSITION: 'setCurrentPosition', // SET POSITION (window.setCurrentPosition)
     SET_WATCH: 'setWatch',// SET POSITION (window.setWatch)

@@ -326,6 +326,7 @@ public class InvoiceDAO {
 				,PRODUCT.ID
 				,PRODUCT.NAME
 				,PRODUCT.CODE
+				,PRODUCT.TYPE
 				,ITEM.DETAIL
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3

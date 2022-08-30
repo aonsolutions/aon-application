@@ -24,23 +24,21 @@ public class Mod303CheckInsertedTest extends AbstractOccamTest{
 
 	@Test
 	public void checkInserted() {
-		ctx.getDslContext().transaction( config -> {
-			int year = LocalDate.now().getYear();
-			Set<Integer> invoices = ctx.getDslContext().select(INVOICE.ID)
-				.from(INVOICE)
-				.innerJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
-				.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
-				.leftAntiJoin(ALCATRAZ).on(ALCATRAZ.INVOICE.eq(INVOICE.ID))
-				.where( DSL.year(INVOICE.TAX_DATE).eq(year))
-				.and(INVOICE_TAX.TAX_TYPE.eq(TaxType.VAT.value()))
-				.stream()
-				.map(rec -> rec.getValue(INVOICE.ID))
-				.filter( id -> isNotImportationWithoutDUA(id))
-				.collect(Collectors.toCollection(HashSet::new));
-	
-			invoices.stream().forEach( i -> System.out.println( "\tFra. sin tener en cuenta ...: " + i));
-			Assert.assertEquals("Existen facturas que no se han tenido en cuenta",0, invoices.size());
-		});
+		int year = LocalDate.now().getYear();
+		Set<Integer> invoices = ctx.getDslContext().select(INVOICE.ID)
+			.from(INVOICE)
+			.innerJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+			.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
+			.leftAntiJoin(ALCATRAZ).on(ALCATRAZ.INVOICE.eq(INVOICE.ID))
+			.where( DSL.year(INVOICE.TAX_DATE).eq(year))
+			.and(INVOICE_TAX.TAX_TYPE.eq(TaxType.VAT.value()))
+			.stream()
+			.map(rec -> rec.getValue(INVOICE.ID))
+			.filter( id -> isNotImportationWithoutDUA(id))
+			.collect(Collectors.toCollection(HashSet::new));
+
+		invoices.stream().forEach( i -> System.out.println( "\tFra. sin tener en cuenta ...: " + i));
+		Assert.assertEquals("Existen facturas que no se han tenido en cuenta",0, invoices.size());
 	}
 
 	private boolean isNotImportationWithoutDUA(Integer id) {

@@ -44,9 +44,7 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else {
 			selection(null);
-		}
-
-		
+		}		
 	}
 	
 	private void selection(AonConfiguration aonConfiguration) {
@@ -115,7 +113,7 @@ public class MainEntryPoint implements EntryPoint {
 	public static native String getParameter(String moduleName, String parameterName) /*-{
 		var search = "/" + moduleName + ".nocache.js";
 		var scripts = $doc.getElementsByTagName("script");
-		for ( var i = 0; i < scripts.length; ++i) {
+		for (var i = 0; i < scripts.length; ++i) {
 			if (scripts[i].src != null && scripts[i].src.indexOf(search) != -1) {
 				var params = scripts[i].src.match(/\w+=\w+/g);
 				for ( var j = 0; j < params.length; ++j) {

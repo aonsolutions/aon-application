@@ -382,15 +382,17 @@ public class printLiqList extends HttpServlet{
 								issueDate = Utils.parseDateTime(transportDate);
 							}
 							Date start = new Date((2019-1900), 8, 1);
+							Date start2 = new Date((2022-1900), 8, 1);
 
-							Boolean a = temp >= 8.0 && temp <= 16.0 && issueDate.compareTo(start) >= 0;
-							Boolean b = temp >= 22.0 && temp <= 24.0 && issueDate.compareTo(start) >= 0;
-							Boolean c = temp > 24.0 && issueDate.compareTo(start) >= 0;
-							Boolean d = temp < 17.0 && issueDate.compareTo(start) < 0;
+							boolean a = temp >= 8.0 && temp <= 16.0 && issueDate.compareTo(start) >= 0;
+							boolean b = temp >= 22.0 && temp <= 24.0 && issueDate.compareTo(start) >= 0 && issueDate.compareTo(start2) < 0;
+							boolean b2 = temp >= 22.5 && temp <= 24.0 && issueDate.compareTo(start2) >= 0;
+							boolean c = temp > 24.0 && issueDate.compareTo(start) >= 0;
+							boolean d = temp < 17.0 && issueDate.compareTo(start) < 0;
 							
 							Double tempVar = 1.0;
 							if(a || d) tempVar = 1.03;
-							else if(b) tempVar = 0.95;
+							else if(b || b2) tempVar = 0.95;
 							else if(c) tempVar = 0.85;
 							// PRIMA
 							Double prima = price * tempVar;
@@ -405,6 +407,8 @@ public class printLiqList extends HttpServlet{
 
 							// PRIMA PEQUEÑA
 							Double primaPeq = Destiny.BASERRI.equals(destiny) ? 0.06 : 0.08;
+							if(issueDate.compareTo(start2) >= 0)
+								primaPeq = Destiny.BASERRI.equals(destiny) ? 0.088 : 0.1;
 							cell(libro, row, style3, 32, primaPeq);
 							
 							// EUROS PEQUEÑA
@@ -412,7 +416,9 @@ public class printLiqList extends HttpServlet{
 							cell(libro, row, style3, 33, AonMathUtils.round(eurosPeq));
 
 							// EUROS GORDA
-							Double eurosGor = 0.7 * kgGor * prima;
+							Double eurosGor = issueDate.compareTo(start2) >= 0 
+									? 0.04 * kgGor
+									: 0.7 * kgGor * prima;
 							cell(libro, row, style3, 34, AonMathUtils.round(eurosGor));
 							
 							Double eurosNet = kgNet * (prima + color);

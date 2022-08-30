@@ -525,17 +525,17 @@ public class AgreementUpdate {
 					count = 1;
 				}
 				
-				AgreementLevelRecord agreementLevelRecord  = dslContext.selectFrom(AGREEMENT_LEVEL)
+				List<AgreementLevelRecord> agreementLevelRecords  = dslContext.selectFrom(AGREEMENT_LEVEL)
 						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
 						.and(AGREEMENT_LEVEL.DESCRIPTION.eq(levelDescription))
-						.fetchOne();
+						.fetch();
 				
 				Integer agreementLevelId = null;
 				
-				if(null == agreementLevelRecord)
+				if(agreementLevelRecords.isEmpty())
 					agreementLevelId = insertAgreementLevelAndCategories(dslContext, agreementId, levelDescription, lvl);
 				else
-					agreementLevelId = agreementLevelRecord.getId();
+					agreementLevelId = agreementLevelRecords.get(0).getId();
 				
 				// Agreement Level Data
 				

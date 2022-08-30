@@ -524,8 +524,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
-	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
+	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, isTransform, callback);
 	}
 	
 	void setData(Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback) {
@@ -548,6 +548,10 @@ public class DomainEmployeesServiceAsync {
 	
 	public void getEmployeeCtoTransform(String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeCtoTransform(getCurrentDomainName(), getCurrentUser(), cif, document, contractId, startDate, sepeIde, callback);
+	}
+	
+	public void getEmployeeCtoExtension(String enterpriseCIF, String document, Integer contractId, Date extensionDate, Integer extensionNum, String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getEmployeeCtoExtension(getCurrentDomainName(), getCurrentUser(), enterpriseCIF, document, contractId, extensionDate, extensionNum, sepeExtensionId, callback);
 	}
 	
 	public void getCertifica2PDF(Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
@@ -617,6 +621,10 @@ public class DomainEmployeesServiceAsync {
 	public void sendContractTransform(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
+	
+	public void sendContractExtension(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractExtension(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
+	}
 
 	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, callback);
@@ -624,6 +632,14 @@ public class DomainEmployeesServiceAsync {
 
 	public void getSepeComunicationData(String document, Date fini, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSepeComunicationData(getCurrentDomainName(), getCurrentUser(), document, fini, contractId, callback);
+	}
+	
+	public void getSepeTransformComunicationData(String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSepeTransformComunicationData(getCurrentDomainName(), getCurrentUser(), document, enterpriseCif, originalStartDate, sepeId, contractId, callback);
+	}
+	
+	public void getSepeExtensionComunicationData(String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSepeExtensionComunicationData(getCurrentDomainName(), getCurrentUser(), document, enterpriseCif, originalStartDate, sepeId, contractId, callback);
 	}
 	
 	// ------------------------------------------------- SEPE Methods
@@ -652,18 +668,27 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- ContractExtension
 	
-	public void contractExtension(ContractExtension contractExtension, AsyncCallback<Void> callback) {
+	public void contractExtension(ContractExtension contractExtension, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.contractExtension(getCurrentDomainName(), contractExtension, callback);
 	}
 	
-	public void deleteContractExtension(Integer contractId, AsyncCallback<Void> callback) {
+	public void deleteContractExtension(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.deleteContractExtension(getCurrentDomainName(), contractId, callback);
 	}
 	
 	// ------------------------------------------------- ContractTransform
 	
-	public void contractTransform(ContractTransform contractTransform, AsyncCallback<Integer> callback) {
+	public void contractTransform(ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.contractTransform(getCurrentDomainName(), contractTransform, callback);
+	}
+	
+	public void deleteContractTransform(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.deleteContractTransform(getCurrentDomainName(), contractId, callback);
+	}
+	
+	
+	public void removeContractTransform(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), contractId, callback);
 	}
 	
 	// ------------------------------------------------- EmployeeIrpf

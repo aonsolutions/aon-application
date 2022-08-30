@@ -30,7 +30,7 @@ import com.esferalia.aon.gwt.fiscal.client.RawdocService;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -607,7 +607,7 @@ public class RawdocModule extends MainEntryPoint {
 							entryDialog.setGlassEnabled(true);
 							entryDialog.setModal(true);
 							entryDialog.setCaption(AON.MSG.accountingDocument());
-							AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+							AccountEntryModule module = new AccountEntryModule();
 							module.onModuleLoad(new AccountEntryModuleOptions()
 									.setParentWidget(entryDialog)
 									.setDomainName(opt.getDomainName())

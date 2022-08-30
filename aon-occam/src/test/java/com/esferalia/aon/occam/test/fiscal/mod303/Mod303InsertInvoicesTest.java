@@ -17,16 +17,14 @@ public class Mod303InsertInvoicesTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		ctx.getDslContext().transaction( config -> {
-			int year = LocalDate.now().getYear();
-			System.out.println(MessageFormat.format("\t\t {0} Invoices inserted "
-					,IntStream.range(0 , AonRandom.getInt(1, 50))
-					.mapToObj( i -> new InvoiceFakerParams(ctx,getConfiguration())
-							.setIssueDate( AonRandom.getRandomYearDay( year ) ))
-					.map( params -> InvoiceFaker.getRandom(params))
-					.map(inv -> AON.insertInvoice(getOccam(),inv))
-					.count()));
-		});
+		int year = LocalDate.now().getYear();
+		System.out.println(MessageFormat.format("\t\t {0} Invoices inserted "
+				,IntStream.range(0 , AonRandom.getInt(1, 50))
+				.mapToObj( i -> new InvoiceFakerParams(ctx,getConfiguration())
+						.setIssueDate( AonRandom.getRandomYearDay( year ) ))
+				.map( params -> InvoiceFaker.getRandom(params))
+				.map(inv -> AON.insertInvoice(getOccam(),inv))
+				.count()));
 		Assert.assertTrue( AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
 				.findFirst()
 				.isPresent()

@@ -91,6 +91,7 @@ public final class IJsonNames {
 	public static final String COMPANY = "company";
 	public static final String COMPLEMENTARY = "complementary";
 	public static final String COMPOSITION = "composition";
+	public static final String COMPOSITION_ITEM = "compositionItem";
 	public static final String COMPOSITION_PRICE = "compositionPrice";
 	public static final String CON = "con";
 	public static final String CONCEPT = "concept";
@@ -98,6 +99,8 @@ public final class IJsonNames {
 	public static final String CONFIGURED_VISIBLE = "configuredVisible";
 	public static final String CONSOLIDATION = "consolidation";
 	public static final String CONTACT_DATA = "contactData";
+	public static final String CONTAINER = "container";
+	public static final String CONTAINERS = "containers";
 	public static final String CONTENT = "content";
 	public static final String CONTENT_ENCODING = "contentEncoding";
 	public static final String CONTENT_NAME = "contentName";
@@ -244,6 +247,7 @@ public final class IJsonNames {
 	public static final String IRPF_REGIME = "irpfRegime";
 	public static final String ISSUE_DATE = "issueDate";
 	public static final String ITEM = "item";
+	public static final String ITEM_COMPOSITION = "itemComposition";
 
 	// ---------------------------------------------------------------------------------------------	[J] 
 	public static final String JSON = "json";
@@ -318,6 +322,7 @@ public final class IJsonNames {
 	public static final String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[P] 
 	public static final String PACKAGED = "packaged";
+	public static final String PACKAGING = "packaging";
 	public static final String PACK_FORMAT_TAG = "packFormatTag";
 	public static final String PACK_MEASUREMENT = "packMeasurement";
 	public static final String PACK_MEASUREMENT_TAG = "packMeasurementTag";
@@ -408,11 +413,13 @@ public final class IJsonNames {
 	public static final String RNAME = "rname";
 	public static final String ROLES = "roles";
 	public static final String ROOT_BAR = "/";
+	public static final String RSS = "rss";
 	// ---------------------------------------------------------------------------------------------	[S] 
 	public static final String SALES  = "sales";
 	public static final String SALES_ACCOUNT  = "salesAccount";
 	public static final String SALES_DETAIL = "salesDetail";
 	public static final String SALES_RATIO = "salesRatio";
+	public static final String SCHEMA = "schema";
 	public static final String SCOPE = "scope";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
@@ -433,6 +440,7 @@ public final class IJsonNames {
 	public static final String SERVICE_NAME = "serviceName";
 	public static final String SESSION_ID = "session_id";
 	public static final String SETTLED = "settled";
+	public static final String SEQUENCE = "sequence";
 	public static final String SHARED = "shared";
 	public static final String SHEET = "sheet";
 	public static final String SHIPPING_ALTERNATIVE_ADDRESS = "shippingAlternativeAddress";

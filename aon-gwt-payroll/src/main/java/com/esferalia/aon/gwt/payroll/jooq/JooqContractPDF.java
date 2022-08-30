@@ -102,9 +102,42 @@ public class JooqContractPDF {
 		} 
 	}
 	
+	public static void saveDraftContractTransform(String domainName, Integer domainId, Integer contractId, byte[] pdfBytes) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			// Id borrador contrato
+			List<Integer> attachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId))
+					.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+					.and(CONTRACT_ATTACH.TYPE.eq((byte)109))
+					.orderBy(CONTRACT_ATTACH.ID.desc()).fetch(CONTRACT_ATTACH.ID);
+			
+			if(attachIds.isEmpty())
+				dslContext.insertInto(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DOMAIN, domainId)
+					.set(CONTRACT_ATTACH.CONTRACT, contractId)
+					.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+					.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR TRANSFORMACION CONTRATO")
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.TYPE, (byte)109)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.execute();
+			else
+				dslContext.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.where(CONTRACT_ATTACH.ID.eq(attachIds.get(0)))
+					.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
 	// ---------------------------------------------------- Contract PDF (fill)
 	
-	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode) throws IllegalArgumentException {
+	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode, boolean isTransform) throws IllegalArgumentException {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 				
 			try {
@@ -117,8 +150,8 @@ public class JooqContractPDF {
 				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
 				contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 				
-				String sepeIde = getSepeIde(dslContext, contractId);
-				java.util.Date comunicationDate = getComunicationDate(dslContext, contractId);
+				String sepeIde = isTransform ? getSepeTransformIde(dslContext, contractId) : getSepeIde(dslContext, contractId);
+				java.util.Date comunicationDate = isTransform ? getComunicationTransformDate(dslContext, contractId) : getComunicationDate(dslContext, contractId);
 				
 				return ContractFill.fillContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 			} catch (IllegalArgumentException e) {
@@ -129,7 +162,7 @@ public class JooqContractPDF {
 	private static String getSepeIde(DSLContext dslContext, Integer contractId) {
 		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("IDE"))
+				.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
 				.fetch();
 		
 		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
@@ -148,12 +181,34 @@ public class JooqContractPDF {
 		}
 	}
 
+	private static String getSepeTransformIde(DSLContext dslContext, Integer contractId) {
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("SEPE_TRANSFORM_ID"))
+				.fetch();
+		
+		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+	}
+
+	private static java.util.Date getComunicationTransformDate(DSLContext dslContext, Integer contractId) {
+		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+				.fetch();
+		
+		try {
+			return comunicationDateRecords.isEmpty() ? null : dateFormat.parse(comunicationDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+		} catch (IllegalArgumentException | ParseException e) {
+			return null;
+		}
+	}
+	
 	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr, String formativeLevelCode) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer contractType = Integer.parseInt(contractTypeStr);
-			return contractFill(connection, domainId, parentDomainId, contractId, contractType, formativeLevelCode);
+			return contractFill(connection, domainId, parentDomainId, contractId, contractType, formativeLevelCode, false);
 		}catch (SQLException  | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 

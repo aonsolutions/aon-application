@@ -27,6 +27,7 @@ import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonDate } from "../../components/aon-date.js";
+import { AonRssList } from "../rss/rss/aon-rss-list.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -203,6 +204,15 @@ export class AonConfiguration extends AonElement {
         });
       } 
 
+      if(this.isBeta()){
+        appOptions.push({
+          id:  "notice",
+          icon: "rss_feed",
+          name: MSG.NOTICE,
+          fn: () => this.buildRss(),
+        });
+      }
+
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
@@ -328,6 +338,9 @@ export class AonConfiguration extends AonElement {
     this.getApplication().setContent(new AonComunicaConfig());
   }
 
+  buildRss(){
+    this.getApplication().setContent(new AonRssList());
+  }
 
   buildCompanyList() {
     let aonConfiguration = this.getApplication();

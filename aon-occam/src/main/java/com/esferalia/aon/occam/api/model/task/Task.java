@@ -343,13 +343,17 @@ public class Task  implements Serializable{
 		this.parent = parent;
 		return this;
 	}
+	
+	public boolean childExist() {
+		return !this.childs.isEmpty();
+	}
 
 	public boolean isChild() {
 		return parent!=null && parent>0;
 	}
 	
 	public boolean isParent() {
-		return parent==null;
+		return !isChild();
 	}
 	
 	public Optional<String> getTmp() {

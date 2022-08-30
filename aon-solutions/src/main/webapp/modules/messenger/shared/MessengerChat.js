@@ -4,55 +4,58 @@ import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, taskNumberParse, upChat } from "./utils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar, checkButtonsToolbar, dialogTaskTags, downChat, getIconJson, taskNumberParse, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import * as ACTIONS from "../../actions.js";
 import { SigninSidenav } from "../../timecontrol/signinEnums.js";
 import { AonTab } from "../../../components/aon-tab.js";
 import { Task } from "../../../models/task/Task.js";
-import { sortBy } from "../../../services/utils.js";
+import { addHorizontalScroll, sortBy } from "../../../services/utils.js";
 import { AonIcon } from "../../../components/aon-icon.js";
+import { getTasks } from "../../../services/taskService.js";
 
 /**
  * 
- * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
+ * @param {Task} task
  */
-export const buildDesktop = (aonMessengerChat)=> {
-
-  buildToolbar(aonMessengerChat);
+export const buildDesktop = (task)=> {
+  const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  buildToolbar(task);
 
   const mainView = TaskCreationUtils.createMainView(aonMessengerChat); //DIV MAIN
   mainView.style.overflow = 'auto';
   mainView.classList.add(CSS.NO_SCROLLBAR);
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
+  firstDiv.style.boxSizing = 'border-box';
 
-  buildForm(firstDiv, aonMessengerChat);
+  const secondDiv = setStyles(createSecondDiv(mainView),{ //-------------------------DIV RIGHT
+    boxSizing: 'border-box',
+    height: '96%'
+  });
 
-  if(aonMessengerChat.task.id){
-    const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
+  buildForm(task, firstDiv);
 
-    firstDiv.style.boxSizing = 'border-box';
-    secondDiv.style.boxSizing = 'border-box';
-    secondDiv.style.height = '96%';
-
-    buildTabs(secondDiv, aonMessengerChat);
-  }
+  if(task.id){
+    buildTabs(task, secondDiv);
+  } 
 }
+
 
 /**
  * 
- * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
+ * @param {Task} task
  */
-const buildToolbar = (aonMessengerChat) => {
-    const task = aonMessengerChat.task;
+const buildToolbar = (task) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     let application = aonMessengerChat.getApplication();
     if(application){
       application.addToolbarOption2(SigninSidenav.ADD, () =>application.getParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
     }
 
-    const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
+    const sourceText =  MSG[task.getSource().toString().toUpperCase()] || task.getSource();
+    
     const toolbar = setAttributes(new AonToolbar(), {
       id:aonMessengerChat.TOOLBAR,
       type:ToolbarType.SECONDARY,
@@ -64,26 +67,28 @@ const buildToolbar = (aonMessengerChat) => {
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
-    if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
+    const status = task.getStatus();
+
+    if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status) ){
       if(!aonMessengerChat.isCau()){
 
-        if(task.id){
+        if(task.getId()){
           toolbar.addButton2({
             id: MESSENGER_IDS.TOOLBAR_BRANCH,
             name: "Crear Rama",
             aonIcon: AON_ICONS.AON_BRANCH,
-          }, (e) =>TaskCreationUtils.openDialogBranch(e));
+          }, () =>TaskCreationUtils.openDialogBranch(task));
         }
 
         toolbar.addButton2({
           id:  MESSENGER_IDS.TOOLBAR_LABELS,
           name: MSG.LABELS,
           icon: MATERIAL_ICONS.LABEL
-          }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
+          }, (ev) =>  dialogTaskTags(ev, task)
         );
       }
       
-      if(task.id){
+      if(task.getId()){
         toolbar.addButton2({
           ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
           name: MSG.CLOSE,
@@ -94,25 +99,30 @@ const buildToolbar = (aonMessengerChat) => {
       }
     }
 
-    if(task.id){
+    if(task.getId()){
       if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(task.status)){
         toolbar.addButton2({...ACTIONS.RESTORE, name:MSG.REOPEN}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
       }
 
-      if(task.status != TASK_STATUS.DELETED) {
-        toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
+      if(task.status !== TASK_STATUS.DELETED) {
+        if(task.getSource() !==  TASK_SOURCE.GROUPED){
+          toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
+        }
       } else {
         toolbar.addButtonAfter(ACTIONS.DELETE, () => aonMessengerChat.deleteTask(), ACTIONS.PREVIOUS.id);
       }
     }
 
-    if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) )
+    if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
       toolbar.addButton2(ACTIONS.SAVE, () =>{
         aonMessengerChat.save().then((success) =>{
-          if(success) aonMessengerChat.showMessage();
+          if(success){
+            aonMessengerChat.showMessage();
+          } 
         });
       });
-
+    }
+    
     toolbar.addButton2(ACTIONS.BACK, () => aonMessengerChat.back());
 
     addIconToolbar(toolbar, task);
@@ -120,24 +130,22 @@ const buildToolbar = (aonMessengerChat) => {
 
 /**
  * Create desktop chat for messenger
+ * @param {Task} task
  * @param {HTMLElement} secondDiv secondDiv
- * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-const buildTabs = async (secondDiv, aonMessengerChat) => {
+const buildTabs = (task, secondDiv) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     secondDiv.classList.add(CSS.FLEX_WRAP);
 
-    const task = aonMessengerChat.task;
-
-    let tab = new AonTab();
+    let tab = setStyles(new AonTab(),{
+      overflow: 'auto',
+      whiteSpace: 'nowrap'
+    });
     tab.id = MESSENGER_IDS.AON_TAB;
-    secondDiv.appendChild(tab);
+    tab.className = CSS.MATERIAL_SCROLL;
+    addHorizontalScroll(tab);
 
-    // let divTab = document.getElementById(tab.DIV);
-    // console.log("newDiv", divTab);
-    // divTab.style.display = "flex";
-    // divTab.style.flexWrap = "wrap";
-    // divTab.style.height = "auto";
-    // divTab.style.minHeight = "40px";
+    secondDiv.appendChild(tab);
 
     const wrapper = buildWrapper(secondDiv);
 
@@ -155,7 +163,7 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
       },
     });
 
-    let parentObj = task.getParentObj();
+    const parentObj = task.getParentObj();
     if(parentObj){
       const tk = new Task(parentObj);
       let title = getTitleHtml(tk, true);
@@ -167,8 +175,7 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
           number: taskNumberParse(tk.number)
         },
         fn: ()=>{
-          // buildChat(tk, wrapper);
-          // aonMessengerChat.getTaskWorkflow(tk);
+          // buildChat(tk, wrapper); aonMessengerChat.getTaskWorkflow(tk);
         }
       });
       if(parentTab){
@@ -176,7 +183,23 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
       }
     }
 
-    sortBy(task.getChilds(), 'number').forEach(t=>{
+    const childs = sortBy(task.getChilds(), 'number');
+
+    if(task.isGrouped()){
+      tab.addOption({ 
+        title: MSG.GROUPED, 
+        dataset:{
+          id: "TasksList",
+          number: MSG.TASKS
+        },
+        fn: () => {
+          checkButtonsToolbar(task, task.id);
+          loadTaskGrouped(task, wrapper);
+        },
+      });
+    }
+
+    childs.forEach(t=>{
 
       const tk = new Task(t);
       let title = getTitleHtml(tk, false);
@@ -193,6 +216,7 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
         }
       });
     });
+    
 }
 
 const buildWrapper = (secondDiv) => {
@@ -334,14 +358,12 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
       width: "60%",
-      // paddingTop: "4px",
       paddingBottom: "30px",
       paddingRight: "10px"
     },
-  }).element;
-
-  mainView.appendChild(secondDiv);
-  return secondDiv;
+  });
+  secondDiv.appendTo(mainView);
+  return secondDiv.element;
 }
 
 /**
@@ -360,9 +382,9 @@ const addChatButtonsUpDown = (secondDiv) => {
   const upIcon = setAttributes(new AonIconButton(), {
     icon: MATERIAL_ICONS.EXPAND_LESS,
     id: "upIcon",
-    background: transparent,
+    background: transparent
   });
-  upIcon.addEventListener(EVENT.CLICK, ()=>upChat());
+  upIcon.addEventListener(EVENT.CLICK, ()=> upChat() );
   leftButtonBar.appendChild(upIcon);
 
   const downIcon = setAttributes(new AonIconButton(), {
@@ -370,39 +392,39 @@ const addChatButtonsUpDown = (secondDiv) => {
     id: "downIcon",
     background: transparent,
   });
-  downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
+  downIcon.addEventListener(EVENT.CLICK, ()=> downChat() )
   leftButtonBar.appendChild(downIcon);
 }
 
 
-const getTitleHtml = (task, isParent) => {
+const getTitleHtml = (task, isParent = false) => {
 
-  let span = document.createElement(TAG.SPAN);
+  const span = document.createElement(TAG.SPAN);
 
-  const { icon_color } = getIconJson(task);
+  const { icon_color, icon } = getIconJson(task);
 
-  let icon = document.createElement(TAG.I);
+  let iconEl = document.createElement(TAG.I);
 
-  if(isParent){
-    setStyles(icon,{
+  if(task.isTask()) {
+    iconEl = new AonIcon();
+    iconEl.icon = AON_ICONS.AON_BRANCH;
+    iconEl.title = "Branch";
+    iconEl.color = icon_color;
+  } else {
+    setStyles(iconEl,{
       position: "relative",
       fontSize: "1.4em",
       top: "3px",
       marginLeft: "1px",
       color:icon_color
     });
+    
+    iconEl.title      = !isParent ? task.getSource() : MSG.PARENT;
+    iconEl.innerText  = !isParent ? icon : MATERIAL_ICONS.FORK_LEFT;
+    iconEl.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
+  } 
 
-    icon.title = MSG.PARENT;
-    icon.innerText = MATERIAL_ICONS.FORK_LEFT;
-    icon.className  = CONSTANT.MATERIAL_ICONS_OUTLINED;
-  } else {
-    icon = new AonIcon();
-    icon.icon = AON_ICONS.AON_BRANCH;
-    icon.title = "Branch";
-    icon.color = icon_color;
-  }
-
-  span.appendChild(icon);
+  span.appendChild(iconEl);
 
   let assigned = "";   
   if(task.task_holder&&task.task_holder.id)    {
@@ -418,3 +440,89 @@ const getTitleHtml = (task, isParent) => {
 
   return span.outerHTML;
 };
+
+
+
+// --------------------------------ADD TAB GROUP TASK
+
+let tasksTmp = [];
+
+export const loadTaskGrouped = (task, parent=undefined) => {
+  const id = "divTaskList";
+  tasksTmp = [];
+  
+  if(!parent){
+    parent = document.getElementById(MESSENGER_IDS.SECOND_DIV);
+  } else {
+    parent.innerHTML = "";
+  }
+
+  let div = document.getElementById(id);
+  if(div){
+    div.remove()
+  }
+
+  div = setStyles(document.createElement(TAG.DIV) ,{//-------------------------DIV RIGH
+    boxSizing: "border-box",
+    height: "96%",
+    width: "100%",
+    overflow: "auto"
+  }); 
+  div.id = id;
+  div.classList.add(CSS.MATERIAL_SCROLL);
+  parent.appendChild(div);
+
+  getTasks({parent:true, status:TASK_STATUS.PENDING, page:1, perPage:200})
+  .then( ts => {
+    tasksTmp = ts.filter(t => task.getChilds().find(x => x.id === t.id) === undefined && t.source===TASK_SOURCE.CAU && task.getId() !== t.id );
+
+    addListTasksExist(div, task);
+  
+    addListTasks(div, task);
+    
+    updateListTask(task);
+  });
+}
+
+const addListTasksExist = (parent, task) => {
+  const icon = MATERIAL_ICONS.DELETE;
+  const fn = (t) => {
+    task.removeChild(t.id);
+    tasksTmp.unshift(t);
+    updateListTask(task);
+  };
+
+  const simpleList = TaskCreationUtils.createSimpleList("Agrupadas", "simpleListTaskExist", parent);
+  simpleList.option = {
+    icon,
+    fn
+  };
+}
+
+const addListTasks = (parent, task) => {
+  const icon = MATERIAL_ICONS.ADD;
+  const fn = (t) => {
+    tasksTmp = tasksTmp.filter(d => d.id !==t.id);
+    task.addChild(t);
+    updateListTask(task);
+  };
+
+  const simpleList = TaskCreationUtils.createSimpleList("Sin agrupar", "simpleListTask", parent);
+  simpleList.option = {
+    icon,
+    fn
+  };
+  simpleList.style.marginTop = "10px";
+}
+
+const updateListTask = (task) => {
+  const childs = task.getChilds();
+
+  const simpleListTaskExist = document.getElementById("simpleListTaskExist");
+  simpleListTaskExist.tasks = childs;
+  simpleListTaskExist.init();
+
+  const simpleListTask = document.getElementById("simpleListTask");
+  simpleListTask.tasks = tasksTmp;
+  simpleListTask.init();
+}

@@ -2077,7 +2077,7 @@ html[dir="rtl"] .verticalToolbarSeparator {
   border-style: solid;
   border-color: var(--field-border-color);
   box-shadow: none;
-  color: var(--field-color);
+  color: rgba(6, 6, 6, 1)/*var(--field-color)*/;
   font-size: 12px;
   line-height: 16px;
   outline-style: none;

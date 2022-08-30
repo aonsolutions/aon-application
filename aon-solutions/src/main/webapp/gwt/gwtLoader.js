@@ -32,7 +32,7 @@
 	}
 
 	export const preStartModule = (module) => {
-		// google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
+		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
 		let search = `/${module}.nocache.js`;
 		let scripts = window.document.getElementsByTagName("script");
 		for (let i = 0; i < scripts.length; ++i) {
@@ -54,9 +54,15 @@
 	}
 
 	export const load = (gwtOption, rootPanel) => {
+		if(gwtOption.subEntryPoint) loadEntryPointsFunctions(gwtOption);
+		window.drawChartsCallback = () => {};
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
-	
+
+	const loadEntryPointsFunctions = (gwtOption) => {
+		window.getSubEntryPoint = () => gwtOption.subEntryPoint;
+	}
+
 	const loadDomainFunctions = () => {
 		window.getCurrentDomainNameURL = () => LS.getDomainName();
 		window.getCurrentDomainName = () => LS.getDomainName();

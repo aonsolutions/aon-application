@@ -1,0 +1,30 @@
+.divDragOver.highlight {
+    border: 2px dashed rgba(3,88,216,.3);
+}
+
+.divDragOver.highlight::after {
+    content: attr(data-drag-over);
+    opacity:  1;
+    position: absolute;
+    color: #808080;
+    font-size: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.contentEditable:empty:before {
+    content: attr(placeholder);
+    color: #555;
+}
+
+.contentEditable::-webkit-scrollbar {
+    display: none;
+}
+.additionalElementsDropdown::-webkit-scrollbar {
+    display: none;
+}
+
+.additionalElementsDropdown {
+    scrollbar-width: none;
+}

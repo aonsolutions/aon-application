@@ -15,7 +15,6 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
-import com.esferalia.aon.occam.mod200.api.model.Secretary;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -26,85 +25,29 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page01 extends PageAbs {
 
-	private AonDocumentTextBox secretaryDocument = new AonDocumentTextBox();
-	private AonTextBox secretaryName = new AonTextBox();
-	private AonDateBox irnr = new AonDateBox();
-	private AonTextBox fiscalGroup = new AonTextBox();
-	private AonDocumentTextBox dominantDocument = new AonDocumentTextBox();
-	private AonTextBox dominantIdentificationNumber = new AonTextBox();
-	private AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
-	private CountryListBox ultimateDocumentCountry = new CountryListBox();
-	private AonTextBox ultimateName = new AonTextBox();;				
-	private CountryListBox ultimateCountry = new CountryListBox(); 
-
+	private AonDocumentTextBox secretaryDocument;
+	private AonTextBox secretaryName;
+	private AonDateBox irnr;
+	private AonTextBox fiscalGroup;
+	private AonDocumentTextBox dominantDocument;
+	private AonTextBox dominantIdentificationNumber;
+	private AonDocumentTextBox ultimateDocument;           
+	private CountryListBox ultimateDocumentCountry;
+	private AonTextBox ultimateName;				
+	private CountryListBox ultimateCountry;
+	
 	public Page01( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
-		paint();
-	}
-
-	@Override
-	public void dump() {
-		super.dump();
-				
-		this.fiscalGroup.setValue( callback.getMod200Object().getMod200().getFiscalGroup());
-		this.dominantDocument.setValue(callback.getMod200Object().getMod200().getDominantDocument());
-		this.dominantIdentificationNumber.setValue(callback.getMod200Object().getMod200().getDominantIdentificationNumber());
-
-		this.ultimateDocument.setValue(callback.getMod200Object().getMod200().getUltimateDocument());
-		this.ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
-		
-	    this.ultimateName.setValue(callback.getMod200Object().getMod200().getUltimateName());
-		this.ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
-	
-		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
-		if (secretary != null) {
-			this.secretaryDocument.setValue(secretary.getDocument());
-			this.secretaryName.setValue(secretary.getName());
-			this.irnr.setValue(secretary.getIrnr());
-		} else {
-			this.secretaryDocument.setValue(null);
-			this.secretaryName.setValue(null);
-			this.irnr.setValue(null);
-		}
-		
-	}
-	
-	@Override
-	public void populate() {
-		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
-		if (secretary == null) {
-			secretary = new Secretary();
-			callback.getMod200Object().getMod200().setSecretary(secretary);	
-		}
-		secretary.setDocument(this.secretaryDocument.getValue());
-		secretary.setName(this.secretaryName.getValue());
-		secretary.setIrnr(this.irnr.getValue());
-		
-		callback.getMod200Object().getMod200().setFiscalGroup(this.fiscalGroup.getValue());
-		callback.getMod200Object().getMod200().setDominantDocument(this.dominantDocument.getValue());
-		callback.getMod200Object().getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
-		
-		callback.getMod200Object().getMod200().setUltimateDocument(this.ultimateDocument.getValue());         
-	    callback.getMod200Object().getMod200().setUltimateName(this.ultimateName.getValue());
 	}
 
 	@Override
 	protected void initializeTable() {
-	}
-	
-	private Secretary getSecretary() {
-		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
-		if (secretary == null) {
-			secretary = new Secretary();
-			callback.getMod200Object().getMod200().setSecretary(secretary);	
-		}
-		return secretary;
+		paint();
 	}
 	
 	private void paint() {
 		
+		otherInputs.clear();		
 		basePanel.clear();
 		
 		// SECRETARIO DEL CONSEJO DE ADMINISTRACION
@@ -116,28 +59,41 @@ public class Page01 extends PageAbs {
 		tab1.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab1);
 		
+		secretaryDocument = new AonDocumentTextBox();
+		secretaryDocument.setValue(callback.getMod200Object().getMod200().getSecretary().getDocument());
 		secretaryDocument.addValueChangeHandler(event -> {
-			getSecretary().setDocument(secretaryDocument.getValue());
+			callback.getMod200Object().getMod200().getSecretary().setDocument(secretaryDocument.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(secretaryDocument);
 		
+		secretaryName = new AonTextBox();
 		secretaryName.setVisibleLength(40);
 		secretaryName.setMaxLength(25);
+		secretaryName.setValue(callback.getMod200Object().getMod200().getSecretary().getName());
 		secretaryName.addValueChangeHandler(event -> {
-			getSecretary().setName(secretaryName.getValue());
+			callback.getMod200Object().getMod200().getSecretary().setName(secretaryName.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(secretaryName);
 		
+		irnr = new AonDateBox();
+		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
 		irnr.addValueChangeHandler(event -> {
-			getSecretary().setIrnr(irnr.getValue());
+			callback.getMod200Object().getMod200().getSecretary().setIrnr(irnr.getValue());
 			callback.markAsDirty();
 		});
+		otherInputs.add(irnr);
 		
 		tab1.addLabelWidgetRow(AON.MSG.document(), secretaryDocument)
 		    .addLabelWidgetRow(AON.MSG.name(), secretaryName)
 		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
 		
 		// GRUPO FISCAL (solo habilitados si caracteres 9 o 10 marcados)
+		
+		fiscalGroup = new AonTextBox();
+		dominantDocument = new AonDocumentTextBox();
+		dominantIdentificationNumber = new AonTextBox();
 		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || 
 			callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010)) {
@@ -151,16 +107,20 @@ public class Page01 extends PageAbs {
 					
 			fiscalGroup.setVisibleLength(7);
 			fiscalGroup.setMaxLength(7);
+			fiscalGroup.setValue( callback.getMod200Object().getMod200().getFiscalGroup());
 			fiscalGroup.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().setFiscalGroup(fiscalGroup.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(fiscalGroup);
 			
 			dominantDocument.setMaxLength(9);
+			dominantDocument.setValue(callback.getMod200Object().getMod200().getDominantDocument());
 			dominantDocument.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().setDominantDocument(dominantDocument.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(dominantDocument);
 			
 			tab2.addRow()
 				.addCell(new Label(AON.MSG.fiscalGroup()), AON.CSS.aonWidth400())
@@ -172,10 +132,12 @@ public class Page01 extends PageAbs {
 			if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010)) {
 				dominantIdentificationNumber.setVisibleLength(15);
 				dominantIdentificationNumber.setMaxLength(15);
+				dominantIdentificationNumber.setValue(callback.getMod200Object().getMod200().getDominantIdentificationNumber());
 				dominantIdentificationNumber.addValueChangeHandler(event -> {
 					callback.getMod200Object().getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
 					callback.markAsDirty();
-				});						
+				});					
+				otherInputs.add(dominantIdentificationNumber);
 				
 				tab2.addRow()
 					.addCell(new Label(AON.MSG.dominantIdentificationNumber()), AON.CSS.aonWidth400())
@@ -184,6 +146,11 @@ public class Page01 extends PageAbs {
 		}
 		
 		// GRUPO MERCANTIL (solo habilitados si caracter 81 marcado)
+		
+		ultimateDocument = new AonDocumentTextBox();           
+		ultimateDocumentCountry = new CountryListBox();
+		ultimateName = new AonTextBox();				
+		ultimateCountry = new CountryListBox();
 		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081)) {
 		
@@ -194,12 +161,15 @@ public class Page01 extends PageAbs {
 			tab3.addStyleName(AON.CSS.aonBlockCenter());
 			basePanel.add(tab3);
 			
+			ultimateDocument.setValue(callback.getMod200Object().getMod200().getUltimateDocument());
 			ultimateDocument.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().setUltimateDocument(ultimateDocument.getValue());         
 				callback.markAsDirty();
 			});
+			otherInputs.add(ultimateDocument);
 			
 			ultimateDocumentCountry.setWidth("240px");
+			ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
 			ultimateDocumentCountry.addChangeHandler(new ChangeHandler() {			
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -207,15 +177,19 @@ public class Page01 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(ultimateDocumentCountry);
 			
 			ultimateName.setVisibleLength(40); 
 			ultimateName.setMaxLength(40);
+		    ultimateName.setValue(callback.getMod200Object().getMod200().getUltimateName());
 			ultimateName.addValueChangeHandler(event -> {
 			    callback.getMod200Object().getMod200().setUltimateName(ultimateName.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(ultimateName);
 			
 			ultimateCountry.setWidth("240px");
+			ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
 			ultimateCountry.addChangeHandler(new ChangeHandler() {			
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -223,6 +197,7 @@ public class Page01 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(ultimateCountry);
 			
 			tab3.addRow()
 				.addCell(new Label(AON.MSG.ultimateDocument()), AON.CSS.aonWidth400())
@@ -246,7 +221,7 @@ public class Page01 extends PageAbs {
 		AonDisplayTable tab4 = new AonDisplayTable();
 		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab4.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab4);
+		basePanel.add(tab4);		
 		
 		tab4.addRow()
 			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
@@ -264,6 +239,7 @@ public class Page01 extends PageAbs {
 				callback.getMod200Object().getMod200().getRepresentatives().get(idx).setDocument(document.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(document);
 			
 			AonTextBox name = new AonTextBox();
 			name.setMaxLength(45);
@@ -273,6 +249,7 @@ public class Page01 extends PageAbs {
 				callback.getMod200Object().getMod200().getRepresentatives().get(idx).setName(name.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(name);
 			
 			AonTextBox notary = new AonTextBox();
 			notary.setMaxLength(20);
@@ -281,6 +258,7 @@ public class Page01 extends PageAbs {
 				callback.getMod200Object().getMod200().getRepresentatives().get(idx).setNotary(notary.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(notary);
 			
 			AonDateBox notaryDate = new AonDateBox();
 			notaryDate.setValue(callback.getMod200Object().getMod200().getRepresentatives().get(idx).getNotaryDate());
@@ -288,6 +266,7 @@ public class Page01 extends PageAbs {
 				callback.getMod200Object().getMod200().getRepresentatives().get(idx).setNotaryDate(notaryDate.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(notaryDate);
 			
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -296,6 +275,7 @@ public class Page01 extends PageAbs {
 				paint();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 
 			tab4.addRow()
 				.addCell( document )
@@ -316,8 +296,10 @@ public class Page01 extends PageAbs {
 			} else {		
 				callback.getMod200Object().getMod200().getRepresentatives().add(new LegalRepresentative());
 				paint();
+				callback.markAsDirty();
 			}
 		});
+		otherInputs.add(addButton1);
 		basePanel.add(addButton1);
 		
 		// RELACION DE ADMINISTRADORES
@@ -346,6 +328,7 @@ public class Page01 extends PageAbs {
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setDocument(document.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(document);
 			
 			CheckBox rep = new CheckBox();
 			rep.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).isRepresentative());
@@ -356,15 +339,17 @@ public class Page01 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(rep);
 			
 			AonTextBox name = new AonTextBox();
 			name.setMaxLength(40);  
-			name.setVisibleLength(45);			
+			name.setVisibleLength(45);	
 			name.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).getName());
 			name.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setName(name.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(name);
 			
 			AonTextBox address = new AonTextBox();
 			address.setMaxLength(17); 
@@ -373,6 +358,7 @@ public class Page01 extends PageAbs {
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setResidence(address.getValue());
 				callback.markAsDirty();
 			});
+			otherInputs.add(address);
 			
 			ProvinceListBox province = new ProvinceListBox();
 			province.setValue(Province.safeValueOf(callback.getMod200Object().getMod200().getAdministrators().get(idx).getProvince()));
@@ -383,6 +369,7 @@ public class Page01 extends PageAbs {
 					callback.markAsDirty();
 				}
 			});
+			otherInputs.add(province);
 
 			// Boton borrar linea
 			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
@@ -391,6 +378,7 @@ public class Page01 extends PageAbs {
 				paint();
 				callback.markAsDirty();
 			});
+			otherInputs.add(deleteButton);
 
 			tab5.addRow()
 				.addCell(document)
@@ -408,7 +396,9 @@ public class Page01 extends PageAbs {
 		addButton2.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().getAdministrators().add(new Mod200CompanyAdministrator());
 			paint();
+			callback.markAsDirty();
 		});
+		otherInputs.add(addButton2);
 		basePanel.add(addButton2);
 		
 	}

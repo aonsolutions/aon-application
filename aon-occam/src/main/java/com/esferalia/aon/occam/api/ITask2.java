@@ -21,10 +21,13 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 public interface ITask2 {
 		
 	public Task getTask(AONContext ctx, TaskFilter filter);
+	public Task getTaskAndChilds(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
-	public Stream<Task> getTaskParentStream(AONContext ctx, TaskFilter filter);
-	public Stream<Task> getTaskParentStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
+	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter);
+	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
+	public Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter);
+	public Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Task saveTask(AONContext ctx, Task task);
 	public void deleteTask(AONContext ctx, Integer id);
 	public Map<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver);

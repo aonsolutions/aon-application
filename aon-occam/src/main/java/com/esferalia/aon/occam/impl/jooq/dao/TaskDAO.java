@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,8 +72,8 @@ public class TaskDAO {
 	}
 	
 	private static final Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
-	private static final com.esferalia.aon.jooq.tables.TaskHolder SENDER = TASK_HOLDER.as("sender");
 	private static final Registry SENDER_REGISTRY = REGISTRY.as("registry_sender");
+	private static final com.esferalia.aon.jooq.tables.TaskHolder SENDER = TASK_HOLDER.as("sender");
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 
@@ -126,6 +125,213 @@ public class TaskDAO {
 		@Override public Property<String> getCommentsWorkflowProperty(){return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.COMMENT);}
 		@Override public Property<String> getTaskHolderNameProperty(){return new FilterDAO.PropertyDAO<>(TH_REGISTRY.NAME);}
 	}
+
+	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
+		return getStream(ctx, filter, Optional.empty(), Optional.empty());
+	}
+	
+	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
+		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
+	}
+	
+	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter){	
+		return getParentOrChildStream(ctx, filter, Optional.empty(), Optional.empty());
+	}
+	
+	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
+		return getParentOrChildStream(ctx, filter, Optional.of(page), Optional.of(perPage));
+	}
+	
+	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
+		ctx.checkRead();
+
+		Task task = getTaskAndChildsStream(ctx, filter).findFirst().orElse(new Task());
+		if(task.getId() != null) {
+			task.setWorkflows(TaskWorkflowDAO.getList(ctx, f -> f.getTaskProperty().eq(task.getId())));
+		}
+		return task;
+	}
+	
+	public static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+		ctx.checkRead();
+		return getTaskAndChildsStream(ctx, filter, Optional.of(page), Optional.of(perPage));
+	}
+	
+	public static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter) {
+		ctx.checkRead();
+		return getTaskAndChildsStream(ctx, filter, Optional.empty(), Optional.empty());
+	}
+	
+	public static Task get(AONContext ctx, TaskFilter filter) {
+		ctx.checkRead();
+
+		Task task = getStream(ctx, filter).findFirst().orElse(new Task());
+		if(task.getId() != null) {
+			task.setWorkflows(TaskWorkflowDAO.getList(ctx, f -> f.getTaskProperty().eq(task.getId())));
+		}
+		
+		return task;
+	}
+	
+	private static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage) {
+
+		List<Task> tasks     =  getStream(ctx, filter, page, perPage).collect(Collectors.toList());
+		
+		Integer[] parentIds  = tasks.stream().map(Task::getId).toArray(Integer[]::new);
+		
+		if(parentIds!=null && parentIds.length>0) {
+			
+			List<Task> childs = getStream(ctx, f-> f.getParentProperty().in(parentIds) ).collect(Collectors.toList());
+
+			tasks.forEach(task->{
+				childs.stream()
+				.filter(t-> t.getParent().equals(task.getId()))
+				.sorted(Comparator.comparing(Task::getId))
+				.forEach(task::addChild);
+			});
+		}
+		
+		return tasks.stream();
+	}
+	
+	
+	
+
+	public static Task save(AONContext ctx, Task task) {
+		TaskAutoComplete.autoComplete(ctx, task);
+		TaskValidation.validate(ctx, task);
+		if(task.getId() != null) {
+			update(ctx, task);
+		} else {
+			insert(ctx, task);
+		}
+		saveTags(ctx, task);
+		return task;
+	}
+	
+	private static Task update(AONContext ctx, Task task) {
+		UpdateSetMoreStep<TaskRecord> sets = ctx.getDslContext()
+		.update(TASK)
+		.set(TASK.DESCRIPTION, task.getTitle())
+		.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
+		.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
+		.set(TASK.PRIORITY, task.getPriority().value())
+		.set(TASK.STATUS, task.getStatus().value())
+		.set(TASK.PERCENT, task.getPercent())
+		.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
+		.set(TASK.WORKGROUP, task.getWorkgroup().getId())
+		.set(TASK.SOURCE, task.getSource().value())
+		.set(TASK.SOURCE_ID, task.getSourceId())
+		.set(TASK.PROJECT, task.getProject().getId())
+		.set(TASK.REGISTRY, task.getRegistry().getId())
+		.set(TASK.ACTIVITY_TYPE, task.getActivityType())
+		.set(TASK.SENDER, task.getSender().getId())
+		.set(TASK.COMMENTS, task.getDescription())
+		.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
+		.set(TASK.GTASKLIST_ID, task.getGtasklistId())
+		.set(TASK.PARENT, task.getParent())
+		.set(TASK.MODIFICATION_USER, ctx.getUser())
+		.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()));
+		
+		task.getGtaskId().ifPresent(d-> sets.set(TASK.GTASK_ID, d));
+
+		if(task.getEvaluation()!=null) {
+			sets.set(TASK.EVALUATION, task.getEvaluation().value());
+		}
+			
+		sets.where(TASK.ID.eq(task.getId())).execute();
+
+		updateChildsGrouped(ctx, task);			
+		
+		ctx.log().debug("UPDATE TASK id: " + task.getId());		
+		return task;
+	}
+	
+	private static Task insert(AONContext ctx, Task task) {
+		Record r  = ctx.getDslContext().insertInto(
+			 TASK,
+			 TASK.ACTIVITY_TYPE, 
+			 TASK.COMMENTS, 
+			 TASK.DESCRIPTION, 
+			 TASK.DOMAIN, 
+			 TASK.DUE_DATE, 
+			 TASK.END_DATE, 
+			 TASK.GTASK_ID, 
+			 TASK.GTASKLIST_ID, 
+			 TASK.PERCENT, 
+			 TASK.PARENT, 
+			 TASK.PRIORITY,
+			 TASK.PROJECT,
+			 TASK.REGISTRY,
+			 TASK.REPEAT_PERIOD,
+			 TASK.SENDER,
+			 TASK.SOURCE,
+			 TASK.SOURCE_ID,
+			 TASK.START_DATE,
+			 TASK.STATUS,
+			 TASK.TASK_HOLDER,
+			 TASK.WORKGROUP,
+			 TASK.CREATION_USER,
+			 TASK.CREATION_DATE,
+			 TASK.MODIFICATION_USER,
+			 TASK.MODIFICATION_DATE,
+			 TASK.NUMBER
+		)
+		.select(getLastTaskNumber(task, ctx))
+		.returning(TASK.ID, TASK.SOURCE, TASK.NUMBER).fetchOne();
+		
+		task.setId(r.getValue(TASK.ID));
+		task.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)));
+		task.setNumber(r.getValue(TASK.NUMBER));
+
+		updateChildsGrouped(ctx, task);			
+	
+		ctx.log().debug("INSERT TASK id: " + task.getId());	
+		return task;
+	}	
+	
+	private static void saveTags(AONContext ctx, Task task) {
+		DSLContext dslContext = ctx.getDslContext();
+		InsertSetMoreStep<TaskTagRecord> insertTaskTags = null;
+		
+		setTagIdOrSave(ctx, task);
+		
+		List<Tag> tags = task.getTags().stream().filter(t->t.getId()!=null).collect(Collectors.toList());
+		
+		for(Tag tag: tags) {
+			
+			Optional<TaskTagRecord> tagExist = dslContext.select()
+			.from(TASK_TAG)
+			.where(TASK_TAG.TASK.eq(task.getId()))
+			.and(TASK_TAG.TAG.eq(tag.getId()))
+			.fetchStreamInto(TASK_TAG)
+			.findFirst();
+			
+			if(!tagExist.isPresent()) {
+				InsertSetStep<TaskTagRecord> insert = null != insertTaskTags ? insertTaskTags.newRecord() : dslContext.insertInto(TASK_TAG);
+						
+				InsertSetMoreStep<TaskTagRecord> recordSets = insert
+				.set(TASK_TAG.DOMAIN, task.getDomain().getId())
+				.set(TASK_TAG.TASK, task.getId())
+				.set(TASK_TAG.TAG, tag.getId())
+				;
+				
+				insertTaskTags = recordSets;
+			}
+		}	
+		
+		if(null!=insertTaskTags) {
+			insertTaskTags.execute();
+		}
+		
+		deleteTags(ctx, task);
+	}
+	
+	/**
+	 * Create tag not exist
+	 * @param ctx
+	 * @param task
+	 */
 	
 	private static <T extends Record> SelectOnConditionStep<T> select(SelectSelectStep<T> select) {
 		return select
@@ -165,7 +371,7 @@ public class TaskDAO {
 		return taskMaps.keySet().stream();
 	}
 	
-	private static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
+	private static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
 		SelectConditionStep<Record> condition = select(ctx.getDslContext().select())
 		.where(whereCondition(ctx, filter));
 	
@@ -179,7 +385,7 @@ public class TaskDAO {
 	   .groupBy(TASK.ID, TAG.ID)
 	   .orderBy(TASK.CREATION_DATE.desc());
 		
-//	   System.out.println(query.getSQL());
+	   System.out.println(query.getSQL());
 		
 		Map<Task, List<Tag>> taskMaps = query.fetchGroups( 
 			new TaskFiller()::apply,
@@ -188,185 +394,24 @@ public class TaskDAO {
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
 
-		List<Task> tasks = taskMaps.keySet().stream().filter(distinctByKey(Task::getId)).collect(Collectors.toList());
+		List<Task> tasks     = taskMaps.keySet().stream().filter(distinctByKey(Task::getId)).collect(Collectors.toList());
 		
-		Integer[] parentsId  = tasks.stream().map(Task::getId).toArray(Integer[]::new);
+		Integer[] parentIds  = tasks.stream().filter(Task::isParent).map(Task::getId).toArray(Integer[]::new);
+		
+		if(parentIds!=null && parentIds.length>0) {
+			List<Task> childsAll = getTaskAndChildsStream(ctx,  f-> f.getParentProperty().in(parentIds) ).collect(Collectors.toList());
 
-		List<Task> childsAll = getStream(ctx,  f-> f.getParentProperty().in(parentsId) ).collect(Collectors.toList());
-
-		tasks.forEach(task->{
-			childsAll.stream()
-			.filter(t-> t.isChild() && t.getParent().equals(task.getId()))
-			.sorted(Comparator.comparing(Task::getId))
-			.forEach(task::addChild);
-		});
+			tasks.forEach(task->{
+				childsAll.stream()
+				.filter(t-> t.getParent().equals(task.getId()))
+				.sorted(Comparator.comparing(Task::getId))
+				.forEach(task::addChild);
+			});
+		}
 
 		return tasks.stream();
 	}
 	
-	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
-		return getStream(ctx, filter, Optional.empty(), Optional.empty());
-	}
-	
-	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
-	}
-	
-	public static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter){	
-		return getParentStream(ctx, filter, Optional.empty(), Optional.empty());
-	}
-	
-	public static Stream<Task> getParentStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		return getParentStream(ctx, filter, Optional.of(page), Optional.of(perPage));
-	}
-	
-	public static Task get(AONContext ctx, TaskFilter filter) {
-		ctx.checkRead();
-
-		Task task = getStream(ctx, filter).findFirst().orElse(new Task());
-		if(task.getId() != null) {
-			task.setWorkflows(TaskWorkflowDAO.getList(ctx, f -> f.getTaskProperty().eq(task.getId())));
-		}
-		return task;
-	}
-	
-	public static Task save(AONContext ctx, Task task) {
-		TaskAutoComplete.autoComplete(ctx, task);
-		TaskValidation.validate(ctx, task);
-		if(task.getId() != null) {
-			update(ctx, task);
-		} else {
-			insert(ctx, task);
-		}
-		saveTags(ctx, task);
-		return task;
-	}
-	
-	public static Task update(AONContext ctx, Task task) {
-		UpdateSetMoreStep<TaskRecord> sets = ctx.getDslContext()
-		.update(TASK)
-		.set(TASK.DESCRIPTION, task.getTitle())
-		.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
-		.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
-		.set(TASK.PRIORITY, task.getPriority().value())
-		.set(TASK.STATUS, task.getStatus().value())
-		.set(TASK.PERCENT, task.getPercent())
-		.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
-		.set(TASK.WORKGROUP, task.getWorkgroup().getId())
-		.set(TASK.SOURCE, task.getSource().value())
-		.set(TASK.SOURCE_ID, task.getSourceId())
-		.set(TASK.PROJECT, task.getProject().getId())
-		.set(TASK.REGISTRY, task.getRegistry().getId())
-		.set(TASK.ACTIVITY_TYPE, task.getActivityType())
-		.set(TASK.SENDER, task.getSender().getId())
-		.set(TASK.COMMENTS, task.getDescription())
-		.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
-		.set(TASK.GTASKLIST_ID, task.getGtasklistId())
-		.set(TASK.PARENT, task.getParent())
-		.set(TASK.MODIFICATION_USER, ctx.getUser())
-		.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()));
-		
-		task.getGtaskId().ifPresent(d-> sets.set(TASK.GTASK_ID, d));
-
-		if(task.getEvaluation()!=null) {
-			sets.set(TASK.EVALUATION, task.getEvaluation().value());
-		}
-			
-		sets.where(TASK.ID.eq(task.getId())).execute();
-
-//		if(task.isParent()) {
-//			updateParent(ctx, task);			
-//		}
-		
-		ctx.log().debug("UPDATE TASK id: " + task.getId());		
-		return task;
-	}
-	
-	public static Task insert(AONContext ctx, Task task) {
-		Record r  = ctx.getDslContext().insertInto(
-			 TASK,
-			 TASK.ACTIVITY_TYPE, 
-			 TASK.COMMENTS, 
-			 TASK.DESCRIPTION, 
-			 TASK.DOMAIN, 
-			 TASK.DUE_DATE, 
-			 TASK.END_DATE, 
-			 TASK.GTASK_ID, 
-			 TASK.GTASKLIST_ID, 
-			 TASK.PERCENT, 
-			 TASK.PARENT, 
-			 TASK.PRIORITY,
-			 TASK.PROJECT,
-			 TASK.REGISTRY,
-			 TASK.REPEAT_PERIOD,
-			 TASK.SENDER,
-			 TASK.SOURCE,
-			 TASK.SOURCE_ID,
-			 TASK.START_DATE,
-			 TASK.STATUS,
-			 TASK.TASK_HOLDER,
-			 TASK.WORKGROUP,
-			 TASK.CREATION_USER,
-			 TASK.CREATION_DATE,
-			 TASK.MODIFICATION_USER,
-			 TASK.MODIFICATION_DATE,
-			 TASK.NUMBER
-		)
-		.select(getLastTaskNumber(task, ctx))
-		.returning(TASK.ID, TASK.SOURCE, TASK.NUMBER).fetchOne();
-		
-		task.setId(r.getValue(TASK.ID));
-		task.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)));
-		task.setNumber(r.getValue(TASK.NUMBER));
-
-//		if(task.isParent()) {
-//			updateParent(ctx, task);			
-//		}
-	
-		ctx.log().debug("INSERT TASK id: " + task.getId());	
-		return task;
-	}	
-	
-	private static void saveTags(AONContext ctx, Task task) {
-		DSLContext dslContext = ctx.getDslContext();
-		InsertSetMoreStep<TaskTagRecord> insertTaskTags = null;
-		
-		setTagIdOrSave(ctx, task);
-		
-		List<Tag> tags = task.getTags().stream().filter(t->t.getId()!=null).collect(Collectors.toList());
-		
-		for(Tag tag: tags) {
-			
-			Optional<TaskTagRecord> tagExist = dslContext.select()
-			.from(TASK_TAG)
-			.where(TASK_TAG.TASK.eq(task.getId()))
-			.and(TASK_TAG.TAG.eq(tag.getId()))
-			.fetchStreamInto(TASK_TAG)
-			.findFirst();
-			
-			if(!tagExist.isPresent()) {
-				InsertSetStep<TaskTagRecord> insert = null != insertTaskTags ? insertTaskTags.newRecord() : dslContext.insertInto(TASK_TAG);
-						
-				InsertSetMoreStep<TaskTagRecord> recordSets = insert
-				.set(TASK_TAG.DOMAIN, task.getDomain().getId())
-				.set(TASK_TAG.TASK, task.getId())
-				.set(TASK_TAG.TAG, tag.getId())
-				;
-				
-				insertTaskTags = recordSets;
-			}
-		}	
-		
-		if(null!=insertTaskTags) insertTaskTags.execute();
-		
-		deleteTags(ctx, task);
-	}
-	
-	/**
-	 * Create tag not exist
-	 * @param ctx
-	 * @param task
-	 */
 	private static void setTagIdOrSave(AONContext ctx, Task task) {
 		DSLContext dslContext = ctx.getDslContext();
 
@@ -453,32 +498,34 @@ public class TaskDAO {
 		TaskCounts taskCounts = new TaskCounts();
 		String count = "count";
 		
-		status.ifPresent(filter->{
+		status.ifPresent(filter->
 			ctx.getDslContext()
 			.select(DSL.count(TASK.ID).as(DSL.name(count)), TASK.STATUS)
 			.from(TASK)
 //			.where(whereCondition(ctx, filter))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TASK.STATUS).fetch().stream()
+			.groupBy(TASK.STATUS)
+			.fetch()
 			.forEach(r->{
 				taskCounts.addStatus(TaskStatus.safeValueOf(r.get(TASK.STATUS)), (Integer) r.get(DSL.name(count)));
-			});
-		});
+			})
+		);
 		
-		workgroup.ifPresent(filter->{
+		workgroup.ifPresent(filter->
 			ctx.getDslContext()
 			.select(DSL.count(TASK.ID).as(DSL.name(count)), TASK.WORKGROUP)
 			.from(TASK)
 //			.where(whereCondition(ctx, filter))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TASK.WORKGROUP).fetch().stream()
+			.groupBy(TASK.WORKGROUP)
+			.fetch()
 			.forEach(r->  {
 				String wg = r.get(TASK.WORKGROUP)!= null ? r.get(TASK.WORKGROUP).toString() : "true";
 				taskCounts.addWorkgroup(wg, (Integer) r.get(DSL.name(count)));
-			});
-		});
+			})
+		);
 		
-		tags.ifPresent(filter->{
+		tags.ifPresent(filter->
 			ctx.getDslContext()
 			.select(DSL.count(TASK.ID).as(DSL.name(count)), TAG.ID)
 			.from(TASK)
@@ -486,13 +533,14 @@ public class TaskDAO {
 			.join(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
 //			.where(whereCondition(ctx, filter))
 			.where(TASK_PROPERTIES.getConditions(filter))
-			.groupBy(TAG.ID).fetch().stream()
+			.groupBy(TAG.ID)
+			.fetch()
 			.forEach(r->  {
 				if(r.get(TAG.ID)!=null) {
 					taskCounts.addTag(r.get(TAG.ID).toString(), (Integer) r.get(DSL.name(count)));
 				}
-			});
-		});
+			})
+		);
 		
 		return taskCounts;
 	}
@@ -520,70 +568,75 @@ public class TaskDAO {
 			TASK.ID.in(
 				select(ctx.getDslContext().select(TASK.PARENT))
     			.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
+	    	).and(
+	    		TASK.PARENT.isNull()
 	    	)
 		);
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
 		 Optional<String> gtaskId = task.getGtaskId();
-		 return 
-				 DSL.select( 
-						DSL.val(task.getActivityType()),
-						DSL.val(task.getDescription()),
-						DSL.val(task.getTitle()),
-						DSL.val(task.getDomain().getId()),
-						DSL.val(AonDateUtils.toTimestamp(new Date())),
-						DSL.val(AonDateUtils.toTimestamp(new Date())),
-						DSL.val(gtaskId.isPresent() ? gtaskId.get() : null),
-						DSL.val(task.getGtasklistId()),
-						DSL.val(task.getPercent()),
-						DSL.val(task.getParent()),
-						DSL.val(task.getPriority().value()),
-						DSL.val(task.getProject().getId()),
-						DSL.val(task.getRegistry().getId()),
-						DSL.val(task.getRepeatPeriod().value()),
-						DSL.val(task.getSender().getId()),
-						DSL.val(task.getSource().value()),
-						DSL.val(task.getSourceId()),
-						DSL.val(AonDateUtils.toTimestamp(new Date())),
-						DSL.val(task.getStatus().value()),
-						DSL.val(task.getTaskHolder().getId()),
-						DSL.val(task.getWorkgroup().getId()),
-						DSL.val(ctx.getUser()),
-						DSL.val( AonDateUtils.toTimestamp(new Date())),
-						DSL.val(ctx.getUser()),
-						DSL.val(AonDateUtils.toTimestamp(new Date())),
-					   	DSL.coalesce(
-							DSL.max(TASK.NUMBER), DSL.inline(0)
-						).plus(DSL.inline(1))
-				  )
-				 .from(TASK)
-				 .where(TASK.DOMAIN.eq(task.getDomain().getId()));
+		 
+		 return DSL.select( 
+			DSL.val(task.getActivityType()),
+			DSL.val(task.getDescription()),
+			DSL.val(task.getTitle()),
+			DSL.val(task.getDomain().getId()),
+			DSL.val(AonDateUtils.toTimestamp(new Date())),
+			DSL.val(AonDateUtils.toTimestamp(new Date())),
+			DSL.val(gtaskId.isPresent() ? gtaskId.get() : null),
+			DSL.val(task.getGtasklistId()),
+			DSL.val(task.getPercent()),
+			DSL.val(task.getParent()),
+			DSL.val(task.getPriority().value()),
+			DSL.val(task.getProject().getId()),
+			DSL.val(task.getRegistry().getId()),
+			DSL.val(task.getRepeatPeriod().value()),
+			DSL.val(task.getSender().getId()),
+			DSL.val(task.getSource().value()),
+			DSL.val(task.getSourceId()),
+			DSL.val(AonDateUtils.toTimestamp(new Date())),
+			DSL.val(task.getStatus().value()),
+			DSL.val(task.getTaskHolder().getId()),
+			DSL.val(task.getWorkgroup().getId()),
+			DSL.val(ctx.getUser()),
+			DSL.val( AonDateUtils.toTimestamp(new Date())),
+			DSL.val(ctx.getUser()),
+			DSL.val(AonDateUtils.toTimestamp(new Date())),
+		   	DSL.coalesce(
+				DSL.max(TASK.NUMBER), DSL.inline(0)
+			).plus(DSL.inline(1))
+		  )
+		 .from(TASK)
+		 .where(TASK.DOMAIN.eq(task.getDomain().getId()));
 	}
 	
-	private static void updateParent(AONContext ctx, Task parent) {
-		
-		List<Task> childsOld = getStream(ctx,  f-> f.getParentProperty().eq(parent.getId()) ).collect(Collectors.toList());
-		List<Task> childsNew = parent.getChilds();
+	private static void updateChildsGrouped(AONContext ctx, Task task) {
+		if( task.getSource().equals(TaskSource.GROUPED) ) {
+			List<Task> childs = task.getChilds();
+			if(!childs.isEmpty()) {
+				List<Task> childsOld = getStream(ctx,  f-> f.getParentProperty().eq(task.getId()) ).collect(Collectors.toList());
+				
+				updateParentChilds(ctx, null, childsOld);
 
-		updateParent(ctx, null, childsOld);
-		
-		updateParent(ctx, parent.getId(), childsNew);
+				updateParentChilds(ctx, task, childs);
+			}
+		}
 	}
 	
-	private static void updateParent(AONContext ctx, Integer parentId, List<Task> childs) {
+	private static void updateParentChilds(AONContext ctx, Task parent, List<Task> childs) {
 		if(!childs.isEmpty()) {
-			Integer[] childsInt = childs.stream().map(Task::getId).toArray(Integer[]::new);
+			Integer[] childIds = childs.stream().map(Task::getId).toArray(Integer[]::new);
+			
+			Integer parentId   = parent!=null ? parent.getId() : null;
 			
 			ctx.getDslContext()
 			.update(TASK)
-			.set(TASK.PARENT, parentId)
 			.set(TASK.MODIFICATION_USER, ctx.getUser())
 			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
-			.where(TASK.ID.in(childsInt))
+			.set(TASK.PARENT, parentId)
+			.where(TASK.ID.in(childIds))
 			.execute();
-			
-			ctx.log().debug("UPDATE PARENT ids: " + Arrays.toString(childsInt));	
 		}
 	}
 	
@@ -635,11 +688,11 @@ public class TaskDAO {
 		@Override
 		public Tag apply(Record r) {
 			return new Tag()
-					.setId(r.getValue(TAG.ID))
-					.setColor(r.getValue(TAG.COLOR))
-					.setDomain(r.getValue(TAG.DOMAIN))
-					.setName(r.getValue(TAG.NAME))
-					.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)))
+				.setId(r.getValue(TAG.ID))
+				.setColor(r.getValue(TAG.COLOR))
+				.setDomain(r.getValue(TAG.DOMAIN))
+				.setName(r.getValue(TAG.NAME))
+				.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)))
 			;
 		}
 	}

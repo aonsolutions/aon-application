@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.issues.client.Issues;
+import com.esferalia.aon.gwt.issues.client.IssuesEntryPoint;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.esferalia.aon.gwt.template.client.Templates;
@@ -32,11 +33,7 @@ import net.aonsolutions.aon.gwt.warehouse.client.Warehouse;
 
 public class Aio implements EntryPoint {
 	
-	final IAioAsync impl = GWT.create(IAio.class);
-
-	private Issues issues;
-//	private Documental documental;
-	
+	final IAioAsync impl = GWT.create(IAio.class);	
 
 	public static native Boolean isAonSolutions()
 	/*-{
@@ -122,8 +119,7 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					issues = new Issues(aonData);
-					issues.onModuleLoad();
+					new IssuesEntryPoint(aonData).onModuleLoad(getSubEntryPoint());
 				}
 			});
 			break;

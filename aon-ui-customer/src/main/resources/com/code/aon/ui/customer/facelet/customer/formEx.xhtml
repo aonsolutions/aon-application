@@ -270,6 +270,14 @@
 								</ui:include>
 							</aon:panelTab>
 						</aon:if>
+						
+						<aon:if test="#{customer.snapshot}">
+							<aon:panelTab id="domainLinked" label="Dominios vinculados">
+								<ui:include	src="/com/code/aon/ui/customer/facelet/customer/domainLinked/domainLinked.xhtml">
+
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
 
 						<aon:if test="#{aonConfiguration.bean.customer.showDirStaff and customerDirStaff.model.rowCount > 0}">
 							<aon:panelTab id="dirStaff" label="#{bundle.registry_dir_staff}">
@@ -457,6 +465,7 @@
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
 			</aon:if>
+			
 			<aon:if test="#{aonConfiguration.bean.customer.showDirStaff}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rdirstaff/newDirStaffModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />

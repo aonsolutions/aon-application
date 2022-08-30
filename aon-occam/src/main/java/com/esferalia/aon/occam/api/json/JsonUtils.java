@@ -147,4 +147,8 @@ public class JsonUtils {
 	public static JSONObject putEnum(JSONObject json, String key , Enum<?> enumValue) {
 		return json.put(key, enumValue==null?null:enumValue.ordinal());
 	}
+	
+	public static boolean has(JSONObject json, String key) {
+		return json.opt(key) != null;
+	}
 }

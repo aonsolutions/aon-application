@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -20,7 +21,6 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Occupation;
 import com.esferalia.aon.occam.api.model.type.QuoteGroup;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -353,21 +353,32 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	private void deletePeriodButton(ToggleButton button) {
+		// Find clicked button
+		int selectedButton = getSelectedButtonIdx(button);
+
+		// Get selected date
+		HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(selectedButton);
+		ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+		String dateStr = toggleButton.getText();
+		Date findingDate = formatFullDate.parse(dateStr);
+		DateUtils.resetTime(findingDate);
+		
+		ArrayList<AFIChange> afiChangeList = afiChangesMap.getAFIChangessByDate(findingDate);
+		Optional<AFIChange> currectTc2 = afiChangeList.stream().filter(afiChange -> AonStringUtils.equalsIgnoreCase(afiChange.getName(), "TC2")).findFirst();
+		if(currectTc2.isPresent()) {
+			ContractTypeRecord contractTypeRecord = contractType.getContractType(Integer.parseInt(currectTc2.get().getValue()));
+			if(contractTypeRecord.isTransform()) {
+				AonDialog dialog = new AonDialog("Eliminar Transformaci\u00f3n", new HTML("La transformaciones de contrato se deben eliminar desde la pesta\u00f1a <b>Datos Sepe</b>"));
+				dialog.warning();
+				return;
+			}
+		}
+		
 		AonConfirmDialog confirmDialog = new AonConfirmDialog();
 		confirmDialog.confirm("BORRADO", "\u00BFDesea eliminar este tramo?", new AonConfirmDialogCallback() {
 
 			@Override
 			public void onAccept() {
-				// Find clicked button
-				int selectedButton = getSelectedButtonIdx(button);
-
-				// Get selected date
-				HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(selectedButton);
-				ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-				String dateStr = toggleButton.getText();
-				Date findingDate = formatFullDate.parse(dateStr);
-				DateUtils.resetTime(findingDate);
-
 				// Delete strech and update dates
 				afiChangesMap.deleteAFIChangeByDate(findingDate);
 				dateList.clear();
@@ -487,14 +498,13 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			quoteGroup.setSelectedIndex(0);
 			ocupation.setSelectedIndex(0);
 			partialityCoef.setValue(null);
-
-			Integer contractTypeAux = null;
 			
 			for (AFIChange afiChange : afiChangeList) {
 				switch (afiChange.getName()) {
 				case "TC2":
 					setSelectedValueLB(tc2, AonStringUtils.leftPad(afiChange.getValue(), 3, '0'));
-					contractTypeAux = Integer.parseInt(afiChange.getValue());
+					ContractTypeRecord contractTypeRecord = contractType.getContractType(Integer.parseInt(afiChange.getValue()));
+					checkPartialityVisibility(contractTypeRecord);
 					break;
 				case "GRUPO_COTIZACION":
 					setSelectedValueLB(quoteGroup, afiChange.getValue());
@@ -510,23 +520,17 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				}
 			}
 
-			if(null != contractTypeAux) checkPartialityVisibility(contractTypeAux);
-
 		}
 	}
 
-	private void checkPartialityVisibility(Integer contractTypeInt) {
-		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+	private void checkPartialityVisibility(ContractTypeRecord contractTypeRecord) {
+		if(AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P")) {
 			partialityCoefL.getElement().getStyle().clearDisplay();
 			partialityCoef.getElement().getStyle().clearDisplay();
 		} else {
 			partialityCoefL.getElement().getStyle().setDisplay(Display.NONE);
 			partialityCoef.getElement().getStyle().setDisplay(Display.NONE);
 		}
-	}
-	
-	private boolean isPartialContract(Integer contractType) {
-		return AonNumberUtils.between(contractType, 200, 300) || AonNumberUtils.between(contractType, 500, 599) || AonNumberUtils.equals(contractType, 0);
 	}
 
 	// ------------------------------------------------- Auxiliar Methods
@@ -583,10 +587,30 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		if (tc2.getSelectedIndex() == 0)
 			afiChangesMap.addAFIChangeByDate(selectedDate, "TC2", null);
 		else {
-			afiChangesMap.addAFIChangeByDate(selectedDate, "TC2", tc2.getSelectedItemText().split(" -")[0]);
-			checkPartialityVisibility(Integer.parseInt(tc2.getSelectedValue()));
-			if(!isPartialContract(Integer.parseInt(tc2.getSelectedValue())))
+			ContractTypeRecord contractTypeRecord = contractType.getContractType(Integer.parseInt(tc2.getSelectedValue()));
+			
+			if(contractTypeRecord.isTransform()) {
+				ArrayList<AFIChange> afiChangeList = afiChangesMap.getAFIChangessByDate(selectedDate);
+				Optional<AFIChange> currectTc2 = afiChangeList.stream().filter(afiChange -> AonStringUtils.equalsIgnoreCase(afiChange.getName(), "TC2")).findFirst();
+				if(currectTc2.isPresent()) {
+					ContractTypeRecord contractCurrentTypeRecord = contractType.getContractType(Integer.parseInt(currectTc2.get().getValue()));
+					if(contractCurrentTypeRecord.isTransform()) {
+						checkPartialityVisibility(contractTypeRecord);
+						if(!AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P"))
+							afiChangesMap.addAFIChangeByDate(selectedDate, "COEFICIENTE_PARCIALIDAD", null);
+						afiChangesMap.addAFIChangeByDate(selectedDate, "TC2", tc2.getSelectedValue());
+					} else {
+						AonDialog dialog = new AonDialog("Transformaci\u00f3n", new HTML("La transformaci\u00f3n del contrato debe hacerse desde la pesta\u00f1a <b>Datos Sepe</b>"));
+						dialog.warning();
+						setSelectedValueLB(tc2, AonStringUtils.leftPad(currectTc2.get().getValue(), 3, '0'));
+					}	
+				}
+			} else {
+				checkPartialityVisibility(contractTypeRecord);
+				if(!AonStringUtils.equalsIgnoreCase(contractTypeRecord.getJourneyType(), "P"))
 					afiChangesMap.addAFIChangeByDate(selectedDate, "COEFICIENTE_PARCIALIDAD", null);
+				afiChangesMap.addAFIChangeByDate(selectedDate, "TC2", tc2.getSelectedValue());
+			}
 		}
 	}
 

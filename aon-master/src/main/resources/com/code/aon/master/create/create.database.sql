@@ -4475,6 +4475,7 @@ CREATE TABLE `elaboration_detail` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del detalle',
   `domain` int(4) NOT NULL COMMENT 'Identificador del dominio',
   `elaboration` int(4) NOT NULL COMMENT 'Identificador de la elaboracion',
+  `type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de detalle',
   `date` datetime DEFAULT NULL COMMENT 'Fecha de elaboracion',
   `item` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador del articulo no base elaborado',
   `quantity` double(15,3) DEFAULT '0.000' COMMENT 'Cantidad elaborado',
@@ -5382,11 +5383,18 @@ CREATE TABLE `fs_model200` (
   `ultimate_name` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Nombre o razon social',
   `ultimate_country` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Pais o jurisdiccion',
   `nrs_anexoV_ric` varchar(22) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NRS anexo V RIC',
+  `creation_user` VARCHAR(16) NULL DEFAULT NULL COMMENT 'Usuario de creacion' COLLATE 'latin1_spanish_ci',
+  `creation_date` DATETIME NULL DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` VARCHAR(16) NULL DEFAULT NULL COMMENT 'Usuario de modificacion' COLLATE 'latin1_spanish_ci',
+  `modification_date` DATETIME NULL DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `fs_model` int(4) DEFAULT NULL Comment 'Identificador de fs_model',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
+  KEY `IDX_FS_MODEL200_FS_MODEL` (`fs_model`),
   CONSTRAINT `FK_FS_MODEL200_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_MODEL200_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+  CONSTRAINT `FK_FS_MODEL200_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
+  CONSTRAINT `FK_FS_MODEL200_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuesto sobre sociedades';
 
 #

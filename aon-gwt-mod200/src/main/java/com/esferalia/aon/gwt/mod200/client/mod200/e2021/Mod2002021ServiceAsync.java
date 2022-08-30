@@ -10,15 +10,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface Mod2002021ServiceAsync {
 
 	void createMod2002021(Occam occam, int year, AsyncCallback<Mod2002021> callback);
-	void initializeNewMod2002021(Occam occam, Mod2002021 mod200, AsyncCallback<Mod2002021> callback);
 	void initializeMod2002021(Occam occam, Mod2002021 mod200,AsyncCallback<Mod2002021> callback);
-	void getMod2002021ByYear(Occam occam, int year,AsyncCallback<Mod2002021> callback);
 	void calculateMod2002021(Mod2002021 mod200, AsyncCallback<Mod2002021> callback);
-	void deleteMod2002021(Occam occam, int id,AsyncCallback<Void> callback);
-	void dumpAEATMod2002021(Mod2002021 mod200, AsyncCallback<String> callback);
+	void deleteMod2002021(Occam occam, Mod2002021 mod200, AsyncCallback<Void> callback);
 	void getMod2002021ById(Occam occam, int id,AsyncCallback<Mod2002021> callback);
 	void saveMod2002021(Occam occam, Mod2002021 mod200,AsyncCallback<Mod2002021> callback);
-	void importMod2002020(Occam occam, Mod2002021 mod200,AsyncCallback<Mod2002021> callback);
 	void fillMod2002021AccountingData(Occam occam, Mod2002021 mod200, String data, AsyncCallback<Mod2002021> callback);
 	void getCompanyBanks(Occam occam, AsyncCallback<LinkedList<CompanyBank>> asyncCallback);
 

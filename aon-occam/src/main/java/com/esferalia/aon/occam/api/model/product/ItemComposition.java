@@ -44,7 +44,7 @@ public class ItemComposition implements Serializable {
 		this.compositionItemId = compositionItemId;
 		return this;
 	}
-	public int getSequence() {
+	public Integer getSequence() {
 		return sequence;
 	}
 	public ItemComposition setSequence(int sequence) {

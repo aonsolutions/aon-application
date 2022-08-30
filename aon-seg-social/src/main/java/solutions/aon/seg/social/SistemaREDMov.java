@@ -1,17 +1,18 @@
 
 package solutions.aon.seg.social;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -26,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
@@ -44,13 +46,14 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 class SistemaREDMov {
 	
 	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	private static final String MESSAGE_ERROR = "Error: No se acepta la comunicaci\u00f3n";
 	
-	 private SistemaREDMov() {
+	private SistemaREDMov() {
 	    throw new IllegalStateException("Utility class");
-	 }
+	}
 	 
 	// HANDLE THE EXCEPTIONS OF ALTA METHOD
-	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -59,12 +62,8 @@ class SistemaREDMov {
 			return sendAltaImpl(certificateInputStream, certificatePassword, certificateType, employee);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -78,8 +77,6 @@ class SistemaREDMov {
 			validateCertImpl(certificateInputStream, certificatePassword, certificateType);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
@@ -97,12 +94,8 @@ class SistemaREDMov {
 					ccc);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -119,12 +112,8 @@ class SistemaREDMov {
 					ccc);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -133,7 +122,7 @@ class SistemaREDMov {
 	}
 
 	// HANDLE THE EXCEPTIONS OF ALTA METHOD
-	public static Employee sendBaja(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] sendBaja(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -142,12 +131,8 @@ class SistemaREDMov {
 			return sendBajaImpl(certificateInputStream, certificatePassword, certificateType, employee);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -156,7 +141,7 @@ class SistemaREDMov {
 	}
 
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -165,12 +150,8 @@ class SistemaREDMov {
 			return ipfxnafImpl(certificateInputStream, certificatePassword, certificateType, nssList);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -187,12 +168,8 @@ class SistemaREDMov {
 			return nafxipfImpl(certificateInputStream, certificatePassword, certificateType, ipf, apellido1, apellido2);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -209,58 +186,27 @@ class SistemaREDMov {
 					fecha);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
 
-	public static void cambioContratoCoef(final InputStream certificateInputStream, final String certificatePassword,
+	public static void updateContractCoef(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio,
 			Optional<String> contract, String coef) throws SegSocialException {
 
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 
 		try {
-			cambioContratoCoefImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
+			updateContractCoefImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
 					nss, fechaCambio, contract, coef);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SegSocialException(e.getMessage());
-		}
-	}
-
-	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String situation, String regimen, String ctaCti, String nss)
-			throws SegSocialException {
-
-		InvalidCertificateException.checkCertificate(certificateInputStream);
-
-		try {
-			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti,
-					nss);
-		} catch (FailingHttpStatusCodeException e) {
-			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
-		} catch (IOException e) {
-			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
@@ -278,79 +224,65 @@ class SistemaREDMov {
 					regimen, ctaCti, nss, ipf, date);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
 
-	public static void cambioGrupCtz(final InputStream certificateInputStream, final String certificatePassword,
+	public static void updateQuoteGroup(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String grupCtz,
 			Date fecha) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try {
-			cambioGrupCtzImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+			updateQuoteGroupImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 					grupCtz, fecha);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
 
-	public static void cambioOcupacion(final InputStream certificateInputStream, final String certificatePassword,
+	public static void updateOccupation(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String ocup,
 			Date fecha) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try {
-			cambioOcupacionImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+			updateOccupationImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 					ocup, fecha);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
 
-	public static void cambioCatProf(final InputStream certificateInputStream, final String certificatePassword,
+	public static void updateCatProf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
 			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {cambioCatProfImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, cat, fecha);} 
+		try {updateCatProfImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, cat, fecha);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}	
 	
-	private static Employee sendAltaImpl(
+	private static byte[] sendAltaImpl(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
-	) throws Exception  {
+	) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException  {
 		String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
     	Integer mov = 0;
 		String ident = Toolkit.getIdentityType(employee.getIpf());
@@ -421,39 +353,65 @@ class SistemaREDMov {
 			}
 		});
 		
-		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		HtmlUnitToolkit.manageStatusCode(htmlPage);
-
-		DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-		if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-		}
-
-		DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-		if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		
+		//------------GET TA
+		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");
+		if(printDoc!=null) {
+			((HtmlSelect)printDoc).setSelectedAttribute("SI", true);
 		}
 		
-		DomNode msg3 = htmlPage.querySelector("#Frame");
-		if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
-			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-		}
-		
-		DomNode message = htmlPage.querySelector("#DIL"); 
-		if(message!=null && Arrays.stream(new String[]{"3408", "9125", "9086", "0350"}).anyMatch(message.getTextContent().trim()::contains) ) {
-			System.out.println(message.getTextContent().trim());
+		DomNode printType = null;
+		if(employee.getRegime().contains("0163")) {
+			printType = form.querySelector("select[name=\"cbo_ListaTipoImpresion\"]");
 		} else {
-			throw new Exception("Error no aceptada la comunicaci\u00f3n");
+			printType = form.querySelector("select[name=\"cbo_ListaTipoImpresion001\"]");
 		}
 
-		return employee;
+		if(printType!=null) {
+			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
+		}
+		
+
+		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
+			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+			}
+
+			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
+			if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+			
+			DomNode msg3 = htmlPage.querySelector("#Frame");
+			if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+		}
+
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			DomNode message = htmlPage.querySelector("#DIL"); 
+			if(message!=null) {
+				throw new SegSocialException(message.getTextContent().trim());
+			}
+		} else {
+			try {
+				return page.getWebResponse().getContentAsStream().readAllBytes();
+			} catch (Exception e) {
+				throw new InvalidDataException();
+			}
+		}
+
+		throw new SegSocialException(MESSAGE_ERROR);
 	}
 
-	private static Employee sendBajaImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws Exception {
+	private static byte[] sendBajaImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, Employee employee) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
 		String situation = employee.getSituacion() != null ? employee.getSituacion() : "93";
 		Integer mov = 1;
 		String ident = Toolkit.getIdentityType(employee.getIpf());
@@ -469,30 +427,73 @@ class SistemaREDMov {
 				employee.getRegime(),  dni, ident
     	);
 
-		HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 
 		if (!frbOpt.isEmpty()) {
 			String[] frb = formatDate(frbOpt.get()); // fecha [dia,mes,anio]
-			jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
-			jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(frb[0]);
-			jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(frb[1]);
-			jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(frb[2]);
+			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
+			form.getInputByName("txt_SDFFREALDD").setValueAttribute(frb[0]);
+			form.getInputByName("txt_SDFFREALMM").setValueAttribute(frb[1]);
+			form.getInputByName("txt_SDFFREALAA").setValueAttribute(frb[2]);
 		}
 
 		if (!frvOpt.isEmpty()) { // FECHA DE VACACIONES
 			String[] fvac = formatDate(frvOpt.get()); 
-			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
-			jacadaForm1.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
-			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);
+			form.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
+			form.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
+			form.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);
 			
 			//------------- Indicativo SAA       
-			employee.getAsociativeSA().ifPresent(jacadaForm1.getInputByName("txt_SDFINDSAA")::setValueAttribute); 
+			employee.getAsociativeSA().ifPresent(form.getInputByName("txt_SDFINDSAA")::setValueAttribute); 
 		}
 
-		HtmlInput btnSubmit1 = htmlPage.querySelector("#Sub2207401004");
-		htmlPage = btnSubmit1.click();
-		HtmlUnitToolkit.manageStatusCode(htmlPage);
-		return employee;
+		//------------GET TA
+		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");
+		if(printDoc!=null) {
+			((HtmlSelect)printDoc).setSelectedAttribute("SI", true);
+		}
+		
+		DomNode printType = form.querySelector("select[name=\"cbo_ListaTipoImpresion001\"]");
+		if(printType!=null) {
+			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
+		}
+        
+		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+	
+			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
+			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+			}
+	
+			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
+			if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+			
+			DomNode msg3 = htmlPage.querySelector("#Frame");
+			if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
+				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			}
+		}
+					
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			DomNode message = htmlPage.querySelector("#DIL"); 
+			if(message!=null) {
+				throw new SegSocialException(message.getTextContent().trim());
+			}
+		} else {
+			try {
+				return page.getWebResponse().getContentAsStream().readAllBytes();
+			} catch (Exception e) {
+				throw new InvalidDataException();
+			}
+		}
+			
+		throw new SegSocialException(MESSAGE_ERROR);
 	}
 
 	private static void movPrevDeleteImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -551,7 +552,7 @@ class SistemaREDMov {
 
 	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss)
-			throws Exception {
+			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -612,7 +613,7 @@ class SistemaREDMov {
 	}
 
 	private static Collection<Employee> ipfxnafImpl(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			final String certificatePassword, final String certificateType, List<String> nssList)
 			throws Exception {
 
 		if (nssList.size() >= 7) {			
@@ -665,7 +666,7 @@ class SistemaREDMov {
 	}
 
 	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -735,18 +736,18 @@ class SistemaREDMov {
 		}
 	}
 
-	private static void cambioGrupCtzImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static void updateQuoteGroupImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String grupCtz,
 			Date fecha) throws Exception {
 
 		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00B";
 		String fieldValue = "codNuevoGrupo";
 		String fieldDate = "fechaSituacion";
-		pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, grupCtz, fieldValue, fieldDate, url);
 	}
 
-	private static void cambioOcupacionImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static void updateOccupationImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String ocup,
 			Date fecha) throws Exception {
 
@@ -754,22 +755,22 @@ class SistemaREDMov {
 		String fieldValue = "NueOcu";
 		String fieldDate = "fecSit";
 		String newOcu = ocup.toUpperCase();
-		pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, newOcu, fieldValue, fieldDate, url);
 	}
 
-	private static void cambioCatProfImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static void updateCatProfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
 			throws Exception {
 
 		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00I";
 		String fieldValue = "NueCat";
 		String fieldDate = "fecSit";
-		pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, cat, fieldValue, fieldDate, url);
 	}
 
-	private static void cambioContratoCoefImpl(final InputStream certificateInputStream,
+	private static void updateContractCoefImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String regimen, String ctaCti,
 			String nss, Date fecha, Optional<String> contract, String coef) throws Exception {
 
@@ -829,7 +830,7 @@ class SistemaREDMov {
 		}
 	}
 
-	private static void pageCambioCatOcupGc(final InputStream certificateInputStream, final String certificatePassword,
+	private static void updateCatOcupGc(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fecha,
 			String newValue, String fieldValue, String fieldDate, String url) throws Exception {
 
@@ -905,7 +906,7 @@ class SistemaREDMov {
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
-			Integer mov, String nss, Optional<String> ctaCti, String regimen, String dni, String ident) throws Exception {
+			Integer mov, String nss, Optional<String> ctaCti, String regimen, String dni, String ident) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
 		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 		

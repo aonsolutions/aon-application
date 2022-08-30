@@ -13,6 +13,10 @@ public class ContractSpecificData implements Serializable {
 	private String cno;
 	private String ide;
 	private Date comunicationDate;
+	private String transformIde;
+	private Date comunicationTransformDate;
+	private String extensionIde;
+	private Date comunicationExtensionDate;
 	private String calendarFormativeStartDate;
 	private String calendarFormativeEndDate;
 	private String formativeLevel;
@@ -109,6 +113,38 @@ public class ContractSpecificData implements Serializable {
 
 	public void setComunicationDate(Date comunicationDate) {
 		this.comunicationDate = comunicationDate;
+	}
+	
+	public String getTransformIde() {
+		return transformIde;
+	}
+
+	public void setTransformIde(String transformIde) {
+		this.transformIde = transformIde;
+	}
+
+	public Date getComunicationTransformDate() {
+		return comunicationTransformDate;
+	}
+
+	public void setComunicationTransformDate(Date comunicationTransformDate) {
+		this.comunicationTransformDate = comunicationTransformDate;
+	}
+
+	public String getExtensionIde() {
+		return extensionIde;
+	}
+
+	public void setExtensionIde(String extensionIde) {
+		this.extensionIde = extensionIde;
+	}
+
+	public Date getComunicationExtensionDate() {
+		return comunicationExtensionDate;
+	}
+
+	public void setComunicationExtensionDate(Date comunicationExtensionDate) {
+		this.comunicationExtensionDate = comunicationExtensionDate;
 	}
 
 	public Date getCalendarFormativeStartDate() {

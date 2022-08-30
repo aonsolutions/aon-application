@@ -43,6 +43,7 @@ export const MESSENGER_VIEWS = {
     AON_MESSENGER: "aonMessenger",
     AON_MESSENGER_LIST: "aonMessengerList",
     AON_MESSENGER_CHAT: "aonMessengerChat",
+    AON_MESSENGER_GRAPHIC: "aonMessengerGraphic"
 }
 
 export const MESSENGER_COMPONENTS = {
@@ -65,6 +66,7 @@ export const MESSENGER_IDS = {
     MESSENGER_CHAT: "messengerChat",
     FORM_DINAMIC:"formDinamic",
     PROCESS_DIV: "processDiv",
+    DINAMIC_DIV: "dinamicDiv",
     FIRST_DIV: "firstDiv",
     SECOND_DIV: "secondDiv",
     DIV_MAIN_MOBILE: "divMainMobile",
@@ -91,7 +93,8 @@ export const MESSENGER_IDS = {
     TOOLBAR_LABELS: "toolbarLabels",
     DAILY_TRACKING: "dailyTracking",
     COMMENT_DAILY_TRACKING: "commentDailyTracking",
-    JOB_TYPE: "jobType"
+    JOB_TYPE: "jobType",
+    MAIN_VIEW:"mainView"
 }
 
 export const WORKFLOW_TYPES = {
@@ -109,15 +112,15 @@ export const WORKFLOW_TYPES = {
 } 
 
 export const WORKFLOW_TYPE = (type)=>{
-    if(WORKFLOW_TYPES.OPEN.indexOf(type)!=-1)      return "Abierta"; //TODO
-    if(WORKFLOW_TYPES.CLOSE.indexOf(type)!=-1)     return "Cerrada";//TODO
-    if(WORKFLOW_TYPES.REOPEN.indexOf(type)!=-1)    return "Reabierta";//TODO
-    if(WORKFLOW_TYPES.DUPLICATE.indexOf(type)!=-1) return "Duplicada";//TODO
-    if(WORKFLOW_TYPES.LIBERATE.indexOf(type)!=-1)  return "Liberada";//TODO
-    if(WORKFLOW_TYPES.DELETE.indexOf(type)!=-1)    return "Archivada";//TODO
-    if(WORKFLOW_TYPES.RESTORE.indexOf(type)!=-1)   return "Restaurada";//TODO
-    if(WORKFLOW_TYPES.ASSIGN.indexOf(type)!=-1)    return "Reasignada";//TODO
-    if(WORKFLOW_TYPES.CONNECTED.indexOf(type)!=-1) return "Conectada";//TODO
+    if(WORKFLOW_TYPES.OPEN.includes(type))      return "Abierta"; //TODO
+    if(WORKFLOW_TYPES.CLOSE.includes(type))     return "Cerrada";//TODO
+    if(WORKFLOW_TYPES.REOPEN.includes(type))    return "Reabierta";//TODO
+    if(WORKFLOW_TYPES.DUPLICATE.includes(type)) return "Duplicada";//TODO
+    if(WORKFLOW_TYPES.LIBERATE.includes(type))  return "Liberada";//TODO
+    if(WORKFLOW_TYPES.DELETE.includes(type))    return "Archivada";//TODO
+    if(WORKFLOW_TYPES.RESTORE.includes(type))   return "Restaurada";//TODO
+    if(WORKFLOW_TYPES.ASSIGN.includes(type))    return "Reasignada";//TODO
+    if(WORKFLOW_TYPES.CONNECTED.includes(type)) return "Conectada";//TODO
     return "Comentada"; //TODO
 } 
 
@@ -157,7 +160,8 @@ export const TASK_SOURCE = {
 	GITHUB:"github",
     QUERY: "query",
 	REQUEST: "request",
-    DUPLICATE:"duplicate"
+    GROUPED: "grouped",
+    TASK:"task"
 } 
 
 export const TASK_EVALUATION = {
@@ -173,7 +177,12 @@ export const MessengerSidenav = {
         name: "Addcomment",
         icon: "add_comment",
         id: "Addcomment",
-    }
+    },
+    GRAPHIC: {
+        name: "GRAPHIC",
+        icon: "bar_chart",
+        id: "bar_chartMessenger",
+    },
 };
 
 export const TASK_FILTER = [

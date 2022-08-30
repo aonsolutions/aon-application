@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -212,5 +213,9 @@ public interface IRegistry {
 	// **************************************************
 	public Stream<Registry> getSuggestionRegistries(AONContext ctx, LinkedList<RegistryType> list, RegistryFilter filter);
 	public Stream<Registry> getGlobalSuggestionRegistries(RegistryFilter filter);
-	
+
+	// ------------------- DOMAIN LINKED
+	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry);
+	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked);	
+
 }

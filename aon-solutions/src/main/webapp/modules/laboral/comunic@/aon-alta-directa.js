@@ -1,12 +1,12 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters, openFileBase64 } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData, createContractDataMdCtz, createQuoteMonthly, createAsociativeSA } from '../createComponent.js';
-import { createToolbar } from '../../notification/createComponent.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
+import { CreateComponent } from '../../../components/CreateComponent.js';
 // import * as LS from '../../../services/localStorageService.js';
 
 export class AonAltaDirecta extends AonElement {
@@ -77,7 +77,8 @@ export class AonAltaDirecta extends AonElement {
     paintView() {
         this.applicationEl.removeToolbarOptions();
 
-        createToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa"}, this);
+        const toolbar = CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa1"});
+        this.appendChild(toolbar);
 
         createFormComunica(this.id, this);
 
@@ -591,9 +592,15 @@ export class AonAltaDirecta extends AonElement {
     async alta() {
         this.applicationEl.startLoading();
         try {
-            await sendAlta(this.getContract());
-            this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
+            const resp = await sendAlta(this.getContract());
+
             this.applicationParentEl._movements = [];
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
+
+            if(resp && resp.file){
+                openFileBase64(resp.file, "application/pdf").catch(console.error);
+            }
+
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -608,16 +615,23 @@ export class AonAltaDirecta extends AonElement {
             const codBajaEl = this.getElement("codBaja");
             const frv = this.getElement("frv");
             const asociativeSA = this.getElement("asociativeSA");
-            await sendBaja({
+            const resp = await sendBaja({
                 ...this.data, 
                 fechaBaja: fechaBajaEl.value, 
                 situation: codBajaEl.value, 
                 frv: frv.value ? frv.value : undefined, 
                 asociativeSA: asociativeSA && asociativeSA.value ? asociativeSA.value : undefined
             });
-            this.applicationEl.getOptionDialog().close();
-            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
+
             this.applicationParentEl._movements = [];
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
+
+            this.applicationEl.getOptionDialog().close();
+
+            if(resp && resp.file){
+                openFileBase64(resp.file, "application/pdf").catch(console.error);
+            }
+
             this.back();
         } catch (error) {
             this.showToast(error);

@@ -39,6 +39,7 @@ export const ACTIVITY_SUMMARY = MSG.ACTIVITY_SUMMARY;
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
+export const ADD_COMPOSITION = 'Añadir Composición'; // TODO
 export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_FINANCE = MSG.ADD; // TODO
@@ -140,6 +141,7 @@ export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 export const CONVERSATION = 'Conversación'; // TODO
+export const CONTENT = 'Contenido'; // TODO
 
 
 // ----- D
@@ -227,6 +229,7 @@ export const GROUP_DATA = MSG.GROUP_DATA;
 export const GROUP_MANAGEMENT = MSG.GROUP_MANAGEMENT;
 export const GROUP = MSG.GROUP;
 export const GROUPS = MSG.GROUPS;
+export const GROUPED = "Agrupadas";//TODO
 
 // ----- H
 
@@ -298,11 +301,13 @@ export const MINIMIZE = "Minimizar";//TODO
 export const MESSENGER_SERVICE = "Mensajería";//TODO
 export const MONTH = "Mes"; //TODO
 export const MAILBOX = "Buzón";//TODO
+export const MESSAGE = "Mensaje"; //TODO
 
 // ----- N
 
 export const NAME = MSG.NAME;
 export const NEW = MSG.NEW;
+export const NEWS = "Noticias";//TODO
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEW_ELABORATION = 'Nueva Elaboración';
 export const NEW_EXPENSE = MSG.NEW_EXPENSE;
@@ -317,6 +322,7 @@ export const NUMBER = MSG.NUMBER;
 export const NOTARY = 'Notario'; //TODO
 export const NOTES = MSG.NOTES;
 export const NOTE = MSG.NOTE;
+export const NOTICE = "Noticia"; //TODO
 // ----- O
 
 export const OBSERVATION = MSG.OBSERVATION;

@@ -31,19 +31,8 @@ public class Mod2002021ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 
 	@Override
-	public Mod2002021 initializeNewMod2002021(Occam occam, Mod2002021 mod200) {
-		return MODEL2002021.initializeNewMod2002021(occam,mod200);
-	}
-	
-	@Override
 	public Mod2002021 initializeMod2002021(Occam occam, Mod2002021 mod200) {
 		return MODEL2002021.initializeMod2002021(occam,mod200);
-	}
-
-	@Override
-	public Mod2002021 getMod2002021ByYear(Occam occam, int year)
-			throws AonCoreException {
-		return MODEL2002021.getMod2002021ByYear(occam,year);
 	}
 
 	@Override
@@ -64,22 +53,11 @@ public class Mod2002021ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 
 	@Override
-	public void deleteMod2002021(Occam occam, int id)
+	public void deleteMod2002021(Occam occam, Mod2002021 mod200)
 			throws AonCoreException {
-		MODEL2002021.deleteMod2002021(occam,id);
+		MODEL2002021.deleteMod2002021(occam, mod200);
 	}
 
-	@Override
-	public String dumpAEATMod2002021(Mod2002021 mod200) throws AonCoreException {
-		return MODEL2002021.dumpAEATMod2002021(mod200);
-	}
-
-	@Override
-	public Mod2002021 importMod2002020(Occam occam,
-			Mod2002021 mod200) throws AonCoreException {
-		return MODEL2002021.importMod2002020(occam, mod200);
-	}
-	
 	@Override
 	public Mod2002021 fillMod2002021AccountingData(Occam occam, Mod2002021 mod200, String base64) {
 		byte[] fileData = Base64.getDecoder().decode(base64);

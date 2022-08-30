@@ -25,6 +25,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -861,9 +862,6 @@ public class JooqIT {
 		contractData.setSeniorityDate(contractTable.get(CONTRACT.SENIORITY_DATE));
 		contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
 		
-		contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
-		contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
-		
 		// FECHA ACTUAL
 		java.util.Date actualJavaDate = new java.util.Date();
 		Date actualSQLDate = new Date(actualJavaDate.getTime());
@@ -982,25 +980,34 @@ public class JooqIT {
 			
 			if(null == it.getId() || -1 == it.getId()) {	// NUEVO PARTE IT
 				
+				EmployeeInfo employeeInfo = itEmployee.getEmployeeInfo();
+				ContractInfo contractInfo = itEmployee.getContractInfo();
+				
 				Date startDate = null == it.getStartDate() ? null : new Date(it.getStartDate().getTime());
 				Date endDate = null == it.getEndDate() ? null : new Date(it.getEndDate().getTime());
 				
-//				Integer contractId = itEmployee.getContractInfo().getContractId();
-				String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-				String nss = itEmployee.getEmployeeInfo().getSsNumber();
-				
-				Result<Record> contractRecords = dslContext
+				String nss = employeeInfo.getSsNumber();
+
+				SelectConditionStep<Record> query = dslContext
 					.select()
 					.from(REGISTRY)
 					.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-					.innerJoin(ENTERPRISE_CCC).onKey()
-					.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
-					.and(ENTERPRISE_CCC.CCC.eq(ccc))
-					.and(PERSON.SOCIAL_SECURITY_NUM.eq(nss))
+					.leftJoin(ENTERPRISE_CCC).onKey()
+					.where(PERSON.SOCIAL_SECURITY_NUM.eq(nss))
 					.and(CONTRACT.START_DATE.le(startDate))
 					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
-					.orderBy(CONTRACT.ID.desc())
+				;
+				
+				String completeCcc = contractInfo.getCompleteCCC();
+				if(completeCcc!=null) {
+					String ccc = completeCcc.substring(4, completeCcc.length());
+					query.and(ENTERPRISE_CCC.DOMAIN.eq(domainId)).and(ENTERPRISE_CCC.CCC.eq(ccc));
+				} else {
+					query.and(CONTRACT.DOMAIN.eq(domainId));
+				}
+		
+				Result<Record> contractRecords = query.orderBy(CONTRACT.ID.desc())
 					.fetch();
 				
 				if(contractRecords.isEmpty())

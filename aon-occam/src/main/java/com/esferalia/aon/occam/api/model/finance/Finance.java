@@ -121,11 +121,13 @@ public class Finance implements Serializable, HasAudit {
 	public Registry getRegistry() {
 		return registry;
 	}
-
 	public Finance setRegistry(Registry registry) {
 		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registry , registry) );
 		this.registry = registry;
 		return this;
+	}
+	public boolean hasRegistry() {
+		return registry != null && registry.getId() != null;
 	}
 
 	public Integer getFinanceGroup() {

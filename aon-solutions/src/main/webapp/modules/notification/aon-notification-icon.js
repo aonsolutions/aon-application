@@ -1,11 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
+import { CreateComponent } from '../../components/CreateComponent.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
 import { getTotalNotification, saveAuthDevice, deleteAuthDevice } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
 import { createSpan } from '../../services/utilsComponents.js';
 import { AonNotification } from './aon-notification.js';
-import { createBadge, createIconButton } from './createComponent.js';
+import { createBadge } from './createComponent.js';
 
 export class AonNotificationIcon extends AonElement {
 
@@ -49,7 +50,7 @@ export class AonNotificationIcon extends AonElement {
 
     getView(){
         const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON}).element;
-        createIconButton({
+        CreateComponent.createAonIconButton({
             attributes:{
                 id:  "aonHeaderNotificationButton",
                 icon: "notifications",

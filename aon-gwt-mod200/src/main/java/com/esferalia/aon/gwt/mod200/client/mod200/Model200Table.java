@@ -38,6 +38,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model200Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod200>{
 	
+	public static final int MAX_YEAR = 2021;  // Máximo Ejercicio para el que se puede hacer el modelo 200
+	public static final int BETA_YEAR = 0; // Ejercicio para el cual la creación del modelo 200 aparece solo si el dominio tiene marcado "BETA"	
+	
 	// PARA COMPILAR LOS ANTERIORES LO USABA LA CLASE ErrorPage
 	public static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 	// --------------------
@@ -80,17 +83,13 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 		ContextMenu menu = new ContextMenu();		
 		menu.addStyleName(AON.AON_CSS.aonSelector());
 		
-		for (int i = 2021; i >= 2013; i--) {
+		for (int i = MAX_YEAR; i >= 2013; i--) {
 			
-			// Ejercicio 2021 solo dominios BETA
-//			if (i==2021 && !cbk.getOptions().getConfiguration().isBetaEnabled())
-//				continue;			
+			// Comprobar si la opción debe aparecer solo en dominios "BETA"
+			if (i == BETA_YEAR && !cbk.getOptions().getConfiguration().isBetaEnabled())
+				continue;
 			
-			String msg = AON.MSG.newSomething(String.valueOf(i));
-			
-			// Ejercicio 2021 BETA
-//			if (i==2021)
-//				msg = msg + " (BETA)";
+			String msg = AON.MSG.newSomething(String.valueOf(i)) + (i == BETA_YEAR ? " (BETA)" : "");
 			
 			final int year = i;
 			
@@ -129,7 +128,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			@Override
 			public void onFailure(Throwable caught) {
 				popup.hide();					
-				cbk.showError( AON.MSG.unableToReadDeclaration(caught.getMessage()) );
+				cbk.showError(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 			}
 		});
 	}
@@ -139,10 +138,9 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter()) // Administración
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter()) // Año
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter()) // Periodo
-		// FALTA - LA COLUMNA DE ESTADO NO SE PONDRÁ HASTA QUE SE DESARROLLE LO DEL ESTADO EN EL MODELO 200
-//		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado
+//		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
 		, CMP("C"					, 20 ,AON.CSS.aonTextCenter()) // Complementaria
-		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())   // Documento
+		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())   // Documento (NIF)
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())   // Nombre
 		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())  // Importe Resultado
 	    , ACT(AonStringUtils.EMPTY	, 100,AON.CSS.aonTextCenter()) // Tipo Resultado
@@ -175,13 +173,13 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
 		AonDisplayGridHeaderRow headerRow = tab.addHeaderRow();
-		for ( Columns col : Columns.values()) {
+		for (Columns col : Columns.values()) {
 			Label label = new Label( col.getHeaderLabel());
 			AonDisplayGridCell headerCell = headerRow.addCell(col.getCellStyleClass());
 			if (col == Columns.AUTO ) {
 				headerCell.addStyleName(AON.CSS.aonFlexGrow1());
 			} else {
-				headerCell.setWidth(col.getColWidth()  + "px");
+				headerCell.setWidth(col.getColWidth() + "px");
 			}
 			headerCell.add(label);
 		}
@@ -189,48 +187,52 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	}
 	
 	private void paint(LinkedList<Mod200> result) {
-		for ( Mod200 mod200 : result) {
+		
+		for (Mod200 mod200 : result) {
 			
+			// Administración
 			InlineLabel admon = new InlineLabel();
 			admon.setTitle( mod200.getAdministration().getDescription() );
 			admon.setStyleName(AON.CSS.aonIconLabel());
 			admon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod200.getAdministration()) );
 			
+			// Complementaria 
 			InlineLabel comp = new InlineLabel();
 			comp.setTitle( AON.MSG.complementary());
 			comp.setStyleName(AON.CSS.aonIconLabel());
 			comp.addStyleName( mod200.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
 			
+			// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+//			AonDisplayGridCell statusCell = new AonDisplayGridCell();
+//			statusCell.add(new InlineLabel(mod200.getYear() < 2022 ? "" : mod200.getStatus().getName()));
+//			statusCell.addStyleName(AON.CSS.aonTextCenter());
+//			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200.getStatus()));
+//			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200.getStatus()));
+
+			// Tipo Resultado (Cuota cero, Ingreso o Devolución)
+			String resultType = AON.MSG.zeroQuota();
+			if (mod200.isDeposit())
+				resultType = AON.MSG.deposit();
+			else if (mod200.isPayback())
+				resultType = AON.MSG.payBack();						
+			
+			// Añadir fila 
+			
 			AonDisplayGridRow row = tab.addRow();
 			row.addStyleName(AON.CSS.aonClickable());
-			row.addClickHandler( event ->  SelectionEvent.fire(Model200Table.this, mod200));					
+			row.addClickHandler( event -> SelectionEvent.fire(Model200Table.this, mod200));					
 			
-			row.addCell( new InlineLabel(FiscalModelUtils.getModelName(mod200)), AON.CSS.aonTextCenter())    
- 				.addCell( admon , AON.CSS.aonTextCenter())
- 				.addCell( new InlineLabel(AonNumberUtils.toString( mod200.getYear())), AON.CSS.aonTextCenter())
-				.addCell( new InlineLabel(mod200.getPeriod().getDescription()), AON.CSS.aonTextCenter());
-			
-			// FALTA - El "Estado" se empezará a usar a partir del Modelo 200 - 2021
-//			AonDisplayGridCell statusCell = new AonDisplayGridCell();
-//			statusCell.add(new InlineLabel(mod200.getYear() < 2021 ? "" : mod200.getStatus().getName()));
-//			statusCell.addStyleName(AON.CSS.aonTextCenter());
-//			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200.getStatus()) );
-//			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200.getStatus()) );
-//			row.add( statusCell );
-			
-			// Tipo Resultado (Ingreso o Devolucion
-			String resultType = "";
-			if (mod200.isDeposit()) 
-				resultType = AON.MSG.deposit(); 
-			else if (mod200.isPayback()) 
-				resultType = AON.MSG.payBack();
-			
-			row.addCell( comp , AON.CSS.aonTextCenter())
-				.addCell( new InlineLabel(mod200.getDocument()))
-				.addCell( new InlineLabel(mod200.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod200.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(resultType));
-				;
+			row.addCell(new InlineLabel(FiscalModelUtils.getModelName(mod200)), AON.CSS.aonTextCenter())     	// Modelo    
+			   .addCell(admon, AON.CSS.aonTextCenter())                                                      	// Administración
+ 			   .addCell(new InlineLabel(AonNumberUtils.toString(mod200.getYear())), AON.CSS.aonTextCenter()) 	// Ejercicio
+			   .addCell(new InlineLabel(mod200.getPeriod().getDescription()), AON.CSS.aonTextCenter());      	// Periodo			
+//			row.add(statusCell); 																				// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+			row.addCell(comp, AON.CSS.aonTextCenter()) 															// Complementaria
+			   .addCell(new InlineLabel(mod200.getDocument())) 													// NIF
+			   .addCell(new InlineLabel(mod200.getFullName())) 													// Apellidos y Nombre o Razón Social
+			   .addCell(new InlineLabel(AON.FMT.format(mod200.getDeclarationResult())), AON.CSS.aonTextRight()) // Resultado (Cero, Importe Ingreso o Devolución)
+			   .addCell(new InlineLabel(resultType)); 															// Tipo Resultado (Cuota Cero, Ingreso o Devolución)
+				
 		}
 		
 	}
@@ -239,5 +241,6 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Mod200> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
+	
 }
 

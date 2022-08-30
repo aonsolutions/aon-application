@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { domainId, getAuth, getDomainUserRoles, getPeriod, getTaskHoldersUser } from "../../services/service.js";
+import { domainId, getAuth, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders } from "../../services/service.js";
 import {  isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
@@ -19,6 +19,7 @@ import '../../css/aon.css';
 export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
   TASK_HOLDER;
+  TASK_HOLDER_ENTERPRISE;
   DATE_TMP;
   AUTHS;
   _filter;
@@ -41,6 +42,7 @@ export class AonTimecontrol extends AonElement {
     this.DATE_TMP = null;
     this.AON_SIGNIN = SIGNIN_VIEWS.AON_SIGNIN;
     this.AUTHS=[];
+    this.TASK_HOLDER_ENTERPRISE = [];
   }
 
   getDur() {
@@ -91,7 +93,7 @@ export class AonTimecontrol extends AonElement {
 
     this.applicationEl.addSidenavOptions(MSG.TIMECONTROL, options);
 
-    const {TODAY, YESTERDAY, THIS_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
+    const {TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
     const options2 = [
       {
         ...TODAY,
@@ -106,8 +108,12 @@ export class AonTimecontrol extends AonElement {
         fn: () =>this.setDataFilter({period:THIS_WEEK.id})
       },
       {
+        ...LAST_WEEK,
+        fn: () =>this.setDataFilter({period:LAST_WEEK.id})
+      },
+      {
         ...THIS_MONTH,
-        fn: (e) => this.setDataFilter({period:THIS_MONTH.id})
+        fn: () => this.setDataFilter({period:THIS_MONTH.id})
       }
     ];
     
@@ -152,6 +158,10 @@ export class AonTimecontrol extends AonElement {
         } else if( SIGNIN_VIEWS.AON_LOCATION_ADD === view){ resolve(true);return; }
       }
 
+      if(data && data.reload){
+        this.TASK_HOLDER = null;
+      }
+
       // if(!this.getElement(view)){
         switch(view){
           case SIGNIN_VIEWS.AON_PRESENCE_LIST:
@@ -162,7 +172,7 @@ export class AonTimecontrol extends AonElement {
             if(data && data.taskHolderId){
               this.TASK_HOLDER = {id: data.taskHolderId, name: data.name};
             } else {
-              this.TASK_HOLDER = await this.getTaskHolder().catch(e=>null);
+              this.TASK_HOLDER = await this.getTaskHolder().catch(()=>null);
             }
             if(data && data.status && !isEmptyObject(this.TASK_HOLDER)) {this.TASK_HOLDER.status = data.status;}
             this._filter.taskHolderId = this.TASK_HOLDER.id;
@@ -172,8 +182,9 @@ export class AonTimecontrol extends AonElement {
             break;
           case SIGNIN_VIEWS.AON_EVENT_ADD:
             aonView = new AonEventAdd();
-            if (data) { aonView.data = data;} 
-            else if (this.TASK_HOLDER) {
+            if (data) { 
+              aonView.data = data;
+            } else if (this.TASK_HOLDER) {
               aonView.data = {task_holder: this.TASK_HOLDER};
             }
             break;
@@ -206,7 +217,7 @@ export class AonTimecontrol extends AonElement {
   async getAuth({task_holder}){
     let auth = this.AUTHS.find(d => d.task_holder === task_holder);
     if(!auth){
-      auth = await getAuth({task_holder}).catch(e=>null);
+      auth = await getAuth({task_holder}).catch(()=>null);
       this.AUTHS.push({...auth, task_holder});
     } 
     return auth;
@@ -220,6 +231,13 @@ export class AonTimecontrol extends AonElement {
     return this.TASK_HOLDER;
   }
   
+  async getTaskHoldersEnterprise(){
+		if(this.TASK_HOLDER_ENTERPRISE.length<=0){
+			const ths = await getTastHolders();
+			this.TASK_HOLDER_ENTERPRISE = ths.map( c=> ({...c, value: c.id})  );
+		}
+		return this.TASK_HOLDER_ENTERPRISE;
+	}
   
   isEmployee(){
     return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();

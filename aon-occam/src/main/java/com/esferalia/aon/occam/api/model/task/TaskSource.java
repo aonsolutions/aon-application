@@ -11,7 +11,8 @@ public enum TaskSource {
 	GITHUB,
 	QUERY,
 	REQUEST,
-	DUPLICATE;
+	GROUPED,
+	TASK;
 
 	public String getName() {
     	return this.toString().toLowerCase();

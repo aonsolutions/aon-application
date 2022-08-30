@@ -12,6 +12,7 @@ public enum ContractAttachType implements Serializable {
 	,IDC(104)
 	,IDCPLNSS(105)
 	,OTHER(106)
+	,COPYCONTRACTTRANSFORM(108)
 	,MODIFCONTRACT(107)
 	;
 

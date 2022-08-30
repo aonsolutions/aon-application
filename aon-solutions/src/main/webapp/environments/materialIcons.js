@@ -130,10 +130,12 @@ export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
 export const GROUP_OFF = 'group_off';
+export const GROUP_WORK = 'group_work';
 export const GROUPS = 'groups';
 
 // ----- H
-export const SCHEDULE = 'schedule';
+export const HIGHLIGHT_OFF = 'highlight_off';
+
 // ----- I
 
 export const INBOX = 'inbox';
@@ -195,6 +197,7 @@ export const ROOM = 'room';
 // ----- S
 
 export const SAVE = 'save';
+export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';

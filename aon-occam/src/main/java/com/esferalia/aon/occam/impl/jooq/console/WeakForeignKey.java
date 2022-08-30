@@ -108,12 +108,12 @@ final class WeakForeignKey<R extends Record, O extends Record> extends AbstractK
 
 	@Override
 	public List<TableField<O, ?>> getKeyFields() {
-		return null;
+		return this.key.getFields();
 	}
 
 	@Override
 	public TableField<O, ?> [] getKeyFieldsArray() {
-		return null;
+		return this.key.getFieldsArray();
 	}
 
 	@Override

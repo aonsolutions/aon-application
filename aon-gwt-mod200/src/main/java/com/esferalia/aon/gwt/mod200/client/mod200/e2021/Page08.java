@@ -60,8 +60,6 @@ public class Page08 extends PageAbs {
 
 	public Page08( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
-		initializeTable();
 	}
 
 	@Override
@@ -132,6 +130,7 @@ public class Page08 extends PageAbs {
 			callback.getMod200Object().getMod200().addVariable(bv);
 			callback.markAsDirty();
 		});
+		otherInputs.add(opeVol);
 		
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
@@ -197,13 +196,6 @@ public class Page08 extends PageAbs {
 			}
 			++row;
 		}
-	}
-	
-	@Override
-	protected void populate() {
-		DoubleVariableEx bv = new DoubleVariableEx( Mod2002021Key.VOLOPE );
-		bv.setValue( (double)opeVol.getSelectedIndex() );
-		callback.getMod200Object().getMod200().addVariable(bv);
 	}
 	
 	@Override

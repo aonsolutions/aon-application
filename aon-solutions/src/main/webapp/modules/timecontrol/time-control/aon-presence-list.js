@@ -15,6 +15,7 @@ export class AonPresenceList extends AonElement {
   TABLE_ID;
   searchFilter;
   _list;
+  FN_FILTER;
   static get observedAttributes() {
     return [];
   }
@@ -37,15 +38,27 @@ export class AonPresenceList extends AonElement {
     this.initialize();
     this.build();
   }
+  
+  disconnectedCallback() {
+    this.applicationParentEl.removeEventListener("filterParent", this.FN_FILTER);
+  }
 
   initialize(){
     this.id = this.id || SIGNIN_VIEWS.AON_PRESENCE_LIST;
     this.TABLE_ID = this.id + "Table";
+    this._list = [];
+
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+
     this.applicationEl.addToolbarTitle("Presencia");
     this.applicationParentEl.periodSideNavDisplay(true);
-    this._list = [];
+
+    this.FN_FILTER = ()=> {
+      this._list = [];
+      this.getTable();
+    }
+
   }
   
   build(){
@@ -53,10 +66,7 @@ export class AonPresenceList extends AonElement {
     this.buildToolbar();
     this.getTable();
     
-    this.applicationParentEl.addEventListener("filterParent",()=> {
-      this._list = [];
-      this.getTable();
-    });
+    this.applicationParentEl.addEventListener("filterParent", this.FN_FILTER);
   }
 
   paintView() {
@@ -67,8 +77,21 @@ export class AonPresenceList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    if(!this.isMobile()) this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
+    
+    if(!this.applicationParentEl.isEmployee()){
+      if(this.isMobile()){
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.aonEventAdd() );
+      } else {
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.aonEventAdd());
+      }
+    }
+
+    if(!this.isMobile()) {
+      this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
+    }
+
     this.buildToolbarSearch();
+    
   }
 
   buildToolbarSearch(){
@@ -287,6 +310,10 @@ export class AonPresenceList extends AonElement {
       parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data);
     }
   }
+  
+  aonEventAdd(){
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, {date: new Date(), reload:true});
+  }  
 }
 
 window.customElements.define("aon-presence-list", AonPresenceList);

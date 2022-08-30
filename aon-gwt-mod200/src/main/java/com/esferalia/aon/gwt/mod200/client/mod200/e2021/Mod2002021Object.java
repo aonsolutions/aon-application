@@ -7,7 +7,6 @@ import java.util.List;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
@@ -29,25 +28,19 @@ public class Mod2002021Object implements Serializable {
 	private boolean initialized;
 	private Mod2002021 mod200;
 	
-	private boolean authomaticCalculation = true;
 	private Model200ModuleOptions options;	
 
 	public Mod2002021Object(Model200ModuleOptions options, Mod2002021 mod200) {
 		
 		this.options = options;
 		this.mod200 = mod200;
-		initialized = mod200.getId() !=null;
+		initialized = (mod200.getId() != null);
 	}
 
-	public Integer getId() {
-		return mod200.getId();
-	}
 	public boolean isInitialized() {
 		return initialized;
 	}
-	public boolean isComplementary() {
-		return mod200.isComplementary();
-	}
+	
 	public void register(IMod200ChangeListener listener) {
 		if (changeListeners == null) {
 			changeListeners = new LinkedList<IMod200ChangeListener>();
@@ -99,7 +92,7 @@ public class Mod2002021Object implements Serializable {
 	}
 	
 	public void delete(final AsyncCallback<Void> callback) {
-		Model200.getMod2002021Service().deleteMod2002021(options.getOccam(), mod200.getId(), new AsyncCallback<Void>() {
+		Model200.getMod2002021Service().deleteMod2002021(options.getOccam(), mod200, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -132,17 +125,6 @@ public class Mod2002021Object implements Serializable {
 		});
 	}
 	
-	public Administration getAdministration() {
-		return mod200.getAdministration();
-	} 
-	public boolean isAuthomaticCalculation() {
-		return authomaticCalculation;
-	}
-
-	public void setAuthomaticCalculation(boolean authomaticCalculation) {
-		this.authomaticCalculation = authomaticCalculation;
-	}
-
 	public Mod2002021 getMod200() {
 		return mod200;
 	}
@@ -161,6 +143,7 @@ public class Mod2002021Object implements Serializable {
 			return 0.0;
 			
 	}
+
 	public boolean isVisible(Mod2002021Key key) {
 		return  mod200.getVisibleMap().containsKey(key);
 	}
@@ -174,9 +157,7 @@ public class Mod2002021Object implements Serializable {
 		newVar.setValue( value );
 		newVar.setChangedByUser(true);
 		mod200.addDraftVariable(newVar);
-		if (isAuthomaticCalculation()) {
-			calculate();
-		}
+		calculate();
 	}
 	
 	public void mathExpression(String expression,AsyncCallback<Double> callback) {
@@ -199,21 +180,6 @@ public class Mod2002021Object implements Serializable {
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert("Error durante el c\u00E1lculo del impuesto.");
-			}
-		});
-	}
-
-	public void dumpAEAT(final AsyncCallback<String> callback) {
-		Model200.getMod2002021Service().dumpAEATMod2002021(mod200, new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				callback.onSuccess(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.onFailure(caught);
 			}
 		});
 	}

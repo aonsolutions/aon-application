@@ -46,16 +46,23 @@ const getImage = (dataUrl) => {
       const newHeight = longestDimension == "height" ? maxResolution : newSize;
   
       // Create a temporary canvas to draw the downscaled image on.
-      const canvas = document.createElement("canvas");
-      canvas.width = newWidth;
+      const canvas  = document.createElement("canvas");
+      canvas.width  = newWidth;
       canvas.height = newHeight;
+
+      // console.log(newWidth, newHeight);
+      // document.getElementById('dinamicDiv').appendChild(image);
   
       // Draw the downscaled image on the canvas and return the new data URL.
       const ctx = canvas.getContext("2d");
+
       ctx.drawImage(image, 0, 0, newWidth, newHeight);
+     
       const newDataUrl = canvas.toDataURL(imageType, quality);
+
       contentBase64 = newDataUrl.split(",")[1];
-      const sizeNew = window.atob(contentBase64).length;
+      const sizeNew = atob(contentBase64).length;
+
       file.content = contentBase64;
       file.size = sizeNew;
 

@@ -3,7 +3,6 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +47,7 @@ import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskCounts;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
@@ -75,14 +75,14 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/":
 					response(req, resp, getTasks(api));
 					break;
+				case "/one":
+					response(req, resp, getTask(api));
+					break;
 				case "/notice":
 					response(req, resp, new JSONObject());
 					break;
 				case "/job-type":
 					response(req, resp, getJobType(api));
-					break;
-				case "/one":
-					response(req, resp, getTask(api));
 					break;
 				case "/workflow":
 					response(req, resp, getWorkflows(api));
@@ -132,8 +132,8 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/historic":
 					response(req, resp, sendTaskHistoric(api));
 					break;
-				case "/historic-email":
-					response(req, resp, sendTaskHistoricEmail(api));
+				case "/branch":
+					response(req, resp, saveBranch(api));
 					break;
 				case "/workflow":
 					response(req, resp, saveWorkflow(api, Optional.empty(), true));
@@ -183,10 +183,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		boolean isReceived = params.isNull(IJsonNames.SENDER) && !params.isNull(IJsonNames.TASK_HOLDER);
 		boolean isSent     = !params.isNull(IJsonNames.SENDER) && params.isNull(IJsonNames.TASK_HOLDER);
 		boolean all = !isReceived && !isSent;
+		boolean isCau = TaskUtils.isCau(params);
 
 		List<Task> tasks = new ArrayList<>(); 
 		
-		if(TaskUtils.isCau(params) && params.optString(IJsonNames.EMAIL).isEmpty()) {
+		if(isCau && params.optString(IJsonNames.EMAIL).isEmpty()) {
 			throw new AonApiException("Auth inexistente");
 		}
 		
@@ -197,9 +198,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			}
 		}
 		
-		if(all) {
+		if(all && !isCau) {
 			tasks.addAll(
-				AON_SOLUTIONS.getTaskParentStream(api.getDomain(), api.getUser(), 
+				AON_SOLUTIONS.getTaskParentOrChildStream(api.getDomain(), api.getUser(), 
 					f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage
 				)
 				.collect(Collectors.toList())
@@ -228,7 +229,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		Integer taskId    = params.optInt(IJsonNames.ID);
 		Integer number    = params.optInt(IJsonNames.NUMBER);
 
-		Task task = AON_SOLUTIONS.getTask(domain, user, f-> 
+		Task task = AON_SOLUTIONS.getTaskAndChilds(domain, user, f-> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(number != 0 ? f.getNumberProperty().eq(number)  : f.getIdProperty().eq(taskId) )
 		);
@@ -239,21 +240,17 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		JSONObject json = TaskJSON.toJSON(task);
 		
-		if(!TaskUtils.isCau(params)) {
+		if(TaskUtils.isCau(params)) {
+			json.put("childs", new JSONArray());
+		} else {
 			if(task.isChild()) {
-				
 				Task parent = AON_SOLUTIONS.getTask(domain, user, f-> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(task.getParent())) );
 				if(parent.getId()!=null) {
 					json.put("parentObj", TaskJSON.toJSON(parent));
 				}
-
-			} else {
-				List<Task> childs = AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getDomainProperty().eq(domain.getId()).and(f.getParentProperty().eq(task.getId())) )
-				.sorted(Comparator.comparing(Task::getId)).collect(Collectors.toList());
-				json.put("childs", TaskJSON.toJSON(childs) );
-			}
+			} 
 		}
-		
+
 		return json;
 	}
 	
@@ -471,7 +468,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskStatusCount(AonApiData api) {
 		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
-			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
+			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain()) ),
 			Optional.empty(),
 			Optional.empty()
 		);
@@ -556,7 +553,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		return json;
 	}
 
-	private JSONObject sendTaskHistoricEmail(AonApiData api) {
+	private JSONObject saveBranch(AonApiData api) {
 		JSONObject params = api.getData();
 		Domain domain = api.getDomain();
 		User user     = api.getUser();
@@ -569,43 +566,39 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		Workgroup workgroup = WorkgroupJSON.fromJSON(params.optJSONObject(IJsonNames.WORKGROUP));
 		
-		TaskHolder sender = workflow.getTaskHolder();
+		TaskHolder sender   = workflow.getTaskHolder();
 		
 		TaskHolder receiver = TaskHolderJSON.fromJSON(params.optJSONObject("task_holder_receiver"));
 		
 		User userReceiver = AON.getUser(domain, login, f->f.getIdProperty().eq(receiver.getUserId()));
 	
-		Task taskParent = AON_SOLUTIONS.getTask(domain, userReceiver, f-> f.getIdProperty().eq(id) );
+		Task task = AON_SOLUTIONS.getTaskAndChilds(domain, userReceiver, f-> f.getIdProperty().eq(id) );
 		
-	   boolean isChild = taskParent.isChild();
-		
-	   Integer taskId = isChild ? taskParent.getParent() : taskParent.getId();
-	   
-	   if(!isChild) {
-			 taskParent.setStatus(TaskStatus.IN_PROGRESS);
-	   }
+	    Integer taskId = task.getId();
+	    
+		if(task.getSource().equals(TaskSource.TASK) && task.isChild()) {
+			taskId = task.getParent();
+		} else {
+			 task.setStatus(TaskStatus.IN_PROGRESS);
+		}
 
-	   AON_SOLUTIONS.saveTask(api.getDomain(), user, taskParent);
-		
-	   taskParent.setTaskHolder(receiver);
-	   taskParent.setWorkgroup(workgroup);
-	   taskParent.setStatus(TaskStatus.PENDING);
-	   
-	   taskParent.setId(null);
-	   
-	   taskParent.setGtaskId(null);
-	   
-	   taskParent.setParent(taskId);
-	   
-	   taskParent.setSender(sender);
+	    AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
+		   
+	    task.setId(null) 
+	    .setGtaskId(null)
+	    .setParent(taskId)
+	    .setSender(sender)
+	    .setTaskHolder(receiver)
+	    .setWorkgroup(workgroup)
+	    .setStatus(TaskStatus.PENDING)
+	    .setSource(TaskSource.TASK);
 
-	   Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), user, taskParent);
-	   
-	   // SAVE CONNECTED TASK PARENT
-	   saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
-	   
-	   //  ASIGNED NEW TASK
-
+	    Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), user, task);
+		   
+	    // SAVE CONNECTED TASK PARENT
+	    saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())), true); 
+		   
+	    //  ASIGNED NEW TASK
 	   TaskWorkflow assign = workflow.clone()
        .setTask(newTask.getId())
 	   .setComment(receiver.getName())
@@ -619,12 +612,12 @@ public class TaskServlet extends AonApiHttpServlet{
 
 	   // SAVE COMMENT
 	   TaskWorkflow commentNew = assign.clone()
-	   .setComment(comment!=null ? comment : "")
+	   .setComment(comment!=null && !comment.isEmpty() ? comment : "")
 	   .setType(TaskWorkflowType.COMMENT);
 	   
 	   saveWorkflow( api, Optional.of(commentNew), false);
 	   
-	   TaskUtils.onNotification(api, commentNew.setComment(comment!=null ? comment : "").setType(TaskWorkflowType.ASSIGN));
+	   TaskUtils.onNotification(api, commentNew.setType(TaskWorkflowType.ASSIGN));
 
 	   return new JSONObject();
     }
@@ -634,22 +627,33 @@ public class TaskServlet extends AonApiHttpServlet{
 		List<Task> tasks = new ArrayList<>();
 		List<String> errors = new ArrayList<>();
 		if(!DomainType.CONSULTANCY.equals(api.getDomain().getDomainType())) {
-			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			
-			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin())
+			boolean isCau     = TaskUtils.isCau(api.getData());
+
+			Company company   = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		
+			String companyDoc = company.getDocument();
+			
+			AON.getDomainOfficeLinked(company)
 			.forEach(domain -> {
 				try {
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", 
-							f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument()))
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(companyDoc))
 					);
-				
-					AON_SOLUTIONS.getTaskParentStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
-					.forEach(tasks::add);
+					
+					if(customer.getId()!=null) {
+						if(isCau) {
+							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							.forEach(tasks::add);
+						} else {
+							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							.forEach(tasks::add);
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					errors.add(e.getMessage());
 				}
-
 			});
 		}
 		return tasks;

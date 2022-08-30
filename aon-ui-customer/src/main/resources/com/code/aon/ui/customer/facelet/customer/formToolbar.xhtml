@@ -82,6 +82,14 @@
 				<ui:param name="registrySupplierController" value="#{customerSupplier}" />
 			</ui:decorate>
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
+			
+			<aon:if test="#{customer.snapshot}">
+				<aon:menuItem id="CustomerDomainLink" 
+					actionListener="#{customer.onSigCustomerDomainLink}"
+					value="Vincular Dominio"
+					iconClass="aon-icon-domain">
+				</aon:menuItem>
+			</aon:if>
 		</ui:define>
 	</ui:decorate>
 		

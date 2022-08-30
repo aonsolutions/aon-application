@@ -452,11 +452,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	// ----------------------------------------------- setCalendarDraftObject.Auxiliar Methods
 
 	private void addItem2DraftMap(Integer id, String item) {
-
-		int start = item.indexOf(" ");
-		String aux = item.substring(start + 1);
-
-		holidayList.addItem(aux, "" + id);
+		holidayList.addItem(item.trim(), id.toString());
 	}
 
 	private void loadCalendarPanel(Integer pattern, Integer year,
@@ -729,7 +725,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 			@Override
 			public int compare(Entry<Integer, String> o1,
 					Entry<Integer, String> o2) {
-				return (o1.getValue().compareTo(o2.getValue()));
+				return (o1.getKey().compareTo(o2.getKey()));
 			}
 		});
 

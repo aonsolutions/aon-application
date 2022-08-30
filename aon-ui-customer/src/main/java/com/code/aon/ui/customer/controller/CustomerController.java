@@ -2,13 +2,21 @@ package com.code.aon.ui.customer.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.CUSTOMER_REPORT;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +41,12 @@ import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DomainLinked;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
@@ -49,6 +63,11 @@ public class CustomerController extends CustomerListController implements ICusto
 	
 	public boolean isCeconsulting() {
 		return AonUtil.getDomainName().contains("ceconsulting");
+	}
+	
+	public boolean isSnapshot() {
+		return AonUtil.getDomainName().contains("aonsolutions.org")
+			|| AonUtil.getDomainName().contains("aibanez.net");
 	}
 	
 	public boolean isUpdateCourseAlumn() {
@@ -186,6 +205,58 @@ public class CustomerController extends CustomerListController implements ICusto
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
 	}
+	
+	public void onSigCustomerDomainLink(ActionEvent e) throws IOException{
+		Customer customer = (Customer) this.getTo();
+		
+		String request = "https://aon.solutions/ms/api/company/domain?document=" + customer.getRegistry().getDocument()
+			 + "&page=1&perPage=30";
+	
+		
+		URL url = new URL(request);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setInstanceFollowRedirects(false);
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("session_id", "AONd95770f269e711eb94390242ac130002");
+		connection.setRequestProperty("charset", "UTF-8");
+	
+		connection.setUseCaches(false);
+		JSONObject json = new JSONObject()
+			.put(IJsonNames.DOCUMENT, customer.getRegistry().getDocument())
+			.put(IJsonNames.PAGE, 1)
+			.put(IJsonNames.PER_PAGE, 30);
+		
+		OutputStream os = connection.getOutputStream();
+		os.write(json.toString().getBytes());
+		os.flush();
+		
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+		String output;	
+		String response = "";
+		while ((output = br.readLine()) != null) {
+			response = output; //.replace("'", "\'");	
+		}	
+		
+		JSONArray array = new JSONArray(response);
+		for(Integer i = 0; i < array.length(); i++) {
+			JSONObject resp = (JSONObject) array.get(i);
+			Company company = CompanyJSON.fromJSON(resp);
+
+			DomainLinked domainLinked = new DomainLinked()
+					.setId(company.getDomain().getId())
+					.setName(company.getDomain().getName())
+					.setSchema(JsonUtils.getString(resp ,IJsonNames.SCHEMA))
+					.setRegistry(customer.getId())
+					.setIndex(i)
+					.setType(company.getDomain().getDomainType().name());
+
+			AON.saveDomainLinked(AonUtil.getDomainName(), customer.getDomain(), "", domainLinked);
+		}
+	}
 
 	public void onLoadInvoicingGroup(ActionEvent event) throws ManagerBeanException {
 		Customer customer = (Customer)getTo();
@@ -230,7 +301,10 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 	
 	private int obtainTargetId() throws ManagerBeanException {
-		Integer customerId = ((Customer)getTo()).getId();
+		Customer customer = (Customer)getTo();
+		if(CustomerStatus.BLOCKED.equals(customer.getStatus()))
+			return -1;
+		Integer customerId = customer.getId();
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
@@ -238,6 +312,11 @@ public class CustomerController extends CustomerListController implements ICusto
 		if(list.size()>0)
 			return ((Target)list.get(0)).getId();
 		return -1;
+	}
+	
+	public List<DomainLinked> getDomainLinkedList() {
+		Customer customer = (Customer)getTo();
+		return AON.getDomainLinkedList(AonUtil.getDomainName(), customer.getDomain(), "", customer.getId());
 	}
 	
 }

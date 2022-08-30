@@ -22,21 +22,9 @@ public class MODEL2002021 {
 		} 
 	}
 
-	public static Mod2002021 initializeNewMod2002021(Occam occam, Mod2002021 mod200) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initializeNewMod2002021(ctx, mod200);
-		} 
-	}
-
 	public static Mod2002021 initializeMod2002021(Occam occam, Mod2002021 mod200) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initializeMod2002021(ctx, mod200);
-		} 
-	}
-
-	public static Mod2002021 getMod2002021ByYear(Occam occam, int year) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {		
-			return getImpl().getMod2002021ByYear(ctx, year);
 		} 
 	}
 
@@ -56,19 +44,9 @@ public class MODEL2002021 {
 		} 
 	}
 
-	public static void deleteMod2002021(Occam occam, int id) {
+	public static void deleteMod2002021(Occam occam, Mod2002021 mod200) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			getImpl().deleteMod2002021(ctx, id);
-		} 
-	}
-
-	public static String dumpAEATMod2002021(Mod2002021 mod200) {
-		return getImpl().dumpAEATMod2002021(mod200);
-	}
-
-	public static Mod2002021 importMod2002020(Occam occam, Mod2002021 mod200) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().importMod2002020(ctx, mod200);
+			getImpl().deleteMod2002021(ctx, mod200);
 		} 
 	}
 

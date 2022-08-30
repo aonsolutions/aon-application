@@ -10,7 +10,6 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -24,6 +23,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -134,20 +134,25 @@ public class Mod111DAO extends FiscalModelDAO {
 	
 	public static Mod111 markAsFinished(AONContext ctx,Mod111 mod111) {
 		FiscalModelValidation.statusChange(mod111, FiscalStatus.FINISHED);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod111);
 		mod111 = FiscalModelDAO.finish(ctx, mod111);
-		return save(ctx, mod111);
+		mod111 = save(ctx, mod111);
+		if (oldFinanceId != null && AonNumberUtils.notEquals(oldFinanceId, mod111.getFinanceId())) {
+			FinanceDAO.delete(ctx, oldFinanceId);
+		}
+		return mod111;
 	}
 	
 	public static Mod111 markAsPending(AONContext ctx,Mod111 mod111) {
 		FiscalModelValidation.statusChange(mod111, FiscalStatus.PENDING);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod111);
 		mod111.setStatus(FiscalStatus.PENDING);
 		mod111.setDeclarationResult(null);
 		mod111.setDeclarationResultType(null);
-		Finance finance = mod111.getFinance();
 		mod111.setFinance(null);
 		mod111 = save(ctx, mod111);
-		if (finance != null) {
-			FinanceDAO.delete(ctx, finance.getId());
+		if (oldFinanceId != null && AonNumberUtils.notEquals(oldFinanceId, mod111.getFinanceId())) {
+			FinanceDAO.delete(ctx, oldFinanceId);
 		}
 		return mod111;
 	}
@@ -161,9 +166,13 @@ public class Mod111DAO extends FiscalModelDAO {
 	
 	public static Mod111 markAsCustomerCheck(AONContext ctx,Mod111 mod111) {
 		FiscalModelValidation.statusChange(mod111, FiscalStatus.CUSTOMER_CHECK);
+		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod111);
 		mod111 = FiscalModelDAO.finish(ctx, mod111);
 		mod111.setStatus(FiscalStatus.CUSTOMER_CHECK);
 		mod111 = save(ctx, mod111);
+		if (oldFinanceId != null && AonNumberUtils.notEquals(oldFinanceId, mod111.getFinanceId())) {
+			FinanceDAO.delete(ctx, oldFinanceId);
+		}
 		return mod111;
 	}
 

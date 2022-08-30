@@ -1350,23 +1350,11 @@ public class AgreementDraftObject {
 	}
 	
 	public AgreementDraftObject createAgreementDraftObject() {
-		com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = new 
-				com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
-
-		draft.setId(agreement.getId());
-		draft.setDomain(agreement.getDomain());
-		draft.setDescription(agreement.getDescription());
-		draft.setSSNumber(agreement.getSSNumber());
-		draft.setOwner(agreement.getOwner());
-		
-		draft.setStartDate(DateUtils.getFirstDayOfMonth());
-		draft.setEndDate(DateUtils.getLastDayOfMonth());
-		
 		return new AgreementDraftObject(
 				draftDomain
 				, draftDomainName
 				, draftUserLogin
-				, draft 
+				, agreementDraft 
 				, agreementsServiceAsync);
 	}
 	

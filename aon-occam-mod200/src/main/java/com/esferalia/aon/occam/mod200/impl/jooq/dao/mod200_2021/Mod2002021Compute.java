@@ -43,7 +43,6 @@ public class Mod2002021Compute {
 	// POR ESO SE USA UN LinkedHashMap, PORQUE SE NECESITA QUE PARA EL CALCULO DEL MODELO, SE RECORRA 
 	// EL MAP EXACTAMENTE EN EL ORDEN EN QUE APARECE EN ESTA CLASE
 	
-//	public static EnumMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new EnumMap<Mod2002021Key,String>(Mod2002021Key.class);
 	public static LinkedHashMap<Mod2002021Key,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<Mod2002021Key,String>();
 		
 	static {
@@ -934,9 +933,6 @@ public class Mod2002021Compute {
 			firstRow = false;
 		}		
 	}	
-	
-	
-//---------------------------------------------------------------------------------------------------
 	
 //	public static void main(String[] args) {
 //				

@@ -31,7 +31,7 @@ public enum DomainJSON {
 		(domain, json) -> json.put(IJsonNames.PARENT_ID, domain.getParentId())
 	),
 	DOMAIN_TYPE(
-		(params, json) -> params.setDomainType( DomainType.safeValueOf( JsonUtils.getInteger(json,IJsonNames.DOMAIN_TYPE) )),
+		(params, json) -> params.setDomainType( DomainType.safeValueOf( JsonUtils.getString(json,IJsonNames.DOMAIN_TYPE) )),
 		(params, json) -> json.put(IJsonNames.DOMAIN_TYPE, params.getDomainType())
 	),
 	ENABLE_HEREDITY(

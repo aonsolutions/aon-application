@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -60,6 +61,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
@@ -76,37 +78,41 @@ import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 public class RegistryImpl implements IRegistry{
 	
 	// ------------------------------------- CATEGORY
-	
+	@Deprecated 
 	@Override
 	public Category getCategory(AONContext ctx, Integer categoryId) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getCategory(ctx, categoryId));
 	}
 
+	@Deprecated
 	@Override
 	public Category insertCategory(AONContext ctx, Category category) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertCategory(ctx, category));
 	}
 	
+	@Deprecated
 	@Override
 	public Category updateCategory(AONContext ctx, Category category) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.updateCategory(ctx, category));
 	}
-
+	@Deprecated
 	@Override
 	public Category deleteCategory(AONContext ctx, Integer categoryId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.deleteCategory(ctx, categoryId));
 	}
 	
+	@Deprecated
 	@Override
 	public LinkedList<Category> getCategoryList(AONContext ctx) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getCategoryList(ctx));
 	}
 	
+	@Deprecated
 	@Override
 	public Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
@@ -668,6 +674,18 @@ public class RegistryImpl implements IRegistry{
 	public RegistryAddress save(AONContext ctx, RegistryAddress registryAddress) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryAddressDAO.save(ctx, registryAddress));
+	}
+
+	@Override
+	public List<DomainLinked> getDomainLinkedList(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainLinkedDAO.getList(ctx, registry));	
+	}
+
+	@Override
+	public DomainLinked saveDomainLinked(AONContext ctx, DomainLinked domainLinked) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainLinkedDAO.save(ctx, domainLinked));
 	}
 
 }

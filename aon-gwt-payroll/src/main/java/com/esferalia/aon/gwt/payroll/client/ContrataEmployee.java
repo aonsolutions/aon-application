@@ -29,6 +29,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFact
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -140,6 +142,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void downloadCtoDocument() {
 			downloadCto(s -> {}, f -> {});
 		}
+		
+		@Override
+		protected void downloadCtoTransformDocument() {
+			downloadCtoTransform(s -> {}, f -> {});
+		}
+		
+		@Override
+		protected void downloadCtoExtensionDocument() {
+			downloadCtoExtension(s -> {}, f -> {});
+		}
 	}
 
 	// ------------------------------------------------- ContractClausesUIImpl
@@ -194,20 +206,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		protected void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportContract(consumer, failure, false);
+		}
+		
+		@Override
+		protected void onExportTransformPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
+			exportContract(consumer, failure, true);
+		}
+		
+		private void exportContract(Consumer<String> consumer, Consumer<Throwable> failure, boolean isTransform) {
 			showLoading("Generando borrador de contrato");
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if (AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-						contrataEmployeeObject.saveContractExport(
+						contrataEmployeeObject.saveContractExport(isTransform,
 								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
 								e -> failure.accept(e));
 					}, f -> failure.accept(f));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-					contrataEmployeeObject.saveContractExport(
+					contrataEmployeeObject.saveContractExport(isTransform,
 							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
 							e -> failure.accept(e));
 				}
@@ -469,6 +490,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			onCBC();
 		}
 	}
+	
+	class CTOTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCTOTransform();
+		}
+	}
+	
+	class CTOExtensionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCTOExtension();
+		}
+	}
 
 	class Certifica2Command implements ScheduledCommand {
 
@@ -542,7 +579,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		public void execute() {
 			AonDialog dialog = new AonDialog("Pr\u00F3rroga contrato",
-					new HTML("\u00bfDesea realmente eliminar la pr\u00f3 del contrato\u003f"));
+					new HTML("\u00bfDesea realmente eliminar la pr\u00f3rroga del contrato\u003f"));
 			dialog.confirm(new AonAcceptDialogCallback() {
 
 				@Override
@@ -564,6 +601,28 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		public void execute() {
 			contractTransform();
+		}
+
+	}
+	
+	class DeleteContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AonDialog dialog = new AonDialog("Transformaci\u00F3n contrato",
+					new HTML("\u00bfDesea realmente eliminar la transformaci\u00f3n del contrato\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+
+				@Override
+				public void onAccept() {
+					deleteContractTransform();
+				}
+			});
 		}
 
 	}
@@ -592,6 +651,36 @@ public abstract class ContrataEmployee extends ResizeComposite {
 											+ " ha sido notificada al SEPE correctamente");
 								contrataEmployeeObject.getComunicationInfo();
 							}, f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage()));
+				}
+			});
+		}
+
+	}
+	
+	class SendContractExtensionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AonDialog dialog = new AonDialog("Notifici\u00f3n pr\u00F3rroga contrato",
+					new HTML("\u00bfDesea realmente notificar la pr\u00f3rroga del contrato\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+
+				@Override
+				public void onAccept() {
+					showLoading("Notificando pr\u00f3rroga contrato...");
+
+					contrataEmployeeObject.sendContractExtension(
+							s -> {
+								showSuccess("Pr\u00F3rroga Contrato",
+									"La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName()
+											+ " ha sido notificada al SEPE correctamente");
+								contrataEmployeeObject.getComunicationInfo();
+							}, f -> showError("Error Pr\u00F3rroga Contrato", f.getMessage()));
 				}
 			});
 		}
@@ -633,6 +722,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		private MenuItem cto;
 		private MenuItem cbc;
+		private MenuItem ctoTransform;
+		private MenuItem ctoExtension;
 		
 		MenuItemSeparator separatorCertifica;
 		
@@ -643,21 +734,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		private MenuItem contractExtension;
 		private MenuItem contractTransform;
-		private MenuItem removeContractExtension;
+		private MenuItem deleteContractExtension;
+		private MenuItem deleteContractTransform;
 
 		MenuItemSeparator separatorComunicate;
 		
 		private MenuItem sendBasicCopy;
 		private MenuItem sendContract;
 		private MenuItem sendContractTransform;
+		private MenuItem sendContractExtension;
 
 		private MenuItem removeContract;
 		private MenuItem removeContractTransform;
 
 		public SEPEContextMenu() {
 
-			cto = addMenuItem("Copia Contrato", new CTOCommand(), AON.CSS.aonIconPdf(), "cto");;
-			cbc = addMenuItem("Copia B\u00E1sica", new CBCCommand(), AON.CSS.aonIconPdf(), "cbc");;
+			cto = addMenuItem("Copia Contrato", new CTOCommand(), AON.CSS.aonIconPdf(), "cto");
+			cbc = addMenuItem("Copia B\u00E1sica", new CBCCommand(), AON.CSS.aonIconPdf(), "cbc");
+			ctoTransform = addMenuItem("Copia Transformaci\u00f3n Contrato", new CTOTransformCommand(), AON.CSS.aonIconPdf(), "ctoTransform");
+			ctoExtension = addMenuItem("Copia Pr\u00f3rroga Contrato", new CTOExtensionCommand(), AON.CSS.aonIconPdf(), "ctoExtension");
 			
 			separatorCertifica = addSeparator();
 
@@ -667,14 +762,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			separatorAdds = addSeparator();
 
 			contractExtension = addMenuItem("Pr\u00F3rroga Contrato", new ContractExtensionCommand(), AON.CSS.aonIconSepe(), "contractExtension");
-			removeContractExtension = addMenuItem("Eliminar Pr\u00F3rroga Contrato", new DeleteContractExtensionCommand(), AON.CSS.aonIconSepe(), "removeContractExtension");
+			deleteContractExtension = addMenuItem("Eliminar Pr\u00F3rroga Contrato", new DeleteContractExtensionCommand(), AON.CSS.aonIconSepe(), "deleteContractExtension");
 			contractTransform = addMenuItem("Transformaci\u00F3n Contrato", new ContractTransformCommand(), AON.CSS.aonIconSepe(), "contractTransform");
-
+			deleteContractTransform = addMenuItem("Eliminar Transformci\u00F3n Contrato", new DeleteContractTransformCommand(), AON.CSS.aonIconSepe(), "deleteContractTransform");
+			
 			separatorComunicate = addSeparator();
 
 			sendBasicCopy = addMenuItem("Notificar Copia B\u00E1sica", new SendBasicCopyCommand(), AON.CSS.aonIconSend(), "sendBasicCopy");
 			sendContract = addMenuItem("Notificar Contrato", new SendContractCommand(), AON.CSS.aonIconSend(), "sendContract");
 			sendContractTransform = addMenuItem("Notificar Transformaci\u00f3n Contrato", new SendContractTransformCommand(), AON.CSS.aonIconSend(), "sendContractTransform");
+			sendContractExtension = addMenuItem("Notificar Pr\u00f3rroga Contrato", new SendContractExtensionCommand(), AON.CSS.aonIconSend(), "sendContractExtension");
 
 			removeContract = addMenuItem("Eliminar Contrato", new RemoveContractCommand(), AON.CSS.aonIconSend(), "removeContract");
 			removeContractTransform = addMenuItem("Eliminar Transformaci\u00f3n Contrato", new RemoveContractTransformCommand(), AON.CSS.aonIconSend(), "removeContractTransform");
@@ -691,19 +788,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			sendBasicCopy.setVisible(isComunica);
 			sendContract.setVisible(isComunica);
 			sendContractTransform.setVisible(isComunica);
+			sendContractExtension.setVisible(isComunica);
 			removeContract.setVisible(isComunica);
 			removeContractTransform.setVisible(isComunica);
 		}
 
 		public void setIsExtension() {
 			contractExtension.setVisible(true);
-			removeContractExtension.setVisible(true);
+			deleteContractExtension.setVisible(true);
 			sendBasicCopy.setVisible(true);
 			sendContract.setVisible(true);
 			
 			contractTransform.setVisible(false);
+			deleteContractTransform.setVisible(false);
 			sendContractTransform.setVisible(false);
 			removeContractTransform.setVisible(false);
+			sendContractExtension.setVisible(true);
 		}
 		
 		public void setCanExtension(boolean canExtension) {
@@ -716,23 +816,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public void setIsTransform() {
 			contractExtension.setVisible(false);
-			removeContractExtension.setVisible(false);
+			deleteContractExtension.setVisible(false);
 			sendContract.setVisible(false);
 			
 			contractTransform.setVisible(false);
+			deleteContractTransform.setVisible(true);
+			ctoTransform.setVisible(true);
 			sendBasicCopy.setVisible(true);
 			sendContractTransform.setVisible(true);
 			removeContractTransform.setVisible(true);
+			sendContractExtension.setVisible(false);
 		}
 		
 		public void setDafaultContract() {
 			contractExtension.setVisible(true);
-			removeContractExtension.setVisible(true);
+			deleteContractExtension.setVisible(true);
+			deleteContractTransform.setVisible(true);
 			contractTransform.setVisible(false);
 			sendContractTransform.setVisible(false);
 			removeContractTransform.setVisible(false);
 			sendBasicCopy.setVisible(true);
 			sendContract.setVisible(true);
+			ctoTransform.setVisible(false);
+			sendContractExtension.setVisible(false);
 		}
 		
 		public void setEndDate(Date endDate) {
@@ -766,6 +872,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ExportTransformContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractAttachUI.exportTransformContract();
+		}
+	}
+	
 	class ModificationPDFCommand implements ScheduledCommand {
 
 		@Override
@@ -777,10 +891,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	class AttachContextMenu extends ContextMenu {
 
 		private MenuItem exportContract;
+		private MenuItem exportTransformContract;
 		private MenuItem modificationPDF;
 		
 		public AttachContextMenu() {
 			exportContract = addMenuItem("Borrador Contrato", new ExportContractCommand(), AON.CSS.aonIconPdf(), "exportContract");
+			exportTransformContract = addMenuItem("Borrador Contrato (Transformac\u00f3n)", new ExportTransformContractCommand(), AON.CSS.aonIconPdf(), "exportTransformContract");
 			modificationPDF = addMenuItem("Notificaci\u00f3n Laboral", new ModificationPDFCommand(), AON.CSS.aonIconPdf(), "modificationPDF");	
 		}
 		
@@ -788,6 +904,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			item.ensureDebugId(debugId);
 			return item;
+		}
+		
+		public void showHideExportTransformMI(boolean visible) {
+			exportTransformContract.setVisible(visible);
 		}
 
 	}
@@ -1048,6 +1168,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tabLayOutPanel.addSelectionHandler(e -> loadWindow(s -> {}));
 	}
 
+	private void loadWindowTimer(Consumer<Void> finish) {
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				loadWindow(finish);
+			}
+		};
+		timer.schedule(2500);
+	}
+		
 	private void loadWindow(Consumer<Void> finish) {
 		checkPayrollTabs();
 		showLoadingPanel();
@@ -1094,6 +1224,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			break;
 		case 4:
 			contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+			try {
+				ContractType contractType = new ContractType();
+				ContractTypeRecord contractTypeRecord = contractType.getContractType(Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
+				attachContextMenu.showHideExportTransformMI(contractTypeRecord.isTransform());
+			} catch (Exception e) {
+				// Nothing to do here
+			}
 			finish.accept(null);
 			break;
 		case 5:
@@ -1324,8 +1461,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	protected abstract void onNextContract(Integer contractId);
 
-	protected abstract void onTransformContract(Integer newContractId);
-
 	protected abstract DomainUserRoles getDomainUserRole();
 
 	// ------------------------------------------------- Toolbar panel
@@ -1488,13 +1623,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onAFIChanges() {
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
 		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
 				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
 				this.contrataEmployeeObject.getContractData().hasSettle(),
-				this.contrataEmployeeObject.getContractData().isHasTransformation(),
+				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				false) {
 
 			@Override
@@ -1537,13 +1680,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onComunicateAFI() {
+		ContractTypeRecord contractTypeRecord = null;
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
 		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
 				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
 				this.contrataEmployeeObject.getContractData().hasSettle(),
-				this.contrataEmployeeObject.getContractData().isHasTransformation(),
+				null == contractTypeRecord ? false : contractTypeRecord.isTransform(),
 				true) {
 
 			@Override
@@ -1810,6 +1961,38 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showError("Error CBC", f.getMessage());
 		});
 	}
+	
+	private void onCTOTransform() {
+		showCtoTrnasform();
+	}
+
+	private void showCtoTrnasform() {
+		showLoading("Obteniendo CTO Transformaci\u00f3n...");
+		contrataEmployeeObject.downloadCtoTransform(dataURI -> {
+			hideMessage();
+			showPdf();
+			pdfViewer.open(dataURI);
+		}, f -> {
+			showBlakPdf();
+			showError("Error CTO Transformaci\u00f3n", f.getMessage());
+		});
+	}
+	
+	private void onCTOExtension() {
+		showCtoExtension();
+	}
+
+	private void showCtoExtension() {
+		showLoading("Obteniendo CTO Pr\u00f3rroga...");
+		contrataEmployeeObject.downloadCtoExtension(dataURI -> {
+			hideMessage();
+			showPdf();
+			pdfViewer.open(dataURI);
+		}, f -> {
+			showBlakPdf();
+			showError("Error CTO Pr\u00f3rroga", f.getMessage());
+		});
+	}
 
 	private void showCertifica2PDF() {
 		showLoading("Obteniendo Certific@2...");
@@ -1903,6 +2086,44 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		};
 		timer.schedule(2500);
 	}
+	
+	private void downloadCtoTransform(Consumer<Void> succes, Consumer<Void> failure) {
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				showLoading("Obteniendo CTO Transformaci\u00f3n....");
+				contrataEmployeeObject.downloadCtoTransform(
+						s -> {
+							showSuccess("CTO", "Se ha descargado el CTO Transformaci\u00f3n del trabajador. El documento se encuentran en el apartado de Documentos");
+							succes.accept(null);
+						},
+						f -> {
+							showError("Error obtenci\u00F3n CTO Transformaci\u00f3n", f.getMessage());
+							failure.accept(null);
+						});
+			}
+		};
+		timer.schedule(2500);
+	}
+	
+	private void downloadCtoExtension(Consumer<Void> succes, Consumer<Void> failure) {
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				showLoading("Obteniendo CTO Pr\u00f3rroga....");
+				contrataEmployeeObject.downloadCtoExtension(
+						s -> {
+							showSuccess("CTO", "Se ha descargado el CTO Pr\u00f3rroga del trabajador.");
+							succes.accept(null);
+						},
+						f -> {
+							showError("Error obtenci\u00F3n CTO Pr\u00f3rroga", f.getMessage());
+							failure.accept(null);
+						});
+			}
+		};
+		timer.schedule(2500);
+	}
 
 	private void removeContract() {
 		showLoading("Eliminando contrato...");
@@ -1917,7 +2138,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			@Override
 			protected void onExtensionDone() {
 				showSuccess("Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
-				loadWindow(su -> {});
+				loadWindowTimer(su -> {});
 			}
 
 			@Override
@@ -1930,9 +2151,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void contractTransform() {
 		new ContractTransformDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
 			@Override
-			protected void onTransformDone(Integer newContractId) {
+			protected void onTransformDone() {
 				showSuccess("Transformaci\u00F3n", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
-				onTransformContract(newContractId);
+				loadWindowTimer(su -> {
+					checkButtonsToolbar();
+					checkStatus(contrataEmployeeObject);
+				});
 			}
 
 			@Override
@@ -1954,7 +2178,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.deleteContractExtension(s -> {
 			showSuccess("Borrado Pr\u00F3rroga", "La pr\u00F3rroga del trabajador "
 					+ contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada correctamente");
-			loadWindow(su -> {});
+			loadWindowTimer(su -> {});
+		}, f -> {});
+	}
+	
+	private void deleteContractTransform() {
+		contrataEmployeeObject.deleteContractTransform(s -> {
+			showSuccess("Borrado Transformaci\u00F3n", "La transformaci\u00F3n del trabajador "
+					+ contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada correctamente");
+			loadWindowTimer(su -> {});
 		}, f -> {});
 	}
 
@@ -1983,14 +2215,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.getContractSpecificData(su -> {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-					contrataEmployeeObject.saveContractExport(a -> showSuccess("Borrador Contrato",
+					contrataEmployeeObject.saveContractExport(false, a -> showSuccess("Borrador Contrato",
 							"El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
 							e -> showError("Borrador Contrato", e.getMessage()));
 				}, f -> showError("Borrador Contrato", f.getMessage()));
 			else {
 				contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-				contrataEmployeeObject.saveContractExport(a -> showSuccess("Borrador Contrato",
+				contrataEmployeeObject.saveContractExport(false, a -> showSuccess("Borrador Contrato",
 						"El borrador de contrato se ha generado correctamente. Se encuentra en la pesta\u00f1a Documentos."),
 						e -> showError("Borrador Contrato", e.getMessage()));
 			}
@@ -2332,7 +2564,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 		
 		// Transform
-		boolean hasTransform = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation();
+		ContractTypeRecord contractTypeRecord = null;
+		
+		try {
+			ContractType contractType = new ContractType();
+			contractTypeRecord = contractType.getContractType(Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
+		} catch (Exception e) {
+			// Nothing to do here
+		}
+		
+		boolean hasTransform = null == contractTypeRecord ? false : contractTypeRecord.isTransform();
 		if(Boolean.TRUE.equals(hasTransform)) sepeContextMenu.setIsTransform();
 		
 		if(Boolean.TRUE.equals(hasExtension) && Boolean.TRUE.equals(hasTransform)) sepeContextMenu.getSeparatorAdds().setVisible(false);

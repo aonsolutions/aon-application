@@ -8,7 +8,7 @@ import { Swipe } from "../../components/swipe.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification, sendNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
-import { createButtonClose, createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl, createForm, createSpanFloat, createSelect, createInput, createIconButton } from "./createComponent.js";
+import { createButtonClose, createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl, createSpanFloat } from "./createComponent.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
@@ -18,6 +18,7 @@ import { AonMessenger } from "../messenger/aon-messenger.js";
 import { App } from "../../models/enums.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as LS from "../../services/localStorageService.js";
+import { CreateComponent } from "../../components/CreateComponent.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -278,7 +279,9 @@ export class AonNotification extends AonElement {
 
   markReadNotification(id){
     this.changeBadgeComponent(-1);
-    markReadNotification({id: parseInt(id)}).catch(e=>console.log(e));
+    markReadNotification({id: parseInt(id)}).then(()=>{
+      // this.loadMore();
+    }).catch(e=>console.log(e));
     let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + id);
     if (aonCard) {
       aonCard.setBackground("#fff");
@@ -363,7 +366,7 @@ export class AonNotification extends AonElement {
     }
 
     aonNotification.appendChild(span);
-    let icon = createIconButton({
+    let icon = CreateComponent.createAonIconButton({
       attributes:{
         id:span.id+"Button",
         icon:"add",
@@ -392,8 +395,8 @@ export class AonNotification extends AonElement {
   }
 
   dialogHtml(){
-    const form = createForm(`${this.AON_NOTIFICATION}Form`);
-    createSelect({
+    const form = CreateComponent.createForm(`${this.AON_NOTIFICATION}Form`);
+    CreateComponent.createAonSelect({
       attributes:{
         name:"type",
         id:"type",
@@ -409,7 +412,7 @@ export class AonNotification extends AonElement {
       },
     }, form);
 
-    const selectTaskHolders = createSelect({
+    const selectTaskHolders = CreateComponent.createAonSelect({
       attributes:{
         name:"task_holder",
         id:"task_holder",
@@ -418,7 +421,7 @@ export class AonNotification extends AonElement {
     }, form);
     this.listTaskHolder().then(taskHolders=>selectTaskHolders.options = JSON.stringify(taskHolders));
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"email",
         id:"email",
@@ -428,7 +431,7 @@ export class AonNotification extends AonElement {
       }
     }, form);
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"title", 
         id:"title", 
@@ -437,7 +440,7 @@ export class AonNotification extends AonElement {
       }
     }, form);
 
-    createInput({
+    CreateComponent.createAonInput({
       attributes:{
         name:"body",
         id:"body",
@@ -500,7 +503,7 @@ export class AonNotification extends AonElement {
       element = document.body;
       window.addEventListener(EVENT.SCROLL, ()=>{
         if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
-    }) 
+      }); 
     }
   }
 

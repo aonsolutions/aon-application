@@ -13,19 +13,25 @@ import { sortBy } from "../../../services/utils.js";
 import { setStyles } from "../../../services/utilsComponents.js";
 import { firstLetters, StringTwoLetters } from "../../timecontrol/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { MESSENGER_VIEWS, TAG_TYPE, TASK_STATUS } from "../MessengerEnums.js";
+import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { getIconJson, taskNumberParse } from "./utils.js";
 
 // ------------DESKTOP
 const getTitleHtmlDesktop = (res) => {
   const title = res.title || "Sin asunto";
+  let divParent = setStyles(document.createElement(TAG.DIV), {
+    position: "relative",
+    padding: "5px"
+  });
+
   let div = setStyles(document.createElement(TAG.DIV), {
-    top: "-15px",
+    top: "-4px",
     position: "absolute",
     left: "0",
     right: "0",
   });
+  divParent.appendChild(div);
 
   let divFlex = setStyles(document.createElement(TAG.DIV), {
     display: "flex",
@@ -38,6 +44,7 @@ const getTitleHtmlDesktop = (res) => {
     fontWeight: "550",
     fontSize: "14px",
     overflow: CONSTANT.HIDDEN,
+    textOverflow: "ellipsis"
   });
   divOne.innerText = title;
   divOne.title = title;
@@ -61,10 +68,17 @@ const getTitleHtmlDesktop = (res) => {
     });
   });
 
-  return div;
+  return divParent;
 };
 
 const getSubTitleHtml = (res, doc, documentTh) => {
+
+  let divParent = setStyles(document.createElement(TAG.DIV), {
+    position: "relative",
+    padding:"11px"
+  });
+
+
   const type = getTagType(res.tags) || "";
   // sender
   const sender = getSender(res, doc, documentTh);
@@ -84,6 +98,7 @@ const getSubTitleHtml = (res, doc, documentTh) => {
     textOverflow: "ellipsis",
     overflow: "hidden",
   });
+  divParent.appendChild(div);
 
   let spanOne = document.createElement(TAG.SPAN);
   const subTitle = `${type} ${res.newNumber}`;
@@ -101,7 +116,7 @@ const getSubTitleHtml = (res, doc, documentTh) => {
     span.title = dText;
     div.appendChild(span);
   }
-  return div;
+  return divParent;
 };
 // ------------END DESKTOP
 
@@ -159,7 +174,8 @@ const getSubtitleMobileTwo = (res) => {
 
   div.appendChild(divTwo);
 
-  getTagsLabel(res.tags).forEach((tag) => {
+  getTagsLabel(res.tags)
+  .forEach((tag) => {
     setStyles(TaskCreationUtils.createTagHtml(tag, divTwo), {
       margin: "0",
       textAlign: "center",
@@ -177,103 +193,40 @@ const addTaskChilds = (task, row, documents, isCau) => {
   try {
     document.querySelectorAll(`div[data-task-id='${task.id}']`).forEach((l) => l.remove());
 
+    const taskId = task.id;
     const parent = row.parent;
+    let childs = task.childs;
+    let childAll = [];
 
-    let paddingBottom = 25;
-    let top = 21;
-    let childs = [];
-
-    if (task.childs && task.childs.length) {
-      childs.push(...task.childs);
+    if (childs && childs.length) {
+      childAll.push(...childs);  
     } else if (task.parentObj && typeof task.parentObj === "object") {
-      childs.push(task.parentObj);
+      childAll.push(task.parentObj);
     }
 
     if (isCau && childs.length) {
       //distinct task for workgroup
-      childs = sortBy(childs, "id", "desc").filter((t) => t.workgroup && t.workgroup.id);
+      childAll = sortBy(childAll, "id", "desc").filter((t) => t.workgroup && t.workgroup.id);
       
-      childs.filter((t, idx) => childs.findIndex(x => x.workgroup.id === t.workgroup.id) === idx);
+      childAll.filter((t, idx) => childAll.findIndex(x => x.workgroup.id === t.workgroup.id) === idx);
 
-      childs = sortBy(childs, "id", "asc");
+      childAll = sortBy(childAll, "id", "asc");
     }
+    
 
-    childs.forEach((t, idx) => {
-      let { person, workgroupDescription } = getAssined(t, documents.domainId);
+    childAll.forEach(t => {
+      addChild(taskId, t, parent, documents, false, isCau);
 
-      let assigned = person || workgroupDescription;
+      // -------------GRANDCHILD-------------------------
+      const grandChild = t.childs && t.childs.length ? t.childs : [];
 
-      if (idx > 0) {
-        top = top + 15;
-        paddingBottom = paddingBottom + 15;
-      } else {
-        paddingBottom = paddingBottom + 5;
-      }
-
-      const div = setStyles(document.createElement(TAG.DIV), {
-        top: `${top}px`,
-        color: CSS.variable(COLORS.AON_GRAY),
-        display: "flex",
-        position: "absolute",
-        left: "0",
-        right: "0",
-        whiteSpace: "nowrap",
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-        gap: "4px",
-        transition: "opacity .5s linear",
-        opacity: "1",
-      });
-
-      div.dataset.taskId = task.id;
-
-      div.dataset.taskChild = t.id;
-
-      parent.appendChild(div);
-
-      let icon = getIcon(t, "16px", true);
-      icon.style.display = "inline-block";
-      div.appendChild(icon);
-
-      const sender = getSender(t, documents.document, documents.documentTh);
-      let span = document.createElement(TAG.SPAN);
-      span.className = CSS.AON_LINK;
-      span.innerText = taskNumberParse(t.number);
-      span.title = "Creador por " + sender;
-      if (!isCau) {
-        span.addEventListener(EVENT.CLICK, (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST).goMessengerChat(t, 0);
-        });
-      } else {
-        assigned = workgroupDescription || null;
-        span.classList.add(CSS.TEXT_DECORATION_NONE);
-      }
-      div.appendChild(span);
-
-      if (assigned) {
-        const spanTwo = document.createElement(TAG.SPAN);
-        const wg = workgroupDescription && assigned != workgroupDescription  ? `<b>${workgroupDescription}</b>`  : "";
-        spanTwo.innerHTML = `${wg} Asignada a <b>${assigned}</b>`;
-        div.appendChild(spanTwo);
-      }
-
-      const spanThree = document.createElement(TAG.SPAN);
-      spanThree.innerText = firstLetters(AonDateUtils.setFullDate(t.creation_date)) + " " +AonDateUtils.setTime(t.creation_date);
-      div.appendChild(spanThree);
+      grandChild.filter(child=> child.id !== taskId).forEach(child => addChild(taskId, child, parent, documents, true, isCau));
     });
     
-    row.paddingBottom = paddingBottom;
-
-    if (parent.parentNode && parent.parentNode.parentNode) {
-      const tr = parent.parentNode.parentNode;
-      tr.style.paddingBottom = paddingBottom + "px";
-    }
-
     // CHANGE COLORS ALL BRANCH CLOSES
-    if ([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && childs.length) {
-      const isChildPending = childs.some(({ status, parent:p }) => p && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status));
+
+    if ([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && childAll.length) {
+      const isChildPending = childAll.some(({ status, parent:p }) => p && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status));
       if (!isChildPending) {
         const iconParent = document.querySelector(`${TAG.SPAN}[data-task-id='${task.id}']`);
         if (iconParent) {
@@ -285,6 +238,68 @@ const addTaskChilds = (task, row, documents, isCau) => {
     console.log(err);
   }
 };
+
+const addChild = (taskId, child, parent, documents, grandChild, isCau)=> {
+  const { person, workgroupDescription } = getAssined(child, documents.domainId);
+
+  let assigned = person || workgroupDescription;
+
+  const div = setStyles(document.createElement(TAG.DIV), {
+    // top: `${top}px`,
+    color: CSS.variable(COLORS.AON_GRAY),
+    display: "flex",
+    // position: "relative",
+    // left: "0",
+    // right: "0",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    gap: "4px",
+    transition: "opacity .5s linear",
+    opacity: "1",
+  });
+
+  if(grandChild){
+    div.style.marginLeft = "17px";
+  }
+
+  div.dataset.taskId = taskId;
+  div.dataset.taskChild = child.id;
+
+  parent.appendChild(div);
+
+  let icon = getIcon(child, "16px", true);
+  icon.style.display = "inline-block";
+  div.appendChild(icon);
+
+  const sender = getSender(child, documents.document, documents.documentTh);
+  let span = document.createElement(TAG.SPAN);
+  span.className = CSS.AON_LINK;
+  span.innerText = taskNumberParse(child.number);
+  span.title = "Creador por " + sender;
+  if (!isCau) {
+    span.addEventListener(EVENT.CLICK, (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST).goMessengerChat(child, 0);
+    });
+  } else {
+    assigned = workgroupDescription || null;
+    span.classList.add(CSS.TEXT_DECORATION_NONE);
+  }
+  div.appendChild(span);
+
+  if (assigned) {
+    const spanTwo = document.createElement(TAG.SPAN);
+    const wg = workgroupDescription && assigned != workgroupDescription  ? `<b>${workgroupDescription}</b>`  : "";
+    spanTwo.innerHTML = `${wg} Asignada a <b>${assigned}</b>`;
+    div.appendChild(spanTwo);
+  }
+
+  const spanThree = document.createElement(TAG.SPAN);
+  spanThree.innerText = firstLetters(AonDateUtils.setFullDate(child.creation_date)) + " " +AonDateUtils.setTime(child.creation_date);
+  div.appendChild(spanThree);
+}
 
 const getIcon = (task, size = undefined, isChild = undefined) => {
   const { source, status, parent, id } = task;
@@ -399,7 +414,7 @@ const getAssignedHtml = (res, domainId) => {
       lineHeight: "21px",
       width: "23px",
       display: "block",
-      fontSize: "14px",
+      fontSize: "12px",
       textAlign: "center",
     });
 
@@ -476,8 +491,7 @@ const getSender = (res, document, documentTh) => {
   return sender;
 };
 
-const getTagsLabel = (tags) =>
-  tags && tags.length ? tags.filter(({ tag_type }) => tag_type === TAG_TYPE.TASK_LABEL) : [];
+const getTagsLabel = (tags) => tags && tags.length ? tags.filter(({ tag_type }) => tag_type === TAG_TYPE.TASK_LABEL) : [];
 
 const getTagType = (tags) => {
   if (tags && tags.length) {
@@ -494,7 +508,7 @@ const getIconList = ({ source, status, parent }) => {
     icon_title: source,
   };
 
-  if (parent) {
+  if (source === TASK_SOURCE.TASK && parent) {
     json.aonIcon = AON_ICONS.AON_BRANCH;
   }
 
