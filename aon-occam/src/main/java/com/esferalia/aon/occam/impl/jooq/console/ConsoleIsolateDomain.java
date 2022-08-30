@@ -34,6 +34,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.DomainValidator;
@@ -53,7 +54,7 @@ public class ConsoleIsolateDomain {
 	}
 	
 	public static void isolate(ConsoleParams params) {
-		if (params.getFromConnection() == null || params.getFromConnection().getDslContext() == null) {
+		if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
 			String msg = "[ERROR]: No se ha definido la conexión origen a la BD";
 			ConsoleUtils.log(params,msg);
 			throw new AonCoreException(msg);
@@ -67,8 +68,8 @@ public class ConsoleIsolateDomain {
 			params.setScript( new LinkedHashMap<>() );
 			
 			DomainValidator domainValidator = DomainValidator.getInstance();
-			if (!domainValidator.isValid(params.getNewDomainName())) {
-				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getNewDomainName());
+			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
+				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
 				ConsoleUtils.log(params,msg);
 				throw new AonCoreException(msg);
 			}
@@ -90,7 +91,7 @@ public class ConsoleIsolateDomain {
 				createDomain(params);
 				checkProductIndex( params );
 				checkNoticeRecipient( params );
-				if (params.isInhertitanceEnabled()) {
+				if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
 					passHeritableTables( params );
 				}
 				params.getScript()
@@ -126,12 +127,14 @@ public class ConsoleIsolateDomain {
 	}
 
 	private static void checkProductIndex(ConsoleParams params) {
-		if (params.isInhertitanceEnabled()) {
+		if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
 			AggregateFunction<Integer> count = DSL.count(PRODUCT.ID);
 			params.getFromDslContext()
 				.select( PRODUCT.CODE, count )
 				.from(PRODUCT)
-				.where(PRODUCT.DOMAIN.in(params.getDomain(),params.getParent()))
+				.where(PRODUCT.DOMAIN.in(
+					params.getFromConnection().getFullDomain().getId()
+					,params.getFromConnection().getFullDomain().getParentId()))
 				.groupBy(PRODUCT.CODE)
 				.having(count.gt(1))
 				.fetch()
@@ -148,8 +151,9 @@ public class ConsoleIsolateDomain {
 			.select( NOTICE.ID,NOTICE.DATE,NOTICE.SUBJECT )
 			.from(NOTICE)
 			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
-			.where(NOTICE.DOMAIN.eq(params.getDomain()))
-			.and(USER.DOMAIN.notIn(params.getDomain(),params.getParent()))
+			.where(NOTICE.DOMAIN.eq(params.getFromConnection().getFullDomain().getId()))
+			.and(USER.DOMAIN.notIn(params.getFromConnection().getFullDomain().getId()
+					,params.getFromConnection().getFullDomain().getParentId()))
 			.fetch()
 			.stream()
 			.map(rec -> MessageFormat.format("Existe un aviso cuyo destinatario no pertence al dominio. [id: {0}, fecha: \"{1}\", subject: \"{2}\"] "
@@ -182,7 +186,7 @@ public class ConsoleIsolateDomain {
 				SelectConditionStep<Record> select = params.getFromDslContext()
 						.select()
 						.from(t.getTable().asTable())
-						.where(getDomainField(t.getTable()).equal(params.getParent()));
+						.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getParentId()));
 				t.setRows(  params.getFromDslContext().fetchCount(select) );
 				t.setCurrentRow(0);
 				t.setPercent(0);
@@ -211,28 +215,28 @@ public class ConsoleIsolateDomain {
 	private static void createDomain(ConsoleParams params) {
 		Optional<Record> optRec = params.getFromDslContext().select()
 			.from(DOMAIN)
-			.where(DOMAIN.NAME.equal(params.getDomainName()))
+			.where(DOMAIN.NAME.equal(params.getToConnection().getDomainName()))
 			.fetch()
 			.stream()
 			.findFirst();
 		if (optRec.isEmpty()) {
-			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getDomainName() + "\"");
+			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getToConnection().getDomainName() + "\"");
 		}
-		params.setDomain(optRec.get().getValue(DOMAIN.ID));
-		params.setParent(optRec.get().getValue(DOMAIN.PARENT));
-		params.setInhertitanceEnabled( optRec.get().getValue(DOMAIN.ENABLEHEREDITY) == 1);
-		
 		DomainRecord domRec = optRec.get().into(DOMAIN);
 		domRec.attach(params.getToDslContext().configuration());
 		domRec.setId(null);
-		domRec.setName(params.getNewDomainName());
+		domRec.setName(params.getToConnection().getDomainName());
 		domRec.setParent(null);
 		domRec.setScope(null);
 		domRec.setEnableheredity((byte) 0);
 		domRec.store();
-		params.setNewDomain(domRec.getId());
-		insertId(params, DOMAIN,params.getDomain(),params.getNewDomain() );
-		ConsoleUtils.log(params,MessageFormat.format("DOMAIN {0} creado con ID {1}", params.getNewDomainName(), params.getNewDomain()));
+		params.getToConnection().setFullDomain( DomainDAO.getDomain(params.getToConnection().getAONContext(), domRec.getId()));
+		insertId(params, DOMAIN,
+			params.getFromConnection().getFullDomain().getId(),
+			params.getToConnection().getFullDomain().getId());
+		ConsoleUtils.log(params,MessageFormat.format("DOMAIN {0} creado con ID {1}"
+			, params.getToConnection().getFullDomain().getName()
+			, params.getToConnection().getFullDomain().getId()));
 	}
 
 	private static void insertId(ConsoleParams params, Table<?> table, Integer oldId, Integer newId) {
@@ -250,7 +254,7 @@ public class ConsoleIsolateDomain {
 			Integer selectCount = params.getFromDslContext()
 				.select( countField )
 				.from(t.getTable().asTable())
-				.where(getDomainField(t.getTable()).equal(params.getDomain()))
+				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getId()))
 				.fetch()
 				.stream()
 				.map(rec -> rec.getValue(countField))
@@ -263,7 +267,7 @@ public class ConsoleIsolateDomain {
 			SelectConditionStep<Record> select = params.getFromDslContext()
 				.select()
 				.from(t.getTable().asTable())
-				.where(getDomainField(t.getTable()).equal(params.getDomain()));
+				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getId()));
 			t.setRows(  selectCount );
 			t.setCurrentRow(0);
 			t.setPercent(0);
@@ -296,7 +300,7 @@ public class ConsoleIsolateDomain {
 		ConsoleUtils.log(params," **** Loop references at invoice table");
 		params.getFromDslContext().select()
 			.from(t.getTable())
-			.where(INVOICE.DOMAIN.eq(params.getNewDomain() ) )
+			.where(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 			.and(INVOICE.RECTIFICATION_INVOICE.isNotNull())
 			.fetch()
 			.stream()
@@ -311,7 +315,7 @@ public class ConsoleIsolateDomain {
 					.update( INVOICE )
 					.set(INVOICE.RECTIFICATION_INVOICE, rec.getValue(INVOICE.RECTIFICATION_INVOICE))
 					.where(INVOICE.ID.eq(rec.getValue(INVOICE.ID)))
-					.and(INVOICE.DOMAIN.eq(params.getNewDomain() ) )
+					.and(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 					.execute()
 			);
 	}
@@ -320,7 +324,7 @@ public class ConsoleIsolateDomain {
 		ConsoleUtils.log(params," **** Loop references at fbatch table");
 		params.getFromDslContext().select()
 			.from(t.getTable())
-			.where(FBATCH.DOMAIN.eq(params.getNewDomain() ) )
+			.where(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 			.and(FBATCH.BANK_STATEMENT_LINK.isNotNull())
 			.fetch()
 			.stream()
@@ -335,7 +339,7 @@ public class ConsoleIsolateDomain {
 					.update( FBATCH )
 					.set(FBATCH.BANK_STATEMENT_LINK, rec.getValue(FBATCH.BANK_STATEMENT_LINK))
 					.where(FBATCH.ID.eq(rec.getValue(FBATCH.ID)))
-					.and(FBATCH.DOMAIN.eq(params.getNewDomain() ) )
+					.and(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 					.execute()
 			);
 	}
@@ -344,7 +348,7 @@ public class ConsoleIsolateDomain {
 		ConsoleUtils.log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
 		params.getFromDslContext().select()
 			.from(t.getTable())
-			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getNewDomain() ) )
+			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 			.and(BANK_STATEMENT_LINK.SOURCE.eq((byte) 0))
 			.and(BANK_STATEMENT_LINK.SOURCE_ID.isNotNull())
 			.fetch()
@@ -357,7 +361,7 @@ public class ConsoleIsolateDomain {
 					.update( BANK_STATEMENT_LINK )
 					.set(BANK_STATEMENT_LINK.SOURCE_ID, rec.getValue(BANK_STATEMENT_LINK.SOURCE_ID))
 					.where(BANK_STATEMENT_LINK.ID.eq(rec.getValue(BANK_STATEMENT_LINK.ID)))
-					.and(BANK_STATEMENT_LINK.DOMAIN.eq(params.getNewDomain() ) )
+					.and(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 					.execute()
 			);
 	}
@@ -366,7 +370,7 @@ public class ConsoleIsolateDomain {
 		ConsoleUtils.log(params," **** ACC Params --> Account table");
 		params.getFromDslContext().select()
 			.from(t.getTable())
-			.where(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
+			.where(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 			.and(APP_PARAM.NAME.like("ACC%ACC"))
 			.and(APP_PARAM.VALUE.isNotNull())
 			.fetch()
@@ -379,7 +383,7 @@ public class ConsoleIsolateDomain {
 					.update( APP_PARAM )
 					.set(APP_PARAM.VALUE, rec.getValue(APP_PARAM.VALUE))
 					.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
-					.and(APP_PARAM.DOMAIN.eq(params.getNewDomain() ) )
+					.and(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 					.execute();
 			});
 	}
@@ -486,7 +490,7 @@ public class ConsoleIsolateDomain {
 	
 	private static Record duplicateForeignKey( ConsoleParams params, ForeignKey<Record, ?> fk, Record rec) {
 		if (isDomainTable(fk.getKey().getTable())) {
-			rec.setValue(getDomainField(fk.getTable()), params.getNewDomain());
+			rec.setValue(getDomainField(fk.getTable()), params.getToConnection().getFullDomain().getId());
 		} else {
 			duplicateOtherForeignKey(params, fk, rec);
 		}
@@ -567,7 +571,7 @@ public class ConsoleIsolateDomain {
 
 	private static void createLoginUser(ConsoleParams params) {
 		int newUserId = params.getToDslContext().insertInto(USER)
-				.set(USER.DOMAIN , params.getNewDomain())
+				.set(USER.DOMAIN , params.getToConnection().getFullDomain().getId())
 				.set(USER.NAME, "DEFAULT USER")
 				.set(USER.LOGIN, "aon")
 				.set(USER.PASSWORD, "0jtZh1BMGz3khL8uR8dvdau3lNM=") // org
@@ -578,25 +582,25 @@ public class ConsoleIsolateDomain {
 		
 		params.getFromDslContext().select( SCOPE.ID)
 			.from(SCOPE)
-			.where(SCOPE.DOMAIN.eq(params.getNewDomain()))
+			.where(SCOPE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
 			.fetch()
 			.stream()
 			.map( rec -> rec.getValue( SCOPE.ID ))
 			.forEach( scopeId ->params.getToDslContext().insertInto(USER_SCOPE)
 				.set(USER_SCOPE.USER_ID, newUserId)
-				.set(USER_SCOPE.DOMAIN , params.getNewDomain())
+				.set(USER_SCOPE.DOMAIN , params.getToConnection().getFullDomain().getId())
 				.set(USER_SCOPE.SCOPE, scopeId)
 				.execute());
 		ConsoleUtils.log(params,"**** User Scope insertado correctamente");
 
 		params.getFromDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
-			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getNewDomain()))
+			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
 			.fetch()
 			.stream()
 			.map( rec -> rec.getValue( DOMAIN_APPLICATION.ID ))
 			.map( domainApplicationId -> params.getToDslContext().insertInto(APPLICATION_USER)
-				.set(APPLICATION_USER.DOMAIN, params.getNewDomain())
+				.set(APPLICATION_USER.DOMAIN, params.getToConnection().getFullDomain().getId())
 				.set(APPLICATION_USER.USER_ID, newUserId)
 				.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplicationId)
 				.set(APPLICATION_USER.ACTIVE, (byte) 1)
@@ -604,7 +608,7 @@ public class ConsoleIsolateDomain {
 				.fetchOne()
 				.getId())
 			.forEach(applicationUserId -> params.getToDslContext().insertInto(APPLICATION_USER_PROFILE)
-					.set(APPLICATION_USER_PROFILE.DOMAIN, params.getNewDomain())
+					.set(APPLICATION_USER_PROFILE.DOMAIN, params.getToConnection().getFullDomain().getId())
 					.set(APPLICATION_USER_PROFILE.APPLICATION_USER, applicationUserId)
 					.set(APPLICATION_USER_PROFILE.PROFILE, 71)
 					.returning(DOMAIN_APPLICATION.ID)

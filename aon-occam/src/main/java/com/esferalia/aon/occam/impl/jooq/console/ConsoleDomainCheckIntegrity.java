@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,6 +15,8 @@ import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
 
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -28,20 +28,17 @@ public class ConsoleDomainCheckIntegrity {
 	}
 	
 	public static void check(ConsoleParams params) {
-		Record domainRec = params.getFromDslContext().select()
-			.from(DOMAIN)
-			.where(DOMAIN.NAME.equal(params.getDomainName()))
-			.fetch()
-			.stream()
-			.findFirst()
-			.orElse(null);
-		if (domainRec == null) {
-			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getDomainName() + "\"");
+		String domainName = params.getFromConnection().getDomainName();
+		Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
+				, p -> p.getNameProperty().eq(domainName));
+		if (fullDomain == null) {
+			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + domainName + "\"");
 		}
-		params.setDomain(domainRec.getValue(DOMAIN.ID))
-			.setParent(domainRec.getValue(DOMAIN.PARENT))
-			.setInhertitanceEnabled( domainRec.getValue(DOMAIN.ENABLEHEREDITY) == 1)
-			.setScript( new LinkedHashMap<>() );
+		ConsoleUtils.log(params,MessageFormat.format("Dominio {0} encontrado", domainName));
+		ConsoleUtils.log(params,MessageFormat.format("Dominio. Herencia:  {0}", fullDomain.isEnableHeredity()));
+		params.getFromConnection()
+			.setFullDomain(fullDomain);
+		params.setScript( new LinkedHashMap<>() );
 		params.getFromDslContext().transaction(conf -> {
 			
 			fillScript(params);
@@ -152,10 +149,12 @@ public class ConsoleDomainCheckIntegrity {
 			selectFields.add(toDomainField);
 			selectFields.add(fkField);
 			Condition condition = null;
-			if (params.isInhertitanceEnabled()) {
-				condition = toDomainField.notIn(0,params.getDomain(),params.getParent());
+			if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
+				condition = toDomainField.notIn(0
+					,params.getFromConnection().getFullDomain().getId()
+					,params.getFromConnection().getFullDomain().getParentId());
 			} else {
-				condition = toDomainField.notIn(0,params.getDomain());
+				condition = toDomainField.notIn(0,params.getFromConnection().getFullDomain().getId());
 			}
 			if (customFk != null) {
 				condition = condition.and(customFk.getCondition( fromTableAlias ));
@@ -166,7 +165,7 @@ public class ConsoleDomainCheckIntegrity {
 				.select( selectFields )
 				.from(fromTableSelect)
 				.innerJoin(toTableSelect).onKey(fk)
-				.where(fromDomainField.eq(params.getDomain()))
+				.where(fromDomainField.eq(params.getFromConnection().getFullDomain().getId()))
 				.and(toDomainField.isNotNull())
 				.and(condition)
 				.stream()

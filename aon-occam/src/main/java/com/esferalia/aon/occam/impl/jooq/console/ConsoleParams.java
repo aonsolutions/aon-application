@@ -15,15 +15,6 @@ public class ConsoleParams {
 	private ConsoleConnectionParams fromConnection;
 	private ConsoleConnectionParams toConnection;
 	
-	private String domainName;
-	private Integer domain;
-	private String user;
-	
-	private Integer parent;
-	private boolean inhertitanceEnabled;
-	private String newDomainName;
-	private Integer newDomain;
-	
 	private PrintStream	printer;
 	private Map<String,ScriptTable> script;
 	private List<String> errors;
@@ -52,70 +43,21 @@ public class ConsoleParams {
 	public ConsoleConnectionParams ensureToConnection() {
 		return getToConnection() != null?getToConnection():getFromConnection();	
 	}
-
-	public String getDomainName() {
-		return domainName;
-	}
-	public ConsoleParams setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
-	}
-
-	public Integer getDomain() {
-		return domain;
-	}
-	public ConsoleParams setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
-
-	public String getUser() {
-		return user;
-	}
-	public ConsoleParams setUser(String user) {
-		this.user = user;
-		return this;
-	}
 	
-	public Occam getOccam() {
+	public Occam getOccam(ConsoleConnectionParams conn) {
 		return new Occam()
-			.setDomainName( getDomainName())
-			.setDomain(getDomain())
-			.setUser(getUser());
+			.setDomainName( conn.getFullDomain().getName())
+			.setDomain( conn.getFullDomain().getId());
 	}
 	
-	public String getNewDomainName() {
-		return newDomainName;
-	}
-	public ConsoleParams setNewDomainName(String newDomainName) {
-		this.newDomainName = newDomainName;
-		return this;
-	}
-
-	public Integer getParent() {
-		return parent;
-	}
-	public ConsoleParams setParent(Integer parent) {
-		this.parent = parent;
-		return this;
+	public Occam getFromOccam() {
+		return getOccam( getFromConnection() );
 	}
 	
-	public boolean isInhertitanceEnabled() {
-		return inhertitanceEnabled;
+	public Occam getToOccam() {
+		return getOccam( ensureToConnection() );
 	}
-	public ConsoleParams setInhertitanceEnabled(boolean inhertitanceEnabled) {
-		this.inhertitanceEnabled = inhertitanceEnabled;
-		return this;
-	}
-
-	public Integer getNewDomain() {
-		return newDomain;
-	}
-	public ConsoleParams setNewDomain(Integer newDomain) {
-		this.newDomain = newDomain;
-		return this;
-	}
-
+	
 	public Map<String, ScriptTable> getScript() {
 		return script;
 	}
@@ -193,10 +135,10 @@ public class ConsoleParams {
 	}
 	
 	public DSLContext getFromDslContext() {
-		return getFromConnection().getDslContext();
+		return getFromConnection().getAONContext().getDslContext();
 	}
 	public DSLContext getToDslContext() {
-		return ensureToConnection().getDslContext();
+		return ensureToConnection().getAONContext().getDslContext();
 	}
 	
 }
