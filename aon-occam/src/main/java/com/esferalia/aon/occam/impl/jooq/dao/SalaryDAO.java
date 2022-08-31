@@ -834,14 +834,14 @@ public class SalaryDAO {
 		.from(SALARY)
 		.where(conditions);
 
-		ctx.getDslContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salariesSelect)).execute();
-		ctx.getDslContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(salariesSelect)).execute();
-		ctx.getDslContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salariesSelect)).execute();
-		ctx.getDslContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salariesSelect)).execute();
-		ctx.getDslContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salariesSelect)).execute();
-		ctx.getDslContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salariesSelect)).execute();
-		
+		ctx.getDslContext().delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(conditions).execute();
+		ctx.getDslContext().delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(conditions).execute();
+		ctx.getDslContext().delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(conditions).execute();
+		ctx.getDslContext().delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(conditions).execute();
+		ctx.getDslContext().delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(conditions).execute();
+		ctx.getDslContext().delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(conditions).execute();
 		ctx.getDslContext().delete(SALARY).where(conditions).execute();
+
 	}
 	
 	private static void removeSalary(AONContext ctx, Integer domainId, Salary salary ) {

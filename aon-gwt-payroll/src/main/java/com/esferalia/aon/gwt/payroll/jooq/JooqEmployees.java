@@ -1212,25 +1212,12 @@ public class JooqEmployees {
 
 		// ----------------------------------Salary------------------------------------------
 
-		SelectConditionStep<Record1<Integer>> salariesSelect = create
-				// formatter:off
-				.select(SALARY.ID).from(SALARY)
-				.where(SALARY.CONTRACT.in(personIds));
-		// formatter:on
-
-		create.delete(SALARY_PAYMENT)
-				.where(SALARY_PAYMENT.SALARY.in(salariesSelect)).execute();
-		create.delete(SALARY_EMBARGO)
-				.where(SALARY_EMBARGO.SALARY.in(salariesSelect)).execute();
-		create.delete(SALARY_DEDUCTION)
-				.where(SALARY_DEDUCTION.SALARY.in(salariesSelect)).execute();
-		create.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salariesSelect))
-				.execute();
-		create.delete(SALARY_COST).where(SALARY_COST.SALARY.in(salariesSelect))
-				.execute();
-		create.delete(SALARY_BONUS)
-				.where(SALARY_BONUS.SALARY.in(salariesSelect)).execute();
-
+		create.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(personIds)).execute();
+		create.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(personIds)).execute();
+		create.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(personIds)).execute();
+		create.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(personIds)).execute();
+		create.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(personIds)).execute();
+		create.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(personIds)).execute();
 		create.delete(SALARY).where(SALARY.CONTRACT.in(personIds)).execute();
 
 		// --------------------------------CERTIFICA2_BATCH------------------------------------
@@ -1305,13 +1292,10 @@ public class JooqEmployees {
 		create.delete(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.in(personIds)).execute();
 
-		SelectConditionStep<Record1<Integer>> leaveDetailSelect = create
-				.select(CONTRACT_LEAVE.ID).from(CONTRACT_LEAVE)
-				.where(CONTRACT_LEAVE.CONTRACT.in(personIds));
-
 		create.delete(CONTRACT_LEAVE_DETAIL)
-				.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE
-						.in(leaveDetailSelect)).execute();
+			.using(CONTRACT_LEAVE_DETAIL.innerJoin(CONTRACT_LEAVE).onKey())
+			.where(CONTRACT_LEAVE.CONTRACT.in(personIds));
+		
 		create.delete(CONTRACT_INFO)
 				.where(CONTRACT_INFO.CONTRACT.in(personIds)).execute();
 
