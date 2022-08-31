@@ -77,7 +77,10 @@ public class Category implements Serializable{
 	}
 	
 	public Category setCategoryType(CategoryType categoryType) {
-		this.categoryType = categoryType;
+		if(categoryType!=null) {
+			this.type = categoryType.value();
+			this.categoryType = categoryType;
+		}
 		return this;
 	}
 	
@@ -89,7 +92,6 @@ public class Category implements Serializable{
 		this.type = type;
 		return this;
 	}
-	
 	
 	public String getUrl() {
 		return url;

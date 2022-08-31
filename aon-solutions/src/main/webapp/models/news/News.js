@@ -145,5 +145,4 @@ export class News {
     setScope(scope){
         this.scope = scope;
     }
-        
 }

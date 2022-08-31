@@ -27,7 +27,7 @@ import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonDate } from "../../components/aon-date.js";
-import { AonRssList } from "../rss/rss/aon-rss-list.js";
+import { AonNewsList } from "../news/news/aon-news-list.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -208,8 +208,8 @@ export class AonConfiguration extends AonElement {
         appOptions.push({
           id:  "notice",
           icon: "rss_feed",
-          name: MSG.NOTICE,
-          fn: () => this.buildRss(),
+          name: MSG.NOTIFICATIONS,
+          fn: () => this.buildNews(),
         });
       }
 
@@ -338,8 +338,8 @@ export class AonConfiguration extends AonElement {
     this.getApplication().setContent(new AonComunicaConfig());
   }
 
-  buildRss(){
-    this.getApplication().setContent(new AonRssList());
+  buildNews(){
+    this.getApplication().setContent(new AonNewsList());
   }
 
   buildCompanyList() {

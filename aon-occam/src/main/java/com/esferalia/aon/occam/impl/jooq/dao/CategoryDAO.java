@@ -6,11 +6,14 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 
 public class CategoryDAO {
@@ -34,7 +37,7 @@ public class CategoryDAO {
 	}
 
 	public static Category save(AONContext ctx, Category category) {
-		return category.getId() !=0 ? update(ctx, category) : insert(ctx, category);
+		return category.getId()!=null && category.getId() !=0 ? update(ctx, category) : insert(ctx, category);
 	}
 	
 	public static void delete(AONContext ctx, Integer id){
@@ -55,10 +58,9 @@ public class CategoryDAO {
 	
 	private static Stream<Category> getStream(AONContext ctx, CategoryFilter filter, Optional<Integer> page, Optional<Integer> perPage){
 		ctx.checkRead();
-		SelectConditionStep<Record> condition = 
-				ctx.getDslContext()
-				.select().from(CATEGORY)
-				.where(CATEGORY_PROPERTIES.getConditions(filter));
+		SelectConditionStep<Record> condition = ctx.getDslContext()
+		.select().from(CATEGORY)
+		.where(CATEGORY_PROPERTIES.getConditions(filter));
 
 		if(page.isPresent() && perPage.isPresent()) {
 			Integer per = perPage.get();
@@ -76,6 +78,9 @@ public class CategoryDAO {
 				.insertInto(CATEGORY)
 				.set(CATEGORY.DOMAIN, category.getDomain())
 				.set(CATEGORY.NAME, category.getName())
+				.set(CATEGORY.DESCRIPTION, category.getDescription())
+				.set(CATEGORY.SCOPE, category.getScope())
+				.set(CATEGORY.URL, category.getUrl())
 				.set(CATEGORY.TYPE, category.getType())
 				.returning(CATEGORY.ID).fetchOne().getId();
 		
@@ -89,6 +94,9 @@ public class CategoryDAO {
 		
 		ctx.getDslContext().update(CATEGORY)
 		.set(CATEGORY.NAME, category.getName())
+		.set(CATEGORY.DESCRIPTION, category.getDescription())
+		.set(CATEGORY.SCOPE, category.getScope())
+		.set(CATEGORY.URL, category.getUrl())
 		.where(CATEGORY.ID.eq(category.getId()))
 		.execute();
 		
@@ -115,10 +123,10 @@ public class CategoryDAO {
 					.setId(r.getValue(CATEGORY.ID))
 					.setDescription(r.getValue(CATEGORY.DESCRIPTION))
 					.setDomain(r.getValue(CATEGORY.DOMAIN))
-					.setName(r.getValue(CATEGORY.NAME))
+					.setName(r.getValue(CATEGORY.NAME) ) // (String) r.getValue(DSL.field("title"))
 					.setRattach(r.getValue(CATEGORY.RATTACH))
 					.setScope(r.getValue(CATEGORY.SCOPE))
-					.setType(r.getValue(CATEGORY.TYPE))
+					.setCategoryType(CategoryType.safeValueOf(r.getValue(CATEGORY.TYPE)))
 					.setUrl(r.getValue(CATEGORY.URL));
 		}
 	}	

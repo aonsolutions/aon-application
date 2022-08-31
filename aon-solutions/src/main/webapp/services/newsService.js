@@ -1,9 +1,11 @@
-import {  post, get, remove, put } from "./request.js";
+import {  post, get, remove } from "./request.js";
 import { API_URL, MSG } from "../environments/environments.js";
 
-export const saveNews = (data) => post(`${API_URL}/news`, data);
+
+export const getNews    = (data) => get(`${API_URL}/news`, data);
+export const getNewOne  = (data) => get(`${API_URL}/news/one`, data);
+export const saveNews   = (data) => post(`${API_URL}/news`, data);
 export const deleteNews = (data) => remove(`${API_URL}/news`, data);
-export const getNews = (data) => get(`${API_URL}/news`, data);
 
 export const getNewsType = (data)=>  new Promise((resolve) =>{
     let json = [
@@ -20,11 +22,8 @@ export const getNewsType = (data)=>  new Promise((resolve) =>{
 });
 
 
-export const NewsType ={
-	NEWS: "NEWS",
-	MESSAGE:"MESSAGE",
-	COMMUNICATION:"COMMUNICATION"
-}
+//-------------------- RSS ----------
+
 export const getRss = (data) => {
     return new Promise((resolve, reject) =>{
         resolve({
@@ -64,17 +63,5 @@ export const getRss = (data) => {
                 }
             ]
         });
-    });
-}
-
-export const getRssList = (data) => {
-    return new Promise((resolve, reject) =>{
-        resolve(true);
-    });
-}
-
-export const saveRss = (data) =>{
-    return new Promise((resolve, reject) =>{
-        resolve(true);
     });
 }
