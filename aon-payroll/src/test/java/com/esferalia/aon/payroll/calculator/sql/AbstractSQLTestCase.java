@@ -495,6 +495,13 @@ public abstract class AbstractSQLTestCase {
 				.set(AGREEMENT.DESCRIPTION, "").returning().fetchOne();
 	}
 
+	public static DomainRecord getDomain(AONContext aonContext, int domainId) {
+		return aonContext.getDslContext().select().from(DOMAIN).where(DOMAIN.ID.eq(domainId))
+				.fetchOneInto(DOMAIN);
+
+	}
+
+
 	public static AgreementRecord getAgreement(AONContext aonContext, int agreementLevel) {
 		return aonContext.getDslContext().select().from(AGREEMENT).join(AGREEMENT_LEVEL)
 				.on(AGREEMENT.ID.eq(AGREEMENT_LEVEL.AGREEMENT)).where(AGREEMENT_LEVEL.ID.eq(agreementLevel))
