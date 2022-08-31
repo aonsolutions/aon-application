@@ -5,7 +5,7 @@ import {AonToolbar} from "../../../components/aon-toolbar.js";
 import {AonCard} from "../../../components/aon-card.js";
 
 import {CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT} from '../../../environments/environments.js'; 
-import {getPackaging, mobileAction, MOBILE_ACTION, savePackaging } from '../../../services/service.js';
+import {getPackaging, mobileAction, MOBILE_ACTION, savePackaging, openFileUrl} from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
 import { AonInput } from '../../../components/aon-input.js';
@@ -42,6 +42,7 @@ export class AonMobilePackaging extends AonElement {
 	contenedor;
 	barcode;
 	packaging;
+	fileUrl;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -92,7 +93,6 @@ export class AonMobilePackaging extends AonElement {
 
 		let print = toolbar.addButton2(ACTION.PRINT, () => this.print());
 		print.style.display = 'none';
-
 
 		toolbar.addButton2(ACTION.SAVE, () =>  {
 			print.style.display = 'block';
@@ -247,6 +247,7 @@ export class AonMobilePackaging extends AonElement {
 		let w = this.getElement(card.CONTENT).offsetWidth;
 		let type = 'application/pdf';
 		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		this.fileUrl = url;
 		card.setContentHTML(`<aon-viewer id=${this.VIEWER} type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 		// fileCard.cleanSection2();
 		// fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
@@ -255,7 +256,8 @@ export class AonMobilePackaging extends AonElement {
 	// ACTIONS
 
 	print() {
-		this.getElement(this.VIEWER).printDocument();
+		//this.getElement(this.VIEWER).printDocument();
+		openFileUrl(this.fileUrl);
 	}
 
 	back() {
