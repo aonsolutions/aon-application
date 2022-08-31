@@ -662,13 +662,16 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 
 		double expected = new Period(getToday(), endDate)
 				.daysStream()
+				.peek( 
+				day -> System.out.println(day.get(DAY_OF_MONTH) +" == " + get(holiday, DAY_OF_MONTH)
+				+ "," + (day.get(DAY_OF_MONTH) == get(holiday, DAY_OF_MONTH)) ))
 				.collect(Collectors.summingDouble(
 						day -> (day.get(DAY_OF_MONTH) == get(holiday, DAY_OF_MONTH)
 								|| day.get(DAY_OF_WEEK) == Calendar.SUNDAY
 								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
 										? 0.00 : 8.00));
-		if (expected == 0 ) 
-			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
+		//if (expected == 0 ) 
+		//	expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 			
 		
 		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
@@ -696,8 +699,8 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 								|| day.get(DAY_OF_WEEK) == Calendar.SUNDAY
 								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
 										? 0.00 : 8.00));
-		if (expected == 0 ) 
-			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
+		//if (expected == 0 ) 
+		//	expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 
 		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
 		
@@ -711,7 +714,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		;
 
 		for (ContextData data : datas)
-			Assert.assertEquals(PARTIAL_FACTOR.getName(), expected == 0.00 ? 0.00 : 1.00, Double.parseDouble(data.getExpression()));
+			Assert.assertEquals(PARTIAL_FACTOR.getName(), 1.00, Double.parseDouble(data.getExpression()));
 		
 	}
 
