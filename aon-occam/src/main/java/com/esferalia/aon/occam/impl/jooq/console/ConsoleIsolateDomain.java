@@ -1,16 +1,24 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
+
+import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
+import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
+import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Session.SESSION;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
@@ -34,6 +42,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -44,7 +53,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConsoleIsolateDomain {
 	
-	private static final String DOMAIN_LABEL = "domain";
+	private static final String DOMAIN_FIELD = "domain";
 	private static final Table<Record> TEMPID = DSL.table("tempId");
 	private static final Field<String> TEMPID_TABLE = DSL.field("tempId.table_name", String.class);
 	private static final Field<Integer> TEMPID_OLD = DSL.field("tempId.old_id", Integer.class);
@@ -65,6 +74,12 @@ public class ConsoleIsolateDomain {
 	private static void isolateDomain(ConsoleParams params) {
 		ConsoleUtils.log(params,"** Start domain isolation!");
 		try {
+			Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
+					, p -> p.getNameProperty().eq(params.getFromConnection().getDomainName()));
+			if (fullDomain == null) {
+				throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getFromConnection().getDomainName() + "\"");
+			}
+			params.getFromConnection().setFullDomain(fullDomain);
 			params.setScript( new LinkedHashMap<>() );
 			
 			DomainValidator domainValidator = DomainValidator.getInstance();
@@ -97,9 +112,9 @@ public class ConsoleIsolateDomain {
 				params.getScript()
 					.values()
 					.stream()
-					.filter(t -> !DOMAIN_LABEL.equals(t.getTable().getName()))
-					.filter(t -> !"session".equals(t.getTable().getName()))
-					.filter(t -> !"action_entry".equals(t.getTable().getName()))
+					.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
+					.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
+					.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
 					.forEach(t -> duplicateTable(params, t));
 				loopRefInvoice(params,params.getScript().get("invoice"));
 				loopFBatch(params,params.getScript().get("fbatch"));
@@ -147,17 +162,27 @@ public class ConsoleIsolateDomain {
 	}
 	
 	private static void checkNoticeRecipient(ConsoleParams params ) {
+		Integer[] domainIds = null;
+		if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
+			domainIds = new Integer[] {params.getFromConnection().getFullDomain().getId()
+				,params.getFromConnection().getFullDomain().getParentId()};
+		} else {
+			domainIds = new Integer[] {params.getFromConnection().getFullDomain().getId()};
+			
+		}
+		
 		params.getFromDslContext()
-			.select( NOTICE.ID,NOTICE.DATE,NOTICE.SUBJECT )
+			.select( NOTICE.ID,NOTICE.DATE,NOTICE.SUBJECT,NOTICE.DOMAIN )
 			.from(NOTICE)
 			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
-			.where(NOTICE.DOMAIN.eq(params.getFromConnection().getFullDomain().getId()))
+			.where(NOTICE.DOMAIN.in(domainIds))
 			.and(USER.DOMAIN.notIn(params.getFromConnection().getFullDomain().getId()
 					,params.getFromConnection().getFullDomain().getParentId()))
 			.fetch()
 			.stream()
-			.map(rec -> MessageFormat.format("Existe un aviso cuyo destinatario no pertence al dominio. [id: {0}, fecha: \"{1}\", subject: \"{2}\"] "
+			.map(rec -> MessageFormat.format("Existe un aviso (tabla \"notice\") cuyo destinatario no pertence al dominio. [id: {0}, dominio: {1}, fecha: \"{2}\", subject: \"{3}\"] "
 				,rec.getValue(NOTICE.ID)
+				,rec.getValue(NOTICE.DOMAIN)
 				,rec.getValue(NOTICE.DATE)
 				,rec.getValue(NOTICE.SUBJECT)) )
 			.forEach( params::addError);
@@ -169,19 +194,37 @@ public class ConsoleIsolateDomain {
 	
 
 	private static void passHeritableTables(ConsoleParams params) {
-		ScriptTable[] tables  = new ScriptTable[] {
-				params.getScript().get("scope"),
-				params.getScript().get("account"),
-				params.getScript().get("geozone"),
-				params.getScript().get("geotree"),
-				params.getScript().get("pcategory"),
-				params.getScript().get("tax"),
-				params.getScript().get("tag"),
-				params.getScript().get("user"),
-				params.getScript().get("series"),
-				params.getScript().get("pay_method"),
-		};
-		Arrays.stream(tables)
+//		ScriptTable[] tables  = new ScriptTable[] {
+//				params.getScript().get("scope"),
+//				params.getScript().get("account"),
+//				params.getScript().get("geozone"),
+//				params.getScript().get("geotree"),
+//				params.getScript().get("pcategory"),
+//				params.getScript().get("tax"),
+//				params.getScript().get("tag"),
+//				params.getScript().get("user"),
+//				params.getScript().get("series"),
+//				params.getScript().get("pay_method"),
+//				params.getScript().get("bank_concept"),
+//				params.getScript().get("product"),
+//				params.getScript().get("item"),
+//				params.getScript().get("registry"),
+//		};
+//		Arrays.stream(tables)
+		params.getScript()
+			.values()
+			.stream()
+			.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
+			.filter(t -> !DOMAIN_APP.getName().equals(t.getTable().getName()))
+			.filter(t -> !DOMAIN_APPLICATION.getName().equals(t.getTable().getName()))
+			.filter(t -> !DOMAIN_APPLICATION_MODULE.getName().equals(t.getTable().getName()))
+			.filter(t -> !DOMAIN_GSERVICEACCOUNT.getName().equals(t.getTable().getName()))
+			.filter(t -> !APPLICATION_USER.getName().equals(t.getTable().getName()))
+			.filter(t -> !APPLICATION_USER_PROFILE.getName().equals(t.getTable().getName()))
+			.filter(t -> !COMPANY.getName().equals(t.getTable().getName()))
+			.filter(t -> !ACCOUNT_PERIOD.getName().equals(t.getTable().getName()))
+			.filter(t -> !APP_PARAM.getName().equals(t.getTable().getName()))
+			.filter(t -> hasDomain(t.getTable()))
 			.forEach( t -> {
 				SelectConditionStep<Record> select = params.getFromDslContext()
 						.select()
@@ -215,12 +258,12 @@ public class ConsoleIsolateDomain {
 	private static void createDomain(ConsoleParams params) {
 		Optional<Record> optRec = params.getFromDslContext().select()
 			.from(DOMAIN)
-			.where(DOMAIN.NAME.equal(params.getToConnection().getDomainName()))
+			.where(DOMAIN.NAME.equal(params.getFromConnection().getDomainName()))
 			.fetch()
 			.stream()
 			.findFirst();
 		if (optRec.isEmpty()) {
-			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getToConnection().getDomainName() + "\"");
+			throw new IllegalArgumentException("Ya existe el dominio \"" + params.getToConnection().getDomainName() + "\"");
 		}
 		DomainRecord domRec = optRec.get().into(DOMAIN);
 		domRec.attach(params.getToDslContext().configuration());
@@ -378,14 +421,12 @@ public class ConsoleIsolateDomain {
 			.map( rec -> duplicateForeignKey(params
 				,CustomForeignKey.ACC_APP_PARAM.getForeignKey()
 				,rec))
-			.forEach(rec -> {
-				params.getToDslContext()
-					.update( APP_PARAM )
-					.set(APP_PARAM.VALUE, rec.getValue(APP_PARAM.VALUE))
-					.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
-					.and(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
-					.execute();
-			});
+			.forEach(rec -> params.getToDslContext()
+				.update( APP_PARAM )
+				.set(APP_PARAM.VALUE, rec.getValue(APP_PARAM.VALUE))
+				.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
+				.and(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
+				.execute());
 	}
 
 	private static void disableForeignKeys(ConsoleParams params) {
@@ -403,7 +444,7 @@ public class ConsoleIsolateDomain {
 	
 	@SuppressWarnings("unchecked")
 	private static <T extends Record> Field<Integer> getDomainField(Table<T> table) {
-		return (TableField<T, Integer>) table.field(DOMAIN_LABEL);
+		return (TableField<T, Integer>) table.field(DOMAIN_FIELD);
 	}
 	
 	private static <T extends Record> boolean hasDomain(Table<T> table) {
@@ -411,7 +452,7 @@ public class ConsoleIsolateDomain {
 	}
 	
 	private static <T extends Record> boolean isDomainTable(Table<T> table) {
-		return (DOMAIN_LABEL.equals(table.getName()));		
+		return (DOMAIN_FIELD.equals(table.getName()));		
 	}
 	
 	private static <T extends Record> Field<Integer> getPrimaryKey(ConsoleParams params, Table<T> table) {
@@ -539,7 +580,7 @@ public class ConsoleIsolateDomain {
 		ConsoleUtils.log(params,"** Generating tables script");
 		ConsoleUtils.log(params,"** ------------------------");
 		tables.stream()
-			.filter(t -> t.field(DOMAIN_LABEL) != null )
+			.filter(t -> t.field(DOMAIN_FIELD) != null )
 			.forEach(t -> addTable(params, t, stack));
 		ConsoleUtils.log(params," [DONE!]");
 		ConsoleUtils.log(params,"");
