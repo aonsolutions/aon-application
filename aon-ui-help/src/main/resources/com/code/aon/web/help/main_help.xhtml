@@ -165,6 +165,8 @@
 		<ui:include src="./facelet/menu_help.xhtml" /> 
 	</ui:insert>
 
+	<ui:include src="./facelet/notifications.xhtml" />
+	<ui:include src="./facelet/links.xhtml" />
 	<aon:div styleClass="box-row" id="aonContent">
 		<aon:div id="sidebar">
 			<ui:include src="./facelet/sidemenu.xhtml" />	
@@ -188,6 +190,8 @@
 								<aon:outputText rendered="${help.isConfig(file)}" value="" styleClass="icon aon-module aon-button-tools" />
 								<aon:outputText rendered="${help.isManagement(file)}" value="" styleClass="icon aon-module aon-button" />
 								<aon:outputText rendered="${help.isAccounting(file)}" value="" styleClass="icon aon-module aon-button-account" />
+								<aon:outputText rendered="${help.isConecta(file)}" value="" styleClass="icon aon-module aon-button-conecta" />
+								<aon:outputText rendered="${help.isFiscal(file)}" value="" styleClass="icon aon-module aon-button-fiscal" />
 								
 								<aon:outputText value="#{file.name}" />
 	

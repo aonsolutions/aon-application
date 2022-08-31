@@ -17,17 +17,28 @@ import com.google.api.services.drive.Drive;
 public class HelpController implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	private static final String HOME_ID = "1Z_DmemsSagq0r5WE3cLDMz4HdHzfofFm";
 	private GFile file;
+	private GFile homeFile;
 	private Drive drive;
 	private Collection<GFile> content;
+	private Collection<GFile> indexContent;
 	private Collection<GFile> faqs;
 	private LinkedHashMap<String,GFile> breadcrumb;
+
+	private boolean notificationsEnabled;
+	private boolean linksEnabled;
 	
 	public HelpController() {
 		try {
 			this.drive = DriveService.connect();
 			this.file = new GFile.GFileBuilder()
-					.setId("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN")
+					.setId(HOME_ID)
+					.setType(MimeTypes.FOLDER)
+					.setName("Inicio")
+					.build();
+			this.homeFile = new GFile.GFileBuilder()
+					.setId(HOME_ID)
 					.setType(MimeTypes.FOLDER)
 					.setName("Inicio")
 					.build();
@@ -47,7 +58,7 @@ public class HelpController implements Serializable {
 	 */
 	private void resetBreadcrumb() {
 		final GFile file = new GFile.GFileBuilder()
-				.setId("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN")
+				.setId(HOME_ID)
 				.setType(MimeTypes.FOLDER)
 				.setName("Inicio")
 				.build();
@@ -67,6 +78,11 @@ public class HelpController implements Serializable {
 		return content;
 	}
 	
+	public Collection<GFile> getIndexContent() {
+		if (indexContent == null)
+			indexContent = DriveService.ListDirectory(drive,homeFile.getId());
+		return indexContent;
+	}
 	
 	/**
 	 * Get the current content 
@@ -119,6 +135,10 @@ public class HelpController implements Serializable {
 	 */
 	public GFile getFile() {
 		return this.file;
+	}
+	
+	public GFile getHomeFile() {
+		return this.homeFile;
 	}
 	
 	/*
@@ -209,7 +229,7 @@ public class HelpController implements Serializable {
 	
 	public void home() {
 		this.setFile(new GFile.GFileBuilder()
-					.setId("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN")
+					.setId(HOME_ID)
 					.setType(MimeTypes.FOLDER)
 					.setName("Inicio")
 					.build());
@@ -218,20 +238,33 @@ public class HelpController implements Serializable {
 	
 
 	public boolean isAonModule(GFile file) {
-		return (isPayroll(file) || isAccounting(file) || isConfig(file) || isManagement(file));
+		return 	isPayroll(file) 	||
+				isAccounting(file) 	||
+				isConfig(file) 		||
+				isManagement(file)	||
+				isFiscal(file)		||
+				isConecta(file);
 		
 	}
 
 	public boolean isHome() {
-		return "1nlCD6BVTPk98UIy96pxd5MevesBCmiIN".equals(this.file.getId());
+		return HOME_ID.equals(this.file.getId());
 	}
 	
 	public boolean isPayroll(GFile file) {
-		return "1p_vxSdxJATMaAm36DxIu8Yrb3DjFdO9l".equals(file.getId());
+		return "1Igr_77rr28FLnvdY9Df4tL4lgTMMRTfB".equals(file.getId());
 	}
 	
 	public boolean isConfig(GFile file) {
-		return "1hdAHjI7LPKkUY3qrfK_OoYUHNST0Vu-c".equals(file.getId());
+		return "1HVUkoicxcxm3jl-Pii6rrIvTn2C7uarY".equals(file.getId());
+	}
+	
+	public boolean isFiscal(GFile file) {
+		return "1s3CfKvoleCKQWpBcVv5i_NR9oTxF5aqz".equals(file.getId());
+	}
+	
+	public boolean isConecta(GFile file) {
+		return "1hW4Woxq3p0Yho-kyloyFYLXL_D0n1bRG".equals(file.getId());
 	}
 
 	public boolean isManagement(GFile file) {
@@ -239,7 +272,25 @@ public class HelpController implements Serializable {
 	}
 	
 	public boolean isAccounting(GFile file) {
-		return "1WwyfJ8em7pGt0ordWiMWtoEgAvaanF1X".equals(file.getId());
+		return "1l9BlhOiHzAWcgUfcYpdSbvdedNnfXCRc".equals(file.getId());
+	}
+
+
+	public boolean isNotificationsEnabled() {
+		return notificationsEnabled;
+	}
+
+	public boolean isLinksEnabled() {
+		return linksEnabled;
+	}
+
+
+	public void setNotificationsEnabled(boolean notificationsEnabled) {
+		this.notificationsEnabled = notificationsEnabled;
+	}
+
+	public void setLinksEnabled(boolean linksEnabled) {
+		this.linksEnabled = linksEnabled;
 	}
 
 }

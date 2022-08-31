@@ -5,6 +5,21 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<style>
+		.logoImg {
+			display: block;
+			margin: 0 auto 10px auto;
+			width: 90%;
+		}
+		
+ 	/* div[id$="aboutWindowContainer"] .rich-mp-container {
+			top: unset !important;
+			margin-top: 50vh !important;
+			margin-bottom: 50vh !important;
+	} */
+	
+	</style>
 
 	<aon:panelGroup id="aboutWindowPanel" styleClass="aon-popupWindow">
 		<aon:if test="#{aonConfiguration.properties.showAbout}">
@@ -12,7 +27,7 @@
 				<rich:modalPanel 
 					id="aboutWindow"
 					showWhenRendered="#{aonConfiguration.properties.showAbout}"
-					minWidth="420" height="260">
+					minWidth="480" height="320">
 	
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
@@ -33,28 +48,68 @@
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div>
-								<aon:graphicImage value="#{customize.headerLogo}" />	
-								<aon:if test="#{customize.applicationTitle != null}" >						
+								<aon:graphicImage value="#{customize.headerLogo}" styleClass="logoImg" />	
+								<!-- <aon:if test="#{customize.applicationTitle != null}" >						
 									<aon:if test="#{customize.separator != null}">					
 										<aon:outputText value="#{customize.separator}"
-											style="margin-left: 5px;#{customize.fontStyle}"
+											style="margin-left: 10%;#{customize.fontStyle}"
 											styleClass="aon-header-title-without-image" />
 									</aon:if>
 									<aon:outputText value="#{customize.applicationTitle}"
-										style="margin-left: 5px;#{customize.fontStyle}"
+										style="margin-left: 10%;#{customize.fontStyle}"
 										styleClass="aon-header-title-without-image" />
-								</aon:if>							
+								</aon:if>					 -->		
 							</aon:div>
-							<h:panelGrid styleClass="aon-margin-top" columnClasses="aon-version-label">
+							<aon:div styleClass="aon-margin-top" columnClasses="aon-version-label">
 								<aon:if test="#{customize.buildDate != null}" >						
-									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_version}" >
+									<aon:outputFormat style="display:block; color: #000; text-align: right; margin-right: 10%;" value="#{bundle.aon_about_version}" >
 										<f:param value="#{customize.buildDate}" />
 									</aon:outputFormat>
 								</aon:if>					
-							</h:panelGrid>	
+							</aon:div>
+							<aon:div>
+								<aon:outputText value="Datos de contacto:"
+								style="font-weight: bold; margin-left: 10%; font-size: 11px; color: #666;"
+								/>
+							</aon:div>	
+							<aon:div style="margin-left: 5%">
+								<aon:div>
+									<aon:outputText value="Teléfono: (+34) 945 121 010"
+									style="margin-left: 10%; font-size: 11px; color: #666;"
+									/>
+								</aon:div>	
+								<aon:div>
+									<aon:outputText value="Correos:"
+									style="margin-left: 10%; font-size: 11px; color: #666;"
+									/>
+									<aon:outputText value="· soporte@aonSolutions.es / Atención a usuarios"
+									style="display:block; margin-left: 10%; font-size: 11px; color: #666; padding-left: .8em;"
+									/>
+									<aon:outputText value="· comercial@aonSolutions.es / Ventas y contratación"
+									style="display:block; margin-left: 10%; font-size: 11px; color: #666; padding-left: .8em;"
+									/>
+									<aon:outputText value="· administración@aonSolutions.es / Facturación, cobros y pagos"
+									style="display:block; margin-left: 10%; font-size: 11px; color: #666; padding-left: .8em;"
+									/>
+								</aon:div>
+								<aon:div>
+									<aon:outputText value="Horario:"
+									style="margin-left: 10%; font-size: 11px; color: #666;"
+									/>
+									<aon:outputText value="· Lunes a jueves de 8:30 a 14:00 / 15:30 a 18:30"
+									style="display:block; margin-left: 10%; font-size: 11px; color: #666; padding-left: .8em;"
+									/>
+									<aon:outputText value="· Viernes de 8:30 a 14:00"
+									style="display:block; margin-left: 10%; font-size: 11px; color: #666; padding-left: .8em;"
+									/>
+									<aon:outputText value="· Verano de 8:00 a 15:00"
+									style="display:block; margin-left: 10%; font-size: 11px; color: #666; padding-left: .8em;"
+									/>
+								</aon:div>
+							</aon:div>
 							<aon:div styleClass="aon-footer-box">
 								<ui:include src="/com/code/aon/ui/resources/facelet/shared/trademark.xhtml" />
-							</aon:div>		
+							</aon:div>
 						</aon:div>		
 					</aon:div>		
 				</rich:modalPanel>
