@@ -89,6 +89,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	build() {
+		
 		let title = this.cau ? MSG.SUPPORT + ' / CAU' : MSG.REQUESTS;
 		this.applicationEl = this.createApplication(this.AON_MESSENGER, title, new AonApplication());
 

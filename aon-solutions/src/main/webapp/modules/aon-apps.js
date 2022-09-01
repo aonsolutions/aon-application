@@ -176,7 +176,7 @@ export class AonApps extends AonElement {
 		else if(Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else if(Apps.WAREHOUSE.app === app.app)
-			return this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
+			return this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat") || this.isLocal();
 		else 
 			return false;
 	}

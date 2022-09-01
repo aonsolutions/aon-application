@@ -48,6 +48,7 @@ export class AonMobileDesktop extends AonElement {
 			this.dur = new DomainUserRoles(r);
 			if(!this.openFirstApp(this.dur)){
 				this.build();
+				this.observerListener();
 			}
 		});
 	}
@@ -101,6 +102,12 @@ export class AonMobileDesktop extends AonElement {
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	observerListener(){
+		window.addEventListener(EVENT.RESUME_APP, ()=>{
+			this.buildTimeControl();
+		});
 	}
 
 	openFirstApp(dur){

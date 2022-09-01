@@ -449,7 +449,7 @@ export class AonNotification extends AonElement {
       }
     }, form);
 
-    return form.element;
+    return form;
   }
 
   hiddenElement(value){

@@ -70,7 +70,7 @@ export class AonLocationAdd extends AonElement {
     CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY}, this);
 
     const form = CreateComponent.createForm(this.id+"Form");
-    this.appendChild(form.element);
+    this.appendChild(form);
 
     let div = this.createElement(TAG.DIV);
     div.id = this.id+"Div";
@@ -110,7 +110,6 @@ export class AonLocationAdd extends AonElement {
         type:"number"
       }
     }, divG);
-
 
     divG = this.createElement(TAG.DIV);
     divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);

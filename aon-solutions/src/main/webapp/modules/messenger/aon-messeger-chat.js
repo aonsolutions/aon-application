@@ -7,10 +7,10 @@ import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkButtonsToolbar, checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
-import { getFormVacationJson } from "./forms/vacation.js";
 import { TaskFill } from "./shared/TaskFill.js";
-import { getFormMovJson } from "./forms/mov-ss.js";
-import { getFormTimeJson } from "./forms/time-control.js";
+import { FormMovSs } from "./forms/FormMvSs.js";
+import { FormTimecontrol } from "./forms/FormTimecontrol.js";
+import { FormVacation } from "./forms/FormVacation.js";
 import { getOfficeProjects } from "../../services/projectService.js";
 import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
@@ -98,6 +98,7 @@ export class AonMessengerChat extends AonElement {
 
   build() {
     this.paintView();
+    
     if(this.task && this.task.id){  //FILL CHATS WORKFLOW
       this.getTaskWorkflow(this.task);
     }  
@@ -427,11 +428,11 @@ export class AonMessengerChat extends AonElement {
       this.task.title = processType.getText();
       const type = processType.value;
       if("1" === type){
-        json = getFormVacationJson();
+        json = FormVacation.getFormJson();
       } else if("2" === type){
-        json = getFormMovJson();
+        json = FormMovSs.getFormJson();
       } else if("3" === type){
-        json = getFormTimeJson();
+        json = FormTimecontrol.getFormJson();
       }
   
       if(json){//TAGS

@@ -21,6 +21,10 @@ window.setNotificationAction = (data) =>  {
     window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
 }
 
+window.setResumeApp = (data) =>  {
+    window.dispatchEvent( new CustomEvent(EVENT.RESUME_APP, {detail:data}));
+}
+
 const isMobile = () => {
     const reg = new RegExp(/mobile/i);
     const navigatorPlatform = navigator.platform.toLowerCase();

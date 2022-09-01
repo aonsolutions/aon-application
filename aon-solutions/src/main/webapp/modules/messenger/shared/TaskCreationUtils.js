@@ -883,8 +883,15 @@ const openDialogBranch = (task)=> {
 
         await saveTaskBranch(params);
         aonMessengerChat.showMessage(`Rama creada!`);
+        
+        let param = { id: task.id };
+        const domain = task.domain;
+        if(domain){
+          param.domainId = domain.id;
+          param.domainName = domain.name;
+        }
 
-        const data = await getTaskOne({id:task.id});
+        const data = await getTaskOne(param);
         let element = new AonMessengerChat();
         element.data = data;
 

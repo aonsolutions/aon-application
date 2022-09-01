@@ -90,11 +90,11 @@ export const createAsociativeSA = (create)=>{
 
 export const createFormComunica = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");
-    parent.appendChild(form.element);
+    parent.appendChild(form);
 
     const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
     const div = createDiv({id: id+"Div", classes:[className]});
-    div.appendTo(form);
+    form.appendChild(div.element);
 
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12]})
@@ -109,7 +109,7 @@ export const createFormComunica = (id, parent) => {
     divC.appendTo(div.element);
     CreateComponent.createAonCard({id: id+"ContratoCard", title:"Datos del contrato"}, divC.element);
 
-    return form.element;
+    return form;
 }
 
 export const createEnterpriseData = (parent) => {

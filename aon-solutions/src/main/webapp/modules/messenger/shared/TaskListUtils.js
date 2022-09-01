@@ -8,7 +8,6 @@ import {
   MATERIAL_ICONS,
   TAG,
 } from "../../../environments/environments.js";
-// import { getTaskOne } from "../../../services/taskService.js";
 import { sortBy } from "../../../services/utils.js";
 import { setStyles } from "../../../services/utilsComponents.js";
 import { firstLetters, StringTwoLetters } from "../../timecontrol/time-control/utils.js";
@@ -351,22 +350,6 @@ const getIcon = (task, size = undefined, isChild = undefined) => {
   }
 
   span.appendChild(icon);
-
-  // if (!isCau) {
-  //   console.log(div);
-  //   div.addEventListener(EVENT.CLICK, (ev) => {
-  //     ev.stopPropagation();
-  //     ev.preventDefault();
-      // const aonMessengerList = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST);
-      // const documents = aonMessengerList.getDocuments();
-      // getTaskOne({ id }).then((t) => {
-      //   let row = aonMessengerList.ROWS.find((x) => x.id === t.id);
-      //   if (row && row.parent) {
-      //     addChilds(t, row, documents, isCau);
-      //   }
-      // });
-    // });
-  // }
 
   return div;
 };

@@ -256,7 +256,14 @@ export class AonMessengerList extends AonElement {
     } else if (res && res.id) {
       this.applicationEl.startLoading();
       try {
-        const data = await getTaskOne({ id: res.id });
+        let params = { id: res.id };
+
+        if(res.domain && res.domain.id &&  res.domain.name){
+          params.domainName = res.domain.name;
+          params.domainId = res.domain.id
+        }
+
+        const data = await getTaskOne(params);
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, data);
       } catch (err) {
         this.showError(err);

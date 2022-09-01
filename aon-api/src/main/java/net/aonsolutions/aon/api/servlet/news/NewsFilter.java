@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.NewsProperties;
+import com.esferalia.aon.occam.api.model.news.NewsType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -19,7 +20,7 @@ public class NewsFilter {
 		JSONObject params  = api.getData();
 		String search      = params.optString(IJsonNames.SEARCH);
 	
-		Filter filter = f.getDomainProperty().eq(domain.getId());
+		Filter filter      = f.getDomainProperty().eq(domain.getId()).and(f.getTypeProperty().eq(NewsType.COMMUNICATION.value()));
 		
 		/*if(!search.isEmpty()) {
 			System.out.println(search);

@@ -1,13 +1,14 @@
 import { AON_ICONS, API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
 import { setAttributes, setClasses, setDataset, setStyles } from "../../../services/utilsComponents.js";
-import { createFormVacation } from "../forms/vacation.js";
+
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { TaskFill } from "./TaskFill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
-import { createFormMov } from "../forms/mov-ss.js";
-import { createFormTimeControl } from "../forms/time-control.js";
+import { FormMovSs } from "../forms/FormMvSs.js";
+import { FormTimecontrol } from "../forms/FormTimecontrol.js";
+import { FormVacation } from "../forms/FormVacation.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import * as ACTIONS from "../../actions.js";
 import { loadTaskGrouped } from "./MessengerChat.js";
@@ -384,7 +385,7 @@ const changeFormProcess = (task, {value,name}) => {
     setStyles(aonCard.getCard(), { margin:0, marginTop:"10px" });
     aonCard.getCardTitle1().style.whiteSpace = "pre-wrap";
 
-    if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
+    if(task.id && aonMessengerChat.getDur().isDev()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
             if(d){
@@ -408,14 +409,14 @@ const changeFormProcess = (task, {value,name}) => {
         if(sender) {
             aonCard.setTitleSection1(sender);
         }
-        createFormVacation(task, aonCard);
+        FormVacation.createForm(task, aonCard);
     } else if(value ===2) {
-        createFormMov(task, aonCard);
+        FormMovSs.createForm(task, aonCard);
     } else if(value ===3) {
         if(sender) {
             aonCard.setTitleSection1(sender);
         }
-        createFormTimeControl(task, aonCard);
+        FormTimecontrol.createForm(task, aonCard);
     }
 }
 
@@ -1167,7 +1168,7 @@ export const checkButtonsToolbar = (task, taskId)=>{
 
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
 
-    let toolbar = document.getElementById(aonMessengerChat.TOOLBAR);
+    const toolbar = document.getElementById(aonMessengerChat.TOOLBAR);
 
     if(toolbar && task && task.id){
         const show = task.id === taskId;
@@ -1176,9 +1177,43 @@ export const checkButtonsToolbar = (task, taskId)=>{
         toolbar.showButton(ACTIONS.RESTORE.id, show);
         toolbar.showButton(ACTIONS.DELETE.id, show);
         toolbar.showButton(ACTIONS.SAVE.id, show);
-        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, show);
         toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, show);
+        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, show);
+
+        if(!aonMessengerChat.isCau() && aonMessengerChat.getDur().isEmployee() && show){
+            getIsMyTask(task)
+            .then(is=>{
+                toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, is);
+                toolbar.showButton(ACTIONS.DELETE.id, is);
+                toolbar.showButton(ACTIONS.SAVE.id, is);
+                toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, is);
+                toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, is);
+            });
+        }   
     }
+}
+
+const getIsMyTask = async (task) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
+    const parent            = aonMessengerChat.getApplicationParent();
+
+    const myTaskHolderId   = aonMessengerChat.MY_TASKHOLDER && aonMessengerChat.MY_TASKHOLDER.id ? aonMessengerChat.MY_TASKHOLDER.id : undefined;
+
+    const taskTaskholderId = task.task_holder && task.task_holder.id ? task.task_holder.id : undefined;
+
+    const taskSenderId     =  task.sender && task.sender.id ? task.sender.id : undefined;
+
+    const taskWorkgroup    = task.workgroup && task.workgroup.id ? task.workgroup.id : undefined;
+   
+    const isMyTaskHolder = (taskTaskholderId == myTaskHolderId) || (taskSenderId == myTaskHolderId);
+
+    if(isMyTaskHolder)  return true;
+
+   
+    const wgs = await parent.getMyWorkgroups().catch(()=> null);
+
+    return wgs && wgs.length ? wgs.some(({id})=> id == taskWorkgroup) : false; // is myWorkgroup
 }
 
 export const taskNumberParse = (number) => "#"+(number || "0").toString().padStart(5, 0);

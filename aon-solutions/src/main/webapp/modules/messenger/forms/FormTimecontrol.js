@@ -15,7 +15,7 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
  * @param {Task} task 
  * @param {HTMLElement} card 
  */
- export const createFormTimeControl = (task, card) =>{
+ const createForm = (task, card) =>{
 
     card.flex = "true";
 
@@ -28,6 +28,21 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
     createDataForm(task, form);
     //-----------END DATA ENTERPRISE
 }
+
+/**
+ * 
+ * @returns json form vacacion json
+ */
+ const getFormJson = ()=>{
+    const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
+    if(form){
+        const formSerialize = serializeForm(form);
+        let observation = form.querySelector("#observation").innerText;
+        return { ...formSerialize, observation };
+    }
+    return null;
+}
+
 
 /**
  * 
@@ -105,22 +120,6 @@ const fillTimeControl = (aonSelect, timeId, taskHolderId) => {
     });
 }
 
-
-/**
- * 
- * @returns json form vacacion json
- */
- export const getFormTimeJson = ()=>{
-    const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
-    if(form){
-        const formSerialize = serializeForm(form);
-        let observation = form.querySelector("#observation").innerText;
-        return { ...formSerialize, observation };
-    }
-    return null;
-}
-
-
 const processAccept = async (tm,{date, time},aonMessengerChat) => {
     let application = aonMessengerChat.getApplication();
     application.startLoading();
@@ -146,4 +145,10 @@ const processAccept = async (tm,{date, time},aonMessengerChat) => {
         aonMessengerChat.showError(err)
     }
     application.stopLoading();
+}
+
+
+export const FormTimecontrol = {
+    createForm,
+    getFormJson
 }

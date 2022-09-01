@@ -7,10 +7,11 @@ import '../../css/aon-grid.css';
 
 export const createFormEvent = (id, parent) => {
     const form = CreateComponent.createForm(id+"Form");
-    parent.appendChild(form.element);
+    parent.appendChild(form);
+    
     const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
     const div = createDiv({id: id+"Div",classes:[className]});
-    div.appendTo(form);
+    form.appendChild(div.element)
 
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12]})
@@ -21,7 +22,7 @@ export const createFormEvent = (id, parent) => {
     divC.appendTo(div.element);
     CreateComponent.createAonCard({id: id+"CardCoordinate", title:"Mapa", visible: false}, divC.element);
   
-    return form.element;
+    return form;
 }
 
 export const createCardEvent = (parent) => {

@@ -6,14 +6,14 @@ import { AonSelect } from "./aon-select.js";
 import { AonSwitch } from "./aon-switch.js";
 import { AonToolbar } from "./aon-toolbar.js";
 import { CONSTANT, CSS, TAG } from "../environments/environments.js";
-import { newComponent, setAttributes, setClasses, setEvents } from "../services/utilsComponents.js";
+import { setAttributes, setClasses, setEvents } from "../services/utilsComponents.js";
 import { AonNumber } from "./aon-number.js";
 
 
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
+ * @param {HTMLElement} parent 
  * @returns 
  */
  const createAonSelect = ({attributes, events}, parent) => {
@@ -35,7 +35,7 @@ import { AonNumber } from "./aon-number.js";
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
+ * @param {HTMLElement} parent 
  * @returns 
  */
 const createAonInput = ({attributes, events}, parent) => {
@@ -48,26 +48,26 @@ const createAonInput = ({attributes, events}, parent) => {
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
+ * @param {HTMLElement} parent 
  * @returns 
  */
  const createAonIconButton = ({attributes, events}, parent) => {
   let icon = setAttributes(new AonIconButton(), attributes);
   if(events) setEvents(icon, events);
-  parent.appendChild(icon);
+  if(parent) parent.appendChild(icon);
   return icon;
 }
 
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
+ * @param {HTMLElement} parent 
  * @returns 
  */
 const createAonDate = ({attributes, events}, parent) => {
   let date = setAttributes( new AonDate(), attributes);
   if(events) setEvents(date, events);
-  parent.appendChild(date);
+  if(parent) parent.appendChild(date);
   return date;
 }
 
@@ -75,66 +75,72 @@ const createAonDate = ({attributes, events}, parent) => {
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
+ * @param {HTMLElement} parent 
  * @returns 
  */
  const createAonNumber = ({attributes, events}, parent) => {
   let input = setAttributes(new AonNumber(), attributes);
   if(events) setEvents(input, events);
-  parent.appendChild(input);
+  if(parent) parent.appendChild(input);
   return input;
 }
 
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {*} parent 
+ * @param {HTMLElement} parent 
  * @returns 
  */
  const createAonSwitch = ({attributes, events}, parent) => {
   let input = setAttributes(new AonSwitch(), attributes);
   if(events) setEvents(input, events);
-  parent.appendChild(input);
+  if(parent) parent.appendChild(input);
   return input;
 }
 
+
+/**
+ * 
+ * @param {Object} attributes, events. parent for appendChild  
+ * @param {HTMLElement} parent 
+ * @returns 
+ */
 const createAonCard = (attributes, parent) => {
   const element =  setAttributes(new AonCard(), {
       ...attributes,
       flex:CONSTANT.TRUE
   });
-  if(parent){
-    parent.appendChild(element);
-  }
+  if(parent) parent.appendChild(element);
   return element;
 }
 
-
+/**
+ * 
+ * @param {Object} attributes, events. parent for appendChild  
+ * @param {HTMLElement} parent 
+ * @returns 
+ */
 const createAonToolbar = (attributes, parent) => {
   const element = setAttributes( new AonToolbar(), attributes);
-  if(parent){
-    parent.appendChild(element);
-  }
+  if(parent) parent.appendChild(element);
   return element;
 }
 
 /**
  * 
  * @param {String} id 
+ * @param {HTMLElement} parent 
  * @returns 
  */
-const createForm = (id="form") => newComponent({
-  type:TAG.FORM,
-  id,
-  attributes:{
-    action: "#"
-  },
-  events:{
-    submit: (ev)=>  ev.preventDefault()
-  }
-});
-
-
+const createForm = (id = "form", parent) => {
+  const form = document.createElement(TAG.FORM);
+  form.id = id;
+  form.action = "#";
+  form.onsubmit = (ev)=> ev.preventDefault();
+  if(parent) parent.appendChild(form);
+  return form;
+};
+ 
 export const CreateComponent = {
   createAonSelect,
   createAonInput,
