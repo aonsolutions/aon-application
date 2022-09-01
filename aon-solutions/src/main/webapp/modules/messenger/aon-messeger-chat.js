@@ -7,10 +7,10 @@ import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkButtonsToolbar, checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
-import { getFormVacationJson } from "./forms/vacation.js";
 import { TaskFill } from "./shared/TaskFill.js";
-import { FormMovSs } from "./forms/form-mov-ss.js";
-import { getFormTimeJson } from "./forms/time-control.js";
+import { FormMovSs } from "./forms/FormMvSs.js";
+import { FormTimecontrol } from "./forms/FormTimecontrol.js";
+import { FormVacation } from "./forms/FormVacation.js";
 import { getOfficeProjects } from "../../services/projectService.js";
 import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
@@ -428,11 +428,11 @@ export class AonMessengerChat extends AonElement {
       this.task.title = processType.getText();
       const type = processType.value;
       if("1" === type){
-        json = getFormVacationJson();
+        json = FormVacation.getFormJson();
       } else if("2" === type){
         json = FormMovSs.getFormJson();
       } else if("3" === type){
-        json = getFormTimeJson();
+        json = FormTimecontrol.getFormJson();
       }
   
       if(json){//TAGS
@@ -604,24 +604,6 @@ export class AonMessengerChat extends AonElement {
     }
 
     return options;
-  }
-
-  isMyTask(){
-
-    try {
-      if(this.isCau()) return true;
-
-      const taskHolderTask = this.task.getTaskHolder();
-      
-      if(this.getDur().isEmployee() && this.TASK_HOLDER && this.TASK_HOLDER.id && taskHolderTask && taskHolderTask.id ){
-        return this.task.getTaskHolder().id == this.TASK_HOLDER.id;
-      }
-  
-    } catch (error) {
-      console.log(error);
-    }
-  
-    return true;
   }
 
   back(){

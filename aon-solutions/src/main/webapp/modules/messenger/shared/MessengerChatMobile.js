@@ -214,15 +214,14 @@ const buildToolbar = (task, div, create = false) => {
                         aonIcon: AON_ICONS.AON_BRANCH,
                     }, () =>TaskCreationUtils.openDialogBranch(task));
                 }
-                if( aonMessengerChat.isMyTask()){
-                    toolbar.addButton2({
-                        ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
-                        name: MSG.CLOSE,
-                        icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
-                    }, () =>{
-                        aonMessengerChat.closeTask();
-                    });
-                }
+
+                toolbar.addButton2({
+                  ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
+                  name: MSG.CLOSE,
+                  icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
+                }, () =>{
+                  aonMessengerChat.closeTask();
+                });
             }
 
             if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(status)){

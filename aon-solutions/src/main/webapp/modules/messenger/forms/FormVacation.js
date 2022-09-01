@@ -15,7 +15,7 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
  * @param {HTMLElement} card 
  * @param {Task} task 
  */
- export const createFormVacation = (task, card) =>{
+ const createForm = (task, card) =>{
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const dur = aonMessengerChat.getDur();
 
@@ -68,6 +68,31 @@ import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
 
 /**
  * 
+ * @returns json form vacacion json
+ */
+ const getFormJson = ()=>{
+    const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
+    if(form){
+        let observation = form.querySelector("#observation").innerText;
+        //DATES
+        let dates = [];
+        [...form.querySelectorAll("table tr")].map(tr=>{
+            const startDate = tr.querySelector("[id*=startDate]");
+            const endDate = tr.querySelector("[id*=endDate]");
+            if(startDate && endDate && startDate.value && endDate.value){
+                dates.push({startDate: startDate.value, endDate: endDate.value});
+            }
+        })
+
+        const formSerialize = serializeForm(form);
+        return { ...formSerialize, dates, observation};
+    }
+    return null;
+}
+
+
+/**
+ * 
  * @param {HTMLElement} table html table
  * @param {Number} i row numeric
  * @param {Object} data data object default
@@ -108,32 +133,6 @@ const addDates = (table, i, data={}) =>{
     table.addCell(dataDelete);
 }
 
-/**
- * 
- * @returns json form vacacion json
- */
-export const getFormVacationJson = ()=>{
-    const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
-    if(form){
-        let observation = form.querySelector("#observation").innerText;
-        //DATES
-        let dates = [];
-        [...form.querySelectorAll("table tr")].map(tr=>{
-            const startDate = tr.querySelector("[id*=startDate]");
-            const endDate = tr.querySelector("[id*=endDate]");
-            if(startDate && endDate && startDate.value && endDate.value){
-                dates.push({startDate: startDate.value, endDate: endDate.value});
-            }
-        })
-
-        const formSerialize = serializeForm(form);
-        return { ...formSerialize, dates, observation};
-    }
-    return null;
-}
-
-
-
 const processAccept = async (task) => {
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const application = aonMessengerChat.getApplication();
@@ -149,4 +148,10 @@ const processAccept = async (task) => {
     }
 
     application.stopLoading();
+}
+
+
+export const FormVacation = {
+    createForm,
+    getFormJson
 }

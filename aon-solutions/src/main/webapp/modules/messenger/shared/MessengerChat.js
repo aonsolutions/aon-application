@@ -88,7 +88,7 @@ const buildToolbar = (task) => {
         );
       }
       
-      if(task.getId() && aonMessengerChat.isMyTask()){
+      if(task.getId()){
         toolbar.addButton2({
           ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
           name: MSG.CLOSE,
