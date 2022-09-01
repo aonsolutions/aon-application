@@ -27,7 +27,7 @@ export class AonCategoryAdd extends AonElement {
 
 	build() {
 
-        const form = CreateComponent.createForm(this.id+"Form").element;
+        const form = CreateComponent.createForm(this.id+"Form");
         this.appendChild(form);
 
 		let table = new AonBasicTable();

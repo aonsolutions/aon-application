@@ -204,7 +204,7 @@ export class AonConfiguration extends AonElement {
         });
       } 
 
-      if(this.isBeta()){
+      if(!this.dur.isEmployee() && this.isBeta()){
         appOptions.push({
           id:  "notice",
           icon: "rss_feed",

@@ -6,7 +6,7 @@ import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
 import { TaskFill } from "./TaskFill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
-import { createFormMov } from "../forms/mov-ss.js";
+import {  FormMovSs } from "../forms/form-mov-ss.js";
 import { createFormTimeControl } from "../forms/time-control.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import * as ACTIONS from "../../actions.js";
@@ -384,7 +384,7 @@ const changeFormProcess = (task, {value,name}) => {
     setStyles(aonCard.getCard(), { margin:0, marginTop:"10px" });
     aonCard.getCardTitle1().style.whiteSpace = "pre-wrap";
 
-    if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
+    if(task.id && aonMessengerChat.getDur().isDev()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
             if(d){
@@ -410,7 +410,7 @@ const changeFormProcess = (task, {value,name}) => {
         }
         createFormVacation(task, aonCard);
     } else if(value ===2) {
-        createFormMov(task, aonCard);
+        FormMovSs.createForm(task, aonCard);
     } else if(value ===3) {
         if(sender) {
             aonCard.setTitleSection1(sender);
