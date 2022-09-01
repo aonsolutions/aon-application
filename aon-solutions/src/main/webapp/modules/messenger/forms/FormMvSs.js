@@ -416,18 +416,31 @@ const processAccept = async (aonMessengerChat) => {
     application.startLoading();
     try {
         const data = getFormJson();
+        const domain = data.domain;
+        
         let newData = {
             ...data,
             fecha: data.fra,
             name: `${data.name} ${data.surname} ${data.lastSurname || ""}`
         }
-        if(data.ocu) newData.ocupacion = data.ocu;
-        if(data.coef) newData.coefparcial = parseInt(data.coef);
 
-        //---SEND MOV TGSS
+        if(data.ocu) {
+            newData.ocupacion = data.ocu;
+        }
+
+        if(data.coef) {
+            newData.coefparcial = parseInt(data.coef);
+        }
+
+        if(domain && domain.id && domain.name){
+            newData.domainId = domain.id;
+            newData.domainName = domain.name;
+        }
+
+        //------------SEND MOV TGSS----------------
         await sendAlta(newData);
 
-        //---CLOSE TASK
+        //-----------------CLOSE TASK---------------
         await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
     } catch (err) {
         console.log(err);

@@ -172,6 +172,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		LOGGER.info("AON COMUNICA SERVLET POST");
 		try {		
 			AonApiData api = initialize(req);
+			setDomain(api);
 			switch (api.getPath()) {
 				case "/alta-directa":
 					LOGGER.info("ALTA-DIRECTA SERVLET - POST METHOD");
@@ -1039,5 +1040,20 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private static List<CCCInfo> getCcs(AonApiData api) {
 		return PAYROLL.getCCCStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())
 		.filter(ComunicaUtils.distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
+	}
+	
+	private void setDomain(AonApiData api) {
+		JSONObject params = api.getData();
+		
+		int domainId = params.optInt(IJsonNames.DOMAIN_ID);
+		String domainName = params.optString(IJsonNames.DOMAIN_NAME);
+		
+		if(domainId!=0 && !domainName.isEmpty()) {
+			Domain domain = new Domain()
+			.setId(domainId)
+			.setName(domainName);
+	
+			api.setDomain(domain);
+		}
 	}
 }
