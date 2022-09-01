@@ -5313,8 +5313,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		boolean autoCommit = conn.getAutoCommit();
 		try {
+			conn.setAutoCommit(false);
+			
 			JooqPayrollSalaries.deleteSalaries(conn, Arrays.stream(ids).boxed().collect(Collectors.toList()));
 
+			conn.commit();
+			
 		} finally {
 			conn.rollback();
 			conn.setAutoCommit(autoCommit);
