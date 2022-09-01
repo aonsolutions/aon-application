@@ -72,10 +72,15 @@ public class PackagingDAO {
 	}
 	
 	public static Packaging save(AONContext ctx, Packaging packaging) {
-		if(packaging.getItem().getId() == null) {
-			Item item = ItemDAO.save(ctx, packaging.getItem());
-			packaging.setItem(item);
-		}
+		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getProductProperty().eq(packaging.getBase().getProduct().getId()))
+				.and(f.getSerialNumberProperty().eq(packaging.getItem().getSerialNumber())));
+		
+		if(item.isEmpty()) {
+			item = ItemDAO.save(ctx, packaging.getItem());
+			packaging.setItem(item);			
+		} else packaging.setItem(item);
+
 		Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		Elaboration elaboration = processElaboration(ctx, packaging, warehouse);
 		return processPackaging(ctx, packaging, elaboration, warehouse);
@@ -93,7 +98,7 @@ public class PackagingDAO {
 					.setNumber(number)
 					.setDate(new Date())
 					.setItem(packaging.getBase())
-					.setDescription("")
+					.setDescription(packaging.getItem().getProduct().getName())
 					.setWarehouse(warehouse)
 					.setQuantity(packaging.getQuantity())
 					.setStatus(ElaborationStatus.IN_PROGRESS)
@@ -114,7 +119,6 @@ public class PackagingDAO {
 					.setAddInfo("");
 			Integer detailId = ElaborationDAO.insertElaborationDetail(ctx, elaborationDetail);
 			elaborationDetail.setId(detailId);
-			
 		} else {
 			elaboration = ElaborationDAO.getElaboration(ctx, elaborationDetail.getElaboration().getId());
 			elaboration.setQuantity(elaboration.getQuantity() + packaging.getQuantity());
