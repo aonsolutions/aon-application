@@ -71,8 +71,15 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			Integer logoId = company.getRegistry().getId();
 			Attach logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
-			Double boxQuantity = quantity / item.getPackMeasurement();
-			boxQuantity = boxQuantity / item.getPackUnits().doubleValue(); 
+
+			Double boxQuantity = quantity;
+			if(item.getStockUnitTag().equals(item.getPackMeasurementTag())) {
+				boxQuantity = quantity / item.getPackMeasurement();
+				boxQuantity = boxQuantity / item.getPackUnits().doubleValue();	
+			} else if(item.getStockUnitTag().equals(item.getPackUnitsTag())) {
+				boxQuantity = quantity / item.getPackUnits().doubleValue();	
+			}
+			 
 			String separator = "\u001d";
 //			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
 			String ean128 = "(02)" + barcode + "(37)" + boxQuantity.intValue() + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber() + separator;
