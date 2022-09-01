@@ -15,12 +15,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,11 +35,18 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
+	private AonToolbarButton runCommand = new AonToolbarButton( AON.MSG.execute(), AON.CSS.aonIconSend() );
+	
 	private ConsoleModuleOptions options;
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
 
+	private ListBox schemaBox = new ListBox();
+	private String schema;
 	private String domainName;
+	
+	private ListBox newSchemaBox = new ListBox();
+	private String newSchema;
 	private String newDomainName;
 
 	public ConsoleDomainIsolate(ConsoleModuleOptions options) {
@@ -50,13 +57,31 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
+		
+		runCommand.setVisible(false);
+		ConsoleModule.CONSOLE_SERVICE.getSchemas(options.getOccam(), new AsyncCallback<String[]>() {
+			
+			@Override
+			public void onSuccess(String[] schemas) {
+				schemaBox.clear();
+				schemaBox.addItem(AonStringUtils.EMPTY);
+				newSchemaBox.clear();
+				newSchemaBox.addItem(AonStringUtils.EMPTY);
+				for (String sch : schemas) {
+					schemaBox.addItem(sch);
+					newSchemaBox.addItem(sch);
+				}
+				runCommand.setVisible(true);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("No se pueden leer los escquemas de la BD");
+			}
+		});
 	}
 
 	private Widget getDataPanel() {
-		String host = Window.Location.getHost();
-		host = AonStringUtils.substringBefore(host, ":");
-		String mainDomain =  "." + AonStringUtils.substringAfter(host, ".");
-		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
 		
@@ -68,6 +93,8 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		descriptionLabel.addStyleName(AON.CSS.aonFontLarger());
 		descriptionLabel.addStyleName(AON.CSS.aonColorBlue());
 		descriptionLabel.addStyleName(AON.CSS.aonTextCenter());
+		
+		
 		AonDisplayTable table = new AonDisplayTable();
 		FlowPanel container = new FlowPanel();
 		container.add(descriptionLabel);
@@ -75,63 +102,37 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
-		FlowPanel firstPanel = new FlowPanel(); 
-		AonTextBox fullDomainName = new AonTextBox();
-		fullDomainName.setVisible(false);
-		fullDomainName.setVisibleLength(50);
-		fullDomainName.addValueChangeHandler( e -> domainName = fullDomainName.getValue());
-		AonTextBox firstDomainName = new AonTextBox();
-		firstDomainName.setVisibleLength(30);
-		firstDomainName.addValueChangeHandler( e -> domainName = firstDomainName.getValue() + mainDomain);
+		Label originLabel = new Label("ORIGEN");
+		originLabel.setStyleName(AON.CSS.aonBold());
 		
-		InlineLabel secondDomainName = new InlineLabel(mainDomain);
-		secondDomainName.setStyleName(AON.CSS.aonMarginLeft());
-		secondDomainName.addStyleName(AON.CSS.aonBold());
-		firstPanel.add(fullDomainName);
-		firstPanel.add(firstDomainName);
-		firstPanel.add(secondDomainName);
-		
-		FlowPanel secondPanel = new FlowPanel();
-		AonTextBox fullNewDomainName = new AonTextBox();
-		fullNewDomainName.setVisible(false);
-		fullNewDomainName.setVisibleLength(50);
-		fullDomainName.addValueChangeHandler( e -> newDomainName = fullNewDomainName.getValue());
-		AonTextBox firstNewDomainName = new AonTextBox();
-		firstNewDomainName.setVisibleLength(30);
-		firstNewDomainName.addValueChangeHandler( e -> newDomainName = firstNewDomainName.getValue() + mainDomain);
-		
-		InlineLabel secondNewDomainName = new InlineLabel(mainDomain);
-		secondNewDomainName.setStyleName(AON.CSS.aonMarginLeft());
-		secondNewDomainName.addStyleName(AON.CSS.aonBold());
-		secondPanel.add(fullNewDomainName);
-		secondPanel.add(firstNewDomainName);
-		secondPanel.add(secondNewDomainName);
+		AonDomainBox domainBox = new AonDomainBox(options.getOccam());
+		domainBox.setEnabled(false);
+		schemaBox.addChangeHandler( e -> {
+			schema = schemaBox.getSelectedValue();
+			domainBox.setEnabled(AonStringUtils.isNotBlank(schema));		
+			domainBox.setSchema(schema);
+		});
 		
 		table.addRow()
-			.addCell(new Label("Nombre del dominio"))
-			.addCell( firstPanel )	
+			.addCell(originLabel)
+			.addCell(new Label("Esquema"))
+			.addCell( schemaBox )
+			.addCell(new Label("Dominio"))
+			.addCell( domainBox )	
 		;
 	
+		Label targetLabel = new Label("DESTINO");
+		targetLabel.setStyleName(AON.CSS.aonBold());
+		newSchemaBox.addChangeHandler( e -> newSchema = newSchemaBox.getSelectedValue());
+		AonTextBox newDomainBox = new AonTextBox();
 		table.addRow()
-			.addCell(new Label("Nuevo nombre del dominio"))
-			.addCell( secondPanel )	
+			.addCell(targetLabel)
+			.addCell(new Label("Esquema"))
+			.addCell( newSchemaBox )
+			.addCell(new Label("Dominio"))
+			.addCell( newDomainBox )	
 		;
 		
-		CheckBox fullViewCheck = new CheckBox("Editar nombres enteros");
-		fullViewCheck.setStyleName(AON.CSS.aonMarginTop() );
-		fullViewCheck.addClickHandler(e -> {
-			boolean visible = fullViewCheck.getValue().booleanValue();
-			fullDomainName.setVisible(visible);
-			firstDomainName.setVisible(!visible);
-			secondDomainName.setVisible(!visible);
-			fullNewDomainName.setVisible(visible);
-			firstNewDomainName.setVisible(!visible);
-			secondNewDomainName.setVisible(!visible);
-		});
-		table.addRow()
-			.addCell(new Label())
-			.addCell( fullViewCheck )	
-		;
 		return scroll;
 	}
 
@@ -139,7 +140,6 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		AonToolbar toolbarPanel = new AonToolbar();
 		toolbarPanel.setTitle("Extracci\u00F3n de dominios");
 		
-		AonToolbarButton runCommand = new AonToolbarButton( AON.MSG.execute(), AON.CSS.aonIconSend() );
 		runCommand.addClickHandler(event -> doIt());
 		toolbarPanel.add(runCommand);
 
@@ -166,7 +166,9 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 					}
 				});
 				StringBuilder requestData = new StringBuilder();
+				requestData.append("&"+IRequestParamsNames.SCHEMA  				+"=" + schema );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + domainName );
+				requestData.append("&"+IRequestParamsNames.NEW_SCHEMA  			+"=" + newSchema );
 				requestData.append("&"+IRequestParamsNames.NEW_DOMAIN_NAME		+"=" + newDomainName );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
 				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );

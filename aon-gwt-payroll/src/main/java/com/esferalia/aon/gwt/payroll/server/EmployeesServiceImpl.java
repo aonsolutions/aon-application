@@ -5310,86 +5310,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	private static void deleteSalaries(Connection conn, int... ids) throws SQLException {
-		PreparedStatement dataStmt = null;
-		PreparedStatement bonusStmt = null;
-		PreparedStatement costsStmt = null;
-		PreparedStatement paymentStmt = null;
-		PreparedStatement deductionStmt = null;
-		PreparedStatement embargoStmt = null;
-		PreparedStatement salaryStmt = null;
 
 		boolean autoCommit = conn.getAutoCommit();
 		try {
-
-			Character questions[] = new Character[ids.length];
-			Arrays.fill(questions, 0, ids.length, '?');
-			String params = asString(",", questions);
-
-			conn.setAutoCommit(false);
-
-			// First of all clean childs...
-			dataStmt = conn.prepareStatement(String.format("DELETE FROM %s WHERE %s IN (%s)", SQLConstants.SALARY_DATA,
-					SalaryDataColumns.SALARY, params));
-			for (int i = 1; i <= ids.length; i++)
-				dataStmt.setInt(i, ids[i - 1]);
-			dataStmt.execute();
-
-			bonusStmt = conn.prepareStatement(String.format("DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_BONUS, SalaryBonusColumns.SALARY, params));
-			for (int i = 1; i <= ids.length; i++)
-				bonusStmt.setInt(i, ids[i - 1]);
-			bonusStmt.execute();
-
-			costsStmt = conn.prepareStatement(String.format("DELETE FROM %s WHERE %s IN (%s)", SQLConstants.SALARY_COST,
-					SalaryCostColumns.SALARY, params));
-			for (int i = 1; i <= ids.length; i++)
-				costsStmt.setInt(i, ids[i - 1]);
-			costsStmt.execute();
-
-			paymentStmt = conn.prepareStatement(String.format("DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_PAYMENT, SalaryPaymentColumns.SALARY, params));
-			for (int i = 1; i <= ids.length; i++)
-				paymentStmt.setInt(i, ids[i - 1]);
-			paymentStmt.execute();
-
-			deductionStmt = conn.prepareStatement(String.format("DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_DEDUCTION, SalaryDeductionColumns.SALARY, params));
-			for (int i = 1; i <= ids.length; i++)
-				deductionStmt.setInt(i, ids[i - 1]);
-			deductionStmt.execute();
-
-			embargoStmt = conn.prepareStatement(String.format("DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_EMBARGO, SalaryEmbargoColumns.SALARY, params));
-			for (int i = 1; i <= ids.length; i++)
-				embargoStmt.setInt(i, ids[i - 1]);
-			embargoStmt.execute();
-
-			salaryStmt = conn.prepareStatement(
-					String.format("DELETE FROM %s WHERE %s IN (%s)", SQLConstants.SALARY, SalaryColumns.ID, params));
-			for (int i = 1; i <= ids.length; i++)
-				salaryStmt.setInt(i, ids[i - 1]);
-			salaryStmt.execute();
-
-			conn.commit();
+			JooqPayrollSalaries.deleteSalaries(conn, Arrays.stream(ids).boxed().collect(Collectors.toList()));
 
 		} finally {
 			conn.rollback();
 			conn.setAutoCommit(autoCommit);
-
-			if (bonusStmt != null)
-				bonusStmt.close();
-			if (costsStmt != null)
-				costsStmt.close();
-			if (dataStmt != null)
-				dataStmt.close();
-			if (paymentStmt != null)
-				paymentStmt.close();
-			if (embargoStmt != null)
-				embargoStmt.close();
-			if (deductionStmt != null)
-				deductionStmt.close();
-			if (salaryStmt != null)
-				salaryStmt.close();
 
 		}
 	}

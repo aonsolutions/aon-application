@@ -29,8 +29,9 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
 		String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
 		ConsoleParams params = new ConsoleParams( );
+		CloseableAONContext ctx =  null;
 		try {
-			CloseableAONContext ctx = AONContext.getAONContext(domainName,0,"");
+			ctx = AONContext.getAONContext(domainName,0,"");
 			params.setFromConnection(new ConsoleConnectionParams()
 				.setAONContext(ctx)
 				.setSchema(resolveSchema(ctx))
@@ -57,6 +58,9 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 			params.getPrinter().flush();
 			resp.flushBuffer();
 			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet finished!");
+			if (ctx != null) {
+				ctx.close();
+			}
 		}
 
 	}

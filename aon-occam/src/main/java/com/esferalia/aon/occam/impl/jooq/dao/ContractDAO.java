@@ -99,14 +99,6 @@ public class ContractDAO {
 		ctx.checkWrite();
 		DSLContext dslContext = ctx.getDslContext();
 
-		SelectConditionStep<Record1<Integer>> irpfSelect = dslContext
-				.select(IRPF_DATA.ID).from(IRPF_DATA)
-				.where(IRPF_DATA.CONTRACT.in(contractIds));
-		
-		SelectConditionStep<Record1<Integer>> salariesSelect = dslContext
-				.select(SALARY.ID).from(SALARY)
-				.where(SALARY.CONTRACT.in(contractIds));
-		
 		Result<Record1<Integer>> certifica2DetailSelect = dslContext
 				.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
 				.from(CERTIFICA2_BATCH_DETAIL)
@@ -117,10 +109,6 @@ public class ContractDAO {
 				.from(CONTRACT_BATCH_DETAIL)
 				.where(CONTRACT_BATCH_DETAIL.CONTRACT.in(contractIds)).fetch();
 		
-		SelectConditionStep<Record1<Integer>> leaveDetailSelect = dslContext
-				.select(CONTRACT_LEAVE.ID).from(CONTRACT_LEAVE)
-				.where(CONTRACT_LEAVE.CONTRACT.in(contractIds));
-
 		Result<Record1<Integer>> leaveBatchDetail = dslContext
 				.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
 				.from(LEAVE_BATCH_DETAIL
@@ -134,19 +122,19 @@ public class ContractDAO {
 
 		dslContext.batch(	
 				// ----------------------------------IRPF-------------------------------------------
-				dslContext.delete(IRPF_DATA_ASCENDANTS).where(IRPF_DATA_ASCENDANTS.IRPF_DATA.in(irpfSelect)),
-				dslContext.delete(IRPF_DATA_DESCENDIENTS).where(IRPF_DATA_DESCENDIENTS.IRPF_DATA.in(irpfSelect)),
+				dslContext.delete(IRPF_DATA_ASCENDANTS).using(IRPF_DATA_ASCENDANTS.innerJoin(IRPF_DATA).onKey()).where(IRPF_DATA.CONTRACT.in(contractIds)),
+				dslContext.delete(IRPF_DATA_DESCENDIENTS).using(IRPF_DATA_DESCENDIENTS.innerJoin(IRPF_DATA).onKey()).where(IRPF_DATA.CONTRACT.in(contractIds)),
 				dslContext.delete(IRPF_REGULARIZATION).where(IRPF_REGULARIZATION.CONTRACT.in(contractIds)),
 				dslContext.delete(IRPF_RESULT).where(IRPF_RESULT.CONTRACT.in(contractIds)),
 				dslContext.delete(IRPF_DATA).where(IRPF_DATA.CONTRACT.in(contractIds)),
 				// ----------------------------------Salary------------------------------------------
-				dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salariesSelect)),
-				dslContext.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salariesSelect)),
-				dslContext.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salariesSelect)),
-				dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salariesSelect)),
-				dslContext.delete(SALARY_COST).where(SALARY_COST.SALARY.in(salariesSelect)),
-				dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salariesSelect)),
-				dslContext.delete(SALARY).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.CONTRACT.in(contractIds)),
+				dslContext.delete(SALARY).where(SALARY.CONTRACT.in(contractIds)),				
 				// --------------------------------CERTIFICA2_BATCH------------------------------------
 				dslContext.delete(CERTIFICA2_BATCH_DETAIL).where(CERTIFICA2_BATCH_DETAIL.CONTRACT.in(contractIds)),
 				dslContext.delete(CERTIFICA2_BATCH).where(CERTIFICA2_BATCH_DETAIL.ID.in(certifica2DetailSelect)),
@@ -155,7 +143,7 @@ public class ContractDAO {
 				dslContext.delete(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(leaveBatchDetail)),
 				// ----------------------------------CONTRACT------------------------------------------
 				dslContext.delete(CONTRACT_BATCH).where(CONTRACT_BATCH.ID.in(batchDetailSelect)),
-				dslContext.delete(CONTRACT_LEAVE_DETAIL).where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.in(leaveDetailSelect)),
+				dslContext.delete(CONTRACT_LEAVE_DETAIL).using(CONTRACT_LEAVE_DETAIL.innerJoin(CONTRACT_LEAVE).onKey()).where(CONTRACT_LEAVE.CONTRACT.in(contractIds)),
 				dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.in(contractIds)),
 				dslContext.delete(CONTRACT_BATCH_DETAIL).where(CONTRACT_BATCH_DETAIL.CONTRACT.in(contractIds)),
 				dslContext.delete(CONTRACT_BONUS).where(CONTRACT_BONUS.CONTRACT.in(contractIds)),

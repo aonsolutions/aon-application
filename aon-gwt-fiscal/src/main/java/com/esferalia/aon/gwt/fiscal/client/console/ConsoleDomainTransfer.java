@@ -15,12 +15,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,9 +40,12 @@ public class ConsoleDomainTransfer extends AonLayoutPanel {
 	private ConsoleModuleOptions options;
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
-
+	
+	private ListBox schemaBox = new ListBox();
 	private String schema;
 	private String domainName;
+	
+	private ListBox newSchemaBox = new ListBox();
 	private String newSchema;
 	private String newDomainName;
 
@@ -52,6 +57,26 @@ public class ConsoleDomainTransfer extends AonLayoutPanel {
 		
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
+		
+		ConsoleModule.CONSOLE_SERVICE.getSchemas(options.getOccam(), new AsyncCallback<String[]>() {
+			
+			@Override
+			public void onSuccess(String[] schemas) {
+				schemaBox.clear();
+				schemaBox.addItem("-");
+				newSchemaBox.clear();
+				newSchemaBox.addItem("-");
+				for (String schema : schemas) {
+					schemaBox.addItem(schema);
+					newSchemaBox.addItem(schema);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("No se pueden leer los escquemas de la BD");
+			}
+		});
 	}
 
 	private Widget getDataPanel() {
@@ -77,9 +102,7 @@ public class ConsoleDomainTransfer extends AonLayoutPanel {
 		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
-		AonTextBox schemaBox = new AonTextBox();
-		schemaBox.setMaxLength(25);
-		schemaBox.addValueChangeHandler( e -> schema = schemaBox.getValue());
+		schemaBox.addChangeHandler( e -> schema = schemaBox.getSelectedValue());
 		FlowPanel firstPanel = new FlowPanel(); 
 		AonTextBox fullDomainName = new AonTextBox();
 		fullDomainName.setVisible(false);
@@ -89,9 +112,7 @@ public class ConsoleDomainTransfer extends AonLayoutPanel {
 		firstDomainName.setVisibleLength(30);
 		firstDomainName.addValueChangeHandler( e -> domainName = firstDomainName.getValue() + mainDomain);
 		
-		AonTextBox newSchemaBox = new AonTextBox();
-		newSchemaBox.setMaxLength(25);
-		newSchemaBox.addValueChangeHandler( e -> newSchema = newSchemaBox.getValue());
+		newSchemaBox.addChangeHandler( e -> newSchema = newSchemaBox.getSelectedValue());
 		InlineLabel secondDomainName = new InlineLabel(mainDomain);
 		secondDomainName.setStyleName(AON.CSS.aonMarginLeft());
 		secondDomainName.addStyleName(AON.CSS.aonBold());

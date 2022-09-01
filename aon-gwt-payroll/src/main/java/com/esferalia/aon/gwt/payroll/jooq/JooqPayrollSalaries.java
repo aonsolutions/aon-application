@@ -89,7 +89,7 @@ public class JooqPayrollSalaries {
 	//									DELETE SALARY METHOD
 	// --------------------------------------------------------------------------------------------
 
-	public static void deleteSalaries(Connection connection, ArrayList<Integer> ids) {
+	public static void deleteSalaries(Connection connection, List<Integer> ids) {
 		deleteSalariesDB(DSL.using(connection, getDefaultSettings()), ids);
 	}
 
@@ -444,15 +444,15 @@ public class JooqPayrollSalaries {
 	//									DELETE SALARY METHOD IMPL
 	// --------------------------------------------------------------------------------------------
 	
-	private static void deleteSalariesDB(DSLContext dslContext, ArrayList<Integer> ids) {
+	private static void deleteSalariesDB(DSLContext dslContext, List<Integer> ids) {
 		// Delete SalaryData, SalaryBonus, SalaryCost, SalaryPayment, SalaryDeduction, SalaryEmbargo, Salary
 		for(Integer id : ids) {			
-			dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.eq(id)).execute();
-			dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.eq(id)).execute();
-			dslContext.delete(SALARY_COST).where(SALARY_COST.SALARY.eq(id)).execute();
-			dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.eq(id)).execute();
-			dslContext.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.eq(id)).execute();
-			dslContext.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.eq(id)).execute();
+			dslContext.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+			dslContext.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+			dslContext.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+			dslContext.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+			dslContext.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+			dslContext.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
 			dslContext.delete(SALARY).where(SALARY.ID.eq(id)).execute();
 		}
 	}

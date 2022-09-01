@@ -31,6 +31,12 @@ public class ConsoleModule extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
+	static final ConsoleServiceAsync CONSOLE_SERVICE;
+	static {
+		ConsoleServiceAsync consoleServiceRaw = GWT.create(ConsoleService.class);
+		CONSOLE_SERVICE = new ConsoleServiceAsyncDecorator(consoleServiceRaw); 
+	}
+
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);

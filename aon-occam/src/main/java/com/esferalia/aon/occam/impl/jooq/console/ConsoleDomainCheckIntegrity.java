@@ -36,8 +36,7 @@ public class ConsoleDomainCheckIntegrity {
 		}
 		ConsoleUtils.log(params,MessageFormat.format("Dominio {0} encontrado", domainName));
 		ConsoleUtils.log(params,MessageFormat.format("Dominio. Herencia:  {0}", fullDomain.isEnableHeredity()));
-		params.getFromConnection()
-			.setFullDomain(fullDomain);
+		params.getFromConnection().setFullDomain(fullDomain);
 		params.setScript( new LinkedHashMap<>() );
 		params.getFromDslContext().transaction(conf -> {
 			
@@ -170,7 +169,7 @@ public class ConsoleDomainCheckIntegrity {
 				.and(condition)
 				.stream()
 				.forEach( toRec -> {params.addError(
-					MessageFormat.format("Tabla {0}: columna {1} -({2}) que referecia a la tabla {3} apunta al dominio {4}."
+					MessageFormat.format("Tabla \"{0}\", columna \"{1}\" ({2}) que referencia a la tabla \"{3}\" apunta al dominio {4}."
 						,fromTable.getName()
 						,fkField.getName()
 						,toRec.getValue(fkField)
