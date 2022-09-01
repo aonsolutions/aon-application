@@ -52,7 +52,6 @@ export class AonTextArea extends AonElement {
 		this.setAttribute("placeholder", value);
 	}
 
-
 	get toolbar(){
 		return this.TOOLBAR;
 	}
@@ -318,27 +317,14 @@ export class AonTextArea extends AonElement {
 				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
 				attributes:{
 					title: properties.name ? properties.name : "",
-				},
-				events : {
-					click : (ev)=> properties.id === MATERIAL_ICONS.ATTACH_FILE ? this.clickFile() : fn(ev)
 				}
 			}).element;
-			this.addToolbarLeft(icon);
+			this.addToolbarLeft(icon, fn);
 		}
 		//ENABLE DRAGGRABLE FILE
 		if(properties.icon === MATERIAL_ICONS.ATTACH_FILE){ 
 			this.draggableEnable(); 
 		}
-	}
-	
-	addToolbarLeft(element, fn){
-		if(fn) element.addEventListener(EVENT.CLICK, fn);
-		const el = this.getElement(this.LEFT);
-		if(el) el.appendChild(element);
-	}
-
-	clickFile(){
-		this.getElement(this.id+"Files").click();
 	}
 
 	addToolbarOptionRight(properties,fn){
@@ -351,18 +337,44 @@ export class AonTextArea extends AonElement {
 				id: properties.id,
 				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
 				attributes:{
-					title: properties.name ? properties.name : "",
+					title: properties.name ? properties.name : ""
 				},
 			}).element;
 			this.addToolbarRight(icon, fn);
 			return icon;
 		}
 	}
+	
+	addToolbarLeft(element, fn){
+		if(fn) {
+			element.addEventListener(EVENT.MOUSEDOWN, (ev)=>{
+				ev.preventDefault();
+				ev.stopPropagation();
+			});
+			element.addEventListener(EVENT.CLICK, (ev)=>{
+				if(element.id === MATERIAL_ICONS.ATTACH_FILE){
+					this.clickFile();
+				} else {
+					fn(ev);
+				}
+			});
+		}
+		const el = this.getElement(this.LEFT);
+		if(el) el.appendChild(element);
+	}
 
 	addToolbarRight(element, fn){
+		element.addEventListener(EVENT.MOUSEDOWN, (ev)=>{
+			ev.preventDefault();
+			ev.stopPropagation();
+		});
 		element.addEventListener(EVENT.CLICK, fn);
 		const el = this.getElement(this.RIGHT);
 		if(el) el.appendChild(element);
+	}
+
+	clickFile(){
+		this.getElement(this.id+"Files").click();
 	}
 
 	addColorPicker(beforeId= undefined){
@@ -418,12 +430,9 @@ export class AonTextArea extends AonElement {
 			});
 
 			let tapedTwice = false;
-			let lastColorMobile = "";
 			div.addEventListener(EVENT.TOUCHSTART, (ev)=>{
 				if(!tapedTwice) {
 					tapedTwice = true;
-					// console.log(lastColorMobile);
-					lastColorMobile = lastColor;
 					setTimeout( () => { tapedTwice = false; }, 300 );
 				} else {
 					ev.preventDefault();
@@ -446,13 +455,6 @@ export class AonTextArea extends AonElement {
 			const el = this.getElement(beforeId);
 			if(el) el.parentNode.insertBefore(div, el);
 		} 
-
-		// const changeFont = ()=>{
-		// 	document.execCommand("fontSize", false, "7");
-		// 	let fontElements = window.getSelection().anchorNode.parentNode
-		// 	fontElements.removeAttribute("size");
-		// 	fontElements.style.fontSize = "30px";
-		// }
 	
     }
 

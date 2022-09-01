@@ -63,6 +63,14 @@ export class AonDate extends AonElement {
     this.setAttribute(CONSTANT.READONLY, readonly);
   }
 
+  get required() {
+    return this.getAttribute(CONSTANT.REQUIRED) == CONSTANT.TRUE;
+  }
+
+  set required(required) {
+    this.setAttribute(CONSTANT.REQUIRED, required);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
       let input = this.getElement(this.INPUT);
@@ -83,6 +91,8 @@ export class AonDate extends AonElement {
     ai.id = this.INPUT;
     ai.description  = this.title;
     ai.autocomplete = "off";
+    if(this.required) ai.required  = this.required;
+    
     this.appendChild(ai);
     this.build();
     this.buildDatepicker();

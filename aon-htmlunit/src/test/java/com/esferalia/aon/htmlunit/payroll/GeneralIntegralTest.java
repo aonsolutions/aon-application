@@ -293,7 +293,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("description-box-new-payment");
 		
 		DomElement el = getElementById("description-box-new-payment");
-		LOGGER.warning( "description-box-new-payment : " + el  +", " + el.asText()); 
+		LOGGER.warning( "description-box-new-payment : " + el  +", " + el.asNormalizedText()); 
 		
 		HtmlInput input = getElementById("description-box-new-payment");
 		input.focus();
@@ -941,9 +941,63 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		//...
 		
-		
 		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
 		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
+
+		calculate(Calendar.SEPTEMBER, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(15070.00/12)");
+		wait4Value("db-amount-label-1", 15070.00/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+		setValue("db-amount-label-1", "BRUTO(15070.01/12)");
+		wait4Value("db-amount-label-1", 15070.01/12);
+		assertValue("irpfPercentTexTBox", "6,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(15830.00/12)");
+		wait4Value("db-amount-label-1", 15830.00/12);
+		assertValue("irpfPercentTexTBox", "6,00 %");		
+		setValue("db-amount-label-1", "BRUTO(15830.01/12)");
+		wait4Value("db-amount-label-1", 15830.01/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(16880.00/12)");
+		wait4Value("db-amount-label-1", 16880.01/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+		setValue("db-amount-label-1", "BRUTO(16880.01/12)");
+		wait4Value("db-amount-label-1", 16880.01/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(18150.00/12)");
+		wait4Value("db-amount-label-1", 18150.00/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");
+		setValue("db-amount-label-1", "BRUTO(18150.01/12)");
+		wait4Value("db-amount-label-1", 18150.01/12);
+		assertValue("irpfPercentTexTBox", "9,00 %");
+		
+		//....
+		
+		setValue("db-amount-label-1", "BRUTO(45340.00/12)");
+		wait4Value("db-amount-label-1", 45340.00/12);
+		assertValue("irpfPercentTexTBox", "19,00 %");		
+		setValue("db-amount-label-1", "BRUTO(45340.01/12)");
+		wait4Value("db-amount-label-1", 45340.01/12);
+		assertValue("irpfPercentTexTBox", "20,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(220450.00/12)");
+		wait4Value("db-amount-label-1", 220450.00/12);
+		assertValue("irpfPercentTexTBox", "39,00 %");		
+		setValue("db-amount-label-1", "BRUTO(220450.01/12)");
+		wait4Value("db-amount-label-1", 220450.01/12);
 		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
@@ -978,6 +1032,34 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
 		wait4Value("db-amount-label-1", 213160.01/12);
 		assertValue("irpfPercentTexTBox", "40,00 %");		
+
+		calculate(Calendar.SEPTEMBER, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(65050.00/12)");
+		wait4Value("db-amount-label-1", 65050.00/12);
+		assertValue("irpfPercentTexTBox", "24,00 %");		
+		setValue("db-amount-label-1", "BRUTO(65050.01/12)");
+		wait4Value("db-amount-label-1", 65050.01/12);
+		assertValue("irpfPercentTexTBox", "25,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(220450.00/12)");
+		wait4Value("db-amount-label-1", 220450.00/12);
+		assertValue("irpfPercentTexTBox", "39,00 %");		
+		setValue("db-amount-label-1", "BRUTO(220450.01/12)");
+		wait4Value("db-amount-label-1", 220450.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
+
 	}
 
 	@Test
@@ -1011,6 +1093,34 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
 		wait4Value("db-amount-label-1", 213160.01/12);
 		assertValue("irpfPercentTexTBox", "40,00 %");		
+
+	
+		calculate(Calendar.SEPTEMBER, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(74950.00/12)");
+		wait4Value("db-amount-label-1", 74950.00/12);
+		assertValue("irpfPercentTexTBox", "26,00 %");		
+		setValue("db-amount-label-1", "BRUTO(74950.01/12)");
+		wait4Value("db-amount-label-1", 74950.01/12);
+		assertValue("irpfPercentTexTBox", "27,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(198600.00/12)");
+		wait4Value("db-amount-label-1", 198600.00/12);
+		assertValue("irpfPercentTexTBox", "38,00 %");		
+		setValue("db-amount-label-1", "BRUTO(198600.01/12)");
+		wait4Value("db-amount-label-1", 198600.01/12);
+		assertValue("irpfPercentTexTBox", "39,00 %");		
 	}
 
 
@@ -1670,9 +1780,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		setValue("description-box-3", "[1001]P. POR ENFERMEDAD COMÚN");
 		
-		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
-		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
-		wait4Class("payment-row-5", "aon-dataTable-row-highlight");
+		// HtmlUnit 2.64.0 disabled.
+		//wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		//wait4Class("payment-row-4", "aon-dataTable-row-highlight");
+		//wait4Class("payment-row-5", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN
 		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-4" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
@@ -1722,7 +1833,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		setValue("description-box-3", "P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
 		
-		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		// HtmlUnit 2.64.0 disabled.
+		//wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
 		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
@@ -1752,7 +1864,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		setValue("description-box-3", "P.POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
 		
-		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		// HtmlUnit 2.64.0 disabled.
+		//wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
 		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
@@ -1782,7 +1895,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		setValue("description-box-3", "P. POR PATERNIDAD");
 		
-		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		// HtmlUnit 2.64.0 disabled.
+		//wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR PATERNIDAD
 		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL

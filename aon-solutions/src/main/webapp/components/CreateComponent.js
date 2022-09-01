@@ -41,7 +41,7 @@ import { AonNumber } from "./aon-number.js";
 const createAonInput = ({attributes, events}, parent) => {
   let input = setAttributes(new AonInput(), attributes);
   if(events) setEvents(input, events);
-  parent.appendChild(input);
+  if(parent) parent.appendChild(input);
   return input;
 }
 
@@ -118,6 +118,11 @@ const createAonToolbar = (attributes, parent) => {
   return element;
 }
 
+/**
+ * 
+ * @param {String} id 
+ * @returns 
+ */
 const createForm = (id="form") => newComponent({
   type:TAG.FORM,
   id,

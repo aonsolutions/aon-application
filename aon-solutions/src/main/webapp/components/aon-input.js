@@ -1,6 +1,6 @@
 import { AonElement } from "./AonElement.js";
 import { AonIconButton } from "./aon-icon-button.js";
-import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS} from '../environments/environments.js'
+import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, COLORS} from '../environments/environments.js'
 import '../css/aon-input.css';
 import '../css/aon-input-loading.css';
 
@@ -24,6 +24,7 @@ export class AonInput extends AonElement {
       CONSTANT.OPTIONS,
       CONSTANT.DESCRIPTION,
       CONSTANT.AUTOCOMPLETE,
+      CONSTANT.REQUIRED,
       "maxlength"
     ];
   }
@@ -133,6 +134,13 @@ export class AonInput extends AonElement {
     this.setAttribute("maxlength", maxlength);
   }
 
+  get required() {
+    return this.getAttribute(CONSTANT.REQUIRED) == CONSTANT.TRUE;
+  }
+
+  set required(required) {
+    this.setAttribute(CONSTANT.REQUIRED, required);
+  }
 
   attributeChangedCallback(name, oldValue, newValue) {
     this.initialize();
@@ -279,6 +287,10 @@ export class AonInput extends AonElement {
       span.classList.add(CSS.AON_INPUT_NOT_EMPTY);
     }
 
+     if(this.required){
+      span.style.color = CSS.variable(COLORS.AON_BLUE);
+    }
+
     label.appendChild(span);
 
     if('password' === this.getAttribute('type') && !this.isDisabled() && !this.isReadonly()){
@@ -289,7 +301,7 @@ export class AonInput extends AonElement {
       icon.style.marginLeft = "-35px";
       icon.style.pointer = "pointer";
     	icon.innerHTML = 'visibility';
-      icon.addEventListener(EVENT.CLICK, (e)=> {
+      icon.addEventListener(EVENT.CLICK, ()=> {
         const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
         icon.innerHTML =  type === 'password' ? 'visibility' : 'visibility_off';
         input.type = type;

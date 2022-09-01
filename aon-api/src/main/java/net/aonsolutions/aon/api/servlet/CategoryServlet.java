@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CategoryJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.type.CategoryType;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -77,14 +78,23 @@ public class CategoryServlet extends AonApiHttpServlet{
 	}
 
 	private JSONArray getCategorys(AonApiData api) {
+		JSONObject params = api.getData();
+		CategoryType type = CategoryType.safeValueOf(params.optString(IJsonNames.TYPE));
 		return CategoryJSON.toJSON(
-				AON_SOLUTIONS.getCategoryStream(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()))
+				AON_SOLUTIONS.getCategoryStream(api.getDomain(), api.getUser(), 
+						f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getTypeProperty().eq(type.value()))
+				)
 		);
 	}
 
 	
 	private JSONObject saveCategory(AonApiData api) {
-		Category category = CategoryJSON.fromJSON(api.getData());
+		JSONObject params = api.getData();
+		
+		validateSave(params);
+		
+		Category category = CategoryJSON.fromJSON(params);
+		
 		return CategoryJSON.toJSON(AON_SOLUTIONS.saveCategory(api.getDomain(), api.getUser(), category));
 	}
 
@@ -94,4 +104,13 @@ public class CategoryServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
+	private void validateSave(JSONObject params) {
+		if(params.isNull(IJsonNames.DESCRIPTION)) {
+			throw new AonApiException("Descripci\u00f3n requerido");
+		} else if(params.isNull(IJsonNames.NAME)) {
+			throw new AonApiException("Nombre requerido");
+		} else if(params.isNull(IJsonNames.TYPE)) {
+			throw new AonApiException("Tipo requerido");
+		}
+	}
 }

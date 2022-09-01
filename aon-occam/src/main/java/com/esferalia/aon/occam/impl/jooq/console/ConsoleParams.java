@@ -6,26 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
-import org.jooq.Schema;
+
+import com.esferalia.aon.occam.api.model.Occam;
 
 
 public class ConsoleParams {
 
-	private DSLContext dslContext;
-	private String hostName;
-	private String user;
-	private String password;
-	private String database;
-	private String port;
-	private String domainName;
-	private String newDomainName;
-	private Integer newDomain;
-	private Integer domain;
-	private Integer parent;
-	private boolean inhertitanceEnabled;
+	private ConsoleConnectionParams fromConnection;
+	private ConsoleConnectionParams toConnection;
 	
 	private PrintStream	printer;
-	private Schema schema;
 	private Map<String,ScriptTable> script;
 	private List<String> errors;
 	
@@ -35,132 +25,42 @@ public class ConsoleParams {
 	private int partialCount;
 	private int partialProgress;
 
-	public DSLContext getDslContext() {
-		return dslContext;
+	public ConsoleConnectionParams getFromConnection() {
+		return fromConnection;
 	}
-
-	public ConsoleParams setDslContext(DSLContext dslContext) {
-		this.dslContext = dslContext;
-		return this;
-	}
-
-	public String getHostName() {
-		return hostName;
-	}
-
-	public ConsoleParams setHostName(String hostName) {
-		this.hostName = hostName;
-		return this;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public ConsoleParams setPassword(String password) {
-		this.password = password;
-		return this;
-	}
-
-	public String getDatabase() {
-		return database;
-	}
-
-	public ConsoleParams setDatabase(String database) {
-		this.database = database;
-		return this;
-	}
-
-	public String getPort() {
-		return port;
-	}
-
-	public ConsoleParams setPort(String port) {
-		this.port = port;
-		return this;
-	}
-
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public ConsoleParams setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
-	}
-
-	public String getNewDomainName() {
-		return newDomainName;
-	}
-
-	public ConsoleParams setNewDomainName(String newDomainName) {
-		this.newDomainName = newDomainName;
-		return this;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public ConsoleParams setUser(String user) {
-		this.user = user;
-		return this;
-	}
-
-	public String getUrl() {
-		return "jdbc:mysql://" + hostName + ":" + port + "/" + database;
-	}
-
-	public Integer getDomain() {
-		return domain;
-	}
-
-	public ConsoleParams setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
-
-	public Integer getParent() {
-		return parent;
-	}
-
-	public ConsoleParams setParent(Integer parent) {
-		this.parent = parent;
+	public ConsoleParams setFromConnection(ConsoleConnectionParams fromConnection) {
+		this.fromConnection = fromConnection;
 		return this;
 	}
 	
-	public boolean isInhertitanceEnabled() {
-		return inhertitanceEnabled;
+	public ConsoleConnectionParams getToConnection() {
+		return toConnection;
 	}
-
-	public ConsoleParams setInhertitanceEnabled(boolean inhertitanceEnabled) {
-		this.inhertitanceEnabled = inhertitanceEnabled;
+	public ConsoleParams setToConnection(ConsoleConnectionParams toConnection) {
+		this.toConnection = toConnection;
 		return this;
 	}
-
-	public Integer getNewDomain() {
-		return newDomain;
+	public ConsoleConnectionParams ensureToConnection() {
+		return getToConnection() != null?getToConnection():getFromConnection();	
 	}
-
-	public ConsoleParams setNewDomain(Integer newDomain) {
-		this.newDomain = newDomain;
-		return this;
-	}
-
 	
-	public Schema getSchema() {
-		return schema;
+	public Occam getOccam(ConsoleConnectionParams conn) {
+		return new Occam()
+			.setDomainName( conn.getFullDomain().getName())
+			.setDomain( conn.getFullDomain().getId());
 	}
-
-	public ConsoleParams setSchema(Schema schema) {
-		this.schema = schema;
-		return this;
+	
+	public Occam getFromOccam() {
+		return getOccam( getFromConnection() );
 	}
-
+	
+	public Occam getToOccam() {
+		return getOccam( ensureToConnection() );
+	}
+	
 	public Map<String, ScriptTable> getScript() {
 		return script;
 	}
-
 	public ConsoleParams setScript(Map<String, ScriptTable> script) {
 		this.script = script;
 		return this;
@@ -229,11 +129,16 @@ public class ConsoleParams {
 		return this;
 	}
 
-	public int addPartialCount() {
+	public int addPartialProgress() {
 		this.partialProgress = partialProgress + 1;
 		return this.partialProgress;
 	}
 	
-	
+	public DSLContext getFromDslContext() {
+		return getFromConnection().getAONContext().getDslContext();
+	}
+	public DSLContext getToDslContext() {
+		return ensureToConnection().getAONContext().getDslContext();
+	}
 	
 }

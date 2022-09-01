@@ -86,6 +86,7 @@ public interface IRequestParamsNames {
 	String NAME = "name";
 	String NEARBY_NUMBERS = "nearbyNumbers";
 	String NEW_DOMAIN_NAME = "newDomainName";
+	String NEW_SCHEMA = "newSchema";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded";
 	String NRC = "nrc";
@@ -122,6 +123,7 @@ public interface IRequestParamsNames {
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
 	String RETURNED = "returned";
+	String SCHEMA = "schema";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELLER_IDS = "sellerIds";
 	String SERVICE = "service";

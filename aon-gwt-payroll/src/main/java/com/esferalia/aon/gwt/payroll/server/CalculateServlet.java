@@ -275,12 +275,12 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			}
 
 			private void delete() {
-				getDSLContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(toRemove)).execute();
-				getDSLContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.ID.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.ID.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.ID.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.ID.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.ID.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.ID.in(toRemove)).execute();
 				getDSLContext().delete(SALARY).where(SALARY.ID.in(toRemove)).execute();
 			}
 		}

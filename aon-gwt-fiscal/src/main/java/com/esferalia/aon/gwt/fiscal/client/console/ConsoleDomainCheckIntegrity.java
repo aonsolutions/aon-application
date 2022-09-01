@@ -26,11 +26,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
-public class DomainIntegrityCheck extends AonLayoutPanel {
+public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 	
-	private static final String CHECK_DOMAIN_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/CheckDomainIntegrityServlet");
+	private static final String CHECK_DOMAIN_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainCheckIntegrityServlet");
 
-	private static final Logger LOGGER = Logger.getLogger(DomainIntegrityCheck.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainCheckIntegrity.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -40,7 +40,7 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 	private boolean running;
 	private String domainName;
 
-	public DomainIntegrityCheck(ConsoleModuleOptions options) {
+	public ConsoleDomainCheckIntegrity(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
 
@@ -68,8 +68,19 @@ public class DomainIntegrityCheck extends AonLayoutPanel {
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
+		Label descriptionLabel = new Label("Chequea la integridad de la claves referenciales");
+		descriptionLabel.setStyleName(AON.CSS.aonPadding());
+		descriptionLabel.addStyleName(AON.CSS.aonMarginBottom());
+		descriptionLabel.addStyleName(AON.CSS.aonBorder());
+		descriptionLabel.addStyleName(AON.CSS.aonBold());
+		descriptionLabel.addStyleName(AON.CSS.aonFontLarger());
+		descriptionLabel.addStyleName(AON.CSS.aonColorBlue());
+		descriptionLabel.addStyleName(AON.CSS.aonTextCenter());
 		AonDisplayTable table = new AonDisplayTable();
-		scroll.setWidget(table);
+		FlowPanel container = new FlowPanel();
+		container.add(descriptionLabel);
+		container.add(table);
+		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
 		FlowPanel firstPanel = new FlowPanel(); 

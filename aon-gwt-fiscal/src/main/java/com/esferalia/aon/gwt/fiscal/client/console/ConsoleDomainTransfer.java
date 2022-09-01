@@ -26,11 +26,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
-public class DomainIsolate extends AonLayoutPanel {
+public class ConsoleDomainTransfer extends AonLayoutPanel {
 	
-	private static final String DOMAIN_ISOLATE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/DomainIsolateServlet");
+	private static final String DOMAIN_TRANSFER_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainTransferServlet");
 
-	private static final Logger LOGGER = Logger.getLogger(DomainIsolate.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainTransfer.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -39,14 +39,16 @@ public class DomainIsolate extends AonLayoutPanel {
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
 
+	private String schema;
 	private String domainName;
+	private String newSchema;
 	private String newDomainName;
 
-	public DomainIsolate(ConsoleModuleOptions options) {
+	public ConsoleDomainTransfer(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
 		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-		this.addNorth(getDataPanel(), 100);
+		this.addNorth(getDataPanel(), 135);
 		
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
@@ -59,10 +61,25 @@ public class DomainIsolate extends AonLayoutPanel {
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
+		
+		Label descriptionLabel = new Label("Duplica un dominio en el esquema indicado");
+		descriptionLabel.setStyleName(AON.CSS.aonPadding());
+		descriptionLabel.addStyleName(AON.CSS.aonMarginBottom());
+		descriptionLabel.addStyleName(AON.CSS.aonBorder());
+		descriptionLabel.addStyleName(AON.CSS.aonBold());
+		descriptionLabel.addStyleName(AON.CSS.aonFontLarger());
+		descriptionLabel.addStyleName(AON.CSS.aonColorBlue());
+		descriptionLabel.addStyleName(AON.CSS.aonTextCenter());
 		AonDisplayTable table = new AonDisplayTable();
-		scroll.setWidget(table);
+		FlowPanel container = new FlowPanel();
+		container.add(descriptionLabel);
+		container.add(table);
+		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
+		AonTextBox schemaBox = new AonTextBox();
+		schemaBox.setMaxLength(25);
+		schemaBox.addValueChangeHandler( e -> schema = schemaBox.getValue());
 		FlowPanel firstPanel = new FlowPanel(); 
 		AonTextBox fullDomainName = new AonTextBox();
 		fullDomainName.setVisible(false);
@@ -72,6 +89,9 @@ public class DomainIsolate extends AonLayoutPanel {
 		firstDomainName.setVisibleLength(30);
 		firstDomainName.addValueChangeHandler( e -> domainName = firstDomainName.getValue() + mainDomain);
 		
+		AonTextBox newSchemaBox = new AonTextBox();
+		newSchemaBox.setMaxLength(25);
+		newSchemaBox.addValueChangeHandler( e -> newSchema = newSchemaBox.getValue());
 		InlineLabel secondDomainName = new InlineLabel(mainDomain);
 		secondDomainName.setStyleName(AON.CSS.aonMarginLeft());
 		secondDomainName.addStyleName(AON.CSS.aonBold());
@@ -96,11 +116,15 @@ public class DomainIsolate extends AonLayoutPanel {
 		secondPanel.add(secondNewDomainName);
 		
 		table.addRow()
+			.addCell(new Label("Esquema origen"))
+			.addCell( schemaBox )
 			.addCell(new Label("Nombre del dominio"))
 			.addCell( firstPanel )	
 		;
 	
 		table.addRow()
+			.addCell(new Label("Esquema destino"))
+			.addCell( newSchemaBox )
 			.addCell(new Label("Nuevo nombre del dominio"))
 			.addCell( secondPanel )	
 		;
@@ -141,7 +165,7 @@ public class DomainIsolate extends AonLayoutPanel {
 				AonConsoleWidget aonConsole = new AonConsoleWidget();
 				pageContainer.setWidget(aonConsole);
 				XMLHttpRequest xhreq = XMLHttpRequest.create();
-				xhreq.open(FormPanel.METHOD_POST, DOMAIN_ISOLATE_SERVLET);
+				xhreq.open(FormPanel.METHOD_POST, DOMAIN_TRANSFER_SERVLET);
 				xhreq.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 				xhreq.setOnReadyStateChange( xhr -> {
 					int state = xhr.getReadyState();
@@ -154,7 +178,9 @@ public class DomainIsolate extends AonLayoutPanel {
 					}
 				});
 				StringBuilder requestData = new StringBuilder();
+				requestData.append("&"+IRequestParamsNames.SCHEMA				+"=" + schema );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + domainName );
+				requestData.append("&"+IRequestParamsNames.NEW_SCHEMA			+"=" + newSchema );
 				requestData.append("&"+IRequestParamsNames.NEW_DOMAIN_NAME		+"=" + newDomainName );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
 				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
