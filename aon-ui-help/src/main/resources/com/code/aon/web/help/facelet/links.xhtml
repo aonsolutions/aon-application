@@ -1,0 +1,47 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGroup id="linksWindowPanel"
+		styleClass="aon-popupWindow" >
+		<aon:if test="#{help.linksEnabled}">
+			<aon:form>
+				<rich:modalPanel id="linksModal"
+					showWhenRendered="#{help.linksEnabled}"
+					minWidth="380" height="150">
+
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="ENLACES DE INTERÉS" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton requestDelay="100"
+							reRender="linksWindowPanel" immediate="true"
+							ajaxSingle="true" type="button"
+							styleClass="aon-popupWindow-close">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{help.linksEnabled}"
+								value="#{false}" />
+							<rich:componentControl for="linksModal" event="onclick"
+								disableDefault="true" operation="hide" />
+						</aon:commandButton>
+					</f:facet>
+
+					<aon:div styleClass="aon-popupWindow-content" style="height: 100%; width: 100%;">
+						<aon:div styleClass="aon-popupWindow-content-internal" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; width: 100%;">
+							<aon:outputText style="font-size: 1.5em; text-align: center; display: block; margin: auto;" value="No hay enlaces de interés definidos" />
+						</aon:div>
+					</aon:div>
+				</rich:modalPanel>
+			</aon:form>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

@@ -1,6 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
 	<style>
 #sidemenu {
 	padding: 0rem 1rem;
@@ -83,21 +85,32 @@
 			</aon:div>
 
 			<aon:div styleClass="menu-panel-options">
+					<aon:form>
+						<aon:div styleClass="menu-panel-option">
+							<aon:commandLink>
+								<aon:outputText value="school" styleClass="material-icons" />
+								<aon:outputText value="Índice contenidos" />
+								<f:setPropertyActionListener target="#{help.file}"
+								value="#{help.homeFile}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:form>
+					
+					
+			<aon:form>
 				<aon:div styleClass="menu-panel-option">
-					<aon:outputText value="school" styleClass="material-icons" />
-					<aon:outputText value="Índice contenidos" />
+					<aon:commandLink id="linksButton" reRender="linksWindowPanel">
+						<aon:outputText value="link" styleClass="material-icons" />
+					<aon:outputText value="Enlaces de interés" />
+						<f:setPropertyActionListener target="#{help.linksEnabled}" value="#{true}" />
+					</aon:commandLink>
 				</aon:div>
-			
-				<aon:div styleClass="menu-panel-option">
+			</aon:form>
+				<!-- <aon:div styleClass="menu-panel-option">
 					<aon:outputText value="link" styleClass="material-icons" />
 					<aon:outputText value="Enlaces de interés" />
-				</aon:div>
-
-				<aon:div styleClass="menu-panel-option">
-					<aon:outputText value="rss_feed" styleClass="material-icons" />
-					<aon:outputText value="Actualizaciones" />
-				</aon:div>
-
+				</aon:div> -->
+				
 			</aon:div>
 		</aon:div>
 		
@@ -109,13 +122,36 @@
 				<aon:outputText value="expand_more" styleClass="material-icons" />
 				<aon:outputText value="Soporte / CAU" />
 			</aon:div>
-	
 			<aon:div styleClass="menu-panel-options">
-				<aon:div styleClass="menu-panel-option">
-					<aon:outputText value="support_agent" styleClass="material-icons" />
-					<aon:outputText value="Incidencias" />
-				</aon:div>
+				
+				<aon:form>
+					<aon:div styleClass="menu-panel-option">
+						<aon:commandLink action="portal_cau_messenger">
+							<aon:outputText value="support_agent" styleClass="material-icons" />
+							<aon:outputText value="Incidencias" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:form>
 
+				<aon:form rendered="#{!desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}">
+					<aon:div styleClass="menu-panel-option">
+						<aon:commandLink id="enableSupport" reRender="support"
+								actionListener="#{desktop.onEnableSupport}">
+							<aon:outputText value="cast" styleClass="material-icons" />
+							<aon:outputText value="Activar soporte" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:form>
+				<aon:form rendered="#{desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}">
+					<aon:div styleClass="menu-panel-option">
+						<aon:commandLink id="disableSupport" reRender="support"
+								actionListener="#{desktop.onDisableSupport}">
+							<aon:outputText value="cast_connected" styleClass="material-icons" />
+							<aon:outputText value="Desactivar soporte" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:form>
+				
 			</aon:div>
 		</aon:div>
 	
@@ -127,9 +163,20 @@
 				<aon:outputText value="expand_more" styleClass="material-icons" />
 				<aon:outputText value="INFORMACIÓN" />
 			</aon:div>
-	
+			
 			<aon:div styleClass="menu-panel-options">
-				<a class="menu-panel-option" href="tel:945121010"> <aon:outputText
+			
+			<aon:form>
+				<aon:div styleClass="menu-panel-option">
+					<aon:commandLink id="notificationButton" reRender="notificationWindowPanel">
+						<aon:outputText value="rss_feed" styleClass="material-icons" />
+						<aon:outputText value="Notificaciones" />
+						<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{true}" />
+					</aon:commandLink>
+				</aon:div>
+			</aon:form>
+			
+<!-- 				<a class="menu-panel-option" href="tel:945121010"> <aon:outputText
 						value="phone" styleClass="material-icons" /> <aon:outputText
 						value="Atención telefónica" />
 				</a>
@@ -138,12 +185,17 @@
 					target="_blank"> <aon:outputText value="email"
 						styleClass="material-icons" /> <aon:outputText
 						value="Contacto vía email" />
-				</a>
-	
-				<aon:div styleClass="menu-panel-option">
-					<aon:outputText value="info" styleClass="material-icons" />
-					<aon:outputText value="Acerca de ..." />
-				</aon:div>
+				</a> -->
+				<aon:form>
+					<aon:div styleClass="menu-panel-option">
+						<aon:commandLink id="about" reRender="aboutWindowPanel"
+								rendered="#{!aonConfiguration.properties.hideMenuAbout}">
+							<aon:outputText value="info" styleClass="material-icons" />
+							<aon:outputText value="Acerca de ..." />
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:form>
 			</aon:div>
 		</aon:div>
 	</aon:div>
