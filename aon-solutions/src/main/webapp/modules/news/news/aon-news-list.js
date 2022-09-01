@@ -152,11 +152,12 @@ export class AonNewsList extends AonElement {
 
   getDataMobile(datos) {
     try {
-
       datos.map((res, idx) => {
         this.AON_TABLE.addLi(
           {
-      
+            title: res.title,
+            subtitle:res.scopeName,
+            subtitleTwo:res.dateParse,
           },
           idx,
           () => this.goNewAdd(res, idx)

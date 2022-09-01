@@ -8,7 +8,7 @@ import {AonCategoryAdd} from "../../category/aon-category-add.js";
 
 
 const createForm = (id, parent) => {
-    const form = CreateComponent.createForm(id+"Form").element;
+    const form = CreateComponent.createForm(id+"Form");
     parent.appendChild(form);
 
     const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
@@ -62,7 +62,7 @@ const buildFormGeneral = (parent, news) => {
             id:"title",
             description:MSG.TITLE,
             required:true,
-            value: news.getTitle()
+            value: news.getTitle() || ""
         },
         events:{
             keyup: ({target}) => {
@@ -80,7 +80,7 @@ const buildFormGeneral = (parent, news) => {
     });
     divC.appendChild(descriptionEl);
 
-    descriptionEl.value = news.getDescription();
+    descriptionEl.value = news.getDescription() || "";;
     
     descriptionEl.addEventListener(EVENT.KEYUP, ({target})=>{
         news.setDescription(target.value);
@@ -299,10 +299,13 @@ const buildEditor = (parent, news) =>{
         id:"aonTextAreaEditor",
         placeholder:MSG.CONTENT,
         required:true,
+        "text-box-min-height":"24em",
         // "bar-integrated": true
     });
-    aonTextAreaEditor.style.height = "24em";
- 
+    if ((navigator.userAgent.indexOf('Firefox') !== -1)) {
+        aonTextAreaEditor.textBoxHeight = "24em";
+    }
+
     aonTextAreaEditor.addEventListener(EVENT.KEYUP, ()=>{
         news.setContent(aonTextAreaEditor.value);
     });
@@ -312,8 +315,7 @@ const buildEditor = (parent, news) =>{
     if(news.getContent()){
         aonTextAreaEditor.value = news.getContent();
     }
-
-} 
+}
 
 export const NewsAddUtils = {
     createForm,
