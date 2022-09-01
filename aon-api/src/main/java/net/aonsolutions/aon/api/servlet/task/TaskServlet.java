@@ -71,6 +71,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		LOGGER.info("AON TASK SERVLET GET");
 		try {		
 			AonApiData api = initialize(req);
+			setDomain(api);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getTasks(api));
@@ -122,6 +123,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		LOGGER.info("AON TASK SERVLET POST");
 		try {		
 			AonApiData api = initialize(req);
+			setDomain(api);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, saveTask(api));
@@ -158,6 +160,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API TASK SERVLET - DELETE METHOD");
 		try {
 			AonApiData api = initialize(req);
+			setDomain(api);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, deleteTask(api));
@@ -718,6 +721,21 @@ public class TaskServlet extends AonApiHttpServlet{
 			LOGGER.info("---- SAVE DAILY_TRACKING------");
 			DailyTracking dailyTracking = DailyTrackingJSON.fromJSON(json);
 			AON_SOLUTIONS.saveDailyTracking(dailyTracking.getDomain(), api.getUser(), dailyTracking);
+		}
+	}
+	
+	private void setDomain(AonApiData api) {
+		JSONObject params = api.getData();
+		
+		int domainId = params.optInt(IJsonNames.DOMAIN_ID);
+		String domainName = params.optString(IJsonNames.DOMAIN_NAME);
+		
+		if(domainId!=0 && !domainName.isEmpty()) {
+			Domain domain = new Domain()
+			.setId(domainId)
+			.setName(domainName);
+	
+			api.setDomain(domain);
 		}
 	}
 }
