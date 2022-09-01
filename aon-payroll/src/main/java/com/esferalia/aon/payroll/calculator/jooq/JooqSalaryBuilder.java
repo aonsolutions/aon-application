@@ -11,7 +11,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CATEGORY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
@@ -21,6 +20,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
@@ -40,7 +40,6 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -378,6 +377,8 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate, Date endDate,
 			IPayment payment, Map<String, ITimedVariable<?>> context) {
 
+		putContext(context);
+
 		if (isSiblingOfPrevious(payment)) {
 			if (prevPayment.getIrpf() != null) {
 				tax += prevPayment.getIrpf();
@@ -391,6 +392,16 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 				amount += prevPayment.getAmount();
 			}
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount != null ? amount : 0.00);
+			
+			if ( !Objects.equals(prevPayment.getDescription(), description)) {
+				try {
+					description = ExpressionContext.evalTemplate(payment.getDescription(), variables);
+					insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.DESCRIPTION, description);
+				} catch ( Exception e  ) {
+					
+				}
+			}
+			
 		} else {
 
 			InsertSetStep<SalaryPaymentRecord> insertPayment = insertMorePayment == null
@@ -414,7 +425,6 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		if ( payment instanceof IContractPayment )
 			prevPayment.setId(((IContractPayment) payment).getId());
 
-		putContext(context);
 	}
 
 	@Override
