@@ -180,13 +180,13 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTasks(AonApiData api) {
-		JSONObject params = api.getData();
-		Integer page = params.optInt(IJsonNames.PAGE);
-		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
+		JSONObject params  = api.getData();
+		Integer page       = params.optInt(IJsonNames.PAGE);
+		Integer perPage    = params.optInt(IJsonNames.PER_PAGE);
 		boolean isReceived = params.isNull(IJsonNames.SENDER) && !params.isNull(IJsonNames.TASK_HOLDER);
 		boolean isSent     = !params.isNull(IJsonNames.SENDER) && params.isNull(IJsonNames.TASK_HOLDER);
-		boolean all = !isReceived && !isSent;
-		boolean isCau = TaskUtils.isCau(params);
+		boolean all        = !isReceived && !isSent;
+		boolean isCau      = TaskUtils.isCau(params);
 
 		List<Task> tasks = new ArrayList<>(); 
 		
