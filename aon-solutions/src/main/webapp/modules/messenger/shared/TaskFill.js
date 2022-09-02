@@ -6,7 +6,7 @@ import { sortBy, waitEl } from "../../../services/utils.js";
 import { getAppsByDur } from "../../../services/app.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { TaskCreationUtils} from "./TaskCreationUtils.js";
-import { chooseIconMessage } from "./utils.js";
+import { TaskUtils } from "./TaskUtils.js";
 
 /**
  * fill typeRequest (Tipo de solicitud)
@@ -337,6 +337,7 @@ const fillChat = (task, meId, workflows=[])=>{
 
             const firstComment = workflows.find(w=> WORKFLOW_TYPES.OPEN.includes(w.type));
             const observation = task.getDescriptionJson().observation;
+            const isSend = task.gtask_id;
           
             if(!firstComment){
                 const date = (task.getCreationDate() || new Date().getTime());
@@ -389,7 +390,8 @@ const fillChat = (task, meId, workflows=[])=>{
                     task:taskWorkflow,
                     number: getNumber(taskWorkflow),
                     date: creation_date,
-                    direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT
+                    direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT,
+                    isSend
                 }
 
                 if(!me){
@@ -401,7 +403,7 @@ const fillChat = (task, meId, workflows=[])=>{
                 } else {
                     message.name = userName;
       
-                    const actionJson = chooseIconMessage(message);
+                    const actionJson = TaskUtils.chooseIconMessage(message);
 
                     const submessage = message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
                     const action = TaskCreationUtils.createAction(actionJson, actionJson.comment, submessage);

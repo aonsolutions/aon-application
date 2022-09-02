@@ -18,7 +18,7 @@ import { AonIcon } from "../../../components/aon-icon.js";
  * Build standard toolbar options 
  * @param {HTMLElement} aonTextArea aon-text-area
  */
-export const buildTextareaToolbar =  (aonTextArea) => {
+const buildTextareaToolbar =  (aonTextArea) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
     if(textAreaText){
         setStyles(textAreaText, {resize: "none"});
@@ -85,9 +85,7 @@ export const buildTextareaToolbar =  (aonTextArea) => {
     aonTextArea.addColorPicker(MATERIAL_ICONS.FORMAT_LIST_NUMBERED);
 }
 
-const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
-
-export const addIconToolbar = (toolbar, task) => {
+const addIconToolbar = (toolbar, task) => {
     const titleSpan = setClasses(toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` ), [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
     if(titleSpan){
         const iconJson = getIconJson(task);
@@ -112,28 +110,115 @@ export const addIconToolbar = (toolbar, task) => {
     }
 }
 
-const createLink =() =>{
-    const selection = document.getSelection();
-    const url = prompt('URL:', 'https://');
-    const aEl = setAttributes(document.createElement(TAG.A),{
-        target:"_system",
-        class:CSS.AON_LINK,
-        href:url,
-        title:url
-    });
-    aEl.textContent = selection.toString() ? selection : url;
-    document.execCommand('insertHTML', false, aEl.outerHTML);
+/**
+ * 
+ * @param {Object} source,status 
+ * @returns icon, icon_color
+ */
+const getIconJson =({source,status}) => {
+
+    const { AON_MESSENGER_LIST_OPEN, AON_MESSENGER_LIST_IN_PROGRESS, AON_MESSENGER_LIST_CLOSE, AON_MESSENGER_LIST_ARCHIVE } = MessengerOptions;
+
+    let icon = MATERIAL_ICONS.INFO;
+    let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
+
+    if(source === TASK_SOURCE.CAU){
+        icon = MATERIAL_ICONS.SUPPORT_AGENT;
+    } else if(source===TASK_SOURCE.REQUEST){
+        icon = MATERIAL_ICONS.ASSIGNMENT;
+    } else if(source===TASK_SOURCE.GROUPED){
+        icon = "group_add";
+    }  
+    
+    if(status === TASK_STATUS.IN_PROGRESS) {
+        icon_color = AON_MESSENGER_LIST_IN_PROGRESS.icon_color;
+    } else if(status === TASK_STATUS.FINISHED) {
+        icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
+    } else if(status === TASK_STATUS.DELETED){
+        icon_color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
+    } 
+    
+    return {
+      icon,
+      icon_color
+    }
 }
 
-const blockquote = ()=>{
-    const selection = document.getSelection();
-    const blockquoteEl = setStyles(document.createElement("blockquote"),{
-        margin:"0px 0px 0px 0.8ex",
-        borderLeft: "1px solid #cccccc",
-        paddingLeft: "1ex"
+/**
+ * downChat down chat
+ */
+const downChat = () => {
+    const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
+    if(chat){
+        setTimeout(() =>{
+            chat.lastChild.scrollIntoView(); 
+            addLine(chat);
+        }, 100) 
+    }
+}
+/**
+ * upChat up chat
+ */
+const upChat = () => {
+    const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
+    if(chat){
+        setTimeout(() => chat.firstChild.scrollIntoView(), 100)    
+    }
+}
+
+const dialogTaskTags = (ev, task) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const rect = ev.target.getBoundingClientRect();
+    const x = ev.clientX - rect.left + 180;
+    const y = ev.clientY - rect.top;
+    const top  = rect.top + y;
+    let left = rect.left + x;
+
+    const dialog = aonMessengerChat.getApplication().getOptionDialog();
+    dialog.clear();
+    dialog.setContentTitle(MSG.TAGS);
+
+    const div = setStyles(document.createElement("div"),{ margin:"5px", display:"flex", flexDirection:"column" });
+
+    const tags = aonMessengerChat.getTagsPanel();
+    
+    const taskTags = task.getTags();
+    
+    for (let tag of tags) {
+        let aonCheckbox = new AonCheckbox();
+        aonCheckbox.description = tag.name;
+        aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id || tag.name===t.name  ) ? true : false;
+        aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
+          if(target.checked){
+            task.addTag(tag);
+          } else {
+            task.removeTag(tag.id);
+          }
+        })
+        div.appendChild(aonCheckbox);
+    }
+
+    dialog.setContent(div);
+    dialog.openPosition({top, left});
+}
+
+/**
+ * create div tags
+ */
+const setTaskTags = (task) => {
+    const div = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
+    div.innerHTML = "";
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
+    task.getTags()
+    .filter(t=>t.tag_type && t.tag_type.toUpperCase() == TAG_TYPE.TASK_LABEL)
+    .forEach(tag=>{
+        if(task.id && task.isExternal() || aonMessengerChat.isCau() || aonMessengerChat.isMobile()){
+            TaskCreationUtils.createTagHtml(tag, div);
+        } else {
+            TaskCreationUtils.appendTaskTag(tag, div, (id)=>  task.removeTag(id));
+        }
     });
-    blockquoteEl.textContent = selection;
-    document.execCommand('insertHTML', false, blockquoteEl.outerHTML);
 }
 
 /**
@@ -141,7 +226,7 @@ const blockquote = ()=>{
  * @param {Object} message
  * @returns {Object} actionJson message new object
  */
-export const chooseIconMessage = ({type, date, name, comment, number}) => {
+const chooseIconMessage = ({type, date, name, comment, number}) => {
     const dateParse = date ? (AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date)) : null;
     
     let actionJson = {
@@ -180,41 +265,18 @@ export const chooseIconMessage = ({type, date, name, comment, number}) => {
 
     return actionJson;
 }
-
-/**
- * Append a new message to the chat with a little animation
- * @param {*} properties 
- */
-const appendChatMessage = (properties) => {
-    const noMessage = document.getElementById(MESSENGER_IDS.NO_MESSAGES);
-    const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
-    
-    if(noMessage){
-        chat.removeChild(noMessage);
-    }
-
-    const message = setStyles( TaskCreationUtils.createChatMessageNew(properties, chat),{
-        opacity : 0,
-        marginTop : '20px',
-        transition : ".25s"
-    });
-    /**
-     * Appearing animation
-     */
-    setTimeout(() => setStyles(message, { opacity : 1, marginTop : '10px'}), 100);
-    return message;
-} 
-
 /**
  * @param {String} text Optional
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Obkect} {value, messageEl, workflowId} message element html
  */
-export const sendMessage = async (text, task) => {
+const sendMessage = async (text, task) => {
     let workflowId = undefined;
     let taskId     = undefined;
     let messageEl  = undefined;
-    let value = text;
+    let value      = text;
+
+    const isSend = task.gtask_id;
 
     let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
 
@@ -252,7 +314,8 @@ export const sendMessage = async (text, task) => {
             date: message.creation_date,
             task:message.task,
             direction : MESSENGER_DIRECTION.RIGHT,
-            me: true
+            me: true,
+            isSend
         });
     }
 
@@ -266,68 +329,10 @@ export const sendMessage = async (text, task) => {
 
 /**
  * 
- * @param {Task} task task
- * @param {HTMLElement} textArea htmlElement textArea
- * check files and send uploadFile(taskAttach) 
- */
-const checkFilesAndSave = async (task, textArea)=>{
-    const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
-
-    if(btnSend){
-        btnSend.style.pointerEvents = "none";
-    }
-
-    try {
-        await textArea.checkFileBase64();
-        await saveFiles(task, textArea);
-    } catch (error) { console.log(error); }
-
-    if(btnSend) {
-        btnSend.style.pointerEvents = "auto";
-    }
-}
-
-const saveFiles = async(task, textArea)=> {
-
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-
-    const files = textArea.getFiles();
-    for await (const file of files) {
-        const attach = await aonMessengerChat.uploadFile({ file, task });
-        if(attach){
-            const json = {
-                domain_name: attach.domain_name,
-                attach_type: attach.attach_type,
-                domain_id:attach.domain,
-                id:attach.id
-            };
-
-            const jsonBase64 = btoa( JSON.stringify(json) );
-            
-            let linkTmp = `/${API_URL}/file/${jsonBase64}`;
-
-            if(aonMessengerChat.isCau()){
-                linkTmp = SIG_URL+linkTmp;
-            }
-
-            const element = document.querySelector(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}][data-id='${file.id}']`);
-            if(element){
-                if(file.contentType.includes("image")){
-                    element.src = linkTmp;
-                } else {
-                    element.href = linkTmp;
-                } 
-            }
-        }
-    }
-}
-
-/**
- * 
  * @param {Number} id 
  * @param {HTMLElement} parent check html and add event 
  */
-export const checkFilesAddEventClick = ({id}, parent)=>{
+const checkFilesAddEventClick = ({id}, parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`)
@@ -362,7 +367,7 @@ export const checkFilesAddEventClick = ({id}, parent)=>{
  * Description add event click img or file
  * @param {Task} task class task
  */
-export const checkFilesAddEventDescription = (task)=>{
+const checkFilesAddEventDescription = (task)=>{
     const descriptionEl = document.getElementById(MESSENGER_IDS.DESCRIPTION_TASK);
     if(task && descriptionEl){
         const observation = task.getDescriptionJson().observation;
@@ -374,65 +379,23 @@ export const checkFilesAddEventDescription = (task)=>{
     }
 }
 
-const changeFormProcess = (task, {value,name}) => {
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
-    processDiv.innerHTML = "";
-    let sender;
-    //CREATE CARD
-    let aonCard = TaskCreationUtils.createCardMessenger("aonCardProcess", name);
-    processDiv.appendChild(aonCard);
-    setStyles(aonCard.getCard(), { margin:0, marginTop:"10px" });
-    aonCard.getCardTitle1().style.whiteSpace = "pre-wrap";
+const taskNumberParse = (number) => "#"+(number || "0").toString().padStart(5, 0);
 
-    if(task.id && aonMessengerChat.getDur().isDev()){ //BUTTON SHOW JSON
-        aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
-            let d = aonMessengerChat.applicationEl.getDialog();
-            if(d){
-                d.clear();
-                if (!aonMessengerChat.isMobile()) {
-                    d.width = '400px';
-                }
-                d.setTitle("JSON");
-                d.setContent(jsonDiv(task));
-                d.addAcceptAction(() => {});
-                d.open();
-            }
-        });
+const parseTimeToDouble = (time)=>{
+    if(time){
+        const timeSplit = time.split(":");
+        return parseFloat(timeSplit[0]) + parseFloat(timeSplit[1])/60;
     }
-
-    if(aonMessengerChat.isMobile() && task.sender && task.sender.name ) {
-        sender = `[${task.sender.name}] ${name}`;
-    }
-     
-    if(value===1){ //FORM VACATION
-        if(sender) {
-            aonCard.setTitleSection1(sender);
-        }
-        FormVacation.createForm(task, aonCard);
-    } else if(value ===2) {
-        FormMovSs.createForm(task, aonCard);
-    } else if(value ===3) {
-        if(sender) {
-            aonCard.setTitleSection1(sender);
-        }
-        FormTimecontrol.createForm(task, aonCard);
-    }
+    return 0;
 }
 
-const jsonDiv = (task)=> {
-    const pre  = setStyles(document.createElement("pre"),{
-        backgroundColor: "ghostwhite",
-        border: "1px solid silver",
-        padding: "10px 20px",
-        margin: "20px",
-        whiteSpace: "pre-wrap"
-    });
-    const code = document.createElement("code");
-    code.style.color = "brown";
-    pre.appendChild(code); 
-    code.textContent = JSON.stringify(task.getDescriptionJson(), undefined, 2);
-    return pre;
+const parseDoubleToTime = (value)=>{
+    if(value){
+        const h = Math.floor(value);
+        const m = Math.round((value - h) * 60);
+        return `${h.toString().padStart(2, 0)}:${m.toString().padStart(2, 0)}`;
+    }
+    return null;
 }
 
 /**
@@ -440,7 +403,7 @@ const jsonDiv = (task)=> {
  * @param {Task} task
  * @param {HTMLElement} divMain
  */
-export const buildForm = (task, divMain) => {
+const buildForm = (task, divMain) => {
     const isAdvisoryCompany = task.isAdvisoryCompany();
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     // const dataDefault = aonMessengerChat.getData();
@@ -541,10 +504,251 @@ export const buildForm = (task, divMain) => {
 
 /**
  * 
+ * @param {Arrays} workflows workflows 
+ */
+const setStyleMessageHistoric = async (workflows) => {
+    if(workflows && workflows.length) {
+      for (const workflow of workflows) {
+        const message = document.querySelector( `#${MESSENGER_IDS.MESSENGER_CHAT} ${MESSENGER_COMPONENTS.MESSAGE}[data-id='${workflow.id}']`);
+        if(message){  //CHANGE STYLE IF SEND MESSAGE
+          message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
+          const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
+
+          if(iconSendWorkflow){
+            iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
+            iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
+            iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
+            
+            const iconEdit = message.querySelector(`#${MESSENGER_IDS.ICON_EDIT_WORKFLOW}`);
+            if(iconEdit){
+                iconEdit.remove();
+                iconSendWorkflow.style.right = "17px";
+            }
+          }
+        }
+      }
+    }
+}
+
+const setContentMessageChat = (task, workflowId) => {
+
+    let content = document.querySelector(`${MESSENGER_COMPONENTS.MESSAGE}[data-id="${workflowId}"] > .${CSS.MESSAGE_CONTENT}`);
+    let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
+
+    if(content && textArea){
+        // content.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+        setDataset(textArea, { workflowId, task });
+        textArea.setValueHtml(content.innerHTML);
+    }
+}
+
+const checkButtonsToolbar = (task, taskId)=>{
+
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
+    const toolbar = document.getElementById(aonMessengerChat.TOOLBAR);
+
+    if(toolbar && task && task.id){
+        const show = task.id === taskId;
+        toolbar.showButton(MESSENGER_IDS.TOOLBAR_BRANCH, show);
+        toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, show);
+        toolbar.showButton(ACTIONS.RESTORE.id, show);
+        toolbar.showButton(ACTIONS.DELETE.id, show);
+        toolbar.showButton(ACTIONS.SAVE.id, show);
+        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, show);
+        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, show);
+
+        if(!aonMessengerChat.isCau() && aonMessengerChat.getDur().isEmployee() && show){
+
+            const myTaskHolderId = aonMessengerChat.MY_TASKHOLDER && aonMessengerChat.MY_TASKHOLDER.id ? aonMessengerChat.MY_TASKHOLDER.id : undefined;
+        
+            const parent         = aonMessengerChat.getApplicationParent();
+
+            parent.getMyWorkgroups().then(myWorkgroups=>{
+                const is = isMyTask(task, myTaskHolderId, myWorkgroups);
+                toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, is);
+                toolbar.showButton(ACTIONS.DELETE.id, is);
+                toolbar.showButton(ACTIONS.SAVE.id, is);
+                toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, is);
+                toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, is);
+            });
+        }   
+    }
+}
+
+const createLink =() =>{
+    const selection = document.getSelection();
+    const url = prompt('URL:', 'https://');
+    const aEl = setAttributes(document.createElement(TAG.A),{
+        target:"_system",
+        class:CSS.AON_LINK,
+        href:url,
+        title:url
+    });
+    aEl.textContent = selection.toString() ? selection : url;
+    document.execCommand('insertHTML', false, aEl.outerHTML);
+}
+
+const blockquote = ()=>{
+    const selection = document.getSelection();
+    const blockquoteEl = setStyles(document.createElement("blockquote"),{
+        margin:"0px 0px 0px 0.8ex",
+        borderLeft: "1px solid #cccccc",
+        paddingLeft: "1ex"
+    });
+    blockquoteEl.textContent = selection;
+    document.execCommand('insertHTML', false, blockquoteEl.outerHTML);
+}
+
+/**
+ * Append a new message to the chat with a little animation
+ * @param {*} properties 
+ */
+const appendChatMessage = (properties) => {
+    const noMessage = document.getElementById(MESSENGER_IDS.NO_MESSAGES);
+    const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
+    
+    if(noMessage){
+        chat.removeChild(noMessage);
+    }
+
+    const message = setStyles( TaskCreationUtils.createChatMessageNew(properties, chat),{
+        opacity : 0,
+        marginTop : '20px',
+        transition : ".25s"
+    });
+    /**
+     * Appearing animation
+     */
+    setTimeout(() => setStyles(message, { opacity : 1, marginTop : '10px'}), 100);
+    return message;
+} 
+
+/**
+ * 
+ * @param {Task} task task
+ * @param {HTMLElement} textArea htmlElement textArea
+ * check files and send uploadFile(taskAttach) 
+ */
+const checkFilesAndSave = async (task, textArea)=>{
+    const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
+
+    if(btnSend){
+        btnSend.style.pointerEvents = "none";
+    }
+
+    try {
+        await textArea.checkFileBase64();
+        await saveFiles(task, textArea);
+    } catch (error) { console.log(error); }
+
+    if(btnSend) {
+        btnSend.style.pointerEvents = "auto";
+    }
+}
+
+const saveFiles = async(task, textArea)=> {
+
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
+    const files = textArea.getFiles();
+    for await (const file of files) {
+        const attach = await aonMessengerChat.uploadFile({ file, task });
+        if(attach){
+            const json = {
+                domain_name: attach.domain_name,
+                attach_type: attach.attach_type,
+                domain_id:attach.domain,
+                id:attach.id
+            };
+
+            const jsonBase64 = btoa( JSON.stringify(json) );
+            
+            let linkTmp = `/${API_URL}/file/${jsonBase64}`;
+
+            if(aonMessengerChat.isCau()){
+                linkTmp = SIG_URL+linkTmp;
+            }
+
+            const element = document.querySelector(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}][data-id='${file.id}']`);
+            if(element){
+                if(file.contentType.includes("image")){
+                    element.src = linkTmp;
+                } else {
+                    element.href = linkTmp;
+                } 
+            }
+        }
+    }
+}
+
+const changeFormProcess = (task, {value,name}) => {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
+    processDiv.innerHTML = "";
+    let sender;
+    //CREATE CARD
+    let aonCard = TaskCreationUtils.createCardMessenger("aonCardProcess", name);
+    processDiv.appendChild(aonCard);
+    setStyles(aonCard.getCard(), { margin:0, marginTop:"10px" });
+    aonCard.getCardTitle1().style.whiteSpace = "pre-wrap";
+
+    if(task.id && aonMessengerChat.getDur().isDev()){ //BUTTON SHOW JSON
+        aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
+            let d = aonMessengerChat.applicationEl.getDialog();
+            if(d){
+                d.clear();
+                if (!aonMessengerChat.isMobile()) {
+                    d.width = '400px';
+                }
+                d.setTitle("JSON");
+                d.setContent(jsonDiv(task));
+                d.addAcceptAction(() => {});
+                d.open();
+            }
+        });
+    }
+
+    if(aonMessengerChat.isMobile() && task.sender && task.sender.name ) {
+        sender = `[${task.sender.name}] ${name}`;
+    }
+     
+    if(value===1){ //FORM VACATION
+        if(sender) {
+            aonCard.setTitleSection1(sender);
+        }
+        FormVacation.createForm(task, aonCard);
+    } else if(value ===2) {
+        FormMovSs.createForm(task, aonCard);
+    } else if(value ===3) {
+        if(sender) {
+            aonCard.setTitleSection1(sender);
+        }
+        FormTimecontrol.createForm(task, aonCard);
+    }
+}
+
+const jsonDiv = (task)=> {
+    const pre  = setStyles(document.createElement("pre"),{
+        backgroundColor: "ghostwhite",
+        border: "1px solid silver",
+        padding: "10px 20px",
+        margin: "20px",
+        whiteSpace: "pre-wrap"
+    });
+    const code = document.createElement("code");
+    code.style.color = "brown";
+    pre.appendChild(code); 
+    code.textContent = JSON.stringify(task.getDescriptionJson(), undefined, 2);
+    return pre;
+}
+
+/**
+ * 
  * @param {Task} task
  * @param {Select} requestTypeSelect aon select type request
  */
- const onChangeTypeSelect = (task, requestTypeSelect, forExternal = false) =>{
+const onChangeTypeSelect = (task, requestTypeSelect, forExternal = false) =>{
     const detail = requestTypeSelect.getDetail() || {};
     if(detail){
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
@@ -603,7 +807,6 @@ export const buildForm = (task, divMain) => {
     }
 } 
 
-
 const hideBtnExternal = (type, btnForExternal, divRequest) => {
     const none = "none";
     const display = type === TASK_SOURCE.CAU ? none : "block";
@@ -622,14 +825,13 @@ const hideBtnExternal = (type, btnForExternal, divRequest) => {
     btnForExternal.style.display = display;
 }
 
-
 /**
  * 
  * @param {Task} task 
  * @param {HTMLElement} dinamicDiv aon-messenger-chat
  * @param {Boolean} forExternal btn by gestor(forExternal)
  */
- const formQuery = (task, dinamicDiv, forExternal = false) => {
+const formQuery = (task, dinamicDiv, forExternal = false) => {
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const applicationParent = aonMessengerChat.applicationParentEl;
     const isAdvisoryCompany = task.isAdvisoryCompany();
@@ -744,62 +946,6 @@ const formCau = (task, dinamicDiv, forExternal = false) => {
 
 /**
  * 
- * @param {Object} source,status 
- * @returns icon, icon_color
- */
-export const getIconJson =({source,status}) => {
-
-    const { AON_MESSENGER_LIST_OPEN, AON_MESSENGER_LIST_IN_PROGRESS, AON_MESSENGER_LIST_CLOSE, AON_MESSENGER_LIST_ARCHIVE } = MessengerOptions;
-
-    let icon = MATERIAL_ICONS.INFO;
-    let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
-
-    if(source === TASK_SOURCE.CAU){
-        icon = MATERIAL_ICONS.SUPPORT_AGENT;
-    } else if(source===TASK_SOURCE.REQUEST){
-        icon = MATERIAL_ICONS.ASSIGNMENT;
-    } else if(source===TASK_SOURCE.GROUPED){
-        icon = "group_add";
-    }  
-    
-    if(status === TASK_STATUS.IN_PROGRESS) {
-        icon_color = AON_MESSENGER_LIST_IN_PROGRESS.icon_color;
-    } else if(status === TASK_STATUS.FINISHED) {
-        icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
-    } else if(status === TASK_STATUS.DELETED){
-        icon_color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
-    } 
-    
-    return {
-      icon,
-      icon_color
-    }
-}
-
-/**
- * downChat down chat
- */
-export const downChat = () => {
-    const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
-    if(chat){
-        setTimeout(() =>{
-            chat.lastChild.scrollIntoView(); 
-            addLine(chat);
-        }, 100) 
-    }
-}
-/**
- * upChat up chat
- */
-export const upChat = () => {
-    const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
-    if(chat){
-        setTimeout(() => chat.firstChild.scrollIntoView(), 100)    
-    }
-}
-
-/**
- * 
  * @param {HTMLElement} chat add line element html
  */
 const addLine = (chat) =>{
@@ -875,7 +1021,6 @@ const addTaskDescription = (task) => {
     buildTextareaToolbar(aonTextArea);
 }
 
-
 /**
  * 
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
@@ -927,63 +1072,6 @@ const createTagsDiv = (task, parent) => {
     div.id = MESSENGER_IDS.DIV_TASK_TAGS;
     parent.insertBefore(div, parent.firstChild);
     setTaskTags(task);
-}
-
-
-export const dialogTaskTags = (ev, task) => {
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const rect = ev.target.getBoundingClientRect();
-    const x = ev.clientX - rect.left + 180;
-    const y = ev.clientY - rect.top;
-    const top  = rect.top + y;
-    let left = rect.left + x;
-
-    const dialog = aonMessengerChat.getApplication().getOptionDialog();
-    dialog.clear();
-    dialog.setContentTitle(MSG.TAGS);
-
-    const div = setStyles(document.createElement("div"),{ margin:"5px", display:"flex", flexDirection:"column" });
-
-    const tags = aonMessengerChat.getTagsPanel();
-    
-    const taskTags = task.getTags();
-    
-    for (let tag of tags) {
-        let aonCheckbox = new AonCheckbox();
-        aonCheckbox.description = tag.name;
-        aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id || tag.name===t.name  ) ? true : false;
-        aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
-          if(target.checked){
-            task.addTag(tag);
-          } else {
-            task.removeTag(tag.id);
-          }
-        })
-        div.appendChild(aonCheckbox);
-    }
-
-    dialog.setContent(div);
-    dialog.openPosition({top, left});
-}
-
-
-/**
- * create div tags
- */
-export const setTaskTags = (task) => {
-    const div = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
-    div.innerHTML = "";
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-
-    task.getTags()
-    .filter(t=>t.tag_type && t.tag_type.toUpperCase() == TAG_TYPE.TASK_LABEL)
-    .forEach(tag=>{
-        if(task.id && task.isExternal() || aonMessengerChat.isCau() || aonMessengerChat.isMobile()){
-            TaskCreationUtils.createTagHtml(tag, div);
-        } else {
-            TaskCreationUtils.appendTaskTag(tag, div, (id)=>  task.removeTag(id));
-        }
-    });
 }
 
 const addCauForm = (task, dinamicDiv)=> {
@@ -1122,115 +1210,40 @@ const createLabelAnchor = (text, domainName, clickable = true, editable = false)
     };
 }
 
-
-
-/**
- * 
- * @param {Arrays} workflows workflows 
- */
-export const setStyleMessageHistoric = async (workflows) => {
-    if(workflows && workflows.length) {
-      for (const workflow of workflows) {
-        const message = document.querySelector( `#${MESSENGER_IDS.MESSENGER_CHAT} ${MESSENGER_COMPONENTS.MESSAGE}[data-id='${workflow.id}']`);
-        if(message){  //CHANGE STYLE IF SEND MESSAGE
-          message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
-          const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
-
-          if(iconSendWorkflow){
-            iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
-            iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
-            iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
-            
-            const iconEdit = message.querySelector(`#${MESSENGER_IDS.ICON_EDIT_WORKFLOW}`);
-            if(iconEdit){
-                iconEdit.remove();
-                iconSendWorkflow.style.right = "17px";
-            }
-          }
-        }
-      }
-    }
-}
-
-export const setContentMessageChat = (task, workflowId) => {
-
-    let content = document.querySelector(`${MESSENGER_COMPONENTS.MESSAGE}[data-id="${workflowId}"] > .${CSS.MESSAGE_CONTENT}`);
-    let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
-
-    if(content && textArea){
-        // content.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-        setDataset(textArea, { workflowId, task });
-        textArea.setValueHtml(content.innerHTML);
-    }
-}
-
-export const checkButtonsToolbar = (task, taskId)=>{
-
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-
-    const toolbar = document.getElementById(aonMessengerChat.TOOLBAR);
-
-    if(toolbar && task && task.id){
-        const show = task.id === taskId;
-        toolbar.showButton(MESSENGER_IDS.TOOLBAR_BRANCH, show);
-        toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, show);
-        toolbar.showButton(ACTIONS.RESTORE.id, show);
-        toolbar.showButton(ACTIONS.DELETE.id, show);
-        toolbar.showButton(ACTIONS.SAVE.id, show);
-        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, show);
-        toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, show);
-
-        if(!aonMessengerChat.isCau() && aonMessengerChat.getDur().isEmployee() && show){
-            getIsMyTask(task)
-            .then(is=>{
-                toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, is);
-                toolbar.showButton(ACTIONS.DELETE.id, is);
-                toolbar.showButton(ACTIONS.SAVE.id, is);
-                toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_CLOSE.id, is);
-                toolbar.showButton(MessengerOptions.AON_MESSENGER_LIST_ARCHIVE.id, is);
-            });
-        }   
-    }
-}
-
-const getIsMyTask = async (task) => {
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-
-    const parent            = aonMessengerChat.getApplicationParent();
-
-    const myTaskHolderId   = aonMessengerChat.MY_TASKHOLDER && aonMessengerChat.MY_TASKHOLDER.id ? aonMessengerChat.MY_TASKHOLDER.id : undefined;
+const isMyTask = (task, myTaskHolderId, myWorkgroups) => {
 
     const taskTaskholderId = task.task_holder && task.task_holder.id ? task.task_holder.id : undefined;
 
-    const taskSenderId     =  task.sender && task.sender.id ? task.sender.id : undefined;
+    const taskSenderId     = task.sender && task.sender.id ? task.sender.id : undefined;
 
     const taskWorkgroup    = task.workgroup && task.workgroup.id ? task.workgroup.id : undefined;
    
-    const isMyTaskHolder = (taskTaskholderId == myTaskHolderId) || (taskSenderId == myTaskHolderId);
+    const isMyTaskHolder   = (taskTaskholderId == myTaskHolderId) || (taskSenderId == myTaskHolderId);
 
-    if(isMyTaskHolder)  return true;
-
-   
-    const wgs = await parent.getMyWorkgroups().catch(()=> null);
-
-    return wgs && wgs.length ? wgs.some(({id})=> id == taskWorkgroup) : false; // is myWorkgroup
+    return isMyTaskHolder || // isMyTaskHolder
+           myWorkgroups && myWorkgroups.length ? myWorkgroups.some(({id})=> id == taskWorkgroup) : false; // is myWorkgroup
 }
 
-export const taskNumberParse = (number) => "#"+(number || "0").toString().padStart(5, 0);
+const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
 
-export const parseTimeToDouble = (time)=>{
-    if(time){
-        const timeSplit = time.split(":");
-        return parseFloat(timeSplit[0]) + parseFloat(timeSplit[1])/60;
-    }
-    return 0;
-}
-
-export const parseDoubleToTime = (value)=>{
-    if(value){
-        const h = Math.floor(value);
-        const m = Math.round((value - h) * 60);
-        return `${h.toString().padStart(2, 0)}:${m.toString().padStart(2, 0)}`;
-    }
-    return null;
+export const TaskUtils = {
+    buildTextareaToolbar,
+    addIconToolbar,
+    getIconJson,
+    downChat,
+    upChat,
+    dialogTaskTags,
+    setTaskTags,
+    chooseIconMessage,
+    sendMessage,
+    checkFilesAddEventClick,
+    checkFilesAddEventDescription,
+    taskNumberParse,
+    parseTimeToDouble,
+    parseDoubleToTime,
+    buildForm,
+    setStyleMessageHistoric,
+    setContentMessageChat,
+    checkButtonsToolbar,
+    isMyTask
 }

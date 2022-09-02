@@ -175,9 +175,10 @@ export class AonApps extends AonElement {
 			return this.getDur().isMessenger();
 		else if(Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
-		else if(Apps.WAREHOUSE.app === app.app)
-			return this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat") || this.isLocal();
-		else 
+		else if(Apps.WAREHOUSE.app === app.app){
+			const domain = this.getDur().getDomain();
+			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		} else 
 			return false;
 	}
 }
