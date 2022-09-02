@@ -18,7 +18,7 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public LinkedList<Domain> getDomains(CloseableAONContext ctx, String schema, String query) {
-		return ConsoleDAO.getDomains(ctx, schema, query);
+	public LinkedList<Domain> getDomains(CloseableAONContext ctx, String query) {
+		return ConsoleDAO.getDomains(ctx, query);
 	}	
 }

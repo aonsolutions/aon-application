@@ -114,29 +114,34 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 			domainBox.setEnabled(AonStringUtils.isNotBlank(schema));		
 			domainBox.setSchema(schema);
 		});
+		Label schemaLabel = new Label("Esquema");
+		schemaLabel.setStyleName(AON.CSS.aonInnerLabel());
+		Label domainLabel = new Label("Dominio");
+		domainLabel.setStyleName(AON.CSS.aonInnerLabel());
 		
 		table.addRow()
 			.addCell(originLabel)
-			.addCell(new Label("Esquema"))
-			.addCell( schemaBox )
-			.addCell(new Label("Dominio"))
+			.addCell(schemaLabel)
+			.addCell(schemaBox)
+			.addCell(domainLabel)
 			.addCell( domainBox )	
 		;
 	
 		Label targetLabel = new Label("DESTINO");
 		targetLabel.setStyleName(AON.CSS.aonBold());
-//		newSchemaBox.addChangeHandler( e -> newSchema = newSchemaBox.getSelectedValue());
-		newSchemaBox.setEnabled(false);
+		newSchemaBox.addChangeHandler( e -> newSchema = newSchemaBox.getSelectedValue());
 		AonTextBox newDomainBox = new AonTextBox();
 		newDomainBox.addValueChangeHandler(e -> newDomainName = newDomainBox.getValue());
+		Label newSchemaLabel = new Label("Esquema");
+		newSchemaLabel.setStyleName(AON.CSS.aonInnerLabel());
+		Label newDomainLabel = new Label("Dominio");
+		newDomainLabel.setStyleName(AON.CSS.aonInnerLabel());
 		table.addRow()
 			.addCell(targetLabel)
-//			.addCell(new Label("Esquema"))
-//			.addCell( newSchemaBox )
-			.addCell( new Label() )
-			.addCell( new Label() )
-			.addCell(new Label("Dominio"))
-			.addCell( newDomainBox )	
+			.addCell(newSchemaLabel)
+			.addCell(newSchemaBox)
+			.addCell(newDomainLabel)
+			.addCell(newDomainBox)	
 		;
 		
 		return scroll;

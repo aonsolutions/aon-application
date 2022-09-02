@@ -24,8 +24,8 @@ public class CONSOLE {
 	}
 
 	public static LinkedList<Domain> getDomains(Occam occam, String schema, String query) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getConsole().getDomains(ctx,schema, query);
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			return getConsole().getDomains(ctx, query);
 		}
 	}
 }

@@ -34,7 +34,7 @@ public class ConsoleDAO {
 			;			
 	}
 
-	public static LinkedList<Domain> getDomains(CloseableAONContext ctx, String schema, String query) {
+	public static LinkedList<Domain> getDomains(CloseableAONContext ctx, String query) {
 		String q = "%" + query + "%";
 		return DomainDAO.getDomainList(ctx, p -> 
 			p.getNameProperty().like(q)

@@ -100,7 +100,7 @@ public class ConsoleIsolateDomain {
 			params.getFromConnection().setFullDomain(fullDomain);
 			params.setScript( new LinkedHashMap<>() );
 			
-			DomainValidator domainValidator = DomainValidator.getInstance();
+			DomainValidator domainValidator = DomainValidator.getInstance(true);
 			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
 				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
 				ConsoleUtils.log(params,msg);
@@ -670,7 +670,7 @@ public class ConsoleIsolateDomain {
 				.getId();
 		ConsoleUtils.log(params,"**** User insertado correctamente");
 		
-		params.getFromDslContext().select( SCOPE.ID)
+		params.getToDslContext().select( SCOPE.ID)
 			.from(SCOPE)
 			.where(SCOPE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
 			.fetch()
@@ -683,7 +683,7 @@ public class ConsoleIsolateDomain {
 				.execute());
 		ConsoleUtils.log(params,"**** User Scope insertado correctamente");
 
-		params.getFromDslContext().select( DOMAIN_APPLICATION.ID)
+		params.getToDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
 			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
 			.fetch()
