@@ -134,7 +134,6 @@ public class NewsServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-
 	
 	private void validateSave(JSONObject params) {
 		if(params.isNull(IJsonNames.SCOPE)) {

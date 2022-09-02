@@ -6,7 +6,7 @@ import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
-import { checkButtonsToolbar, checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
+import { TaskUtils } from "./shared/TaskUtils.js";
 import { TaskFill } from "./shared/TaskFill.js";
 import { FormMovSs } from "./forms/FormMvSs.js";
 import { FormTimecontrol } from "./forms/FormTimecontrol.js";
@@ -89,7 +89,7 @@ export class AonMessengerChat extends AonElement {
       if(propName == "project"){
         this.onChangeProject();
       } else if(propName == "tags"){
-        setTaskTags(this.task);
+        TaskUtils.setTaskTags(this.task);
       }
     }
     
@@ -129,7 +129,7 @@ export class AonMessengerChat extends AonElement {
   async saveComment(text = undefined, task=undefined) {
     const taskW = task ? task : this.task;
     try {
-          const {comment, messageEl, workflowId, taskId}  = await sendMessage(text, taskW); 
+          const {comment, messageEl, workflowId, taskId}  = await TaskUtils.sendMessage(text, taskW); 
           if(comment){
             if(workflowId && taskId){
               this.updateComment(taskId, workflowId, comment);
@@ -232,7 +232,7 @@ export class AonMessengerChat extends AonElement {
     try {
       const taskId = task.id;
 
-      checkButtonsToolbar(this.task, task.id);
+      TaskUtils.checkButtonsToolbar(this.task, task.id);
 
       let params = { task:taskId, domainId:task.domain.id, domainName:task.domain.name };
       
@@ -304,7 +304,7 @@ export class AonMessengerChat extends AonElement {
     const data = await saveTask(this.task);
     this.task.editTask(data);
 
-    checkFilesAddEventDescription(this.task);//check files description
+    TaskUtils.checkFilesAddEventDescription(this.task);//check files description
 
     if(this.getData().id){
       this.setData(data);
@@ -403,7 +403,7 @@ export class AonMessengerChat extends AonElement {
         this.showMessage("Comentario enviado por correo!");
       }
 
-      setStyleMessageHistoric(workflows);
+      TaskUtils.setStyleMessageHistoric(workflows);
     } catch (error) {
       console.log(error);
     }
@@ -548,7 +548,6 @@ export class AonMessengerChat extends AonElement {
       }
     }
   }
-
     
   setWhAndTh(){
     if(!this.task.getId()){

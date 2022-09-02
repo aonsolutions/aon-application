@@ -3,7 +3,7 @@ import { AonSimpleList } from '../../components/aon-simple-list.js';
 import { EVENT } from '../../environments/environments.js';
 import { getTasks } from '../../services/taskService.js';
 import {TaskListUtils} from "./shared/TaskListUtils.js";
-import { taskNumberParse } from './shared/utils.js';
+import { TaskUtils } from './shared/TaskUtils.js';
 
 export class AonMessengerSimpleList extends AonSimpleList {
 
@@ -54,7 +54,7 @@ export class AonMessengerSimpleList extends AonSimpleList {
         let liValue = {
             iconHtmlCustom: iconHtmlCustom.outerHTML,
             title: task.title,
-            subtitle: taskNumberParse(task.number)
+            subtitle: TaskUtils.taskNumberParse(task.number)
         }
         this.addLi(liValue, i, () => {}, this.option.icon, () => this.option.fn(task));
     }

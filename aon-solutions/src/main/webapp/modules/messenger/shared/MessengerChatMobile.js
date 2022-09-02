@@ -4,8 +4,9 @@ import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
 import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils} from "./TaskCreationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar, taskNumberParse } from "./utils.js";
+import {TaskUtils} from "./TaskUtils.js";
 import * as ACTIONS from "../../actions.js";
+
 /**
  * 
  * @param {Task} task 
@@ -23,7 +24,7 @@ export const buildMobile = (task)=> {
 
     const secondDiv = createSecondDiv(task, mainView);
 
-    buildForm(task, secondDiv);
+    TaskUtils.buildForm(task, secondDiv);
 
     if(!task.getId()){
         showForm(true);
@@ -149,7 +150,7 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
     });
     
     writter.appendChild(textarea);
-    buildTextareaToolbar(textarea);
+    TaskUtils.buildTextareaToolbar(textarea);
 
     const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
@@ -195,7 +196,7 @@ const buildToolbar = (task, div, create = false) => {
      const sourceText =  MSG[task.getSource().toString().toUpperCase()] || task.getSource();
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title:sourceText +" " +taskNumberParse(task.number)
+        title:sourceText +" " +TaskUtils.taskNumberParse(task.number)
     });
     toolbar.style.width = "100%"; 
     
@@ -259,7 +260,7 @@ const buildToolbar = (task, div, create = false) => {
         }
     });
 
-    addIconToolbar(toolbar, task);
+    TaskUtils.addIconToolbar(toolbar, task);
 }
 
 /**

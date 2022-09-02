@@ -7,7 +7,7 @@ import { sortBy } from "../../services/utils.js";
 import { MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
-import { taskNumberParse } from "./shared/utils.js";
+import { TaskUtils } from "./shared/TaskUtils.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
 import * as LS from "../../services/localStorageService.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
@@ -212,7 +212,7 @@ export class AonMessengerList extends AonElement {
           .map((task) => ({
             ...task,
             date: task.start_date,
-            newNumber: taskNumberParse(task.number),
+            newNumber: TaskUtils.taskNumberParse(task.number),
           }));
       }
       data = sortBy(data, "id", "desc");

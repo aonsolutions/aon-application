@@ -8,13 +8,14 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { checkFilesAddEventClick, downChat, setContentMessageChat, parseTimeToDouble, parseDoubleToTime } from "./utils.js";
+import {TaskUtils} from "./TaskUtils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { saveTaskBranch, getTaskOne, getJobType, getDailyTrackingByTask } from "../../../services/taskService.js";
 import { AonMessengerChat } from "../aon-messeger-chat.js";
 import { DailyTracking } from "../../../models/task/DailyTracking.js";
 import { sortBy } from "../../../services/utils.js";
 import { AonMessengerSimpleList } from "../aon-messenger-simple-list.js";
+
 
 /**
  * 
@@ -541,7 +542,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
       iconEdit.title = MSG.EDIT;
       setStyles(iconEdit, { color: CSS.variable(COLORS.AON_BLUE), fontSize: "17px", position:"absolute", top: "14px", zIndex: "1" , right: "17px", cursor: "pointer" });
       iconEdit.addEventListener(EVENT.CLICK, ()=> {
-        setContentMessageChat(task, parseInt(message.dataset.id))
+        TaskUtils.setContentMessageChat(task, parseInt(message.dataset.id))
       });
 
       if(iconSend){
@@ -572,7 +573,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   const description = createCommentContent(properties);
   description.appendTo(message);
 
-  checkFilesAddEventClick({id:properties.task}, message); //ADD EVENT CLICK
+  TaskUtils.checkFilesAddEventClick({id:properties.task}, message); //ADD EVENT CLICK
 
   return message;
 }
@@ -605,7 +606,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
 
   const messageSend = properties.notification_user; // si el mensaje fue enviado
  
-  createIconMessage(message, messageSend, true, properties);
+  createIconMessage(message, messageSend, properties.isSend, properties);
 
   if(!properties.me){
     properties.marginLeft = "20px";
@@ -625,9 +626,9 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   });
   date.appendTo(name.element);
   
-  checkFilesAddEventClick({id: properties.task},message); //ADD EVENT CLICK
+  TaskUtils.checkFilesAddEventClick({id: properties.task},message); //ADD EVENT CLICK
 
-  downChat();
+  TaskUtils.downChat();
 
   return message;
 }
@@ -972,7 +973,7 @@ const openDialogDailyTracking = (task)=> {
         color:CSS.variable(COLORS.GRAYSON)
       });
    
-      div.innerHTML = `<p><b>${MSG.HOURS} empleadas</b>: ${parseDoubleToTime(trackingTotal)}</p>`; // TODO
+      div.innerHTML = `<p><b>${MSG.HOURS} empleadas</b>: ${TaskUtils.parseDoubleToTime(trackingTotal)}</p>`; // TODO
       form.appendChild(div);
     }
  
@@ -1028,7 +1029,7 @@ const openDialogDailyTracking = (task)=> {
         .setTrackingDate(AonDateUtils.formatDateOrigin(new Date()))
         .setTaskHolder(myTaskHolder)
         .setJobType(jobValue)
-        .setTrackingDuration(parseTimeToDouble(trackingValue))
+        .setTrackingDuration(TaskUtils.parseTimeToDouble(trackingValue))
         .setComments(note.value)
         ;
       }

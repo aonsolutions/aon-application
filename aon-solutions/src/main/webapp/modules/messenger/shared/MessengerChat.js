@@ -4,7 +4,7 @@ import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_EVALUATION, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
-import { addIconToolbar, buildForm, buildTextareaToolbar, checkButtonsToolbar, dialogTaskTags, downChat, getIconJson, taskNumberParse, upChat } from "./utils.js";
+import { TaskUtils } from "./TaskUtils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import * as ACTIONS from "../../actions.js";
@@ -14,6 +14,7 @@ import { Task } from "../../../models/task/Task.js";
 import { addHorizontalScroll, sortBy } from "../../../services/utils.js";
 import { AonIcon } from "../../../components/aon-icon.js";
 import { getTasks } from "../../../services/taskService.js";
+
 
 /**
  * 
@@ -35,7 +36,7 @@ export const buildDesktop = (task)=> {
     height: '96%'
   });
 
-  buildForm(task, firstDiv);
+  TaskUtils.buildForm(task, firstDiv);
 
   if(task.id){
     buildTabs(task, secondDiv);
@@ -59,7 +60,7 @@ const buildToolbar = (task) => {
     const toolbar = setAttributes(new AonToolbar(), {
       id:aonMessengerChat.TOOLBAR,
       type:ToolbarType.SECONDARY,
-      title:sourceText +" "+taskNumberParse(task.number)
+      title:sourceText +" "+TaskUtils.taskNumberParse(task.number)
     });
 
     aonMessengerChat.appendChild(toolbar);
@@ -84,7 +85,7 @@ const buildToolbar = (task) => {
           id:  MESSENGER_IDS.TOOLBAR_LABELS,
           name: MSG.LABELS,
           icon: MATERIAL_ICONS.LABEL
-          }, (ev) =>  dialogTaskTags(ev, task)
+          }, (ev) =>  TaskUtils.dialogTaskTags(ev, task)
         );
       }
       
@@ -125,7 +126,7 @@ const buildToolbar = (task) => {
     
     toolbar.addButton2(ACTIONS.BACK, () => aonMessengerChat.back());
 
-    addIconToolbar(toolbar, task);
+    TaskUtils.addIconToolbar(toolbar, task);
 }
 
 /**
@@ -155,7 +156,7 @@ const buildTabs = (task, secondDiv) => {
       title: MSG.CONVERSATION, 
       dataset:{
         id: task.id,
-        number: taskNumberParse(task.number)
+        number: TaskUtils.taskNumberParse(task.number)
       },
       fn: () => {
         buildChat(task, wrapper);
@@ -172,7 +173,7 @@ const buildTabs = (task, secondDiv) => {
         title,
         dataset:{
           id: tk.id,
-          number: taskNumberParse(tk.number)
+          number: TaskUtils.taskNumberParse(tk.number)
         },
         fn: ()=>{
           // buildChat(tk, wrapper); aonMessengerChat.getTaskWorkflow(tk);
@@ -193,7 +194,7 @@ const buildTabs = (task, secondDiv) => {
           number: MSG.TASKS
         },
         fn: () => {
-          checkButtonsToolbar(task, task.id);
+          TaskUtils.checkButtonsToolbar(task, task.id);
           loadTaskGrouped(task, wrapper);
         },
       });
@@ -208,7 +209,7 @@ const buildTabs = (task, secondDiv) => {
         title,
         dataset:{
           id: tk.id,
-          number: taskNumberParse(tk.number)
+          number: TaskUtils.taskNumberParse(tk.number)
         },
         fn: ()=>{
           buildChat(tk, wrapper);
@@ -313,7 +314,7 @@ const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   });
   dialog.setContent(textarea);
 
-  buildTextareaToolbar(textarea);
+  TaskUtils.buildTextareaToolbar(textarea);
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{
@@ -384,7 +385,7 @@ const addChatButtonsUpDown = (secondDiv) => {
     id: "upIcon",
     background: transparent
   });
-  upIcon.addEventListener(EVENT.CLICK, ()=> upChat() );
+  upIcon.addEventListener(EVENT.CLICK, ()=> TaskUtils.upChat() );
   leftButtonBar.appendChild(upIcon);
 
   const downIcon = setAttributes(new AonIconButton(), {
@@ -392,7 +393,7 @@ const addChatButtonsUpDown = (secondDiv) => {
     id: "downIcon",
     background: transparent,
   });
-  downIcon.addEventListener(EVENT.CLICK, ()=> downChat() )
+  downIcon.addEventListener(EVENT.CLICK, ()=> TaskUtils.downChat() )
   leftButtonBar.appendChild(downIcon);
 }
 
@@ -401,7 +402,7 @@ const getTitleHtml = (task, isParent = false) => {
 
   const span = document.createElement(TAG.SPAN);
 
-  const { icon_color, icon } = getIconJson(task);
+  const { icon_color, icon } = TaskUtils.getIconJson(task);
 
   let iconEl = document.createElement(TAG.I);
 
@@ -434,7 +435,7 @@ const getTitleHtml = (task, isParent = false) => {
   }                                       
    
   let spanTwo = document.createElement(TAG.SPAN);
-  spanTwo.innerHTML = taskNumberParse(task.number);
+  spanTwo.innerHTML = TaskUtils.taskNumberParse(task.number);
   spanTwo.title = assigned;
   span.appendChild(spanTwo);
 

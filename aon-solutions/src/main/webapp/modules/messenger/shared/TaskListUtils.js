@@ -14,7 +14,8 @@ import { firstLetters, StringTwoLetters } from "../../timecontrol/time-control/u
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import { TaskCreationUtils } from "./TaskCreationUtils.js";
-import { getIconJson, taskNumberParse } from "./utils.js";
+import { TaskUtils } from "./TaskUtils.js";
+
 
 // ------------DESKTOP
 const getTitleHtmlDesktop = (res) => {
@@ -274,7 +275,7 @@ const addChild = (taskId, child, parent, documents, grandChild, isCau)=> {
   const sender = getSender(child, documents.document, documents.documentTh);
   let span = document.createElement(TAG.SPAN);
   span.className = CSS.AON_LINK;
-  span.innerText = taskNumberParse(child.number);
+  span.innerText = TaskUtils.taskNumberParse(child.number);
   span.title = "Creador por " + sender;
   if (!isCau) {
     span.addEventListener(EVENT.CLICK, (ev) => {
@@ -486,7 +487,7 @@ const getTagType = (tags) => {
 
 const getIconList = ({ source, status, parent }) => {
   let json = {
-    ...getIconJson({ source, status }),
+    ...TaskUtils.getIconJson({ source, status }),
     icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED,
     icon_title: source,
   };
