@@ -165,67 +165,23 @@
 		<ui:include src="./facelet/menu_help.xhtml" /> 
 	</ui:insert>
 
-	<ui:include src="./facelet/notifications.xhtml" />
-	<ui:include src="./facelet/links.xhtml" />
 	<aon:div styleClass="box-row" id="aonContent">
 		<aon:div id="sidebar">
 			<ui:include src="./facelet/sidemenu.xhtml" />	
 		</aon:div>
-		<aon:div id="help-viewer" styleCass="div-horizontal-center box-column">
-				<ui:include src="./facelet/breadcrumb.xhtml" />
-			<aon:div styleClass="box-column list">
-				<c:forEach items="#{help.content}" var="file">
-					<aon:form>
-	
-						<!-- FOLDER -->
-						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
-							<aon:commandLink styleClass="list-item" reRender="aonContent">
-								<f:setPropertyActionListener target="#{help.file}"
-									value="#{file}" />
-								<aon:outputText rendered="${!help.isHome()}"  value="drive_file_move" styleClass="icon material-icons" />
-								
-								<!-- AON ICONS -->
-								<aon:outputText rendered="${help.isHome() and !help.isAonModule(file)}" value="" styleClass="icon aon-module aon-button" />
-								<aon:outputText rendered="${help.isPayroll(file)}" value="" styleClass="icon aon-module aon-button-payroll" />
-								<aon:outputText rendered="${help.isConfig(file)}" value="" styleClass="icon aon-module aon-button-tools" />
-								<aon:outputText rendered="${help.isManagement(file)}" value="" styleClass="icon aon-module aon-button" />
-								<aon:outputText rendered="${help.isAccounting(file)}" value="" styleClass="icon aon-module aon-button-account" />
-								<aon:outputText rendered="${help.isConecta(file)}" value="" styleClass="icon aon-module aon-button-conecta" />
-								<aon:outputText rendered="${help.isFiscal(file)}" value="" styleClass="icon aon-module aon-button-fiscal" />
-								
-								<aon:outputText value="#{file.name}" />
-	
-							</aon:commandLink>
-						</aon:if>
-	
-						<!-- PDF -->
-						<aon:if test="${file.isPDF()}">
-							<a href="./html/pdfjs/viewer.html?encoded=true&amp;newtoolbar=true&amp;file=#{help.getFileServletUrl(file)}"
-								class="list-item" target="_blank"> <aon:outputText
-									value="description" styleClass="icon file material-icons" /> <aon:outputText
-									value="#{file.name}" />
-							</a>
-						</aon:if>
-	
-						<!-- VIDEO -->
-						<aon:if test="${file.isVideo()}">
-							<a href="./html/video.html##{help.getFileServletUrl(file)}"
-								class="list-item" target="_blank"> <aon:outputText
-									value="video_file" styleClass="icon file material-icons" /> <aon:outputText
-									value="#{file.name}" />
-							</a>
-						</aon:if>
-	
-					</aon:form>
-	
-				</c:forEach>
-	
-			</aon:div>
 		
+		<aon:div id="help-viewer" styleCass="div-horizontal-center box-column">			
+			<aon:if test="#{!help.notificationsEnabled}">				
+			<ui:include src="./facelet/drive_content.xhtml" />
+			</aon:if>
+			<aon:if test="#{help.notificationsEnabled}">
+			<ui:include src="./facelet/notifications.xhtml" />				
+			</aon:if>
 		</aon:div>
+		
+		
 		<aon:if test="#{help.getCurrentFaqs().size() > 0}">
 				<ui:include src="./facelet/faqs.xhtml" />
 		</aon:if>	
 	</aon:div>
-
 </ui:composition>

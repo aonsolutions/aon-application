@@ -87,9 +87,11 @@
 			<aon:div styleClass="menu-panel-options">
 					<aon:form>
 						<aon:div styleClass="menu-panel-option">
-							<aon:commandLink>
+							<aon:commandLink reRender="help-viewer">
 								<aon:outputText value="school" styleClass="material-icons" />
 								<aon:outputText value="Índice contenidos" />
+								<f:setPropertyActionListener target="#{help.notificationsEnabled}"
+								value="#{false}" />
 								<f:setPropertyActionListener target="#{help.file}"
 								value="#{help.homeFile}" />
 							</aon:commandLink>
@@ -168,7 +170,7 @@
 			
 			<aon:form>
 				<aon:div styleClass="menu-panel-option">
-					<aon:commandLink id="notificationButton" reRender="notificationWindowPanel">
+					<aon:commandLink id="notificationButton" reRender="help-viewer">
 						<aon:outputText value="rss_feed" styleClass="material-icons" />
 						<aon:outputText value="Notificaciones" />
 						<f:setPropertyActionListener target="#{help.notificationsEnabled}" value="#{true}" />
@@ -199,6 +201,4 @@
 			</aon:div>
 		</aon:div>
 	</aon:div>
-
-
 </ui:composition>
