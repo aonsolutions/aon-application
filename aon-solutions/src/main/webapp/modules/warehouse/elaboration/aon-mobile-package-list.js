@@ -5,6 +5,7 @@ import { AonMobilePackage } from './aon-mobile-package.js';
 export class AonMobilePackageList extends AonMobileList {
 
     elaborationPackages;
+    ELABORATION_TOOLBAR;
 
     constructor () {
         super();
@@ -38,6 +39,7 @@ export class AonMobilePackageList extends AonMobileList {
 
     aonPackage(packaging, i) {
         let aonPackage = new AonMobilePackage();
+        aonPackage.setElaborationToolbar(this.ELABORATION_TOOLBAR);
         aonPackage.setPackaging(packaging);
         let div = this.getElement('aonPackageDiv');
         this.clearElement(div);
@@ -46,6 +48,10 @@ export class AonMobilePackageList extends AonMobileList {
 
     setElaborationPackages(elaborationPackages){
         this.elaborationPackages = elaborationPackages;
+    }
+
+    setElaborationToolbar(toolbar) {
+        this.ELABORATION_TOOLBAR = toolbar;
     }
 }
 if(!window.customElements.get(TAG.AON_MOBILE_PACKAGE_LIST)){
