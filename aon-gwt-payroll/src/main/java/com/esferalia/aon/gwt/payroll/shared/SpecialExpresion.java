@@ -11,7 +11,7 @@ public class SpecialExpresion {
 	private static final int LABEL_GROUP = 2;
 	private static final int INPUT_GROUP = 3;
 
-	private static final String PATTERN = "(/\\*(user|read-only)\\*/)((?:[^/]|(?:/[^\\*]))*)(/\\*\\*/)";
+	private static final String PATTERN = "(/\\*(user|read-only|inherit)\\*/)((?:[^/]|(?:/[^\\*]))*)(/\\*\\*/)";
 
 	private static class BlankExpression extends SpecialExpresion {
 

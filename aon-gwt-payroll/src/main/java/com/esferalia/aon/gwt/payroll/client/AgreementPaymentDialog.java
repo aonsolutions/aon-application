@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -177,8 +178,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	HTMLPanel buttonsPanel;
 	
 	private int widgetIndex;
-	private int nextDraftPaymentId = 0;
-	private int nextDraftExtraId = 0;
+	private int nextDraftPaymentId = new Random().nextInt() * -1;
+	private int nextDraftExtraId = new Random().nextInt() * -1;
 	
 	private List<HTMLPanel> panelList;
 	

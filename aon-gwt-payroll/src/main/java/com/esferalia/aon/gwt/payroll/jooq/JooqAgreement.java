@@ -1982,7 +1982,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		return message;
 	}
 	
-	public static String getAgreementUsedInfo(Connection conn, Agreement agreement) {
+	public static String getAgreementUsedInfo(Connection conn, Integer agreementId, String agreementDescription) {
 		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL, getDefaultSettings());
 		
 		String message = "";
@@ -1990,7 +1990,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		List<Integer> agreementContracts = dslContext.select(CONTRACT.ID).from(CONTRACT)
 			.where(CONTRACT.AGREEMENT_LEVEL.in(
 					dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
 						.fetch(AGREEMENT_LEVEL.ID)
 			)).fetch(CONTRACT.ID);
 		
@@ -2008,7 +2008,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			.fetch();
 		
 		if(infoRecords.isNotEmpty()) {
-			message = "El convenio <b>" + agreement.getDescription() + "</b> contiene contratos asociados.";
+			message = "El convenio <b>" + agreementDescription + "</b> contiene contratos asociados.";
 			Integer enterpriseId = infoRecords.get(0).get(REGISTRY.ID);
 			message += "<br><br>";
 			message += "<b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
@@ -2022,7 +2022,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				}
 			}
 		} else 
-			message = "El convenio <b>" + agreement.getDescription() + "</b> no contiene contratos asociados.";
+			message = "El convenio <b>" + agreementDescription + "</b> no contiene contratos asociados.";
 		
 		
 		return message;

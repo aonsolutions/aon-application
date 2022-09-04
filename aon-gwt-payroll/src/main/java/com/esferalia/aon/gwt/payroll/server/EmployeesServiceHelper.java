@@ -71,6 +71,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Event;
@@ -1280,6 +1281,86 @@ public class EmployeesServiceHelper {
 			// TODO: 
 		}
 		
+	}
+	
+	public static Set<String> getVariables(Connection connection, AgreementInfo agreement, Integer domainId, Integer parentDomainId) throws SQLException {
+		Date defaultStartDate =  DateUtils.getFirstDayOfMonth(DateUtils.getDate(0, 2018));
+		Date startDate = agreement.getSortedDates().isEmpty() ? defaultStartDate
+				: (Date) agreement.getSortedDates().toArray()[agreement.getSortedDates().size() -1];
+		Date endDate = null; 
+		
+		Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
+				agreement.getId(), startDate, endDate, domainId, parentDomainId);
+
+		@SuppressWarnings("unchecked")
+		Collection<Payment> payments = new CompositeItems<>(agreement.getPayments(), dbPayments);
+
+		Set<String> variables = new HashSet<>();
+		Set<String> paymentsNames = new HashSet<>();
+
+		for (Payment payment : payments) {
+
+			if (hide(payment, dbPayments))
+				continue;
+
+			String paymentName = payment.getName();
+			
+			try {
+				String expression = getUserScript(payment.getExpression());
+				Set<String> exprVariables = ExpressionContext.getVariableSet(expression);				
+				variables.addAll(exprVariables);
+				if ( !exprVariables.contains(paymentName) )
+					paymentsNames.add(paymentName);
+
+			} catch (Exception e) {
+				paymentsNames.add(paymentName);
+			}
+
+			try {
+				String irpfExpression = getUserScript(payment.getIrpfExpression());
+				Set<String> irpfVariables = ExpressionContext.getVariableSet(irpfExpression);				
+				variables.addAll(irpfVariables);
+			} catch (Exception e) {}
+
+			try {
+				String quoteExpression = getUserScript(payment.getQuoteExpression());
+				Set<String> quoteVariables = ExpressionContext.getVariableSet(quoteExpression);				
+				variables.addAll(quoteVariables);
+			} catch (Exception e) {}
+			
+		}
+
+		variables.removeAll(paymentsNames);
+
+		// Filter ContextVariable
+		List<String> contextVariables = new LinkedList<>();
+		for (ContextVariable ctxVar : ContextVariable.values())
+			if (ctxVar.isInternal())
+				contextVariables.add(ctxVar.getName());
+		variables.removeAll(contextVariables);
+
+		// This is awfull ... very awful
+		List<String> privateVariables = new LinkedList<>();
+		for (String var : variables) {
+			if (var.endsWith("_ACTUAL"))
+				privateVariables.add(var);
+			if (var.endsWith("_HELP"))
+				privateVariables.add(var);
+		}
+		variables.removeAll(privateVariables);
+
+		SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(connection, agreement.getId(), startDate, endDate, domainId, parentDomainId);
+		SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
+		
+		for ( Variable var: allSalaryTable.getAllVariables() ) {
+			String expression = getUserScript(var.getExpression());
+			try {
+				Set<String> exprVariables = ExpressionContext.getVariableSet(expression);
+				variables.addAll(exprVariables);
+			} catch ( Exception e ) {}
+		}
+
+		return variables;
 	}
 
 	private static Set<String> filterVariables(Set<String> variables) {

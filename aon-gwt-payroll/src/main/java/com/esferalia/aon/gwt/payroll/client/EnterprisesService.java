@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
@@ -13,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -45,6 +47,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -80,7 +83,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	String getDeleteAgreementMessage(String domain, Agreement agreement);
 	
-	String getAgreementUsedInfo(String currentDomainName, Agreement agreement) throws IllegalArgumentException;
+	String getAgreementUsedInfo(String currentDomainName, Integer agreementId, String agreementDescription);
 
 	void deleteBonusConcept(String domain, Bonus bonus);
 
@@ -359,5 +362,17 @@ public interface EnterprisesService extends RemoteService {
 	// --------------------------- Agreements Clean
 	
 	List<AgreementsClean> getAgreementsClean(String currentDomainName, AgreementCleanType cleanType) throws IllegalArgumentException;
+	
+	// --------------------------- Agreements Tabs (New)
+	
+	AgreementInfo getAgreementInfo(String currentDomainName, Integer agreementId) throws IllegalArgumentException;
 
+	void setAgreementInfo(String currentDomainName, AgreementInfo agreementInfo) throws IllegalArgumentException;
+
+	Set<String> getAgreementVariables(String currentDomainName, AgreementInfo agreementInfo) throws IllegalArgumentException;
+	
+	String getAgreementDraftReceipt(String currentDomainName, AgreementInfo agreement, List<Variable> context, int levelId, String mime) throws IllegalArgumentException;
+
+	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement) throws IllegalArgumentException;
+	
 }

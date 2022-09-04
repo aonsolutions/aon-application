@@ -1,0 +1,128 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+    <ui:style>
+
+		.form{
+			width: 40rem;
+			height: 100%;
+			padding: .7rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+		}
+		
+		.buttonsPanel{
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			gap: 3em;
+		}
+		
+		.element{
+			display: flex;
+			flex-direction: column;
+			gap: .2em;
+		}
+		
+		.title{
+			font-weight: bold;
+		}
+		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.flex{
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			gap: .5rem;
+		}
+		
+		.date{
+			width: auto !important;
+			text-align: center;
+			height: 1.2rem;
+		}
+		
+		.aon-toolbar-button {
+		    height: 24px;
+		    padding-left: 25px;
+		    background-position: .2rem;
+		    background-repeat: no-repeat;
+		    background-color: transparent;
+		    background-size: 20px;
+		    border: none;
+			cursor: pointer;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
+	
+		<!-- PAYMENT -->
+		
+		<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexColumn}">
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label styleName="{style.title}">Tipo</g:Label>
+				<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label styleName="{style.title}">Concepto</g:Label>
+				<g:SuggestBox ui:field="paymentConceptSB"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label styleName="{style.title}">Descripción</g:Label>
+				<g:TextBox ui:field="paymentDescriptionTB"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label styleName="{style.title}">Expresión</g:Label>
+				<g:TextArea ui:field="paymentExpressionTB"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label styleName="{style.title}">Tributa</g:Label>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:ListBox ui:field="paymentTaxedTypeLB"/>
+					<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll}"/>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label styleName="{style.title}">Cotiza</g:Label>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:ListBox ui:field="paymentQuoteTypeLB"/>
+					<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll}"/>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}" ui:field="extraPanel">
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label styleName="{style.title}">Prorratear</g:Label>
+					<g:Button ui:field="prorratExtra"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label styleName="{style.title}">Fecha Incio</g:Label>
+					<g:TextBox ui:field="extraStartDate"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+					<g:TextBox ui:field="extraEndDate"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
+					<g:TextBox ui:field="extraIssueDate"/>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+			
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"/>
+		
+	</g:HTMLPanel>
+
+</ui:UiBinder>

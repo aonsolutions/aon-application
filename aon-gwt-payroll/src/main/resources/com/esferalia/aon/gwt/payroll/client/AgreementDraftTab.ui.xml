@@ -8,7 +8,7 @@
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
-	<ui:style type='com.esferalia.aon.gwt.payroll.client.AgreementDraft.MyStyle'>
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.AgreementDraftTab.MyStyle'>
 
 		@external .gwt-ToggleButton-down;
 		@external .gwt-ToggleButton-up;
@@ -324,7 +324,7 @@
 			width: 40px;
 			text-align: center;
 			font-size: 10px;
-			padding: 2px;
+			padding-right: 5px;
 		}
 		
 		.issueTextBox{
@@ -369,18 +369,6 @@
 		
 		.showExtra:hover{
 			background-color: transparent !important;
-		}
-		
-		.flexColumn {
-			display: flex;
-			flex-direction: column;
-			margin-top: 1rem;
-			align-items: center;
-		}
-		
-		.message {
-			font-weight: bold;
-			text-transform: uppercase;
 		}
 
 	</ui:style>
@@ -452,8 +440,7 @@
 										<g:Label ui:field="payPeriodLabel"></g:Label>
 									</g:DeckPanel>
 								</g:HTMLPanel>
-								<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
-								styleName="aon-dataTable {style.edit-rows}" />
+								<g:FlexTable debugId='extrasTable' ui:field='extrasTable' styleName="aon-dataTable {style.edit-rows}" />
 								<g:HTML styleName="{style.vertical-space}" />
 							</g:DeckPanel>
 						</g:VerticalPanel>

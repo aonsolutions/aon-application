@@ -1,0 +1,40 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"	
+	xmlns:w='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentTab.MyStyle">
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+		
+		.cmdBtn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+		
+		.heigthAll {height: 100%;}
+		.widthAll {width: 100%;}
+		.grid { margin: 0 1rem;}
+		
+	</ui:style>
+	
+	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">
+		<g:HTMLPanel ui:field="messagePanel" />
+		<g:HTMLPanel styleName="{style.flexColumn}">
+			<aon:AonToolbar ui:field="toolbar" />
+			<c:DataGrid ui:field="agreementPaymentDG" styleName="{style.grid}" />
+		</g:HTMLPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 
+
