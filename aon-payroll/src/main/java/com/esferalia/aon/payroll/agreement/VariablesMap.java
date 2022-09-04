@@ -276,7 +276,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AYUDA_VIVIENDA_TRAMO_1_ANUAL", "A_VIVIENDA_T1_ANUAL");
 		variablesMap.put("AYUDA_VIVIENDA_TRAMO_2_ANUAL", "A_VIVIENDA_T2_ANUAL");
 		variablesMap.put("BARES_Y_CAFETERIAS_MENSUAL", "BARES_Y_CAFETERIAS");
-		variablesMap.put("BENEFICIOS_MENSUAL", "BENEFICIOS_MENSUAL");
+		variablesMap.put("BENEFICIOS_ANUAL", "BENEFICIOS_A");
+		variablesMap.put("BENEFICIOS_MENSUAL", "BENEFICIOS_M");
 		variablesMap.put("BIENIOS_DIARIO", "BIENIOS_DIARIO");
 		variablesMap.put("BIENIOS_MENSUAL", "BIENIOS_MENSUAL");
 		variablesMap.put("BASE_DE_CALCULO_PARA_PLUSES_DIARIO", "BASE_CALCULO_PLUSES");
