@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
@@ -17,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -49,6 +51,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -247,9 +250,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getAgreementUsedInfo(String domain, Agreement agreement, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getAgreementUsedInfo(String domain, Integer agreementId, String agreementDescription, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getAgreementUsedInfo(domain, agreement, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.getAgreementUsedInfo(domain, agreementId, agreementDescription, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	@Override
@@ -984,6 +987,38 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getAgreementsClean(String domainName, AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getAgreementsClean(domainName, cleanType, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Agreement Tab (New)
+
+	@Override
+	public void getAgreementInfo(String domainName, Integer agreementId, AsyncCallback<AgreementInfo> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAgreementInfo(domainName, agreementId, callback);
+	}
+
+	@Override
+	public void setAgreementInfo(String domainName, AgreementInfo agreementInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.setAgreementInfo(domainName, agreementInfo, callback);
+	}
+
+	@Override
+	public void getAgreementVariables(String domainName, AgreementInfo agreement, AsyncCallback<Set<String>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAgreementVariables(domainName, agreement, callback);
+	}
+
+	@Override
+	public void getAgreementDraftReceipt(String domainName, AgreementInfo agreement, List<Variable> context, int levelId, String mime, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAgreementDraftReceipt(domainName, agreement, context, levelId, mime, callback);
+	}
+
+	@Override
+	public void checkAndUpdateServiAgreement(String domainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.checkAndUpdateServiAgreement(domainName, currentUser, agreement, callback);
 	}
 
 }

@@ -11,8 +11,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -61,7 +63,7 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- Constructor
 	
-	public AgreementVariablesDialog(Set<String> variables, Set<String> shownVariables) {
+	protected AgreementVariablesDialog(Set<String> variables, Set<String> shownVariables) {
 		setCaption("Selecci\u00D3n Variables");
 		setWidget(binder.createAndBindUi(this));
 		this.showCloseButton(true);
@@ -174,4 +176,23 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 			}
 		});
 	}
+
+	public void setShowVariables(String shownVariables) {
+		switch (shownVariables) {
+			case "VALUES":
+				variablesTypeLB.setSelectedIndex(0);
+				break;
+			case "NO_VALUES":
+				variablesTypeLB.setSelectedIndex(1);
+				break;
+			case "ALL":
+				variablesTypeLB.setSelectedIndex(2);
+				break;
+			default:
+				variablesTypeLB.setSelectedIndex(3);
+				break;
+		}
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), variablesTypeLB);
+	}
+
 }

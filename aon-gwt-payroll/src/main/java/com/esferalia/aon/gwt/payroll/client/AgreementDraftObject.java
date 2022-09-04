@@ -1381,7 +1381,7 @@ public class AgreementDraftObject {
 	}
 
 	public void getAgreementInfo(Consumer<String> succes, Consumer<Throwable> failure) {
-		enterpriseServiceAsync.getAgreementUsedInfo(agreement, new AsyncCallback<String>() {
+		enterpriseServiceAsync.getAgreementUsedInfo(agreement.getId(), agreement.getDescription(), new AsyncCallback<String>() {
 			
 			@Override
 			public void onSuccess(String result) {

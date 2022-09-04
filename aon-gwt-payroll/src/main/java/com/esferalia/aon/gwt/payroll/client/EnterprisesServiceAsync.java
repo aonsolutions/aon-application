@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
@@ -13,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -45,6 +47,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
@@ -70,7 +73,7 @@ public interface EnterprisesServiceAsync {
 	void deleteAgreements(String currentDomainName, List<Integer> agreementIds, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	void updateAgreementId(String domain, Agreement agreement, AsyncCallback<Void> callback);
 	void getDeleteAgreementMessage(String domain, Agreement agreement, AsyncCallback<String> callback);
-	void getAgreementUsedInfo(String currentDomainName, Agreement agreement, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getAgreementUsedInfo(String currentDomainName, Integer agreementId, String agreementDescription, AsyncCallback<String> callback) throws IllegalArgumentException;
 	void copyAgreement(String domain, Agreement agreement, AsyncCallback<Agreement> callback);
 	void getWorkplacesExtras(String domain, List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
 	void getAgreement(String domain, Integer agreementId, AsyncCallback<Agreement> callback);
@@ -237,5 +240,17 @@ public interface EnterprisesServiceAsync {
 	// --------------------------- Agreements Clean
 	
 	void getAgreementsClean(String currentDomainName, AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException;
+	
+	// --------------------------- Agreements Tabs (New)
+	
+	void getAgreementInfo(String currentDomainName, Integer agreementId, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException;
+	
+	void setAgreementInfo(String currentDomainName, AgreementInfo agreementInfo, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void getAgreementVariables(String currentDomainName, AgreementInfo agreementInfo, AsyncCallback<Set<String>> asyncCallback) throws IllegalArgumentException;
+	
+	void getAgreementDraftReceipt(String currentDomainName, AgreementInfo agreement, List<Variable> context, int levelId, String mime, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }

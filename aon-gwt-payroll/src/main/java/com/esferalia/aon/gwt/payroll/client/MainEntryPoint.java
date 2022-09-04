@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.shared.Constants;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -37,7 +37,10 @@ public class MainEntryPoint implements EntryPoint {
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
 			runAsync( MainAgreement.class, new MainAgreement());
-		}else if (entryPoint
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_TAB_ENTRY_POINT)) {
+			runAsync( MainAgreementTab.class, new MainAgreementTab());
+		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
 			runAsync(  MainTrash.class, new MainTrash() );
 		} else if (entryPoint
@@ -111,6 +114,19 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else if (name == MainAgreement.class ) {
 			GWT.runAsync(MainAgreement.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainAgreementTab.class ) {
+			GWT.runAsync(MainAgreementTab.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {
@@ -303,7 +319,7 @@ public class MainEntryPoint implements EntryPoint {
 	public static void ensureGwtSelector() {
 		BodyElement body = Document.get().getBody();
 		String className = body.getClassName();
-		if (StringUtils.isBlank(className)
+		if (AonStringUtils.isBlank(className)
 				|| (className.indexOf("gwt-Selector") == -1))
 			body.addClassName("gwt-Selector");
 
