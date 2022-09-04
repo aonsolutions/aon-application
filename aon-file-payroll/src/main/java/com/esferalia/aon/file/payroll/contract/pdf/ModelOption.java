@@ -209,6 +209,11 @@ public enum ModelOption implements IResourceable {
 	 *  NUEVO FAMILIARES CONTRATADO DE AUTONOMOS. (pág 17 no se si esto esta bien)
 	 */
 	INDEFINITE_OPT18(ContractPdfModel.INDEFINITE, 17, ContractCode.C250, ContractCode.C350),
+	
+	/**
+	 *  PARADOS DE LARGA DURACION. (pág 17 no se si esto esta bien)
+	 */
+	INDEFINITE_OPT19(ContractPdfModel.INDEFINITE, 17, ContractCode.C150, ContractCode.C250),
 	;
 	
 	private ContractPdfModel pdfModel;
