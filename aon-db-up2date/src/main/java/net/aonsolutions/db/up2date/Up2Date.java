@@ -19,15 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.JacalInvoiceUpdateFix;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadiSeptember2022Insert;
-import net.aonsolutions.db.up2date.attach.DocumentalUpdateFix;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod200Audit;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod200FsModel;
-import net.aonsolutions.db.up2date.payroll.ContractTransfromUnify;
-import net.aonsolutions.db.up2date.task.TaskSourceUpdate;
-import net.aonsolutions.db.up2date.tgss.AgriculturalMonthlyQuote2022Fix;
-import net.aonsolutions.db.up2date.warehouse.ElaborationDetailUpdate;
+import net.aonsolutions.db.up2date.payroll.AlterSalaryAddIndexSocialSecurityNumber;
 
 public class Up2Date {
 
@@ -262,13 +254,14 @@ public class Up2Date {
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
 	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
     		//AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX
-    		ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
-    		AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
-    		TaskSourceUpdate.TASK_SOURCE_UPDATE,
-    		DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
-    		AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
-    		ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
-    		IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
+    		//ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
+    		//AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
+    		//TaskSourceUpdate.TASK_SOURCE_UPDATE,
+    		//DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
+    		//AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
+    		//ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
+    		//IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
+    		AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER
     };
 
     
