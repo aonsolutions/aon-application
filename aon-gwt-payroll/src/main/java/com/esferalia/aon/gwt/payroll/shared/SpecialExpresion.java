@@ -1,9 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
-import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 
 public class SpecialExpresion {
 
@@ -11,7 +10,7 @@ public class SpecialExpresion {
 	private static final int LABEL_GROUP = 2;
 	private static final int INPUT_GROUP = 3;
 
-	private static final String PATTERN = "(/\\*(user|read-only|inherit)\\*/)((?:[^/]|(?:/[^\\*]))*)(/\\*\\*/)";
+	private static final String PATTERN = "(/\\*(user|read-only|inherit|wizard)\\*/)((?:[^/]|(?:/[^\\*]))*)(/\\*\\*/)";
 
 	private static class BlankExpression extends SpecialExpresion {
 
@@ -41,10 +40,10 @@ public class SpecialExpresion {
 
 	public static SpecialExpresion parse(String expression) {
 
-		if (StringUtils.isBlank(expression))
+		if (AonStringUtils.isBlank(expression))
 			return new BlankExpression();
 
-		if (StringUtils.equals(expression.trim(), "REMOVE()"))
+		if (AonStringUtils.equals(expression.trim(), "REMOVE()"))
 			return new BlankExpression();
 
 		RegExp regExp = RegExp.compile(PATTERN, "g");
@@ -84,7 +83,7 @@ public class SpecialExpresion {
 	}
 
 	public static boolean isSpecial(String expression) {
-		if (StringUtils.isBlank(expression))
+		if (AonStringUtils.isBlank(expression))
 			return false;
 
 		RegExp regExp = RegExp.compile(PATTERN, "g");
@@ -105,6 +104,10 @@ public class SpecialExpresion {
 		return input;
 	}
 
+	public String getExpression() {
+		return expression;
+	}
+	
 	public boolean isReadOnly() {
 		return readOnly;
 	}
