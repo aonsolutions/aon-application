@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Random;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -558,17 +559,14 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	}
 	
 	private int  delete() {
-		SelectConditionStep<Record1<Integer>> condition = 
-		DSL.select(SALARY.ID).from(SALARY).where(SALARY.REGISTRATION.eq(deleteMark));
 		
-		getDSLContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(condition)).execute();
-		getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(condition)).execute();
+		getDSLContext().delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		getDSLContext().delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		getDSLContext().delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		getDSLContext().delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		getDSLContext().delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		getDSLContext().delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
 		return getDSLContext().delete(SALARY).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
-		
 	}
 
 	private java.sql.Date getContractStartDate(Salary salary) {
@@ -648,4 +646,5 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	protected static <E extends Enum<?>> byte type(E constant) {
 		return (byte) constant.ordinal();
 	}
+	
 }
