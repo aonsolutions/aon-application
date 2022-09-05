@@ -9,6 +9,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -68,6 +69,10 @@ public class DomainUserRolesController implements Serializable {
 
 	public boolean isDocumental() {
 		return getDur().isDocumental();
+	}
+	
+	public boolean isBank() {
+		return getDur().hasApp(AonApp.BANK);
 	}
 	
 	public String getToken() {
