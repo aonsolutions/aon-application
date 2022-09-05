@@ -12,6 +12,9 @@ import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
 import * as LS from '../../../services/localStorageService.js';
+import {openFileUrl} from '../../../services/service.js';
+
+import * as ACTION from '../../actions.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -33,6 +36,9 @@ export class AonMobilePackage extends AonElement {
 	TAG_CARD;
 
 	packaging;
+	fileUrl;
+
+	ELABORATION_TOOLBAR;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -77,6 +83,10 @@ export class AonMobilePackage extends AonElement {
 		div.style.width = "100%";
 		this.appendChild(div);
 		this.buildPackage(div);
+
+		let toolbar = this.getElement(this.ELABORATION_TOOLBAR);		
+		toolbar.removeButton(ACTION.PRINT.id);
+		toolbar.addButtonAfter(ACTION.PRINT, () => this.print());
 	}
 
   	buildPackage(parent){
@@ -169,6 +179,7 @@ export class AonMobilePackage extends AonElement {
 		let w = this.getElement(card.CONTENT).offsetWidth;
 		let type = 'application/pdf';
 		let url = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		this.fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
 		card.setContentHTML(`<aon-viewer type="${type}" file="${url}" width="${w}"></aon-viewer>`);
 	}
 
@@ -180,6 +191,10 @@ export class AonMobilePackage extends AonElement {
 
 	save() {
 	
+	}
+
+	print() {
+		openFileUrl(this.fileUrl);
 	}
 
 	
@@ -215,6 +230,10 @@ export class AonMobilePackage extends AonElement {
 		number.id = id;
 		number.description = title;
 		return number;
+	}
+
+	setElaborationToolbar(toolbar) {
+		this.ELABORATION_TOOLBAR = toolbar;
 	}
 }
 

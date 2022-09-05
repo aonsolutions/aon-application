@@ -73,10 +73,10 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 
 			Double boxQuantity = quantity;
-			if(item.getStockUnitTag().equals(item.getPackMeasurementTag())) {
+			if(item.getStockUnitTag().getId().equals(item.getPackMeasurementTag().getId())) {
 				boxQuantity = quantity / item.getPackMeasurement();
 				boxQuantity = boxQuantity / item.getPackUnits().doubleValue();	
-			} else if(item.getStockUnitTag().equals(item.getPackUnitsTag())) {
+			} else if(item.getStockUnitTag().getId().equals(item.getPackUnitsTag().getId())) {
 				boxQuantity = quantity / item.getPackUnits().doubleValue();	
 			}
 			 
@@ -85,7 +85,7 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			String ean128 = "(02)" + barcode + "(37)" + boxQuantity.intValue() + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber() + separator;
 			String sscc = container.getSerialNumber();
 			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, boxQuantity, ean128, sscc);
-			
+
 			responseFile(resp, "packaging", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);
