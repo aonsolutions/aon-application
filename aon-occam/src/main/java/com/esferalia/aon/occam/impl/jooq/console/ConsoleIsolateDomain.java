@@ -39,6 +39,8 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -270,7 +272,9 @@ public class ConsoleIsolateDomain {
 			.filter(t -> !USER_SCOPE.getName().equals(t.getTable().getName()))
 			.filter(t -> !USER_WORKGROUP.getName().equals(t.getTable().getName()))
 			
-			
+			.filter(t -> !CRA_BATCH.getName().equals(t.getTable().getName()))
+			.filter(t -> !CRA_BATCH_DETAIL.getName().equals(t.getTable().getName()))
+
 			
 			
 			.filter(t -> hasDomain(t.getTable()))
@@ -390,7 +394,7 @@ public class ConsoleIsolateDomain {
 
 	private static void loopRefInvoice(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at invoice table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 			.and(INVOICE.RECTIFICATION_INVOICE.isNotNull())
@@ -414,7 +418,7 @@ public class ConsoleIsolateDomain {
 
 	private static void loopFBatch(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at fbatch table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 			.and(FBATCH.BANK_STATEMENT_LINK.isNotNull())
@@ -438,7 +442,7 @@ public class ConsoleIsolateDomain {
 	
 	private static void loopBankStatementLinkFinanceTracking(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 			.and(BANK_STATEMENT_LINK.SOURCE.eq((byte) 0))
@@ -460,7 +464,7 @@ public class ConsoleIsolateDomain {
   
 	private static void loopAccAppParamAccount(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** ACC Params --> Account table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 			.and(APP_PARAM.NAME.like("ACC%ACC"))
