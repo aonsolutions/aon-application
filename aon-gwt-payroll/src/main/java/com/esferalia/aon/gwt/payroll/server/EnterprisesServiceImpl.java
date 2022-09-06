@@ -1944,7 +1944,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileName, connection);
+			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

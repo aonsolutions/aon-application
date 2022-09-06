@@ -265,7 +265,7 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Set CRA
 
-	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, String fileName, Connection connection) {
+	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, Date fileNameDate, String fileName, Connection connection) {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		java.util.Date startDate = new java.util.Date(startDateTime);
@@ -337,7 +337,7 @@ public class JooqCRA {
 			
 				CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 						.set(CRA_BATCH.DOMAIN, domainId)
-						.set(CRA_BATCH.DATE, new Timestamp(formatDate.parse(fileName).getTime()))
+						.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
 						.set(CRA_BATCH.STATUS, (byte)1)
 						.set(CRA_BATCH.COMMUNICATION_ID, "R")
 						.set(CRA_BATCH.INCOME_FILE, (byte[])null)
@@ -364,7 +364,7 @@ public class JooqCRA {
 			try { 
 				CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 					.set(CRA_BATCH.DOMAIN, domainId)
-					.set(CRA_BATCH.DATE, new Timestamp(formatDate.parse(fileName).getTime()))
+					.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
 					.set(CRA_BATCH.STATUS, (byte)1)
 					.set(CRA_BATCH.COMMUNICATION_ID, "N")
 					.set(CRA_BATCH.INCOME_FILE, (byte[])null)
