@@ -8,9 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -19,8 +17,8 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.DomEvent;
@@ -83,6 +81,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	
 	@UiField
 	VerticalPanel ideExtensionTable;
+	
+	@UiField
+	ListBox extensionsLB;
 	
 	@UiField
 	HTMLPanel ideExtensionPanel;
@@ -445,39 +446,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.ideTB.addStyleName(style.maxWidthTB());
 		this.ideTB.addChangeHandler(e -> contractSpecificData.setIde(ideTB.getValue()));
 		idePanel.add(ideTB);
-		
-		AonToolbarSmallButton updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n Sepe", AON.CSS.aonIconCloudImport());
-		if(Boolean.FALSE.equals(isComunica))
-			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
-		else {
-			updateSepeInfoBtn.addClickHandler(e -> {
-				showLoadingMessage("Obteniendo informaci\u00f3n del Sepe");
-				implEmployee.getSepeComunicationData(document, fini, contractId, new AsyncCallback<Map<String,String>>() {
-					@Override
-					public void onSuccess(Map<String, String> sepeData) {
-						ideTB.setValue(sepeData.getOrDefault("ide", null));
-						String communicationDate = sepeData.getOrDefault("comunicationDate", null);
-						comunicationDateBx.setValue(AonStringUtils.isBlank(communicationDate) ? null : formatDate.parse(communicationDate));
-						showSuccessMessage("Sincronizaci\u00f3n Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
-						
-						contractSpecificData.setIde(sepeData.getOrDefault("ide", null));
-						contractSpecificData.setComunicationDate(AonStringUtils.isBlank(communicationDate) ? null : formatDate.parse(communicationDate));
-						
-						downloadCtoDocument();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage("Error sincronizaci\u00f3n Sepe", caught.getMessage());
-					}
-				});
-			});
-		}
-		idePanel.add(updateSepeInfoBtn);
 	}
 	
 	private void createUpdateTransformSepeInfo(boolean isTransform, boolean isComunica, String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) {
-		if(Boolean.FALSE.equals(isTransform)) {
+		if(Boolean.FALSE.equals(isTransform) && AonStringUtils.isBlank(contractSpecificData.getTransformIde())) {
 			ideTransformTable.setVisible(false);
 			return;
 		}
@@ -489,39 +461,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.ideTransformTB.addStyleName(style.maxWidthTB());
 		this.ideTransformTB.addChangeHandler(e -> contractSpecificData.setTransformIde(ideTransformTB.getValue()));
 		ideTransformPanel.add(ideTransformTB);
-		
-		AonToolbarSmallButton updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n transformaci\u00f3n Sepe", AON.CSS.aonIconCloudImport());
-		if(Boolean.FALSE.equals(isComunica))
-			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
-		else {
-			updateSepeInfoBtn.addClickHandler(e -> {
-				showLoadingMessage("Obteniendo informaci\u00f3 transformaci\u00f3n del Sepe");
-				implEmployee.getSepeTransformComunicationData(document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallback<Map<String,String>>() {
-					@Override
-					public void onSuccess(Map<String, String> sepeData) {
-						ideTransformTB.setValue(sepeData.getOrDefault("trasnformIde", null));
-						String communicationTransformDate = sepeData.getOrDefault("comunicationTransformDate", null);
-						comunicationTransformDateBx.setValue(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
-						showSuccessMessage("Sincronizaci\u00f3n Transformaci\u00f3n Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
-						
-						contractSpecificData.setTransformIde(sepeData.getOrDefault("trasnformIde", null));
-						contractSpecificData.setComunicationTransformDate(AonStringUtils.isBlank(communicationTransformDate) ? null : formatDate.parse(communicationTransformDate));
-						
-						downloadCtoTransformDocument();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage("Error sincronizaci\u00f3n Transformaci\u00f3n Sepe", caught.getMessage());
-					}
-				});
-			});
-		}
-		ideTransformPanel.add(updateSepeInfoBtn);
 	}
 	
 	private void createUpdateExtensionSepeInfo(boolean isExtension, boolean isComunica, String document, String enterpriseCif, Date originalStartDate, String sepeId, Integer contractId) {
-		if(Boolean.FALSE.equals(isExtension)) {
+		if(Boolean.FALSE.equals(isExtension) && contractSpecificData.getExtensions().isEmpty()) {
 			ideExtensionTable.setVisible(false);
 			return;
 		}
@@ -531,37 +474,12 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		ideExtensionPanel.clear();
 		this.ideExtensionTB = new TextBox();
 		this.ideExtensionTB.addStyleName(style.maxWidthTB());
-		this.ideExtensionTB.addChangeHandler(e -> contractSpecificData.setExtensionIde(ideExtensionTB.getValue()));
+		this.ideExtensionTB.addChangeHandler(e -> {
+			Date extensionDate = contractSpecificData.getExtensions().get(ideExtensionTB.getValue());
+			if(null == extensionDate)
+				contractSpecificData.addExtension(ideExtensionTB.getValue(), new Date());
+		});
 		ideExtensionPanel.add(ideExtensionTB);
-		
-		AonToolbarSmallButton updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n pro\u00f3rroga Sepe", AON.CSS.aonIconCloudImport());
-		if(Boolean.FALSE.equals(isComunica))
-			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
-		else {
-			updateSepeInfoBtn.addClickHandler(e -> {
-				showLoadingMessage("Obteniendo informaci\u00f3n pr\u00f3rroga del Sepe");
-				implEmployee.getSepeExtensionComunicationData(document, enterpriseCif, originalStartDate, sepeId, contractId, new AsyncCallback<Map<String,String>>() {
-					@Override
-					public void onSuccess(Map<String, String> sepeData) {
-						ideExtensionTB.setValue(sepeData.getOrDefault("extensionIde", null));
-						String communicationExtensionDate = sepeData.getOrDefault("comunicationExtensionDate", null);
-						comunicationExtensionDateBx.setValue(AonStringUtils.isBlank(communicationExtensionDate) ? null : formatDate.parse(communicationExtensionDate));
-						showSuccessMessage("Sincronizaci\u00f3n pro\u00f3rroga Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
-						
-						contractSpecificData.setExtensionIde(sepeData.getOrDefault("extensionIde", null));
-						contractSpecificData.setComunicationExtensionDate(AonStringUtils.isBlank(communicationExtensionDate) ? null : formatDate.parse(communicationExtensionDate));
-						
-						downloadCtoExtensionDocument();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage("Error sincronizaci\u00f3n Pr\u00f3rroga Sepe", caught.getMessage());
-					}
-				});
-			});
-		}
-		ideExtensionPanel.add(updateSepeInfoBtn);
 	}
 	
 	// --------------------------------------------------------- Abstract Methods --------------------------------------------------
@@ -2302,14 +2220,30 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		ideTB.setValue(this.contractSpecificData.getIde());
 		comunicationDateBx.setValue(this.contractSpecificData.getComunicationDate());
 		
-		if(Boolean.TRUE.equals(isTransform)) {
+		if(Boolean.TRUE.equals(isTransform) || AonStringUtils.isNotBlank(contractSpecificData.getTransformIde())) {
 			ideTransformTB.setValue(this.contractSpecificData.getTransformIde());
 			comunicationTransformDateBx.setValue(this.contractSpecificData.getComunicationTransformDate());
 		}
 		
-		if(Boolean.TRUE.equals(isExtension)) {
-			ideExtensionTB.setValue(this.contractSpecificData.getExtensionIde());
-			comunicationExtensionDateBx.setValue(this.contractSpecificData.getComunicationExtensionDate());
+		if(Boolean.TRUE.equals(isExtension) || !contractSpecificData.getExtensions().isEmpty()) {
+			int extension = 1;
+			for(String extensionIde : contractSpecificData.getExtensions().keySet()){
+				extensionsLB.addItem("Pr\u00f3rroga " + extension, extensionIde);
+				extension++;
+			}
+			
+			extensionsLB.addChangeHandler(e -> {
+				Date extensionDate = contractSpecificData.getExtensions().get(extensionsLB.getSelectedValue());
+				ideExtensionTB.setValue(extensionsLB.getSelectedValue());
+				comunicationExtensionDateBx.setValue(extensionDate);
+			});
+			
+			if(!contractSpecificData.getExtensions().isEmpty()) {
+				Entry<String, Date> entry = (Entry<String, Date>) contractSpecificData.getExtensions().entrySet().toArray()[0];
+				ideExtensionTB.setValue(entry.getKey());
+				comunicationExtensionDateBx.setValue(entry.getValue());
+			}
+			
 		}
 		
 		calendarFormativeStartDate.setValue(this.contractSpecificData.getCalendarFormativeStartDate());
@@ -2482,6 +2416,34 @@ public abstract class ContractSpecificData extends ResizeComposite {
 				};
 				timer.schedule(2500);
 			}, f -> showErrorMessage("Error obtenci\u00f3n Datos Sepe contrato", f.getMessage()));
+	}
+	
+	public void syncComunicationsData() {
+		showLoadingMessage("Sincronizando comunicaciones del Sepe...");
+		implEmployee.getSepeComunicationData(
+				contractEmployeeInfo.getEmployeeInfo().getDocument(),
+				contractEmployeeInfo.getContractInfo().getStartDate(),
+				contractEmployeeInfo.getContractInfo().getContractId(), 
+				new AsyncCallback<Map<String,String>>() {
+			
+					@Override
+					public void onSuccess(Map<String, String> sepeData) {
+						showSuccessMessage("Sincronizaci\u00f3n Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
+						
+						Timer timer = new Timer() {
+							@Override
+							public void run() {
+								reloadSepeData();
+							}
+						};
+						timer.schedule(2500);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage("Error sincronizaci\u00f3n Sepe", caught.getMessage());
+					}
+		});
 	}
 	
 	public void setContractSpecificData(com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
