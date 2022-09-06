@@ -639,17 +639,15 @@ public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalary
 		mark4DeleteUpdates.forEach(dslContext::execute);
 	}
 	private int  delete(DSLContext dslContext) {
-		SelectConditionStep<Record1<Integer>> condition = 
-		DSL.select(SALARY.ID).from(SALARY).where(SALARY.REGISTRATION.eq(deleteMark));
 		
-		dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(condition)).execute();
-		dslContext.delete(SALARY_COST).where(SALARY_COST.SALARY.in(condition)).execute();
-		dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(condition)).execute();
-		dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(condition)).execute();
-		dslContext.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(condition)).execute();
-		dslContext.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(condition)).execute();
+		dslContext.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		dslContext.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		dslContext.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		dslContext.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		dslContext.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
+		dslContext.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
 		return dslContext.delete(SALARY).where(SALARY.REGISTRATION.eq(deleteMark)).execute();
-		
+
 	}
 
 	private DSLSalaryBuilder<Salary> getDSLSalaryBuilder(){
