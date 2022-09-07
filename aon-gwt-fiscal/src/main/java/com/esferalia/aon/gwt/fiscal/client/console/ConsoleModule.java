@@ -114,7 +114,7 @@ public class ConsoleModule extends MainEntryPoint {
 		opt3.setStyleName(AON.CSS.aonClickableBlock());
 		opt3.addStyleName(AON.CSS.aonPadding());
 		opt3.addClickHandler( e -> content.setWidget( new ConsoleDomainTransfer(options) ));
-		optionsGrid.addRow().addCell(opt3);
+//		optionsGrid.addRow().addCell(opt3);
 
 		aonLayout.addWest(sidebar, 275);
 		aonLayout.add(content);

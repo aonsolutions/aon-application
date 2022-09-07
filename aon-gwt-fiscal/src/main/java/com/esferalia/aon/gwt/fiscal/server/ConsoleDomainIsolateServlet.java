@@ -10,6 +10,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jooq.Schema;
+
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -26,25 +28,45 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String schemaName = req.getParameter(IRequestParamsNames.SCHEMA);
 		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
+		String newSchemaName = req.getParameter(IRequestParamsNames.NEW_SCHEMA);
 		String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
 		ConsoleParams params = new ConsoleParams( );
-		CloseableAONContext ctx =  null;
+		CloseableAONContext fromCtx =  null;
+		CloseableAONContext toCtx =  null;
 		try {
-			ctx = AONContext.getAONContext(domainName,0,"");
+			fromCtx = AONContext.getAONContext(schemaName);
+			Schema fromSchema = fromCtx.getDslContext().meta()
+				.getSchemas(schemaName)
+				.stream()
+				.findFirst()
+				.orElse(null);
+			
 			params.setFromConnection(new ConsoleConnectionParams()
-				.setAONContext(ctx)
-				.setSchema(resolveSchema(ctx))
+				.setAONContext(fromCtx)
+				.setSchemaName( schemaName )
+				.setSchema( fromSchema )
 				.setDomainName(domainName)
 				);
+			
+			toCtx = AONContext.getAONContext(newSchemaName);
+			Schema toSchema = fromCtx.getDslContext().meta()
+				.getSchemas(newSchemaName)
+				.stream()
+				.findFirst()
+				.orElse(null);
 			params.setToConnection(new ConsoleConnectionParams()
-				.setAONContext(ctx)
-				.setSchema(params.getFromConnection().getSchema())
+				.setAONContext(toCtx)
+				.setSchemaName( newSchemaName )
+				.setSchema(toSchema)
 				.setDomainName(newDomainName)
 				);
 			params.setPrinter(new PrintStream(resp.getOutputStream()));
-			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet domain \"{0}\" to \"{1}\"", new String[] {
-				params.getFromConnection().getDomainName()
+			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet domain \"{0}\".\"{1}\" to \"{2}\".\"{3}\"", new String[] {
+				 params.getFromConnection().getSchemaName()
+				,params.getFromConnection().getDomainName()
+				,params.getToConnection().getSchemaName()
 				,params.getToConnection().getDomainName()});
 			ConsoleIsolateDomain.isolate(params);
 			resp.flushBuffer();
@@ -58,8 +80,20 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 			params.getPrinter().flush();
 			resp.flushBuffer();
 			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet finished!");
-			if (ctx != null) {
-				ctx.close();
+			try {
+				if (fromCtx != null) {
+					fromCtx.close();
+				}
+			} catch (Exception e) {
+				// Nada. Aseguramos el cerrado.
+			}
+			
+			try {
+				if (toCtx != null) {
+					toCtx.close();
+				}
+			} catch (Exception e) {
+				// Nada. Aseguramos el cerrado.
 			}
 		}
 

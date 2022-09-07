@@ -200,7 +200,7 @@ public class SIIManager {
 			}
 
 			if(modList.size() > 0){
-				return FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.MOD_RECIBIDAS.isModificacion(), terceros);
+				return FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, modList, SendType.MOD_RECIBIDAS.isModificacion(), terceros);
 			}
 		}
     	return null;

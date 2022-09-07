@@ -1,0 +1,523 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared" 
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"	
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
+
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.AgreementDraftTab.MyStyle'>
+
+		@external .gwt-ToggleButton-down;
+		@external .gwt-ToggleButton-up;
+		@external .gwt-ToggleButton-down-hovering;
+		@external .gwt-ToggleButton-up-hovering;
+
+		.editor {
+			
+		}
+
+		.hide {
+			visibility: hidden;
+		}
+		
+		.label {
+			/*
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+			*/
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 1.1em;
+		}
+
+		.field {
+			width: 100%;
+			padding: 1px 0.5em;
+		}
+
+		.highlight,
+		.highlight td  {
+    		border-color: #D3C061;
+    		background-color: #FBEDB6;
+    	}
+    	
+		.vertical-space {
+			height: 20px;
+		}
+
+		.vertical-space2 {
+			height: 2px;
+		}
+
+		.horizontal-space {
+			width: 5px;
+		}
+
+		.document {
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 15px;
+		}
+		
+		.edit-rows .edit-cells {
+		}
+
+		.gwt-ToggleButton-down{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.gwt-ToggleButton-down-hovering{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up-hovering{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.selectButtonSalaryToggleButton{
+			border-top: 1px solid #ababab !important;
+			border-left: 1px solid #ababab !important;
+			border-right: 1px solid #ababab !important;
+	
+		}
+
+		.marginToggleButton{
+			margin-right: 2px;
+		}
+
+		.moreButton{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background-color: #e2e2e2 !important;
+		}
+
+		.deleteButtonUp{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background-color: #e2e2e2 !important;
+			padding-top: 2px !important;
+		}
+		
+		.backgroundCenter{
+			background-position: center;
+		}
+		
+		.innerPopUpButton{
+			background: transparent !important;
+			width: 100% !important;
+			text-align: left;
+			font-size: 12px;
+		}
+		
+		.popUpLine{
+			height: 1px;
+			border-bottom: 1px solid #e1e1e1;
+			margin: 0 2px;
+		}
+
+		.deleteButtonDown{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background-color: white !important;
+			background-position: center;
+		}
+
+		.categoryStyleButtonUp{
+			font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+			font-weight: normal !important;
+    		border: none !important;
+    		height: 22px !important;
+    		border-bottom: none !important;
+    		color: #ababab !important;
+    		background: #e2e2e2 !important;
+		}
+
+		.categoryStyleButtonDown{
+			font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+			border: none !important;
+    		color: black !important;
+    		font-weight: bold !important;
+    		padding-bottom: 3px !important;
+   			background: white !important;
+		}
+
+		.categoryButton{
+			top: 46px;
+    		right: -88px;
+    		float: right;
+    		position: relative;
+			border: none;
+    		border-bottom: none;
+    		color: black;
+    		font-weight: bold;
+    		height: 22px;
+    		background: #e2e2e2;
+		}
+		
+		.bgWhite{
+			background-color: white !important;
+		}
+
+		.panelButtons{
+			vertical-align: top;
+    		background: #e2e2e2 !important;
+		}
+
+		.datePickerPanel{
+			border: none !important;
+    		box-shadow: none !important;
+		}
+
+		.edit-rows td, 
+		 .edit-cells td {
+			color: #000000 !important;			
+		}
+		
+		.edit-rows tr:hover,
+		.edit-cells td:hover{
+			cursor: pointer;
+			background-color: #E2F1F5 !important;
+	
+		}
+
+		.span-cell {
+			padding: 0px !important;
+		}
+		
+		@if !user.agent safari {
+			.cell-label {
+				font-size: 9px;
+				font-weight: bold;
+				font-family: sans-serif;
+			}
+		}
+		@else {
+			.cell-label {
+				font-size: 11px;
+				font-weight: bold;
+				font-family: sans-serif;
+			}
+		}
+		
+		.text-ok,
+		.text-ok * {
+			color: green !important;
+		}
+
+		.text-warn *{
+			font-weight: bold;
+			color: orange !important;
+		}
+
+		.text-error,
+		.text-error *{
+			font-weight: bold;
+			color: red !important;
+		}
+
+		.icon-warn {
+			color: orange;
+		}
+
+		.span-cell-table {
+			width: 100%;
+			border-collapse: collapse !important;
+		}
+
+		.span-cell-cell {
+			border-top: 0px !important;
+			border-left: 0px !important;
+			border-bottom: 0px !important;
+		}
+		
+		.span-cell-cell-last {
+			border: 0px !important;
+		}
+		
+		.toolBar-checkBox input {
+			vertical-align: middle;
+		}
+		
+		
+		.toolBar-checkBox input {
+			vertical-align: middle;
+		}
+		
+		.monthListBox-item {
+			padding-left : 16px;
+		}
+
+		.monthListBox-old {
+			
+		}
+		
+		button[disabled],
+		.gwt-ListBox[disabled] {
+			display:none;
+			visibility:hidden;
+		}
+
+		.gwt-TextBox[readonly],
+		.gwt-SuggestBox[readonly]
+		{
+			border-color:transparent;
+    		color: inherit !important;
+    		background-color: transparent;
+		}
+		
+		.gwt-TextBox[readonly]:focus{
+			background-color: inherit;
+		}
+		
+		.aon-Disabled .gwt-TextBox,
+		.aon-Disabled .gwt-SuggestBox,
+		.aon-Disabled .gwt-ListBox
+		{
+    		color: grey !important;
+		}
+
+		 @external gwt-TextBox;
+		 @external gwt-ListBox;
+		 @external aon-Disabled;
+		 @external gwt-SuggestBox;
+		 
+		 
+		.issueLabel{
+			font-weight: bold;
+			width: 40px;
+			text-align: center;
+			font-size: 10px;
+			padding-right: 5px;
+		}
+		
+		.issueTextBox{
+			text-align: center;
+			width: 50px;
+		}
+		
+		.p2{
+			padding: 2px;
+			width: 40px;
+			text-align: center;
+		}
+		
+		.payPeriodLabel{
+			font-weight: bold;
+			padding: 2px;
+			margin-right: 5px;
+		}
+		
+		.textCenter{
+			text-align: center;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+		
+		.bg_newPaeriod{
+			background-color: white !important;
+			border: 1px solid #ababab !important;
+			background: white !important;
+		}
+		
+		.showExtra:hover{
+			background-color: transparent !important;
+		}
+
+	</ui:style>
+
+
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.AgreementDraft.*" />
+
+	<g:DeckLayoutPanel debugId='deckPanel' ui:field='deckPanel'>
+		<g:DockLayoutPanel unit="PX" debugId='draftPanel' ui:field='draftPanel'>
+			<g:center>
+				<g:ScrollPanel styleName="{style.editor}" debugId='draftScrollPane' ui:field='draftScrollPane'>
+					<g:VerticalPanel width="100%">
+						<g:HTMLPanel ui:field="messageContainer" />
+						<g:VerticalPanel width="auto" styleName="{style.document}">
+
+							<g:Grid width="100%">
+								<g:row>
+									<g:customCell styleName="{style.label}">
+										<g:Label>Descripci&oacute;n
+										</g:Label>
+									</g:customCell>
+									<g:customCell styleName="{style.field}">
+										<g:TextBox width="100%" debugId='descriptionTextBox' ui:field='descriptionTextBox' maxLength="{DESCRIPTION_MAX_LENGTH}"/>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell styleName="{style.label}">
+										<g:Label>C&oacute;digo SS
+										</g:Label>
+									</g:customCell>
+									<g:customCell styleName="{style.field}">
+										<g:HTMLPanel styleName="{style.flex}">
+											<g:TextBox debugId='ssNumberTextBox' ui:field='ssNumberTextBox' styleName="gwt-TextBox {style.textCenter}"/>
+											<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}"></g:HTMLPanel>
+										</g:HTMLPanel>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
+
+							<g:HTML styleName="{style.vertical-space}" />
+
+							<g:HorizontalPanel> 
+								<g:HorizontalPanel debugId='categoryButtonPanel' ui:field='categoryButtonPanel'/>
+								<g:HorizontalPanel debugId='salaryToggleButtonsPanel' ui:field='salaryToggleButtonsPanel'/>
+								<g:HTMLPanel debugId='moreToggleButtonsPanel' styleName="{style.flex}" ui:field='moreToggleButtonsPanel'/> 
+							</g:HorizontalPanel>
+							
+							<g:HTML styleName="{style.vertical-space2}" />
+							
+							<g:ScrollPanel debugId='salaryTableScrollPane' ui:field='salaryTableScrollPane'>
+								<g:FlexTable debugId='salaryTable' ui:field='salaryTable'
+									styleName="aon-dataTable {style.edit-cells} " height="100%" />
+							</g:ScrollPanel> 
+							
+							<g:HTML styleName="{style.vertical-space}" />
+
+							<g:FlexTable debugId='eventsTable' ui:field='eventsTable' styleName="aon-dataTable" />
+							<g:HTML debugId='eventsTableSpace' ui:field='eventsTableSpace' styleName="{style.vertical-space}"
+								visible="false" />
+							<g:FlexTable debugId='paymentsTable' ui:field='paymentsTable'
+								styleName="aon-dataTable {style.edit-rows}" />
+							<g:HTML styleName="{style.vertical-space}" />
+							<g:DeckPanel ui:field="deckPanelExtras">
+								<g:HTMLPanel ui:field="periodTypePanel" styleName="{style.flex}">
+									<g:Label styleName="{style.payPeriodLabel}">Pagas extras:</g:Label>
+									<g:DeckPanel ui:field="deckPanelPayPeriod">
+										<g:ListBox ui:field="payPeriod"></g:ListBox>
+										<g:Label ui:field="payPeriodLabel"></g:Label>
+									</g:DeckPanel>
+								</g:HTMLPanel>
+								<g:FlexTable debugId='extrasTable' ui:field='extrasTable' styleName="aon-dataTable {style.edit-rows}" />
+								<g:HTML styleName="{style.vertical-space}" />
+							</g:DeckPanel>
+						</g:VerticalPanel>
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:center>
+		</g:DockLayoutPanel>
+		<g:DockLayoutPanel unit="PX" debugId='printPreviewPanel' ui:field='printPreviewPanel'>
+			<g:north size="72">
+
+				<g:FlowPanel>
+
+					<g:FlowPanel styleName="aon-finding-title-toolbar">
+						<g:HorizontalPanel>
+							<g:HTMLPanel styleName="aon-finding-title">
+								<g:HTMLPanel styleName="aon-finding-title-internal">
+									<g:Label styleName="aon-outputText">Convenio</g:Label>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-subtitle">
+								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+									<g:Label styleName="aon-outputText"></g:Label>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HorizontalPanel styleName="aon-finding-toolbar">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+
+									<g:ListBox debugId='typeListBox' ui:field='typeListBox' visible="false" />
+									<aon:MonthListBox debugId='previewMonthListBox' ui:field='previewMonthListBox'
+										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
+										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
+										
+									<g:ListBox debugId='levelListBox' ui:field='levelListBox' />
+									
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<span class="aon-outputText aon-black aon-bold">Coef. Parcialidad: </span>
+									<g:TextBox debugId='partialTextBox' ui:field='partialTextBox' text="1.00" textAlignment="right" maxLength="5" visibleLength="6"/>
+									
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<span class="aon-outputText aon-black aon-bold">Grupo Cotiz.: </span>
+									<g:ListBox debugId='groupListBox' ui:field='groupListBox' >
+										<g:item value='01'>1</g:item>
+										<g:item value='02'>2</g:item>
+										<g:item value='03'>3</g:item>
+										<g:item value='04'>4</g:item>
+										<g:item value='05'>5</g:item>
+										<g:item value='06'>6</g:item>
+										<g:item value='07'>7</g:item>
+
+										<g:item value='08'>8</g:item>
+										<g:item value='09'>9</g:item>
+										<g:item value='10'>10</g:item>
+										<g:item value='11'>11</g:item>
+									</g:ListBox>
+
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<g:ListBox debugId='tc2ListBox' ui:field='tc2ListBox' />
+
+									<span>&nbsp;</span>
+									<span>&nbsp;</span>
+									<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
+										styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
+
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
+						</g:HorizontalPanel>
+					</g:FlowPanel>
+				</g:FlowPanel>
+
+			</g:north>
+			<g:center>
+				<p:FullViewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
+			</g:center>
+		</g:DockLayoutPanel>
+	</g:DeckLayoutPanel>
+
+</ui:UiBinder>

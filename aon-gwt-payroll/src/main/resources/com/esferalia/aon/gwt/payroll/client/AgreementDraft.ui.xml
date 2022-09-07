@@ -531,9 +531,6 @@
 				<p:FullViewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
 			</g:center>
 		</g:DockLayoutPanel>
-		<g:HTMLPanel styleName="{style.flexColumn}" ui:field="selectMessage">
-			<g:Label text="Seleccione un convenio para visualizarlo" styleName="{style.message}" />
-		</g:HTMLPanel>
 	</g:DeckLayoutPanel>
 
 </ui:UiBinder>

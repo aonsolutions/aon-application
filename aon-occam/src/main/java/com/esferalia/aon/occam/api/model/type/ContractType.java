@@ -270,6 +270,8 @@ public class ContractType {
 		// NUEVO
 		this.contractTypes.get(250).addNewModel(45, "FAMILIARES CONTRATADO DE AUTONOMO");
 		this.contractTypes.get(350).addNewModel(45, "FAMILIARES CONTRATADO DE AUTONOMO");
+		this.contractTypes.get(150).addNewModel(46, "PARADOS DE LARGA DURACION");
+		this.contractTypes.get(250).addNewModel(46, "PARADOS DE LARGA DURACION");
 	}
 	
 	public Map<Integer, ContractTypeRecord> getContractTypes(){

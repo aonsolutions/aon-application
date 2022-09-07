@@ -5,12 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1120,6 +1120,54 @@ public class ExpressionContext {
 
 	private static String round(String str) {
 		return str.replaceAll("([0-9,]+\\.[0-9]{2})[0-9]+", "$1");
+	}
+
+	public static String evalTemplate(String template, Variables vars) {
+
+		Map<String, Object> map = new AbstractMap<String, Object>(){
+
+			@Override
+			public Set<Entry<String, Object>> entrySet() {
+				return
+				vars.varsSet().stream().map(name -> new Entry<String, Object>() {
+
+					@Override
+					public String getKey() {
+						return name;
+					}
+
+					@Override
+					public Object getValue() {
+
+						double sum = 						
+						vars.get(name).stream()
+						.map(v -> v.getValue(v.getPeriod()))
+						.filter(Number.class::isInstance)
+						.mapToDouble(v -> ((Number)v).doubleValue() )
+						.sum();
+						if ( sum % 1 == 0.00 ) 
+							return Math.round(sum);
+						else 
+							return sum;
+					}
+
+					@Override
+					public Object setValue(Object value) {
+						throw new UnsupportedOperationException();
+					}
+				}).collect(Collectors.toSet());
+			}
+			
+		};
+		
+		Object result = TemplateRuntime.eval(template, map);
+		
+		return result != null ? round(result.toString()) : null;
+	}
+	
+	public static String evalTemplate(String template, Map<String,Object> map) {
+		Object result = TemplateRuntime.eval(template, map);
+		return result != null ? round(result.toString()) : null;
 	}
 
 	// ------------------------------------------------------------------------

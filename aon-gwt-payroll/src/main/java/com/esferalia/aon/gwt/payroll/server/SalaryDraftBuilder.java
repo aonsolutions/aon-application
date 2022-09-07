@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
 import java.text.DecimalFormatSymbols;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mvel2.ast.FunctionInstance;
@@ -53,7 +56,6 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.payroll.IrpfOutcome;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -1397,11 +1399,11 @@ public class SalaryDraftBuilder
 		if (payment instanceof CompositePayment) {
 			composite = (CompositePayment) payment;
 			composite.addChild(childPayment);
-			composite.setDescription(childPayment.getDescription());
+			composite.setDescription(getCompositeDescription(payment, childPayment));
 		} else if (isDelay(payment) || isNotZero(payment)){
 			composite = newCompositePayment(payment);
 			composite.addChild(childPayment);
-			composite.setDescription(childPayment.getDescription());
+			composite.setDescription(getCompositeDescription(payment, childPayment));
 
 		} else {
 			return childPayment;
@@ -1576,6 +1578,54 @@ public class SalaryDraftBuilder
 		.filter(p -> p.getExpression() != null )
 		.forEach(p -> replaceNETO(p, totalPayment))
 		;
+	}
+	
+	private String getCompositeDescription(Payment payment1, Payment payment2) {
+		if ( AonStringUtils.equals(payment1.getDescription(), payment2.getDescription()) )
+				return payment1.getDescription();
+		
+		
+		Map<String, Object> map = new AbstractMap<String, Object>(){
+
+			@Override
+			public Set<Entry<String, Object>> entrySet() {
+				return
+				salaryDraft.getContext().stream().map(variable -> new Entry<String, Object>() {
+
+					@Override
+					public String getKey() {
+						return variable.getName();
+					}
+
+					@Override
+					public Object getValue() {
+
+						double sum = 						
+						salaryDraft.getContext().stream()
+						.filter( v -> v.getName().equals(getKey()))
+						.map(Variable::getValue)
+						.filter(Number.class::isInstance)
+						.mapToDouble(v -> ((Number)v).doubleValue() )
+						.sum();
+						if ( sum % 1 == 0.00 ) 
+							return Math.round(sum);
+						else 
+							return sum;
+					}
+
+					@Override
+					public Object setValue(Object value) {
+						throw new UnsupportedOperationException();
+					}
+				}).collect(Collectors.toSet());
+			}
+			
+		};
+		try {
+			return ExpressionContext.evalTemplate(payment1.getDescriptionTemplate(), map );
+		} catch ( Exception e) {
+			return AonStringUtils.defaultIfBlank(payment1.getDescription(), payment2.getDescription() );
+		}
 	}
 
 	private static void replaceNETO(Payment p, Double totalPayment) {

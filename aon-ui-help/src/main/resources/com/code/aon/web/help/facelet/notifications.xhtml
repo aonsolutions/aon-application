@@ -1,4 +1,3 @@
-
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -7,41 +6,230 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGroup id="notificationWindowPanel"
-		styleClass="aon-popupWindow" >
-		<aon:if test="#{help.notificationsEnabled}">
-			<aon:form>
-				<rich:modalPanel id="notificationModal"
-					showWhenRendered="#{help.notificationsEnabled}"
-					minWidth="380" height="150">
+	<script>
+		function toggleNotificationPanel(id) {
 
-					<f:facet name="header">
-						<aon:div styleClass="aon-popupWindow-title">
-							<aon:outputText value="NOTIFICACIONES" />
+			console.log("toggle pressed");
+
+			const panel = document.querySelector(".menu-panel#" + id + "");
+			const icon = document.querySelector(".menu-panel#" + id
+					+ " .menu-panel-title .material-icons");
+			const content = document.querySelector(".menu-panel#" + id
+					+ " .menu-panel-categoryNews");
+			console.log(".menu-panel#" + id + " .menu-panel-categoryNews");
+
+			if (panel.dataset.opened === "true") {
+				icon.style.transform = "rotate(0deg)";
+				content.style.display = "flex";
+				panel.dataset.opened = false;
+				console.log("closing")
+			} else {
+				icon.style.transform = "rotate(180deg)";
+				content.style.display = "none";
+				panel.dataset.opened = true;
+				console.log("opening")
+			}
+
+		}
+	</script>
+
+	<style>
+.menu-panel-categoryNews {
+	display: flex;
+	/* margin-left: 2em; */
+	padding-bottom: 1em;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	flex-direction: column;
+	/* row-gap: 1em; */
+	justify-content: center;
+}
+
+.nyuusuKaado {
+	border: 1px solid #f1f1f1;
+	padding-top: 2.5em;
+	padding-bottom: 2.5em;
+	padding-left: 2.5%;
+	padding-right: 2.5%;
+	padding-left: 2.5%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: no-wrap;
+}
+
+.nyuusuKaado:hover {
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.newsHead {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+.newsTitle {
+	width: 100%;
+	font-size: 1.2em;
+	color: black;
+}
+
+.newsDateContainer {
+	font-size: 12px;
+	color: lightslategray;
+}
+
+.newsDate {
+	margin-top: 2em;
+	align-self: center;
+	color: #606060;
+}
+
+.newsDescriptionContainer {
+	width: 100%;
+	color: #606060;
+}
+
+.newsDescription {
+	margin-top: .5em;
+	margin-bottom: .5em;
+	font-size: 1.1em;
+	color: #002349;
+}
+
+.newsContent {
+	font-size: 1em;
+}
+
+.newsContent ul, .newsContent ol {
+	margin: revert-layer !important;
+	padding: revert-layer !important;
+}
+
+.imageContainer {
+	width: 25%;
+	margin-right: 2em;
+	position: relative;
+	height: 100%;
+	display:flex;
+	flex-direction: column;
+	
+	
+}
+
+.contentContainer {
+	width: 75%;
+}
+
+
+/*IMAGE*/
+
+.newsImgDiv {
+height: 140px;
+    box-sizing: border-box;
+    /* margin: 0px 2em 0px 0px; */
+    min-width: 0px;
+    width: 100%;
+    /* height: 100%; */
+    display: block;
+    background-repeat: no-repeat;
+    margin-left: 2em;
+}
+
+.imgChannelName {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.5em;
+	font-weight: 800;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	position: absolute;
+	color: white;
+}
+
+
+.fiscalImage {
+	background-image: url(#{aonResource.resolve['/images/apps/aon-fiscal.svg']});
+}
+.laboralImage {
+	background-image: url(#{aonResource.resolve['/images/apps/aon-payroll.svg']});
+}
+.conectaImage {
+	background-image: url(#{aonResource.resolve['/images/apps/aon-portal.svg']});
+}
+.contabilidadImage {
+	background-image: url(#{aonResource.resolve['/images/apps/aon-accounting.svg']});
+}
+.configImage {
+	background-image: url(#{aonResource.resolve['/images/apps/aon-tools.svg']});
+}
+.otherImage {
+	background-image: url(#{aonResource.resolve['/images/aon-icon-logo.svg']});
+}
+
+</style>
+
+
+	<c:forEach items="#{help.getNews().keySet()}" var="categoryName">
+
+		<aon:div styleClass="menu-panel"
+			id="notifications-#{categoryName}-panel">
+
+			<aon:div styleClass="menu-panel-title"
+				style="color: #002349; font-weight: bold;"
+				onclick="toggleNotificationPanel('notifications-#{categoryName}-panel')">
+				<aon:outputText value="expand_more" styleClass="material-icons" />
+				<aon:outputText value="#{categoryName}" />
+			</aon:div>
+
+			<aon:div styleClass="menu-panel-categoryNews">
+				<c:forEach items="#{help.getNews().get(categoryName)}" var="news">
+					<aon:div styleClass="nyuusuKaado">
+						<aon:div styleClass="imageContainer">
+							<aon:div styleClass="newsImgDiv #{help.categoryImgClass(categoryName)}">
+							</aon:div>
+							<aon:div styleClass="newsDateContainer">
+								<aon:div styleClass="newsDate">
+									<aon:outputText value="#{help.formatDate(news)}" />
+								</aon:div>
+							</aon:div>
+							<!-- <aon:div styleClass="imgChannelName">
+								<aon:outputText value="#{categoryName}" style="text-align: center;"></aon:outputText>
+							</aon:div> -->
 						</aon:div>
-					</f:facet>
-					<f:facet name="controls">
-						<aon:commandButton requestDelay="100"
-							reRender="notificationWindowPanel" immediate="true"
-							ajaxSingle="true" type="button"
-							styleClass="aon-popupWindow-close">
-							<aon:actionHotKey key="esc" />
-							<f:setPropertyActionListener
-								target="#{help.notificationsEnabled}"
-								value="#{false}" />
-							<rich:componentControl for="notificationModal" event="onclick"
-								disableDefault="true" operation="hide" />
-						</aon:commandButton>
-					</f:facet>
+						<aon:div styleClass="contentContainer">
+							<aon:div styleClass="menu-panel-news">
+								<aon:div styleClass="newsHead">
+									<aon:div styleClass="newsTitle">
+										<aon:outputText value="#{news.getTitle()}"
+											style="font-weight: bold; text-transform: uppercase;" />
+									</aon:div>
 
-					<aon:div styleClass="aon-popupWindow-content" style="height: 100%; width: 100%;">
-						<aon:div styleClass="aon-popupWindow-content-internal" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; width: 100%;">
-							<aon:outputText style="font-size: 1.5em; text-align: center; display: block; margin: auto;" value="No hay notificaciones para mostrar" />
+								</aon:div>
+								<aon:div styleClass="newsDescriptionContainer">
+									<aon:div styleClass="newsDescription">
+										<aon:outputText value="#{news.getDescription().orElse('')}"
+											escape="true" />
+									</aon:div>
+								</aon:div>
+								<aon:div styleClass="newsContent">
+									<aon:outputText value="#{news.getContent()}" escape="false" />
+								</aon:div>
+							</aon:div>
 						</aon:div>
 					</aon:div>
-				</rich:modalPanel>
-			</aon:form>
-		</aon:if>
-	</aon:panelGroup>
+
+				</c:forEach>
+			</aon:div>
+
+
+
+		</aon:div>
+
+	</c:forEach>
 
 </ui:composition>

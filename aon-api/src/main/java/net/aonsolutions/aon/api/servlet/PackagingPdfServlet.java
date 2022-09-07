@@ -49,12 +49,12 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			String barcode = json.optString(IJsonNames.BARCODE);
 	
 			Integer itemId;
-			if(json.opt(IJsonNames.ITEM) == null && containerId != null) {
+			if(containerId != null) {
 				ItemComposition ic = AON.getItemCompositionStream(domain, login, f -> f.getItemProperty().eq(containerId))
 						.findFirst().orElse(new ItemComposition());
 				itemId = ic.getCompositionItemId();
 				quantity = ic.getQuantity();
-			} else itemId =json.optInt(IJsonNames.ITEM);
+			} else itemId = json.optInt(IJsonNames.ITEM);
 			
 			Item item = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(itemId)));
 			Item container = AON.getItem(domain, login, f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(containerId)));
@@ -72,10 +72,20 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			Attach logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 
-			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
+			Double boxQuantity = quantity;
+			if(item.getStockUnitTag().getId().equals(item.getPackMeasurementTag().getId())) {
+				boxQuantity = quantity / item.getPackMeasurement();
+				boxQuantity = boxQuantity / item.getPackUnits().doubleValue();	
+			} else if(item.getStockUnitTag().getId().equals(item.getPackUnitsTag().getId())) {
+				boxQuantity = quantity / item.getPackUnits().doubleValue();	
+			}
+			 
+			String separator = "\u001d";
+//			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
+			String ean128 = "(02)" + barcode + "(37)" + boxQuantity.intValue() + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber() + separator;
 			String sscc = container.getSerialNumber();
-			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, quantity, ean128, sscc);
-			
+			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, boxQuantity, ean128, sscc);
+
 			responseFile(resp, "packaging", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);

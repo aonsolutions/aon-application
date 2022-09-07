@@ -404,6 +404,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		Integer customerId = delivery.getCustomer().getId();
 		String productCustomerCode = obtainProductCustomerCode(detail.getItem(), customerId);
 		
+		Item base = AON.getItem(new Domain().setId(domainId).setName(domainName), login, f -> 
+			f.getDomainProperty().eq(domainId)
+			.and(f.getProductProperty().eq(detail.getItem().getProduct().getId()))
+			.and(f.getSerialNumberProperty().isNull()));
+		
 		SEH1L seh1l = new SEH1L();
 		seh1l.setNumeroDeLineaDelArticulo(lineNumber);
 		seh1l.setCodigoEANDelArticulo(productCustomerCode);
@@ -411,7 +416,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
 		seh1l.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
 		seh1l.setNumeroVariablePromocional_PV_(null);
-		seh1l.setCodigoDUN_14_ADU_(null);
+		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
 		seh1l.setCodigoACU_ACU_(null);
 		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
 		seh1l.setNumeroDeArticuloDelComprador_IN_(null);

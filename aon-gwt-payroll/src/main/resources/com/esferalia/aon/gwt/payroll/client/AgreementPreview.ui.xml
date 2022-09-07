@@ -1,0 +1,164 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"	
+	xmlns:w='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPreview.MyStyle">
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+		
+		.container {
+			padding: .5rem 2rem;
+		}
+		
+		.flex {
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+		}
+		
+		.inputTitle {
+			min-width: 7rem; 
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 1.1em;
+		}
+		
+		.gridTitle{
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+		
+		.textCenter {
+			text-align: center;
+		}
+		
+		.gridCell{
+			text-transform: uppercase;
+			text-align: center;
+			width: 100px;
+		}
+		
+		.cellWidth {
+			width: 100px;
+		}
+		
+		.headerSticky {
+			background-color: #eee;
+			position: sticky;
+			top: 0;
+			height: 1.5rem;
+		}
+		
+		.headerFSize{
+			font-size: .8em;
+		}
+		
+		.levelHeaderSticky {
+			position: sticky;
+			left: 0;
+			background-color: #eee;
+		}
+		
+		.levelSticky {
+			background-color: white;
+			position: sticky;
+			left: 0;
+		}
+		
+		.flexCenter {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 1rem;
+		}
+		
+		.headerColor {
+			background-color: #eee;
+		}
+		
+		.borderCollapse {
+			border-collapse: collapse;
+		}
+		
+		.message {
+			font-weight: bold;
+		}
+		
+		.columnBorder {
+			border: 1px solid #eee;
+			border-bottom: none;
+		}
+		
+		.heigthAll {height: 100%;}
+		.widthAll {width: 100%;}
+		
+	</ui:style>
+	
+	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">
+		<g:HTMLPanel ui:field="messagePanel" />
+		<g:DeckLayoutPanel ui:field="deckLayoutPanel" styleName="{style.heigthAll}">
+			<!-- AGREEMENT PREVIEW -->
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<aon:AonToolbar ui:field="toolbar" />
+				<g:ScrollPanel ui:field="scrollPanel">
+					<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label text="Descripción" styleName="{style.inputTitle}" />
+							<g:Label ui:field="description" />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label text="Código SS" styleName="{style.inputTitle}" />
+							<g:Label ui:field="ssNumber" />
+							<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex}" />
+						<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter}">
+							<g:ScrollPanel ui:field="salaryScrollPanel">
+								<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
+							</g:ScrollPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="agreementSalaryTableMessage" styleName="{style.flexCenter}">
+							<g:Label text="NO EXISTEN TRAMOS QUE VISUALIZAR, DIRIGASE A LA PESTAÑA 'TABLA SALARIAL' PARA CREAR UNO NUEVO" styleName="{style.message}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">
+							<g:Label text="NO EXISTEN NIVELES QUE VISUALIZAR, DIRIGASE A LA PESTAÑA 'TABLA SALARIAL' PARA CREAR UNO NUEVO" styleName="{style.message}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexCenter}">
+							<g:ScrollPanel ui:field="paymentScrollPanel">
+								<g:Grid ui:field="paymentGrid" styleName="{style.borderCollapse}" />
+							</g:ScrollPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="agreementPaymentMessage" styleName="{style.flexCenter}">
+							<g:Label text="NO EXISTEN DEVENGOS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="extraTable" styleName="{style.flexCenter}">
+							<g:ScrollPanel ui:field="extraScrollPanel">
+								<g:Grid ui:field="extraGrid" styleName="{style.borderCollapse}" />
+							</g:ScrollPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="agreementExtraMessage" styleName="{style.flexCenter}">
+							<g:Label text="NO EXISTEN EXTRAS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:ScrollPanel>
+			</g:HTMLPanel>
+			
+			<!-- AGREEMENT SIMULATOR -->
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<aon:AonToolbar ui:field="toolbarSimulator" />
+				<p:FullViewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
+			</g:HTMLPanel>
+			
+		</g:DeckLayoutPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 
+

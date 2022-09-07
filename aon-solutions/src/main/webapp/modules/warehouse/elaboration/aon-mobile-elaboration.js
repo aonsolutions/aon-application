@@ -201,6 +201,7 @@ export class AonMobileElaboration extends AonElement {
 	buildPackaging(parent){
 		let div = this.createElement(TAG.DIV, "aonPackageDiv")
 		let packaging = new AonMobilePackageList();
+		packaging.setElaborationToolbar(this.ELABORATION_TOOLBAR);
 		packaging.setElaborationPackages(this.elaboration.packaging);
 		div.appendChild(packaging);
 		parent.appendChild(div);

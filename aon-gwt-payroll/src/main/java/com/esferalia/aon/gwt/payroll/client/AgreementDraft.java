@@ -1438,8 +1438,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		contextMenu = new AddPaymentContextMenu();
 		
-//		showDraft();
-		showSelectMessage();
+		showDraft();
 		
 		// Add extra hide option
 		KeyDownHandler myHandler = new KeyDownHandler() {
@@ -4553,10 +4552,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		deckPanel.showWidget(deckPanel.getWidgetIndex(printPreviewPanel));
 	}
 	
-	private void showSelectMessage() {
-		deckPanel.showWidget(2);
-	}
-
 	private void printPreview() {
 		Type type = getType();
 		int levelId = getLevelId();

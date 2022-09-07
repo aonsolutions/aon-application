@@ -408,7 +408,7 @@ public class WarehouseTemplate implements AutoCloseable {
 		this.x = this.marginBarCode;
 		float maxWidth = this.getPageWidth() - 2 * this.marginBarCode;
 		
-		byte[] barcodeBytes = createBarcode(code, (int) maxWidth, (int) this.heightBarCode + 1);
+		byte[] barcodeBytes = createBarcode(code.replace("(", "").replace(")", ""), (int) maxWidth, (int) this.heightBarCode + 1);
 		
 		PDFToolkit.drawImage(this.document, this.contents, barcodeBytes, this.x, this.y, maxWidth, this.heightBarCode);
 		
@@ -418,7 +418,7 @@ public class WarehouseTemplate implements AutoCloseable {
 		PDFToolkit.drawTextCenter(
 				this.contents,
 				new PDRectangle(this.x, this.y, maxWidth, codeFontSize),
-				code,
+				code.replace("\u001d", ""),
 				DEFAULT_FONT_COLOR,
 				DEFAULT_FONT,
 				codeFontSize,

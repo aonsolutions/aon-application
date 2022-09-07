@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -15,12 +14,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,7 +37,12 @@ public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 	private ConsoleModuleOptions options;
 	private SimpleLayoutPanel pageContainer;
 	private boolean running;
+	
+	private ListBox schemaBox = new ListBox();
+	private String schema;
 	private String domainName;
+
+	
 
 	public ConsoleDomainCheckIntegrity(ConsoleModuleOptions options) {
 		this.options = options;
@@ -48,6 +52,22 @@ public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 		this.addNorth(getDataPanel(), 100);
 		pageContainer = new SimpleLayoutPanel();
 		this.add(pageContainer);
+		ConsoleModule.CONSOLE_SERVICE.getSchemas(options.getOccam(), new AsyncCallback<String[]>() {
+			
+			@Override
+			public void onSuccess(String[] schemas) {
+				schemaBox.clear();
+				schemaBox.addItem(AonStringUtils.EMPTY);
+				for (String sch : schemas) {
+					schemaBox.addItem(sch);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("No se pueden leer los escquemas de la BD");
+			}
+		});
 	}
 
 	private AonToolbar getToolbarPanel() {
@@ -62,10 +82,6 @@ public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 	}
 	
 	private Widget getDataPanel() {
-		String host = Window.Location.getHost();
-		host = AonStringUtils.substringBefore(host, ":");
-		String mainDomain =  "." + AonStringUtils.substringAfter(host, ".");
-		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
 		Label descriptionLabel = new Label("Chequea la integridad de la claves referenciales");
@@ -83,39 +99,30 @@ public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		
-		FlowPanel firstPanel = new FlowPanel(); 
-		AonTextBox fullDomainName = new AonTextBox();
-		fullDomainName.setVisible(false);
-		fullDomainName.setVisibleLength(50);
-		fullDomainName.addValueChangeHandler( e -> domainName = fullDomainName.getValue());
-		AonTextBox firstDomainName = new AonTextBox();
-		firstDomainName.setVisibleLength(30);
-		firstDomainName.addValueChangeHandler( e -> domainName = firstDomainName.getValue() + mainDomain);
+		Label originLabel = new Label("ORIGEN");
+		originLabel.setStyleName(AON.CSS.aonBold());
 		
-		InlineLabel secondDomainName = new InlineLabel(mainDomain);
-		secondDomainName.setStyleName(AON.CSS.aonMarginLeft());
-		secondDomainName.addStyleName(AON.CSS.aonBold());
-		firstPanel.add(fullDomainName);
-		firstPanel.add(firstDomainName);
-		firstPanel.add(secondDomainName);
-		
-		table.addRow()
-			.addCell(new Label("Nombre del dominio"))
-			.addCell( firstPanel )	
-		;
-	
-		CheckBox fullViewCheck = new CheckBox("Editar nombres enteros");
-		fullViewCheck.setStyleName(AON.CSS.aonMarginTop() );
-		fullViewCheck.addClickHandler(e -> {
-			boolean visible = fullViewCheck.getValue().booleanValue();
-			fullDomainName.setVisible(visible);
-			firstDomainName.setVisible(!visible);
-			secondDomainName.setVisible(!visible);
+		AonDomainBox domainBox = new AonDomainBox(options.getOccam());
+		domainBox.setEnabled(false);
+		domainBox.addSelectionHandler( e -> domainName = (e.getSelectedItem() == null)?null:e.getSelectedItem().getName());
+		schemaBox.addChangeHandler( e -> {
+			schema = schemaBox.getSelectedValue();
+			domainBox.setEnabled(AonStringUtils.isNotBlank(schema));		
+			domainBox.setSchema(schema);
 		});
+		Label schemaLabel = new Label("Esquema");
+		schemaLabel.setStyleName(AON.CSS.aonInnerLabel());
+		Label domainLabel = new Label("Dominio");
+		domainLabel.setStyleName(AON.CSS.aonInnerLabel());
+		
 		table.addRow()
-			.addCell(new Label())
-			.addCell( fullViewCheck )	
+			.addCell(originLabel)
+			.addCell(schemaLabel)
+			.addCell(schemaBox)
+			.addCell(domainLabel)
+			.addCell( domainBox )	
 		;
+		
 		return scroll;
 	}
 
@@ -139,6 +146,7 @@ public class ConsoleDomainCheckIntegrity extends AonLayoutPanel {
 					}
 				});
 				StringBuilder requestData = new StringBuilder();
+				requestData.append("&"+IRequestParamsNames.SCHEMA  				+"=" + schema );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + domainName );
 				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
 				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );

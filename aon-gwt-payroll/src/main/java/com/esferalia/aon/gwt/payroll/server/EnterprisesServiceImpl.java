@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
@@ -8,6 +9,7 @@ import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -30,6 +32,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
@@ -37,6 +41,8 @@ import javax.servlet.annotation.WebServlet;
 import org.jooq.DSLContext;
 import org.jooq.tools.json.JSONObject;
 
+import com.code.aon.company.WorkPlace;
+import com.code.aon.person.Person;
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -47,6 +53,7 @@ import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementTab;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementsClean;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 import com.esferalia.aon.gwt.payroll.jooq.JooqComunicaEnterpriseSettings;
@@ -73,6 +80,8 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
@@ -114,10 +123,13 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -139,9 +151,24 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
+import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryCostsFactory;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryDeductionsFactory;
+import com.esferalia.aon.payroll.SalaryEmbargo;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.SalaryPaymentsFactory;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
+import com.esferalia.aon.payroll.agreement.AgreementUpdate;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -165,7 +192,15 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.Bonuses;
+import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -548,9 +583,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 
 	@Override
-	public String getAgreementUsedInfo(String domain, Agreement agreement) throws IllegalArgumentException {
+	public String getAgreementUsedInfo(String domain, Integer agreementId, String agreementDescription) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domain)) {
-			return JooqAgreement.getAgreementUsedInfo(connection, agreement);
+			return JooqAgreement.getAgreementUsedInfo(connection, agreementId, agreementDescription);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -1909,7 +1944,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileName, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileName, connection);
+			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, fileName, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -3592,6 +3627,298 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	// ------------------------------------------------ Agreement Tab (New)
+	
+	@Override
+	public AgreementInfo getAgreementInfo(String domainName, Integer agreementId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			return JooqAgreementTab.getAgreementInfo(connection, agreementId, parentDomainId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void setAgreementInfo(String domainName, AgreementInfo agreementInfo) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqAgreementTab.setAgreementInfo(connection, agreementInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public Set<String> getAgreementVariables(String domainName, AgreementInfo agreement) throws IllegalArgumentException {
+		try(Connection conn = AonServletUtils.getConnection(domainName)) {
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Set<String> allVariables = EmployeesServiceHelper.getVariables(conn, agreement, agreement.getDomain(), parentDomainId);
+			return allVariables;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void checkAndUpdateServiAgreement(String domainName, String userLogin, AgreementInfo agreement) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer year = 0;
+			Optional<java.util.Date> lastDate = agreement.getSortedDates().stream().findFirst();
+			if(lastDate.isPresent()) year = lastDate.get().getYear() + 1900;
+			AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, userLogin, agreement.getId(), agreement.getSSNumber(), year);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public String getAgreementDraftReceipt(String domain, AgreementInfo agreement, List<Variable> context, int levelId, String mime) throws IllegalArgumentException {
+		
+		try {
+
+			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			ISalary salary = getSalary(domain, agreement, context, levelId);
+
+			try {
+				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
+			} catch (SalaryException | CanNotCreatePdfException e) {
+			}
+
+			byte reportByteArray[] = reportOut.toByteArray();
+
+			ByteArrayInputStream reportInput = new ByteArrayInputStream(reportByteArray);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent(mime, reportInput, stringWriter);
+
+			reportOut.close();
+			reportInput.close();
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	private static com.esferalia.aon.payroll.Salary getSalary(String domain, AgreementInfo agreement, List<Variable> context, int levelId) {
+
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+			@Override
+			public void createNewSalary() {
+				this.salary = new com.esferalia.aon.payroll.Salary() {
+					@Override
+					public Collection<SalaryCost> getCosts() throws SalaryException {
+						return getSalaryCosts();
+					}
+
+					@Override
+					public Collection<SalaryCost> getCostS() throws SalaryException {
+						return getSalaryCosts();
+					}
+
+					@Override
+					public Collection<SalaryBonus> getBonus() throws SalaryException {
+						return getSalaryBonus();
+					}
+
+					@Override
+					public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+						return getSalaryPayments();
+					}
+
+					@Override
+					public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+						return getSalaryDeductions();
+					}
+
+					@Override
+					public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+						return super.getSalaryEmbargos();
+					}
+				};
+				// default ones
+				salary.setTotalIrpf(0.00);
+			};
+		};
+
+		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator = new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
+
+		calculator.setSalaryBuilder(salaryBuilder);
+
+		Connection conn = null;
+		ISQLContractSalaryCalculatorContext ctx;
+		try {
+			conn = getConnection(domain);
+			ctx = getSalaryCalculatorContext(conn, agreement, context, levelId);
+			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator.calculate(ctx);
+
+			Payments payments = new Payments();
+			salary.getSalaryPayments().forEach(p -> SalaryPaymentsFactory.managePayment(payments, p));
+			try {
+				salary.setPayments(payments);
+			} catch (SalaryException e) {
+			}
+
+			Deductions deductions = new Deductions();
+			salary.getSalaryDeductions().forEach(d -> SalaryDeductionsFactory.manageDeductions(deductions, d));
+			deductions.setTotal(getOrZero(salary.getTotalDeduction()));
+			deductions.setSocialSecurityContributions(getOrZero(salary.getSocialSecurityContributions()));
+			try {
+				salary.setDeductions(deductions);
+			} catch (SalaryException e) {
+			}
+
+			Costs costs = new Costs();
+			salary.getSalaryCosts().forEach(c -> SalaryCostsFactory.manageCosts(costs, c));
+			try {
+				salary.setEnterpriseCosts(costs);
+			} catch (SalaryException e) {
+			}
+
+			Bonuses bonuses = new Bonuses();
+			salary.getSalaryBonus().forEach(c -> bonuses.setTotal(bonuses.getTotal() + c.getAmount()));
+			try {
+				salary.setBonuses(bonuses);
+			} catch (SalaryException e) {
+			}
+
+			// fill salary , ugly code
+			salary.setEmployeeDocument(AonStringUtils.repeat(" ", 9));
+			String levelDescription = AonStringUtils.repeat(" ", 2);
+			String draftDescription = AonStringUtils.repeat(" ", 12);
+			String categoryDescription = AonStringUtils.repeat(" ", 12);
+
+			for (Level level : agreement.getLevels()) {
+				if (level.getId() == levelId) {
+
+					String description = level.getDescription();
+					if (!AonStringUtils.isBlank(description))
+						levelDescription = description;
+
+					Map<Integer, Set<String>> categoriesMap = agreement.getCategoriesMap();
+					if (categoriesMap != null) {
+						Set<String> categories = categoriesMap.get(levelId);
+						if (categories != null) {
+							for (String category : categories) {
+								if (!AonStringUtils.isBlank(category)) {
+									categoryDescription = category;
+									break;
+								}
+							}
+						}
+					}
+
+					break;
+				}
+			}
+
+			salary.setEmployeeName(levelDescription + " " + categoryDescription);
+			salary.setCategory(categoryDescription);
+			salary.setCcc(AonStringUtils.repeat(" ", 11));
+			salary.setSocialSecurityNumber(AonStringUtils.repeat(" ", 10));
+
+			com.esferalia.aon.payroll.Contract contract = new com.esferalia.aon.payroll.Contract();
+			contract.setId(0);
+			Person person = new Person();
+			person.setId(0);
+			contract.setPerson(person);
+
+			salary.setContract(contract);
+
+			WorkPlace workPlace = new WorkPlace();
+			contract.setWorkPlace(workPlace);
+
+			try {
+				EnterpriseCCC enterpriseCCC = null; // getDefaultHEnterpriseCCC();
+
+				com.code.aon.company.Enterprise enterprise = null;
+
+				if (enterpriseCCC == null) {
+					enterprise = getEnterprise(domain);
+					enterpriseCCC = new EnterpriseCCC();
+					enterpriseCCC.setCcc("");
+					EnterpriseActivity enterpriseActivity = new EnterpriseActivity();
+					enterpriseActivity.setEnterprise(enterprise);
+					enterpriseCCC.setActivity(enterpriseActivity);
+					contract.setEnterpriseCCC(enterpriseCCC);
+				}
+				salary.setEnterpriseDocument(enterprise.getRegistry().getDocument());
+				salary.setEnterpriseName(enterprise.getRegistry().getFullName());
+				/*
+				 * RegistryAddress rAddress = enterprise.getRegistry() .getDefaultAddress(); if
+				 * (rAddress != null) { salary.setEnterpriseAddress(rAddress.getFullAddress());
+				 * workPlace.setAddress(rAddress); }
+				 */
+				workPlace.setEnterprise(enterprise);
+				person.setRegistry(enterprise.getRegistry());
+
+			} catch (Exception e) {
+				if (!AonStringUtils.isBlank(agreement.getDescription()))
+					draftDescription = agreement.getDescription();
+				salary.setEnterpriseName(draftDescription);
+				salary.setEnterpriseDocument(AonStringUtils.repeat(" ", 9));
+				salary.setEnterpriseAddress(AonStringUtils.repeat(" ", 25));
+			}
+
+			// TODO: Calendar ???
+			salary.setIssueYear(ctx.getIssueDate().getYear());
+			salary.setIssueMonth(ctx.getIssueDate().getMonth());
+
+			return salary;
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SalaryException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+	
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(final Connection conn,
+			final AgreementInfo agreement, List<Variable> vars, int levelId) throws ExpressionException, SQLException {
+		
+		HashMap<String, Object> data = new HashMap<>();
+		vars.forEach( var -> data.put(var.getName(), var.getValue()));
+		
+		return getSalaryCalculatorContextImpl(conn, agreement, levelId, data);
+	}
+	
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContextImpl(Connection conn,
+			final AgreementInfo agreement, int levelId, Map<String, Object> data)
+			throws ExpressionException, SQLException {
+
+		TreeSet<java.util.Date> sortedDates = new TreeSet<java.util.Date>(agreement.getDates());
+		java.util.Date startDate = sortedDates.last();
+		java.util.Date endDate = DateUtils.getLastDayOfMonth(startDate);
+
+		SQLAgreementSalaryCalculatorContext sqlAgreementSalaryCalculatorContext = new SQLAgreementSalaryCalculatorContext(
+				conn, startDate, endDate, levelId);
+
+		sqlAgreementSalaryCalculatorContext.next(ctx -> data.entrySet().stream().forEach(entry -> ctx
+				.putVariable(entry.getKey(), new TimedObject<Object>(entry.getValue(), startDate, endDate))));
+
+		return sqlAgreementSalaryCalculatorContext;
+	}
+	
+	private static double getOrZero(Double value) {
+		return value != null ? value : 0.00;
 	}
 
 	@Override

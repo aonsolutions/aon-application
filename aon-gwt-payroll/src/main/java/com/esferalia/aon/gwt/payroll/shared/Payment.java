@@ -7,8 +7,9 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.js.payroll.client.Reports;
+import com.google.gwt.view.client.ProvidesKey;
 
-public class Payment extends Item<Payment.Type> implements Reports.Payment{
+public class Payment extends Item<Payment.Type> implements Reports.Payment {
 
 	
 	Double irpf;
@@ -16,6 +17,12 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 
 	String irpfExpression;
 	String quoteExpression;
+	
+	boolean hasExtra;
+	boolean isDeleted = false;
+	
+	// The key provider that provides the unique ID of a contact.
+    public static final ProvidesKey<Payment> KEY_PROVIDER = item -> item == null ? null : item.getId();
 
 	public static enum Type implements HasDescription {
 		//@formatter:off
@@ -363,7 +370,23 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 	public void setQuoteExpression(String quoteExpression) {
 		this.quoteExpression = quoteExpression;
 	}
+	
+	public boolean hasExtra() {
+		return hasExtra;
+	}
 
+	public void setHasExtra(boolean hasExtra) {
+		this.hasExtra = hasExtra;
+	}
+	
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.isDeleted = deleted;
+	}
+	
 	@Override
 	public int getCode() {
 		return null == type ? 1 : this.type.getCode();

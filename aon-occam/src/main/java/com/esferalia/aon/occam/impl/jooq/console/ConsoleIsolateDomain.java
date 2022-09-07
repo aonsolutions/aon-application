@@ -2,25 +2,45 @@ package com.esferalia.aon.occam.impl.jooq.console;
 
 
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
 import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
+import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
+import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
 import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
+import static com.esferalia.aon.jooq.tables.Favorite.FAVORITE;
+import static com.esferalia.aon.jooq.tables.FavoriteCategory.FAVORITE_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
+import static com.esferalia.aon.jooq.tables.Note.NOTE;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
+import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.ProjectReservationDivert.PROJECT_RESERVATION_DIVERT;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Session.SESSION;
+import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
+import static com.esferalia.aon.jooq.tables.SurveyResponse.SURVEY_RESPONSE;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -82,7 +102,7 @@ public class ConsoleIsolateDomain {
 			params.getFromConnection().setFullDomain(fullDomain);
 			params.setScript( new LinkedHashMap<>() );
 			
-			DomainValidator domainValidator = DomainValidator.getInstance();
+			DomainValidator domainValidator = DomainValidator.getInstance(true);
 			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
 				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
 				ConsoleUtils.log(params,msg);
@@ -224,6 +244,39 @@ public class ConsoleIsolateDomain {
 			.filter(t -> !COMPANY.getName().equals(t.getTable().getName()))
 			.filter(t -> !ACCOUNT_PERIOD.getName().equals(t.getTable().getName()))
 			.filter(t -> !APP_PARAM.getName().equals(t.getTable().getName()))
+			.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
+			.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
+			.filter(t -> !RATTACH.getName().equals(t.getTable().getName()))
+			.filter(t -> !RATTACH_TAG.getName().equals(t.getTable().getName()))
+			
+			.filter(t -> !USER.getName().equals(t.getTable().getName()))
+			.filter(t -> !USER.getName().equals(t.getTable().getName()))
+			.filter(t -> !ACTION_DENIED.getName().equals(t.getTable().getName()))
+			.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
+			.filter(t -> !ACTION_FAVORITE.getName().equals(t.getTable().getName()))
+			.filter(t -> !ALARM.getName().equals(t.getTable().getName()))
+			.filter(t -> !USER_APP_ROLE.getName().equals(t.getTable().getName()))
+			.filter(t -> !APPLICATION_USER.getName().equals(t.getTable().getName()))
+			.filter(t -> !CONTACT.getName().equals(t.getTable().getName()))
+			.filter(t -> !TASK_HOLDER.getName().equals(t.getTable().getName()))
+			.filter(t -> !FAVORITE_CATEGORY.getName().equals(t.getTable().getName()))
+			.filter(t -> !FAVORITE.getName().equals(t.getTable().getName()))
+			.filter(t -> !SIGNATURE.getName().equals(t.getTable().getName()))
+			.filter(t -> !MAIL_ACCOUNT.getName().equals(t.getTable().getName()))
+			.filter(t -> !SURVEY_RESPONSE.getName().equals(t.getTable().getName()))
+			.filter(t -> !MK_ACTION_TARGET.getName().equals(t.getTable().getName()))
+			.filter(t -> !NOTE.getName().equals(t.getTable().getName()))
+			.filter(t -> !NOTICE.getName().equals(t.getTable().getName()))
+			.filter(t -> !NOTICE_TAG.getName().equals(t.getTable().getName()))
+			.filter(t -> !PROJECT_RESERVATION_DIVERT.getName().equals(t.getTable().getName()))
+			.filter(t -> !USER_SCOPE.getName().equals(t.getTable().getName()))
+			.filter(t -> !USER_WORKGROUP.getName().equals(t.getTable().getName()))
+			
+			.filter(t -> !CRA_BATCH.getName().equals(t.getTable().getName()))
+			.filter(t -> !CRA_BATCH_DETAIL.getName().equals(t.getTable().getName()))
+
+			
+			
 			.filter(t -> hasDomain(t.getTable()))
 			.forEach( t -> {
 				SelectConditionStep<Record> select = params.getFromDslContext()
@@ -341,7 +394,7 @@ public class ConsoleIsolateDomain {
 
 	private static void loopRefInvoice(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at invoice table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 			.and(INVOICE.RECTIFICATION_INVOICE.isNotNull())
@@ -365,7 +418,7 @@ public class ConsoleIsolateDomain {
 
 	private static void loopFBatch(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at fbatch table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
 			.and(FBATCH.BANK_STATEMENT_LINK.isNotNull())
@@ -389,7 +442,7 @@ public class ConsoleIsolateDomain {
 	
 	private static void loopBankStatementLinkFinanceTracking(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 			.and(BANK_STATEMENT_LINK.SOURCE.eq((byte) 0))
@@ -411,7 +464,7 @@ public class ConsoleIsolateDomain {
   
 	private static void loopAccAppParamAccount(ConsoleParams params, ScriptTable t) {
 		ConsoleUtils.log(params," **** ACC Params --> Account table");
-		params.getFromDslContext().select()
+		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
 			.and(APP_PARAM.NAME.like("ACC%ACC"))
@@ -621,7 +674,7 @@ public class ConsoleIsolateDomain {
 				.getId();
 		ConsoleUtils.log(params,"**** User insertado correctamente");
 		
-		params.getFromDslContext().select( SCOPE.ID)
+		params.getToDslContext().select( SCOPE.ID)
 			.from(SCOPE)
 			.where(SCOPE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
 			.fetch()
@@ -634,7 +687,7 @@ public class ConsoleIsolateDomain {
 				.execute());
 		ConsoleUtils.log(params,"**** User Scope insertado correctamente");
 
-		params.getFromDslContext().select( DOMAIN_APPLICATION.ID)
+		params.getToDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
 			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
 			.fetch()

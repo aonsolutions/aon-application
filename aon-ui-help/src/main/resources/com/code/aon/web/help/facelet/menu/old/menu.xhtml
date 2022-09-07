@@ -16,8 +16,9 @@
 				<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
 					<aon:commandLink
 						value="#{file.getName()}" action="drive"
-						immediate="true" styleClass="aon-top-menu-item">
-			
+						immediate="true" styleClass="aon-top-menu-item" reRender="help-viewer">
+						<f:setPropertyActionListener target="#{help.notificationsEnabled}"
+							value="#{false}" />
 						<f:setPropertyActionListener target="#{help.rootFolder}"
 							value="#{file.getId()}" />
 					</aon:commandLink>

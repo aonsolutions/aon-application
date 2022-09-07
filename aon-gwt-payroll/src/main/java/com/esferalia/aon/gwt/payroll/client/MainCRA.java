@@ -597,7 +597,7 @@ public class MainCRA extends MainEntryPoint {
 	private MultiSelectionModel<CCCInfo> selectionCCCInfoModel;
 	private MultiSelectionModel<CRA> selectionCraModel;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("MM/yyyy");
-	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
+	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private Date findingDate = new Date();
 	private Date findingDateCRA = new Date();
 

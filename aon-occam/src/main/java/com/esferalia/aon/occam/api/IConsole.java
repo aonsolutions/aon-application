@@ -8,6 +8,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 public interface IConsole {
 	
 	public String[] getSchemaNames(AONContext ctx);
-	public LinkedList<Domain> getDomains(CloseableAONContext ctx, String schema, String query);		
+	public LinkedList<Domain> getDomains(CloseableAONContext ctx, String query);		
 	
 }

@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+	
+	<style>
+		.breadcrumb {
+			/* background: dodgerblue;*/
+			width: 100%;
+			height: 2rem;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			padding: 0 1rem;
+			color: #ccc;
+			border-bottom: 1px solid #f1f1f1;
+		}
+		
+		.breadcrumb .link {
+			font-size: .8rem;
+			font-weight: 900;
+			cursor: pointer;
+			color: #bbb;
+			transition: .15s;
+		}
+		
+		.breadcrumb .link:hover {
+			color: #163776;
+		}
+		
+		.breadcrumb form {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.breadcrumb separator {
+			font .size: 1.35rem;
+		}
+		
+		#aonContent {
+			height: calc(100% - 90px);
+		}
+		
+		#sidebar {
+			background: rgba(0,0,0,.015);
+			width: 20rem;
+			border-right: 1px solid #f1f1f1;
+		}
+		
+		#help-viewer {
+			width: calc(100% - 20rem);
+			height: 100%;
+			position: relative;
+		}
+		
+		#help-viewer .list { 
+			overflow-y: auto;
+			height: calc(100% - 2rem);
+		}
+	</style>
+	
+				<ui:include src="./breadcrumb.xhtml" />
+			<aon:div styleClass="box-column list">
+				<c:forEach items="#{help.content}" var="file">
+					<aon:form>
+	
+						<!-- FOLDER -->
+						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
+							<aon:commandLink styleClass="list-item" reRender="aonContent">
+								<f:setPropertyActionListener target="#{help.file}"
+									value="#{file}" />
+								<aon:outputText rendered="${!help.isHome()}"  value="drive_file_move" styleClass="icon material-icons" />
+								
+								<!-- AON ICONS -->
+								<aon:outputText rendered="${help.isHome() and !help.isAonModule(file)}" value="" styleClass="icon aon-module aon-button" />
+								<aon:outputText rendered="${help.isPayroll(file)}" value="" styleClass="icon aon-module aon-button-payroll" />
+								<aon:outputText rendered="${help.isConfig(file)}" value="" styleClass="icon aon-module aon-button-tools" />
+								<aon:outputText rendered="${help.isManagement(file)}" value="" styleClass="icon aon-module aon-button" />
+								<aon:outputText rendered="${help.isAccounting(file)}" value="" styleClass="icon aon-module aon-button-account" />
+								<aon:outputText rendered="${help.isConecta(file)}" value="" styleClass="icon aon-module aon-button-conecta" />
+								<aon:outputText rendered="${help.isFiscal(file)}" value="" styleClass="icon aon-module aon-button-fiscal" />
+								
+								<aon:outputText value="#{file.name}" />
+	
+							</aon:commandLink>
+						</aon:if>
+	
+						<!-- PDF -->
+						<aon:if test="${file.isPDF()}">
+							<a href="./html/pdfjs/viewer.html?encoded=true&amp;newtoolbar=true&amp;file=#{help.getFileServletUrl(file)}"
+								class="list-item" target="_blank"> <aon:outputText
+									value="description" styleClass="icon file material-icons" /> <aon:outputText
+									value="#{file.name}" />
+							</a>
+						</aon:if>
+	
+						<!-- VIDEO -->
+						<aon:if test="${file.isVideo()}">
+							<a href="./html/video.html##{help.getFileServletUrl(file)}"
+								class="list-item" target="_blank"> <aon:outputText
+									value="video_file" styleClass="icon file material-icons" /> <aon:outputText
+									value="#{file.name}" />
+							</a>
+						</aon:if>
+	
+					</aon:form>
+	
+				</c:forEach>
+	
+			</aon:div>
+	
+</ui:composition>

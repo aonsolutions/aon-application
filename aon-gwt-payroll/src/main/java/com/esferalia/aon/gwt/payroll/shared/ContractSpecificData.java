@@ -4,6 +4,8 @@ import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ContractSpecificData implements Serializable {
 	
@@ -15,8 +17,7 @@ public class ContractSpecificData implements Serializable {
 	private Date comunicationDate;
 	private String transformIde;
 	private Date comunicationTransformDate;
-	private String extensionIde;
-	private Date comunicationExtensionDate;
+	private Map<String, Date> extensions;
 	private String calendarFormativeStartDate;
 	private String calendarFormativeEndDate;
 	private String formativeLevel;
@@ -131,22 +132,19 @@ public class ContractSpecificData implements Serializable {
 		this.comunicationTransformDate = comunicationTransformDate;
 	}
 
-	public String getExtensionIde() {
-		return extensionIde;
+	public  Map<String, Date> getExtensions() {
+		return extensions;
 	}
 
-	public void setExtensionIde(String extensionIde) {
-		this.extensionIde = extensionIde;
+	public void setExtensions(Map<String, Date> extensions) {
+		this.extensions = extensions;
 	}
 
-	public Date getComunicationExtensionDate() {
-		return comunicationExtensionDate;
+	public void addExtension(String extensionIde, Date extensionDate) {
+		if(null == this.extensions) this.extensions = new HashMap<String, Date>();
+		this.extensions.put(extensionIde, extensionDate);
 	}
-
-	public void setComunicationExtensionDate(Date comunicationExtensionDate) {
-		this.comunicationExtensionDate = comunicationExtensionDate;
-	}
-
+	
 	public Date getCalendarFormativeStartDate() {
 		return parse(calendarFormativeStartDate);
 	}
