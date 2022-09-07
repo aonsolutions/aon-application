@@ -2107,6 +2107,43 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+
+	@Test
+	public void TestEmbargos() throws Exception {
+
+		if (!isDisplayed("max,_embargable"))
+			open("embargos");
+
+
+		wait4Id("max,_embargable");
+
+		draft("MAX, EMBARGABLE"); 
+		calculate(Calendar.SEPTEMBER,2022);
+		double totalLiquid = getValue("totalLiquidLabel");
+		double totalPayment = getValue("totalPaymentLabel");
+		double totalDeduction = getText("totalDeductionLabel");
+		
+		double totalEmbargable = totalPayment - totalDeduction;
+		double totalEmbargado = totalEmbargable - totalLiquid;
+		
+		double smi = 1000.00 * 14 / 12;
+		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
+		
+		
+		selectOption("issueDate-listbox-2", "6");  //Ene
+		selectOption("issueDate-listbox-3", "11"); //Dic
+		calculate(Calendar.NOVEMBER,2022);
+		
+		smi = 1000.00 ;
+		totalLiquid = getValue("totalLiquidLabel");
+		totalPayment = getValue("totalPaymentLabel");
+		totalDeduction = getText("totalDeductionLabel");
+		totalEmbargable = totalPayment - totalDeduction;
+		totalEmbargado = totalEmbargable - totalLiquid;
+		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
