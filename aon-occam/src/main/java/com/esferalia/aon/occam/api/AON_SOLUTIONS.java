@@ -646,9 +646,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteNews(Domain domain, User user, Integer id) {
+	public static void deleteNews(Domain domain, User user, News news) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			getNews().deleteNews(ctx, id);
+			getNews().deleteNews(ctx, news);
 		}
 	}
 	// ---END NEWS

@@ -31,7 +31,7 @@ public class NewsImpl implements INews {
 	}
 
 	@Override
-	public void deleteNews(AONContext ctx, Integer id) {
-		ctx.getDslContext().transaction(configuration -> NewsDAO.delete(ctx, id));
+	public void deleteNews(AONContext ctx, News news) {
+		ctx.getDslContext().transaction(configuration -> NewsDAO.delete(ctx, news));
 	}
 }

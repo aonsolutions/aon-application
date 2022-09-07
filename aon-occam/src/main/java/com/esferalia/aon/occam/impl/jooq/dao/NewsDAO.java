@@ -90,10 +90,19 @@ public class NewsDAO {
 		return news.getId() !=0 ? update(ctx, news) : insert(ctx, news);
 	}
 	
-	public static void delete(AONContext ctx, Integer id){
+	public static void delete(AONContext ctx, News news){
 		ctx.checkWrite();
 		
+		Integer id = news.getId();
+		
 		delete(ctx, f -> f.getIdProperty().eq(id));
+		
+		news.getRattach().ifPresent(rattach->
+			AttachmentDAO.deleteRegistryAttach(ctx, 
+				f-> f.getDomainProperty().eq(news.getDomain().getId()).and(f.getIdProperty().eq(rattach))
+			)
+		);
+	
 		
 		ctx.log().debug("DELETE NEWS id: " + id);	
 	}
@@ -137,6 +146,7 @@ public class NewsDAO {
 		
 		news.getInitDate().ifPresent(d-> sets.set(NEWS.INIT_DATE, AonDateUtils.toTimestamp(d)));
 		news.getEndDate().ifPresent(d-> sets.set(NEWS.END_DATE, AonDateUtils.toTimestamp(d)));
+		news.getRattach().ifPresent(d-> sets.set(NEWS.RATTACH, d));
 		
 		if(news.getCategory()!=null &&news.getCategory().getId()!=null) {
 			sets.set(NEWS.CATEGORY,news.getCategory().getId());
@@ -157,6 +167,7 @@ public class NewsDAO {
 		Optional<Date> endDateOpt = news.getEndDate();
 		Optional<String> urlOpt = news.getUrl();
 		Optional<String> descriptionOpt = news.getDescription();
+		Optional<Integer> rattachOpt = news.getRattach();
 		
 		
 		Timestamp initDate = initDateOpt.isPresent() ? AonDateUtils.toTimestamp(initDateOpt.get()) : null;
@@ -165,6 +176,7 @@ public class NewsDAO {
 		
 		String url = urlOpt.isPresent() ? urlOpt.get() : null;
 		String description = descriptionOpt.isPresent() ? descriptionOpt.get() : null;
+		Integer rattach = rattachOpt.isPresent() ? rattachOpt.get() : null;
 		
 		ctx.getDslContext()
 		.update(NEWS)
@@ -179,6 +191,7 @@ public class NewsDAO {
 		.set(NEWS.END_DATE, endDate)
 		.set(NEWS.URL, url)
 		.set(NEWS.DESCRIPTION, description)
+		.set(NEWS.RATTACH, rattach)
 		.where(NEWS.ID.eq(news.getId()))
 		.execute()
 		;
@@ -213,6 +226,7 @@ public class NewsDAO {
 					.setCategory(checkField(r, CATEGORY.ID) ? CategoryFiller.build(r) : new Category() )
 					.setScope(checkField(r, SCOPE.ID) ? ScopeFiller.buildScope(r) : new Scope())
 					.setType(NewsType.safeValueOf(r.getValue(NEWS.TYPE)))
+					.setRattach(r.getValue(NEWS.RATTACH))
 					;
 		}
 	}	
