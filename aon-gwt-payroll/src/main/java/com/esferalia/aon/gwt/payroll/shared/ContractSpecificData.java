@@ -133,7 +133,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public  Map<String, Date> getExtensions() {
-		return extensions;
+		return null == extensions ? new HashMap<String, Date>() : extensions;
 	}
 
 	public void setExtensions(Map<String, Date> extensions) {
