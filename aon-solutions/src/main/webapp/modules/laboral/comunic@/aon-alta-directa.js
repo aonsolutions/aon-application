@@ -192,8 +192,9 @@ export class AonAltaDirecta extends AonElement {
         this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.disabledCardTrabajor(false));
 
         if(!this.isEdit()){
-            this.getElement(`gc`).addEventListener(EVENT.CHANGE, ({target}) =>{
-                createQuoteMonthly(target.getDetail(), this.isManager());
+            let gcEl = this.getElement(`gc`);
+            gcEl.addEventListener(EVENT.CHANGE, () =>{
+                createQuoteMonthly(gcEl.getDetail(), this.isManager());
             });
         }
     }

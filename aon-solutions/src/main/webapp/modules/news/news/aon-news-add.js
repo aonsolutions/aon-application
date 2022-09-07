@@ -4,7 +4,7 @@ import { CONSTANT, MSG } from "../../../environments/environments.js";
 import { NewsEnums } from "../NewsEnums.js";
 import { NewsAddUtils } from "./NewsAddUtils.js";
 import { AonNewsList } from "./aon-news-list.js";
-import { saveNews, getNewsType, deleteNews } from "../../../services/newsService.js";
+import { saveNews, deleteNews } from "../../../services/newsService.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { CategoryService } from "../../../services/categoryService.js";
@@ -149,15 +149,25 @@ export class AonNewsAdd extends AonElement {
     }
   }
 
-  async save(){
+  async save(messageSuccess=true){
     this.applicationEl.startLoading();
 
     try {
-      const {id} = await saveNews(this.news);
-      if(id){
-        this.news.setId(id);
+      const isUpdate = this.news.getId();
+      const news = await saveNews(this.news);
+
+      if(news && news.id){
+        if(messageSuccess)
+          this.showMessage();
+
+        if(!isUpdate){
+          const aonNewsAdd = new AonNewsAdd();
+          aonNewsAdd.data = news;
+          this.applicationEl.setContent(aonNewsAdd);
+        }
+      
       }
-      this.showMessage();
+
     } catch (error) {
       console.log(error);
       this.showError(error);

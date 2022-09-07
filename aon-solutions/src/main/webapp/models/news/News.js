@@ -15,6 +15,8 @@ export class News {
 	category; // channel
 	type;
 	scope;
+    rattach;
+    attach;
 	
     constructor(news) {
         if(news) {
@@ -23,6 +25,7 @@ export class News {
             this.domain = new Domain();
             this.active = true;
             this.rss    = false;
+            this.attach = {};
         }
     }
 
@@ -40,6 +43,8 @@ export class News {
         this.category = news.category;
         this.type = news.type;
         this.scope = news.scope;
+        this.rattach = news.rattach;
+        this.attach = {};
     }
 
     getId() {
@@ -144,5 +149,21 @@ export class News {
 
     setScope(scope){
         this.scope = scope;
+    }
+
+    getRattach(){
+        return this.rattach;
+    }
+
+    setRattach(rattach){
+        this.rattach = rattach;
+    }
+
+    getAttach(){
+        return this.attach;
+    }
+
+    setAttach(attach){
+        this.attach = attach;
     }
 }
