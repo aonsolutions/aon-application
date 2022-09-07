@@ -209,6 +209,16 @@
 						        <td></td>
 						        <td></td>
 						    </tr>
+						     <tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Prórrogas</g:Label>
+								</td>
+								<td>
+									<g:HTMLPanel styleName="{style.row}">
+										<g:ListBox ui:field="extensionsLB" />
+									</g:HTMLPanel>
+								</td>
+							</tr>
 						    <tr>
 								<td style="background-color: #eaeaea; width: 400px;">
 									<g:Label styleName='{style.firstColumnTextStyle}'>IDE Prórroga</g:Label>

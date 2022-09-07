@@ -37,8 +37,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -129,7 +127,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
-import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -146,6 +143,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
@@ -214,9 +212,9 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -260,13 +258,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.IrpfResultColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryCostColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryEmbargoColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
@@ -6900,17 +6893,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 
-			aon.sepe.objects.Contract sepeContractData = Sepe.getContractData(certificateIS, certificate.getPassword(),
+			aon.sepe.objects.Contract sepeContract = Sepe.getContractData(certificateIS, certificate.getPassword(),
 					certificate.getType(), ipf, date, date);
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 			Map<String, String> result = new HashMap<>();
 
-			result.put("ide", sepeContractData.getSepeId());
-			result.put("comunicationDate", dateFormat.format(sepeContractData.getDateComContract()));
+			result.put("ide", sepeContract.getSepeId());
+			result.put("comunicationDate", dateFormat.format(sepeContract.getDateComContract()));
 
-			JooqContractSEPE.setSepeIde(connection, domainId, contractId, sepeContractData.getSepeId());
-			JooqContractSEPE.setSepeComunicationDate(connection, domainId, contractId, sepeContractData.getDateComContract());
+			System.out.println("------------- Contract SEPE -------------\n");
+			System.out.println(sepeContract.toString());
+			
+			JooqContractSEPE.setSepeComunications(connection, domainId, contractId, sepeContract);
 
 			return result;
 

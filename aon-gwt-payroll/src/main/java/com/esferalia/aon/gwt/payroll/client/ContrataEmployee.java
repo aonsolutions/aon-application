@@ -1030,6 +1030,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ContractOtherData
 	private HTMLPanel employeeSepeButtons;
+	private AonToolbarButton syncComunicationsData;
 
 	// ContractOtherData
 	private HTMLPanel employeeOtherDataButtons;
@@ -1288,6 +1289,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			checkTgssContextMenu();
 		} else if (tabIdx == 1) {
 			checkSepeContextMenu();
+			syncComunicationsData.setVisible(hasCertificateSEPE);
 		}
 	}
 
@@ -1926,7 +1928,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		};
 		hPanel.add(sepe);
-
+		
+		syncComunicationsData = new AonToolbarButton("Sincronizar comunicaciones Sepe", AON.CSS.aonIconCloudImport());
+		syncComunicationsData.addClickHandler(e -> contractSpecificData.syncComunicationsData());
+		hPanel.add(syncComunicationsData);
+		
 		return hPanel;
 	}
 

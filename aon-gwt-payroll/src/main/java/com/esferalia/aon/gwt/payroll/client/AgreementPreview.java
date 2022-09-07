@@ -350,7 +350,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			int col = 1;
 			
-			for(String variable : agreement.getVariables().get(selectedDate)) {
+			for(String variable : agreement.getVariablesByDate(selectedDate)) {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
 				TextBox cell = new ExpressionBox();
 				cell.addStyleName(style.gridCell());

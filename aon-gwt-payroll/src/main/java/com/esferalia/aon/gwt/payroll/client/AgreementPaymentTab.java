@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -452,7 +453,8 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	}
 
 	private String getParsedExpression(String expression) {
-		return AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+		return SpecialExpresion.parse(expression).getInput();
 	}
 	
 	private boolean isHideExpression(Payment payment) {

@@ -1543,7 +1543,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 				&& AonStringUtils.containsIgnoreCase(periodicityTypeValue, "PRORRATEAR"))
 			expression = createProrratExpression();
 
-		return "/*wizard*/" + expression;
+		return "/*wizard*/" + expression + "/**/";
 	}
 
 	private void createExtraPayment() {
