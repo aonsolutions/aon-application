@@ -425,6 +425,15 @@
 									<g:ListBox ui:field="discReasonLB" styleName='{style.maxWidthLB}'></g:ListBox>  
 								</td>
 							</tr>
+							<!-- LINEA 17 -->
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Periodo actividad sin fecha cierta</g:Label>
+								</td>
+								<td>
+									<g:CheckBox ui:field="trueDateCB"/>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</g:HTMLPanel>

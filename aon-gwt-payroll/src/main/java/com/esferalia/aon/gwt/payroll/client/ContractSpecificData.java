@@ -158,6 +158,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	ListBox discReasonLB;
 	
 	@UiField
+	CheckBox trueDateCB;
+	
+	@UiField
 	HTMLPanel workProgramDataCBPanel;
 	
 	@UiField
@@ -622,6 +625,11 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	@UiHandler("discReasonLB")
 	void onDiscReasonLBChange(ChangeEvent event) {
 		this.contractSpecificData.setDiscReason(discReasonLB.getSelectedValue());
+	}
+	
+	@UiHandler("trueDateCB")
+	void onTrueDateCBChange(ValueChangeEvent<Boolean> event) {
+		this.contractSpecificData.setTrueDate(event.getValue());
 	}
 	
 	@UiHandler("workProgramDataCB")
@@ -1443,6 +1451,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		
 		// CheckBox
 		discCB.setValue(false);
+		trueDateCB.setValue(false);
 		profesionalityCB.setValue(false);
 		repeatFDCB.setValue(false);
 		workProgramDataCB.setValue(false);
@@ -2227,6 +2236,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		
 		if(Boolean.TRUE.equals(isExtension) || !contractSpecificData.getExtensions().isEmpty()) {
 			int extension = 1;
+			extensionsLB.clear();
 			for(String extensionIde : contractSpecificData.getExtensions().keySet()){
 				extensionsLB.addItem("Pr\u00f3rroga " + extension, extensionIde);
 				extension++;
@@ -2268,6 +2278,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		retirementPercentTB.setText(this.contractSpecificData.getRetirementPercent());
 		discCB.setValue(this.contractSpecificData.getDisc());
 		setSelectedValueLB(discReasonLB, this.contractSpecificData.getDiscReason());
+		trueDateCB.setValue(this.contractSpecificData.getTrueDate());
 		
 		//WorkProgramDataTable
 		if(Boolean.TRUE.equals(this.contractSpecificData.getWorkProgramData())) {
