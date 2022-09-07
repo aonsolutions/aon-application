@@ -151,6 +151,7 @@ public class JooqContractSEPE {
 		getContractTransformIDE(dslContext, contractId, contractSpecificData);
 		getContractTransformComunicationDate(dslContext, contractId, contractSpecificData);
 		getContractDisc(dslContext, contractId, contractSpecificData);
+		getContractTrueDate(dslContext, contractId, contractSpecificData);
 		getContractExtensions(dslContext, contractId, contractSpecificData);
 		
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
@@ -291,6 +292,24 @@ public class JooqContractSEPE {
 		}
 	}
 	
+	private static void getContractTrueDate(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
+		Result<Record> trueDateRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("TRUE_DATE"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(trueDateRecords.isNotEmpty()) {
+			Boolean trueDate;
+			try {
+				trueDate = Boolean.parseBoolean(trueDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+				contractSpecificData.setTrueDate(trueDate);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 	private static void getContractExtensions(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
 		Result<Record> extensionRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.NAME.contains("SEPE_EXTENSION_ID").or(CONTRACT_DATA.NAME.contains("COMUNICATION_EXTENSION_DATE")))
@@ -336,7 +355,8 @@ public class JooqContractSEPE {
 			updateContractTransformIDE(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getTransformIde());
 			updateContractTransformComunicationDate(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getComunicationTransformDate());
 			updateContractDisc(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getDisc(), contractSpecificData.getDiscReason());
-		
+			updateContractTrueDate(dslContext, domainId, contractId, startDate, endDate, contractSpecificData.getTrueDate());
+			
 			IContratoType contrato = JooqContrata.createCONTRATOS(employeeContractInfo);
 			
 			if(null != contrato) {
@@ -543,6 +563,26 @@ public class JooqContractSEPE {
 					.set(CONTRACT_DATA.START_DATE, startDate)
 					.set(CONTRACT_DATA.END_DATE, endDate)
 					.execute();
+		}
+	}
+	
+	private static void updateContractTrueDate(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
+			Date endDate, Boolean trueDate) {
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("TRUE_DATE"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+	
+		if(null != trueDate) {
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.NAME, "TRUE_DATE")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, trueDate ? "true" : "false")
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
 		}
 	}
 

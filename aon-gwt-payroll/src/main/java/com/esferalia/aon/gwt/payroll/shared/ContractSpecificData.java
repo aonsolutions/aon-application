@@ -80,6 +80,8 @@ public class ContractSpecificData implements Serializable {
 	private Boolean disc;
 	private String discReason;
 	
+	private Boolean trueDate;
+	
 	public ContractSpecificData() {
 		super();
 	}
@@ -623,6 +625,14 @@ public class ContractSpecificData implements Serializable {
 
 	public void setDiscReason(String discReason) {
 		this.discReason = discReason;
+	}
+	
+	public Boolean getTrueDate() {
+		return trueDate;
+	}
+
+	public void setTrueDate(Boolean trueDate) {
+		this.trueDate = trueDate;
 	}
 	
 }
