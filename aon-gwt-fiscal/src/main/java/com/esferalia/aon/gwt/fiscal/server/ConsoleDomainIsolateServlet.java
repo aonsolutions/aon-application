@@ -32,11 +32,15 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
 		String newSchemaName = req.getParameter(IRequestParamsNames.NEW_SCHEMA);
 		String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
-		ConsoleParams params = new ConsoleParams( );
-		CloseableAONContext fromCtx =  null;
-		CloseableAONContext toCtx =  null;
-		try {
-			fromCtx = AONContext.getAONContext(schemaName);
+		String validate = req.getParameter(IRequestParamsNames.VALIDATE);
+		String mustFlatten = req.getParameter(IRequestParamsNames.MUST_FLATTEN);
+		ConsoleParams params = new ConsoleParams( )
+			.setValidate( Boolean.valueOf(validate))
+			.setMustFlatten( Boolean.valueOf(mustFlatten));
+		try (
+			CloseableAONContext fromCtx = AONContext.getAONContext(schemaName);
+			CloseableAONContext toCtx = AONContext.getAONContext(newSchemaName) ) {
+			
 			Schema fromSchema = fromCtx.getDslContext().meta()
 				.getSchemas(schemaName)
 				.stream()
@@ -50,8 +54,7 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 				.setDomainName(domainName)
 				);
 			
-			toCtx = AONContext.getAONContext(newSchemaName);
-			Schema toSchema = fromCtx.getDslContext().meta()
+			Schema toSchema = toCtx.getDslContext().meta()
 				.getSchemas(newSchemaName)
 				.stream()
 				.findFirst()
@@ -80,21 +83,6 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 			params.getPrinter().flush();
 			resp.flushBuffer();
 			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet finished!");
-			try {
-				if (fromCtx != null) {
-					fromCtx.close();
-				}
-			} catch (Exception e) {
-				// Nada. Aseguramos el cerrado.
-			}
-			
-			try {
-				if (toCtx != null) {
-					toCtx.close();
-				}
-			} catch (Exception e) {
-				// Nada. Aseguramos el cerrado.
-			}
 		}
 
 	}

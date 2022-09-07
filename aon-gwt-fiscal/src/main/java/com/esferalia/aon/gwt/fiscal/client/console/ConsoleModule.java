@@ -110,12 +110,6 @@ public class ConsoleModule extends MainEntryPoint {
 		opt2.addClickHandler( e -> content.setWidget( new ConsoleDomainIsolate(options) ));
 		optionsGrid.addRow().addCell(opt2);
 		
-		Label opt3 = new Label(AonStringUtils.BULLET + "Traspaso de dominios");
-		opt3.setStyleName(AON.CSS.aonClickableBlock());
-		opt3.addStyleName(AON.CSS.aonPadding());
-		opt3.addClickHandler( e -> content.setWidget( new ConsoleDomainTransfer(options) ));
-//		optionsGrid.addRow().addCell(opt3);
-
 		aonLayout.addWest(sidebar, 275);
 		aonLayout.add(content);
 		

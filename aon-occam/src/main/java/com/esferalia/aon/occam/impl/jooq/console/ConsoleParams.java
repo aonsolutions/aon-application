@@ -15,6 +15,9 @@ public class ConsoleParams {
 	private ConsoleConnectionParams fromConnection;
 	private ConsoleConnectionParams toConnection;
 	
+	private boolean validate;
+	private boolean mustFlatten;
+	
 	private PrintStream	printer;
 	private Map<String,ScriptTable> script;
 	private List<String> errors;
@@ -58,6 +61,22 @@ public class ConsoleParams {
 		return getOccam( ensureToConnection() );
 	}
 	
+	public boolean isValidate() {
+		return validate;
+	}
+	public ConsoleParams setValidate(boolean validate) {
+		this.validate = validate;
+		return this;
+	}
+	
+	public boolean mustFlatten() {
+		return mustFlatten;
+	}
+	public ConsoleParams setMustFlatten(boolean mustFlatten) {
+		this.mustFlatten = mustFlatten;
+		return this;
+	}
+
 	public Map<String, ScriptTable> getScript() {
 		return script;
 	}
