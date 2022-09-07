@@ -2,7 +2,9 @@ package com.code.aon.ui.help.controller;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -10,8 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import org.json.JSONObject;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.util.AonUtil;
@@ -19,8 +21,12 @@ import com.code.aon.web.help.service.drive.DriveService;
 import com.code.aon.web.help.service.drive.GFile;
 import com.code.aon.web.help.service.drive.MimeTypes;
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.news.NewsType;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -29,6 +35,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
+
 
 
 public class HelpController implements Serializable {
@@ -338,7 +345,39 @@ public class HelpController implements Serializable {
 			newsList.add(news);
 			newsMap.put(cat.getName(), newsList);
 		});
+		
 		return newsMap;
+	}
+	
+	public String getNewsImgUrl(Integer attachId) {
+		Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(DomainManager.getCurrentDomain());
+		Attach a = AON.getAttach(domain.getName(), domain.getId(), AonUtil.getRemoteUser(), f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY);
+		if(a != null && a.getId() != null && domain != null && !AonStringUtils.isBlank(domain.getName())) {
+			JSONObject data = new JSONObject();
+			data.put("domain_name", domain.getName());
+			data.put("domain_id", domain.getId());
+			data.put(IJsonNames.ID, a.getId());
+			data.put("attach_type", AttachType.REGISTRY.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			return "ms/api/file/" +  result;
+		}
+		return "";
+	}
+	
+	public String getNewsImgStyle(News news) {
+		String url = getNewsImgUrl(news.getRattach().orElse(null));
+		return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
+	}
+	
+	public static boolean kinouDesuKa(Calendar cal) {
+		if (cal == null) {
+			return false;
+		}
+		
+		Calendar kinou = Calendar.getInstance();
+		kinou.add(Calendar.DAY_OF_YEAR, -1);
+		
+		return AonDateUtils.isSameDay(kinou, cal);
 	}
 	
 	public String formatDate(News news) {
@@ -348,8 +387,21 @@ public class HelpController implements Serializable {
 			return "";
 		}
 		Date date = optDate.get();
+		
+		Calendar currentCalendar = Calendar.getInstance();
+		Calendar dateCalendar = Calendar.getInstance();
+		dateCalendar.setTime(date);
+		
+		String tyFormat = "Publicado %s a las %s:%s";
+		String airedHour = AonStringUtils.leftPad(AonNumberUtils.toString(dateCalendar.get(Calendar.HOUR_OF_DAY)), 2, '0');
+		String airedMinute = AonStringUtils.leftPad(AonNumberUtils.toString(dateCalendar.get(Calendar.MINUTE)), 2, '0');
+		if (AonDateUtils.isSameDay(currentCalendar, dateCalendar)) {
+			return String.format(tyFormat, "hoy", airedHour, airedMinute);
+		} else if (kinouDesuKa(dateCalendar)) {
+			return String.format(tyFormat, "ayer", airedHour, airedMinute);
+		}
+		
 		long millisDiff = new Date().getTime() - date.getTime();
-		double minutesDiff = millisDiff / (1000*60d);
 		double hoursDiff = millisDiff / (1000*60*60d);
 		double daysDiff = hoursDiff / 24;
 		double weeksDiff = daysDiff / 7;
@@ -368,32 +420,30 @@ public class HelpController implements Serializable {
 		} else if (daysDiff >= 1) {
 			int days = (int) daysDiff;
 			return publicadoHace + days + (days > 1 ? " días" : " día");
-		} else if (hoursDiff >= 1) {
-			int hours = (int) hoursDiff;
-			return publicadoHace + hours + (hours > 1 ? " horas" : " hora");
-		} else if (minutesDiff >= 0) {
-			int minutes = (int) minutesDiff;
-			return publicadoHace + minutes + (minutes > 1 ? " minutos" : " minuto");
 		} else {
-			return "Publicado el: " + AonDateUtils.format(date, AonDateUtils.SIMPLE_DATE_FORMAT);
+			String airedDate = AonDateUtils.format(date, AonDateUtils.SIMPLE_DATE_FORMAT);
+			return String.format(tyFormat, "el " + airedDate, airedHour, airedMinute);
 		}
 		
 	}
 	
-	public String categoryImgClass(String categoryName) {
-		if (AonStringUtils.equalsIgnoreCase("fiscal", categoryName)) {
-			return "fiscalImage";
-		} else if (AonStringUtils.equalsIgnoreCase("laboral", categoryName)) {
-			return "laboralImage";
-		} else if (AonStringUtils.equalsIgnoreCase("conecta", categoryName)) {
-			return "conectaImage";
-		} else if (AonStringUtils.equalsIgnoreCase("contabilidad", categoryName)) {
-			return "contabilidadImage";
-		} else if (AonStringUtils.equalsIgnoreCase("configuración", categoryName)) {
-			return "configImage";
-		} else {
-			return "otherImage";			
+	public String categoryImgClass(News news, String categoryName) {
+		if (!news.getRattach().isPresent() || news.getRattach().orElse(0) <= 0) {			
+			if (AonStringUtils.equalsIgnoreCase("fiscal", categoryName)) {
+				return "fiscalImage";
+			} else if (AonStringUtils.equalsIgnoreCase("laboral", categoryName)) {
+				return "laboralImage";
+			} else if (AonStringUtils.equalsIgnoreCase("conecta", categoryName)) {
+				return "conectaImage";
+			} else if (AonStringUtils.equalsIgnoreCase("contabilidad", categoryName)) {
+				return "contabilidadImage";
+			} else if (AonStringUtils.equalsIgnoreCase("configuración", categoryName)) {
+				return "configImage";
+			} else {
+				return "otherImage";			
+			}
 		}
+		return "";
 	}
 
 }
