@@ -2059,12 +2059,13 @@ public class Contrata {
 		String msg = null;
 
 		final List<String> list = Arrays.asList(
-			"sin fecha de t\u00E9rmino", 
-			"f\u00EDsica en la base de datos",
-			"igual o inferior a 90", // previsible inferior o igual a 90 dias
-			"convenio colectivo que autoriza", // previsible mayor a 90 dias
-			"certificado de profesionalidad", // indicar si el trabajador tiene Certificado de Profesionalidad
-            "seleccionar el campo convenio colectivo"
+			"sin fecha de t\u00E9rmino"
+			,"f\u00EDsica en la base de datos"
+			,"igual o inferior a 90" // previsible inferior o igual a 90 dias
+			,"convenio colectivo que autoriza" // previsible mayor a 90 dias
+			,"certificado de profesionalidad" // indicar si el trabajador tiene Certificado de Profesionalidad
+            ,"seleccionar el campo convenio colectivo"
+            ,"sin fecha cierta"
 		);
 
 		for (DomNode p : texts) {
@@ -2106,15 +2107,17 @@ public class Contrata {
 
 		// ---------------------PREVISIBLE---------------------
 		if (Arrays.asList("402", "502").contains(cto.getCodContract())) { // es previsible
-			DomNode previsible = form.querySelector("select[name=preg90dias]");
+			DomNode previsible              = form.querySelector("select[name=preg90dias]");
+			DomNode previsibleAutoriza      = form.querySelector("select[name=AutorizaDuracion]");
+			DomNode periodoActividadJornada = form.querySelector("select[name=periodoActividadJornada]");
+			
 			if (previsible != null) { // previsible inferior o igual a 90 dias
 				((HtmlSelect) previsible).setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
-			} else {
-				DomNode previsibleAutoriza = form.querySelector("select[name=AutorizaDuracion]");
-				if (previsibleAutoriza != null) { // previsible mayor a 90 dias
-					((HtmlSelect) previsibleAutoriza).setSelectedAttribute(cto.getPrevisible() ? "1" : "0", true);
-				}
-			}
+			} else if(previsibleAutoriza!=null){// previsible mayor a 90 dias
+				((HtmlSelect) previsibleAutoriza).setSelectedAttribute(cto.getPrevisible() ? "1" : "0", true);
+			} else if(periodoActividadJornada!=null){// periodo de actividad sin fecha cierta
+				((HtmlSelect) periodoActividadJornada).setSelectedAttribute(cto.getNoCertainDate() ? "S" : "N", true);
+			} 
 		}
 
 		DomNode certificadoProf = form.querySelector("select[name=certificadoProf]");
