@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceTaxProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -134,13 +135,17 @@ public class InvoiceTaxDAO {
 		public static InvoiceTax build(Record r) {
 			InvoiceTax tax = new InvoiceTax()
 				.setId(getValue(r, INVOICE_TAX.ID))
+				.setDomain(getValue(r, INVOICE_TAX.DOMAIN))
 				.setTaxType(TaxType.safeValueOf(getValue(r, INVOICE_TAX.TAX_TYPE)))
 				.setPercentage(getDouble(r, INVOICE_TAX.PERCENTAGE))
 				.setBase(getDouble(r, INVOICE_TAX.BASE))
 				.setSurcharge(getDouble(r, INVOICE_TAX.SURCHARGE))
 				.setQuota(getDouble(r, INVOICE_TAX.QUOTA))
 				.setSurchargeQuota(getDouble(r, INVOICE_TAX.SURCHARGE_QUOTA))
-				.setWithholdingType(WithholdingType.safeValueOf(getValue(r, INVOICE_TAX.WITHHOLDING_TYPE)));
+				.setVatDeductionType(VatDeductionType.safeValueOf(getValue(r, INVOICE_TAX.VAT_DEDUCTION_TYPE)))
+				.setWithholdingType(WithholdingType.safeValueOf(getValue(r, INVOICE_TAX.WITHHOLDING_TYPE)))
+				.setDeductiblePercent(getDouble(r, INVOICE_TAX.DEDUCTIBLE_PERCENT))
+				.setDeductibleQuota(getDouble(r, INVOICE_TAX.DEDUCTIBLE_QUOTA));
 
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
