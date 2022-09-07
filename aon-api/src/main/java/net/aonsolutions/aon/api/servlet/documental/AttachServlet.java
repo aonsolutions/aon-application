@@ -67,6 +67,9 @@ public class AttachServlet extends AonApiHttpServlet{
 		if(json.opt(IJsonNames.SOURCE) != null) 
 			filter = filter.and(f.getSourceTypeProperty().eq(JsonUtils.getByte(json, IJsonNames.SOURCE)));
 		
+		if(json.opt(IJsonNames.ID) != null) 
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.optInteger(json, IJsonNames.ID)));
+
 		return filter;
 	}
 	
