@@ -557,7 +557,7 @@ public class LroeModel140 extends DockLayoutPanel {
 					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted()) {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !InvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {

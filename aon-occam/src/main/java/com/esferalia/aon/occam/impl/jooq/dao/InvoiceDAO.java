@@ -539,7 +539,9 @@ public class InvoiceDAO {
 					.setSurcharge(record.getValue(INVOICE_TAX.SURCHARGE))
 					.setQuota(record.getValue(INVOICE_TAX.QUOTA))
 					.setSurchargeQuota(record.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-					.setWithholdingType(WithholdingType.safeValueOf(record.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));	
+					.setWithholdingType(WithholdingType.safeValueOf(record.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
+					.setDeductiblePercent(record.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
+					.setDeductibleQuota(record.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));	
 		}
 		
 	}

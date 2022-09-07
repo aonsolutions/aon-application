@@ -107,7 +107,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private SEH1C createSEH1CRecord(Delivery delivery, EdiCodes codes) {
 		SEH1C seh1c = new SEH1C();
 		
-		String referenceCode = delivery.getReferenceCode();
+		String referenceCode = isECI(delivery.getCustomer().getDocument()) ? referenceCodeNumber(delivery.getReferenceCode()) : delivery.getReferenceCode();
 		
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
 				.getValue());
@@ -149,26 +149,26 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 	private List<SEH1D> createSEH1DList(Delivery delivery, EdiCodes codes) {
 		List<SEH1D> list = new ArrayList<>();
-
+		boolean eci = isECI(delivery.getCustomer().getDocument());
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-				codes.getMscode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
+				codes.getMscode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), "", eci));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
-				codes.getMrcode(), delivery.getCustomer().getId(), ""));
+				codes.getMrcode(), delivery.getCustomer().getId(), "", eci));
 		
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
-				codes.getSucode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
+				codes.getSucode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), "", eci));
 
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-				codes.getPwcode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
+				codes.getPwcode(), getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), "", eci));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				codes.getDpcode(), delivery.getCustomer().getId(), ""));
+				codes.getDpcode(), delivery.getCustomer().getId(), "", eci));
 		// TODO UC list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC, null, null));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, codes.getBycode(),
-				delivery.getCustomer().getId(), codes.getDepartment()));
+				delivery.getCustomer().getId(), codes.getDepartment(), eci));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, codes.getShcode(),
-				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), ""));
+				getWorkPlace(delivery.getWorkplace().getId()).getEnterprise(), "", eci));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
-				codes.getIvcode(), delivery.getCustomer().getId(), ""));
+				codes.getIvcode(), delivery.getCustomer().getId(), "", eci));
 		
 		return list;
 	}
@@ -306,7 +306,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Información de partes
 	 */
-	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, Integer registryId, String department) {
+	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, Integer registryId, String department, boolean eci) {
 		Registry registry = getRegistry(registryId);
 		SEH1D seh1d = new SEH1D();
 		seh1d.setCalificadorDelInterlocutor(type.getValue());
@@ -333,10 +333,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
+		
+		boolean eciDP = eci && SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP.equals(type);
 		seh1d.setCalificadorReferencia1("API");
 		seh1d.setReferencia1(department);
-		seh1d.setFuncionDeContacto(null);
-		seh1d.setDepartamentoOIdentificacionDelEmpleado(null);
+		seh1d.setFuncionDeContacto(eciDP ? "DL" : null);
+		seh1d.setDepartamentoOIdentificacionDelEmpleado(eciDP ? "PERECEDEROS" : null);
 		seh1d.setDepartamentoOEmpleado(null);
 		seh1d.setCalificadorReferencia2(null);
 		seh1d.setReferencia2(null);
