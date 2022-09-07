@@ -126,8 +126,10 @@ public class NewsServlet extends AonApiHttpServlet{
 		validateSave(params);
 		
 		News news = NewsJSON.fromJSON(params);
+		
+		Integer rattachId = saveAttach(api, news.getRattach());
 
-		news.setRattach(saveAttach(api, news.getRattach()));
+		news.setRattach(rattachId);
 
 		return NewsJSON.toJSON(
 			AON_SOLUTIONS.saveNews(api.getDomain(), api.getUser(), news)
@@ -180,6 +182,7 @@ public class NewsServlet extends AonApiHttpServlet{
 					attach.setDescription(description);
 					
 					rattachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
+					System.out.println(rattachId);
 				}
 			}
 		}
