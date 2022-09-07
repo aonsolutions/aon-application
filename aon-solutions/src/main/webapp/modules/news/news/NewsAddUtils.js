@@ -185,26 +185,26 @@ const buildUnloadFile = (parent, news)=>{
   
     
     aonUpload.addEventListener(EVENT.UPLOAD, ({detail}) => {
-        getReader(detail).then( async(f) => {
+   
+        if(!news.getRattach()){
+            getReader(detail).then( async(f) => {
        
-            f.attachType = attachType;
-
-            news.setAttach(f);
-
-            if(news.getId()){
-                await aonNewsAdd.save(false);
-                news.setAttach({});
-            }
-        });
+                f.attachType = attachType;
+    
+                news.setAttach(f);
+            });
+        }
     });
     
     aonUpload.addEventListener(EVENT.DELETE, async () => {
-        news.attach = null;
         if(news.getId()){
-            await aonNewsAdd.save(false);
+
             const id = news.getRattach();
             if(id){
-                deleteAttach({attachType, id});
+                news.setRattach(null);
+
+                await aonNewsAdd.save(false);
+                await deleteAttach({attachType, id});
             }
         }
     });

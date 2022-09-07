@@ -164,6 +164,9 @@ export class AonNewsAdd extends AonElement {
           const aonNewsAdd = new AonNewsAdd();
           aonNewsAdd.data = news;
           this.applicationEl.setContent(aonNewsAdd);
+        } else {
+          this.news.setAttach({})
+          this.news.setRattach(news.rattach);  
         }
       }
     } catch (error) {
