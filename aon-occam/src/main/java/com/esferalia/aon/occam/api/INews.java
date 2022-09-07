@@ -15,5 +15,5 @@ public interface INews {
 	
 	public News saveNews(AONContext ctx, News category);
 	
-	public void deleteNews(AONContext ctx, Integer id);
+	public void deleteNews(AONContext ctx, News news);
 }

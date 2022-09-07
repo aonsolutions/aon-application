@@ -1,10 +1,14 @@
 import { CreateComponent } from "../../../components/CreateComponent.js";
 import { CONSTANT, CSS, MSG, TAG, EVENT, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { createDiv, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { getAttach, deleteAttach } from '../../../services/fileService.js';
+import { getReader } from '../../../services/utils.js';
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { AonTextareaEditor } from "../../../components/aon-textarea-editor.js";
 import { NewsEnums } from "../NewsEnums.js";
 import {AonCategoryAdd} from "../../category/aon-category-add.js";
+import { AonUpload } from "../../../components/aon-upload.js";
+
 
 
 const createForm = (id, parent) => {
@@ -37,7 +41,7 @@ const buildFormGeneral = (parent, news) => {
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
-    CreateComponent.createAonSelect({
+    const scope = CreateComponent.createAonSelect({
         attributes:{
             name:"scope",
             id:"scope",
@@ -47,8 +51,8 @@ const buildFormGeneral = (parent, news) => {
             required:true
         },
         events:{
-            change: ({target}) => {
-                news.setScope(target.value ? target.getDetail(): undefined);
+            change: () => {
+                news.setScope(scope.value ? scope.getDetail(): undefined);
             }
         }
     }, divC.element);
@@ -142,10 +146,68 @@ const buildFormGeneral = (parent, news) => {
       },
       divC.element
     );
+    
+    buildUnloadFile(parent, news);
 
+    // AonUpload
     news.setType("COMMUNICATION");
 
     // buildNews(parent, true);
+}
+
+const buildUnloadFile = (parent, news)=>{
+    const aonNewsAdd = document.getElementById(NewsEnums.VIEWS_NEWS.AON_NEWS_ADD);
+    
+    let divC = createDiv({classes:[CSS.AON_COL_XS_12], styles: {marginTop:"12px"}});
+    divC.appendTo(parent);
+
+    let aonUpload = new AonUpload();
+    aonUpload.id = 'NewsUpload';
+    aonUpload.setMessage(MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND);
+    aonUpload.setDeleteMessage(MSG.DELETE_BACKGROUND_CONFIRM);
+    divC.appendChild(aonUpload);
+
+    const attachType = "registry";
+
+    if(news.getRattach()){
+
+        let filter = {
+          id: news.getRattach(),
+          attachType
+        };
+    
+        getAttach(filter).then(attach => {
+            if(attach && attach.id){
+                aonUpload.setAttach(attach);
+            }
+        });
+      }
+  
+    
+    aonUpload.addEventListener(EVENT.UPLOAD, ({detail}) => {
+        getReader(detail).then( async(f) => {
+       
+            f.attachType = attachType;
+
+            news.setAttach(f);
+
+            if(news.getId()){
+                await aonNewsAdd.save(false);
+                news.setAttach({});
+            }
+        });
+    });
+    
+    aonUpload.addEventListener(EVENT.DELETE, async () => {
+        news.attach = null;
+        if(news.getId()){
+            await aonNewsAdd.save(false);
+            const id = news.getRattach();
+            if(id){
+                deleteAttach({attachType, id});
+            }
+        }
+    });
 }
 
 /**
@@ -154,7 +216,8 @@ const buildFormGeneral = (parent, news) => {
 const buildCategory = (parent, news) => {
     let divC = createDiv({classes:[CSS.AON_COL_XS_11]})
     divC.appendTo(parent);
-    CreateComponent.createAonSelect({
+    
+    const category = CreateComponent.createAonSelect({
         attributes:{
             name:"category",
             id:"category",
@@ -164,8 +227,8 @@ const buildCategory = (parent, news) => {
             required: true
         },
         events:{
-            change: ({target}) => {
-                news.setCategory(target.value ? target.getDetail(): undefined);
+            change: () => {
+                news.setCategory(category.value ? category.getDetail(): undefined);
             }
         }
     }, divC.element);
@@ -276,7 +339,7 @@ const openCategoryDialog = () => {
 //     divCategory.id = "divCategory";
 //     parent.appendChild(divCategory);
 
-//     CreateComponent.createAonSelect({
+//     const category = CreateComponent.createAonSelect({
 //         attributes:{
 //             name:"category",
 //             id:"category",
@@ -286,7 +349,7 @@ const openCategoryDialog = () => {
 //         },
 //         events:{
 //             change: ({target}) => {
-//                 news.setCategory(target.getDetail());
+//                 news.setCategory(category.getDetail());
 //             }
 //         }
 //     }, divCategory);

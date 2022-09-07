@@ -29,7 +29,7 @@ public class News  implements Serializable{
 	private NewsType type;
 	private Scope scope;
 	
-//	private Integer rattach;
+	private Integer rattach;
 //	private Integer template;
 
 	public Integer getId() {
@@ -146,6 +146,15 @@ public class News  implements Serializable{
 	
 	public News setScope(Scope scope) {
 		this.scope = scope;
+		return this;
+	}
+	
+	public Optional<Integer> getRattach() {
+		return Optional.ofNullable(rattach);
+	}
+	
+	public News setRattach(Integer rattach) {
+		this.rattach = rattach;
 		return this;
 	}
 }

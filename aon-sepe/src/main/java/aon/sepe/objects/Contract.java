@@ -42,6 +42,8 @@ public class Contract {
 	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion
 								// previsible ?
 	private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
+	
+	private boolean noCertainDate; // ¿ Periodo de actividad es sin fecha cierta.?
 
 	// Para las transformaciones
 	private DiscontinuoReason discontinuoReason;
@@ -194,8 +196,8 @@ public class Contract {
 		return discontinuo;
 	}
 
-	public void setDiscontinuo(boolean discontinuo) {
-		this.discontinuo = discontinuo;
+	public boolean getNoCertainDate() {
+		return noCertainDate;
 	}
 	
 	public List<ContractDetail> getDetails() {
@@ -245,6 +247,8 @@ public class Contract {
 									// previsible ?
 		private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
 
+		private boolean noCertainDate; // ¿ Periodo de actividad es sin fecha cierta.?
+		
 		// Para la transformacion
 		private Date oldDateIniContract;
 		private Date oldDateFinContract;
@@ -436,6 +440,11 @@ public class Contract {
 			return this;
 		}
 		
+		public ContractBuilder setNoCertainDate(boolean noCertainDate) {
+			this.noCertainDate = noCertainDate;
+			return this;
+		}
+		
 		public ContractBuilder setDetails(List<ContractDetail> details) {
 			this.details = details;
 			return this;
@@ -485,6 +494,7 @@ public class Contract {
 			contract.titulacion = this.titulacion;
 			contract.certificateProfessional = this.certificateProfessional;
 			contract.details = this.details;
+			contract.noCertainDate = this.noCertainDate;
 			return contract;
 		}
 	}
