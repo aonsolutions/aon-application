@@ -172,6 +172,17 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		return list;
 	}
+	
+	private List<IngenetPackaging> getPackageList(String packageData) {
+		String[] b = packageData.split("\\]\\[");
+		LinkedList<IngenetPackaging> packageList = new LinkedList<>();
+		Integer cont = 0;
+		while(cont < b.length) {
+			packageList.add(IngenetPackaging.parse(b[cont]));
+			cont++;
+		}
+		return packageList;
+	}
 
 	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();
@@ -180,6 +191,25 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 						.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
 						.collect(Collectors.toList())
 				: delivery.getDetails();
+		
+// TODO
+//		List<IngenetPackaging> packageList = getPackageList(packageData);
+//		List<IngenetPackaging> ssccList = packageList.stream().filter(f -> f.hasSscc()).collect(Collectors.toCollection(LinkedList::new));
+//	
+//		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null);
+//		list.add(mainPackage);
+//		for (Integer i = 0; i < ssccList.size(); i++) {
+//			IngenetPackaging sscc = ssccList.get(i);
+//
+//			IngenetPackaging aux = packageList.stream().filter(f -> f.hasCont() && f.getCont().equals(sscc.getEnv())).findFirst().orElse(null);
+//			if(aux != null) {
+//				aux.getEnv();
+//				SEH1P packaging  = createSEH1PRecord(i + 2, ssccList.size(), "CT", sscc.getSscc());
+//				packaging.seh1lList = new ArrayList<>();				
+//			}
+//
+//		
+//		}
 		
 		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
 		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
