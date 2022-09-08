@@ -194,7 +194,7 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	print() {
-		openFileUrl(this.fileUrl);
+		openFileUrl(this.fileUrl, 'application/pdf');
 	}
 
 	

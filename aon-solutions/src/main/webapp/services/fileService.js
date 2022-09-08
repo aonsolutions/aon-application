@@ -21,10 +21,10 @@ export const getFileUrl = (data) =>{
 });
 }
 
-export const openFileUrl = async (url) => {
+export const openFileUrl = async (url, type) => {
   try {
     if (webkitRequestMobile()){
-      await openFileMobile(url).then(async (obj) => await actionRequestMobile(obj));
+      await openFileMobile(url, type).then(async (obj) => await actionRequestMobile(obj));
     } else {
       openFileDesktop(url);
     }
