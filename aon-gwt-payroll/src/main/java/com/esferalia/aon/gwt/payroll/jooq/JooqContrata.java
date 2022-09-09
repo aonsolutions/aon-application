@@ -592,7 +592,7 @@ public class JooqContrata {
 	private static void completeDatosEtt(DATOSETTTYPE datos, ContractSpecificData contractSpecificData) {
 		if(datos != null){
 			contractSpecificData.setTemporalWorkEnterprise(true);
-			contractSpecificData.setNif(datos.getCIFNIFEMPRESAUSUARIA().getCIFNIF());
+			contractSpecificData.setNif(null != datos.getCIFNIFEMPRESAUSUARIA() ? datos.getCIFNIFEMPRESAUSUARIA().getCIFNIF() : null);
 			contractSpecificData.setSocialReason(datos.getRAZONSOCIALEMPRESAUSUARIA());
 			contractSpecificData.setContractTemplate(!AonStringUtils.isBlank(datos.getINDCTOPLANTILLA()) && datos.getINDCTOPLANTILLA().equals("S"));
 			contractSpecificData.setForeignEnterprise(!AonStringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
@@ -1116,8 +1116,9 @@ public class JooqContrata {
 		DATOSETTTYPE datos = new DATOSETTTYPE();
 		datos.setCIFNIFEMPRESAUSUARIA(employeeContractInfo.getContractSpecificData().getNif()!=null?createCifNif(employeeContractInfo.getContractSpecificData().getNif()):null);
 		datos.setRAZONSOCIALEMPRESAUSUARIA(employeeContractInfo.getContractSpecificData().getSocialReason());
-		datos.setINDCTOPLANTILLA(employeeContractInfo.getContractSpecificData().getContractTemplate()?"S":null);
-		datos.setINDEMPRESAEXTRANJERA(employeeContractInfo.getContractSpecificData().getForeignEnterprise()?"S":null);
+		Boolean contractTemplate = employeeContractInfo.getContractSpecificData().getContractTemplate();
+		datos.setINDCTOPLANTILLA(null != contractTemplate && contractTemplate ? "S" : null);
+		datos.setINDEMPRESAEXTRANJERA(null != contractTemplate && contractTemplate ? "S" : null);
 		return datos;
 	}
 
