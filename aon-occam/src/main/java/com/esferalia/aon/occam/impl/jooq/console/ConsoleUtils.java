@@ -27,6 +27,19 @@ class ConsoleUtils {
 	private ConsoleUtils() {
 	}
 
+	static void disableForeignKeys(ConsoleParams params) {
+		String cmd = "SET FOREIGN_KEY_CHECKS=0";
+		params.getToDslContext().execute(cmd);
+		ConsoleUtils.log(params,"** Foreign keys disabled");
+	}
+	
+	static void enableForeignKeys(ConsoleParams params) {
+		String cmd = "SET FOREIGN_KEY_CHECKS=1";
+		params.getToDslContext().execute(cmd);
+		ConsoleUtils.log(params,"** Foreign keys enabled");
+	}
+
+	
     static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(UniqueKey<U> key,
             Table<R> table, String name, TableField<R, ?> field) {
         return new WeakForeignKey<>(key, table, name, field);

@@ -93,8 +93,9 @@ public class ConsoleIsolateDomain {
 			if (!params.hasErrors()) {
 				isolateDomain(params);		
 			}
+		} else {
+			isolateDomain(params);
 		}
-		isolateDomain(params);
 	}
 
 	private static void isolateDomain(ConsoleParams params) {
@@ -123,7 +124,7 @@ public class ConsoleIsolateDomain {
 					ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
 				});
 			
-			disableForeignKeys(params);
+			ConsoleUtils.disableForeignKeys(params);
 			ConsoleUtils.log(params,"** Start transaction!");
 			
 
@@ -163,7 +164,7 @@ public class ConsoleIsolateDomain {
 				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
 			}
 			ConsoleUtils.log(params,"** Program ended!");
-			enableForeignKeys(params);
+			ConsoleUtils.enableForeignKeys(params);
 		}
 	}
 
@@ -494,19 +495,6 @@ public class ConsoleIsolateDomain {
 				.execute());
 	}
 
-	private static void disableForeignKeys(ConsoleParams params) {
-		String cmd = "SET FOREIGN_KEY_CHECKS=0";
-		params.getToDslContext().execute(cmd);
-		ConsoleUtils.log(params,"** Foreign keys disabled");
-	}
-	
-	private static void enableForeignKeys(ConsoleParams params) {
-		String cmd = "SET FOREIGN_KEY_CHECKS=1";
-		params.getToDslContext().execute(cmd);
-		ConsoleUtils.log(params,"** Foreign keys enabled");
-	}
-	
-	
 	@SuppressWarnings("unchecked")
 	private static <T extends Record> Field<Integer> getDomainField(Table<T> table) {
 		return (TableField<T, Integer>) table.field(DOMAIN_FIELD);
