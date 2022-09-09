@@ -87,7 +87,6 @@ public class CategoryServlet extends AonApiHttpServlet{
 		);
 	}
 
-	
 	private JSONObject saveCategory(AonApiData api) {
 		JSONObject params = api.getData();
 		

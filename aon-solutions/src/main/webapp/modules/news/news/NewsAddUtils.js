@@ -242,7 +242,7 @@ const buildCategory = (parent, news) => {
             title:`Crear canal`
         },
         events:{
-            click: () =>{  openCategoryDialog() }
+            click: () =>{  openCategoryDialog(category.getDetail()) }
         }
     }, divC.element);
 
@@ -253,7 +253,10 @@ const buildCategory = (parent, news) => {
 }
 
 
-const openCategoryDialog = () => {
+const openCategoryDialog = (category) => {
+
+    const categoryExist = category && category.id;
+
     const aonNewsAdd = document.getElementById(NewsEnums.VIEWS_NEWS.AON_NEWS_ADD);
     const application = aonNewsAdd.getApplication();
     
@@ -265,11 +268,36 @@ const openCategoryDialog = () => {
     dialog.clear();
     dialog.setTitle("Canal");
         
-
     const aonCategoryAdd = new AonCategoryAdd();
+    if(category && category.id){
+        aonCategoryAdd.data = category;
+    }
     aonCategoryAdd.type = "ARTICLE";
     dialog.setContent(aonCategoryAdd);
 
+    if(categoryExist){
+        const btnRemove = dialog.addCancelAction(() =>{
+            application.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM+` ${category.name}`, async()=>{
+                try {
+                    const success = await aonCategoryAdd.delete();
+                    if(success){
+                        const categoryEl = document.getElementById("category");
+
+                        if(categoryEl && category.id ==categoryEl.value){
+                            categoryEl.clear();
+                        }
+ 
+                        aonNewsAdd.getCategorys();
+                        dialog.close();
+                    }
+                } catch (error) {
+                    application.showError(error);
+                }
+            });
+        }, false);
+
+        btnRemove.innerHTML = MSG.DELETE;
+    }
     
     dialog.addSendAction(async()=>{
         application.startLoading();
@@ -282,7 +310,9 @@ const openCategoryDialog = () => {
 
         application.stopLoading();
   
-    }, MSG.CREATE)
+    }, MSG.SAVE);
+
+
         
     dialog.open();
 }

@@ -13,6 +13,7 @@ export class AonCategoryAdd extends AonElement {
     category;
     type;
     id;
+    data;
     
 	connectedCallback () {
 		this.initialize();
@@ -22,7 +23,9 @@ export class AonCategoryAdd extends AonElement {
 	
     initialize() {
         this.id = "aonCategoryAdd";
-        this.setCategory(null);
+        this.setCategory(this.data);
+
+        // console.log(this.category);
 	}
 
 	build() {
@@ -39,7 +42,8 @@ export class AonCategoryAdd extends AonElement {
             attributes:{
                 id:this.id+"category",
                 description:MSG.NAME,
-                required:true
+                required:true,
+                value: this.category.getName() || ""
             },
             events:{
                 keyup: ({target}) => {
@@ -55,11 +59,14 @@ export class AonCategoryAdd extends AonElement {
             title: MSG.DESCRIPTION,
             required:true
         });
+        
+        descriptionEl.value = this.category.getDescription() || "";
+  
         descriptionEl.addEventListener(EVENT.KEYUP, ({target})=>{
             this.category.setDescription(target.value);
         });
         table.addCell(descriptionEl);
-  
+
 
 		table.addRow();
         const scope = CreateComponent.createAonSelect({
@@ -82,7 +89,8 @@ export class AonCategoryAdd extends AonElement {
         const urlEl = CreateComponent.createAonInput({
             attributes:{
                 id:this.id+"url",
-                description:"URL"
+                description:"URL",
+                value: this.category.getUrl() || ""
             },
             events:{
                 keyup: ({target}) => {
@@ -102,17 +110,23 @@ export class AonCategoryAdd extends AonElement {
     async getScopes(){
         const scopes = await getScopes();
         if(scopes.length){
+          const scope = this.category.getScope();
+
           const options = scopes.map(scope => ({...scope, value:scope.id}));
           let scopeEl = document.getElementById(this.id+"scope");
           scopeEl.setOptions(options);
+
+          if(scope){
+            scopeEl.value = scope;
+          }
         }
     }
     
 	async save() {
         try{
-            const category = await CategoryService.saveCategory(this.category);
+            const {id} = await CategoryService.saveCategory(this.category);
             
-            this.category.id = category.id;
+            this.category.setId(id);
 
             this.showToast({
                 type: 'success',
@@ -132,6 +146,21 @@ export class AonCategoryAdd extends AonElement {
             this.category.setType(this.type);
         }
 	}
+
+    async delete(){
+        try {
+            await CategoryService.deleteCategory(this.category);
+            this.showToast({message:MSG.DELETED_DATA});
+            return true;
+        } catch (error) {
+            this.showError(error);
+        }
+        return false;
+    }
+
+    isEdit(){
+        return this.category.getId();
+    }
 }
 
 if(!window.customElements.get("aon-category-add")){

@@ -219,7 +219,6 @@ export class AonAutosizeTextarea extends AonElement {
         this.TEXTAREA.style.display = "block";
         this.TEXTAREA.style.backgroundColor = "transparent";
         this.TEXTAREA.style.border = "none";
-        this.TEXTAREA.style.height = "auto";
         this.TEXTAREA.style.overflowY = "scroll";
         this.TEXTAREA.style.maxHeight = this._scrollLimit;
         // this.TEXTAREA.style.height = lineHeight;
@@ -230,6 +229,7 @@ export class AonAutosizeTextarea extends AonElement {
         this.TEXTAREA.tabIndex = 0;
 
         this.TEXTAREA.addEventListener("input", ({target}) => {
+            console.log("target.scrollHeight", target.scrollHeight);
             target.style.height = "auto";
             target.style.height = target.scrollHeight + "px";
 
