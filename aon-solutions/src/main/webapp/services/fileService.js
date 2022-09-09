@@ -1,5 +1,5 @@
 
-import { post, openFileMobile, openFileDesktop, webkitRequestMobile, actionRequestMobile, requestFile, get, remove } from "./request.js";
+import { post, openFileMobile, openFileDesktop, webkitRequestMobile, sendActionMobile, requestFile, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const uploadFile = (data) => post(`${API_URL}/file`, data);
@@ -24,7 +24,7 @@ export const getFileUrl = (data) =>{
 export const openFileUrl = async (url, type) => {
   try {
     if (webkitRequestMobile()){
-      await openFileMobile(url, type).then(async (obj) => await actionRequestMobile(obj));
+      await openFileMobile(url, type).then(async (obj) => await sendActionMobile(obj));
     } else {
       openFileDesktop(url);
     }

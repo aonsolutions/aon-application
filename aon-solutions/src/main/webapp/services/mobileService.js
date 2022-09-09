@@ -1,8 +1,8 @@
-import { webkitRequestMobile, actionRequestMobile } from "./request.js";
+import { webkitRequestMobile, sendActionMobile } from "./request.js";
 
 export const webkitMobile = () => webkitRequestMobile();
 
-export const mobileAction = (data) => actionRequestMobile(data);
+export const mobileAction = (data) => sendActionMobile(data);
 
 export const MOBILE_ACTION = {
     CAMERA: 'camera', //OPEN CAMERA
