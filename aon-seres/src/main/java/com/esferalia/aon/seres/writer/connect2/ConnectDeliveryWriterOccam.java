@@ -94,7 +94,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		rectl.seh1c = createSEH1CRecord(delivery, codes);
 		rectl.seh1dList = createSEH1DList(delivery, codes);
-		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
+//		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
+		rectl.seh1pList = createSEH1PList2(delivery, packageData, codes);
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -184,7 +185,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return packageList;
 	}
 
-	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
+	private List<SEH1P> createSEH1PList2(Delivery delivery, String packageData, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();
 		List<DeliveryDetail> detailList = delivery.getDetails().isEmpty()
 				? getDetailList(delivery.getId()).stream()
@@ -210,71 +211,83 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				DeliveryDetail auxDetail = detailList.stream().filter(f-> f.getLine() == aux.getEnv().shortValue()).findFirst().orElse(new DeliveryDetail());
 				Double quantity = auxDetail.getQuantity();
 				SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc());
+				packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+
 				packaging.seh1lList = new ArrayList<>();
-				packaging.seh1lList.add(createSEH1LRecord( sscc.getLin(), delivery, detail, null, codes));
+				packaging.seh1lList.add(createSEH1LRecord( sscc.getLin(), delivery, detail, quantity, codes));
 				list.add(packaging);
 			}
-
-		
 		}
 		
-//		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
-//		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
-//		Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
-//		Map<Integer, String> ssccMap = DeliveryPackages.loadSSCCMap(packageData);
-//		
-//		int mainPackageLine = 0;
-//		int packageLine = 0;
-//		int mainPackageSize = 0;
-//		for(Entry<Integer, List<Integer>> entry: level1Map.entrySet()) {
-//			Integer level1Key = entry.getKey();
-//			List<Integer> packageLineList = entry.getValue();
-//
-//			// MAIN-PACKAGE
-//			mainPackageSize = (int)detailList.stream()
-//				.filter(detail->packageLineList.contains((int)detail.getLine()))
-//				.mapToDouble(DeliveryDetail::getQuantity).sum();
-//			mainPackageLine = ++packageLine;
-//			SEH1P mainPackage = createSEH1PRecord(mainPackageLine, mainPackageSize, "201", null);
-//			mainPackage.seh1lList = new ArrayList<>();
-//			list.add(mainPackage);
-//			
-//			// SUB-PACKAGE OR PRODUCT OVER MAIN-PACKAGE
-//			for(Entry<Integer, List<Integer>> entry2: level2Map.entrySet()){
-//				Integer level2Key = entry2.getKey();
-//				if(packageLineList.contains(level2Key)){		
-//					List<Integer> level2LineList = entry2.getValue();
-//					for(int level2LineId: level2LineList){
-//						DeliveryDetail level2Detail = detailList.get(level2LineId-1);
-//						if(!isPackageItem(level2Detail.getItem().getId())) {
-//							Integer mainPackageKey = level1Map.get(level1Key).get(0);
-//							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
-//							int lineNumber = mainPackage.seh1lList.size()+1;
-//							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null, codes));
-//						} else {
-//							SEH1P subPackage = null;
-//							
-//							// PRODUCT OVER SUB-PACKAGE, IF EXIST
-//							List<Integer> level3List = level3Map.get((int)level2Detail.getLine());
-//							List<Integer> level3LineList = level3List != null
-//									? new LinkedList<>(level3List)
-//									: new LinkedList<>();
-//							for(int level3LineId: level3LineList){
-//								DeliveryDetail level3Detail = detailList.get(level3LineId-1);
-//								SEH1P p = searchExistingPackage(list, level3Detail, ssccMap.get(level2Key));
-//								if(p==null && subPackage==null){
-//									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT", ssccMap.get(level2Key));
-//									subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-//									subPackage.seh1lList = new ArrayList<>();
-//									list.add(subPackage);
-//								}
-//								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key), codes);
-//							}
-//						}
-//					}
-//				}				
-//			}	
-//		}
+		return list;
+	}
+	
+
+	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
+		List<SEH1P> list = new ArrayList<>();
+		List<DeliveryDetail> detailList = delivery.getDetails().isEmpty()
+				? getDetailList(delivery.getId()).stream()
+						.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
+						.collect(Collectors.toList())
+				: delivery.getDetails();
+		
+		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
+		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
+		Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
+		Map<Integer, String> ssccMap = DeliveryPackages.loadSSCCMap(packageData);
+		
+		int mainPackageLine = 0;
+		int packageLine = 0;
+		int mainPackageSize = 0;
+		for(Entry<Integer, List<Integer>> entry: level1Map.entrySet()) {
+			Integer level1Key = entry.getKey();
+			List<Integer> packageLineList = entry.getValue();
+
+			// MAIN-PACKAGE
+			mainPackageSize = (int)detailList.stream()
+				.filter(detail->packageLineList.contains((int)detail.getLine()))
+				.mapToDouble(DeliveryDetail::getQuantity).sum();
+			mainPackageLine = ++packageLine;
+			SEH1P mainPackage = createSEH1PRecord(mainPackageLine, mainPackageSize, "201", null);
+			mainPackage.seh1lList = new ArrayList<>();
+			list.add(mainPackage);
+			
+			// SUB-PACKAGE OR PRODUCT OVER MAIN-PACKAGE
+			for(Entry<Integer, List<Integer>> entry2: level2Map.entrySet()){
+				Integer level2Key = entry2.getKey();
+				if(packageLineList.contains(level2Key)){		
+					List<Integer> level2LineList = entry2.getValue();
+					for(int level2LineId: level2LineList){
+						DeliveryDetail level2Detail = detailList.get(level2LineId-1);
+						if(!isPackageItem(level2Detail.getItem().getId())) {
+							Integer mainPackageKey = level1Map.get(level1Key).get(0);
+							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
+							int lineNumber = mainPackage.seh1lList.size()+1;
+							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null, codes));
+						} else {
+							SEH1P subPackage = null;
+							
+							// PRODUCT OVER SUB-PACKAGE, IF EXIST
+							List<Integer> level3List = level3Map.get((int)level2Detail.getLine());
+							List<Integer> level3LineList = level3List != null
+									? new LinkedList<>(level3List)
+									: new LinkedList<>();
+							for(int level3LineId: level3LineList){
+								DeliveryDetail level3Detail = detailList.get(level3LineId-1);
+								SEH1P p = searchExistingPackage(list, level3Detail, ssccMap.get(level2Key));
+								if(p==null && subPackage==null){
+									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT", ssccMap.get(level2Key));
+									subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+									subPackage.seh1lList = new ArrayList<>();
+									list.add(subPackage);
+								}
+								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key), codes);
+							}
+						}
+					}
+				}				
+			}	
+		}
 		
 		return list;
 	}
