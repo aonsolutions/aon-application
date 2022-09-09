@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.AlterSalaryAddIndexSocialSecurityNumber;
+import net.aonsolutions.db.up2date.payroll.MaxEmbargableFix;
 
 public class Up2Date {
 
@@ -261,7 +262,8 @@ public class Up2Date {
     		//AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
     		//ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
     		//IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
-    		AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER
+    		//AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER
+    		MaxEmbargableFix.MAXEMBARGABLEFIX
     };
 
     

@@ -94,7 +94,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		rectl.seh1c = createSEH1CRecord(delivery, codes);
 		rectl.seh1dList = createSEH1DList(delivery, codes);
-		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
+//		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
+		rectl.seh1pList = createSEH1PList2(delivery, packageData, codes);
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -172,6 +173,55 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		return list;
 	}
+	
+	private List<IngenetPackaging> getPackageList(String packageData) {
+		String[] b = packageData.split("\\]\\[");
+		LinkedList<IngenetPackaging> packageList = new LinkedList<>();
+		Integer cont = 0;
+		while(cont < b.length) {
+			packageList.add(IngenetPackaging.parse(b[cont]));
+			cont++;
+		}
+		return packageList;
+	}
+
+	private List<SEH1P> createSEH1PList2(Delivery delivery, String packageData, EdiCodes codes) {
+		List<SEH1P> list = new ArrayList<>();
+		List<DeliveryDetail> detailList = delivery.getDetails().isEmpty()
+				? getDetailList(delivery.getId()).stream()
+						.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
+						.collect(Collectors.toList())
+				: delivery.getDetails();
+		
+ 
+		List<IngenetPackaging> packageList = getPackageList(packageData);
+		List<IngenetPackaging> ssccList = packageList.stream().filter(f -> f.hasSscc()).collect(Collectors.toCollection(LinkedList::new));
+		
+		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null);
+		mainPackage.seh1lList = new ArrayList<>();
+		list.add(mainPackage);
+		for (Integer i = 0; i < ssccList.size(); i++) {
+			IngenetPackaging sscc = ssccList.get(i);
+
+			IngenetPackaging aux = packageList.stream().filter(f -> f.hasCont() && f.getCont().equals(sscc.getEnv())).findFirst().orElse(null);
+			if(aux != null) {
+				aux.getEnv();
+				DeliveryDetail detail = detailList.stream().filter(f-> f.getLine() == sscc.getLin().shortValue()).findFirst().orElse(new DeliveryDetail());
+				
+				DeliveryDetail auxDetail = detailList.stream().filter(f-> f.getLine() == aux.getEnv().shortValue()).findFirst().orElse(new DeliveryDetail());
+				Double quantity = auxDetail.getQuantity();
+				SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc());
+				packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+
+				packaging.seh1lList = new ArrayList<>();
+				packaging.seh1lList.add(createSEH1LRecord( sscc.getLin(), delivery, detail, quantity, codes));
+				list.add(packaging);
+			}
+		}
+		
+		return list;
+	}
+	
 
 	private List<SEH1P> createSEH1PList(Delivery delivery, String packageData, EdiCodes codes) {
 		List<SEH1P> list = new ArrayList<>();

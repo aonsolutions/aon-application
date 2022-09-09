@@ -41504,6 +41504,7 @@ CREATE TABLE `salary` (
   PRIMARY KEY (`id`),
   KEY `IDX_SALARY_CONTRACT` (`contract`),
   KEY `IDX_SALARY_DOMAIN` (`domain`),
+  KEY `IDX_SALARY_SOCIAL_SECURITY_NUMBER` (`social_security_number`),
   CONSTRAINT `FK_SALARY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_SALARY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=552 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
@@ -59989,4 +59990,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-04 20:10:16
+-- Dump completed on 2022-09-07 14:47:19

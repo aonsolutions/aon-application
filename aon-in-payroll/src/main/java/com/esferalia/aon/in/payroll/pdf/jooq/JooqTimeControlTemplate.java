@@ -35,6 +35,7 @@ public class JooqTimeControlTemplate {
 //	}
 	public static void generateTimeControlTemplate(OutputStream os, String domainName, String user, Integer enterpriseId, Date period) throws CanNotCreatePdfException {
 		Calendar cal = Calendar.getInstance();
+		cal.setTime(period);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		java.sql.Date sqlDate = new java.sql.Date(cal.getTimeInMillis());
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {

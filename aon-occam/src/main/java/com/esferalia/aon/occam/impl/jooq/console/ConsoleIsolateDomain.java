@@ -88,7 +88,14 @@ public class ConsoleIsolateDomain {
 			ConsoleUtils.log(params,msg);
 			throw new AonCoreException(msg);
 		}
-		isolateDomain(params);
+		if (params.isValidate()) {
+			ConsoleDomainCheckIntegrity.check(params);
+			if (!params.hasErrors()) {
+				isolateDomain(params);		
+			}
+		} else {
+			isolateDomain(params);
+		}
 	}
 
 	private static void isolateDomain(ConsoleParams params) {
@@ -117,7 +124,7 @@ public class ConsoleIsolateDomain {
 					ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
 				});
 			
-			disableForeignKeys(params);
+			ConsoleUtils.disableForeignKeys(params);
 			ConsoleUtils.log(params,"** Start transaction!");
 			
 
@@ -126,7 +133,7 @@ public class ConsoleIsolateDomain {
 				createDomain(params);
 				checkProductIndex( params );
 				checkNoticeRecipient( params );
-				if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
+				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
 					passHeritableTables( params );
 				}
 				params.getScript()
@@ -157,12 +164,12 @@ public class ConsoleIsolateDomain {
 				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
 			}
 			ConsoleUtils.log(params,"** Program ended!");
-			enableForeignKeys(params);
+			ConsoleUtils.enableForeignKeys(params);
 		}
 	}
 
 	private static void checkProductIndex(ConsoleParams params) {
-		if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
+		if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
 			AggregateFunction<Integer> count = DSL.count(PRODUCT.ID);
 			params.getFromDslContext()
 				.select( PRODUCT.CODE, count )
@@ -183,7 +190,7 @@ public class ConsoleIsolateDomain {
 	
 	private static void checkNoticeRecipient(ConsoleParams params ) {
 		Integer[] domainIds = null;
-		if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
+		if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
 			domainIds = new Integer[] {params.getFromConnection().getFullDomain().getId()
 				,params.getFromConnection().getFullDomain().getParentId()};
 		} else {
@@ -322,9 +329,15 @@ public class ConsoleIsolateDomain {
 		domRec.attach(params.getToDslContext().configuration());
 		domRec.setId(null);
 		domRec.setName(params.getToConnection().getDomainName());
-		domRec.setParent(null);
+		domRec.setParent(params.mustFlatten()
+			? ((Integer) null)
+			:domRec.getParent() 
+		);
 		domRec.setScope(null);
-		domRec.setEnableheredity((byte) 0);
+		domRec.setEnableheredity(params.mustFlatten()
+			? ((byte) 0)
+			:domRec.getEnableheredity()
+		);
 		domRec.store();
 		params.getToConnection().setFullDomain( DomainDAO.getDomain(params.getToConnection().getAONContext(), domRec.getId()));
 		insertId(params, DOMAIN,
@@ -482,19 +495,6 @@ public class ConsoleIsolateDomain {
 				.execute());
 	}
 
-	private static void disableForeignKeys(ConsoleParams params) {
-		String cmd = "SET FOREIGN_KEY_CHECKS=0";
-		params.getToDslContext().execute(cmd);
-		ConsoleUtils.log(params,"** Foreign keys disabled");
-	}
-	
-	private static void enableForeignKeys(ConsoleParams params) {
-		String cmd = "SET FOREIGN_KEY_CHECKS=1";
-		params.getToDslContext().execute(cmd);
-		ConsoleUtils.log(params,"** Foreign keys enabled");
-	}
-	
-	
 	@SuppressWarnings("unchecked")
 	private static <T extends Record> Field<Integer> getDomainField(Table<T> table) {
 		return (TableField<T, Integer>) table.field(DOMAIN_FIELD);

@@ -159,12 +159,11 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 			}
 		};
 		domainTextBox = new AonTextBox();
-		domainTextBox.addStyleName(AON.CSS.aonInputText());
-		domainTextBox.setVisibleLength(25);
-		domainTextBox.setMaxLength(25);
-		
 		suggestionDisplay =  new AccountSuggestionDisplay();
 		domainBox = new SuggestBox(oracle,domainTextBox,suggestionDisplay);
+		domainTextBox.setStyleName(AON.CSS.aonInputText());
+		domainTextBox.setVisibleLength(25);
+		domainTextBox.setMaxLength(50);
 		domainBox.addSelectionHandler(event -> select( ((DomainSuggestion)event.getSelectedItem()).getDomain() ));
 
 		rootPanel = new FlowPanel();
@@ -194,6 +193,10 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 
 	public Domain getDomain() {
 		return this.domain;
+	}
+
+	public void setDomain(Domain domain) {
+		select(domain);
 	}
 
 	@Override

@@ -83,6 +83,7 @@ public interface IRequestParamsNames {
 	String LIMIT = "limit";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	String MOD = "mod";
+	String MUST_FLATTEN = "mustFlatten";
 	String NAME = "name";
 	String NEARBY_NUMBERS = "nearbyNumbers";
 	String NEW_DOMAIN_NAME = "newDomainName";
@@ -138,9 +139,11 @@ public interface IRequestParamsNames {
 	String TYPE = "type";
 	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF)
 	String USER = "user";
+	String VALIDATE = "validate";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String WITHHOLDING_TYPE = "withholdingType";
 	String WORKPLACE_IDS = "workplaceIds";
+	
 	
 }

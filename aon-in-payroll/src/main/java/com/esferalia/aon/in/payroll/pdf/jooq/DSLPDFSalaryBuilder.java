@@ -626,7 +626,8 @@ public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalary
 		DSL
 		.update(SALARY)
 		.set(SALARY.REGISTRATION, deleteMark)
-		.where(SALARY.EMPLOYEE_DOCUMENT.eq(salary.getEmployeeDocument()))
+		//.where(SALARY.EMPLOYEE_DOCUMENT.eq(salary.getEmployeeDocument()))
+		.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(salary.getSocialSecurityNumber()))
 		.and(SALARY.CCC.eq(salary.getCcc()))
 		.and(SALARY.START_DATE.eq(toSqlDate(salary.getStartDate())))
 		.and(SALARY.END_DATE.eq(toSqlDate(salary.getEndDate())))

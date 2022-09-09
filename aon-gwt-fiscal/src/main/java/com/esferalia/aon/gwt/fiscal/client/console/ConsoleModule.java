@@ -98,22 +98,22 @@ public class ConsoleModule extends MainEntryPoint {
 		sidebarMenu.add(optionsGrid);
 		optionsGrid.addRow().addCell(new InlineLabel("UTILIDADES"), AON.CSS.aonBold(), AON.CSS.aonTextUnderline());
 		
-		Label opt1 = new Label(AonStringUtils.BULLET + "Validaci\u00F3n de dominios");
+		Label opt1 = new Label(AonStringUtils.BULLET + "Validaci\u00F3n de un dominio");
 		opt1.setStyleName(AON.CSS.aonClickableBlock());
 		opt1.addStyleName(AON.CSS.aonPadding());
 		opt1.addClickHandler( e -> content.setWidget( new ConsoleDomainCheckIntegrity(options) ));
 		optionsGrid.addRow().addCell(opt1);
 
-		Label opt2 = new Label(AonStringUtils.BULLET + "Extracci\u00F3n de dominios");
+		Label opt2 = new Label(AonStringUtils.BULLET + "Extracci\u00F3n de un dominio");
 		opt2.setStyleName(AON.CSS.aonClickableBlock());
 		opt2.addStyleName(AON.CSS.aonPadding());
 		opt2.addClickHandler( e -> content.setWidget( new ConsoleDomainIsolate(options) ));
 		optionsGrid.addRow().addCell(opt2);
 		
-		Label opt3 = new Label(AonStringUtils.BULLET + "Traspaso de dominios");
+		Label opt3 = new Label(AonStringUtils.BULLET + "Borrado de un dominio");
 		opt3.setStyleName(AON.CSS.aonClickableBlock());
 		opt3.addStyleName(AON.CSS.aonPadding());
-		opt3.addClickHandler( e -> content.setWidget( new ConsoleDomainTransfer(options) ));
+		opt3.addClickHandler( e -> content.setWidget( new ConsoleDomainDelete(options) ));
 //		optionsGrid.addRow().addCell(opt3);
 
 		aonLayout.addWest(sidebar, 275);

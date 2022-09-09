@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -21,7 +20,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -32,11 +30,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
-public class ConsoleDomainIsolate extends AonLayoutPanel {
+public class ConsoleDomainDelete extends AonLayoutPanel {
 	
-	private static final String DOMAIN_ISOLATE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainIsolateServlet");
+	private static final String DOMAIN_DELETE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainDeleteServlet");
 
-	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainIsolate.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainDelete.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -48,18 +46,12 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 	private boolean running;
 
 	private FlowPanel domainContainer = new FlowPanel();
-	private CheckBox mustFlatten = new CheckBox("Aplanar el dominio origen.");
-	private CheckBox validate = new CheckBox("Validar antes de ejecutar.");
 	
 	private ListBox schemaBox = new ListBox();
 	private String schema;
 	private Domain privDomain;
-	
-	private ListBox newSchemaBox = new ListBox();
-	private String newSchema;
-	private String newDomainName;
 
-	public ConsoleDomainIsolate(ConsoleModuleOptions options) {
+	public ConsoleDomainDelete(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
 		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
@@ -75,11 +67,8 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 			public void onSuccess(String[] schemas) {
 				schemaBox.clear();
 				schemaBox.addItem(AonStringUtils.EMPTY);
-				newSchemaBox.clear();
-				newSchemaBox.addItem(AonStringUtils.EMPTY);
 				for (String sch : schemas) {
 					schemaBox.addItem(sch);
-					newSchemaBox.addItem(sch);
 				}
 				runCommand.setVisible(true);
 			}
@@ -139,20 +128,6 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		
 		
 		AonDisplayTable table = new AonDisplayTable();
-		FlowPanel flattenContainer = new FlowPanel();
-		flattenContainer.setStyleName(AON.CSS.aonTextCenter());
-		flattenContainer.addStyleName(AON.CSS.aonMarginTop());		
-		flattenContainer.addStyleName(AON.CSS.aonPaddingTop());
-		flattenContainer.addStyleName(AON.CSS.aonPaddingBottom());
-		flattenContainer.addStyleName(AON.CSS.aonBlockCenter());
-		flattenContainer.addStyleName(AON.CSS.aonBorder());
-		validate.setValue(true);
-		validate.setStyleName(AON.CSS.aonMarginLeft());
-		
-		mustFlatten.setStyleName(AON.CSS.aonMarginLeft());
-		mustFlatten.setEnabled(false);
-		flattenContainer.add(validate);
-		flattenContainer.add(mustFlatten);
 		
 		domainContainer.setStyleName(AON.CSS.aonTextCenter());
 		domainContainer.addStyleName(AON.CSS.aonMarginTop());		
@@ -164,7 +139,6 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		FlowPanel container = new FlowPanel();
 		container.add(descriptionLabel);
 		container.add(table);
-		container.add(flattenContainer);
 		container.add(domainContainer);
 		scroll.setWidget(container);
 		table.addStyleName(AON.CSS.aonBlockCenter());
@@ -174,21 +148,13 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		
 		AonDomainBox domainBox = new AonDomainBox(options.getOccam());
 		domainBox.setEnabled(false);
-		domainBox.addSelectionHandler( e -> {
-			setDomain(e.getSelectedItem());
-			manageMustFlatten();
-		});
+		domainBox.addSelectionHandler( e -> setDomain(e.getSelectedItem()));
 		schemaBox.addChangeHandler( e -> {
 			schema = schemaBox.getSelectedValue();
-			if (AonStringUtils.isBlank(newSchema)) {
-				newSchema = schemaBox.getSelectedValue();
-				newSchemaBox.setSelectedIndex(schemaBox.getSelectedIndex());			
-			}
 			domainBox.setEnabled(AonStringUtils.isNotBlank(schema));		
 			domainBox.setSchema(schema);
 			setDomain(null);
 			domainBox.setDomain(getDomain());
-			manageMustFlatten();
 		});
 		Label schemaLabel = new Label("Esquema");
 		schemaLabel.setStyleName(AON.CSS.aonInnerLabel());
@@ -202,45 +168,8 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 			.addCell(domainLabel)
 			.addCell( domainBox )	
 		;
-	
-		Label targetLabel = new Label("DESTINO");
-		targetLabel.setStyleName(AON.CSS.aonBold());
-		newSchemaBox.addChangeHandler( e -> {
-			newSchema = newSchemaBox.getSelectedValue();
-			manageMustFlatten();
-		});
-		AonTextBox newDomainBox = new AonTextBox();
-		newDomainBox.setVisibleLength(25);
-		newDomainBox.addValueChangeHandler(e -> newDomainName = newDomainBox.getValue());
-		Label newSchemaLabel = new Label("Esquema");
-		newSchemaLabel.setStyleName(AON.CSS.aonInnerLabel());
-		Label newDomainLabel = new Label("Dominio");
-		newDomainLabel.setStyleName(AON.CSS.aonInnerLabel());
-		table.addRow()
-			.addCell(targetLabel)
-			.addCell(newSchemaLabel)
-			.addCell(newSchemaBox)
-			.addCell(newDomainLabel)
-			.addCell(newDomainBox)	
-		;
 		
 		return scroll;
-	}
-
-	private void manageMustFlatten() {
-		if (!AonStringUtils.equals(schema, newSchema)) {
-			mustFlatten.setValue(false);
-			mustFlatten.setEnabled(false);
-		} else {
-			if (getDomain() == null 
-				|| getDomain().getParentId() == null 
-				|| !getDomain().isEnableHeredity()) {
-				mustFlatten.setValue(false);
-				mustFlatten.setEnabled(false);
-			} else {
-				mustFlatten.setEnabled(true);		
-			}
-		}
 	}
 
 	private AonToolbar getToolbarPanel() {
@@ -255,17 +184,8 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 	
 	private void doIt() {
 		if (!running && validate()) {
-			StringBuffer extraMsg = new StringBuffer("");
-			if (mustFlatten.isEnabled()) {
-				extraMsg.append("\t[");
-				extraMsg.append(mustFlatten.getValue().booleanValue()?"CON":"SIN");
-				extraMsg.append(" APLANAMIENTO DE DATOS]");
-			}
-			String msg = "Se va a traspasar el dominio \n"
-					+ "\t["+getDomain().getName()+"] "
-					+ "a el dominio \n"
-					+ "\t["+newDomainName+"]."
-					+ extraMsg
+			String msg = "Se va a borrar el dominio "
+					+ "["+getDomain().getName()+"] "
 					+ "\u00BFContinuar?";
 			AonConfirmDialog acd = new AonConfirmDialog();
 			acd.confirm(msg, new AonConfirmDialogCallback() {
@@ -289,7 +209,7 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 			AonConsoleWidget aonConsole = new AonConsoleWidget();
 			pageContainer.setWidget(aonConsole);
 			XMLHttpRequest xhreq = XMLHttpRequest.create();
-			xhreq.open(FormPanel.METHOD_POST, DOMAIN_ISOLATE_SERVLET);
+			xhreq.open(FormPanel.METHOD_POST, DOMAIN_DELETE_SERVLET);
 			xhreq.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xhreq.setOnReadyStateChange( xhr -> {
 				int state = xhr.getReadyState();
@@ -304,12 +224,8 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 			StringBuilder requestData = new StringBuilder();
 			requestData.append("&"+IRequestParamsNames.SCHEMA  				+"=" + schema );
 			requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + getDomain().getName() );
-			requestData.append("&"+IRequestParamsNames.NEW_SCHEMA  			+"=" + newSchema );
-			requestData.append("&"+IRequestParamsNames.NEW_DOMAIN_NAME		+"=" + newDomainName );
 			requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + getDomain().getId() );
 			requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
-			requestData.append("&"+IRequestParamsNames.VALIDATE				+"=" + Boolean.toString( validate.getValue()) );
-			requestData.append("&"+IRequestParamsNames.MUST_FLATTEN			+"=" + Boolean.toString( mustFlatten.getValue() ));
 			xhreq.send(requestData.toString());
 		} catch (Exception e){
 			running = false;
@@ -347,10 +263,6 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 		this.hideErrorPanel();
 		if (getDomain() == null || AonStringUtils.isBlank(getDomain().getName())) {
 			this.showErrorPanel("El nombre del dominio debe tener valor");			
-			return false;
-		}
-		if (AonStringUtils.isBlank(newDomainName)) {
-			this.showErrorPanel("El nuevo nombre del dominio debe tener valor");			
 			return false;
 		}
 		return true;

@@ -16,13 +16,13 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
-import com.esferalia.aon.occam.impl.jooq.console.ConsoleIsolateDomain;
+import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 
-@WebServlet(name = "Console Domain Isolate Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/ConsoleDomainIsolateServlet" })
-public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
+@WebServlet(name = "Console Domain Delete Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/ConsoleDomainDeleteServlet" })
+public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 
-	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainIsolateServlet.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainDeleteServlet.class.getName());
 	
 	private static final long serialVersionUID = -5703828624659508582L;
 
@@ -30,16 +30,9 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String schemaName = req.getParameter(IRequestParamsNames.SCHEMA);
 		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
-		String newSchemaName = req.getParameter(IRequestParamsNames.NEW_SCHEMA);
-		String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
-		String validate = req.getParameter(IRequestParamsNames.VALIDATE);
-		String mustFlatten = req.getParameter(IRequestParamsNames.MUST_FLATTEN);
-		ConsoleParams params = new ConsoleParams( )
-			.setValidate( Boolean.valueOf(validate))
-			.setMustFlatten( Boolean.valueOf(mustFlatten));
-		try (
-			CloseableAONContext fromCtx = AONContext.getAONContext(schemaName);
-			CloseableAONContext toCtx = AONContext.getAONContext(newSchemaName) ) {
+		ConsoleParams params = new ConsoleParams( );
+		
+		try (CloseableAONContext fromCtx = AONContext.getAONContext(schemaName)) {
 			
 			Schema fromSchema = fromCtx.getDslContext().meta()
 				.getSchemas(schemaName)
@@ -54,35 +47,23 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 				.setDomainName(domainName)
 				);
 			
-			Schema toSchema = toCtx.getDslContext().meta()
-				.getSchemas(newSchemaName)
-				.stream()
-				.findFirst()
-				.orElse(null);
-			params.setToConnection(new ConsoleConnectionParams()
-				.setAONContext(toCtx)
-				.setSchemaName( newSchemaName )
-				.setSchema(toSchema)
-				.setDomainName(newDomainName)
-				);
 			params.setPrinter(new PrintStream(resp.getOutputStream()));
-			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet domain \"{0}\".\"{1}\" to \"{2}\".\"{3}\"", new String[] {
+			LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet domain \"{0}\".\"{1}\"", new String[] {
 				 params.getFromConnection().getSchemaName()
-				,params.getFromConnection().getDomainName()
-				,params.getToConnection().getSchemaName()
-				,params.getToConnection().getDomainName()});
-			ConsoleIsolateDomain.isolate(params);
+				,params.getFromConnection().getDomainName()});
+			ConsoleDeleteDomain.delete(params);
 			resp.flushBuffer();
 		} catch (Exception e) {
+			e.printStackTrace();
 			params.getPrinter().println(e.getMessage());
 			params.getPrinter().println();
-			LOGGER.log(Level.SEVERE, "ConsoleDomainIsolateServlet {0}!",e.getMessage());
+			LOGGER.log(Level.SEVERE, "ConsoleDomainDeleteServlet {0}!",e.getMessage());
 		} finally {
 			params.getPrinter().println("Request ended.");
 			params.getPrinter().println();
 			params.getPrinter().flush();
 			resp.flushBuffer();
-			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet finished!");
+			LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet finished!");
 		}
 
 	}

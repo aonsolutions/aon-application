@@ -185,9 +185,9 @@ const blobToBase64 = blob => new Promise((resolve, reject) => {
  * @param {String} fileName
  * @returns {Object} Object {fileBase64, fileName, contentType, action}
  */
-const objFileMobile = (base64Data, fileName = undefined) => {
+const getObjFromBase64 = (base64Data, fileName = undefined, type) => {
   const base64Str = base64Data.replace(/^data:.+;base64,/, "");
-  const contentType = base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
+  const contentType = type || base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
   if(!fileName){
     fileName = "document";
     const extension = extensionsEnums[contentType];
@@ -209,8 +209,7 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
       if (webkitRequestMobile()){
          //------------ IS MOBILE APP---------
         const base64Data = await blobToBase64(blob).catch(e=>reject(e));
-        const obj = objFileMobile(base64Data, fileName);
-        await actionRequestMobile(obj);
+        await sendActionMobile(getObjFromBase64(base64Data, fileName));
       } else {
         // ------------IS DESKTOP---------------
         try {
@@ -230,8 +229,7 @@ export const openFileBase64 = async (base64Str, contentType) => new Promise(asyn
   if (webkitRequestMobile()){
       //------------ IS MOBILE APP---------
     const base64Data = `data:${contentType},${base64Str}`;
-    const obj = objFileMobile(base64Data);
-    await actionRequestMobile(obj);
+    await sendActionMobile(getObjFromBase64(base64Data));
   } else {
     // ------------IS DESKTOP---------------
     try {
@@ -273,7 +271,7 @@ export const webkitRequestMobile = () => {
   return result;
 };
 
-export const actionRequestMobile = (data) => {
+export const sendActionMobile = (data) => {
   return new Promise((resolve) => {
     let result = false;
     try {
@@ -300,15 +298,16 @@ const requestFileUrl = (method, url, fn) => {
   xhr.onerror = () => {};
 };
 
-export const openFileMobile = async (url) => new Promise((resolve, reject) => {
+export const openFileMobile = async (url, type) => new Promise((resolve, reject) => {
+  console.log(type);
     requestFileUrl("GET", url, (result, error) => {
       if (error) reject(error);
       else {
         const reader = new FileReader();
         reader.readAsDataURL(result);
         reader.onload = function () {
-          const obj = objFileMobile(reader.result.toString());
-          resolve(obj);
+          console.log(type);
+          resolve(getObjFromBase64(reader.result.toString(), undefined, type));
         };
         reader.onerror = function () {
           reject(true);

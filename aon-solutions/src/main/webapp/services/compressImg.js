@@ -28,10 +28,10 @@ const getImage = (dataUrl) => {
     let contentBase64 = file.content;
     let fileSize = file.size;
     const imageType = file.contentType;// 'image/jpeg'
-    const fileUrl = `data:${file.contentType};${file.contentEncoding},${file.content}`;
-    const image = await getImage(fileUrl);
-    const oldWidth = image.naturalWidth;
-    const oldHeight = image.naturalHeight;
+    const fileUrl    = `data:${file.contentType};${file.contentEncoding},${file.content}`;
+    const image      = await getImage(fileUrl);
+    const oldWidth   = image.naturalWidth;
+    const oldHeight  = image.naturalHeight;
     const newMaxSize = maxSize*1024;
 
     const longestDimension = oldWidth > oldHeight ? "width" : "height";
