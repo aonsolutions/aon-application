@@ -68,14 +68,14 @@ public abstract class AgreementPreview extends ResizeComposite {
 		String gridTitle();
 		String gridCell();
 		String textCenter();
-		String headerSticky();
-		String levelHeaderSticky();
-		String levelSticky();
 		String headerColor();
 		String columnBorder();
 		String cellWidth();
 		String headerFSize();
 		String widthAll();
+		String headerFixed();
+		String headerLevelFixed();
+		String levelFixed();
 	}
 	
 	@UiField
@@ -306,7 +306,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.headerFSize());
 		salaryGrid.setWidget(row, 0, level);
-		salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelHeaderSticky());
+		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerLevelFixed());
 		salaryGrid.getColumnFormatter().addStyleName(0, style.columnBorder());
 		
 		int col = 1;
@@ -320,6 +320,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 			salaryGrid.setWidget(row, col, label);
 			salaryGrid.getColumnFormatter().setWidth(col, "100px");
 			salaryGrid.getColumnFormatter().addStyleName(col, style.columnBorder());
+			salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 			
 			col++;
 		}
@@ -328,8 +329,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		emptyCell.addStyleName(style.widthAll());
 		salaryGrid.setWidget(row, col, emptyCell);
 		salaryGrid.getColumnFormatter().addStyleName(col, style.widthAll());
-		
-		salaryGrid.getRowFormatter().addStyleName(row, style.headerSticky());
 	}
 
 	private void fillSalaryTable() {
@@ -346,7 +345,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 			levelCell.addStyleName(style.cellWidth());
 			
 			salaryGrid.setWidget(row, 0, levelCell);
-			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelSticky());
+			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
 			
 			int col = 1;
 			
@@ -398,13 +397,15 @@ public abstract class AgreementPreview extends ResizeComposite {
 		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.headerFSize());
 		salaryGrid.setWidget(row, 0, level);
+		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+
 		
 		Label category = new Label("Categoria");
 		category.addStyleName(style.gridTitle());
 		category.addStyleName(style.headerFSize());
 		salaryGrid.setWidget(row, 1, category);
-		
-		salaryGrid.getRowFormatter().addStyleName(row, style.headerSticky());
+		salaryGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
+
 		salaryGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
 
@@ -462,30 +463,34 @@ public abstract class AgreementPreview extends ResizeComposite {
 		cra.addStyleName(style.headerFSize());
 		cra.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		paymentGrid.setWidget(row, 0, cra);
+		paymentGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 		
 		Label concept = new Label("Concepto");
 		concept.addStyleName(style.gridTitle());
 		concept.addStyleName(style.headerFSize());
 		paymentGrid.setWidget(row, 1, concept);
+		paymentGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
 		Label tributa = new Label("Tributa");
 		tributa.addStyleName(style.gridTitle());
 		tributa.addStyleName(style.headerFSize());
 		tributa.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		paymentGrid.setWidget(row, 2, tributa);
+		paymentGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
 		Label cotiza = new Label("Cotiza");
 		cotiza.addStyleName(style.gridTitle());
 		cotiza.addStyleName(style.headerFSize());
 		cotiza.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		paymentGrid.setWidget(row, 3, cotiza);
+		paymentGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
 		
 		Label devengo = new Label("Devengo");
 		devengo.addStyleName(style.gridTitle());
 		devengo.addStyleName(style.headerFSize());
 		paymentGrid.setWidget(row, 4, devengo);
+		paymentGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
 		
-		paymentGrid.getRowFormatter().addStyleName(row, style.headerSticky());
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
 
@@ -580,25 +585,28 @@ public abstract class AgreementPreview extends ResizeComposite {
 		start.addStyleName(style.headerFSize());
 		start.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		extraGrid.setWidget(row, 0, start);
+		extraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 		
 		Label end = new Label("F. Fin");
 		end.addStyleName(style.gridTitle());
 		end.addStyleName(style.headerFSize());
 		end.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		extraGrid.setWidget(row, 1, end);
+		extraGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
 		Label issue = new Label("F. Cobro");
 		issue.addStyleName(style.gridTitle());
 		issue.addStyleName(style.headerFSize());
 		issue.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		extraGrid.setWidget(row, 2, issue);
+		extraGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
 		Label payment = new Label("Concepto");
 		payment.addStyleName(style.gridTitle());
 		payment.addStyleName(style.headerFSize());
 		extraGrid.setWidget(row, 3, payment);
+		extraGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
 		
-		extraGrid.getRowFormatter().addStyleName(row, style.headerSticky());
 		extraGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
 
