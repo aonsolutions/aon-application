@@ -4589,10 +4589,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return Dismissal.DEFINITE_END.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.OBJECTIVE.getName(), causeStr)) {
 			return Dismissal.OBJECTIVE.getDescription();
-		}  else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
+		} else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
 			return Dismissal.CONDITIONS_CHANGE.getDescription();
-		}   else if (AonStringUtils.equals(ContextVariable.RETIREMENT.getName(), causeStr)) {
+		} else if (AonStringUtils.equals(ContextVariable.RETIREMENT.getName(), causeStr)) {
 			return Dismissal.RETIREMENT.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.NOT_PASS_TRIAL_PERIOD.getName(), causeStr)) {
+			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
 		}
 		return "";
 	}

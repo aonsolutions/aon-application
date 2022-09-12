@@ -46,6 +46,12 @@ public enum DismissalType {
 			return visitor.visitVoluntaryEnd(this);
 		}
 	 },
+	 NOT_PASS_TRIAL_PERIOD{
+		 @Override
+		 public<T> T accept(Visitor<T> visitor) {
+			return visitor.visitNotPassTrialPeriod(this);
+		}
+	 },
 	;
 	 
 	 
@@ -57,6 +63,7 @@ public enum DismissalType {
 		T visitRetirement(DismissalType type);
 		T visitDefiniteEnd(DismissalType type);
 		T visitVoluntaryEnd(DismissalType type);
+		T visitNotPassTrialPeriod(DismissalType type);
 	}
 	
 	public abstract <T> T accept(Visitor<T> visitor );
