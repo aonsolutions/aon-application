@@ -299,6 +299,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	ListBox disabilityLB;
 	
 	@UiField
+	ListBox bonusColectiveDisabilityLB;
+	
+	@UiField
 	VerticalPanel annexedDataTable;
 	
 	@UiField
@@ -854,6 +857,12 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.contractSpecificData.setDisability(disabilityValue);
 	}
 	
+	@UiHandler("bonusColectiveDisabilityLB")
+	void onBonusColectiveDisabilityLBChange(ChangeEvent event) {
+		String bonusColectiveValue = bonusColectiveDisabilityLB.getSelectedValue();
+		this.contractSpecificData.setBonusColective(bonusColectiveValue);
+	}
+	
 	@UiHandler("annexedRB")
 	void onAnnexedRBChange(ValueChangeEvent<Boolean> event) {
 		if(Boolean.TRUE.equals(event.getValue()))
@@ -1057,6 +1066,19 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		disabilityLB.addItem("ENCLAVES LABORALES DISC. FIS./SENS. >= 65%", "F");
 		disabilityLB.addItem("ENCLAVES LABORALES MUJERES DISC. >= 33%", "G");
 		disabilityLB.addItem("DISCAPACITADOS", "S");
+		createBonusColectiveDisability();
+	}
+	
+	private void createBonusColectiveDisability() {
+		bonusColectiveDisabilityLB.clear();
+		bonusColectiveDisabilityLB.addItem("HOMBRE SIN DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "070");
+		bonusColectiveDisabilityLB.addItem("HOMBRE SIN DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "071");
+		bonusColectiveDisabilityLB.addItem("HOMBRE CON DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "072");
+		bonusColectiveDisabilityLB.addItem("HOMBRE CON DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "073");
+		bonusColectiveDisabilityLB.addItem("MUJER SIN DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "074");
+		bonusColectiveDisabilityLB.addItem("MUJER SIN DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "075");
+		bonusColectiveDisabilityLB.addItem("MUJER CON DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "076");
+		bonusColectiveDisabilityLB.addItem("MUJER CON DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "077");
 	}
 	
 	private void showAnnexedDataTable() {
@@ -1337,7 +1359,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		bonusColectiveLB.addItem("TRANSFORMACIÓN CONTRATO TEMPORAL AGRARIO, HOMBRES", "189");
 		bonusColectiveLB.addItem("TRANSFORMACIÓN CONTRATO TEMPORAL AGRARIO, MUJERES", "190");
 
-		
 		freelanceEmployeerCB.setValue(false);
 	}
 	
@@ -1762,8 +1783,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
@@ -2325,7 +2344,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		if(Boolean.TRUE.equals(this.contractSpecificData.getDisabilityB())) {
 			showDisabilityDataTable();
 			disabilityCB.setValue(true);
-			setSelectedValueLB(disabilityLB, this.contractSpecificData.getDisability());	
+			setSelectedValueLB(disabilityLB, this.contractSpecificData.getDisability());
+			setSelectedValueLB(bonusColectiveDisabilityLB, this.contractSpecificData.getBonusColective());
 		}
 		
 		//AnnexedDataTable

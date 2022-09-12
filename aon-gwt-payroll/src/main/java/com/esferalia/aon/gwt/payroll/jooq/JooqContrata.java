@@ -630,7 +630,6 @@ public class JooqContrata {
 	
 	private static void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos, ContractSpecificData contractSpecificData) {
 		if(datos != null){
-			contractSpecificData.setEntrepreneurSupport(true);
 			if( datos.getCODIGOCOLECTIVOBONIF()!=null )
 				contractSpecificData.setBonusColective(datos.getCODIGOCOLECTIVOBONIF());
 
@@ -641,6 +640,10 @@ public class JooqContrata {
 					contractSpecificData.setFreelanceEmployeer(false);
 				}
 			}
+			
+			contractSpecificData.setEntrepreneurSupport(datos.getINDICEMPLEADAUTONOMO()!=null);
+			contractSpecificData.setDisabilityB(datos.getCODIGOCOLECTIVOBONIF()!=null);
+			
 		}
 	}
 	
@@ -1251,7 +1254,7 @@ public class JooqContrata {
 	}
 	
 	private static DATOSBONIFICACIONTYPE createDatosBonificacion(EmployeeContractInfo employeeContractInfo) {
-		if(employeeContractInfo.getContractSpecificData().getEntrepreneurSupport()){
+		if(employeeContractInfo.getContractSpecificData().getEntrepreneurSupport() || employeeContractInfo.getContractSpecificData().getDisabilityB()){
 			DATOSBONIFICACIONTYPE datos = new DATOSBONIFICACIONTYPE();
 //			if( params.getIndDiscapacidad()!=TEJINDIS.TEJINDIS_C ){
 				if(employeeContractInfo.getContractSpecificData().getBonusColective()!=null){

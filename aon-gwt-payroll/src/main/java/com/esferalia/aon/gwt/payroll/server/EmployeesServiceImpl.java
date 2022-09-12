@@ -7305,6 +7305,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		if((contractType == 420 || contractType == 520) && null == employeeContractInfo.getContractInfo().getEndDate())
 			throw new IllegalArgumentException("La fecha fin es obligatoria para los contratos de tipo 420 y 520. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
 		
+		if(employeeContractInfo.getContractSpecificData().getDisabilityB()) {
+			builder.setDiscapacidad(true);
+			builder.setDiscapacidadType(employeeContractInfo.getContractSpecificData().getDisability());
+			builder.setCollectiveType(employeeContractInfo.getContractSpecificData().getBonusColective());
+		} else builder.setDiscapacidad(false);
+		
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setOldDateFinContract(employeeContractInfo.getContractInfo().getOriginalEndDate());

@@ -705,6 +705,14 @@
 								    <g:ListBox ui:field="disabilityLB" styleName='{style.maxWidthLB}'></g:ListBox>
 								</td>
 							</tr>
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Colectivo bonificación</g:Label>
+								</td>
+								<td>
+								    <g:ListBox ui:field="bonusColectiveDisabilityLB" styleName='{style.maxWidthLB}'></g:ListBox>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</g:HTMLPanel>
