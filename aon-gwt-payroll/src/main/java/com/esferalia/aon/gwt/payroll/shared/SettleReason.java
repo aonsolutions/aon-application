@@ -31,7 +31,7 @@ public class SettleReason {
 		this.settleReasonMap.put(76, "Baja por excedencia violencia de g\u00E9nero");
 		this.settleReasonMap.put(77, "Baja por despido colectivo");
 		this.settleReasonMap.put(80, "Suspensi\u00F3n por violencia de g\u00E9nero");
-		this.settleReasonMap.put(85, "Baja por no superar el per\u00EDodo de prueba");
+		this.settleReasonMap.put(85, "Baja por no superar el periodo de prueba");
 		this.settleReasonMap.put(89, "Baja por cambio de CCC. Datos por trabajador");
 		this.settleReasonMap.put(91, "Baja por despido por causas objetivas empresa");
 		this.settleReasonMap.put(92, "Baja por despido por causas objetivas trabajador");
