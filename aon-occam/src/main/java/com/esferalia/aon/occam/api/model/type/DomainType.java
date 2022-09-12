@@ -4,25 +4,32 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum DomainType {
 
-	ENTERPRISE,
-	CONSULTANCY,
-	GARAGE,
-	ACADEMY,
-	HOTEL,
-	ADMIN,
-	OFFICE,
-	GENERIC,
-	COMMERCE,
-	KIT_DIGITAL;   
+	ENTERPRISE("Empresa"),
+	CONSULTANCY("Asesor\u00EDa"),
+	GARAGE("Garaje"),
+	ACADEMY("Academ\u00EDa"),
+	HOTEL("Hotel"),
+	ADMIN("Administraci\u00F3n"),
+	OFFICE("Despacho"),
+	GENERIC("Gen\u00E9rico"),
+	COMMERCE("Comercio"),
+	KIT_DIGITAL("Kit Digital");
+
+	private String name;
+	private DomainType(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
 	
 	public byte value() {
 		return (byte) this.ordinal();
 	}
-	
 	public String getValue() {
 		return toString();
 	}
-	
 	public static DomainType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

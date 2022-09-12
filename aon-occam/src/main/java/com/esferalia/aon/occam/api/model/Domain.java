@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
@@ -23,6 +24,14 @@ public class Domain implements Serializable {
 	private Integer definedUsers;
 	private Integer maxDocumentSize;
 	private Integer maxTotalDocumentSize;
+	private String lastAccessUser;
+	private Date lastAccessDate;
+	private Date expirationDate;
+	private String creationUser;
+	private Date creationDate;
+	private String modifitionUser;
+	private Date modificationDate;
+	
 	
 	public Integer getId() {
 		return id;
@@ -168,4 +177,66 @@ public class Domain implements Serializable {
 		this.maxTotalDocumentSize = maxTotalDocumentSize;
 		return this;
 	}
+
+	public String getLastAccessUser() {
+		return lastAccessUser;
+	}
+	public Domain setLastAccessUser(String lastAccessUser) {
+		this.lastAccessUser = lastAccessUser;
+		return this;
+	}
+
+	public Date getLastAccessDate() {
+		return lastAccessDate;
+	}
+	public Domain setLastAccessDate(Date lastAccessDate) {
+		this.lastAccessDate = lastAccessDate; 
+		return this;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;  
+	}
+	public Domain setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+		return this;
+	}
+
+	public String getCreationUser() {
+		return creationUser;
+	}
+
+	public Domain setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public Domain setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+
+	public String getModifitionUser() {
+		return modifitionUser;
+	}
+
+	public Domain setModifitionUser(String modifitionUser) {
+		this.modifitionUser = modifitionUser;
+		return this;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public Domain setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	
 }

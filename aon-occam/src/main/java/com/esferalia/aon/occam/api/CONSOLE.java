@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 
@@ -23,9 +24,9 @@ public class CONSOLE {
 		}
 	}
 
-	public static LinkedList<Domain> getDomains(Occam occam, String schema, String query) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
-			return getConsole().getDomains(ctx, query);
+	public static LinkedList<Domain> getDomains(Occam occam, DomainParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().getDomains(ctx, params);
 		}
 	}
 }

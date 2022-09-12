@@ -111,7 +111,9 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 				.addCell(new Label("Nombre"))
 				.addCell(new Label("Descripci\u00F3n"))
 				.addCell(new Label("Herencia"))
-				.addCell(new Label("Crea Dominios"))
+				.addCell(new Label("Crea Dominios?"))
+				.addCell(new Label("\u00FAltimo acceso"))
+				.addCell(new Label("Expira"))
 			;
 			table.addRow()
 				.addCell(new Label(AonNumberUtils.toString(getDomain().getId())), AON.CSS.aonTextCenter())
@@ -120,7 +122,9 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 				.addCell(new Label(getDomain().getDescription()))
 				.addCell(new Label(Boolean.toString( getDomain().isEnableHeredity())), AON.CSS.aonTextCenter())
 				.addCell(new Label(Boolean.toString( getDomain().isDomainManagement())), AON.CSS.aonTextCenter())
-		;
+				.addCell(new Label(getDomain().getLastAccessDate() == null ?"":AON.TIME_FORMAT.format(getDomain().getLastAccessDate())), AON.CSS.aonTextCenter())
+				.addCell(new Label(getDomain().getExpirationDate() == null ?"":AON.TIME_FORMAT.format(getDomain().getExpirationDate())), AON.CSS.aonTextCenter())
+			;	
 		}
 	}
 

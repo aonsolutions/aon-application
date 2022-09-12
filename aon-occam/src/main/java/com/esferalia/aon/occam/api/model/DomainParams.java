@@ -1,0 +1,111 @@
+package com.esferalia.aon.occam.api.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class DomainParams implements Serializable {
+
+	private static final long serialVersionUID = -8674079205943551908L;
+	
+	private String schema;
+	private String query;
+	private Integer type;
+	private Integer parent;
+	private Boolean active;
+	private Boolean enableHeredity;
+	private Boolean domainManagement;
+	private Date  fromLastAccess;
+	private Date toLastAccess;
+	private Date fromExpirationDate;
+	private Date toExpirationDate;
+	
+
+	public String getSchema() {
+		return schema;
+	}
+	public DomainParams setSchema(String schema) {
+		this.schema = schema;
+		return this;
+	}
+	
+	public String getQuery() {
+		return query;
+	}
+	public DomainParams setQuery(String query) {
+		this.query = query;
+		return this;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+	public DomainParams setType(Integer type) {
+		this.type = type;
+		return this;
+	}
+	
+	public Integer getParent() {
+		return parent;
+	}
+	public DomainParams setParent(Integer parent) {
+		this.parent = parent;
+		return this;
+	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+	public DomainParams setActive(Boolean active) {
+		this.active = active;
+		return this;
+	}
+
+	public Boolean getEnableHeredity() {
+		return enableHeredity;
+	}
+	public DomainParams setEnableHeredity(Boolean enableHeredity) {
+		this.enableHeredity = enableHeredity;
+		return this;
+	}
+
+	public Boolean getDomainManagement() {
+		return domainManagement;
+	}
+	public DomainParams setDomainManagement(Boolean domainManagement) {
+		this.domainManagement = domainManagement;
+		return this;
+	}
+
+	public Date getFromLastAccess() {
+		return fromLastAccess;
+	}
+	public DomainParams setFromLastAccess(Date fromLastAccess) {
+		this.fromLastAccess = fromLastAccess;
+		return this;
+	}
+
+	public Date getToLastAccess() {
+		return toLastAccess;
+	}
+	public DomainParams setToLastAccess(Date toLastAccess) {
+		this.toLastAccess = toLastAccess;
+		return this;
+	}
+
+	public Date getFromExpirationDate() {
+		return fromExpirationDate;
+	}
+	public DomainParams setFromExpirationDate(Date fromExpirationDate) {
+		this.fromExpirationDate = fromExpirationDate;
+		return this;
+	}
+
+	public Date getToExpirationDate() {
+		return toExpirationDate;
+	}
+	public DomainParams setToExpirationDate(Date toExpirationDate) {
+		this.toExpirationDate = toExpirationDate;
+		return this;
+	}
+	
+}

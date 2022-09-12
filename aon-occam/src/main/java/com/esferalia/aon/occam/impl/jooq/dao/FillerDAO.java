@@ -79,7 +79,6 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
-import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -121,7 +120,8 @@ public class FillerDAO {
 	public static class DomainFiller extends Filler implements Function<Record, Domain> {
 		@Override
 		public Domain apply(Record r) {
-			return build(r);
+			Domain d = build(r);
+			return d;
 		}
 		
 		public static Domain build(Record r) {
@@ -140,14 +140,14 @@ public class FillerDAO {
 					.setMaxTotalDocumentSize(getValue(r, DOMAIN.MAXTOTALDOCUMENTSIZE))
 					.setMaxDefinedUsers(r.getValue(DOMAIN.MAXDEFINEDUSERS))
 					.setActive(getBoolean(r, DOMAIN.ACTIVE))
-					.setOwner(r.getValue(DOMAIN.OWNER))
-					//.setCreationUser(r.getValue(DOMAIN.CREATION_USER))
-					//.setCreationDate(r.getValue(DOMAIN.CREATION_DATE))
-					//.setModifitionUser(r.getValue(DOMAIN.MODIFICATION_USER))
-					//.setModificationDate(r.getValue(DOMAIN.MODIFICATION_DATE))
-					//.setLastAccessUser(r.getValue(DOMAIN.LASTACCESS_USER))
-					//.setLastAccessDate(r.getValue(DOMAIN.LASTACCESS_DATE))
-					//.setExpirationDate(r.getValue(DOMAIN.EXPIRATIONDATE))
+					.setOwner(getValue(r, DOMAIN.OWNER))
+					.setCreationUser(getValue(r, DOMAIN.CREATION_USER))
+					.setCreationDate(getValue(r, DOMAIN.CREATION_DATE))
+					.setModifitionUser(getValue(r, DOMAIN.MODIFICATION_USER))
+					.setModificationDate(getValue(r, DOMAIN.MODIFICATION_DATE))
+					.setLastAccessUser(getValue(r, DOMAIN.LASTACCESS_USER))
+					.setLastAccessDate(getValue(r, DOMAIN.LASTACCESS_DATE))
+					.setExpirationDate(getValue(r, DOMAIN.EXPIRATIONDATE))
 					;	
 		}
 	}

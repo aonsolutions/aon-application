@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
@@ -8,7 +9,12 @@ import org.jooq.Schema;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConsoleDAO {
 
@@ -34,12 +40,52 @@ public class ConsoleDAO {
 			;			
 	}
 
-	public static LinkedList<Domain> getDomains(CloseableAONContext ctx, String query) {
-		String q = "%" + query + "%";
-		return DomainDAO.getDomainList(ctx, p -> 
-			p.getNameProperty().like(q)
-			.or(p.getDescriptionProperty().like(q))
-		);
+	public static LinkedList<Domain> getDomains(CloseableAONContext ctx, DomainParams params) {
+		return DomainDAO.getDomainList(ctx, p-> getFilter(p,params));
+	}
+
+	private static Filter getFilter(DomainProperties p, DomainParams params) {
+		Filter filter = p.getIdProperty().isNotNull();
+		if (AonStringUtils.isNotBlank(params.getQuery())) {
+			String q = "%" + params.getQuery() + "%";
+			filter = filter.and( p.getNameProperty().like(q)
+				.or(p.getDescriptionProperty().like(q)));
+		}
+		
+		if (params.getParent() != null ) {
+			filter = filter.and(p.getParentProperty().eq(params.getParent()) );
+		}
+
+		if (params.getType() != null ) {
+			filter = filter.and(p.getTypeProperty().eq(params.getType().byteValue()) ); 
+		}
+		if (params.getActive() != null ) {
+			filter = filter.and(p.getTypeProperty().eq((byte) (params.getActive().booleanValue()?1:0)));
+		}
+		if (params.getEnableHeredity() != null ) {
+			filter = filter.and(p.getEnableheredityProperty().eq((byte) (params.getEnableHeredity().booleanValue()?1:0)));
+		}
+		if (params.getDomainManagement() != null ) {
+			filter = filter.and(p.getDomainmanagementProperty().eq((byte) (params.getDomainManagement().booleanValue()?1:0)));
+		}
+		if (params.getFromLastAccess() != null ) {
+			filter = filter.and(p.getLastaccessDateProperty().ge(
+				new Timestamp( params.getFromLastAccess().getTime())));
+		}
+		if (params.getToLastAccess() != null ) {
+			filter = filter.and(p.getLastaccessDateProperty().le(
+				new Timestamp( params.getToLastAccess().getTime())));
+		}
+		
+		if (params.getFromExpirationDate() != null ) {
+			filter = filter.and(p.getExpirationdateProperty().ge(
+				AonDateUtils.toSql(params.getFromExpirationDate())));
+		}
+		if (params.getToExpirationDate() != null ) {
+			filter = filter.and(p.getExpirationdateProperty().le(
+				AonDateUtils.toSql(params.getToExpirationDate())));
+		}
+		return filter;
 	}
 
 }

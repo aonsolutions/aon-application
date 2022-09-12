@@ -98,6 +98,12 @@ public class ConsoleModule extends MainEntryPoint {
 		sidebarMenu.add(optionsGrid);
 		optionsGrid.addRow().addCell(new InlineLabel("UTILIDADES"), AON.CSS.aonBold(), AON.CSS.aonTextUnderline());
 		
+		Label opt0 = new Label(AonStringUtils.BULLET + "Gesti\u00F3n de dominios");
+		opt0.setStyleName(AON.CSS.aonClickableBlock());
+		opt0.addStyleName(AON.CSS.aonPadding());
+		opt0.addClickHandler( e -> content.setWidget( new ConsoleDomainModule(options) ));
+		optionsGrid.addRow().addCell(opt0);
+
 		Label opt1 = new Label(AonStringUtils.BULLET + "Validaci\u00F3n de un dominio");
 		opt1.setStyleName(AON.CSS.aonClickableBlock());
 		opt1.addStyleName(AON.CSS.aonPadding());

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -126,7 +127,10 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					CONSOLE_SERVICE.getDomains(occam,getSchema(),request.getQuery(),new AsyncCallback<LinkedList<Domain>>() {
+					DomainParams  params = new DomainParams()
+						.setSchema(getSchema())
+						.setQuery(request.getQuery()); 
+					CONSOLE_SERVICE.getDomains(occam,params,new AsyncCallback<LinkedList<Domain>>() {
 		
 						public void onFailure(Throwable caught) {
 							callback.onSuggestionsReady(request, new Response());
@@ -140,7 +144,13 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 									SafeHtmlBuilder bld = new SafeHtmlBuilder();
 									String ds = domain.getDescription() + " (" + domain.getName() + ")";
 									int i = AonStringUtils.indexOfIgnoreCase(ds, request.getQuery());
-									bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\"" + AON.CSS.aonTabIcon() + "\" >");
+									bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\""
+											+ ((domain.isParent())
+												?AON.CSS.aonIconLevelTop()
+												:AON.CSS.aonIconLevelThis() )
+											+ AonStringUtils.SPACE
+											+ AON.CSS.aonTabIcon()
+											+ "\" >");
 									bld.appendEscaped(AonStringUtils.substring(ds, 0, i));
 									bld.appendHtmlConstant(BEGIN_STRONG);
 									bld.appendEscaped(AonStringUtils.substring(ds, i, (i + AonStringUtils.length(request.getQuery()) )));

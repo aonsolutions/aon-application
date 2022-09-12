@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,8 +24,8 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void getDomains(Occam occam, String schema, String query, AsyncCallback<LinkedList<Domain>> callback) {
+	public void getDomains(Occam occam, DomainParams params, AsyncCallback<LinkedList<Domain>> callback) {
 		AON.start();
-		fsa.getDomains(occam, schema, query, new AsyncCallbackWrapper<>(callback));
+		fsa.getDomains(occam, params, new AsyncCallbackWrapper<>(callback));
 	}
 }

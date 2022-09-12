@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleService;
 import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -22,7 +23,7 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 
 	@Override
-	public LinkedList<Domain> getDomains(Occam occam, String schema, String query) throws AonCoreException {
-		return CONSOLE.getDomains(occam, schema, query);
+	public LinkedList<Domain> getDomains(Occam occam, DomainParams params) throws AonCoreException {
+		return CONSOLE.getDomains(occam, params);
 	}
 }
