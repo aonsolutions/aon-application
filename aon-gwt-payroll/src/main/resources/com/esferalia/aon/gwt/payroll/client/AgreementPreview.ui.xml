@@ -54,25 +54,11 @@
 		
 		.headerSticky {
 			background-color: #eee;
-			position: sticky;
-			top: 0;
 			height: 1.5rem;
 		}
 		
 		.headerFSize{
 			font-size: .8em;
-		}
-		
-		.levelHeaderSticky {
-			position: sticky;
-			left: 0;
-			background-color: #eee;
-		}
-		
-		.levelSticky {
-			background-color: white;
-			position: sticky;
-			left: 0;
 		}
 		
 		.flexCenter {
@@ -101,6 +87,33 @@
 		.heigthAll {height: 100%;}
 		.widthAll {width: 100%;}
 		
+		.headerFixed {
+			position: sticky;
+  			top: 0;
+  			height: 1.5rem;
+			font-size: .7rem;
+			background-color: #eee;
+			min-width: 120px;
+		}
+		
+		.headerLevelFixed {
+			z-index: 5;
+			position: sticky;
+			top: 0;
+			left: 0;
+			height: 1.5rem;
+			font-size: .7rem;
+			background-color: #eee;
+		}
+
+		.levelFixed {
+			position: sticky;
+			left: 0;
+			z-index: 2;
+			font-size: .7rem;
+			background-color: white;
+		}
+				
 	</ui:style>
 	
 	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">
