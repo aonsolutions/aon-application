@@ -59,7 +59,8 @@ public class Contrata {
 
 	private static final String MESSAGE_ERROR  = "Error no aceptada la comunicaci\u00f3n";
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
-
+	private static final String RETURN_INIT    = "returnInit";
+	
 	private Contrata() {
 		throw new IllegalStateException("Utility class");
 	}
@@ -392,8 +393,7 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
 			handleSepeExceptions(htmlPage);
 
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp")
-					.click();
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 			handleSepeExceptions(htmlPage);
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/atraves_comunicacion.jsp").click();
@@ -423,7 +423,7 @@ public class Contrata {
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
-			{// DATA ENTERPRISE
+			{// -------------------------DATA ENTERPRISE----------------------------
 				String ctaCti = cto.getCtaCti();
 				String regimen = cto.getRegimen();
 
@@ -438,7 +438,7 @@ public class Contrata {
 				form.getInputByName("cuentacotizacion").setValueAttribute(regimen + ctaCti);
 			}
 
-			{// DATA EMPLOYEE
+			{// ---------------------------DATA EMPLOYEE-------------------------
 				String tipodoc = "D";
 				if (Toolkit.getIdentityType(cto.getIpf()).equals("6")) {
 					tipodoc = "E"; // NIE
@@ -485,7 +485,7 @@ public class Contrata {
 				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
 			}
 
-			{// DATA CONTRACT
+			{// ----------------------DATA CONTRACT--------------------
 				form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es
 																				// menor a 28
 
@@ -521,7 +521,7 @@ public class Contrata {
 				}
 			}
 
-			{// OTHERS DATA CONTRACT (OPTIONAL)
+			{// --------------------OTHERS DATA CONTRACT (OPTIONAL)-----------------
 				if (cto.getDateFinContract() != null) {
 					DomNode endDay = form.querySelector("[name=\"diafechafin\"]");
 					if (endDay != null) {
@@ -533,8 +533,7 @@ public class Contrata {
 				}
 
 				if (cto.getJndType() != null) {
-					((HtmlSelect) form.querySelector("select[name=codtipojornada]"))
-							.setSelectedAttribute(cto.getJndType().getValue(), true);
+					((HtmlSelect) form.querySelector("select[name=codtipojornada]")).setSelectedAttribute(cto.getJndType().getValue(), true);
 				}
 
 				if (cto.getDurationTypeJndHour() != null) {
@@ -577,12 +576,37 @@ public class Contrata {
 					check.click();
 
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					handleSepeAlert(alertHandler.getCollectedAlerts());
 					handleSepeExceptions(htmlPage);
 
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
 					((HtmlSelect) form.querySelector("select[name=codobjetointerinidad]"))
 							.setSelectedAttribute(interinidad.get(), true);
+				}
+			}
+			
+			{//------------------DATA CONTRACT SPECIFIC -----------------
+				
+				if(cto.isDiscapacidad()) {
+					DomNode checkDiscapacidad = form.querySelector("[name=\"checkDiscapacidad\"]");
+					if(checkDiscapacidad!=null) {
+						htmlPage = ((HtmlCheckBoxInput) checkDiscapacidad).click();
+						handleSepeAlert(alertHandler.getCollectedAlerts());
+						handleSepeExceptions(htmlPage);
+						
+						Optional<String> discapacidadType = cto.getDiscapacidadType();
+						if(discapacidadType.isPresent()) {
+							htmlPage = ((HtmlSelect) htmlPage.querySelector("select[name=\"coddiscapacidad\"]")).setSelectedAttribute(discapacidadType.get(), true);
+						}
+						
+						Optional<String> collectiveType = cto.getCollectiveType();
+						if(collectiveType.isPresent()) {							
+							htmlPage = ((HtmlSelect) htmlPage.querySelector("select[name=\"codbonificaciondisca\"]")).setSelectedAttribute(collectiveType.get(), true);
+						}
+					
+						form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					}
 				}
 			}
 
@@ -595,7 +619,7 @@ public class Contrata {
 				message = getSuccessMessage(htmlPage);
 				if (message == null || (message != null && message.indexOf("E") >= 0)) {
 					break;
-				} else if (message.contains("returnInit")) {
+				} else if (message.contains(RETURN_INIT)) {
 					htmlPage = sepeReturnInitPage(htmlPage, cto);
 				}
 			}
@@ -1199,7 +1223,7 @@ public class Contrata {
 					message = getSuccessMessage(htmlPage);
 					if (message == null || (message != null && message.indexOf("E") >= 0)) {
 						break;
-					} else if (message.contains("returnInit")) {
+					} else if (message.contains(RETURN_INIT)) {
 						htmlPage = sepeReturnInitContractExtension(htmlPage, contractExtension);
 					}
 				}
@@ -2084,7 +2108,7 @@ public class Contrata {
 					msg = pStr;
 					b = true;
 				} else if (list.stream().anyMatch(pLowerCase::contains)) {
-					msg = "returnInit";
+					msg = RETURN_INIT;
 					b = true;
 				}
 

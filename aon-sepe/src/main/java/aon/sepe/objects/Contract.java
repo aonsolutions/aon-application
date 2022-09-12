@@ -37,6 +37,7 @@ public class Contract {
 	private String interinidad;
 	private String titulacion;
 
+
 	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas
 									// ciertas?
 	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion
@@ -44,6 +45,12 @@ public class Contract {
 	private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
 	
 	private boolean noCertainDate; // ¿ Periodo de actividad es sin fecha cierta.?
+	
+	private boolean isDiscapacidad; // ¿ Posee discapacidad ?
+	
+	//discapacidad
+	private String discapacidadType;
+	private String collectiveType;
 
 	// Para las transformaciones
 	private DiscontinuoReason discontinuoReason;
@@ -200,6 +207,18 @@ public class Contract {
 		return noCertainDate;
 	}
 	
+	public boolean isDiscapacidad() {
+		return isDiscapacidad;
+	}
+	
+	public Optional<String> getDiscapacidadType() {
+		return Optional.ofNullable(discapacidadType);
+	}
+	
+	public Optional<String> getCollectiveType() {
+		return Optional.ofNullable(collectiveType);
+	}
+	
 	public List<ContractDetail> getDetails() {
 		return details;
 	}
@@ -248,6 +267,12 @@ public class Contract {
 		private boolean certificateProfessional; // ¿ El trabajador tiene Certificado de profesionalidad?
 
 		private boolean noCertainDate; // ¿ Periodo de actividad es sin fecha cierta.?
+		
+		private boolean isDiscapacidad; // ¿ Posee discapacidad ?
+		
+		//discapacidad
+		private String discapacidadType;
+		private String collectiveType;
 		
 		// Para la transformacion
 		private Date oldDateIniContract;
@@ -445,6 +470,21 @@ public class Contract {
 			return this;
 		}
 		
+		public ContractBuilder setDiscapacidad(boolean isDiscapacidad) {
+			this.isDiscapacidad = isDiscapacidad;
+			return this;
+		}
+		
+		public ContractBuilder setDiscapacidadType(String discapacidadType) {
+			this.discapacidadType = discapacidadType;
+			return this;
+		}
+		
+		public ContractBuilder setCollectiveType(String collectiveType) {
+			this.collectiveType = collectiveType;
+			return this;
+		}
+		
 		public ContractBuilder setDetails(List<ContractDetail> details) {
 			this.details = details;
 			return this;
@@ -491,10 +531,13 @@ public class Contract {
 			contract.previsible = this.previsible;
 			contract.oldDateIniContract = this.oldDateIniContract;
 			contract.oldDateFinContract = this.oldDateFinContract;
-			contract.titulacion = this.titulacion;
+			contract.titulacion              = this.titulacion;
 			contract.certificateProfessional = this.certificateProfessional;
-			contract.details = this.details;
-			contract.noCertainDate = this.noCertainDate;
+			contract.details          = this.details;
+			contract.noCertainDate    = this.noCertainDate;
+			contract.isDiscapacidad   = this.isDiscapacidad;
+			contract.discapacidadType = this.discapacidadType;
+			contract.collectiveType   = this.collectiveType;
 			return contract;
 		}
 	}
@@ -655,21 +698,47 @@ public class Contract {
 		}
 	}
 	
-	@Override
+    @Override
 	public String toString() {
-		return "Contract [sepeId=" + sepeId + ", cifEnterprise=" + cifEnterprise + ", regimen=" + regimen + ", ctaCti="
-				+ ctaCti + ", nss=" + nss + ", ipf=" + ipf + ", name=" + name + ", sex=" + sex + ", surname=" + surname
-				+ ", lastSurname=" + lastSurname + ", codNationality=" + codNationality + ", codPaisDom=" + codPaisDom
-				+ ", codMunDom=" + codMunDom + ", codFormativo=" + codFormativo + ", codOccupation=" + codOccupation
-				+ ", codPaisWork=" + codPaisWork + ", codMunWork=" + codMunWork + ", codContract=" + codContract
-				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract
-				+ ", oldDateIniContract=" + oldDateIniContract + ", oldDateFinContract=" + oldDateFinContract
-				+ ", dateBirth=" + dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer
-				+ ", jndType=" + jndType + ", discontinuoReason=" + discontinuoReason + ", durationTypeJndHour="
-				+ durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin + ", durationTypeCvnHour="
-				+ durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin + ", interinidad=" + interinidad
-				+ ", titulacion=" + titulacion + ", certificateProfessional=" + certificateProfessional
-				+ ", previsible=" + previsible 
-				+ ", details=" + details +"]";
+		return "Contract [sepeId=" + sepeId 
+			+ ", cifEnterprise=" + cifEnterprise 
+			+ ", regimen=" + regimen 
+			+ ", ctaCti="+ ctaCti 
+			+ ", nss=" + nss 
+			+ ", ipf=" + ipf 
+			+ ", name=" + name 
+			+ ", sex=" + sex 
+			+ ", surname=" + surname
+			+ ", lastSurname=" + lastSurname 
+			+ ", codNationality=" + codNationality 
+			+ ", codPaisDom=" + codPaisDom
+			+ ", codMunDom=" + codMunDom 
+			+ ", codFormativo=" + codFormativo 
+			+ ", codOccupation=" + codOccupation
+			+ ", codPaisWork=" + codPaisWork 
+			+ ", codMunWork=" + codMunWork 
+			+ ", codContract=" + codContract
+			+ ", dateIniContract=" + dateIniContract 
+			+ ", dateFinContract=" + dateFinContract
+			+ ", oldDateIniContract=" + oldDateIniContract 
+			+ ", oldDateFinContract=" + oldDateFinContract
+			+ ", dateBirth=" + dateBirth 
+			+ ", dateComContract=" + dateComContract 
+			+ ", offer=" + offer
+			+ ", jndType=" + jndType 
+			+ ", discontinuoReason=" + discontinuoReason 
+			+ ", durationTypeJndHour="+ durationTypeJndHour 
+			+ ", durationTypeJndMin=" + durationTypeJndMin 
+			+ ", durationTypeCvnHour="+ durationTypeCvnHour 
+			+ ", durationTypeCvnMin=" + durationTypeCvnMin 
+			+ ", interinidad=" + interinidad
+			+ ", titulacion=" + titulacion 
+			+ ", certificateProfessional=" + certificateProfessional
+			+ ", previsible=" + previsible 
+			+ ", noCertainDate=" + noCertainDate 
+			+ ", isDiscapacidad=" + isDiscapacidad 
+			+ ", discapacidadType=" + discapacidadType 
+			+ ", collectiveType=" + collectiveType 
+			+ ", details=" + details +"]";
 	}
 }
