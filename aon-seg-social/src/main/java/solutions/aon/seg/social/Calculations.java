@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -221,7 +222,7 @@ class Calculations {
 			}
 			throw new solutions.aon.seg.social.exception.ElementNotFoundException(e.getMessage());
 		}
-		return null;
+		return Collections.emptyMap();
 	}
 	
 	
@@ -460,7 +461,7 @@ class Calculations {
 			}
 			throw new solutions.aon.seg.social.exception.ElementNotFoundException(e.getMessage());
 		}
-		return null;
+		return Collections.emptyMap();
 	}
 
 

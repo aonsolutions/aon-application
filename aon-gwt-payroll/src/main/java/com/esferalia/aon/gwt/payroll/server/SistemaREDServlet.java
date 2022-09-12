@@ -140,26 +140,29 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 				
 				for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
-
-//					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
-					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 					
-					SistemaRED2AON.addCalcs(aonContext, 
-							userLogin, 
-							domainName, 
-							domainId, 
-							certificate.getCertificate(), 
-							certificate.getPassword(), 
-							certificate.getType(), 
-							ccc.getRegime(), 
-							ccc.getCode(), 
-							startDate, 
-							endDate);
-					writer.write(ccc.getCode());
-					writer.flush();
-//					resp.setStatus(HttpServletResponse.SC_OK);
-//					String base64 = Base64.getEncoder().encodeToString(data);
-//					encodeURIComponent("application/pdf", base64, writer);
+					try {
+	//					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+						Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
+						
+						SistemaRED2AON.addCalcs(aonContext, 
+								userLogin, 
+								domainName, 
+								domainId, 
+								certificate.getCertificate(), 
+								certificate.getPassword(), 
+								certificate.getType(), 
+								ccc.getRegime(), 
+								ccc.getCode(), 
+								startDate, 
+								endDate);
+						writer.write(ccc.getCode());
+						writer.flush();
+	//					resp.setStatus(HttpServletResponse.SC_OK);
+	//					String base64 = Base64.getEncoder().encodeToString(data);
+	//					encodeURIComponent("application/pdf", base64, writer);
+					} catch ( Exception e ) {
+					}
 					
 				}
 				resp.setStatus(HttpServletResponse.SC_OK);
