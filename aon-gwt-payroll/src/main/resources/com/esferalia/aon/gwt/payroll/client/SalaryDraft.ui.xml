@@ -693,7 +693,7 @@
 													DEDUCIR</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalDeductionLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalDeductionLabel" debugId="totalDeductionLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML debugId="dbTotalDeductionLabel" ui:field="dbTotalDeductionLabel"
 														visible="false" />
 												</g:HTMLPanel>
