@@ -7,11 +7,11 @@ import { sortBy } from "../../services/utils.js";
 import { MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
-import { TaskUtils } from "./shared/TaskUtils.js";
+import { TaskUtils } from "./utils/TaskUtils.js";
+import { TaskListUtils } from "./utils/TaskListUtils.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
 import * as LS from "../../services/localStorageService.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
-import { TaskListUtils } from "./shared/TaskListUtils.js";
 
 export class AonMessengerList extends AonElement {
   MORE;

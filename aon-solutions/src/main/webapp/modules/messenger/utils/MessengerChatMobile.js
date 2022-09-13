@@ -11,7 +11,7 @@ import * as ACTIONS from "../../actions.js";
  * 
  * @param {Task} task 
  */
-export const buildMobile = (task)=> {
+const buildForm = (task)=> {
     const mainView = TaskCreationUtils.createMobileMainView();
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     aonMessengerChat.appendChild(mainView);
@@ -167,7 +167,6 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
     });
 }
 
-
 const changeStyleSectionComment = (divs) => {
     setStyles(divs.aonTextArea,{
        fontSize: "15px",
@@ -298,7 +297,6 @@ const showFullComment  = (b) => {
     }
 } 
 
-
 const createFirstDiv = (mainView) => {
     const firstDiv = newComponent({
         classes: [CSS.FLEX_ROW],
@@ -329,7 +327,6 @@ const createFirstDiv = (mainView) => {
     return wrapper;
 }
   
-
 const createSecondDiv = (task, mainView) => {
     let div = newComponent({
         type: TAG.DIV,
@@ -378,4 +375,9 @@ const hiddenBtnToolbar =(parent, b, exclude) => {
             });
         }
     }
+}
+
+
+export const MessengerChatMobile = {
+    buildForm
 }

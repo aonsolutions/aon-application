@@ -20,7 +20,7 @@ import { getTasks } from "../../../services/taskService.js";
  * 
  * @param {Task} task
  */
-export const buildDesktop = (task)=> {
+const buildForm = (task)=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   buildToolbar(task);
 
@@ -301,6 +301,7 @@ const addTextAreaChat = (wrapper, task) => {
 
 const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();
+  dialog.autoclose = false;
   dialog.clear();
 
   if (!aonMessengerChat.isMobile()) {
@@ -448,7 +449,7 @@ const getTitleHtml = (task, isParent = false) => {
 
 let tasksTmp = [];
 
-export const loadTaskGrouped = (task, parent=undefined) => {
+const loadTaskGrouped = (task, parent=undefined) => {
   const id = "divTaskList";
   tasksTmp = [];
   
@@ -526,4 +527,10 @@ const updateListTask = (task) => {
   const simpleListTask = document.getElementById("simpleListTask");
   simpleListTask.tasks = tasksTmp;
   simpleListTask.init();
+}
+
+
+export const MessengerChat = {
+  buildForm,
+  loadTaskGrouped
 }

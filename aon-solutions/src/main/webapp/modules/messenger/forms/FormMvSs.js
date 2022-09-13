@@ -2,7 +2,7 @@ import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/en
 import { getCccForActivity } from "../../../services/contractService.js";
 import { serializeForm, sortBy } from "../../../services/utils.js";
 import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums.js";
-import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
+import { TaskCreationUtils } from "../utils/TaskCreationUtils.js";
 import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType, sendAlta } from "../../../services/comunicaService.js";
 import { CreateComponent } from "../../../components/CreateComponent.js";
 

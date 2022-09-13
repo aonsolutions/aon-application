@@ -15,7 +15,7 @@ export class AonDialog extends AonElement {
 	ACCEPT;
 
 	static get observedAttributes() {
-		return ['width'];
+		return ['width', 'autoclose'];
 	}
 
 	get id() {
@@ -50,11 +50,19 @@ export class AonDialog extends AonElement {
 		this.setAttribute('width', width);
 	}
 
+	get autoclose() {
+		return this.getAttribute('autoclose') == "true";
+	}
+
+	set autoclose(autoclose) {
+		this.setAttribute('autoclose', autoclose);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if ('width' === name) {
 			let main = this.getElement(this.MAIN);
 			if (main) main.style.width = newValue;
-		}
+		} 
 	}
 
 	constructor() {
@@ -76,6 +84,7 @@ export class AonDialog extends AonElement {
 		this.ACTION = this.DIALOG + 'Action';
 		this.CANCEL = this.ACTION + 'Cancel';
 		this.ACCEPT = this.ACTION + 'Accept';
+		this.autoclose = this.autoclose || true;
 	}
 
 	clear() {
@@ -104,12 +113,7 @@ export class AonDialog extends AonElement {
 		content.style.width = '200px';
 		content.style.padding = '0px';
 
-		dialog.onclick = (event) => {
-			if (event.target === dialog) {
-				this.close();
-			}
-		}
-
+		this.onClick(dialog);
 	}
 
 	buildMenu() {
@@ -128,12 +132,7 @@ export class AonDialog extends AonElement {
 		content.style.width = '200px';
 		content.style.padding = '0px';
 
-		dialog.onclick = (event) => {
-			if (event.target === dialog) {
-				this.close();
-			}
-		}
-
+		this.onClick(dialog);
 	}
  
 	build() {
@@ -170,16 +169,21 @@ export class AonDialog extends AonElement {
 			main.style.padding = '0px';
 		}
 
-		dialog.onclick = (event) => {
-			if (event.target === dialog) {
-				this.close();
-			}
-		}
+		this.onClick(dialog);
 
 		this.getElement(`${this.DIALOG}Click`).addEventListener('click', (ev)=>{
 			this.close()
 		})
 
+	}
+
+
+	onClick(dialog){
+		dialog.onclick = ({target}) => {
+			if (target === dialog && this.autoclose) {
+				this.close();
+			}
+		}
 	}
 
 	isTypeMenu() {
@@ -196,6 +200,7 @@ export class AonDialog extends AonElement {
 	}
 
 	close() {
+		this.autoclose = true;
 		let dialog = document.getElementById(this.getAttribute(CONSTANT.ID) + 'Dialog');
 		if(dialog) dialog.style.display = 'none';
 		this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
