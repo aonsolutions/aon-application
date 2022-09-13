@@ -1,8 +1,10 @@
 import { AonAvatar } from '../../components/aon-avatar.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonInput } from '../../components/aon-input.js';
 import { AonElement } from '../../components/AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
-import { getAuth, insertAvatar } from '../../services/authService.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { changePassword, getAuth, insertAvatar } from '../../services/authService.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 // import { AonDialog } from '../../components/aon-dialog.js';
@@ -11,6 +13,7 @@ export class AonMobileProfile extends AonElement {
 
     INPUT_FILE;
     AVATAR;
+    DIALOG;
     get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -34,6 +37,7 @@ export class AonMobileProfile extends AonElement {
         this.id = this.id || CONSTANT.AON_MOBILE_PROFILE;
         this.INPUT_FILE = this.id + 'InputFile';
         this.AVATAR = "aonAvatar";
+        this.DIALOG = this.id+"Dialog"; 
     }
 
     build(user) {
@@ -45,7 +49,11 @@ export class AonMobileProfile extends AonElement {
         input.name = "file";
         input.addEventListener(EVENT.CHANGE, ({target}) => this.uploadAvatarFile(target.files[0]));
         this.appendChild(input);
-		
+
+        let aonDialog = new AonDialog();
+        aonDialog.id = this.DIALOG;
+        this.appendChild(aonDialog);
+
         let div = this.createElement(TAG.DIV);
         div.style.margin = '20px';
         this.appendChild(div);  
@@ -75,11 +83,11 @@ export class AonMobileProfile extends AonElement {
         this.buildOption('mail', user.email);
         this.buildOption('fingerprint', user.document);
         this.buildOption('smartphone', user.phone);
-        this.buildOption('password', 'Cambiar Contraseña');
+        this.buildOption('password', 'Cambiar Contraseña', () => this.editPassword());
         // this.addCloseSessionButton();
     }
 
-    buildOption(icon, value) {
+    buildOption(icon, value, fn) {
         let div = this.createElement(TAG.DIV);
         div.style.margin = '20px';
         div.style.marginLeft = '40px';
@@ -96,7 +104,54 @@ export class AonMobileProfile extends AonElement {
         val.style.position = 'absolute';
         val.innerHTML = value;
         div.appendChild(val);
+
+        if(fn){
+            div.addEventListener(EVENT.CLICK, fn)
+        }
     }
+
+	editPassword() {
+		let d = document.getElementById(this.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.CHANGE_PASSWORD);
+
+        let div = document.createElement("div");
+
+        let oldPassword = new AonInput();
+        oldPassword.id = "oldPassword";
+        oldPassword.type = "password";
+        oldPassword.description = "Contraseña actual";
+        div.appendChild(oldPassword);
+
+        let newPassword = new AonInput();
+        newPassword.id = "newPassword";
+        newPassword.type = "password";
+        newPassword.description = "Nueva Contraseña";
+        div.appendChild(newPassword);
+
+		d.setContent(div);
+        
+		d.addAcceptAction(() => {
+            const oldPs = oldPassword.value;
+            const newPs = newPassword.value;
+
+            changePassword({oldPassword: oldPs, newPassword: newPs})
+            .then(()=>{
+                this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
+            })
+            .catch(error=>{
+                if(typeof error === 'string'){
+                    error = JSON.parse(error);
+                }
+
+                if(error.message){
+                    alert(error.message);
+                }
+            });
+		});
+		d.open();
+	}
 
     // addCloseSessionButton() {
     //     let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);

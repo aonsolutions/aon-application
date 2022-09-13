@@ -4,10 +4,11 @@ import { APP_PARAMS_REQUEST, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEW
 import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, sendTaskHistoric, deleteTaskWorkflow, updateTaskWorkflow} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
-import { buildDesktop } from "./shared/MessengerChat.js";
-import { buildMobile } from "./shared/MessengerChatMobile.js";
-import { TaskUtils } from "./shared/TaskUtils.js";
-import { TaskFill } from "./shared/TaskFill.js";
+import { MessengerChat } from "./utils/MessengerChat.js";
+import { MessengerChatMobile } from "./utils/MessengerChatMobile.js";
+import { TaskUtils } from "./utils/TaskUtils.js";
+import { TaskFill } from "./utils/TaskFill.js";
+import { TaskCreationUtils } from "./utils/TaskCreationUtils.js";
 import { FormMovSs } from "./forms/FormMvSs.js";
 import { FormTimecontrol } from "./forms/FormTimecontrol.js";
 import { FormVacation } from "./forms/FormVacation.js";
@@ -16,7 +17,6 @@ import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
 import { getTastHoldersWorkGroup } from "../../services/taskHolderService.js";
 import {getDomainLogin} from '../../services/localStorageService.js';
-import { TaskCreationUtils } from "./shared/TaskCreationUtils.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -114,11 +114,11 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintDesktop() {
-    buildDesktop(this.task);
+    MessengerChat.buildForm(this.task);
   }
 
   paintMobile() {
-    buildMobile(this.task);
+    MessengerChatMobile.buildForm(this.task);
   }
 
   /**

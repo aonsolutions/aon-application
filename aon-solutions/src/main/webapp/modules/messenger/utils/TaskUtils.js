@@ -11,7 +11,7 @@ import { FormTimecontrol } from "../forms/FormTimecontrol.js";
 import { FormVacation } from "../forms/FormVacation.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import * as ACTIONS from "../../actions.js";
-import { loadTaskGrouped } from "./MessengerChat.js";
+import { MessengerChat } from "./MessengerChat.js";
 import { AonIcon } from "../../../components/aon-icon.js";
 
 /**
@@ -779,7 +779,7 @@ const onChangeTypeSelect = (task, requestTypeSelect, forExternal = false) =>{
                     task.setTitle(detail.name);
                 } 
                 else if(type === TASK_SOURCE.GROUPED && !aonMessengerChat.isCau() && !aonMessengerChat.isMobile()){
-                    loadTaskGrouped(task);
+                    MessengerChat.loadTaskGrouped(task);
                 }
         
                 if(!forExternal) {
