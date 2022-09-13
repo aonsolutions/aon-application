@@ -1,5 +1,10 @@
+import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
-export const TYPE_USER =[
+const NOTIFICATION_IDS = {
+    AON_NOTIFICATION_DESK:"aonNotificationDesk"
+}
+
+const TYPE_USER =[
     {
         name:"Empleado",
         value:"employee"
@@ -10,7 +15,7 @@ export const TYPE_USER =[
     }
 ];
 
-export const NOTIFICATION_TABS = [
+const NOTIFICATION_TABS = [
     {
         name: "Notificaciones",
         id: "notification",
@@ -23,7 +28,7 @@ export const NOTIFICATION_TABS = [
     }
 ];
 
-export const badgeUpdate = ({notification, messenger}) => [
+const badgeUpdate = ({notification, messenger}) => [
     {
         id: "notification",
         badge: notification,
@@ -32,4 +37,30 @@ export const badgeUpdate = ({notification, messenger}) => [
         id: "messenger",
         badge: messenger,
     },
-]
+];
+
+const NOTIFICATION_ALL = {
+    name: "Todas",
+    id:'notification_all',
+    icon: MATERIAL_ICONS.ALL_INBOX
+};
+
+const NOTIFICATION_NOT_READ = {
+    name: 'No leídas',
+    id:'notification_not_read',
+    icon:MATERIAL_ICONS.MOVE_TO_INBOX
+};
+
+const NotificationOptions = {
+    NOTIFICATION_ALL,
+    NOTIFICATION_NOT_READ
+};
+
+
+export const NotificationEnums = {
+    TYPE_USER,
+    NOTIFICATION_TABS,
+    NOTIFICATION_IDS,
+    badgeUpdate,
+    NotificationOptions
+}
