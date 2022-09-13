@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCENDIENTS;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import org.eclipse.jetty.util.AtomicBiInteger;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.junit.Ignore;
@@ -45,17 +45,14 @@ import org.junit.Test;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.Enterprise;
 import com.esferalia.aon.jooq.tables.EnterpriseActivity;
 import com.esferalia.aon.jooq.tables.EnterpriseCcc;
-import com.esferalia.aon.jooq.tables.Person;
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.IrpfDataRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
-import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfData;
@@ -78,7 +75,6 @@ import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
-import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Discapacidad;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -3029,6 +3025,145 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 		System.out.println( irpf + " == " + nullIrpf);
 		org.junit.Assert.assertTrue(irpf == nullIrpf);
+	}
+
+	@Test
+	public void testDecendentsDisabilityLevel() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.PRINCIPAL, 
+				getFirstDayOfYear(getToday()),
+				null,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), C401.getValue());
+						put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+					}
+				}, new String[] { 
+						"2000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+						new String[] {
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
+				}
+				, null
+				,null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				org.junit.Assert.assertNull(irpfOutcome.getIrpfData().getDisabilityLevel()) ;
+			}
+		});
+		double nullIrpf = ctx.getIrpf();
+
+		IrpfDataRecord irpfData = 
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA)
+		.set(IRPF_DATA.DOMAIN, contract.getDomain())
+		.set(IRPF_DATA.CONTRACT, contract.getId())
+		.set(IRPF_DATA.END_DATE, endDate)
+		.set(IRPF_DATA.START_DATE, startDate)
+		.set(IRPF_DATA.ISSUE_DATE, startDate)
+		.set(IRPF_DATA.FAMILY_SITUATION, (byte) FamilySituation.OTHER.ordinal())
+		.set(IRPF_DATA.DISABILITY_LEVEL, DSL.castNull(IRPF_DATA.DISABILITY_LEVEL))
+		.returning()
+		.fetchOne();
+		
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA_DESCENDIENTS)
+		.set(IRPF_DATA_DESCENDIENTS.DOMAIN, irpfData.getDomain())
+		.set(IRPF_DATA_DESCENDIENTS.IRPF_DATA, irpfData.getId())
+		.set(IRPF_DATA_DESCENDIENTS.BIRTH_YEAR, get(startDate, Calendar.YEAR) - 5)
+		.set(IRPF_DATA_DESCENDIENTS.DEPENDENCE, (byte) 1 )
+		.set(IRPF_DATA_DESCENDIENTS.UNIQUE_PARENT, (byte) 1)
+		.set(IRPF_DATA_DESCENDIENTS.DISABILITY_LEVEL, (byte) DisabilityLevel.GT_EQ_65.ordinal())
+		.execute();
+		
+		
+
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println("DescendentsFirst : " + irpfOutcome.getIrpfResult().getDescendentsFirst() );
+				System.out.println("Descendents65 : " + irpfOutcome.getIrpfResult().getDescendents65Entirely() );
+				System.out.println("Descendents65Total : " + irpfOutcome.getIrpfResult().getDescendents65Total() );
+				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendentsFirst()) ;
+				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents65Entirely()) ;
+				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents65Total()) ;
+
+			}
+		});
+		
+		double gt65Irpf = ctx.getIrpf();
+		
+		System.out.println( gt65Irpf + " < " + nullIrpf);
+		org.junit.Assert.assertTrue(gt65Irpf < nullIrpf);
+
+		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
+		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+
+		irpfData = 
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA)
+		.set(IRPF_DATA.DOMAIN, contract.getDomain())
+		.set(IRPF_DATA.CONTRACT, contract.getId())
+		.set(IRPF_DATA.END_DATE, endDate)
+		.set(IRPF_DATA.START_DATE, startDate)
+		.set(IRPF_DATA.ISSUE_DATE, startDate)
+		.set(IRPF_DATA.FAMILY_SITUATION, (byte) FamilySituation.OTHER.ordinal())
+		.set(IRPF_DATA.DISABILITY_LEVEL, DSL.castNull(IRPF_DATA.DISABILITY_LEVEL))
+		.returning()
+		.fetchOne();
+		
+		aonContext.getDslContext()
+		.insertInto(IRPF_DATA_DESCENDIENTS)
+		.set(IRPF_DATA_DESCENDIENTS.DOMAIN, irpfData.getDomain())
+		.set(IRPF_DATA_DESCENDIENTS.IRPF_DATA, irpfData.getId())
+		.set(IRPF_DATA_DESCENDIENTS.BIRTH_YEAR, get(startDate, Calendar.YEAR) - 5)
+		.set(IRPF_DATA_DESCENDIENTS.DEPENDENCE, (byte) 1 )
+		.set(IRPF_DATA_DESCENDIENTS.UNIQUE_PARENT, (byte) 1)
+		.set(IRPF_DATA_DESCENDIENTS.DISABILITY_LEVEL, (byte) DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE.ordinal())
+		.execute();
+
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println("DescendentsFirst : " + irpfOutcome.getIrpfResult().getDescendentsFirst() );
+				System.out.println("Descendents3365 : " + irpfOutcome.getIrpfResult().getDescendents33_65Entirely() );
+				System.out.println("Descendents3365Total : " + irpfOutcome.getIrpfResult().getDescendents33_65Total() );
+				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendentsFirst()) ;
+				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents33_65Entirely()) ;
+				org.junit.Assert.assertEquals((long)1, (long)irpfOutcome.getIrpfResult().getDescendents33_65Total()) ;
+
+			}
+		});
+		
+
+		double gt33lt65Irpf = ctx.getIrpf();
+		System.out.println( gt65Irpf + " < " + gt33lt65Irpf);
+		org.junit.Assert.assertTrue(gt65Irpf < gt33lt65Irpf);
+
+		startDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
+		endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+
+	
 	}
 
 	@Test

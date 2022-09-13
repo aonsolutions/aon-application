@@ -18193,8 +18193,8 @@ LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
 INSERT INTO `domain` VALUES
 (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2020-12-09 20:01:33'),
-(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2022-07-28 00:16:25',NULL,'admin','2022-08-09 19:36:33'),
-(8777,'general-payroll-test.aonsolutions.org','RÃ‰GIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-08-09 19:38:00'),
+(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2022-07-28 00:16:25',NULL,'admin','2022-09-13 13:35:59'),
+(8777,'general-payroll-test.aonsolutions.org','RÃ‰GIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-09-13 13:36:08'),
 (8778,'trainning-payroll-test.aonsolutions.org','FORMACIÃ“N Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2022-07-13 21:11:32'),
 (8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),
 (8780,'agrarian-payroll-test.aonsolutions.org','RÃ‰GIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2022-06-21 21:35:17'),
@@ -32027,7 +32027,7 @@ CREATE TABLE `irpf_data` (
 LOCK TABLES `irpf_data` WRITE;
 /*!40000 ALTER TABLE `irpf_data` DISABLE KEYS */;
 INSERT INTO `irpf_data` VALUES
-(1,8777,5934,1,'98335497D',1,1,NULL,0,2,'2018-05-30',NULL,0,'2018-05-30',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),
+(1,8777,5934,1,'98335497D',0,0,NULL,0,2,'2018-05-30',NULL,0,'2018-05-30',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),
 (2,8777,6051,NULL,NULL,NULL,0,NULL,0,NULL,'2022-01-01',NULL,0,'2022-01-01',NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,0,0);
 /*!40000 ALTER TABLE `irpf_data` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -32052,7 +32052,7 @@ CREATE TABLE `irpf_data_ascendants` (
   KEY `IDX_IRPF_DATA_ASCENDANTS_DOMAIN` (`domain`),
   CONSTRAINT `FK_IRPF_DATA_ASCENDANTS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_IRPF_DATA_ASCENDANTS_IRPF_DATA` FOREIGN KEY (`irpf_data`) REFERENCES `irpf_data` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ascendientes del modelo 145';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ascendientes del modelo 145';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -32061,6 +32061,8 @@ CREATE TABLE `irpf_data_ascendants` (
 
 LOCK TABLES `irpf_data_ascendants` WRITE;
 /*!40000 ALTER TABLE `irpf_data_ascendants` DISABLE KEYS */;
+INSERT INTO `irpf_data_ascendants` VALUES
+(1,8777,1,1935,0,0,1);
 /*!40000 ALTER TABLE `irpf_data_ascendants` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -32095,8 +32097,8 @@ CREATE TABLE `irpf_data_descendients` (
 LOCK TABLES `irpf_data_descendients` WRITE;
 /*!40000 ALTER TABLE `irpf_data_descendients` DISABLE KEYS */;
 INSERT INTO `irpf_data_descendients` VALUES
-(1,8777,1,2010,NULL,NULL,0,0),
-(2,8777,1,2012,NULL,NULL,0,1);
+(1,8777,1,2010,NULL,2,0,0),
+(2,8777,1,2012,NULL,0,0,1);
 /*!40000 ALTER TABLE `irpf_data_descendients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58072,7 +58074,7 @@ INSERT INTO `system_data` VALUES
 (553,0,'INGRESO_AC_EMPRESA','false','1979-01-01',NULL,0,'Ingreso a cuenta a cargo de la empresa'),
 (555,0,'SMI','633.30','2010-01-01','2010-12-31',0,'Salario mÃ­nimo interprofesional'),
 (557,0,'SMI','641.40','2011-01-01','2012-12-31',0,'Salario mÃ­nimo interprofesional'),
-(559,0,'MAX_EMBARGABLE','def(total_liquido){ MAX(((total_liquido - SMI) * 0.30),0)+MAX(((total_liquido - 2 * SMI ) * 0.20),0) + MAX((( total_liquido - 3 * SMI ) * 0.10),0) +MAX((( total_liquido - 4 * SMI ) * 0.15),0) + MAX((( total_liquido - 5 * SMI ) * 0.15),0)}','2000-01-01',NULL,0,'MÃ¡ximo embargable'),
+(559,0,'MAX_EMBARGABLE','def(total_liquido){ _smi = ( PAGAS_PRORRATEADAS ? SMI * 14 /12 : SMI); MAX(((total_liquido - _smi) * 0.30),0) + MAX(((total_liquido - 2 * _smi ) * 0.20),0) + MAX((( total_liquido - 3 * _smi ) * 0.10),0) + MAX((( total_liquido - 4 * _smi ) * 0.15),0) + MAX((( total_liquido - 5 * _smi ) * 0.15),0)}','2000-01-01',NULL,0,'MÃ¡ximo embargable'),
 (561,0,'BASE_IPREM','0.00','2000-01-01',NULL,1,'Base para los conceptos exentos de cotizacion (IPREM) '),
 (563,0,'BIPREM','0.00','2000-01-01',NULL,1,'Base para los conceptos exentos de cotizacion (IPREM) '),
 (565,0,'OCUPACION_IT',' [\"a\": 0.65, \"b\": 1.00, \"d\": 3.35, \"e\": 1.80, \"f\": 3.35, \"g\": 2.10, \"h\": 1.40]','2010-01-01','2018-12-31',1,'Tarifas de primas para I.T'),
@@ -59288,7 +59290,7 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
 (2862,0,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),
-(10248,8776,0,'ADMIN','admin',8628387,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-08-03 00:38:12','ŒKwÞí¶æB¬\0',0),
+(10248,8776,0,'ADMIN','admin',8628387,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-09-13 13:35:54','ŒKwÞí¶æB¬\0',0),
 (10249,8790,0,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -59990,4 +59992,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-07 14:47:19
+-- Dump completed on 2022-09-13 11:37:41
