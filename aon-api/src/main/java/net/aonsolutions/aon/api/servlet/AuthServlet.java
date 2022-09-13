@@ -103,18 +103,36 @@ public class AuthServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject changePassword(AonApiData api) throws AonApiException {
-		String oldPassword = api.getData().opt("oldPassword") != null ? api.getData().optString("oldPassword") : null;
-		if(oldPassword == null) {
-			throw new AonApiException("La contraseña introducida es incorrecta.");
+		
+		JSONObject params = api.getData();
+		
+		String oldPassword = params.optString("oldPassword");
+		String newPassword = params.optString("newPassword");
+		
+		if(oldPassword.isEmpty()) {
+			throw new AonApiException("La contraseña actual requerida.");
+		} 
+		
+		if(newPassword.isEmpty()) {
+			throw new AonApiException("La contraseña anterior requerida.");
 		} 
 		
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
 		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 		auth.setSchema(aonToken.getSchema());
-		String password = api.getData().optString("newPassword");
-		String pass = Utils.createPasswordHash(auth.getEmail(), password);
-		auth.setPassword(pass);
+		
+		String email = auth.getEmail();
+		
+		String oldPass = Utils.createPasswordHash(email, oldPassword);
+		if(!oldPass.equalsIgnoreCase(auth.getPassword())) {
+			throw new AonApiException("La contraseña actual no coincide.");
+		}
+		
+		String newPass = Utils.createPasswordHash(email, newPassword);
+		auth.setPassword(newPass);
+		
 		AON_SOLUTIONS.updateAuthPassword(auth);
+		
 		return new JSONObject();
 	}
 	
