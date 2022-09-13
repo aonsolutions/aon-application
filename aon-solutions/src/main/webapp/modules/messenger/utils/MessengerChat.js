@@ -301,6 +301,7 @@ const addTextAreaChat = (wrapper, task) => {
 
 const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();
+  dialog.autoclose = false;
   dialog.clear();
 
   if (!aonMessengerChat.isMobile()) {
