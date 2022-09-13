@@ -55,8 +55,9 @@ export class AonNotificationDesk extends AonElement {
   initialize() {
     this.id = NotificationEnums.NOTIFICATION_IDS.AON_NOTIFICATION_DESK;
     this.AON_NOTIFICATION_DESK =this.id+"Application";
-    this.TASK_HOLDERS = [];
     this.aonNotifyIconEl = document.querySelector("aon-notification-icon");
+    this.TASK_HOLDERS = [];
+    this.MORE = true;
   }
 
   getDur() {
@@ -86,12 +87,15 @@ export class AonNotificationDesk extends AonElement {
 			{
 				...notificationOptions.NOTIFICATION_ALL,
 				fn: () =>{
-
+          this.setFilter({page:0, perPage:10, status: undefined});
+          this.loadMore(true);
 				}
 			},
 			{
 				...notificationOptions.NOTIFICATION_NOT_READ,
 				fn: () =>{
+          this.setFilter({page:0, perPage:10, status: undefined});
+          this.loadMore(true);
 				}
 			}
 		];
@@ -103,12 +107,24 @@ export class AonNotificationDesk extends AonElement {
     this.DIV_PARENT = NotificationUtils.buildDesk(this.id + "DivParent");
  
     this.getApplication().setContent(this.DIV_PARENT);
-   
-    // this.AON_TABLE.addEventListener(EVENT.MORE,() =>{
-    //   if(this.MORE){
-    //     this.loadMore(false)
-    //   }
-    // });
+
+    let timeOut = undefined;
+    this.DIV_PARENT.addEventListener("scroll", ({target}) => {
+
+      clearTimeout(timeOut);
+      if(this.MORE){
+        const scrollTop = target.scrollTop;
+        const offsetHeight = target.offsetHeight;
+        const physicalSize = target.scrollHeight;
+        const maxScrollPosition = physicalSize - offsetHeight;
+
+        if (scrollTop >= maxScrollPosition) {
+          timeOut = setTimeout(async () => {
+            await this.loadMore(false);
+          }, 300);
+        }
+      }
+    });
   }
 
   async loadMore(reload) {

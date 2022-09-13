@@ -9,11 +9,10 @@ import { NotificationEnums } from "./NotificationEnums.js";
 const buildDesk = () => {
   let divParent = setStyles(document.createElement(TAG.DIV),{
     color: CSS.variable(COLORS.AON_GRAY),
-    boxSizing: "border-box",
     margin: "0",
     minWidth: "0",
-    width: "100%"
   });
+  divParent.className = CSS.AON_CONTENT;
 
   return divParent;
 }
@@ -194,6 +193,7 @@ const getStyleExpand = (b) => {
     font-size: 14px;
     line-height: 20px;
     color: rgb(112, 122, 138);
+    height: auto;
   `
   :
   `
@@ -205,6 +205,7 @@ const getStyleExpand = (b) => {
     font-size: 14px;
     line-height: 20px;
     color: rgb(112, 122, 138);
+    height: 20px;
   `;
 }
 
