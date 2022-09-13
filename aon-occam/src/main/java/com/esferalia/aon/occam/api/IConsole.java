@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 public interface IConsole {
 	
 	public String[] getSchemaNames(AONContext ctx);
-	public LinkedList<Domain> getDomains(CloseableAONContext ctx, DomainParams params);		
+	public LinkedList<Domain> getDomains(CloseableAONContext ctx, DomainParams params);
+	public boolean deleteDomain(CloseableAONContext ctx, DomainParams params);		
 	
 }

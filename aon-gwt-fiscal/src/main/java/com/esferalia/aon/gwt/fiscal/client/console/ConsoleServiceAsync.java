@@ -11,5 +11,6 @@ public interface ConsoleServiceAsync {
 
 	void getSchemas(Occam occam, AsyncCallback<String[]> callback);
 	void getDomains(Occam occam, DomainParams params, AsyncCallback<LinkedList<Domain>> asyncCallback);
+	void deleteDomain(Occam occam, DomainParams params, AsyncCallback<Boolean> callback);
 
 }

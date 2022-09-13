@@ -29,4 +29,10 @@ public class CONSOLE {
 			return getConsole().getDomains(ctx, params);
 		}
 	}
+
+	public static boolean deleteDomain(Occam occam, DomainParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().deleteDomain(ctx, params);
+		}
+	}
 }

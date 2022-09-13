@@ -175,6 +175,11 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 		domainTextBox.setVisibleLength(25);
 		domainTextBox.setMaxLength(50);
 		domainBox.addSelectionHandler(event -> select( ((DomainSuggestion)event.getSelectedItem()).getDomain() ));
+		domainBox.addValueChangeHandler(event -> {
+			if ( AonStringUtils.isBlank(domainTextBox.getValue())) {
+				select(null);
+			}
+		});
 
 		rootPanel = new FlowPanel();
 		rootPanel.addStyleName(AON.CSS.aonNowrap() );
@@ -191,13 +196,11 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 	}
 	
 	private void select(Domain domain) {
-		domainTextBox.removeStyleName(AON.CSS.aonInputTextError());
 		this.domain = domain;
 		SelectionEvent.fire(AonDomainBox.this, this.domain);
 	}
 	
 	private void reset() {
-		domainTextBox.removeStyleName(AON.CSS.aonInputTextError() );
 		domain = null;
 	}
 

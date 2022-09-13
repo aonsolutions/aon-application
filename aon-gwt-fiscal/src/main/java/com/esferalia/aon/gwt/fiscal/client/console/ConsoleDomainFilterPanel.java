@@ -18,10 +18,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
  
 public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<DomainParams>{
+	
+	public static final double HEIGTH = 115;
 	
 	private static final String ALL = "-- TODOS --";
 	
@@ -42,7 +43,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	
 	public ConsoleDomainFilterPanel(final ConsoleModuleOptions opt) {
 		setStyleName(AON.CSS.aonSearchPanel());
-		addStyleName(AON.CSS.aonScrollArea());
+			addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMargin());
 		addStyleName(AON.CSS.aonBlockCenter());
 		
@@ -117,10 +118,9 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		toExpirationDateBox = new AonDateBox();
 		toExpirationDateBox.addValueChangeHandler(e -> fire(opt));
 		
-		AonDisplayTable mainTab = new AonDisplayTable(
-			 AON.CSS.aonBlockCenter()
-			,AON.CSS.aonWidthAlmostAll()
-		);
+		FlowPanel mainTab = new FlowPanel();
+		mainTab.setStyleName( AON.CSS.aonBlockCenter());
+		mainTab.addStyleName( AON.CSS.aonWidthAlmostAll());
 		
 		cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
 		cleanButton.addClickHandler(event -> fire(opt));
@@ -133,40 +133,42 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
 		
-		mainTab.addRow().addCell(
-			new AonDisplayTable().addRow()
-				.addCell(new Label("Esquema"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
-				.addCell(schemaBox)
-				.addCell(new Label(AON.MSG.description()),AON.CSS.aonSearchPanelLabel())
-				.addCell(queryBox)
-				.addCell(new Label("Dominio padre"),AON.CSS.aonSearchPanelLabel())
-				.addCell(parentBox));
-		mainTab.addRow().addCell(
-			new AonDisplayTable().addRow()
-				.addCell(new Label(AON.MSG.type()),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
-				.addCell(typeBox)
-				.addCell(new Label( "Estado" ),AON.CSS.aonSearchPanelLabel())
-				.addCell(activeBox)
-				.addCell(new Label("Herencia"),AON.CSS.aonSearchPanelLabel())
-				.addCell(enableHeredityBox)
-				.addCell(new Label("Crea dominios"),AON.CSS.aonSearchPanelLabel())
-				.addCell(domainManagementBox));
-		mainTab.addRow().addCell(
-			new AonDisplayTable().addRow()
-				.addCell(new Label("\u00FAltimo acceso"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
-				.addCell(fromLastAccessBox)
-				.addCell(new Label(" hasta "),AON.CSS.aonInnerLabel())
-				.addCell(toLastAccessBox)
-				.addCell(new Label("Fecha expiraci\u00F3n"),AON.CSS.aonSearchPanelLabel())
-				.addCell(fromExpirationDateBox)
-				.addCell(new Label(" hasta "),AON.CSS.aonInnerLabel())
-				.addCell(toExpirationDateBox)
-				.addCell(buttonsPanel));
+		AonDisplayTable rowTable1 = new AonDisplayTable();
+		rowTable1.addRow()
+			.addCell(new Label("Esquema"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
+			.addCell(schemaBox)
+			.addCell(new Label(AON.MSG.description()),AON.CSS.aonSearchPanelLabel())
+			.addCell(queryBox)
+			.addCell(new Label("Dominio padre"),AON.CSS.aonSearchPanelLabel())
+			.addCell(parentBox);
+		mainTab.add(rowTable1);
 		
-		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
-		scrollPanel.setWidget(mainTab);
-		setWidget(scrollPanel);
+		AonDisplayTable rowTable2 = new AonDisplayTable();
+		rowTable2.addRow()
+			.addCell(new Label(AON.MSG.type()),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
+			.addCell(typeBox)
+			.addCell(new Label( "Estado" ),AON.CSS.aonSearchPanelLabel())
+			.addCell(activeBox)
+			.addCell(new Label("Herencia"),AON.CSS.aonSearchPanelLabel())
+			.addCell(enableHeredityBox)
+			.addCell(new Label("Crea dominios"),AON.CSS.aonSearchPanelLabel())
+			.addCell(domainManagementBox);
+		mainTab.add(rowTable2);
+		
+		AonDisplayTable rowTable3 = new AonDisplayTable();
+		rowTable3.addRow()
+			.addCell(new Label("\u00FAltimo acceso"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
+			.addCell(fromLastAccessBox)
+			.addCell(new Label(" hasta "))
+			.addCell(toLastAccessBox)
+			.addCell(new Label("Fecha expiraci\u00F3n"),AON.CSS.aonSearchPanelLabel())
+			.addCell(fromExpirationDateBox)
+			.addCell(new Label(" hasta "))
+			.addCell(toExpirationDateBox)
+			.addCell(buttonsPanel);
+		mainTab.add(rowTable3);
+		
+		setWidget(mainTab);
 	}
 
 	private void fire(final ConsoleModuleOptions opt) {

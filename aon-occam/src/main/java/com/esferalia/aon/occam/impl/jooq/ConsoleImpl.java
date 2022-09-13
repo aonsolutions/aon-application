@@ -21,5 +21,10 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public LinkedList<Domain> getDomains(CloseableAONContext ctx, DomainParams params ) {
 		return ConsoleDAO.getDomains(ctx, params);
-	}	
+	}
+	
+	@Override
+	public boolean deleteDomain(CloseableAONContext ctx, DomainParams params) {
+		return ConsoleDAO.deleteDomain(ctx, params);
+	}
 }
