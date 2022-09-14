@@ -683,6 +683,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		taxedTypeLB.addItem("Importe integro", "FULL");
 		taxedTypeLB.addItem("Exento", "NONE");
 		taxedTypeLB.addItem("Personalizado", "CUSTOM");
+		taxedTypeLB.addItem("Ingreso a Cuenta", "IRPF_CTA_ESP");
 
 		taxedTypeLB.addChangeHandler(e -> {
 			int selected = taxedTypeLB.getSelectedIndex();
@@ -696,6 +697,11 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 				taxedFxButton.setVisible(false);
 				taxedExpression.setEnabled(false);
 				taxedExpression.setValue("0.00");
+				break;
+			case 3:
+				taxedFxButton.setVisible(false);
+				taxedExpression.setEnabled(false);
+				taxedExpression.setValue("BASE_CTA_ESP=_P");
 				break;
 			default:
 				taxedFxButton.setVisible(true);
@@ -1511,6 +1517,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 		if (AonStringUtils.equalsIgnoreCase(lbValue, "PRORRAT")) {
 			return "PRORRATEAR()";
+		}
+		if (AonStringUtils.equalsIgnoreCase(lbValue, "IRPF_CTA_ESP")) {
+			return "BASE_CTA_ESP=_P";
 		}
 		// It must be CUSTOM
 		return src;

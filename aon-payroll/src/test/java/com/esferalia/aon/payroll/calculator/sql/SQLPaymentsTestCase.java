@@ -10,9 +10,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.DSLContext;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -22,15 +22,23 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
 
@@ -38,7 +46,7 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 
 	protected static final double DELTA = 0.004;
 	
-		@Test
+	@Test
 	public void testCommonDiseaseITI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -180,5 +188,362 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 	}
 
 	
+	@Test
+	public void testSalaryInKindIRPF() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
 
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {}, 
+				new String[] {
+						"BASE_CGC * PORCENTAJE_CGC / 100.00",
+						"BASE_CGP * PORCENTAJE_FP / 100.00",
+						"BASE_CGP * PORCENTAJE_DESMPL / 100.00",
+						
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00"
+				}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord paga = addConcept(aonContext, "PAGA");
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		
+		
+		addPayment(aonContext, contract, salarioBase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, paga, "(SALARIO_BASE )/12");
+		addPayment(aonContext, contract, 
+				"SALARIO EN ESPECIE", 
+				"1200.00", 
+				"BASE_CTA_ESP=_P", 
+				"_P", PaymentType.CRA_0013);
+		
+		PaymentConceptRecord ingrCtaEsp = addConcept(aonContext, "IRPF_CTA_ESP");
+
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), 
+				ingrCtaEsp,
+				PaymentType.CRA_0000, 
+				//"INGRESO A CUENTA ESPECIE A CARGO DE LA EMPRESA" ,
+				"/*read-only*/isdef BASE_CTA_ESP ? BASE_CTA_ESP * PORCENTAJE_IRPF / 100.00 : HIDE()/**/", 
+				"0.00", 
+				"0.00",
+				SalaryType.SALARY);
+		
+		addSSRegimeDeduction(
+				aonContext, 
+				SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()),
+				DeductionType.OTHER,
+				"IRPF_CTA_ESP");
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+		
+		setData(aonContext, contract, "PORCENTAJE_CGC", "4.70");
+		setData(aonContext, contract, "PORCENTAJE_FP", "0.10");
+		setData(aonContext, contract, "PORCENTAJE_DESMPL", "1.55");
+		setData(aonContext, contract, "PORCENTAJE_IRPF", "9.55");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		salary.getSalaryPayments().forEach( p -> {
+			System.out.println( p.getDescription() + ": " + p.getAmount() +", " + p.getIrpf());
+		});
+		
+		
+		
+		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
+		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00 + (1200.00 * 9.55 / 100.00), salary.getTotalPayment(), 0.001);
+		
+		salary.getSalaryDeductions().forEach( p -> {
+			System.out.println( p.getDescription() + ": " + p.getAmount() );
+		});
+
+		org.junit.Assert.assertEquals( 5, salary.getSalaryDeductions().size(), 0.001);
+		
+		org.junit.Assert.assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * 9.55 / 100.00 + 1200.00 * 9.55 / 100.00 , 
+				salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount() )), 
+				0.001);
+		
+		org.junit.Assert.assertEquals( 1000.00 * 13/12, salary.getRemuneration(), 0.001);
+
+	}
+
+	@Test
+	public void testSalaryInKindIRPFII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {}, 
+				new String[] {
+						"BASE_CGC * PORCENTAJE_CGC / 100.00",
+						"BASE_CGP * PORCENTAJE_FP / 100.00",
+						"BASE_CGP * PORCENTAJE_DESMPL / 100.00",
+						
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00"
+				}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord paga = addConcept(aonContext, "PAGA");
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		
+		
+		addPayment(aonContext, contract, salarioBase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, paga, "(SALARIO_BASE )/12");
+		addPayment(aonContext, contract, 
+				"SALARIO EN ESPECIE", 
+				"1200.00", 
+				"BASE_CTA_ESP=_P", 
+				"_P", PaymentType.CRA_0013);
+		
+		
+		
+		PaymentConceptRecord ingrCtaEsp = addConcept(aonContext, "IRPF_CTA_ESP");
+
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), 
+				ingrCtaEsp,
+				PaymentType.CRA_0000, 
+				//"INGRESO A CUENTA ESPECIE A CARGO DE LA EMPRESA" ,
+				"/*read-only*/isdef BASE_CTA_ESP ? BASE_CTA_ESP * PORCENTAJE_IRPF / 100.00 : HIDE()/**/", 
+				"0.00", 
+				"0.00",
+				SalaryType.SALARY);
+		
+		addSSRegimeDeduction(
+				aonContext, 
+				SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()),
+				DeductionType.OTHER,
+				"IRPF_CTA_ESP");
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+		
+		setData(aonContext, contract, "PORCENTAJE_CGC", "4.70");
+		setData(aonContext, contract, "PORCENTAJE_FP", "0.10");
+		setData(aonContext, contract, "PORCENTAJE_DESMPL", "1.55");
+		//setData(aonContext, contract, "PORCENTAJE_IRPF", "9.55");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				if ( "INGR_CTA_ESP".equals(payment.getName())) {
+					ITimedVariable<?> baseCtaEsp = context.get("BASE_CTA_ESP");
+					org.junit.Assert.assertEquals(1200.00, baseCtaEsp.getValue(baseCtaEsp.getPeriod()));
+				}
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		});
+		Salary salary = calculator.calculate(ctx);
+		
+		salary.getSalaryPayments().forEach( p -> {
+			System.out.println( p.getDescription() + ": " + p.getAmount() +", " + p.getIrpf());
+		});
+		
+		salary.getSalaryDatas().forEach(d -> System.out.println(d.getName() + " = " + d.getExpression() ));
+		
+		//double irpf = Double.parseDouble(salary.getSalaryData("PORCENTAJE_IRPF"));
+		double irpf = salary.getTotalIrpf() / salary.getIrpfBase() * 100.00;
+		
+		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
+		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00 + (1200.00 * irpf / 100.00), salary.getTotalPayment(), 0.001);
+		
+		salary.getSalaryDeductions().forEach( p -> {
+			System.out.println( p.getDescription() + ": " + p.getAmount() );
+		});
+
+		org.junit.Assert.assertEquals( 5, salary.getSalaryDeductions().size(), 0.001);
+		
+		org.junit.Assert.assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * irpf / 100.00 + 1200.00 * irpf / 100.00 , 
+				salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount() )), 
+				0.001);
+		
+		
+		org.junit.Assert.assertEquals( 1000.00 * 13/12, salary.getRemuneration(), 0.001);
+
+	}
+
+	@Test
+	public void testSalaryInKindIRPFIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {}, 
+				new String[] {
+						"BASE_CGC * PORCENTAJE_CGC / 100.00",
+						"BASE_CGP * PORCENTAJE_FP / 100.00",
+						"BASE_CGP * PORCENTAJE_DESMPL / 100.00",
+						
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00"
+				}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord paga = addConcept(aonContext, "PAGA");
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		
+		
+		addPayment(aonContext, contract, salarioBase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, paga, "(SALARIO_BASE )/12");
+		addPayment(aonContext, contract, 
+				"SALARIO EN ESPECIE", 
+				"1200.00", 
+				"_P", 
+				"_P", PaymentType.CRA_0013);
+		
+		
+		
+		PaymentConceptRecord ingrCtaEsp = addConcept(aonContext, "INGR_CTA_ESP");
+
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), 
+				ingrCtaEsp,
+				PaymentType.CRA_0000, 
+				//"INGRESO A CUENTA ESPECIE A CARGO DE LA EMPRESA" ,
+				"/*read-only*/isdef BASE_CTA_ESP ? BASE_CTA_ESP * PORCENTAJE_IRPF / 100.00 : HIDE()/**/", 
+				"0.00", 
+				"0.00",
+				SalaryType.SALARY);
+		
+		addSSRegimeDeduction(
+				aonContext, 
+				SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()),
+				DeductionType.OTHER,
+				"INGR_CTA_ESP");
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+		
+		setData(aonContext, contract, "PORCENTAJE_CGC", "4.70");
+		setData(aonContext, contract, "PORCENTAJE_FP", "0.10");
+		setData(aonContext, contract, "PORCENTAJE_DESMPL", "1.55");
+		//setData(aonContext, contract, "PORCENTAJE_IRPF", "9.55");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder() {
+			@Override
+			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
+					IPayment payment, Map<String, ITimedVariable<?>> context) {
+				org.junit.Assert.fail();
+			}
+		});
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			
+			@Override
+			public void onUndefinedData(IContractDeduction deduction, String variableName, String message) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onUndefinedData(IContractDeduction deduction, RemovedExpressionVariable<?> var) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onUndefinedData(IContractPayment payment, String variableName, String message) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onUndefinedData(IContractPayment payment, RemovedExpressionVariable<?> var) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onRemove(IContractPayment payment) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onRemove(IContractDeduction payment) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onRemove(IContractBonus bonus) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onInvalidData(IContractBonus bonus, String variableName, String message) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onInvalidData(IContractDeduction deduction, String variableName, String message) {
+				org.junit.Assert.fail();
+			}
+			
+			@Override
+			public void onInvalidData(IContractPayment payment, String variableName, String message) {
+				org.junit.Assert.fail();
+			}
+			
+		});
+		Salary salary = calculator.calculate(ctx);
+		
+		
+		salary.getSalaryPayments().forEach( p -> {
+			System.out.println( p.getDescription() + ": " + p.getAmount() +", " + p.getIrpf());
+		});
+		
+		double irpf = salary.getTotalIrpf() / salary.getIrpfBase() * 100.00;
+		
+		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00, salary.getIrpfBase(), 0.001);
+		org.junit.Assert.assertEquals( 1000.00 * 13.00/12.00  + 1200.00 , salary.getTotalPayment(), 0.001);
+		
+		salary.getSalaryDeductions().forEach( p -> {
+			System.out.println( p.getDescription() + ": " + p.getAmount() );
+		});
+
+		org.junit.Assert.assertEquals( 4, salary.getSalaryDeductions().size(), 0.001);
+		
+		org.junit.Assert.assertEquals( salary.getCommonBase() * ( 4.7 + 0.10 + 1.55 ) / 100.00 + salary.getIrpfBase() * irpf / 100.00  , 
+				salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d -> d.getAmount() )), 
+				0.001);
+
+	}
 }
