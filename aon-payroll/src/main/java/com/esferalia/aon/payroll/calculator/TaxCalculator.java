@@ -153,13 +153,13 @@ public abstract class TaxCalculator {
 				throw new NotNowException();
 			}
 			
+			final double  tax  = getTax(contractPayment, start, end, amount);
 
 			DefaultTaxCalculator.this.totalPayment += amount;
 			
 			if ( AonStringUtils.equals(IRPF_CTA_ESP.getName(), contractPayment.getName() ))
 				return 0.00; //tax
 			
-			final double  tax  = getTax(contractPayment, start, end, amount);
 			
 			PaymentType paymentType = contractPayment.getType();
 			PaymentTypeVisitor typeVisitor = new PaymentTypeVisitor() {

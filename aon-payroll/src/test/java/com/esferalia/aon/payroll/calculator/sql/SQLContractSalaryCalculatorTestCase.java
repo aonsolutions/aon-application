@@ -712,7 +712,15 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 				connection, start, end, end, contract);
 
 		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
-		calculator.setSalaryBuilder(new SalaryBuilder());
+		calculator.setSalaryBuilder(new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + " : " + amount );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		});
 
 		final List<String> errors = new ArrayList<String>();
 		
@@ -722,6 +730,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 				super.onCheckError(payment, message);
 				errors.add(message);
 			}
+			
 		});
 		
 		
