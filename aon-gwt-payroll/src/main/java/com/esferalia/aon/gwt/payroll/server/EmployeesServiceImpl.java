@@ -4589,10 +4589,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return Dismissal.DEFINITE_END.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.OBJECTIVE.getName(), causeStr)) {
 			return Dismissal.OBJECTIVE.getDescription();
-		}  else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
+		} else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
 			return Dismissal.CONDITIONS_CHANGE.getDescription();
-		}   else if (AonStringUtils.equals(ContextVariable.RETIREMENT.getName(), causeStr)) {
+		} else if (AonStringUtils.equals(ContextVariable.RETIREMENT.getName(), causeStr)) {
 			return Dismissal.RETIREMENT.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.NOT_PASS_TRIAL_PERIOD.getName(), causeStr)) {
+			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
 		}
 		return "";
 	}
@@ -7304,6 +7306,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		
 		if((contractType == 420 || contractType == 520) && null == employeeContractInfo.getContractInfo().getEndDate())
 			throw new IllegalArgumentException("La fecha fin es obligatoria para los contratos de tipo 420 y 520. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
+		
+		if(employeeContractInfo.getContractSpecificData().getDisabilityB()) {
+			builder.setDiscapacidad(true);
+			builder.setDiscapacidadType(employeeContractInfo.getContractSpecificData().getDisability());
+			builder.setCollectiveType(employeeContractInfo.getContractSpecificData().getBonusColective());
+		} else builder.setDiscapacidad(false);
 		
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());

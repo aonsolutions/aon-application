@@ -550,9 +550,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		@Override
 		public Discapacidad getDiscapacidad() {
 			try {
-				int ordinal = rs
-						.getInt(IrpfDataAscendantsColumns.DISABILITY_LEVEL);
-				return getByOrdinal(ordinal, Discapacidad.class);
+				Integer disabilityLevel = 
+				(Integer) rs.getObject(IrpfDataColumns.DISABILITY_LEVEL);
+				return getDiscapacidadByDisabilityLevel(disabilityLevel);
+				
 			} catch (SQLException e) {
 				return rethrow(e);
 			}
@@ -604,9 +605,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		@Override
 		public Discapacidad getDiscapacidad() {
 			try {
-				int ordinal = rs
-						.getInt(IrpfDataDescendientsColumns.DISABILITY_LEVEL);
-				return getByOrdinal(ordinal, Discapacidad.class);
+				Integer disabilityLevel = 
+				(Integer) rs.getObject(IrpfDataColumns.DISABILITY_LEVEL);
+				return getDiscapacidadByDisabilityLevel(disabilityLevel);
+				
 			} catch (SQLException e) {
 				return rethrow(e);
 			}

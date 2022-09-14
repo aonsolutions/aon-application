@@ -1156,10 +1156,12 @@ public class SalaryDraft extends ResizeComposite
 						return "FIN";
 					case OBJECTIVE:
 						return "PROCEDENTE";
-					case CONDITIONS_CHANGE:
-						return "CAMBIO_CONDICIONES";
 					case RETIREMENT:
 						return "JUBILACION";
+					case CONDITIONS_CHANGE:
+						return "CAMBIO_CONDICIONES";
+					case NOT_PASS_TRIAL_PERIOD:
+						return "BAJA_PERIODO_PRUEBA";
 					}
 					return null;
 				}
@@ -7883,6 +7885,8 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.CONDITIONS_CHANGE.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.RETIREMENT.name(),obj.toString()))
 			return Dismissal.RETIREMENT.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.NOT_PASS_TRIAL_PERIOD.name(),obj.toString()))
+			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
 		
 		try {
 			double value = Double.parseDouble(obj.toString());
