@@ -161,6 +161,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentTaxedTypeLB.addItem("Importe integro", "FULL");
 		paymentTaxedTypeLB.addItem("Exento", "NONE");
 		paymentTaxedTypeLB.addItem("Personalizado", "CUSTOM");
+		paymentTaxedTypeLB.addItem("Ingreso a Cuenta", "IRPF_CTA_ESP");
 
 		paymentTaxedTypeLB.addChangeHandler(e -> {
 			int selected = paymentTaxedTypeLB.getSelectedIndex();
@@ -172,6 +173,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			case 1:
 				paymentTaxedExpression.setEnabled(false);
 				paymentTaxedExpression.setValue("0.00");
+				break;
+			case 3:
+				paymentTaxedExpression.setEnabled(false);
+				paymentTaxedExpression.setValue("BASE_CTA_ESP=_P");
 				break;
 			default:
 				paymentTaxedExpression.setEnabled(true);
@@ -216,7 +221,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 	
 	private String getTaxedQuoteType(String expression) {
-		if(AonStringUtils.isBlank(expression)) return "CUSTOM";
+		if(AonStringUtils.isBlank(expression)) {
+			return "CUSTOM";
+		}
+		if(AonStringUtils.contains(expression, "BASE_CTA_ESP")) {
+			return "IRPF_CTA_ESP";
+		}
 		switch (expression) {
 			case "_P":
 				return "FULL";

@@ -73,7 +73,8 @@ public class Payment extends ResizeComposite {
 	public static final String IPREM = "IPREM";
 	public static final String CUSTOM = "CUSTOM";
 	public static final String PRORATED = "PRORATED";
-	
+	public static final String IRPF_CTA_ESP = "IRPF_CTA_ESP";
+		
 	private static final List<Variable> EMPTY_VARS = Collections.emptyList();
 
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
@@ -790,6 +791,9 @@ public class Payment extends ResizeComposite {
 		if (PRORATED.equals(listValue)) {
 			return "PRORRATEAR()";
 		}
+		if (IRPF_CTA_ESP.equals(listValue)) {
+			return "BASE_CTA_ESP=_P";
+		}
 		// It must be CUSTOM
 		return src;
 	}
@@ -894,7 +898,8 @@ public class Payment extends ResizeComposite {
 			return PRORATED;
 		if ("PRORRATEAR(_P)".equals(expression))
 			return PRORATED;
-
+		if (AonStringUtils.contains(expression, "BASE_CTA_ESP")) 
+			return IRPF_CTA_ESP;
 		try {
 			if (Double.parseDouble(expression) == 0.00)
 				return NONE;

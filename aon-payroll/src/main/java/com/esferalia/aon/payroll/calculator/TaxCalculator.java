@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +13,14 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class TaxCalculator {
 
@@ -133,6 +137,7 @@ public abstract class TaxCalculator {
 		public double tax(IContractPayment contractPayment, Date start, Date end,
 				Date issue, final double amount, final double total) throws AonException {
 			
+			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != context.getSalaryType() ) {
 				if ( salaryType == SalaryType.EXTRA)
@@ -152,6 +157,8 @@ public abstract class TaxCalculator {
 
 			DefaultTaxCalculator.this.totalPayment += amount;
 			
+			if ( AonStringUtils.equals(IRPF_CTA_ESP.getName(), contractPayment.getName() ))
+				return 0.00; //tax
 			
 			
 			PaymentType paymentType = contractPayment.getType();

@@ -529,6 +529,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		if(AonStringUtils.isBlank(irpfExpression)) return "P";
 		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "I";
 		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "E";
+		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "C";
 		return "N/D";
 	}
 
@@ -536,6 +537,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		if(AonStringUtils.isBlank(irpfExpression)) return "Personalizado";
 		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "Importe \u00cdntegro";
 		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "Ingreso a Cuenta";
 		return "No definido";
 	}
 
