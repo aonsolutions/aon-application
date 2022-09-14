@@ -2221,7 +2221,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			
-			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
@@ -2245,11 +2244,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Map<String, CCC> cccsMap = cccs.stream().collect(Collectors.toMap(ccc -> ccc.getRegime()+ccc.getCode(), ccc -> ccc, (ccc1, ccc2) -> ccc1));
 			
 			for ( CCC ccc: cccsMap.values() ) {
-				Collection<solutions.aon.seg.social.object.Employee> ssEmployees = 
-				SistemaRED.getEmployees(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
+				Collection<solutions.aon.seg.social.object.Employee> ssEmployees = new ArrayList<>();
+				
+				try {
+					ssEmployees = SistemaRED.getEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
+				} catch ( ForbiddenException e) {
+					return new EnterpriseStatus.Forbidden();
+				} catch ( NotAllowedContributionAccount e) {
+					enterpriseStatus.and(new EnterpriseStatus.UnknownErrorAnd().setMessage("CCC: "+ ccc.getCode()+" no autorizado."));
+					continue;
+				} catch ( CertificateNotFoundException e) {
+					return new EnterpriseStatus.CredentialsNotFound();
+				} catch ( SegSocialException e  ) {
+					enterpriseStatus.and(new EnterpriseStatus.UnknownErrorAnd().setMessage("CCC: "+ ccc.getCode()+". "+e.getMessage()));
+					continue;
+				}
 				
 				for ( solutions.aon.seg.social.object.Employee ssEmployee :  ssEmployees) {
-					
 					
 					String dni = ssEmployee.getIpf();
 					String naf = ssEmployee.getNss();
@@ -2298,14 +2309,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return enterpriseStatus;				
 			
-		} catch ( ForbiddenException e) {
-			return new EnterpriseStatus.Forbidden();
-		} catch ( NotAllowedContributionAccount e) {
-			return new EnterpriseStatus.NotAuthorizedCCC();
-		} catch ( CertificateNotFoundException e) {
-			return new EnterpriseStatus.CredentialsNotFound();
-		} catch ( SegSocialException e  ) {
-			return new EnterpriseStatus.UnknownError().setMessage(e.getMessage());
 		} catch (  SQLException e ) {
 			throw new RuntimeException(e);
 		} 
