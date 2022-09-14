@@ -1,7 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, AccountingPortalMenu} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
-import {getNotes} from  '../services/noteService.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {  CONSTANT, CSS, EVENT, MATERIAL_ICONS,  TAG } from '../environments/environments.js';
 import {AonDocumental} from './documental/aon-documental.js';
@@ -16,14 +15,9 @@ import { AonLaboral } from './laboral/aon-laboral.js';
 import { AonComunica } from './laboral/aon-comunica.js';
 import { AonSaltra } from './laboral/aon-saltra.js';
 import { AonIcon } from '../components/aon-icon.js';
-import { Note } from '../models/note/Note.js';
-import { AonDialogMenu } from '../components/aon-dialog-menu.js';
-import { appendNote } from './note/utils.js';
+import { AonNote } from './note/aon-note.js';
 import { AonInvoicePanel } from './invoice/aon-invoice-panel.js';
-import { AonAccounting } from './accounting/aon-accounting.js';
 import { AonBooking } from './marketplace/aon-booking.js';
-
-import { sortBy } from '../services/utils.js';
 
 // import './example/aon-example.js';
 // import './faqs/aon-faqs.js';
@@ -458,27 +452,20 @@ export class AonMenu extends AonElement {
 		div.appendChild(span2);
 		div.appendChild(span3);
 
-		let div2 = this.createElement(TAG.DIV);
-		let ul = this.createElement(TAG.UL);
-		ul.classList.add(CSS.AON_UL);
-		ul.classList.add(CSS.AON_MENU_SIDENAV_SUBAPP_LIST);
-		div2.appendChild(ul);
-		aonMenuSidenav.appendChild(div2);
-
 		aibC.addEventListener(EVENT.CLICK,()=>{
 			this.CLOSE = true;
 			aonMenuSidenav.style.width = '175px';
 			this.buildMenu();
 		});
 
-		aibS.addEventListener(EVENT.CLICK,()=>appendNote(ul, new Note()));
+		let div2 = this.createElement(TAG.DIV);
+		aonMenuSidenav.appendChild(div2);
 		
-		let aonDialogM = new AonDialogMenu();
-		aonDialogM.id = "DialogNote";
-		ul.appendChild(aonDialogM);
-		
-		getNotes().then((notes)=>{
-		 	sortBy(notes, 'date', 'desc').map(note=> appendNote(ul, new Note(note)))
+		let aonNote = new AonNote();
+		div2.appendChild(aonNote);
+
+		aibS.addEventListener(EVENT.CLICK,()=>{
+			aonNote.addNote();
 		});
 	}
 

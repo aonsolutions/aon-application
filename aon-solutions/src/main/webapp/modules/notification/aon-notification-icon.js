@@ -111,8 +111,9 @@ export class AonNotificationIcon extends AonElement {
     
     deleteToken(){
         let tokenFCM = window.tokenFCM;
-        if(tokenFCM)
+        if(tokenFCM){
             deleteAuthDevice({tokenFCM}).then(console.log).catch(console.log);
+        }
     }
 
     getTotalCount(){
