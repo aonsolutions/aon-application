@@ -99,12 +99,8 @@ public class Contrata {
 			sendTransformationImpl(certificateInputStream, certificatePassword, certificateType, cto, copyBasic);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -117,12 +113,8 @@ public class Contrata {
 			return sendCopyBasicImpl(certificateInputStream, certificatePassword, certificateType, copyBasic);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -138,12 +130,8 @@ public class Contrata {
 					copyBasic, cif, startDate);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -159,12 +147,10 @@ public class Contrata {
 					endDate, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
+		} catch (MalformedURLException | InterruptedException e) {
 			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -179,12 +165,8 @@ public class Contrata {
 					endDate, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -199,12 +181,8 @@ public class Contrata {
 					startDate, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -219,12 +197,8 @@ public class Contrata {
 					startDate, nprorroga, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -239,12 +213,8 @@ public class Contrata {
 					cif, startDate, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			throw new SepeException(e);
 		}
@@ -256,8 +226,6 @@ public class Contrata {
 			validateCertImpl(certificateInputStream, certificatePassword, certificateType);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
@@ -273,8 +241,6 @@ public class Contrata {
 					endDate);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException | InterruptedException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
@@ -292,8 +258,6 @@ public class Contrata {
 					oldDateIniContract, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException | InterruptedException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
@@ -312,8 +276,6 @@ public class Contrata {
 					oldDateIniContract, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException | InterruptedException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
@@ -329,12 +291,8 @@ public class Contrata {
 			removeContrataImpl(certificateInputStream, certificatePassword, certificateType, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -347,12 +305,8 @@ public class Contrata {
 			removeTransformationImpl(certificateInputStream, certificatePassword, certificateType, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -365,12 +319,8 @@ public class Contrata {
 			removeContractExtensionImpl(certificateInputStream, certificatePassword, certificateType, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException e) {
-			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
@@ -975,12 +925,10 @@ public class Contrata {
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click();
 			handleSepeExceptions(htmlPage);
 
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
-					.click();
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=").click();
 			handleSepeExceptions(htmlPage);
 
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaTransformacion?pagina=entrada")
-					.click();
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaTransformacion?pagina=entrada").click();
 			handleSepeExceptions(htmlPage);
 
 			htmlPage = getPageContracByStartDate(htmlPage, ipf, cif, oldDateIniContract, sepeId);
@@ -1511,20 +1459,23 @@ public class Contrata {
 
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click();
-			handleSepeExceptions(htmlPage);
-
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
-					.click();
-			handleSepeExceptions(htmlPage);
-
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=entrada")
+			htmlPage = htmlPage
+					.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas")
 					.click();
 			handleSepeExceptions(htmlPage);
 
 			htmlPage = htmlPage
-					.getAnchorByHref(
-							"/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultaImpCB&origen=consultaImpresionCB")
+					.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
+					.click();
+			handleSepeExceptions(htmlPage);
+
+			htmlPage = htmlPage
+					.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=entrada")
+					.click();
+			handleSepeExceptions(htmlPage);
+
+			htmlPage = htmlPage
+					.getAnchorByHref("/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultaImpCB&origen=consultaImpresionCB")
 					.click();// PARA CONTRATOS INICIALES
 			handleSepeExceptions(htmlPage);
 
@@ -1548,8 +1499,8 @@ public class Contrata {
 
 				handleSepeExceptions(htmlPage);
 			} else {
-				htmlPage = htmlPage.getAnchorByHref(
-						"/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=idtrabajador&origen=consultaImpresionCB")
+				htmlPage = htmlPage
+						.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=idtrabajador&origen=consultaImpresionCB")
 						.click();// por identificador del trabajador
 				handleSepeExceptions(htmlPage);
 
@@ -1582,10 +1533,13 @@ public class Contrata {
 
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click();
+			htmlPage = htmlPage
+					.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas")
+					.click();
 			handleSepeExceptions(htmlPage);
 
-			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
+			htmlPage = htmlPage
+					.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=")
 					.click();
 			handleSepeExceptions(htmlPage);
 
@@ -1594,8 +1548,7 @@ public class Contrata {
 			handleSepeExceptions(htmlPage);
 
 			htmlPage = htmlPage
-					.getAnchorByHref(
-							"/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=init&origen=consultaImpresionCB")
+					.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=init&origen=consultaImpresionCB")
 					.click();// PARA CONTRATOS TRANSFORMACIONES
 			handleSepeExceptions(htmlPage);
 

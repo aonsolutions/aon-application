@@ -163,6 +163,7 @@
 									<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
 									<g:item value="{NONE}">Exento</g:item>
 									<g:item value="{CUSTOM}">Personalizado...</g:item>
+									<g:item value="{IRPF_CTA_ESP}">Ingreso a Cuenta</g:item>
 								</g:ListBox>
 								<g:Label ui:field="taxLabel"></g:Label>
 							</g:DeckPanel>

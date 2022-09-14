@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMPENSATION_CAUSE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY_CAUSE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
@@ -192,6 +193,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	
 		PREST_IT,
 		GUARENTEED,
+		
+		COMPENSATION_CAUSE.getName(),
+		
 	};
 	
 	

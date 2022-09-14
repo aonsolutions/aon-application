@@ -317,12 +317,16 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Coordinates coordinates = new Coordinates(params.optString("coordinates"));
 	
 		Date date = !params.optString(IJsonNames.DATE).isEmpty() ?  new Date(params.optLong(IJsonNames.DATE)) : new Date();
+		
 		Location lc = new Location();
+		
 		if(!coordinates.isEmpty()) {
-			  lc = !params.optString("location").isEmpty() 
-				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().ge(params.optInt("location")) )
+			Integer locationId = params.optInt("location");
+			  lc = locationId!=0
+				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().eq(locationId) )
 				: AON_SOLUTIONS.getLocationByCoordinates(taskHolder.getDomain(), "",  coordinates);
 		}
+		
 		TimeControlDetail tcd = new TimeControlDetail()
 				.setId(params.opt(IJsonNames.ID) != null ? params.optInt(IJsonNames.ID) : null)
 				.setDomain(taskHolder.getDomain())

@@ -268,6 +268,7 @@ public enum ContextVariable implements IResourceable {
 	OBJECTIVE("PROCEDENTE", VariableType.UNKNOWN), CONTRACT_COMPLETE("FIN", VariableType.UNKNOWN),
 	WORK_COMPLETE("FIN_OBRA", VariableType.UNKNOWN), TEMP_COMPLETE("FIN_TEMPORAL", VariableType.UNKNOWN),
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),RETIREMENT("JUBILACION", VariableType.UNKNOWN),
+	NOT_PASS_TRIAL_PERIOD("BAJA_PERIODO_PRUEBA", VariableType.UNKNOWN),
 
 	NON_WORKING("NO_LABORABLE", VariableType.UNKNOWN),
 
@@ -309,6 +310,8 @@ public enum ContextVariable implements IResourceable {
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),
 	
 	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
+	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
+	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 
 	// Percentages
 	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE,false), 

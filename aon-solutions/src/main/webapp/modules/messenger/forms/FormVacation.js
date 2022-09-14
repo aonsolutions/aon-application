@@ -8,7 +8,7 @@ import { serializeForm } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums.js";
-import { TaskCreationUtils } from "../shared/TaskCreationUtils.js";
+import { TaskCreationUtils } from "../utils/TaskCreationUtils.js";
 
 /**
  * 

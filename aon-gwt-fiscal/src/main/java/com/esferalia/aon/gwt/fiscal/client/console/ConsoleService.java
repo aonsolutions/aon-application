@@ -13,6 +13,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ConsoleService extends RemoteService {
 
 	String[] getSchemas(Occam occam) throws AonCoreException;
-	LinkedList<Domain> getDomains(Occam occam, DomainParams params) throws AonCoreException;
-
+	LinkedList<Domain> getDomains(DomainParams params) throws AonCoreException;
+	Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException;
 }

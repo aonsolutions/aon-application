@@ -1,10 +1,16 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
-
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
 import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
 import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
@@ -12,6 +18,9 @@ import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_U
 import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
@@ -26,6 +35,7 @@ import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
 import static com.esferalia.aon.jooq.tables.Note.NOTE;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProjectReservationDivert.PROJECT_RESERVATION_DIVERT;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
@@ -39,8 +49,6 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
-import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
-import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -115,6 +123,13 @@ public class ConsoleIsolateDomain {
 				ConsoleUtils.log(params,msg);
 				throw new AonCoreException(msg);
 			}
+			
+			params.getToDslContext().transaction(conf -> {
+				checkProductIndex( params );
+				checkNoticeRecipient( params );
+				checkAgreements(params);
+			});
+			
 			fillScript(params);
 			ConsoleUtils.log (params, "Orden de carga:");
 			MutableInt x = new MutableInt(1);
@@ -131,8 +146,6 @@ public class ConsoleIsolateDomain {
 			params.getToDslContext().transaction(conf -> {
 				createTempTable(params);
 				createDomain(params);
-				checkProductIndex( params );
-				checkNoticeRecipient( params );
 				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
 					passHeritableTables( params );
 				}
@@ -165,6 +178,43 @@ public class ConsoleIsolateDomain {
 			}
 			ConsoleUtils.log(params,"** Program ended!");
 			ConsoleUtils.enableForeignKeys(params);
+		}
+	}
+	private static void checkAgreements(ConsoleParams params) {
+		if (params.mustFlatten()) {
+			AggregateFunction<Integer> count = DSL.count(CONTRACT.ID);
+			params.getFromDslContext()
+				.select( CONTRACT.AGREEMENT_LEVEL, count )
+				.from(CONTRACT)
+				.innerJoin(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
+				.where(CONTRACT.DOMAIN.eq(params.getFromConnection().getFullDomain().getId()))
+				.and(AGREEMENT_LEVEL.DOMAIN.eq(params.getFromConnection().getFullDomain().getParentId()))
+				.groupBy(CONTRACT.AGREEMENT_LEVEL)
+				.having(count.gt(0))
+				.fetch()
+				.stream()
+				.forEach( rec -> params.addError("Existen \"" + rec.getValue(count) + "\" "
+					+ "contratos que referencian "
+					+ "al agreement_level " + rec.getValue(CONTRACT.AGREEMENT_LEVEL)))
+				;
+				
+			AggregateFunction<Integer> count1 = DSL.count(PAYROLL_WORKPLACE.ID);
+				params.getFromDslContext()
+					.select( PAYROLL_WORKPLACE.AGREEMENT, count1 )
+					.from(PAYROLL_WORKPLACE)
+					.innerJoin(AGREEMENT).on(AGREEMENT.ID.eq(PAYROLL_WORKPLACE.AGREEMENT))
+					.where(PAYROLL_WORKPLACE.DOMAIN.eq(params.getFromConnection().getFullDomain().getId()))
+					.and(AGREEMENT.DOMAIN.eq(params.getFromConnection().getFullDomain().getParentId()))
+					.groupBy(PAYROLL_WORKPLACE.AGREEMENT)
+					.having(count1.gt(0))
+					.fetch()
+					.stream()
+					.forEach( rec -> params.addError("Existen \"" + rec.getValue(count1) + "\" "
+						+"centros de trabajo que referencian "
+						+ "al convenio " + rec.getValue(PAYROLL_WORKPLACE.AGREEMENT)));
+				if (params.hasErrors()) {
+					throw new AonCoreException("Revisar convenios");
+				}
 		}
 	}
 
@@ -221,23 +271,6 @@ public class ConsoleIsolateDomain {
 	
 
 	private static void passHeritableTables(ConsoleParams params) {
-//		ScriptTable[] tables  = new ScriptTable[] {
-//				params.getScript().get("scope"),
-//				params.getScript().get("account"),
-//				params.getScript().get("geozone"),
-//				params.getScript().get("geotree"),
-//				params.getScript().get("pcategory"),
-//				params.getScript().get("tax"),
-//				params.getScript().get("tag"),
-//				params.getScript().get("user"),
-//				params.getScript().get("series"),
-//				params.getScript().get("pay_method"),
-//				params.getScript().get("bank_concept"),
-//				params.getScript().get("product"),
-//				params.getScript().get("item"),
-//				params.getScript().get("registry"),
-//		};
-//		Arrays.stream(tables)
 		params.getScript()
 			.values()
 			.stream()
@@ -279,11 +312,18 @@ public class ConsoleIsolateDomain {
 			.filter(t -> !USER_SCOPE.getName().equals(t.getTable().getName()))
 			.filter(t -> !USER_WORKGROUP.getName().equals(t.getTable().getName()))
 			
+			.filter(t -> !AGREEMENT.getName().equals(t.getTable().getName()))
+			.filter(t -> !AGREEMENT_DATA.getName().equals(t.getTable().getName()))
+			.filter(t -> !AGREEMENT_EXTRA.getName().equals(t.getTable().getName()))
+			.filter(t -> !AGREEMENT_LEVEL.getName().equals(t.getTable().getName()))
+			.filter(t -> !AGREEMENT_LEVEL_CATEGORY.getName().equals(t.getTable().getName()))
+			.filter(t -> !AGREEMENT_LEVEL_DATA.getName().equals(t.getTable().getName()))
+			.filter(t -> !AGREEMENT_PAYMENT.getName().equals(t.getTable().getName()))
+			.filter(t -> !PAYROLL_WORKPLACE.getName().equals(t.getTable().getName()))
+			
 			.filter(t -> !CRA_BATCH.getName().equals(t.getTable().getName()))
 			.filter(t -> !CRA_BATCH_DETAIL.getName().equals(t.getTable().getName()))
 
-			
-			
 			.filter(t -> hasDomain(t.getTable()))
 			.forEach( t -> {
 				SelectConditionStep<Record> select = params.getFromDslContext()

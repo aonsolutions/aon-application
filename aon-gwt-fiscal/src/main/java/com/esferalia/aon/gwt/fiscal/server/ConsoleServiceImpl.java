@@ -23,7 +23,12 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 
 	@Override
-	public LinkedList<Domain> getDomains(Occam occam, DomainParams params) throws AonCoreException {
-		return CONSOLE.getDomains(occam, params);
+	public LinkedList<Domain> getDomains(DomainParams params) throws AonCoreException {
+		return CONSOLE.getDomains(params);
+	}
+	
+	@Override
+	public Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException {
+		return CONSOLE.deleteDomain(params, domainId);
 	}
 }

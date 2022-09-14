@@ -124,11 +124,24 @@ public class NotificationServlet extends AonApiHttpServlet{
 	private JSONArray getNotification(AonApiData api) {
 		JSONArray array = new JSONArray();
 		AonToken at = SECURITY.getAonToken(api.getToken());
-		Integer page = api.getData().optInt("page");
-		Integer perPage = api.getData().optInt("perPage");
+		
+		JSONObject params = api.getData();
+		
+		Integer page    = params.optInt(IJsonNames.PAGE);
+		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
+		
+		String status = params.optString("status");
+	
+		System.out.println(status);
+		
 		AON_SOLUTIONS.getNotificationStream(f -> 
-			f.getStatusProperty().eq(NotificationStatus.UNREAD.value())
-			.and(f.getAuthProperty().eq(at.getAuth())), page, perPage)
+			f.getAuthProperty().eq(at.getAuth())
+			.and(
+				status.isEmpty() ?
+				f.getAuthProperty().isNotNull() :
+				f.getStatusProperty().eq(NotificationStatus.safeValueOf(status).value())
+			),
+			page, perPage)
 		.forEach(nt -> array.put(nt.toJSON()));
 		return array;
 	}

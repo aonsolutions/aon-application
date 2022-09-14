@@ -165,6 +165,7 @@ public abstract class AbstractSQLTestCase {
 		cleanSystemData(context);
 		cleanSystemCosts(context);
 		cleanSystemPayments(context);
+		cleanSystemDeductions(context);
 	}
 
 	@After

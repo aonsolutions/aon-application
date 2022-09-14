@@ -115,7 +115,7 @@ public class ExpressionCodeArea extends CodeArea {
 				"_P",
 
 				"NADA", "IMPROCEDENTE", "PROCEDENTE", "FIN", "FIN_OBRA",
-				"FIN_TEMPORAL", "CAMBIO_CONDICIONES",
+				"FIN_TEMPORAL", "CAMBIO_CONDICIONES", "BAJA_PERIODO_PRUEBA",
 
 				"PREST_IT",
 

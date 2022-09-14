@@ -2,8 +2,8 @@
 import { AonSimpleList } from '../../components/aon-simple-list.js';
 import { EVENT } from '../../environments/environments.js';
 import { getTasks } from '../../services/taskService.js';
-import {TaskListUtils} from "./shared/TaskListUtils.js";
-import { TaskUtils } from './shared/TaskUtils.js';
+import {TaskListUtils} from "./utils/TaskListUtils.js";
+import { TaskUtils } from './utils/TaskUtils.js';
 
 export class AonMessengerSimpleList extends AonSimpleList {
 
