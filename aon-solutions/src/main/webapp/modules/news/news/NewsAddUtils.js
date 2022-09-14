@@ -393,8 +393,32 @@ const buildEditor = (parent, news) =>{
         placeholder:MSG.CONTENT,
         required:true,
         "text-box-min-height":"24em",
-        // "bar-integrated": true
+        'has-fullscreen-mode': true
     });
+
+    aonTextAreaEditor.elementFilter = {
+        undo: false,
+        redo: false,
+        font: !aonTextAreaEditor.isMobile(),
+        fontSize: !aonTextAreaEditor.isMobile(),
+        bold: true,
+        italic: true,
+        underline: true,
+        color: true,
+        backgroundColor: !aonTextAreaEditor.isMobile(),
+        alignment: true,
+        orderedList: !aonTextAreaEditor.isMobile(),
+        unorderedList: !aonTextAreaEditor.isMobile(),
+        indent: !aonTextAreaEditor.isMobile(),
+        outdent: !aonTextAreaEditor.isMobile(),
+        removeFormat: true,
+        strikethrough: true,
+        quote: !aonTextAreaEditor.isMobile(),
+        hyperlink: true,
+        attachment: true,
+        editorMode: !aonTextAreaEditor.isMobile()
+    };
+
     if ((navigator.userAgent.indexOf('Firefox') !== -1)) {
         aonTextAreaEditor.textBoxHeight = "24em";
     }
