@@ -130,7 +130,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 					DomainParams  params = new DomainParams()
 						.setSchema(getSchema())
 						.setQuery(request.getQuery()); 
-					CONSOLE_SERVICE.getDomains(occam,params,new AsyncCallback<LinkedList<Domain>>() {
+					CONSOLE_SERVICE.getDomains(params,new AsyncCallback<LinkedList<Domain>>() {
 		
 						public void onFailure(Throwable caught) {
 							callback.onSuggestionsReady(request, new Response());
@@ -140,12 +140,12 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 							LinkedList<Suggestion> suggestions = new LinkedList<>();
 							if (result != null) {
 								
-								for (final Domain domain : result) {
+								for (final Domain dom : result) {
 									SafeHtmlBuilder bld = new SafeHtmlBuilder();
-									String ds = domain.getDescription() + " (" + domain.getName() + ")";
+									String ds = dom.getDescription() + " (" + dom.getName() + ")";
 									int i = AonStringUtils.indexOfIgnoreCase(ds, request.getQuery());
 									bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\""
-											+ ((domain.isParent())
+											+ ((dom.isParent())
 												?AON.CSS.aonIconLevelTop()
 												:AON.CSS.aonIconLevelThis() )
 											+ AonStringUtils.SPACE
@@ -157,7 +157,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 							        bld.appendHtmlConstant(END_STRONG);
 							        bld.appendEscaped(AonStringUtils.substring(ds, (i + AonStringUtils.length(request.getQuery()) )));
 							        bld.appendHtmlConstant("</span>");
-							        DomainSuggestion as = new DomainSuggestion(domain, domain.getName(), bld.toSafeHtml().asString());
+							        DomainSuggestion as = new DomainSuggestion(dom, dom.getName(), bld.toSafeHtml().asString());
 									suggestions.add(as);
 								}
 							}

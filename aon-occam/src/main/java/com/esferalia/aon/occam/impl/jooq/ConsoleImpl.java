@@ -7,6 +7,8 @@ import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
+import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 import com.esferalia.aon.occam.impl.jooq.dao.console.ConsoleDAO;
 
 public class ConsoleImpl implements IConsole {
@@ -24,7 +26,7 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public boolean deleteDomain(CloseableAONContext ctx, DomainParams params) {
-		return ConsoleDAO.deleteDomain(ctx, params);
+	public boolean deleteDomain(ConsoleParams params) {
+		return ConsoleDeleteDomain.delete(params);
 	}
 }
