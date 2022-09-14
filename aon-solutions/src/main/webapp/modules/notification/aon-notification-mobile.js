@@ -1,11 +1,10 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { serializeForm } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { firstLetters } from "../timecontrol/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
-import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification, sendNotification } from "../../services/service.js";
+import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
 import { createButtonClose, createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl, createSpanFloat } from "./createComponent.js";
@@ -13,16 +12,15 @@ import { AonDialog } from "../../components/aon-dialog.js";
 import { CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { NotificationEnums } from "./NotificationEnums.js";
-import { NotificationUtils } from "./NotificationUtils.js";
+import { NotificationUtils } from "./utils/NotificationUtils.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonMessenger } from "../messenger/aon-messenger.js";
 import { App } from "../../models/enums.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
-import * as LS from "../../services/localStorageService.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 
 export class AonNotificationMobile extends AonElement {
-  AON_NOTIFICATION_MOBILE;
+  CONTENT;
   AON_TABS;
   MORE;
   DIALOG;
@@ -65,12 +63,13 @@ export class AonNotificationMobile extends AonElement {
   }
 
   initialize() {
-    this.AON_NOTIFICATION_MOBILE = "aonNotificationMobile";
-    this.TOAST = this.AON_NOTIFICATION_MOBILE+"Toast";
-    this.DIALOG = this.AON_NOTIFICATION_MOBILE+"Dialog";
-    this.AON_TABS = this.AON_NOTIFICATION_MOBILE + "aonTabs";
+    this.id = NotificationEnums.NOTIFICATION_IDS.AON_NOTIFICATION_MOBILE;
+    this.CONTENT = this.id+"Content";
+    this.TOAST = this.id+"Toast";
+    this.DIALOG = this.id+"Dialog";
+    this.AON_TABS = this.id + "aonTabs";
+    this.UL = this.id+"Ul";
     this.TASK_HOLDERS = [];
-    this.UL = this.AON_NOTIFICATION_MOBILE+"Ul";
     this.aonNotifyIconEl = document.querySelector("aon-notification-icon");
   }
 
@@ -120,7 +119,7 @@ export class AonNotificationMobile extends AonElement {
       let filter = this.getFilter();
       filter.page = 0;
       this.setFilter(filter);
-      const aonNotification = this.getElement(this.AON_NOTIFICATION_MOBILE);
+      const aonNotification = this.getElement(this.CONTENT);
       aonNotification.style.width = "80%";
       if(!this.isMobile())
         aonNotification.style.margin = "auto";
@@ -139,7 +138,7 @@ export class AonNotificationMobile extends AonElement {
   }
 
   async loadMore() {
-	  const aonNotification = this.getElement(this.AON_NOTIFICATION_MOBILE);
+	  const aonNotification = this.getElement(this.CONTENT);
 		let filter = this.getFilter();
 		if(aonNotification && this.MORE) {
 			filter.page = filter.page + 1;
@@ -173,12 +172,14 @@ export class AonNotificationMobile extends AonElement {
 	}
 
   createContentDiv() {
-    return this.getElement(this.AON_NOTIFICATION_MOBILE) || createAonNotification(this.AON_NOTIFICATION_MOBILE).element;
+    return this.getElement(this.CONTENT) || createAonNotification(this.CONTENT).element;
   }
 
   async goNotification(data) {
     const {id, source, source_id, domain} = data;
+
     this.markReadNotification(id);
+
     if(source && source_id){
       let aonComponent = null;
       switch(source){
@@ -193,20 +194,11 @@ export class AonNotificationMobile extends AonElement {
       aonComponent.value = source_id;
 
       if(aonComponent){
-        this.setDomainStorage(domain);
+        NotificationUtils.setDomainStorage(domain);
         this.rootPanel(aonComponent);
       }
     }
   }
-
-
-  setDomainStorage(domain){
-    if(domain && domain.id){
-      LS.setDomainId(domain.id);
-      LS.setDomainName(domain.name);
-    }
-  }
-
   
   /**
    *
@@ -215,7 +207,7 @@ export class AonNotificationMobile extends AonElement {
    */
   createCard(data, close = false) {
     const ulEl = this.getElement(this.UL);
-    const idCard = this.AON_NOTIFICATION_MOBILE + "Card" + data.id;
+    const idCard = this.id + "Card" + data.id;
     
     if(this.getElement(idCard)) {
       this.getElement(idCard).remove();
@@ -246,7 +238,7 @@ export class AonNotificationMobile extends AonElement {
   }
 
   changeTabs(position = 0) {
-    let aonNotification = this.getElement(this.AON_NOTIFICATION_MOBILE);
+    let aonNotification = this.getElement(this.CONTENT);
     if (aonNotification) aonNotification.innerHTML = "";
     switch (position) {
       case 0:
@@ -260,7 +252,7 @@ export class AonNotificationMobile extends AonElement {
 
   async messengerView() {
     try {
-      const aonNotification = this.getElement(this.AON_NOTIFICATION_MOBILE);
+      const aonNotification = this.getElement(this.CONTENT);
       if (aonNotification) {
         aonNotification.style.width = "100%";
         const aonMessengerList = new AonMessengerList();
@@ -276,7 +268,7 @@ export class AonNotificationMobile extends AonElement {
     markReadNotification({id: parseInt(id)}).then(()=>{
       // this.loadMore();
     }).catch(e=>console.log(e));
-    let aonCard = this.getElement(this.AON_NOTIFICATION_MOBILE + "Card" + id);
+    let aonCard = this.getElement(this.id + "Card" + id);
     if (aonCard) {
       aonCard.setBackground("#fff");
       const icon = this.getElement(`${id}Icon`);
@@ -286,7 +278,7 @@ export class AonNotificationMobile extends AonElement {
   }
 
   eventSwipe(){    
-    let tasks = document.querySelectorAll(`#${this.AON_NOTIFICATION_MOBILE} ul > li`);
+    let tasks = document.querySelectorAll(`#${this.id} ul > li`);
     if(tasks.length){
       new Swipe(tasks).onDelete(({dataset})=>{
         if(dataset && dataset.id ) {
@@ -349,7 +341,7 @@ export class AonNotificationMobile extends AonElement {
   }
 
   addFloatButton(){
-    let aonNotification = this.getElement(this.AON_NOTIFICATION_MOBILE);
+    let aonNotification = this.getElement(this.CONTENT);
     const dialog = this.getElement(this.DIALOG) || new AonDialog();
     dialog.id = this.DIALOG;
     aonNotification.appendChild(dialog);
@@ -367,30 +359,11 @@ export class AonNotificationMobile extends AonElement {
         title:`${MSG.CREATE} ${MSG.NOTIFICATION}`,
       },
       events:{
-        click: () => this.openDialog()
+        click: () => NotificationUtils.openDialog(this, dialog)
       }
     }, span);
     let btn = icon.getButton(); 
-    btn.classList.add("addNotification", CSS.PULSE)
-    // btn.style.boxShadow = `0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)`;
-  }
-
-  openDialog() {
-    const dialog = 	this.getElement(this.DIALOG);
-    dialog.clear();
-    if (!this.isMobile()) {
-      dialog.width = "500px";
-    }
-    
-    dialog.setContent(NotificationUtils.buildDialogAdd(`${this.AON_NOTIFICATION_MOBILE}Form`));
-
-    this.listTaskHolder().then(taskHolders=>{
-      document.getElementById("task_holder").setOptions(taskHolders);
-    });
-
-    dialog.setTitle(MSG.NOTIFICATION);
-    dialog.open();
-    dialog.addSendAction(() =>  this.sendNotification(), MSG.SEND);
+    btn.classList.add("addNotification", CSS.PULSE);
   }
 
 
@@ -400,23 +373,6 @@ export class AonNotificationMobile extends AonElement {
       if(result) this.TASK_HOLDERS = result.map(r=>({name:r.name,value:r.id}));
     }
     return this.TASK_HOLDERS;
-  }
-
-  async sendNotification(){
-    const formData = serializeForm(this.getElement(`${this.AON_NOTIFICATION_MOBILE}Form`));
-    if(formData.title && formData.body) {
-      let dialog = this.getElement(this.DIALOG);
-      let buttonAccept = dialog.getButtonAccept();
-      buttonAccept.disabled = true;
-      try {
-          await sendNotification(formData);
-          this.showToast({ message: MSG.MSG_SENT, type: CONSTANT.SUCCESS, delay: 3000 });
-      } catch (error) {
-        this.showToast(error);
-      }
-      buttonAccept.disabled = false;
-      dialog.close();
-    }
   }
 
     /**
@@ -436,7 +392,6 @@ export class AonNotificationMobile extends AonElement {
       }); 
     }
   }
-
 
   showToast(obj) {
     if(typeof obj === "string")  obj = JSON.parse(obj);

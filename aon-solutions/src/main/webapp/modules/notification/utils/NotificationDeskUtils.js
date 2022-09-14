@@ -1,12 +1,10 @@
-import { CreateComponent } from "../../components/CreateComponent.js";
-import { COLORS, CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
-import { setStyles } from "../../services/utilsComponents.js";
-import { firstLetters } from "../timecontrol/time-control/utils.js";
-import { AonDateUtils } from "../utils/AonDateUtils.js";
-import { NotificationEnums } from "./NotificationEnums.js";
+import { COLORS, CONSTANT, CSS, MSG, TAG } from "../../../environments/environments.js";
+import { setStyles } from "../../../services/utilsComponents.js";
+import { firstLetters } from "../../timecontrol/time-control/utils.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import { NotificationEnums } from "../NotificationEnums.js";
 
-
-const buildDesk = () => {
+const build = () => {
   let divParent = setStyles(document.createElement(TAG.DIV),{
     color: CSS.variable(COLORS.AON_GRAY),
     margin: "0",
@@ -63,7 +61,6 @@ const buildRow = (res)=>{
 
   return row;
 }
-
 
 const buildTitle = (res)=>{
   let div = document.createElement(TAG.DIV);
@@ -156,7 +153,6 @@ const buildTitle = (res)=>{
   return div;
 }
 
-
 const buildSubTitle = (res)=>{
   let div = document.createElement(TAG.DIV);
   div.style = `
@@ -164,7 +160,8 @@ const buildSubTitle = (res)=>{
     min-width: 0px;
     border-bottom: 1px solid rgb(234, 236, 239);
     padding-bottom: 24px;
-  `
+  `;
+  
   let divTwo = document.createElement(TAG.DIV);
   divTwo.id = "notificationDivSubTitle"+res.id;
   divTwo.style = `
@@ -173,6 +170,7 @@ const buildSubTitle = (res)=>{
     font-size: 14px;
     line-height: 20px;
     color: rgb(112, 122, 138);
+    width: 75%;
   `;
   div.appendChild(divTwo);
 
@@ -228,150 +226,7 @@ const buildButtonMore = (add, res) => {
   }
 }
 
-const buildDialogAdd = (idForm) =>{
-    const form = CreateComponent.createForm(idForm);
-    CreateComponent.createAonSelect({
-      attributes:{
-        name:"type",
-        id:"type",
-        title:MSG.TYPE,
-        options: NotificationEnums.TYPE_USER,
-        value: NotificationEnums.TYPE_USER[0].value
-      },   
-      events: {
-        change: ({detail})=>{
-          if(detail && detail.value) {
-            hiddenElement(detail.value);
-          }
-        }
-      },
-    }, form);
-
-    CreateComponent.createAonSelect({
-      attributes:{
-        name:"task_holder",
-        id:"task_holder",
-        title: MSG.EMPLOYEE
-      }
-    }, form);
-    
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"email",
-        id:"email",
-        description:MSG.EMAIL,
-        type:"text",
-        hidden:true
-      }
-    }, form);
-
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"title", 
-        id:"title", 
-        description:MSG.TITLE,
-        type:"text"
-      }
-    }, form);
-
-    CreateComponent.createAonInput({
-      attributes:{
-        name:"body",
-        id:"body",
-        description:"Mensaje",
-        type:"text"
-      }
-    }, form);
-
-    return form;
-}
-
-const hiddenElement = (value)=> {
-  let taskHolderEl = document.getElementById("task_holder");
-  let emailEl = document.getElementById("email");
-    if("employee"===value){
-      taskHolderEl.hidden = false;
-      emailEl.setAttribute(CONSTANT.HIDDEN, true);
-    } else {
-      taskHolderEl.hidden = true;
-      emailEl.removeAttribute(CONSTANT.HIDDEN);
-    }
-}
-
-// const buildTitleDesk = (res) => {
-//   const title = res.title || "Sin asunto";
-//   let divParent = setStyles(document.createElement(TAG.DIV), {
-//     position: "relative",
-//     padding: "5px"
-//   });
-
-//   let div = setStyles(document.createElement(TAG.DIV), {
-//     top: "-4px",
-//     position: "absolute",
-//     left: "0",
-//     right: "0",
-//   });
-//   divParent.appendChild(div);
-
-//   let divFlex = setStyles(document.createElement(TAG.DIV), {
-//     display: "flex",
-//     whiteSpace: "nowrap",
-//   });
-
-//   div.appendChild(divFlex);
-
-//   const divOne = setStyles(document.createElement(TAG.DIV), {
-//     fontWeight: "550",
-//     fontSize: "14px",
-//     overflow: CONSTANT.HIDDEN,
-//     textOverflow: "ellipsis",
-//     color: CSS.variable(COLORS.AON_BLUE)
-//   });
-//   divOne.innerText = title;
-//   divOne.title = title;
-
-//   divFlex.appendChild(divOne);
-  
-
-//   return divParent;
-// }
-
-// const buildSubtitleDesk =({body}) => {
-
-//   let divParent = setStyles(document.createElement(TAG.DIV), {
-//     position: "relative",
-//     padding:"11px"
-//   });
-
-//   //----------- DESCRIPTION
-
-//   let div = setStyles(document.createElement(TAG.DIV), {
-//     position: "absolute",
-//     top: "6px",
-//     left: "0",
-//     right: "0",
-//     whiteSpace: "nowrap",
-//     textOverflow: "ellipsis",
-//     overflow: "hidden",
-//   });
-//   divParent.appendChild(div);
-
-//   let span = setStyles(document.createElement(TAG.SPAN), {
-//     color:  CSS.variable(COLORS.AON_GRAY),
-//     marginLeft: "3px",
-//   });
-
-//   span.innerHTML = body;
-//   span.title = body.replace(/<[^>]+>|&nbsp;|\n/g, " ");
-//   div.appendChild(span);
-  
-//   return divParent;
-// }
-
-
-
-export const NotificationUtils = {
-    buildDesk,
-    buildRow,
-    buildDialogAdd
+export const NotificationDeskUtils = {
+  build,
+  buildRow
 }

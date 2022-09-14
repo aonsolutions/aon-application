@@ -1,6 +1,7 @@
-import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
+import { MATERIAL_ICONS } from "../../environments/environments.js";
 
 const NOTIFICATION_IDS = {
+    AON_NOTIFICATION_MOBILE: "aonNotificationMobile",
     AON_NOTIFICATION_DESK:"aonNotificationDesk"
 }
 

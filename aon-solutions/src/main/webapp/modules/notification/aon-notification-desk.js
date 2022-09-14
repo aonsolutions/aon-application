@@ -1,16 +1,15 @@
 import { AonElement } from "../../components/AonElement.js";
-import { serializeForm } from "../../services/utils.js";
-import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification, sendNotification } from "../../services/service.js";
+import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
 import { AonDocumental } from "../documental/aon-documental.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { AonMessenger } from "../messenger/aon-messenger.js";
 import { App } from "../../models/enums.js";
-import * as LS from "../../services/localStorageService.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
-import { NotificationUtils } from "./NotificationUtils.js";
 import { NotificationEnums } from "./NotificationEnums.js";
+import { NotificationUtils } from "./utils/NotificationUtils.js";
+import { NotificationDeskUtils } from "./utils/NotificationDeskUtils.js";
 
 export class AonNotificationDesk extends AonElement {
   AON_NOTIFICATION_DESK;
@@ -76,7 +75,9 @@ export class AonNotificationDesk extends AonElement {
   buildToobar(){
     const application = this.getApplication();
 
-    application.addToolbarOption2(SigninSidenav.ADD, () => this.openDialog());
+    if(!this.getDur().isEmployee()) {
+      application.addToolbarOption2(SigninSidenav.ADD, () => NotificationUtils.openDialog(this, this.getApplication().getDialog()));
+    }
 
     this.navBar();
   }
@@ -104,7 +105,7 @@ export class AonNotificationDesk extends AonElement {
   }
 
   paintView() {
-    this.DIV_PARENT = NotificationUtils.buildDesk(this.id + "DivParent");
+    this.DIV_PARENT = NotificationDeskUtils.build(this.id + "DivParent");
  
     this.getApplication().setContent(this.DIV_PARENT);
 
@@ -137,7 +138,7 @@ export class AonNotificationDesk extends AonElement {
 
     datos.forEach((res) => {
       this.DIV_PARENT.appendChild(
-        NotificationUtils.buildRow(res)
+        NotificationDeskUtils.buildRow(res)
       );
     });
   }
@@ -162,38 +163,6 @@ export class AonNotificationDesk extends AonElement {
     return data;
   }
   
-  openDialog() {
-    const dialog = this.getApplication().getDialog();
-    dialog.width = "500px";
-    dialog.clear();
-    
-    dialog.setContent(NotificationUtils.buildDialogAdd(`${this.id}Form`));
-
-    this.listTaskHolder().then(taskHolders=>{
-      document.getElementById("task_holder").setOptions(taskHolders);
-    });
-
-    dialog.setTitle(MSG.NOTIFICATION);
-    dialog.open();
-    dialog.addSendAction(() =>  this.sendNotification(), MSG.SEND);
-  }
-
-  async sendNotification(){
-    const formData = serializeForm(this.getElement(`${this.id}Form`));
-    if(formData.title && formData.body) {
-      const dialog = this.getApplication().getDialog();
-      let buttonAccept = dialog.getButtonAccept();
-      buttonAccept.disabled = true;
-      try {
-          await sendNotification(formData);
-          this.showToast({ message: MSG.MSG_SENT, type: CONSTANT.SUCCESS, delay: 3000 });
-      } catch (error) {
-        this.showToast(error);
-      }
-      buttonAccept.disabled = false;
-      dialog.close();
-    }
-  }
 
   async listTaskHolder(){
     if(this.TASK_HOLDERS.length <= 0){
@@ -226,16 +195,9 @@ export class AonNotificationDesk extends AonElement {
       aonComponent.value = source_id;
 
       if(aonComponent){
-        this.setDomainStorage(domain);
+        NotificationUtils.setDomainStorage(domain);
         this.rootPanel(aonComponent);
       }
-    }
-  }
-
-  setDomainStorage(domain){
-    if(domain && domain.id){
-      LS.setDomainId(domain.id);
-      LS.setDomainName(domain.name);
     }
   }
 }
