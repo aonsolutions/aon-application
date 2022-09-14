@@ -2,6 +2,7 @@ import { AonDate } from "../../components/aon-date.js";
 import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { MONTHS } from "../../models/enums.js";
+import { Note } from "../../models/note/Note.js";
 import { deleteNote, saveNote } from "../../services/noteService.js";
 import { addZero } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
@@ -9,10 +10,13 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 /**
  * 
- * @param {HTMLElement} ul ul appendNote 
+ * @param {HTMLElement} parent addNote 
  * @param {Note} note class 
  */
-export const appendNote = (ul, note) => {
+const addNote = (parent, note) => {
+    note = new Note(note);
+    
+    const ul = parent.UL;
     let li = document.createElement(TAG.LI);
     ul.insertBefore(li, ul.firstChild);
     
@@ -28,14 +32,17 @@ export const appendNote = (ul, note) => {
         color : CSS.variable(COLORS.AON_GRAY),
         marginTop : 0
     });
+
     textArea.placeholder = MSG.WRITE_A_NOTE;
     textArea.id = `notes${idRand}`;
-    textArea.title  =  note.note || MSG.NOTE;
+    textArea.title  =  note.getNote() || MSG.NOTE;
     textArea.NOT_BACKGROUND = true;
 
     div.appendChild(textArea);
-    if(note.note) textArea.value = note.note;
-
+    if(note.getNote()){
+        textArea.value = note.getNote();
+    } 
+        
     const toolbarLeft = document.getElementById(textArea.LEFT)
     toolbarLeft.style.width = "80%";
     
@@ -57,17 +64,21 @@ export const appendNote = (ul, note) => {
     subject.setAttribute("contentEditable", true);
     subject.setAttribute("placeholder", MSG.TITLE);
     subject.classList.add(CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.TRANSITION_QUICK);
-    textArea.addToolbarLeft(subject,()=>{});
     subject.addEventListener(EVENT.INPUT,({target})=> target.innerText.length <= 60 ? note.setSubject(target.innerText) : false);
     subject.addEventListener(EVENT.KEYPRESS,(ev)=> ev.target.innerText.length >= 60 ? ev.preventDefault() : true );
-    if(note.subject) subject.innerText = note.subject;
-
+    textArea.addToolbarLeft(subject,()=>subject.focus());
+    if(note.getSubject()){
+        subject.innerText = note.getSubject();
+    } 
+    
     const textAreaId = textArea.id;
     textArea.addToolbarOptionRight({
         id: MATERIAL_ICONS.MORE_VERT+textAreaId,
         icon: MATERIAL_ICONS.MORE_VERT,
         name: MSG.OPTIONS
-    },(ev) => dialogMoreVert(ev, li, note, textAreaId));
+    },(ev) => {
+        dialogMoreVert(ev, parent.DIALOG, li, note, textAreaId)
+    });
     
 
     textArea.draggableEnable(); 
@@ -76,17 +87,20 @@ export const appendNote = (ul, note) => {
         note.setId(id);
     });
 
-    if(note.date && new Date(note.date).isValid()) appendDate(note, textArea.id);
+    if(note.getDate() && new Date(note.getDate()).isValid()){
+        addDate(note, parent.DIALOG, textArea.id);
+    }
 
-    if(!note.id)
+    if(!note.getId()){
         subject.focus();
+    }
 }
 
-const dialogMoreVert = (ev, li, note, textAreaId) => {
+const dialogMoreVert = (ev, dialog, li, note, textAreaId) => {
     ev.preventDefault();
-    
-    let dialog = document.getElementById("DialogNote");
+
     dialog.clear();
+
     let content = dialog.getContent()
     content.style.width = "133px";
 
@@ -94,7 +108,7 @@ const dialogMoreVert = (ev, li, note, textAreaId) => {
             id: MATERIAL_ICONS.NOTIFICATION_ADD,
             icon: MATERIAL_ICONS.NOTIFICATION_ADD,
             name: MSG.REMINDER,
-            fn : (e) => reminder(e, note, textAreaId)
+            fn : (e) => reminder(e, dialog, note, textAreaId)
         },
         {
             name: MSG.DELETE,
@@ -114,7 +128,7 @@ const dialogMoreVert = (ev, li, note, textAreaId) => {
     dialog.open();
 } 
 
-const appendDate = (note, textAreaId)=>{
+const addDate = (note, dialog, textAreaId)=>{
     const parent = document.getElementById(textAreaId).parentNode;
     if(parent){
         const date = note.date;
@@ -126,7 +140,9 @@ const appendDate = (note, textAreaId)=>{
         else if(today > newDate) color = COLORS.MATERIAL_RED;
 
         let divMain = document.getElementById(idDiv);
-        if(divMain) divMain.remove();
+        if(divMain) {
+            divMain.remove();
+        }
 
         divMain = setStyles(document.createElement(TAG.DIV), { display:"flex", justifyContent:"end"});
         divMain.id = idDiv;
@@ -149,15 +165,15 @@ const appendDate = (note, textAreaId)=>{
         let reloj = setStyles(document.createElement(TAG.SPAN),{ height: "28px", opacity: "0.54", fontSize: "16px"});
         reloj.classList.add(CONSTANT.MATERIAL_ICONS_OUTLINED);
         reloj.innerText = MATERIAL_ICONS.SCHEDULE;
-        reloj.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, note, textAreaId) );
+        reloj.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, dialog, note, textAreaId) );
         div.appendChild(reloj);
     
         let label = setStyles(document.createElement(TAG.LABEL),{ border: "1px solid transparent", fontSize: "11px", position:"relative", top:"-4px", cursor:"pointer"});
         label.classList.add(CSS.FIRST_LETTER_UPPER);
         label.id = "label"+textAreaId;
-        label.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, note, textAreaId) );
+        label.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, dialog, note, textAreaId) );
         div.appendChild(label);
-        label.innerText = dateFormat(note.date);
+        label.innerText = dateFormat(note.getDate());
 
         let iconX = setStyles(document.createElement(TAG.SPAN),{ height: "28px", opacity: "0.54", fontSize: "16px", display:"none"});
         iconX.classList.add(CONSTANT.MATERIAL_ICONS_OUTLINED);
@@ -174,9 +190,7 @@ const appendDate = (note, textAreaId)=>{
     }
 }
 
-
-const reminder = (ev, note, textAreaId) => {
-    const dialog = document.getElementById("DialogNote");
+const reminder = (ev, dialog, note, textAreaId) => {
     const rect = ev.target.getBoundingClientRect();
     const top  = rect.top + (ev.clientY - rect.top);
     const left = rect.left + (ev.clientX - rect.left) + 50;
@@ -194,16 +208,20 @@ const reminder = (ev, note, textAreaId) => {
         if(aonDate.value){
             note.setDate(aonDate.value);
             saveNote(note);
-            appendDate(note, textAreaId);
+            addDate(note, dialog, textAreaId);
             dialog.close();
         }
     });
+
     let divContent = document.createElement(TAG.DIV);
     divContent.style.margin = "0 10px";
     divContent.appendChild(aonDate);
+
     dialog.setContent(divContent);
 
-    if(note.date && new Date(note.date).isValid()) aonDate.setDate(note.date);
+    if(note.getDate() && new Date(note.getDate()).isValid()) {
+        aonDate.setDate(note.getDate());
+    }
 
     dialog.openPosition({top, left: (left - 100) });
 }
@@ -212,4 +230,9 @@ const dateFormat = (d) => {
     let day = AonDateUtils.lastThreeDayStr(d);
     const date = new Date(d);
     return day ? day : `${addZero(date.getDate(),2)} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+
+export const NotesUtils = {
+    addNote
 }
