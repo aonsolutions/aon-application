@@ -208,14 +208,13 @@ export class AonConfiguration extends AonElement {
         appOptions.push({
           id:  "notice",
           icon: "rss_feed",
-          name: MSG.NOTIFICATIONS,
+          name: "Comunicaciones",
           fn: () => this.buildNews(),
         });
       }
 
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
-
 
     this.buildPersonal();
   }
