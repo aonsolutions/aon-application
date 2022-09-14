@@ -7,11 +7,14 @@ import java.text.MessageFormat;
 
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -24,33 +27,80 @@ public class ConsoleDeleteDomain {
 	private ConsoleDeleteDomain() {
 	}
 	
-	public static void delete(ConsoleParams params) {
+	public static boolean delete(ConsoleParams params) {
 		if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
-			String msg = "[ERROR]: No se ha definido la conexión origen a la BD";
+			String msg = "No se ha definido la conexión origen a la BD";
 			ConsoleUtils.log(params,msg);
 			throw new AonCoreException(msg);
 		}
-		deleteDomain(params);		
+		return deleteDomain(params);		
 	}
-
-	private static void deleteDomain(ConsoleParams params) {
-		ConsoleUtils.log(params,"** Start domain deletion!");
+		
+	private static boolean deleteDomain(ConsoleParams params) {
 		try {
-			Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
-				, p -> p.getNameProperty().eq(params.getFromConnection().getDomainName()));
-			if (fullDomain == null) {
-				throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getFromConnection().getDomainName() + "\"");
+			ConsoleUtils.log(params,"** Start domain validation deletion!");
+			if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
+				String msg = "No se ha definido la conexión origen a la BD";
+				ConsoleUtils.log(params,msg);
+				throw new AonCoreException(msg);
 			}
-			params.getFromConnection().setFullDomain(fullDomain);
+
+			if (params.getFromConnection().getSchema() == null) {
+				String schemaName = params.getFromConnection().getSchemaName();
+				if (AonStringUtils.isBlank(schemaName)) {
+					throw new AonCoreException("No se ha indicado un esquema del que borrar el dominio.");
+				}
+				Schema fromSchema = params
+						.getFromDslContext()
+						.meta()
+						.getSchemas(schemaName)
+						.stream()
+						.findFirst()
+						.orElse(null);
+				if (fromSchema == null) {
+					throw new AonCoreException("No se ha encontrado el esquema \""+schemaName+"\".");
+				}
+				params.getFromConnection().setSchema( fromSchema );
+			}
+
+			Domain domain = params.getFromConnection().getFullDomain();
+			if (domain == null || domain.getId() == null) {
+				throw new AonCoreException("No se ha indicado un dominio que borrar.");
+			}
+			Integer domainId = domain.getId();
+			domain = DomainDAO.getDomain(params.getFromConnection().getAONContext(), domainId);
+			if (domain == null) {
+				throw new AonCoreException("No se ha encontrado el dominio \"" + domainId + "\"");
+			}
+			if (domain.getDomainType() == DomainType.ADMIN) {
+				throw new AonCoreException("No se puede borrar un dominio de ADMINISTRACION");
+			}
+			int count = params.getFromDslContext()
+				.select( DSL.count(DOMAIN.ID) )
+				.from(DOMAIN)
+				.where(DOMAIN.PARENT.eq(domainId))
+				.fetch()
+				.stream()
+				.map( r -> r.get(DSL.count(DOMAIN.ID)) )
+				.findFirst()
+				.orElse(0);
+			if (count > 0) {
+				throw new AonCoreException("No se puede borrar un dominio con hijos");
+			}
+			params.getFromConnection().setFullDomain(domain);
+			
+			ConsoleUtils.log(params,"** End domain validation!");
+			
+			
+			
+			ConsoleUtils.log(params,"** Start domain deletion!");
 			ConsoleUtils.disableForeignKeys(params);
 			ConsoleUtils.log(params,"** Start transaction!");
-			params.getToDslContext().transaction(conf -> {
-				params.getFromConnection()
-					.getSchema()
-					.getTables()
-					.stream()
-					.forEach(t -> deleteTableRows(params, t));				
-			});
+			params.getToDslContext().transaction(conf -> params.getFromConnection()
+				.getSchema()
+				.getTables()
+				.stream()
+				.forEach(t -> deleteTableRows(params, t)));
 			params.getFromDslContext()
 				.delete(DOMAIN)
 				.where( DOMAIN.ID.equal(params.getFromConnection().getFullDomain().getId()))
@@ -60,10 +110,12 @@ public class ConsoleDeleteDomain {
 				, params.getFromConnection().getFullDomain().getName()));
 			ConsoleUtils.log(params,"** Commit!");
 			ConsoleUtils.log(params,"** End domain deletion!");
+			return true;
 		} catch (Exception e) {
 			ConsoleUtils.log(params, e.getMessage() );
 			ConsoleUtils.log(params,"** Rollback!");
 			e.printStackTrace();
+			throw new AonCoreException(e.getMessage(),e);
 		} finally {
 			if (!params.getErrors().isEmpty()) {
 				ConsoleUtils.log(params, "" );

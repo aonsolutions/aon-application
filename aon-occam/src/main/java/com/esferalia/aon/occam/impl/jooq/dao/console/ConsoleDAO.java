@@ -88,8 +88,4 @@ public class ConsoleDAO {
 		return filter;
 	}
 
-	public static boolean deleteDomain(CloseableAONContext ctx, DomainParams params) {
-		return true;
-	}
-
 }

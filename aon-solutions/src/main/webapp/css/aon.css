@@ -1385,3 +1385,7 @@ label.rating:hover {
   transform: scale(1.1);
   transition: 100ms ease;
 }
+
+.divRowHover:hover{
+  background-color: #FAFAFA;
+}

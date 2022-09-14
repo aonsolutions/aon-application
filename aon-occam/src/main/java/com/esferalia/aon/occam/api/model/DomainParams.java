@@ -8,6 +8,7 @@ public class DomainParams implements Serializable {
 	private static final long serialVersionUID = -8674079205943551908L;
 	
 	private String schema;
+	private Integer id;
 	private String query;
 	private Integer type;
 	private Integer parent;
@@ -25,6 +26,14 @@ public class DomainParams implements Serializable {
 	}
 	public DomainParams setSchema(String schema) {
 		this.schema = schema;
+		return this;
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+	public DomainParams setId(Integer id) {
+		this.id = id;
 		return this;
 	}
 	
