@@ -534,21 +534,19 @@ public class ContractFill {
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 		} else if(contractType.equals(410) || contractType.equals(510)) {
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(3);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
+			pdfDocument.removePage(7);
 		} else if(contractType.equals(430) || contractType.equals(530)) {
 			pdfDocument.removePage(3);
 			pdfDocument.removePage(3);
