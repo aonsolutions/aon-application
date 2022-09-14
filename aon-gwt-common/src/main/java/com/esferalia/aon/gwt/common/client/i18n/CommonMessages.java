@@ -17,7 +17,8 @@ public interface CommonMessages extends Messages {
 	// Ú --> \u00DA ú --> \u00FA
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF
+	// ¿ --> \u00BF 
+	// ¡ --> \u00A1
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")

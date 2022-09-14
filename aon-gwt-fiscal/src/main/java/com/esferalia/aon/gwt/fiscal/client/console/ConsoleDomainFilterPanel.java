@@ -179,7 +179,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		}
 	}
 	
-	private DomainParams getParams(ConsoleModuleOptions opt) {
+	DomainParams getParams(ConsoleModuleOptions opt) {
 		DomainParams params = new DomainParams()
 			.setSchema(schemaBox.getSelectedValue())
 			.setQuery(queryBox.getValue())

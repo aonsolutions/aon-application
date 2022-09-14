@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ConsoleServiceAsync {
 
 	void getSchemas(Occam occam, AsyncCallback<String[]> callback);
-	void getDomains(Occam occam, DomainParams params, AsyncCallback<LinkedList<Domain>> asyncCallback);
-	void deleteDomain(Occam occam, DomainParams params, AsyncCallback<Boolean> callback);
+	void getDomains(DomainParams params, AsyncCallback<LinkedList<Domain>> asyncCallback);
+	void deleteDomain(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback);
 
 }

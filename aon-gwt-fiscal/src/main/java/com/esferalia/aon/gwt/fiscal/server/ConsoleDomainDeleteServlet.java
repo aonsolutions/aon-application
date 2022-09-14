@@ -15,9 +15,11 @@ import org.jooq.Schema;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @WebServlet(name = "Console Domain Delete Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/ConsoleDomainDeleteServlet" })
 public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
@@ -30,6 +32,7 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String schemaName = req.getParameter(IRequestParamsNames.SCHEMA);
 		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
+		Integer domainId = AonNumberUtils.toInteger( req.getParameter(IRequestParamsNames.DOMAIN) );
 		ConsoleParams params = new ConsoleParams( );
 		
 		try (CloseableAONContext fromCtx = AONContext.getAONContext(schemaName)) {
@@ -45,6 +48,7 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 				.setSchemaName( schemaName )
 				.setSchema( fromSchema )
 				.setDomainName(domainName)
+				.setFullDomain(new Domain().setId(domainId))
 				);
 			
 			params.setPrinter(new PrintStream(resp.getOutputStream()));

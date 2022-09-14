@@ -109,6 +109,21 @@
 .aon_icon_cancel { background-image: iconCancel;}
 @url iconClose aonIconClose;
 .aon_icon_close { background-image: iconClose;}
+.aon_widget_close {
+	background-image: iconClose;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	background-color: #F2F2F2;
+	border: 1px solid #FFFFFF;
+	cursor: pointer;
+	height: 16px;
+	margin: 5px 5px 3px 0;
+	width: 16px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
 @url iconCloseWhite aonIconCloseWhite;
 .aon_icon_close_white { background-image: iconCloseWhite;}
 @url iconCheck aonIconCheck;

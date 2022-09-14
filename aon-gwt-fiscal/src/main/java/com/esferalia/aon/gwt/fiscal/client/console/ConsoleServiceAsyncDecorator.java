@@ -24,14 +24,14 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void getDomains(Occam occam, DomainParams params, AsyncCallback<LinkedList<Domain>> callback) {
+	public void getDomains(DomainParams params, AsyncCallback<LinkedList<Domain>> callback) {
 		AON.start();
-		fsa.getDomains(occam, params, new AsyncCallbackWrapper<>(callback));
+		fsa.getDomains(params, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void deleteDomain(Occam occam, DomainParams params, AsyncCallback<Boolean> callback) {
+	public void deleteDomain(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback) {
 		AON.start();
-		fsa.deleteDomain(occam, params, new AsyncCallbackWrapper<>(callback));
+		fsa.deleteDomain(params, domainId, new AsyncCallbackWrapper<>(callback));
 	}
 }

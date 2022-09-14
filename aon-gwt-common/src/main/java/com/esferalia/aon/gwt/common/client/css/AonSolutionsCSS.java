@@ -165,6 +165,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_close")
 	String aonIconClose();
 	
+	@ClassName("aon_widget_close")
+	String aonWidgetClose();
+	
 	@ClassName("aon_icon_close_white")
 	String aonIconCloseWhite();
 	
