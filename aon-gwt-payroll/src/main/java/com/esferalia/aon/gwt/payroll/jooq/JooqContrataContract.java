@@ -53,6 +53,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.ibm.icu.util.Calendar;
+import com.itextpdf.text.log.SysoLogger;
 
 public class JooqContrataContract {
 	
@@ -367,6 +368,10 @@ public class JooqContrataContract {
 				
 			}
 			
+			//FECHA ACTUAL
+			java.util.Date actualJavaDate = new java.util.Date();
+			Date actualSQLDate = new Date(actualJavaDate.getTime());
+			
 			contractData.setContracttypeId(null);
 			contractData.setContractType(null);
 			contractData.setQuotegroupId(null);
@@ -375,22 +380,20 @@ public class JooqContrataContract {
 			contractData.setOcupation(null);
 			contractData.setJourneytypeId(null);
 			contractData.setJourneyType(null);
-			contractData.setPartialityCoef(null);
 			
-			// CONTRACT DATA TABLE
+			//CONTRACT DATA TABLE
 			Date currentDate = new Date(new java.util.Date().getTime());
 			Result<Record> contractDataTable = null;
 			
 			if(null != contractData.getEndDate()) { //Para contratos finalizados
-				if(currentDate.after( contractData.getEndDate())) {
+				if(currentDate.after(contractData.getEndDate())) {
 					contractDataTable = dslContext.select().from(CONTRACT_DATA)
-					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.orderBy(CONTRACT_DATA.START_DATE)
-					.fetch();
+						.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+						.orderBy(CONTRACT_DATA.START_DATE)
+						.fetch();
 				}else {
 					contractDataTable = dslContext.select().from(CONTRACT_DATA)
 							.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-							.and(CONTRACT_DATA.START_DATE.le(currentDate))
 							.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
 							.fetch();
 					
@@ -400,8 +403,7 @@ public class JooqContrataContract {
 						.orderBy(CONTRACT_DATA.ID)
 						.fetch();
 				}
-				
-			} else {
+			}else {
 				
 				if(contractData.getStartDate().after(currentDate)) {
 					contractDataTable = dslContext.select().from(CONTRACT_DATA)
@@ -412,6 +414,7 @@ public class JooqContrataContract {
 				}else
 					contractDataTable = dslContext.select().from(CONTRACT_DATA)
 							.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(currentDate)))
 							.orderBy(CONTRACT_DATA.START_DATE.asc())
 							.fetch();
 				

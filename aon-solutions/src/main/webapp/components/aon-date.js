@@ -208,7 +208,7 @@ export class AonDate extends AonElement {
     let datepicker =  this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
     datepicker.id = this.DATEPICKER;
     datepicker.className = 'aonDatepicker';
-    datepicker.style.width = '250px';
+    datepicker.style.width = this.width || '250px';
     span.appendChild(datepicker);
     let datepickerHeaderId =this.DATEPICKER +"Header";
     let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement(TAG.DIV);
