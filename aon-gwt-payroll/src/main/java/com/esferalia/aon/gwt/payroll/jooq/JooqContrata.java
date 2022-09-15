@@ -591,11 +591,12 @@ public class JooqContrata {
 	
 	private static void completeDatosEtt(DATOSETTTYPE datos, ContractSpecificData contractSpecificData) {
 		if(datos != null){
-			contractSpecificData.setTemporalWorkEnterprise(true);
 			contractSpecificData.setNif(null != datos.getCIFNIFEMPRESAUSUARIA() ? datos.getCIFNIFEMPRESAUSUARIA().getCIFNIF() : null);
 			contractSpecificData.setSocialReason(datos.getRAZONSOCIALEMPRESAUSUARIA());
 			contractSpecificData.setContractTemplate(!AonStringUtils.isBlank(datos.getINDCTOPLANTILLA()) && datos.getINDCTOPLANTILLA().equals("S"));
 			contractSpecificData.setForeignEnterprise(!AonStringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
+		
+			contractSpecificData.setTemporalWorkEnterprise(null != datos.getCIFNIFEMPRESAUSUARIA() || !AonStringUtils.isBlank(datos.getINDCTOPLANTILLA()) || !AonStringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) || !AonStringUtils.isBlank(datos.getRAZONSOCIALEMPRESAUSUARIA()));
 		}
 	}
 	
@@ -1117,11 +1118,13 @@ public class JooqContrata {
 	
 	private static DATOSETTTYPE createDatosEtt(EmployeeContractInfo employeeContractInfo) {
 		DATOSETTTYPE datos = new DATOSETTTYPE();
-		datos.setCIFNIFEMPRESAUSUARIA(employeeContractInfo.getContractSpecificData().getNif()!=null?createCifNif(employeeContractInfo.getContractSpecificData().getNif()):null);
-		datos.setRAZONSOCIALEMPRESAUSUARIA(employeeContractInfo.getContractSpecificData().getSocialReason());
-		Boolean contractTemplate = employeeContractInfo.getContractSpecificData().getContractTemplate();
-		datos.setINDCTOPLANTILLA(null != contractTemplate && contractTemplate ? "S" : null);
-		datos.setINDEMPRESAEXTRANJERA(null != contractTemplate && contractTemplate ? "S" : null);
+		if(employeeContractInfo.getContractSpecificData().getTemporalWorkEnterprise()) {
+			datos.setCIFNIFEMPRESAUSUARIA(employeeContractInfo.getContractSpecificData().getNif()!=null?createCifNif(employeeContractInfo.getContractSpecificData().getNif()):null);
+			datos.setRAZONSOCIALEMPRESAUSUARIA(employeeContractInfo.getContractSpecificData().getSocialReason());
+			Boolean contractTemplate = employeeContractInfo.getContractSpecificData().getContractTemplate();
+			datos.setINDCTOPLANTILLA(null != contractTemplate && contractTemplate ? "S" : null);
+			datos.setINDEMPRESAEXTRANJERA(null != contractTemplate && contractTemplate ? "S" : null);
+		}
 		return datos;
 	}
 
