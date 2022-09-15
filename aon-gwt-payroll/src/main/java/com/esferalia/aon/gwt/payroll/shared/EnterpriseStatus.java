@@ -182,9 +182,36 @@ public abstract class EnterpriseStatus implements Serializable {
 			visitor.unknownError(message);
 		}
 	}	
-
-	public abstract void visit(Visitor visitor);
 	
+	
+	//----------NEW
+	public static class UnknownErrorAnd extends AndEnterpriseStatus{
+		
+		private String message;
+		
+		public String getMessage() {
+			return message;
+		}
+		
+		public UnknownErrorAnd setMessage(String message) {
+			this.message = message;
+			return this;
+		}
+
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.unknownError(message);
+			super.visit(visitor);
+		}
+
+		protected void super_visit( Visitor visitor) {
+			super.visit(visitor);
+		}
+	}	
+	//-----------------END NEW---------------------
+
+	
+	public abstract void visit(Visitor visitor);
 	
 	public static void ifSistemaREDEnabled(EnterpriseStatus enterpriseStatus, Runnable saltraEnable,
 			Runnable saltraDisabled) {

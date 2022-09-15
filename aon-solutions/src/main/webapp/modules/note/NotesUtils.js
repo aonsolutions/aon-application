@@ -108,7 +108,10 @@ const dialogMoreVert = (ev, dialog, li, note, textAreaId) => {
             id: MATERIAL_ICONS.NOTIFICATION_ADD,
             icon: MATERIAL_ICONS.NOTIFICATION_ADD,
             name: MSG.REMINDER,
-            fn : (e) => reminder(e, dialog, note, textAreaId)
+            fn : () =>{
+                const rect = li.getBoundingClientRect();
+                reminder({target:li, clientY:(rect.y+15), clientX:(rect.right-63)}, dialog, note, textAreaId);
+            } 
         },
         {
             name: MSG.DELETE,
@@ -193,17 +196,19 @@ const addDate = (note, dialog, textAreaId)=>{
 const reminder = (ev, dialog, note, textAreaId) => {
     const rect = ev.target.getBoundingClientRect();
     const top  = rect.top + (ev.clientY - rect.top);
-    const left = rect.left + (ev.clientX - rect.left) + 50;
+    const left = rect.left + (ev.clientX - rect.left);
     const content = dialog.getContent();
 
     const idRand =  Math.random().toString(36).substring(7);
     dialog.clear();
-    content.style.width = "250px";
+    content.style.width = "185px";
+    content.style.borderRadius = "6px";
     dialog.setContentTitle(MSG.REMINDER);
     const aonDate = new AonDate(); 
     aonDate.id = "date"+ idRand;
     aonDate.name = "date"+ idRand;
     aonDate.title =  MSG.DATE;
+    aonDate.width = "228px";
     aonDate.addEventListener(EVENT.CHANGE, ()=>{
         if(aonDate.value){
             note.setDate(aonDate.value);
@@ -223,7 +228,7 @@ const reminder = (ev, dialog, note, textAreaId) => {
         aonDate.setDate(note.getDate());
     }
 
-    dialog.openPosition({top, left: (left - 100) });
+    dialog.openPosition({top, left});
 }
 
 const dateFormat = (d) => {
