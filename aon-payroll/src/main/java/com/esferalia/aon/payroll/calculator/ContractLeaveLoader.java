@@ -116,15 +116,15 @@ public class ContractLeaveLoader {
 	}, new DaysRange(366), };
 	// @formatter:on
 
-	protected static final DaysRange[] getCommonRanges(Date start, ExpressionContext ctx) {
+	protected static final DaysRange[] getCommonRanges(Date start, ExpressionContext ctx, long parentDays) {
 		
 		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
 		
 		if ( directPayStart == null )
-			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
+			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365-(int)parentDays) , start, null);
 		
 
-		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, directPayStart) : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 365;
 
 		DaysRange commonRanges[] = new DaysRange[5];
 		commonRanges[0] = new DaysRange(1, Math.min(delegatePayDays,3));
@@ -147,12 +147,12 @@ public class ContractLeaveLoader {
 		return commonRanges;
 	}
 
-	protected static final DaysRange[] getProfessionalRanges(Date start, ExpressionContext ctx) {
+	protected static final DaysRange[] getProfessionalRanges(Date start, ExpressionContext ctx, long parentDays) {
 		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
 		if ( directPayStart == null )
-			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
+			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365 - (int)parentDays) , start, null);
 		
-		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 365;
 
 		DaysRange professionalRanges[] = new DaysRange[2];
 		professionalRanges[0] = new DaysRange(1, delegatePayDays) {
@@ -294,7 +294,7 @@ public class ContractLeaveLoader {
 			public Void visitCommonDisease(LeaveType leaveType) {
 
 				//for (DaysRange range : COMMON_RANGES) {
-				for (DaysRange range : getCommonRanges(itStart, exprCtx)) {
+				for (DaysRange range : getCommonRanges(start, exprCtx, parentDays)) {
 
 					String name = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
 
@@ -341,7 +341,7 @@ public class ContractLeaveLoader {
 			public Void visitOcupationalDisease(LeaveType leaveType) {
 
 				// for (DaysRange range : PROFESSIONAL_RANGES) {
-				for (DaysRange range : getProfessionalRanges(itStart, exprCtx)) {
+				for (DaysRange range : getProfessionalRanges(start, exprCtx, parentDays )) {
 
 					String name = range.getName(ContextVariable.OCCUPATIONAL_DISEASE_DAYS);
 
@@ -559,7 +559,7 @@ public class ContractLeaveLoader {
 		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(), leave.getEnd());
 
 //		for (DaysRange range : COMMON_RANGES) {
-		for (DaysRange range : getCommonRanges(leave.getStart(), exprCtx)) {
+		for (DaysRange range : getCommonRanges(leave.getStart(), exprCtx,0)) {
 
 			String common = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
 			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());
