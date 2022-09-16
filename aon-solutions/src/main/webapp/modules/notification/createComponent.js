@@ -1,7 +1,7 @@
 import { CSS, TAG } from "../../environments/environments.js";
 import { createDiv, createSpan, newComponent } from "../../services/utilsComponents.js";
 
-export const createUl = (id) => newComponent({
+const createUl = (id) => newComponent({
   id,
   type: TAG.UL,
   classes: [CSS.AON_UL],
@@ -13,7 +13,7 @@ export const createUl = (id) => newComponent({
   }
 });
 
-export const createLi = (dataset) => newComponent({
+const createLi = (dataset) => newComponent({
     dataset,
     type: TAG.LI,
     styles:{
@@ -22,9 +22,9 @@ export const createLi = (dataset) => newComponent({
       transition: "background-color 1s",
       userSelect: "none"
     },
-  });
+});
 
-export const createContent = (text) => createSpan({
+const createContent = (text) => createSpan({
     text,
     styles:{
       fontSize: "14px",
@@ -32,12 +32,12 @@ export const createContent = (text) => createSpan({
     }
 }); 
 
-export const createTitle = (text) => createSpan({
+const createTitle = (text) => createSpan({
   text,
   classes:[CSS.AON_COLOR_PRIMARY]
 }); 
 
-export const createDivFooter = () => createDiv({
+const createDivFooter = () => createDiv({
   styles:{
     display: "flex",
     marginTop: "10px",
@@ -46,14 +46,14 @@ export const createDivFooter = () => createDiv({
   }
 })
 
-export const createDivFooter1 = (text) => createDiv({
+const createDivFooter1 = (text) => createDiv({
   text,
   styles:{
     marginLeft: "auto",
   }
 })
 
-export const createAonNotification = (id) =>createDiv({
+const createAonNotification = (id) =>createDiv({
   id,
   styles:{
     margin: "auto",
@@ -61,7 +61,7 @@ export const createAonNotification = (id) =>createDiv({
   }
 });
 
-export const createButtonClose = () => newComponent({
+const createButtonClose = () => newComponent({
   type: TAG.LABEL,
   text: "×",
   styles:{
@@ -73,7 +73,7 @@ export const createButtonClose = () => newComponent({
   },
 });
 
-export const createSpanFloat = () => createSpan({
+const createSpanFloat = () => createSpan({
   id: "aonNotificationFloatSpan",
   styles:{
     position: "fixed",
@@ -82,7 +82,7 @@ export const createSpanFloat = () => createSpan({
   }
 });
 
-export const createBadge = (id) => createSpan({
+const createBadge = (id) => createSpan({
   id,
   styles:{
     position: "absolute", 
@@ -96,3 +96,17 @@ export const createBadge = (id) => createSpan({
     fontWeight: 800,
   }
 });
+
+
+export const NotificationCreateComponent = {
+  createUl,
+  createLi,
+  createContent,
+  createTitle,
+  createDivFooter,
+  createDivFooter1,
+  createAonNotification,
+  createButtonClose,
+  createSpanFloat,
+  createBadge
+}

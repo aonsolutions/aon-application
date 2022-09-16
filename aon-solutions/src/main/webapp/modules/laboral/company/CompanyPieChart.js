@@ -1,4 +1,6 @@
-import { isEmptyObject } from "../../../services/utils.js";
+import { CSS, MSG, TAG } from "../../../environments/environments.js";
+import { formatNumber, isEmptyObject } from "../../../services/utils.js";
+import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 
 // const customLenged = (data, total) => {
 //      for (let i = 0; i < data.length; i++) {
@@ -12,8 +14,6 @@ import { isEmptyObject } from "../../../services/utils.js";
 //   }
 // }
 
-const createElement = (el) => document.createElement(el);
-
 const changeSliceColor = (colors) => {
   let slices = {};
   for (const key in colors) {
@@ -22,8 +22,8 @@ const changeSliceColor = (colors) => {
   return slices;
 };
 
-const createStylePoint = (color) => {
-  let div = createElement("div");
+const createStylePoint = (document, color) => {
+  let div = document.createElement("div");
   div.style.height = "10px";
   div.style.width = "10px";
   div.style.backgroundColor = color || "#bbb";
@@ -40,7 +40,70 @@ const createStylePoint = (color) => {
 //   return total;
 // };
 
-export const pieChar = (div, data, opts, callBackClick) => {
+const paintPieChart = async (aonCompanyCostsList, data, parent, aonIframe) => {
+  const sumEnterpriseSs = data.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
+  const sumEmployeeSs = data.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
+  const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
+  const totalLiquid = data.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
+  const totalSS = sumEnterpriseSs + sumEmployeeSs;
+  const total = sumEnterpriseSs + sumEmployeeSs + importIrpf + totalLiquid;
+
+  let fields = [
+    ['SS Empresa', sumEnterpriseSs],
+    ['SS Empleado', sumEmployeeSs],
+    ['Total IRPF', importIrpf],
+    ['Total Nominas', totalLiquid]
+  ];
+
+  const colors = ['#0051C6','#db4437', '#B3B3B3', '#5e97f6'];
+
+  await pieChar(parent, aonIframe, fields, { slices: colors }, (evClick)=>{
+    console.log(evClick);
+  });
+
+
+  fields.splice(2, 0, ["Total SS", totalSS]);
+  colors.splice(2, 0, "none");
+  
+  let newColor = colors.map(color=> ({ divColor: color, nameColor: 'grey', valueColor: 'grey'}));
+
+  newColor[2].valueColor = newColor[3].valueColor =  newColor[4].valueColor = "black";
+  
+  let newData = fields.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
+
+  await addLegend(parent, aonIframe, newData, newColor, (evClick)=>console.log(evClick));
+
+  //----CREATE BUTTON NOMINAS 
+
+  let button = aonIframe.getDocument().createElement(TAG.BUTTON);
+  button.className = CSS.AON_BUTTON;
+  button.id = `${aonCompanyCostsList.id}Nomina`;
+  button.innerHTML = MSG.VIEW_PAYROLLS;
+  button.style.marginTop = "10px";
+  parent.appendChild(button);
+
+  button.onclick = () => {
+    console.log("click");
+    aonCompanyCostsList.getApplicationParent().showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
+  }
+
+  const workplaceEl = document.querySelector('#workplace').querySelector('LI');
+
+  const workplaceText = workplaceEl && workplaceEl.textContent ? workplaceEl.textContent+": " : "";
+
+  return {
+    workplaceText,
+    total
+  }
+
+};
+
+
+
+const pieChar = (parent, aonIframe, fields, opts, callBackClick) => {
+
+  const google = aonIframe.getGoogle();
+
   return new Promise((resolve) => {
     const drawChart = () => {
       let table = new google.visualization.DataTable({
@@ -50,7 +113,7 @@ export const pieChar = (div, data, opts, callBackClick) => {
         ],
       });
 
-      table.addRows(data);
+      table.addRows(fields);
 
       let formatter = new google.visualization.NumberFormat({
         prefix: "€",
@@ -71,7 +134,7 @@ export const pieChar = (div, data, opts, callBackClick) => {
         options = { ...options, ...opts };
       }
 
-      let chart = new google.visualization.PieChart(div);
+      let chart = new google.visualization.PieChart(parent);
       google.visualization.events.addListener(chart, "select", (ev) => {
         let item = chart.getSelection()[0];
         if (item) {
@@ -89,10 +152,13 @@ export const pieChar = (div, data, opts, callBackClick) => {
   });
 };
 
-export const addLegend = (div, data, colors, fn) => {
+
+const addLegend = (parent, aonIframe, data, colors, fn) => {
   return new Promise((resolve) => {
-    let id = "pieLegend";
-    let tableLegend = document.getElementById(id) || createElement("table");
+    const document = aonIframe.getDocument();
+    const id = "pieLegend";
+
+    let tableLegend = document.getElementById(id) || document.createElement("table");
     tableLegend.innerHTML = "";
     tableLegend.id = id;
     tableLegend.style.textAlign = "right";
@@ -101,8 +167,8 @@ export const addLegend = (div, data, colors, fn) => {
     tableLegend.style.fontSize = "14px";
     tableLegend.style.borderCollapse = "separate";
     tableLegend.style.borderSpacing = "1em .5em";
-    div.appendChild(tableLegend);
-    let tbody = createElement("tbody");
+    parent.appendChild(tableLegend);
+    let tbody = document.createElement("tbody");
     tableLegend.appendChild(tbody);
 
     for (let idx in data) {
@@ -110,7 +176,7 @@ export const addLegend = (div, data, colors, fn) => {
       let value = data[idx][1];
       if(name && value){
         let color = colors[idx];
-        let tr = addTrTableLegend({ name, value, color }, tbody);
+        let tr = addTrTableLegend({ name, value, color }, tbody, document);
         tr.addEventListener("click", () => 
           fn({ name, value })
         );
@@ -120,18 +186,18 @@ export const addLegend = (div, data, colors, fn) => {
   });
 };
 
-export const addTrTableLegend = (data, tbody, el) => {
-  let tr = createElement("tr");
-  let th = createElement("th");
-  let td = createElement("td");
+const addTrTableLegend = (data, tbody, document) => {
+  let tr = document.createElement("tr");
+  let th = document.createElement("th");
+  let td = document.createElement("td");
   th.innerHTML = data.name + ":";
   td.innerHTML = data.value;
   td.style.fontWeight = 600;
   td.style.color = "grey";
-  let tdColor = createElement("td");
+  let tdColor = document.createElement("td");
   if (!isEmptyObject(data.color)) {
     const { divColor, nameColor, valueColor } = data.color;
-    if (divColor) tdColor.appendChild(createStylePoint(divColor));
+    if (divColor) tdColor.appendChild(createStylePoint(document, divColor));
     if (nameColor) th.style.color = nameColor;
     if (valueColor) td.style.color = valueColor;
   }
@@ -139,6 +205,14 @@ export const addTrTableLegend = (data, tbody, el) => {
   tr.appendChild(tdColor);
   tr.appendChild(th);
   tr.appendChild(td);
+
   tbody.appendChild(tr);
+
   return tr;
 };
+
+
+
+export const CompanyPieChart = {
+  paintPieChart
+}
