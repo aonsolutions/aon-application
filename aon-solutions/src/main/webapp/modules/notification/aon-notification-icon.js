@@ -1,3 +1,4 @@
+import { AonDialogMenu } from '../../components/aon-dialog-menu.js';
 import {AonElement} from '../../components/AonElement.js';
 import { CreateComponent } from '../../components/CreateComponent.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
@@ -6,7 +7,7 @@ import { getTotalNotification, saveAuthDevice, deleteAuthDevice } from '../../se
 import { waitEl } from '../../services/utils.js';
 import { createSpan } from '../../services/utilsComponents.js';
 import { AonNotification } from './aon-notification.js';
-import { createBadge } from './createComponent.js';
+import { NotificationCreateComponent } from './createComponent.js';
 
 export class AonNotificationIcon extends AonElement {
 
@@ -15,6 +16,7 @@ export class AonNotificationIcon extends AonElement {
     COUNT;
     color;
     AUTH_DEVICE;
+    DIALOG;
     static get observedAttributes() {
         return [CONSTANT.BADGE];
     }
@@ -37,7 +39,8 @@ export class AonNotificationIcon extends AonElement {
 	}
 
     build(){
-        this.append(this.getView());
+        this.append(this.buildView());
+        this.append(this.buildDialog());
     }
 
     observerListener(){
@@ -45,10 +48,16 @@ export class AonNotificationIcon extends AonElement {
 			this.getTotalNotification();
 		});
 
-        this.addEventListener(EVENT.CLICK, ()=>this.goAonNotification());
+        this.addEventListener(EVENT.CLICK, ()=> {
+            // if(this.isMobile()){
+                this.goAonNotification()
+            // } else {
+            //     this.openDialog();
+            // }
+        });
 	}
 
-    getView(){
+    buildView(){
         const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON}).element;
         CreateComponent.createAonIconButton({
             attributes:{
@@ -61,11 +70,17 @@ export class AonNotificationIcon extends AonElement {
         return notificationSpan;
     }
 
+    buildDialog(){
+        this.DIALOG = new AonDialogMenu();
+        this.DIALOG.id = 'notificationDialogE';
+        return this.DIALOG;
+    }
+
     async changeBadge(){
         const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
         notificationSpan.style.position = "relative";
         const total = this.getTotalCount();
-        const badge = this.getElement(this.BADGE) || createBadge(this.BADGE).element;
+        const badge = this.getElement(this.BADGE) || NotificationCreateComponent.createBadge(this.BADGE).element;
         if(total && total > 0){
             // badge.textContent = total;
             notificationSpan.appendChild(badge);   
@@ -102,6 +117,23 @@ export class AonNotificationIcon extends AonElement {
         } catch(e){
             console.log(e);
         }
+    }
+
+    openDialog(){
+        const dialog = this.DIALOG;
+        const top = this.getBoundingClientRect().top;
+        const left = this.getBoundingClientRect().left;
+        // options = options.map(({ aonIcon, icon, name, fn }) => {
+        //   return {
+        //     aonIcon,
+        //     icon,
+        //     name,
+        //     fn: () => fn(ev),
+        //   };
+        // });
+    
+        dialog.setContent(null, top, left);
+        dialog.open();
     }
 
     async getTotalNotification(){
