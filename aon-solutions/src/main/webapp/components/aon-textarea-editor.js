@@ -372,6 +372,7 @@ export class AonTextareaEditor extends AonElement {
         setTimeout(() => {
             this.resizeBar();
         }, 50);
+
     }
 
     resizeBar(width) {
@@ -502,15 +503,8 @@ export class AonTextareaEditor extends AonElement {
     }
 
     formatDoc(sCmd, sValue) {
-        console.log(this.#selectionRange);
-        if (this.isApple) {
-            document.designMode = "on";
-        }
         this.textBox.focus();
         document.execCommand(sCmd, false, sValue);
-        if (this.isApple) {
-            document.designMode = "off";
-        }
     }
     
     textBoxElement() {
@@ -534,7 +528,7 @@ export class AonTextareaEditor extends AonElement {
         box.addEventListener(EVENT.INPUT, ev => {
             ev.preventDefault();
             ev.stopPropagation();
-            this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+            this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target: ev.target}));
         });
 
         ["focus", "mouseover"].forEach((eventType) => {
@@ -853,7 +847,6 @@ export class AonTextareaEditor extends AonElement {
             [icon, drop].forEach(el => el.style.fontSize = "20px");
 
             selector.addEventListener("mousedown", (ev) => {
-                console.log("propagación evitada");
                 ev.preventDefault();
                 ev.stopPropagation();
             });
@@ -1074,13 +1067,7 @@ export class AonTextareaEditor extends AonElement {
         blockquoteEl.style.paddingLeft = "1ex";
         
         blockquoteEl.textContent = selection;
-        if (this.isApple) {
-            document.designMode = "on"
-        }
         document.execCommand('insertHTML', false, blockquoteEl.outerHTML);
-        if (this.isApple) {
-            document.designMode = "off"
-        }
     }
 
     quoteElement() {
@@ -1450,6 +1437,8 @@ export class AonTextareaEditor extends AonElement {
 
     }
 
+    
+
     openDialog() {
         let fullEditor = new AonTextareaEditor();
         this.editorDialog.setContent(fullEditor, null, null, "100%");
@@ -1468,6 +1457,16 @@ export class AonTextareaEditor extends AonElement {
         this.editorDialog.autoclose = false;
         this.editorDialog.open();
     };
+
+    getSelection() {
+		let userSelection;
+		if (window.getSelection) {
+			userSelection = window.getSelection();
+		} else if (document.selection) { // Opera
+			userSelection = document.selection.createRange();
+		}  
+		return userSelection;
+	} 
 
 
     drawElement() {
