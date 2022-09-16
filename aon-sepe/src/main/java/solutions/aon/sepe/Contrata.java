@@ -2004,6 +2004,7 @@ public class Contrata {
 
 	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto)
 			throws ElementNotFoundException, IOException, SepeException {
+		
 		String href = null;
 
 		if(Arrays.asList("421", "450").contains(codCto)) { // Formación en alternancia tiempo completo

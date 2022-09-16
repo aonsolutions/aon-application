@@ -83,25 +83,17 @@ const setWindowApp = () => {
 } 
 
 const loadScripts = () => {
-    if(isMobile()){
-        Promise.all([
-            loadScript("https://www.google.com/jsapi"),
-            loadScript("https://www.gstatic.com/charts/loader.js")
-        ]);
-    } else {
-        Promise.all([
-            loadScript("https://www.google.com/jsapi"),
-            loadScript("https://www.gstatic.com/charts/loader.js"),
-            loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js")
-        ]);
+    let promises = [
+        loadScript("https://www.google.com/jsapi"),
+        loadScript("https://www.gstatic.com/charts/loader.js")
+    ];
+
+    if(!isMobile()){
+        promises.push(loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"));
     }
+
+    Promise.all(promises);
 }
-
-// const loadScriptFirebase = () => Promise.all([
-//     loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"),
-//     loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js")
-// ]).then(() => setWindowApp());
-
 
 const loadScriptFirebase = async() =>{
     await loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js");
