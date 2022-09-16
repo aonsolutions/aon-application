@@ -311,7 +311,7 @@ export class AonTextareaEditor extends AonElement {
                     this.textBoxEnvelope.id = this.textBoxEnvelopeId;
                 }
                 if (this.barEnvelope) {
-                    this.barEnvelope = this.barEnvelopeId;
+                    this.barEnvelope.id = this.barEnvelopeId;
                 }
                 if (this.bar) {
                     this.bar.id = this.barId;
@@ -372,6 +372,7 @@ export class AonTextareaEditor extends AonElement {
         setTimeout(() => {
             this.resizeBar();
         }, 50);
+
     }
 
     resizeBar(width) {
@@ -502,15 +503,8 @@ export class AonTextareaEditor extends AonElement {
     }
 
     formatDoc(sCmd, sValue) {
-        console.log(this.#selectionRange);
-        if (this.isApple) {
-            document.designMode = "on";
-        }
         this.textBox.focus();
         document.execCommand(sCmd, false, sValue);
-        if (this.isApple) {
-            document.designMode = "off";
-        }
     }
     
     textBoxElement() {
@@ -534,7 +528,7 @@ export class AonTextareaEditor extends AonElement {
         box.addEventListener(EVENT.INPUT, ev => {
             ev.preventDefault();
             ev.stopPropagation();
-            this.dispatchEvent(new CustomEvent(EVENT.INPUT));
+            this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target: ev.target}));
         });
 
         ["focus", "mouseover"].forEach((eventType) => {
@@ -853,7 +847,6 @@ export class AonTextareaEditor extends AonElement {
             [icon, drop].forEach(el => el.style.fontSize = "20px");
 
             selector.addEventListener("mousedown", (ev) => {
-                console.log("propagación evitada");
                 ev.preventDefault();
                 ev.stopPropagation();
             });
@@ -1074,13 +1067,7 @@ export class AonTextareaEditor extends AonElement {
         blockquoteEl.style.paddingLeft = "1ex";
         
         blockquoteEl.textContent = selection;
-        if (this.isApple) {
-            document.designMode = "on"
-        }
         document.execCommand('insertHTML', false, blockquoteEl.outerHTML);
-        if (this.isApple) {
-            document.designMode = "off"
-        }
     }
 
     quoteElement() {
@@ -1446,9 +1433,18 @@ export class AonTextareaEditor extends AonElement {
 
     createDialog() {
         this.editorDialog = new AonDialog();
+ 
         this.appendChild(this.editorDialog);
 
+               
+        this.editorDialog.addSendAction(()=>{
+            this.dispatchEvent(new CustomEvent("save"))
+            this.editorDialog.close();
+        }, MSG.ACCEPT);
+
     }
+
+    
 
     openDialog() {
         let fullEditor = new AonTextareaEditor();
@@ -1460,21 +1456,33 @@ export class AonTextareaEditor extends AonElement {
         fullEditor.value = this.value;
         fullEditor.placeholder = this.placeholder;
         fullEditor.elementFilter = this.elementFilter;
-        fullEditor.addEventListener(EVENT.INPUT, () => {
+        fullEditor.textBoxMinHeight = "450px";
+        fullEditor.addEventListener(EVENT.INPUT, (ev) => {
             this.value = fullEditor.value;
             this.files = fullEditor.FILES;
+            this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target: ev.target}));
         });
 
         this.editorDialog.autoclose = false;
         this.editorDialog.open();
     };
 
+    getSelection() {
+		let userSelection;
+		if (window.getSelection) {
+			userSelection = window.getSelection();
+		} else if (document.selection) { // Opera
+			userSelection = document.selection.createRange();
+		}  
+		return userSelection;
+	} 
+
 
     drawElement() {
         
         this.textBoxEnvelope = document.createElement("div");
         this.textBoxEnvelope.style.overflow = "hidden";
-        this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
+        // this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
         this.textBoxEnvelope.style.minHeight = this.#textBoxMinHeight || this.#textBoxHeight || "3em";
         this.textBoxEnvelope.style.minWidth = "260px";
         this.textBoxEnvelope.style.maxWidth = "100%";

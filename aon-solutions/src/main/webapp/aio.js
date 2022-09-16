@@ -11,3 +11,4 @@ import './modules/configuration/aon-configuration.js';
 import './modules/accounting/aon-accounting.js';
 import './modules/fiscal/aon-fiscal.js';
 import './modules/laboral/aon-laboral.js';
+import './modules/note/aon-note.js';
