@@ -30,6 +30,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -2304,9 +2305,14 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			showWorkProgramDataTable();
 			workProgramDataCB.setValue(true);
 			setSelectedValueLB(workProgramLB, this.contractSpecificData.getWorkProgram());	
+		} else {
+			workProgramDataCB.setValue(false);
+			resetWorkProgramDataTable();
+			hideWorkProgramDataTable();
 		}
 		
 		//TemporalWorkEnterpriseDataTable
+		Window.alert("temporalWorkEnterpriseCB : " + this.contractSpecificData.getTemporalWorkEnterprise());
 		if(Boolean.TRUE.equals(this.contractSpecificData.getTemporalWorkEnterprise())){
 			showTemporalWorkEnterpriseDataTable();
 			temporalWorkEnterpriseCB.setValue(true);
@@ -2314,6 +2320,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			socialReasonTB.setText(this.contractSpecificData.getSocialReason());
 			contractTemplateCB.setValue(this.contractSpecificData.getContractTemplate());
 			foreignEnterpriseCB.setValue(this.contractSpecificData.getForeignEnterprise());
+		} else {
+			temporalWorkEnterpriseCB.setValue(false);
+			resetTemporalWorkEnterpriseDataTable();
+			hideTemporalWorkEnterpriseDataTable();
 		}
 		
 		//ContractReliefDataTable
@@ -2324,6 +2334,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			retirementNameTB.setText(this.contractSpecificData.getRetirementName());
 			retirementSurnameTB.setText(this.contractSpecificData.getRetirementSurname());
 			retirementSurname2TB.setText(this.contractSpecificData.getRetirementSurname2());
+		} else {
+			contractReliefCB.setValue(false);
+			resetContractReliefDataTable();
+			hideContractReliefDataTable();
 		}
 		
 		//OfferWorkDataTable
@@ -2331,6 +2345,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			showOfferWorkDataTable();
 			offerWorkDataCB.setValue(true);
 			offerTB.setText(this.contractSpecificData.getOffer());
+		} else {
+			offerWorkDataCB.setValue(false);
+			resetOfferWorkDataTable();
+			hideOfferWorkDataTable();
 		}
 		
 		//WorkshopSchoolDataTable
@@ -2338,6 +2356,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			showWorkshopSchoolDataTable();
 			workshopSchoolCB.setValue(true);
 			setSelectedValueLB(workshopSchoolLB, this.contractSpecificData.getWorkshopSchool());	
+		} else {
+			workshopSchoolCB.setValue(false);
+			resetWorkshopSchoolDataTable();
+			hideWorkshopSchoolDataTable();
 		}
 		
 		//DisabilityDataTable
@@ -2346,6 +2368,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			disabilityCB.setValue(true);
 			setSelectedValueLB(disabilityLB, this.contractSpecificData.getDisability());
 			setSelectedValueLB(bonusColectiveDisabilityLB, this.contractSpecificData.getBonusColective());
+		} else {
+			disabilityCB.setValue(false);
+			resetDisabilityDataTable();
+			hideDisabilityDataTable();
 		}
 		
 		//AnnexedDataTable
@@ -2357,6 +2383,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			else
 				annexed2RB.setValue(true);
 			sourceYearTB.setValue(this.contractSpecificData.getSourceYear());
+		} else {
+			annexedCB.setValue(false);
+			resetAnnexedDataTable();
+			hideAnnexedDataTable();
 		}
 
 		//CampaignsDataTable
@@ -2366,6 +2396,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			cpCampaignTB.setValue(this.contractSpecificData.getCpCampaign());
 			codeCampaignTB.setValue(this.contractSpecificData.getCodeCampaign());
 			yearCampaignTB.setValue(this.contractSpecificData.getYearCampaign());
+		} else {
+			campaignsCB.setValue(false);
+			resetCampaignsDataTable();
+			hideCampaignsDataTable();
 		}
 		
 		//InvestDataTable
@@ -2375,6 +2409,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			setSelectedValueLB(employerLB, this.contractSpecificData.getEmployer());	
 			setSelectedValueLB(employeeLB, this.contractSpecificData.getEmployee());	
 			researcherCB.setValue(this.contractSpecificData.getResearcher());
+		} else {
+			investCB.setValue(false);
+			resetInvestDataTable();
+			hideInvestDataTable();
 		}
 
 		//InterimCauseDataTable
@@ -2382,6 +2420,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			showInterimCauseDataTable();
 			interimCauseCB.setValue(true);
 			setSelectedValueLB(interimCauseLB, this.contractSpecificData.getInterimCause());	
+		} else {
+			interimCauseCB.setValue(false);
+			resetInterimCauseDataTable();
+			hideInterimCauseDataTable();
 		}
 		
 		//EntrepreneurSupportDataTable
@@ -2390,6 +2432,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			entrepreneurSupportCB.setValue(true);
 			setSelectedValueLB(bonusColectiveLB, this.contractSpecificData.getBonusColective());
 			freelanceEmployeerCB.setValue(this.contractSpecificData.getFreelanceEmployeer());
+		} else {
+			entrepreneurSupportCB.setValue(false);
+			resetEntrepreneurSupportDataTable();
+			hideEntrepreneurSupportDataTable();
 		}
 
 		//PromotionMeasuresDataTable
@@ -2397,6 +2443,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			showPromotionMeasuresDataTable();
 			promotionMeasuresCB.setValue(true);
 			promotionPermanentHiringCB.setValue(this.contractSpecificData.getPromotionPermanentHiring());
+		} else {
+			promotionMeasuresCB.setValue(false);
+			resetPromotionMeasuresDataTable();
+			hidePromotionMeasuresDataTable();
 		}
 
 		//QuoteReductionsDataTable
@@ -2409,6 +2459,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			else
 				quoteReduction2RB.setValue(true);
 			journeyPercentTB.setValue(this.contractSpecificData.getJourneyPercent());
+		} else {
+			quoteReductionsCB.setValue(false);
+			resetQuoteReductionsDataTable();
+			hideQuoteReductionsDataTable();
 		}	
 	}
 	
