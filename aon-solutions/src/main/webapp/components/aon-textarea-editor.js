@@ -311,7 +311,7 @@ export class AonTextareaEditor extends AonElement {
                     this.textBoxEnvelope.id = this.textBoxEnvelopeId;
                 }
                 if (this.barEnvelope) {
-                    this.barEnvelope = this.barEnvelopeId;
+                    this.barEnvelope.id = this.barEnvelopeId;
                 }
                 if (this.bar) {
                     this.bar.id = this.barId;
@@ -1433,7 +1433,14 @@ export class AonTextareaEditor extends AonElement {
 
     createDialog() {
         this.editorDialog = new AonDialog();
+ 
         this.appendChild(this.editorDialog);
+
+               
+        this.editorDialog.addSendAction(()=>{
+            this.dispatchEvent(new CustomEvent("save"))
+            this.editorDialog.close();
+        }, MSG.ACCEPT);
 
     }
 
@@ -1449,9 +1456,11 @@ export class AonTextareaEditor extends AonElement {
         fullEditor.value = this.value;
         fullEditor.placeholder = this.placeholder;
         fullEditor.elementFilter = this.elementFilter;
-        fullEditor.addEventListener(EVENT.INPUT, () => {
+        fullEditor.textBoxMinHeight = "450px";
+        fullEditor.addEventListener(EVENT.INPUT, (ev) => {
             this.value = fullEditor.value;
             this.files = fullEditor.FILES;
+            this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target: ev.target}));
         });
 
         this.editorDialog.autoclose = false;
@@ -1473,7 +1482,7 @@ export class AonTextareaEditor extends AonElement {
         
         this.textBoxEnvelope = document.createElement("div");
         this.textBoxEnvelope.style.overflow = "hidden";
-        this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
+        // this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
         this.textBoxEnvelope.style.minHeight = this.#textBoxMinHeight || this.#textBoxHeight || "3em";
         this.textBoxEnvelope.style.minWidth = "260px";
         this.textBoxEnvelope.style.maxWidth = "100%";
