@@ -1,6 +1,8 @@
 package net.aonsolutions.db.up2date.tgss;
 
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
+import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -11,6 +13,9 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.PaymentConcept;
+import com.esferalia.aon.jooq.tables.SystemPayment;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -32,7 +37,7 @@ public class TrainingBases2022Fix implements Update {
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 
-		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+		dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -81,6 +86,20 @@ public class TrainingBases2022Fix implements Update {
 			.set(SYSTEM_DATA.NAME, BASE_CGP_MIN)
 			.set(SYSTEM_DATA.START_DATE, startDate)
 			.set(SYSTEM_DATA.EXPRESSION, "1166.70")
+			.execute()
+			;
+			
+			dslContext
+			.insertInto(SYSTEM_DATA)
+			.set(SYSTEM_DATA.DOMAIN,-101)
+			.set(SYSTEM_DATA.NAME, "HIDE_BASE_CGC_MIN")
+			.set(SYSTEM_DATA.START_DATE, startDate)
+			.set(SYSTEM_DATA.EXPRESSION, "VERDADERO()")
+			.newRecord()
+			.set(SYSTEM_DATA.DOMAIN,-105)
+			.set(SYSTEM_DATA.NAME, "HIDE_BASE_CGC_MIN")
+			.set(SYSTEM_DATA.START_DATE, startDate)
+			.set(SYSTEM_DATA.EXPRESSION, "VERDADERO()")
 			.execute()
 			;
 

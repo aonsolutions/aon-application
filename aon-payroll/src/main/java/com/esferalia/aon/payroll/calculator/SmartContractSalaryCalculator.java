@@ -1098,15 +1098,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 //			}
 //		}
 		
-		
-		
-		
 		try {
+			if ( expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN) ) 
+				return;
 			ITimedVariable<?> noHoliDays = expressionContext.getVariable(NO_HOLIDAYS.getName(), start, end);
+			
 			
 			resolvePayment(
 			new SimpleContractPayment()
 			.setId(Integer.MAX_VALUE)
+			.setName("FIX_BASE_CGC_MIN")
 			.setStartDate(start)
 			.setEndDate(end)
 			//.setExpression("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * (isdef DIAS_TRABAJADOS ? DIAS_TRABAJADOS : DIAS_VACACIONES_NO_DISFRUTADOS ))")

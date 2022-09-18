@@ -355,6 +355,8 @@ public enum ContextVariable implements IResourceable {
 	
 	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN)
 	
+	
+	
 	;
 
 	public static final String ALL = "_P";
@@ -401,7 +403,7 @@ public enum ContextVariable implements IResourceable {
 
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";
 	
-	
+	public static final String HIDE_BASE_CGC_MIN = "HIDE_BASE_CGC_MIN";
 	
 	private static final List<String> NAMES =
 	Arrays.asList(new String []{
