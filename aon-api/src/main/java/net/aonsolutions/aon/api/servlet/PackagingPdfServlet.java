@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -80,7 +79,8 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 				boxQuantity = quantity / item.getPackUnits().doubleValue();	
 			}
 			 
-			String separator = "\u001d";
+//			String separator = "\u001d";
+			char separator = 29; 
 //			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
 			String ean128 = "(02)" + barcode + "(37)" + boxQuantity.intValue() + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber() + separator;
 			String sscc = container.getSerialNumber();
@@ -98,5 +98,4 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 	}
 	
 	private static final Logger LOGGER  = Logger.getLogger(PackagingPdfServlet.class.getName());
-	
 }
