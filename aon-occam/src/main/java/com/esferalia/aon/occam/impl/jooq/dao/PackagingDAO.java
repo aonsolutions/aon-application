@@ -77,6 +77,8 @@ public class PackagingDAO {
 				.and(f.getSerialNumberProperty().eq(packaging.getItem().getSerialNumber())));
 		
 		if(item.isEmpty()) {
+			packaging.getItem().setDescription(packaging.getBase().getProduct().getName() 
+					+ " #" + packaging.getItem().getSerialNumber());
 			item = ItemDAO.save(ctx, packaging.getItem());
 			packaging.setItem(item);			
 		} else packaging.setItem(item);
@@ -218,9 +220,9 @@ public class PackagingDAO {
 	private static String calculateSerialNumber(String barcode) {
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			return b.parseGS1128().get(GS1128Codes.CODE_10);
+			return "22" + b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
-		return Integer.toString(AonDateUtils.getDayOfYear(new Date()));
+		return "22" + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
 	}
 	
 	private static Date calculateSerialDate(String barcode) {
