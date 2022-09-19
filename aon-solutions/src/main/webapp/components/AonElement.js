@@ -130,6 +130,10 @@ export class AonElement extends HTMLElement{
     return document.querySelector(TAG.AON_APPLICATION);
   }
 
+  isClasic(){
+    return !this.getModule();
+  }
+
   getModule() {
     return document.querySelector(TAG.AON_MODULE);
   }

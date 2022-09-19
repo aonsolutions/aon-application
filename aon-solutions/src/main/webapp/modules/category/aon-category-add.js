@@ -7,6 +7,9 @@ import { setAttributes } from '../../services/utilsComponents.js';
 import { CreateComponent } from '../../components/CreateComponent.js';
 import { AonAutosizeTextarea } from '../../components/aon-autosize-textarea.js';
 import { getScopes } from "../../services/documentalService.js";
+import { deleteAttach, getAttach } from '../../services/fileService.js';
+import { AonUpload } from '../../components/aon-upload.js';
+import { getReader } from '../../services/utils.js';
 
 export class AonCategoryAdd extends AonElement {
 
@@ -99,6 +102,12 @@ export class AonCategoryAdd extends AonElement {
             }
         });
         table.addCell(urlEl);
+
+        table.addRow();
+
+        const divUpload = document.createElement("div");
+        table.addCell(divUpload);
+        this.getUnloadFile(divUpload);
 	}	
 
     async initGets() {
@@ -121,30 +130,81 @@ export class AonCategoryAdd extends AonElement {
           }
         }
     }
-    
-	async save() {
-        try{
-            const {id} = await CategoryService.saveCategory(this.category);
-            
-            this.category.setId(id);
-
-            this.showToast({
-                type: 'success',
-                message: 'Datos Guardados Correctamente'
-            });
-            
-            return true;
-        } catch(error){
-            this.showToast(error);
-        }
-        return false;
-	}
 
 	setCategory(category) {
 		this.category = new Category(category);
         if(this.type){
             this.category.setType(this.type);
         }
+	}
+
+    getUnloadFile(parent){
+        let aonUpload = new AonUpload();
+        aonUpload.id = 'CategoryUpload';
+        aonUpload.setMessage(MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND);
+        aonUpload.setDeleteMessage(MSG.DELETE_BACKGROUND_CONFIRM);
+        parent.appendChild(aonUpload);
+    
+        const attachType = "registry";
+    
+        if(this.category.getRattach()){
+    
+            let filter = {
+              id: this.category.getRattach(),
+              attachType
+            };
+        
+            getAttach(filter).then(attach => {
+                if(attach && attach.id){
+                    aonUpload.setAttach(attach);
+                }
+            });
+        }
+      
+        aonUpload.addEventListener(EVENT.UPLOAD, ({detail}) => {
+       
+            if(!this.category.getRattach()){
+                getReader(detail).then( async(f) => {
+           
+                    f.attachType = attachType;
+        
+                    this.category.setAttach(f);
+                });
+            }
+        });
+        
+        aonUpload.addEventListener(EVENT.DELETE, async () => {
+            if(this.category.getId()){
+    
+                const id = this.category.getRattach();
+                if(id){
+                    this.category.setRattach(null);
+    
+                    await this.save(false);
+                    await deleteAttach({attachType, id});
+                }
+            }
+        });
+    }
+
+    async save(message = true) {
+        try{
+            const {id} = await CategoryService.saveCategory(this.category);
+            
+            this.category.setId(id);
+
+            if(message){
+                this.showToast({
+                    type: 'success',
+                    message: 'Datos Guardados Correctamente'
+                });
+            }
+
+            return true;
+        } catch(error){
+            this.showToast(error);
+        }
+        return false;
 	}
 
     async delete(){

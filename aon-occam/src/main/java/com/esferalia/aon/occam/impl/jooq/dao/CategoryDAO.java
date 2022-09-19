@@ -82,6 +82,7 @@ public class CategoryDAO {
 				.set(CATEGORY.SCOPE, category.getScope())
 				.set(CATEGORY.URL, category.getUrl())
 				.set(CATEGORY.TYPE, category.getType())
+				.set(CATEGORY.RATTACH, category.getRattach())
 				.returning(CATEGORY.ID).fetchOne().getId();
 		
 		ctx.log().debug("INSERT CATEGORY id: " + id);		
@@ -97,6 +98,7 @@ public class CategoryDAO {
 		.set(CATEGORY.DESCRIPTION, category.getDescription())
 		.set(CATEGORY.SCOPE, category.getScope())
 		.set(CATEGORY.URL, category.getUrl())
+		.set(CATEGORY.RATTACH, category.getRattach())
 		.where(CATEGORY.ID.eq(category.getId()))
 		.execute();
 		
@@ -127,7 +129,8 @@ public class CategoryDAO {
 					.setRattach(r.getValue(CATEGORY.RATTACH))
 					.setScope(r.getValue(CATEGORY.SCOPE))
 					.setCategoryType(CategoryType.safeValueOf(r.getValue(CATEGORY.TYPE)))
-					.setUrl(r.getValue(CATEGORY.URL));
+					.setUrl(r.getValue(CATEGORY.URL))
+					.setRattach(r.getValue(CATEGORY.RATTACH));
 		}
 	}	
 }

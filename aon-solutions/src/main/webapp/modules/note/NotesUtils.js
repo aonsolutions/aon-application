@@ -66,7 +66,8 @@ const addNote = (parent, note) => {
     subject.classList.add(CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.TRANSITION_QUICK);
     subject.addEventListener(EVENT.INPUT,({target})=> target.innerText.length <= 60 ? note.setSubject(target.innerText) : false);
     subject.addEventListener(EVENT.KEYPRESS,(ev)=> ev.target.innerText.length >= 60 ? ev.preventDefault() : true );
-    textArea.addToolbarLeft(subject,()=>subject.focus());
+    textArea.addToolbarLeft(subject);
+    
     if(note.getSubject()){
         subject.innerText = note.getSubject();
     } 

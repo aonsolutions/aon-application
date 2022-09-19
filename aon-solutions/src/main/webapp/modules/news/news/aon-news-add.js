@@ -122,7 +122,6 @@ export class AonNewsAdd extends AonElement {
     }
   }
 
-
   // async getNewsType(){
   //   const typeEl = document.getElementById("type");
   //   if(typeEl){

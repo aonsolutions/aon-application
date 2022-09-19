@@ -66,7 +66,6 @@ export class AonUpload extends AonElement {
         input.className = CSS.AON_NONE;
         input.addEventListener(EVENT.CHANGE, (ev) => {
             ev.preventDefault();
-            
             ev.stopPropagation();
       
             const [file] = ev.target.files
@@ -78,8 +77,10 @@ export class AonUpload extends AonElement {
         div.appendChild(input);
         
         div.addEventListener(EVENT.CLICK, (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
+          if(this.isClasic()){
+            ev.preventDefault();
+            ev.stopPropagation();
+          }
           input.click();  
         });
 

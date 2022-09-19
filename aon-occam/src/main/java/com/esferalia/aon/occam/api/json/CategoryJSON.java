@@ -30,7 +30,7 @@ public class CategoryJSON {
 			.setScope(JsonUtils.optInteger(json, IJsonNames.SCOPE))
 			.setDescription(JsonUtils.optString(json, IJsonNames.DESCRIPTION))
 			.setUrl(JsonUtils.optString(json, IJsonNames.URL))
-			.setRattach(JsonUtils.optInteger(json, "rattach"))
+			.setRattach(JsonUtils.optInteger(json, IJsonNames.RATTACH))
 			;
 	}
 	
@@ -60,7 +60,7 @@ public class CategoryJSON {
 			.put(IJsonNames.SCOPE, category.getScope())
 			.put(IJsonNames.DESCRIPTION, category.getDescription())
 			.put(IJsonNames.URL, category.getUrl())
-			.put(IJsonNames.ATTACH, category.getRattach())
+			.put(IJsonNames.RATTACH, category.getRattach())
 			;
 	}
 
