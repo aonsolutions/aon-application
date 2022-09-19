@@ -7,7 +7,7 @@ import { Swipe } from "../../components/swipe.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
-import { createButtonClose, createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl, createSpanFloat } from "./createComponent.js";
+import {  NotificationCreateComponent } from "./createComponent.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
@@ -24,7 +24,7 @@ export class AonNotificationMobile extends AonElement {
   AON_TABS;
   MORE;
   DIALOG;
-  TASK_HOLDERS;
+  TASK_HOLDERS; 
   dur;
   UL;
   TOAST;
@@ -124,7 +124,7 @@ export class AonNotificationMobile extends AonElement {
       if(!this.isMobile())
         aonNotification.style.margin = "auto";
 
-      createUl(this.UL).appendTo(aonNotification);
+      NotificationCreateComponent.createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
       if(!this.getDur().isEmployee()) {
         this.addFloatButton();
@@ -161,10 +161,10 @@ export class AonNotificationMobile extends AonElement {
           const aonCard = this.createCard(data, true);
           aonCard.flex = "true";
           aonCard.addEventListener(EVENT.CLICK, () =>  this.goNotification(data));
-          const divFooter = createDivFooter();
+          const divFooter = NotificationCreateComponent.createDivFooter();
           aonCard.setContent(divFooter.element);
           const dateText = firstLetters(AonDateUtils.setFullDate(data.date)) + " " + AonDateUtils.setTime(data.date);
-          createDivFooter1(dateText).appendTo(divFooter)
+          NotificationCreateComponent.createDivFooter1(dateText).appendTo(divFooter)
         });
       }
 		}
@@ -172,7 +172,7 @@ export class AonNotificationMobile extends AonElement {
 	}
 
   createContentDiv() {
-    return this.getElement(this.CONTENT) || createAonNotification(this.CONTENT).element;
+    return this.getElement(this.CONTENT) || NotificationCreateComponent.createAonNotification(this.CONTENT).element;
   }
 
   async goNotification(data) {
@@ -217,13 +217,13 @@ export class AonNotificationMobile extends AonElement {
     aonCard.style.cursor = "pointer";
     aonCard.id = idCard;    
     
-    createLi(data).appendTo(ulEl).appendChild(aonCard);
+    NotificationCreateComponent.createLi(data).appendTo(ulEl).appendChild(aonCard);
 
     if(close){
       this.buttonClose(aonCard, data.id);
     }
 
-    const content = createContent(data.body);
+    const content = NotificationCreateComponent.createContent(data.body);
     aonCard.setContent(content.element);
     if (!data.status) {
       aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
@@ -233,7 +233,7 @@ export class AonNotificationMobile extends AonElement {
 
     const titleEl = aonCard.getCardTitle1();
     titleEl.style.whiteSpace = "pre-wrap";
-    titleEl.innerHTML = createTitle(data.title).element.outerHTML;
+    titleEl.innerHTML = NotificationCreateComponent.createTitle(data.title).element.outerHTML;
     return aonCard;
   }
 
@@ -289,7 +289,7 @@ export class AonNotificationMobile extends AonElement {
   }
 
   buttonClose(aonCard, id){
-    let button = createButtonClose()
+    let button = NotificationCreateComponent.createButtonClose()
     button.element.addEventListener(EVENT.CLICK, (ev)=>{
       ev.stopPropagation();
       this.removeFadeOutNotify(id, 600);
@@ -345,7 +345,7 @@ export class AonNotificationMobile extends AonElement {
     const dialog = this.getElement(this.DIALOG) || new AonDialog();
     dialog.id = this.DIALOG;
     aonNotification.appendChild(dialog);
-    const span = createSpanFloat().element;
+    const span = NotificationCreateComponent.createSpanFloat().element;
 
     if(!this.isMobile()){
       setStyles(span,{ bottom:0, top:76, right: "7%" });

@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.payroll.AlterSalaryAddIndexSocialSecurityNumb
 import net.aonsolutions.db.up2date.payroll.ContractExtraCreation;
 import net.aonsolutions.db.up2date.payroll.IrpfInKindSystemInsert;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargableFix;
+import net.aonsolutions.db.up2date.tgss.TrainingBases2022Fix;
 
 public class Up2Date {
 
@@ -267,7 +268,8 @@ public class Up2Date {
     		//AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER
     		//MaxEmbargableFix.MAXEMBARGABLEFIX
     		//ContractExtraCreation.CONTRACTEXTRACREATION
-    		IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
+    		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
+    		TrainingBases2022Fix.TRAININGBASES2022FIX
     		
     };
 

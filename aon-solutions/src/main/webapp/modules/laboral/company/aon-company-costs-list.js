@@ -1,4 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
+
+import { AonIframe } from "../../../components/aon-iframe.js";
+
 import {
   formatNumber,
   isEmptyObject,
@@ -17,8 +20,8 @@ import {
   PAYROLL_FILTER,
   PAYROLL_VIEWS,
 } from "../PayrollEnums.js";
-import { pieChar, addLegend} from "./pieChar.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CompanyPieChart } from "./CompanyPieChart.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
@@ -63,6 +66,12 @@ export class AonCompanyCostsList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle(MSG.COMPANY_COSTS);
+
+    // this.style = `
+    //   display:flex;
+    //   flex-direction: column;
+    //   height: 100%;
+    // `;
   }
 
   async build() {
@@ -128,86 +137,71 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   async paintPieChar() {
+    const iframeId = this.id+ "Iframe";
     let startDate = new Date();
     let endDate = new Date();
     let title = MSG.RESUME_COSTS;
     let workplaceText = "";
-    let id = this.id+ "pieChar";
-    let idTitle = id + "Title";
     let total = 0;
-    let div = this.getElement(id) || this.createElement(TAG.DIV);
-    div.id = id;
-    div.style.textAlign = "center";
-    div.innerHTML = "";
-    let divTitle = this.getElement(idTitle) || this.createElement(TAG.DIV);
-    divTitle.id = idTitle;
+
+    let aonIframe = this.getElement(iframeId);
+    if(!aonIframe){
+      aonIframe =  new AonIframe();
+      aonIframe.id = iframeId;
+      this.appendChild(aonIframe);
+      await aonIframe.load();
+    } else {
+      aonIframe.clearContent();
+    }
+
+    //-----TITLE--------------
+    let divTitle = this.createElement(TAG.DIV);
+    divTitle.id = this.id + "Title";
+    divTitle.style.color  = "grey";
+    divTitle.style.fontWeight ="500";
+    divTitle.style.margin = "20px";
+    divTitle.style.textAlign = "center";
+    divTitle.style.marginBottom = 0;
+    aonIframe.addContent(divTitle);
+
     try {
-      const resp = await this.getData();
-      if(resp && resp.length > 0 ){
-        startDate = new Date(resp[0].startDate);
-        endDate   = new Date(resp[0].endDate);
-        divTitle.style.color  = "grey";
-        divTitle.style.fontWeight ="500";
-        divTitle.style.margin = "20px";
-        divTitle.style.textAlign = "center";
-        divTitle.style.marginBottom = 0;
-        this.appendChild(divTitle);
-        this.appendChild(div);
-        let sumEnterpriseSs = resp.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
-        let sumEmployeeSs = resp.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
-        let totalSS = sumEnterpriseSs + sumEmployeeSs;
-        let importIrpf = resp.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
-        let totalLiquid = resp.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
-        total = sumEnterpriseSs + sumEmployeeSs + importIrpf + totalLiquid;
-  
-        let data = [
-          ['SS Empresa', sumEnterpriseSs],
-          ['SS Empleado', sumEmployeeSs],
-          ['Total IRPF', importIrpf],
-          ['Total Nominas', totalLiquid]
-        ];
+      const data = await this.getData();
+      if(data && data.length > 0 ){
+      
+        await aonIframe.loadChart();
 
-        const colors = ['#0051C6','#db4437', '#B3B3B3', '#5e97f6'];
+        startDate = new Date(data[0].startDate);
+        endDate   = new Date(data[0].endDate);
 
-        await pieChar(div, data, { slices: colors }, (evClick)=>{
-          console.log(evClick);
-        });
+        //-----DIV CHART--------------
+        let div = this.createElement(TAG.DIV);
+        div.id = this.id+ "pieChart";
+        div.style.textAlign = "center";
+        div.innerHTML = "";
+        aonIframe.addContent(div);
+      
+        const resp = await CompanyPieChart.paintPieChart(this, data, div, aonIframe);
         
-        data.splice(2, 0, ["Total SS", totalSS]);
-        colors.splice(2, 0, "none");
-        
-        let newColor = colors.map(color=> ({ divColor: color, nameColor: 'grey', valueColor: 'grey'}));
+        total = resp.total;
 
-        newColor[2].valueColor = newColor[3].valueColor =  newColor[4].valueColor = "black";
-        
-        let newData = data.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
-
-        await addLegend(div, newData, newColor, (evClick)=>console.log(evClick));
-
-        let button = this.createElement(TAG.BUTTON);
-        button.className = CSS.AON_BUTTON;
-        button.id = `${this.id}Nomina`;
-        button.innerHTML = MSG.VIEW_PAYROLLS;
-        button.style.marginTop = "10px";
-        div.appendChild(button);
-        button.addEventListener(EVENT.CLICK,()=> this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST));
-
-        let workplaceEl = this.getElement('workplace').querySelector('LI');
-        if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
+        workplaceText = resp.workplaceText;
       }
 
       let startDateText = AonDateUtils.getMonthYear(startDate),
       endDateText = AonDateUtils.getMonthYear(endDate);
+      
       if(startDateText === endDateText){
         title = title + " "+ startDateText;
       } else {
         title = `${title} ${startDateText} - ${endDateText}`;
       }
-          
+
       title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
 
       divTitle.innerHTML = title;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getData() {
