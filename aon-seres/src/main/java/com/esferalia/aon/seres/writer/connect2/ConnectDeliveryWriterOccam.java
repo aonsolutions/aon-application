@@ -204,19 +204,18 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			IngenetPackaging sscc = ssccList.get(i);
 
 			IngenetPackaging aux = packageList.stream().filter(f -> f.hasCont() && f.getCont().equals(sscc.getEnv())).findFirst().orElse(null);
-			if(aux != null) {
-				aux.getEnv();
-				DeliveryDetail detail = detailList.stream().filter(f-> f.getLine() == sscc.getLin().shortValue()).findFirst().orElse(new DeliveryDetail());
+			
+			DeliveryDetail detail = detailList.stream().filter(f-> f.getLine() == sscc.getLin().shortValue()).findFirst().orElse(new DeliveryDetail());
 				
-				DeliveryDetail auxDetail = detailList.stream().filter(f-> f.getLine() == aux.getEnv().shortValue()).findFirst().orElse(new DeliveryDetail());
-				Double quantity = auxDetail.getQuantity();
-				SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc());
-				packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+			Short env = aux != null ? aux.getEnv().shortValue() : sscc.getEnv().shortValue();
+			DeliveryDetail auxDetail = detailList.stream().filter(f-> f.getLine() == env).findFirst().orElse(new DeliveryDetail());
+			Double quantity = auxDetail.getQuantity();
+			SEH1P packaging  = createSEH1PRecord(i + 2, quantity.intValue(), "CT", sscc.getSscc());
+			packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
-				packaging.seh1lList = new ArrayList<>();
-				packaging.seh1lList.add(createSEH1LRecord( sscc.getLin(), delivery, detail, quantity, codes));
-				list.add(packaging);
-			}
+			packaging.seh1lList = new ArrayList<>();
+			packaging.seh1lList.add(createSEH1LRecord( sscc.getLin(), delivery, detail, quantity, codes));
+			list.add(packaging);
 		}
 		
 		return list;
