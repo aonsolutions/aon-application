@@ -866,7 +866,17 @@ public abstract class ServicioREDRegeXML {
 		String error = Toolkit.getDIL(body);
 		if (Toolkit.getErrCode(error) != null)
 			InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+		else {
+			String notAuthorized = Toolkit.getElementByAttribute(body, "class", "cuerpo_noautorizado");
+			if(notAuthorized!=null) {
+				notAuthorized = Toolkit.getElementByAttribute(body, "class", "cabMensaje");
+				if(notAuthorized!=null && notAuthorized.toLowerCase().contains("no autorizado")) {
+					InvalidDataException.checkCode(0, "Certificado no autorizado");
+				}
+			}
+		}
 	}
+
 	
 	public static void checkOldSsError(String body, Integer... exceptions) throws SegSocialException {
 		String error = Toolkit.getDIL(body);
