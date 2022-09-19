@@ -60,7 +60,7 @@ public class ConsoleDAO {
 			filter = filter.and(p.getTypeProperty().eq(params.getType().byteValue()) ); 
 		}
 		if (params.getActive() != null ) {
-			filter = filter.and(p.getTypeProperty().eq((byte) (params.getActive().booleanValue()?1:0)));
+			filter = filter.and(p.getActiveProperty().eq((byte) (params.getActive().booleanValue()?1:0)));
 		}
 		if (params.getEnableHeredity() != null ) {
 			filter = filter.and(p.getEnableheredityProperty().eq((byte) (params.getEnableHeredity().booleanValue()?1:0)));

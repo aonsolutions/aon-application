@@ -539,6 +539,9 @@ public class AonStringUtils {
 				Math.max(cs1.length(), cs2.length()));
 	}
 
+	public static boolean notEquals(final CharSequence cs1, final CharSequence cs2) {
+		return !equals(cs1, cs2);
+	}
 	/**
 	 * <p>
 	 * Compares two CharSequences, returning {@code true} if they represent

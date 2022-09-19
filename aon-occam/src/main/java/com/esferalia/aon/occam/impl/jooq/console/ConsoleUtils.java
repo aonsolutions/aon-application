@@ -1,24 +1,142 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
+
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AmortizationType.AMORTIZATION_TYPE;
+import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
+import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
+import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.CalendarHoliday.CALENDAR_HOLIDAY;
+import static com.esferalia.aon.jooq.tables.CalendarPeriod.CALENDAR_PERIOD;
+import static com.esferalia.aon.jooq.tables.Catalogue.CATALOGUE;
+import static com.esferalia.aon.jooq.tables.CatalogueCategory.CATALOGUE_CATEGORY;
+import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
+import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
+import static com.esferalia.aon.jooq.tables.Cnae.CNAE;
+import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
+import static com.esferalia.aon.jooq.tables.Cnae2009Rate.CNAE2009_RATE;
+import static com.esferalia.aon.jooq.tables.Cno.CNO;
+import static com.esferalia.aon.jooq.tables.Feature.FEATURE;
+import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Iae.IAE;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
+import static com.esferalia.aon.jooq.tables.ItemAlternative.ITEM_ALTERNATIVE;
+import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
+import static com.esferalia.aon.jooq.tables.ItemTariff.ITEM_TARIFF;
+import static com.esferalia.aon.jooq.tables.JobType.JOB_TYPE;
+import static com.esferalia.aon.jooq.tables.Location.LOCATION;
+import static com.esferalia.aon.jooq.tables.Make.MAKE;
+import static com.esferalia.aon.jooq.tables.Mark.MARK;
+import static com.esferalia.aon.jooq.tables.Model.MODEL;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
+import static com.esferalia.aon.jooq.tables.Relationship.RELATIONSHIP;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.Tariff.TARIFF;
+import static com.esferalia.aon.jooq.tables.TariffAddinfo.TARIFF_ADDINFO;
+import static com.esferalia.aon.jooq.tables.TariffCatalogue.TARIFF_CATALOGUE;
+import static com.esferalia.aon.jooq.tables.TasItem.TAS_ITEM;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
+import static com.esferalia.aon.jooq.tables.TaxDetail.TAX_DETAIL;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
+
+
+
+import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
+import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
+import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
+import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
+import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
+import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
+import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
+import static com.esferalia.aon.jooq.tables.FanBatch.FAN_BATCH;
+import static com.esferalia.aon.jooq.tables.FanBatchDetail.FAN_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.Favorite.FAVORITE;
+import static com.esferalia.aon.jooq.tables.FavoriteCategory.FAVORITE_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAddress.INVOICE_ADDRESS;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
+import static com.esferalia.aon.jooq.tables.InvoiceBatch.INVOICE_BATCH;
+import static com.esferalia.aon.jooq.tables.InvoiceBatchDetail.INVOICE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
+import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
+import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
+import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
+import static com.esferalia.aon.jooq.tables.Note.NOTE;
+import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
+import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
+import static com.esferalia.aon.jooq.tables.ProfileActionDenied.PROFILE_ACTION_DENIED;
+import static com.esferalia.aon.jooq.tables.ProfileModuleDenied.PROFILE_MODULE_DENIED;
+import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
+import static com.esferalia.aon.jooq.tables.ProjectReservationDivert.PROJECT_RESERVATION_DIVERT;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
+import static com.esferalia.aon.jooq.tables.Session.SESSION;
+import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
+import static com.esferalia.aon.jooq.tables.SurveyResponse.SURVEY_RESPONSE;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.jooq.ForeignKey;
 import org.jooq.Record;
+import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -119,5 +237,71 @@ class ConsoleUtils {
 		}
 		getPrinter(params).flush();
 	}
+
+	static ConsoleIDsTableInfo initializeConsoleIDsTableInfo( ConsoleIDsTableInfo info, ConsoleParams params ) {
+		String schema = params.getFromConnection().getSchemaName();
+		try (CloseableAONContext metaCtx = AONContext.getAONContext(schema)) {
+			Schema idsSchema = metaCtx.getDslContext().meta()
+				.getSchemas(ConsoleIDsTableInfo.SCHEMA)
+				.stream()
+				.findFirst()
+				.orElse(null);
+			if ( idsSchema == null) {
+				throw new AonCoreException("No es posible encontrar el esquema \""+ConsoleIDsTableInfo.SCHEMA+"\"");
+			}
+			info.initialize(params);
+			info.setCtx(AONContext.getAONContext(ConsoleIDsTableInfo.SCHEMA));
+			return info;
+		}
+	}
 	
+	static final Set<String> PARENT_INCLUDED_TABLES = new HashSet<>();
+	static {
+		PARENT_INCLUDED_TABLES.add(ACCOUNT.getName());
+		PARENT_INCLUDED_TABLES.add(AMORTIZATION_TYPE.getName());
+		PARENT_INCLUDED_TABLES.add(AUTO_CONCEPT.getName());
+		PARENT_INCLUDED_TABLES.add(BANK_CONCEPT.getName());
+		PARENT_INCLUDED_TABLES.add(BRAND.getName());
+		PARENT_INCLUDED_TABLES.add(CALENDAR.getName());
+		PARENT_INCLUDED_TABLES.add(CALENDAR_HOLIDAY.getName());
+		PARENT_INCLUDED_TABLES.add(CALENDAR_PERIOD.getName());
+		PARENT_INCLUDED_TABLES.add(CATALOGUE.getName());
+		PARENT_INCLUDED_TABLES.add(CATALOGUE_CATEGORY.getName());
+		PARENT_INCLUDED_TABLES.add(CATALOGUE_ITEM.getName());
+		PARENT_INCLUDED_TABLES.add(CATEGORY.getName());
+		PARENT_INCLUDED_TABLES.add(CNAE.getName());
+		PARENT_INCLUDED_TABLES.add(CNAE2009.getName());
+		PARENT_INCLUDED_TABLES.add(CNAE2009_RATE.getName());
+		PARENT_INCLUDED_TABLES.add(CNO.getName());
+		PARENT_INCLUDED_TABLES.add(FEATURE.getName());
+		PARENT_INCLUDED_TABLES.add(GEOTREE.getName());
+		PARENT_INCLUDED_TABLES.add(GEOZONE.getName());
+		PARENT_INCLUDED_TABLES.add(IAE.getName());
+		PARENT_INCLUDED_TABLES.add(ITEM.getName());
+		PARENT_INCLUDED_TABLES.add(ITEM_ADDINFO.getName());
+		PARENT_INCLUDED_TABLES.add(ITEM_ALTERNATIVE.getName());
+		PARENT_INCLUDED_TABLES.add(ITEM_COMPOSITION.getName());
+		PARENT_INCLUDED_TABLES.add(ITEM_TARIFF.getName());
+		PARENT_INCLUDED_TABLES.add(JOB_TYPE.getName());
+		PARENT_INCLUDED_TABLES.add(LOCATION.getName());
+		PARENT_INCLUDED_TABLES.add(MAKE.getName());
+		PARENT_INCLUDED_TABLES.add(MARK.getName());
+		PARENT_INCLUDED_TABLES.add(MODEL.getName());
+		PARENT_INCLUDED_TABLES.add(PAY_METHOD.getName());
+		PARENT_INCLUDED_TABLES.add(PAYMENT_CONCEPT.getName());
+		PARENT_INCLUDED_TABLES.add(PCATEGORY.getName());
+		PARENT_INCLUDED_TABLES.add(PRODUCT.getName());
+		PARENT_INCLUDED_TABLES.add(PRODUCT_TAG.getName());
+		PARENT_INCLUDED_TABLES.add(PROFILE.getName());
+		PARENT_INCLUDED_TABLES.add(RELATIONSHIP.getName());
+		PARENT_INCLUDED_TABLES.add(SCOPE.getName());
+		PARENT_INCLUDED_TABLES.add(SEGMENT.getName());
+		PARENT_INCLUDED_TABLES.add(TAG.getName());
+		PARENT_INCLUDED_TABLES.add(TARIFF.getName());
+		PARENT_INCLUDED_TABLES.add(TARIFF_ADDINFO.getName());
+		PARENT_INCLUDED_TABLES.add(TARIFF_CATALOGUE.getName());
+		PARENT_INCLUDED_TABLES.add(TAS_ITEM.getName());
+		PARENT_INCLUDED_TABLES.add(TAX.getName());
+		PARENT_INCLUDED_TABLES.add(TAX_DETAIL.getName());
+	}
 }

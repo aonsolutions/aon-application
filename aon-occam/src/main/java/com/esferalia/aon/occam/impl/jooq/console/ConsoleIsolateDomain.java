@@ -1,54 +1,26 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
-import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
 import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
-import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
-import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
-import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
-import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
-import static com.esferalia.aon.jooq.tables.Company.COMPANY;
-import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
-import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
-import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
-import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
-import static com.esferalia.aon.jooq.tables.Favorite.FAVORITE;
-import static com.esferalia.aon.jooq.tables.FavoriteCategory.FAVORITE_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.MkActionTarget.MK_ACTION_TARGET;
-import static com.esferalia.aon.jooq.tables.Note.NOTE;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
-import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.ProjectReservationDivert.PROJECT_RESERVATION_DIVERT;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
-import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Session.SESSION;
-import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
-import static com.esferalia.aon.jooq.tables.SurveyResponse.SURVEY_RESPONSE;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -66,6 +38,7 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
@@ -82,10 +55,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class ConsoleIsolateDomain {
 	
 	private static final String DOMAIN_FIELD = "domain";
-	private static final Table<Record> TEMPID = DSL.table("tempId");
-	private static final Field<String> TEMPID_TABLE = DSL.field("tempId.table_name", String.class);
-	private static final Field<Integer> TEMPID_OLD = DSL.field("tempId.old_id", Integer.class);
-	private static final Field<Integer> TEMPID_NEW = DSL.field("tempId.new_id", Integer.class);
 	
 	private ConsoleIsolateDomain() {
 	}
@@ -108,6 +77,7 @@ public class ConsoleIsolateDomain {
 
 	private static void isolateDomain(ConsoleParams params) {
 		ConsoleUtils.log(params,"** Start domain isolation!");
+		ConsoleIDsTableInfo idsTableInfo = new ConsoleIDsTableInfo();
 		try {
 			Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
 					, p -> p.getNameProperty().eq(params.getFromConnection().getDomainName()));
@@ -116,7 +86,6 @@ public class ConsoleIsolateDomain {
 			}
 			params.getFromConnection().setFullDomain(fullDomain);
 			params.setScript( new LinkedHashMap<>() );
-			
 			DomainValidator domainValidator = DomainValidator.getInstance(true);
 			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
 				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
@@ -141,14 +110,27 @@ public class ConsoleIsolateDomain {
 			
 			ConsoleUtils.disableForeignKeys(params);
 			ConsoleUtils.log(params,"** Start transaction!");
-			
 
 			params.getToDslContext().transaction(conf -> {
-				createTempTable(params);
+				
 				createDomain(params);
+				ConsoleUtils.initializeConsoleIDsTableInfo(idsTableInfo, params);
+				params.setIdsTableInfo( idsTableInfo );			
+				createTempTable(params);
+				insertId(params, DOMAIN,
+					params.getFromConnection().getFullDomain().getId(),
+					params.getToConnection().getFullDomain().getId());
+
+				
 				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
 					passHeritableTables( params );
 				}
+				
+				if (!AonStringUtils.equals(params.getFromConnection().getSchemaName(), params.getToConnection().getSchemaName())) {
+					// Se pasan los datos a otro esquema. Se vinculan los datos de dominio cera de un esquema a otro.
+					bindTagTable( params );
+				}
+				
 				params.getScript()
 					.values()
 					.stream()
@@ -160,6 +142,9 @@ public class ConsoleIsolateDomain {
 				loopFBatch(params,params.getScript().get("fbatch"));
 				loopBankStatementLinkFinanceTracking(params,params.getScript().get("bank_statement_link"));
 				loopAccAppParamAccount(params,params.getScript().get("app_param"));
+				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
+					fixTaskHolder( params );
+				}
 				createLoginUser(params);
 			});
 			ConsoleUtils.log(params,"** Commit!");
@@ -169,6 +154,9 @@ public class ConsoleIsolateDomain {
 			ConsoleUtils.log(params,"** Rollback!");
 			e.printStackTrace();
 		} finally {
+			if (idsTableInfo != null && idsTableInfo.getCtx() != null) {
+				idsTableInfo.getCtx().close();
+			}
 			if (!params.getErrors().isEmpty()) {
 				ConsoleUtils.log(params, "" );
 				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
@@ -180,6 +168,68 @@ public class ConsoleIsolateDomain {
 			ConsoleUtils.enableForeignKeys(params);
 		}
 	}
+	
+	private static void fixTaskHolder(ConsoleParams params) {
+		ConsoleUtils.log(params," **** Fix Task HOLDER table");
+		params.getToDslContext()
+			.select( TASK_HOLDER.REGISTRY, TASK_HOLDER.USER_ID )
+			.from( TASK_HOLDER )
+			.where( TASK_HOLDER.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
+			.and( TASK_HOLDER.USER_ID.isNotNull() )
+			.fetch()
+			.stream()
+			.forEach(r -> {
+				Integer taskHolderId = r.getValue(TASK_HOLDER.REGISTRY);
+				Integer userId = r.getValue(TASK_HOLDER.USER_ID);
+				Integer targetId = params.getToDslContext()
+					.select( USER.ID, USER.DOMAIN )
+					.from( USER )
+					.where(USER.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
+					.and(USER.ID.eq(userId))
+					.fetch()
+					.stream()
+					.map(rec -> rec.getValue(USER.ID) )
+					.findFirst()
+					.orElse(null);
+				if (targetId == null) {
+					int count = params.getToDslContext()
+						.update( TASK_HOLDER )
+						.set(TASK_HOLDER.USER_ID, (Integer) null)
+						.where(TASK_HOLDER.REGISTRY.eq(taskHolderId))
+						.execute();
+					ConsoleUtils.log(params,"     **** Task HOLDER "+ taskHolderId +" USER set to NULL ("+ count + " rows )");
+				}
+			});
+	}
+
+	private static void bindTagTable(ConsoleParams params) {
+		params.getFromDslContext()
+			.select( TAG.ID, TAG.NAME, TAG.TYPE, TAG.COLOR )
+			.from( TAG )
+			.where(TAG.DOMAIN.eq(0))
+			.fetch()
+			.stream()
+			.forEach(r -> {
+				Integer fromId = r.getValue(TAG.ID);
+				String name = r.getValue(TAG.NAME);
+				Integer toId = params.getToDslContext()
+					.select( TAG.ID )
+					.from( TAG )
+					.where(TAG.DOMAIN.eq(0))
+					.and(TAG.NAME.eq(name))
+					.fetch()
+					.stream()
+					.map(rec -> rec.getValue(TAG.ID) )
+					.findFirst()
+					.orElse(null);
+				if (toId != null) {
+					insertId(params, TAG, fromId, toId);
+				}
+			});
+			
+		
+	}
+
 	private static void checkAgreements(ConsoleParams params) {
 		if (params.mustFlatten()) {
 			AggregateFunction<Integer> count = DSL.count(CONTRACT.ID);
@@ -274,56 +324,7 @@ public class ConsoleIsolateDomain {
 		params.getScript()
 			.values()
 			.stream()
-			.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
-			.filter(t -> !DOMAIN_APP.getName().equals(t.getTable().getName()))
-			.filter(t -> !DOMAIN_APPLICATION.getName().equals(t.getTable().getName()))
-			.filter(t -> !DOMAIN_APPLICATION_MODULE.getName().equals(t.getTable().getName()))
-			.filter(t -> !DOMAIN_GSERVICEACCOUNT.getName().equals(t.getTable().getName()))
-			.filter(t -> !APPLICATION_USER.getName().equals(t.getTable().getName()))
-			.filter(t -> !APPLICATION_USER_PROFILE.getName().equals(t.getTable().getName()))
-			.filter(t -> !COMPANY.getName().equals(t.getTable().getName()))
-			.filter(t -> !ACCOUNT_PERIOD.getName().equals(t.getTable().getName()))
-			.filter(t -> !APP_PARAM.getName().equals(t.getTable().getName()))
-			.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
-			.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
-			.filter(t -> !RATTACH.getName().equals(t.getTable().getName()))
-			.filter(t -> !RATTACH_TAG.getName().equals(t.getTable().getName()))
-			
-			.filter(t -> !USER.getName().equals(t.getTable().getName()))
-			.filter(t -> !USER.getName().equals(t.getTable().getName()))
-			.filter(t -> !ACTION_DENIED.getName().equals(t.getTable().getName()))
-			.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
-			.filter(t -> !ACTION_FAVORITE.getName().equals(t.getTable().getName()))
-			.filter(t -> !ALARM.getName().equals(t.getTable().getName()))
-			.filter(t -> !USER_APP_ROLE.getName().equals(t.getTable().getName()))
-			.filter(t -> !APPLICATION_USER.getName().equals(t.getTable().getName()))
-			.filter(t -> !CONTACT.getName().equals(t.getTable().getName()))
-			.filter(t -> !TASK_HOLDER.getName().equals(t.getTable().getName()))
-			.filter(t -> !FAVORITE_CATEGORY.getName().equals(t.getTable().getName()))
-			.filter(t -> !FAVORITE.getName().equals(t.getTable().getName()))
-			.filter(t -> !SIGNATURE.getName().equals(t.getTable().getName()))
-			.filter(t -> !MAIL_ACCOUNT.getName().equals(t.getTable().getName()))
-			.filter(t -> !SURVEY_RESPONSE.getName().equals(t.getTable().getName()))
-			.filter(t -> !MK_ACTION_TARGET.getName().equals(t.getTable().getName()))
-			.filter(t -> !NOTE.getName().equals(t.getTable().getName()))
-			.filter(t -> !NOTICE.getName().equals(t.getTable().getName()))
-			.filter(t -> !NOTICE_TAG.getName().equals(t.getTable().getName()))
-			.filter(t -> !PROJECT_RESERVATION_DIVERT.getName().equals(t.getTable().getName()))
-			.filter(t -> !USER_SCOPE.getName().equals(t.getTable().getName()))
-			.filter(t -> !USER_WORKGROUP.getName().equals(t.getTable().getName()))
-			
-			.filter(t -> !AGREEMENT.getName().equals(t.getTable().getName()))
-			.filter(t -> !AGREEMENT_DATA.getName().equals(t.getTable().getName()))
-			.filter(t -> !AGREEMENT_EXTRA.getName().equals(t.getTable().getName()))
-			.filter(t -> !AGREEMENT_LEVEL.getName().equals(t.getTable().getName()))
-			.filter(t -> !AGREEMENT_LEVEL_CATEGORY.getName().equals(t.getTable().getName()))
-			.filter(t -> !AGREEMENT_LEVEL_DATA.getName().equals(t.getTable().getName()))
-			.filter(t -> !AGREEMENT_PAYMENT.getName().equals(t.getTable().getName()))
-			.filter(t -> !PAYROLL_WORKPLACE.getName().equals(t.getTable().getName()))
-			
-			.filter(t -> !CRA_BATCH.getName().equals(t.getTable().getName()))
-			.filter(t -> !CRA_BATCH_DETAIL.getName().equals(t.getTable().getName()))
-
+			.filter(t -> ConsoleUtils.PARENT_INCLUDED_TABLES.contains(t.getTable().getName()))
 			.filter(t -> hasDomain(t.getTable()))
 			.forEach( t -> {
 				SelectConditionStep<Record> select = params.getFromDslContext()
@@ -342,17 +343,18 @@ public class ConsoleIsolateDomain {
 	}
 
 	private static void createTempTable(ConsoleParams params) {
-		params.getToDslContext().execute("DROP TEMPORARY TABLE IF EXISTS `tempId`");
+		params.getIdsTableInfo().getCtx().getDslContext()
+			.execute("DROP TABLE IF EXISTS `"+params.getIdsTableInfo().getTableName()+"`");
 		String sql =
-			"CREATE TEMPORARY TABLE `tempId` ("
+			"CREATE TABLE `"+params.getIdsTableInfo().getTableName()+"` ("
 				+"`table_name` char(40) NOT NULL,"
 				+"`old_id` int(4) NOT NULL,"
 				+"`new_id` int(4) NOT NULL,"
-				+"PRIMARY KEY (`table_name`,`old_id`)"
+				+"PRIMARY KEY (`old_id`,`table_name`)"
 			+"  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;"
 		;
-		params.getToDslContext().execute(sql);
-		ConsoleUtils.log(params,"** IDs Temp table created!");
+		params.getIdsTableInfo().getCtx().getDslContext().execute(sql);
+		ConsoleUtils.log(params,"** IDs Table created! [" + params.getIdsTableInfo().getTableName() +"]");
 	}
 	
 	private static void createDomain(ConsoleParams params) {
@@ -369,10 +371,7 @@ public class ConsoleIsolateDomain {
 		domRec.attach(params.getToDslContext().configuration());
 		domRec.setId(null);
 		domRec.setName(params.getToConnection().getDomainName());
-		domRec.setParent(params.mustFlatten()
-			? ((Integer) null)
-			:domRec.getParent() 
-		);
+		domRec.setParent(params.mustFlatten() ? null :domRec.getParent());
 		domRec.setScope(null);
 		domRec.setEnableheredity(params.mustFlatten()
 			? ((byte) 0)
@@ -380,19 +379,17 @@ public class ConsoleIsolateDomain {
 		);
 		domRec.store();
 		params.getToConnection().setFullDomain( DomainDAO.getDomain(params.getToConnection().getAONContext(), domRec.getId()));
-		insertId(params, DOMAIN,
-			params.getFromConnection().getFullDomain().getId(),
-			params.getToConnection().getFullDomain().getId());
 		ConsoleUtils.log(params,MessageFormat.format("DOMAIN {0} creado con ID {1}"
 			, params.getToConnection().getFullDomain().getName()
 			, params.getToConnection().getFullDomain().getId()));
 	}
 
 	private static void insertId(ConsoleParams params, Table<?> table, Integer oldId, Integer newId) {
-		params.getToDslContext().insertInto(TEMPID)
-			.set(TEMPID_TABLE, table.getName() )
-			.set(TEMPID_OLD, oldId )
-			.set(TEMPID_NEW, newId )
+		params.getIdsTableInfo().getCtx().getDslContext()
+			.insertInto(params.getIdsTableInfo().getTable())
+				.set(params.getIdsTableInfo().getTableColumn(), table.getName() )
+				.set(params.getIdsTableInfo().getOldIdColumn(), oldId )
+				.set(params.getIdsTableInfo().getNewIdColumn(), newId )
 			.execute();
 	}
 
@@ -566,14 +563,14 @@ public class ConsoleIsolateDomain {
 	}
 
 	private static Integer getNewId(ConsoleParams params, Table<?> table, Integer fkOldId) {
-		return params.getToDslContext()
-			.select(TEMPID_NEW)
-			.from(TEMPID)
-			.where(TEMPID_TABLE.eq(table.getName()))
-			.and(TEMPID_OLD.eq(fkOldId))
+		return params.getIdsTableInfo().getCtx().getDslContext()
+			.select(params.getIdsTableInfo().getNewIdColumn())
+			.from(params.getIdsTableInfo().getTable())
+			.where(params.getIdsTableInfo().getTableColumn().eq(table.getName()))
+			.and(params.getIdsTableInfo().getOldIdColumn().eq(fkOldId))
 			.fetch()
 			.stream()
-			.map(r -> r.getValue(TEMPID_NEW))
+			.map(r -> r.getValue(params.getIdsTableInfo().getNewIdColumn()))
 			.findFirst()
 			.orElse(null);
 	}
