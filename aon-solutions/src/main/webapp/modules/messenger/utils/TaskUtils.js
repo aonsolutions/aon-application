@@ -979,9 +979,9 @@ const addTaskDescription = (task) => {
             task.setDescriptionJson({observation:target.value});
           }
           
-          target.checkFileBase64()
+          aonTextArea.checkFileBase64()
           .then(()=> {
-            task.setFiles(target.getFiles());
+            task.setFiles(aonTextArea.getFiles());
           });
         });
         checkFilesAddEventDescription(task);//check files description

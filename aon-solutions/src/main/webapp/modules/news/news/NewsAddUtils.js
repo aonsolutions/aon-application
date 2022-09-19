@@ -409,7 +409,7 @@ const openCategoryDialog = (category) => {
 const buildEditor = (parent, news, aonNewsAdd) =>{
     const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
         id:"aonTextAreaEditor",
-        placeholder:MSG.CONTENT,
+        placeholder:MSG.WRITE_A_DESCRIPTION,
         required:true,
         "text-box-min-height":"24em",
         'has-fullscreen-mode': true
