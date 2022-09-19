@@ -292,6 +292,7 @@
 		.gwt-ListBox[disabled] {
 			display:none;
 			visibility:hidden;
+		  	background-color: transparent !important; 
 		}
 
 		.gwt-TextBox[readonly],
