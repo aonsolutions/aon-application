@@ -14,9 +14,12 @@ import org.jooq.ForeignKey;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -118,7 +121,7 @@ public class ConsoleDomainCheckIntegrity {
 	}
 
 	private static void checkTable(ConsoleParams params, ScriptTable table) {
-		if (hasDomain(table.getTable())) {
+		if (hasDomain(table.getTable()) && hasPrimaryKey(table.getTable())) {
 			ConsoleUtils.log(params,MessageFormat.format(" **** Checking {0} table:", table.getTableName()));			
 			params.getScript().get(table.getTableName())
 				.getReferences()
@@ -141,36 +144,60 @@ public class ConsoleDomainCheckIntegrity {
 		Table<?> toTable = fk.getKey().getTable();
 		Table<?> toTableSelect = toTable.as("toTable");
 		Field<?> fkField = fromTableSelect.field(fk.getFields().get(0).getName());
+		Field<?> fkPkField = toTableSelect.field(toTableSelect.getPrimaryKey().getFields().get(0).getName());
+		Field<?> pkField = fromTableSelect.field(fromTableSelect.getPrimaryKey().getFields().get(0).getName());
 		if (hasDomain(toTable))  {
 			Field<Integer> fromDomainField = getDomainField(fromTableSelect);
 			Field<Integer> toDomainField = getDomainField(toTableSelect);
 			LinkedList<Field<?>> selectFields = new LinkedList<>();
+			selectFields.add(pkField);
+			selectFields.add(fromDomainField);
 			selectFields.add(toDomainField);
 			selectFields.add(fkField);
-			Condition condition = null;
-			if (params.getFromConnection().getFullDomain().isEnableHeredity()) {
-				condition = toDomainField.notIn(0
-					,params.getFromConnection().getFullDomain().getId()
-					,params.getFromConnection().getFullDomain().getParentId());
-			} else {
-				condition = toDomainField.notIn(0,params.getFromConnection().getFullDomain().getId());
-			}
+			Integer domain = params.getFromConnection().getFullDomain().getId();
+			Integer parent = params.getFromConnection().getFullDomain().getParentId();
+			Condition mainCondition = params.getFromConnection().getFullDomain().isEnableHeredity()
+					?fromDomainField.in(domain,parent)
+					:fromDomainField.eq(domain);
 			if (customFk != null) {
-				condition = condition.and(customFk.getCondition( fromTableAlias ));
+				mainCondition = mainCondition.and(customFk.getCondition( fromTableAlias ));
 				Arrays.stream(customFk.getInvolvedColumns())
-					.forEach(f ->  selectFields.add(fromTableSelect.field(f.getName())) );
+				.forEach(f ->  selectFields.add(fromTableSelect.field(f.getName())) );
 			}
+			mainCondition = mainCondition.and(fkField.isNotNull());
+			mainCondition = mainCondition.and(DSL.trim(DSL.cast(fkField, String.class)).notEqual(AonStringUtils.EMPTY));
+			mainCondition = mainCondition.and(
+					(params.getFromConnection().getFullDomain().isEnableHeredity()
+						?toDomainField.notIn(0,domain,parent)
+						:toDomainField.notIn(0,domain)).or(fkPkField.isNull())
+					);
+			
+//			System.out.println( 
+//					params.getFromDslContext()
+//					.select( selectFields )
+//					.from(fromTableSelect)
+//					.leftOuterJoin(toTableSelect).onKey(fk)
+//					.where(mainCondition)
+//					.getSQL(ParamType.INLINED)
+//					);
+			
 			params.getFromDslContext()
 				.select( selectFields )
 				.from(fromTableSelect)
-				.innerJoin(toTableSelect).onKey(fk)
-				.where(fromDomainField.eq(params.getFromConnection().getFullDomain().getId()))
-				.and(toDomainField.isNotNull())
-				.and(condition)
+				.leftOuterJoin(toTableSelect).onKey(fk)
+				.where(mainCondition)
 				.stream()
-				.forEach( toRec -> {params.addError(
-					MessageFormat.format("Tabla \"{0}\", columna \"{1}\" ({2}) que referencia a la tabla \"{3}\" apunta al dominio {4}."
+				.filter( toRec ->
+					AonNumberUtils.equals( domain, toRec.getValue(fromDomainField))
+					||  (AonNumberUtils.equals( parent, toRec.getValue(fromDomainField))
+					  && ConsoleUtils.PARENT_INCLUDED_TABLES.contains(fromTable.getName()))
+				)
+				.forEach( toRec -> {
+					params.addError(
+					MessageFormat.format("Dom: {0}. Tabla \"{1}\",id \"{2}\", columna \"{3}\" ({4}) que referencia a la tabla \"{5}\" apunta al dominio {6}."
+						,toRec.getValue(fromDomainField)
 						,fromTable.getName()
+						,toRec.getValue(pkField)
 						,fkField.getName()
 						,toRec.getValue(fkField)
 						,toTable.getName()
@@ -189,4 +216,7 @@ public class ConsoleDomainCheckIntegrity {
 		return (getDomainField(table) != null);
 	}
 
+	private static <T extends Record> boolean hasPrimaryKey(Table<T> table) {
+		return (table.getPrimaryKey() != null);
+	}
 }
