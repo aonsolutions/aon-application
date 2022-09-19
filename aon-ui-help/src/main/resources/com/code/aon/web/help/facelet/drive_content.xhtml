@@ -60,7 +60,27 @@
 			overflow-y: auto;
 			height: calc(100% - 2rem);
 		}
+		.list-item {
+			border-bottom: revert !important;
+			border-top:1px solid #f1f1f1;
+		}
 	</style>
+	<script>
+		function displayVideo(elem) {
+			if (elem) {
+				ifrmContainer = elem.parentElement.querySelector(".ifrmContainer");
+				if (ifrmContainer) {
+					ifrmContainer.style.display = ifrmContainer.style.display === "none" ? "flex" : "none";
+					ifrm = ifrmContainer.querySelector("iframe");
+					if (ifrm) {
+						ifrmSrc = ifrm.src;
+						ifrm.src = ifrmSrc;
+					}
+				}
+			}
+		}
+		
+	</script>
 	
 				<ui:include src="./breadcrumb.xhtml" />
 			<aon:div styleClass="box-column list">
@@ -99,11 +119,18 @@
 	
 						<!-- VIDEO -->
 						<aon:if test="${file.isVideo()}">
-							<a href="./html/video.html##{help.getFileServletUrl(file)}"
-								class="list-item" target="_blank"> <aon:outputText
-									value="video_file" styleClass="icon file material-icons" /> <aon:outputText
-									value="#{file.name}" />
-							</a>
+							<aon:div>
+								<aon:div
+									styleClass="list-item"
+									onclick="javascript:displayVideo(this);return;"> <aon:outputText
+										value="video_file" styleClass="icon file material-icons" /> <aon:outputText
+										value="#{file.name}" />
+								</aon:div>
+								<aon:div styleClass="ifrmContainer" style="display:none; justify-content:center; width: 100%; margin-bottom: 10px;">
+									<iframe src="https://drive.google.com/file/d/#{file.getId()}/preview" style="min-width:680px;" width="50%" height="480" frameBorder="0" allow="autoplay" allowfullscreen="allowfullscreen"></iframe>
+									<!-- <iframe src="./html/video.html##{help.getFileServletUrl(file)}" style="min-width:680px;" width="50%" height="480"></iframe> -->
+								</aon:div>
+							</aon:div>
 						</aon:if>
 	
 					</aon:form>
