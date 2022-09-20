@@ -946,10 +946,10 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void removeContractTransform(String currentDomainName, String currentUser, String ide,
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide, Integer contractId,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.removeContractTransform(currentDomainName, currentUser, ide, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.removeContractTransform(currentDomainName, currentUser, ide, contractId, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
