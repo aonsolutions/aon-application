@@ -8,17 +8,28 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
  
 public class ConsoleDomainModule extends AonLayoutPanel {
+
+	private static final String DOMAIN_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainReportExcelPrint";
 
 	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainModule.class.getName());
 	static {
@@ -42,7 +53,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	public ConsoleDomainModule(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
-		this.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+		this.addNorth(getToolbarPanel(options), AonToolbar.HEIGTH);
 		filterPanel = new ConsoleDomainFilterPanel(options);
 		filterPanel.addValueChangeHandler(e -> search(options, e.getValue()) );
 		this.addNorth(filterPanel, ConsoleDomainFilterPanel.HEIGTH);
@@ -67,13 +78,32 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		});
 	}
 
-	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbarPanel = new AonToolbar();
-		toolbarPanel.setTitle("Gesti\u00F3n de dominios");
+	private AonToolbar getToolbarPanel( ConsoleModuleOptions options) {
+		AonToolbar toolbar = new AonToolbar();
+		toolbar.setTitle("Gesti\u00F3n de dominios");
 		
+		FormPanel diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		Hidden domainParamsHidden = new Hidden(IRequestParamsNames.DOMAIN_PARAMS);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(domainParamsHidden);
+		toolbar.add(diskForm);
+
+		AonToolbarButton exportButton = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconExcel() );
+		exportButton.addClickHandler(event -> {
+			DomainParams params = filterPanel.getParams(options);
+			if (!AonStringUtils.isBlank(params.getSchema())) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + DOMAIN_REPORT_EXCEL_PRINT);
+				domainParamsHidden.setValue(JsonParams.convert(params));
+				diskForm.submit();
+			} else {
+				AonMessageDialog.show("AVISO", "Seleccione un esquema");
+			}
+		});
+		toolbar.add(exportButton);
 		
-		
-		return toolbarPanel;
+		return toolbar;
 	}
 	
 	private Widget getTable(LinkedList<Domain> domains) {

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -788,4 +789,71 @@ public class JsonParser {
 		}
 		return params;
 	}
+	
+	public static DomainParams parseDomainParams(String domainParams) throws ParseException, java.text.ParseException {
+		DomainParams params = new DomainParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(domainParams);
+		String schema = (String) jsonParams.get(IRequestParamsNames.SCHEMA);
+		params.setSchema(schema);
+		
+		Long id = (Long) jsonParams.get(IRequestParamsNames.ID);
+		if (id!= null) {
+			params.setId(id.intValue());	
+		}
+		
+		String query = (String) jsonParams.get(IRequestParamsNames.QUERY);
+		if (AonStringUtils.isNotBlank(query)) {
+			params.setQuery(query);
+		}
+
+		Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
+		if (type!= null) {
+			params.setType(type.intValue());	
+		}
+
+		Long parent = (Long) jsonParams.get(IRequestParamsNames.PARENT);
+		if (parent!= null) {
+			params.setParent(parent.intValue());	
+		}
+		
+		Long active = (Long) jsonParams.get(IRequestParamsNames.ACTIVE);
+		if (active != null) {
+			params.setActive(active==1);
+		}
+
+		Long enableHeredity = (Long) jsonParams.get(IRequestParamsNames.ENABLE_HEREDITY);
+		if (enableHeredity != null) {
+			params.setEnableHeredity(enableHeredity==1);
+		}
+		
+		Long domainManagement = (Long) jsonParams.get(IRequestParamsNames.DOMAIN_MANAGEMENT);
+		if (domainManagement != null) {
+			params.setDomainManagement(domainManagement==1);
+		}
+
+		String fromLastAccess = (String) jsonParams.get(IRequestParamsNames.FROM_LAST_ACCESS_DATE);
+		if (AonStringUtils.isNotBlank(fromLastAccess)) {
+			params.setFromLastAccess(FORMATTER.parse(fromLastAccess));			
+		}
+		
+		String toLastAccess = (String) jsonParams.get(IRequestParamsNames.TO_LAST_ACCESS_DATE);
+		if (AonStringUtils.isNotBlank(toLastAccess)) {
+			params.setToLastAccess(FORMATTER.parse(toLastAccess));	
+		}
+
+		String fromExpirationDate = (String) jsonParams.get(IRequestParamsNames.FROM_EXPIRATION_DATE);
+		if (AonStringUtils.isNotBlank(fromExpirationDate)) {
+			params.setFromExpirationDate(FORMATTER.parse(fromExpirationDate));			
+		}
+
+		String toExpirationDate = (String) jsonParams.get(IRequestParamsNames.TO_EXPIRATION_DATE);
+		if (AonStringUtils.isNotBlank(toExpirationDate)) {
+			params.setToExpirationDate(FORMATTER.parse(toExpirationDate));			
+		}
+		
+		return params;
+		
+	}
+	
 }
