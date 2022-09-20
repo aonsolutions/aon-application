@@ -147,11 +147,6 @@ form {
   background-color: #cccccc;
 }
 
-button:disabled, button[disabled]{
-  cursor: not-allowed;
-  background-color: #ccc !important;
-}
-
 .aonColorIcon {
   color: #5f6368;
 }
