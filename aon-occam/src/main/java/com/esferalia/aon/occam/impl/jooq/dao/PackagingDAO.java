@@ -222,7 +222,7 @@ public class PackagingDAO {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
 			return "22" + b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
-		return "22" + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
+		return ""; //"22" + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
 	}
 	
 	private static Date calculateSerialDate(String barcode) {

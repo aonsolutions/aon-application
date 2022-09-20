@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
@@ -21,6 +22,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -37,6 +39,8 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 		public void showError(String message);
 		public void showInfo(String message);
 		public void onDelete(Domain domain, AsyncCallback<Boolean> cbk);
+		public void onChangeActive(Domain domain, AsyncCallback<Domain> cbk);
+		public void onChangeExpirationDate(Domain domain, AsyncCallback<Domain> cbk);
 	}
 	
 	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainTable.class.getName());
@@ -145,12 +149,53 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 		InlineLabel parentIdLabel = new InlineLabel(AonNumberUtils.toString( domain.getParentId()));
 		InlineLabel nameLabel = new InlineLabel(domain.getName());
 		InlineLabel lastAccessLabel = new InlineLabel( domain.getLastAccessDate()==null?"":AON.TIME_FORMAT.format(domain.getLastAccessDate()));
-		InlineLabel expiredLabel = new InlineLabel( domain.getExpirationDate()==null?"":AON.DATE_FORMAT.format(domain.getExpirationDate())); 
+		 
 
-		InlineLabel active = new InlineLabel();
-		active.setTitle( "Activo" );
-		active.setStyleName(AON.CSS.aonIconLabel());
-		active.addStyleName( domain.isActive()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff() );
+		AonTableButton active = new AonTableButton(
+			domain.isActive()?"Activo":"Inactivo"
+			,domain.isActive()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff()		
+		);
+		
+		active.addClickHandler(e -> {
+			AonConfirmDialog acd = new AonConfirmDialog();
+			acd.confirm("Se va a proceder al cambio de estado del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+				, new AonConfirmDialogCallback() {
+				@Override 
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					if (!running) {
+						running = true;
+						callback.onChangeActive( domain , new AsyncCallback<Domain>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								running = false;
+								callback.showError( "No se pudo cambiar el estado del dominio. ("+ caught.getMessage() +")");
+							}
+			
+							@Override
+							public void onSuccess(Domain result) {
+								running = false;
+								domain.setActive(result.isActive());
+								if (result.isActive()) {
+									active.removeStyleName(AON.CSS.aonIconToggleOff());
+									active.addStyleName(AON.CSS.aonIconToggleOn());
+									active.setTitle("Activo");
+								} else {
+									active.removeStyleName(AON.CSS.aonIconToggleOn());
+									active.addStyleName(AON.CSS.aonIconToggleOff());
+									active.setTitle("Inactivo");
+								}
+							}
+							
+						});
+					}
+				}
+			});
+		});
 		
 		InlineLabel domManagement = new InlineLabel();
 		domManagement.setTitle( "Puede crear dominios" );
@@ -164,6 +209,49 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 
 		InlineLabel descriptionLabel = new InlineLabel(AonStringUtils.abbreviate(domain.getDescription(), 50));
 		descriptionLabel.setTitle(domain.getDescription());
+		
+		AonDateBox expiredDateBox = new AonDateBox();
+		expiredDateBox.setValue(domain.getExpirationDate());
+		expiredDateBox.addValueChangeHandler(e ->{
+			AonConfirmDialog acd = new AonConfirmDialog();
+			acd.confirm("Se va a proceder al cambio de fecha de expiraci\u00F3n " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+				, new AonConfirmDialogCallback() {
+				@Override 
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					if (!running) {
+						running = true;
+						domain.setExpirationDate( expiredDateBox.getValue() );
+						callback.onChangeExpirationDate( domain , new AsyncCallback<Domain>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								running = false;
+								callback.showError( "No se pudo cambiar la fecha de expiraci\u00F3n del dominio. ("+ caught.getMessage() +")");
+							}
+			
+							@Override
+							public void onSuccess(Domain result) {
+								running = false;
+								domain.setExpirationDate(result.getExpirationDate());
+								expiredDateBox.setValue(result.getExpirationDate());
+								expiredDateBox.addStyleName(AON.CSS.aonValueChanged());
+								new Timer() {
+									@Override
+									public void run() {
+										expiredDateBox.removeStyleName(AON.CSS.aonValueChanged());
+									}
+								}.schedule(3000);
+							}
+						});
+					}
+				}
+			});
+		});
+
 		
 		FlowPanel buttons = new FlowPanel();
 		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
@@ -205,7 +293,8 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 									parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
 									nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
 									lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
-									expiredLabel.addStyleName(AON.CSS.aonTextLineThrough());
+									expiredDateBox.setEnabled(false);
+									active.setEnabled(false);
 									buttons.clear();
 									Label deletedLabel = new Label("BORRADO");
 									deletedLabel.setStyleName(AON.CSS.aonColorRed());
@@ -232,7 +321,7 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 			.addCell( nameLabel )
 			.addCell( descriptionLabel )
 			.addCell( lastAccessLabel )
-			.addCell( expiredLabel )
+			.addCell( expiredDateBox )
 			.addCell( buttons )
 			;
 	}

@@ -51,8 +51,11 @@ public interface IRequestParamsNames {
 	String DOCUMENT_TYPE = "documentType";
 	String DOMAIN = "domain";
 	String DOMAIN_ID = "domainId";
+	String DOMAIN_MANAGEMENT = "domainManagement";
 	String DOMAIN_NAME = "domainName";
+	String DOMAIN_PARAMS = "domainParams";
 	String DOMAINS = "domains";
+	String ENABLE_HEREDITY = "enableHeredity";
 	String EXPENSES = "expenses";
 	String FARMER_REGIME = "farmerRegime";
 	String FILE_DATA = "fileData";
@@ -60,6 +63,8 @@ public interface IRequestParamsNames {
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
+	String FROM_EXPIRATION_DATE = "fromExpirationDate";
+	String FROM_LAST_ACCESS_DATE = "fromLastAccessDate";
 	String GROUPED_BY = "groupedBy";
 	String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
 	String HEADER_TEXT = "headerText";
@@ -109,6 +114,7 @@ public interface IRequestParamsNames {
 	String PAGE_OFFSET = "pageOffset";
 	String PAGE_OFFSET_TEXT = "pageOffsetText";
 	String PAID = "paid";
+	String PARENT = "parent";
 	String PASS = "pass";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
@@ -118,6 +124,7 @@ public interface IRequestParamsNames {
 	String PERIOD = "period";
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String PRODUCT_ID = "productId";
+	String QUERY = "query";
 	String RECTIFICATION = "rectification";
 	String REFERENCE_CODE = "referenceCode";
 	String REGISTRY_ID = "registryId";
@@ -136,6 +143,8 @@ public interface IRequestParamsNames {
 	String TITLE = "title";
 	String TO_DATE = "toDate";
 	String TO_DUE_DATE = "toDueDate";
+	String TO_EXPIRATION_DATE = "toExpirationDate";
+	String TO_LAST_ACCESS_DATE = "toLastAccessDate";
 	String TYPE = "type";
 	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF)
 	String USER = "user";
@@ -144,6 +153,5 @@ public interface IRequestParamsNames {
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String WITHHOLDING_TYPE = "withholdingType";
 	String WORKPLACE_IDS = "workplaceIds";
-	
 	
 }

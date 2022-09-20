@@ -43,4 +43,18 @@ public class CONSOLE {
 			return getConsole().deleteDomain(consoleParams);
 		}
 	}
+
+	public static Domain changeActive(DomainParams params, Domain domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().changeActive(ctx,domain);
+		}
+	}
+
+	public static Domain changeExpirationDate(DomainParams params, Domain domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().changeExpirationDate(ctx,domain);
+		}
+	}
+	
+	
 }

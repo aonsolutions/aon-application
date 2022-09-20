@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.console;
 
 import java.util.LinkedList;
 
@@ -30,5 +30,15 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException {
 		return CONSOLE.deleteDomain(params, domainId);
+	}
+	
+	@Override
+	public Domain changeActive(DomainParams params, Domain domain) throws AonCoreException {
+		return CONSOLE.changeActive(params, domain);
+	}
+	
+	@Override
+	public Domain changeExpirationDate(DomainParams params, Domain domain) throws AonCoreException {
+		return CONSOLE.changeExpirationDate(params, domain);
 	}
 }
