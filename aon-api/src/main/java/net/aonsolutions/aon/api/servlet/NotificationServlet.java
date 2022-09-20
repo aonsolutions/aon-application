@@ -130,9 +130,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 		Integer page    = params.optInt(IJsonNames.PAGE);
 		Integer perPage = params.optInt(IJsonNames.PER_PAGE);
 		
-		String status = params.optString("status");
-	
-		System.out.println(status);
+		String status = params.optString(IJsonNames.STATUS);
 		
 		AON_SOLUTIONS.getNotificationStream(f -> 
 			f.getAuthProperty().eq(at.getAuth())

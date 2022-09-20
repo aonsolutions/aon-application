@@ -1,7 +1,8 @@
+import { TAG } from "../../environments/environments.js";
 import { waitEl } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
-import * as UTILS from "./accounting-utils.js";
+import * as UTILS from "./AccountingUtils.js";
 
 let selectedElement,
   chartData,
@@ -22,8 +23,7 @@ let selectedElement,
   data2,
   chart,
   options,
-  selAccounts,
-  position = null;
+  selAccounts;
 
 function getArray(selectedColumn) {
   switch (selectedColumn) {
@@ -71,7 +71,10 @@ function getTotalByColumn(selectedColumn) {
   }
 }
 
-export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
+const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe) => {
+  const doc = aonIframe.getDocument();
+  const google = aonIframe.getGoogle();
+
   return new Promise((resolve) => {
     //PARA EL TRIMESTRAL
 
@@ -97,20 +100,15 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
             },
           },
         ];
-        for (let j = 0; j < data.intervals.length; j++) {
-          let interFrom = UTILS.getDateFromString(
-            data.intervals[j].interval.fromDate
-          );
-          let interTo = UTILS.getDateFromString(
-            data.intervals[j].interval.toDate
-          );
+        for (const element of data.intervals) {
+          let interFrom = UTILS.getDateFromString(element.interval.fromDate);
+          let interTo = UTILS.getDateFromString(element.interval.toDate);
 
           if (interFrom.getTime() != interTo.getTime() && dteFrom <= interFrom && dteTo >= interTo) {
-            data.intervals[j].statements.forEach((stm) => {
-              let repeatedAccount = stmnts.filter(
-                (st) =>
-                  JSON.stringify(st.account) == JSON.stringify(stm.account)
-              );
+            element.statements.forEach((stm) => {
+              let repeatedAccount = stmnts
+              .filter((st) =>JSON.stringify(st.account) == JSON.stringify(stm.account));
+
               if (repeatedAccount.length > 0) {
                 repeatedAccount[0].debit = repeatedAccount[0].debit + stm.debit;
                 repeatedAccount[0].credit = repeatedAccount[0].credit + stm.credit;
@@ -156,13 +154,10 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     } else if (data.intervals && filter && filter.show === "yearly") {
       accounts = data.intervals || [];
 
-      selectedElement = accounts.filter((acc) =>
-        /31\/12\/d*/.test(acc.interval.fromDate)
-      )[0];
+      selectedElement = accounts.filter((acc) =>/31\/12\/d*/.test(acc.interval.fromDate))[0];
     } else {
       accounts = data.intervals || [];
     }
-
 
     accounts = UTILS.getOnly6and7(accounts);
 
@@ -175,15 +170,11 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         ];
 
         if (accounts != null) {
-          let elements = accounts.filter(
-            (acc) => acc.interval.fromDate != acc.interval.toDate
-          );
+          let elements = accounts.filter((acc) => acc.interval.fromDate != acc.interval.toDate);
 
           if (elements != null) {
             elements.forEach((element) => {
-              let result = element.statements.filter(
-                (st) => st.account.type == "RESULT"
-              )[0];
+              let result = element.statements.filter((st) => st.account.type == "RESULT")[0];
 
               let total = result.credit - result.debit;
               let entry = [
@@ -198,7 +189,6 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         }
 
         let table = google.visualization.arrayToDataTable(chartData);
-        position = isMobile ? "none" : "right";
         let options = {
           title: `Resultados ${selectedPeriod.name}`,
           vAxis: { title: "Cantidad (€)" },
@@ -222,23 +212,23 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         let trialToolbarHeader = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
 
-        if (trialToolbarHeader)
+        if (trialToolbarHeader){
           trialToolbarHeader.style.display = "none";
-
+        }
+        
         chart.draw(table, options);
 
         let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
         div.appendChild(mobileLegend);
         if (isMobile) {
-
           let firstChild = divCombo.querySelector(":nth-child(1)");
-          if (firstChild)
+          if (firstChild){
             firstChild.style.marginLeft = "8%";
-          
-            divCombo.style.overflow = "hidden";
+          }
+          divCombo.style.overflow = "hidden";
         }
       } else {
-        let divMessage = setStyles(document.createElement("div"), {
+        let divMessage = setStyles(document.createElement(TAG.DIV), {
           display : "flex", justifyContent : "center", alignItems : "center", paddingTop : "1.5em", maxWidth : "90%"
         });
 
@@ -247,7 +237,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
         setStyles(message, {textAlign : "center", margin : "10%"});
 
-        let infoSpan = setStyles(document.createElement("span"), {
+        let infoSpan = setStyles(document.createElement(TAG.SPAN), {
           fontSize : isMobile ? "2em" : "3.5em",
           display : isMobile ? "block" : "",
           marginRight : "10px"
@@ -260,10 +250,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         div.appendChild(divMessage);
 
-        let elem = document
-        .getElementById(
-          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-        );
+        let elem = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
 
         if (elem) {
           elem.onclick = () => {
@@ -377,12 +364,13 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         pieDiv.style.width = isMobile ? "100%" : "55%";
 
-        var chart2 = new google.visualization.PieChart(pieDiv);
+        let chart2 = new google.visualization.PieChart(pieDiv);
 
         let legend = setStyles(document.createElement("table"), {
           padding : "10px",
           marginTop : "auto",
-          marginBottom : "auto"
+          marginBottom : "auto",
+          zIndex :1
         });
         legend.id = "legend";
 
@@ -459,33 +447,33 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         div.innerHTML = "";
         div.appendChild(pieDiv);
         div.appendChild(legend);
-        setStyles(div, {margin : "3em auto"});
+        // setStyles(div, {margin : "3em auto"});
         chart2.draw(data2, opt);
 
         if (isMobile) {
           let ratio = window.innerWidth / window.innerHeight;
 
-          let marg = ratio <= 1 ? -1 * 35 * (1 - ratio) * 1.8 : 0;
+          let marg = ratio <= 1 ? -1 * 35 * (1 - ratio) * 1.5 : 0;
 
-          let firstOfPie = document.querySelector("#pieDiv > div:first-of-type");
+          let firstOfPie = pieDiv.querySelector("div:first-of-type");
 
           if (firstOfPie) {
             firstOfPie.style.overflow = "hidden";
 
-            let firstOfPieSub = document.querySelector("#pieDiv > div:first-of-type > div:first-of-type");
+            let firstOfPieSub = pieDiv.querySelector("div:first-of-type > div:first-of-type");
 
             if (firstOfPieSub) {
               firstOfPieSub.style.marginTop = `${marg}%`;
               firstOfPieSub.style.marginBottom = `${marg}%`;
             }
 
-
           }
         }
 
         pieDiv.prepend(head);
-        if (pieDiv)
-          waitEl(`#${pieDiv.id} svg g:last-child`).then(el => el.style.pointerEvents = "none").catch(err => null);
+        if (pieDiv){
+          waitEl(`#${pieDiv.id} svg g:last-child`, doc).then(el => el.style.pointerEvents = "none").catch(err => null);
+        }
       }
     }
 
@@ -615,7 +603,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
         message.style.margin = "10%";
 
-        let infoSpan = setStyles(document.createElement("span"), {
+        let infoSpan = setStyles(document.createElement(TAG.SPAN), {
           fontSize : isMobile ? "2em" : "3.5em",
           display : isMobile ? "block" : "",
           marginRight : "10px"
@@ -629,16 +617,15 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         div.appendChild(divMessage);
 
-        let elem = document
-        .getElementById(
-          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-        );
+        let elem = document.getElementById( "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
+
         if (elem) {
           elem.onclick = () => {
             drawChart();
             let elemChild = document.querySelector("#aonAccountingSidenavOPCIONESList li:nth-child(1)");
-            if (elemChild)
+            if (elemChild){
               elemChild.click();
+            }
           };
         }
       }
@@ -656,10 +643,6 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         });
         trialToolbarH.style.display = filter && filter.show == "yearly" ? "none" : "";
       }
-
-
-
-
 
       data1 = new google.visualization.DataTable();
       data1.addColumn("string", "Concepto");
@@ -742,7 +725,6 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           { v: liquid, f: UTILS.formatNumber(liquid) + " €" },
         ],
       ]);
-      let formatter = Intl.DateTimeFormat("es");
 
       let sDteStr = selectedElement.interval.fromDate;
       let eDteStr = selectedElement.interval.toDate;
@@ -771,9 +753,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
       if (isMobile) {
         let childone = div.querySelector(":nth-child(1)");
-        if (childone)
+        if (childone){
           childone.style.marginLeft = "15%";
-        div.style.overflow = "hidden";
+        }
       }
 
       //Adding listener
@@ -786,8 +768,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
     function getColLegend(isMobile) {
       //LEGEND
+      let legend = setStyles(document.createElement(TAG.TABLE), {marginTop : "auto", marginBottom : "auto"});
 
-      let legend = setStyles(document.createElement("table"), {marginTop : "auto", marginBottom : "auto"});
       const colorSize = 15;
       const legendColData = [
         {
@@ -860,8 +842,10 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         trCateg.appendChild(tdCategDesc);
 
-        let tdCategAmount = setStyles(document.createElement("td"), 
-        {textAlign : "right", width : "9em"});
+        let tdCategAmount = setStyles(document.createElement("td"), {
+          textAlign : "right", 
+          width : "9em"
+        });
 
         tdCategAmount.innerHTML = `${UTILS.formatNumber(categ.amount)} €`;
 
@@ -884,3 +868,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     }
   });
 };
+
+export const AccoutingChart = {
+  colChart
+}

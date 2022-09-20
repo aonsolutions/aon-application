@@ -21,7 +21,7 @@ import {
   PAYROLL_VIEWS,
 } from "../PayrollEnums.js";
 import { CompanyPieChart } from "./CompanyPieChart.js";
-import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
@@ -154,15 +154,21 @@ export class AonCompanyCostsList extends AonElement {
       aonIframe.clearContent();
     }
 
+
+    const main = document.createElement(TAG.DIV);
+    main.style.textAlign = "center";
+    main.style.height    = "100%";
+    main.style.overflowY = "auto";
+    main.className = CSS.MATERIAL_SCROLL;
+    aonIframe.setContent(main);
+
     //-----TITLE--------------
     let divTitle = this.createElement(TAG.DIV);
-    divTitle.id = this.id + "Title";
     divTitle.style.color  = "grey";
     divTitle.style.fontWeight ="500";
     divTitle.style.margin = "20px";
-    divTitle.style.textAlign = "center";
     divTitle.style.marginBottom = 0;
-    aonIframe.addContent(divTitle);
+    main.appendChild(divTitle);
 
     try {
       const data = await this.getData();
@@ -177,14 +183,17 @@ export class AonCompanyCostsList extends AonElement {
         let div = this.createElement(TAG.DIV);
         div.id = this.id+ "pieChart";
         div.style.textAlign = "center";
-        div.innerHTML = "";
-        aonIframe.addContent(div);
+        main.appendChild(div);
       
         const resp = await CompanyPieChart.paintPieChart(this, data, div, aonIframe);
         
         total = resp.total;
 
         workplaceText = resp.workplaceText;
+
+
+        CompanyPieChart.createButton(main, aonIframe, this);
+        
       }
 
       let startDateText = AonDateUtils.getMonthYear(startDate),

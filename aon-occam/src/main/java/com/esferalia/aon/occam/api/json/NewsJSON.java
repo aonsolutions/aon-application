@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -31,8 +32,8 @@ public class NewsJSON {
 			.setUrl(json.optString(IJsonNames.URL))
 			.setActive(json.optBoolean(IJsonNames.ACTIVE))
 			.setRss(json.optBoolean(IJsonNames.RSS))
-			.setInitDate(JsonUtils.getDate(json, "initDate"))
-			.setEndDate(JsonUtils.getDate(json, "endDate"))
+			.setInitDate(!json.isNull("initDate") ? new Date(json.optLong("initDate")) : null)
+			.setEndDate(!json.isNull("endDate") ? new Date(json.optLong("endDate")) : null)
 			.setType( NewsType.safeValueOf(json.optString(IJsonNames.TYPE))) 
 			.setCategory(!json.optString(IJsonNames.CATEGORY).isEmpty() ? CategoryJSON.fromJSON(json.optJSONObject(IJsonNames.CATEGORY)) : null)
 			.setScope(!json.optString(IJsonNames.SCOPE).isEmpty() ? ScopeJSON.fromJSON(json.optJSONObject(IJsonNames.SCOPE))  : null )

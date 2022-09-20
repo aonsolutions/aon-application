@@ -3,6 +3,7 @@ package com.code.aon.ui.help.controller;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -322,9 +323,19 @@ public class HelpController implements Serializable {
 		Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(DomainManager.getCurrentDomain());
 		User user = new User().setName(AonUtil.getRemoteUser());
 		
+		Timestamp now = new Timestamp(new Date().getTime());
+		
 		Map<String, List<News>> newsMap = new LinkedHashMap<>();
 		AON_SOLUTIONS
-		.getNewsStream(domain, user, f -> f.getDomainProperty().eq(domain.getId()).and(f.getCategoryProperty().isNotNull()).and(f.getTypeProperty().eq(NewsType.COMMUNICATION.value())))
+		.getNewsStream(domain,
+				user,
+				f -> f.getDomainProperty().eq(domain.getId())//SAME DOMAIN
+					  .and(f.getCategoryProperty().isNotNull())//CATEGORY NOT NULL
+					  .and(f.getTypeProperty().eq(NewsType.COMMUNICATION.value()))//MUST BE OF TYPE 'COMMUNICATION'
+					  .and(f.getInitDateProperty().isNotNull().and(f.getInitDateProperty().le(now)))//INIT DATE NOT NULL AND LOWER THAN TODAY
+					  .and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now)))//END DATE NULL OR HIGHER THAN TODAY
+					  
+		)
 		.sorted((news1, news2) -> {
 			Date n1 = news1.getInitDate().orElse(null);
 			Date n2 = news2.getInitDate().orElse(null);
@@ -381,7 +392,6 @@ public class HelpController implements Serializable {
 	}
 	
 	public String formatDate(News news) {
-		String publicadoHace = "Publicado hace: ";
 		Optional<Date> optDate = news.getInitDate();
 		if (optDate.isEmpty()) {
 			return "";
@@ -405,21 +415,15 @@ public class HelpController implements Serializable {
 		double hoursDiff = millisDiff / (1000*60*60d);
 		double daysDiff = hoursDiff / 24;
 		double weeksDiff = daysDiff / 7;
-		double monthsDiff = weeksDiff / 30;
-		double yearsDiff = monthsDiff / 365;
 		
-		if (yearsDiff >= 1) {
-			int years = (int) yearsDiff;
-			return publicadoHace + years + (years > 1 ? " años" : " año");
-		} else if (monthsDiff >= 1) {
-			int months = (int) monthsDiff;
-			return publicadoHace + months + (months > 1 ? " meses" : " mes");
-		} else if (weeksDiff >= 1) {
-			int weeks = (int) weeksDiff;
-			return publicadoHace + weeks + (weeks > 1 ? " semanas" : " semana");
+		
+		
+		if (weeksDiff >= 1) {
+			String simpleDate = AonDateUtils.format(date, AonDateUtils.SIMPLE_DATE_FORMAT);
+			return String.format(tyFormat, "el " + simpleDate, airedHour, airedMinute);
 		} else if (daysDiff >= 1) {
-			int days = (int) daysDiff;
-			return publicadoHace + days + (days > 1 ? " días" : " día");
+			String weekDay = AonDateUtils.format(date, "EEEEEEEEEE");
+			return String.format(tyFormat, "el " + weekDay, airedHour, airedMinute);
 		} else {
 			String airedDate = AonDateUtils.format(date, AonDateUtils.SIMPLE_DATE_FORMAT);
 			return String.format(tyFormat, "el " + airedDate, airedHour, airedMinute);

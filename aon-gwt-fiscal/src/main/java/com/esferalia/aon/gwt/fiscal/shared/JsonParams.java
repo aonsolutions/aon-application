@@ -4,11 +4,13 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -247,6 +249,24 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.REFERENCE_CODE,AonStringUtils.isBlank(params.getReferenceCode())? JSON_NULL : new JSONString( params.getReferenceCode()));
 		json.put(IRequestParamsNames.PAY_METHOD	,params.getPayMethod() 		== null? JSON_NULL : new JSONNumber( params.getPayMethod()));		
 		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));		
+		return json.toString();
+	}
+
+	public static String convert(DomainParams params) {
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.SCHEMA	,AonStringUtils.isBlank(params.getSchema())? JSON_NULL : new JSONString( params.getSchema()));
+		json.put(IRequestParamsNames.ID		,params.getId()	== null? JSON_NULL : new JSONNumber( params.getId()));
+		json.put(IRequestParamsNames.QUERY	,AonStringUtils.isBlank(params.getQuery())? JSON_NULL : new JSONString( params.getQuery()));
+		json.put(IRequestParamsNames.TYPE	,params.getType()	== null? JSON_NULL : new JSONNumber( params.getType()));
+		json.put(IRequestParamsNames.PARENT	,params.getParent()	== null? JSON_NULL : new JSONNumber( params.getParent()));
+		json.put(IRequestParamsNames.ACTIVE	,params.getActive()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger( params.getActive())));
+		json.put(IRequestParamsNames.ENABLE_HEREDITY,params.getEnableHeredity()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger(params.getEnableHeredity())));
+		json.put(IRequestParamsNames.DOMAIN_MANAGEMENT,params.getDomainManagement()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger(params.getDomainManagement()) ));
+		json.put(IRequestParamsNames.FROM_LAST_ACCESS_DATE,params.getFromLastAccess() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromLastAccess())));
+		json.put(IRequestParamsNames.TO_LAST_ACCESS_DATE,params.getToLastAccess()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToLastAccess())));
+		json.put(IRequestParamsNames.FROM_EXPIRATION_DATE,params.getFromExpirationDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromExpirationDate())));
+		json.put(IRequestParamsNames.TO_EXPIRATION_DATE,params.getToExpirationDate()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToExpirationDate())));
 		return json.toString();
 	}
 }

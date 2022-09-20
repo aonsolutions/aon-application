@@ -178,6 +178,13 @@ public abstract class AbsExcelAction  {
 		return cell;
 	}
 
+	protected Cell addCell(boolean bool) {
+		Cell cell = row.createCell(cellCount++);
+		cell.setCellValue(bool?"SI":"NO");
+		cell.setCellType(CellType.STRING);
+		return cell;
+	}
+
 	public void finalize(OutputStream out) throws IOException {
 		workbook.write(out);
 		
