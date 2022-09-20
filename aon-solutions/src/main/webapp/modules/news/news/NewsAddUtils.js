@@ -90,7 +90,7 @@ const buildFormGeneral = (parent, news) => {
         news.setDescription(target.value);
     });
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_8]})
     divC.appendTo(parent);
     const initDate = CreateComponent.createAonDate({
         attributes:{
@@ -105,11 +105,32 @@ const buildFormGeneral = (parent, news) => {
         }
     }, divC.element);
 
+
     if(news.getInitDate()){
         initDate.value = new Date(news.getInitDate())
     }
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_4]})
+    divC.appendTo(parent);
+    const initDateTime = CreateComponent.createAonInput({
+        attributes:{
+            name:"init_date_time",
+            id:"init_date_time",
+            description:MSG.HOUR,
+            type:"time"
+        }, events:{
+            change: ({target}) => {
+                news.setInitDateTime(target.value);
+            }
+        }
+    }, divC.element);
+
+
+    if(news.getInitDateTime()){
+        initDateTime.value = news.getInitDateTime();
+    }
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_8]})
     divC.appendTo(parent);
     const endDate = CreateComponent.createAonDate({
         attributes:{
@@ -127,6 +148,27 @@ const buildFormGeneral = (parent, news) => {
     if(news.getEndDate()){
         endDate.value = new Date(news.getEndDate())
     }
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_4]})
+    divC.appendTo(parent);
+    const endDateTime = CreateComponent.createAonInput({
+        attributes:{
+            name:"end_date_time",
+            id:"end_date_time",
+            description:MSG.HOUR,
+            type:"time"
+        }, events:{
+            change: ({target}) => {
+              news.setEndDateTime(target.value);
+            }
+        }
+    }, divC.element);
+
+
+    if(news.getEndDateTime()){
+        endDateTime.value = news.getEndDateTime();
+    }
+
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
@@ -146,10 +188,10 @@ const buildFormGeneral = (parent, news) => {
       },
       divC.element
     );
-    
-    buildUnloadFile(parent, news);
 
     // AonUpload
+    buildUnloadFile(parent, news);
+
     news.setType("COMMUNICATION");
 
     // buildNews(parent, true);
