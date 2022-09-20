@@ -1,8 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
-import { TAG } from "../../environments/environments.js";
-
+import { CSS, TAG, EVENT } from "../../environments/environments.js";
 import { isEmptyObject } from "../../services/utils.js";
-import { colChart } from "./charts.js";
+import { AccoutingChart } from "./AccoutingChart.js";
 import {
   getAccounting,
   getPeriods,
@@ -12,6 +11,7 @@ import "../../components/aon-filter.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { getPeriodAccounting } from "../../services/service.js";
 import { ToolbarType } from "../../models/enums.js";
+import { AonIframe } from "../../components/aon-iframe.js";
 import * as ACTION from "../actions.js";
 
 export class AonGraphicsTrial extends AonElement {
@@ -40,7 +40,6 @@ export class AonGraphicsTrial extends AonElement {
     super();
     this.id = this.id || "aonGraphicsTrial";
     this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
   }
 
   connectedCallback() {
@@ -67,15 +66,16 @@ export class AonGraphicsTrial extends AonElement {
     this.innerHTML = `
     <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Pérdidas y Ganancias"> </aon-toolbar>
     <aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    this.PERIODS = await getPeriods(this.params).catch((error) => {console.log(error);return []});
 
-    let lastDateTime = Math.max.apply(
-      null,
-      this.PERIODS.map((p) => new Date(p.initiationDate).getTime())
-    );
-    let lastPeriod = this.PERIODS.filter(
-      (p) => new Date(p.initiationDate).getTime() == lastDateTime
-    )[0];
+    this.PERIODS = await getPeriods(this.params)
+    .catch((error) => {
+      console.log(error);
+      return [];
+    });
+
+    let lastDateTime = Math.max.apply(null,this.PERIODS.map((p) => new Date(p.initiationDate).getTime()) );
+    let lastPeriod = this.PERIODS.find((p) => new Date(p.initiationDate).getTime() == lastDateTime );
+
     this.selectedPeriod = lastPeriod;
 
     this.buildToolbar();
@@ -83,18 +83,18 @@ export class AonGraphicsTrial extends AonElement {
     await this.buildFilter();
 
     this.draw();
-    if (this.selectedPeriod)
+    if (this.selectedPeriod){
       this.getElement("year").value = this.selectedPeriod.id;
+    }
 
-    this.getElement("show").value =
-      this.filter != null ? this.filter.show : "yearly";
+    this.getElement("show").value = this.filter != null ? this.filter.show : "yearly";
     this.getElement("detail").value = this.params.level;
   }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () =>
       filterEl.openFilter()
     );
   }
@@ -112,7 +112,6 @@ export class AonGraphicsTrial extends AonElement {
       if (detail) {
         this.filter = detail;
         this.build();
-        // this.applicationParentEl.setDataFilter(detail);
       }
     });
 
@@ -120,10 +119,10 @@ export class AonGraphicsTrial extends AonElement {
     let yearEl = this.getElement("year");
     let years = [];
 
-    for (let i = 0; i < this.PERIODS.length; i++) {
+    for (const element of this.PERIODS) {
       years.push({
-        name: this.PERIODS[i].name,
-        value: this.PERIODS[i].id,
+        name: element.name,
+        value: element.id,
       });
     }
     yearEl.options = JSON.stringify(years);
@@ -151,23 +150,40 @@ export class AonGraphicsTrial extends AonElement {
   }
 
   async draw() {
-    // this.getApplication().startLoader();
 
-    let id = "chart_div";
+    const id = "chart_div";
+
+    const iframeId = this.id+ "Iframe";
+    let aonIframe = this.getElement(iframeId);
+    if(!aonIframe){
+      aonIframe =  new AonIframe();
+      aonIframe.id = iframeId;
+      this.appendChild(aonIframe);
+      await aonIframe.load();
+    } else {
+      aonIframe.clearContent();
+    }
+
+    this.getApplicationParent().loader(`#${id}`, aonIframe.getDocument());
 
     const result = await this.getData();
     if (result) {
-      let div = this.getElement(id) || this.createElement(TAG.DIV);
+      await aonIframe.loadChart();
+
+      let div = this.createElement(TAG.DIV);
       div.innerHTML = "";
       div.id = id;
       div.style.textAlign = "center";
       div.style.display = "flex";
       div.style.justifyContent = "center";
       div.style.flexWrap = "wrap";
-      this.appendChild(div);
-      div.style.margin = "auto";
+      div.style.overflowY = "auto";
+      div.style.height = "100%";
+      div.className = CSS.MATERIAL_SCROLL;
 
-      colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
+      aonIframe.addContent(div);
+
+      AccoutingChart.colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter,  aonIframe);
 
       let sidenavBaseId = null;
       try {
@@ -177,60 +193,45 @@ export class AonGraphicsTrial extends AonElement {
       }
 
       const el1 = this.getElement(`${sidenavBaseId}VistaTrimestral`);
+      if (el1){
+        el1.addEventListener(EVENT.CLICK, () => this.goChart(div, result, aonIframe, "quarterly"));
+      }
+
       const el2 = this.getElement(`${sidenavBaseId}VistaAnual`);
+      if (el2){
+        el2.addEventListener(EVENT.CLICK, () => this.goChart(div, result, aonIframe, "yearly"));
+      }
+       
       const el3 = this.getElement(`${sidenavBaseId}VistaMensual`);
-      
-      if (el1)
-        el1.addEventListener("click", () => {
-          if (!this.filter) this.filter = new Object();
-          div.innerHTML = "";
-          this.filter.show = "quarterly";
-          this.getElement("show").value = this.filter.show;
-          colChart(
-            div,
-            result,
-            this.selectedPeriod,
-            this.isMobile(),
-            this.filter
-          );
-        });
-      if (el2)
-        el2.addEventListener("click", () => {
-          if (!this.filter) this.filter = new Object();
-          div.innerHTML = "";
-          this.filter.show = "yearly";
-          this.getElement("show").value = this.filter.show;
-          colChart(
-            div,
-            result,
-            this.selectedPeriod,
-            this.isMobile(),
-            this.filter
-          );
-        });
-      if (el3)
-        el3.addEventListener("click", () => {
-          if (!this.filter) this.filter = new Object();
-          div.innerHTML = "";
-          this.filter.show = "monthly";
-          this.getElement("show").value = this.filter.show;
-          colChart(
-            div,
-            result,
-            this.selectedPeriod,
-            this.isMobile(),
-            this.filter
-          );
-        });
+      if (el3){
+        el3.addEventListener(EVENT.CLICK, () =>  this.goChart(div, result, aonIframe, "monthly"));
+      }
     }
-    // this.getApplication().stopLoader();
+  }
+  
+  goChart(parent, result, aonIframe, showFilter){
+    parent.innerHTML = "";
+
+    if (!this.filter) {
+      this.filter = new Object();
+    }
+   
+    this.filter.show = showFilter;
+    this.getElement("show").value = showFilter;
+
+    AccoutingChart.colChart(
+      parent,
+      result,
+      this.selectedPeriod,
+      this.isMobile(),
+      this.filter,
+      aonIframe
+    );
   }
 
-  getData = async () => {
+  async getData() {
     if (this.filter) {
-      this.selectedPeriod = this.PERIODS.filter(
-        (p) => p.id == this.filter.year
-      )[0];
+      this.selectedPeriod = this.PERIODS.find((p) => p.id == this.filter.year);
       this.params.level = this.filter.detail;
     }
 
@@ -241,9 +242,7 @@ export class AonGraphicsTrial extends AonElement {
         this.params.fromDate = this.selectedPeriod.initiationDate;
         this.params.toDate = this.selectedPeriod.deadline;
       }
-      this.ACCOUNTS = await getAccounting(this.params).catch((error) => null);
-      console.log(this.PERIODS);
-      console.log(this.ACCOUNTS);
+      this.ACCOUNTS = await getAccounting(this.params).catch(() => null);
     }
 
     return this.ACCOUNTS;

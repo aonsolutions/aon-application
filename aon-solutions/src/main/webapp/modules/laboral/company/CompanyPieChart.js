@@ -73,20 +73,6 @@ const paintPieChart = async (aonCompanyCostsList, data, parent, aonIframe) => {
 
   await addLegend(parent, aonIframe, newData, newColor, (evClick)=>console.log(evClick));
 
-  //----CREATE BUTTON NOMINAS 
-
-  let button = aonIframe.getDocument().createElement(TAG.BUTTON);
-  button.className = CSS.AON_BUTTON;
-  button.id = `${aonCompanyCostsList.id}Nomina`;
-  button.innerHTML = MSG.VIEW_PAYROLLS;
-  button.style.marginTop = "10px";
-  parent.appendChild(button);
-
-  button.onclick = () => {
-    console.log("click");
-    aonCompanyCostsList.getApplicationParent().showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
-  }
-
   const workplaceEl = document.querySelector('#workplace').querySelector('LI');
 
   const workplaceText = workplaceEl && workplaceEl.textContent ? workplaceEl.textContent+": " : "";
@@ -97,6 +83,21 @@ const paintPieChart = async (aonCompanyCostsList, data, parent, aonIframe) => {
   }
 
 };
+
+const createButton = (parent, aonIframe, aonCompanyCostsList)=>{
+   //----CREATE BUTTON NOMINAS 
+
+   let button = aonIframe.getDocument().createElement(TAG.BUTTON);
+   button.className = CSS.AON_BUTTON;
+   button.id = `${aonCompanyCostsList.id}Nomina`;
+   button.innerHTML = MSG.VIEW_PAYROLLS;
+   button.style.marginTop = "10px";
+   parent.appendChild(button);
+ 
+   button.onclick = () => {
+     aonCompanyCostsList.getApplicationParent().showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
+   }
+}
 
 
 
@@ -214,5 +215,6 @@ const addTrTableLegend = (data, tbody, document) => {
 
 
 export const CompanyPieChart = {
-  paintPieChart
+  paintPieChart,
+  createButton
 }
