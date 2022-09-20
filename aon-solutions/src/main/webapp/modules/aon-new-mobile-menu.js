@@ -17,6 +17,9 @@ import { AonInvoicePanel } from "./invoice/aon-invoice-panel.js";
 import { AonMessenger } from "./messenger/aon-messenger.js";
 import { TASK_SOURCE } from "./messenger/MessengerEnums.js";
 import { AonDocumental } from "./documental/aon-documental.js";
+import { AonWarehouse } from "./warehouse/aon-warehouse.js";
+
+import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
 
 export class AonNewMobileMenu extends AonElement {
 
@@ -269,87 +272,111 @@ export class AonNewMobileMenu extends AonElement {
     const isInvoice = this.getDur().isInvoice();
     const isMessenger = this.getDur().isMessenger();
     const isDocumentalManager = this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager();
+    const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 
-    let buttons = [
-      {
-        title:"Nueva factura",
-        icon: 'add',
-        permission: isInvoice,
-        backgroundColor: "#4472C4",
-        fn :  () => {
-          if(isInvoice){
-            dialog.close();
-            let aonComponent = new AonInvoicePanel();
-            aonComponent.invoice = {type:"emitida"};
-            this.rootPanel(aonComponent);
-          }
-        }
-      },
-      {
-        title:"Subir factura",
-        icon: 'upload',
-        permission: isInvoice,
-        backgroundColor: "#4472C4",
-        fn :  (ev) => {
-          if(isInvoice){
-            dialog.close();
-            ev.preventDefault();
-            this.addInvoiceFile();
-          }
-        }
-      },
-      {
-        title:"Foto factura",
-        icon: 'photo_camera',
-        permission: isInvoice,
-        backgroundColor: "#4472C4",
-        fn :  () => {
-          if(isInvoice){
-            dialog.close();
-            this.openCamera("invoice");
-          }
-        }
-      },
-      {
-        title:"Nueva solicitud",
-        icon: 'add',
-        permission: isMessenger,
-        backgroundColor: "#1fd8b9",
-        fn :  () => {
-          if(isMessenger){
-            dialog.close();
-            let aonComponent = new AonMessenger();	
-            aonComponent.data = {source:TASK_SOURCE.QUERY};
-            this.rootPanel(aonComponent);
-          }
-        }
-      },
-      {
-        icon: 'upload',
-        title:"Subir documento",
-        permission: isDocumentalManager,
-        backgroundColor: "#6986BB",
-        fn :  () => {
-          if(isDocumentalManager){
-            dialog.close();
-            this.addDocumentFile();
-          }
-        }
-      },
-      {
-        title:"Foto documento",
-        icon: 'photo_camera',
-        permission: isDocumentalManager,
-        backgroundColor: "#6986BB",
-        fn :  () => {
-          if(isDocumentalManager){
-            dialog.close();
-            this.openCamera("documental");
-          }
-        }
-      },
-    ];
 
+    const newInvoice = {
+      title:"Nueva factura",
+      icon: 'add',
+      permission: isInvoice,
+      backgroundColor: "#4472C4",
+      fn :  () => {
+        if(isInvoice){
+          dialog.close();
+          let aonComponent = new AonInvoicePanel();
+          aonComponent.invoice = {type:"emitida"};
+          this.rootPanel(aonComponent);
+        }
+      }
+    };
+
+    const uploadInvoice = {
+      title:"Subir factura",
+      icon: 'upload',
+      permission: isInvoice,
+      backgroundColor: "#4472C4",
+      fn :  (ev) => {
+        if(isInvoice){
+          dialog.close();
+          ev.preventDefault();
+          this.addInvoiceFile();
+        }
+      }
+    };
+
+    const photoInvoice = {
+      title:"Foto factura",
+      icon: 'photo_camera',
+      permission: isInvoice,
+      backgroundColor: "#4472C4",
+      fn :  () => {
+        if(isInvoice){
+          dialog.close();
+          this.openCamera("invoice");
+        }
+      }
+    };
+
+    const newMessenger = {
+      title:"Nueva solicitud",
+      icon: 'add',
+      permission: isMessenger,
+      backgroundColor: "#1fd8b9",
+      fn :  () => {
+        if(isMessenger){
+          dialog.close();
+          let aonComponent = new AonMessenger();	
+          aonComponent.data = {source:TASK_SOURCE.QUERY};
+          this.rootPanel(aonComponent);
+        }
+      }
+    };
+
+    const uploadDocument = {
+      icon: 'upload',
+      title:"Subir documento",
+      permission: isDocumentalManager,
+      backgroundColor: "#6986BB",
+      fn :  () => {
+        if(isDocumentalManager){
+          dialog.close();
+          this.addDocumentFile();
+        }
+      }
+    }
+
+    const photoDocument = {
+      title:"Foto documento",
+      icon: 'photo_camera',
+      permission: isDocumentalManager,
+      backgroundColor: "#6986BB",
+      fn :  () => {
+        if(isDocumentalManager){
+          dialog.close();
+          this.openCamera("documental");
+        }
+      }
+    };
+
+    const newPackaging = {
+      title:'Nuevo Empaquetado',
+      icon: 'add',
+      permission: isUdapa,
+      backgroundColor: "#002469",
+      fn :  () => {
+        if(isUdapa){
+          dialog.close();
+          let aonComponent = new  AonWarehouse();
+          aonComponent.setOption(WAREHOUSE_OPTION.PACKAGING);
+          this.rootPanel(aonComponent);
+        }
+      }
+    };
+    
+    let buttons = [newInvoice, uploadInvoice, photoInvoice, newMessenger, uploadDocument, photoDocument];
+    if(isUdapa) {
+      buttons = [newInvoice, uploadInvoice, photoInvoice, newPackaging, uploadDocument, photoDocument];
+    }
     dialog.addButtons(buttons);
   }
 
