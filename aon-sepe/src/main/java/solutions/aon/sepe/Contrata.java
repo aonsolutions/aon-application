@@ -2004,29 +2004,38 @@ public class Contrata {
 
 	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto)
 			throws ElementNotFoundException, IOException, SepeException {
+		
 		String href = null;
-		String oneCodCto = codCto.substring(0, 1);
-		switch (oneCodCto) {
-		case "1": // INDEFINIDO_TIEMPO_COMPLETO
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=1";
-			break;
-		case "2": // INDEFINIDO_TIEMPO_PARCIAL
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=2";
-			break;
-		case "3": // FIJO_DISCONTINUO
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=3";
-			break;
-		case "4": // TEMPORAL_TIEMPO_COMPLETO
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=4";
-			break;
-		case "5": // TEMPORAL_TIEMPO_PARCIAL
-			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=5";
-			break;
-		default:
-			throw new SepeException("Contrato no soportado");
+
+		if(Arrays.asList("421", "450").contains(codCto)) { // Formación en alternancia tiempo completo
+			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
+		} else if(codCto.equals("420")) { //Formativo para la obtención de la práctica profesional tiempo completo
+			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
+		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtención de la práctica profesional tiempo parcial
+			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
+		} else {
+			String oneCodCto = codCto.substring(0, 1);
+			switch (oneCodCto) {
+			case "1": // INDEFINIDO_TIEMPO_COMPLETO
+				href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=1";
+				break;
+			case "2": // INDEFINIDO_TIEMPO_PARCIAL
+				href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=2";
+				break;
+			case "3": // FIJO_DISCONTINUO
+				href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=3";
+				break;
+			case "4": // TEMPORAL_TIEMPO_COMPLETO
+				href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=4";
+				break;
+			case "5": // TEMPORAL_TIEMPO_PARCIAL
+				href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=5";
+				break;
+			default:
+				throw new SepeException("Contrato no soportado");
+			}
 		}
-		// /ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7 // FP TC
-		// /ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8 // FP TP
+			
 		htmlPage = htmlPage.getAnchorByHref(href).click();
 		return htmlPage;
 	}

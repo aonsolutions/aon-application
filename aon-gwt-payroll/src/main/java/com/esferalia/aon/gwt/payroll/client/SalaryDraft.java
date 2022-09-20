@@ -264,6 +264,7 @@ public class SalaryDraft extends ResizeComposite
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 	private static final String PORCENTAJE_CGC = "PORCENTAJE_CGC";
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
+	private static final String PORCENTAJE_DESMPL_E = "PORCENTAJE_DESMPL_E";
 	private static final String PORCENTAJE_FOGASA = "PORCENTAJE_FOGASA";
 	private static final String PORCENTAJE_SHORT = "PORCENTAJE_CORTA_DURACION";
 	private static final String PORCENTAJE_OFF = "PORCENTAJE_EXONERADO";
@@ -5086,7 +5087,9 @@ public class SalaryDraft extends ResizeComposite
 
 		dumpSystemItem(deduction, description, row, percentWidget, expandButton, iconStyles);
 
-		Variable percentVariable = getPercentVariable(getType(deduction, Deduction.Type.OTHER));
+		Variable percentVariable = getPercentVariable(AonStringUtils.defaultIfBlank(deduction.getName()));
+		if (percentVariable == null)
+			percentVariable = getPercentVariable(getType(deduction, Deduction.Type.OTHER));
 		if (percentVariable == null)
 			return;
 
@@ -6096,6 +6099,16 @@ public class SalaryDraft extends ResizeComposite
 			return getContextVariable(PORCENTAJE_FOGASA);
 		case UNEMPLOYMENT:
 			return getContextVariable(PORCENTAJE_DESMPL);
+		default:
+			return null;
+		}
+	}
+
+	private Variable getPercentVariable(String name) {
+		
+		switch (name) {
+		case "DESMPL_E":
+			return getContextVariable(PORCENTAJE_DESMPL_E);
 		default:
 			return null;
 		}

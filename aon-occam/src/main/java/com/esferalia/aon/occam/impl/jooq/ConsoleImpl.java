@@ -29,4 +29,14 @@ public class ConsoleImpl implements IConsole {
 	public boolean deleteDomain(ConsoleParams params) {
 		return ConsoleDeleteDomain.delete(params);
 	}
+	
+	@Override
+	public Domain changeActive(CloseableAONContext ctx, Domain domain) {
+		return ConsoleDAO.changeActive(ctx, domain);
+	}
+	
+	@Override
+	public Domain changeExpirationDate(CloseableAONContext ctx, Domain domain) {
+		return ConsoleDAO.changeExpirationDate(ctx, domain);
+	}
 }

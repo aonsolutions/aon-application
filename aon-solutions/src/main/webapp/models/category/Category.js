@@ -10,12 +10,17 @@ export class Category {
 	description;
 	url; 
     type;
+    rattach;
+    
+    attach;
+	
 
     constructor(category) {
         if(category) {
             this.setCategory(category);
         } else {
             this.domain = new Domain().getId();
+            this.attach = {};
         }
     }
 
@@ -27,6 +32,8 @@ export class Category {
         this.description = category.description;
         this.url = category.url;
         this.type = category.type;
+        this.rattach = category.rattach;
+        this.attach = {};
     }
 
     getId() {
@@ -83,5 +90,21 @@ export class Category {
 
     setUrl(url){
         this.url = url;
+    }
+
+    getRattach(){
+        return this.rattach;
+    }
+
+    setRattach(rattach){
+        this.rattach = rattach;
+    }
+
+    getAttach(){
+        return this.attach;
+    }
+
+    setAttach(attach){
+        this.attach = attach;
     }
 }

@@ -233,12 +233,10 @@ public class ConsoleDomainIsolate extends AonLayoutPanel {
 
 	private void manageMustFlatten() {
 		if (!AonStringUtils.equals(schema, newSchema)) {
-			mustFlatten.setValue(false);
 			mustFlatten.setEnabled(false);
+			mustFlatten.setValue(getDomain().getParentId() != null && getDomain().isEnableHeredity());
 		} else {
-			if (getDomain() == null 
-				|| getDomain().getParentId() == null 
-				|| !getDomain().isEnableHeredity()) {
+			if (getDomain().getParentId() == null || !getDomain().isEnableHeredity()) {
 				mustFlatten.setValue(false);
 				mustFlatten.setEnabled(false);
 			} else {

@@ -14,6 +14,7 @@ public class ConsoleParams {
 
 	private ConsoleConnectionParams fromConnection;
 	private ConsoleConnectionParams toConnection;
+	private ConsoleIDsTableInfo idsTableInfo;
 	
 	private boolean validate;
 	private boolean mustFlatten;
@@ -61,6 +62,14 @@ public class ConsoleParams {
 		return getOccam( ensureToConnection() );
 	}
 	
+	public ConsoleIDsTableInfo getIdsTableInfo() {
+		return idsTableInfo;
+	}
+	public ConsoleParams setIdsTableInfo(ConsoleIDsTableInfo idsTableInfo) {
+		this.idsTableInfo = idsTableInfo;
+		return this;
+	}
+
 	public boolean isValidate() {
 		return validate;
 	}

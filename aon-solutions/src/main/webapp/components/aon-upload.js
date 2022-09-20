@@ -64,12 +64,23 @@ export class AonUpload extends AonElement {
         input.type = CONSTANT.FILE;
         input.accept = this.accept;
         input.className = CSS.AON_NONE;
-        input.addEventListener(EVENT.CHANGE, () => {
-            this.upload(input.files[0]);
+        input.addEventListener(EVENT.CHANGE, (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+      
+            const [file] = ev.target.files
+
+            this.upload(file);
+
             input.value = "";
         });
         div.appendChild(input);
-        div.addEventListener(EVENT.CLICK, () => {
+        
+        div.addEventListener(EVENT.CLICK, (ev) => {
+          if(this.isClasic()){
+            ev.preventDefault();
+            ev.stopPropagation();
+          }
           input.click();  
         });
 
@@ -104,36 +115,41 @@ export class AonUpload extends AonElement {
         button.style.position = 'absolute';
         button.style.top = '0px';
         button.style.right = '0px';
-        button.addEventListener(EVENT.CLICK, (e) => {
-            e.stopPropagation();
-            e.preventDefault();
+        button.addEventListener(EVENT.CLICK, (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
             this.deleteFile();
         });
        div.appendChild(button);
     }
 
     builDragAndDrop(element) {
+        const preventDefault = (ev)=> {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
         const dragoverFn = (event) => {
-            event.preventDefault();
-            console.log(EVENT.DRAGOVER);
+            preventDefault(event);
             element.style.borderColor = "#002469";
         };
         
         const dragenterFn = (event) => {
-            event.preventDefault();
+            preventDefault(event);
             element.style.borderColor = "#002469";
         };
         
         const mouseleaveFn = (event) => {
+            preventDefault(event);
             element.style.borderColor = "#aaa";
         };
         
         const mouseoverFn = (event) => {
+            preventDefault(event);
             element.style.borderColor = "#002469";
         };
         
         const dragleaveFn = (event) => {
-            event.preventDefault();
+            preventDefault(event);
             let isClickInside = element.contains(event.target) || element === event.target;
             if (!isClickInside) {
                 element.style.borderColor = "#aaa";
@@ -141,10 +157,14 @@ export class AonUpload extends AonElement {
         }
         
         const dropFn = (event) => {
-            event.preventDefault();
+            preventDefault(event);
+            
             element.style.borderColor = "#aaa";
+  
             if(event && event.dataTransfer && event.dataTransfer.files){
-                this.upload(event.dataTransfer.files[0]);
+                const [file] =  event.dataTransfer.files;
+            
+                this.upload(file);
             }
         };
 

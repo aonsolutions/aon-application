@@ -15,4 +15,6 @@ public interface ConsoleService extends RemoteService {
 	String[] getSchemas(Occam occam) throws AonCoreException;
 	LinkedList<Domain> getDomains(DomainParams params) throws AonCoreException;
 	Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException;
+	Domain changeActive(DomainParams params, Domain domain) throws AonCoreException;
+	Domain changeExpirationDate(DomainParams params, Domain domain) throws AonCoreException;
 }

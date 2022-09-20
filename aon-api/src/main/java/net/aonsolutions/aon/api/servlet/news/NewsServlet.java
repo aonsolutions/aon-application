@@ -182,7 +182,6 @@ public class NewsServlet extends AonApiHttpServlet{
 					attach.setDescription(description);
 					
 					rattachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
-					System.out.println(rattachId);
 				}
 			}
 		}

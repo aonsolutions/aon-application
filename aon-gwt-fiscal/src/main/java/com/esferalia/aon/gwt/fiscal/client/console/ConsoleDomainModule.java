@@ -69,7 +69,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 
 	private AonToolbar getToolbarPanel() {
 		AonToolbar toolbarPanel = new AonToolbar();
-		toolbarPanel.setTitle("Extracci\u00F3n de dominios");
+		toolbarPanel.setTitle("Gesti\u00F3n de dominios");
 		
 		
 		
@@ -87,6 +87,18 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					domain.getId(),new AsyncCallbackWrapper<>( cbk ));
 			}
 
+			@Override
+			public void onChangeActive(Domain domain, AsyncCallback<Domain> cbk) {
+				DomainParams params = filterPanel.getParams(options);
+				ConsoleModule.CONSOLE_SERVICE.changeActive(params,domain,new AsyncCallbackWrapper<>( cbk ));
+			}
+			
+			@Override
+			public void onChangeExpirationDate(Domain domain, AsyncCallback<Domain> cbk) {
+				DomainParams params = filterPanel.getParams(options);
+				ConsoleModule.CONSOLE_SERVICE.changeExpirationDate(params,domain,new AsyncCallbackWrapper<>( cbk ));
+			}
+			
 		});
 		table.addSelectionHandler(e -> check( e.getSelectedItem() ));
 		return table;

@@ -321,7 +321,7 @@ public enum ContextVariable implements IResourceable {
 	FP_EMPLOYEE_PERCENT("PORCENTAJE_FP", VariableType.DOUBLE), 
 	FP_ENTERPRISE_PERCENT("PORCENTAJE_FP_E", VariableType.DOUBLE),
 	UNEMPLOY_EMPLOYEE_PERCENT("PORCENTAJE_DESMPL", VariableType.DOUBLE, false), 
-	UNEMPLOY_ENTERPRISE_PERCENT("PORCENTAJE_DESMPL_E", VariableType.DOUBLE),
+	UNEMPLOY_ENTERPRISE_PERCENT("PORCENTAJE_DESMPL_E", VariableType.DOUBLE, false),
 	FOGASA_ENTERPRISE_PERCENT("PORCENTAJE_FOGASA", VariableType.DOUBLE, false), 
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
 	NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
@@ -354,6 +354,8 @@ public enum ContextVariable implements IResourceable {
 	HOURLY_BASE("BASE_HORARIA", VariableType.BOOLEAN, false),
 	
 	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN)
+	
+	
 	
 	;
 
@@ -401,7 +403,7 @@ public enum ContextVariable implements IResourceable {
 
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";
 	
-	
+	public static final String HIDE_BASE_CGC_MIN = "HIDE_BASE_CGC_MIN";
 	
 	private static final List<String> NAMES =
 	Arrays.asList(new String []{

@@ -275,6 +275,7 @@
 		button[disabled], .gwt-ListBox[disabled] {
 		  display: initial !important;
 		  visibility: initial !important;
+		  background-color: transparent !important; 
 		}		
 		
 		.aon-content-scroll-panel{

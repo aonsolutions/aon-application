@@ -181,6 +181,19 @@ export class AonDialogMenu extends AonElement {
 			});
 		});
 	}
+
+	setContent(element, top, left) {
+		let dialog = this.getElement(this.DIALOG);
+		let content = this.getElement(this.CONTENT);
+		content.innerHTML = "";
+
+  		content.style.top = top + 'px' || '90px';
+		content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
+
+		if(element){
+			content.appendChild(element);
+		}
+	}
 }
 if(!window.customElements.get('aon-dialog-menu')){
 	window.customElements.define('aon-dialog-menu', AonDialogMenu);

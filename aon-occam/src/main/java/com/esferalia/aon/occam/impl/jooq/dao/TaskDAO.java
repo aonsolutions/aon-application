@@ -567,7 +567,8 @@ public class TaskDAO {
 		.or(
 			TASK.ID.in(
 				select(ctx.getDslContext().select(TASK.PARENT))
-    			.where(TASK_PROPERTIES.getConditions(filter)).and(TASK.PARENT.isNotNull())
+    			.where(TASK_PROPERTIES.getConditions(filter))
+    			.and(TASK.PARENT.isNotNull())
 	    	).and(
 	    		TASK.PARENT.isNull()
 	    	)

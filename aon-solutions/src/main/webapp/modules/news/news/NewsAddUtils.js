@@ -1,5 +1,5 @@
 import { CreateComponent } from "../../../components/CreateComponent.js";
-import { CONSTANT, CSS, MSG, TAG, EVENT, MATERIAL_ICONS } from "../../../environments/environments.js";
+import { CONSTANT, CSS, MSG, EVENT, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { createDiv, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { getAttach, deleteAttach } from '../../../services/fileService.js';
 import { getReader } from '../../../services/utils.js';
@@ -37,7 +37,7 @@ const createForm = (id, parent) => {
 const buildFormGeneral = (parent, news) => {
     let divC;
 
-    buildCategory(parent, news);
+    buildChannel(parent, news);
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);
@@ -213,29 +213,42 @@ const buildUnloadFile = (parent, news)=>{
 /**
  * buildChannel
  */
-const buildCategory = (parent, news) => {
+const buildChannel = (parent, news) => {
     let divC = createDiv({classes:[CSS.AON_COL_XS_11]})
     divC.appendTo(parent);
-    
-    const category = CreateComponent.createAonSelect({
+
+    let divB = createDiv({classes:[CSS.AON_COL_XS_1]})
+    divB.appendTo(parent);
+
+    let category = null;
+    let button   = null;
+
+
+    const setIconButton = (btn, edit) => {
+        btn.icon = edit ? MATERIAL_ICONS.EDIT : MATERIAL_ICONS.OPEN_IN_NEW; 
+        btn.title = edit ? MSG.EDIT : MSG.CREATE; 
+    }
+
+    category = CreateComponent.createAonSelect({
         attributes:{
             name:"category",
             id:"category",
             title:"Canal",
+            required: true,
             default:CONSTANT.TRUE,
-            autocomplete: CONSTANT.OFF,
-            required: true
+            autocomplete: CONSTANT.OFF
         },
         events:{
             change: () => {
-                news.setCategory(category.value ? category.getDetail(): undefined);
+                const categoryData = category.value ? category.getDetail(): undefined;
+                news.setCategory(categoryData);
+
+                setIconButton(button, categoryData);
             }
         }
-    }, divC.element);
+    });
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_1]})
-    divC.appendTo(parent);
-    const button = CreateComponent.createAonIconButton({
+    button = CreateComponent.createAonIconButton({
         attributes:{
             id:"categoryAdd",
             icon:MATERIAL_ICONS.OPEN_IN_NEW,
@@ -244,7 +257,13 @@ const buildCategory = (parent, news) => {
         events:{
             click: () =>{  openCategoryDialog(category.getDetail()) }
         }
-    }, divC.element);
+    });
+
+    setIconButton(button, news.getCategory());
+
+    divC.appendChild(category);
+
+    divB.appendChild(button);
 
     setStyles(button.getButton(), {
         top:"12px",
@@ -344,7 +363,7 @@ const openCategoryDialog = (category) => {
 //                     const isChecked = target.checked;
 //                     news.setRss(isChecked);
 //                     if(checked){
-//                         buildCategory(divNews);
+//                         buildChannel(divNews);
 //                     } else {
 //                         document.getElementById('divCategory').remove();
 //                     }
@@ -354,11 +373,11 @@ const openCategoryDialog = (category) => {
 //     }
 
 //     if(checked){
-//         buildCategory(divNews);
+//         buildChannel(divNews);
 //     }
 // }
 
-// const buildCategory = (parent)=>{
+// const buildChannel = (parent)=>{
 
 //     const aonNewsAdd = document.getElementById(NewsEnums.VIEWS_NEWS.AON_NEWS_ADD);
 
@@ -387,19 +406,43 @@ const openCategoryDialog = (category) => {
 //     aonNewsAdd.getCategorys();
 // }
 
-const buildEditor = (parent, news) =>{
+const buildEditor = (parent, news, aonNewsAdd) =>{
     const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
         id:"aonTextAreaEditor",
-        placeholder:MSG.CONTENT,
+        placeholder:MSG.WRITE_A_DESCRIPTION,
         required:true,
         "text-box-min-height":"24em",
-        // "bar-integrated": true
+        'has-fullscreen-mode': true
     });
+
+    aonTextAreaEditor.elementFilter = {
+        undo: false,
+        redo: false,
+        font: !aonTextAreaEditor.isMobile(),
+        fontSize: !aonTextAreaEditor.isMobile(),
+        bold: true,
+        italic: true,
+        underline: true,
+        color: true,
+        backgroundColor: !aonTextAreaEditor.isMobile(),
+        alignment: true,
+        orderedList: !aonTextAreaEditor.isMobile(),
+        unorderedList: !aonTextAreaEditor.isMobile(),
+        indent: !aonTextAreaEditor.isMobile(),
+        outdent: !aonTextAreaEditor.isMobile(),
+        removeFormat: true,
+        strikethrough: true,
+        quote: !aonTextAreaEditor.isMobile(),
+        hyperlink: true,
+        attachment: true,
+        editorMode: !aonTextAreaEditor.isMobile()
+    };
+
     if ((navigator.userAgent.indexOf('Firefox') !== -1)) {
         aonTextAreaEditor.textBoxHeight = "24em";
     }
 
-    aonTextAreaEditor.addEventListener(EVENT.KEYUP, ()=>{
+    aonTextAreaEditor.addEventListener(EVENT.INPUT, ()=>{
         news.setContent(aonTextAreaEditor.value);
     });
     
@@ -408,6 +451,10 @@ const buildEditor = (parent, news) =>{
     if(news.getContent()){
         aonTextAreaEditor.value = news.getContent();
     }
+
+    aonTextAreaEditor.addEventListener("save", ()=> {
+        aonNewsAdd.save(false);
+    })
 }
 
 export const NewsAddUtils = {

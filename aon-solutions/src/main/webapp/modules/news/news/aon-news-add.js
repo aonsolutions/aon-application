@@ -94,7 +94,7 @@ export class AonNewsAdd extends AonElement {
 
     NewsAddUtils.buildFormGeneral(cardOne.getContent(), this.news);
 
-    NewsAddUtils.buildEditor(cardTwo.getContent(), this.news);
+    NewsAddUtils.buildEditor(cardTwo.getContent(), this.news, this);
   }
 
   async initGets() {
@@ -121,7 +121,6 @@ export class AonNewsAdd extends AonElement {
       }
     }
   }
-
 
   // async getNewsType(){
   //   const typeEl = document.getElementById("type");

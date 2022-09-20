@@ -169,6 +169,8 @@ export class AonMobilePackaging extends AonElement {
 		table.addCell(container, 2);
 
 		product.addEventListener(EVENT.CHANGE, () => this.changeProduct());
+
+		product.focus();
 	}
 
 	changeProduct() {
@@ -265,11 +267,15 @@ export class AonMobilePackaging extends AonElement {
 	}
 
 	save(div) {
-		this.packaging.quantity = this.getElement(this.PACKAGING_QUANTITY).value;
-		savePackaging(this.packaging).then(r => {
-			this.packaging = r;
-			this.buildTag(div);
-		})
+		if(!this.packaging.item.serialNumber){
+			this.showError({message:`El número de Lote está vacío.`, type:CONSTANT.ERROR});
+		} else {
+			this.packaging.quantity = this.getElement(this.PACKAGING_QUANTITY).value;
+			savePackaging(this.packaging).then(r => {
+				this.packaging = r;
+				this.buildTag(div);
+			});
+		}
 	}
 
 	// Create Components

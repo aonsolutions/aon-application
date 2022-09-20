@@ -28,3 +28,8 @@
 .additionalElementsDropdown {
     scrollbar-width: none;
 }
+
+.contentEditable ol, .contentEditable ul {
+    margin: revert !important;
+    padding: revert !important;
+}

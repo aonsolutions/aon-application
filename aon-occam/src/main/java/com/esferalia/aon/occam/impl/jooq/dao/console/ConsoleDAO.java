@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.stream.Stream;
@@ -14,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConsoleDAO {
@@ -60,7 +63,7 @@ public class ConsoleDAO {
 			filter = filter.and(p.getTypeProperty().eq(params.getType().byteValue()) ); 
 		}
 		if (params.getActive() != null ) {
-			filter = filter.and(p.getTypeProperty().eq((byte) (params.getActive().booleanValue()?1:0)));
+			filter = filter.and(p.getActiveProperty().eq((byte) (params.getActive().booleanValue()?1:0)));
 		}
 		if (params.getEnableHeredity() != null ) {
 			filter = filter.and(p.getEnableheredityProperty().eq((byte) (params.getEnableHeredity().booleanValue()?1:0)));
@@ -86,6 +89,46 @@ public class ConsoleDAO {
 				AonDateUtils.toSql(params.getToExpirationDate())));
 		}
 		return filter;
+	}
+
+	public static Domain changeActive(CloseableAONContext ctx, Domain domain) {
+		int count = ctx.getDslContext()
+			.update(DOMAIN)
+			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte( !domain.isActive() ))
+			.where(DOMAIN.ID.eq(domain.getId()))
+			.execute();
+		Domain dom = DomainDAO.getDomain(ctx, domain.getId());
+		if (dom != null) {
+			ctx.log().info("Domain {0} - {1} - Active changed --> {2} ({3} rows)"
+					,dom.getId()
+					,dom.getName()
+					,dom.isActive()
+					,count
+					);
+		} else {
+			ctx.log().info("Domain active not changed");
+		}
+		return dom;
+	}
+
+	public static Domain changeExpirationDate(CloseableAONContext ctx, Domain domain) {
+		int count = ctx.getDslContext()
+			.update(DOMAIN)
+			.set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql( domain.getExpirationDate() ))
+			.where(DOMAIN.ID.eq(domain.getId()))
+			.execute();
+		Domain dom = DomainDAO.getDomain(ctx, domain.getId());
+		if (dom != null) {
+			ctx.log().info("Domain {0} - {1} - Expiration Date changed --> {2} ({3} rows)"
+					,dom.getId()
+					,dom.getName()
+					,dom.getExpirationDate()
+					,count
+					);
+		} else {
+			ctx.log().info("Domain active not changed");
+		}
+		return dom;
 	}
 
 }
