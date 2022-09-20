@@ -6865,7 +6865,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void removeContractTransform(String domainName, String userLogin, String ide) throws IllegalArgumentException {
+	public void removeContractTransform(String domainName, String userLogin, String transformIde, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6875,7 +6875,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 
-			Sepe.removeTransformation(certificateIS, certificate.getPassword(), certificate.getType(), ide);
+			Sepe.removeTransformation(certificateIS, certificate.getPassword(), certificate.getType(), transformIde);
+			JooqContractSEPE.deleteContractTransformData(connection, contractId);
 
 		} catch (Exception e) {
 			e.printStackTrace();

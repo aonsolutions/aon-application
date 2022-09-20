@@ -479,8 +479,10 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void removeContractTransform(Consumer<Void> success, Consumer<Throwable> failure) {
-		String ide = employeeContractData.getContractInfo().getSepeId();
-		employeesService.removeContractTransform(ide, new AsyncCallback<Void>() {
+		String transformIde = employeeContractData.getContractInfo().getSepeTransformId();
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		
+		employeesService.removeContractTransform(transformIde, contractId, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
