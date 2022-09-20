@@ -75,6 +75,9 @@ public class ConsoleDeleteDomain {
 			if (domain.getDomainType() == DomainType.ADMIN) {
 				throw new AonCoreException("No se puede borrar un dominio de ADMINISTRACION");
 			}
+			if (domain.isActive()) {
+				throw new AonCoreException("No se puede borrar un dominio ACTIVO");
+			}
 			int count = params.getFromDslContext()
 				.select( DSL.count(DOMAIN.ID) )
 				.from(DOMAIN)

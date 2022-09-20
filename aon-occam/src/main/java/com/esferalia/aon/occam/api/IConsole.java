@@ -11,6 +11,8 @@ public interface IConsole {
 	
 	public String[] getSchemaNames(AONContext ctx);
 	public LinkedList<Domain> getDomains(CloseableAONContext ctx, DomainParams params);
-	public boolean deleteDomain(ConsoleParams params);		
+	public boolean deleteDomain(ConsoleParams params);
+	public Domain changeActive(CloseableAONContext ctx, Domain domain);
+	public Domain changeExpirationDate(CloseableAONContext ctx, Domain domain);		
 	
 }

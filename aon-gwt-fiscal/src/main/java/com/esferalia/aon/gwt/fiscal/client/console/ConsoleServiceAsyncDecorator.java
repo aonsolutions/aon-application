@@ -34,4 +34,16 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 		AON.start();
 		fsa.deleteDomain(params, domainId, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void changeActive(DomainParams params, Domain domain, AsyncCallback<Domain> callback) {
+		AON.start();
+		fsa.changeActive(params, domain, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void changeExpirationDate(DomainParams params, Domain domain, AsyncCallback<Domain> callback) {
+		AON.start();
+		fsa.changeExpirationDate(params, domain, new AsyncCallbackWrapper<>(callback));
+	}
 }
