@@ -1,0 +1,88 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"	
+	xmlns:w='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementLevelTab.MyStyle">
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+		
+		.flexCenter {
+			display: flex;
+			justify-content: center;
+		}
+		
+		.borderCollapse {
+			border-collapse: collapse;
+		}
+		
+		.message {
+			font-weight: bold;
+			margin-top: 2rem;
+		}
+		
+		.heigthAll {
+			height: 100%;
+		}
+		
+		.scrollPanel {
+			margin: 0 1rem;
+		}
+		
+		/* Class of AgreementLevelTab.Style */
+		
+		.cellWidth {
+			width: 120px;
+		}
+		
+		.gridTitle{
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+		
+		.headerColor {
+			background-color: #eee;
+		}
+		
+		.headerFSize{
+			font-size: 1em;
+		}
+		
+		.headerSticky {
+			position: sticky;
+			top: 0;
+			height: 1.5rem;
+			z-index: 5;
+		}
+		
+		.textCenter {
+			text-align: center;
+		}
+		
+		.oddRow {
+			background-color: #f8f7f7;
+		}
+		
+	</ui:style>
+	
+	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">
+		<g:HTMLPanel ui:field="messagePanel" />
+		<aon:AonToolbar ui:field="toolbar" />
+		<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.scrollPanel}">
+			<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
+		</g:ScrollPanel>
+		<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">
+			<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
+		</g:HTMLPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 
+

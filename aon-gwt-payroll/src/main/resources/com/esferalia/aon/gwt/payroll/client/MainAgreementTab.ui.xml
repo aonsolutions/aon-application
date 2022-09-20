@@ -105,11 +105,13 @@
 					<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn}"> 
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label text="Convenio" ui:field="agreementTab" />
+							<g:Label text="Nivel / Categoría" ui:field="levelTab" />
 							<g:Label text="Tabla Salarial" ui:field="salaryTableTab" />
 							<g:Label text="Devengos" ui:field="paymentTab" />
 						</g:HTMLPanel>
 						<g:DeckPanel ui:field="mainDeckPanel">
 							<aon:AgreementPreview debugId="agreementPreview" ui:field="agreementPreview" />
+							<aon:AgreementLevelTab debugId="agreementLevelTab" ui:field="agreementLevelTab" />
 							<aon:AgreementSalaryTableTab debugId="agreementSalaryTableTab" ui:field="agreementSalaryTableTab" />
 							<aon:AgreementPaymentTab debugId="agreementPaymentTab" ui:field="agreementPaymentTab" />
 						</g:DeckPanel>

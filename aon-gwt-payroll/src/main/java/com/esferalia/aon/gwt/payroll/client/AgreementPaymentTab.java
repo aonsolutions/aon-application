@@ -170,7 +170,9 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			AgreementPaymentDialog dialog = new AgreementPaymentDialog(4) {
 				
 				@Override
-				protected void onAccept(List<Payment> payments) {}
+				protected void onAccept(List<Payment> payments) {
+					// Nothing to do here
+				}
 				
 				@Override
 				protected void onAcceptExtra(List<Payment> payments, List<Extra> extras) {
@@ -619,19 +621,9 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messagePanel, errorMap);
 	}
-	
-	private void showWarning(String title, String message) {
-		Map<String, String> warningMap = new HashMap<>();
-		warningMap.put(title, message);
-		AonMessagePanel.showWarning(messagePanel, warningMap);
-	}
 
 	public void showLoading(String message) {
 		AonMessagePanel.showLoading(messagePanel, message);
-	}
-
-	private void hideMessage() {
-		AonMessagePanel.hideMessage(messagePanel);
 	}
 	
 }

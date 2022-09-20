@@ -23,9 +23,13 @@
 			background-size: contain;
 		}
 		
-		.heigthAll {height: 100%;}
-		.widthAll {width: 100%;}
-		.grid { margin: 0 1rem;}
+		.heigthAll {
+			height: 100%;
+		}
+		
+		.grid {
+			margin: 0 1rem;
+		}
 		
 	</ui:style>
 	

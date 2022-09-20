@@ -333,6 +333,10 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	public Set<Level> getActiveLevels(){
 		return levels != null ? levels.stream().filter(level -> !level.isDeleted()).collect(Collectors.toSet()) : Collections.<Level>emptySet();
 	}
+	
+	public boolean existLevel(String levelDescription) {
+		return getLevels().stream().filter(level -> AonStringUtils.equalsIgnoreCase(level.getDescription(), levelDescription)).findAny().isPresent();
+	}
 
 	public void setLevels(Set<Level> levels) {
 		this.levels = levels;

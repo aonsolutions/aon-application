@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementOwner;
@@ -23,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,6 +38,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -65,17 +66,19 @@ public abstract class AgreementPreview extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String gridTitle();
-		String gridCell();
-		String textCenter();
-		String headerColor();
-		String columnBorder();
 		String cellWidth();
-		String headerFSize();
-		String widthAll();
+		String columnBorder();
+		String extraCellHeight();
+		String gridCell();
+		String gridTitle();
+		String headerColor();
 		String headerFixed();
+		String headerFSize();
 		String headerLevelFixed();
 		String levelFixed();
+		String oddRow();
+		String textCenter();
+		String widthAll();
 	}
 	
 	@UiField
@@ -100,6 +103,15 @@ public abstract class AgreementPreview extends ResizeComposite {
 	HTMLPanel serviAgreementPanel;
 	
 	@UiField
+	DisclosurePanel salaryDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton salaryDiscBtn;
+	
+	@UiField
+	HTMLPanel salaryDiscPanelContent;
+	
+	@UiField
 	HTMLPanel salaryTableButtons;
 	
 	@UiField
@@ -118,6 +130,33 @@ public abstract class AgreementPreview extends ResizeComposite {
 	HTMLPanel agreementLevelMessage;
 	
 	@UiField
+	DisclosurePanel levelDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton levelDiscBtn;
+	
+	@UiField
+	HTMLPanel levelDiscPanelContent;
+	
+	@UiField
+	HTMLPanel levelTable;
+	
+	@UiField
+	ScrollPanel levelScrollPanel;
+	
+	@UiField
+	Grid levelGrid;
+	
+	@UiField
+	DisclosurePanel paymentDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton paymentDiscBtn;
+	
+	@UiField
+	HTMLPanel paymentDiscPanelContent;
+	
+	@UiField
 	HTMLPanel paymentTable;
 	
 	@UiField
@@ -128,6 +167,15 @@ public abstract class AgreementPreview extends ResizeComposite {
 	
 	@UiField
 	HTMLPanel agreementPaymentMessage;
+	
+	@UiField
+	DisclosurePanel extraDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton extraDiscBtn;
+	
+	@UiField
+	HTMLPanel extraDiscPanelContent;
 	
 	@UiField
 	HTMLPanel extraTable;
@@ -153,8 +201,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
 	
-	AonToolbarSmallButton categoriesBtn;
-	AonToolbarSmallButton salaryTableBtn;
 	private ListBox datesLB;
 	
 	private AonToolbarButton printPreviewButton;
@@ -165,16 +211,16 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private TextBox partialTextBox;
 	private ListBox groupListBox;
 	
-	private boolean isSalaryTableSelected = true;
-	
 	// ------------------------------------------ Constructor
 
 	protected AgreementPreview() {
 		createToolbar();
 		createToolbarSimulator();
+		createDiscPanelButtons();
 		initWidget(uiBinder.createAndBindUi(this));
+		initDiscPanels();
 	}
-
+	
 	// ------------------------------------------ setAgreementPreview
 	
 	public void setAgreementPreview(AgreementInfo agreementIn) {
@@ -191,6 +237,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 	
 	private void fillAgreementInfo() {
 		scrollPanel.setHeight((Window.getClientHeight() - 200) + "px");
+		
 		if(agreement.getDates().isEmpty())
 			printPreviewButton.setVisible(false);
 		
@@ -204,8 +251,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 		
 		createSalaryTableButtons();
 		
-		if (isSalaryTableSelected && !agreement.getSortedDates().isEmpty()) createSalaryTable();
-		else createCategoryTable();
+		createSalaryTable();
+		createCategoryTable();
 		
 		if(agreement.getActivePayments().isEmpty()) showPaymentMessage();
 		else createPaymentTable();
@@ -244,37 +291,14 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void createSalaryTableButtons() {
 		salaryTableButtons.clear();
 		
-		categoriesBtn = new AonToolbarSmallButton("Categorias", AON.CSS.aonIconList());
-		salaryTableBtn = new AonToolbarSmallButton("Tabla salarial", AON.CSS.aonIconStatics());
-		categoriesBtn.setVisible(isSalaryTableSelected && !agreement.getSortedDates().isEmpty());
-		salaryTableBtn.setVisible(!isSalaryTableSelected || agreement.getSortedDates().isEmpty());
-		
 		datesLB = new ListBox();
 		datesLB.getElement().getStyle().setHeight(1.7, Unit.EM);
 		agreement.getSortedDates().forEach(date -> datesLB.addItem(formatDate.format(date), formatDate.format(date)));
 		datesLB.setSelectedIndex(0);
 		datesLB.setVisible(!agreement.getSortedDates().isEmpty());
 		
-		categoriesBtn.addClickHandler(e -> {
-			isSalaryTableSelected = false;
-			categoriesBtn.setVisible(false);
-			salaryTableBtn.setVisible(true);
-			datesLB.setVisible(!agreement.getSortedDates().isEmpty());
-			createCategoryTable();
-		});
-		
-		salaryTableBtn.addClickHandler(e -> {
-			isSalaryTableSelected = true;
-			categoriesBtn.setVisible(true);
-			salaryTableBtn.setVisible(false);
-			datesLB.setVisible(!agreement.getSortedDates().isEmpty());
-			createSalaryTable();
-		});
-		
 		datesLB.addChangeHandler(e -> createSalaryTable());
 		
-		salaryTableButtons.add(categoriesBtn);
-		salaryTableButtons.add(salaryTableBtn);
 		salaryTableButtons.add(datesLB);
 	}
 
@@ -285,8 +309,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 			showSalaryTableMessage();
 		else {
 			hideLevelSalaryMessage();
-			salaryScrollPanel.setWidth("100%");
-			salaryScrollPanel.setHeight("200px");
+			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			salaryScrollPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 620), Unit.PX);
 			getSalaryTableHeader();
 			fillSalaryTable();
 			salaryTableWidth();
@@ -328,6 +352,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		Label emptyCell = new Label("");
 		emptyCell.addStyleName(style.widthAll());
 		salaryGrid.setWidget(row, col, emptyCell);
+		salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 		salaryGrid.getColumnFormatter().addStyleName(col, style.widthAll());
 	}
 
@@ -336,6 +361,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 		
 		for(Entry<Integer, Set<LevelData>> e : agreement.getLevelDatasMap().entrySet()) {
 			Level level = agreement.getLevelById(e.getKey());
+			
+			if(level.isDeleted()) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 			
@@ -346,6 +373,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			salaryGrid.setWidget(row, 0, levelCell);
 			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
+			if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			
 			int col = 1;
 			
@@ -358,12 +386,13 @@ public abstract class AgreementPreview extends ResizeComposite {
 				cell.addStyleName(style.cellWidth());
 						
 				salaryGrid.setWidget(row, col, cell);
+				if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
 				col++;
 			}
 			
 			Label emptyCell = new Label("");
-			emptyCell.addStyleName(style.widthAll());
 			salaryGrid.setWidget(row, col, emptyCell);
+			if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
 		}
 	}
 
@@ -379,8 +408,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 			showLevelMessage();
 		else {
 			hideLevelSalaryMessage();
-			salaryScrollPanel.setWidth("100%");
-			salaryScrollPanel.setHeight("200px");
+			levelScrollPanel.setWidth("100%");
 			getCategoryTableHeader();
 			fillCategoryTable();
 			categoryTableWidth();
@@ -388,32 +416,35 @@ public abstract class AgreementPreview extends ResizeComposite {
 	}
 
 	private void getCategoryTableHeader() {
-		salaryGrid.clear();
-		salaryGrid.resize(0, 2);
-		int row = salaryGrid.insertRow(salaryGrid.getRowCount());
+		levelGrid.clear();
+		levelGrid.resize(0, 2);
+		int row = levelGrid.insertRow(levelGrid.getRowCount());
 		
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
 		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.headerFSize());
-		salaryGrid.setWidget(row, 0, level);
-		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		level.getElement().getStyle().setFontSize(1, Unit.EM);
+		levelGrid.setWidget(row, 0, level);
+		levelGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 
 		
 		Label category = new Label("Categoria");
 		category.addStyleName(style.gridTitle());
 		category.addStyleName(style.headerFSize());
-		salaryGrid.setWidget(row, 1, category);
-		salaryGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
+		category.getElement().getStyle().setFontSize(1, Unit.EM);
+		levelGrid.setWidget(row, 1, category);
+		levelGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 
-		salaryGrid.getRowFormatter().addStyleName(row, style.headerColor());
+		levelGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
 
 	private void fillCategoryTable() {
 		for(Entry<Integer, Set<String>> e : agreement.getCategoriesMap().entrySet()) {
 			Level level = agreement.getLevelById(e.getKey());
+			if(level.getId() == 0 || level.isDeleted()) continue;
 			
-			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
+			int row = levelGrid.insertRow(levelGrid.getRowCount());
 			
 			Set<String> categories = e.getValue();
 			StringBuilder categoriesBuilder = new StringBuilder();
@@ -427,19 +458,24 @@ public abstract class AgreementPreview extends ResizeComposite {
 			Label levelCell = new Label(level.getDescription());
 			levelCell.addStyleName(style.gridTitle());
 			levelCell.addStyleName(style.cellWidth());
+			levelCell.getElement().getStyle().setPaddingLeft(1, Unit.EM);
 			
 			Label categoryCell = new Label(categoriesBuilder.toString());
 			categoryCell.setTitle("Categorias nivel " + level.getDescription());
 			
-			salaryGrid.setWidget(row, 0, levelCell);
-			salaryGrid.setWidget(row, 1, categoryCell);
+			levelGrid.setWidget(row, 0, levelCell);
+			levelGrid.setWidget(row, 1, categoryCell);
+			
+			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
+			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
+			
 		}
 	}
 
 	private void categoryTableWidth() {
-		salaryGrid.setWidth("100%");
-		salaryGrid.getColumnFormatter().setWidth(0, "20%");
-		salaryGrid.getColumnFormatter().setWidth(1, "80%");
+		levelGrid.setWidth("100%");
+		levelGrid.getColumnFormatter().setWidth(0, "20%");
+		levelGrid.getColumnFormatter().setWidth(1, "80%");
 	}
 	
 	// ------------------------------------------ paymentTable
@@ -447,7 +483,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void createPaymentTable() {
 		hidePaymentMessage();
 		paymentScrollPanel.setWidth("100%");
-		paymentScrollPanel.setHeight("200px");
 		getPaymentTableHeader();
 		fillPaymentTable();
 		paymentTableWidth();
@@ -522,6 +557,12 @@ public abstract class AgreementPreview extends ResizeComposite {
 			paymentGrid.setWidget(row, 2, taxedCell);
 			paymentGrid.setWidget(row, 3, quoteCell);
 			paymentGrid.setWidget(row, 4, devengoCell);
+			
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
 		}
 	}
 
@@ -571,7 +612,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void createExtraTable() {
 		hideExtraMessage();
 		extraScrollPanel.setWidth("100%");
-		extraScrollPanel.setHeight("250px");
 		getExtraTableHeader();
 		fillExtraTable();
 		extraTableWidth();
@@ -618,9 +658,9 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			Payment extraPayment = agreement.getPaymentById(extra.getAgreementPayment());
 			
-			Label startCell = new Label(extra.getStartDate());
+			Label startCell = new Label(parseExtraDate(extra.getStartDate()));
 			startCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-			Label endCell = new Label(extra.getEndDate());
+			Label endCell = new Label(parseExtraDate(extra.getEndDate()));
 			endCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			Label issueCell = new Label(extra.getIssueDate());
 			issueCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
@@ -630,7 +670,25 @@ public abstract class AgreementPreview extends ResizeComposite {
 			extraGrid.setWidget(row, 1, endCell);
 			extraGrid.setWidget(row, 2, issueCell);
 			extraGrid.setWidget(row, 3, paymentCell);
+			
+			extraGrid.getCellFormatter().addStyleName(row, 0, style.extraCellHeight());
+			extraGrid.getCellFormatter().addStyleName(row, 1, style.extraCellHeight());
+			extraGrid.getCellFormatter().addStyleName(row, 2, style.extraCellHeight());
+			extraGrid.getCellFormatter().addStyleName(row, 3, style.extraCellHeight());
+			
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
 		}
+	}
+
+	private String parseExtraDate(String date) {
+		if(AonStringUtils.isBlank(date)) return "";
+		
+		if(AonStringUtils.contains(date, "-1")) {
+			return AonStringUtils.split(date, '-')[0].trim() + " (A\u00f1o anterior)";
+		} else return date;
 	}
 
 	private void extraTableWidth() {
@@ -695,6 +753,54 @@ public abstract class AgreementPreview extends ResizeComposite {
 		agreementExtraMessage.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
+	// ------------------------------------------ DisclosurePanel
+
+	private void initDiscPanels() {
+		levelDiscPanel.setAnimationEnabled(true);
+		levelDiscPanel.addOpenHandler(e -> handleIcon(levelDiscBtn, true));
+		levelDiscPanel.addCloseHandler(e -> handleIcon(levelDiscBtn, false));
+		levelDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+		
+		salaryDiscPanel.setAnimationEnabled(true);
+		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
+		salaryDiscPanel.addCloseHandler(e -> handleIcon(salaryDiscBtn, false));
+		salaryDiscPanel.setOpen(true);
+		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+		
+		paymentDiscPanel.setAnimationEnabled(true);
+		paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
+		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
+		paymentDiscPanel.setOpen(true);
+		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+		
+		extraDiscPanel.setAnimationEnabled(true);
+		extraDiscPanel.addOpenHandler(e -> handleIcon(extraDiscBtn, true));
+		extraDiscPanel.addCloseHandler(e -> handleIcon(extraDiscBtn, false));
+		extraDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+	}
+
+	private void createDiscPanelButtons() {
+		levelDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
+		salaryDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
+		paymentDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
+		extraDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
+		
+		levelDiscBtn.addClickHandler(e -> handleIcon(levelDiscBtn, levelDiscPanel.isOpen()));
+		salaryDiscBtn.addClickHandler(e -> handleIcon(salaryDiscBtn, salaryDiscPanel.isOpen()));
+		paymentDiscBtn.addClickHandler(e -> handleIcon(paymentDiscBtn, paymentDiscPanel.isOpen()));
+		extraDiscBtn.addClickHandler(e -> handleIcon(extraDiscBtn, extraDiscPanel.isOpen()));
+	}
+
+	private void handleIcon(AonToolbarButton button, boolean open) {
+		if(open) {
+			button.removeStyleName(AON.CSS.aonIconRight());
+			button.addStyleName(AON.CSS.aonIconDown());
+		} else {
+			button.removeStyleName(AON.CSS.aonIconDown());
+			button.addStyleName(AON.CSS.aonIconRight());
+		}
+	}
+	
 	// ------------------------------------------ toolbar
 
 	private void createToolbar() {
@@ -720,21 +826,38 @@ public abstract class AgreementPreview extends ResizeComposite {
 		toolbar.add(agreementInfoButton);
 		
 		serviAgreementUpdateButton = new AonToolbarButton("Actualizar Convenio", AON.CSS.aonIconCloudImport());
-		serviAgreementUpdateButton.addClickHandler(e -> {
-			showLoading("Actualizando convenio");
-			impl.checkAndUpdateServiAgreement(agreement, new AsyncCallback<Void>() {
+		serviAgreementUpdateButton.addClickHandler(e -> 
+			impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+				
+				@Override
+				public void onSuccess(DomainUserRoles userRole) {
+					if(userRole.isConvenios()) {
+						showLoading("Actualizando convenio");
+						impl.checkAndUpdateServiAgreement(agreement, new AsyncCallback<Void>() {
 
+							@Override
+							public void onFailure(Throwable caught) {
+								showError("Error actualizaci\u00F3n", caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Void result) {
+								showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
+								reloadAgreement();
+							}});
+					} else {
+						AonDialog error = new AonDialog("Actualizaci|u00f3n no disponible", new HTMLPanel("Para poder actualizar un convenio a traves de ServiConvenios debe tener contrato el m\u00f3dulo."));
+						error.warning();
+					}
+				}
+				
 				@Override
 				public void onFailure(Throwable caught) {
-					showError("Error actualizaci\u00F3n", caught.getMessage());
+					AonDialog error = new AonDialog("Error", new HTMLPanel(caught.getMessage()));
+					error.warning();
 				}
-
-				@Override
-				public void onSuccess(Void result) {
-					showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
-					reloadAgreement();
-				}});
-		});
+			})
+		);
 		toolbar.add(serviAgreementUpdateButton);
 		
 		
@@ -914,12 +1037,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		AonMessagePanel.showError(messagePanel, errorMap);
 	}
 	
-	private void showWarning(String title, String message) {
-		Map<String, String> warningMap = new HashMap<>();
-		warningMap.put(title, message);
-		AonMessagePanel.showWarning(messagePanel, warningMap);
-	}
-
 	public void showLoading(String message) {
 		AonMessagePanel.showLoading(messagePanel, message);
 	}
