@@ -105,7 +105,6 @@ const buildFormGeneral = (parent, news) => {
         }
     }, divC.element);
 
-
     if(news.getInitDate()){
         initDate.value = new Date(news.getInitDate())
     }
@@ -124,7 +123,6 @@ const buildFormGeneral = (parent, news) => {
             }
         }
     }, divC.element);
-
 
     if(news.getInitDateTime()){
         initDateTime.value = news.getInitDateTime();
@@ -164,11 +162,9 @@ const buildFormGeneral = (parent, news) => {
         }
     }, divC.element);
 
-
     if(news.getEndDateTime()){
         endDateTime.value = news.getEndDateTime();
     }
-
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
     divC.appendTo(parent);

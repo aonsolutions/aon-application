@@ -5,7 +5,7 @@ import { AonElement } from "./AonElement.js";
 export class AonIframe extends AonElement {
   DOC;
   WD;
-
+  IFRAME;
   get id() {
     return this.getAttribute(CONSTANT.ID);
   }
@@ -14,6 +14,9 @@ export class AonIframe extends AonElement {
     this.setAttribute(CONSTANT.ID, id);
   }
 
+  constructor() {
+    super();
+  }
 
   connectedCallback() {
     this.initialize();
@@ -21,7 +24,9 @@ export class AonIframe extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || "aonIframe";
+    this.id  = this.id || "aonIframe";
+    this.DOC = this.DOC || null;
+    this.WD  = this.WD || null;
   }
 
   setDocument(doc){
@@ -49,37 +54,43 @@ export class AonIframe extends AonElement {
   }
   
   build() {
-    let iframe = this.createElement(TAG.IFRAME);
-    iframe.id = this.id+"Iframe";
-    iframe.frameBorder = "0";
-    iframe.scrolling = "no";
-    iframe.style = `
+    this.IFRAME = this.createElement(TAG.IFRAME);
+    this.IFRAME.id = this.id+"Iframe";
+    this.IFRAME.frameBorder = "0";
+    this.IFRAME.scrolling = "no";
+    this.IFRAME.style = `
       position: relative; 
       height: 100%; 
       width: 100%;
     `;
-
-    iframe.onload = () => {
-      this.setDocument(iframe.contentDocument);
-      this.setWindow(iframe.contentWindow);
-    }; //onload
-    this.appendChild(iframe);
+ 
+    this.appendChild(this.IFRAME);
   }
 
   async load(){
+    try{
+      await Promise.all([
+        this.waitForValue(this.IFRAME.contentDocument),
+        this.waitForValue(this.IFRAME.contentWindow)
+      ]);
 
-    let promises = [
-      this.waitForValue(this.getDocument()),
-      this.waitForValue(this.getWindow()),
-      this.loadCss()
-    ];
-    await Promise.all(promises);
+      this.setDocument(this.IFRAME.contentDocument);
+      this.setWindow(this.IFRAME.contentWindow);
+
+      await this.loadCss();
+
+      this.setFontFamily('Roboto, Helvetica, Arial, sans-serif !important');
+
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async loadCss(){
     // /css/aon-gwt.css
     let promises = [
       this.loadLink("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"),
+      this.loadLink("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"),
       this.loadLink("../dist/app.min.css"),
     ];
 
@@ -96,16 +107,22 @@ export class AonIframe extends AonElement {
   }
 
   clearContent(){
-    this.getDocument().body.innerHTML = "";
+    this.getBody().innerHTML = "";
   }
 
   setContent(element){
     this.clearContent();
-    this.getDocument().body.appendChild(element);
+    this.getBody().appendChild(element);
   }
 
   addContent(element){
-    this.getDocument().body.appendChild(element);
+    this.getBody().appendChild(element);
+  }
+
+  setFontFamily(fontFamily){
+    this.getBody().style = `
+      font-family:${fontFamily};
+    `;
   }
 
   loadScript(url, module=false) {
