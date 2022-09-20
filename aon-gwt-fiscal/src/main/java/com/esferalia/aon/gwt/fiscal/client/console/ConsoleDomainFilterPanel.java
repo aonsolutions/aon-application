@@ -203,7 +203,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		}
 		
 		if ( enableHeredityBox.getSelectedIndex() > 0 ) {
-			params.setEnableHeredity(activeBox.getSelectedIndex() == 1 
+			params.setEnableHeredity(enableHeredityBox.getSelectedIndex() == 1 
 				?Boolean.valueOf(true)
 				:Boolean.valueOf(false));
 		}

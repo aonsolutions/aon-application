@@ -36,7 +36,7 @@ public class NewsJSON {
 			.setType( NewsType.safeValueOf(json.optString(IJsonNames.TYPE))) 
 			.setCategory(!json.optString(IJsonNames.CATEGORY).isEmpty() ? CategoryJSON.fromJSON(json.optJSONObject(IJsonNames.CATEGORY)) : null)
 			.setScope(!json.optString(IJsonNames.SCOPE).isEmpty() ? ScopeJSON.fromJSON(json.optJSONObject(IJsonNames.SCOPE))  : null )
-			.setRattach(json.optInt("rattach")!=0 ? json.getInt("rattach") : null )
+			.setRattach(json.optInt(IJsonNames.RATTACH)!=0 ? json.getInt(IJsonNames.RATTACH) : null )
 			;
 	}
 	
@@ -76,7 +76,7 @@ public class NewsJSON {
 		news.getUrl().ifPresent(d-> json.put(IJsonNames.URL, d));
 		
 		news.getDescription().ifPresent(d-> json.put(IJsonNames.DESCRIPTION, d));
-		news.getRattach().ifPresent(d-> json.put("rattach", d));
+		news.getRattach().ifPresent(d-> json.put(IJsonNames.RATTACH, d));
 		
 		return json;
 	}

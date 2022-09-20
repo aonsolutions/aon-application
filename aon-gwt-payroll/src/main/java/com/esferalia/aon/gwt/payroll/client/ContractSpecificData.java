@@ -2312,7 +2312,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		}
 		
 		//TemporalWorkEnterpriseDataTable
-		Window.alert("temporalWorkEnterpriseCB : " + this.contractSpecificData.getTemporalWorkEnterprise());
 		if(Boolean.TRUE.equals(this.contractSpecificData.getTemporalWorkEnterprise())){
 			showTemporalWorkEnterpriseDataTable();
 			temporalWorkEnterpriseCB.setValue(true);

@@ -199,7 +199,7 @@ public class LROE240_2 extends LROE240 {
 				r.setBaseImponible(Double.toString(tax.getBase()));	
 				r.setTipoImpositivo(Double.toString(tax.getPercentage()));
 				if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
-					tax.setDeductibleQuota(AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100));
+					tax.setDeductibleQuota(AonMathUtils.round(tax.getQuota() * tax.getDeductiblePercent() / 100));
 				}
 				r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
 				r.setCuotaIVASoportada(Double.toString(tax.getQuota()));

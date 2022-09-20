@@ -380,6 +380,7 @@ public final class IJsonNames {
 	public static final String QUOTA = "quota";
 	// ---------------------------------------------------------------------------------------------	[R] 
 	public static final String RATE = "rate";
+	public static final String RATTACH = "rattach";
 	public static final String RDOCUMENT = "rdocument";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";

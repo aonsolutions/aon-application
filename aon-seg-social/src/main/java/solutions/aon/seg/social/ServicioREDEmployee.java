@@ -157,6 +157,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			List<Employee> employees = new LinkedList<>();
 			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+			checkOldSsError(body);
 			link = Toolkit.getLink(body);
 			sessionId = Toolkit.getSessionId(body);
 			

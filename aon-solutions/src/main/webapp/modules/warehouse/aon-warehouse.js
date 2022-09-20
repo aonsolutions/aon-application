@@ -10,6 +10,7 @@ import * as ACTION from '../actions.js';
 export class AonWarehouse extends AonElement {
 
 	WAREHOUSE;
+	option;
 
 	constructor () {
 		super();
@@ -22,12 +23,13 @@ export class AonWarehouse extends AonElement {
 
 	initialize() {
 		this.WAREHOUSE = 'aonWarehouse';
+		this.option = this.option || OPTION.ELABORATION;
 	}
 
  	build() {
 		this.createApplication(this.WAREHOUSE, MSG.WAREHOUSE, new AonApplication());
 		this.buildSidenav();
-		this.selectOption(OPTION.ELABORATION);
+		this.selectOption(this.option);
 	}
 
 	buildSidenav() {
@@ -61,6 +63,10 @@ export class AonWarehouse extends AonElement {
 			this.aonElaboration();
 			break;
 		}
+	}
+
+	setOption(option) {
+		this.option = option;
 	}
 
 	aonElaboration() {
