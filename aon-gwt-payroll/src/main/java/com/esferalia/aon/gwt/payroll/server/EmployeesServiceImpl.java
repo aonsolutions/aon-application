@@ -6440,7 +6440,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get employee nafxipf
 			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
-					new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
 					employeeContractInfo.getEmployeeInfo().getSurName(),
 					employeeContractInfo.getEmployeeInfo().getSecondSurName());
@@ -7318,7 +7318,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setOldDateFinContract(employeeContractInfo.getContractInfo().getOriginalEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
-		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
+		builder.setDateComContract(employeeContractInfo.getContractInfo().getTransformDate() == null ? 
+				employeeContractInfo.getContractInfo().getStartDate() : employeeContractInfo.getContractInfo().getTransformDate());
 		builder.setOffer(OfferType.NO);
 		builder.setJndType(JndType.safeValueOf(employeeContractInfo.getContractSpecificData().getJourneyType()));
 		builder.setDurationTypeJndHour(employeeContractInfo.getContractSpecificData().getJourneyDurationHours());
