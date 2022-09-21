@@ -26,7 +26,9 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -66,7 +68,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String cellWidth();
 		String columnBorder();
 		String extraCellHeight();
 		String gridCell();
@@ -231,8 +232,9 @@ public abstract class AgreementPreview extends ResizeComposite {
 		showAgreementPreview();
 		fillAgreementInfo();
 		hideMessage();
+		animateDiscButtons();
 	}
-	
+
 	// ------------------------------------------ fillAgreementInfo
 	
 	private void fillAgreementInfo() {
@@ -310,7 +312,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		else {
 			hideLevelSalaryMessage();
 			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-			salaryScrollPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 620), Unit.PX);
+//			salaryScrollPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 620), Unit.PX);
 			getSalaryTableHeader();
 			fillSalaryTable();
 			salaryTableWidth();
@@ -327,7 +329,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
 		level.addStyleName(style.textCenter());
-		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.headerFSize());
 		salaryGrid.setWidget(row, 0, level);
 		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerLevelFixed());
@@ -339,7 +340,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			Label label = new Label(variable);
 			label.addStyleName(style.gridTitle());
 			label.addStyleName(style.textCenter());
-			label.addStyleName(style.cellWidth());
 			label.addStyleName(style.headerFSize());
 			salaryGrid.setWidget(row, col, label);
 			salaryGrid.getColumnFormatter().setWidth(col, "100px");
@@ -369,7 +369,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			Label levelCell = new Label(level.getDescription());
 			levelCell.addStyleName(style.gridTitle());
 			levelCell.addStyleName(style.gridCell());
-			levelCell.addStyleName(style.cellWidth());
 			
 			salaryGrid.setWidget(row, 0, levelCell);
 			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
@@ -383,7 +382,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 				cell.addStyleName(style.gridCell());
 				cell.setValue(null == levelData ? null : levelData.getExpression());
 				cell.setReadOnly(true);
-				cell.addStyleName(style.cellWidth());
 						
 				salaryGrid.setWidget(row, col, cell);
 				if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
@@ -422,7 +420,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
-		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.headerFSize());
 		level.getElement().getStyle().setFontSize(1, Unit.EM);
 		levelGrid.setWidget(row, 0, level);
@@ -457,7 +454,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			Label levelCell = new Label(level.getDescription());
 			levelCell.addStyleName(style.gridTitle());
-			levelCell.addStyleName(style.cellWidth());
 			levelCell.getElement().getStyle().setPaddingLeft(1, Unit.EM);
 			
 			Label categoryCell = new Label(categoriesBuilder.toString());
@@ -759,31 +755,31 @@ public abstract class AgreementPreview extends ResizeComposite {
 		levelDiscPanel.setAnimationEnabled(true);
 		levelDiscPanel.addOpenHandler(e -> handleIcon(levelDiscBtn, true));
 		levelDiscPanel.addCloseHandler(e -> handleIcon(levelDiscBtn, false));
-		levelDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+//		levelDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 		
 		salaryDiscPanel.setAnimationEnabled(true);
 		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 		salaryDiscPanel.addCloseHandler(e -> handleIcon(salaryDiscBtn, false));
 		salaryDiscPanel.setOpen(true);
-		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+//		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 		
 		paymentDiscPanel.setAnimationEnabled(true);
 		paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
 		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
 		paymentDiscPanel.setOpen(true);
-		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+//		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 		
 		extraDiscPanel.setAnimationEnabled(true);
 		extraDiscPanel.addOpenHandler(e -> handleIcon(extraDiscBtn, true));
 		extraDiscPanel.addCloseHandler(e -> handleIcon(extraDiscBtn, false));
-		extraDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
+//		extraDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 	}
 
 	private void createDiscPanelButtons() {
-		levelDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
-		salaryDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
-		paymentDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
-		extraDiscBtn = new AonToolbarButton("Pagas extras", AON.CSS.aonIconRight());
+		levelDiscBtn = new AonToolbarButton("Desplegar Nivel / Categoria", AON.CSS.aonIconRight());
+		salaryDiscBtn = new AonToolbarButton("Desplegar Tabla Salarial", AON.CSS.aonIconRight());
+		paymentDiscBtn = new AonToolbarButton("Desplegar Devengos", AON.CSS.aonIconRight());
+		extraDiscBtn = new AonToolbarButton("Desplegar Extras", AON.CSS.aonIconRight());
 		
 		levelDiscBtn.addClickHandler(e -> handleIcon(levelDiscBtn, levelDiscPanel.isOpen()));
 		salaryDiscBtn.addClickHandler(e -> handleIcon(salaryDiscBtn, salaryDiscPanel.isOpen()));
@@ -795,10 +791,90 @@ public abstract class AgreementPreview extends ResizeComposite {
 		if(open) {
 			button.removeStyleName(AON.CSS.aonIconRight());
 			button.addStyleName(AON.CSS.aonIconDown());
+			
+			if(button.equals(levelDiscBtn)) button.setTitle("Colapsar Nivel / Categoria");
+			if(button.equals(levelDiscBtn)) button.setTitle("Colapsar Tabla Salarial");
+			if(button.equals(levelDiscBtn)) button.setTitle("Colapsar Devengos");
+			if(button.equals(levelDiscBtn)) button.setTitle("Colapsar Extras");
 		} else {
 			button.removeStyleName(AON.CSS.aonIconDown());
 			button.addStyleName(AON.CSS.aonIconRight());
+			
+			if(button.equals(levelDiscBtn)) button.setTitle("Desplegar Nivel / Categoria");
+			if(button.equals(levelDiscBtn)) button.setTitle("Desplegar Tabla Salarial");
+			if(button.equals(levelDiscBtn)) button.setTitle("Desplegar Devengos");
+			if(button.equals(levelDiscBtn)) button.setTitle("Desplegar Extras");
 		}
+	}
+	
+	private void animateDiscButtons() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			animateDiscButton(levelDiscBtn);
+			animateDiscButton(salaryDiscBtn);
+			animateDiscButton(paymentDiscBtn);
+			animateDiscButton(extraDiscBtn);
+		});
+		
+		Scheduler.get().scheduleFixedDelay(() -> {
+
+			animateDiscButton(levelDiscBtn);
+			animateDiscButton(salaryDiscBtn);
+			animateDiscButton(paymentDiscBtn);
+			animateDiscButton(extraDiscBtn);
+			return false;
+			
+		}, 2000);
+		
+		Scheduler.get().scheduleFixedDelay(() -> {
+
+			animateDiscButton(levelDiscBtn);
+			animateDiscButton(salaryDiscBtn);
+			animateDiscButton(paymentDiscBtn);
+			animateDiscButton(extraDiscBtn);
+			return false;
+		
+		}, 4000);
+		
+		Scheduler.get().scheduleFixedDelay(() -> {
+
+			animateDiscButton(levelDiscBtn);
+			animateDiscButton(salaryDiscBtn);
+			animateDiscButton(paymentDiscBtn);
+			animateDiscButton(extraDiscBtn);
+			return false;
+		
+		}, 6000);
+	}
+	
+	private void animateDiscButton(AonToolbarButton button) {
+		new Animation() {
+			
+			@Override
+			protected void onUpdate(double progress) {
+				double size = 24 + progress*11;
+				button.getElement().getStyle().setProperty("background-size", size + "px");
+			}
+			
+			@Override
+			protected void onComplete() {
+				new Animation() {
+					
+					@Override
+					protected void onUpdate(double progress) {
+						double size = 35 - progress*11;
+						button.getElement().getStyle().setProperty("background-size", size + "px");
+					}
+					
+					@Override
+					protected void onComplete() {
+						button.getElement().getStyle().setProperty("background-size", "24px");
+					}
+					
+				}.run(1000);
+			}
+			
+		}.run(1000);
 	}
 	
 	// ------------------------------------------ toolbar

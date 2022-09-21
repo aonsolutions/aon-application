@@ -248,7 +248,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	}
 
 	private void salaryTableWidth() {
-		salaryGrid.getColumnFormatter().setWidth(0, "100px");
+		salaryGrid.getColumnFormatter().setWidth(0, "120px");
 	}
 	
 	// ------------------------------------------ toolbar

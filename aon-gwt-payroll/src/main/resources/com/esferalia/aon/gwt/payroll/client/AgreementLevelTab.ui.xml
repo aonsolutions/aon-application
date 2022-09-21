@@ -47,6 +47,7 @@
 		.gridTitle{
 			text-transform: uppercase;
 			font-weight: bold;
+			width: 120px;
 		}
 		
 		.headerColor {

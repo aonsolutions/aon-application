@@ -27,6 +27,10 @@
 			padding: .5rem 2rem;
 		}
 		
+		.discContent {
+			padding: 1rem 0 !important;
+		}
+		
 		.flex {
 			display: flex;
 			gap: 1rem;
@@ -37,6 +41,7 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			border-bottom: 1px solid #c1bebe;
 		}
 		
 		.flexCenter {
@@ -68,11 +73,6 @@
 				
 		/* Class AgreementPreview.Style */
 		
-		.cellWidth {
-			width: 100px;
-			padding: .3em 1rem;
-		}
-		
 		.columnBorder {
 			border: 1px solid #eee;
 			border-bottom: none;
@@ -85,7 +85,7 @@
 		.gridCell{
 			text-transform: uppercase;
 			text-align: center;
-			width: 100px;
+			width: 120px;
 		}
 		
 		.gridTitle{
@@ -166,7 +166,7 @@
 						   	  	<aon:AonToolbarButton ui:field="levelDiscBtn" />
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
-						   <g:HTMLPanel styleName="{style.flexColumn}" ui:field="levelDiscPanelContent">
+						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="levelDiscPanelContent">
 						   		<g:HTMLPanel ui:field="levelTable" styleName="{style.flexCenter} {style.heigthAll}">
 									<g:ScrollPanel ui:field="levelScrollPanel">
 										<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
@@ -185,7 +185,7 @@
 						   	  	<aon:AonToolbarButton ui:field="salaryDiscBtn" />
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
-						   <g:HTMLPanel styleName="{style.flexColumn}" ui:field="salaryDiscPanelContent">
+						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="salaryDiscPanelContent">
 						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex}" />
 								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter}">
 									<g:ScrollPanel ui:field="salaryScrollPanel">
@@ -205,7 +205,7 @@
 							   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" />
 							   	 </g:HTMLPanel>
 							   </g:customHeader>
-							   <g:HTMLPanel styleName="{style.flexColumn}" ui:field="paymentDiscPanelContent">
+							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentDiscPanelContent">
 							   		<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexCenter} {style.heigthAll}">
 										<g:ScrollPanel ui:field="paymentScrollPanel">
 											<g:Grid ui:field="paymentGrid" styleName="{style.borderCollapse}" />
@@ -224,7 +224,7 @@
 							   	  	<aon:AonToolbarButton ui:field="extraDiscBtn" />
 							   	 </g:HTMLPanel>
 							   </g:customHeader>
-							   <g:HTMLPanel styleName="{style.flexColumn}" ui:field="extraDiscPanelContent">
+							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">
 							   		<g:HTMLPanel ui:field="extraTable" styleName="{style.flexCenter} {style.heigthAll}">
 										<g:ScrollPanel ui:field="extraScrollPanel">
 											<g:Grid ui:field="extraGrid" styleName="{style.borderCollapse}" />
