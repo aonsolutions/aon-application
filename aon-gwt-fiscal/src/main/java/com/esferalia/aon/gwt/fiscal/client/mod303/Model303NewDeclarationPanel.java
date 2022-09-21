@@ -68,8 +68,92 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
+		registerHandlers(model,callback);
 		paint(model,callback);
 		
+	}
+	
+	private void registerHandlers(Mod303 model, Model303Callback callback) {
+		admonList.addChangeHandler( event -> {
+			model.setAdministration( admonList.getValue() );
+			initialize(model, callback );
+		});
+		
+		yearBox.setMaxLength(4);
+		yearBox.setVisibleLength(4);
+		yearBox.addValueChangeHandler(event -> {
+			model.setYear(yearBox.getValue());
+			initialize(model, callback );
+		});
+		
+		periodList.addChangeHandler( event -> {
+			model.setPeriod( periodList.getValue());
+			initialize(model, callback );
+		});
+		
+		complementary.setText(AON.MSG.complementary());
+		complementary.addClickHandler(event -> {
+			model.setComplementary(complementary.getValue());
+			replacement.setEnabled(!complementary.getValue());
+			if (AonEnumUtils.getBoolean(complementary.getValue())) {
+				replacement.setValue(false);
+			}
+			initialize(model, callback );
+		});
+		
+		replacement.setText(AON.MSG.replacement());
+		replacement.addClickHandler(event -> {
+			model.setReplacement(replacement.getValue());
+			complementary.setEnabled(!replacement.getValue());
+			if (AonEnumUtils.getBoolean(replacement.getValue())) {
+				complementary.setValue(false);
+			}
+			initialize(model, callback );
+		});
+		
+		withoutActivity.setText(AON.MSG.withoutActivity());
+		withoutActivity.addClickHandler(event -> {
+			model.setWithoutActivity(withoutActivity.getValue());
+			initialize(model, callback );
+		});
+
+		manualDeclaration.setText(AON.MSG.manualDeclaration());
+		manualDeclaration.addClickHandler(event -> {
+			model.setManualDeclaration(manualDeclaration.getValue());
+			if ( model.isManualDeclaration()) {
+				model.setProratePercent(0);
+				model.setSpecialProrateValue(false);
+			}
+			initialize(model, callback );
+		});
+
+		defaultVatRegimeLabel.setText("Destinar Fras. sin actividad a");
+		if (defaultVatRegime.getItemCount() == 0) {
+			defaultVatRegime.addItem(VATRegime.GENERAL.getName());
+			defaultVatRegime.addItem(VATRegime.SIMPLIFIED.getName());
+		}
+		defaultVatRegime.addChangeHandler(event -> {
+			model.setDefaultVatRegime(defaultVatRegime.getSelectedIndex() == 1? VATRegime.SIMPLIFIED: VATRegime.GENERAL);
+			initialize(model, callback );	
+		});
+
+		generateFromYearStart.setText(AON.MSG.generateFromYearStartInv( model.getYear() ));
+		generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
+
+		prorate.addValueChangeHandler(event -> {
+			if (prorate.getValue() == null) prorate.setValue(100.0,false); 
+			model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
+			specialProrate.setVisible(model.hasProrate());
+			calculateProratePanel.setVisible(((model.hasProrate() || model.hasPreviousProrate()) && model.getPeriod().isLastPeriod()));
+			if (!model.hasProrate()) {
+				specialProrate.setValue(false);
+				model.setSpecialProrateValue( specialProrate.getValue() );
+			}
+		});
+
+		specialProrate.addClickHandler(event -> {
+			model.setSpecialProrateValue( specialProrate.getValue() );
+		});
 	}
 
 	private void paint(Mod303 model, Model303Callback callback) {
@@ -144,100 +228,44 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	}
 
 	private void paintAdministration(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
-		admonList.addChangeHandler( event -> {
-			model.setAdministration( admonList.getValue() );
-			initialize(model, callback );
-		});
 		tab.addLabelWidgetRow(AON.MSG.administration(), admonList);
 	}
 	
 	private void paintYear(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
-		yearBox.setMaxLength(4);
-		yearBox.setVisibleLength(4);
-		yearBox.addValueChangeHandler(event -> {
-			model.setYear(yearBox.getValue());
-			initialize(model, callback );
-		});
 		tab.addLabelWidgetRow(AON.MSG.year(), yearBox);
 	}
 
 	private void paintPeriod(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
-		periodList.addChangeHandler( event -> {
-			model.setPeriod( periodList.getValue());
-			initialize(model, callback );
-		});
 		tab.addLabelWidgetRow(AON.MSG.period(), periodList);
 	}
 
 	private void paintDefaultVatRegime(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		if (model.isAEAT()) {
-			defaultVatRegimeLabel.setText("Destinar Fras. sin actividad a");
-			if (defaultVatRegime.getItemCount() == 0) {
-				defaultVatRegime.addItem(VATRegime.GENERAL.getName());
-				defaultVatRegime.addItem(VATRegime.SIMPLIFIED.getName());
-			}
 			defaultVatRegime.setSelectedIndex( model.getDefaultVATRegime() == VATRegime.SIMPLIFIED? 1 : 0);
-			defaultVatRegime.addChangeHandler(event -> {
-				model.setDefaultVatRegime(defaultVatRegime.getSelectedIndex() == 1? VATRegime.SIMPLIFIED: VATRegime.GENERAL);
-				initialize(model, callback );	
-			});
 			tab.addLabelWidgetRow(defaultVatRegimeLabel, defaultVatRegime);
 		}
 	}
 
 	private void paintComplementary(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		if (model.isComplementaryDeclarationAvailable()) {
-			complementary.setText(AON.MSG.complementary());
-			complementary.addClickHandler(event -> {
-				model.setComplementary(complementary.getValue());
-				replacement.setEnabled(!complementary.getValue());
-				if (AonEnumUtils.getBoolean(complementary.getValue())) {
-					replacement.setValue(false);
-				}
-				initialize(model, callback );
-			});
 			tab.addLabelWidgetRow("", complementary);
 		}
 	}
 
 	private void paintReplacement(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		if (model.isReplacementDeclarationAvailable() ) {
-			replacement.setText(AON.MSG.replacement());
-			replacement.addClickHandler(event -> {
-				model.setReplacement(replacement.getValue());
-				complementary.setEnabled(!replacement.getValue());
-				if (AonEnumUtils.getBoolean(replacement.getValue())) {
-					complementary.setValue(false);
-				}
-				initialize(model, callback );
-			});
 			tab.addLabelWidgetRow("", replacement);
 		}
 		
 	}
 
 	private void paintManualDeclaration(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
-		manualDeclaration.setText(AON.MSG.manualDeclaration());
 		manualDeclaration.setValue(model.isManualDeclaration());
-		manualDeclaration.addClickHandler(event -> {
-			model.setManualDeclaration(manualDeclaration.getValue());
-			if ( model.isManualDeclaration()) {
-				model.setProratePercent(0);
-				model.setSpecialProrateValue(false);
-			}
-			initialize(model, callback );
-		});
 		tab.addLabelWidgetRow("", manualDeclaration);
 	}
 
 	private void paintWithoutActivity(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
-		// SIN ACTIVIDAD
-		withoutActivity.setText(AON.MSG.withoutActivity());
 		withoutActivity.setValue(model.isWithoutActivity());
-		withoutActivity.addClickHandler(event -> {
-			model.setWithoutActivity(withoutActivity.getValue());
-			initialize(model, callback );
-		});
 		tab.addLabelWidgetRow("", withoutActivity);
 	}
 
@@ -252,21 +280,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		// PORCENTAJE DE PRORRATA
 		FlowPanel proratePanel = new FlowPanel();
 		proratePanel.setStyleName(AON.CSS.aonFlexBlock());
-		prorate.addValueChangeHandler(event -> {
-			if (prorate.getValue() == null) prorate.setValue(100.0,false); 
-			model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
-			specialProrate.setVisible(model.hasProrate());
-			calculateProratePanel.setVisible(((model.hasProrate() || model.hasPreviousProrate()) && model.getPeriod().isLastPeriod()));
-			if (!model.hasProrate()) {
-				specialProrate.setValue(false);
-				model.setSpecialProrateValue( specialProrate.getValue() );
-			}
-		});
 		
 		specialProrate.setStyleName(AON.CSS.aonMarginLeft());  
-		specialProrate.addClickHandler(event -> {
-			model.setSpecialProrateValue( specialProrate.getValue() );
-		});
 		
 		proratePanel.add(prorate);
 		proratePanel.add(specialProrate);
@@ -379,8 +394,6 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 
 	private void paintGenerateFromYearStart(Mod303 model, AonDisplayTable tab) {
 		if (model.isGenerateFromYearStartAvailable() ) {
-			generateFromYearStart.setText(AON.MSG.generateFromYearStartInv( model.getYear() ));
-			generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
 			tab.addRow()
 				.addCell(new Label(),AON.CSS.aonTableLabel())
 				.addCell(generateFromYearStart,AON.CSS.aonWidth400());
