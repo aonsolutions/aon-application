@@ -456,6 +456,20 @@ public class JooqContractSEPE {
 		}
 	}
 	
+	public static void deleteContractTransformData(Connection conn, Integer contractId) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("SEPE_TRANSFORM_ID"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("COMUNICATION_TRANSFORM_DATE"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+	}
+	
 	private static void updateContractTransformIDE(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, String ide) {
 		

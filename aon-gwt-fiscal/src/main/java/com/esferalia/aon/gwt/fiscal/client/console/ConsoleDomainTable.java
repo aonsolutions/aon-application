@@ -11,6 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -41,6 +43,7 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 		public void onDelete(Domain domain, AsyncCallback<Boolean> cbk);
 		public void onChangeActive(Domain domain, AsyncCallback<Domain> cbk);
 		public void onChangeExpirationDate(Domain domain, AsyncCallback<Domain> cbk);
+		public void onValidate(Domain domain, AsyncCallback<Boolean> cbk);
 	}
 	
 	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainTable.class.getName());
@@ -149,7 +152,7 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 		InlineLabel parentIdLabel = new InlineLabel(AonNumberUtils.toString( domain.getParentId()));
 		InlineLabel nameLabel = new InlineLabel(domain.getName());
 		InlineLabel lastAccessLabel = new InlineLabel( domain.getLastAccessDate()==null?"":AON.TIME_FORMAT.format(domain.getLastAccessDate()));
-		 
+		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());		 
 
 		AonTableButton active = new AonTableButton(
 			domain.isActive()?"Activo":"Inactivo"
@@ -180,6 +183,7 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 							public void onSuccess(Domain result) {
 								running = false;
 								domain.setActive(result.isActive());
+								deleteButton.setEnabled(!result.isActive());
 								if (result.isActive()) {
 									active.removeStyleName(AON.CSS.aonIconToggleOff());
 									active.addStyleName(AON.CSS.aonIconToggleOn());
@@ -252,9 +256,8 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 			});
 		});
 
-		
-		FlowPanel buttons = new FlowPanel();
-		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+		AonDisplayTable buttons = new AonDisplayTable();
+		deleteButton.setEnabled(!domain.isActive());
 		deleteButton.addClickHandler(e -> {
 			AonConfirmDialog acd = new AonConfirmDialog();
 			acd.confirm("\u00A1\u00A1ESTE PROCESO ES IRREVERSIBLE!!",
@@ -309,7 +312,40 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 			});
 		});
 		
-		buttons.add(deleteButton);
+		AonTableButton validateButton = new AonTableButton(AON.MSG.validateAction(), AON.CSS.aonIconValid());
+		validateButton.addClickHandler(e -> {
+			AonConfirmDialog acd = new AonConfirmDialog();
+			acd.confirm("Proceder con la validaci\u00F3n de integridad referencial del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+				, new AonConfirmDialogCallback() {
+				@Override 
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					if (!running) {
+						callback.onValidate(domain , new AsyncCallback<Boolean>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								running = false;
+								callback.showError( "No se pudo validar el dominio. ("+ caught.getMessage() +")");
+							}
+			
+							@Override
+							public void onSuccess(Boolean result) {
+								running = false;
+							}
+						});
+					} else {
+						AonMessageDialog.show("AVISO","Hay una validaci\u00F3n ejecut\u00E1ndose. Un momento, por favor.");
+					}
+				}
+			});
+		});
+		buttons.addRow()
+			.addCell(deleteButton)
+			.addCell(validateButton);
 		
 		row.addStyleName(AON.CSS.aonClickable());
 		row .addCell( checkBox , AON.CSS.aonTextCenter())

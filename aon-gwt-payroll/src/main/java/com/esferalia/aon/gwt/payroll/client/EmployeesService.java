@@ -313,7 +313,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void sendContractExtension(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 	
-	void removeContractTransform(String currentDomainName, String currentUser, String ide) throws IllegalArgumentException;
+	void removeContractTransform(String currentDomainName, String currentUser, String ide, Integer contractId) throws IllegalArgumentException;
 
 	Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
 			Date date, Integer contractId) throws IllegalArgumentException;

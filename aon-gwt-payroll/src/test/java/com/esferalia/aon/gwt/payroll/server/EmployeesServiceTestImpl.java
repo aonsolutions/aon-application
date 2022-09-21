@@ -1030,7 +1030,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void removeContractTransform(String currentDomainName, String currentUser, String ide)
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide, Integer contractId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
