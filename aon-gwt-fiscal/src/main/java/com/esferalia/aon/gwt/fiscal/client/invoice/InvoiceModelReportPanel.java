@@ -150,6 +150,7 @@ class InvoiceModelReportPanel extends ScrollPanel{
 					.addCell(new Label("N\u00BA Referencia"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 					.addCell(new Label("Fec. Fac."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 					.addCell(new Label("Fec. Imp."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
+					.addCell(new Label("Fec. Crea."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 					.addCell(new Label("Modelos"),AON.CSS.aonWidthAuto())
 				;
 			}
@@ -164,6 +165,8 @@ class InvoiceModelReportPanel extends ScrollPanel{
 				if (!AonStringUtils.equals(issueDate, taxDate)) {
 					taxDateLabel.addStyleName(AON.CSS.aonBackgroundHighlightedOrange());
 				}
+				String creationDate = ensure(inv.getCreationDate(), () -> AON.DATE_FORMAT.format(inv.getCreationDate()), AonStringUtils.EMPTY);
+				Label creationDateLabel = new Label(creationDate);
 				AonTableButton viewInvoice = new AonTableButton(AON.MSG.documentViewer(),AON.CSS.aonIconSearch());
 				viewInvoice.addClickHandler( event -> showInvoice(options, inv.getId()));
 				
@@ -177,6 +180,7 @@ class InvoiceModelReportPanel extends ScrollPanel{
 					.addCell(new Label(ensure(inv.getReferenceCode(), inv::getReferenceCode, AonStringUtils.EMPTY)))
 					.addCell(issueDateLabel)
 					.addCell(taxDateLabel)
+					.addCell(creationDateLabel)
 				;
 			}
 
