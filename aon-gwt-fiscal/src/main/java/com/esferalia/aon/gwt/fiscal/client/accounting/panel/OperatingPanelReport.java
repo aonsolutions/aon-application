@@ -46,7 +46,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -68,6 +67,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	private HashSet<String> costCentersSet;
 	
 	private AccountPeriodBox period;
+	private FlowPanel periodBoxContainer = new FlowPanel();
 	private AonDateBox fromDate;
 	private AonDateBox toDate;
 	private ListBox confidential;
@@ -124,7 +124,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			addStyleName(AON.CSS.aonScrollArea());
 			addStyleName(AON.CSS.aonMarginBottom());
 
-			FlexTable dateTab = new FlexTable();
 			period = new AccountPeriodBox();
 			period.setWidth("100px");
 			fromDate = new AonDateBox();
@@ -139,7 +138,8 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 						if (AonNumberUtils.equals(p.getId(), params.getPeriod())) {
 							period.select(params.getPeriod());
 							ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
-							dateTab.setWidget(0, 1, periodBox);
+							periodBoxContainer.clear();
+							periodBoxContainer.add(periodBox);
 							periodBoxShown = true;
 						}
 					}
@@ -156,7 +156,8 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				@Override
 				public void onChange(ChangeEvent event) {
 					ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
-					dateTab.setWidget(0, 1, periodBox);
+					periodBoxContainer.clear();
+					periodBoxContainer.add(periodBox);
 					onSearch(options);
 				}
 			});
@@ -390,11 +391,16 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				,AON.CSS.aonWidthAlmostAll()
 			);
 			
+			if (!periodBoxShown) {
+				periodBoxContainer.clear();
+				periodBoxContainer.add(getPeriodBox(options,period.getSelectedValue()));
+			}
+
 			mainTab.addRow().addCell( 
 				new AonDisplayTable().addRow()
 				.addCell(new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()),AON.CSS.aonSearchPanelLabel())
 				.addCell(period)
-				.addCellIf(!periodBoxShown, getPeriodBox(options,period.getSelectedValue()))
+				.addCellIf(!periodBoxShown, periodBoxContainer)
 				.addCell(new InlineLabel(AON.MSG.from()), AON.CSS.aonSearchPanelLabel(), AON.CSS.aonPaddingLeft())
 				.addCell(fromDate)
 				.addCell(new InlineLabel(AON.MSG.to()), AON.CSS.aonSearchPanelLabel())
