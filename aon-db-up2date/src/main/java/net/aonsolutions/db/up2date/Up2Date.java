@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.payroll.IrpfInKindSystemInsert;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargableFix;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2022Fix;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2022FixII;
+import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
 
 public class Up2Date {
 
@@ -267,11 +268,12 @@ public class Up2Date {
     		//ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
     		//IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
     		//AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER
-    		//MaxEmbargableFix.MAXEMBARGABLEFIX
-    		//ContractExtraCreation.CONTRACTEXTRACREATION
+    		//MaxEmbargableFix.MAXEMBARGABLEFIX,
+    		//ContractExtraCreation.CONTRACTEXTRACREATION,
     		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
-    		//TrainingBases2022Fix.TRAININGBASES2022FIX
-    		TrainingBases2022FixII.TRAININGBASES2022FIXII
+    		//TrainingBases2022Fix.TRAININGBASES2022FIX,
+    		TrainingBases2022FixII.TRAININGBASES2022FIXII,
+    		UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX
     		
     };
 
