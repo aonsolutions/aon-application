@@ -44,3 +44,9 @@
     font-size: 0.9375rem;
     padding-left: 5px;
 }
+
+textarea.aonAutosizeTextareaContent {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
