@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyStore;
 import java.util.Base64;
 import java.util.Map;
 import java.util.logging.Level;
@@ -28,6 +29,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -315,5 +318,44 @@ public class AonApiHttpServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 		return decode;
+	}
+	
+	public static Certificate checkCertificate(AonApiData api) {
+		Certificate cert = new Certificate();
+		try {
+			if(api.getData().opt("cert") != null) {
+				Integer id = JsonUtils.getInteger(api.getData(), "cert");
+				cert = AON.getCertificates(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(id))
+						.findFirst().orElse(new Certificate());
+			} else {
+				cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());				
+			}
+
+		} catch (Exception e) {
+			throw new AonApiException("Error al obtener el certificado.");
+		}
+		try {
+			if(!checkCert(cert.getData(), cert.getPassword())) {
+				throw new AonApiException("El certificado o la contraseña no son correctos.");
+			}
+		} catch (Exception e) {
+			throw new AonApiException("El certificado o la contraseña no son correctos.");			
+		}		
+		if(cert.isEmpty()) {
+			throw new AonApiException("El certificado no existe.");
+		}
+		return cert;
+		
+	}
+	
+	public static boolean checkCert(byte[] cert, String password) {
+		try {
+			ByteArrayInputStream is = new ByteArrayInputStream(cert);
+			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(is, password.toCharArray());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

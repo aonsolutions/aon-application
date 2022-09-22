@@ -1,7 +1,6 @@
 package com.code.aon.facturae.nuevo;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -11,8 +10,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.facturae.enumeration.TaxTypeCode;
@@ -86,7 +83,6 @@ public class FacturaeWriter2 {
 	
 	private static final String RETENTION_TAX_TYPE_CODE = "04";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FacturaeWriter2.class.getName());
 	private static final String SCHEMA_VERSION = "3.2";
 	public static final String FACTURAE_EXTENSION = ".xsig";
 	

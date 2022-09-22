@@ -1,4 +1,4 @@
-package com.code.aon.facturae.servlet;
+package net.aonsolutions.aon.api.servlet.invoice;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,18 +24,26 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.sign.FacturaeSigner;
+import net.aonsolutions.aon.sign.exception.AonSignerException;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "FaceServlet", urlPatterns = {"/ms/api/face/*",
 												"/aon_gwt_aio/face/*"})
-public class FaceServlet extends HttpServlet {
+public class FaceServlet extends AonApiHttpServlet {
+	
+	private static final Logger LOGGER  = Logger.getLogger(FaceServlet.class.getName());
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API DOWNLOAD INVOICE PDF AK");
+		AonApiData api = initialize(req, false);
 		try {
 			String idStr = req.getParameter("id");
 			Integer id = Integer.parseInt(idStr);
@@ -66,7 +73,15 @@ public class FaceServlet extends HttpServlet {
 
 			FacturaeWriter2 facturae = new FacturaeWriter2(domain, user, company, workplace, invoice);
 			byte[] data = facturae.generate();
-			responseFile(resp, "FACTURAE", data, MimeType.XML);
+			
+			try {
+				Certificate certificate = checkCertificate(api);
+				byte[] signedData = FacturaeSigner.getInstance().sign(certificate, data);
+				responseFile(resp, "FACTURAE", signedData, MimeType.XML);
+			} catch (AonSignerException e) {
+				e.printStackTrace();
+				responseFile(resp, "FACTURAE", data, MimeType.XML);
+			}
 		} catch (IOException e) {
 			error(req, resp, e);
 		}
@@ -76,8 +91,8 @@ public class FaceServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		doGet(req, resp);
 	}
+
 	
-	private static final Logger LOGGER  = Logger.getLogger(FaceServlet.class.getName());
 	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
 		responseFile(resp, attach.getDescription(), is, attach.getMimeType());
