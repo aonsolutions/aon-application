@@ -190,9 +190,11 @@ export class AonMessenger extends AonElement {
 					this.rootPanel(new AonMessenger())
 				);
 
-				this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
-				);
+				if(this.getDur().isMessengerManager()){
+					this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
+					);
+				}
 			}
 		}
 
@@ -264,8 +266,6 @@ export class AonMessenger extends AonElement {
 
 
 	searchValueDefault(){
-
-
 
 		// let statusEl = this.getElement("status");
 		// let workgroup = this.getElement("workgroup");

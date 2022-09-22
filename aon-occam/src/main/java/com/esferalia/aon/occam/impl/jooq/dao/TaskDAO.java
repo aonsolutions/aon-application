@@ -363,11 +363,14 @@ public class TaskDAO {
 			Integer p = page.get();
 			condition.limit(per).offset(per * (p -1));
 		}
-		
-		Map<Task, List<Tag>> taskMaps = condition
+
+		SelectSeekStep1<Record, Timestamp> query = condition
 	   .groupBy(TASK.ID, TAG.ID, DOMAIN.ID)
-	   .orderBy(TASK.CREATION_DATE.desc())
-	   .fetchGroups( 
+	   .orderBy(TASK.CREATION_DATE.desc());
+	
+		System.out.println(query.getSQL());
+			
+	    Map<Task, List<Tag>> taskMaps = query.fetchGroups( 
 			new TaskFiller()::apply,
 			new TagFiller()::apply
 		);

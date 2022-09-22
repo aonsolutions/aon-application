@@ -873,7 +873,9 @@ const openDialogBranch = (task)=> {
     if(taskHolder.value && workgroup.value){
       application.startLoading();
       try {
-        const params = {
+        const domain = task.domain;
+
+        let params = {
           ...task.getWorkflowTmp(),
           type: WORKFLOW_TYPES.CONNECTED, 
           workgroup:workgroup.getDetail(), 
@@ -881,11 +883,16 @@ const openDialogBranch = (task)=> {
           comment: note.value
         };
 
+        if(domain){
+          params.domainId = domain.id;
+          params.domainName = domain.name;
+        }
+
         await saveTaskBranch(params);
         aonMessengerChat.showMessage(`Rama creada!`);
         
         let param = { id: task.id };
-        const domain = task.domain;
+    
         if(domain){
           param.domainId = domain.id;
           param.domainName = domain.name;
