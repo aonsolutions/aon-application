@@ -194,13 +194,6 @@ public class TaskServlet extends AonApiHttpServlet{
 			throw new AonApiException("Auth inexistente");
 		}
 		
-		if(page==1) {	//GET TASK ALL DOMAIN
-			List<Task> listOffice = getTasksOffice(api);
-			if(!listOffice.isEmpty()) {
-				tasks.addAll(listOffice);
-			}
-		}
-		
 		if(all && !isCau) {
 			tasks.addAll(
 				AON_SOLUTIONS.getTaskParentOrChildStream(api.getDomain(), api.getUser(), 
@@ -211,6 +204,13 @@ public class TaskServlet extends AonApiHttpServlet{
 		} else {
 			tasks.addAll(TaskUtils.getTasksNotAll(api));
 		} 
+		
+		if(page==1) {	//GET TASK ALL DOMAIN
+			List<Task> listOffice = getTasksOffice(api);
+			if(!listOffice.isEmpty()) {
+				tasks.addAll(listOffice);
+			}
+		}
 
 		JSONArray array = new JSONArray();
 		

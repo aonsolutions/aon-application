@@ -52,9 +52,51 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
+		registerHandlers(model,callback);
 		paint(model,callback);
 	}
 	
+	private void registerHandlers(Mod123 model, Model123Callback callback) {
+		admonList.addChangeHandler( event -> {
+			model.setAdministration( admonList.getValue() );
+			initialize(model, callback );
+		});
+
+		yearBox.setMaxLength(4);
+		yearBox.setVisibleLength(4);
+		yearBox.addValueChangeHandler(event -> {
+			model.setYear(yearBox.getValue());
+			initialize(model, callback );
+		});
+
+		periodList.addChangeHandler( event -> {
+			model.setPeriod( periodList.getValue());
+			initialize(model, callback );
+		});
+
+		complementary.setText(AON.MSG.complementary());
+		complementary.addClickHandler(event -> {
+			model.setComplementary(complementary.getValue());
+			replacement.setEnabled(!complementary.getValue());
+			if (AonEnumUtils.getBoolean(complementary.getValue())) {
+				replacement.setValue(false);
+				model.setReplacement(false);
+			}
+			
+		});
+
+		replacement.setText(AON.MSG.replacement());
+		replacement.addClickHandler(event -> {
+			model.setReplacement(replacement.getValue());
+			complementary.setEnabled(!replacement.getValue());
+			if (AonEnumUtils.getBoolean(replacement.getValue())) {
+				complementary.setValue(false);
+				model.setComplementary(false);
+			}
+		});
+
+		generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
+	}
 		
 	private void paint(Mod123 model, Model123Callback callback) {
 		headerPanel.setWidget(new AonFiscalModelHeader(model));
@@ -124,22 +166,12 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 	}
 	
 	private void paintAdministration(Mod123 model, Model123Callback callback, AonDisplayTable tab) {
-		admonList.addChangeHandler( event -> {
-			model.setAdministration( admonList.getValue() );
-			initialize(model, callback );
-		});
 		tab.addRow()
 			.addCell(new Label(AON.MSG.administration()),AON.CSS.aonTableLabel(),AON.CSS.aonWidth120() )
 			.addCell(admonList,AON.CSS.aonWidth400());
 	}
 
 	private void paintYear(Mod123 model, Model123Callback callback, AonDisplayTable tab) {
-		yearBox.setMaxLength(4);
-		yearBox.setVisibleLength(4);
-		yearBox.addValueChangeHandler(event -> {
-			model.setYear(yearBox.getValue());
-			initialize(model, callback );
-		});
 		tab.addRow()
 			.addCell(new Label(AON.MSG.year()),AON.CSS.aonTableLabel())
 			.addCell(yearBox);
@@ -147,10 +179,6 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 	}
 
 	private void paintPeriod(Mod123 model, Model123Callback callback, AonDisplayTable tab) {
-		periodList.addChangeHandler( event -> {
-			model.setPeriod( periodList.getValue());
-			initialize(model, callback );
-		});
 		tab.addRow()
 			.addCell(new Label(AON.MSG.period()),AON.CSS.aonTableLabel())
 			.addCell(periodList);
@@ -159,16 +187,6 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 	
 	private void paintComplementary(Mod123 model, AonDisplayTable tab) {
 		if (model.isComplementaryDeclarationAvailable()) {
-			complementary.setText(AON.MSG.complementary());
-			complementary.addClickHandler(event -> {
-				model.setComplementary(complementary.getValue());
-				replacement.setEnabled(!complementary.getValue());
-				if (AonEnumUtils.getBoolean(complementary.getValue())) {
-					replacement.setValue(false);
-					model.setReplacement(false);
-				}
-				
-			});
 			tab.addRow()
 				.addCell(new Label(),AON.CSS.aonTableLabel())
 				.addCell(complementary);
@@ -177,15 +195,6 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 
 	private void paintReplacement(Mod123 model, AonDisplayTable tab) {
 		if (model.isReplacementDeclarationAvailable() ) {
-			replacement.setText(AON.MSG.replacement());
-			replacement.addClickHandler(event -> {
-				model.setReplacement(replacement.getValue());
-				complementary.setEnabled(!replacement.getValue());
-				if (AonEnumUtils.getBoolean(replacement.getValue())) {
-					complementary.setValue(false);
-					model.setComplementary(false);
-				}
-			});
 			tab.addRow()
 				.addCell(new Label(),AON.CSS.aonTableLabel())
 				.addCell(replacement);
@@ -196,7 +205,6 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 	private void paintGenerateFromYearStart(Mod123 model, AonDisplayTable tab) {
 		if (model.isGenerateFromYearStartAvailable() ) {
 			generateFromYearStart.setText(AON.MSG.generateFromYearStart( model.getYear() ));
-			generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
 			tab.addRow()
 				.addCell(new Label(),AON.CSS.aonTableLabel())
 				.addCell(generateFromYearStart,AON.CSS.aonWidth400());

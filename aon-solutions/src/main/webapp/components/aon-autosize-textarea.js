@@ -14,6 +14,7 @@ export class AonAutosizeTextarea extends AonElement {
     _disabled;
     _title;
     _scrollLimit;
+    _required;
 
     OPTIONS;
     OPTIONS_UL;
@@ -35,7 +36,7 @@ export class AonAutosizeTextarea extends AonElement {
     }
 
     static get observedAttributes() {
-        return ["disabled", "title", "scroll-limit", CONSTANT.NAME, CONSTANT.VALUE];
+        return ["disabled", "title", "scroll-limit", CONSTANT.NAME, CONSTANT.VALUE, CONSTANT.REQUIRED];
     }    
 
     get title() {
@@ -73,6 +74,14 @@ export class AonAutosizeTextarea extends AonElement {
 
     get disabled() {
         return this.getAttribute("disabled");
+    }
+
+    set required(required) {
+        this.setAttribute(CONSTANT.REQUIRED, required);
+    }
+
+    get required() {
+        return this.getAttribute(CONSTANT.REQUIRED);
     }
 
     get DETAIL_COLOR_ACTIVE() {
@@ -135,8 +144,14 @@ export class AonAutosizeTextarea extends AonElement {
                 this.TEXTAREA.value = newValue;
                 this.autoAdjustTextarea();
             }
+        } else if (CONSTANT.REQUIRED === name) {
+            this._required = newValue !== "false";
+            if (this._required && this.TITLE_BAR) {
+                this.changeDetailColor();
+            }
         }
     }
+
 
     build() {
         this.className = CSS.AON_AUTOSIZE_TEXTAREA;
@@ -206,6 +221,9 @@ export class AonAutosizeTextarea extends AonElement {
         this.TITLE_BAR.className = CSS.AON_AUTOSIZE_TEXTAREA_TITLE;
         this.TITLE_BAR.innerHTML = this.title;
         this.TITLE_BAR.tabIndex = 0;
+        if (this.required) {
+            this.changeDetailColor();
+        }
     }
     
     createTextArea() {
@@ -250,6 +268,9 @@ export class AonAutosizeTextarea extends AonElement {
     }
 
     changeDetailColor(color) {
+        if (this.required) {
+            color = this.DETAIL_COLOR_ACTIVE;
+        }
         this.detailColor = color;
         this.TITLE_BAR.style.color = color;
         this.style.borderBottomColor = color;

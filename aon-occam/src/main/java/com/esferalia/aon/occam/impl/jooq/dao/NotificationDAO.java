@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectSeekStep2;
 
@@ -26,14 +27,17 @@ public class NotificationDAO {
 
 	private static final NotificationPropertiesDAO NOTIFICATION_PROPERTIES = new NotificationPropertiesDAO();
 	
-	public static SelectSeekStep2<Record, Byte, Integer> select(AONContext ctx, NotificationFilter filter) {
-		 return ctx.getDslContext()
-			.select()
+	public static SelectSeekStep2<Record, Byte, Integer> select(AONContext context, NotificationFilter filter) {
+		 DSLContext ctx = context.getDslContext();
+		 return ctx
+			.select(NOTIFICATION.fields())
+			.select(NOTIFICATION_RECEIVER.STATUS, NOTIFICATION_RECEIVER.ID)
+			.select(DOMAIN.fields())
 			.from(NOTIFICATION)
 			.join(NOTIFICATION_RECEIVER).on(NOTIFICATION_RECEIVER.NOTIFICATION.eq(NOTIFICATION.ID))
 			.join(DOMAIN).on(DOMAIN.ID.eq(NOTIFICATION.DOMAIN))
 			.where(NOTIFICATION_PROPERTIES.getConditions(filter))
-			.groupBy(NOTIFICATION_RECEIVER.NOTIFICATION)
+			.groupBy(NOTIFICATION_RECEIVER.NOTIFICATION, NOTIFICATION_RECEIVER.ID, DOMAIN.ID)
 			.orderBy( NOTIFICATION_RECEIVER.STATUS.asc(), NOTIFICATION.ID.desc());
 	}
 	
@@ -55,8 +59,7 @@ public class NotificationDAO {
 	}
 	
 	public static Notification saveNotification(AONContext ctx, Notification nt) {
-		Notification notification  = nt.getId() !=0 ? update(ctx, nt) : insert(ctx, nt);
-		return notification;
+		return nt.getId()!=null && nt.getId() !=0 ? update(ctx, nt) : insert(ctx, nt);
 	}
 	
 	public static void markReadNotification(AONContext ctx, NotificationFilter filter){
@@ -103,10 +106,11 @@ public class NotificationDAO {
 		return nt;
 	}
 	
-	
 	private static Notification insertNotificationReceiver(AONContext ctx, Notification nt) {
 		try {	 
-			nt.getReceiver().stream().forEach(rc->{
+			nt.getReceiver()
+			.stream()
+			.forEach(rc->{
 				try {
 					Integer id = ctx.getDslContext()
 					.insertInto(NOTIFICATION_RECEIVER, NOTIFICATION_RECEIVER.DOMAIN, NOTIFICATION_RECEIVER.NOTIFICATION,
@@ -161,17 +165,17 @@ public class NotificationDAO {
 		@Override
 		public Notification apply(Record r) {
 			return new Notification()
-					.setId(r.getValue(NOTIFICATION_RECEIVER.ID))
-					.setDomain(DomainFiller.build(r))
-					.setDate(r.getValue(NOTIFICATION.DATE))
-					.setTitle(r.getValue(NOTIFICATION.TITLE))
-					.setBody(r.getValue(NOTIFICATION.BODY))
-					.setSource(NotificationSource.safeValueOf(r.getValue(NOTIFICATION.SOURCE)))
-					.setSourceId(r.getValue(NOTIFICATION.SOURCE_ID))
-					.setSender(r.getValue(NOTIFICATION.SENDER))
-					.setPriority(Priority.safeValueOf(r.getValue(NOTIFICATION.PRIORITY)))
-					.setStatus(NotificationStatus.safeValueOf(r.getValue(NOTIFICATION_RECEIVER.STATUS)))
-					;
+				.setId(r.getValue(NOTIFICATION_RECEIVER.ID))
+				.setDomain(DomainFiller.build(r))
+				.setDate(r.getValue(NOTIFICATION.DATE))
+				.setTitle(r.getValue(NOTIFICATION.TITLE))
+				.setBody(r.getValue(NOTIFICATION.BODY))
+				.setSource(NotificationSource.safeValueOf(r.getValue(NOTIFICATION.SOURCE)))
+				.setSourceId(r.getValue(NOTIFICATION.SOURCE_ID))
+				.setSender(r.getValue(NOTIFICATION.SENDER))
+				.setPriority(Priority.safeValueOf(r.getValue(NOTIFICATION.PRIORITY)))
+				.setStatus(NotificationStatus.safeValueOf(r.getValue(NOTIFICATION_RECEIVER.STATUS)))
+				;
 		}
 	}
 	

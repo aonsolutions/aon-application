@@ -445,6 +445,7 @@ const openCategoryDialog = (category) => {
 // }
 
 const buildEditor = (parent, news, aonNewsAdd) =>{
+
     const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
         id:"aonTextAreaEditor",
         placeholder:MSG.WRITE_A_DESCRIPTION,
@@ -453,27 +454,29 @@ const buildEditor = (parent, news, aonNewsAdd) =>{
         'has-fullscreen-mode': true
     });
 
+    const isMobile = aonTextAreaEditor.isMobile();
+
     aonTextAreaEditor.elementFilter = {
         undo: false,
         redo: false,
-        font: !aonTextAreaEditor.isMobile(),
-        fontSize: !aonTextAreaEditor.isMobile(),
+        font: !isMobile,
+        fontSize: !isMobile,
         bold: true,
         italic: true,
         underline: true,
         color: true,
-        backgroundColor: !aonTextAreaEditor.isMobile(),
+        backgroundColor: !isMobile,
         alignment: true,
-        orderedList: !aonTextAreaEditor.isMobile(),
-        unorderedList: !aonTextAreaEditor.isMobile(),
-        indent: !aonTextAreaEditor.isMobile(),
-        outdent: !aonTextAreaEditor.isMobile(),
+        orderedList: !isMobile,
+        unorderedList: !isMobile,
+        indent: !isMobile,
+        outdent: !isMobile,
         removeFormat: true,
         strikethrough: true,
-        quote: !aonTextAreaEditor.isMobile(),
+        quote: !isMobile,
         hyperlink: true,
         attachment: true,
-        editorMode: !aonTextAreaEditor.isMobile()
+        editorMode: !isMobile
     };
 
     if ((navigator.userAgent.indexOf('Firefox') !== -1)) {

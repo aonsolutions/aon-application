@@ -55,6 +55,8 @@ export class AonTextareaEditor extends AonElement {
     #extraElements
     #timeoutResize;
 
+    resTimeout;
+
     #selectionRange;
 
     static get observedAttributes() {
@@ -353,12 +355,13 @@ export class AonTextareaEditor extends AonElement {
             this.elementFilter = this.DEFAULT_ELEMENTS_FILTER;
         }
         this.drawElement();
-        let resTimeout = null;
+        
         const resizeObserver = new ResizeObserver(() => {
-            if (resTimeout) {
-                clearTimeout(resTimeout);
+
+            if (this.resTimeout) {
+                clearTimeout(this.resTimeout);
             }
-            resTimeout = setTimeout(() => {
+            this.resTimeout = setTimeout(() => {
                 const textWidth = this.textBoxEnvelope.offsetWidth;
                 this.resizeBar(textWidth);
             }, 200);
@@ -377,7 +380,7 @@ export class AonTextareaEditor extends AonElement {
 
     resizeBar(width) {
         if (width) {
-            this.barEnvelope.style.width = width;
+            this.barEnvelope.style.width = `${width}px`;
         }
         let remaining = this.bar.querySelector(".additionalElements");
         if (remaining) {
@@ -514,7 +517,7 @@ export class AonTextareaEditor extends AonElement {
         box.style.margin = 0;
         box.style.width = "100%";
         box.style.height = "100%";
-        box.style.overflowY = "scroll";
+        // box.style.overflowY = "scroll";
         box.style.wordBreak = "break-word";
         // box.style.backgroundColor = this.#textAreaBackground;
         box.style.outline = "0px solid transparent";
@@ -1264,7 +1267,13 @@ export class AonTextareaEditor extends AonElement {
     checkFiles() {
         let filesIds = [...this.textBox.querySelectorAll(`[type='${CONSTANT.AON_FILE}']`)].map(el => el.dataset.id);
         this.FILES = this.FILES.filter(f => (filesIds || []).includes(f.id));
+        return this.FILES;
     }
+
+    getFiles(){
+        return this.checkFiles();
+    }
+    
 
     draggableEnable(){
 		const divTextArea = this.textBox;
@@ -1481,10 +1490,11 @@ export class AonTextareaEditor extends AonElement {
     drawElement() {
         
         this.textBoxEnvelope = document.createElement("div");
-        this.textBoxEnvelope.style.overflow = "hidden";
-        // this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
+        this.textBoxEnvelope.style.overflowX = "hidden";
+        this.textBoxEnvelope.style.overflowY = "auto";
+        this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
         this.textBoxEnvelope.style.minHeight = this.#textBoxMinHeight || this.#textBoxHeight || "3em";
-        this.textBoxEnvelope.style.minWidth = "260px";
+        this.textBoxEnvelope.style.minWidth = "275px";
         this.textBoxEnvelope.style.maxWidth = "100%";
         this.textBoxEnvelope.style.width = "100%";
         this.textBoxEnvelope.style.height = this.#textBoxHeight || "";
@@ -1493,6 +1503,7 @@ export class AonTextareaEditor extends AonElement {
         this.textBoxEnvelope.style.padding = "5px";
         this.textBoxEnvelope.style.cursor = "text";
         this.textBoxEnvelope.classList.add("materialScroll");
+        this.textBoxEnvelope.classList.add("textBoxEnvelope");
         
         this.textBox = this.textBoxElement();
         this.textBoxEnvelope.addEventListener("click", (ev) => {

@@ -190,9 +190,11 @@ export class AonMessenger extends AonElement {
 					this.rootPanel(new AonMessenger())
 				);
 
-				this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
-				);
+				if(this.getDur().isMessengerManager()){
+					this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
+					);
+				}
 			}
 		}
 
@@ -265,8 +267,6 @@ export class AonMessenger extends AonElement {
 
 	searchValueDefault(){
 
-
-
 		// let statusEl = this.getElement("status");
 		// let workgroup = this.getElement("workgroup");
 
@@ -274,14 +274,19 @@ export class AonMessenger extends AonElement {
 		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
 		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
 		});
-	
-		// registryEl.addEventListener(EVENT.INPUT,async({target})=>{
-		// 	const value = target.value;
-		// 	if(value.length > 2){
-		// 	  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
-		// 	  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
-		// 	}
-		// });
+
+
+		let timeOut = null;
+		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+			clearTimeout(timeOut);
+			const value = target.value;
+			if(value.length > 2){
+				timeOut = setTimeout(async() =>{
+					const cs = await getCustomers({reload:true, page:1, perPage:30, value});
+					registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+				}, 300);
+			}
+		});
 
 		let taskHolderEl = this.getElement("task_holder");
 		let senderEl = this.getElement("senderFilter");
