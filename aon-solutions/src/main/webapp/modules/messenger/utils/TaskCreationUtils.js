@@ -3,6 +3,7 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTime } from "../../../components/aon-time.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
+import { AonTextareaEditor } from "../../../components/aon-textarea-editor.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
@@ -468,6 +469,52 @@ const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
     name:MESSENGER_IDS.COMMENT_TASK,
     placeholder: placeholder || MSG.COMMENT+"..."
 });
+
+//-------------TEXT AREA EDITOR
+const createAonTextAreaEditor = (placeholder) => {
+  const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
+    placeholder:placeholder,
+    required:true,
+    'text-box-min-height':"24em",
+    'bar-position':'top',
+    'bar-integrated': true,
+    'has-fullscreen-mode': false
+  });
+
+  const isMobile = aonTextAreaEditor.isMobile();
+
+  aonTextAreaEditor.elementFilter = {
+    undo: false,
+    redo: false,
+    font: !isMobile,
+    fontSize: !isMobile,
+    bold: true,
+    italic: true,
+    attachmentEl: !isMobile,
+    underline: true,
+    color: true,
+    backgroundColor: !isMobile,
+    alignment: true,
+    orderedList: !isMobile,
+    unorderedList: !isMobile,
+    indent: !isMobile,
+    outdent: !isMobile,
+    removeFormat: true,
+    strikethrough: true,
+    quote: !isMobile,
+    hyperlink: true,
+    attachment: true,
+    editorMode: !isMobile
+  };
+
+  if ((navigator.userAgent.indexOf('Firefox') !== -1)) {
+    aonTextAreaEditor.textBoxHeight = "24em";
+  }
+
+  return aonTextAreaEditor; 
+} 
+
+
 
 const iconComment = (icon_name) => {
     const a = setStyles(document.createElement(TAG.A),{
@@ -1148,5 +1195,6 @@ export const TaskCreationUtils = {
   openDialogDailyTracking,
   createSectionRating,
   createIconEvaluation,
-  createSimpleList
+  createSimpleList,
+  createAonTextAreaEditor
 };

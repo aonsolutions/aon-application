@@ -140,30 +140,22 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
     });
     bar.addButton2(ACTIONS.BACK,() => showFullComment(false));
 
-    const textarea = setStyles(TaskCreationUtils.createAonTextArea(), {
-        flexDirection: 'column',
+    const textarea = setStyles(TaskCreationUtils.createAonTextAreaEditor(`${MSG.WRITE_A_COMMENT}...`),{
         height: '100%',
         width: '100%',
         boxShadow: "none",
         background: CSS.variable(COLORS.AON_WHITE),
-        margin: 0,
+        margin: 0
     });
-    
     writter.appendChild(textarea);
-    TaskUtils.buildTextareaToolbar(textarea);
 
-    const textAreaToolbar = textarea.querySelector("toolbar");
-    if(textAreaToolbar){
-        setStyles(textAreaToolbar, {
-            background: CSS.variable(COLORS.AON_LIGHT_GRAY),
-            border: "none",
-            padding: "10px",
-            height: "50px"
-        });
-    }
+    textarea.textBoxMaxHeight = "95%";
+
+    textarea.moveBar();
+
     textarea.addEventListener(EVENT.INPUT, ()=>{
       aonTextArea.value = textarea.value || "";
-      aonTextArea.FILES = textarea.FILES;
+      aonTextArea.FILES = textarea.getFiles();
     });
 }
 
@@ -285,8 +277,9 @@ const showForm = (b, cardDataHidden = false) => {
  */
 const showFullComment  = (b) => {
     const writter = document.getElementById(MESSENGER_COMPONENTS.WRITTER);
-    const textarea = writter.querySelector(TAG.AON_TEXTAREA);
+    const textarea = writter.querySelector("aon-textarea-editor");
     const aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK)
+
     if(b){
         if(aonTextArea.value) {
             textarea.value = aonTextArea.value;

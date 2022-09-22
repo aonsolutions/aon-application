@@ -303,28 +303,23 @@ const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();
   dialog.autoclose = false;
   dialog.clear();
+  dialog.width = "600px";
 
-  if (!aonMessengerChat.isMobile()) {
-    dialog.width = "600px";
-  }
-  
-  const textarea = setStyles(TaskCreationUtils.createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
-    height: '100%',
-    maxHeight: '300px',
-    minHeight: '250px'
-  });
+  const textarea = TaskCreationUtils.createAonTextAreaEditor(`${MSG.WRITE_A_COMMENT}...`);
+  textarea.textBoxMinHeight = "250px";
+  textarea.textBoxMaxHeight = "300px";
   dialog.setContent(textarea);
 
-  TaskUtils.buildTextareaToolbar(textarea);
+  textarea.moveBar();
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{
     aonTextArea.value = target.value || "";
-    aonTextArea.FILES = target.FILES;
+    aonTextArea.FILES = textarea.getFiles();
   });
 
-  let button = dialog.addSendAction(
-    ()=>{
+
+  let button = dialog.addSendAction(()=>{
       aonMessengerChat.saveComment(undefined, task);
       dialog.close();
     }, 
