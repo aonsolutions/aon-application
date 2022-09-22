@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -41,6 +42,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API NOTIFICATION SERVLET - GET METHOD");
 		try {
 			AonApiData api = initialize(req);
+			setDomain(api);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getNotification(api));
@@ -64,6 +66,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API NOTIFICATION SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req);
+			setDomain(api);
 			switch (api.getPath()) {
 			case "/mark-read-notification":
 				response(req, resp, markReadNotification(api));
@@ -171,8 +174,9 @@ public class NotificationServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject markReadNotification(AonApiData api) {
+		
 		AON_SOLUTIONS.markReadNotification(api.getDomain(), api.getUser().getLogin(),
-				f->  getFilterMark(api, f)
+			f->  getFilterMark(api, f)
 		);
 
 		return new JSONObject().put("success", true);
@@ -206,12 +210,15 @@ public class NotificationServlet extends AonApiHttpServlet{
 	private Filter getFilterMark(AonApiData api, NotificationProperties f) {
 		JSONObject params = api.getData();
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		int id = params.optInt(IJsonNames.ID);
 		
-		if(params.optInt(IJsonNames.ID)!=0) {
-			return f.getReceiverIdProperty().eq(params.optInt(IJsonNames.ID));
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		if(id!=0) {
+			filter = filter.and(f.getReceiverIdProperty().eq(id));
 		} else {
 			
-			Filter filter = f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAuthProperty().eq(aonToken.getAuth()));
+			filter =  filter.and(f.getAuthProperty().eq(aonToken.getAuth()));
 			
 			Boolean read = params.optBoolean("read");
 			
@@ -228,8 +235,16 @@ public class NotificationServlet extends AonApiHttpServlet{
 					filter = filter.and(f.getSourceProperty().eq(NotificationSource.safeValueOf(source).value()));
 				}
 			}
-
-			return filter;
+		}
+		
+		return filter;
+	}
+	
+	private void setDomain(AonApiData api) {
+		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
+		if(domainJson!=null) {
+			Domain domain = DomainJSON.fromJSON(domainJson);
+			api.setDomain(domain);
 		}
 	}
 }
