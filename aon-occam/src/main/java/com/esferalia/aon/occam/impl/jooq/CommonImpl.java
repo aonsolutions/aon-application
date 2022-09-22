@@ -490,13 +490,13 @@ public class CommonImpl implements ICommon {
 	// -------------------- Certificate
 	
 	@Override
-	public List<Certificate> getCertificates(AONContext ctx, Integer domainId, Integer userId) {
+	public List<Certificate> getCertificates(AONContext ctx, Integer domainId, Integer userId) throws IllegalArgumentException {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		CertificateDAO.getList(ctx, domainId, userId));
 	}
 	
 	@Override
-	public List<Certificate> getCertificatesWithParent(AONContext ctx, Integer domainId, Integer parentDomainId, Integer userId) {
+	public List<Certificate> getCertificatesWithParent(AONContext ctx, Integer domainId, Integer parentDomainId, Integer userId) throws IllegalArgumentException {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		CertificateDAO.getListWithParent(ctx, domainId, parentDomainId, userId));
 	}

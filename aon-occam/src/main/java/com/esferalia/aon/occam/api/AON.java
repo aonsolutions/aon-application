@@ -6306,13 +6306,13 @@ public class AON {
 	
 	// ------------------- CERTIFICATES
 	
-	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId){
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificates(ctx, domainId, userId);
 		}
 	}
 	
-	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId){
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificatesWithParent(ctx, domainId, parentDomainId, userId);
 		}

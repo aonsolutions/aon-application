@@ -835,16 +835,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			return false;
 		
 		}, 4000);
-		
-		Scheduler.get().scheduleFixedDelay(() -> {
-
-			animateDiscButton(levelDiscBtn);
-			animateDiscButton(salaryDiscBtn);
-			animateDiscButton(paymentDiscBtn);
-			animateDiscButton(extraDiscBtn);
-			return false;
-		
-		}, 6000);
 	}
 	
 	private void animateDiscButton(AonToolbarButton button) {

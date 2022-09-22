@@ -109,19 +109,28 @@ public class CertificateDAO {
 	
 	// -------------------------- Methods
 	
-	public static List<Certificate> getList(AONContext ctx, Integer domainId, Integer userId) {
-		List<Certificate> certificateList = new ArrayList<>();
-		getUserCertificates(ctx, userId, certificateList);
-		getEnterpriseCertificates(ctx, domainId, certificateList);
-		return certificateList;
+	public static List<Certificate> getList(AONContext ctx, Integer domainId, Integer userId) throws IllegalArgumentException {
+		try {
+			List<Certificate> certificateList = new ArrayList<>();
+			getUserCertificates(ctx, userId, certificateList);
+			getEnterpriseCertificates(ctx, domainId, certificateList);
+			return certificateList;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		
 	}
 	
-	public static List<Certificate> getListWithParent(AONContext ctx, Integer domainId, Integer parentDomainId, Integer userId) {
-		List<Certificate> certificateList = new ArrayList<>();
-		getUserCertificates(ctx, userId, certificateList);
-		getEnterpriseCertificates(ctx, domainId, certificateList);
-		getEnterprisParentCertificates(ctx, parentDomainId, certificateList);
-		return certificateList;
+	public static List<Certificate> getListWithParent(AONContext ctx, Integer domainId, Integer parentDomainId, Integer userId) throws IllegalArgumentException {
+		try {
+			List<Certificate> certificateList = new ArrayList<>();
+			getUserCertificates(ctx, userId, certificateList);
+			getEnterpriseCertificates(ctx, domainId, certificateList);
+			getEnterprisParentCertificates(ctx, parentDomainId, certificateList);
+			return certificateList;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 
 	public static Certificate get(AONContext ctx, AttachFilter attachFilter) {
@@ -159,99 +168,111 @@ public class CertificateDAO {
 
 	// -------------------------- Methods auxiliar methods (getList)
 	
-	private static void getUserCertificates(AONContext ctx, Integer userId, List<Certificate> certificateList) {
-		Integer registryUserId = ctx.getDslContext().select(USER.REGISTRY).from(USER).where(USER.ID.eq(userId)).fetchOne(USER.REGISTRY);
-		
-		if(null == registryUserId) return;
-		
-		Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(registryUserId))
-				.and(RATTACH.TYPE.eq((byte)4))
-				.fetch();
-		
-		for(Record certificateRecord : certificateRecords) {
+	private static void getUserCertificates(AONContext ctx, Integer userId, List<Certificate> certificateList) throws IllegalArgumentException {
+		try {
+			Integer registryUserId = ctx.getDslContext().select(USER.REGISTRY).from(USER).where(USER.ID.eq(userId)).fetchOne(USER.REGISTRY);
 			
-			java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-			String description = certificateRecord.get(RATTACH.DESCRIPTION);
+			if(null == registryUserId) return;
 			
-			Certificate certificate = new Certificate();
-			certificate.setId(certificateRecord.get(RATTACH.ID));
-			certificate.setOwner(CertificateOwner.USER);
-			certificate.setDescription(parseDescription(description));
-			certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
-			certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
-			certificate.setUpdateDate(updateDate);
-			parsePassword(ctx, registryUserId, description, certificate);
-			getCertificateTags(ctx, certificate);
-			getCertificateInfo(ctx, certificate);
+			Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+					.where(RATTACH.REGISTRY.eq(registryUserId))
+					.and(RATTACH.TYPE.eq((byte)4))
+					.fetch();
 			
-			certificateList.add(certificate);
+			for(Record certificateRecord : certificateRecords) {
+				
+				java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+				String description = certificateRecord.get(RATTACH.DESCRIPTION);
+				
+				Certificate certificate = new Certificate();
+				certificate.setId(certificateRecord.get(RATTACH.ID));
+				certificate.setOwner(CertificateOwner.USER);
+				certificate.setDescription(parseDescription(description));
+				certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
+				certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
+				certificate.setUpdateDate(updateDate);
+				parsePassword(ctx, registryUserId, description, certificate);
+				getCertificateTags(ctx, certificate);
+				getCertificateInfo(ctx, certificate);
+				
+				certificateList.add(certificate);
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
-	private static void getEnterpriseCertificates(AONContext ctx, Integer domainId, List<Certificate> certificateList) {
-		Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
-		
-		if(null == registryEnterpriseId)
-			return;
-		
-		Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
-				.and(RATTACH.TYPE.eq((byte)4))
-				.and(RATTACH.DOMAIN.eq(domainId))
-				.fetch();
-		
-		for(Record certificateRecord : certificateRecords) {
+	private static void getEnterpriseCertificates(AONContext ctx, Integer domainId, List<Certificate> certificateList) throws IllegalArgumentException {
+		try {
+			Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
 			
-			java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-			String description = certificateRecord.get(RATTACH.DESCRIPTION);
+			if(null == registryEnterpriseId)
+				return;
 			
-			Certificate certificate = new Certificate();
-			certificate.setId(certificateRecord.get(RATTACH.ID));
-			certificate.setOwner(CertificateOwner.ENTERPRISE);
-			certificate.setDescription(parseDescription(description));
-			certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
-			certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
-			certificate.setUpdateDate(updateDate);
-			parsePassword(ctx, registryEnterpriseId, description, certificate);
-			getCertificateTags(ctx, certificate);
-			getCertificateInfo(ctx, certificate);
+			Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+					.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
+					.and(RATTACH.TYPE.eq((byte)4))
+					.and(RATTACH.DOMAIN.eq(domainId))
+					.fetch();
 			
-			certificateList.add(certificate);
+			for(Record certificateRecord : certificateRecords) {
+				
+				java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+				String description = certificateRecord.get(RATTACH.DESCRIPTION);
+				
+				Certificate certificate = new Certificate();
+				certificate.setId(certificateRecord.get(RATTACH.ID));
+				certificate.setOwner(CertificateOwner.ENTERPRISE);
+				certificate.setDescription(parseDescription(description));
+				certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
+				certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
+				certificate.setUpdateDate(updateDate);
+				parsePassword(ctx, registryEnterpriseId, description, certificate);
+				getCertificateTags(ctx, certificate);
+				getCertificateInfo(ctx, certificate);
+				
+				certificateList.add(certificate);
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
-	private static void getEnterprisParentCertificates(AONContext ctx, Integer parentDomainId, List<Certificate> certificateList) {
-		Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
-		
-		if(null == registryEnterpriseId)
-			return;
-		
-		Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
-				.and(RATTACH.TYPE.eq((byte)4))
-				.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
-				.and(RATTACH.DOMAIN.eq(parentDomainId))
-				.fetch();
-		
-		for(Record certificateRecord : certificateRecords) {
+	private static void getEnterprisParentCertificates(AONContext ctx, Integer parentDomainId, List<Certificate> certificateList) throws IllegalArgumentException {
+		try {
+			Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
 			
-			java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-			String description = certificateRecord.get(RATTACH.DESCRIPTION);
+			if(null == registryEnterpriseId)
+				return;
 			
-			Certificate certificate = new Certificate();
-			certificate.setId(certificateRecord.get(RATTACH.ID));
-			certificate.setDomain(certificateRecord.get(RATTACH.DOMAIN));
-			certificate.setOwner(CertificateOwner.ENTERPRISE);
-			certificate.setDescription(parseDescription(description));
-			certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
-			certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
-			certificate.setUpdateDate(updateDate);
-			parsePassword(ctx, registryEnterpriseId, description, certificate);
-			getCertificateTags(ctx, certificate);
-			getCertificateInfo(ctx, certificate);
+			Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+					.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
+					.and(RATTACH.TYPE.eq((byte)4))
+					.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
+					.and(RATTACH.DOMAIN.eq(parentDomainId))
+					.fetch();
 			
-			certificateList.add(certificate);
+			for(Record certificateRecord : certificateRecords) {
+				
+				java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+				String description = certificateRecord.get(RATTACH.DESCRIPTION);
+				
+				Certificate certificate = new Certificate();
+				certificate.setId(certificateRecord.get(RATTACH.ID));
+				certificate.setDomain(certificateRecord.get(RATTACH.DOMAIN));
+				certificate.setOwner(CertificateOwner.ENTERPRISE);
+				certificate.setDescription(parseDescription(description));
+				certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
+				certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
+				certificate.setUpdateDate(updateDate);
+				parsePassword(ctx, registryEnterpriseId, description, certificate);
+				getCertificateTags(ctx, certificate);
+				getCertificateInfo(ctx, certificate);
+				
+				certificateList.add(certificate);
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
@@ -284,7 +305,7 @@ public class CertificateDAO {
 			            type = subjectDN.split("T=")[1].split(",")[0];
 			            ocupation = subjectDN.split("OU=")[1].split(",")[0];
 		            } catch (Exception e) {
-		            	// Nothing to do here
+		            	e.printStackTrace();
 		            }
 		            
 		            String surname = "";
@@ -293,21 +314,21 @@ public class CertificateDAO {
 			            surname = subjectDN.split("SURNAME=")[1].split(",")[0];
 			            name = subjectDN.split("GIVENNAME=")[1].split(",")[0];
 		            } catch (Exception e) {
-		            	// Nothing to do here
+		            	e.printStackTrace();
 					}
 		            
 		            if(AonStringUtils.isBlank(name))
 		            	try {
 		            		name = subjectDN.split("O=")[1].split(",")[0];
 		            	}catch (Exception e) {
-		            		// Nothing to do here
+		            		e.printStackTrace();
 						}
 		            
 		            if(AonStringUtils.isBlank(enterprise))
 		            	try {
 		            		enterprise = subjectDN.split("O=")[1].split(",")[0];
 		            	}catch (Exception e) {
-		            		// Nothing to do here
+		            		e.printStackTrace();
 						}
 		            
 		            String document = "";
@@ -337,6 +358,7 @@ public class CertificateDAO {
 		            		.setToDate(toDate);
 		            
 	        	} catch (Exception e) {
+	        		e.printStackTrace();
 	        		throw new IllegalArgumentException("Certificado validado correctamente");
 				}
 	        }
