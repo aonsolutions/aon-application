@@ -2,9 +2,9 @@ FROM maven:3-openjdk-17
 
 RUN set -eux; \
 	microdnf install \
-	procps sudo hostname mariadb-server
+	selinux-policy-targeted procps sudo hostname mysql-server
 
-RUN sudo -u mysql mysql_install_db
+#RUN sudo -u mysql mysqld --initialize-insecure
 
 # Install git, SSH, unzip and other utilities
 RUN set -eux; \
@@ -37,7 +37,6 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 
 # Set the time zone
-#RUN echo "Europe/Madrid" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
