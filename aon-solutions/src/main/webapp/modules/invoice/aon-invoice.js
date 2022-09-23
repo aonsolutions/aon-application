@@ -374,11 +374,9 @@ export class AonInvoice extends AonElement {
 				let sign = ACTION.SIGN_INVOICE;
 				sign.fn = () => this.signInvoice();
 				moreActions.push(sign);
-				if(this.isBeta()){
-					let face = ACTION.FACTURAE;
-					face.fn = () => this.facturae();
-					moreActions.push(face);
-				}
+				let face = ACTION.FACTURAE;
+				face.fn = () => this.facturae();
+				moreActions.push(face);
 			}
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
@@ -2411,12 +2409,30 @@ export class AonInvoice extends AonElement {
 	}
 
 	facturae() {
-		let data = {
-			id: this.invoice.id,
-			domainName: LS.getDomainName(),
-			domainId: LS.getDomainId()
-		}
-		downloadFacturae(data).then(r => {});
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("FACTURAE");
+		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		getAeatCertificates().then(certs => {
+			certSelect.setOptions(certs.map(s => {
+				return {
+				  value: s.id,
+				  name: s.name
+				}
+			  }));
+		}); 
+		d.setContent(certSelect);
+		d.addAcceptAction(() => {
+			let data = {
+				id: this.invoice.id,
+				domainName: LS.getDomainName(),
+				domainId: LS.getDomainId()
+			}
+			data.cert = certSelect.value;
+			downloadFacturae(data).then(r => {});
+		});			
+		d.open();
 	}
 
 	duplicateInvoice() {

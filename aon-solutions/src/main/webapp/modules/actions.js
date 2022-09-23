@@ -1,4 +1,4 @@
-import {CONSTANT, MSG, MATERIAL_ICONS} from '../environments/environments.js';
+import {CONSTANT, MSG, MATERIAL_ICONS, AON_ICONS} from '../environments/environments.js';
 
 export const ACCEPT = {
     id: CONSTANT.ACCEPT.initCap(),
@@ -44,8 +44,8 @@ export const SIGN_INVOICE = {
 
 export const FACTURAE = {
     id: 'Facturae',
-    name: 'Facturae' ,
-    icon: 'draw'
+    name: 'Facturae',
+    aonIcon: AON_ICONS.FACE
 };
 
 export const REMARKS = {

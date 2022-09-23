@@ -3,6 +3,7 @@ export const CONTRACT = 'contract';
 export const CERT = 'cert';
 export const AYUDAT = 'ayudat';
 export const ATP = 'atp';
+export const FACE = 'face';
 
 export const AON_ACCOUNTING = 'aon_accounting';
 export const AON_ARABA = 'aon_araba';

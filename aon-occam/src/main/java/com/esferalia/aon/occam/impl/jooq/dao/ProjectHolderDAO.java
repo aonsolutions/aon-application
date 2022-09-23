@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectHolder.PROJECT_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ProjectHolderProperties;
+import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -128,8 +130,12 @@ public class ProjectHolderDAO {
 	}	
 	
 	public static void delete(AONContext ctx, Integer id){
+		delete(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static void delete(AONContext ctx, ProjectHolderFilter filter) {
 		ctx.getDslContext().delete(PROJECT_HOLDER)
-		.where(PROJECT_HOLDER.ID.eq(id))
+		.where(PROJECT_HOLDER_PROPERTIES.getConditions(filter))
 		.execute();
 	}
 	

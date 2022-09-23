@@ -11,7 +11,7 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonRegistry } from '../../components/aon-registry.js';
 import { AonSelect } from '../../components/aon-select.js';
-import { getProjectTypes, saveProject } from '../../services/projectService.js';
+import { getProjectTypes, saveProject, deleteProject } from '../../services/projectService.js';
 
 import * as LS from '../../services/localStorageService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
@@ -69,6 +69,7 @@ export class AonProject extends AonElement {
             ? (this.project.getName() + ' - ' + this.project.getType().getDescription())
             : 'NUEVO EXPEDIENTE';
 		this.appendChild(toolbar);
+		toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 
@@ -169,6 +170,19 @@ export class AonProject extends AonElement {
 				});
 				this.setProject(project)
 			}).catch(e => this.showError(e));;
+	}
+
+	delete() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE);
+		d.setContentHTML(`Estás seguro de eliminar el expediente`);
+		d.addAcceptAction(() => {
+			let data = { id: this.project.id};
+			deleteProject(data).then(() => this.back());
+		});
+		d.open();
 	}
 
 	setProject(project) {
