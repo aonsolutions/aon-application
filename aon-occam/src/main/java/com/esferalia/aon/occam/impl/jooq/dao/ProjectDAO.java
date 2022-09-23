@@ -248,6 +248,7 @@ public class ProjectDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		ProjectHolderDAO.delete(ctx, f -> f.getProjectProperty().eq(id));
 		delete(ctx, f -> f.getIdProperty().eq(id));
 	}
 	
