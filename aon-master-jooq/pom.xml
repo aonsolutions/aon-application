@@ -52,7 +52,7 @@
 					<dependency>
 						<groupId>mysql</groupId>
 						<artifactId>mysql-connector-java</artifactId>
-						<version>5.0.8</version>
+						<version>8.0.13</version>
 					</dependency>
 				</dependencies>
 
@@ -73,6 +73,14 @@
 						<name>org.jooq.codegen.DefaultGenerator</name>
 
 						<database>
+		
+							<forcedTypes>
+								<forcedType>
+									<name>DOUBLE</name>
+									<includeTypes>(?i:DECIMAL)</includeTypes>
+								</forcedType>
+							</forcedTypes>
+							
 							<!-- MySQL database dialect from jooq-meta. -->
 							<name>org.jooq.meta.mysql.MySQLDatabase</name>
 
@@ -86,6 +94,7 @@
 
 							<!-- Use this as the integration / production database: -->
 							<outputSchema>aon-master</outputSchema>
+			
 						</database>
 						
 						<generate>

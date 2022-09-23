@@ -18,6 +18,8 @@
 		<sql-type jdbc-type="BIT" not-null="false" hibernate-type="boolean"/>
 		<sql-type jdbc-type="DOUBLE" hibernate-type="double" not-null="true"/>
 		<sql-type jdbc-type="DOUBLE" hibernate-type="double" not-null="false"/>
+		<sql-type jdbc-type="DECIMAL" hibernate-type="double" not-null="true"/>
+		<sql-type jdbc-type="DECIMAL" hibernate-type="double" not-null="false"/>
 	</type-mapping>
 
 	<!--  ************** -->
@@ -3102,6 +3104,12 @@
 	</table>
 
 	<table name="user_scope">
+		<primary-key>
+			<key-column name="id" type="java.lang.Integer"/>
+		</primary-key>
+	</table>
+
+	<table name="contract_extra">
 		<primary-key>
 			<key-column name="id" type="java.lang.Integer"/>
 		</primary-key>
