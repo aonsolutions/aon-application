@@ -43,6 +43,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	private CheckBox specialProrate = new CheckBox("Especial");
 	private PeriodListBox periodList = new PeriodListBox(true);
 	private CheckBox manualDeclaration = new CheckBox();
+	private boolean running;
 	
 	private FlowPanel rootPanel;
 	private FlowPanel calculateProratePanel = new FlowPanel();	
@@ -151,9 +152,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			}
 		});
 
-		specialProrate.addClickHandler(event -> {
-			model.setSpecialProrateValue( specialProrate.getValue() );
-		});
+		specialProrate.addClickHandler(event -> model.setSpecialProrateValue( specialProrate.getValue() ));
 	}
 
 	private void paint(Mod303 model, Model303Callback callback) {
@@ -212,15 +211,18 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	}
 
 	private void initialize(Mod303 model, Model303Callback callback) {
+		running = true;
 		Model303.service.initialize(callback.getOptions().getOccam(),model,
 			new AsyncCallback<Mod303>() {
 				@Override
 				public void onSuccess(Mod303 m303) {
 					paint(m303,callback);
+					running = false;
 				}
 	
 				@Override
 				public void onFailure(Throwable caught) {
+					running = false;
 					callback.showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 				}
 			}
@@ -417,13 +419,16 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		buttonsPanel.setStyleName(AON.CSS.aonPadding());
 		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
 		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
-		Button acceptButton = new Button();
+		
+		Button acceptButton = new Button();		
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText( AON.MSG.accept() + " & " + AON.MSG.saveAction());
 		
 		acceptButton.addClickHandler(event -> {
-			acceptButton.setEnabled(false);
-			callback.onAccept(model);
+			if (!running) {
+				acceptButton.setEnabled(false);
+				callback.onAccept(model);
+			}
 		});
 		buttonsPanel.add(acceptButton);
 		Button cancelButton = new Button();
