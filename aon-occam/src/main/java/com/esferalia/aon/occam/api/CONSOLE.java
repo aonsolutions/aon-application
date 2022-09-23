@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.LinkedList;
+import java.util.Date;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -26,7 +27,7 @@ public class CONSOLE {
 		}
 	}
 
-	public static LinkedList<Domain> getDomains(DomainParams params) {
+	public static Stream<Domain> getDomains(DomainParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().getDomains(ctx, params);
 		}
@@ -44,15 +45,15 @@ public class CONSOLE {
 		}
 	}
 
-	public static Domain changeActive(DomainParams params, Domain domain) {
+	public static Domain changeActive(DomainParams params, Integer domainId, boolean active) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
-			return getConsole().changeActive(ctx,domain);
+			return getConsole().changeActive(ctx,domainId, active);
 		}
 	}
 
-	public static Domain changeExpirationDate(DomainParams params, Domain domain) {
+	public static Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
-			return getConsole().changeExpirationDate(ctx,domain);
+			return getConsole().changeExpirationDate(ctx,domainId,expireDate);
 		}
 	}
 	

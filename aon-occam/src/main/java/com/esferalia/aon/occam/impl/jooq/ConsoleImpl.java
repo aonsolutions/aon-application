@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.util.LinkedList;
+import java.util.Date;
+import java.util.stream.Stream;
+
+import org.jooq.Named;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
@@ -16,12 +19,12 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public String[] getSchemaNames(AONContext ctx) {
 		return ConsoleDAO.getAONSchemas(ctx)
-			.map( schema -> schema.getName() )
+			.map( Named::getName )
 			.toArray(i -> new String[i]);
 	}
 	
 	@Override
-	public LinkedList<Domain> getDomains(CloseableAONContext ctx, DomainParams params ) {
+	public Stream<Domain> getDomains(CloseableAONContext ctx, DomainParams params ) {
 		return ConsoleDAO.getDomains(ctx, params);
 	}
 	
@@ -31,12 +34,12 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public Domain changeActive(CloseableAONContext ctx, Domain domain) {
-		return ConsoleDAO.changeActive(ctx, domain);
+	public Domain changeActive(CloseableAONContext ctx, Integer domainId, boolean active) {
+		return ConsoleDAO.changeActive(ctx, domainId, active);
 	}
 	
 	@Override
-	public Domain changeExpirationDate(CloseableAONContext ctx, Domain domain) {
-		return ConsoleDAO.changeExpirationDate(ctx, domain);
+	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate) {
+		return ConsoleDAO.changeExpirationDate(ctx, domainId, expireDate);
 	}
 }

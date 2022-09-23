@@ -852,6 +852,16 @@ public class JsonParser {
 			params.setToExpirationDate(FORMATTER.parse(toExpirationDate));			
 		}
 		
+		Long offset = (Long) jsonParams.get(IRequestParamsNames.OFFSET);
+		if (offset!= null) {
+			params.setOffset(offset.intValue());	
+		}
+
+		Long limit = (Long) jsonParams.get(IRequestParamsNames.LIMIT);
+		if (parent!= null) {
+			params.setLimit(limit.intValue());
+		}
+
 		return params;
 		
 	}

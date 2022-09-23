@@ -267,6 +267,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.TO_LAST_ACCESS_DATE,params.getToLastAccess()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToLastAccess())));
 		json.put(IRequestParamsNames.FROM_EXPIRATION_DATE,params.getFromExpirationDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromExpirationDate())));
 		json.put(IRequestParamsNames.TO_EXPIRATION_DATE,params.getToExpirationDate()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToExpirationDate())));
+		json.put(IRequestParamsNames.OFFSET,new JSONNumber( params.getOffset()));
+		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
 		return json.toString();
 	}
 }

@@ -20,6 +20,9 @@ public class DomainParams implements Serializable {
 	private Date fromExpirationDate;
 	private Date toExpirationDate;
 	
+	private int limit = 50;
+	private int offset;
+	
 
 	public String getSchema() {
 		return schema;
@@ -114,6 +117,22 @@ public class DomainParams implements Serializable {
 	}
 	public DomainParams setToExpirationDate(Date toExpirationDate) {
 		this.toExpirationDate = toExpirationDate;
+		return this;
+	}
+	
+	public int getLimit() {
+		return limit;
+	}
+	public DomainParams setLimit(int limit) {
+		this.limit = limit;
+		return this;
+	}
+	
+	public int getOffset() {
+		return offset;
+	}
+	public DomainParams setOffset(int offset) {
+		this.offset = offset;
 		return this;
 	}
 	

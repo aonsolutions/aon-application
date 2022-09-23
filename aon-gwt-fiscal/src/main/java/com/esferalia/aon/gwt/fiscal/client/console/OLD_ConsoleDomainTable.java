@@ -1,86 +1,168 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
-import java.util.Date;
+import java.util.Collection;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDomain>{
-	
-	private ConsoleDomainTableCallback callback;
-	private final AonDisplayGrid grid;
-	private boolean running;
+class OLD_ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandlers<Domain>{
 	
 	interface ConsoleDomainTableCallback {
 		public void showError(String message);
 		public void showInfo(String message);
-		public void onDelete(Integer domainId, AsyncCallback<Boolean> cbk);
-		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
-		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
-		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
+		public void onDelete(Domain domain, AsyncCallback<Boolean> cbk);
+		public void onChangeActive(Domain domain, AsyncCallback<Domain> cbk);
+		public void onChangeExpirationDate(Domain domain, AsyncCallback<Domain> cbk);
+		public void onValidate(Domain domain, AsyncCallback<Boolean> cbk);
 	}
 	
+	private static final Logger LOGGER = Logger.getLogger(OLD_ConsoleDomainTable.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
+	private SimpleLayoutPanel centerLayoutPanel;
+	private ScrollPanel centerPanel;
+	private FlowPanel container;
+	private boolean running;
 	
-	ConsoleDomainTable(ConsoleDomainTableCallback callback) {
-		this.callback = callback;
-		grid = new AonDisplayGrid();
-		grid.addStyleName(AON.CSS.aonMarginTop());
-		grid.addStyleName(AON.CSS.aonBlockCenter());
-		paintHeader();
-		add( grid );
+	protected OLD_ConsoleDomainTable(ConsoleDomainTableCallback callback) {
+		this(null, callback);
 	}
 	
-	private void paintHeader() {
-		grid.addHeaderRow()
-			.addCell(new Label(""),AON.CSS.aonWidth20())
-			.addCell(new Label(AON.MSG.type()),AON.CSS.aonWidth80(), AON.CSS.aonNowrap())
-			.addCell(new Label("Act."),AON.CSS.aonWidth20())
-			.addCell(new Label("Crea"),AON.CSS.aonWidth20())
-			.addCell(new Label("Padre"),AON.CSS.aonWidth40())
-			.addCell(new Label("Her."),AON.CSS.aonWidth20())
-			.addCell(new Label(AON.MSG.name()),AON.CSS.aonWidthAuto())
-			.addCell(new Label(AON.MSG.description()),AON.CSS.aonWidth150(), AON.CSS.aonNowrap())		
-			.addCell(new Label("\u00FAlt. Acceso"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
-			.addCell(new Label("Expira"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
-			.addCell(new Label(""),AON.CSS.aonWidth100())
+	protected OLD_ConsoleDomainTable(Collection<Domain> domains, ConsoleDomainTableCallback callback) {
+		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
+		centerLayoutPanel = new SimpleLayoutPanel();
+		centerPanel = new ScrollPanel();
+		centerPanel.setStyleName(AON.CSS.aonScrollArea());
+		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
+		container = new FlowPanel();
+		centerPanel.setWidget(container);
+		centerLayoutPanel.setWidget(centerPanel);
+		tableDockLayout.add(centerLayoutPanel);
+		setWidget(tableDockLayout);
+		paint(domains, callback);
+	}
+
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Domain> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
+	}
+
+
+	private enum Columns {
+		  CHK(""					, 20 ,AON.CSS.aonTextCenter())
+		, TYP(AON.MSG.type()		, 75 ,AON.CSS.aonTextCenter())
+	    , STA("Act."				, 20 ,AON.CSS.aonTextCenter())
+	    , MNG("Crea"				, 20 ,AON.CSS.aonTextCenter())
+	    , PAR("Padre"				, 50 ,AON.CSS.aonTextCenter())
+	    , HER("Her"					, 20 ,AON.CSS.aonTextCenter())
+	    , AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextCenter())
+	    , DES(AON.MSG.description() , 150,AON.CSS.aonTextCenter())
+		, ACC("\u00FAlt. Acceso"	, 75 ,AON.CSS.aonTextCenter())
+		, EXP("Expira"				, 75 ,AON.CSS.aonTextCenter())
+		, CMD(""					, 100,AON.CSS.aonTextCenter())
 		;
+
+		String headerLabel;
+		int colWidth;
+		String cellStyleClass;
+
+		private Columns(String headerLabel,int colWidth,String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+		public int getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
 	}
 	
-	public void addRow(JsDomain domain) {
+	private void paint(Collection<Domain> domains, ConsoleDomainTableCallback callback) {
+		container.clear();
+		if ( domains == null || domains.isEmpty()) {
+			FlowPanel line = new FlowPanel();
+			InlineLabel label = new InlineLabel(AON.MSG.noData());
+			line.add(label);
+			container.add(line);
+		} else {
+			AonDisplayGrid tab = new AonDisplayGrid();
+			tab.addStyleName(AON.CSS.aonNoPadding());
+			tab.addStyleName(AON.CSS.aonBlockCenter());
+			tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+			container.add(tab);
+			paintHeader( tab );
+			domains
+				.stream()
+				.forEach(d -> paintRow( callback, d , tab.addRow()));
+		}
+	}
+
+	private void paintHeader(AonDisplayGrid tab) {
+		AonDisplayGridHeaderRow headerRow = tab.addHeaderRow();
+		for ( Columns col : Columns.values()) {
+			Label label = new Label( col.getHeaderLabel());
+			AonDisplayGridCell headerCell = headerRow.addCell(col.getCellStyleClass());
+			if (col == Columns.AUTO ) {
+				headerCell.addStyleName(AON.CSS.aonFlexGrow1());
+			} else {
+				headerCell.setWidth(col.getColWidth()  + "px");
+			}
+			headerCell.add(label);
+		}
+	}
+
+	private void paintRow(ConsoleDomainTableCallback callback, Domain domain, AonDisplayGridRow row) {
 		CheckBox checkBox = new CheckBox();
-		checkBox.addClickHandler(e -> SelectionEvent.fire(ConsoleDomainTable.this, domain));
+		checkBox.addClickHandler(e -> SelectionEvent.fire(OLD_ConsoleDomainTable.this, domain));
 		
 		InlineLabel typeLabel = new InlineLabel( domain.getDomainType()==null?"":domain.getDomainType().getName() );
-		InlineLabel parentIdLabel = new InlineLabel( domain.getParentId()==null?"":""+domain.getParentId() );
+		InlineLabel parentIdLabel = new InlineLabel(AonNumberUtils.toString( domain.getParentId()));
 		InlineLabel nameLabel = new InlineLabel(domain.getName());
 		InlineLabel lastAccessLabel = new InlineLabel( domain.getLastAccessDate()==null?"":AON.TIME_FORMAT.format(domain.getLastAccessDate()));
 		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());		 
+
 		AonTableButton active = new AonTableButton(
 			domain.isActive()?"Activo":"Inactivo"
 			,domain.isActive()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff()		
 		);
-	
+		
 		active.addClickHandler(e -> {
 			AonConfirmDialog acd = new AonConfirmDialog();
 			acd.confirm("Se va a proceder al cambio de estado del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
@@ -94,8 +176,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 				public void onAccept() {
 					if (!running) {
 						running = true;
-						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
-						callback.onChangeActive( domainId , !domain.isActive() , new AsyncCallback<Domain>() {
+						callback.onChangeActive( domain , new AsyncCallback<Domain>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								running = false;
@@ -152,9 +233,8 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 				public void onAccept() {
 					if (!running) {
 						running = true;
-						Date expiredDate = expiredDateBox.getValue();
-						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
-						callback.onChangeExpirationDate( domainId, expiredDate , new AsyncCallback<Domain>() {
+						domain.setExpirationDate( expiredDateBox.getValue() );
+						callback.onChangeExpirationDate( domain , new AsyncCallback<Domain>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								running = false;
@@ -164,6 +244,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 							@Override
 							public void onSuccess(Domain result) {
 								running = false;
+								domain.setExpirationDate(result.getExpirationDate());
 								expiredDateBox.setValue(result.getExpirationDate());
 								expiredDateBox.addStyleName(AON.CSS.aonValueChanged());
 								new Timer() {
@@ -200,8 +281,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 						popup.setAnimationEnabled(true);
 						popup.center();
 						running = true;
-						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
-						callback.onDelete( domainId , new AsyncCallback<Boolean>() {
+						callback.onDelete( domain , new AsyncCallback<Boolean>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								popup.hide();
@@ -249,10 +329,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 				@Override
 				public void onAccept() {
 					if (!running) {
-						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
-						String name = domain.getName();
-						String description = domain.getDescription();
-						callback.onValidate(domainId,name, description, new AsyncCallback<Boolean>() {
+						callback.onValidate(domain , new AsyncCallback<Boolean>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								running = false;
@@ -270,13 +347,12 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 				}
 			});
 		});
-		
 		buttons.addRow()
 			.addCell(deleteButton)
 			.addCell(validateButton);
 		
-		grid.addRow()
-			.addCell( checkBox , AON.CSS.aonTextCenter())
+		row.addStyleName(AON.CSS.aonClickable());
+		row .addCell( checkBox , AON.CSS.aonTextCenter())
 			.addCell( typeLabel , AON.CSS.aonTextCenter())
 			.addCell( active , AON.CSS.aonTextCenter())
 			.addCell( domManagement , AON.CSS.aonTextCenter())
@@ -288,14 +364,5 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 			.addCell( expiredDateBox )
 			.addCell( buttons )
 			;
-	}
-
-	public void addFooterRow() {
-		// Nothing
-	}
-
-	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<JsDomain> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

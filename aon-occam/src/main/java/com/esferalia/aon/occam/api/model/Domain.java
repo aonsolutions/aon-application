@@ -29,14 +29,13 @@ public class Domain implements Serializable {
 	private Date expirationDate;
 	private String creationUser;
 	private Date creationDate;
-	private String modifitionUser;
+	private String modificationUser;
 	private Date modificationDate;
 	
 	
 	public Integer getId() {
 		return id;
 	}
-
 	public Domain setId(Integer id) {
 		this.id = id;
 		return this;
@@ -45,7 +44,6 @@ public class Domain implements Serializable {
 	public String getName() {
 		return name;
 	}
-
 	public Domain setName(String name) {
 		this.name = name;
 		return this;
@@ -54,7 +52,6 @@ public class Domain implements Serializable {
 	public Integer getParentId() {
 		return parentId;
 	}
-
 	public Domain setParentId(Integer parentId) {
 		this.parentId = parentId;
 		return this;
@@ -220,23 +217,20 @@ public class Domain implements Serializable {
 		return this;
 	}
 
-	public String getModifitionUser() {
-		return modifitionUser;
+	public String getModificationUser() {
+		return modificationUser;
 	}
-
-	public Domain setModifitionUser(String modifitionUser) {
-		this.modifitionUser = modifitionUser;
+	public Domain setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
 		return this;
 	}
 
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-
 	public Domain setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
 	
 }

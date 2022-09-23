@@ -46,7 +46,6 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 			ExcelAction action = new ExcelAction();
 			action.initialize("Dominios");
 			CONSOLE.getDomains(params)
-				.stream()
 				.forEach(action);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
 			String balName = "Plan general contable";
@@ -54,7 +53,8 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 					"attachment; filename=\"" + balName + "." + MimeType.MS_EXCEL_2007.getExtension() + "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
-		} catch (Throwable e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ServletException(e);
 		}
 	}

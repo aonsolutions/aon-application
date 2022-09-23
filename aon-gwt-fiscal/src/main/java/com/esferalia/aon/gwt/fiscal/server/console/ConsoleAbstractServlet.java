@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.console;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
