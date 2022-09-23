@@ -19,13 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AlterSalaryAddIndexSocialSecurityNumber;
-import net.aonsolutions.db.up2date.payroll.ContractExtraCreation;
-import net.aonsolutions.db.up2date.payroll.IrpfInKindSystemInsert;
-import net.aonsolutions.db.up2date.payroll.MaxEmbargableFix;
-import net.aonsolutions.db.up2date.tgss.TrainingBases2022Fix;
+import net.aonsolutions.db.up2date.domain.SevenConsultingDomainNameUpdate;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2022FixII;
-import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
 
 public class Up2Date {
 
@@ -273,7 +268,8 @@ public class Up2Date {
     		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
     		//TrainingBases2022Fix.TRAININGBASES2022FIX,
     		TrainingBases2022FixII.TRAININGBASES2022FIXII,
-    		UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX
+    		//UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
+    		SevenConsultingDomainNameUpdate.SEVEN_CONSULTING_DOMAIN_NAME_UPDATE
     		
     };
 
