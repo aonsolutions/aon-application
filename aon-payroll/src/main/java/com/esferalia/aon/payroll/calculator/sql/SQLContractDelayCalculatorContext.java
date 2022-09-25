@@ -1047,73 +1047,93 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SalaryDataColumns.EXPRESSION + " != '0.0' "
 				+ ")"
 				;
+		
+		private static final String GTZDO_IT = 
+				"(IFNULL(GARANTIZADO,IFNULL((GTZDO / ALLITDAYS  * ITDAYS ),0.00)))";
 
+
+		private static final String AMOUNT = 
+				"(( OTHERSAMOUNT ) / ALLWORKEDDAYS * ( IF(WORKEDDAYS > 0.00, WORKEDDAYS , IF(DROPDAYS > 0.00, 0.00 ,(DATEDIFF(?, ?) + 1 )) ) ))";
+		
+		private static final String PAYMENT = 
+				"(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + ",PRESTIT )" + " + " + GTZDO_IT
+				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- ( PRESTITAMOUNT + GTZDO )) / ALLWORKEDDAYS * WORKEDDAYS )"
+				+ ")";
+
+		private static final String IRPF = 
+				"(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF +", PRESTIT )" + " + " + GTZDO_IT
+				+ ", (" + SalaryColumns.IRPF_BASE + " - ( PRESTITIRPF + GTZDO )) / ALLWORKEDDAYS * WORKEDDAYS )"
+				+ ")";
+		
 		private static final String SALARY_SQL = 
-				"SELECT " 
-				
-				+ SALARY_PAYMENT +"." + SalaryPaymentColumns.ID
-				
-				+ ", @GTZDO:=" + GARANTIZADO_AMOUNT_SQL +  ""
-				+ " AS GTZDO" 
+				"SELECT "
+				+ SalaryPaymentColumns.ID
+				+", ITDAYS"
+				+ ", " + SalaryColumns.CGC_BASE
+				+ ", IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + IRPF + " ) AS " + SalaryColumns.IRPF_BASE
+				+ ", IF ( ITDAYS IS NULL , "+ AMOUNT +" , " + PAYMENT + " ) AS " + SalaryColumns.TOTAL_PAYMENT
 
-				+ ", @GARANTIZADO:=" + GARANTIZADO +  ""
-				+ " AS GARANTIZADO" 
-				
-				+ ", @ALL_IT_DAYS:=(" + ALL_IT_DAYS +")" 
-				+ " AS ALLITDAYS" 
+				+" FROM ("
+					+" SELECT " 
+					
+					+ SALARY_PAYMENT +"." + "*"
+					
+					+ ", " + SALARY + "." + SalaryColumns.IRPF_BASE
+					+ ", " + SALARY + "." + SalaryColumns.TOTAL_PAYMENT
+					
+					+ ", " + GARANTIZADO_AMOUNT_SQL +  ""
+					+ " AS GTZDO" 
+	
+					+ ", " + GARANTIZADO +  ""
+					+ " AS GARANTIZADO" 
+					
+					+ ", (" + ALL_IT_DAYS +")" 
+					+ " AS ALLITDAYS" 
+	
+					+ ", (" + IT_DAYS +")" 
+					+ " AS ITDAYS" 
+	
+					+ ", (" + ALL_WORKED_DAYS +")" 
+					+ " AS ALLWORKEDDAYS" 
+	
+					+ ", (" + WORKED_DAYS +")" 
+					+ " AS WORKEDDAYS" 
+	
+					+ ", (" + DROP_DAYS +")" 
+					+ " AS DROPDAYS" 
+					
+					+ ", (" + PREST_IT +")" 
+					+ " AS PRESTIT" 
 
-				+ ", @IT_DAYS:=(" + IT_DAYS +")" 
-				+ " AS ITDAYS" 
+					+ ", (" + PREST_IT_IRPF_SQL +")" 
+					+ " AS PRESTITIRPF" 
+					
+					+ ", (" + PREST_IT_AMOUNT_SQL +")" 
+					+ " AS PRESTITAMOUNT" 
+	
+					+ ", (" + OTHERS_AMOUNT_SQL +")" 
+					+ " AS OTHERSAMOUNT" 
 
-				+ ", @ALL_WORKED_DAYS:=(" + ALL_WORKED_DAYS +")" 
-				+ " AS ALLWORKEDDAYS" 
-
-				+ ", @WORKED_DAYS:=(" + WORKED_DAYS +")" 
-				+ " AS WORKEDDAYS" 
-
-				+ ", @DROP_DAYS:=(" + DROP_DAYS +")" 
-				+ " AS DROPDAYS" 
-
-				+ ", @GTZDOIT:=IFNULL(@GARANTIZADO,IFNULL((@GTZDO / @ALL_IT_DAYS  * @IT_DAYS ),0.00))"
-				+ " AS GTZDOIT" 
-
-				+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
-				+ ") AS " + SalaryColumns.CGC_BASE
-				
-				+ ", @IRPF:=(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF +","+ PREST_IT + ")" + " + @GTZDOIT"
-				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + " + @GTZDO )) / @ALL_WORKED_DAYS * @WORKED_DAYS )"
-				+ ")"
-				+ " AS _" + SalaryColumns.IRPF_BASE
-
-				+ ", @PAYMENT:=(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + "," + PREST_IT +")" + " + @GTZDOIT"
-				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + " + @GTZDO )) / @ALL_WORKED_DAYS * @WORKED_DAYS )"
-				+ ")"
-				+ " AS _" + SalaryColumns.TOTAL_PAYMENT
-				
-				//+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * (DATEDIFF(?, ?) + 1 )"   
-				+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * ( IF(@WORKED_DAYS > 0.00, @WORKED_DAYS , IF(@DROP_DAYS > 0.00, 0.00 ,(DATEDIFF(?, ?) + 1 )) ) )"   
-				+ ")"
-				+ " AS _" + SalaryPaymentColumns.AMOUNT  
-				
-				+ ", IF ( @IT_DAYS IS NULL , @AMOUNT , @IRPF ) AS " + SalaryColumns.IRPF_BASE
-				+ ", IF ( @IT_DAYS IS NULL , @AMOUNT , @PAYMENT ) AS " + SalaryColumns.TOTAL_PAYMENT
-
-				+ " FROM "
-				+ SALARY 
-				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
-				+" LEFT JOIN " + SALARY_PAYMENT + " ON (" + SALARY_DATA + "." + SalaryDataColumns.SALARY +  " = " + SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY 
-														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.PAYMENT_CONCEPT + " =  'PREST_IT'"  
-														+ " AND  ROUND("+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + ",2) =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,2))"
-														+")" 
-				
-				+ " WHERE " 
-				+ SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
-				+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
-				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
-				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
-				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + ")" 
-				+ " GROUP BY 1"
-//				+ " ORDER BY 1"
+					+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
+					+ ") AS " + SalaryColumns.CGC_BASE
+					
+					+ " FROM "
+					+ SALARY 
+					+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
+					+" LEFT JOIN " + SALARY_PAYMENT + " ON (" + SALARY_DATA + "." + SalaryDataColumns.SALARY +  " = " + SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY 
+															+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.PAYMENT_CONCEPT + " =  'PREST_IT'"  
+															+ " AND  ROUND("+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + ",2) =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,2))"
+															+")" 
+					
+					+ " WHERE " 
+					+ SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
+					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
+					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
+					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + ")" 
+					+ " GROUP BY 1"
+	//				+ " ORDER BY 1"
+				+") AS " + SALARY_PAYMENT
 				;
 
 		protected static final class DelayContractPayment extends ContractPayment {
@@ -1340,22 +1360,31 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-			stmt.setDate(i++, sqlStartDate); 
+			// AMOUNT DATEDIFF(?, ?)
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
+			// AMOUNT DATEDIFF(?, ?)
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
-			stmt.setDate(i++, sqlEndDate); 
+			// GARANTIZADO
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
+			// IT_DAYS
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
+			// WORKED_DAYS
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
+			// DROP_DAYS
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
+			//PREST_IT
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			
 			// DATEDIFF(?, ?) 
-			stmt.setDate(i++, sqlEndDate); 
-			stmt.setDate(i++, sqlStartDate); 
+			//stmt.setDate(i++, sqlEndDate); 
+			//stmt.setDate(i++, sqlStartDate); 
 			
 			stmt.setInt(i++, contract); // SalaryColumns.CONTRACT + " = ? "
 			stmt.setInt(i++, type.ordinal()); // SalaryColumns.TYPE + " = ? "
