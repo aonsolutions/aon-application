@@ -19,6 +19,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class SQLContractLeaveLoader extends ContractLeaveLoader{
 
@@ -65,13 +66,13 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 
 		Object dailyRegBase = rs
 				.getObject(ContractLeaveColumns.DAILY_REG_BASE);
-
+		
 		Integer id = rs.getInt(ContractLeaveColumns.ID);
 		
 		Date leaveEnd4Length = leaveEnd == null ? Period.max(endDate, new Date()) : leaveEnd;
 		
 		loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
-				(Double) dailyRegBase, exprCtx);
+				AonNumberUtils.toDouble((Number)dailyRegBase), exprCtx);
 		
 		Date lastDayOMonth = AonDateUtils.getLastDayOfMonth(startDate);
 		
