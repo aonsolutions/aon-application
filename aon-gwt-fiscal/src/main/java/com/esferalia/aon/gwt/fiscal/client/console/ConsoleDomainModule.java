@@ -42,8 +42,12 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 public class ConsoleDomainModule extends AonLayoutPanel {
 
 
+	private static final String AVISO = "AVISO";
+	private static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+	private static final String CONTENT_TYPE = "Content-type";
 	private static final String DOMAIN_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainFlatStreamServlet");
 	private static final String CHECK_DOMAIN_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainCheckIntegrityServlet");
+	private static final String DOMAIN_DELETE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainDeleteServlet");
 	private static final String DOMAIN_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainReportExcelPrint";
 	private static final String DOMAIN_INFO_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainInfoReportExcelPrint";
 
@@ -165,7 +169,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				domainParamsHidden.setValue(JsonParams.convert(params));
 				diskForm.submit();
 			} else {
-				AonMessageDialog.show("AVISO", "Seleccione un esquema");
+				AonMessageDialog.show(AVISO, "Seleccione un esquema");
 			}
 		});
 		toolbar.add(exportButton);
@@ -213,7 +217,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		if (!isMoreData()) return;
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open(FormPanel.METHOD_POST, DOMAIN_STREAM_SERVLET);
-		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		xhr.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
 		xhr.setOnReadyStateChange(xhreq -> {
 			int state = xhreq.getReadyState();
 			LOGGER.info("START onReadyStateChange: ("+ state +")");
@@ -260,9 +264,10 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		ConsoleDomainTable table = new ConsoleDomainTable(new AbsConsoleDomainTableCallback() {
 			
 			@Override
-			public void onDelete(Integer domainId, AsyncCallback<Boolean> cbk) {
+			public void onDelete(Integer domainId, String name, AsyncCallback<Boolean> cbk) {
 				DomainParams params = filterPanel.getParams(options);
-				ConsoleModule.CONSOLE_SERVICE.deleteDomain(params,domainId,new AsyncCallbackWrapper<>( cbk ));
+				deleteDomain(params.getSchema(), domainId, name, cbk);
+				
 			}
 
 			@Override
@@ -311,14 +316,14 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				AonConsoleWidget aonConsole = new AonConsoleWidget();
 				String tabLabel = AonStringUtils.abbreviate(description, 30);
 				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-				tabLayout.add(aonConsole, closeTab);
-				closeTab.addCloseHandler(e -> {Window.alert("click!!");tabLayout.remove(tabLabel);});
+				tabLayout.add(aonConsole, closeTab, tabLabel);
+				closeTab.addCloseHandler(e -> {if (!running) tabLayout.remove(tabLabel);});
 				tabLayout.selectTab(aonConsole);
 				openFootPanelIfNeeded();
 				
 				XMLHttpRequest xhreq = XMLHttpRequest.create();
 				xhreq.open(FormPanel.METHOD_POST, CHECK_DOMAIN_INTEGRITY_SERVLET);
-				xhreq.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
 				xhreq.setOnReadyStateChange( xhr -> {
 					int state = xhr.getReadyState();
 					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
@@ -338,7 +343,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			} catch (Exception e){
 				running = false;
 			}
-		} 
+		} else {
+			AonMessageDialog.show(AVISO,"Hay un proceso en ejecuci\u00F3n. Espere un momento, por favor.");
+		} 	
 	}
 	
 	private void info(String schema,Integer domainId) {
@@ -350,8 +357,48 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			domainParamsHidden.setValue(JsonParams.convert(params));
 			diskForm.submit();
 		} else {
-			AonMessageDialog.show("AVISO", "Seleccione un esquema");
+			AonMessageDialog.show(AVISO, "Seleccione un esquema");
 		}
 		
 	}
+	
+	private void deleteDomain(String schema,Integer domainId, String description, AsyncCallback<Boolean> cbk) {
+		if (!running) {
+			running = true;
+			try {
+				AonConsoleWidget aonConsole = new AonConsoleWidget();
+				String tabLabel = AonStringUtils.abbreviate(description, 30);
+				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+				tabLayout.add(aonConsole, closeTab, tabLabel);
+				closeTab.addCloseHandler(e -> {if (!running) tabLayout.remove(tabLabel);});
+				tabLayout.selectTab(aonConsole);
+				openFootPanelIfNeeded();
+				
+				XMLHttpRequest xhreq = XMLHttpRequest.create();
+				xhreq.open(FormPanel.METHOD_POST, DOMAIN_DELETE_SERVLET);
+				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
+				xhreq.setOnReadyStateChange( xhr -> {
+					int state = xhr.getReadyState();
+					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
+						String text = xhr.getResponseText();
+						aonConsole.log(text);
+					}
+					if (state == XMLHttpRequest.DONE) {
+						running = false;
+						cbk.onSuccess(true);
+					}
+				});
+				StringBuilder requestData = new StringBuilder();
+				DomainParams params = filterPanel.getParams(options).setId(domainId);
+				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(params));
+				xhreq.send(requestData.toString());
+			} catch (Exception e){
+				running = false;
+				cbk.onFailure(e);
+			}
+		} else {
+			AonMessageDialog.show(AVISO,"Hay un proceso en ejecuci\u00F3n. Espere un momento, por favor.");
+		}
+	}
+	
 }

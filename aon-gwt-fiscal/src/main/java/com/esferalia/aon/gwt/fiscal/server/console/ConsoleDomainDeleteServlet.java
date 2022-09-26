@@ -10,16 +10,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jooq.Schema;
+import org.jooq.tools.json.ParseException;
 
+import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @WebServlet(name = "Console Domain Delete Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/ConsoleDomainDeleteServlet" })
 public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
@@ -30,45 +31,42 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String schemaName = req.getParameter(IRequestParamsNames.SCHEMA);
-		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
-		Integer domainId = AonNumberUtils.toInteger( req.getParameter(IRequestParamsNames.DOMAIN) );
-		ConsoleParams params = new ConsoleParams( );
-		
-		try (CloseableAONContext fromCtx = AONContext.getAONContext(schemaName)) {
-			
-			Schema fromSchema = fromCtx.getDslContext().meta()
-				.getSchemas(schemaName)
-				.stream()
-				.findFirst()
-				.orElse(null);
-			
-			params.setFromConnection(new ConsoleConnectionParams()
-				.setAONContext(fromCtx)
-				.setSchemaName( schemaName )
-				.setSchema( fromSchema )
-				.setDomainName(domainName)
-				.setFullDomain(new Domain().setId(domainId))
-				);
-			
-			params.setPrinter(new PrintStream(resp.getOutputStream()));
-			LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet domain \"{0}\".\"{1}\"", new String[] {
-				 params.getFromConnection().getSchemaName()
-				,params.getFromConnection().getDomainName()});
-			ConsoleDeleteDomain.delete(params);
-			resp.flushBuffer();
-		} catch (Exception e) {
-			e.printStackTrace();
-			params.getPrinter().println(e.getMessage());
-			params.getPrinter().println();
-			LOGGER.log(Level.SEVERE, "ConsoleDomainDeleteServlet {0}!",e.getMessage());
-		} finally {
-			params.getPrinter().println("Request ended.");
-			params.getPrinter().println();
-			params.getPrinter().flush();
-			resp.flushBuffer();
+		LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet start!");
+		String domainParamsParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
+		ConsoleParams consoleParams = new ConsoleParams()
+			.setPrinter(new PrintStream(resp.getOutputStream()));
+		DomainParams domainParams = null;
+		try {
+			domainParams = JsonParser.parseDomainParams(domainParamsParam);
+			try (CloseableAONContext ctx = AONContext.getAONContext(domainParams.getSchema())) {
+				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
+					.setAONContext(ctx)
+					.setSchemaName(domainParams.getSchema())
+					.setFullDomain(new Domain().setId(domainParams.getId()));
+				consoleParams.setFromConnection(conParams);
+				ConsoleDeleteDomain.delete(consoleParams);
+			} catch (Exception e) {
+				e.printStackTrace();
+				consoleParams.getPrinter().println(e.getMessage());
+				consoleParams.getPrinter().println();
+				LOGGER.log(Level.SEVERE, "ConsoleDomainDeleteServlet {0}!",e.getMessage());
+			} finally {
+				consoleParams.getPrinter().println("Request ended.");
+				consoleParams.getPrinter().println();
+				consoleParams.getPrinter().flush();
+				resp.flushBuffer();
+				LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet finished!");
+			}
+
+		} catch (ParseException | java.text.ParseException e1) {
+			consoleParams.getPrinter().println("Params parse Problem.");
+			consoleParams.getPrinter().println("Request ended.");
+			consoleParams.getPrinter().println();
+			consoleParams.getPrinter().flush();
 			LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet finished!");
+			resp.flushBuffer();
 		}
+		
 
 	}
 	
