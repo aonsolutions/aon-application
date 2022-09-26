@@ -32,6 +32,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 	private ConsoleDomainTableCallback callback;
 	private final AonDisplayGrid grid;
 	private boolean running;
+	private int count;
 	
 	interface ConsoleDomainTableCallback {
 		public void showError(String message);
@@ -56,6 +57,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 	private void paintHeader() {
 		grid.addHeaderRow()
 			.addCell(new Label(""),AON.CSS.aonWidth20())
+			.addCell(new Label("#"),AON.CSS.aonWidth20())
 			.addCell(new Label(AON.MSG.type()),AON.CSS.aonWidth80(), AON.CSS.aonNowrap())
 			.addCell(new Label("Act."),AON.CSS.aonWidth20())
 			.addCell(new Label("Crea"),AON.CSS.aonWidth20())
@@ -287,6 +289,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 		
 		grid.addRow()
 			.addCell( checkBox , AON.CSS.aonTextCenter())
+			.addCell( new InlineLabel("" + (++count)), AON.CSS.aonTextCenter())
 			.addCell( typeLabel , AON.CSS.aonTextCenter())
 			.addCell( active , AON.CSS.aonTextCenter())
 			.addCell( domManagement , AON.CSS.aonTextCenter())
