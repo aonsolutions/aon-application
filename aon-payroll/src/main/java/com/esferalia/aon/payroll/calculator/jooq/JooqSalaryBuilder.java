@@ -14,6 +14,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.Date;
@@ -305,7 +307,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	@Override
 	public void setTotalIrpf(Double totalIrpf) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_IRPF, totalIrpf);
+		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_IRPF, round(totalIrpf));
 	}
 
 	@Override
@@ -696,6 +698,10 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		Integer max = dslContext.select(maxFunc).from(identity.getTable()).forUpdate().fetchOne(maxFunc);
 
 		return max == null ? 0 : max; // null if the query returned no records.
+	}
+
+	private static Double round(Double value) {
+		return value != null ? BigDecimal.valueOf(value).setScale(3, RoundingMode.HALF_DOWN).doubleValue() : null;
 	}
 
 	// ------------------------------------------------------------------------

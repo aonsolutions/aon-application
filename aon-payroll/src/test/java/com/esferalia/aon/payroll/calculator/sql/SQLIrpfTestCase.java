@@ -1138,13 +1138,30 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 					irpfResult[3] = irpfOutcome.getIrpfResult().getAnnualRemuneration();
 					irpfResults.add(irpfResult);
 					
+					System.out.printf("%tB\r\n", endDate );
+					
 					System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
 					System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
 					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
 					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+
+//					System.out.println("DeducciblesExpenses:" + irpfOutcome.getIrpfResult().getDeducciblesExpenses());
+//					System.out.println("Irregular18_2Reduction:" + irpfOutcome.getIrpfResult().getIrregular18_2Reduction());
+//					System.out.println("Irregular18_3Reduction:" + irpfOutcome.getIrpfResult().getIrregular18_3Reduction());
+
+					if ( irpfOutcome.getIrpfRegularization() != null ) {
+						System.out.println("PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+						System.out.println("PaidRemuenration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+					}
 				}
 			});
-			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+//				@Override
+//				public void setTotalPayment(Double totalPayment) {
+//					System.out.println("TOTAL PAYMENT: " + totalPayment);
+//					super.setTotalPayment(totalPayment);
+//				}
+			};
 			new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(startDate, Calendar.MONTH, 1); 
