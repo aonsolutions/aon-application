@@ -6,7 +6,6 @@ import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
-import { AonDocumental } from "../documental/aon-documental.js";
 import {  NotificationCreateComponent } from "./createComponent.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
@@ -14,8 +13,6 @@ import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { NotificationEnums } from "./NotificationEnums.js";
 import { NotificationUtils } from "./utils/NotificationUtils.js";
 import { AonToast } from "../../components/aon-toast.js";
-import { AonMessenger } from "../messenger/aon-messenger.js";
-import { App } from "../../models/enums.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 
@@ -179,28 +176,10 @@ export class AonNotificationMobile extends AonElement {
     return this.getElement(this.CONTENT) || NotificationCreateComponent.createAonNotification(this.CONTENT).element;
   }
 
-  async goNotification(data) {
-    const {source, source_id, domain} = data;
-
-    this.markReadNotification(data);
-
-    if(source && source_id){
-      let aonComponent = null;
-      switch(source){
-        case App.DOCUMENTAL:
-          aonComponent =  new AonDocumental();
-          break;
-        case App.MESSENGER:
-          aonComponent =  new AonMessenger();
-          break;
-      }
-
-      aonComponent.value = source_id;
-
-      if(aonComponent){
-        NotificationUtils.setDomainStorage(domain);
+  goNotification(data) {
+    const aonComponent = NotificationUtils.getNotificationComponent(data);
+    if(aonComponent){
         this.rootPanel(aonComponent);
-      }
     }
   }
   

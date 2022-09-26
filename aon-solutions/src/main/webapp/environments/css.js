@@ -109,6 +109,8 @@ export const AON_LIST_GROUP_ITEM = 'aonListGroupItem';
 export const AON_DESKTOP_MENU_CLASSIC_OPTION = 'aonDesktopMenuClassicOption';
 export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionAon';
 
+export const AON_NOTIFICATION_CONTENT = 'aonNotificationContent';
+
 // aon-toast.css
 
 export const AON_TOAST = 'aonToast';

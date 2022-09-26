@@ -1,10 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
-import { AonDocumental } from "../documental/aon-documental.js";
 import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { AonMessenger } from "../messenger/aon-messenger.js";
-import { App } from "../../models/enums.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { NotificationEnums } from "./NotificationEnums.js";
@@ -108,18 +105,19 @@ export class AonNotificationDesk extends AonElement {
 
   navBar(){
     const notificationOptions = NotificationEnums.NotificationOptions;
+    let filter = {page:0, perPage:10, status: undefined};
     let notificationOpts = [
 			{
 				...notificationOptions.NOTIFICATION_ALL,
 				fn: () =>{
-          this.setFilter({page:0, perPage:10, status: undefined});
+          this.setFilter(filter);
           this.loadMore(true);
 				}
 			},
 			{
 				...notificationOptions.NOTIFICATION_NOT_READ,
 				fn: () =>{
-          this.setFilter({page:0, perPage:10, status: undefined});
+          this.setFilter(filter);
           this.loadMore(true);
 				}
 			}
@@ -209,25 +207,10 @@ export class AonNotificationDesk extends AonElement {
     }
   }
 
-  async goNotification(data) {
-    const {source, source_id, domain} = data;
-    if(source && source_id){
-      let aonComponent = null;
-      switch(source){
-        case App.DOCUMENTAL:
-          aonComponent =  new AonDocumental();
-          break;
-        case App.MESSENGER:
-          aonComponent =  new AonMessenger();
-          break;
-      }
-
-      aonComponent.value = source_id;
-
-      if(aonComponent){
-        NotificationUtils.setDomainStorage(domain);
-        this.rootPanel(aonComponent);
-      }
+  goNotification(data) {
+    const aonComponent = NotificationUtils.getNotificationComponent(data);
+    if(aonComponent){
+      this.rootPanel(aonComponent);
     }
   }
 }

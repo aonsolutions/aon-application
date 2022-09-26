@@ -5,6 +5,9 @@ import { NotificationEnums } from "../NotificationEnums.js";
 import * as LS from "../../../services/localStorageService.js";
 
 import { sendNotification } from "../../../services/service.js";
+import { AonDocumental } from "../../documental/aon-documental.js";
+import { AonMessenger } from "../../messenger/aon-messenger.js";
+import { App } from "../../../models/enums.js";
 
 const buildDialogAdd = (idForm) =>{
     const form = CreateComponent.createForm(idForm);
@@ -112,6 +115,30 @@ const saveNotification = async(parent, dialog)=> {
   }
 }
 
+const getNotificationComponent = (data)=>{
+  const {source, source_id, domain} = data;
+  if(source && source_id){
+    let aonComponent = null;
+    switch(source){
+      case App.DOCUMENTAL:
+        aonComponent =  new AonDocumental();
+        break;
+      case App.MESSENGER:
+        aonComponent =  new AonMessenger();
+        break;
+    }
+
+    aonComponent.value = source_id;
+
+    if(aonComponent){
+      setDomainStorage(domain);
+      return aonComponent;
+    }
+  }
+  return null;
+}
+
+
 const setDomainStorage = (domain)=>{
   if(domain && domain.id){
     LS.setDomainId(domain.id);
@@ -123,5 +150,6 @@ const setDomainStorage = (domain)=>{
 export const NotificationUtils = {
   buildDialogAdd,
   openDialog,
+  getNotificationComponent,
   setDomainStorage
 }
