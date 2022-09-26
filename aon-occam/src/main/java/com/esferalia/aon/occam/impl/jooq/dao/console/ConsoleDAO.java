@@ -99,6 +99,9 @@ public class ConsoleDAO {
 	}
 	private static Condition getFilter(DomainParams params) {
 		Condition c = null;
+		if (params.getId() != null ) {
+			c = and(c, DOMAIN.ID.eq(params.getId()));
+		}
 		if (AonStringUtils.isNotBlank(params.getQuery())) {
 			String q = AonStringUtils.PERCENT + params.getQuery() + AonStringUtils.PERCENT;
 			c = and(c, DOMAIN.NAME.like(q).or(DOMAIN.DESCRIPTION.like(q))); 

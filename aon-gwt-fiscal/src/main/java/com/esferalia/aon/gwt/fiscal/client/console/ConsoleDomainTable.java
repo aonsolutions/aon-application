@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -36,6 +37,7 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 		public void showError(String message);
 		public void showInfo(String message);
 		public void onDelete(Integer domainId, AsyncCallback<Boolean> cbk);
+		public void onInfo(Integer domainId);
 		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
 		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
 		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
@@ -271,9 +273,17 @@ class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDom
 			});
 		});
 		
-		buttons.addRow()
+		AonDisplayTableRow buttonsRow = buttons.addRow();
+		buttonsRow
 			.addCell(deleteButton)
-			.addCell(validateButton);
+			.addCell(validateButton)
+			;
+		
+		if (domain.isParent() || domain.isStandalone()) {
+			AonTableButton infoButton = new AonTableButton("Resumen contrataci\u00F3n", AON.CSS.aonIconInfo());
+			infoButton.addClickHandler(e -> callback.onInfo(AonNumberUtils.toInteger("" +  domain.getId())));
+			buttonsRow.addCell(infoButton);
+		}
 		
 		grid.addRow()
 			.addCell( checkBox , AON.CSS.aonTextCenter())

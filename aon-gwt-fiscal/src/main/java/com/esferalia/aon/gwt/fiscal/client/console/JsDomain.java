@@ -118,4 +118,12 @@ public class JsDomain extends JavaScriptObject {
 		return AonStringUtils.mapIfNotBlank(getModificationDateString(), AonDateUtils::parseDateTime );
 	}
 
+	public final boolean isStandalone() {
+		return getParentId() == null && !isDomainManagement();
+	}
+	public final boolean isParent() {
+		return getParentId() == null && isDomainManagement();
+	}
+
+	
 }

@@ -45,6 +45,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private static final String DOMAIN_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainFlatStreamServlet");
 	private static final String CHECK_DOMAIN_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainCheckIntegrityServlet");
 	private static final String DOMAIN_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainReportExcelPrint";
+	private static final String DOMAIN_INFO_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainInfoReportExcelPrint";
 
 	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainModule.class.getName());
 	static {
@@ -60,6 +61,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private SimpleLayoutPanel container = new SimpleLayoutPanel();
 	private ConsoleDomainFilterPanel filterPanel;
 	private AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+	private FormPanel diskForm;
+	private Hidden domainParamsHidden;
+
 	
 	private int lastScrollPos = 0;
 	private final MutableInt offset = new MutableInt(0);
@@ -145,9 +149,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		AonToolbar toolbar = new AonToolbar();
 		toolbar.setTitle("Gesti\u00F3n de dominios");
 		
-		FormPanel diskForm = new FormPanel("_blank");
+		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
-		Hidden domainParamsHidden = new Hidden(IRequestParamsNames.DOMAIN_PARAMS);
+		domainParamsHidden = new Hidden(IRequestParamsNames.DOMAIN_PARAMS);
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
 		formFlowPanel.add(domainParamsHidden);
@@ -247,9 +251,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		});
 		StringBuilder requestData = new StringBuilder();
 		params.setOffset(offset.getValue());
-		String jsonParams = JsonParams.convert( params );
-		LOGGER.info("jsonParams --> " + jsonParams);
-		requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + jsonParams );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert( params ) );
 		xhr.send(requestData.toString());
 	}
 	
@@ -281,6 +283,11 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				validate(params.getSchema(), domainId, name, description);
 			}
 
+			@Override
+			public void onInfo(Integer domainId) {
+				DomainParams params = filterPanel.getParams(options);
+				info(params.getSchema(), domainId);
+			}
 		});
 		table.addSelectionHandler(e -> check( e.getSelectedItem() ));
 		return table;
@@ -334,4 +341,17 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		} 
 	}
 	
+	private void info(String schema,Integer domainId) {
+		DomainParams params = new DomainParams()
+			.setSchema(schema)
+			.setId(domainId);
+		if (!AonStringUtils.isBlank(params.getSchema())) {
+			diskForm.setAction(GWT.getHostPageBaseURL() + DOMAIN_INFO_REPORT_EXCEL_PRINT);
+			domainParamsHidden.setValue(JsonParams.convert(params));
+			diskForm.submit();
+		} else {
+			AonMessageDialog.show("AVISO", "Seleccione un esquema");
+		}
+		
+	}
 }
