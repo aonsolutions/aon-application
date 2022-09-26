@@ -285,7 +285,7 @@ public class AonRandom {
 		return CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), null)
 			.filter(act -> act.isPrincipal() == mainActivity)
 			.findFirst()
-			.orElse(null);
+			.orElse(new EnterpriseActivity());
 	}
 	
 	public static Administration getRandomAdministration() {

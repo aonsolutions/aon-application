@@ -230,7 +230,8 @@ public class FinanceEntryDAO {
 			.setPeriod(period.getId())
 			.setEntryDate(tracking.getTrackingDate())
 			.setEntryType(entryType)
-			.setActivity(finance.getInvoice()==null?null:finance.getInvoice().getActivity())
+			.setActivity(finance.getInvoice()==null && finance.getInvoice().getActivity() == null
+				? null : finance.getInvoice().getActivity().getId())
 			.setSecurityLevel(finance.getSecurityLevel());
 		FinanceEntry financeEntry = new FinanceEntry();
 		financeEntry.setAccountEntry(ae);

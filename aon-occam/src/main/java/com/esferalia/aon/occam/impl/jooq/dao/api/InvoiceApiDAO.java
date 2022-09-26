@@ -16,6 +16,7 @@ import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -126,7 +127,7 @@ public class InvoiceApiDAO {
 //				.setAddressZIP(record.getValue(RADDRESS.ZIP))
 				
 //				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
-				.setActivity(r.getValue(INVOICE.ACTIVITY))	
+				.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	

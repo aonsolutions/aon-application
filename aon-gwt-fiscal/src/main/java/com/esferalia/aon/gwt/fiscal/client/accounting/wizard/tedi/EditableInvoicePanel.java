@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
@@ -963,7 +964,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onChange(ChangeEvent event) {
 				Integer act = AonNumberUtils.toInteger(invoiceCallback.getModule().getActivityBox().getSelectedValue());
 				invoiceCallback.getInvoice().getAccountEntry().setActivity(act);
-				invoiceCallback.getInvoice().getInvoice().setActivity(act);
+				invoiceCallback.getInvoice().getInvoice().setActivity(new EnterpriseActivity().setId(act));
 			}
 		});
 		invoiceCallback.getModule().getConfidentialBox().addClickHandler( new ClickHandler() {

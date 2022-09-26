@@ -92,6 +92,9 @@ public class EnterpriseActivity implements Serializable {
 	}
 
 	public VATRegime getVatRegime() {
+		if(vatRegime == null) {
+			vatRegime = VATRegime.GENERAL;
+		}
 		return vatRegime;
 	}
 	public EnterpriseActivity setVatRegime(VATRegime vatRegime) {

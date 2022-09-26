@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.commission.Commission;
@@ -819,7 +820,7 @@ public class FillerDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(r.getValue(INVOICE.RNAME))
 				.setScope(new Scope().setId(r.getValue(INVOICE.SCOPE)))
-				.setActivity(r.getValue(INVOICE.ACTIVITY))	
+				.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	

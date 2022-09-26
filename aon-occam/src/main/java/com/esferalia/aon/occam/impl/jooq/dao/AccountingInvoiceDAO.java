@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -492,7 +493,7 @@ public class AccountingInvoiceDAO {
 					.setTaxDate(issueDate)
 					.setType(reg.getType().getInvoiceType())
 					.setTransaction(reg.getTransaction())
-					.setActivity(activity)
+					.setActivity(new EnterpriseActivity().setId(activity))
 					.setService( reg.getType().getInvoiceType() == InvoiceType.EXPENSES 
 							  || reg.getType().getInvoiceType() == InvoiceType.UNDEDUCTIBLE)
 					.setSeries(null)

@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
@@ -1115,27 +1116,27 @@ public class AccountingUtilitiesDAO {
 			)
 			.fetch()
 			.stream()
-			.map( record -> new AccUtilitiesInvoiceIntegrityItem()
-					.setDomain(record.getValue(INVOICE.DOMAIN))
+			.map( r -> new AccUtilitiesInvoiceIntegrityItem()
+					.setDomain(r.getValue(INVOICE.DOMAIN))
 					.setInvoice(new Invoice () 
-						.setId(record.getValue(INVOICE.ID))
-						.setDomain(record.getValue(INVOICE.DOMAIN))
-						.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
-						.setSeries(record.getValue(INVOICE.SERIES))
-						.setNumber(record.getValue(INVOICE.NUMBER))
-						.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-						.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-						.setTaxDate(record.getValue(INVOICE.TAX_DATE))
-						.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
-						.setRegistry(record.getValue(INVOICE.REGISTRY))
-						.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
-						.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
-						.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-						.setRegistryName(record.getValue(INVOICE.RNAME))
-						.setActivity(record.getValue(INVOICE.ACTIVITY)))
-					.setCustomer(record.getValue(CUSTOMER.REGISTRY) != null)
-					.setCreditor(record.getValue(CREDITOR.REGISTRY) != null)
-					.setSupplier(record.getValue(SUPPLIER.REGISTRY) != null)
+						.setId(r.getValue(INVOICE.ID))
+						.setDomain(r.getValue(INVOICE.DOMAIN))
+						.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
+						.setSeries(r.getValue(INVOICE.SERIES))
+						.setNumber(r.getValue(INVOICE.NUMBER))
+						.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+						.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+						.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+						.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,r.getValue(INVOICE.SECURITY_LEVEL)))
+						.setRegistry(r.getValue(INVOICE.REGISTRY))
+						.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
+						.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class, r.getValue(INVOICE.RDOCUMENT_TYPE)))
+						.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+						.setRegistryName(r.getValue(INVOICE.RNAME))
+						.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY))))
+					.setCustomer(r.getValue(CUSTOMER.REGISTRY) != null)
+					.setCreditor(r.getValue(CREDITOR.REGISTRY) != null)
+					.setSupplier(r.getValue(SUPPLIER.REGISTRY) != null)
 				)
 			.forEach(item -> {
 				String who = "";

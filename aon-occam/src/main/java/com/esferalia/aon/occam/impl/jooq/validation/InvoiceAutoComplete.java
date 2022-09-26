@@ -170,7 +170,7 @@ public class InvoiceAutoComplete {
 			&& ctx.getConfiguration().getActivities().size() == 1) {
 			
 			EnterpriseActivity act = ctx.getConfiguration().getMainActivity(); 
-			inv.setActivity( act == null ? null : act.getId() );
+			inv.setActivity( act == null ? new EnterpriseActivity() : act);
 		}
 	};
 
