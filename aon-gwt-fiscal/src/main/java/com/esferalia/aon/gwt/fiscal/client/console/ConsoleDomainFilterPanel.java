@@ -47,7 +47,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		addStyleName(AON.CSS.aonMargin());
 		addStyleName(AON.CSS.aonBlockCenter());
 		
-		parentBox = new AonDomainBox(opt.getOccam());
+		parentBox = new AonDomainBox(opt.getOccam(), true);
 		parentBox.addSelectionHandler(e -> fire(opt));
 		parentBox.setEnabled(false);
 
