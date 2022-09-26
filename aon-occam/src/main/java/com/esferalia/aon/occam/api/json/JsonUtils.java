@@ -53,7 +53,7 @@ public class JsonUtils {
 	}
 	
 	public static Boolean getBoolean(JSONObject json, String key ) {
-		String value = json.optString(key,null);
+		String value = json != null && json.opt(key) != null ? json.optString(key,null) : null;
 		if (AonStringUtils.isNotBlank(value)) {
 			return Boolean.valueOf( json.optBoolean(key)); 
 		}
@@ -61,7 +61,7 @@ public class JsonUtils {
 	}
 	
 	public static Boolean getboolean(JSONObject json, String key ) {
-		String value = json.optString(key,null);
+		String value = json != null && json.opt(key) != null ? json.optString(key,null) : null;
 		if (AonStringUtils.isNotBlank(value)) {
 			Boolean ret = Boolean.valueOf( json.optBoolean(key));
 			return ret != null ? ret : false; 
@@ -84,7 +84,8 @@ public class JsonUtils {
 	}
 	
 	public static Integer getInteger(JSONObject json, String key ) {
-		return AonNumberUtils.toInteger(json.optNumber(key, null)); 
+		if(json == null) return null;
+		return json.opt(key) != null ? AonNumberUtils.toInteger(json.optNumber(key, null)) : null; 
 	}
 	
 	public static Integer optInteger(JSONObject json, String key ) {
