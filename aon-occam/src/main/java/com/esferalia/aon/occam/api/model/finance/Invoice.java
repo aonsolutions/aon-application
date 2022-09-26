@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -25,7 +26,7 @@ public class Invoice implements Serializable, HasAudit {
 	
 	private Integer id;
 	private Integer domain;
-	private Integer activity; 				//**
+	private EnterpriseActivity activity;
 	private String epigraph;
 	private Integer investAsset;			//**
 	private Integer project;				//**
@@ -114,10 +115,13 @@ public class Invoice implements Serializable, HasAudit {
 		this.domain = domain;
 		return this;
 	}
-	public Integer getActivity() {
+	public EnterpriseActivity getActivity() {
+		if(activity == null) {
+			activity = new EnterpriseActivity();
+		}
 		return activity;
 	}
-	public Invoice setActivity(Integer activity) {
+	public Invoice setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
 		return this;
 	}

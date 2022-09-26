@@ -278,6 +278,10 @@ export class Invoice {
   isNacional() {
     return this.transaction === 'NAC';
   }
+
+  isExempt() {
+    return false;
+  }
   
   isCcm() {
     return this.transaction === 'CCM';
@@ -417,7 +421,7 @@ export class Invoice {
 
   setWithholding(withholding) {
     this.withholding = withholding;
-    if(this.isNacional()) {
+    if(this.isNacional() && !this.isExempt()) {
       this.calculateWithholdingFromTax();
       this.calculateTotalFromTax();
     } else {
@@ -459,7 +463,7 @@ export class Invoice {
 
   setTransaction(transaction) {
     this.transaction = transaction;
-    if(!this.isNacional()){
+    if(!this.isNacional() || this.isExempt()){
       this.surcharge = false;
       
       if(!this.isCcm()) {
@@ -689,7 +693,7 @@ export class Invoice {
   }
 
   calculateTaxFromTotal() {
-    if(this.isEmitida() && !this.isNacional()){
+    if(this.isEmitida() && (!this.isNacional() || this.isExempt)){
       this.taxes = [{
           tax:TaxType.IVA,
           type: TaxType.IVA,
@@ -743,7 +747,7 @@ export class Invoice {
       amount: 0.0,
       category: this.category,
       prepayment: false,
-      percentage: this.isNacional() ? 21.0 : 0.0, 
+      percentage: this.isNacional() && !this.isExempt() ? 21.0 : 0.0, 
       quota: 0.0,
       surcharge: this.isSurcharge() ? 5.2 : 0.0, 
       surcharge_quota: 0.0,
@@ -833,7 +837,7 @@ export class Invoice {
         }
       }
     }); 
-    if(this.isNacional() || this.isCcm())   
+    if((this.isNacional() && !this.isExempt()) || this.isCcm())   
       this.calculateWithholdingFromTax();
   }
   

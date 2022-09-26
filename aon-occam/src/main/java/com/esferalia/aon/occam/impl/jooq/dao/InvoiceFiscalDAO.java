@@ -108,7 +108,7 @@ public class InvoiceFiscalDAO {
 				public void visitVatGeneral() {
 					boolean assigned = false;
 					if (invoice.getActivity() != null) {
-						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity());
+						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity().getId());
 						if (act != null && act.getVatRegime() != null) {
 							invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_GENERAL, (act.getVatRegime() == VATRegime.GENERAL) );
 							assigned = true;
@@ -128,7 +128,7 @@ public class InvoiceFiscalDAO {
 				public void visitVatSimplified() {
 					boolean assigned = false;
 					if (invoice.getActivity() != null) {
-						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity());
+						EnterpriseActivity act = ctx.getConfiguration().getActivity(invoice.getActivity().getId());
 						if (act != null && act.getVatRegime() != null) {
 							invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, (act.getVatRegime() == VATRegime.SIMPLIFIED) );
 							assigned = true;
@@ -187,6 +187,12 @@ public class InvoiceFiscalDAO {
 					} else {
 						invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, false);
 					}
+				}
+
+				@Override
+				public void visitVatExempt() {
+					// TODO Auto-generated method stub
+					
 				}
 			};
 			for (VATTaxRegime vatTaxRegime : VATTaxRegime.values()) {

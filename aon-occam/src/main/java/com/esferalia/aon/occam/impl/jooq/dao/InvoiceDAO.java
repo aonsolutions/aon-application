@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -582,7 +583,7 @@ public class InvoiceDAO {
 					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
 					.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 					.setRegistryName(record.getValue(INVOICE.RNAME))
-					.setActivity(record.getValue(INVOICE.ACTIVITY))
+					.setActivity(new EnterpriseActivity().setId(record.getValue(INVOICE.ACTIVITY)))
 				;
 		}
 		
@@ -616,7 +617,7 @@ public class InvoiceDAO {
 				.setScope(checkField(r, SCOPE.ID)
 						? ScopeFiller.buildScope(r)
 						: new Scope().setId(r.getValue(INVOICE.SCOPE)))
-				.setActivity(r.getValue(INVOICE.ACTIVITY))	
+				.setActivity(new EnterpriseActivity().setId(r.getValue(INVOICE.ACTIVITY)))	
 				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
 				.setProject(r.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
@@ -970,7 +971,7 @@ public class InvoiceDAO {
 		InvoiceRecord record = ctx.getDslContext()
 			.insertInto(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
-			.set(INVOICE.ACTIVITY, invoice.getActivity() )
+			.set(INVOICE.ACTIVITY, invoice.getActivity().getId())
 			.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
 			.set(INVOICE.PROJECT, invoice.getProject() )
 			.set(INVOICE.SERIES, invoice.getSeries() )
@@ -1113,7 +1114,7 @@ public class InvoiceDAO {
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
-			.set(INVOICE.ACTIVITY, invoice.getActivity() )
+			.set(INVOICE.ACTIVITY, invoice.getActivity().getId() )
 			.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
 			.set(INVOICE.PROJECT, invoice.getProject() )
 			.set(INVOICE.SERIES, invoice.getSeries() )

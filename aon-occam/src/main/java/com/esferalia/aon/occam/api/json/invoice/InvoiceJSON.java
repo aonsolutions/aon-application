@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
@@ -84,7 +85,7 @@ public class InvoiceJSON {
 				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
-				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY));
+				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)));
 	}
 
 	private static RectificationType getRectificationType(JSONObject json) {
@@ -141,7 +142,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.TAXES, InvoiceBreakdownJSON.toJSON(invoice.getBreakdown()))
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
-			.put(IJsonNames.ACTIVITY, invoice.getActivity());
+			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()));
 		
 		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());

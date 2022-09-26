@@ -68,7 +68,7 @@ public class AccountingInvoiceTest {
 		System.out.println("*****************************************************");
 		System.out.println("id ... " + invoice.getId());
 		System.out.println("domain ... " + invoice.getDomain());
-		System.out.println("activity ... " + invoice.getActivity());
+		System.out.println("activity ... " + invoice.getActivity().getId());
 		System.out.println("epigraph ... " + invoice.getEpigraph());
 		System.out.println("investAsset ... " + invoice.getInvestAsset());
 		System.out.println("project ... " + invoice.getProject());

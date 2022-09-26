@@ -77,6 +77,12 @@ public enum VATTaxRegime implements Serializable {
 		public void visit(IVATTaxRegimeVisitor visitor) {
 			visitor.visitVatImportation();
 		}
+	},
+	VAT_EXEMPT("Exenta"){
+		@Override
+		public void visit(IVATTaxRegimeVisitor visitor) {
+			visitor.visitVatExempt();
+		}
 	}
 	;
 	

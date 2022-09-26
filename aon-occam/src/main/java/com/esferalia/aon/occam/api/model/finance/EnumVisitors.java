@@ -160,6 +160,7 @@ public class EnumVisitors {
 		void visitVatUnionExternal();
 		void visitVatUnion();
 		void visitVatImportation();
+		void visitVatExempt();
 	}
 	
 		

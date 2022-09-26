@@ -113,7 +113,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			tbaiConfiguration.setCertificate(cert);
 			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
 			EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-			company.getDomain().getId(), "", invoice.getActivity());
+			company.getDomain().getId(), "", invoice.getActivity().getId());
 			if(ea == null || ea.getId() == null) {
 				ea = AON.getEnterpriseActivities(company.getDomain().getName(),
 						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
