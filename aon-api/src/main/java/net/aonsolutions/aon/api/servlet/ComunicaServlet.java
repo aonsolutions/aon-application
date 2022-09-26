@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -861,6 +862,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			    	notification.setDomain(api.getDomain());
 			    	notification.setUser(api.getUser());
 			    	notification.setAuths(auths);
+			    	notification.setSource(NotificationSource.COMUNICA);
 			    	notification.send();
 				}
 			} catch (Exception e) {
