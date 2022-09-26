@@ -28,9 +28,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.api.checkit.CheckItAPI;
-import net.aonsolutions.aon.api.checkit.CheckItException;
-import net.aonsolutions.aon.api.checkit.IParamNames;
+import net.aonsolutions.aon.bank.checkit.CheckItAPI;
+import net.aonsolutions.aon.bank.checkit.CheckItException;
+import net.aonsolutions.aon.bank.checkit.IParamNames;
 
 @WebServlet(name = "CheckIt Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
 public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet implements CheckItService {

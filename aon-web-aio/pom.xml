@@ -495,6 +495,12 @@
     </dependency>
     <dependency>
       <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.bank</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
       <artifactId>aon.sign</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
