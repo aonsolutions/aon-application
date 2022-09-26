@@ -32,28 +32,29 @@ public class DomainJSON {
 	}
 	
 	public static Domain fromJSON(JSONObject json) {
+		if(json == null) return new Domain();
 		return new Domain()
-			.setId( JsonUtils.getInteger(json,IJsonNames.ID))
-			.setName(json.optString(IJsonNames.NAME,null))
-			.setDescription(json.optString(IJsonNames.DESCRIPTION,null))
-			.setOwner(json.optString(IJsonNames.OWNER,null))
+			.setId(JsonUtils.getInteger(json,IJsonNames.ID))
+			.setName(JsonUtils.getString(json, IJsonNames.NAME))
+			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+			.setOwner(JsonUtils.getString(json, IJsonNames.OWNER))
 			.setParentId(JsonUtils.optInteger(json, IJsonNames.PARENT_ID))
 			.setDomainType( DomainType.safeValueOf( JsonUtils.getString(json,IJsonNames.DOMAIN_TYPE) ))
-			.setEnableHeredity(json.optBoolean(IJsonNames.ENABLE_HEREDITY))
-			.setDomainManagement(json.optBoolean(IJsonNames.DOMAIN_MANAGEMENT))
-			.setDisableDomainManagement(json.optBoolean(IJsonNames.DISABLE_DOMAIN_MANAGEMENT))
-			.setActive(json.optBoolean(IJsonNames.ACTIVE))
-			.setScope( JsonUtils.getInteger(json,IJsonNames.SCOPE))
+			.setEnableHeredity(JsonUtils.getboolean(json, IJsonNames.ENABLE_HEREDITY))
+			.setDomainManagement(JsonUtils.getboolean(json, IJsonNames.DOMAIN_MANAGEMENT))
+			.setDisableDomainManagement(JsonUtils.getboolean(json, IJsonNames.DISABLE_DOMAIN_MANAGEMENT))
+			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
+			.setScope(JsonUtils.getInteger(json,IJsonNames.SCOPE))
 			.setMaxDefinedUsers( JsonUtils.getInteger(json,IJsonNames.MAX_DEFINED_USERS))
 			.setDefinedUsers( JsonUtils.getInteger(json,IJsonNames.DEFINED_USERS))
 			.setMaxDocumentSize( JsonUtils.getInteger(json,IJsonNames.MAX_DOCUMENT_SIZE))
 			.setMaxTotalDocumentSize( JsonUtils.getInteger(json,IJsonNames.MAX_TOTAL_DOCUMENT_SIZE))
-			.setLastAccessUser(json.optString(IJsonNames.LAST_ACCESS_USER,null))
+			.setLastAccessUser(JsonUtils.getString(json, IJsonNames.LAST_ACCESS_USER))
 			.setLastAccessDate(JsonUtils.getDate(json, IJsonNames.LAST_ACCESS_DATE))
 			.setExpirationDate(JsonUtils.getDate(json, IJsonNames.EXPIRATION_DATE))
-			.setCreationUser(json.optString(IJsonNames.CREATION_USER,null))
+			.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
 			.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
-			.setModificationUser(json.optString(IJsonNames.MODIFICATION_USER,null))
+			.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
 			.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
 		;
 	}
@@ -69,6 +70,7 @@ public class DomainJSON {
 	}
 	
 	public static JSONObject toJSON(Domain domain) {
+		if(domain == null) return new JSONObject();
 		return new JSONObject()
 			.putOpt(IJsonNames.ID, domain.getId())
 			.putOpt(IJsonNames.NAME, domain.getName())
@@ -92,7 +94,7 @@ public class DomainJSON {
 			.putOpt(IJsonNames.CREATION_DATE, AonDateUtils.format(domain.getCreationDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.putOpt(IJsonNames.MODIFICATION_USER, domain.getModificationUser())
 			.putOpt(IJsonNames.MODIFICATION_DATE, AonDateUtils.format(domain.getModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
-					;		
+			;		
 	}
 
 		
