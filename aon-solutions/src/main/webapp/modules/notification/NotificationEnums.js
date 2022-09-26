@@ -57,7 +57,6 @@ const NotificationOptions = {
     NOTIFICATION_NOT_READ
 };
 
-
 export const NotificationEnums = {
     TYPE_USER,
     NOTIFICATION_TABS,

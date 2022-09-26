@@ -4,7 +4,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum NotificationSource {
 	DOCUMENTAL,
-	MESSENGER
+	MESSENGER,
+	COMUNICA,
+	INVOICE
 	;
 	
 	private NotificationSource() {}
