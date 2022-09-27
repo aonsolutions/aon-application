@@ -242,15 +242,13 @@ const addTaskChilds = (task, row, documents, isCau) => {
 const addChild = (taskId, child, parent, documents, grandChild, isCau)=> {
   const { person, workgroupDescription } = getAssined(child, documents.domainId);
 
+  const aonMessengerList = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+
   let assigned = person || workgroupDescription;
 
   const div = setStyles(document.createElement(TAG.DIV), {
-    // top: `${top}px`,
     color: CSS.variable(COLORS.AON_GRAY),
     display: "flex",
-    // position: "relative",
-    // left: "0",
-    // right: "0",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     overflow: "hidden",
@@ -277,11 +275,12 @@ const addChild = (taskId, child, parent, documents, grandChild, isCau)=> {
   span.className = CSS.AON_LINK;
   span.innerText = TaskUtils.taskNumberParse(child.number);
   span.title = "Creador por " + sender;
-  if (!isCau) {
+
+  if (!isCau && aonMessengerList.getIsMyTask(child) ) {
     span.addEventListener(EVENT.CLICK, (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
-      document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_LIST).goMessengerChat(child, 0);
+      aonMessengerList.goMessengerChat(child, 0);
     });
   } else {
     assigned = workgroupDescription || null;

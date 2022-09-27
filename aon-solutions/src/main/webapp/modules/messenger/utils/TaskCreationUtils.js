@@ -685,7 +685,6 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
  * @returns Object divs
  */
 const createSectionComment = (div) => {
-
     const divWrite = setStyles(document.createElement(TAG.DIV),{ width: "100%", display: "flex", flexDirection: "column" });
     div.appendChild(divWrite);
 
@@ -728,7 +727,8 @@ const createSectionComment = (div) => {
       overflow:"hidden",
       flex: 1
     });
-    
+
+
     aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
     divMain.appendChild(aonTextArea);
     aonTextArea.height = "45px";

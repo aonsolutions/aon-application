@@ -90,6 +90,7 @@ public class NotificationRequest extends Notification {
 		    String[] tokens = getAuthDevices();
 		    if(tokens!=null && tokens.length>0) {
 			    HttpPost httpPost = new HttpPost(urlFB);
+			    
 				//---------HEADER
 				httpPost.addHeader("Authorization", "key="+keyFB);
 				httpPost.addHeader("Accept", "*/*");

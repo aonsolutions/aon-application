@@ -6,7 +6,6 @@ import './AonStringUtils.js';
 
 import './AonDateUtils.js';
 
-
 export * from './authService.js';
 
 export * from './invoiceService.js';
@@ -56,5 +55,6 @@ export * from './workplaceService.js';
 export const clear = () => {
   clearCompanyService();
   clearRegistryService();
+  clearAuth();
   mobileAction({ action: MOBILE_ACTION.REMOVE_SESSION_BIDOQ });
 }
