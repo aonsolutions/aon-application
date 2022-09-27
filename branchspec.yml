@@ -39,16 +39,16 @@ phases:
       - docker push $REPOSITORY_URI/aon-solutions:$TAG
       - |
         printf '[
-        {"name":"%s","imageUri":"%s/aon-application:%s"}
-        ]' ${TAG^^} $REPOSITORY_URI  $TAG > testimgdef.json
-      - cat testimgdef.json'
+        {"name":"SNAPSH0T","imageUri":"%s/aon-application:%s"}
+        ]' $REPOSITORY_URI $TAG > snapshotimgdef.json
+      - cat snapshotimgdef.json
       - |
-       printf '[
-       {"name":"TEST-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
-       ]' $REPOSITORY_URI $TAG > testsolutionsimgdef.json
-      - cat testsolutionsimgdef.json'
+        printf '[
+        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+        ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
+      - cat snapshotsolutionsimgdef.json
 artifacts:
   files:
-    - testimgdef.json
-    - testsolutionsimgdef.json
+    - snapshotimgdef.json
+    - snapshotsolutionsimgdef.json
     # - location
