@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -65,6 +66,7 @@ public class Invoice implements Serializable, HasAudit {
 	private boolean service;
 	private boolean advance;
 	private boolean signed;
+	private boolean annulled;
 	private double taxableBase;
 	private double vatQuota;
 	private double retentionQuota;
@@ -83,9 +85,9 @@ public class Invoice implements Serializable, HasAudit {
 
 	private String siiStatus;
 
-	private LinkedList<InvoiceDetail> details;
-	private LinkedList<InvoiceBreakdown> breakdown;
-	private LinkedList<Finance> finances;
+	private List<InvoiceDetail> details;
+	private List<InvoiceBreakdown> breakdown;
+	private List<Finance> finances;
 
 	private InvoiceFiscal fiscal;
 	
@@ -96,7 +98,6 @@ public class Invoice implements Serializable, HasAudit {
 	// ATRIBUTOS CON DUDOSO FUTURO
 	// ***************************
 	private Registry registryData;
-	private Byte status;
 	// ***************************
 
 	private InvoiceInfo invoiceInfo;
@@ -381,6 +382,16 @@ public class Invoice implements Serializable, HasAudit {
 		this.signed = signed;
 		return this;
 	}
+	
+	public boolean isAnnulled() {
+		return annulled;
+	}
+	
+	public Invoice setAnnulled(boolean annulled) {
+		this.annulled = annulled;
+		return this;
+	}
+	
 	public double getTaxableBase() {
 		return taxableBase;
 	}
@@ -498,32 +509,32 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public LinkedList<InvoiceDetail> getDetails() {
+	public List<InvoiceDetail> getDetails() {
 		if(details == null) {
 			details = new LinkedList<>();
 		}
 		return details;
 	}
-	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
+	public Invoice setDetails(List<InvoiceDetail> details) {
 		this.details = details;
 		return this;
 	}
 
-	public LinkedList<InvoiceBreakdown> getBreakdown() {
+	public List<InvoiceBreakdown> getBreakdown() {
 		if(breakdown == null) {
 			this.breakdown = new LinkedList<>();
 		}
 		return breakdown;
 	}
-	public Invoice setBreakdown(LinkedList<InvoiceBreakdown> breakdown) {
+	public Invoice setBreakdown(List<InvoiceBreakdown> breakdown) {
 		this.breakdown = breakdown;
 		return this;
 	}
 
-	public LinkedList<Finance> getFinances() {
+	public List<Finance> getFinances() {
 		return finances;
 	}
-	public Invoice setFinances(LinkedList<Finance> finances) {
+	public Invoice setFinances(List<Finance> finances) {
 		this.finances = finances;
 		return this;
 	}
@@ -537,14 +548,6 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public boolean hasFinances() {
 		return getFinances() != null && !getFinances().isEmpty(); 
-	}
-	
-	public Byte getStatus() {
-		return status;
-	}
-	public Invoice setStatus(Byte status) {
-		this.status = status;
-		return this;
 	}
 	
 	public InvoiceFiscal getFiscal() {

@@ -90,6 +90,12 @@ export const DOWNLOAD = {
     icon: MATERIAL_ICONS.FILE_DOWNLOAD
 };
 
+export const DOWNLOAD_PDF = {
+    id: CONSTANT.DOWNLOAD.initCap(),
+    name: MSG.DOWNLOAD,
+    aonIcon: AON_ICONS.AON_PDF
+};
+
 export const DOWNLOAD_FILE = {
     id: CONSTANT.DOWNLOAD_FILE.initCap(),
     name: MSG.DOWNLOAD_FILE,

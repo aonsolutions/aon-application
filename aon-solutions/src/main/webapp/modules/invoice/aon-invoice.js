@@ -2210,7 +2210,7 @@ export class AonInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.REJECT_INVOICE);
-		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea"> </textarea>');
+		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
 			if(!ta.value.isEmpty()){
@@ -2244,7 +2244,7 @@ export class AonInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ADD_REMARKS);
-		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea"> </textarea>');
+		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
 			let dt = new Date()
@@ -2274,6 +2274,7 @@ export class AonInvoice extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 
 		let textarea = this.createElement('textarea');
+		textarea.maxLength = "256";
 		textarea.id = 'commentTextArea';
 		textarea.className = 'aonTextarea';
 		textarea.value = this.invoice.comments;
@@ -2335,7 +2336,7 @@ export class AonInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.RECTIFY_INVOICE);
-		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea" placeholder="Causa..."></textarea>');
+		d.setContentHTML('<textarea id="commentTextArea" maxlength="256" class="aonTextarea" placeholder="Causa..."></textarea>');
 		d.addAcceptAction(() => {
 			let recInv = this.invoice;
 			recInv.setRectificationInvoice(this.getInvoice());

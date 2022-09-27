@@ -91,12 +91,14 @@ export class AonMobilePackaging extends AonElement {
 		div.style.width = "100%";
 		this.appendChild(div);
 
-		let print = toolbar.addButton2(ACTION.PRINT, () => this.print());
-		print.style.display = 'none';
+		let downloadButton = toolbar.addButton2(ACTION.DOWNLOAD_PDF, () => this.print());
+		downloadButton.style.display = 'none';
 
-		toolbar.addButton2(ACTION.SAVE, () =>  {
-			print.style.display = 'block';
-			this.save(div);
+		let printButton = toolbar.addButton2(ACTION.PRINT, () => this.print());
+		printButton.style.display = 'none';
+
+		let saveButton = toolbar.addButton2(ACTION.SAVE, () =>  {
+			this.save(div, saveButton, printButton, downloadButton);
 		});
 		// toolbar.addButton2(ACTION.BACK, () => this.back());
 
@@ -266,12 +268,17 @@ export class AonMobilePackaging extends AonElement {
 
 	}
 
-	save(div) {
+	save(div, saveButton, printButton, downloadButton) {
 		if(!this.packaging.item.serialNumber){
 			this.showError({message:`El número de Lote está vacío.`, type:CONSTANT.ERROR});
 		} else {
+			saveButton.style.display = 'none';
+			this.getApplication().startLoader();
 			this.packaging.quantity = this.getElement(this.PACKAGING_QUANTITY).value;
 			savePackaging(this.packaging).then(r => {
+				this.getApplication().stopLoader();
+				printButton.style.display = 'block';
+				downloadButton.style.display = 'block';
 				this.packaging = r;
 				this.buildTag(div);
 			});

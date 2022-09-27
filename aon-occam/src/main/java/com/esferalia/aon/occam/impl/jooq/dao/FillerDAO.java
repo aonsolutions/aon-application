@@ -839,7 +839,6 @@ public class FillerDAO {
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
-				.setStatus(r.getValue(INVOICE.STATUS))
 				.setSeller(r.getValue(REGISTRY.ID))
 				.setSellerName(r.getValue(REGISTRY.NAME));
 			
