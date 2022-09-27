@@ -27,7 +27,7 @@ phases:
       - docker build --no-cache -t aonsolutions/aon-solutions:$TAG -f ./aon-solutions/Dockerfile .
       - docker tag aonsolutions/aon-db-up2date:$TAG $REPOSITORY_URI/aon-db-up2date:$TAG
       - docker tag aonsolutions/aon-application:$TAG $REPOSITORY_URI/aon-application:$TAG
-      #- docker tag aonsolutions/aon-solutions:$TAG $REPOSITORY_URI/aon-solutions:$TAG
+      - docker tag aonsolutions/aon-solutions:$TAG $REPOSITORY_URI/aon-solutions:$TAG
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
   post_build:
     commands:
