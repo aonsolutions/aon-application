@@ -146,7 +146,6 @@ public class InvoiceApiDAO {
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
-				.setStatus(r.getValue(INVOICE.STATUS))
 				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))

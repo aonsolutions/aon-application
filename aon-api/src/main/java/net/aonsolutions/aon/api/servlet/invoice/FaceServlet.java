@@ -62,9 +62,9 @@ public class FaceServlet extends AonApiHttpServlet {
 			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
 			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
 			Workplace workplace = new Workplace();
-			if(invoice.getDetails().getFirst().getWorkplace() != null &&
-					invoice.getDetails().getFirst().getWorkplace().getId() != null) {
-				Integer wId = invoice.getDetails().getFirst().getWorkplace().getId();
+			if(!invoice.getDetails().isEmpty() && invoice.getDetails().get(0).getWorkplace() != null &&
+					invoice.getDetails().get(0).getWorkplace().getId() != null) {
+				Integer wId = invoice.getDetails().get(0).getWorkplace().getId();
 				workplace = AON.getWorkplace(domainName, domainId, login, f -> f.getIdProperty().eq(wId));				
 			} else {
 				workplace = AON.getWorkplace(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)

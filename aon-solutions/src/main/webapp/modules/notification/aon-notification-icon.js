@@ -109,9 +109,6 @@ export class AonNotificationIcon extends AonElement {
 
 
         this.WINDOW_LISTENER = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-
             if(!this.contains(ev.target)){
                 this.closeDialog();
             }

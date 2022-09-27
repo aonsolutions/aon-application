@@ -67,7 +67,7 @@ public class Lroe140_2_1Test {
 		.setService(false)
 		.setAdvance(false)
 		.setTotal(12.10)
-		.setStatus(InvoiceStatus.PENDING.value())
+		.setRecorded(false)
 		.setCreationDate(new Date())
 		.setModificationDate(new Date())
 		.setEpigraph("150411");

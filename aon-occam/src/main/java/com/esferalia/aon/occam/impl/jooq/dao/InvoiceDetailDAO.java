@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -105,11 +106,10 @@ public class InvoiceDetailDAO {
 	}
 	
 	
-	public static LinkedList<InvoiceDetail> save(AONContext ctx, LinkedList<InvoiceDetail> invoiceDetails) {
+	public static LinkedList<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
-		invoiceDetails.stream().forEach(invoiceDetail -> {
-			list.add(save(ctx, invoiceDetail));
-		});
+		invoiceDetails.stream().forEach(invoiceDetail -> 
+			list.add(save(ctx, invoiceDetail)));
 		return list;
 	}
 	
