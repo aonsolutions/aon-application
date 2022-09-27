@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +17,11 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FinanceJSON {
 
-	public static LinkedList<Finance> fromJSON(JSONArray json) {
+	private FinanceJSON() {
+	
+	}
+	
+	public static List<Finance> fromJSON(JSONArray json) {
 		LinkedList<Finance> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
@@ -39,7 +44,7 @@ public class FinanceJSON {
 				.setDueDate(date);
 	}
 	
-	public static JSONArray toJSON(LinkedList<Finance> finances) {
+	public static JSONArray toJSON(List<Finance> finances) {
 		JSONArray array = new JSONArray();
 		if(finances != null) 
 			finances.stream().forEach(finance -> array.put(toJSON(finance)));

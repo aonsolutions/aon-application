@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +19,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDetailJSON {
 	
-	public static LinkedList<InvoiceDetail> fromJSON(JSONArray json) {
+	private InvoiceDetailJSON() {
+	
+	}
+	
+	public static List<InvoiceDetail> fromJSON(JSONArray json) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
@@ -41,7 +46,7 @@ public class InvoiceDetailJSON {
 			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
 			.setSource(InvoiceSource.TEDI)
-			.setInvoiceTaxes(new LinkedList<InvoiceTax>())
+			.setInvoiceTaxes(new LinkedList<>())
 			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET));
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
@@ -73,7 +78,7 @@ public class InvoiceDetailJSON {
 		return detail;
 	}
 	
-	public static JSONArray toJSON(LinkedList<InvoiceDetail> details) {
+	public static JSONArray toJSON(List<InvoiceDetail> details) {
 		JSONArray array = new JSONArray();
 		details.stream().forEach(detail -> array.put(toJSON(detail)));
 		return array;

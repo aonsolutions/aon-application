@@ -12,10 +12,9 @@ export class AonTextArea extends AonElement {
 
 	TEXTAREA;
 	TOOLBAR;
-	LEFT;
-	RIGHT;
 	FILES;
-
+	RIGHT;
+	LEFT;
 	static get observedAttributes() {
 		return [CONSTANT.VALUE, CONSTANT.DISABLED, "height"];
 	}
@@ -28,36 +27,12 @@ export class AonTextArea extends AonElement {
 		this.setAttribute("height", height);
 	}
 
-	get left(){
-		return this.LEFT;
-	}
-
-	set left(value){
-		this.LEFT = value;
-	}
-
-	get right(){
-		return this.RIGHT;
-	}
-
-	set right(value){
-		this.RIGHT = value;
-	}
-
 	get placeholder(){
 		return this.getAttribute("placeholder");
 	}
 
 	set placeholder(value){
 		this.setAttribute("placeholder", value);
-	}
-
-	get toolbar(){
-		return this.TOOLBAR;
-	}
-
-	set toolbar(value){
-		this.TOOLBAR = value;
 	}
 
 	get id() {
@@ -77,7 +52,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	get value() {
-		const textarea = this.getElement(this.TEXTAREA);
+		const textarea = this.TEXTAREA;
 		return textarea && textarea.innerHTML.trim().length>0  ? textarea.innerHTML.trim() : null;
 	}
 
@@ -103,21 +78,12 @@ export class AonTextArea extends AonElement {
 	
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
-			let textAreaDiv = this.getTextArea();
-			if(textAreaDiv){
-				textAreaDiv.innerHTML = newValue;
-			}
+			this.TEXTAREA.innerHTML = newValue;
 		} else if(CONSTANT.DISABLED === name){
-			let textAreaDiv = this.getTextArea();
-			if(textAreaDiv){
-				const disabled = newValue == "true";
-				textAreaDiv.contentEditable = !disabled;
-			}
+			const disabled = newValue == "true";
+			this.TEXTAREA.contentEditable = !disabled;
 		} else if("height" === name){
-			let textAreaDiv = this.getTextArea();
-			if(textAreaDiv){
-				this.style.minHeight = textAreaDiv.style.minHeight = newValue;
-			}
+			this.style.minHeight = this.TEXTAREA.style.minHeight = newValue;
 		} 
 	}
 
@@ -127,19 +93,14 @@ export class AonTextArea extends AonElement {
 	}
 
 	connectedCallback () {
-		this.TEXTAREA = "textarea" + this.id;
-		this.TOOLBAR = "toolbar" + this.id;
-		this.left = "left"+ this.id;
-		this.right = "right"+this.id;
 		this.build();
 	}
 
 	build() {
 		this.buildToolbar();
 
-		const textarea = this.generateTextArea();
-		textarea.appendTo(this);
-
+		this.buildGenerateTextArea();
+		
   	 	//ADD INPUT FILE
 		let inputFile = setAttributes(document.createElement(TAG.INPUT),{
 			id:this.id+"Files",
@@ -154,9 +115,9 @@ export class AonTextArea extends AonElement {
 
 	buildToolbar(){
 		if(this.NOT_TOOLBAR) return;
-		const bar = newComponent({
+		this.TOOLBAR = newComponent({
 			type: "toolbar",
-			id : this.TOOLBAR,
+			id : "toolbar" + this.id,
 			classes: [
 				'bar',
 				CSS.FLEX_ROW,
@@ -167,30 +128,30 @@ export class AonTextArea extends AonElement {
 			styles:{
 				height: "auto"
 			}
-		});
-		bar.appendTo(this);
+		}).element;
+		this.appendChild(this.TOOLBAR);
 
-		const left = newComponent({
-			id:this.LEFT,
+		this.LEFT = newComponent({
+			id:"left"+ this.id,
 			classes: [
 				'left',
 				CSS.FLEX_ROW,
 				CSS.FLEX_JUSTIFY_START,
 				CSS.FLEX_ALIGN_CENTER
 			]
-		});
-		left.appendTo(bar.element);
+		}).element;
+		this.TOOLBAR.appendChild(this.LEFT)
 
-		const right = newComponent({
-			id:this.RIGHT, 
+		this.RIGHT = newComponent({
+			id:"right"+this.id , 
 			classes: [
 				'right',
 				CSS.FLEX_ROW,
 				CSS.FLEX_ALIGN_CENTER,
 				CSS.FLEX_JUSTIFY_END
 			]
-		});
-		right.appendTo(bar.element);
+		}).element;
+		this.TOOLBAR.appendChild(this.RIGHT)
 	}
 
 	getSelection() {
@@ -204,7 +165,7 @@ export class AonTextArea extends AonElement {
 	} 
 
 	getSelectionForAdd(){
-		const textArea = this.getTextArea();
+		const textArea = this.TEXTAREA;
 		const range = this.getSelection().getRangeAt(0);
 		const selectedText = range.extractContents();
 
@@ -224,15 +185,16 @@ export class AonTextArea extends AonElement {
 		return textArea;
 	}
 
-	generateTextArea(){
+	buildGenerateTextArea(){
 		const preventDefault = (ev) =>{
 			ev.preventDefault();
 			ev.stopPropagation();
 		}  
-		const element =  newComponent({
+		
+		this.TEXTAREA =  newComponent({
 			type: TAG.DIV,
 			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE],
-			id: this.TEXTAREA,
+			id: "textarea" + this.id,
 			text: this.dataset.value,
 			attributes:{
 				contentEditable: true,
@@ -262,39 +224,34 @@ export class AonTextArea extends AonElement {
 			dataset:{
 				dragOver: MSG.DROP_FILE,
 			}
-		});
+		}).element;
 
-		element.element.classList.add(CSS.FOCUS_COLOR_MINUS);
-		if(this.NOT_BACKGROUND) element.element.classList.remove(CSS.FOCUS_COLOR_MINUS);
-		return element;
+		this.TEXTAREA.classList.add(CSS.FOCUS_COLOR_MINUS);
+		if(this.NOT_BACKGROUND) this.TEXTAREA.classList.remove(CSS.FOCUS_COLOR_MINUS);
+
+		this.appendChild(this.TEXTAREA);
 	}
 
 	clear(){
-		const area = this.getTextArea();
-		area.innerHTML = "";
-		area.value = "";
+		const element = this.TEXTAREA;
+		element.innerHTML = "";
+		element.value = "";
 	}
 
 	removeToolbar(){
-		let toolbar = this.getElement(this.TOOLBAR);
+		let toolbar = this.TOOLBAR;
 		if(toolbar) toolbar.remove();
 	}
 
-	// getValueHtml(html) {
-	// 	const textarea = this.getTextArea();
-	// 	if(textarea) 
-	// 		return textarea.innerHTML;
-	// 		textarea.innerHTML = html;
-	// }
-
 	setValueHtml(html) {
-		const textarea = this.getTextArea();
-		if(textarea) 
+		const textarea = this.TEXTAREA;
+		if(textarea) {
 			textarea.innerHTML = html;
+		}
 	}
 
 	addValueHtml(html) {
-		const textarea = this.getTextArea();
+		const textarea = this.TEXTAREA;
 		if(textarea) {
 			const element = document.createElement(TAG.DIV);
 			element.innerHTML = html;
@@ -303,7 +260,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	getTextArea(){
-		return this.getElement(this.TEXTAREA);
+		return this.TEXTAREA;
 	}
 
 	addToolbarOptionLeft(properties,fn){
@@ -359,8 +316,8 @@ export class AonTextArea extends AonElement {
 				}
 			});
 		}
-		const el = this.getElement(this.LEFT);
-		if(el) el.appendChild(element);
+	
+		if(this.LEFT) this.LEFT.appendChild(element);
 	}
 
 	addToolbarRight(element, fn){
@@ -369,8 +326,7 @@ export class AonTextArea extends AonElement {
 			ev.stopPropagation();
 		});
 		element.addEventListener(EVENT.CLICK, fn);
-		const el = this.getElement(this.RIGHT);
-		if(el) el.appendChild(element);
+		if(this.RIGHT) this.RIGHT.appendChild(element);
 	}
 
 	clickFile(){
@@ -384,14 +340,14 @@ export class AonTextArea extends AonElement {
 			let div = document.createElement(TAG.DIV);
 			div.id = MATERIAL_ICONS.FORMAT_COLOR_TEXT;
 			div.innerHTML =  MATERIAL_ICONS.FORMAT_COLOR_TEXT;		
-			div.classList.add("icon", "material-icons", CSS.CENTER_FLEX);
 			div.setAttribute("title", `Color del texto (Ctrl + Click para cambiar el color)`);
+			div.classList.add("icon", "material-icons", CSS.CENTER_FLEX);
 			div.style.position = "relative";
 
 			let input = setAttributes(document.createElement(TAG.INPUT),{
 				type : "color",
 				value: defaultColor,
-				id : Math.random().toString(36).substring(7),
+				id : this.id+ Math.random().toString(36).substring(7),
 			});
 			setStyles(input,{
 				position: "absolute",
@@ -455,7 +411,6 @@ export class AonTextArea extends AonElement {
 			const el = this.getElement(beforeId);
 			if(el) el.parentNode.insertBefore(div, el);
 		} 
-	
     }
 
 	getValue() {
@@ -541,35 +496,32 @@ export class AonTextArea extends AonElement {
     }
 
 	checkFiles() {
-		let textArea = this.getTextArea();
-		if(textArea){
-			let filesIds = [...textArea.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`)].map(el => el.dataset.id);
-			this.FILES = this.FILES.filter(f => (filesIds || []).includes(f.id));
-		}
+		let filesIds = [...this.TEXTAREA.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`)].map(el => el.dataset.id);
+		this.FILES = this.FILES.filter(f => (filesIds || []).includes(f.id));
     }
 
 	getToolbar(){
-		return this.getElement(this.TOOLBAR);
+		return this.TOOLBAR;
 	}
 
 	draggableEnable(){
-		const divTextArea = this.getTextArea();
-		divTextArea.classList.add("divDragOver");
+		const textarea = this.TEXTAREA;
+		textarea.classList.add("divDragOver");
 		
 		const highlight = ()   => {
-			divTextArea.classList.add('highlight');
-			divTextArea.setAttribute("placeholder", "");
+			textarea.classList.add('highlight');
+			textarea.setAttribute("placeholder", "");
 		} 
 		
 		const unhighlight = () =>{
-			divTextArea.classList.remove('highlight');
-			divTextArea.setAttribute("placeholder", this.placeholder);
+			textarea.classList.remove('highlight');
+			textarea.setAttribute("placeholder", this.placeholder);
 		}
 
-		[EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => divTextArea.addEventListener(eventName, highlight, false));
-		[EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => divTextArea.addEventListener(eventName, unhighlight, false));
+		[EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => textarea.addEventListener(eventName, highlight, false));
+		[EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => textarea.addEventListener(eventName, unhighlight, false));
 
-	    divTextArea.addEventListener(EVENT.DROP, (ev) => {
+	    textarea.addEventListener(EVENT.DROP, (ev) => {
 			if(ev && ev.dataTransfer && ev.dataTransfer.files){
 				this.addFiles(ev.dataTransfer.files);
 			}
@@ -595,7 +547,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	removeBackground(){
-		this.getTextArea().classList.remove(CSS.FOCUS_COLOR_MINUS);
+		this.TEXTAREA.classList.remove(CSS.FOCUS_COLOR_MINUS);
 	}
 
 	interceptorPaste(ev){
@@ -664,7 +616,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	async checkFileBase64() {
-		let textArea = this.getTextArea();
+		let textArea = this.TEXTAREA;
 		if(textArea){
 			const elements = textArea.querySelectorAll(`img[src*=";base64"]`);
 			if(elements.length){
