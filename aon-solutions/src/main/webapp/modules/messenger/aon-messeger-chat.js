@@ -151,14 +151,17 @@ export class AonMessengerChat extends AonElement {
    */
     async saveCommentNew(task, text, messageEl) {
       try {
-        const workflow = await saveTaskWorkflow({
+
+        const data = {
           domain:task.getDomain().id,
           task: task.getId(),
           task_holder:this.MY_TASKHOLDER,
           type: WORKFLOW_TYPES.COMMENT,
           email: this.getAuth().email ? this.getAuth().email : undefined,
           comment:text
-        });
+        };
+
+        const workflow = await saveTaskWorkflow(data);
 
         if(workflow){
           messageEl.dataset["id"] = workflow.id;
@@ -167,6 +170,9 @@ export class AonMessengerChat extends AonElement {
           }
         }
       } catch (error) {
+        if(messageEl){
+          messageEl.remove();
+        }
         console.error("updateComment", error);
         this.showError(error);
       }

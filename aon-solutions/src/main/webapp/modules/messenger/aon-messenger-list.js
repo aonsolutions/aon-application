@@ -173,6 +173,16 @@ export class AonMessengerList extends AonElement {
     }
   }
 
+  /**
+   * @return boolean}
+   */
+  getIsMyTask(task){
+    const parent = this.applicationParentEl;
+    const myTaskHolderId = parent.TASK_HOLDER ? parent.TASK_HOLDER.id : undefined;
+    const myWorkgroups   = parent._workgroups;
+    return TaskUtils.isMyTask(task, myTaskHolderId, myWorkgroups);
+  }
+
   getDataMobile(datos) {
     try {
       const company = LS.getCompany();
@@ -212,10 +222,11 @@ export class AonMessengerList extends AonElement {
           .map((task) => ({
             ...task,
             date: task.start_date,
+            startDate: new Date(task.start_date),
             newNumber: TaskUtils.taskNumberParse(task.number),
           }));
       }
-      data = sortBy(data, "id", "desc");
+      data = sortBy(data, "startDate", "desc");
     } catch (error) {
       console.log("error>>", error);
       this.showError(error);
