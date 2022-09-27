@@ -305,7 +305,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(inv.getRegistryDocument());
 		
-		invoice.setStatus(InvoiceStatus.values()[inv.getStatus()]);
+		invoice.setStatus(inv.isRecorded() ? InvoiceStatus.SCORED : InvoiceStatus.PENDING);
 		invoice.setTransaction(InvoiceTransactionType.values()[inv.getTransaction().ordinal()]);
 		invoice.setCreationUser(inv.getCreationUser());
 		invoice.setCreationDate(inv.getCreationDate());

@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -320,7 +321,7 @@ public class FinanceDAO {
 		return invoice;
 	}
 	
-	public static void insertFinances(AONContext ctx, LinkedList<Finance> finances) {
+	public static void insertFinances(AONContext ctx, List<Finance> finances) {
 		for (Finance finance : finances) {
 			insert(ctx, finance);
 		}

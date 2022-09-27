@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +14,11 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class InvoiceBreakdownJSON {
 
-	public static LinkedList<InvoiceBreakdown> fromJSON(JSONArray json) {
+	private InvoiceBreakdownJSON() {
+	
+	}
+	
+	public static List<InvoiceBreakdown> fromJSON(JSONArray json) {
 		LinkedList<InvoiceBreakdown> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
@@ -32,7 +37,7 @@ public class InvoiceBreakdownJSON {
 				.setWithholdingType(WithholdingType.safeValueOf(json.optString(IJsonNames.WITHHOLDING_TYPE)));
 	}
 	
-	public static JSONArray toJSON(LinkedList<InvoiceBreakdown> breakdown) {
+	public static JSONArray toJSON(List<InvoiceBreakdown> breakdown) {
 		JSONArray array = new JSONArray();
 		breakdown.stream().forEach(tax -> array.put(toJSON(tax)));
 		return array;

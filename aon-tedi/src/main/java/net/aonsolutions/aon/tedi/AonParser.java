@@ -3,6 +3,7 @@ package net.aonsolutions.aon.tedi;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -79,7 +80,9 @@ public class AonParser {
 				.setDetails(getDetails(invoice.getDetails()))
 				.setTaxes(getTaxes(taxes))
 				.setFinances(getFinances(finances))
-				.setStatus(TediInvoiceStatus.safeValueOf(invoice.getStatus()))
+				.setStatus(invoice.isRecorded() 
+						? TediInvoiceStatus.SCORED 
+						: TediInvoiceStatus.PENDING)
 				.setFile(getTediFile(domain, attach))
 				;
 	}
@@ -149,7 +152,7 @@ public class AonParser {
 				.setPostalCode(address.getZip());
 	}
 	
-	public LinkedList<TediInvoiceDetail> getDetails(LinkedList<InvoiceDetail> details) {
+	public LinkedList<TediInvoiceDetail> getDetails(List<InvoiceDetail> details) {
 		return details.stream().map(r -> {
 			Double amount = AonMathUtils.round( r.getQuantity() * r.getPrice());
 			amount = amount - amount * (calculateDiscountExpression(r.getDiscountExpression()) / 100);
