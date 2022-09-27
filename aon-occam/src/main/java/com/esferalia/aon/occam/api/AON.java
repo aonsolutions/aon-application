@@ -652,6 +652,8 @@ public class AON {
 			if(null == certificate.getCertificate())
 				throw new CertificateNotFoundException();
 			return certificate;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new IllegalArgumentException("El certificado no se ha podido obtener. Revise que los certificados esten en vigor");
 		}
 	}
 	
@@ -6304,13 +6306,13 @@ public class AON {
 	
 	// ------------------- CERTIFICATES
 	
-	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId){
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificates(ctx, domainId, userId);
 		}
 	}
 	
-	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId){
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificatesWithParent(ctx, domainId, parentDomainId, userId);
 		}

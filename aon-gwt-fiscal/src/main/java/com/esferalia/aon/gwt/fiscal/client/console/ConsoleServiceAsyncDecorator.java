@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -33,5 +34,17 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void deleteDomain(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback) {
 		AON.start();
 		fsa.deleteDomain(params, domainId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void changeActive(DomainParams params, Integer domainId, boolean active, AsyncCallback<Domain> callback) {
+		AON.start();
+		fsa.changeActive(params, domainId, active, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback) {
+		AON.start();
+		fsa.changeExpirationDate(params, domainId, expireDate, new AsyncCallbackWrapper<>(callback));
 	}
 }

@@ -36,14 +36,14 @@ public class TaskFilter {
 	
 	public static Filter task(AonApiData api, TaskProperties f, Domain domain, Customer customer) {
 		JSONObject params  = api.getData();
+		boolean isParent   = params.optBoolean(IJsonNames.PARENT);
 		String email       = params.optString(IJsonNames.EMAIL);
 		String search      = params.optString(IJsonNames.SEARCH);
 		String status      = params.optString(IJsonNames.STATUS);
 		String source      = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer tag        = params.optInt(IJsonNames.TAG);
-		boolean isParent   = params.optBoolean(IJsonNames.PARENT);
-		
+
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
 		if(!status.isEmpty() && !TaskStatus.safeValueOf(status).equals(TaskStatus.PENDING) ) {

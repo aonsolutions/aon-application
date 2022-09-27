@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -40,6 +42,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
@@ -48,6 +51,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -71,6 +75,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
+import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tedi.TEDI;
@@ -231,9 +236,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/accept":
 				response(req, resp, acceptInvoice(api));
 				break;
-//			case "/sign":
-//				response(req, resp, signInvoice(api));
-//				break;
+			case "/sign":
+				response(req, resp, signInvoice(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -546,84 +551,45 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-//	public static JSONObject signInvoice(AonApiData api) throws Exception {
-//		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
-//		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-//		PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), true);
-//		CompanyFull company = AON.getCompanyFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-//		
-//		String qrUrl = api.getDomain().getName() + "/dip?source=invoice&id=" + invoiceId;  
-//		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-//		String tbaiId = "";
-//		if(tbai.isActive()) {
-//			TbaiData tbaiData = TbaiData.getInstance(tbai);
-//			String tbaiUrl = tbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
-//			qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
-//			tbaiId = tbaiData.getTbaiId(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
-//		}
-//		Attach logo = new Attach();
-//		
-//		if(config.isLogo()) {
-//			Integer id = company.getRegistry().getId();
-//			logo = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f-> f.getAttachModuleProperty().eq(id)
-//				.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
-//		}
-//		
-//		ByteArrayOutputStream out = new ByteArrayOutputStream();
-//		PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
-//		byte[] data = out.toByteArray();
-//		PdfSigner signer = new PdfSigner();
-//		byte[] signedData = signer.sign(checkCertificate(api), data);
-//		
-//		Attach attach = new Attach(AttachType.INVOICE)	
-//			.setDomain(api.getDomain())
-//			.setDate(new Date())
-//			.setDescription(invoice.getReferenceCode())
-//			.setMimeType(MimeType.SIGNED_PDF)
-//			.setType(InvoiceAttachmentType.INVOICE.value())
-//			.setAttachModule(invoiceId)
-//			.setData(signedData);
-//		AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
-//		return new JSONObject();
-//	}
-	
-	private static Certificate checkCertificate(AonApiData api) {
-		Certificate cert = new Certificate();
-		try {
-			if(api.getData().opt("cert") != null) {
-				Integer id = JsonUtils.getInteger(api.getData(), "cert");
-				cert = AON.getCertificates(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(id))
-						.findFirst().orElse(new Certificate());
-			} else {
-				cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());				
-			}
-
-		} catch (Exception e) {
-			throw new AonApiException("Error al obtener el certificado.");
-		}
-		try {
-			if(!checkCert(cert.getData(), cert.getPassword())) {
-				throw new AonApiException("El certificado o la contraseña no son correctos.");
-			}
-		} catch (Exception e) {
-			throw new AonApiException("El certificado o la contraseña no son correctos.");			
-		}		
-		if(cert.isEmpty()) {
-			throw new AonApiException("El certificado no existe.");
-		}
-		return cert;
+	public static JSONObject signInvoice(AonApiData api) throws Exception {
+		Integer invoiceId = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
+		PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), true);
+		CompanyFull company = AON.getCompanyFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
-	}
-	
-	public static boolean checkCert(byte[] cert, String password) {
-		try {
-			ByteArrayInputStream is = new ByteArrayInputStream(cert);
-			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-			keystore.load(is, password.toCharArray());
-			return true;
-		} catch (Exception e) {
-			return false;
+		String qrUrl = api.getDomain().getName() + "/dip?source=invoice&id=" + invoiceId;  
+		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		String tbaiId = "";
+		if(tbai.isActive()) {
+			TbaiData tbaiData = TbaiData.getInstance(tbai);
+			String tbaiUrl = tbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+			tbaiId = tbaiData.getTbaiId(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 		}
+		Attach logo = new Attach();
+		
+		if(config.isLogo()) {
+			Integer id = company.getRegistry().getId();
+			logo = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f-> f.getAttachModuleProperty().eq(id)
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+		}
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
+		byte[] data = out.toByteArray();
+		PdfSigner signer = new PdfSigner();
+		byte[] signedData = signer.sign(checkCertificate(api), data);
+		
+		Attach attach = new Attach(AttachType.INVOICE)	
+			.setDomain(api.getDomain())
+			.setDate(new Date())
+			.setDescription(invoice.getReferenceCode())
+			.setMimeType(MimeType.SIGNED_PDF)
+			.setType(InvoiceAttachmentType.INVOICE.value())
+			.setAttachModule(invoiceId)
+			.setData(signedData);
+		AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+		return new JSONObject();
 	}
 	
 	public static JSONObject setInvoice(AonApiData api) {

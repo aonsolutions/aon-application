@@ -118,8 +118,11 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 		}
 		
 	}
-	
 	public AonDomainBox(final Occam occam) {
+		this(occam, false);
+	}
+	
+	public AonDomainBox(final Occam occam, boolean onlyParents) {
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -129,7 +132,10 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 					reset();
 					DomainParams  params = new DomainParams()
 						.setSchema(getSchema())
-						.setQuery(request.getQuery()); 
+						.setQuery(request.getQuery());
+					if (onlyParents) {
+						params.setDomainManagement(onlyParents);
+					}
 					CONSOLE_SERVICE.getDomains(params,new AsyncCallback<LinkedList<Domain>>() {
 		
 						public void onFailure(Throwable caught) {

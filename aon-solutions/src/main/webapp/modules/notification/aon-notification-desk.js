@@ -1,10 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
-import { AonDocumental } from "../documental/aon-documental.js";
-import { CONSTANT, MSG } from "../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { AonMessenger } from "../messenger/aon-messenger.js";
-import { App } from "../../models/enums.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { NotificationEnums } from "./NotificationEnums.js";
@@ -53,7 +50,7 @@ export class AonNotificationDesk extends AonElement {
 
   initialize() {
     this.id = NotificationEnums.NOTIFICATION_IDS.AON_NOTIFICATION_DESK;
-    this.AON_NOTIFICATION_DESK =this.id+"Application";
+    this.AON_NOTIFICATION_DESK = this.id+"Application";
     this.aonNotifyIconEl = document.querySelector("aon-notification-icon");
     this.TASK_HOLDERS = [];
     this.MORE = true;
@@ -75,27 +72,52 @@ export class AonNotificationDesk extends AonElement {
   buildToobar(){
     const application = this.getApplication();
 
-    if(!this.getDur().isEmployee()) {
+    if(!this.getDur().isEmptyDomain() && !this.getDur().isEmployee()) {
       application.addToolbarOption2(SigninSidenav.ADD, () => NotificationUtils.openDialog(this, this.getApplication().getDialog()));
     }
+
+    this.buildToolbarSearch();
 
     this.navBar();
   }
 
+  buildToolbarSearch(){
+
+		let btnSearch = this.getApplication().addSearchOption(!this.isMobile());
+		let timeOut = null;
+		
+		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
+		  clearTimeout(timeOut);
+		  
+		  timeOut = setTimeout(() => {
+			  this.setFilter({
+          ...this.getFilter(), 
+          page:0, 
+          perPage:30, 
+          search: detail.search
+			  });
+        this.loadMore(true);
+		  }, 300);
+		});
+
+    btnSearch.removeButtonAvanced();
+	}
+
   navBar(){
     const notificationOptions = NotificationEnums.NotificationOptions;
+    let filter = {page:0, perPage:10, status: undefined};
     let notificationOpts = [
 			{
 				...notificationOptions.NOTIFICATION_ALL,
 				fn: () =>{
-          this.setFilter({page:0, perPage:10, status: undefined});
+          this.setFilter(filter);
           this.loadMore(true);
 				}
 			},
 			{
 				...notificationOptions.NOTIFICATION_NOT_READ,
 				fn: () =>{
-          this.setFilter({page:0, perPage:10, status: undefined});
+          this.setFilter(filter);
           this.loadMore(true);
 				}
 			}
@@ -130,6 +152,10 @@ export class AonNotificationDesk extends AonElement {
 
   async loadMore(reload) {
     
+    let application = this.getApplication();
+
+    application.startLoader();
+    
     const datos = await this.getData();
 
     if (reload){
@@ -141,6 +167,8 @@ export class AonNotificationDesk extends AonElement {
         NotificationDeskUtils.buildRow(res)
       );
     });
+
+    application.stopLoader();
   }
 
   async getData() {
@@ -179,25 +207,10 @@ export class AonNotificationDesk extends AonElement {
     }
   }
 
-  async goNotification(data) {
-    const {source, source_id, domain} = data;
-    if(source && source_id){
-      let aonComponent = null;
-      switch(source){
-        case App.DOCUMENTAL:
-          aonComponent =  new AonDocumental();
-          break;
-        case App.MESSENGER:
-          aonComponent =  new AonMessenger();
-          break;
-      }
-
-      aonComponent.value = source_id;
-
-      if(aonComponent){
-        NotificationUtils.setDomainStorage(domain);
-        this.rootPanel(aonComponent);
-      }
+  goNotification(data) {
+    const aonComponent = NotificationUtils.getNotificationComponent(data);
+    if(aonComponent){
+      this.rootPanel(aonComponent);
     }
   }
 }

@@ -142,6 +142,7 @@ public final class IJsonNames {
 	public static final String DETAILED = "detailed";
 	public static final String DETAILS = "details";
 	public static final String DIRTY = "dirty";
+	public static final String DISABLE_DOMAIN_MANAGEMENT = "disableDomainManagement";
 	public static final String DISCOUNT = "discount";
 	public static final String DOCUMENT_COUNTRY = "documentCountry";
 	public static final String DOCUMENT = "document";
@@ -260,6 +261,8 @@ public final class IJsonNames {
 	public static final String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	public static final String LANGUAGE = "language";
+	public static final String LAST_ACCESS_DATE = "lastAccessDate";
+	public static final String LAST_ACCESS_USER = "lastAccessUser";
 	public static final String LEDGER_ACCOUNT = "ledgerAccount";
 	public static final String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	public static final String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
@@ -280,6 +283,8 @@ public final class IJsonNames {
 	public static final String MESSAGE = "message";
 	public static final String MESSAGES = "messages";
 	public static final String MADE_MODELS_VISIBLE = "madeModelsVisible";
+	public static final String MAX_DOCUMENT_SIZE = "maxDocumentSize";
+	public static final String MAX_TOTAL_DOCUMENT_SIZE = "maxTotalDocumentSize";
 	public static final String MODE = "mode";
 	public static final String MODEL = "model";
 	public static final String MODELS = "models";

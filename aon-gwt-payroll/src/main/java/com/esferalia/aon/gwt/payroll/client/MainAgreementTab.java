@@ -338,6 +338,9 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	Label agreementTab;
 	
 	@UiField
+	Label levelTab;
+	
+	@UiField
 	Label salaryTableTab;
 	
 	@UiField
@@ -354,6 +357,9 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	
 	@UiField (provided = true)
 	AgreementPreview agreementPreview;
+	
+	@UiField (provided = true)
+	AgreementLevelTab agreementLevelTab;
 	
 	@UiField (provided = true)
 	AgreementSalaryTableTab agreementSalaryTableTab;
@@ -420,6 +426,19 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
+		};
+		
+		agreementLevelTab = new AgreementLevelTab() {
+			
+			@Override
+			public void onSaved() {
+				saveAgreement(agreementInfo -> {
+					agreementSelected = agreementInfo;
+					agreementLevelTab.setAgreementLevel(agreementSelected);
+					agreementLevelTab.showSuccess("Convenio", "Convenio guardado correctamente");
+				});
+			}
+			
 		};
 		
 		agreementSalaryTableTab = new AgreementSalaryTableTab() {
@@ -914,12 +933,19 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		selectSalaryTableTab();
 	}
 	
+	@UiHandler("levelTab")
+	void onLevelTabClick(ClickEvent event) {
+		selectLevelTab();
+	}
+	
 	private void selectAgreementTab() {
 		agreementTab.removeStyleName(style.tabNotSelected());
 		agreementTab.addStyleName(style.tabSelected());
 		
 		mainDeckPanel.showWidget(0);
 		
+		levelTab.removeStyleName(style.tabSelected());
+		levelTab.addStyleName(style.tabNotSelected());
 		salaryTableTab.removeStyleName(style.tabSelected());
 		salaryTableTab.addStyleName(style.tabNotSelected());
 		paymentTab.removeStyleName(style.tabSelected());
@@ -928,14 +954,32 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		agreementPreview.setAgreementPreview(agreementSelected);
 	}
 	
-	private void selectSalaryTableTab() {
-		salaryTableTab.removeStyleName(style.tabNotSelected());
-		salaryTableTab.addStyleName(style.tabSelected());
+	private void selectLevelTab() {
+		levelTab.removeStyleName(style.tabNotSelected());
+		levelTab.addStyleName(style.tabSelected());
 		
 		mainDeckPanel.showWidget(1);
 		
 		agreementTab.removeStyleName(style.tabSelected());
 		agreementTab.addStyleName(style.tabNotSelected());
+		salaryTableTab.removeStyleName(style.tabSelected());
+		salaryTableTab.addStyleName(style.tabNotSelected());
+		paymentTab.removeStyleName(style.tabSelected());
+		paymentTab.addStyleName(style.tabNotSelected());
+		
+		agreementLevelTab.setAgreementLevel(agreementSelected);
+	}
+	
+	private void selectSalaryTableTab() {
+		salaryTableTab.removeStyleName(style.tabNotSelected());
+		salaryTableTab.addStyleName(style.tabSelected());
+		
+		mainDeckPanel.showWidget(2);
+		
+		agreementTab.removeStyleName(style.tabSelected());
+		agreementTab.addStyleName(style.tabNotSelected());
+		levelTab.removeStyleName(style.tabSelected());
+		levelTab.addStyleName(style.tabNotSelected());
 		paymentTab.removeStyleName(style.tabSelected());
 		paymentTab.addStyleName(style.tabNotSelected());
 		
@@ -946,10 +990,12 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.removeStyleName(style.tabNotSelected());
 		paymentTab.addStyleName(style.tabSelected());
 		
-		mainDeckPanel.showWidget(2);
+		mainDeckPanel.showWidget(3);
 		
 		agreementTab.removeStyleName(style.tabSelected());
 		agreementTab.addStyleName(style.tabNotSelected());
+		levelTab.removeStyleName(style.tabSelected());
+		levelTab.addStyleName(style.tabNotSelected());
 		salaryTableTab.removeStyleName(style.tabSelected());
 		salaryTableTab.addStyleName(style.tabNotSelected());
 		

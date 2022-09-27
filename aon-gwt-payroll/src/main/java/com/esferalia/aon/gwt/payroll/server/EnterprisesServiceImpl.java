@@ -3439,8 +3439,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
 			
-			return withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, userId) : AON.getCertificates(domain, domainId, login, userId);
-		} catch (SQLException e) {
+			List<com.esferalia.aon.occam.api.model.Certificate> certificates = withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, userId) : AON.getCertificates(domain, domainId, login, userId);
+			return certificates;
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}

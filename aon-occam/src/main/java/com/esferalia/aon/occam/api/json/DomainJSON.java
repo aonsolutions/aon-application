@@ -1,98 +1,101 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonDomainFromJSON;
-import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonDomainToJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
-public enum DomainJSON {
+public class DomainJSON {
+	
+	private DomainJSON() {
+		
+	}
+	
+	public static List<Domain> fromJSONArray(String jsonArray) {
+		JSONArray array = new JSONArray( jsonArray );
+		return fromJSON( array );
+	}
+	
+	public static List<Domain> fromJSON(JSONArray json) {
+		LinkedList<Domain> list = new LinkedList<>();
+		for(Integer i = 0; i < json.length(); i++) {
+			list.add(fromJSON(json.getJSONObject(i)));
+		}
+ 		return list;
+	}
+	
+	public static Domain fromJSON(JSONObject json) {
+		if(json == null) return new Domain();
+		return new Domain()
+			.setId(JsonUtils.getInteger(json,IJsonNames.ID))
+			.setName(JsonUtils.getString(json, IJsonNames.NAME))
+			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+			.setOwner(JsonUtils.getString(json, IJsonNames.OWNER))
+			.setParentId(JsonUtils.optInteger(json, IJsonNames.PARENT_ID))
+			.setDomainType( DomainType.safeValueOf( JsonUtils.getString(json,IJsonNames.DOMAIN_TYPE) ))
+			.setEnableHeredity(JsonUtils.getboolean(json, IJsonNames.ENABLE_HEREDITY))
+			.setDomainManagement(JsonUtils.getboolean(json, IJsonNames.DOMAIN_MANAGEMENT))
+			.setDisableDomainManagement(JsonUtils.getboolean(json, IJsonNames.DISABLE_DOMAIN_MANAGEMENT))
+			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
+			.setScope(JsonUtils.getInteger(json,IJsonNames.SCOPE))
+			.setMaxDefinedUsers( JsonUtils.getInteger(json,IJsonNames.MAX_DEFINED_USERS))
+			.setDefinedUsers( JsonUtils.getInteger(json,IJsonNames.DEFINED_USERS))
+			.setMaxDocumentSize( JsonUtils.getInteger(json,IJsonNames.MAX_DOCUMENT_SIZE))
+			.setMaxTotalDocumentSize( JsonUtils.getInteger(json,IJsonNames.MAX_TOTAL_DOCUMENT_SIZE))
+			.setLastAccessUser(JsonUtils.getString(json, IJsonNames.LAST_ACCESS_USER))
+			.setLastAccessDate(JsonUtils.getDate(json, IJsonNames.LAST_ACCESS_DATE))
+			.setExpirationDate(JsonUtils.getDate(json, IJsonNames.EXPIRATION_DATE))
+			.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
+			.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
+			.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
+			.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
+		;
+	}
 
-	ID(
-		(domain, json) -> domain.setId( JsonUtils.getInteger(json,IJsonNames.ID)),
-		(domain, json) -> json.put(IJsonNames.ID, domain.getId())
-	),
-	NAME(
-		(domain, json) -> domain.setName(json.optString(IJsonNames.NAME,null)),
-		(domain, json) -> json.put(IJsonNames.NAME, domain.getName())
-	),
-	DESCRIPTION(
-		(domain, json) -> domain.setDescription(json.optString(IJsonNames.DESCRIPTION,null)),
-		(domain, json) -> json.put(IJsonNames.DESCRIPTION, domain.getDescription())
-	),
-	OWNER(
-			(domain, json) -> domain.setOwner(json.optString(IJsonNames.OWNER,null)),
-			(domain, json) -> json.put(IJsonNames.OWNER, domain.getOwner())
-	),
-	PARENT_ID(
-		(domain, json) -> domain.setParentId( JsonUtils.getInteger(json,IJsonNames.PARENT_ID)),
-		(domain, json) -> json.put(IJsonNames.PARENT_ID, domain.getParentId())
-	),
-	DOMAIN_TYPE(
-		(params, json) -> params.setDomainType( DomainType.safeValueOf( JsonUtils.getString(json,IJsonNames.DOMAIN_TYPE) )),
-		(params, json) -> json.put(IJsonNames.DOMAIN_TYPE, params.getDomainType())
-	),
-	ENABLE_HEREDITY(
-		(domain, json) -> domain.setEnableHeredity(json.optBoolean(IJsonNames.ENABLE_HEREDITY)),
-		(domain, json) -> json.put(IJsonNames.ENABLE_HEREDITY, domain.isEnableHeredity())
-	),
-	DOMAIN_MANAGEMENT(
-		(domain, json) -> domain.setDomainManagement(json.optBoolean(IJsonNames.DOMAIN_MANAGEMENT)),
-		(domain, json) -> json.put(IJsonNames.DOMAIN_MANAGEMENT, domain.isDomainManagement())
-	),
-	ACTIVE(
-		(domain, json) -> domain.setActive(json.optBoolean(IJsonNames.ACTIVE)),
-		(domain, json) -> json.put(IJsonNames.ACTIVE, domain.isActive())
-	),
-	SCOPE(
-		(domain, json) -> domain.setScope( JsonUtils.getInteger(json,IJsonNames.SCOPE)),
-		(domain, json) -> json.put(IJsonNames.SCOPE, domain.getScope())
-	),
-	MAX_DEFINED_USERS(
-		(domain, json) -> domain.setMaxDefinedUsers( JsonUtils.getInteger(json,IJsonNames.MAX_DEFINED_USERS)),
-		(domain, json) -> json.put(IJsonNames.MAX_DEFINED_USERS, domain.getMaxDefinedUsers())
-	),
-	DEFINED_USERS(
-		(domain, json) -> domain.setDefinedUsers( JsonUtils.getInteger(json,IJsonNames.DEFINED_USERS)),
-		(domain, json) -> json.put(IJsonNames.DEFINED_USERS, domain.getDefinedUsers())
-	),
-	;
-
-	private IAonDomainFromJSON fromJSON;
-	private IAonDomainToJSON toJSON;
-
-	private DomainJSON(IAonDomainFromJSON fromJSON, IAonDomainToJSON toJSON) {
-		this.fromJSON = fromJSON;
-		this.toJSON = toJSON;
+	public static JSONArray toJSON(List<Domain> domains) {
+		return toJSON(domains.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<Domain> domains) {
+		JSONArray array = new JSONArray();
+		domains.forEach(task -> array.put(toJSON(task)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(Domain domain) {
-		if (domain != null) {
-			JSONObject json = new JSONObject();
-			for (DomainJSON p : DomainJSON.values()) {
-				p.toJSON.to(domain, json);
-			}
-			return json;
-		}
-		return null;
-	}
-	
-	public static Domain fromString(String text) {
-		JSONObject json = new JSONObject(text);
-		return fromJSON(json); 
+		if(domain == null) return new JSONObject();
+		return new JSONObject()
+			.putOpt(IJsonNames.ID, domain.getId())
+			.putOpt(IJsonNames.NAME, domain.getName())
+			.putOpt(IJsonNames.DESCRIPTION, domain.getDescription())
+			.putOpt(IJsonNames.OWNER, domain.getOwner())
+			.putOpt(IJsonNames.PARENT_ID, domain.getParentId())
+			.putOpt(IJsonNames.DOMAIN_TYPE, domain.getDomainType() == null?null:domain.getDomainType().toString())
+			.putOpt(IJsonNames.ENABLE_HEREDITY, domain.isEnableHeredity())
+			.putOpt(IJsonNames.DOMAIN_MANAGEMENT, domain.isDomainManagement())
+			.putOpt(IJsonNames.DISABLE_DOMAIN_MANAGEMENT, domain.isDisableDomainManagement())
+			.putOpt(IJsonNames.ACTIVE, domain.isActive())
+			.putOpt(IJsonNames.SCOPE, domain.getScope())
+			.putOpt(IJsonNames.MAX_DEFINED_USERS, domain.getMaxDefinedUsers())
+			.putOpt(IJsonNames.DEFINED_USERS, domain.getDefinedUsers())
+			.putOpt(IJsonNames.MAX_DOCUMENT_SIZE, domain.getMaxDocumentSize())
+			.putOpt(IJsonNames.MAX_TOTAL_DOCUMENT_SIZE, domain.getMaxTotalDocumentSize())
+			.putOpt(IJsonNames.LAST_ACCESS_USER, domain.getLastAccessUser())
+			.putOpt(IJsonNames.LAST_ACCESS_DATE, AonDateUtils.format(domain.getLastAccessDate(), AonDateUtils.DATE_TIME_FORMAT))
+			.putOpt(IJsonNames.EXPIRATION_DATE, AonDateUtils.format(domain.getExpirationDate(), AonDateUtils.DATE_TIME_FORMAT))
+			.putOpt(IJsonNames.CREATION_USER, domain.getCreationUser())
+			.putOpt(IJsonNames.CREATION_DATE, AonDateUtils.format(domain.getCreationDate(), AonDateUtils.DATE_TIME_FORMAT))
+			.putOpt(IJsonNames.MODIFICATION_USER, domain.getModificationUser())
+			.putOpt(IJsonNames.MODIFICATION_DATE, AonDateUtils.format(domain.getModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
+			;		
 	}
 
-	public static Domain fromJSON(JSONObject json) {
-		if (json != null) {
-			Domain domain = new Domain();
-			for (DomainJSON p : DomainJSON.values()) {
-				p.fromJSON.from(domain, json);
-			}
-			return domain;
-		}
-		return null;
-	}
-
+		
 }

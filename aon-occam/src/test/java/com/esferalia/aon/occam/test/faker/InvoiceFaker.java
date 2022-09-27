@@ -357,7 +357,7 @@ public class InvoiceFaker {
 			}
 		});
 		EnterpriseActivity activity = AonRandom.getRandomActivity(params.getCtx());
-		invoice.setActivity(activity==null?null:activity.getId());
+		invoice.setActivity(activity==null ? new EnterpriseActivity() : activity);
 		InvoiceFaker.fillHeader(invoice, params);
 		return invoice;
 	}

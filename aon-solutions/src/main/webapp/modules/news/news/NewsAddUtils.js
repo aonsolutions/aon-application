@@ -90,7 +90,7 @@ const buildFormGeneral = (parent, news) => {
         news.setDescription(target.value);
     });
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_8]})
     divC.appendTo(parent);
     const initDate = CreateComponent.createAonDate({
         attributes:{
@@ -109,7 +109,26 @@ const buildFormGeneral = (parent, news) => {
         initDate.value = new Date(news.getInitDate())
     }
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_4]})
+    divC.appendTo(parent);
+    const initDateTime = CreateComponent.createAonInput({
+        attributes:{
+            name:"init_date_time",
+            id:"init_date_time",
+            description:MSG.HOUR,
+            type:"time"
+        }, events:{
+            change: ({target}) => {
+                news.setInitDateTime(target.value);
+            }
+        }
+    }, divC.element);
+
+    if(news.getInitDateTime()){
+        initDateTime.value = news.getInitDateTime();
+    }
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_8]})
     divC.appendTo(parent);
     const endDate = CreateComponent.createAonDate({
         attributes:{
@@ -126,6 +145,25 @@ const buildFormGeneral = (parent, news) => {
 
     if(news.getEndDate()){
         endDate.value = new Date(news.getEndDate())
+    }
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_4]})
+    divC.appendTo(parent);
+    const endDateTime = CreateComponent.createAonInput({
+        attributes:{
+            name:"end_date_time",
+            id:"end_date_time",
+            description:MSG.HOUR,
+            type:"time"
+        }, events:{
+            change: ({target}) => {
+              news.setEndDateTime(target.value);
+            }
+        }
+    }, divC.element);
+
+    if(news.getEndDateTime()){
+        endDateTime.value = news.getEndDateTime();
     }
 
     divC = createDiv({classes:[CSS.AON_COL_XS_12]})
@@ -146,10 +184,10 @@ const buildFormGeneral = (parent, news) => {
       },
       divC.element
     );
-    
-    buildUnloadFile(parent, news);
 
     // AonUpload
+    buildUnloadFile(parent, news);
+
     news.setType("COMMUNICATION");
 
     // buildNews(parent, true);
@@ -407,35 +445,39 @@ const openCategoryDialog = (category) => {
 // }
 
 const buildEditor = (parent, news, aonNewsAdd) =>{
+
     const aonTextAreaEditor = setAttributes(new AonTextareaEditor(),{
         id:"aonTextAreaEditor",
         placeholder:MSG.WRITE_A_DESCRIPTION,
         required:true,
+        resizeable: true,
         "text-box-min-height":"24em",
         'has-fullscreen-mode': true
     });
 
+    const isMobile = aonTextAreaEditor.isMobile();
+
     aonTextAreaEditor.elementFilter = {
         undo: false,
         redo: false,
-        font: !aonTextAreaEditor.isMobile(),
-        fontSize: !aonTextAreaEditor.isMobile(),
+        font: !isMobile,
+        fontSize: !isMobile,
         bold: true,
         italic: true,
         underline: true,
         color: true,
-        backgroundColor: !aonTextAreaEditor.isMobile(),
+        backgroundColor: !isMobile,
         alignment: true,
-        orderedList: !aonTextAreaEditor.isMobile(),
-        unorderedList: !aonTextAreaEditor.isMobile(),
-        indent: !aonTextAreaEditor.isMobile(),
-        outdent: !aonTextAreaEditor.isMobile(),
+        orderedList: !isMobile,
+        unorderedList: !isMobile,
+        indent: !isMobile,
+        outdent: !isMobile,
         removeFormat: true,
         strikethrough: true,
-        quote: !aonTextAreaEditor.isMobile(),
+        quote: !isMobile,
         hyperlink: true,
         attachment: true,
-        editorMode: !aonTextAreaEditor.isMobile()
+        editorMode: !isMobile
     };
 
     if ((navigator.userAgent.indexOf('Firefox') !== -1)) {

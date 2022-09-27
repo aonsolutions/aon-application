@@ -474,4 +474,8 @@ export class DomainUserRoles {
   hasCustomView() {
     return this.hasApp(App.CUSTOM_VIEW);
   }
+
+  isEmptyDomain() {
+    return !(this.domain && this.domain.id);
+  }
 }

@@ -47,7 +47,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		addStyleName(AON.CSS.aonMargin());
 		addStyleName(AON.CSS.aonBlockCenter());
 		
-		parentBox = new AonDomainBox(opt.getOccam());
+		parentBox = new AonDomainBox(opt.getOccam(), true);
 		parentBox.addSelectionHandler(e -> fire(opt));
 		parentBox.setEnabled(false);
 
@@ -123,7 +123,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		mainTab.addStyleName( AON.CSS.aonWidthAlmostAll());
 		
 		cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
-		cleanButton.addClickHandler(event -> fire(opt));
+		cleanButton.addClickHandler(event -> clean(opt));
 
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refreshButton.addClickHandler(event -> fire(opt));
@@ -169,6 +169,20 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		mainTab.add(rowTable3);
 		
 		setWidget(mainTab);
+	}
+
+	private void clean(ConsoleModuleOptions opt) {
+		queryBox.setValue(null,false);
+		fromLastAccessBox.setValue(null,false);
+		toLastAccessBox.setValue(null,false);
+		fromExpirationDateBox.setValue(null,false);
+		toExpirationDateBox.setValue(null,false);
+		parentBox.setValue(null,false);
+		typeBox.setSelectedIndex(0);
+		activeBox.setSelectedIndex(0);
+		enableHeredityBox.setSelectedIndex(0);
+		domainManagementBox.setSelectedIndex(0);
+		fire(opt);
 	}
 
 	private void fire(final ConsoleModuleOptions opt) {

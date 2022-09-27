@@ -631,7 +631,7 @@ public class Asserts {
 		assertEqualsNulls( "Invoice", expected, actual);
 		assertEquals("Id", expected.getId(), actual.getId());
 		assertEquals("Domain", expected.getDomain(), actual.getDomain());
-		assertEquals("Activity", expected.getActivity(), actual.getActivity());
+		assertEquals("Activity", expected.getActivity().getId(), actual.getActivity().getId());
 		assertEquals("Epigraph", expected.getEpigraph(), actual.getEpigraph());
 		assertEquals("InvestAsset", expected.getInvestAsset(), actual.getInvestAsset());
 		assertEquals("Project", expected.getProject(), actual.getProject());

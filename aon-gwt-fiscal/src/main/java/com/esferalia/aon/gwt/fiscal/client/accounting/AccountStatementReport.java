@@ -90,7 +90,7 @@ public class AccountStatementReport extends MainEntryPoint {
 
 		FlowPanel buttonContainer = new FlowPanel();
 		
-		final AonToolbarButton pdfPrint = new AonToolbarButton(AON.MSG.print(),AON.CSS.aonIconPdf());
+		final AonToolbarButton pdfPrint = new AonToolbarButton(AON.MSG.print(),AON.CSS.aonIconExcel());
 		pdfPrint.addClickHandler(new ClickHandler() {
 			
 			@Override

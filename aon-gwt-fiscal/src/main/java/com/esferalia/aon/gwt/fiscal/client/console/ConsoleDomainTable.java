@@ -1,156 +1,140 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
-import java.util.Collection;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandlers<Domain>{
-	
-	interface ConsoleDomainTableCallback {
-		public void showError(String message);
-		public void showInfo(String message);
-		public void onDelete(Domain domain, AsyncCallback<Boolean> cbk);
-	}
+class ConsoleDomainTable extends FlowPanel implements HasSelectionHandlers<JsDomain>{
 	
 	private static final Logger LOGGER = Logger.getLogger(ConsoleDomainTable.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private SimpleLayoutPanel centerLayoutPanel;
-	private ScrollPanel centerPanel;
-	private FlowPanel container;
+	private ConsoleDomainTableCallback callback;
+	private final AonDisplayGrid grid;
 	private boolean running;
+	private int count;
 	
-	protected ConsoleDomainTable(Collection<Domain> domains, ConsoleDomainTableCallback callback) {
-		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		centerLayoutPanel = new SimpleLayoutPanel();
-		centerPanel = new ScrollPanel();
-		centerPanel.setStyleName(AON.CSS.aonScrollArea());
-		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
-		container = new FlowPanel();
-		centerPanel.setWidget(container);
-		centerLayoutPanel.setWidget(centerPanel);
-		tableDockLayout.add(centerLayoutPanel);
-		setWidget(tableDockLayout);
-		paint(domains, callback);
+	interface ConsoleDomainTableCallback {
+		public void showError(String message);
+		public void showInfo(String message);
+		public void onDelete(Integer domainId, String descrption, AsyncCallback<Boolean> cbk);
+		public void onInfo(Integer domainId);
+		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
+		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
+		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
 	}
-
-	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Domain> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
+	
+	
+	ConsoleDomainTable(ConsoleDomainTableCallback callback) {
+		this.callback = callback;
+		grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonMarginTop());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		paintHeader();
+		add( grid );
 	}
-
-
-	private enum Columns {
-		  CHK(""					, 20 ,AON.CSS.aonTextCenter())
-		, TYP(AON.MSG.type()		, 75 ,AON.CSS.aonTextCenter())
-	    , STA("Act."				, 20 ,AON.CSS.aonTextCenter())
-	    , MNG("Crea"				, 20 ,AON.CSS.aonTextCenter())
-	    , PAR("Padre"				, 50 ,AON.CSS.aonTextCenter())
-	    , HER("Her"					, 20 ,AON.CSS.aonTextCenter())
-	    , AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextCenter())
-	    , DES(AON.MSG.description() , 150,AON.CSS.aonTextCenter())
-		, ACC("\u00FAlt. Acceso"	, 75 ,AON.CSS.aonTextCenter())
-		, EXP("Expira"				, 75 ,AON.CSS.aonTextCenter())
-		, CMD(""					, 100,AON.CSS.aonTextCenter())
+	
+	private void paintHeader() {
+		grid.addHeaderRow()
+			.addCell(new Label(""),AON.CSS.aonWidth20())
+			.addCell(new Label("#"),AON.CSS.aonWidth20())
+			.addCell(new Label("ID"),AON.CSS.aonWidth20())
+			.addCell(new Label(AON.MSG.type()),AON.CSS.aonWidth80(), AON.CSS.aonNowrap())
+			.addCell(new Label("Act."),AON.CSS.aonWidth20())
+			.addCell(new Label("Crea"),AON.CSS.aonWidth20())
+			.addCell(new Label("Padre"),AON.CSS.aonWidth40())
+			.addCell(new Label("Her."),AON.CSS.aonWidth20())
+			.addCell(new Label("Usr."),AON.CSS.aonWidth20())
+			.addCell(new Label(AON.MSG.name()),AON.CSS.aonWidthAuto())
+			.addCell(new Label(AON.MSG.description()),AON.CSS.aonWidth150(), AON.CSS.aonNowrap())		
+			.addCell(new Label("\u00FAlt. Acceso"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
+			.addCell(new Label("Expira"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
+			.addCell(new Label(""),AON.CSS.aonWidth100())
 		;
-
-		String headerLabel;
-		int colWidth;
-		String cellStyleClass;
-
-		private Columns(String headerLabel,int colWidth,String cellStyleClass) {
-			this.headerLabel = headerLabel;
-			this.colWidth = colWidth;
-			this.cellStyleClass = cellStyleClass;
-		}
-		public int getColWidth() {
-			return colWidth;
-		}
-		public String getHeaderLabel() {
-			return headerLabel;
-		}
-		public String getCellStyleClass() {
-			return cellStyleClass;
-		}
 	}
 	
-	private void paint(Collection<Domain> domains, ConsoleDomainTableCallback callback) {
-		container.clear();
-		if ( domains == null || domains.isEmpty()) {
-			FlowPanel line = new FlowPanel();
-			InlineLabel label = new InlineLabel(AON.MSG.noData());
-			line.add(label);
-			container.add(line);
-		} else {
-			AonDisplayGrid tab = new AonDisplayGrid();
-			tab.addStyleName(AON.CSS.aonNoPadding());
-			tab.addStyleName(AON.CSS.aonBlockCenter());
-			tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-			container.add(tab);
-			paintHeader( tab );
-			domains
-				.stream()
-				.forEach(d -> paintRow( callback, d , tab.addRow()));
-		}
-	}
-
-	private void paintHeader(AonDisplayGrid tab) {
-		AonDisplayGridHeaderRow headerRow = tab.addHeaderRow();
-		for ( Columns col : Columns.values()) {
-			Label label = new Label( col.getHeaderLabel());
-			AonDisplayGridCell headerCell = headerRow.addCell(col.getCellStyleClass());
-			if (col == Columns.AUTO ) {
-				headerCell.addStyleName(AON.CSS.aonFlexGrow1());
-			} else {
-				headerCell.setWidth(col.getColWidth()  + "px");
-			}
-			headerCell.add(label);
-		}
-	}
-
-	private void paintRow(ConsoleDomainTableCallback callback, Domain domain, AonDisplayGridRow row) {
+	public void addRow(JsDomain domain) {
 		CheckBox checkBox = new CheckBox();
 		checkBox.addClickHandler(e -> SelectionEvent.fire(ConsoleDomainTable.this, domain));
 		
 		InlineLabel typeLabel = new InlineLabel( domain.getDomainType()==null?"":domain.getDomainType().getName() );
-		InlineLabel parentIdLabel = new InlineLabel(AonNumberUtils.toString( domain.getParentId()));
+		InlineLabel idLabel = new InlineLabel( domain.getId()==null?"":""+domain.getId() );
+		InlineLabel parentIdLabel = new InlineLabel( domain.getParentId()==null?"":""+domain.getParentId() );
 		InlineLabel nameLabel = new InlineLabel(domain.getName());
 		InlineLabel lastAccessLabel = new InlineLabel( domain.getLastAccessDate()==null?"":AON.TIME_FORMAT.format(domain.getLastAccessDate()));
-		InlineLabel expiredLabel = new InlineLabel( domain.getExpirationDate()==null?"":AON.DATE_FORMAT.format(domain.getExpirationDate())); 
-
-		InlineLabel active = new InlineLabel();
-		active.setTitle( "Activo" );
-		active.setStyleName(AON.CSS.aonIconLabel());
-		active.addStyleName( domain.isActive()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff() );
+		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());		 
+		AonTableButton active = new AonTableButton(
+			domain.isActive()?"Activo":"Inactivo"
+			,domain.isActive()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff()		
+		);
+	
+		active.addClickHandler(e -> {
+			AonConfirmDialog acd = new AonConfirmDialog();
+			acd.confirm("Se va a proceder al cambio de estado del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+				, new AonConfirmDialogCallback() {
+				@Override 
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					if (!running) {
+						running = true;
+						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
+						callback.onChangeActive( domainId , !domain.isActive() , new AsyncCallback<Domain>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								running = false;
+								callback.showError( "No se pudo cambiar el estado del dominio. ("+ caught.getMessage() +")");
+							}
+			
+							@Override
+							public void onSuccess(Domain result) {
+								running = false;
+								domain.setActive(result.isActive());
+								deleteButton.setEnabled(!result.isActive());
+								if (result.isActive()) {
+									active.removeStyleName(AON.CSS.aonIconToggleOff());
+									active.addStyleName(AON.CSS.aonIconToggleOn());
+									active.setTitle("Activo");
+								} else {
+									active.removeStyleName(AON.CSS.aonIconToggleOn());
+									active.addStyleName(AON.CSS.aonIconToggleOff());
+									active.setTitle("Inactivo");
+								}
+							}
+							
+						});
+					}
+				}
+			});
+		});
 		
 		InlineLabel domManagement = new InlineLabel();
 		domManagement.setTitle( "Puede crear dominios" );
@@ -161,16 +145,22 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 		heredity.setTitle( "Herencia de datos" );
 		heredity.setStyleName(AON.CSS.aonIconLabel());
 		heredity.addStyleName( domain.isEnableHeredity()?AON.CSS.aonIconToggleOn():AON.CSS.aonIconToggleOff() );
+		
+		int users = domain.getDefinedUsers() == null? 0 : AonNumberUtils.toInteger("" +  domain.getDefinedUsers());
+		int maxUser = domain.getMaxDefinedUsers() == null? 0 : AonNumberUtils.toInteger("" +  domain.getMaxDefinedUsers());
+		InlineLabel userLabel = new InlineLabel( users + " / " + maxUser );
+		if ( users > maxUser) {
+			userLabel.setStyleName(AON.CSS.aonColorRed());
+		}
 
 		InlineLabel descriptionLabel = new InlineLabel(AonStringUtils.abbreviate(domain.getDescription(), 50));
 		descriptionLabel.setTitle(domain.getDescription());
 		
-		FlowPanel buttons = new FlowPanel();
-		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
-		deleteButton.addClickHandler(e -> {
+		AonDateBox expiredDateBox = new AonDateBox();
+		expiredDateBox.setValue(domain.getExpirationDate());
+		expiredDateBox.addValueChangeHandler(e ->{
 			AonConfirmDialog acd = new AonConfirmDialog();
-			acd.confirm("\u00A1\u00A1ESTE PROCESO ES IRREVERSIBLE!!",
-				"Se va a proceder al BORRADO del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+			acd.confirm("Se va a proceder al cambio de fecha de expiraci\u00F3n " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
 				, new AonConfirmDialogCallback() {
 				@Override 
 				public void onCancel() {
@@ -180,60 +170,159 @@ class ConsoleDomainTable extends SimpleLayoutPanel implements HasSelectionHandle
 				@Override
 				public void onAccept() {
 					if (!running) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						popup.add(new AonSplash());
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
 						running = true;
-						callback.onDelete( domain , new AsyncCallback<Boolean>() {
+						Date expiredDate = expiredDateBox.getValue();
+						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
+						callback.onChangeExpirationDate( domainId, expiredDate , new AsyncCallback<Domain>() {
 							@Override
 							public void onFailure(Throwable caught) {
-								popup.hide();
 								running = false;
-								callback.showError( "No se pudo borrar el dominio. ("+ caught.getMessage() +")");
+								callback.showError( "No se pudo cambiar la fecha de expiraci\u00F3n del dominio. ("+ caught.getMessage() +")");
 							}
 			
 							@Override
-							public void onSuccess(Boolean result) {
-								popup.hide();
+							public void onSuccess(Domain result) {
 								running = false;
-								if (result == null || !result ) {
-									callback.showInfo( "No se pudo borrar el dominio. (Unknown cause)");
-								} else {
-									typeLabel.addStyleName(AON.CSS.aonTextLineThrough());
-									parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
-									nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
-									lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
-									expiredLabel.addStyleName(AON.CSS.aonTextLineThrough());
-									buttons.clear();
-									Label deletedLabel = new Label("BORRADO");
-									deletedLabel.setStyleName(AON.CSS.aonColorRed());
-									deletedLabel.addStyleName(AON.CSS.aonBold());
-									buttons.add(deletedLabel);
-								}
+								expiredDateBox.setValue(result.getExpirationDate());
+								expiredDateBox.addStyleName(AON.CSS.aonValueChanged());
+								new Timer() {
+									@Override
+									public void run() {
+										expiredDateBox.removeStyleName(AON.CSS.aonValueChanged());
+									}
+								}.schedule(3000);
 							}
-							
 						});
 					}
 				}
 			});
 		});
+
+		AonDisplayTable buttons = new AonDisplayTable();
+		deleteButton.setEnabled(!domain.isActive());
+		deleteButton.addClickHandler(e -> {
+			if (running) {
+				AonMessageDialog.show("AVISO","Hay un proceso en ejecuci\u00F3n. Espere un momento, por favor.");
+			} else {
+				AonConfirmDialog acd = new AonConfirmDialog();
+				acd.confirm("\u00A1\u00A1ESTE PROCESO ES IRREVERSIBLE!!",
+						"Se va a proceder al BORRADO del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+						, new AonConfirmDialogCallback() {
+					@Override 
+					public void onCancel() {
+						// Nothing
+					}
+					
+					@Override
+					public void onAccept() {
+						if (!running) {
+							running = true;
+							Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
+							callback.onDelete( domainId , domain.getDescription(), new AsyncCallback<Boolean>() {
+								@Override
+								public void onFailure(Throwable caught) {
+									running = false;
+									callback.showError( "No se pudo borrar el dominio. ("+ caught.getMessage() +")");
+								}
+								
+								@Override
+								public void onSuccess(Boolean result) {
+									running = false;
+									if (result == null || !result ) {
+										callback.showInfo( "No se pudo borrar el dominio. (Unknown cause)");
+									} else {
+										typeLabel.addStyleName(AON.CSS.aonTextLineThrough());
+										parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
+										nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
+										lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
+										expiredDateBox.setEnabled(false);
+										active.setEnabled(false);
+										buttons.clear();
+										Label deletedLabel = new Label("BORRADO");
+										deletedLabel.setStyleName(AON.CSS.aonColorRed());
+										deletedLabel.addStyleName(AON.CSS.aonBold());
+										buttons.add(deletedLabel);
+									}
+								}
+								
+							});
+						}
+					}
+				});
+			}
+		});
+
+		AonTableButton validateButton = new AonTableButton(AON.MSG.validateAction(), AON.CSS.aonIconValid());
+		validateButton.addClickHandler(e -> {
+			AonConfirmDialog acd = new AonConfirmDialog();
+			acd.confirm("Proceder con la validaci\u00F3n de integridad referencial del dominio " + domain.getId() + " - " + domain.getName() + "("+ domain.getDescription() +")."					
+				, new AonConfirmDialogCallback() {
+				@Override 
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					if (!running) {
+						Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
+						String name = domain.getName();
+						String description = domain.getDescription();
+						callback.onValidate(domainId,name, description, new AsyncCallback<Boolean>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								running = false;
+								callback.showError( "No se pudo validar el dominio. ("+ caught.getMessage() +")");
+							}
+			
+							@Override
+							public void onSuccess(Boolean result) {
+								running = false;
+							}
+						});
+					} else {
+						AonMessageDialog.show("AVISO","Hay una validaci\u00F3n ejecut\u00E1ndose. Un momento, por favor.");
+					}
+				}
+			});
+		});
 		
-		buttons.add(deleteButton);
+		AonDisplayTableRow buttonsRow = buttons.addRow();
+		buttonsRow
+			.addCell(deleteButton)
+			.addCell(validateButton)
+			;
 		
-		row.addStyleName(AON.CSS.aonClickable());
-		row .addCell( checkBox , AON.CSS.aonTextCenter())
+		if (domain.isParent() || domain.isStandalone()) {
+			AonTableButton infoButton = new AonTableButton("Resumen contrataci\u00F3n", AON.CSS.aonIconInfo());
+			infoButton.addClickHandler(e -> callback.onInfo(AonNumberUtils.toInteger("" +  domain.getId())));
+			buttonsRow.addCell(infoButton);
+		}
+		
+		grid.addRow()
+			.addCell( checkBox , AON.CSS.aonTextCenter())
+			.addCell( new InlineLabel("" + (++count)), AON.CSS.aonTextCenter())
+			.addCell( idLabel, AON.CSS.aonTextCenter())
 			.addCell( typeLabel , AON.CSS.aonTextCenter())
 			.addCell( active , AON.CSS.aonTextCenter())
 			.addCell( domManagement , AON.CSS.aonTextCenter())
 			.addCell( parentIdLabel, AON.CSS.aonTextCenter())
 			.addCell( heredity , AON.CSS.aonTextCenter())
+			.addCell( userLabel , AON.CSS.aonTextCenter())
 			.addCell( nameLabel )
 			.addCell( descriptionLabel )
 			.addCell( lastAccessLabel )
-			.addCell( expiredLabel )
+			.addCell( expiredDateBox )
 			.addCell( buttons )
 			;
+	}
+
+	public void addFooterRow() {
+		// Nothing
+	}
+
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<JsDomain> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

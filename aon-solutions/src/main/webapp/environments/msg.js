@@ -463,6 +463,7 @@ export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
 export const SENDER = "Remitente";//TODO
+export const SEE_ALL = "Ver todas";//TODO
 
 // ----- T
 

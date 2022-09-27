@@ -45,6 +45,7 @@ export class AonTextareaEditor extends AonElement {
     #disabled;
     #barPosition;
     #barIntegrated;
+    #resizeable
 
     #textBoxHeight;
     #textBoxMaxHeight;
@@ -55,10 +56,12 @@ export class AonTextareaEditor extends AonElement {
     #extraElements
     #timeoutResize;
 
+    resTimeout;
+
     #selectionRange;
 
     static get observedAttributes() {
-        return ['text-area-background', 'text-area-hover-background', 'bar-background', 'placeholder', 'disabled', 'bar-position', 'bar-integrated', 'text-box-height', 'text-box-min-height', 'text-box-max-height','id', 'has-fullscreen-mode'];
+        return ['text-area-background', 'text-area-hover-background', 'bar-background', 'placeholder', 'disabled', 'bar-position', 'bar-integrated', 'text-box-height', 'text-box-min-height', 'text-box-max-height','id', 'has-fullscreen-mode', 'resizeable'];
     }
 
     static get BAR_POSITIONS() {
@@ -97,7 +100,13 @@ export class AonTextareaEditor extends AonElement {
         this.#elementFilter = ef;
         if (this.bar) {
             this.clearElement(this.bar);
-            this.appendElements(this.bar);
+            
+            if (this.isMobile()) {
+                this.appendElementsMobile(this.bar);
+            } else {
+                this.appendElements(this.bar);
+            }
+            
             this.bar.appendChild(this.#disabledBarLayer);
         }
     }
@@ -165,6 +174,13 @@ export class AonTextareaEditor extends AonElement {
         return "";
     }
 
+    set resizeable(resizeable) {
+        this.setAttribute("resizeable", resizeable);
+    }
+
+    get resizeable() {
+        return this.getAttribute("resizeable");
+    }
 
 
     /**
@@ -278,6 +294,7 @@ export class AonTextareaEditor extends AonElement {
                 break;
             case 'bar-background':
                 this.barBackground = newValue;
+                break;
             case 'bar-position':
                 this.#barPosition = newValue;
                 if (this.bar) {
@@ -295,8 +312,7 @@ export class AonTextareaEditor extends AonElement {
                 }
                 break;
             case 'disabled':
-                let dsbl = !(newValue === "false");
-                this.#disabled = dsbl;
+                this.#disabled = newValue !== "false";
                 this.setEnabled(!this.#disabled);
                 break;
             case 'id':
@@ -343,6 +359,10 @@ export class AonTextareaEditor extends AonElement {
             case 'has-fullscreen-mode':
                 this.hasFullScreenMode = this.isMobile() ? false : newValue === "true";
                 break;
+            case 'resizeable':
+                this.#resizeable;
+                this.setResizeable();
+                break;
             default:
                 break;
         }
@@ -353,12 +373,13 @@ export class AonTextareaEditor extends AonElement {
             this.elementFilter = this.DEFAULT_ELEMENTS_FILTER;
         }
         this.drawElement();
-        let resTimeout = null;
+        
         const resizeObserver = new ResizeObserver(() => {
-            if (resTimeout) {
-                clearTimeout(resTimeout);
+
+            if (this.resTimeout) {
+                clearTimeout(this.resTimeout);
             }
-            resTimeout = setTimeout(() => {
+            this.resTimeout = setTimeout(() => {
                 const textWidth = this.textBoxEnvelope.offsetWidth;
                 this.resizeBar(textWidth);
             }, 200);
@@ -377,7 +398,7 @@ export class AonTextareaEditor extends AonElement {
 
     resizeBar(width) {
         if (width) {
-            this.barEnvelope.style.width = width;
+            this.barEnvelope.style.width = `${width}px`;
         }
         let remaining = this.bar.querySelector(".additionalElements");
         if (remaining) {
@@ -514,7 +535,7 @@ export class AonTextareaEditor extends AonElement {
         box.style.margin = 0;
         box.style.width = "100%";
         box.style.height = "100%";
-        box.style.overflowY = "scroll";
+        // box.style.overflowY = "scroll";
         box.style.wordBreak = "break-word";
         // box.style.backgroundColor = this.#textAreaBackground;
         box.style.outline = "0px solid transparent";
@@ -530,22 +551,23 @@ export class AonTextareaEditor extends AonElement {
             ev.stopPropagation();
             this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target: ev.target}));
         });
-
-        ["focus", "mouseover"].forEach((eventType) => {
-            box.addEventListener(eventType, (ev) => {
-                if (!this.#disabled && this.#textAreaHoverBackground) {
-                    this.textBoxEnvelope.style.backgroundColor = this.#textAreaHoverBackground;
-                }
+        if (!this.isMobile()) {
+            ["focus", "mouseover"].forEach((eventType) => {
+                box.addEventListener(eventType, (ev) => {
+                    if (!this.#disabled && this.#textAreaHoverBackground) {
+                        this.textBoxEnvelope.style.backgroundColor = this.#textAreaHoverBackground;
+                    }
+                });
             });
-        });
-
-        ["focusout", "mouseout"].forEach((eventType) => {
-            box.addEventListener(eventType, (ev) => {
-                if (!this.#disabled && this.textAreaBackground && document.activeElement !== this.textBox) {
-                    this.textBoxEnvelope.style.backgroundColor = this.#textAreaBackground;
-                }
+    
+            ["focusout", "mouseout"].forEach((eventType) => {
+                box.addEventListener(eventType, (ev) => {
+                    if (!this.#disabled && this.textAreaBackground && document.activeElement !== this.textBox) {
+                        this.textBoxEnvelope.style.backgroundColor = this.#textAreaBackground;
+                    }
+                });
             });
-        });
+        }
 
         box.setAttribute("placeholder", this.placeholder);
         if (this.#defaultValue) {
@@ -618,7 +640,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     fullScreenElement() {
-        let btn = this.createCommandButton("fullscreen", {fontSize: "19px"});
+        let btn = this.createCommandButton("fullscreen", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Pantalla completa (Ctrl+M)";
         btn.addEventListener("click", () => {
             this.openDialog();
@@ -627,7 +649,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     undoElement() {
-        let btn = this.createCommandButton("undo", {fontSize: "19px"});
+        let btn = this.createCommandButton("undo", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Deshacer";
         btn.addEventListener("click", () => {
             this.formatDoc('undo');
@@ -636,7 +658,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     redoElement() {
-        let btn = this.createCommandButton("redo", {fontSize: "19px"});
+        let btn = this.createCommandButton("redo", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Restaurar";
         btn.addEventListener("click", () => {
             this.formatDoc('redo');
@@ -743,7 +765,12 @@ export class AonTextareaEditor extends AonElement {
             this.hoverEfect(option);
             dropdown.appendChild(option);
         });
-        dropdown.style.bottom = "1.75em";
+        if (this.isMobile()) {
+            dropdown.style.top = "1.75em";
+        } else {
+            dropdown.style.bottom = "1.75em";
+        }
+        
         return dropdown;
     }
 
@@ -778,8 +805,11 @@ export class AonTextareaEditor extends AonElement {
         dropdown.classList.add("additionalElementsDropdown");
 
 
-
-        dropdown.style.bottom = "1.75em";
+        if (this.isMobile()) {
+            dropdown.style.top = "1.75em";
+        } else {
+            dropdown.style.bottom = "1.75em";
+        }
 
         this.#extraElements.forEach(elem => dropdown.appendChild(elem));
 
@@ -892,16 +922,6 @@ export class AonTextareaEditor extends AonElement {
             };
             window.addEventListener("resize", resizeListener);
 
-            // new ResizeObserver(() => {
-            //     clearTimeout(this.#timeoutResize);
-            //     this.#timeoutResize = setTimeout(() => {
-            //         if (this.bar) {
-            //             console.log();
-            //             this.bar.style.width = `${this.textBoxEnvelope.offsetWidth * (this.barIntegrated ? 1 : 0.9) - 10}px`;
-            //         }
-            //     }, 50);
-            // }).observe(this.textBoxEnvelope)
-
             return selector;
     }
 
@@ -915,7 +935,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     boldElement() {
-        let btn = this.createCommandButton("format_bold");
+        let btn = this.createCommandButton("format_bold", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Negrita";
         btn.addEventListener("click", (ev) => {;
             this.formatDoc('bold');
@@ -924,7 +944,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     italicElement() {
-        let btn = this.createCommandButton("format_italic");
+        let btn = this.createCommandButton("format_italic", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Cursiva";
         btn.addEventListener("click", () => {
             this.formatDoc('italic');
@@ -933,7 +953,7 @@ export class AonTextareaEditor extends AonElement {
     }
     
     underlineElement() {
-        let btn = this.createCommandButton("format_underlined");
+        let btn = this.createCommandButton("format_underlined", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Subrayado";
         btn.addEventListener("click", () => {
             this.formatDoc('underline');
@@ -942,7 +962,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     colorElement(material, title, colorListener) {
-        let btn = this.createCommandButton(material, {fontSize: "19px"});
+        let btn = this.createCommandButton(material, {fontSize: this.isMobile() ? "23px" : "19px"});
         btn.title = title;
 
         let inputColor = document.createElement("input");
@@ -995,7 +1015,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     orderedListElement() {
-        let btn = this.createCommandButton("format_list_numbered");
+        let btn = this.createCommandButton("format_list_numbered", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Lista ordenada";
         btn.addEventListener("click", () => {
             this.formatDoc('insertorderedlist');
@@ -1004,7 +1024,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     unorderedListElement() {
-        let btn = this.createCommandButton("format_list_bulleted");
+        let btn = this.createCommandButton("format_list_bulleted", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Lista no ordenada";
         btn.addEventListener("click", () => {
             this.formatDoc('insertunorderedlist');
@@ -1013,7 +1033,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     indentElement() {
-        let btn = this.createCommandButton("format_indent_increase");
+        let btn = this.createCommandButton("format_indent_increase", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Tabular";
         btn.addEventListener("click", () => {
             this.formatDoc('indent');
@@ -1022,7 +1042,7 @@ export class AonTextareaEditor extends AonElement {
     }
     
     outdentElement() {
-        let btn = this.createCommandButton("format_indent_decrease");
+        let btn = this.createCommandButton("format_indent_decrease", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Recoger";
         btn.addEventListener("click", () => {
             this.formatDoc('outdent');
@@ -1031,7 +1051,7 @@ export class AonTextareaEditor extends AonElement {
     }
     
     removeFormatElement() {
-        let btn = this.createCommandButton("format_strikethrough");
+        let btn = this.createCommandButton("format_strikethrough", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Eliminar formato";
         btn.addEventListener("click", () => {
             this.formatDoc('removeFormat');
@@ -1040,7 +1060,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     strikethroughElement() {
-        let btn = this.createCommandButton("strikethrough_s");
+        let btn = this.createCommandButton("strikethrough_s", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Tachado";
         btn.addEventListener("click", () => {
             this.formatDoc('strikeThrough');
@@ -1049,7 +1069,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     editorModeElement() {
-        let btn = this.createCommandButton("html");
+        let btn = this.createCommandButton("html", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Modo del editor";
         btn.addEventListener("click", () => {
             this.setDocMode(this.#htmlMode = !this.#htmlMode);
@@ -1071,7 +1091,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     quoteElement() {
-        let btn = this.createCommandButton("format_quote");
+        let btn = this.createCommandButton("format_quote", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Cita";
         btn.addEventListener("click", () => {
             this.blockquote();
@@ -1082,7 +1102,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     hyperlinkElement() {
-        let btn = this.createCommandButton("insert_link");
+        let btn = this.createCommandButton("insert_link", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Enlace";
         btn.addEventListener("click", () => {
             let sLnk=prompt('Escriba la URL','https:\/\/');
@@ -1108,7 +1128,7 @@ export class AonTextareaEditor extends AonElement {
     }
 
     attachmentElement() {
-        let btn = this.createCommandButton("attach_file");
+        let btn = this.createCommandButton("attach_file", {fontSize: this.isMobile() ? "25px" : "19px"});
         btn.title = "Adjuntar";
         let inputFile = document.createElement("input");
         inputFile.type = "file";
@@ -1264,7 +1284,13 @@ export class AonTextareaEditor extends AonElement {
     checkFiles() {
         let filesIds = [...this.textBox.querySelectorAll(`[type='${CONSTANT.AON_FILE}']`)].map(el => el.dataset.id);
         this.FILES = this.FILES.filter(f => (filesIds || []).includes(f.id));
+        return this.FILES;
     }
+
+    getFiles(){
+        return this.checkFiles();
+    }
+    
 
     draggableEnable(){
 		const divTextArea = this.textBox;
@@ -1350,6 +1376,9 @@ export class AonTextareaEditor extends AonElement {
         if (this.elementFilter.backgroundColor) {
             bar.appendChild(this.ELEMENTS.backgroundColorEl);
         }
+        if (this.elementFilter.attachment) {
+            bar.appendChild(this.ELEMENTS.attachmentEl);
+        }
         if (this.elementFilter.orderedList) {
             bar.appendChild(this.ELEMENTS.orderedListEl);
         }
@@ -1374,14 +1403,38 @@ export class AonTextareaEditor extends AonElement {
         if (this.elementFilter.hyperlink) {
             bar.appendChild(this.ELEMENTS.hyperlinkEl);
         }
-        if (this.elementFilter.attachment) {
-            bar.appendChild(this.ELEMENTS.attachmentEl);
-        }
         if (this.elementFilter.editorMode) {
             bar.appendChild(this.ELEMENTS.editorModeEl);
         }
         if (this.hasFullScreenMode) {
             bar.appendChild(this.fullScreenElement());
+        }
+    }
+
+    appendElementsMobile(bar) {
+        if (this.elementFilter.bold) {
+            bar.appendChild(this.ELEMENTS.boldEl);
+        }
+        if (this.elementFilter.italic) {
+            bar.appendChild(this.ELEMENTS.italicEl);
+        }
+        if (this.elementFilter.underline) {
+            bar.appendChild(this.ELEMENTS.underlineEl);
+        }
+        if (this.elementFilter.color) {
+            bar.appendChild(this.ELEMENTS.textColorEl);
+        }
+        if (this.elementFilter.attachment) {
+            bar.appendChild(this.ELEMENTS.attachmentEl);
+        }
+        if (this.elementFilter.strikethrough) {
+            bar.appendChild(this.ELEMENTS.strikethroughEl);
+        }
+        if (this.elementFilter.removeFormat) {
+            bar.appendChild(this.ELEMENTS.removeFormatEl);
+        }
+        if (this.elementFilter.alignment) {
+            bar.appendChild(this.ELEMENTS.alignmentEl);
         }
     }
 
@@ -1405,12 +1458,16 @@ export class AonTextareaEditor extends AonElement {
         bar.style.width = "fit-content";
         bar.style.position = "relative";
         bar.style.overflow = this.#disabled ? "hidden" : "";
-        bar.style.columnGap = "3px";
+        bar.style.columnGap = this.isMobile() ? "8px" : "3px";
         
         this.unselectable(bar);
         
         this.createElements();
-        this.appendElements(bar);
+        if (this.isMobile()) {
+            this.appendElementsMobile(bar);
+        } else {
+            this.appendElements(bar);
+        }
         
         this.#disabledBarLayer = document.createElement("div");
         this.#disabledBarLayer.style.display = !this.#disabled ? "none" : "block";
@@ -1477,22 +1534,30 @@ export class AonTextareaEditor extends AonElement {
 		return userSelection;
 	} 
 
+    setResizeable() {
+        if (this.textBoxEnvelope) {
+            this.textBoxEnvelope.style.resize = this.hasFullScreenMode && this.resizeable ? "both" : "none";
+        }
+    }
+
 
     drawElement() {
         
         this.textBoxEnvelope = document.createElement("div");
-        this.textBoxEnvelope.style.overflow = "hidden";
-        // this.textBoxEnvelope.style.resize = /*this.isMobile() || */!this.hasFullScreenMode ? "none" : "both";
+        this.textBoxEnvelope.style.overflowX = "hidden";
+        this.textBoxEnvelope.style.overflowY = "auto";
+        this.setResizeable();
         this.textBoxEnvelope.style.minHeight = this.#textBoxMinHeight || this.#textBoxHeight || "3em";
-        this.textBoxEnvelope.style.minWidth = "260px";
+        this.textBoxEnvelope.style.minWidth = "275px";
         this.textBoxEnvelope.style.maxWidth = "100%";
         this.textBoxEnvelope.style.width = "100%";
         this.textBoxEnvelope.style.height = this.#textBoxHeight || "";
         this.textBoxEnvelope.style.maxHeight = this.#textBoxMaxHeight || (this.isMobile() ? "300px" : "500px");
-        this.textBoxEnvelope.style.backgroundColor = this.#textAreaBackground;
+        this.textBoxEnvelope.style.backgroundColor = this.isMobile() ? this.#textAreaHoverBackground : this.#textAreaBackground;
         this.textBoxEnvelope.style.padding = "5px";
         this.textBoxEnvelope.style.cursor = "text";
         this.textBoxEnvelope.classList.add("materialScroll");
+        this.textBoxEnvelope.classList.add("textBoxEnvelope");
         
         this.textBox = this.textBoxElement();
         this.textBoxEnvelope.addEventListener("click", (ev) => {

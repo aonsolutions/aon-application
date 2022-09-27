@@ -433,7 +433,7 @@ public class FootPanel extends Composite {
 						issueDate = Utils.parseDateTime(transportDate);
 					}
 					Date start = new Date((2019-1900), 8, 1);
-					Date start2 = new Date((2022-1900), 8, 1);
+					Date start2 = new Date((2022-1900), 7, 1);
 					
 					boolean a = temp >= 8.0 && temp <= 16.0 && issueDate.compareTo(start) >= 0;
 					boolean b = temp >= 22.0 && temp <= 24.0 && issueDate.compareTo(start) >= 0 && issueDate.compareTo(start2) < 0;

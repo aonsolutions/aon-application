@@ -43,14 +43,11 @@ export class AonAccounting extends AonElement {
 		let application = this.getApplication();
 
 		this.aonGraphicsTrialView();
-		this.loader(`#chart_div`);
-
 
 		if(this.isMobile()){
 			application.addMobileSidenavHeader(Apps.ACCOUNTING);
 		}
-
-
+		
 		let options2 = [
 			{
 				id: 'VistaAnual',
@@ -81,7 +78,6 @@ export class AonAccounting extends AonElement {
 				application.addSidenavOptions(MSG.OPTIONS , options2);
 				this.clearElementById(this.getApplication().getContent().id);
 				this.aonGraphicsTrialView ();
-				this.loader(`#chart_div`);
 			}
 		}];
 		
@@ -102,17 +98,16 @@ export class AonAccounting extends AonElement {
 		application.addSidenavOptions(MSG.OPTIONS , options2);
 	}
 
-	async loader (selector) {
+	async loader(selector, doc=undefined) {
 		this.getApplication().startLoader();
 		try {
-			await waitEl(selector);
+			await waitEl(selector, doc);
 		} catch (e) {}
 		this.getApplication().stopLoader();
 	}
 	
 	aonGraphicsTrialView () {
-		const aonGraphicsTrial = new AonGraphicsTrial();
-		this.getApplication().setContent(aonGraphicsTrial);
+		this.getApplication().setContent(new AonGraphicsTrial());
 	}
 }
 if(!window.customElements.get('aon-accounting')){

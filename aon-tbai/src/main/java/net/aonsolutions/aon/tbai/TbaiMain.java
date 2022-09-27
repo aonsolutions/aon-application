@@ -97,7 +97,7 @@ public class TbaiMain {
 				} else {
 					Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-						company.getDomain().getId(), "", invoice.getActivity());
+						company.getDomain().getId(), "", invoice.getActivity().getId());
 					if(ea == null || ea.getId() == null) {
 						ea = AON.getEnterpriseActivities(company.getDomain().getName(),
 								company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
@@ -171,7 +171,7 @@ public class TbaiMain {
 				} else {
 					Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
-						company.getDomain().getId(), "", invoice.getActivity());
+						company.getDomain().getId(), "", invoice.getActivity().getId());
 					if(ea == null || ea.getId() == null) {
 						ea = AON.getEnterpriseActivities(company.getDomain().getName(),
 							company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());

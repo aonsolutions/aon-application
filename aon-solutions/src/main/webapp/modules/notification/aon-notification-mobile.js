@@ -6,7 +6,6 @@ import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
-import { AonDocumental } from "../documental/aon-documental.js";
 import {  NotificationCreateComponent } from "./createComponent.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
@@ -14,8 +13,6 @@ import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { NotificationEnums } from "./NotificationEnums.js";
 import { NotificationUtils } from "./utils/NotificationUtils.js";
 import { AonToast } from "../../components/aon-toast.js";
-import { AonMessenger } from "../messenger/aon-messenger.js";
-import { App } from "../../models/enums.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
 
@@ -28,6 +25,7 @@ export class AonNotificationMobile extends AonElement {
   dur;
   UL;
   TOAST;
+  NOTIFICATIONS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -70,6 +68,7 @@ export class AonNotificationMobile extends AonElement {
     this.AON_TABS = this.id + "aonTabs";
     this.UL = this.id+"Ul";
     this.TASK_HOLDERS = [];
+    this.NOTIFICATIONS = [];
     this.aonNotifyIconEl = document.querySelector("aon-notification-icon");
   }
 
@@ -121,8 +120,9 @@ export class AonNotificationMobile extends AonElement {
       this.setFilter(filter);
       const aonNotification = this.getElement(this.CONTENT);
       aonNotification.style.width = "80%";
-      if(!this.isMobile())
+      if(!this.isMobile()){
         aonNotification.style.margin = "auto";
+      }
 
       NotificationCreateComponent.createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
@@ -158,6 +158,7 @@ export class AonNotificationMobile extends AonElement {
         this.removeFadeOutNotify(0, 0);
         
         datos.map((data) => {
+          this.addNotification(data);
           const aonCard = this.createCard(data, true);
           aonCard.flex = "true";
           aonCard.addEventListener(EVENT.CLICK, () =>  this.goNotification(data));
@@ -175,28 +176,10 @@ export class AonNotificationMobile extends AonElement {
     return this.getElement(this.CONTENT) || NotificationCreateComponent.createAonNotification(this.CONTENT).element;
   }
 
-  async goNotification(data) {
-    const {id, source, source_id, domain} = data;
-
-    this.markReadNotification(id);
-
-    if(source && source_id){
-      let aonComponent = null;
-      switch(source){
-        case App.DOCUMENTAL:
-          aonComponent =  new AonDocumental();
-          break;
-        case App.MESSENGER:
-          aonComponent =  new AonMessenger();
-          break;
-      }
-
-      aonComponent.value = source_id;
-
-      if(aonComponent){
-        NotificationUtils.setDomainStorage(domain);
+  goNotification(data) {
+    const aonComponent = NotificationUtils.getNotificationComponent(data);
+    if(aonComponent){
         this.rootPanel(aonComponent);
-      }
     }
   }
   
@@ -220,7 +203,7 @@ export class AonNotificationMobile extends AonElement {
     NotificationCreateComponent.createLi(data).appendTo(ulEl).appendChild(aonCard);
 
     if(close){
-      this.buttonClose(aonCard, data.id);
+      this.buttonClose(aonCard, data);
     }
 
     const content = NotificationCreateComponent.createContent(data.body);
@@ -263,17 +246,22 @@ export class AonNotificationMobile extends AonElement {
     }
   }
 
-  markReadNotification(id){
-    this.changeBadgeComponent(-1);
-    markReadNotification({id: parseInt(id)}).then(()=>{
-      // this.loadMore();
-    }).catch(e=>console.log(e));
-    let aonCard = this.getElement(this.id + "Card" + id);
-    if (aonCard) {
-      aonCard.setBackground("#fff");
-      const icon = this.getElement(`${id}Icon`);
-      if (icon) 
-        icon.remove();
+  markReadNotification(data, save= true){
+    const id = data.id;
+    if(id){
+      if(save){
+        markReadNotification(data).catch(console.log);
+      }
+
+      this.changeBadgeComponent(-1);
+      let aonCard = this.getElement(this.id + "Card" + id);
+      if (aonCard) {
+        aonCard.setBackground("#fff");
+        const icon = this.getElement(`${id}Icon`);
+        if (icon) {
+          icon.remove();
+        }
+      }
     }
   }
 
@@ -282,35 +270,44 @@ export class AonNotificationMobile extends AonElement {
     if(tasks.length){
       new Swipe(tasks).onDelete(({dataset})=>{
         if(dataset && dataset.id ) {
-          this.markReadNotification(dataset.id);
+          const noti = this.getNotificationById(parseInt(dataset.id));
+          if(noti) {
+            markReadNotification(noti).catch(console.log);
+            this.markReadNotification(noti, false);
+          }
         }
       });
     }
   }
 
-  buttonClose(aonCard, id){
+  buttonClose(aonCard, data){
     let button = NotificationCreateComponent.createButtonClose()
     button.element.addEventListener(EVENT.CLICK, (ev)=>{
       ev.stopPropagation();
-      this.removeFadeOutNotify(id, 600);
+      this.removeFadeOutNotify(data, 600);
     });
     button.appendTo( aonCard.getCardTitle() );
   }
 
-  removeFadeOutNotify(notificationId=0, speed=0) {
-    const notificationLi = document.querySelector(`[data-id='${notificationId}']`);
-    if(notificationLi){
-      const aonCardN = notificationLi.firstChild;
-      if(aonCardN){
-        const seconds = speed / 1000;
-        setStyles(aonCardN.getCard(),{
-          transition: "opacity " + seconds + "s ease",
-          opacity: 0
-        })
-        setTimeout(() => {
-          notificationLi.removeChild(aonCardN);
-          this.markReadNotification(notificationId);
-        }, speed);
+  removeFadeOutNotify(data=0, speed=0) {
+    if(data.id){
+      const notificationLi = document.querySelector(`[data-id='${data.id}']`);
+      if(notificationLi){
+        this.markReadNotification(data);
+        const aonCardN = notificationLi.firstChild;
+        if(aonCardN){
+          const seconds = speed / 1000;
+
+          setStyles(aonCardN.getCard(),{
+            transition: "opacity " + seconds + "s ease",
+            opacity: 0
+          });
+
+          setTimeout(() => {
+            notificationLi.removeChild(aonCardN);
+          }, speed);
+
+        }
       }
     }
   }
@@ -391,6 +388,18 @@ export class AonNotificationMobile extends AonElement {
         if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
       }); 
     }
+  }
+
+  addNotification(notification){
+    this.NOTIFICATIONS.push(notification);
+  }
+
+  getNotifications(){
+    return this.NOTIFICATIONS;
+  }
+
+  getNotificationById(id){
+    return this.NOTIFICATIONS.find(n  => n.id === id);
   }
 
   showToast(obj) {

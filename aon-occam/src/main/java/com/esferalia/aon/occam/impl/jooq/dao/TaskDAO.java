@@ -125,24 +125,52 @@ public class TaskDAO {
 		@Override public Property<String> getCommentsWorkflowProperty(){return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.COMMENT);}
 		@Override public Property<String> getTaskHolderNameProperty(){return new FilterDAO.PropertyDAO<>(TH_REGISTRY.NAME);}
 	}
+	
+	/**
+	 * Create tag not exist
+	 * @param ctx
+	 * @param task
+	 */
+	
+	private static <T extends Record> SelectOnConditionStep<T> select(SelectSelectStep<T> select) {
+		return select
+		.from(TASK)
+		.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
+		.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
+		.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
+		.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
+		.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+		.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
+		.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
+		.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+		.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+		.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID))
+		;
+	}
+	
 
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
+		System.out.println("getStream");
 		return getStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
+		System.out.println("getStream page perPage");
 		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
 	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter){	
+		System.out.println("getParentOrChildStream");
 		return getParentOrChildStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
 	
 	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
+		System.out.println("getParentOrChildStream page perPage");
 		return getParentOrChildStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
 	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
+		System.out.println("getTaskAndChilds");
 		ctx.checkRead();
 
 		Task task = getTaskAndChildsStream(ctx, filter).findFirst().orElse(new Task());
@@ -153,6 +181,7 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage) {
+		System.out.println("getTaskAndChildsStream page perPage");
 		ctx.checkRead();
 		return getTaskAndChildsStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
@@ -193,9 +222,6 @@ public class TaskDAO {
 		
 		return tasks.stream();
 	}
-	
-	
-	
 
 	public static Task save(AONContext ctx, Task task) {
 		TaskAutoComplete.autoComplete(ctx, task);
@@ -327,29 +353,9 @@ public class TaskDAO {
 		deleteTags(ctx, task);
 	}
 	
-	/**
-	 * Create tag not exist
-	 * @param ctx
-	 * @param task
-	 */
-	
-	private static <T extends Record> SelectOnConditionStep<T> select(SelectSelectStep<T> select) {
-		return select
-		.from(TASK)
-		.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
-		.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
-		.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
-		.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
-		.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
-		.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
-		.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-		.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
-		.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
-		.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID));
-	}
-	
 	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = select(ctx.getDslContext().select()) 
+		SelectConditionStep<Record> condition = 
+		select(getFields(ctx.getDslContext())) 
 		.where(TASK_PROPERTIES.getConditions(filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -357,11 +363,14 @@ public class TaskDAO {
 			Integer p = page.get();
 			condition.limit(per).offset(per * (p -1));
 		}
-		
-		Map<Task, List<Tag>> taskMaps = condition
-	   .groupBy(TASK.ID, TAG.ID)
-	   .orderBy(TASK.CREATION_DATE.desc())
-	   .fetchGroups( 
+
+		SelectSeekStep1<Record, Timestamp> query = condition
+	   .groupBy(TASK.ID, TAG.ID, DOMAIN.ID)
+	   .orderBy(TASK.CREATION_DATE.desc());
+	
+		System.out.println(query.getSQL());
+			
+	    Map<Task, List<Tag>> taskMaps = query.fetchGroups( 
 			new TaskFiller()::apply,
 			new TagFiller()::apply
 		);
@@ -372,7 +381,8 @@ public class TaskDAO {
 	}
 	
 	private static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = select(ctx.getDslContext().select())
+		SelectConditionStep<Record> condition = 
+		select( getFields(ctx.getDslContext()) )
 		.where(whereCondition(ctx, filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -380,9 +390,9 @@ public class TaskDAO {
 			Integer p = page.get();
 			condition.limit(per).offset(per * (p -1));
 		}
-		
+
 	   SelectSeekStep1<Record, Timestamp> query = condition
-	   .groupBy(TASK.ID, TAG.ID)
+       .groupBy(TASK.ID, TAG.ID, DOMAIN.ID)
 	   .orderBy(TASK.CREATION_DATE.desc());
 		
 	   System.out.println(query.getSQL());
@@ -410,6 +420,21 @@ public class TaskDAO {
 		}
 
 		return tasks.stream();
+	}
+	
+	
+	private static SelectSelectStep<Record> getFields(DSLContext ctx) {
+		return ctx
+		.select(TASK.fields())
+		.select(DOMAIN.fields())
+		.select(TASK_HOLDER.fields())
+		.select(WORKGROUP.fields())
+		.select(REGISTRY.fields())
+		.select(TH_REGISTRY.fields())
+		.select(SENDER.fields())
+		.select(SENDER_REGISTRY.fields())
+		.select(TASK_TAG.TASK)
+		.select(TAG.fields());
 	}
 	
 	private static void setTagIdOrSave(AONContext ctx, Task task) {

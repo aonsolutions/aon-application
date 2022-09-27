@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.console;
 
 import java.io.IOException;
 import java.io.PrintStream;

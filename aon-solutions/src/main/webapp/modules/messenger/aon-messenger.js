@@ -5,7 +5,7 @@ import {Apps, getAppsByDur} from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
+import { APP_PARAMS_REQUEST, MessengerOptions, MessengerSidenav, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
@@ -190,9 +190,11 @@ export class AonMessenger extends AonElement {
 					this.rootPanel(new AonMessenger())
 				);
 
-				// this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
-				// 	this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
-				// );
+				if(this.getDur().isMessengerManager()){
+					this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
+						this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
+					);
+				}
 			}
 		}
 
@@ -265,8 +267,6 @@ export class AonMessenger extends AonElement {
 
 	searchValueDefault(){
 
-
-
 		// let statusEl = this.getElement("status");
 		// let workgroup = this.getElement("workgroup");
 
@@ -274,14 +274,19 @@ export class AonMessenger extends AonElement {
 		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
 		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
 		});
-	
-		// registryEl.addEventListener(EVENT.INPUT,async({target})=>{
-		// 	const value = target.value;
-		// 	if(value.length > 2){
-		// 	  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
-		// 	  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
-		// 	}
-		// });
+
+
+		let timeOut = null;
+		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+			clearTimeout(timeOut);
+			const value = target.value;
+			if(value.length > 2){
+				timeOut = setTimeout(async() =>{
+					const cs = await getCustomers({reload:true, page:1, perPage:30, value});
+					registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+				}, 300);
+			}
+		});
 
 		let taskHolderEl = this.getElement("task_holder");
 		let senderEl = this.getElement("senderFilter");
@@ -933,9 +938,7 @@ export class AonMessenger extends AonElement {
 		let application = this.getApplication();
 		
 		this.clearElementById(application.CONTENT);
-	
-		application.startLoader();
-	
+
 		GWT.load(module, application.CONTENT);
 	}
 
@@ -950,7 +953,7 @@ export class AonMessenger extends AonElement {
 					aonView = new AonMessengerChat();
 				break;
 				case MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC:
-					this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
+					this.loadGwt(GWT.TASK_STAT);
 				break;
 			}
 			if(aonView){

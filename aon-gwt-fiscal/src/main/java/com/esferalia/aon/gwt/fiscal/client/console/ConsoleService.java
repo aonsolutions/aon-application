@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
@@ -15,4 +16,6 @@ public interface ConsoleService extends RemoteService {
 	String[] getSchemas(Occam occam) throws AonCoreException;
 	LinkedList<Domain> getDomains(DomainParams params) throws AonCoreException;
 	Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException;
+	Domain changeActive(DomainParams params, Integer domainId, boolean active) throws AonCoreException;
+	Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) throws AonCoreException;
 }

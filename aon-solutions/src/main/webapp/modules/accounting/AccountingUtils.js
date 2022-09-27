@@ -1,29 +1,43 @@
 import { TAG } from "../../environments/environments.js";
-import { TOTAL_SUPPLIED } from "../../environments/msg-en.js";
 import { setStyles } from "../../services/utilsComponents.js";
-export function getRandomColor() {
-  var letters = "0123456789ABCDEF";
-  var color = "#";
-  for (var i = 0; i < 6; i++) {
+
+export {
+  getRandomColor,
+  getDateFromString,
+  formatNumber,
+  getTitle,
+  getPeriodName,
+  getMobileLegend,
+  getOnly6and7,
+  googleChartsColors
+}
+
+function getRandomColor() {
+  let letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
 }
-export function getDateFromString(strDate) {
+
+function getDateFromString(strDate) {
   if (typeof strDate == "string") {
     let splittedDate = strDate.split("/");
 
     if (splittedDate.length != 3) return null;
 
     return new Date(`${splittedDate[1]}/${splittedDate[0]}/${splittedDate[2]}`);
-  } else return null;
+  } 
+  return null;
 }
 
-export function formatNumber(number) {
+function formatNumber(number) {
+  let formatted = null;
   if (number != null && !Number.isNaN(number)) {
     let nmbr = Math.round(number * 100) / 100;
 
-    let formatted = nmbr.toLocaleString("es-ES", { minimumFractionDigits: 2 });
+    formatted = nmbr.toLocaleString("es-ES", { minimumFractionDigits: 2 });
 
     if (formatted && formatted.length == 7 && formatted.charAt(0) != "-") {
       formatted = formatted.charAt(0) + "." + formatted.substring(1);
@@ -34,13 +48,12 @@ export function formatNumber(number) {
     ) {
       formatted = formatted.substring(0, 2) + "." + formatted.substring(2);
     }
-
-    return formatted;
   }
-  return null;
+
+  return formatted;
 }
 
-export function getTitle(selectedColumn) {
+function getTitle(selectedColumn) {
   switch (selectedColumn) {
     case 1:
       return "Ingresos";
@@ -57,7 +70,7 @@ export function getTitle(selectedColumn) {
   }
 }
 
-export function getPeriodName(dateFromStr, dateToStr) {
+function getPeriodName(dateFromStr, dateToStr) {
   let spaMonths = [
     "enero",
     "febrero",
@@ -113,25 +126,21 @@ export function getPeriodName(dateFromStr, dateToStr) {
   return "";
 }
 
-export function getMobileLegend(accounts, isMobile) {
+function getMobileLegend(accounts, isMobile) {
   const finalRegex = /31\/12\/d*/;
   let totalYear = null;
   try {
     totalYear = accounts
       ? accounts
-          .filter(
-            (acc) =>
-              acc.interval.fromDate == acc.interval.toDate &&
-              finalRegex.test(acc.interval.fromDate)
-          )
-          .map((acc) => acc.statements)[0]
-          .filter((st) => st.account.type == "RESULT")[0]
+        .filter((acc) => acc.interval.fromDate == acc.interval.toDate && finalRegex.test(acc.interval.fromDate) )
+        .map((acc) => acc.statements)[0]
+        .find((st) => st.account.type == "RESULT")
       : null;
   } catch (error) {
     console.log(error);
   }
 
-  let mobileLegend = setStyles(document.createElement("table"), {
+  let mobileLegend = setStyles(document.createElement(TAG.TABLE), {
     width : isMobile ? "90%" : "26%",
     cursor : "default"
   });
@@ -170,12 +179,13 @@ export function getMobileLegend(accounts, isMobile) {
   ];
 
   legendData.forEach((d) => {
-    let trColumn = document.createElement("tr");
+    let trColumn = document.createElement(TAG.TR);
     trColumn.style.cursor = "pointer";
-    let tdColumnColor = document.createElement("td");
+
+    let tdColumnColor = document.createElement(TAG.TD);
     tdColumnColor.style.width = colorSize * 2.5 + "px";
 
-    let divColumnColor = setStyles(document.createElement("div"), {
+    let divColumnColor = setStyles(document.createElement(TAG.DIV), {
       width : "100%",
       height : colorSize + "px",
       borderRadius : "1px",
@@ -188,7 +198,7 @@ export function getMobileLegend(accounts, isMobile) {
 
     trColumn.appendChild(tdColumnColor);
 
-    let tdColumnDescriptor = setStyles(document.createElement("td"), {
+    let tdColumnDescriptor = setStyles(document.createElement(TAG.TD), {
       textIndent : ".4em",
       maxWidth : "4em",
       whiteSpace : "nowrap",
@@ -200,9 +210,12 @@ export function getMobileLegend(accounts, isMobile) {
 
     trColumn.appendChild(tdColumnDescriptor);
 
-    let tdColumnAmount = document.createElement("td");
+    let tdColumnAmount = setStyles(document.createElement(TAG.TD), {
+      textAlign : "right", 
+      width : "8em"
+    });
     tdColumnAmount.innerHTML = window.innerWidth > 320 ? `${d.amount} €` : `${d.amount}€`;
-    setStyles(tdColumnAmount, {textAlign : "right", width : "8em"});
+   
     trColumn.appendChild(tdColumnAmount);
 
     trColumn.addEventListener("click", () => {
@@ -227,24 +240,13 @@ export function getMobileLegend(accounts, isMobile) {
 }
 
 function getTotals(accounts) {
-  let mainTable = document.createElement("table");
   try {
-    let monthlyTotals = accounts
-      .filter(
-        (acc) =>
-          !/31\/12\/d*/.test(acc.interval.fromDate) &&
-          acc.interval.fromDate != acc.interval.toDate
-      )
-      .map((acc) => {
-        return {
-          interval: acc.interval,
-          statements: acc.statements.filter(
-            (st) => st.account.type == "RESULT"
-          ),
-        };
-      });
-
-    return monthlyTotals;
+    return accounts
+      .filter((acc) => !/31\/12\/d*/.test(acc.interval.fromDate) && acc.interval.fromDate != acc.interval.toDate)
+      .map((acc) => ({
+        interval: acc.interval,
+        statements: acc.statements.filter( (st) => st.account.type == "RESULT"),
+      }));
   } catch (error) {
     console.log(error);
   }
@@ -288,7 +290,7 @@ function periodChooser(periodName) {
   return periodName;
 }
 
-export function getOnly6and7(accounts) {
+function getOnly6and7(accounts) {
   if (accounts) {
     accounts.forEach(acc => {
       let states = acc.statements ? acc.statements : [];
@@ -316,18 +318,18 @@ function getTotalsTables(totals, totalAmounts) {
     let elem = totals[i];
 
     const periodName = elem.interval.name;
-    let trIncome = document.createElement("tr");
-    let trOutgoing = document.createElement("tr");
-    let trResult = document.createElement("tr");
-    let tdAmountIncome = document.createElement("td");
-    let tdAmountOutgoing = document.createElement("td");
-    let tdAmountResult = document.createElement("td");
+    let trIncome = document.createElement(TAG.TR);
+    let trOutgoing = document.createElement(TAG.TR);
+    let trResult = document.createElement(TAG.TR);
+    let tdAmountIncome = document.createElement(TAG.TD);
+    let tdAmountOutgoing = document.createElement(TAG.TD);
+    let tdAmountResult = document.createElement(TAG.TD);
 
-    let tdIncomePercent = document.createElement("td");
+    let tdIncomePercent = document.createElement(TAG.TD);
     tdIncomePercent.style.textAlign = "right";
-    let tdOutgoingPercent = document.createElement("td");
+    let tdOutgoingPercent = document.createElement(TAG.TD);
     tdOutgoingPercent.style.textAlign = "right";
-    let tdResultPercent = document.createElement("td");
+    let tdResultPercent = document.createElement(TAG.TD);
     tdResultPercent.style.textAlign = "right";
     if (elem.statements != null && elem.statements.length != 0) {
       const credit = elem.statements[0].credit;
@@ -356,24 +358,24 @@ function getTotalsTables(totals, totalAmounts) {
       tdAmountResult.innerHTML = "-";
     }
 
-    let tdNameIncome = setStyles(document.createElement("td"), {textIndent : ".4em"});
+    let tdNameIncome = setStyles(document.createElement(TAG.TD), {textIndent : ".4em"});
     tdNameIncome.innerHTML = periodChooser(periodName);
-    let tdNameOutgoing = setStyles(document.createElement("td"), {textIndent : ".4em"});
+    let tdNameOutgoing = setStyles(document.createElement(TAG.TD), {textIndent : ".4em"});
     tdNameOutgoing.innerHTML = periodChooser(periodName);
-    let tdNameResult = setStyles(document.createElement("td"), {textIndent : ".4em"});
+    let tdNameResult = setStyles(document.createElement(TAG.TD), {textIndent : ".4em"});
     tdNameResult.innerHTML = periodChooser(periodName);
 
-    trIncome.appendChild(document.createElement("td"));
+    trIncome.appendChild(document.createElement(TAG.TD));
     trIncome.appendChild(tdNameIncome);
     trIncome.appendChild(tdIncomePercent);
     trIncome.appendChild(tdAmountIncome);
     ret.income.push(trIncome);
-    trOutgoing.appendChild(document.createElement("td"));
+    trOutgoing.appendChild(document.createElement(TAG.TD));
     trOutgoing.appendChild(tdNameOutgoing);
     trOutgoing.appendChild(tdOutgoingPercent);
     trOutgoing.appendChild(tdAmountOutgoing);
     ret.outgoing.push(trOutgoing);
-    trResult.appendChild(document.createElement("td"));
+    trResult.appendChild(document.createElement(TAG.TD));
     trResult.appendChild(tdNameResult);
     trResult.appendChild(tdResultPercent);
     trResult.appendChild(tdAmountResult);
@@ -383,15 +385,19 @@ function getTotalsTables(totals, totalAmounts) {
     i++;
   } while (
     i < totals.length &&
-    (date.getFullYear() < new Date().getFullYear() ||
-      (date.getFullYear() == new Date().getFullYear() &&
-        date.getMonth() < new Date().getMonth()))
+    (
+      date.getFullYear() < new Date().getFullYear() ||
+      (
+        date.getFullYear() == new Date().getFullYear() &&
+        date.getMonth() < new Date().getMonth()
+      )
+    )
   );
 
   return ret;
 }
 
-export const googleChartsColors = [
+const googleChartsColors = [
   "#3366cc",
   "#dc3912",
   "#ff9900",

@@ -626,8 +626,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.sendContractExtension(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
 
-	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, callback);
+	public void removeContractTransform(String ide, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, contractId, callback);
 	}
 
 	public void getSepeComunicationData(String document, Date fini, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {

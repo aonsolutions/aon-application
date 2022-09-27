@@ -38,9 +38,9 @@ public class AccountLedgerReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static final DecimalFormat FMT_INT = new DecimalFormat("#,##0");
-	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
-	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static final Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
+	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 
 	public void printLedgerReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
@@ -74,7 +74,6 @@ public class AccountLedgerReportPDF {
 		document.setMargins(30, 30, 50, 30);
 		
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-//		writer.setPageEvent(new ReportPageEvent(metadata));
 		writer.setPageEvent(new AccountReportPdfPageEvent(metadata));
 		document.open();
 		
@@ -162,13 +161,14 @@ public class AccountLedgerReportPDF {
 		Stream<FlatAccountEntryDetail> stream = ACCOUNTING.getLedgerStream(domainName, domainId, user, params,0,Integer.MAX_VALUE);
 		PDFAction action = new PDFAction(table); 
 		stream.forEach(action);
+		action.paintTotals();
 		stream.close();
 	    
 		document.add(table);
 		document.close();
 	}
 
-	private void concat(StringBuffer buf, String string) {
+	private void concat(StringBuilder buf, String string) {
 		if (buf.length() > 0) {
 			buf.append(", ");
 		}
@@ -176,7 +176,7 @@ public class AccountLedgerReportPDF {
 	}
 	
 	private String getFilterDescription(AccountingReportParams params) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (params.getSelectedPeriod() != null) {
 			concat(buf, "Ejr.: " + params.getSelectedPeriod().getName() );
 		}
@@ -202,6 +202,10 @@ public class AccountLedgerReportPDF {
 
 		private PdfPTable table;
 		private Integer oldId;
+		private double sumDebit;
+		private double sumCredit;
+		private double sumDebitBalance;
+		private double sumCreditBalance;
 		
 		public PDFAction(PdfPTable table) {
 			this.table = table;
@@ -210,6 +214,9 @@ public class AccountLedgerReportPDF {
 		@Override
 		public void accept(FlatAccountEntryDetail entry) {
 			if (!AonNumberUtils.equals(oldId, entry.getAccount())) {
+				if ( oldId != null) {
+					paintTotals();
+				}
 				paintEntryHeader( entry );
 			}
 			Paragraph code = new Paragraph(8,entry.getJournal() == null || AonMathUtils.isZero(entry.getJournal())?""
@@ -283,7 +290,95 @@ public class AccountLedgerReportPDF {
 			documentCell.addElement(documentAccount);
 			documentCell.setBorder(0);
 			table.addCell(documentCell);
-}
+			
+			sumDebit = AonMathUtils.round(sumDebit + entry.getDebit());
+			sumCredit = AonMathUtils.round(sumCredit + entry.getCredit());
+			sumDebitBalance =  db;
+			sumCreditBalance = ub;
+			
+		}
+
+		private void paintTotals() {
+			Paragraph code = new Paragraph(8,"");
+			PdfPCell codeCell = new PdfPCell();
+			codeCell.addElement(code);
+			codeCell.setBorder(0);
+			table.addCell(codeCell);
+			
+			Paragraph description = new Paragraph(8,"");
+			PdfPCell descriptionCell = new PdfPCell();
+			descriptionCell.addElement(description);
+			descriptionCell.setBorder(0);
+			table.addCell(descriptionCell);
+
+			Chunk conceptChunk = new Chunk("",BODY_FONT);
+			while (conceptChunk.getWidthPoint() > 100f) {
+				conceptChunk = new Chunk("",BODY_FONT);
+			}
+			Paragraph concept = new Paragraph(8,conceptChunk);
+			PdfPCell conceptCell = new PdfPCell();
+			conceptCell.addElement(concept);
+			conceptCell.setBorder(0);
+			table.addCell(conceptCell);
+			
+			String debit = AonMathUtils.isZero( sumDebit)?"":FMT.format(sumDebit);
+			Paragraph debitP = new Paragraph(8,debit,BODY_FONT_BOLD);
+			debitP .setAlignment( Element.ALIGN_RIGHT );
+			PdfPCell debitCell = new PdfPCell( );
+			debitCell.addElement(debitP);
+			debitCell.setBorder(0);
+			debitCell.setBorderWidthTop(1);
+			debitCell.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			table.addCell(debitCell);
+			
+			String credit = AonMathUtils.isZero( sumCredit)?"":FMT.format(sumCredit);
+			Paragraph creditP = new Paragraph(8,credit,BODY_FONT_BOLD);
+			creditP .setAlignment( Element.ALIGN_RIGHT );
+			PdfPCell creditCell = new PdfPCell( );
+			creditCell.addElement(creditP);
+			creditCell.setBorder(0);
+			creditCell.setBorderWidthTop(1);
+			creditCell.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			table.addCell(creditCell);
+
+			String debitBalance = AonMathUtils.isLessThanZero( sumDebitBalance )?"":FMT.format(sumDebitBalance);
+			Paragraph debitBalanceP = new Paragraph(8,debitBalance,BODY_FONT_BOLD);
+			debitBalanceP .setAlignment( Element.ALIGN_RIGHT );
+			PdfPCell debitBalanceCell = new PdfPCell( );
+			debitBalanceCell.addElement(debitBalanceP);
+			debitBalanceCell.setBorder(0);
+			debitBalanceCell.setBorderWidthTop(1);
+			debitBalanceCell.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			table.addCell(debitBalanceCell);
+			
+			String creditBalance = AonMathUtils.isLessThanZero( sumCreditBalance )?"":FMT.format(sumCreditBalance);
+			Paragraph creditBalanceP = new Paragraph(8,creditBalance,BODY_FONT_BOLD);
+			creditBalanceP .setAlignment( Element.ALIGN_RIGHT );
+			PdfPCell creditBalanceCell = new PdfPCell( );
+			creditBalanceCell.addElement(creditBalanceP);
+			creditBalanceCell.setBorder(0);
+			creditBalanceCell.setBorderWidthTop(1);
+			creditBalanceCell.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			table.addCell(creditBalanceCell);
+
+			Paragraph balancingAccount = new Paragraph(8,"",BODY_FONT);
+			balancingAccount.setAlignment( Element.ALIGN_CENTER);
+			PdfPCell balancingAccountCell = new PdfPCell();
+			balancingAccountCell.addElement(balancingAccount);
+			balancingAccountCell.setBorder(0);
+			table.addCell(balancingAccountCell);
+
+			Paragraph documentAccount = new Paragraph(8,"",BODY_FONT);
+			PdfPCell documentCell = new PdfPCell();
+			documentCell.addElement(documentAccount);
+			documentCell.setBorder(0);
+			table.addCell(documentCell);
+			
+			sumDebit = 0.0;
+			sumCredit = 0.0;
+			sumDebitBalance = 0.0;
+			sumCreditBalance = 0.0;
+		}
 
 		private void paintEntryHeader(FlatAccountEntryDetail entry) {
 			oldId = entry.getAccount();

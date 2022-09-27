@@ -99,7 +99,7 @@ public class PDF2AONTestCase extends AbstractTediTest {
 			
 			
 			// Activity
-			assertNull(file + "Not Null Activity!", inv.getActivity());
+			assertNull(file + "Not Null Activity!", inv.getActivity().getId());
 			// Epigraph
 			assertNull(file + "Not Null Epigraph!", inv.getEpigraph());
 			// InvestAsset

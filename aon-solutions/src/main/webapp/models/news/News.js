@@ -1,3 +1,4 @@
+import { AonDateUtils } from "../../modules/utils/AonDateUtils.js";
 import { Domain } from "../Domain.js";
 
 export class News {
@@ -17,7 +18,7 @@ export class News {
 	scope;
     rattach;
     attach;
-	
+
     constructor(news) {
         if(news) {
             this.setNews(news);
@@ -116,7 +117,7 @@ export class News {
     }
 
     setInitDate(initDate){
-        this.initDate = initDate;
+        this.initDate = initDate ? new Date(initDate).getTime() : null;
     }
 
     getEndDate(){
@@ -124,7 +125,7 @@ export class News {
     }
 
     setEndDate(endDate){
-        this.endDate = endDate;
+        this.endDate = endDate ? new Date(endDate).getTime() : null;
     }
 
     getCategory(){
@@ -159,11 +160,41 @@ export class News {
         this.rattach = rattach;
     }
 
+    //--------------------TMP---------
     getAttach(){
         return this.attach;
     }
 
     setAttach(attach){
         this.attach = attach;
+    }
+
+    setInitDateTime(time){
+        if(this.initDate){
+            let date =  AonDateUtils.formatDateOrigin(this.initDate);
+            if(time){
+                date =  date + " " + time 
+            }
+            this.initDate  = new Date(date).getTime();
+        }
+    }
+    
+    setEndDateTime(time){
+        if(this.endDate){
+            let date =  AonDateUtils.formatDateOrigin(this.endDate);
+            if(time){
+                date =  date + " " + time 
+            }
+            this.endDate  = new Date(date).getTime();
+        }
+    }
+
+
+    getInitDateTime(){
+        return this.initDate ? AonDateUtils.setTime(this.initDate) : null;
+    }
+    
+    getEndDateTime(){
+        return this.endDate ? AonDateUtils.setTime(this.endDate) : null;
     }
 }

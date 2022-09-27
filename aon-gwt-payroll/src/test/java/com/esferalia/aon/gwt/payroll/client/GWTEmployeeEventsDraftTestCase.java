@@ -633,7 +633,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void removeContractTransform(String currentDomainName, String currentUser, String ide,
+			public void removeContractTransform(String currentDomainName, String currentUser, String ide, Integer contractId,
 					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				

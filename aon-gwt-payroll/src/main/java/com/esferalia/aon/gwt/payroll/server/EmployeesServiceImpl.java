@@ -6440,7 +6440,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get employee nafxipf
 			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
-					new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
 					employeeContractInfo.getEmployeeInfo().getSurName(),
 					employeeContractInfo.getEmployeeInfo().getSecondSurName());
@@ -6865,7 +6865,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void removeContractTransform(String domainName, String userLogin, String ide) throws IllegalArgumentException {
+	public void removeContractTransform(String domainName, String userLogin, String transformIde, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6875,7 +6875,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 
-			Sepe.removeTransformation(certificateIS, certificate.getPassword(), certificate.getType(), ide);
+			Sepe.removeTransformation(certificateIS, certificate.getPassword(), certificate.getType(), transformIde);
+			JooqContractSEPE.deleteContractTransformData(connection, contractId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -7317,7 +7318,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setOldDateFinContract(employeeContractInfo.getContractInfo().getOriginalEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
-		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
+		builder.setDateComContract(employeeContractInfo.getContractInfo().getTransformDate() == null ? 
+				employeeContractInfo.getContractInfo().getStartDate() : employeeContractInfo.getContractInfo().getTransformDate());
 		builder.setOffer(OfferType.NO);
 		builder.setJndType(JndType.safeValueOf(employeeContractInfo.getContractSpecificData().getJourneyType()));
 		builder.setDurationTypeJndHour(employeeContractInfo.getContractSpecificData().getJourneyDurationHours());

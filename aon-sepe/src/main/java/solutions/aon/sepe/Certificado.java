@@ -191,9 +191,8 @@ public class Certificado {
 			String[] fST = Toolkit.formatDate(certificates.getfSTd());
 
 			HtmlPage htmlPage = firstPageSepeCert(webClient);
-			HtmlAnchor hrefButton = HtmlUnitToolkit
-					.wait4(htmlPage, p -> p.getAnchorByHref(
-							"https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do"))
+			
+			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do"))
 					.orElseThrow();
 			htmlPage = (HtmlPage) hrefButton.click();
 
@@ -486,13 +485,13 @@ public class Certificado {
 			Thread.sleep(1000);
 		}
 		HtmlPage htmlPage = (HtmlPage) page;
-
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
+		handleExceptionsErrors(htmlPage);
+		
 		return htmlPage;
 	}
 
-	private static Page getPageFirstProcess(WebClient webClient) throws FailingHttpStatusCodeException,
-			MalformedURLException, IOException, SepeException, InterruptedException {
+	private static Page getPageFirstProcess(WebClient webClient) throws FailingHttpStatusCodeException, IOException, SepeException, InterruptedException {
 
 		HtmlPage htmlPage = webClient.getPage(
 				"https://isweb.sepe.gob.es/GetAccess/Saml/SSO/Init?GAURI=https%3A%2F%2Fsede.sepe.gob.es%2FDCertificadosWeb%2FActionNavegacion.do%3FaccesoGA%3Dempresas%26accion%3Dnavegacion&GA_SAML_AC_COMPARISON=minimum&GA_SAML_IS_PASSIVE=false&GA_SAML_AC_CLASS_REF=http%3A%2F%2Feidas.europa.eu%2FLoA%2Flow&GA_SAML_PROVIDER=Q2819009H_E00142804&GA_SAML_IDP=https%3A%2F%2Fpasarela.clave.gob.es%2FProxy2");
@@ -512,8 +511,7 @@ public class Certificado {
 		if (page.isHtmlPage()) {
 			HtmlPage htmlPage = (HtmlPage) page;
 			handleSepeExceptions(htmlPage);
-			DomNode inputRadio2 = htmlPage
-					.querySelector("#contenido form input[name=documentoSeleccionado][value=\"0\"]");
+			DomNode inputRadio2 = htmlPage.querySelector("#contenido form input[name=documentoSeleccionado][value=\"0\"]");
 			if (inputRadio2 != null) {
 				((HtmlRadioButtonInput) inputRadio2).click();
 				page = htmlPage.getElementByName("btMostrar").click();
@@ -527,6 +525,16 @@ public class Certificado {
 			DomNode error = htmlPage.querySelector("#contenido > form > p.formAviso");
 			if (error != null && !error.getVisibleText().isEmpty())
 				throw new SepeException(error.getVisibleText());
+		} catch (NullPointerException e) {
+		}
+	}
+	
+	
+	private static void handleExceptionsErrors(HtmlPage htmlPage) throws SepeException {
+		try {
+			DomNode error = htmlPage.querySelector("#content > div > div.panel-body > .alert");
+			if (error != null && !error.getVisibleText().isEmpty() && error.getVisibleText().toLowerCase().contains("please contact your system"))
+				throw new SepeException("Certificado revocado o no v\u00e1lido");
 		} catch (NullPointerException e) {
 		}
 	}

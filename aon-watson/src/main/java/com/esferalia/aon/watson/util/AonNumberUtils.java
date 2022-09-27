@@ -320,4 +320,11 @@ public class AonNumberUtils {
 		return !isPar(n);
 	}
 
+	public static Integer toInteger(Boolean b) {
+		if (b == null) {
+			return null;
+		}
+		return b.booleanValue()?1:0;
+	}
+
 }

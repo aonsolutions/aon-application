@@ -743,6 +743,7 @@ class SistemaREDMov {
 		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00B";
 		String fieldValue = "codNuevoGrupo";
 		String fieldDate = "fechaSituacion";
+
 		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, grupCtz, fieldValue, fieldDate, url);
 	}
@@ -755,6 +756,7 @@ class SistemaREDMov {
 		String fieldValue = "NueOcu";
 		String fieldDate = "fecSit";
 		String newOcu = ocup.toUpperCase();
+
 		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, newOcu, fieldValue, fieldDate, url);
 	}
@@ -766,6 +768,7 @@ class SistemaREDMov {
 		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00I";
 		String fieldValue = "NueCat";
 		String fieldDate = "fecSit";
+
 		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, cat, fieldValue, fieldDate, url);
 	}
@@ -777,7 +780,7 @@ class SistemaREDMov {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
-			Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 3 : 1;
+			Integer ident = Integer.parseInt(Toolkit.getIdentityType(ipf));
 
 			// Date
 			String[] fr = formatDate(fecha); // date [day,month,year]
@@ -841,8 +844,8 @@ class SistemaREDMov {
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 			HtmlPage htmlPage = webClient.getPage(url);
-
-			Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 3 : 1;
+			
+			Integer ident = Integer.parseInt(Toolkit.getIdentityType(ipf));
 
 			String[] fr = formatDate(fecha); // date [day,month,year]
 
