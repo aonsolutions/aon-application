@@ -17,6 +17,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -71,6 +72,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	// ------------------------------------------ Variables
 	
 	private AgreementInfo agreement;
+	private boolean hasChange = false;
+	private AonToolbarSmallButton saveBtn;
 	
 	// ------------------------------------------ Constructor
 
@@ -120,7 +123,6 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 		levelGrid.setWidget(row, 1, category);
 		
 		Label delete = new Label("");
-		delete.addStyleName(style.gridTitle());
 		levelGrid.setWidget(row, 2, delete);
 		
 		levelGrid.getRowFormatter().addStyleName(row, style.headerSticky());
@@ -155,8 +157,10 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 				if(AonStringUtils.isBlank(ev.getValue()) || agreement.existLevel(ev.getValue())) {
 					showWarning("Nivel existente", "La descripci\u00f3n no puede ser vacia o coincidir con la de otro nivel ya existente");
 					levelCell.setValue(level.getDescription());
-				} else
+				} else {
 					level.setDescription(ev.getValue());
+					setHasChange(true);
+				}
 			});
 			
 			TextBox categoryCell = new TextBox();
@@ -171,6 +175,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 					String[] categorySplit = AonStringUtils.split(categoryValue.getValue(), ',');
 					for(int i = 0; i < categorySplit.length; i++)
 						agreement.addCategory(level.getId(), categorySplit[i].trim());
+					
+					setHasChange(true);
 				}
 				
 			});
@@ -189,6 +195,7 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 					public void onAccept() {
 						agreement.deleteLevel(level.getId());
 						setAgreementLevel(agreement);
+						setHasChange(true);
 					}
 				});
 			});
@@ -206,7 +213,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	private void categoryTableWidth() {
 		levelGrid.setWidth("100%");
 		levelGrid.getColumnFormatter().setWidth(0, "20%");
-		levelGrid.getColumnFormatter().setWidth(1, "80%");
+		levelGrid.getColumnFormatter().setWidth(1, "75%");
+		levelGrid.getColumnFormatter().setWidth(2, "5%");
 	}
 	
 	// ------------------------------------------ toolbar
@@ -214,9 +222,10 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	private void createToolbar() {
 		toolbar = new AonToolbar("Nivel / Categoria");
 		
-		AonToolbarSmallButton saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+			setHasChange(false);
 			onSaved();
 		});
 		
@@ -242,6 +251,7 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 				public void onAccept() {
 					agreement.createLevel(levelDescription.getValue());
 					setAgreementLevel(agreement);
+					setHasChange(true);
 				}
 			});
 		});
@@ -261,6 +271,21 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 		agreementLevelMessage.getElement().getStyle().clearDisplay();
 	}
 	
+	// ------------------------------------------ HasChange
+	
+	public boolean hasChange() {
+		return hasChange;
+	}
+
+	public void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		saveBtn.setEnabled(hasChange());
+		if(!hasChange()) {
+			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
+			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		}
+	}
+
 	// ------------------------------------------ Abstract methods
 	
 	public abstract void onSaved();

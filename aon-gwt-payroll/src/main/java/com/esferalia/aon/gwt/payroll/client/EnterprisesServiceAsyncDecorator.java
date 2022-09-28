@@ -1020,5 +1020,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.checkAndUpdateServiAgreement(domainName, currentUser, agreement, callback);
 	}
+	
+	@Override
+	public void deletePayments(String domainName, List<Integer> paymentIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deletePayments(domainName, paymentIds, callback);
+	}
 
 }

@@ -517,6 +517,21 @@ public class JooqAgreementTab {
 		});
 	}
 	
+	// ------------------------------- deletePayments
+
+	public static void deletePayments(Connection conn, Integer domainId, List<Integer> paymentIds) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		dslContext.delete(AGREEMENT_EXTRA)
+			.where(AGREEMENT_EXTRA.DOMAIN.eq(domainId))
+			.and(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.in(paymentIds))
+			.execute();
+		
+		dslContext.delete(AGREEMENT_PAYMENT)
+			.where(AGREEMENT_PAYMENT.DOMAIN.eq(domainId))
+			.and(AGREEMENT_PAYMENT.ID.in(paymentIds))
+			.execute();
+	}
+	
 	// ------------------------------- Auxiliar methods
 	
 	private static java.util.Date parseToJavaDate(Date date) {

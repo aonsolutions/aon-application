@@ -451,6 +451,8 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	public LevelData getLevelData(Integer levelId, String variable, Date date) {
 		Set<LevelData> levelDatas = getLevelDatasMap().get(levelId);
+		if(null == levelDatas) return null;
+		
 		for(LevelData levelData : levelDatas)
 			if(AonStringUtils.equalsIgnoreCase(levelData.getName(), variable) && levelData.getStartDate().equals(date))
 				return levelData;
@@ -459,6 +461,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	public void createLevelData(Integer levelId, String variable, String expression, Date selectedDate) {
 		Set<LevelData> levelDatas = getLevelDatasMap().get(levelId);
+		if(null == levelDatas) levelDatas = new HashSet<>();
 		Date endDate = getNextEndDate(selectedDate);
 		
 		Random rand = new Random();

@@ -1,0 +1,76 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
+	xmlns:cv='urn:import:com.google.gwt.user.cellview.client'>
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.PaymentsCleanDialog.MyStyle">
+	
+		.form {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+			width: 780px;
+			height: 430px;
+			margin: 1rem 0;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			padding: 0 1rem;
+			gap: .5rem;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.margin{
+			margin: 0 0 0 1rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+		}
+		
+		.contractsPanel{
+			padding: 1rem;
+		}
+		
+		.container{
+			padding: 0 1rem;
+		}
+		
+		.content{
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+			padding: 0 1rem;
+			gap: 1rem;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+	
+		<g:HTMLPanel ui:field="messagePanel" />
+		
+		<g:HTMLPanel styleName="{style.content}">
+			<g:Label text="Al actualizar el convenio se volverán importar todos los devengos. Seleccione los que quiere eliminar y deje solo los que quiera mantener." />
+			<cv:DataGrid ui:field="paymentsDG" styleName="{style.container}"/>
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

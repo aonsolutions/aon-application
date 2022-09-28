@@ -29,7 +29,9 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -70,6 +72,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					for(Payment payment : payments)
 						agreement.addPayment(payment);
 					setAgreementPayment(agreement);
+					setHasChange(true);
 				}
 
 				@Override
@@ -96,6 +99,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					for(Payment payment : payments)
 						agreement.addPayment(payment);
 					setAgreementPayment(agreement);
+					setHasChange(true);
 				}
 				
 				@Override
@@ -122,6 +126,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					for(Payment payment : payments)
 						agreement.addPayment(payment);
 					setAgreementPayment(agreement);
+					setHasChange(true);
 				}
 				
 				@Override
@@ -148,6 +153,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					for(Payment payment : payments)
 						agreement.addPayment(payment);
 					setAgreementPayment(agreement);
+					setHasChange(true);
 				}
 				
 				@Override
@@ -183,6 +189,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 						agreement.addExtra(extra);
 					
 					setAgreementPayment(agreement);
+					setHasChange(true);
 				}
 				
 			};
@@ -264,6 +271,9 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	private AddPaymentContextMenu contextMenu;
 	private List<Payment> paymentList;
 	
+	private boolean hasChange = false;
+	private AonToolbarSmallButton saveBtn;
+	
 	// ------------------------------------------ Constructor
 
 	protected AgreementPaymentTab() {
@@ -329,7 +339,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		Column<Payment, String> codeColumn = new Column<Payment, String>(new TextCell()) {
 			@Override
 	        public String getValue(Payment payment) {
-				return null == payment.getType() ? "" : payment.getType().ordinal()+"";
+				return null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
 	        }
 		};
 
@@ -363,6 +373,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
 	    	showHidePayment(payment);
 	    	agreementPaymentDG.redraw();
+			setHasChange(true);
 	    });
 	    
 	    Column<Payment, Payment> visibilityColumn = new Column<Payment, Payment>(visibilityActionCell) {
@@ -400,6 +411,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				public void onAccept() {
 					agreement.deletePayment(payment);
 					setAgreementPayment(agreement);
+					setHasChange(true);
 				}
 			});
 	    }); 
@@ -441,6 +453,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				agreement.replacePayment(payment);
 				if(null != extra) agreement.replaceExtra(extra);
 				setAgreementPayment(agreement);
+				setHasChange(true);
 			}
 
 			private void updatePaymentExpresion(boolean isHide, Payment selectedPayment, Payment updatedPayment) {
@@ -551,9 +564,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	private void createToolbar() {
 		toolbar = new AonToolbar("Devengos");
 		
-		AonToolbarSmallButton saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+			setHasChange(false);
 			onSaved();
 		});
 		
@@ -574,6 +588,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					protected void onAccept(Payment payment) {
 						agreement.addPayment(payment);
 						setAgreementPayment(agreement);
+						setHasChange(true);
 					}
 
 					@Override
@@ -584,6 +599,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 							agreement.addExtra(extra);
 						
 						setAgreementPayment(agreement);
+						setHasChange(true);
 						
 					}
 
@@ -594,6 +610,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 								agreement.addPayment(payment);
 						}
 						setAgreementPayment(agreement);
+						setHasChange(true);
 					}
 				};
 			}
@@ -602,6 +619,21 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		toolbar.add(saveBtn);
 		toolbar.add(addPaymentButton);
 		
+	}
+	
+	// ------------------------------------------ HasChange
+	
+	public boolean hasChange() {
+		return hasChange;
+	}
+
+	public void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		saveBtn.setEnabled(hasChange());
+		if(!hasChange()) {
+			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
+			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		}
 	}
 	
 	// ------------------------------------------ Abstract methods

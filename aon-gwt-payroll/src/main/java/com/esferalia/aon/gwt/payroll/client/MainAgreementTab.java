@@ -738,6 +738,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 						@Override
 						public void onSuccess(Void result) {
+							MainAgreementTab.this.agreements.setViewAgreements(false);
 							MainAgreementTab.this.agreements.resetTypeView();
 							MainAgreementTab.this.agreements.reloadAgreements();
 //							showSelectAgreementMessage();
@@ -920,22 +921,63 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	
 	@UiHandler("agreementTab")
 	void onAgreementTabClick(ClickEvent event) {
-		selectAgreementTab();
+		if(!handleSave()) selectAgreementTab();
+		else showWarnSave(accept -> selectAgreementTab());
 	}
 	
 	@UiHandler("paymentTab")
 	void onPaymentTabClick(ClickEvent event) {
-		selectPaymentTab();
+		if(!handleSave()) selectPaymentTab();
+		else showWarnSave(accept -> selectPaymentTab());
 	}
 	
 	@UiHandler("salaryTableTab")
 	void onSalaryTableTabClick(ClickEvent event) {
-		selectSalaryTableTab();
+		if(!handleSave()) selectSalaryTableTab();
+		else showWarnSave(accept -> selectSalaryTableTab());
 	}
 	
 	@UiHandler("levelTab")
 	void onLevelTabClick(ClickEvent event) {
-		selectLevelTab();
+		if(!handleSave()) selectLevelTab();
+		else showWarnSave(accept -> selectLevelTab());
+	}
+	
+	private boolean handleSave() {
+		int widgetIdx = mainDeckPanel.getVisibleWidget();
+		switch (widgetIdx) {
+		case 1:
+			return agreementLevelTab.hasChange();
+		case 2:
+			return agreementSalaryTableTab.hasChange();
+		case 3:
+			return agreementPaymentTab.hasChange();
+		default:
+			return false;
+		}
+	}
+	
+	private void showWarnSave(Consumer<Void> accept) {
+		AonDialog warnDialog = new AonDialog("Cambios sin guardar", new HTMLPanel("Esta abandonando una pesta\u00f1a con cambios no guardados. \u00bfEst\u00e1 seguro de que desea continuar sin guardar\u003f"));
+		warnDialog.confirm(new AonAcceptDialogCallback() {
+			
+			@Override
+			public void onCancel() {
+				// Nothing to do here
+			}
+			
+			@Override
+			public void onAccept() {
+				// Recargando el convenio para omitir cambios
+				getAgreement(agreementSelected.getId(), agreementInfo -> {
+					agreementSelected = agreementInfo;
+					accept.accept(null);
+				});
+				
+				// NO recargando el convenio para omitir cambios
+				// accept.accept(null);
+			}
+		});
 	}
 	
 	private void selectAgreementTab() {
@@ -968,6 +1010,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.addStyleName(style.tabNotSelected());
 		
 		agreementLevelTab.setAgreementLevel(agreementSelected);
+		agreementLevelTab.setHasChange(false);
 	}
 	
 	private void selectSalaryTableTab() {
@@ -984,6 +1027,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.addStyleName(style.tabNotSelected());
 		
 		agreementSalaryTableTab.setAgreementSalaryTable(agreementSelected);
+		agreementSalaryTableTab.setHasChange(false);
 	}
 	
 	private void selectPaymentTab() {
@@ -1000,6 +1044,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		salaryTableTab.addStyleName(style.tabNotSelected());
 		
 		agreementPaymentTab.setAgreementPayment(agreementSelected);
+		agreementPaymentTab.setHasChange(false);
 	}
 	
 }

@@ -114,6 +114,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		extraPanel.setVisible(null != extra || payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005));
 		getEnableDisableButton(prorratExtra, null == extra || AonStringUtils.isBlank(extra.getIssueDate()));
+		prorratExtraClick(null == extra || AonStringUtils.isBlank(extra.getIssueDate()));
 		extraStartDate.getElement().setPropertyString("placeholder", "dd/mm");
 		extraEndDate.getElement().setPropertyString("placeholder", "dd/mm");
 		extraIssueDate.getElement().setPropertyString("placeholder", "dd/mm");		
@@ -402,6 +403,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		Boolean value = !oldValue;
 		getEnableDisableButton(prorratExtra, value);
 		
+		prorratExtraClick(value);
+	}
+	
+	private void prorratExtraClick(boolean value) {
 		if(Boolean.TRUE.equals(value)) {
 			// Prorrat
 			extraStartDate.setValue(null);
