@@ -112,12 +112,11 @@ public class InvoiceJSON {
 	
 	public static JSONObject toJSON(Invoice invoice) {
 		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
-		InvoiceStatus status = invoice.getStatus() != null 
-				? InvoiceStatus.safeValueOf(invoice.getStatus())
-				: InvoiceStatus.PENDING; 
 		
 		JSONObject json = new JSONObject()
-			.put(IJsonNames.STATUS, status.name().toLowerCase())
+			.put(IJsonNames.STATUS, invoice.isRecorded() 
+				? InvoiceStatus.SCORED.name().toLowerCase() 
+				: InvoiceStatus.PENDING.name().toLowerCase())
 			.put(IJsonNames.ID, invoice.getId())
 			.put(IJsonNames.DOMAIN, invoice.getDomain())
 			.put(IJsonNames.SERIES, invoice.getSeries())

@@ -139,6 +139,11 @@ public class ConsoleParams {
 		return this;
 	}
 
+	public int addTotalProgress() {
+		this.totalProgress = totalProgress + 1;
+		return this.totalProgress;
+	}
+
 	public int getPartialCount() {
 		return partialCount;
 	}

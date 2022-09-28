@@ -214,7 +214,8 @@ public class TaskServlet extends AonApiHttpServlet{
 
 		JSONArray array = new JSONArray();
 		
-		tasks.forEach(t ->{
+		tasks
+		.forEach(t ->{
 			JSONObject json = TaskJSON.toJSON(t);
 			if(t.getParentObj()!=null) {
 				json.put("parentObj", TaskJSON.toJSON(t.getParentObj()));

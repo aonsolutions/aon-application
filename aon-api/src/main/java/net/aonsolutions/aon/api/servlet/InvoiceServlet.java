@@ -510,7 +510,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				? invoice.getReferenceCode() : referenceAux);
 		json.put(IJsonNames.NAME, invoice.getRegistryName());
 		json.put(IJsonNames.TOTAL, invoice.getTotal());
-		json.put(IJsonNames.STATUS, InvoiceStatus.safeValueOf(invoice.getStatus()));
+		json.put(IJsonNames.STATUS, invoice.isRecorded() 
+				? InvoiceStatus.SCORED.name().toLowerCase() 
+				: InvoiceStatus.PENDING.name().toLowerCase());
 		return json;
 	}
 	

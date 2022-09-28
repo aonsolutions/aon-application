@@ -70,7 +70,7 @@ export class AonNotificationIcon extends AonElement {
         });
 
 	}
-
+   
     buildView(){
         const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON}).element;
         CreateComponent.createAonIconButton({
@@ -97,7 +97,7 @@ export class AonNotificationIcon extends AonElement {
             font-weight: 300;
             background: white;
             box-sizing: border-box;
-            border-radius: 0.5rem;
+            border-radius: 5px;
             box-shadow: 0.5rem 0.5rem 2rem 0 rgb(0 0 0 / 20%);
             animation-name: dropPanel;
             animation-iteration-count: 1;
@@ -109,9 +109,6 @@ export class AonNotificationIcon extends AonElement {
 
 
         this.WINDOW_LISTENER = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-
             if(!this.contains(ev.target)){
                 this.closeDialog();
             }
@@ -200,14 +197,13 @@ export class AonNotificationIcon extends AonElement {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.082);
             padding:0.6em;
             margin:0;
         `;
         box.appendChild(header);
   
         const pHeader = document.createElement('p');
-        pHeader.style = `padding:0;margin:0;color: #84929f;font-weight: 700;`;
+        pHeader.style = `padding:0;margin:0;color:#5F6368;font-weight: 700;`;
         pHeader.innerHTML = MSG.NOTIFICATIONS;
         header.appendChild(pHeader);
 
@@ -381,6 +377,5 @@ export class AonNotificationIcon extends AonElement {
     getTotalCount(){
         return Object.keys(this.COUNT).reduce((acc, value) => acc + this.COUNT[value], 0);
     }
-
 }
 window.customElements.define(TAG.AON_NOTIFICATION_ICON,  AonNotificationIcon);

@@ -22,7 +22,12 @@ public class AonTabLayoutPanel extends TabLayoutPanel {
         tabList.add(label);
     }
     
-    @Override
+	public void add(Widget widget, Widget tab, String label) {
+		super.add(widget, tab);
+		tabList.add(label);
+	}
+
+	@Override
     public boolean remove(Widget widget) {
     	int i = getWidgetIndex(widget);
     	if (i < 0) return false; 
@@ -60,4 +65,5 @@ public class AonTabLayoutPanel extends TabLayoutPanel {
     public void selectTab(final String label) {
     	super.selectTab(getWidgetIndex(label));
     }
+
 }

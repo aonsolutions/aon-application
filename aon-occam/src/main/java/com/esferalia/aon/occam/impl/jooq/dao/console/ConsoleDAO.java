@@ -1,13 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record2;
 import org.jooq.Schema;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -18,7 +22,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class ConsoleDAO {
 	
@@ -30,14 +36,23 @@ public class ConsoleDAO {
 	}
 	
 	public static Stream<Domain> getDomains(CloseableAONContext ctx, DomainParams params) {
+		Field<Integer> count = DSL.count().as("userCount");
+		Field<Integer> userDomain = USER.DOMAIN.as("userCountDomain");
+		Table<Record2<Integer,Integer>> userCount = ctx.getDslContext().select(userDomain,count)
+			.from(USER)
+			.where( USER.ACTIVE.eq((byte) 1) )
+			.groupBy(userDomain)
+			.asTable();
 		return ctx.getDslContext().select()
 			.from(DOMAIN)
+			.leftOuterJoin(userCount).on(DOMAIN.ID.eq(userDomain))
 			.where( getFilter(params) )
 			.offset(params.getOffset())
 			.limit(params.getLimit())
 			.fetch()
 			.stream()
-			.map(new DomainFiller());
+			.map(rec -> new Pair<>(rec, new DomainFiller().apply(rec)) )
+			.map( pair -> pair.getRight().setDefinedUsers( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(count)) ) );
 	}
 	
 	public static Stream<Schema> getSchemas(AONContext ctx) {

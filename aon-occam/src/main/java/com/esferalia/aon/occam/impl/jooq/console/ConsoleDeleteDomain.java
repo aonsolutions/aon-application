@@ -4,13 +4,13 @@ package com.esferalia.aon.occam.impl.jooq.console;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.text.MessageFormat;
+import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.Domain;
@@ -99,11 +99,18 @@ public class ConsoleDeleteDomain {
 			ConsoleUtils.log(params,"** Start domain deletion!");
 			ConsoleUtils.disableForeignKeys(params);
 			ConsoleUtils.log(params,"** Start transaction!");
-			params.getToDslContext().transaction(conf -> params.getFromConnection()
-				.getSchema()
-				.getTables()
-				.stream()
-				.forEach(t -> deleteTableRows(params, t)));
+			
+			
+			params.setTotalCount(0);
+			params.setTotalProgress(0);
+			getStream( params )
+				.forEach( t -> params.setTotalCount( params.getTotalCount() + 1) );
+			
+			params.getToDslContext().transaction(conf -> 
+				getStream( params )
+					.filter( ConsoleDeleteDomain::hasDomain )
+					.forEach(t -> deleteTableRows(params, t))
+			);
 			params.getFromDslContext()
 				.delete(DOMAIN)
 				.where( DOMAIN.ID.equal(params.getFromConnection().getFullDomain().getId()))
@@ -132,19 +139,29 @@ public class ConsoleDeleteDomain {
 		}
 	}
 
+	private static Stream<Table<?>> getStream(ConsoleParams params) {
+		return params.getFromConnection()
+			.getSchema()
+			.getTables()
+			.stream()
+			.filter( ConsoleDeleteDomain::hasDomain );
+	}
+	
 	private static void deleteTableRows(ConsoleParams params, Table<?> t) {
-		if (hasDomain(t)) {
-			ConsoleUtils.log(params,MessageFormat.format(" **** Deleting {0} table:", t.getName()));
-			ConsoleUtils.log(params," ****** " + params.getFromDslContext()
-				.delete(t)
-				.where( getDomainField(t).equal(params.getFromConnection().getFullDomain().getId()))
-				.getSQL(ParamType.INLINED));
-			int count = params.getFromDslContext()
-				.delete(t)
-				.where( getDomainField(t).equal(params.getFromConnection().getFullDomain().getId()))
-				.execute();
-			ConsoleUtils.log(params,MessageFormat.format(" ****** {0} rows deleted", count));
-		}
+		params.addTotalProgress();
+		int percent = (params.getTotalProgress() * 100 / params.getTotalCount());
+		int count = params.getFromDslContext()
+			.delete(t)
+			.where( getDomainField(t).equal(params.getFromConnection().getFullDomain().getId()))
+			.execute();
+		ConsoleUtils.log(params,MessageFormat.format("\t [ {0} ] {1}%  ( {2} / {3} ) -- {4} - {5} rows)"
+			, (AonStringUtils.repeat('*', percent/2) + AonStringUtils.repeat(' ', 50 - percent/2))
+			, percent
+			, Integer.toString(params.getTotalProgress())
+			, Integer.toString(params.getTotalCount())
+			, t.getName()
+			, count)
+		);
 	}
 	
 	@SuppressWarnings("unchecked")

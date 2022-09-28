@@ -19,7 +19,7 @@ import { AonIcon } from "../../../components/aon-icon.js";
  * @param {HTMLElement} aonTextArea aon-text-area
  */
 const buildTextareaToolbar =  (aonTextArea) => {
-    const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
+    const textAreaText = aonTextArea.getTextArea();
     if(textAreaText){
         setStyles(textAreaText, {resize: "none"});
     } 
@@ -335,7 +335,7 @@ const sendMessage = async (text, task) => {
 const checkFilesAddEventClick = ({id}, parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`)
+        parent.querySelectorAll(`[${CONSTANT.TYPE}='${CONSTANT.AON_FILE}'], ${TAG.IMG}`)
         .forEach(element=>{
             const tagName = element.tagName;
             if(tagName && tagName.toLowerCase() === TAG.IMG){
@@ -372,9 +372,8 @@ const checkFilesAddEventDescription = (task)=>{
     if(task && descriptionEl){
         const observation = task.getDescriptionJson().observation;
         if(observation) {
-            const element = document.getElementById(descriptionEl.TEXTAREA);
             descriptionEl.setValueHtml(observation);
-            checkFilesAddEventClick({id:task.getId()}, element);
+            checkFilesAddEventClick({id:task.getId()}, descriptionEl.getTextArea());
         }
     }
 }
@@ -564,7 +563,8 @@ const checkButtonsToolbar = (task, taskId)=>{
         
             const parent         = aonMessengerChat.getApplicationParent();
 
-            parent.getMyWorkgroups().then(myWorkgroups=>{
+            parent.getMyWorkgroups()
+            .then(myWorkgroups=>{
                 const is = isMyTask(task, myTaskHolderId, myWorkgroups);
                 toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, is);
                 toolbar.showButton(ACTIONS.DELETE.id, is);
@@ -1210,6 +1210,13 @@ const createLabelAnchor = (text, domainName, clickable = true, editable = false)
     };
 }
 
+/**
+ * 
+ * @param {Task} task 
+ * @param {Integer} myTaskHolderId 
+ * @param {Array} myWorkgroups 
+ * @returns 
+ */
 const isMyTask = (task, myTaskHolderId, myWorkgroups) => {
 
     const taskTaskholderId = task.task_holder && task.task_holder.id ? task.task_holder.id : undefined;
@@ -1220,8 +1227,9 @@ const isMyTask = (task, myTaskHolderId, myWorkgroups) => {
    
     const isMyTaskHolder   = (taskTaskholderId == myTaskHolderId) || (taskSenderId == myTaskHolderId);
 
-    return isMyTaskHolder || // isMyTaskHolder
-           myWorkgroups && myWorkgroups.length ? myWorkgroups.some(({id})=> id == taskWorkgroup) : false; // is myWorkgroup
+    const isMyWorkgroup   = myWorkgroups && myWorkgroups.length ? myWorkgroups.some(({id})=> id == taskWorkgroup) : false;
+
+    return isMyTaskHolder || isMyWorkgroup;
 }
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);

@@ -450,6 +450,7 @@ const buildEditor = (parent, news, aonNewsAdd) =>{
         id:"aonTextAreaEditor",
         placeholder:MSG.WRITE_A_DESCRIPTION,
         required:true,
+        resizeable: true,
         "text-box-min-height":"24em",
         'has-fullscreen-mode': true
     });
