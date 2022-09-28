@@ -656,6 +656,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkAndUpdateServiAgreement(getCurrentDomainName(), getCurrentUser(), agreement, asyncCallback);
 	}
 	
+	public void deletePayments(List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deletePayments(getCurrentDomainName(), paymentIds, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
