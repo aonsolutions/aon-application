@@ -37,9 +37,9 @@
 			align-items: center;
 		}
 		
-		.flexBetween {
+		.flexTitle {
 			display: flex;
-			justify-content: space-between;
+			gap: 1rem;
 			align-items: center;
 			border-bottom: 1px solid #c1bebe;
 		}
@@ -161,9 +161,9 @@
 						</g:HTMLPanel>
 						<g:DisclosurePanel ui:field="levelDiscPanel">
 						   <g:customHeader>
-						   	 <g:HTMLPanel styleName="{style.flexBetween}">
-						   	  	<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
+						   	 <g:HTMLPanel styleName="{style.flexTitle}">
 						   	  	<aon:AonToolbarButton ui:field="levelDiscBtn" />
+						   	  	<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="levelDiscPanelContent">
@@ -180,9 +180,9 @@
 						
 						<g:DisclosurePanel ui:field="salaryDiscPanel">
 						   <g:customHeader>
-						   	 <g:HTMLPanel styleName="{style.flexBetween}">
-						   	  	<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
+						   	 <g:HTMLPanel styleName="{style.flexTitle}">
 						   	  	<aon:AonToolbarButton ui:field="salaryDiscBtn" />
+						   	  	<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="salaryDiscPanelContent">
@@ -200,9 +200,9 @@
 						  
 						  <g:DisclosurePanel ui:field="paymentDiscPanel">
 							  <g:customHeader>
-							   	 <g:HTMLPanel styleName="{style.flexBetween}">
-							   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
+							   	 <g:HTMLPanel styleName="{style.flexTitle}">
 							   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" />
+							   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
 							   	 </g:HTMLPanel>
 							   </g:customHeader>
 							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentDiscPanelContent">
@@ -219,9 +219,9 @@
 						   
 						   <g:DisclosurePanel ui:field="extraDiscPanel">
 							   <g:customHeader>
-							   	 <g:HTMLPanel styleName="{style.flexBetween}">
+							   	 <g:HTMLPanel styleName="{style.flexTitle}">
+							   		 <aon:AonToolbarButton ui:field="extraDiscBtn" />
 							   	  	<g:Label styleName="{style.disclouruseTitle}">Pagas extra</g:Label>
-							   	  	<aon:AonToolbarButton ui:field="extraDiscBtn" />
 							   	 </g:HTMLPanel>
 							   </g:customHeader>
 							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">

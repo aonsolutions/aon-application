@@ -26,9 +26,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -232,7 +230,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		showAgreementPreview();
 		fillAgreementInfo();
 		hideMessage();
-		animateDiscButtons();
 	}
 
 	// ------------------------------------------ fillAgreementInfo
@@ -359,8 +356,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void fillSalaryTable() {
 		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 		
-		for(Entry<Integer, Set<LevelData>> e : agreement.getLevelDatasMap().entrySet()) {
-			Level level = agreement.getLevelById(e.getKey());
+		for(Level level : agreement.getLevels()) {
 			
 			if(level.isDeleted()) continue;
 			
@@ -755,24 +751,20 @@ public abstract class AgreementPreview extends ResizeComposite {
 		levelDiscPanel.setAnimationEnabled(true);
 		levelDiscPanel.addOpenHandler(e -> handleIcon(levelDiscBtn, true));
 		levelDiscPanel.addCloseHandler(e -> handleIcon(levelDiscBtn, false));
-//		levelDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 		
 		salaryDiscPanel.setAnimationEnabled(true);
 		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 		salaryDiscPanel.addCloseHandler(e -> handleIcon(salaryDiscBtn, false));
 		salaryDiscPanel.setOpen(true);
-//		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 		
 		paymentDiscPanel.setAnimationEnabled(true);
 		paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
 		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
 		paymentDiscPanel.setOpen(true);
-//		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 		
 		extraDiscPanel.setAnimationEnabled(true);
 		extraDiscPanel.addOpenHandler(e -> handleIcon(extraDiscBtn, true));
 		extraDiscPanel.addCloseHandler(e -> handleIcon(extraDiscBtn, false));
-//		extraDiscPanelContent.setHeight((Window.getClientHeight() - 570) + "px");
 	}
 
 	private void createDiscPanelButtons() {
@@ -807,66 +799,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		}
 	}
 	
-	private void animateDiscButtons() {
-		// Show center
-		Scheduler.get().scheduleDeferred(() -> {
-			animateDiscButton(levelDiscBtn);
-			animateDiscButton(salaryDiscBtn);
-			animateDiscButton(paymentDiscBtn);
-			animateDiscButton(extraDiscBtn);
-		});
-		
-		Scheduler.get().scheduleFixedDelay(() -> {
-
-			animateDiscButton(levelDiscBtn);
-			animateDiscButton(salaryDiscBtn);
-			animateDiscButton(paymentDiscBtn);
-			animateDiscButton(extraDiscBtn);
-			return false;
-			
-		}, 2000);
-		
-		Scheduler.get().scheduleFixedDelay(() -> {
-
-			animateDiscButton(levelDiscBtn);
-			animateDiscButton(salaryDiscBtn);
-			animateDiscButton(paymentDiscBtn);
-			animateDiscButton(extraDiscBtn);
-			return false;
-		
-		}, 4000);
-	}
-	
-	private void animateDiscButton(AonToolbarButton button) {
-		new Animation() {
-			
-			@Override
-			protected void onUpdate(double progress) {
-				double size = 24 + progress*11;
-				button.getElement().getStyle().setProperty("background-size", size + "px");
-			}
-			
-			@Override
-			protected void onComplete() {
-				new Animation() {
-					
-					@Override
-					protected void onUpdate(double progress) {
-						double size = 35 - progress*11;
-						button.getElement().getStyle().setProperty("background-size", size + "px");
-					}
-					
-					@Override
-					protected void onComplete() {
-						button.getElement().getStyle().setProperty("background-size", "24px");
-					}
-					
-				}.run(1000);
-			}
-			
-		}.run(1000);
-	}
-	
 	// ------------------------------------------ toolbar
 
 	private void createToolbar() {
@@ -898,21 +830,29 @@ public abstract class AgreementPreview extends ResizeComposite {
 				@Override
 				public void onSuccess(DomainUserRoles userRole) {
 					if(userRole.isConvenios()) {
-						showLoading("Actualizando convenio");
-						impl.checkAndUpdateServiAgreement(agreement, new AsyncCallback<Void>() {
-
+						new PaymentsCleanDialog(agreement.getPayments()) {
+							
 							@Override
-							public void onFailure(Throwable caught) {
-								showError("Error actualizaci\u00F3n", caught.getMessage());
+							public void onAccept() {
+								showLoading("Actualizando convenio");
+								impl.checkAndUpdateServiAgreement(agreement, new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										showError("Error actualizaci\u00F3n", caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
+										reloadAgreement();
+									}});
 							}
-
-							@Override
-							public void onSuccess(Void result) {
-								showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
-								reloadAgreement();
-							}});
+						
+						};
+						
 					} else {
-						AonDialog error = new AonDialog("Actualizaci|u00f3n no disponible", new HTMLPanel("Para poder actualizar un convenio a traves de ServiConvenios debe tener contrato el m\u00f3dulo."));
+						AonDialog error = new AonDialog("Actualizaci\u00f3n no disponible", new HTMLPanel("Para poder actualizar un convenio a traves de ServiConvenios debe tener contrato el m\u00f3dulo."));
 						error.warning();
 					}
 				}

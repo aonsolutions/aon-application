@@ -400,4 +400,8 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 		getToolbar().resetTypeView();
 	}
 
+	public void setViewAgreements(boolean viewAgreements) {
+		toolbar.setViewAgreements(viewAgreements);
+	}
+
 }

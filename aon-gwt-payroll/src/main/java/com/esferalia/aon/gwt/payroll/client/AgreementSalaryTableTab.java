@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -20,6 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -86,6 +86,9 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
 	
+	private boolean hasChange = false;
+	
+	private AonToolbarSmallButton saveBtn;
 	private AonToolbarSmallButton newDateBtn;
 	private ListBox datesLB;
 	private AonToolbarSmallButton deleteDateBtn;
@@ -177,8 +180,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private void fillSalaryTable() {
 		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 		
-		for(Entry<Integer, Set<LevelData>> e : agreement.getLevelDatasMap().entrySet()) {
-			Level level = agreement.getLevelById(e.getKey());
+		for(Level level : agreement.getLevels()) {
 			if(level.isDeleted()) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
@@ -209,6 +211,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 						agreement.updateLevelData(level.getId(), levelData.getId(), event.getValue());
 					
 					setAgreementSalaryTable(agreement);
+					setHasChange(true);
 				});
 						
 				salaryGrid.setWidget(row, col, cell);
@@ -236,6 +239,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					public void onAccept() {
 						agreement.deleteLevel(level.getId());
 						createSalaryTable();
+						setHasChange(true);
 					}
 				});
 			});
@@ -256,9 +260,10 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private void createToolbar() {
 		toolbar = new AonToolbar("Tabla Salarial");
 		
-		AonToolbarSmallButton saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+			setHasChange(false);
 			onSaved();
 		});
 		
@@ -279,6 +284,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					agreement.createNewPeriod(newPeriod);
 					agreement.setFilteredAllVariables();
 					setAgreementSalaryTable(agreement);
+					setHasChange(true);
 				} else {
 					Date maxDate = agreement.getSortedDates().stream().findFirst().get();
 					if(maxDate.after(newPeriod) || maxDate.equals(newPeriod))
@@ -286,6 +292,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					else {
 						agreement.createNewPeriod(newPeriod);
 						setAgreementSalaryTable(agreement);
+						setHasChange(true);
 					}
 				}
 			});
@@ -313,6 +320,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 					agreement.deletePeriod(selectedDate);
 					setAgreementSalaryTable(agreement);
+					setHasChange(true);
 				}
 			});
 		});
@@ -371,6 +379,21 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		datesLB.setVisible(false);
 		deleteDateBtn.setVisible(false);
 		variablesVisivility.setVisible(false);
+	}
+	
+	// ------------------------------------------ HasChange
+	
+	public boolean hasChange() {
+		return hasChange;
+	}
+
+	public void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		saveBtn.setEnabled(hasChange());
+		if(!hasChange()) {
+			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
+			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		}
 	}
 	
 	// ------------------------------------------ Abstract methods
