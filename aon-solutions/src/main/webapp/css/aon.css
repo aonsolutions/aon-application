@@ -133,9 +133,9 @@
   transform: scale(0.99);
 }
 
-.aonButton[disabled=disabled], .aonButton:disabled {
+.aonButton[disabled], .aonButton:disabled {
   cursor: not-allowed;
-  background-color: #cccccc;
+  background-color: #cccccc !important;
 }
 
 .aonColorIcon {
