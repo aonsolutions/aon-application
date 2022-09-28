@@ -219,6 +219,13 @@ public class DomainUserRoles implements Serializable {
 		return hasDocumental() && (isAdmin() || hasRole(AonRole.DOCUMENTAL));
 	}
 	
+	public boolean isOldDocumental() {
+		return (hasOldModule(Module.DOCUMENT) || hasOldModule(Module.DOCUMENT_PORTAL)) && 
+				(isAdmin() 
+					|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT)
+					|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER));
+	}
+
 	public boolean isDocumentalPortal() {
 		return (hasDocumental() && (isAdmin() || hasRole(AonRole.DOCUMENTAL_PORTAL))) 
 				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN)
