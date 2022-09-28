@@ -11,6 +11,33 @@
 	<artifactId>aon.entity</artifactId>
 	<name>AON ENTITY</name>
 	<description>AON ENTITY</description>
+
+
+	<profiles>
+		<profile>
+			<id>mysql5</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<mysql.connector.version>5.0.8</mysql.connector.version>
+			</properties>
+		</profile>
+		<profile>
+			<id>mysql8</id>
+			<activation>
+				<property>
+					<name>mysql8</name>
+					<value>true</value>
+				</property>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<mysql.connector.version>8.0.13</mysql.connector.version>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
     <plugin>
@@ -144,7 +171,7 @@
 					<dependency>
 						<groupId>mysql</groupId>
 						<artifactId>mysql-connector-java</artifactId>
-						<version>8.0.13</version>
+						<version>${mysql.connector.version}</version>
 						<scope>runtime</scope>
 					</dependency>
 					<dependency>
