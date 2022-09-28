@@ -12,9 +12,9 @@ export class AonTextArea extends AonElement {
 
 	TEXTAREA;
 	TOOLBAR;
-	FILES;
 	RIGHT;
 	LEFT;
+	FILES;
 	static get observedAttributes() {
 		return [CONSTANT.VALUE, CONSTANT.DISABLED, "height"];
 	}
