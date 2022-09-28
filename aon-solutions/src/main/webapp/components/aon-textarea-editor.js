@@ -1,10 +1,10 @@
 import { AonElement } from "./AonElement.js";
 import { getReader } from '../services/utils.js';
 import { openFileUrl } from '../services/fileService.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
-import { KEYDOWN } from "../environments/aonEvent.js";
-import '../css/aon-textarea-editor.css';
+import { CONSTANT, CSS, EVENT, MSG, TAG} from '../environments/environments.js';
 import { AonDialog } from "./aon-dialog.js";
+import '../css/aon-textarea-editor.css';
+
 
 export class AonTextareaEditor extends AonElement {
 
@@ -546,11 +546,17 @@ export class AonTextareaEditor extends AonElement {
                 this.clearElement(box);
             }
         });
+
+        box.addEventListener(EVENT.PASTE, (ev) => {
+            this.interceptorPaste(ev);
+        });
+
         box.addEventListener(EVENT.INPUT, ev => {
             ev.preventDefault();
             ev.stopPropagation();
             this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target: ev.target}));
         });
+
         if (!this.isMobile()) {
             ["focus", "mouseover"].forEach((eventType) => {
                 box.addEventListener(eventType, (ev) => {
@@ -1140,47 +1146,11 @@ export class AonTextareaEditor extends AonElement {
         inputFile.addEventListener("change", (ev) => {
             let files = inputFile.files;
             this.addFiles(files).then(() => {
-                console.log(this.FILES);
+                // console.log(this.FILES);
             })
         });
         return btn;
     }
-
-
-    // openFullComment = (aonMessengerChat, aonTextArea, task) => {
-    //     const dialog = aonMessengerChat.applicationEl.getDialog();
-    //     dialog.clear();
-      
-    //     if (!aonMessengerChat.isMobile()) {
-    //       dialog.width = "600px";
-    //     }
-        
-    //     const textarea = setStyles(TaskCreationUtils.createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
-    //       height: '100%',
-    //       maxHeight: '300px',
-    //       minHeight: '250px'
-    //     });
-    //     dialog.setContent(textarea);
-      
-    //     TaskUtils.buildTextareaToolbar(textarea);
-      
-    //     if(aonTextArea.value) textarea.value = aonTextArea.value;
-    //     textarea.addEventListener(EVENT.INPUT, ({target})=>{
-    //       aonTextArea.value = target.value || "";
-    //       aonTextArea.FILES = target.FILES;
-    //     });
-      
-    //     let button = dialog.addSendAction(
-    //       ()=>{
-    //         aonMessengerChat.saveComment(undefined, task);
-    //         dialog.close();
-    //       }, 
-    //       MSG.SEND
-    //     );
-    //     button.style.padding = "0.7rem 1em";
-    //     dialog.open();
-    //   }
-
 
     //--------------------------- FILE UPLOAD STUFF (powered by Ray) --------------------------------
     
@@ -1229,6 +1199,36 @@ export class AonTextareaEditor extends AonElement {
 		return textArea;
 	}
 
+    addValueForSelection(element, parent){
+		if(parent){
+			parent.appendChild(element); //APPEND ELEMENT
+			parent.appendChild(document.createElement(TAG.BR));
+		} else {
+			const textArea = this.textBox;
+			const html = element.outerHTML;
+
+			const range = this.getSelection().getRangeAt(0);
+			const selectedText = range.extractContents();
+		
+			if(range && range.toString()!=""){
+				let div = document.createElement(TAG.DIV); 
+				div.appendChild(selectedText);
+				range.insertNode(div);
+		
+				const baseSelection = this.getSelection().baseNode;
+
+				const inside = textArea.contains(baseSelection);
+	
+				if(inside) {//  inside
+					document.execCommand("insertHTML", false, html); //APPEND ELEMENT
+					return;
+				}
+			}
+
+			this.addValueHtml(html); //APPEND ELEMENT
+		}
+	}
+
     async addFiles(files, parent=undefined) {
 		for await (const file of files) {
 			await this.addFile(file, parent);
@@ -1236,8 +1236,6 @@ export class AonTextareaEditor extends AonElement {
 	}
 
 	async addFile(file, parent=undefined) {
-		let div = parent || this.getSelectionForAdd();
-
 		const reader = await getReader(file).catch(()=>null);
 		if(reader) {
 			
@@ -1266,7 +1264,7 @@ export class AonTextareaEditor extends AonElement {
 				element.appendChild(source);
 			} else {
 				element = document.createElement(TAG.A);
-				element.target = "_blank";
+				element.target = "_system";
 				element.className = CSS.AON_LINK;
 				element.href = url;
 				element.textContent = reader.name;
@@ -1274,8 +1272,8 @@ export class AonTextareaEditor extends AonElement {
 			element.dataset.id = fileId;
 			element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
 			element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-			div.appendChild(element);
-			div.appendChild(document.createElement(TAG.BR));
+
+	        this.addValueForSelection(element, parent);
 
 			this.dispatchEvent(new CustomEvent(EVENT.INPUT));
 		}
@@ -1290,7 +1288,6 @@ export class AonTextareaEditor extends AonElement {
     getFiles(){
         return this.checkFiles();
     }
-    
 
     draggableEnable(){
 		const divTextArea = this.textBox;
@@ -1608,6 +1605,63 @@ export class AonTextareaEditor extends AonElement {
         this.formatDoc('fontname',"Arial");
 
     }
+
+    interceptorPaste(ev){
+
+		const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
+
+		const items = Object.values(clipboardData.items || []).filter(item => item && item.kind);
+
+		const isFile = items.some(item => item.kind === 'file');
+
+		if(!isFile){
+       
+			ev.preventDefault();
+			ev.stopPropagation();
+
+			const html  = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
+
+			let div   = document.createElement(TAG.DIV);
+			div.innerHTML = html;
+	
+			setTimeout(()=>{
+				div = this.removeStyles(div);
+				document.execCommand("insertHTML", false, div.outerHTML);
+			});
+		}
+	}
+
+	removeStyles(parent) {
+		if(parent){
+			//-------------REMOVE INPUTS------------------
+			const inputs = `toolbar, textarea, input, aon-input, aon-select, aon-switch, aon-toolbar, aon-select, aon-textarea, aon-autosize-textarea, aon-date, aon-icon-button, aon-upload`;
+			parent.querySelectorAll(inputs)
+			.forEach(element=>element.remove());
+
+			//-------------REMOVE STYLES AND CLASS------------------
+			const styles = `*`;
+			parent.querySelectorAll(`${styles}:not(img, source)`)
+			.forEach(element=>{
+				if(element.tagName && element.tagName.toLowerCase() === TAG.A){
+					element.className = CSS.AON_LINK;
+					element.target = "_system";
+				} else {
+					element.removeAttribute("style");
+					element.removeAttribute("class");
+				}
+			});
+		}
+		return parent;
+	}
+
+    addValueHtml(html) {
+		const textarea = this.textBox;
+		if(textarea) {
+			const element = document.createElement(TAG.DIV);
+			element.innerHTML = html;
+			textarea.appendChild(element);
+		}
+	}
 }
 
 if(!window.customElements.get('aon-textarea-editor')) {
