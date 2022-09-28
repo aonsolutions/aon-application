@@ -43,11 +43,11 @@ const addNote = (parent, note) => {
         textArea.value = note.getNote();
     } 
         
-    const toolbarLeft = document.getElementById(textArea.LEFT)
+    const toolbarLeft = textArea.LEFT
     toolbarLeft.style.width = "80%";
     
     //SET STYLE BTN RIGHT TOOLBAR
-    setStyles(document.getElementById(textArea.RIGHT),{ paddingRight : 0, alignSelf : "flex-start" });
+    setStyles(textArea.RIGHT,{ paddingRight : 0, alignSelf : "flex-start" });
     
     //CHANGE STYLE TOOLBAR
     setStyles(textArea.getToolbar(),{ borderBottom:"none", color :"black"});
