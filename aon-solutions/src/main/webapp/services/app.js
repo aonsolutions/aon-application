@@ -24,13 +24,13 @@ export const TIMECONTROL = {
     },
   ],
   price: " ", //  '-',
-  disabled: true,
+  disabled: false,
   options: {
     menu: false,
     add: false,
     upload: false,
     stat: false,
-  },
+  }
 };
 
 export const ACCOUNTING = {
@@ -136,7 +136,7 @@ export const COMUNICA = {
       name: "Empleado",
     },
   ],
-  apps: [TIMECONTROL],
+// apps: [TIMECONTROL],
   price: " ", // '60€/mes'
 };
 
@@ -162,9 +162,8 @@ export const DOCUMENTAL = {
     },
   ],
   price: " ", // '-',
-  disabled: true
+  disabled: false
 };
-
 
 export const WAREHOUSE = {
   app: CONSTANT.WAREHOUSE,
@@ -206,7 +205,7 @@ export const INVOICE = {
     },
   ],
   price: " ", // '-',
-  disabled: true,
+  disabled: false,
   options: {
     menu: false,
     add: true,
@@ -245,7 +244,7 @@ export const MESSENGER = {
     },
   ],
   price: " ", // '-',
-  disabled: true,
+  disabled: false,
   options: {
     menu: false,
     add: true,
@@ -1071,7 +1070,7 @@ export const Packs = {
     app: "pack_suite",
     icon: "aon_app",
     title: "Suite Completa",
-    subtitle: " Portal Asesor | Pack Cotización | Pack Tributación",
+    subtitle: " Pack Portal | Pack Cotización | Pack Tributación",
     color: "black",
     apps: [
       Apps.ACCOUNTING,
@@ -1105,7 +1104,7 @@ export const Packs = {
     app: "pack_payroll",
     icon: AON_ICONS.AON_PACK,
     title: "Pack Cotización",
-    subtitle: " Laboral | Comunic@ | Horario",
+    subtitle: " Laboral | Comunic@",
     color: "#002469",
     apps: [Apps.PAYROLL, Apps.COMUNICA, Apps.TIMECONTROL, Apps.NOTES],
     price: " ", // '120€/mes'
