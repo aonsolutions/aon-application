@@ -27,8 +27,8 @@
 			<id>mysql8</id>
 			<activation>
 				<property>
-					<name>mysql8</name>
-					<value>true</value>
+                                      	<name>PROFILE</name>
+                                        <value>mysql8</value>
 				</property>
 				<activeByDefault>false</activeByDefault>
 			</activation>
