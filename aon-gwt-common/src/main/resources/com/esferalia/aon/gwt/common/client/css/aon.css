@@ -3141,7 +3141,7 @@ input:disabled+label {
 		font-weight: bold;
 		padding: 5px 1em;
 		text-transform: uppercase;
-		height: 13px;
+		height: auto;
 		width: auto;
 		font-size: 11px;
 	}
