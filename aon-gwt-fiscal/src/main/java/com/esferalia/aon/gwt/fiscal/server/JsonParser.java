@@ -817,6 +817,11 @@ public class JsonParser {
 			params.setParent(parent.intValue());	
 		}
 		
+		Long orphan = (Long) jsonParams.get(IRequestParamsNames.ORPHAN);
+		if (orphan != null) {
+			params.setOrphan(orphan == 1);
+		}
+
 		Long active = (Long) jsonParams.get(IRequestParamsNames.ACTIVE);
 		if (active != null) {
 			params.setActive(active==1);

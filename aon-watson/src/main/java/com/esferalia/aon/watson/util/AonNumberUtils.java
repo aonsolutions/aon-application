@@ -112,6 +112,10 @@ public class AonNumberUtils {
 		return 0;		
 	}
 
+	public static String emptyIfNull(Integer value) {
+		if (value == null) return "";
+		return value.toString();
+	}
 	public static String toString(Integer value) {
 		if (value == null) return null;
 		return value.toString();

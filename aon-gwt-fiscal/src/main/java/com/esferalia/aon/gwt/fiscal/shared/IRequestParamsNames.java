@@ -110,6 +110,7 @@ public interface IRequestParamsNames {
 	String ORDER_STATUS_INVOICED = "orderStatusInvoiced";
 	String ORDER_STATUS_PENDING = "orderStatusPending";
 	String ORDER_STATUS_SERVED = "orderStatusServed";
+	String ORPHAN = "orphan";
 	String OUTPUT = "output";
 	String PAGE_OFFSET = "pageOffset";
 	String PAGE_OFFSET_TEXT = "pageOffsetText";

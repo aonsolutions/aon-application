@@ -12,6 +12,7 @@ public class DomainParams implements Serializable {
 	private String query;
 	private Integer type;
 	private Integer parent;
+	private Boolean orphan;	
 	private Boolean active;
 	private Boolean enableHeredity;
 	private Boolean domainManagement;
@@ -61,6 +62,14 @@ public class DomainParams implements Serializable {
 	}
 	public DomainParams setParent(Integer parent) {
 		this.parent = parent;
+		return this;
+	}
+	
+	public Boolean getOrphan() {
+		return orphan;
+	}
+	public DomainParams setOrphan(Boolean orphan) {
+		this.orphan = orphan;
 		return this;
 	}
 	

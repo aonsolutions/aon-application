@@ -124,6 +124,13 @@ public class ConsoleDAO {
 		if (params.getParent() != null ) {
 			c = and(c, DOMAIN.PARENT.eq(params.getParent())); 
 		}
+		if (params.getOrphan() != null ) {
+			if (params.getOrphan().booleanValue()) {
+				c = and(c, DOMAIN.PARENT.isNull());
+			} else {
+				c = and(c, DOMAIN.PARENT.isNotNull());
+			}
+		}
 		if (params.getType() != null ) {
 			c = and(c, DOMAIN.TYPE.eq(params.getType().byteValue())); 
 		}
