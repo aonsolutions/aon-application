@@ -66,6 +66,11 @@
 										<f:param value="#{customize.buildDate}" />
 									</aon:outputFormat>
 								</aon:if>					
+								<aon:if test="#{customize.buildNumber != null}" >						
+									<aon:outputFormat style="display:block; color: #000; text-align: right; margin-right: 10%;" value="{0}" >
+										<f:param value="#{customize.buildNumber}" />
+									</aon:outputFormat>
+								</aon:if>					
 							</aon:div>
 							<aon:div>
 								<aon:outputText value="Datos de contacto:"
