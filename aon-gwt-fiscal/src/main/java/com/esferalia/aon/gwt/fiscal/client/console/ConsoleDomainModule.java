@@ -175,7 +175,6 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		toolbar.add(exportButton);
 		
 		deleteButton.setEnabled(false);
-		deleteButton.setVisible(false);
 		toolbar.add(deleteButton);
 		
 		return toolbar;
@@ -310,7 +309,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	}
 
 	private void validate(String schema,Integer domainId, String name, String description) {
-		if (!running) {
+		if (canRun()) {
 			running = true;
 			try {
 				AonConsoleWidget aonConsole = new AonConsoleWidget();
@@ -343,8 +342,6 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			} catch (Exception e){
 				running = false;
 			}
-		} else {
-			AonMessageDialog.show(AVISO,"Hay un proceso en ejecuci\u00F3n. Espere un momento, por favor.");
 		} 	
 	}
 	
@@ -363,7 +360,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	}
 	
 	private void deleteDomain(String schema,Integer domainId, String description, AsyncCallback<Boolean> cbk) {
-		if (!running) {
+		if (canRun()) {
 			running = true;
 			try {
 				AonConsoleWidget aonConsole = new AonConsoleWidget();
@@ -396,9 +393,15 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				running = false;
 				cbk.onFailure(e);
 			}
-		} else {
-			AonMessageDialog.show(AVISO,"Hay un proceso en ejecuci\u00F3n. Espere un momento, por favor.");
 		}
 	}
 	
+	private boolean canRun() {
+		if (running) {
+			AonMessageDialog.show(AVISO,"Hay un proceso en ejecuci\u00F3n. Espere un momento, por favor.");
+			return false;
+		}
+		return true;
+	}
 }
+

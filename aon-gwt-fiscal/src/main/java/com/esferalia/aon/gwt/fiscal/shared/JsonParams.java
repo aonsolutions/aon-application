@@ -260,6 +260,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.QUERY	,AonStringUtils.isBlank(params.getQuery())? JSON_NULL : new JSONString( params.getQuery()));
 		json.put(IRequestParamsNames.TYPE	,params.getType()	== null? JSON_NULL : new JSONNumber( params.getType()));
 		json.put(IRequestParamsNames.PARENT	,params.getParent()	== null? JSON_NULL : new JSONNumber( params.getParent()));
+		json.put(IRequestParamsNames.ORPHAN ,params.getOrphan()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger( params.getOrphan())));
 		json.put(IRequestParamsNames.ACTIVE	,params.getActive()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger( params.getActive())));
 		json.put(IRequestParamsNames.ENABLE_HEREDITY,params.getEnableHeredity()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger(params.getEnableHeredity())));
 		json.put(IRequestParamsNames.DOMAIN_MANAGEMENT,params.getDomainManagement()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger(params.getDomainManagement()) ));

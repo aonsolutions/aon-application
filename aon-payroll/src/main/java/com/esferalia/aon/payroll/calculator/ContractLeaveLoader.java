@@ -701,8 +701,8 @@ public class ContractLeaveLoader {
 			if ( var.getPeriod().getStart().before(start) )
 				continue;
 			directPayStart = (Date) var.getValue(var.getPeriod());
-			if ( directPayStart != null && directPayStart.before(start))
-				directPayStart = null;
+//			if ( directPayStart != null && directPayStart.before(start))
+//				directPayStart = null;
 		}
 		
 		return directPayStart;

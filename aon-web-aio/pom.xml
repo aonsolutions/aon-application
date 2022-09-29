@@ -41,10 +41,15 @@
             </manifest>
             <manifestEntries>
               <dbVersion>${dbVersion}</dbVersion>
-              <buildNumber>${env.BUILD_NUMBER}</buildNumber>
               <buildDate>${maven.build.timestamp}</buildDate>
               <buildRevision>${buildNumber}</buildRevision>
-            </manifestEntries>
+
+              <buildId>${env.CODEBUILD_BUILD_ID}</buildId>
+              <buildNumber>${env.CODEBUILD_BUILD_NUMBER}</buildNumber>
+              <sourceVersion>${env.CODEBUILD_SOURCE_VERSION}</sourceVersion>
+
+      
+      	    </manifestEntries>
           </archive>
 
           <webResources>
@@ -985,6 +990,13 @@
       <artifactId>jodconverter-core</artifactId>
       <version>3.0-SNAPSHOT</version>
       <scope>compile</scope>
+    </dependency>
+   <dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon-solutions</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

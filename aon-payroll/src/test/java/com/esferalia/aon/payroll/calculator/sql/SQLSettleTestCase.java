@@ -2453,10 +2453,12 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
 		Assert.assertEquals( 
-				1750.00 * 1.10 / 12.00 * 9.00 /*J,A,S,O,N,D,E,F,M*/
-				+ 1750.00 * 1.10 / 12.00 * 3.00 /*E,F,M*/
-				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 /*A*/
-				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 /*A*/
+				1750.00 * 1.10 / 12.00 * 9.00 			/*JULY..MARCH JUNIO*/
+				+ 1750.00 * 1.10 / 12.00 * 3.00 		/*JANUARY..MARCH DICIEMBRE */
+				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 	/*APRIL JUNIO */ 
+				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 	/*APRIL DICIEMBRE*/
+				
+				+ 1750.00 * 1.10 / 12.00 * 4 			/*SEPTEMBER..DECEMBER SEPTIEMBRE*/
 				,
 				settle.getTotalPayment(), 0.05);
 	}
@@ -3362,6 +3364,101 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		;
 		
 		System.out.println(embargo.getDescription() + " = " + embargo.getAmount() );
+	}
+
+	@Test
+	public void testSettleWithExtrasOverrideI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+						this.concept = pagaExtraConcept.getId();
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+						this.concept = pagaExtraConcept.getId();
+					}
+				}, });
+		
+		Date contractStart = add(getFirstDayOfYear(getToday()), Calendar.YEAR, -2 );
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { 
+						"( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+						category);
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+		
+		addPayment(aonContext, contract, contractStart, getLastDayOfYear(contractStart), pagaExtraConcept, "PAGA_EXTRA", "REMOVE()", null, null, PaymentType.CRA_0004);
+		addPayment(aonContext, contract, contractStart, getLastDayOfYear(contractStart), pagaExtraConcept, "PAGA_EXTRA", "REMOVE()", null, null, PaymentType.CRA_0004);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		settleCtx.getExpressionContext().eval("TRACE('SALARIO_DIA:%f\r\n', SALARIO_DIA)", contractStart, getToday())
+		;
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println( description + ":" + amount);
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(settleCtx);
+		
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		int julyExtraMonths = (months >= 6 ? months -6 : months );
+		// Settle at 01/07, so we have two extras for July .
+		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
+		//julyExtraMonths += 6;
+
+		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
+		
+
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
+
+		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+
 	}
 
 	// ------------------------------------------------------------------------

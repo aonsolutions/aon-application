@@ -11,6 +11,31 @@
 	<name>AON MASTER JOOQ</name>
 	<description>AON MASTER JOOQ</description>
 
+        <profiles>
+                <profile>
+                        <id>mysql5</id>
+                        <activation>
+                                <activeByDefault>true</activeByDefault>
+                        </activation>
+                        <properties>
+                                <mysql.connector.version>5.0.8</mysql.connector.version>
+                        </properties>
+                </profile>
+                <profile>
+                        <id>mysql8</id>
+                        <activation>
+                                <property>
+                                        <name>PROFILE</name>
+                                        <value>mysql8</value>
+                                </property>
+                                <activeByDefault>false</activeByDefault>
+                        </activation>
+                        <properties>
+                                <mysql.connector.version>8.0.13</mysql.connector.version>
+                        </properties>
+                </profile>
+        </profiles>
+
 	<build>
 		<plugins>
 			<!-- Creates database -->
@@ -52,7 +77,7 @@
 					<dependency>
 						<groupId>mysql</groupId>
 						<artifactId>mysql-connector-java</artifactId>
-						<version>5.0.8</version>
+						<version>${mysql.connector.version}</version>
 					</dependency>
 				</dependencies>
 
@@ -73,6 +98,14 @@
 						<name>org.jooq.codegen.DefaultGenerator</name>
 
 						<database>
+		
+							<forcedTypes>
+								<forcedType>
+									<name>DOUBLE</name>
+									<includeTypes>(?i:DECIMAL)</includeTypes>
+								</forcedType>
+							</forcedTypes>
+							
 							<!-- MySQL database dialect from jooq-meta. -->
 							<name>org.jooq.meta.mysql.MySQLDatabase</name>
 
@@ -86,6 +119,7 @@
 
 							<!-- Use this as the integration / production database: -->
 							<outputSchema>aon-master</outputSchema>
+			
 						</database>
 						
 						<generate>

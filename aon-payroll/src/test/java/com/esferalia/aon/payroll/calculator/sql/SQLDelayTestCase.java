@@ -2943,13 +2943,13 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
 		Salary delay = delayCalculator.calculate(delayCtx);
-//		
-//		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
-//				.getSalaryPayments()) {
-//			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
-//					+ " (" + payment.getExpression() + ")");
-//		}
-//		
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
 		Assert.assertEquals(10.00, delay.getCommonBase());
 		Assert.assertEquals(10.00, delay.getRawCommonBase());
 		Assert.assertEquals(10.00, delay.getTotalPayment());
