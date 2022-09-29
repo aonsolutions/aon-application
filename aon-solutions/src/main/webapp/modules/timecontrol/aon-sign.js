@@ -193,8 +193,17 @@ export class AonSign extends AonElement {
   }
 
   disabledButton(disabled){
-    let content = this.getElement(this.CONTENT);
-    if(content) [...content.querySelectorAll('button')].map(el => el.disabled = disabled);
+    const content = this.getElement(this.CONTENT);
+    if(content){
+      content.querySelectorAll('.aonButton')
+      .forEach(element => {
+        if(disabled){
+          element.setAttribute(CONSTANT.DISABLED, true);
+        } else {
+          element.removeAttribute(CONSTANT.DISABLED);
+        }
+      });
+    }
   }
 
   buildSignin(signin) {
@@ -202,23 +211,30 @@ export class AonSign extends AonElement {
 		const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
+
     let time = signin.time;
     localStorage.removeItem(this.TIME_ID);
+
+    let color = '#DC4D30';
+
     if(signin.status === 'in') {
+      color =  '#86D364';
       time = signin.time + (new Date().getTime() - signin.in_date);
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
       let timeId =  Math.random();
       localStorage.setItem(this.TIME_ID, timeId);
       this.timeAction(time, timeId);
     } else if(signin.status === 'pause') {
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
+      color = '#F39F1D';
       this.vuelta();
     } else {
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
     }
-    
+
+    if(aonUserConnected) {
+      aonUserConnected.style.backgroundColor = color;
+    }
+
     this.changeTime(time);
     this.divLastTime(signin);
   }

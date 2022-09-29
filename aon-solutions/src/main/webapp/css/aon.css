@@ -57,12 +57,6 @@
   background-color: var(--aonLightGray);
 }
 
-a {
-  color: #000;
-  text-decoration: none;
-  background-color: transparent;
-}
-
 .aonListGroup {
   display: -ms-flexbox;
   display: flex;
@@ -100,22 +94,19 @@ a {
 }
 
 .aonLink {
-  color: #12ccd1;
+  color: #12ccd1 !important;
+  background: transparent !important;
   cursor: pointer;
 }
 
 .aonLink:hover {
-  color: #12ccd1;
+  color: #12ccd1 !important;
   text-decoration: underline;
 }
 
 .textDecorationNone{
   text-decoration: none !important; 
 } 
-
-form {
-  margin: 0;
-}
 
 .aonButton {
   display: inline-block;
@@ -142,9 +133,9 @@ form {
   transform: scale(0.99);
 }
 
-.aonButton[disabled=disabled], .aonButton:disabled {
+.aonButton[disabled], .aonButton:disabled {
   cursor: not-allowed;
-  background-color: #cccccc;
+  background-color: #cccccc !important;
 }
 
 .aonColorIcon {
