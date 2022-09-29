@@ -62,7 +62,8 @@ public class DBContext extends VelocityContext{
 				put(Types.DOUBLE, "Double");
 				put(Types.TINYINT, "Short");
 				put(Types.INTEGER, "Integer");
-				put(Types.DECIMAL, "BigDecimal");
+				//put(Types.DECIMAL, "BigDecimal");
+				put(Types.DECIMAL, "Double");
 				put(Types.SMALLINT, "Integer");
 
 				put(Types.BINARY, "Byte");

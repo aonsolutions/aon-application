@@ -72,21 +72,28 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 		+" FROM calendar"
 		+" WHERE id = ? ";
 	
-	private static final String _HOLIDAY_SQL = "SELECT * "
-		+" FROM calendar_holiday"
-		+" WHERE calendar = ?"
-		+" AND date <= ? "
-		+" AND date >= ? ";
-	
-	private static final String HOLIDAY_SQL = "SELECT"
-			+" holiday_detail.*"
-			+" FROM  (SELECT *, @pv := (SELECT holiday FROM calendar WHERE id = ?) FROM holiday ORDER BY holiday DESC, id DESC) holiday_sorted"
-			+" LEFT JOIN holiday_detail ON ( holiday_sorted.id = holiday_detail.holiday  AND holiday_detail.date <= ? AND holiday_detail.date >= ? )"
-			+" WHERE FIND_IN_SET(holiday_sorted.id , @pv) > 0"
-			+" AND @pv := CONCAT(@pv,',',IFNULL(holiday_sorted.holiday,''))"
+	private static final String CALENDAR_HOLIDAY_SQL = 
+			"SELECT *"
+			+" FROM  calendar "
+			+" INNER JOIN holiday ON ( calendar.holiday = holiday.id )"
+			+" INNER JOIN holiday_detail ON ( holiday.id = holiday_detail.holiday )"
+			+" WHERE calendar.id =  ? "
+			+" AND holiday_detail.date <= ?"
+			+" AND holiday_detail.date >= ?"
 			;	
+
+	private static final String HOLIDAY_HOLIDAY_SQL = 
+			"SELECT *"
+			+" FROM  holiday_detail "
+			+" INNER JOIN holiday ON ( holiday_detail.holiday = holiday.id )"
+			+" WHERE holiday.id =  ? "
+			+" AND holiday_detail.date <= ?"
+			+" AND holiday_detail.date >= ?"
+			;	
+
 	private PreparedStatement calendarStmt;
-	private PreparedStatement holidayStmt;
+	private PreparedStatement calendarHolidayStmt;
+	private PreparedStatement holidayHolidayStmt;
 	private LRUCache<Integer, ICalendar> cache;
 	
 	
@@ -125,9 +132,13 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			calendarStmt.close();
 			calendarStmt = null;
 		}
-		if ( holidayStmt != null ) {
-			holidayStmt.close();
-			holidayStmt = null;
+		if ( calendarHolidayStmt != null ) {
+			calendarHolidayStmt.close();
+			calendarHolidayStmt = null;
+		}
+		if ( holidayHolidayStmt != null ) {
+			holidayHolidayStmt.close();
+			holidayHolidayStmt = null;
 		}
 	}
 	
@@ -169,12 +180,32 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	throws SQLException {
 		ResultSet rs = null;
 		try  {
-			holidayStmt.setInt(1, calendarId );
-			rs = holidayStmt.executeQuery();
+			Integer holidayId = null;
+			calendarHolidayStmt.setInt(1, calendarId );
+			rs = calendarHolidayStmt.executeQuery();
 			while ( rs.next() ) {
 				Date day = rs.getDate(SQLConstants.HolidayDetailColumns.DATE);
 				calendar.add(day, DayType.HOLIDAY);
+				holidayId = (Integer) rs.getObject(SQLConstants.HOLIDAY +"." + SQLConstants.HolidayColumns.HOLIDAY);
 			}
+			rs.close();
+			rs = null;
+
+			while ( holidayId != null ) {
+				holidayHolidayStmt.setInt(1, holidayId);
+				rs = holidayHolidayStmt.executeQuery();
+				while ( rs.next() ) {
+					Date day = rs.getDate(SQLConstants.HolidayDetailColumns.DATE);
+					calendar.add(day, DayType.HOLIDAY);
+					holidayId = (Integer) rs.getObject(SQLConstants.HOLIDAY +"." + SQLConstants.HolidayColumns.HOLIDAY);
+				}
+				rs.close();
+				rs = null;
+			}
+			
+		}
+		catch ( Exception e ) {
+			e.printStackTrace();
 		}
 		finally {
 			if ( rs != null )
@@ -190,10 +221,15 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	
 	private void initHolidaysStmt(Connection connection, Date startDate, Date endDate)
 	throws SQLException {
-		this.holidayStmt  = 
-			connection.prepareStatement(HOLIDAY_SQL);
-		this.holidayStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
-		this.holidayStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		this.calendarHolidayStmt  = 
+			connection.prepareStatement(CALENDAR_HOLIDAY_SQL);
+		this.calendarHolidayStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
+		this.calendarHolidayStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		
+		this.holidayHolidayStmt  = 
+				connection.prepareStatement(HOLIDAY_HOLIDAY_SQL);
+		this.holidayHolidayStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
+		this.holidayHolidayStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
 	}
 	
 	

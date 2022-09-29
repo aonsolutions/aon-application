@@ -2,13 +2,13 @@
 set -eo pipefail
 shopt -s nullglob
 
-#echo 'Initializing database'
-#sudo -u mysql mysql_install_db 
-#echo 'Database initialized'
+echo 'Initializing database'
+sudo -u mysql mysqld --initialize-insecure
+echo 'Database initialized'
 
-sed -i -s 's/^\s*\(bind-address.*\)$/# \1/' /etc/my.cnf.d/mariadb-server.cnf
+sed -i -s 's/^\s*\(bind-address.*\)$/# \1/' /etc/my.cnf.d/mysql-server.cnf
 
-mysqld_safe --datadir='/var/lib/mysql' &
+sudo -u mysql mysqld --datadir='/var/lib/mysql' --sql-mode=0 --default-time-zone='+01:00' &
 
 
 mysql=( mysql -uroot -hlocalhost )
@@ -28,11 +28,13 @@ fi
 #mysqladmin -u root password 'new-password'
 
 "${mysql[@]}" -v  <<-EOSQL
-	-- 
-	GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'serubd2000' ;
+	--
+	CREATE USER 'dbuser'@'%' IDENTIFIED BY 'serubd2000' ;
+	GRANT ALL ON *.* TO 'dbuser'@'%' ;
 	--
 	-- default privileges include a row with Host='localhost' and User=''. 
-	GRANT ALL ON *.* TO 'dbuser'@'localhost' IDENTIFIED BY 'serubd2000' ;
+	CREATE USER 'dbuser'@'localhost' IDENTIFIED BY 'serubd2000' ;
+	GRANT ALL ON *.* TO 'dbuser'@'localhost';
 EOSQL
 
 echo

@@ -56,7 +56,7 @@ export class AonNote extends AonElement {
       sortBy(notes, 'date', 'desc')
       .forEach(note=> this.addNote(note))
     } catch (error) {
-      alert(error);
+      //alert(error);
     }
   }
 
