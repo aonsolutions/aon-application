@@ -68,12 +68,12 @@ phases:
       - echo Building PRODUCTION version...
       - mvn -B --resume-from aon-js-payroll -DbuildNumber=666 -Drpm.release=false -DskipTests=true clean install
       # - echo Building PRODUCTION Docker images...
-      - docker build --no-cache -t aonsolutions/aon-application:snapshot .
-      # - docker build --no-cache -t aonsolutions/aon-db-up2date:snapshot ./aon-db-up2date
-      - docker build --no-cache -t aonsolutions/aon-solutions:snapshot -f ./aon-solutions/Dockerfile .
-      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:snapshot
-      - docker tag aonsolutions/aon-application:snapshot $REPOSITORY_URI/aon-application:snapshot
-      - docker tag aonsolutions/aon-solutions:snapshot $REPOSITORY_URI/aon-solutions:snapshot
+      - docker build --no-cache -t aonsolutions/aon-application:${TAG:=snapshot} .
+      # - docker build --no-cache -t aonsolutions/aon-db-up2date:${TAG:=snapshot} ./aon-db-up2date
+      - docker build --no-cache -t aonsolutions/aon-solutions:${TAG:=snapshot} -f ./aon-solutions/Dockerfile .
+      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-application:${TAG:=snapshot} $REPOSITORY_URI/aon-application:${TAG:=snapshot}
+      - docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-oauth2 clean install
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
       # - command
@@ -82,22 +82,22 @@ phases:
       - echo Entered the post_build phase...
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI/aon-db-up2date:snapshot
-      - docker push $REPOSITORY_URI/aon-solutions:snapshot
-      - docker push $REPOSITORY_URI/aon-application:snapshot
+      - docker push $REPOSITORY_URI/aon-db-up2date:${TAG:=snapshot}
+      - docker push $REPOSITORY_URI/aon-solutions:${TAG:=snapshot}
+      - docker push $REPOSITORY_URI/aon-application:${TAG:=snapshot}
       - |
         [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
-        && docker tag aonsolutions/aon-solutions:snapshot $REPOSITORY_URI/aon-solutions:hotfix \
+        && docker tag aonsolutions/aon-solutions:${TAG:=snapshot} $REPOSITORY_URI/aon-solutions:hotfix \
         && docker push $REPOSITORY_URI/aon-solutions:hotfix \
         || echo $COMMIT_MESSAGE
       - |
         printf '[
-        {"name":"SNAPSH0T","imageUri":"%s/aon-application:snapshot"}
+        {"name":"SNAPSH0T","imageUri":"%s/aon-application:${TAG:=snapshot}"}
         ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotimgdef.json
       - cat snapshotimgdef.json
       - |
         printf '[
-        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:snapshot"}
+        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:${TAG:=snapshot}"}
         ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotsolutionsimgdef.json
       - cat snapshotsolutionsimgdef.json
       - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
