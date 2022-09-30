@@ -18,6 +18,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -44,7 +45,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private InlineLabel parentIdLabel;
 	private InlineLabel heredityLabel;
 	private InlineLabel userLabel;
-	private InlineLabel nameLabel;
+	private Anchor nameAnchor;
 	private InlineLabel descriptionLabel;
 	private InlineLabel lastAccessLabel;
 	private AonDateBox expirationDateBox;
@@ -102,7 +103,10 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		String maxDefinedUsersString = AonNumberUtils.emptyIfNull(maxDefinedUsers);
 		userLabel = new InlineLabel( definedUsersString + " / " + maxDefinedUsersString );
 		
-		nameLabel = new InlineLabel(domain.getName());
+		nameAnchor = new Anchor(domain.getName());
+		nameAnchor.setStyleName(AON.CSS.aonClickableLabel());
+		nameAnchor.setHref("https://" + domain.getName());
+		nameAnchor.setTarget("_blank");
 		
 		descriptionLabel = new InlineLabel(AonStringUtils.abbreviate(domain.getDescription(), 50));
 		descriptionLabel.setTitle(domain.getDescription());
@@ -147,7 +151,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( parentIdLabel, AON.CSS.aonTextCenter())
 			.addCell( heredityLabel , AON.CSS.aonTextCenter())
 			.addCell( userLabel , AON.CSS.aonTextCenter())
-			.addCell( nameLabel )
+			.addCell( nameAnchor )
 			.addCell( descriptionLabel )
 			.addCell( lastAccessLabel )
 			.addCell( expirationDateBox )
@@ -392,7 +396,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private void decorateRowAsPending() {
 		typeLabel.removeStyleName(AON.CSS.aonTextLineThrough());
 		parentIdLabel.removeStyleName(AON.CSS.aonTextLineThrough());
-		nameLabel.removeStyleName(AON.CSS.aonTextLineThrough());
+		nameAnchor.removeStyleName(AON.CSS.aonTextLineThrough());
 		lastAccessLabel.removeStyleName(AON.CSS.aonTextLineThrough());
 		expirationDateBox.setEnabled(true);
 		decorateRow(domain);
@@ -407,7 +411,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private void decorateRowAsPendingDeleted() {
 		typeLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
-		nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
+		nameAnchor.addStyleName(AON.CSS.aonTextLineThrough());
 		lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		expirationDateBox.setEnabled(false);
 		activeButton.setEnabled(false);
@@ -421,7 +425,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private void decorateRowAsDeleted() {
 		typeLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
-		nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
+		nameAnchor.addStyleName(AON.CSS.aonTextLineThrough());
 		lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		expirationDateBox.setEnabled(false);
 		activeButton.setEnabled(false);
