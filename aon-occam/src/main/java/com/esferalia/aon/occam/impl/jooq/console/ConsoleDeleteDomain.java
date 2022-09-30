@@ -4,6 +4,9 @@ package com.esferalia.aon.occam.impl.jooq.console;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.text.MessageFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Stream;
 
 import org.jooq.Field;
@@ -17,10 +20,13 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class ConsoleDeleteDomain {
+	
+	private static final String ID = "ID";
 	
 	private static final String DOMAIN_FIELD = "domain";
 	
@@ -29,26 +35,37 @@ public class ConsoleDeleteDomain {
 	
 	public static boolean delete(ConsoleParams params) {
 		if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
+			ConsoleMessageUtils.start(params.getPrinter());
 			String msg = "No se ha definido la conexión origen a la BD";
-			ConsoleUtils.log(params,msg);
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(ID, msg));
+			ConsoleMessageUtils.end(params.getPrinter());
 			throw new AonCoreException(msg);
 		}
 		return deleteDomain(params);		
 	}
 		
 	private static boolean deleteDomain(ConsoleParams params) {
+		String processId = AonRandomStringUtils.randomAlphabetic(4) + "_" + (new Date()).getTime();
 		try {
-			ConsoleUtils.log(params,"** Start domain validation deletion!");
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "BORRADO DE DOMINIO"));
+
+			ConsoleMessageUtils.start(params.getPrinter());
+			
+			String title = "Start domain validation deletion";
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, title));
+			
 			if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
 				String msg = "No se ha definido la conexión origen a la BD";
-				ConsoleUtils.log(params,msg);
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
 				throw new AonCoreException(msg);
 			}
 
 			if (params.getFromConnection().getSchema() == null) {
 				String schemaName = params.getFromConnection().getSchemaName();
 				if (AonStringUtils.isBlank(schemaName)) {
-					throw new AonCoreException("No se ha indicado un esquema del que borrar el dominio.");
+					String msg = "No se ha indicado un esquema del que borrar el dominio.";
+					ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+					throw new AonCoreException(msg);
 				}
 				Schema fromSchema = params
 						.getFromDslContext()
@@ -58,26 +75,37 @@ public class ConsoleDeleteDomain {
 						.findFirst()
 						.orElse(null);
 				if (fromSchema == null) {
-					throw new AonCoreException("No se ha encontrado el esquema \""+schemaName+"\".");
+					String msg = "No se ha encontrado el esquema \""+schemaName+"\".";
+					ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+					throw new AonCoreException(msg);
 				}
 				params.getFromConnection().setSchema( fromSchema );
 			}
 
 			Domain domain = params.getFromConnection().getFullDomain();
 			if (domain == null || domain.getId() == null) {
-				throw new AonCoreException("No se ha indicado un dominio que borrar.");
+				String msg = "No se ha indicado un dominio que borrar.";
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				throw new AonCoreException(msg);
 			}
 			Integer domainId = domain.getId();
 			domain = DomainDAO.getDomain(params.getFromConnection().getAONContext(), domainId);
 			if (domain == null) {
-				throw new AonCoreException("No se ha encontrado el dominio \"" + domainId + "\"");
+				String msg = "No se ha encontrado el dominio \"" + domainId + "\"";
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				throw new AonCoreException(msg);
 			}
 			if (domain.getDomainType() == DomainType.ADMIN) {
-				throw new AonCoreException("No se puede borrar un dominio de ADMINISTRACION");
+				String msg = "No se puede borrar un dominio de ADMINISTRACION";
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				throw new AonCoreException(msg);
 			}
 			if (domain.isActive()) {
-				throw new AonCoreException("No se puede borrar un dominio ACTIVO");
+				String msg = "No se puede borrar un dominio ACTIVO";
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				throw new AonCoreException(msg);
 			}
+			
 			int count = params.getFromDslContext()
 				.select( DSL.count(DOMAIN.ID) )
 				.from(DOMAIN)
@@ -88,54 +116,62 @@ public class ConsoleDeleteDomain {
 				.findFirst()
 				.orElse(0);
 			if (count > 0) {
-				throw new AonCoreException("No se puede borrar un dominio con hijos");
+				String msg = "No se puede borrar un dominio con hijos";
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				throw new AonCoreException(msg);
 			}
 			params.getFromConnection().setFullDomain(domain);
 			
-			ConsoleUtils.log(params,"** End domain validation!");
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "End domain validation!"));
+			
+			String msg1 = MessageFormat.format(" COMIENZA EL BORRADO DEL DOMINIO \"{0}\" - {1} ({2}) !"
+					, params.getFromConnection().getFullDomain().getDescription()
+					, params.getFromConnection().getFullDomain().getId()
+					, params.getFromConnection().getFullDomain().getName());
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, msg1));
 			
 			
 			
-			ConsoleUtils.log(params,"** Start domain deletion!");
 			ConsoleUtils.disableForeignKeys(params);
-			ConsoleUtils.log(params,"** Start transaction!");
-			
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Start transaction"));
 			
 			params.setTotalCount(0);
 			params.setTotalProgress(0);
 			getStream( params )
+				.filter( ConsoleDeleteDomain::hasDomain )
 				.forEach( t -> params.setTotalCount( params.getTotalCount() + 1) );
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId, params.getTotalCount(),params.getTotalProgress() ));
 			
-			params.getToDslContext().transaction(conf -> 
+			params.getToDslContext().transaction(conf -> {
+				
 				getStream( params )
 					.filter( ConsoleDeleteDomain::hasDomain )
-					.forEach(t -> deleteTableRows(params, t))
-			);
-			params.getFromDslContext()
-				.delete(DOMAIN)
-				.where( DOMAIN.ID.equal(params.getFromConnection().getFullDomain().getId()))
-				.execute();
-			ConsoleUtils.log(params,MessageFormat.format(" DOMAIN {0} {1} DELETED!"
-				, params.getFromConnection().getFullDomain().getId()
-				, params.getFromConnection().getFullDomain().getName()));
-			ConsoleUtils.log(params,"** Commit!");
-			ConsoleUtils.log(params,"** End domain deletion!");
+					.forEach(t -> deleteTableRows(params, processId, t));
+				
+				params.getFromDslContext()
+					.delete(DOMAIN)
+					.where( DOMAIN.ID.equal(params.getFromConnection().getFullDomain().getId()))
+					.execute();
+				
+				String msg = MessageFormat.format(" DOMINIO \"{0}\" - {1} ({2}) BORRADO!"
+					, params.getFromConnection().getFullDomain().getDescription()
+					, params.getFromConnection().getFullDomain().getId()
+					, params.getFromConnection().getFullDomain().getName());
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, msg));
+				
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Commit"));
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "FIN BORRADO DEL DOMINIO"));
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "HECHO. OK!"));
+				
+			});
 			return true;
 		} catch (Exception e) {
-			ConsoleUtils.log(params, e.getMessage() );
-			ConsoleUtils.log(params,"** Rollback!");
-			e.printStackTrace();
-			throw new AonCoreException(e.getMessage(),e);
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "FIN. ROLLBACK!"));
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e.getMessage()));
+			return false;
 		} finally {
-			if (!params.getErrors().isEmpty()) {
-				ConsoleUtils.log(params, "" );
-				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-				ConsoleUtils.log(params,"** Se han producido incidencias!");
-				params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
-				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-			}
-			ConsoleUtils.log(params,"** Program ended!");
 			ConsoleUtils.enableForeignKeys(params);
+			ConsoleMessageUtils.end(params.getPrinter());
 		}
 	}
 
@@ -147,21 +183,32 @@ public class ConsoleDeleteDomain {
 			.filter( ConsoleDeleteDomain::hasDomain );
 	}
 	
-	private static void deleteTableRows(ConsoleParams params, Table<?> t) {
-		params.addTotalProgress();
-		int percent = (params.getTotalProgress() * 100 / params.getTotalCount());
-		int count = params.getFromDslContext()
+	private static void deleteTableRows(ConsoleParams params, String processId, Table<?> t) {
+		
+		// Se añafe un eco por si el proceso de BD tarda mucho, se programa 
+		// una salida cada cinco segundos para mantener el flujo.
+		TimerTask task = new TimerTask() {
+			int times = 0;
+	        public void run() {
+	        	String msg = "- Borrando tabla " + t.getName() + " " + AonStringUtils.repeat(".", ++times);
+	    		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId
+	    				,params.getTotalCount()
+	    				,params.getTotalProgress() )
+	    				.setMessage(msg));
+	        }
+	    };
+	    params.addTotalProgress();
+	    
+	    Timer timer = new Timer("Timer");
+	    long delay = 5000L;
+	    timer.scheduleAtFixedRate(task, 0, delay);
+	    
+		params.getFromDslContext()
 			.delete(t)
 			.where( getDomainField(t).equal(params.getFromConnection().getFullDomain().getId()))
 			.execute();
-		ConsoleUtils.log(params,MessageFormat.format("\t [ {0} ] {1}%  ( {2} / {3} ) -- {4} - {5} rows)"
-			, (AonStringUtils.repeat('*', percent/2) + AonStringUtils.repeat(' ', 50 - percent/2))
-			, percent
-			, Integer.toString(params.getTotalProgress())
-			, Integer.toString(params.getTotalCount())
-			, t.getName()
-			, count)
-		);
+		
+		timer.cancel();
 	}
 	
 	@SuppressWarnings("unchecked")

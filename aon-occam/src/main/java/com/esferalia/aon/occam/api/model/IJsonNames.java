@@ -361,9 +361,11 @@ public final class IJsonNames {
 	public static final String PRICE = "price";
 	public static final String PRINCIPAL = "principal";
 	public static final String PRIORITY = "priority";
+	public static final String PROCESS_ID = "processId";
 	public static final String PRODUCT = "product";
 	public static final String PRODUCT_ID = "productId";
 	public static final String PROFIT_PERCENT = "profitPercent";
+	public static final String PROGRESS = "progress";
 	public static final String PROJECT = "project";
 	public static final String PROJECT_GROUPED = "ProjectGrouped";
  	public static final String PROJECTS = "projects";

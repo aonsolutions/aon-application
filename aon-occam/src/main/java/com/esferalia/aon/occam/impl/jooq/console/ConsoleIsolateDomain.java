@@ -38,7 +38,6 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
@@ -108,7 +107,7 @@ public class ConsoleIsolateDomain {
 					ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
 				});
 			
-			ConsoleUtils.disableForeignKeys(params);
+			ConsoleUtils.disableForeignKeysAndPrint(params);
 			ConsoleUtils.log(params,"** Start transaction!");
 
 			params.getToDslContext().transaction(conf -> {
@@ -165,7 +164,7 @@ public class ConsoleIsolateDomain {
 				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
 			}
 			ConsoleUtils.log(params,"** Program ended!");
-			ConsoleUtils.enableForeignKeys(params);
+			ConsoleUtils.enableForeignKeysAndPrint(params);
 		}
 	}
 	
