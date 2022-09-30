@@ -503,9 +503,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					Window.alert("ERROR de evaluación");
 				}
 				JavaScriptObject unk = JsonUtils.safeEval(text);
-				JsArray<JsDomain> array = unk.cast();
+				JsArray<JsConsoleDomain> array = unk.cast();
 				for (; x < array.length(); x++ ) {
-					JsDomain domain = array.get(x);
+					JsConsoleDomain domain = array.get(x);
 					grid.addRow(innerCallback,domain);
 					something = true;
 				}

@@ -32,7 +32,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 
 	private ConsoleDomainTableCallback callback;
 	private Integer id;
-	private JsDomain domain;
+	private JsConsoleDomain domain;
 	
 	private CheckBox checkBox;
 	private InlineLabel counterLabel;
@@ -40,6 +40,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private InlineLabel typeLabel;
 	private AonTableButton activeButton;
 	private InlineLabel domManagementLabel;
+	private InlineLabel childCountLabel;
 	private InlineLabel parentIdLabel;
 	private InlineLabel heredityLabel;
 	private InlineLabel userLabel;
@@ -54,7 +55,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	
 	
 	
-	public ConsoleDomainTableRow(ConsoleDomainTableCallback callback,JsDomain domain) {
+	public ConsoleDomainTableRow(ConsoleDomainTableCallback callback,JsConsoleDomain domain) {
 		this.callback = callback;
 		this.domain = domain; 
 		id = AonNumberUtils.toInteger("" + domain.getId()); 
@@ -64,58 +65,51 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		
 		counterLabel = new InlineLabel("" + (this.callback.addCount()));
 
-		ROW_LOGGER.info("6");
 		String domainIdString = AonNumberUtils.emptyIfNull(id);
 		idLabel = new InlineLabel( domainIdString );
 		
-		ROW_LOGGER.info("7");
 		typeLabel = new InlineLabel( AonStringUtils.defaultIfBlank( DomainType.getName(domain.getDomainType())));
 		
-		ROW_LOGGER.info("8");
 		activeButton = new AonTableButton("Inactivo",AON.CSS.aonIconToggleOff());
 		activeButton.addClickHandler(e -> changeActive(domain));
 		
-		ROW_LOGGER.info("9");
 		domManagementLabel = new InlineLabel();
 		domManagementLabel.setTitle( "Puede crear dominios" );
 		domManagementLabel.setStyleName(AON.CSS.aonIconLabel());
 		
-		ROW_LOGGER.info("10");
+		childCountLabel = new InlineLabel();
+		if (domain.hasChild()) {
+			Integer childCount = domain.getChildCount() == null ? null : AonNumberUtils.toInteger("" + domain.getChildCount());
+			Integer activeChildCount = domain.getActiveChildCount() == null ? null : AonNumberUtils.toInteger("" + domain.getActiveChildCount());
+			String child = AonNumberUtils.toString(childCount) + " ( " + activeChildCount + " )";
+			childCountLabel.setText(child);
+		}
+		
+		
 		Integer parentId = domain.getParentId() == null ? null : AonNumberUtils.toInteger("" + domain.getParentId());
 		String parentIdString = AonNumberUtils.emptyIfNull(parentId);
 		parentIdLabel = new InlineLabel( parentIdString );
 		
-		ROW_LOGGER.info("11");
 		heredityLabel = new InlineLabel();
 		heredityLabel.setTitle( "Herencia de datos" );
 		heredityLabel.setStyleName(AON.CSS.aonIconLabel());
 
-		ROW_LOGGER.info("12");
 		Integer definedUsers = AonNumberUtils.toInteger("" + domain.getDefinedUsers());
-		ROW_LOGGER.info("12.1");
 		String definedUsersString = AonNumberUtils.emptyIfNull(definedUsers);
-		ROW_LOGGER.info("12.2");
 		Integer maxDefinedUsers = (domain.getMaxDefinedUsers() != null)
 			?AonNumberUtils.toInteger("" + domain.getMaxDefinedUsers())
 			:0;
-		ROW_LOGGER.info("12.31");
 		String maxDefinedUsersString = AonNumberUtils.emptyIfNull(maxDefinedUsers);
-		ROW_LOGGER.info("12.4");
 		userLabel = new InlineLabel( definedUsersString + " / " + maxDefinedUsersString );
-		ROW_LOGGER.info("12.5");
 		
-		ROW_LOGGER.info("13");
 		nameLabel = new InlineLabel(domain.getName());
 		
-		ROW_LOGGER.info("14");
 		descriptionLabel = new InlineLabel(AonStringUtils.abbreviate(domain.getDescription(), 50));
 		descriptionLabel.setTitle(domain.getDescription());
 		
-		ROW_LOGGER.info("15");
 		String lastAccessDate = getTime(domain.getLastAccessDate());
 		lastAccessLabel = new InlineLabel( lastAccessDate );
 		
-		ROW_LOGGER.info("16");
 		expirationDateBox = new AonDateBox();
 		expirationDateBox.setValue(domain.getExpirationDate());
 		expirationDateBox.addValueChangeHandler(e -> changeExpirationDate(domain));
@@ -140,7 +134,6 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell(infoButton)
 		;
 		
-		ROW_LOGGER.info("DECORATE");
 		decorateRow(domain);
 		
 		this
@@ -150,6 +143,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( typeLabel , AON.CSS.aonTextCenter())
 			.addCell( activeButton , AON.CSS.aonTextCenter())
 			.addCell( domManagementLabel , AON.CSS.aonTextCenter())
+			.addCell( childCountLabel , AON.CSS.aonTextCenter())
 			.addCell( parentIdLabel, AON.CSS.aonTextCenter())
 			.addCell( heredityLabel , AON.CSS.aonTextCenter())
 			.addCell( userLabel , AON.CSS.aonTextCenter())
@@ -182,7 +176,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		return true;
 	}
 
-	private void decorateRow(JsDomain domain) {
+	private void decorateRow(JsConsoleDomain domain) {
 		
 		if (domain.isActive()) {
 			activeButton.setTitle("Activo");
@@ -219,7 +213,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			userLabel.setStyleName(AON.CSS.aonColorRed());
 		}
 		
-		deleteButton.setEnabled(!domain.isActive());
+		deleteButton.setEnabled(!domain.isActive() && !domain.hasChild());
 		
 		checkBox.setEnabled(deleteButton.isEnabled());
 		infoButton.setVisible(domain.isParent() || domain.isStandalone());
@@ -229,7 +223,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	// -----------------------------------------------------------------------
 	// 																[VALIDATE]
 	// -----------------------------------------------------------------------
-	private void validate(JsDomain domain) {
+	private void validate(JsConsoleDomain domain) {
 		if (canRunElseNotify()) {
 			Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
 			String name = domain.getName();
@@ -252,14 +246,14 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	// -----------------------------------------------------------------------
 	// 														   [CHANGE ACTIVE]
 	// -----------------------------------------------------------------------
-	private String getChangeActiveMessage(JsDomain domain) {
+	private String getChangeActiveMessage(JsConsoleDomain domain) {
 		return  "Se va a proceder al cambio de estado del dominio " 
 			+ domain.getId() 
 			+ " - " + domain.getName() 
 			+ " ("+ domain.getDescription() +").";
 	}
 	
-	private void changeActive(JsDomain domain) {
+	private void changeActive(JsConsoleDomain domain) {
 		if (canRunElseNotify()) {
 			if (domain.getLastAccessDate() != null ) {
 				Date today = new Date();
@@ -275,7 +269,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		}
 	}
 	
-	private void doChangeActive(JsDomain domain) {
+	private void doChangeActive(JsConsoleDomain domain) {
 		callback.setRunning(true);
 		Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
 		callback.onChangeActive( domainId , !domain.isActive() , new AsyncCallback<Domain>() {
@@ -297,14 +291,14 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	// -----------------------------------------------------------------------
 	// 												  [CHANGE EXPIRATION DATE]
 	// -----------------------------------------------------------------------
-	private String getExpirationDateChangeMessage(JsDomain domain) {
+	private String getExpirationDateChangeMessage(JsConsoleDomain domain) {
 		return  "Se va a proceder al cambio de fecha de expiraci\u00F3n del dominio " 
 			+ domain.getId() 
 			+ " - " + domain.getName() 
 			+ " ("+ domain.getDescription() +").";
 	}
 
-	private void changeExpirationDate(JsDomain domain) {
+	private void changeExpirationDate(JsConsoleDomain domain) {
 		if (canRunElseNotify()) {
 			AonConfirmDialog.showConfirm(getExpirationDateChangeMessage(domain) , () -> {
 				callback.setRunning(true);
@@ -337,7 +331,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	// -----------------------------------------------------------------------
 	// 												  				  [DELETE]
 	// -----------------------------------------------------------------------
-	private String getDeleteMessage(JsDomain domain) {
+	private String getDeleteMessage(JsConsoleDomain domain) {
 		return  "Se va a proceder al BORRADO del dominio "  
 			+ domain.getId() 
 			+ " - " + domain.getName() 
@@ -353,7 +347,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		callback.onDelete( domainId , tab, cbk);
 	}
 	
-	private void delete(JsDomain domain,String tabLabel) {
+	private void delete(JsConsoleDomain domain,String tabLabel) {
 		if (canRunElseNotify()) {
 			AonConfirmDialog.showConfirm("\u00A1\u00A1ESTE PROCESO ES IRREVERSIBLE!!",
 				getDeleteMessage(domain) , () -> {

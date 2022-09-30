@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleService;
 import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -25,10 +26,11 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 
 	@Override
-	public LinkedList<Domain> getDomains(DomainParams params) throws AonCoreException {
+	public LinkedList<ConsoleDomain> getDomains(DomainParams params) throws AonCoreException {
 		return CONSOLE.getDomains(params)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
 	@Override
 	public Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException {
 		return CONSOLE.deleteDomain(params, domainId);

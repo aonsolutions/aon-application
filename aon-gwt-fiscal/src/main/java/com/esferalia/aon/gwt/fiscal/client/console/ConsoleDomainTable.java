@@ -52,6 +52,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 			.addCell(new Label(AON.MSG.type()),AON.CSS.aonWidth80(), AON.CSS.aonNowrap())
 			.addCell(new Label("Act."),AON.CSS.aonWidth20())
 			.addCell(new Label("Crea"),AON.CSS.aonWidth20())
+			.addCell(new Label("Hijos"),AON.CSS.aonWidth40())
 			.addCell(new Label("Padre"),AON.CSS.aonWidth40())
 			.addCell(new Label("Her."),AON.CSS.aonWidth20())
 			.addCell(new Label("Usr."),AON.CSS.aonWidth20())
@@ -63,7 +64,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		;
 	}
 	
-	public void addRow(ConsoleDomainTableCallback callback, JsDomain domain) {
+	public void addRow(ConsoleDomainTableCallback callback, JsConsoleDomain domain) {
 		this.add( new ConsoleDomainTableRow(callback, domain) );
 	}
 

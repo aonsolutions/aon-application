@@ -23,6 +23,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
 	public static final String ACTIVE = "active";
+	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";
 	public static final String ACTIVITY = "activity";
 	public static final String ACTIVITY_TYPE = "activity_type";
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
@@ -78,6 +79,7 @@ public final class IJsonNames {
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
+	public static final String CHILD_COUNT = "childCount";
 	public static final String CLASS_NAME = "class_name";
 	public static final String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
 	public static final String CNAE = "cnae";
