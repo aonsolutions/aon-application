@@ -14,7 +14,7 @@ import { AonTaskHolder } from '../taskholder/aon-taskholder.js';
 import { AonTaskHolderList } from '../taskholder/aon-taskholder-list.js';
 
 export class AonOfficePanel extends AonElement {
-
+    projectTypes;
 	constructor () {
 		super();
 	}
@@ -26,6 +26,7 @@ export class AonOfficePanel extends AonElement {
 
 	initialize(){
 		this.id = this.id || OfficeEnums.OfficeViews.AON_OFFICE_PANEL;
+        this.projectTypes = [];
 	}
 
  	build() {
@@ -53,14 +54,14 @@ export class AonOfficePanel extends AonElement {
 
         application.addSidenavOptions(MSG.OFFICE, options);
 
-
-        application.addSidenavOptions2(DocumentalSidenav.TYPES, [], () => this.createType());
+        application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], () => this.createType());
         this.loadProjectType();
     }
 
 
     loadProjectType() {
         getProjectTypes({}).then(types => {
+            this.projectTypes = types;
             this.clearElementById(this.getApplication().SIDENAV + DocumentalSidenav.TYPES.id + 'List');
             types.forEach(item => {
                 let option = {
@@ -81,6 +82,16 @@ export class AonOfficePanel extends AonElement {
            });
        });
     }
+
+
+    async getProjectTypes(){
+        if(this.projectTypes.length == 0){
+            const types = await getProjectTypes({}).catch(()=> [null]);
+            this.projectTypes = types;
+        }
+        return this.projectTypes;
+    }
+        
 
     createType() {
         let d = this.getApplication().getDialog();

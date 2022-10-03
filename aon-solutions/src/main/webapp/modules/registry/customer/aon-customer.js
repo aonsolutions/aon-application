@@ -25,8 +25,12 @@ export class AonCustomer extends AonReg {
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
-			{ title: MSG.FISCAL_DATA, fn: () => this.buildFiscalData()}
+			{ title: MSG.FISCAL_DATA, fn: () => this.buildFiscalData()},
 		];
+
+		if(this.isBeta()){
+			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData()});
+		}
 	}
 
 	buildFiscalData() {
@@ -96,10 +100,12 @@ export class AonCustomer extends AonReg {
 			saveCustomer(this.registry).then(registry => {
 				this.registry.id = registry.id;
 				this.saveBool = true;
+				this.saveProjects();
 				this.showToast({
 					type: 'success',
 					 message: 'Datos Guardados Correctamente'
 				 });
+			
 			}).catch(error => {
 				this.saveBool = true;
 				this.showToast(error);
