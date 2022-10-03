@@ -78,6 +78,22 @@
 			border-bottom: none;
 		}
 		
+		.dateNoSelected {
+			padding: .2rem;
+			background-color: #eee;
+			font-weight: bold;
+			cursor: pointer;
+		}
+		
+		.dateSelected {
+			background-color: white;
+			border: 1px solid #eee;
+		}
+		
+		.datePanel {
+			gap: .3rem !important;
+		}
+		
 		.extraCellHeight{
 			height: 1.5rem;
 		}
@@ -186,7 +202,7 @@
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="salaryDiscPanelContent">
-						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex}" />
+						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flexColumn}" />
 								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter}">
 									<g:ScrollPanel ui:field="salaryScrollPanel">
 										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />

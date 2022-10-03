@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -122,7 +123,18 @@ public class JooqAgreementTab {
 			levels.add(level);
 		}
 		
-		agreement.setLevels(levels);
+		agreement.setLevels(sortLevelSet(levels));
+	}
+	
+	private static Set<Level> sortLevelSet(Set<Level> levelsSetIn) {
+		Set<Level> levelsSet = new LinkedHashSet<Level>();
+		
+		ArrayList<Level> levelArray = new ArrayList<>(levelsSetIn);
+		levelArray.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
+		
+		levelsSet.addAll(levelArray);
+		
+		return levelsSet;
 	}
 
 	private static void getAgreementHasContracts(DSLContext dslContext, AgreementInfo agreement) {
@@ -252,9 +264,20 @@ public class JooqAgreementTab {
 			paymentsSet.add(payment);
 		}
 
-		agreement.setPayments(paymentsSet);
+		agreement.setPayments(sortPaymentSet(paymentsSet));
 	}
 	
+	private static Set<Payment> sortPaymentSet(Set<Payment> paymentsSetIn) {
+		Set<Payment> paymentsSet = new LinkedHashSet<Payment>();
+		
+		ArrayList<Payment> paymentArray = new ArrayList<>(paymentsSetIn);
+		paymentArray.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
+		
+		paymentsSet.addAll(paymentArray);
+		
+		return paymentsSet;
+	}
+
 	private static void getAgreementExtras(DSLContext dslContext, AgreementInfo agreement) {
 		Result<AgreementExtraRecord> agreementExtraRecords = dslContext.selectFrom(AGREEMENT_EXTRA)
 				.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement.getId()))
