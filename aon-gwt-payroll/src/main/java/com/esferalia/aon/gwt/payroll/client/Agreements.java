@@ -325,7 +325,7 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 						if (agreementsTree.getTree().getItemCount() > 0)
 							agreementsTree.getTree().setSelectedItem(
 									agreementsTree.getTree().getItem(0), 
-									false);
+									true);
 						
 						toolbar.setVisibleLoadingButton(false);
 						success.accept(agreements);

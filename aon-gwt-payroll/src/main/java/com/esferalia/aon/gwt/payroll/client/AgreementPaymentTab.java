@@ -19,9 +19,9 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -40,6 +40,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -356,7 +357,39 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		descriptionColumn.setSortable(true);
-		agreementPaymentDG.setColumnWidth(descriptionColumn, 20, Unit.PCT);
+		agreementPaymentDG.setColumnWidth(descriptionColumn, 30, Unit.PCT);
+		
+		// Taxed column.
+		TextColumn<Payment> taxedColumn = new TextColumn<Payment>() {
+			@Override
+			public String getValue(Payment payment) {
+				return getTaxedType(payment.getIrpfExpression());
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<div title=\"" + getTaxedDescription(payment.getIrpfExpression()) + "\">" + getTaxedType(payment.getIrpfExpression()) + "</div>");
+			}
+		};
+		
+		taxedColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementPaymentDG.setColumnWidth(taxedColumn, 5, Unit.PCT);
+		 
+		// Quote column.
+		TextColumn<Payment> quoteColumn = new TextColumn<Payment>() {
+			@Override
+			public String getValue(Payment payment) {
+				return getQuoteType(payment.getQuoteExpression());
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<div title=\"" + getQuoteDescription(payment.getQuoteExpression()) + "\">" + getQuoteType(payment.getQuoteExpression()) + "</div>");
+			}
+		};
+		
+		quoteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementPaymentDG.setColumnWidth(quoteColumn, 5, Unit.PCT);
 	    
 	    // Expression column.
 	    Column<Payment, String> expressionColumn = new Column<Payment, String>(new TextCell()) {
@@ -367,7 +400,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 
 	    expressionColumn.setSortable(true);
-	    agreementPaymentDG.setColumnWidth(expressionColumn, 30, Unit.PCT);
+	    agreementPaymentDG.setColumnWidth(expressionColumn, 35, Unit.PCT);
 	    
 	    // Visibility column.
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
@@ -438,6 +471,8 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		agreementPaymentDG.addColumn(editColumn, "");
 		agreementPaymentDG.addColumn(codeColumn, "CRA");
 		agreementPaymentDG.addColumn(descriptionColumn, "Descripci\u00F3n");
+		agreementPaymentDG.addColumn(taxedColumn, "Tributa");
+		agreementPaymentDG.addColumn(quoteColumn, "Cotiza");
 		agreementPaymentDG.addColumn(expressionColumn, "Expresi\u00F3n");
 		
 		agreementPaymentDG.addColumn(visibilityColumn, "");  
@@ -496,6 +531,38 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		payment.setExpression(expression);
 	}
 
+	private String getTaxedType(String irpfExpression) {
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "T";
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "E";
+		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "C";
+		if(AonStringUtils.isNotBlank(irpfExpression)) return "P";
+		return "N/D";
+	}
+
+	private String getTaxedDescription(String irpfExpression) {
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "Importe \u00cdntegro";
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "Ingreso a Cuenta";
+		if(AonStringUtils.isNotBlank(irpfExpression)) return "Personalizado";
+		return "No definido";
+	}
+
+	private String getQuoteType(String quoteExpression) {
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) return "T";
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) return "E";
+		if(AonStringUtils.containsIgnoreCase(quoteExpression, "PRORRATEAR")) return "PR";
+		if(AonStringUtils.isNotBlank(quoteExpression)) return "P";
+		return "N/D";
+	}
+
+	private String getQuoteDescription(String quoteExpression) {
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) return "Importe \u00cdntegro";
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(quoteExpression, "PRORRATEAR")) return "Prorrateado";
+		if(AonStringUtils.isNotBlank(quoteExpression)) return "Personalizado";
+		return "No definido";
+	}
+	
 	// ------------------------------------------ setAgreementPayment
 	
 	public void setAgreementPayment(AgreementInfo agreementIn) {

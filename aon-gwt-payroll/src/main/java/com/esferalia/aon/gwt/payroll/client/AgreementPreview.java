@@ -67,7 +67,11 @@ public abstract class AgreementPreview extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String columnBorder();
+		String dateNoSelected();
+		String dateSelected();
+		String datePanel();
 		String extraCellHeight();
+		String flex();
 		String gridCell();
 		String gridTitle();
 		String headerColor();
@@ -200,7 +204,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
 	
-	private ListBox datesLB;
+	private ListBox levelLB;
 	
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementUpdateButton;
@@ -210,6 +214,10 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private TextBox partialTextBox;
 	private ListBox groupListBox;
 	
+	private ArrayList<Label> dateLabels;
+	
+	private Date selectedDate;
+	
 	// ------------------------------------------ Constructor
 
 	protected AgreementPreview() {
@@ -218,6 +226,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		createDiscPanelButtons();
 		initWidget(uiBinder.createAndBindUi(this));
 		initDiscPanels();
+		dateLabels = new ArrayList<>();
 	}
 	
 	// ------------------------------------------ setAgreementPreview
@@ -290,15 +299,65 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void createSalaryTableButtons() {
 		salaryTableButtons.clear();
 		
-		datesLB = new ListBox();
-		datesLB.getElement().getStyle().setHeight(1.7, Unit.EM);
-		agreement.getSortedDates().forEach(date -> datesLB.addItem(formatDate.format(date), formatDate.format(date)));
-		datesLB.setSelectedIndex(0);
-		datesLB.setVisible(!agreement.getSortedDates().isEmpty());
+		HTMLPanel levelPanel = new HTMLPanel("");
+		levelPanel.addStyleName(style.flex());
 		
-		datesLB.addChangeHandler(e -> createSalaryTable());
+		Label levelL = new Label("Mostrar nivel(es) :");
+		levelL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		levelLB = new ListBox();
+		levelLB.getElement().getStyle().setHeight(1.7, Unit.EM);
+		levelLB.addItem("Todos", "");
+		agreement.getLevels().forEach(level -> levelLB.addItem(level.getDescription(), level.getId().toString()));
+		setSelectedValueLB(levelLB, null == agreement.getSelectedLevel() ? "" : String.valueOf(agreement.getSelectedLevel().getId()));
+		levelLB.setVisible(!agreement.getLevels().isEmpty());
 		
-		salaryTableButtons.add(datesLB);
+		levelLB.addChangeHandler(e -> filterSelectedLevel());
+		
+		levelPanel.add(levelL);
+		levelPanel.add(levelLB);
+		
+		HTMLPanel datesPanel = new HTMLPanel("");
+		datesPanel.addStyleName(style.flex());
+		datesPanel.addStyleName(style.datePanel());
+		
+		selectedDate = agreement.getSortedDates().stream().findFirst().get();
+		
+		agreement.getSortedDates().forEach(date -> {
+			Label dateLabel = new Label(formatDate.format(date));
+			dateLabel.addStyleName(style.dateNoSelected());
+			if(date.equals(selectedDate)) dateLabel.addStyleName(style.dateSelected());
+			dateLabel.addClickHandler(e -> {
+				Date dateClicked = formatDate.parse(dateLabel.getText());
+				selectedDate = dateClicked;
+				dateLabels.forEach(dateLabelIn -> dateLabelIn.removeStyleName(style.dateSelected()));
+				dateLabel.addStyleName(style.dateSelected());
+				createSalaryTable();
+			});
+			
+			dateLabels.add(dateLabel);
+			datesPanel.add(dateLabel);
+		});
+		
+		salaryTableButtons.add(levelPanel);
+		salaryTableButtons.add(datesPanel);
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+
+	private void filterSelectedLevel() {
+		String levelId = levelLB.getSelectedValue();
+		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(levelLB.getSelectedValue())));
+		setAgreementPreview(agreement);
 	}
 
 	// ------------------------------------------ salaryTable
@@ -309,7 +368,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 		else {
 			hideLevelSalaryMessage();
 			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-//			salaryScrollPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 620), Unit.PX);
 			getSalaryTableHeader();
 			fillSalaryTable();
 			salaryTableWidth();
@@ -317,8 +375,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 	}
 	
 	private void getSalaryTableHeader() {
-		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
-		
 		salaryGrid.clear();
 		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size()+2);
 		int row = salaryGrid.insertRow(salaryGrid.getRowCount());
@@ -354,11 +410,9 @@ public abstract class AgreementPreview extends ResizeComposite {
 	}
 
 	private void fillSalaryTable() {
-		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
-		
 		for(Level level : agreement.getLevels()) {
 			
-			if(level.isDeleted()) continue;
+			if(level.getId() != 0 && (level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId())))) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 			
@@ -435,7 +489,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void fillCategoryTable() {
 		for(Entry<Integer, Set<String>> e : agreement.getCategoriesMap().entrySet()) {
 			Level level = agreement.getLevelById(e.getKey());
-			if(level.getId() == 0 || level.isDeleted()) continue;
+			
+			if(level.getId() == 0 || level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId()))) continue;
 			
 			int row = levelGrid.insertRow(levelGrid.getRowCount());
 			
@@ -482,7 +537,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 
 	private void getPaymentTableHeader() {
 		paymentGrid.clear();
-		paymentGrid.resize(0, 5);
+		paymentGrid.resize(0, 3);
 		int row = paymentGrid.insertRow(paymentGrid.getRowCount());
 		
 		Label cra = new Label("CRA");
@@ -498,25 +553,11 @@ public abstract class AgreementPreview extends ResizeComposite {
 		paymentGrid.setWidget(row, 1, concept);
 		paymentGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
-		Label tributa = new Label("Tributa");
-		tributa.addStyleName(style.gridTitle());
-		tributa.addStyleName(style.headerFSize());
-		tributa.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		paymentGrid.setWidget(row, 2, tributa);
-		paymentGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
-		
-		Label cotiza = new Label("Cotiza");
-		cotiza.addStyleName(style.gridTitle());
-		cotiza.addStyleName(style.headerFSize());
-		cotiza.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		paymentGrid.setWidget(row, 3, cotiza);
-		paymentGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
-		
 		Label devengo = new Label("Devengo");
 		devengo.addStyleName(style.gridTitle());
 		devengo.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 4, devengo);
-		paymentGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
+		paymentGrid.setWidget(row, 2, devengo);
+		paymentGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
@@ -531,14 +572,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			Label conceptCell = new Label(payment.getDescription());
 			
-			Label taxedCell = new Label(getTaxedType(payment.getIrpfExpression()));
-			taxedCell.setTitle(getTaxedDescription(payment.getIrpfExpression()));
-			taxedCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-			
-			Label quoteCell = new Label(getQuoteType(payment.getQuoteExpression()));
-			quoteCell.setTitle(getQuoteDescription(payment.getQuoteExpression()));
-			quoteCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-			
 			TextBox devengoCell = new ExpressionBox();
 			devengoCell.setWidth("100%");
 			devengoCell.setValue(null == payment.getExpression() ? null : payment.getExpression());
@@ -546,57 +579,19 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			paymentGrid.setWidget(row, 0, craCell);
 			paymentGrid.setWidget(row, 1, conceptCell);
-			paymentGrid.setWidget(row, 2, taxedCell);
-			paymentGrid.setWidget(row, 3, quoteCell);
-			paymentGrid.setWidget(row, 4, devengoCell);
+			paymentGrid.setWidget(row, 2, devengoCell);
 			
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
-			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
-			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
 		}
-	}
-
-	private String getTaxedType(String irpfExpression) {
-		if(AonStringUtils.isBlank(irpfExpression)) return "P";
-		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "I";
-		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "E";
-		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "C";
-		return "N/D";
-	}
-
-	private String getTaxedDescription(String irpfExpression) {
-		if(AonStringUtils.isBlank(irpfExpression)) return "Personalizado";
-		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "Importe \u00cdntegro";
-		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "Exento";
-		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "Ingreso a Cuenta";
-		return "No definido";
-	}
-
-	private String getQuoteType(String quoteExpression) {
-		if(AonStringUtils.isBlank(quoteExpression)) return "P";
-		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) return "I";
-		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) return "E";
-		if(AonStringUtils.containsIgnoreCase(quoteExpression, "PRORRATEAR")) return "PR";
-		return "N/D";
-	}
-
-	private String getQuoteDescription(String quoteExpression) {
-		if(AonStringUtils.isBlank(quoteExpression)) return "Personalizado";
-		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) return "Importe \u00cdntegro";
-		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) return "Exento";
-		if(AonStringUtils.containsIgnoreCase(quoteExpression, "PRORRATEAR")) return "Prorrateado";
-		return "No definido";
 	}
 
 	private void paymentTableWidth() {
 		paymentGrid.setWidth("100%");
 		paymentGrid.getColumnFormatter().setWidth(0, "10%");
-		paymentGrid.getColumnFormatter().setWidth(1, "30%");
-		paymentGrid.getColumnFormatter().setWidth(2, "10%");
-		paymentGrid.getColumnFormatter().setWidth(3, "10%");
-		paymentGrid.getColumnFormatter().setWidth(4, "40%");
+		paymentGrid.getColumnFormatter().setWidth(1, "40%");
+		paymentGrid.getColumnFormatter().setWidth(2, "50%");
 	}
 	
 	// ------------------------------------------ extraTable

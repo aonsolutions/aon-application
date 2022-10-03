@@ -276,6 +276,8 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	private Set<String> allVariables = new HashSet<>();
 	private ShownVariables shownVariables = ShownVariables.VALUES;
 	
+	private Level selectedLevel;
+	
 	@Override
 	public Integer getId() {
 		return id;
@@ -677,8 +679,16 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		getVariables().remove(deleteDate);
 		getLevelDatasMap().values().forEach(levelDatas -> levelDatas.forEach(levelData -> levelData.setDeleted(levelData.getStartDate().equals(deleteDate))));
 	}
-
+	
 	// ----------------------------------------------------------------------
+
+	public Level getSelectedLevel() {
+		return selectedLevel;
+	}
+
+	public void setSelectedLevel(Level selectedLevel) {
+		this.selectedLevel = selectedLevel;
+	}
 
 	public boolean isSaved(){
 		return id > 0;
