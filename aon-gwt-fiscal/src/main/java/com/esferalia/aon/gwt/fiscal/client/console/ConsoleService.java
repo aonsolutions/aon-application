@@ -19,4 +19,5 @@ public interface ConsoleService extends RemoteService {
 	Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException;
 	Domain changeActive(DomainParams params, Integer domainId, boolean active) throws AonCoreException;
 	Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) throws AonCoreException;
+	String remoteAccess(DomainParams params, Integer domainId);
 }

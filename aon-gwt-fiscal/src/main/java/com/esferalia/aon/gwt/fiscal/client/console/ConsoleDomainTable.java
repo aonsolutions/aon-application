@@ -35,6 +35,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
 		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
 		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
+		public void onRemoteAccess(Integer integer, AsyncCallback<String> cbk);
 	}
 	
 	
@@ -61,6 +62,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 			.addCell(new Label("\u00FAlt. Acceso"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 			.addCell(new Label("Expira"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 			.addCell(new Label(""),AON.CSS.aonWidth100())
+			.addCell(new Label(""),AON.CSS.aonWidth20())
 		;
 	}
 	

@@ -45,4 +45,9 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate ) throws AonCoreException {
 		return CONSOLE.changeExpirationDate(params, domainId, expireDate);
 	}
+	
+	@Override
+	public String remoteAccess(DomainParams params, Integer domainId) {
+		return CONSOLE.remoteAccess(params, domainId);
+	}
 }

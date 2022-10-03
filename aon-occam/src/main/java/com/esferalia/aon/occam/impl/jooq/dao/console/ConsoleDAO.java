@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -23,6 +25,8 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
@@ -37,8 +41,6 @@ public class ConsoleDAO {
 	private static final Field<Integer> USER_COUNT = DSL.count().as("userCount");
 	private static final Field<Integer> USER_COUNT_DOMAIN = USER.DOMAIN.as("userCountDomain");
 
-	
-	
 	private static final String INFORMATION_SCHEMA = "information_schema";
 	private static final String MYSQL = "mysql";
 	private static final String PERFORMANCE_SCHEMA = "performance_schema";
@@ -48,15 +50,15 @@ public class ConsoleDAO {
 	
 	public static Stream<ConsoleDomain> getDomains(CloseableAONContext ctx, DomainParams params) {
 		com.esferalia.aon.jooq.tables.Domain domainChild = DOMAIN.as("domainChild");
-		Field<Integer> CHILD_COUNT_PARENT = domainChild.PARENT.as("childCountParent");
-		Field<Integer> CHILD_COUNT = DSL.count().as("childCount");
+		Field<Integer> childCountParent = domainChild.PARENT.as("childCountParent");
+		Field<Integer> childCountField = DSL.count().as("childCount");
 		BigDecimal one = new BigDecimal(1);
 		BigDecimal zero = new BigDecimal(0);
-		Field<BigDecimal> CHILD_ACTIVE_COUNT_IF  = DSL.if_(domainChild.ACTIVE.eq((byte)1), one , zero);
-		Field<BigDecimal> CHILD_ACTIVE_COUNT = DSL.sum(CHILD_ACTIVE_COUNT_IF).as("childActiveCount");
+		Field<BigDecimal> childActiveCountIf  = DSL.if_(domainChild.ACTIVE.eq((byte)1), one , zero);
+		Field<BigDecimal> childActiveCount = DSL.sum(childActiveCountIf).as("childActiveCount");
 		
 		Table<Record3<Integer,Integer,BigDecimal>> childCount = 
-			ctx.getDslContext().select(CHILD_COUNT_PARENT,CHILD_COUNT,CHILD_ACTIVE_COUNT)
+			ctx.getDslContext().select(childCountParent,childCountField,childActiveCount)
 				.from(domainChild)
 				.where( domainChild.PARENT.isNotNull() )
 				.groupBy(domainChild.PARENT)
@@ -73,7 +75,8 @@ public class ConsoleDAO {
 		return ctx.getDslContext().select()
 			.from(DOMAIN)
 			.leftOuterJoin(userCount).on(DOMAIN.ID.eq(USER_COUNT_DOMAIN))
-			.leftOuterJoin(childCount).on(DOMAIN.ID.eq(CHILD_COUNT_PARENT))
+			.leftOuterJoin(childCount).on(DOMAIN.ID.eq(childCountParent))
+			.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
 			.where( getFilter(params) )
 			.offset(params.getOffset())
 			.limit(params.getLimit())
@@ -84,12 +87,15 @@ public class ConsoleDAO {
 				return pair;
 			})
 			.map( pair -> {
-				pair.getRight().setChildCount( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(CHILD_COUNT)) );
-				BigDecimal activeCount = pair.getLeft().getValue(CHILD_ACTIVE_COUNT);
+				pair.getRight().setChildCount( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(childCountField)) );
+				BigDecimal activeCount = pair.getLeft().getValue(childActiveCount);
 				pair.getRight().setActiveChildCount( activeCount==null?0:activeCount.intValue()  );
 				return pair.getRight();
 			})
 			;
+			
+			
+		
 	}
 	
 	public static Stream<Schema> getSchemas(AONContext ctx) {
@@ -186,7 +192,6 @@ public class ConsoleDAO {
 		if (params.getToLastAccess() != null ) {
 			c = and(c, DOMAIN.LASTACCESS_DATE.le(new Timestamp( params.getToLastAccess().getTime()))); 
 		}
-		
 		if (params.getFromExpirationDate() != null ) {
 			c = and(c, DOMAIN.EXPIRATIONDATE.ge(AonDateUtils.toSql(params.getFromExpirationDate()))); 
 		}
@@ -200,8 +205,7 @@ public class ConsoleDAO {
 	public static class ConsoleDomainFiller extends Filler implements Function<Record, ConsoleDomain> {
 		@Override
 		public ConsoleDomain apply(Record r) {
-			ConsoleDomain d = build(r);
-			return d;
+			return build(r);
 		}
 		
 		public static ConsoleDomain build(Record r) {
@@ -214,8 +218,50 @@ public class ConsoleDAO {
 			return consoleDomain
 				.setChildCount(0)
 				.setActiveChildCount(0)
+				.setRemoteAccessEnabled( getValue(r, APP_PARAM.ID) != null)
 			;	
 		}
+	}
+
+	public static boolean isRemoteAccessEnabled(AONContext ctx, Integer domainId) {
+		return AppParamDAO.getApplicationParameterStream(ctx
+				, p -> p.getDomainProperty().eq(domainId)
+				.and(p.getNameProperty().eq(AppParam.AON_SUPPORT_ENABLED.toString())))
+			.findAny()
+			.isPresent();
+	}
+
+	public static String remoteAccess(CloseableAONContext ctx, Integer domainId) {
+		if (isRemoteAccessEnabled(ctx, domainId)) {
+			int count = ctx.getDslContext()
+				.delete(APP_PARAM)
+				.where(APP_PARAM.DOMAIN.eq(domainId))
+				.and(APP_PARAM.NAME .eq(AppParam.AON_SUPPORT_ENABLED.toString()))
+				.execute();
+			ctx.log().info("Remote Access Change: OFF " + domainId + "(" + count + " rows)");
+			return null;
+		} else {
+			int count = ctx.getDslContext()
+				.insertInto(APP_PARAM)
+				.set(APP_PARAM.DOMAIN, domainId)
+				.set(APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
+				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
+				.execute();
+			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
+			String users = ctx.getDslContext()
+				.select(USER.LOGIN)
+				.from(USER)
+				.where(USER.DOMAIN.eq(domainId))
+				.and(USER.ACTIVE.eq((byte) 1))
+				.limit(10)
+				.fetch()
+				.stream()
+				.map(rec -> "(" + rec.getValue(USER.LOGIN)+ ")")
+				.collect(Collectors.joining(", "));
+			;
+			return AonStringUtils.defaultIfBlank(users, "No hay usuarios activos en el dominio");
+		}
+		
 	}
 	
 }

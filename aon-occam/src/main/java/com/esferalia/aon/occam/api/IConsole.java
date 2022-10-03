@@ -15,6 +15,7 @@ public interface IConsole {
 	public Stream<ConsoleDomain> getDomains(CloseableAONContext ctx, DomainParams params);
 	public boolean deleteDomain(ConsoleParams params);
 	public Domain changeActive(CloseableAONContext ctx, Integer domainId, boolean active);
-	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate);		
+	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate);
+	public String remoteAccess(CloseableAONContext ctx, Integer domainId);		
 	
 }

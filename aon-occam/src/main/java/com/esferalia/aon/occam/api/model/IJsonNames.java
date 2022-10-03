@@ -412,6 +412,7 @@ public final class IJsonNames {
 	public static final String REGISTRY_PARAMS = "registryParams";
 	public static final String REGISTRY = "registry";
 	public static final String REMARKS = "remarks";
+	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
 	public static final String RESERVATION = "reservation";

@@ -17,6 +17,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -53,6 +54,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private AonTableButton deleteButton;
 	private AonTableButton validateButton;
 	private AonTableButton infoButton;
+	private AonTableButton remoteAccessButton;
 	
 	
 	
@@ -82,6 +84,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		if (domain.hasChild()) {
 			Integer childCount = domain.getChildCount() == null ? null : AonNumberUtils.toInteger("" + domain.getChildCount());
 			Integer activeChildCount = domain.getActiveChildCount() == null ? null : AonNumberUtils.toInteger("" + domain.getActiveChildCount());
+			activeChildCount = AonNumberUtils.zeroIfNull(activeChildCount);
 			String child = AonNumberUtils.toString(childCount) + " ( " + activeChildCount + " )";
 			childCountLabel.setText(child);
 		}
@@ -124,14 +127,36 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		
 		validateButton = new AonTableButton(AON.MSG.validateAction(), AON.CSS.aonIconValid());
 		validateButton.addClickHandler(e -> AonConfirmDialog.showConfirm("Proceder con la validaci\u00F3n de integridad referencial del dominio " 
-				+ domain.getId() 
+				+ id 
 				+ " - " + domain.getName() 
 				+ " ("+ domain.getDescription() +")."
 			, () -> validate(domain)));
 		
 		infoButton = new AonTableButton("Resumen contrataci\u00F3n", AON.CSS.aonIconInfo());
-		infoButton.addClickHandler(e -> callback.onInfo(AonNumberUtils.toInteger("" +  domain.getId())));
+		infoButton.addClickHandler(e -> callback.onInfo(id));
 					
+		
+		remoteAccessButton = new AonTableButton("Acceso remoto", AON.CSS.aonIconWrench());
+		remoteAccessButton.addClickHandler(e -> callback.onRemoteAccess(id, new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.showError( "No se pudo modificar el acceso remoto. ("+ caught.getMessage() +")");
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				if (AonStringUtils.isBlank(result)) {
+					decorateRemoteAccess(false);	
+				} else {
+					String msg =  "Desea navegar a " + domain.getName() 
+						+ "?. Puede acceder con uno de los siguientes usuarios " + result;
+					AonConfirmDialog.showConfirm("Pregunta", msg
+						, () -> Window.open("https://" + domain.getName(), "", ""));
+					decorateRemoteAccess(true);
+				}
+			}
+		}));
+		
 		buttons.addRow()
 			.addCell(deleteButton)
 			.addCell(validateButton)
@@ -156,6 +181,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( lastAccessLabel )
 			.addCell( expirationDateBox )
 			.addCell( buttons )
+			.addCell( remoteAccessButton )
 		;
 
 		
@@ -216,7 +242,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		if ( AonNumberUtils.compare( definedUsers , maxDefinedUsers) < 0) {
 			userLabel.setStyleName(AON.CSS.aonColorRed());
 		}
-		
+		decorateRemoteAccess( domain.isRemoteAccessEnabled() );
 		deleteButton.setEnabled(!domain.isActive() && !domain.hasChild());
 		
 		checkBox.setEnabled(deleteButton.isEnabled());
@@ -224,6 +250,21 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		
 	}
 	
+	private void decorateRemoteAccess(boolean remoteAccessEnabled) {
+		ROW_LOGGER.info("remoteAccessEnabled ..:" + remoteAccessEnabled );
+		if (remoteAccessEnabled) {
+			remoteAccessButton.setTitle("Acceso remoto HABILITADO");
+			remoteAccessButton.addStyleName(AON.CSS.aonIconRedWrench());
+			remoteAccessButton.removeStyleName(AON.CSS.aonIconWrench());
+			ROW_LOGGER.info("1.- remoteAccessEnabled ..:" + remoteAccessEnabled );
+		} else {
+			remoteAccessButton.setTitle("Acceso remoto DESHABILITADO");
+			remoteAccessButton.addStyleName(AON.CSS.aonIconWrench());
+			remoteAccessButton.removeStyleName(AON.CSS.aonIconRedWrench());
+			ROW_LOGGER.info("2.- remoteAccessEnabled ..:" + remoteAccessEnabled );
+		}
+	}
+
 	// -----------------------------------------------------------------------
 	// 																[VALIDATE]
 	// -----------------------------------------------------------------------
@@ -415,6 +456,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		expirationDateBox.setEnabled(false);
 		activeButton.setEnabled(false);
+		remoteAccessButton.setVisible(true);
 		buttons.clear();
 		Label deletedLabel = new Label("PENDIENTE");
 		deletedLabel.setStyleName(AON.CSS.aonColorOrange());
@@ -423,12 +465,15 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	}
 
 	private void decorateRowAsDeleted() {
+		checkBox.setValue(false);
+		checkBox.setEnabled(false);
 		typeLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		nameAnchor.addStyleName(AON.CSS.aonTextLineThrough());
 		lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
 		expirationDateBox.setEnabled(false);
 		activeButton.setEnabled(false);
+		remoteAccessButton.setVisible(false);
 		buttons.clear();
 		Label deletedLabel = new Label("BORRADO");
 		deletedLabel.setStyleName(AON.CSS.aonColorRed());

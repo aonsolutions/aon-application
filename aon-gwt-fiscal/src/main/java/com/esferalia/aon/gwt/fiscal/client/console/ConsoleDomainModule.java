@@ -164,9 +164,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					
 					
 				}));
-						
-						
-//						
+
 		}
 		
 		@Override
@@ -323,6 +321,15 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		@Override
 		public void check(com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTableRow row) {
 			updateChecks(row);			
+		}
+		
+		// -----------------------------------------------------------------------
+		// 												  		   [REMOTE ACCESS]
+		// -----------------------------------------------------------------------
+		@Override
+		public void onRemoteAccess(Integer domainId, AsyncCallback<String> cbk) {
+			DomainParams params = filterPanel.getParams(options);
+			ConsoleModule.CONSOLE_SERVICE.remoteAccess(params,domainId, new AsyncCallbackWrapper<>( cbk ));
 		}
 		
 	}
@@ -527,6 +534,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				LOGGER.info("onReadyStateChange (enableSearch)");
 			}
 		});
+		count = 0;
 		StringBuilder requestData = new StringBuilder();
 		params.setOffset(offset.getValue());
 		requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert( params ) );
@@ -552,43 +560,5 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	}
 
 
-/*	
-	private void _deleteDomain(String schema,Integer domainId, String description, AsyncCallback<Boolean> cbk) {
-		if (canRun()) {
-			running = true;
-			try {
-				AonConsoleWidget aonConsole = new AonConsoleWidget();
-				String tabLabel = AonStringUtils.abbreviate(description, 30);
-				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-				tabLayout.add(aonConsole, closeTab, tabLabel);
-				closeTab.addCloseHandler(e -> {if (!running) tabLayout.remove(tabLabel);});
-				tabLayout.selectTab(aonConsole);
-				openFootPanelIfNeeded();
-				
-				XMLHttpRequest xhreq = XMLHttpRequest.create();
-				xhreq.open(FormPanel.METHOD_POST, DOMAIN_DELETE_SERVLET);
-				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
-				xhreq.setOnReadyStateChange( xhr -> {
-					int state = xhr.getReadyState();
-					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
-						String text = xhr.getResponseText();
-						aonConsole.log(text);
-					}
-					if (state == XMLHttpRequest.DONE) {
-						running = false;
-						cbk.onSuccess(true);
-					}
-				});
-				StringBuilder requestData = new StringBuilder();
-				DomainParams params = filterPanel.getParams(options).setId(domainId);
-				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(params));
-				xhreq.send(requestData.toString());
-			} catch (Exception e){
-				running = false;
-				cbk.onFailure(e);
-			}
-		}
-	}
-*/
 }
 

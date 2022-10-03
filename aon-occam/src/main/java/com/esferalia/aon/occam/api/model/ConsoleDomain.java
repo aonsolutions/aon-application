@@ -5,6 +5,7 @@ public class ConsoleDomain extends Domain {
 	private static final long serialVersionUID = 1093889839212920172L;
 	private Integer childCount;
 	private Integer activeChildCount;
+	private boolean remoteAccessEnabled;
 	
 	public Integer getChildCount() {
 		return childCount;
@@ -22,6 +23,11 @@ public class ConsoleDomain extends Domain {
 		return this;
 	}
 	
-	
-	
+	public boolean isRemoteAccessEnabled() {
+		return remoteAccessEnabled;
+	}
+	public ConsoleDomain setRemoteAccessEnabled(boolean remoteAccessEnabled) {
+		this.remoteAccessEnabled = remoteAccessEnabled;
+		return this;
+	}
 }

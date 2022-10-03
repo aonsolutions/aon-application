@@ -43,4 +43,9 @@ public class ConsoleImpl implements IConsole {
 	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate) {
 		return ConsoleDAO.changeExpirationDate(ctx, domainId, expireDate);
 	}
+	
+	@Override
+	public String remoteAccess(CloseableAONContext ctx, Integer domainId) {
+		return ConsoleDAO.remoteAccess(ctx, domainId);
+	}
 }

@@ -35,7 +35,9 @@ public class ConsoleDomainJSON {
 		if(json == null) return new ConsoleDomain();
 		ConsoleDomain consoleDomain =  new ConsoleDomain()
 			.setChildCount(JsonUtils.getInteger(json,IJsonNames.CHILD_COUNT))
-			.setActiveChildCount(JsonUtils.getInteger(json,IJsonNames.ACTIVE_CHILD_COUNT));
+			.setActiveChildCount(JsonUtils.getInteger(json,IJsonNames.ACTIVE_CHILD_COUNT))
+			.setRemoteAccessEnabled(JsonUtils.getboolean(json,IJsonNames.REMOTE_ACCESS_ENABLED))
+			;
 		consoleDomain.setId(JsonUtils.getInteger(json,IJsonNames.ID));
 		consoleDomain.setName(JsonUtils.getString(json, IJsonNames.NAME));
 		consoleDomain.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION));
@@ -98,6 +100,7 @@ public class ConsoleDomainJSON {
 			.putOpt(IJsonNames.MODIFICATION_DATE, AonDateUtils.format(domain.getModificationDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.putOpt(IJsonNames.ACTIVE_CHILD_COUNT, domain.getActiveChildCount())
 			.putOpt(IJsonNames.CHILD_COUNT, domain.getChildCount())
+			.putOpt(IJsonNames.REMOTE_ACCESS_ENABLED, domain.isRemoteAccessEnabled())
 			;		
 	}
 

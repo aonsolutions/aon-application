@@ -139,5 +139,8 @@ public class JsConsoleDomain extends JavaScriptObject {
 		return cc.intValue() > 0;
 	}
 
+	public final native boolean isRemoteAccessEnabled() /*-{
+		return this.remoteAccessEnabled;
+	}-*/;
 	
 }

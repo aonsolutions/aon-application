@@ -16,5 +16,6 @@ public interface ConsoleServiceAsync {
 	void deleteDomain(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback);
 	void changeActive(DomainParams params, Integer domainId, boolean active, AsyncCallback<Domain> callback);
 	void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback);
+	void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback);
 
 }

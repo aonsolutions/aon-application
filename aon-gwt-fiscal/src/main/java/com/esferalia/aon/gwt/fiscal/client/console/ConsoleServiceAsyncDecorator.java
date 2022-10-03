@@ -48,4 +48,10 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 		AON.start();
 		fsa.changeExpirationDate(params, domainId, expireDate, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.remoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
+	}
 }

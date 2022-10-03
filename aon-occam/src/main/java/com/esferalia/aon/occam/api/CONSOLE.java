@@ -57,6 +57,12 @@ public class CONSOLE {
 			return getConsole().changeExpirationDate(ctx,domainId,expireDate);
 		}
 	}
+
+	public static String remoteAccess(DomainParams params, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().remoteAccess(ctx,domainId);
+		}
+	}
 	
 	
 }
