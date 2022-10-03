@@ -153,7 +153,6 @@ export class AonMap extends AonElement {
         (results) => {
           try {
             let r = results[0];
-            console.log(r.properties);
             if (r && r.name) resolve(r.name);
           } catch (error) {}
           reject(null);
