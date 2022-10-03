@@ -6823,7 +6823,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println(certificates.toString());
 
 			// Send certificates
-			byte[] certifica2PDF = Sepe.certEnterprise(new ByteArrayInputStream(certificate.getCertificate()),
+			byte[] certifica2PDF = Sepe.certEnterprise(new ByteArrayInputStream(certificate.getData()),
 					certificate.getPassword(), certificate.getType(), certificates);
 
 			if (null != certifica2PDF && certifica2PDF.length > 0)

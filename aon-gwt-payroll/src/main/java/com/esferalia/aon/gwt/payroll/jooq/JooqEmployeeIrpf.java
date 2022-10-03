@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
@@ -346,6 +347,7 @@ public class JooqEmployeeIrpf {
 			if(employeeIrpf.isDelete()) {
 				dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.eq(employeeIrpf.getSalaryId())).execute();
 				dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.eq(employeeIrpf.getSalaryId())).execute();
+				dslContext.delete(ALCATRAZ).where(ALCATRAZ.SALARY.eq(employeeIrpf.getSalaryId())).execute();
 				dslContext.delete(SALARY).where(SALARY.ID.eq(employeeIrpf.getSalaryId())).execute();
 			} else {
 					

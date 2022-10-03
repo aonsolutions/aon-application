@@ -739,6 +739,8 @@ public class JooqCertifica2 {
 		representanteType.setCIFNIF(certifica2Info.getRepresentativeDocument());
 		representanteType.setNombre(removeAccents(certifica2Info.getRepresentativeName()));
 		representanteType.setApellido1(removeAccents(certifica2Info.getRepresentativeSurname()));
+		if(AonStringUtils.isNotBlank(certifica2Info.getRepresentativeWork()))
+			representanteType.setCargo(certifica2Info.getRepresentativeWork());
 
 		EMPRESATYPE empresaType = new EMPRESATYPE();
 		empresaType.setCIFNIF(certifica2Info.getEnterpriseDocument());
@@ -871,6 +873,7 @@ public class JooqCertifica2 {
 			.setName(certifica2Info.getRepresentativeName())
 			.setSurname(certifica2Info.getRepresentativeSurname())
 			.setLastSurname("")
+			.setCargo(certifica2Info.getRepresentativeWork())
 			.setIpf(certifica2Info.getDocument())
 			.setEmployeeName(certifica2Info.getName())
 			.setEmployeeSurname(certifica2Info.getSurname())
