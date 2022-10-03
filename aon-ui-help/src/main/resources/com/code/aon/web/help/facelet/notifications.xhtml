@@ -6,240 +6,266 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<script>
-		function toggleNotificationPanel(id) {
-
-			console.log("toggle pressed");
-
-			const panel = document.querySelector(".menu-panel#" + id + "");
-			const icon = document.querySelector(".menu-panel#" + id
-					+ " .menu-panel-title .material-icons");
-			const content = document.querySelector(".menu-panel#" + id
-					+ " .menu-panel-categoryNews");
-			console.log(".menu-panel#" + id + " .menu-panel-categoryNews");
-
-			if (panel.dataset.opened === "true") {
-				icon.style.transform = "rotate(0deg)";
-				content.style.display = "flex";
-				panel.dataset.opened = false;
-				console.log("closing")
-			} else {
-				icon.style.transform = "rotate(180deg)";
-				content.style.display = "none";
-				panel.dataset.opened = true;
-				console.log("opening")
-			}
-
+<style>
+	.menu-panel-categoryNews {
+		display: flex;
+		padding-bottom: 1em;
+		width: 95%;
+		margin-left: auto;
+		margin-right: auto;
+		flex-direction: column;
+		justify-content: center;
+	}
+	
+	.nyuusuKaado {
+		border: 1px solid #f1f1f1;
+		padding-top: 2.5em;
+		padding-bottom: 2.5em;
+		padding-left: 2.5%;
+		padding-right: 2.5%;
+		padding-left: 2.5%;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: no-wrap;
+	}
+	
+	.nyuusuKaado:hover {
+		box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+	}
+	
+	.newsHead {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+	}
+	
+	.newsTitle {
+		width: 100%;
+		font-size: 1.2em;
+		color: black;
+	}
+	
+	.newsDateContainer {
+		font-size: 12px;
+		color: lightslategray;
+	}
+	
+	.newsDate {
+		margin-top: 2em;
+		align-self: center;
+		color: #606060;
+	}
+	
+	.newsDescriptionContainer {
+		width: 100%;
+		color: #606060;
+	}
+	
+	.newsDescription {
+		margin-top: .5em;
+		margin-bottom: .5em;
+		font-size: 1.1em;
+		color: #002349;
+	}
+	
+	.newsContent {
+		font-size: 1em;
+	}
+	
+	.newsContent ul, .newsContent ol {
+		margin: revert-layer !important;
+		padding: revert-layer !important;
+	}
+	
+	@media screen and (max-width: 1300px) {
+		.imageContainer {
+			width: 25%;
 		}
-	</script>
-
-	<style>
-.menu-panel-categoryNews {
-	display: flex;
-	/* margin-left: 2em; */
-	padding-bottom: 1em;
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-	flex-direction: column;
-	/* row-gap: 1em; */
-	justify-content: center;
-}
-
-.nyuusuKaado {
-	border: 1px solid #f1f1f1;
-	padding-top: 2.5em;
-	padding-bottom: 2.5em;
-	padding-left: 2.5%;
-	padding-right: 2.5%;
-	padding-left: 2.5%;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: no-wrap;
-}
-
-.nyuusuKaado:hover {
-	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
-
-.newsHead {
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-}
-
-.newsTitle {
-	width: 100%;
-	font-size: 1.2em;
-	color: black;
-}
-
-.newsDateContainer {
-	font-size: 12px;
-	color: lightslategray;
-}
-
-.newsDate {
-	margin-top: 2em;
-	align-self: center;
-	color: #606060;
-}
-
-.newsDescriptionContainer {
-	width: 100%;
-	color: #606060;
-}
-
-.newsDescription {
-	margin-top: .5em;
-	margin-bottom: .5em;
-	font-size: 1.1em;
-	color: #002349;
-}
-
-.newsContent {
-	font-size: 1em;
-}
-
-.newsContent ul, .newsContent ol {
-	margin: revert-layer !important;
-	padding: revert-layer !important;
-}
-
-.imageContainer {
-	width: 25%;
-	margin-right: 2em;
-	position: relative;
-	/* height: 100%; */
-	display:flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-content: center;
-	align-items: center;
+	}
+	@media screen and (min-width: 1301px) {
+		.imageContainer {
+			width: 20%;
+		}
+	}
+	
+	.imageContainer {
+		margin-right: 2em;
+		position: relative;
+		/* height: 100%; */
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-content: center;
+		align-items: center;
+	}
+	
+	.contentContainer {
+		width: 75%;
+	}
+	
+	.contentContainer img {
+		max-width: 100%;
+		height: auto;
+	}
+	
+	/*IMAGE*/
+	.newsImgDiv {
+		height: 140px;
+		box-sizing: border-box;
+		min-width: 0px;
+		width: 100%;
+		display: block;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+	}
+	
+	.imgChannelName {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 1.2m;
+		margin-top: .75em;
+		font-weight: bold;
+		color: #002469;
+	}
+	
+	.fiscalImage {
+		background-image: url(#{ aonResource.resolve [ '/images/apps/aon-fiscal.svg' ]});
+		background-size: revert;
+	}
+	.laboralImage {
+		background-image: url(#{ aonResource.resolve [ '/images/apps/aon-payroll.svg' ]});
+		background-size: revert;
 	
 	
-}
-
-.contentContainer {
-	width: 75%;
-}
-
-.contentContainer img {
-	max-width: 100%;
-	height: auto;
-}
-
-
-/*IMAGE*/
-
-.newsImgDiv {
-	height: 140px;
-    box-sizing: border-box;
-    /* margin: 0px 2em 0px 0px; */
-    min-width: 0px;
-    width: 100%;
-    /* height: 100%; */
-    display: block;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    /* margin-left: 2em; */
-}
-
-.imgChannelName {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 1.5em;
-	font-weight: 800;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin: auto;
-	position: absolute;
-	color: white;
-}
-
-
-.fiscalImage {
-	background-image: url(#{aonResource.resolve['/images/apps/aon-fiscal.svg']});
-}
-.laboralImage {
-	background-image: url(#{aonResource.resolve['/images/apps/aon-payroll.svg']});
-}
-.conectaImage {
-	background-image: url(#{aonResource.resolve['/images/apps/aon-portal.svg']});
-}
-.contabilidadImage {
-	background-image: url(#{aonResource.resolve['/images/apps/aon-accounting.svg']});
-}
-.configImage {
-	background-image: url(#{aonResource.resolve['/images/apps/aon-tools.svg']});
-}
-.otherImage {
-	background-image: url(#{aonResource.resolve['/images/aon-icon-logo.svg']});
-}
+	}
+	.conectaImage {
+		background-image: url(#{ aonResource.resolve [ '/images/apps/aon-portal.svg' ]});
+		background-size: revert;
+	}
+	.contabilidadImage {
+		background-image: url(#{ aonResource.resolve [ '/images/apps/aon-accounting.svg' ]});
+		background-size: revert;
+	}
+	.configImage {
+		background-image: url(#{ aonResource.resolve [ '/images/apps/aon-tools.svg' ]});
+		background-size: revert;
+	}
+	.otherImage {
+		background-image: url(#{ aonResource.resolve [ '/images/aon-icon-logo.svg' ]});
+		background-size: revert;
+	}
+	.channelMenu {
+		display: flex;
+		flex-direction: row;
+		justify-content: start;
+		margin: 1em;
+	}
+	
+	.channelItem {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		font-size: 14px;
+		padding: 0 1em;
+	}
+	
+	.channelMenu .channelItem:not(:last-of-type) {
+		border-right: 1px solid gray;
+	}
+	
+	.selectedChannel .aon-outputText{
+		font-weight: bold !important;
+		color: #002469 !important;
+	}
+	
+	.categoryLabel {
+		margin-right: 5px;
+		font-weight: normal;
+		color: black;
+	}
 
 </style>
 
+	<div class="channelMenu">
+		<div class="channelItem #{help.currentNewsCategory == null || help.currentNewsCategory.isEmpty() ? 'selectedChannel' : ''}">
+			<aon:form>
+				<aon:commandLink>
+					<aon:outputText value="TODO"/>
+					<f:setPropertyActionListener target="#{help.currentNewsCategory}"
+						value="#{null}" reRender="channelMenu" />
+				</aon:commandLink>
+			</aon:form>
+		</div>
+		<c:forEach items="#{help.getNews().keySet()}" var="categoryName">
 
-	<c:forEach items="#{help.getNews().keySet()}" var="categoryName">
+			<div class="channelItem #{help.currentNewsCategory.equals(categoryName) ? 'selectedChannel' : ''}">
 
-		<aon:div styleClass="menu-panel"
-			id="notifications-#{categoryName}-panel">
+				<aon:form>
+					<aon:commandLink>
+						<aon:outputText value="#{categoryName}" />
+						<f:setPropertyActionListener target="#{help.currentNewsCategory}"
+							value="#{categoryName}" reRender="channelMenu"/>
+					</aon:commandLink>
+				</aon:form>
+			</div>
 
-			<aon:div styleClass="menu-panel-title"
-				style="color: #002349; font-weight: bold;"
-				onclick="toggleNotificationPanel('notifications-#{categoryName}-panel')">
-				<aon:outputText value="expand_more" styleClass="material-icons" />
-				<aon:outputText value="#{categoryName}" />
-			</aon:div>
+		</c:forEach>
+	</div>
 
-			<aon:div styleClass="menu-panel-categoryNews">
-				<c:forEach items="#{help.getNews().get(categoryName)}" var="news">
-					<aon:div styleClass="nyuusuKaado">
-						<aon:div styleClass="imageContainer">
-							<aon:div styleClass="newsImgDiv #{help.categoryImgClass(news, categoryName)}" style="#{help.getNewsImgStyle(news)}">
-							</aon:div>
-							<aon:div styleClass="newsDateContainer">
-								<aon:div styleClass="newsDate">
-									<aon:outputText value="#{help.formatDate(news)}" />
-								</aon:div>
-							</aon:div>
-							<!-- <aon:div styleClass="imgChannelName">
-								<aon:outputText value="#{categoryName}" style="text-align: center;"></aon:outputText>
-							</aon:div> -->
+	<div class="menu-panel-categoryNews">
+		<c:forEach items="#{help.getNewsByCategory(help.currentNewsCategory)}" var="news">
+
+			<aon:div styleClass="nyuusuKaado">
+				<aon:div styleClass="imageContainer">
+					<aon:div
+						styleClass="newsImgDiv #{help.categoryImgClass(news, help.getNewsCategoryName(news))}"
+						style="#{help.getNewsImgStyle(news)}">
+					</aon:div>
+					<c:if test="#{help.currentNewsCategory == null || help.currentNewsCategory.isEmpty()}">
+						<aon:div styleClass="imgChannelName">
+						<h:outputText value="#{help.getNewsCategoryName(news)}"></h:outputText>
 						</aon:div>
-						<aon:div styleClass="contentContainer">
-							<aon:div styleClass="menu-panel-news">
-								<aon:div styleClass="newsHead">
-									<aon:div styleClass="newsTitle">
-										<aon:outputText value="#{news.getTitle()}"
-											style="font-weight: bold; text-transform: uppercase;" />
-									</aon:div>
-
-								</aon:div>
-								<aon:div styleClass="newsDescriptionContainer">
-									<aon:div styleClass="newsDescription">
-										<aon:outputText value="#{news.getDescription().orElse('')}"
-											escape="true" />
-									</aon:div>
-								</aon:div>
-								<aon:div styleClass="newsContent">
-									<aon:outputText value="#{news.getContent()}" escape="false" />
-								</aon:div>
-							</aon:div>
+					</c:if>
+					
+					<aon:div styleClass="newsDateContainer">
+						<aon:div styleClass="newsDate">
+							<aon:outputText value="#{help.formatDate(news)}" />
 						</aon:div>
 					</aon:div>
+				</aon:div>
+				<aon:div styleClass="contentContainer">
+					<aon:div styleClass="menu-panel-news">
+						<aon:div styleClass="newsHead">
+							<aon:div styleClass="newsTitle">
+								<aon:outputText value="#{news.getTitle()}"
+									style="font-weight: bold; text-transform: uppercase;" />
+							</aon:div>
 
-				</c:forEach>
+						</aon:div>
+						<aon:div styleClass="newsDescriptionContainer">
+							<aon:div styleClass="newsDescription">
+								<aon:outputText value="#{news.getDescription().orElse('')}"
+									escape="true" />
+							</aon:div>
+						</aon:div>
+						<aon:div styleClass="newsContent">
+							<aon:outputText value="#{news.getContent()}" escape="false" />
+						</aon:div>
+					</aon:div>
+				</aon:div>
 			</aon:div>
 
+		</c:forEach>
+	</div>
 
 
-		</aon:div>
 
-	</c:forEach>
+
+
+
+
 
 </ui:composition>

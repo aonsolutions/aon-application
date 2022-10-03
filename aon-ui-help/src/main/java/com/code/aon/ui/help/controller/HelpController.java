@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -54,6 +56,17 @@ public class HelpController implements Serializable {
 	private boolean notificationsEnabled;
 	private boolean linksEnabled;
 	
+	private String currentNewsCategory;
+	public String getCurrentNewsCategory() {
+		return currentNewsCategory;
+	}
+
+
+	public void setCurrentNewsCategory(String currentNewsCategory) {
+		this.currentNewsCategory = currentNewsCategory;
+	}
+
+
 	public HelpController() {
 		try {
 			this.drive = DriveService.connect();
@@ -69,8 +82,11 @@ public class HelpController implements Serializable {
 					.build();
 			
 			
-			this.breadcrumb = new LinkedHashMap<String,GFile>();
+			this.breadcrumb = new LinkedHashMap<>();
 			this.breadcrumb.put(this.file.getId(), this.file);
+			
+			this.currentNewsCategory = null;
+			
 		} catch (GoogleDriveException e) {
 			e.printStackTrace();
 		} 
@@ -317,6 +333,12 @@ public class HelpController implements Serializable {
 		this.linksEnabled = linksEnabled;
 	}
 	
+	public String getNewsCategoryName(News news) {
+		if (news != null && news.getCategory() != null) {
+			return news.getCategory().getName();
+		}
+		return "";
+	}
 	
 	//NEWS
 	public Map<String, List<News>> getNews() {
@@ -324,6 +346,8 @@ public class HelpController implements Serializable {
 		User user = new User().setName(AonUtil.getRemoteUser());
 		
 		Timestamp now = new Timestamp(new Date().getTime());
+		
+		NewsDateComparator comparator = new NewsDateComparator();
 		
 		Map<String, List<News>> newsMap = new LinkedHashMap<>();
 		AON_SOLUTIONS
@@ -336,7 +360,21 @@ public class HelpController implements Serializable {
 					  .and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now)))//END DATE NULL OR HIGHER THAN TODAY
 					  
 		)
-		.sorted((news1, news2) -> {
+		.sorted(comparator)
+		.forEach(news -> {
+			Category cat = news.getCategory();
+			List<News> newsList = newsMap.getOrDefault(cat.getName(), new LinkedList<>());
+			newsList.add(news);
+			newsMap.put(cat.getName(), newsList);
+		});
+		
+		return newsMap;
+	}
+	
+	private class NewsDateComparator implements Comparator<News> {
+
+		@Override
+		public int compare(News news1, News news2) {
 			Date n1 = news1.getInitDate().orElse(null);
 			Date n2 = news2.getInitDate().orElse(null);
 			if (n1 == n2) {
@@ -349,21 +387,30 @@ public class HelpController implements Serializable {
 				return 1;
 			}
 			return n2.compareTo(n1);
-		})
-		.forEach(news -> {
-			Category cat = news.getCategory();
-			List<News> newsList = newsMap.getOrDefault(cat.getName(), new LinkedList<>());
-			newsList.add(news);
-			newsMap.put(cat.getName(), newsList);
-		});
+		}
 		
-		return newsMap;
+	}
+	
+	public List<News> getNewsByCategory(String category) {
+		Map<String, List<News>> allNews = getNews();
+		if (allNews != null) {
+			if (AonStringUtils.isEmpty(category)) {
+				List<News> allNewsList = new LinkedList<>();
+				NewsDateComparator comparator = new NewsDateComparator();
+				allNews.values().forEach(allNewsList::addAll);
+				allNewsList.sort(comparator);
+				return allNewsList; 
+			}
+			
+			return allNews.getOrDefault(category, Collections.emptyList());
+		}
+		return Collections.emptyList();
 	}
 	
 	public String getNewsImgUrl(Integer attachId) {
 		Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(DomainManager.getCurrentDomain());
 		Attach a = AON.getAttach(domain.getName(), domain.getId(), AonUtil.getRemoteUser(), f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY);
-		if(a != null && a.getId() != null && domain != null && !AonStringUtils.isBlank(domain.getName())) {
+		if(a != null && a.getId() != null && !AonStringUtils.isBlank(domain.getName())) {
 			JSONObject data = new JSONObject();
 			data.put("domain_name", domain.getName());
 			data.put("domain_id", domain.getId());
@@ -376,8 +423,17 @@ public class HelpController implements Serializable {
 	}
 	
 	public String getNewsImgStyle(News news) {
-		String url = getNewsImgUrl(news.getRattach().orElse(null));
-		return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
+		
+		if (news.getRattach().isPresent()) {			
+			String url = getNewsImgUrl(news.getRattach().orElse(null));
+			return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
+		}
+		Category cat = news.getCategory();
+		if (cat != null && cat.getRattach() != null && cat.getRattach() > 0) {
+			String url = getNewsImgUrl(cat.getRattach());
+			return !AonStringUtils.isBlank(url) ? "background-image: url(" + url + ");" : "";
+		}
+		return "";
 	}
 	
 	public static boolean kinouDesuKa(Calendar cal) {
@@ -432,7 +488,7 @@ public class HelpController implements Serializable {
 	}
 	
 	public String categoryImgClass(News news, String categoryName) {
-		if (!news.getRattach().isPresent() || news.getRattach().orElse(0) <= 0) {			
+		if (AonStringUtils.isBlank(getNewsImgStyle(news))) {
 			if (AonStringUtils.equalsIgnoreCase("fiscal", categoryName)) {
 				return "fiscalImage";
 			} else if (AonStringUtils.equalsIgnoreCase("laboral", categoryName)) {
