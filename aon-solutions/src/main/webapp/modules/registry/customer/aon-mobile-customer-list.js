@@ -1,4 +1,4 @@
-import {getCustomer} from '../../../services/service.js';
+import {getCustomer, getCustomers} from '../../../services/service.js';
 import { TAG} from '../../../environments/environments.js';
 import { AonMobileRegistryList } from '../aon-mobile-registry-list.js';
 import { AonMobileCustomer } from './aon-mobile-customer.js';
@@ -6,7 +6,7 @@ import { AonMobileCustomer } from './aon-mobile-customer.js';
 export class AonMobileCustomerList extends AonMobileRegistryList {
 
 	getRegistries() {
-		return getCustomer(this.filter2);
+		return getCustomers(this.filter2);
 	}
 
 	buildRegistry(registry) {

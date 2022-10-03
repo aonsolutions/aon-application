@@ -5,6 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -15,20 +16,18 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 
-import net.aonsolutions.aon.api.error.AonApiError;
-import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.servlet.AonRouting;
 
-/**
- * @deprecated  Replaced by CustomersServlet
- */
-@Deprecated(forRemoval = true )
 @SuppressWarnings("serial")
-@WebServlet(name = "AonApiCustomeServlet", urlPatterns = {"/ms/api/customer/*"})
-public class CustomerServlet extends AonApiHttpServlet {
+@WebServlet(name = "AonApiCustomersServlet", urlPatterns = {"/ms/api/customers/*"})
+public class CustomersServlet extends AonApiHttpServlet {
 		
-	private static final Logger LOGGER  = Logger.getLogger(CustomerServlet.class.getName());
+	private static final Logger LOGGER  = Logger.getLogger(CustomersServlet.class.getName());
+	
+	public static final String CUSTOMERS = "/";
+	public static final String CUSTOMER = "/:id";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -42,50 +41,49 @@ public class CustomerServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[PUT] /ms/api/customer/* - AON API CUSTOMER SERVLET");
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, saveCustomer(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		put(req, resp);
 	}
 	
 	private void get(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getCustomers(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
+			
+			Object object = new AonRouting(api)
+				.addRoute(CUSTOMERS, CustomersServlet::getCustomers)
+				.addRoute(CUSTOMER, CustomersServlet::getCustomer)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 	
-	private Object getCustomer(AonApiData api) {
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(CUSTOMERS, CustomersServlet::saveCustomer)
+				.addRoute(CUSTOMER, CustomersServlet::saveCustomer)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private static JSONObject getCustomer(AonApiData api) {
 		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> customerFilter(api, f));
 		JSONObject object = CustomerJSON.toJSON(customer);
 		
 		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), customer.getId(), null);
 	}
 	
-	private Object getCustomers(AonApiData api) {
-		if(api.getData().opt(IJsonNames.ID) != null || api.getData().opt(IJsonNames.REGISTRY) != null 
-				|| api.getData().opt(IJsonNames.DOCUMENT) != null)
-			return getCustomer(api);
-		
+	private static JSONArray getCustomers(AonApiData api) {
 		Integer page = api.getData().opt(IJsonNames.PAGE) != null 
 			? api.getData().optInt(IJsonNames.PAGE) : 1;
 		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
@@ -95,7 +93,7 @@ public class CustomerServlet extends AonApiHttpServlet {
 			f -> customerFilter(api, f), perPage * (page -1), perPage));
 	}
 	
-	private Filter customerFilter(AonApiData api, CustomerProperties f) {
+	private static Filter customerFilter(AonApiData api, CustomerProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;
 				//.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()));
 		

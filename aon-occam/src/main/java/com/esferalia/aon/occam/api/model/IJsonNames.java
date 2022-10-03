@@ -517,6 +517,7 @@ public final class IJsonNames {
 	public static final String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	public static final String VALUE = "value";
+	public static final String VARIABLES = "variables";
 	public static final String VAT = "vat";
 	public static final String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	public static final String VAT_ACCRUAL_REGIME = "vatAccrualRegime";
