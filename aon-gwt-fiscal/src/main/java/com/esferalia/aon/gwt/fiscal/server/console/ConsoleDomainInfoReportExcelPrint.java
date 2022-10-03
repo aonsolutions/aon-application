@@ -25,7 +25,7 @@ import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.CONSOLE;
-import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -63,7 +63,7 @@ public class ConsoleDomainInfoReportExcelPrint extends HttpServlet {
 		}
 	}
 
-	private class ExcelAction extends AbsExcelAction implements Consumer<Domain> {
+	private class ExcelAction extends AbsExcelAction implements Consumer<ConsoleDomain> {
 		private XSSFCellStyle entryHeaderStyle;
 	
 		@Override
@@ -153,7 +153,7 @@ public class ConsoleDomainInfoReportExcelPrint extends HttpServlet {
 		}
 	
 		@Override
-		public void accept(Domain domain) {
+		public void accept(ConsoleDomain domain) {
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
 	

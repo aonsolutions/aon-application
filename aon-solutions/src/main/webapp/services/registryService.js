@@ -1,22 +1,14 @@
 import { get, post, put } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
-let customers;
-let domain;
-
-export const clearRegistryService = () => {
-  clearCustomers();
-  clearDomain();
-}
-
-export const clearCustomers = () => customers = undefined;
-export const clearDomain = () => domain = undefined;
+const CUSTOMERS = `${API_URL}/customers`;
 
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
 export const saveRegistry = (data) => put(`${API_URL}/registry`, data);
 
-export const getCustomer = (data) => post(`${API_URL}/customer`, data);
-export const saveCustomer = (data) => put(`${API_URL}/customer`, data);
+export const getCustomers = (data) => post(CUSTOMERS, data);
+export const getCustomer = (data) => post(`${CUSTOMERS}/${data.id}`, data);
+export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
 
 export const getCreditor = (data) => post(`${API_URL}/creditor`, data);
 export const saveCreditor = (data) => put(`${API_URL}/creditor`, data);
@@ -31,21 +23,5 @@ export const getRegistryAddress = (data) => get(`${API_URL}/registry/address`, d
 export const getRegistryBanks = (id) => get(`${API_URL}/registry/banks`, {id});
 
 export const getRegistryPaymethod = (data) => get(`${API_URL}/registry/paymethod`, data);
-
-export const getCustomers = (data) => {
-  data = data || {};
-  return new Promise((resolve, reject) => {
-    if (customers && !data.reload && domain && domain === localStorage.getItem('aon_domain_id')) {
-      resolve(customers);
-    } else {
-      get(`${API_URL}/customer`, data)
-        .then(r => {
-          domain = localStorage.getItem('aon_domain_id');
-          customers = r;
-          resolve(customers);
-        }).catch(e => reject(e));
-    }
-  });
-}
 
 export const getGlobalRegistries = (data) => get(`${API_URL}/global/registry`, data);

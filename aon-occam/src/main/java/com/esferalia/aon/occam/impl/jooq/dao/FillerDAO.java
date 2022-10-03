@@ -129,29 +129,33 @@ public class FillerDAO {
 			return buildDomain(r, DOMAIN);
 		}
 		
-		public static Domain buildDomain(Record r, com.esferalia.aon.jooq.tables.Domain domain) {
-			return new Domain()
-				.setId(r.getValue(domain.ID))
-				.setName(r.getValue(domain.NAME))
-				.setDescription(r.getValue(domain.DESCRIPTION))
-				.setParentId(r.getValue(domain.PARENT))
-				.setDomainType(DomainType.safeValueOf(r.getValue(domain.TYPE)))
-				.setScope(r.getValue(domain.SCOPE))
-				.setEnableHeredity(getBoolean(r, domain.ENABLEHEREDITY))
-				.setDomainManagement(getBoolean(r, domain.DOMAINMANAGEMENT))
-				.setDisableDomainManagement(getBoolean(r, domain.DISABLEDOMAINMANAGEMENT))
-				.setMaxDocumentSize(getValue(r, domain.MAXDOCUMENTSIZE))
-				.setMaxTotalDocumentSize(getValue(r, domain.MAXTOTALDOCUMENTSIZE))
-				.setMaxDefinedUsers(r.getValue(domain.MAXDEFINEDUSERS))
-				.setActive(getBoolean(r, domain.ACTIVE))
-				.setOwner(getValue(r, domain.OWNER))
-				.setCreationUser(getValue(r, domain.CREATION_USER))
-				.setCreationDate(getValue(r, domain.CREATION_DATE))
-				.setModificationUser(getValue(r, domain.MODIFICATION_USER))
-				.setModificationDate(getValue(r, domain.MODIFICATION_DATE))
-				.setLastAccessUser(getValue(r, domain.LASTACCESS_USER))
-				.setLastAccessDate(getValue(r, domain.LASTACCESS_DATE))
-				.setExpirationDate(getValue(r, domain.EXPIRATIONDATE))
+		public static Domain buildDomain(Record r, com.esferalia.aon.jooq.tables.Domain domainTable) {
+			return fillDomain(r, new Domain(), domainTable);
+		}
+		
+		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.Domain domainTable) {
+			return domain
+				.setId(r.getValue(domainTable.ID))
+				.setName(r.getValue(domainTable.NAME))
+				.setDescription(r.getValue(domainTable.DESCRIPTION))
+				.setParentId(r.getValue(domainTable.PARENT))
+				.setDomainType(DomainType.safeValueOf(r.getValue(domainTable.TYPE)))
+				.setScope(r.getValue(domainTable.SCOPE))
+				.setEnableHeredity(getBoolean(r, domainTable.ENABLEHEREDITY))
+				.setDomainManagement(getBoolean(r, domainTable.DOMAINMANAGEMENT))
+				.setDisableDomainManagement(getBoolean(r, domainTable.DISABLEDOMAINMANAGEMENT))
+				.setMaxDocumentSize(getValue(r, domainTable.MAXDOCUMENTSIZE))
+				.setMaxTotalDocumentSize(getValue(r, domainTable.MAXTOTALDOCUMENTSIZE))
+				.setMaxDefinedUsers(r.getValue(domainTable.MAXDEFINEDUSERS))
+				.setActive(getBoolean(r, domainTable.ACTIVE))
+				.setOwner(getValue(r, domainTable.OWNER))
+				.setCreationUser(getValue(r, domainTable.CREATION_USER))
+				.setCreationDate(getValue(r, domainTable.CREATION_DATE))
+				.setModificationUser(getValue(r, domainTable.MODIFICATION_USER))
+				.setModificationDate(getValue(r, domainTable.MODIFICATION_DATE))
+				.setLastAccessUser(getValue(r, domainTable.LASTACCESS_USER))
+				.setLastAccessDate(getValue(r, domainTable.LASTACCESS_DATE))
+				.setExpirationDate(getValue(r, domainTable.EXPIRATIONDATE))
 				;	
 		}
 	}

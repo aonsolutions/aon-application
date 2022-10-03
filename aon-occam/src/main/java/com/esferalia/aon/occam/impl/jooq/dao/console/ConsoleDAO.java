@@ -1,24 +1,34 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -28,6 +38,9 @@ import com.esferalia.aon.watson.util.Pair;
 
 public class ConsoleDAO {
 	
+	private static final Field<Integer> USER_COUNT = DSL.count().as("userCount");
+	private static final Field<Integer> USER_COUNT_DOMAIN = USER.DOMAIN.as("userCountDomain");
+
 	private static final String INFORMATION_SCHEMA = "information_schema";
 	private static final String MYSQL = "mysql";
 	private static final String PERFORMANCE_SCHEMA = "performance_schema";
@@ -35,24 +48,54 @@ public class ConsoleDAO {
 	protected ConsoleDAO() {
 	}
 	
-	public static Stream<Domain> getDomains(CloseableAONContext ctx, DomainParams params) {
-		Field<Integer> count = DSL.count().as("userCount");
-		Field<Integer> userDomain = USER.DOMAIN.as("userCountDomain");
-		Table<Record2<Integer,Integer>> userCount = ctx.getDslContext().select(userDomain,count)
-			.from(USER)
-			.where( USER.ACTIVE.eq((byte) 1) )
-			.groupBy(userDomain)
-			.asTable();
+	public static Stream<ConsoleDomain> getDomains(CloseableAONContext ctx, DomainParams params) {
+		com.esferalia.aon.jooq.tables.Domain domainChild = DOMAIN.as("domainChild");
+		Field<Integer> childCountParent = domainChild.PARENT.as("childCountParent");
+		Field<Integer> childCountField = DSL.count().as("childCount");
+		BigDecimal one = new BigDecimal(1);
+		BigDecimal zero = new BigDecimal(0);
+		Field<BigDecimal> childActiveCountIf  = DSL.if_(domainChild.ACTIVE.eq((byte)1), one , zero);
+		Field<BigDecimal> childActiveCount = DSL.sum(childActiveCountIf).as("childActiveCount");
+		
+		Table<Record3<Integer,Integer,BigDecimal>> childCount = 
+			ctx.getDslContext().select(childCountParent,childCountField,childActiveCount)
+				.from(domainChild)
+				.where( domainChild.PARENT.isNotNull() )
+				.groupBy(domainChild.PARENT)
+				.asTable()
+				.as("childCount");
+		
+		Table<Record2<Integer,Integer>> userCount = ctx.getDslContext().select(USER_COUNT_DOMAIN,USER_COUNT)
+				.from(USER)
+				.where( USER.ACTIVE.eq((byte) 1) )
+				.groupBy(USER_COUNT_DOMAIN)
+				.asTable()
+				.as("userCount");
+		
 		return ctx.getDslContext().select()
 			.from(DOMAIN)
-			.leftOuterJoin(userCount).on(DOMAIN.ID.eq(userDomain))
+			.leftOuterJoin(userCount).on(DOMAIN.ID.eq(USER_COUNT_DOMAIN))
+			.leftOuterJoin(childCount).on(DOMAIN.ID.eq(childCountParent))
+			.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
 			.where( getFilter(params) )
 			.offset(params.getOffset())
 			.limit(params.getLimit())
 			.fetch()
 			.stream()
-			.map(rec -> new Pair<>(rec, new DomainFiller().apply(rec)) )
-			.map( pair -> pair.getRight().setDefinedUsers( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(count)) ) );
+			.map(rec -> new Pair<>(rec, new ConsoleDomainFiller().apply(rec) ) )
+			.map( pair -> {pair.getRight().setDefinedUsers( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(USER_COUNT)) );
+				return pair;
+			})
+			.map( pair -> {
+				pair.getRight().setChildCount( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(childCountField)) );
+				BigDecimal activeCount = pair.getLeft().getValue(childActiveCount);
+				pair.getRight().setActiveChildCount( activeCount==null?0:activeCount.intValue()  );
+				return pair.getRight();
+			})
+			;
+			
+			
+		
 	}
 	
 	public static Stream<Schema> getSchemas(AONContext ctx) {
@@ -149,7 +192,6 @@ public class ConsoleDAO {
 		if (params.getToLastAccess() != null ) {
 			c = and(c, DOMAIN.LASTACCESS_DATE.le(new Timestamp( params.getToLastAccess().getTime()))); 
 		}
-		
 		if (params.getFromExpirationDate() != null ) {
 			c = and(c, DOMAIN.EXPIRATIONDATE.ge(AonDateUtils.toSql(params.getFromExpirationDate()))); 
 		}
@@ -159,4 +201,67 @@ public class ConsoleDAO {
 		c = c==null?DSL.trueCondition():c;
 		return c;
 	}
+	
+	public static class ConsoleDomainFiller extends Filler implements Function<Record, ConsoleDomain> {
+		@Override
+		public ConsoleDomain apply(Record r) {
+			return build(r);
+		}
+		
+		public static ConsoleDomain build(Record r) {
+			return buildConsoleDomain(r, DOMAIN);
+		}
+		
+		public static ConsoleDomain buildConsoleDomain(Record r, com.esferalia.aon.jooq.tables.Domain domain) {
+			ConsoleDomain consoleDomain = new ConsoleDomain();
+			DomainFiller.fillDomain(r, consoleDomain, domain);
+			return consoleDomain
+				.setChildCount(0)
+				.setActiveChildCount(0)
+				.setRemoteAccessEnabled( getValue(r, APP_PARAM.ID) != null)
+			;	
+		}
+	}
+
+	public static boolean isRemoteAccessEnabled(AONContext ctx, Integer domainId) {
+		return AppParamDAO.getApplicationParameterStream(ctx
+				, p -> p.getDomainProperty().eq(domainId)
+				.and(p.getNameProperty().eq(AppParam.AON_SUPPORT_ENABLED.toString())))
+			.findAny()
+			.isPresent();
+	}
+
+	public static String remoteAccess(CloseableAONContext ctx, Integer domainId) {
+		if (isRemoteAccessEnabled(ctx, domainId)) {
+			int count = ctx.getDslContext()
+				.delete(APP_PARAM)
+				.where(APP_PARAM.DOMAIN.eq(domainId))
+				.and(APP_PARAM.NAME .eq(AppParam.AON_SUPPORT_ENABLED.toString()))
+				.execute();
+			ctx.log().info("Remote Access Change: OFF " + domainId + "(" + count + " rows)");
+			return null;
+		} else {
+			int count = ctx.getDslContext()
+				.insertInto(APP_PARAM)
+				.set(APP_PARAM.DOMAIN, domainId)
+				.set(APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
+				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
+				.execute();
+			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
+			String users = ctx.getDslContext()
+				.select(USER.LOGIN)
+				.from(USER)
+				.where(USER.DOMAIN.eq(domainId))
+				.and(USER.ACTIVE.eq((byte) 1))
+				.limit(10)
+				.fetch()
+				.stream()
+				.map(rec -> "(" + rec.getValue(USER.LOGIN)+ ")")
+				.collect(Collectors.joining(", "));
+			;
+			return AonStringUtils.defaultIfBlank(users, "No hay usuarios activos en el dominio");
+		}
+		
+	}
+	
 }

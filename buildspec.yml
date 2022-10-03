@@ -92,13 +92,13 @@ phases:
         || echo $COMMIT_MESSAGE
       - |
         printf '[
-        {"name":"SNAPSH0T","imageUri":"%s/aon-application:${TAG:=snapshot}"}
-        ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotimgdef.json
+        {"name":"SNAPSH0T","imageUri":"%s/aon-application:%s"}
+        ]' $REPOSITORY_URI ${TAG:=snapshot} > snapshotimgdef.json
       - cat snapshotimgdef.json
       - |
         printf '[
-        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:${TAG:=snapshot}"}
-        ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotsolutionsimgdef.json
+        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+        ]' $REPOSITORY_URI ${TAG:=snapshot} > snapshotsolutionsimgdef.json
       - cat snapshotsolutionsimgdef.json
       - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar

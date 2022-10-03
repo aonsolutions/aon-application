@@ -79,16 +79,24 @@ class ConsoleUtils {
 	
 	private ConsoleUtils() {
 	}
-
+	
 	static void disableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=0";
 		params.getToDslContext().execute(cmd);
+	}
+
+	static void disableForeignKeysAndPrint(ConsoleParams params) {
+		disableForeignKeys(params);
 		ConsoleUtils.log(params,"** Foreign keys disabled");
 	}
 	
 	static void enableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=1";
 		params.getToDslContext().execute(cmd);
+	}
+
+	static void enableForeignKeysAndPrint(ConsoleParams params) {
+		enableForeignKeys(params);
 		ConsoleUtils.log(params,"** Foreign keys enabled");
 	}
 

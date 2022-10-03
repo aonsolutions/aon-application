@@ -317,7 +317,7 @@ public class Invoice2tbai {
 		TipoDesgloseType desglose = new TipoDesgloseType();
 
 		SujetaType sujeta = new SujetaType();
-
+		
 		NoExentaType noExenta = new NoExentaType();
 		DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
 		detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
@@ -328,10 +328,10 @@ public class Invoice2tbai {
 			}
 			DetalleIVAType  detalleIVA = new DetalleIVAType();
 			detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
-			detalleIVA.setCuotaImpuesto(Double.toString(AonMathUtils.round(r.getQuota())));
-			detalleIVA.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
-			detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
-			detalleIVA.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurcharge())));
+			detalleIVA.setCuotaImpuesto(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getQuota())));
+			detalleIVA.setCuotaRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
+			detalleIVA.setTipoImpositivo(invoice.isIsp() ? "0.0" : Double.toString(r.getPercentage()));
+			detalleIVA.setTipoRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurcharge())));
 			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
 			desgloseIVA.getDetalleIVA().add(detalleIVA);
 		});

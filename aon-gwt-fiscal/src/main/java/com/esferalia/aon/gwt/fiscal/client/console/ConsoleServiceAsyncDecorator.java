@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -25,7 +26,7 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void getDomains(DomainParams params, AsyncCallback<LinkedList<Domain>> callback) {
+	public void getDomains(DomainParams params, AsyncCallback<LinkedList<ConsoleDomain>> callback) {
 		AON.start();
 		fsa.getDomains(params, new AsyncCallbackWrapper<>(callback));
 	}
@@ -46,5 +47,11 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback) {
 		AON.start();
 		fsa.changeExpirationDate(params, domainId, expireDate, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.remoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
 	}
 }

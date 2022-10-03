@@ -23,6 +23,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
 	public static final String ACTIVE = "active";
+	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";
 	public static final String ACTIVITY = "activity";
 	public static final String ACTIVITY_TYPE = "activity_type";
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
@@ -78,6 +79,7 @@ public final class IJsonNames {
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
+	public static final String CHILD_COUNT = "childCount";
 	public static final String CLASS_NAME = "class_name";
 	public static final String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
 	public static final String CNAE = "cnae";
@@ -361,9 +363,11 @@ public final class IJsonNames {
 	public static final String PRICE = "price";
 	public static final String PRINCIPAL = "principal";
 	public static final String PRIORITY = "priority";
+	public static final String PROCESS_ID = "processId";
 	public static final String PRODUCT = "product";
 	public static final String PRODUCT_ID = "productId";
 	public static final String PROFIT_PERCENT = "profitPercent";
+	public static final String PROGRESS = "progress";
 	public static final String PROJECT = "project";
 	public static final String PROJECT_GROUPED = "ProjectGrouped";
  	public static final String PROJECTS = "projects";
@@ -408,6 +412,7 @@ public final class IJsonNames {
 	public static final String REGISTRY_PARAMS = "registryParams";
 	public static final String REGISTRY = "registry";
 	public static final String REMARKS = "remarks";
+	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
 	public static final String RESERVATION = "reservation";
@@ -513,6 +518,7 @@ public final class IJsonNames {
 	public static final String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	public static final String VALUE = "value";
+	public static final String VARIABLES = "variables";
 	public static final String VAT = "vat";
 	public static final String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	public static final String VAT_ACCRUAL_REGIME = "vatAccrualRegime";

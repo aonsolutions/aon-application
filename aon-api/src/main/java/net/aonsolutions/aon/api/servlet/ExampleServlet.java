@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import net.aonsolutions.aon.api.error.AonApiError;
-import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -17,41 +15,84 @@ public class ExampleServlet extends AonApiHttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(ExampleServlet.class.getName());
 	
+	public static final String EXAMPLES = "/";
+	public static final String EXAMPLE = "/:id";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON EXAMPLE SERVLET - GET METHOD");
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getResponseObject());
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
+		get(req, resp);
+	}
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		put(req, resp);
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		delete(req, resp);
+	}
+	
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getResponseObject());
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
+			
+			Object object = new AonRouting(api)
+				.addRoute(EXAMPLES, ExampleServlet::getAction)
+				.addRoute(EXAMPLE, ExampleServlet::getAction)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 	
-	private JSONObject getResponseObject() {
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(EXAMPLE, ExampleServlet::putAction)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private void delete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(EXAMPLE, ExampleServlet::deleteAction)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private static JSONObject getAction(AonApiData api) {
+		return new JSONObject();
+	}
+	
+	private static JSONObject putAction(AonApiData api) {
+		return new JSONObject();
+	}
+	
+	private static JSONObject deleteAction(AonApiData api) {
 		return new JSONObject();
 	}
 }

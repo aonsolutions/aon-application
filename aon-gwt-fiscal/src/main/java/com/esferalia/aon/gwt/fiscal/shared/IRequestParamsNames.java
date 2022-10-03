@@ -128,6 +128,7 @@ public interface IRequestParamsNames {
 	String QUERY = "query";
 	String RECTIFICATION = "rectification";
 	String REFERENCE_CODE = "referenceCode";
+	String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
