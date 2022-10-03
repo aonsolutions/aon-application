@@ -681,20 +681,27 @@ public class AON_SOLUTIONS {
 //		return getNotificationStream(f->f.getAuthProperty().eq(auth.getAuth()).or(f.getSenderProperty().eq(auth.getAuth())), 1, 10);
 //	}
 	
-	public static Stream<Notification> getNotificationStream(NotificationFilter filter, Integer page, Integer peerPage) {
+	public static Stream<Notification> getNotificationStream(NotificationFilter filter, Integer page, Integer perPage) {
 		List<String> schemas = AONContext.getSchemas();
-		Stream<Notification> stream = new LinkedList<Notification>().stream();
+		LinkedList<Notification> list = new LinkedList<>();
+	
 		for(String schema: schemas) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {
 				try {
-					Stream <Notification> s = getNotificationStream(domain, 0, "", filter, page, peerPage); 
-					stream = Stream.concat(stream, s);
-				} catch (Exception e) {}
+					getNotificationStream(domain, 0, "", filter, page, perPage)
+					.forEach(list::add);
+					
+					if(list.size() == perPage) {
+						break;
+					}
+				} catch (Exception e) {
+					System.out.println(e);
+				}
 			}
 			
 		}
-		return stream;
+		return list.stream();
 	}
 	
 	public static Stream<Notification> getNotificationStream(String domainName, Integer domainId, String login, NotificationFilter filter, Integer page, Integer peerPage) {

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
@@ -1353,6 +1354,9 @@ public class PropertiesDAO {
 		@Override public Property<String> getAuthEmailProperty() {return new FilterDAO.PropertyDAO<>(AUTH.EMAIL);}
 		@Override public Property<String> getAuthDocumentProperty() {return new FilterDAO.PropertyDAO<>(AUTH.DOCUMENT);}
  		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.SCOPE);}
+
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.REGISTRY);}
+		@Override public Property<Byte> getTaskHolderActiveProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.ACTIVE);}
 	}
 	
 	

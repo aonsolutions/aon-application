@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
 import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -581,6 +582,7 @@ public class SecurityDAO {
 				.join(DOMAIN).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
 				.leftOuterJoin(USER_SCOPE).on(USER_SCOPE.USER_ID.eq(USER.ID))
 				.leftOuterJoin(USER_WORKGROUP).on(USER_WORKGROUP.USER_ID.eq(USER.ID))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.USER_ID.eq(USER.ID))
 				.where(USER_PROPERTIES.getConditions(filter))
 				.and(DOMAIN.ID.eq(ctx.getDomainId()).and( 
 							DOMAIN.SCOPE.isNull().or(USER.DOMAIN.eq(ctx.getDomainId())).or( 
