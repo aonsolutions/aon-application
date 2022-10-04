@@ -21,6 +21,13 @@ public class Agreement {
 			this.startDate = startDate;
 		}
 		
+		public AgreementLevelData(String name, String value, Date startDate, Date endDate) {
+			this.name = name;
+			this.value = value;
+			this.startDate = startDate;
+			this.endDate = endDate;
+		}
+		
 		public void setEndDate(Date endDate) {
 			this.endDate = endDate;
 		}
@@ -63,6 +70,10 @@ public class Agreement {
 		
 		public void addLevelData(String name, String value, Date startDate) {
 			this.levelDatas.add(new AgreementLevelData(name, value, startDate));
+		}
+		
+		public void addLevelData(String name, String value, Date startDate, Date endDate) {
+			this.levelDatas.add(new AgreementLevelData(name, value, startDate, endDate));
 		}
 		
 		public String getDescription() {
