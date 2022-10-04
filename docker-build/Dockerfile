@@ -10,7 +10,7 @@ RUN set -eux; \
 RUN set -eux; \
 	microdnf install \
 	ca-certificates curl gnupg2 unzip \
-	btrfs-progs e2fsprogs xfsprogs
+	btrfs-progs e2fsprogs xfsprogs iproute
 
 # Install Docker
 WORKDIR /etc/yum.repos.d
