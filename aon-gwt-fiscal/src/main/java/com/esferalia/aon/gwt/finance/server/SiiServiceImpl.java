@@ -111,7 +111,9 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 			tbaiConfiguration.setCertificate(cert);
-			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
+			Integer invoiceId = invoice.getId();
+			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
+			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
 			EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
 			company.getDomain().getId(), "", invoice.getActivity().getId());
 			if(ea == null || ea.getId() == null) {
@@ -180,7 +182,9 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 			tbaiConfiguration.setCertificate(cert);
-			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
+			Integer invoiceId = invoice.getId();
+			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
+			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
 			InvoiceCommunication ic = new InvoiceCommunication()
 					.setCompany(company)
 					.setInvoice(invoice)
