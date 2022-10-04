@@ -352,6 +352,14 @@ export const BANK = {
   price: " ", // 'Desde 45€/mes'
 };
 
+export const OFFICE = {
+  app: "office",
+  icon: AON_ICONS.AON_OFFICE,
+  title: "Despacho",
+  color: "black",
+  domainType: true,
+};
+
 export const API_SERVICE = {
   app: "api_service",
   title: "Cuentas de Servicio | Acceso API",
@@ -382,6 +390,7 @@ export const CUSTOM_VIEW = {
 };
 
 export const MenuApps = {
+  OFFICE,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -434,6 +443,7 @@ export const EnterpriseApps = [
 ];
 
 export const Apps = {
+  OFFICE,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -1188,13 +1198,7 @@ export const ENTERPRISE = {
   domainType: true,
 };
 
-export const OFFICE = {
-  app: "office",
-  icon: AON_ICONS.AON_OFFICE,
-  title: "Despacho",
-  color: "black",
-  domainType: true,
-};
+
 
 export const ACADEMY = {
   app: "academy",

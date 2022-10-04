@@ -1457,6 +1457,9 @@ public interface Properties {
 		Property<String> getAuthEmailProperty();
 		Property<String> getAuthDocumentProperty();
 		Property<Integer> getScopeProperty();
+		
+		Property<Integer> getTaskHolderProperty();
+		Property<Byte> getTaskHolderActiveProperty();
 	}
 	
 	public interface CertificateProperties {
