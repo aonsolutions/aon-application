@@ -308,12 +308,12 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 
 					@Override
 					public void onSuccess(List<Agreement> agreements) {
-						Agreement selectedAgreement = null == agreementsTree.getTree().getSelectedItem()
-								? null : (Agreement) agreementsTree.getTree().getSelectedItem().getUserObject();
+//						Agreement selectedAgreement = null == agreementsTree.getTree().getSelectedItem()
+//								? null : (Agreement) agreementsTree.getTree().getSelectedItem().getUserObject();
 						
 						agreementsTree.getTree().clear();
-						if(null != selectedAgreement)
-							addAgreementItem(selectedAgreement);
+//						if(null != selectedAgreement)
+//							addAgreementItem(selectedAgreement);
 						
 						for (int i = 0; i < agreements.size(); i++) {
 							Agreement agreement = agreements.get(i);
