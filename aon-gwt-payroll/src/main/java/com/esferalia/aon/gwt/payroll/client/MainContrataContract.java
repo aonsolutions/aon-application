@@ -759,7 +759,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private boolean checkInactive(EmployeeContractInfo employeeContractInfo) {
 		Date currentDate = new Date();
 		Date endDate = employeeContractInfo.getContractInfo().getEndDate();
-		return null != endDate && DateUtils.isBeforeOrEquals(endDate, currentDate) && !DateUtils.equals(endDate, currentDate);
+		return null != endDate && DateUtils.isBeforeOrEquals(endDate, currentDate);
 	}
 
 	private boolean checkPrevAlta(EmployeeContractInfo employeeContractInfo) {
