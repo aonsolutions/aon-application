@@ -238,22 +238,34 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 	
 	private Filter userFilter(AonApiData api, UserProperties f) {
+		JSONObject params = api.getData();
+		
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
-		if(!api.getDomain().isParent() && api.getData().opt("filter") != null 
-				&& api.getData().optString("filter").equals("entorno")) {
+		if(!api.getDomain().isParent() && params.opt("filter") != null 
+				&& params.optString("filter").equals("entorno")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getParentId());
 			if(api.getDomain().getScope() != null) {
 				filter = filter.and(f.getScopeProperty().eq(api.getDomain().getScope()));
 			}
-		} else if(api.getData().opt("filter") != null &&
-				api.getData().optString("filter").equals("shared")) {
+		} else if(params.opt("filter") != null &&
+				params.optString("filter").equals("shared")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getSharedProperty().eq((byte)1));
+		} else if(params.opt("filter") != null &&
+				params.optString("filter").equals("all")) {
+			
+			Filter all = f.getDomainProperty().eq(api.getDomain().getParentId());
+			
+			if(api.getDomain().getScope() != null) {
+				all = all.and(f.getScopeProperty().eq(api.getDomain().getScope()));
+			}
+			
+			filter = filter.or(all);
 		}
 		
-		if(!AonStringUtils.isBlank(api.getData().optString(IJsonNames.VALUE))) {
-			String value = api.getData().optString(IJsonNames.VALUE);
+		if(!AonStringUtils.isBlank(params.optString(IJsonNames.VALUE))) {
+			String value = params.optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getLoginProperty().like("%" + value + "%")
 					.or(f.getNameProperty().like("%" + value + "%"))
 					.or(f.getAuthEmailProperty().like("%" + value + "%"))
@@ -262,16 +274,21 @@ public class UserServlet extends AonApiHttpServlet {
 			filter = filter.and(valueFilter);
 		}
 		
-		if(api.getData().opt(IJsonNames.TYPE) != null) {
-			filter = filter.and(f.getTypeProperty().eq(UserType.safeValueOf(api.getData().getString(IJsonNames.TYPE)).value()));
+		if(params.opt(IJsonNames.TYPE) != null) {
+			filter = filter.and(f.getTypeProperty().eq(UserType.safeValueOf(params.getString(IJsonNames.TYPE)).value()));
 		}
 		
-		if(api.getData().opt(IJsonNames.WORKGROUP) != null) {
-			filter = filter.and(f.getWorkgroupProperty().eq(api.getData().optInt(IJsonNames.WORKGROUP)));
+		if(params.opt(IJsonNames.WORKGROUP) != null) {
+			filter = filter.and(f.getWorkgroupProperty().eq(params.optInt(IJsonNames.WORKGROUP)));
 		}
 		
-		if(api.getData().opt(IJsonNames.ID) != null) {
-			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.ID)));
+		if(params.opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(params, IJsonNames.ID)));
+		}
+		
+		
+		if(params.opt("task_holder_empty") != null) {
+			filter = filter.and(f.getTaskHolderProperty().isNull().or(f.getTaskHolderActiveProperty().eq((byte)0)));
 		}
 		
 		return filter;
@@ -537,7 +554,7 @@ public class UserServlet extends AonApiHttpServlet {
 //		return new JSONObject();
 //	}
 	
-	private void saveTaskHolder(AonApiData api, User user) {
+	private JSONObject saveTaskHolder(AonApiData api, User user) {
 		Integer userId = user != null && user.getId() != null 
 				? user.getId() : JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(userId)));
@@ -575,8 +592,9 @@ public class UserServlet extends AonApiHttpServlet {
 		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
 		if(user != null && th != null && th.getId() != null) {
 			user.setRegistry(th.getId());
-			AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
+			user = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
 		}
+		return UserJSON.toJSON(user);
 	}
 	
 //	private JSONObject setUserAppRole2(AonApiData api){

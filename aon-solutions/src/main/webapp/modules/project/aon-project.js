@@ -13,11 +13,10 @@ import { AonRegistry } from '../../components/aon-registry.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { getProjectTypes, saveProject, deleteProject } from '../../services/projectService.js';
 
-import * as LS from '../../services/localStorageService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { Project } from '../../models/project/Project.js';
-import { TaskHolder } from '../../models/project/TaskHolder.js';
+import { AonProjectList } from './aon-project-list.js';
 
 export class AonProject extends AonElement {
     PROJECT_TOOLBAR;
@@ -158,18 +157,21 @@ export class AonProject extends AonElement {
 	// ACTIONS
 
 	back() {
-		this.getApplication().getParent().buildContent();
+		this.getApplication().setContent(new AonProjectList());
 	}
 
 	save() {
 		if(this.project.isDirty())
-			saveProject(this.project).then(project =>{
+			saveProject(this.project)
+			.then(project =>{
 				this.getApplication().getToast().start({
 					type: CONSTANT.SUCCESS,
 					message: MSG.SAVED_DATA
 				});
 				this.setProject(project)
-			}).catch(e => this.showError(e));;
+			}).catch(err => {
+				this.showError(err)
+			});
 	}
 
 	delete() {
@@ -180,7 +182,11 @@ export class AonProject extends AonElement {
 		d.setContentHTML(`Estás seguro de eliminar el expediente`);
 		d.addAcceptAction(() => {
 			let data = { id: this.project.id};
-			deleteProject(data).then(() => this.back());
+			deleteProject(data)
+			.then(() => this.back())
+			.catch(err => {
+				this.showError({message:"Error while deleting project", type:"error"});
+			});
 		});
 		d.open();
 	}

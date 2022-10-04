@@ -6099,6 +6099,9 @@ public class AON {
 	}
 	
 	// ------------------- TASK HOLDER
+	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter){
+		return getTaskHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
 
 	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter){
 		CloseableAONContext ctx = null;

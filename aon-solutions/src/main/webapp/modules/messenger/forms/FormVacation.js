@@ -138,9 +138,10 @@ const processAccept = async (task) => {
     const application = aonMessengerChat.getApplication();
     application.startLoading();
     try {
-        const data = getFormVacationJson();
         const registry = task.sender.id; 
-        await saveVacation({...data, registry});
+        const params = {...getFormJson(), registry};
+   
+        await saveVacation(params);
         await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
     } catch (err) {
         console.log(err);

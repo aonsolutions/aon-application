@@ -41,10 +41,15 @@
             </manifest>
             <manifestEntries>
               <dbVersion>${dbVersion}</dbVersion>
-              <buildNumber>${env.BUILD_NUMBER}</buildNumber>
               <buildDate>${maven.build.timestamp}</buildDate>
               <buildRevision>${buildNumber}</buildRevision>
-            </manifestEntries>
+
+              <buildId>${env.CODEBUILD_BUILD_ID}</buildId>
+              <buildNumber>${env.CODEBUILD_BUILD_NUMBER}</buildNumber>
+              <sourceVersion>${env.CODEBUILD_SOURCE_VERSION}</sourceVersion>
+
+      
+      	    </manifestEntries>
           </archive>
 
           <webResources>

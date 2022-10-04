@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -27,7 +28,7 @@ public class CONSOLE {
 		}
 	}
 
-	public static Stream<Domain> getDomains(DomainParams params) {
+	public static Stream<ConsoleDomain> getDomains(DomainParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().getDomains(ctx, params);
 		}
@@ -54,6 +55,12 @@ public class CONSOLE {
 	public static Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().changeExpirationDate(ctx,domainId,expireDate);
+		}
+	}
+
+	public static String remoteAccess(DomainParams params, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().remoteAccess(ctx,domainId);
 		}
 	}
 	

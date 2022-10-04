@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet.project;
 import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER;
 import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
+import com.esferalia.aon.occam.api.model.registry.Project;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -161,15 +163,24 @@ public class ProjectServlet extends AonApiHttpServlet{
 		return filter;
     }
     
-    private JSONObject saveProject(AonApiData api) {
-    	return ProjectJSON.toJSON(
-    		AON.saveProject(api.getDomain(), api.getUser(), 
-    			ProjectJSON.fromJSON(api.getData())));
+    private Object saveProject(AonApiData api) {
+    	JSONArray projects = api.getData().optJSONArray(IJsonNames.PROJECTS);
+    	if(projects!=null) {
+    		 List<Project> list = ProjectJSON.fromJSON(projects);
+    		 list.forEach(project->{
+    			 AON.saveProject(api.getDomain(), api.getUser(), project);
+    		 });
+    		 return ProjectJSON.toJSON(list);
+    	} else {
+        	return ProjectJSON.toJSON(AON.saveProject(api.getDomain(), api.getUser(), 
+        			ProjectJSON.fromJSON(api.getData())));
+    	}
     }
     
+    
+    
     private JSONObject deleteProject(AonApiData api) {
-    	AON.deleteProject(api.getDomain(), api.getUser(), 
-    			JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
+    	AON.deleteProject(api.getDomain(), api.getUser(), JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
     	return new JSONObject();
     }
     

@@ -95,7 +95,7 @@ export class Project {
 
     setProjectHolder(projectHolder) {
         this.setDirty(true);
-        this.ProjectHolder = new ProjectHolder(projectHolder);
+        this.projectHolder = new ProjectHolder(projectHolder);
         return this;
     }
 

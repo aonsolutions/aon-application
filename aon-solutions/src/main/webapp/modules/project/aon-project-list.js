@@ -86,6 +86,6 @@ export class AonProjectList extends AonElement {
 	}
 }
 
-if(!window.customElements.get(TAG.AON_PROJECT_LIST)) {
-	window.customElements.define(TAG.AON_PROJECT_LIST, AonProjectList);
+if(!window.customElements.get("aon-project-list")) {
+	window.customElements.define("aon-project-list", AonProjectList);
 }

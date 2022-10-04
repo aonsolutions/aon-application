@@ -11,4 +11,3 @@ export const COMPANY_ACTIVITIES = `${COMPANY}/activities`;
 export const COMPANY_APPROLES = `${COMPANY}/approles`;
 export const COMPANY_HEADER = `${COMPANY}/header`;
 export const ELABORATION = `${API}/elaboration`;
-

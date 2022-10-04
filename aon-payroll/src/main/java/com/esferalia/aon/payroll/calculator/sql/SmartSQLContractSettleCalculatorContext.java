@@ -60,6 +60,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * @author rtrepiana
@@ -131,16 +132,16 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		AONContext aonCtx = new AONContext(connection);
 		DSLContext dslCtx = aonCtx.getDslContext();
 		
-		List<String> redefined = 
-		dslCtx
+		Record [] redefined = dslCtx
 		.select()
 		.from(CONTRACT_PAYMENT)
 		.innerJoin(PAYMENT_CONCEPT).onKey()
 		.where(CONTRACT_PAYMENT.CONTRACT.eq(getId()))
 		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4)
 		.or(CONTRACT_PAYMENT.TYPE.isNull().and(PAYMENT_CONCEPT.TYPE.eq((byte)4))))
-		.fetch(PAYMENT_CONCEPT.CODE)
+		.fetchArray()
 		;
+		
 
 		Result<Record> extras = dslCtx
 		.select()
@@ -150,9 +151,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		.leftJoin(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
 		.leftJoin(PAYMENT_CONCEPT).on(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(PAYMENT_CONCEPT.ID))
 		.where(CONTRACT.ID.eq(getId()))
-		.and (PAYMENT_CONCEPT.CODE.notIn(redefined))
+//		.and (PAYMENT_CONCEPT.CODE.notIn(redefined))
 		.fetch()
-//		.fetchInto(AGREEMENT_EXTRA)
 		;
 		
 		Date contractStartDate = getContractStartate();
@@ -205,9 +205,33 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
 					
 					Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
+						
+						private boolean isRedefined(IPayment payment, Period period ) {
+							String name = payment.getName();
+							if ( AonStringUtils.isBlank(name) ) {
+								return false;
+							}
+							for (int i = 0; i < redefined.length; i++) {
+								String redefinedName = redefined[i].get(PAYMENT_CONCEPT.CODE);
+								if ( AonStringUtils.equals(name, redefinedName )) {
+									Date redefinedStartDate = redefined[i].get(CONTRACT_PAYMENT.START_DATE);
+									Date redefinedEndDate = redefined[i].get(CONTRACT_PAYMENT.END_DATE);
+									Period redefinedPeriod = new Period(redefinedStartDate, redefinedEndDate);
+									if ( redefinedPeriod.intersects(period) ) { 
+										return true;
+									}
+								}
+							}
+							return false;
+						}
+						
 						@Override
 						public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
 								Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+							
+							if (isRedefined(payment, new Period(startDate, endDate)) )
+								return;
+							
 							SystemPayment extraPayment = new SystemPayment();
 							
 							if ( payment instanceof IContractPayment )

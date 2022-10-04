@@ -36,6 +36,8 @@ public class CustomizeBean implements Serializable {
 	
 	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 
+	private static final String BUILD_ID = "buildId";
+
 	private static final String BUILD_NUMBER = "buildNumber";
 	
 	private static final String BUILD_DATE = "buildDate";
@@ -50,6 +52,8 @@ public class CustomizeBean implements Serializable {
 
 	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.svg";	
 	
+	private static final String SOURCE_VERSION = "sourceVersion";
+
 	private String toolbarLogo;
 
 	private String favicon;
@@ -74,6 +78,8 @@ public class CustomizeBean implements Serializable {
 	
 	private String applicationVersion;
 
+	private String buildId;
+
 	private String buildNumber;
 	
 	private String buildDate;
@@ -84,6 +90,8 @@ public class CustomizeBean implements Serializable {
 	
 	private Integer companyId;
 	
+	private String sourceVersion;
+
 	public CustomizeBean() {
 		this.fontStyle = getColorStyle(FONT_STYLE_DEFAULT);
 	}
@@ -116,9 +124,12 @@ public class CustomizeBean implements Serializable {
 			Manifest m = new Manifest(in);
 			Attributes attrs = m.getMainAttributes();
 			this.applicationVersion = StringUtils.trimToNull(attrs.getValue(IMPLEMENTATION_VERSION));
-			this.buildNumber = StringUtils.trimToNull( attrs.getValue(BUILD_NUMBER) );
 			this.buildDate = StringUtils.trimToNull( attrs.getValue(BUILD_DATE) );
 			this.buildRevision = StringUtils.trimToNull( attrs.getValue(BUILD_REVISION) );
+
+			this.buildId = StringUtils.trimToNull( attrs.getValue(BUILD_ID) );
+			this.buildNumber = StringUtils.trimToNull( attrs.getValue(BUILD_NUMBER) );
+			this.sourceVersion = StringUtils.trimToNull( attrs.getValue(SOURCE_VERSION) );
 		} catch (Throwable e) {
 			LOGGER.warn("Imposible determinar la versión");
 		}
@@ -290,7 +301,10 @@ public class CustomizeBean implements Serializable {
 	public String getApplicationVersion() {
 		return applicationVersion;
 	}
-
+	
+	public String getBuildId() {
+		return buildId;
+	}
 	public String getBuildNumber() {
 		return buildNumber; 
 	}
@@ -303,6 +317,10 @@ public class CustomizeBean implements Serializable {
 		return buildRevision;
 	}
 
+	public String getSourceVersion() {
+		return sourceVersion;
+	}
+	
 	public String getApplicationTitle() {
 		return this.applicationTitle;
 	}

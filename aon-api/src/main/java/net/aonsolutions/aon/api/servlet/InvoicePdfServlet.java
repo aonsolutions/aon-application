@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -73,6 +74,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 						.and(f.getIdProperty().eq(id))).findFirst().orElse(new Rawdoc());
 				if(r.getId() != null) json = new JSONObject(r.getJson());
 				invoice = InvoiceJSON.fromJSON(json);
+				invoice = setPaymethod(domainName, domainId, login, invoice);
 			} else if(json.opt(IConstants.ID) != null){
 				invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
 			}
@@ -107,4 +109,16 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		doGet(req, resp);
 	}
+	
+	private Invoice setPaymethod(String domainName, Integer domainId, String login, Invoice invoice) {
+		for(Integer i = 0; i < invoice.getFinances().size(); i++) {
+			Integer paymethod = invoice.getFinances().get(i).getPayMethod();
+			if(paymethod != null) {
+				PayMethod pm = AON.getPayMethod(domainName, domainId, login, f -> f.getIdProperty().eq(paymethod));
+				invoice.getFinances().get(i).setPayMethodName(pm.getName());
+			}
+		}
+		return invoice;
+	}
+	
 }

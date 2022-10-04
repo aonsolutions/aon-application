@@ -232,6 +232,7 @@
 		.datePickerPanel{
 			border: none !important;
     		box-shadow: none !important;
+    		z-index: 8;
 		}
 		
 		.moreButton{

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
+import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("serial")
 public class CalendarHours implements Serializable {
@@ -171,6 +172,7 @@ public class CalendarHours implements Serializable {
 								newHourList.add(dayHour);
 								newHourList.add(newDayHour);
 								
+								Window.alert("EndDate : " + newDayHour.getEndDate());
 								Date newStartDate = DateUtils.copyDateOnly(newDayHour.getEndDate());
 								newStartDate = DateUtils.addDays2Date(newStartDate, 1);
 								DayHour postNewDayHour = new DayHour(newStartDate, oldEndDate, dayHour.getValue());
@@ -181,7 +183,7 @@ public class CalendarHours implements Serializable {
 								continue;
 							}
 						// Si el elemento a añadir es el mismo tramo de la lista
-						} else if(newDayHour.getStartDate().equals(dayHour.getStartDate()) && newDayHour.getEndDate().equals(dayHour.getEndDate())) {
+						} else if(newDayHour.getStartDate().equals(dayHour.getStartDate()) && dayHour.getEndDate().equals(newDayHour.getEndDate())) {
 							newHourList.add(newDayHour);
 							added = true;
 							continue;
@@ -195,6 +197,7 @@ public class CalendarHours implements Serializable {
 							DayHour postNewDayHour = null;
 							
 							if(!isNullOrEndContract(newDayHour.getEndDate()) && newDayHour.getEndDate().before(dayHour.getEndDate())) {
+								Window.alert("EndDate 2 : " + newDayHour.getEndDate());
 								Date newStartDate = DateUtils.copyDateOnly(newDayHour.getEndDate());
 								newStartDate = DateUtils.addDays2Date(newStartDate, 1);
 								
@@ -202,14 +205,14 @@ public class CalendarHours implements Serializable {
 							}
 							
 							if(!newDayHour.getStartDate().equals(dayHour.getStartDate()) &&
-									!newDayHour.getEndDate().equals(dayHour.getEndDate()) &&
+									!dayHour.getEndDate().equals(newDayHour.getEndDate()) &&
 									!isBetween(dayHour, newDayHour)) {
 									Date newEndDate = DateUtils.copyDateOnly(newDayHour.getStartDate());
 									newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
 									dayHour.setEndDate(newEndDate);
 									
 									newHourList.add(dayHour);
-								} else if(newDayHour.getEndDate().equals(dayHour.getEndDate())) {
+								} else if(dayHour.getEndDate().equals(newDayHour.getEndDate())) {
 									Date newEndDate = DateUtils.copyDateOnly(newDayHour.getStartDate());
 									newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
 									dayHour.setEndDate(newEndDate);
@@ -231,12 +234,12 @@ public class CalendarHours implements Serializable {
 							newHourList.add(newDayHour);
 							added = true;
 							continue;
-						} else if (beforeOrEqual(newDayHour.getEndDate(), dayHour.getStartDate())) {
+						} else if (!isNullOrEndContract(newDayHour.getEndDate()) && beforeOrEqual(newDayHour.getEndDate(), dayHour.getStartDate())) {
 							newHourList.add(newDayHour);
 							newHourList.add(dayHour);
 							added = true;
 							continue;
-						} else if (afterOrEqual(newDayHour.getEndDate(), dayHour.getStartDate()))	{
+						} else if (!isNullOrEndContract(newDayHour.getEndDate()) && afterOrEqual(newDayHour.getEndDate(), dayHour.getStartDate()))	{
 							Date newStartDate = DateUtils.copyDateOnly(newDayHour.getEndDate());
 							DateUtils.resetTime(newStartDate);
 							DateUtils.addDays2Date(newStartDate, 1);

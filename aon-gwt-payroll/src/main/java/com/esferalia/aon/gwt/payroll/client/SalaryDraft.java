@@ -1669,6 +1669,7 @@ public class SalaryDraft extends ResizeComposite
 			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
 			paymentDialog.setConcept(getConcept());
+			paymentDialog.setName(item.getName());
 			paymentDialog.setMonth(item.getMonth());
 			paymentDialog.setType(item.getType());
 			paymentDialog.setReceiptType(item.getSalaryType());

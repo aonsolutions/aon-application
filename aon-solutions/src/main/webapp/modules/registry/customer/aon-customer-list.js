@@ -14,7 +14,7 @@ export class AonCustomerList extends AonRegistryList {
 	}
 
 	getRegistries() {
-		return getCustomer(this.filter);
+		return getCustomers(this.filter);
 	}
 
 	buildRegistry(registry) {
