@@ -25,6 +25,6 @@ public class CRUDETest extends AbstractOccamTest {
 		
 		CreditorDAO.delete(ctx, creditor.getId());
 		Creditor deleted = CreditorDAO.get(ctx, creditor.getId());
-		assertNull(deleted);
+		assertNull(deleted.getId());
 	}
 }

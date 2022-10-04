@@ -124,16 +124,13 @@ public class SupplierDAO {
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)
-				
 				.fetch()
 				.stream()
 				.map(new SupplierFiller());
 	}
 
 	public static Supplier get(AONContext ctx, Integer id){
-		return getStream(ctx, p -> p.getIdProperty().eq(id))
-			.findFirst()
-			.orElse(null);
+		return get(ctx, p -> p.getIdProperty().eq(id));
 	}
 	
 	public static Supplier get(AONContext ctx, SupplierFilter filter){
@@ -148,12 +145,9 @@ public class SupplierDAO {
 		SupplierValidation.validate(ctx, supplier);
 		boolean nullId = (supplier.getId() == null); 
 		supplier = RegistryDAO.save(ctx, supplier);
-		if (nullId || get(ctx, supplier.getId()) == null ) {
-			supplier = insert(ctx, supplier);
-		} else {
-			supplier = update(ctx, supplier);			
-		}
-		return supplier;
+		return nullId || get(ctx, supplier.getId()).isEmpty() 
+			? insert(ctx, supplier)
+			: update(ctx, supplier);		
 	}
 
 	private static Supplier insert(AONContext ctx, Supplier supplier){

@@ -125,7 +125,6 @@ public class CreditorDAO {
 				.orderBy(REGISTRY.NAME)
 				.offset(offset)
 				.limit(limit)
-				
 				.fetch()
 				.stream()
 				.map(new CreditorFiller());
@@ -135,7 +134,7 @@ public class CreditorDAO {
 	public static Creditor get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()
-			.orElse(null);
+			.orElse(new Creditor());
 	}
 	
 	public static Creditor save(AONContext ctx, Creditor creditor) {
@@ -144,12 +143,9 @@ public class CreditorDAO {
 		CreditorValidation.validate(ctx, creditor);
 		boolean nullId = (creditor.getId() == null); 
 		creditor = RegistryDAO.save(ctx, creditor);
-		if (nullId || get(ctx, creditor.getId()) == null ) {
-			creditor = insert(ctx, creditor);
-		} else {
-			creditor = update(ctx, creditor);			
-		}
-		return creditor;
+		return nullId || get(ctx, creditor.getId()).isEmpty()
+				? insert(ctx, creditor)
+				: update(ctx, creditor);
 	}
 
 	private static Creditor insert(AONContext ctx, Creditor creditor){
