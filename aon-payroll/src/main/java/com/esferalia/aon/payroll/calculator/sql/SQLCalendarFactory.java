@@ -7,14 +7,15 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.CalendarHolidayColumns;
 
 public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	
@@ -76,19 +77,15 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			"SELECT *"
 			+" FROM  calendar "
 			+" INNER JOIN holiday ON ( calendar.holiday = holiday.id )"
-			+" INNER JOIN holiday_detail ON ( holiday.id = holiday_detail.holiday )"
+			+" LEFT JOIN holiday_detail ON ( holiday.id = holiday_detail.holiday AND holiday_detail.date <= ? AND holiday_detail.date >= ?)"
 			+" WHERE calendar.id =  ? "
-			+" AND holiday_detail.date <= ?"
-			+" AND holiday_detail.date >= ?"
 			;	
 
 	private static final String HOLIDAY_HOLIDAY_SQL = 
 			"SELECT *"
-			+" FROM  holiday_detail "
-			+" INNER JOIN holiday ON ( holiday_detail.holiday = holiday.id )"
+			+" FROM  holiday"
+			+" LEFT JOIN holiday_detail ON ( holiday_detail.holiday = holiday.id AND holiday_detail.date <= ? AND holiday_detail.date >= ? )"
 			+" WHERE holiday.id =  ? "
-			+" AND holiday_detail.date <= ?"
-			+" AND holiday_detail.date >= ?"
 			;	
 
 	private PreparedStatement calendarStmt;
@@ -179,9 +176,10 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	private void loadHolidays( Integer calendarId, DefaultCalendar calendar ) 
 	throws SQLException {
 		ResultSet rs = null;
+		Set<Integer> holidayIds = new HashSet<>();
 		try  {
 			Integer holidayId = null;
-			calendarHolidayStmt.setInt(1, calendarId );
+			calendarHolidayStmt.setInt(3, calendarId );
 			rs = calendarHolidayStmt.executeQuery();
 			while ( rs.next() ) {
 				Date day = rs.getDate(SQLConstants.HolidayDetailColumns.DATE);
@@ -192,7 +190,9 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			rs = null;
 
 			while ( holidayId != null ) {
-				holidayHolidayStmt.setInt(1, holidayId);
+				if ( !holidayIds.add(holidayId) )
+					break;
+				holidayHolidayStmt.setInt(3, holidayId);
 				rs = holidayHolidayStmt.executeQuery();
 				while ( rs.next() ) {
 					Date day = rs.getDate(SQLConstants.HolidayDetailColumns.DATE);
@@ -223,13 +223,13 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	throws SQLException {
 		this.calendarHolidayStmt  = 
 			connection.prepareStatement(CALENDAR_HOLIDAY_SQL);
-		this.calendarHolidayStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
-		this.calendarHolidayStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		this.calendarHolidayStmt.setDate(1, new java.sql.Date(endDate.getTime()) );
+		this.calendarHolidayStmt.setDate(2, new java.sql.Date(startDate.getTime()) );
 		
 		this.holidayHolidayStmt  = 
 				connection.prepareStatement(HOLIDAY_HOLIDAY_SQL);
-		this.holidayHolidayStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
-		this.holidayHolidayStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		this.holidayHolidayStmt.setDate(1, new java.sql.Date(endDate.getTime()) );
+		this.holidayHolidayStmt.setDate(2, new java.sql.Date(startDate.getTime()) );
 	}
 	
 	
