@@ -27,6 +27,11 @@
 			padding: .5rem 2rem;
 		}
 		
+		.dateGap {
+			gap: 2px !important;
+			align-items: center;
+		}
+		
 		.discContent {
 			padding: 1rem 0 !important;
 		}
@@ -79,7 +84,7 @@
 		}
 		
 		.dateNoSelected {
-			padding: .2rem;
+			padding: .3rem;
 			background-color: #eee;
 			font-weight: bold;
 			cursor: pointer;
@@ -201,8 +206,8 @@
 						   	  	<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
-						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="salaryDiscPanelContent">
-						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flexColumn}" />
+						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
+						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex} {style.datePanel}" />
 								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter}">
 									<g:ScrollPanel ui:field="salaryScrollPanel">
 										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
@@ -232,25 +237,6 @@
 									</g:HTMLPanel>
 							   </g:HTMLPanel>
 						   </g:DisclosurePanel>
-						   
-						   <g:DisclosurePanel ui:field="extraDiscPanel">
-							   <g:customHeader>
-							   	 <g:HTMLPanel styleName="{style.flexTitle}">
-							   		 <aon:AonToolbarButton ui:field="extraDiscBtn" />
-							   	  	<g:Label styleName="{style.disclouruseTitle}">Pagas extra</g:Label>
-							   	 </g:HTMLPanel>
-							   </g:customHeader>
-							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">
-							   		<g:HTMLPanel ui:field="extraTable" styleName="{style.flexCenter} {style.heigthAll}">
-										<g:ScrollPanel ui:field="extraScrollPanel">
-											<g:Grid ui:field="extraGrid" styleName="{style.borderCollapse}" />
-										</g:ScrollPanel>
-									</g:HTMLPanel>
-									<g:HTMLPanel ui:field="agreementExtraMessage" styleName="{style.flexCenter}">
-										<g:Label text="NO EXISTEN EXTRAS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
-									</g:HTMLPanel>
-							   </g:HTMLPanel>
-						 </g:DisclosurePanel>
 						
 					</g:HTMLPanel>
 				</g:ScrollPanel>
