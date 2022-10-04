@@ -5115,13 +5115,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if ( workedHours != 0 )
 						return workedHours;
 					
+					Number agreementHours = ctx.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
+					if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
+						return 0.00;
+
+					double actualDays = ctx.getVariables(ACTUAL_DAYS, p.getStart(), p.getEnd()).stream()
+					.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()));
+					if ( actualDays > 0.00  ) 
+						return agreementHours.doubleValue() / 5.00 * actualDays ;
+					
+					
 					Number workedDays = ctx.getVariable(WORKED_DAYS, p.getStart(), p.getEnd(), Number.class);
 					if ( workedDays == null  || workedDays.doubleValue() == 0.00  ) 
 						return 0.00;
 					
-					Number agreementHours = ctx.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
-					if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
-						return 0.00;
 					
 					return agreementHours.doubleValue()  * workedDays.doubleValue() / 5.00 ; 
 				}

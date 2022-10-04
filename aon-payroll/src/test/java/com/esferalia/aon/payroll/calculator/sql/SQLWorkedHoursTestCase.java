@@ -14,12 +14,31 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOU
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C109;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C130;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C139;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C150;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C189;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C200;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C209;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C230;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C239;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C250;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C289;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C401;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C402;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C403;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C408;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C410;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C418;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C420;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C421;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C430;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C441;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C450;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C452;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C501;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C502;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C503;
@@ -43,6 +62,7 @@ import static java.util.Calendar.DAY_OF_WEEK;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,6 +109,130 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 	private static ContractCode PARTIAL_TIME[] = { C200, C209, C230, C239, C250,
 			C289, C501, C502, C503, C508, C510, C518, C520, C530, C540, C541,
 			C550, C552, };
+
+	private static ContractCode FULL_TIME[] = { C100, C109, C130, C139,
+			C150,
+			C189, // indefinite fulltime
+			C401, C402, C403, C408, C410, C418, C420, C421, C430, C441, C450,
+			C452, // partial & temp fulltime
+	};
+
+	@Test
+	public void testFullTimeWorkHoursActualDays()
+			throws ExpressionException, SQLException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()), new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(FULL_TIME).getValue()));
+					}
+				});
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		int actualDays[] = { Calendar.MONDAY, Calendar.WEDNESDAY, Calendar.THURSDAY};
+		Arrays.sort(actualDays);
+		
+		
+		new Period(startDate, endDate).daysStream()
+		.filter(day -> Arrays.binarySearch(actualDays,day.get(Calendar.DAY_OF_WEEK)) >= 0 )
+		.forEach( day -> addData(aonContext, contract, new java.sql.Date(day.getTimeInMillis()), new java.sql.Date(day.getTimeInMillis()), ContextVariable.ACTUAL_DAYS, "1"))
+		;
+
+		long days = 
+		new Period(startDate, endDate).daysStream()
+		.filter(day -> Arrays.binarySearch(actualDays,day.get(Calendar.DAY_OF_WEEK)) >= 0 ).count();
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		List<ITimedVariable<Object>> workedHours = ctx.getExpressionContext()
+				.getVariables(WORKED_HOURS);
+
+		double hours = 0.00;
+		for (ITimedVariable<Object> workedHour : workedHours)
+			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
+					.doubleValue();
+
+		Assert.assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
+	}
+
+	@Test
+	public void testFullTimeWorkHoursActualDaysII()
+			throws ExpressionException, SQLException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Integer domainId = newDomain(aonContext).getId();
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null //parentId, 
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				null,//mondayHours, 
+				8.00,//tuesdayHours, 
+				null,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				null,//fridayHours, 
+				8.00,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfMonth(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(FULL_TIME).getValue()));
+					}
+				},
+				new String[] { 
+				},
+				new String[] { 
+						
+				},
+				null,
+				calendar);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		int actualDays[] = { Calendar.MONDAY, Calendar.WEDNESDAY, Calendar.FRIDAY, Calendar.SUNDAY};
+		Arrays.sort(actualDays);
+		
+		
+		long days = 
+		new Period(startDate, endDate).daysStream()
+		.filter(day -> Arrays.binarySearch(actualDays,day.get(Calendar.DAY_OF_WEEK)) < 0 ).count();
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		List<ITimedVariable<Object>> workedHours = ctx.getExpressionContext()
+				.getVariables(WORKED_HOURS);
+
+		double hours = 0.00;
+		for (ITimedVariable<Object> workedHour : workedHours)
+			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
+					.doubleValue();
+
+		Assert.assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
+	}
 
 	@Test
 	public void testPartialTimeWorkHoursI()
