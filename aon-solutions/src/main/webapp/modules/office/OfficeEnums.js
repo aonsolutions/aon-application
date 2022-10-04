@@ -23,6 +23,15 @@ const OfficeViews = {
     AON_TASK_HOLDER_LIST: "aonTaskHolderList",
 }
 
+const OfficeSidenav = {
+    ADD_FOLDER: {
+        name: "Agregar expediente",
+        icon: "create_new_folder",
+        id: "create_new_folder",
+    },
+}
+
+
 
 const OfficeOptions = {
     AON_CUSTOMER,
@@ -31,6 +40,7 @@ const OfficeOptions = {
 
 export const OfficeEnums = {
     OfficeViews,
-    OfficeOptions
+    OfficeOptions,
+    OfficeSidenav
 }
 

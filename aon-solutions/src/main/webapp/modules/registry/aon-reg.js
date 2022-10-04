@@ -30,8 +30,6 @@ import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
 import * as GWT from '../../gwt/gwt.js';
-import { getWorkgroups } from '../../services/workgroupService.js';
-import { getTastHolders } from '../../services/taskHolderService.js';
 import { deleteProject, getProjects, saveProject } from '../../services/projectService.js';
 
 
@@ -44,8 +42,6 @@ export class AonReg extends AonElement {
 	logo;
 	options;
 
-	workgroups;
-	taskHolders;
 	projects;
 
 	get id() {
@@ -138,8 +134,6 @@ export class AonReg extends AonElement {
 			{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
 		];
 
-		this.workgroups = [];
-		this.taskHolders = [];
 		this.projects = [];
 	}
 
@@ -835,27 +829,28 @@ export class AonReg extends AonElement {
 		let table = new AonBasicTable();
 		parent.appendChild(table);
 
-		card.addTitleButton(MSG.ADD, MATERIAL_ICONS.ADD_CIRCLE_OUTLINE, false, () => {
-			let project = new Project();
-			this.projects.push(project);
-			this.buildExpendiente(table, project);
-		});
-		
-
-		getProjects({page:1, perPage:200, registry: this.registry.getId()})
-		.then(projects => {
-			this.projects = [];
-
-			projects
-			.filter(({type}) => type && type.description )
-			.sort((a,b) => a.type.description.toLowerCase() > b.type.description.toLowerCase() ? 1 : -1 )
-			.forEach(p => {
-				let project = new Project(p);
+		if(this.registry.getId()){
+			
+			card.addTitleButton(MSG.ADD, MATERIAL_ICONS.ADD_CIRCLE_OUTLINE, false, () => {
+				let project = new Project();
 				this.projects.push(project);
 				this.buildExpendiente(table, project);
 			});
-		})
-
+			
+			getProjects({page:1, perPage:200, registry: this.registry.getId()})
+			.then(projects => {
+				this.projects = [];
+	
+				projects
+				.filter(({type}) => type && type.description )
+				.sort((a,b) => a.type.description.toLowerCase() > b.type.description.toLowerCase() ? 1 : -1 )
+				.forEach(p => {
+					let project = new Project(p);
+					this.projects.push(project);
+					this.buildExpendiente(table, project);
+				});
+			})
+		}
 	}
 
 	buildExpendiente(table, project) {
@@ -870,13 +865,13 @@ export class AonReg extends AonElement {
 		project.idRandom = idRandom;
 
 		let type = new AonSelect();
-		type.title = "Tipo";
+		type.title = MSG.TYPE;
 		type.autocomplete = true;
 		type.id = "projectType"+idRandom;
 		table.addCell(type);
 	
 		let workgroup = new AonSelect();
-		workgroup.title = "Grupo de trabajo";
+		workgroup.title = MSG.WORKGROUP;
 		workgroup.autocomplete = true;
 		workgroup.id = "workgroup"+idRandom;
 		workgroup.default = true;
@@ -914,7 +909,6 @@ export class AonReg extends AonElement {
 
 				project.setName(detail.description);
 
-				console.log(detail);
 			});
 
 			if(!typeId && options.length===1){
@@ -949,36 +943,34 @@ export class AonReg extends AonElement {
 		remove.title = MSG.DELETE_DETAIL;
 		remove.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
 		remove.addEventListener(EVENT.CLICK, () => {
-			table.removeRow(rowNum);
+			let newProjects = this.projects.filter(p => (p.getId() !== project.getId()) || (p.idRandom !== project.idRandom));;
 			if(project.getId()){
-				deleteProject(project);
+				this.getApplication()
+				.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, ()=>{
+					table.removeRow(rowNum);
+					if(project.getId()){
+						deleteProject(project);
+					}
+					this.projects = newProjects
+				});
+			} else {
+				table.removeRow(rowNum);
+				this.projects = newProjects;
 			}
-			this.projects = this.projects.filter(p => (p.getId() !== project.getId()) || (p.idRandom !== project.idRandom));
 		});
 		table.addCell(remove);
 	}
 
-	async getProjectTypes(){
-		let types = await this.getApplicationParent().getProjectTypes();
-		return types
-		.map((r) => ({...r, name: r.description, value: r.id}))
-		;
+	getProjectTypes(){
+		return this.getApplicationParent().getProjectTypes();
 	}
 
-	async getWorkgroups(){
-		if(this.workgroups.length==0){
-			let wgs = await getWorkgroups().catch(()=> []);
-			this.workgroups = wgs.map((r) => ({...r, name: r.description, value: r.id}))
-		} 
-		return this.workgroups;
+	getWorkgroups(){
+		return this.getApplicationParent().getWorkgroups();
 	}
 
-	async getTaskHolders(){
-		if(this.taskHolders.length==0){
-			let ths = await getTastHolders().catch(()=> []);
-			this.taskHolders = ths.map((r) => ({...r, value: r.id}))
-		} 
-		return this.taskHolders;
+	getTaskHolders(){
+		return this.getApplicationParent().getTaskHolders();
 	}
 	
 	buildWeb(table, web, i) {

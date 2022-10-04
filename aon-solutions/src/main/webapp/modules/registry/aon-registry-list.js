@@ -31,6 +31,7 @@ export class AonRegistryList extends AonElement {
 
 	build() {
 		let aonTable = this.getElement(this.AON_REGISTRY_TABLE);
+		this.selectabledTable(aonTable);
 
 		aonTable.addColumn(MSG.DOCUMENT, 'string', 'document', '20%');
 		aonTable.addColumn(MSG.NAME, 'string', 'name', '40%');
@@ -40,6 +41,15 @@ export class AonRegistryList extends AonElement {
 		});
 		this.init();
  	}
+
+	selectabledTable(aonTable){
+		if(this.selectable){
+			aonTable.selectable = true;
+			aonTable.addEventListener('select', () => {
+				this.dispatchEvent(new CustomEvent("select", {detail: {parent:this, table:aonTable}}));
+			});
+		}
+	}
 
 	loadMore() {
 		this.more = false;
