@@ -141,9 +141,7 @@ public class CustomerDAO {
 	}
 
 	public static Customer get(AONContext ctx, Integer id){
-		return getStream(ctx, p -> p.getIdProperty().eq(id))
-			.findFirst()
-			.orElse(null);
+		return get(ctx, p -> p.getIdProperty().eq(id));
 	}
 	
 	public static Customer get(AONContext ctx, CustomerFilter filter){
@@ -158,7 +156,7 @@ public class CustomerDAO {
 		CustomerValidation.validate(ctx, customer);
 		boolean nullId = (customer.getId() == null); 
 		customer = RegistryDAO.save(ctx, customer);
-		return (nullId || get(ctx, customer.getId()) == null )
+		return (nullId || get(ctx, customer.getId()).isEmpty())
 			? insert(ctx, customer)
 			: update(ctx, customer);			
 	}

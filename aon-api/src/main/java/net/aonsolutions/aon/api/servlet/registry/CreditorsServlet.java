@@ -5,6 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -14,99 +15,88 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 
-import net.aonsolutions.aon.api.error.AonApiError;
-import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.servlet.AonRouting;
 
-/**
- * @deprecated  Replaced by CreditorsServlet
- */
-@Deprecated(forRemoval = true )
 @SuppressWarnings("serial")
-@WebServlet(name = "AonApiCreditorServlet", urlPatterns = {"/ms/api/creditor/*"})
-public class CreditorServlet extends AonApiHttpServlet {
+@WebServlet(name = "AonApiCreditorsServlet", urlPatterns = {"/ms/api/creditors/*"})
+public class CreditorsServlet extends AonApiHttpServlet {
 		
-	private static final Logger LOGGER  = Logger.getLogger(CreditorServlet.class.getName());
+	private static final Logger LOGGER  = Logger.getLogger(CreditorsServlet.class.getName());
+	
+	public static final String CREDITORS = "/";
+	public static final String CREDITOR = "/:id";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[GET] /ms/api/creditor/* - AON API CREDITOR SERVLET");
-		try {
-			AonApiData api = initialize(req);
-		
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getCreditors(api, api.getData()));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[POST] /ms/api/creditor/* - AON API CREDITOR SERVLET");
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getCreditors(api, api.getData()));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
 	}
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[PUT] /ms/api/creditor/* - AON API CREDITOR SERVLET");
+		put(req, resp);
+	}
+	
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, saveCreditor(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
 			
+			Object object = new AonRouting(api)
+				.addRoute(CREDITORS, CreditorsServlet::getCreditors)
+				.addRoute(CREDITOR, CreditorsServlet::getCreditor)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 	
-	private Object getCreditor(AonApiData api, JSONObject json) {
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(CREDITORS, CreditorsServlet::saveCreditor)
+				.addRoute(CREDITOR, CreditorsServlet::saveCreditor)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	
+	private static JSONObject getCreditor(AonApiData api) {
 		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
 				? api.getData().optInt(IJsonNames.REGISTRY)
 				: api.getData().optInt(IJsonNames.ID);
 		Creditor creditor = AON.getCreditor(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(id)).get();
 		JSONObject object = CreditorJSON.toJSON(creditor);
 		
-		return RegistryServlet.getRegistryAdditionalInfo(object, api, json, id, null);
+		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), id, null);
 	}
 	
-	private Object getCreditors(AonApiData api, JSONObject json) {
-		if(json.opt(IJsonNames.ID) != null || json.opt(IJsonNames.REGISTRY) != null)
-			return getCreditor(api, json);
-		
-		Integer page = json.opt(IJsonNames.PAGE) != null 
-			? json.optInt(IJsonNames.PAGE) : 1;
-		Integer perPage = json.opt(IJsonNames.PER_PAGE) != null
-			? json.optInt(IJsonNames.PER_PAGE) : 50;
+	private static JSONArray getCreditors(AonApiData api) {
+		Integer page = api.getData().opt(IJsonNames.PAGE) != null 
+			? api.getData().optInt(IJsonNames.PAGE) : 1;
+		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
+			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
 
 		return CreditorJSON.toJSON(AON.getCreditorStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> creditorFilter(api, json, f), perPage * (page -1), perPage));
+			f -> creditorFilter(api, api.getData(), f), perPage * (page -1), perPage));
 	}
 	
-	private Filter creditorFilter(AonApiData api, JSONObject json, CreditorProperties f) {
+	private static Filter creditorFilter(AonApiData api, JSONObject json, CreditorProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
 		if(json.opt(IJsonNames.VALUE) != null) {
