@@ -4,13 +4,13 @@ import { MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 const AON_CUSTOMER = {
     id: 'sideNavcustomer',
-    name: MSG.CUSTOMER,
+    name: MSG.CUSTOMERS,
     icon: MATERIAL_ICONS.CONTACT_PAGE
 }
   
 const AON_TASK_HOLDER = {
     id: 'sideNavTaskHolder',
-    name: "Operario",
+    name: "Operarios",
     icon: MATERIAL_ICONS.PEOPLE
 }
   

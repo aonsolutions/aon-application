@@ -406,8 +406,9 @@ export class AonSelect extends AonElement {
    */
   loading(load){
     const input = this.getElement(this.INPUT);
-    if(input)
+    if(input){
       input.loading(load);
+    }
   }
 
   getDetail(){
@@ -424,8 +425,9 @@ export class AonSelect extends AonElement {
       let options = this.getOptions();
       if(options.length){
         const option = options[idx];
-        if(option)
+        if(option){
           this.value = option.value;
+        }
       }
     } else {
       this.clear();

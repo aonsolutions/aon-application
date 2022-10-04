@@ -819,8 +819,6 @@ export class AonReg extends AonElement {
 		card.style.width = '100%';
 		main.appendChild(card);
 
-		let project = new Project();
-
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
@@ -837,7 +835,7 @@ export class AonReg extends AonElement {
 		let table = new AonBasicTable();
 		parent.appendChild(table);
 
-		card.addTitleButton(MSG.ADD, MATERIAL_ICONS.ADD, false, () => {
+		card.addTitleButton(MSG.ADD, MATERIAL_ICONS.ADD_CIRCLE_OUTLINE, false, () => {
 			let project = new Project();
 			this.projects.push(project);
 			this.buildExpendiente(table, project);
@@ -847,7 +845,11 @@ export class AonReg extends AonElement {
 		getProjects({page:1, perPage:200, registry: this.registry.getId()})
 		.then(projects => {
 			this.projects = [];
-			projects.forEach(p => {
+
+			projects
+			.filter(({type}) => type && type.description )
+			.sort((a,b) => a.type.description.toLowerCase() > b.type.description.toLowerCase() ? 1 : -1 )
+			.forEach(p => {
 				let project = new Project(p);
 				this.projects.push(project);
 				this.buildExpendiente(table, project);
@@ -860,10 +862,12 @@ export class AonReg extends AonElement {
 		const projectHolder = project.getProjectHolder();
 
 		project.setRegistry(this.registry);
-		
-		let rowNum = table.addRow();
+
+		const rowNum = table.addRow();
 
 		const idRandom = Math.floor(Math.random() * 10000000) + 1;
+
+		project.idRandom = idRandom;
 
 		let type = new AonSelect();
 		type.title = "Tipo";
@@ -887,7 +891,8 @@ export class AonReg extends AonElement {
 		table.addCell(taskHolder);
 
 
-		this.getProjectTypes().then(types=>{
+		this.getProjectTypes().
+		then(types=>{
 			const typeId = project.getType().getId() || 0;
 			let options = types
 			.filter(r=> 
@@ -900,16 +905,21 @@ export class AonReg extends AonElement {
 
 			if(typeId){
 				type.value = typeId;
-			} else if(options.length===1){
-				type.setIndexOf(0);
-			}
+			} 
 
 			type.addEventListener(EVENT.CHANGE, () => {
+		
 				const detail = type.getDetail();
 				project.setType(detail);
 
 				project.setName(detail.description);
+
+				console.log(detail);
 			});
+
+			if(!typeId && options.length===1){
+				type.setIndexOf(0);
+			}
 		});
 
 		this.getWorkgroups().then(wgs=>{
@@ -935,14 +945,15 @@ export class AonReg extends AonElement {
 		});
 
 		let remove = new AonIconButton();
+		remove.id = "remove"+idRandom;
 		remove.title = MSG.DELETE_DETAIL;
 		remove.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
 		remove.addEventListener(EVENT.CLICK, () => {
 			table.removeRow(rowNum);
 			if(project.getId()){
 				deleteProject(project);
-				this.projects = this.projects.filter(p => p.getId() != project.getId());
 			}
+			this.projects = this.projects.filter(p => (p.getId() !== project.getId()) || (p.idRandom !== project.idRandom));
 		});
 		table.addCell(remove);
 	}
@@ -1045,8 +1056,8 @@ export class AonReg extends AonElement {
 	saveProjects(){
 		if(this.projects.length>0){
 			saveProject({projects:this.projects})
-			.then(r=>{
-				this.projects = r;
+			.then(projects=>{
+				this.projects = projects.map(p => new Project(p));
 			})
 			.catch(err=>{
 				this.showError(err);
