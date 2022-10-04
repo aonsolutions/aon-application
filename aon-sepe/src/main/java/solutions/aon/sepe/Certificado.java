@@ -525,17 +525,16 @@ public class Certificado {
 			DomNode error = htmlPage.querySelector("#contenido > form > p.formAviso");
 			if (error != null && !error.getVisibleText().isEmpty())
 				throw new SepeException(error.getVisibleText());
-		} catch (NullPointerException e) {
-		}
+		} catch (NullPointerException e) {}
 	}
 	
 	
 	private static void handleExceptionsErrors(HtmlPage htmlPage) throws SepeException {
 		try {
 			DomNode error = htmlPage.querySelector("#content > div > div.panel-body > .alert");
-			if (error != null && !error.getVisibleText().isEmpty() && error.getVisibleText().toLowerCase().contains("please contact your system"))
+			if (error != null && !error.getVisibleText().isEmpty() && error.getVisibleText().toLowerCase().contains("please contact your system")) {				
 				throw new SepeException("Certificado revocado o no v\u00e1lido");
-		} catch (NullPointerException e) {
-		}
+			}
+		} catch (NullPointerException e) {}
 	}
 }
