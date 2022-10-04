@@ -1134,7 +1134,7 @@ const addInfoDomain = (task, dinamicDiv)=> {
             if(!isCau){
                 const domainName = task.id && company && company.domain && company.domain.name ? company.domain.name : undefined;
                 const domainIsEditable = !domainName && isEditable;
-                let {label, anchor} = createLabelAnchor(MSG.DOMAIN, domainName, false, true);
+                let {label, anchor} = createLabelAnchor(MSG.DOMAIN, domainName, true, domainIsEditable);
                 fn(dinamicDiv, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
                 if(domainIsEditable){
                     anchor.addEventListener(EVENT.INPUT, ({target})=>{

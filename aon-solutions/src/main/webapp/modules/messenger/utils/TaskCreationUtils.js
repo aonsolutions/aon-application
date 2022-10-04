@@ -883,12 +883,14 @@ const openDialogBranch = (task)=> {
   // div.appendChild(email);
 
   const workgroup  = createSelectCau(MSG.WORKGROUP, MSG.WORKGROUP+"Random", MSG.WORKGROUP);
+  workgroup.autocomplete = true;
   div.appendChild(workgroup);
   aonMessengerChat.getWorkgroup().then(options=>{
     workgroup.setOptions(options);
   })
 
   const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
+  taskHolder.autocomplete = true;
   div.appendChild(taskHolder);
 
   const myTaskHolder =  aonMessengerChat.MY_TASKHOLDER;

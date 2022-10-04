@@ -130,7 +130,8 @@ public class TaskHolderDAO {
 		TaskHolderValidation.validate(ctx, taskHolder);
 		
 		boolean nullId = (taskHolder.getId() == null); 
-		if(nullId) taskHolder = RegistryDAO.save(ctx, taskHolder);
+//		if(nullId) 
+		taskHolder = RegistryDAO.save(ctx, taskHolder);
 		return nullId || get(ctx, taskHolder.getId()).isEmpty() 
 			? insert(ctx, taskHolder) : update(ctx, taskHolder);
 	}

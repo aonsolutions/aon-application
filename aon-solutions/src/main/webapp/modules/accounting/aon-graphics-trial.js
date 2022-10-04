@@ -242,7 +242,11 @@ export class AonGraphicsTrial extends AonElement {
         this.params.fromDate = this.selectedPeriod.initiationDate;
         this.params.toDate = this.selectedPeriod.deadline;
       }
-      this.ACCOUNTS = await getAccounting(this.params).catch(() => null);
+      this.ACCOUNTS = await getAccounting(this.params)
+      .catch((err) => {
+        this.showError(err)
+        return null;
+      });
     }
 
     return this.ACCOUNTS;

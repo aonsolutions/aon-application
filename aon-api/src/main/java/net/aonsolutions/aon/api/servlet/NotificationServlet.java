@@ -45,9 +45,11 @@ public class NotificationServlet extends AonApiHttpServlet{
 			setDomain(api);
 			switch (api.getPath()) {
 			case "/":
+				LOGGER.info("AON API GET NOTIFICATION SERVLET");
 				response(req, resp, getNotification(api));
 				break;
 			case "/domain":
+				LOGGER.info("AON API GET NOTIFICATION DOMAIN SERVLET");
 				response(req, resp, getNotificationByDomain(api));
 				break;
 			case "/total-notification":

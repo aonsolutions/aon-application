@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-
+import {Project} from '../../models/project/Project.js';
 import '../../components/aon-address.js';
 import '../../components/aon-input.js';
 
@@ -30,6 +30,10 @@ import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
 import * as GWT from '../../gwt/gwt.js';
+import { getWorkgroups } from '../../services/workgroupService.js';
+import { getTastHolders } from '../../services/taskHolderService.js';
+import { deleteProject, getProjects, saveProject } from '../../services/projectService.js';
+
 
 export class AonReg extends AonElement {
 
@@ -39,6 +43,10 @@ export class AonReg extends AonElement {
 	oneAddress;
 	logo;
 	options;
+
+	workgroups;
+	taskHolders;
+	projects;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -129,6 +137,10 @@ export class AonReg extends AonElement {
 			{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()},
 			{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
 		];
+
+		this.workgroups = [];
+		this.taskHolders = [];
+		this.projects = [];
 	}
 
 	build() {
@@ -189,6 +201,7 @@ export class AonReg extends AonElement {
 		this.clearElement(div);
 		this.buildRegistralCard(div);
 	}
+
 
 	buildGeneralCard(parent){
 		let card = new AonCard();
@@ -793,6 +806,169 @@ export class AonReg extends AonElement {
 				this.buildWeb(table, web, i));
 		}
 	}
+
+	//EXPEDIENTE
+
+	buildExpedienteData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let card = new AonCard();
+		card.id = this.MEDIA_CARD;
+		card.title = "Expedientes";
+		card.style.width = '100%';
+		main.appendChild(card);
+
+		let project = new Project();
+
+		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		this.buildExpedientes(div, card);	
+	}
+
+	async buildExpedientes(parent, card) {
+		await Promise.all([
+			this.getProjectTypes(),
+			this.getWorkgroups(),
+			this.getTaskHolders()
+		]);
+
+		let table = new AonBasicTable();
+		parent.appendChild(table);
+
+		card.addTitleButton(MSG.ADD, MATERIAL_ICONS.ADD, false, () => {
+			let project = new Project();
+			this.projects.push(project);
+			this.buildExpendiente(table, project);
+		});
+		
+
+		getProjects({page:1, perPage:200, registry: this.registry.getId()})
+		.then(projects => {
+			this.projects = [];
+			projects.forEach(p => {
+				let project = new Project(p);
+				this.projects.push(project);
+				this.buildExpendiente(table, project);
+			});
+		})
+
+	}
+
+	buildExpendiente(table, project) {
+		const projectHolder = project.getProjectHolder();
+
+		project.setRegistry(this.registry);
+		
+		let rowNum = table.addRow();
+
+		const idRandom = Math.floor(Math.random() * 10000000) + 1;
+
+		let type = new AonSelect();
+		type.title = "Tipo";
+		type.autocomplete = true;
+		type.id = "projectType"+idRandom;
+		table.addCell(type);
+	
+		let workgroup = new AonSelect();
+		workgroup.title = "Grupo de trabajo";
+		workgroup.autocomplete = true;
+		workgroup.id = "workgroup"+idRandom;
+		workgroup.default = true;
+		table.addCell(workgroup);
+
+			
+		let taskHolder = new AonSelect();
+		taskHolder.title = "Asignar a";
+		taskHolder.autocomplete = true;
+		taskHolder.id = "taskHolder"+idRandom;
+		taskHolder.default = true;
+		table.addCell(taskHolder);
+
+
+		this.getProjectTypes().then(types=>{
+			const typeId = project.getType().getId() || 0;
+			let options = types
+			.filter(r=> 
+				!this.projects.some(({type}) =>
+					(type && type.id === r.id) && typeId!==r.id 
+				) 
+			);
+
+			type.setOptions(options);
+
+			if(typeId){
+				type.value = typeId;
+			} else if(options.length===1){
+				type.setIndexOf(0);
+			}
+
+			type.addEventListener(EVENT.CHANGE, () => {
+				const detail = type.getDetail();
+				project.setType(detail);
+
+				project.setName(detail.description);
+			});
+		});
+
+		this.getWorkgroups().then(wgs=>{
+			let options = wgs;
+			
+			workgroup.setOptions(options);
+
+			if(projectHolder.getWorkgroup().getId() ){
+				workgroup.value = projectHolder.getWorkgroup().getId();
+			} 
+
+			workgroup.addEventListener(EVENT.CHANGE, () => project.getProjectHolder().setWorkgroup(workgroup.getDetail()));
+		});
+
+		this.getTaskHolders().then(ths=>{
+			taskHolder.setOptions(ths);
+
+			if(projectHolder.getTaskHolder().getId() ){
+				taskHolder.value = projectHolder.getTaskHolder().getId();
+			}
+
+			taskHolder.addEventListener(EVENT.CHANGE, () => project.getProjectHolder().setTaskHolder(taskHolder.getDetail()));
+		});
+
+		let remove = new AonIconButton();
+		remove.title = MSG.DELETE_DETAIL;
+		remove.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
+		remove.addEventListener(EVENT.CLICK, () => {
+			table.removeRow(rowNum);
+			if(project.getId()){
+				deleteProject(project);
+				this.projects = this.projects.filter(p => p.getId() != project.getId());
+			}
+		});
+		table.addCell(remove);
+	}
+
+	async getProjectTypes(){
+		let types = await this.getApplicationParent().getProjectTypes();
+		return types
+		.map((r) => ({...r, name: r.description, value: r.id}))
+		;
+	}
+
+	async getWorkgroups(){
+		if(this.workgroups.length==0){
+			let wgs = await getWorkgroups().catch(()=> []);
+			this.workgroups = wgs.map((r) => ({...r, name: r.description, value: r.id}))
+		} 
+		return this.workgroups;
+	}
+
+	async getTaskHolders(){
+		if(this.taskHolders.length==0){
+			let ths = await getTastHolders().catch(()=> []);
+			this.taskHolders = ths.map((r) => ({...r, value: r.id}))
+		} 
+		return this.taskHolders;
+	}
 	
 	buildWeb(table, web, i) {
 		if(!web.isRemoved()){
@@ -850,11 +1026,13 @@ export class AonReg extends AonElement {
 	}
 
 	save() {
+
 		let medias = this.emails.concat(this.phones).concat(this.webs);
 		this.registry.setMedia(medias);
 
 		saveRegistry(this.registry).then(registry => {
 			this.registry.id = registry.id;
+			this.saveProjects();
 			this.showToast({
 				type: 'success',
 	 			message: 'Datos Guardados Correctamente'
@@ -862,6 +1040,18 @@ export class AonReg extends AonElement {
 		}).catch(error => {
 	 		this.showToast(error);
 	 	});
+	}
+
+	saveProjects(){
+		if(this.projects.length>0){
+			saveProject({projects:this.projects})
+			.then(r=>{
+				this.projects = r;
+			})
+			.catch(err=>{
+				this.showError(err);
+			});
+		}
 	}
 
 	setRegistry(registry) {

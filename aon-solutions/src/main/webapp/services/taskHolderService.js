@@ -1,8 +1,14 @@
-import { get } from "./request.js";
+import { get, post } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 
+export const saveTastHolder = (data) => post(`${API_URL}/taskholder`, data);
+
 export const getTastHolders = (data) => get(`${API_URL}/taskholder/enterprise`, data);
+
+export const getTastHoldersList = (data) => get(`${API_URL}/taskholder/list`, data);
+
+export const getTaskHolderNoCache = (data) => get(`${API_URL}/taskholder`, data);
 
 export const getTastHoldersWorkGroup = async (data) =>{
   const resp = await get(`${API_URL}/taskholder/workgroup`, data);
