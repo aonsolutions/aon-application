@@ -232,20 +232,22 @@ public class ProjectDAO {
 	}
 	
 	public static Project insert(AONContext ctx, Project project){
-		Integer id =  ctx.getDslContext().insertInto(PROJECT)
-				.set(PROJECT.ACTIVE, project.isActive() ? (byte) 1: (byte)0)
-				.set(PROJECT.ALIAS, project.getAlias())
-				.set(PROJECT.COMMERCIAL, project.isCommercial() ? (byte) 1: (byte)0)
-				.set(PROJECT.DATE, new Date(project.getDate().getTime()))
-				.set(PROJECT.DOMAIN, project.getDomain().getId())
-				.set(PROJECT.NAME, project.getName())
-				.set(PROJECT.PROJECT_TYPE, project.getType().getId())
-				.set(PROJECT.REGISTRY, project.getRegistry().getId())
-				.set(PROJECT.RESERVATION, project.isReservation() ? (byte) 1: (byte) 0)
-				.set(PROJECT.TAS, project.isTas() ? (byte) 1 :  (byte) 0)
-				.returning(PROJECT.ID).fetchOne().getValue(PROJECT.ID);
+		Integer id = ctx.getDslContext().insertInto(PROJECT)
+		.set(PROJECT.ACTIVE, project.isActive() ? (byte) 1: (byte)0)
+		.set(PROJECT.ALIAS, project.getAlias())
+		.set(PROJECT.COMMERCIAL, project.isCommercial() ? (byte) 1: (byte)0)
+		.set(PROJECT.DATE, new Date(project.getDate().getTime()))
+		.set(PROJECT.DOMAIN, project.getDomain().getId())
+		.set(PROJECT.NAME, project.getName())
+		.set(PROJECT.PROJECT_TYPE, project.getType().getId())
+		.set(PROJECT.REGISTRY, project.getRegistry().getId())
+		.set(PROJECT.RESERVATION, project.isReservation() ? (byte) 1: (byte) 0)
+		.set(PROJECT.TAS, project.isTas() ? (byte) 1 :  (byte) 0)
+		.returning(PROJECT.ID).fetchOne().getValue(PROJECT.ID);
+		
 		return project.setId(id);
 	}
+
 	
 	public static void delete(AONContext ctx, Integer id) {
 		ProjectHolderDAO.delete(ctx, f -> f.getProjectProperty().eq(id));

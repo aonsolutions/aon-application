@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserType;
+import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -209,7 +210,7 @@ public class UserServlet extends AonApiHttpServlet {
 		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
 		.map(user -> {
 			user.setWorkgroups(AON.getUserWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getUserIdProperty().eq(user.getId()))
-					.map(uw -> uw.getWorkgroup()).collect(Collectors.toCollection(LinkedList::new)));
+					.map(UserWorkgroup::getWorkgroup).collect(Collectors.toCollection(LinkedList::new)));
 			return user;
 		})
 		.forEach(r -> {
