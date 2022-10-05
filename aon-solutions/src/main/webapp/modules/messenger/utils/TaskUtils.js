@@ -339,8 +339,7 @@ const checkFilesAddEventClick = ({id}, parent)=>{
         .forEach(element=>{
             const tagName = element.tagName;
             if(tagName && tagName.toLowerCase() === TAG.IMG){
-                // parent.style.position = "relative";
-                // magnify(element, 3);
+                element.classList.add(CSS.AON_IMG_COMMENT);
             }
 
             let url = element.src || element.href;      

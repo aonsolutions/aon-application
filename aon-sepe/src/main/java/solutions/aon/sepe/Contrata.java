@@ -2153,17 +2153,18 @@ public class Contrata {
 			} else {
 				String body = htmlPage.asText();
 				if (body != null) {
-					Pattern pattern = Pattern.compile("certificado\\s*digital\\s*no\\s*v.lido",
-							Pattern.CASE_INSENSITIVE);
+					Pattern pattern = Pattern.compile("(?<certificate>certificado\\s*digital\\s*no\\s*v.lido)|(?<permission>no\\s*est.{1,3}\\s*autorizado)", Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(body);
 					if (matcher.find()) {
-						throw new InvalidCertificateException("Certificado digital no v\u00e1lido");
+						if(matcher.group("certificate") != null) {
+							throw new InvalidCertificateException("Certificado digital no v\u00e1lido");
+						} else if(matcher.group("permission") != null)  {
+							throw new SepeException("El usuario no est\u00e1 autorizado");
+						}
 					}
 				}
 			}
-
-		} catch (NullPointerException e) {
-		}
+		} catch (NullPointerException e) {}
 	}
 
 	private static void handleSepeAlert(List<String> list) throws SepeException {
