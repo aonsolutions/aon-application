@@ -24,7 +24,6 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -46,55 +45,50 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonRandomStringUtils;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.DomainValidator;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class ConsoleIsolateDomain {
+public class OLD_ConsoleIsolateDomain {
+/*	
 	private static final String DOMAIN_FIELD = "domain";
 	
-	private ConsoleIsolateDomain() {
+	private OLD_ConsoleIsolateDomain() {
 	}
 	
 	public static void isolate(ConsoleParams params) {
-		String processId = AonRandomStringUtils.randomAlphabetic(4) + "_" + (new Date()).getTime();
 		if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
-			ConsoleMessageUtils.start(params.getPrinter());
 			String msg = "[ERROR]: No se ha definido la conexión origen a la BD";
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
-			ConsoleMessageUtils.end(params.getPrinter());
+			ConsoleUtils.log(params,msg);
 			throw new AonCoreException(msg);
 		}
 		if (params.isValidate()) {
-			ConsoleDomainCheckIntegrity.check(processId, params);
+			ConsoleDomainCheckIntegrity.check(params);
 			if (!params.hasErrors()) {
-				isolateDomain(processId, params);		
+				isolateDomain(params);		
 			}
 		} else {
-			isolateDomain(processId, params);
+			isolateDomain(params);
 		}
 	}
 
-	private static void isolateDomain(String processId, ConsoleParams params) {
-		ConsoleMessageUtils.start(params.getPrinter());
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "DUPLICADO DE DOMINIO"));
+	private static void isolateDomain(ConsoleParams params) {
+		ConsoleUtils.log(params,"** Start domain isolation!");
 		ConsoleIDsTableInfo idsTableInfo = new ConsoleIDsTableInfo();
 		try {
 			Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
 					, p -> p.getNameProperty().eq(params.getFromConnection().getDomainName()));
 			if (fullDomain == null) {
-				String msg = "No se ha encontrado el dominio \"" + params.getFromConnection().getDomainName() + "\"";
-				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
-				throw new AonCoreException(msg);
+				throw new IllegalArgumentException("No se ha encontrado el dominio \"" + params.getFromConnection().getDomainName() + "\"");
 			}
 			params.getFromConnection().setFullDomain(fullDomain);
 			params.setScript( new LinkedHashMap<>() );
 			DomainValidator domainValidator = DomainValidator.getInstance(true);
 			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
 				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
-				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				ConsoleUtils.log(params,msg);
 				throw new AonCoreException(msg);
 			}
 			
@@ -104,57 +98,36 @@ public class ConsoleIsolateDomain {
 				checkAgreements(params);
 			});
 			
-			fillScript(processId,params);
-			params.setTotalCount( (int) params.getScript()
-				.values()
-				.stream()
-				.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
-				.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
-				.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
-				.count());
+			fillScript(params);
+			ConsoleUtils.log (params, "Orden de carga:");
+			MutableInt x = new MutableInt(1);
+			params.getScript().values().stream()
+				.forEach(sc -> {
+					x.add(1);
+					ConsoleUtils.log (params,("\t" + x.getValue() + " - " + sc.getTable().getName()));
+				});
 			
-			if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
-				long parentTables = params.getScript()
-					.values()
-					.stream()
-					.filter(t -> ConsoleUtils.PARENT_INCLUDED_TABLES.contains(t.getTable().getName()))
-					.filter(t -> hasDomain(t.getTable()))
-					.count();
-				params.setTotalCount( params.getTotalCount() +  ((int) parentTables)  + 1);
-			}
-			
-			params.setTotalCount( params.getTotalCount() +  2);
-			
-			
-			
-			ConsoleUtils.disableForeignKeys(params);
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Start transaction"));
+			ConsoleUtils.disableForeignKeysAndPrint(params);
+			ConsoleUtils.log(params,"** Start transaction!");
 
 			params.getToDslContext().transaction(conf -> {
 				
-				createDomain(processId,params);
-				logMainProgress(processId, params);
-				
+				createDomain(params);
 				ConsoleUtils.initializeConsoleIDsTableInfo(idsTableInfo, params);
-				logMainProgress(processId, params);
-				
 				params.setIdsTableInfo( idsTableInfo );			
-				createTempTable(processId,params);
-				logMainProgress(processId, params);
-				
+				createTempTable(params);
 				insertId(params, DOMAIN,
 					params.getFromConnection().getFullDomain().getId(),
 					params.getToConnection().getFullDomain().getId());
 
 				
 				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
-					passHeritableTables( processId, params );
+					passHeritableTables( params );
 				}
 				
 				if (!AonStringUtils.equals(params.getFromConnection().getSchemaName(), params.getToConnection().getSchemaName())) {
 					// Se pasan los datos a otro esquema. Se vinculan los datos de dominio cera de un esquema a otro.
 					bindTagTable( params );
-					logMainProgress(processId, params);
 				}
 				
 				params.getScript()
@@ -163,44 +136,40 @@ public class ConsoleIsolateDomain {
 					.filter(t -> !DOMAIN.getName().equals(t.getTable().getName()))
 					.filter(t -> !SESSION.getName().equals(t.getTable().getName()))
 					.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
-					.forEach(t -> duplicateTable(processId, params, t));
-				loopRefInvoice(processId,params,params.getScript().get("invoice"));
-				logMainProgress(processId, params);
-				loopFBatch(processId,params,params.getScript().get("fbatch"));
-				logMainProgress(processId, params);
-				loopBankStatementLinkFinanceTracking(processId,params,params.getScript().get("bank_statement_link"));
-				logMainProgress(processId, params);
-				loopAccAppParamAccount(processId,params,params.getScript().get("app_param"));
-				logMainProgress(processId, params);
+					.forEach(t -> duplicateTable(params, t));
+				loopRefInvoice(params,params.getScript().get("invoice"));
+				loopFBatch(params,params.getScript().get("fbatch"));
+				loopBankStatementLinkFinanceTracking(params,params.getScript().get("bank_statement_link"));
+				loopAccAppParamAccount(params,params.getScript().get("app_param"));
 				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
-					fixTaskHolder(processId, params );
-					logMainProgress(processId, params);
+					fixTaskHolder( params );
 				}
-				createLoginUser(processId,params);
-				logMainProgress(processId, params);
+				createLoginUser(params);
 			});
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Commit"));
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "FIN DUPLICADO DEL DOMINIO"));
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "HECHO. OK!"));
+			ConsoleUtils.log(params,"** Commit!");
+			ConsoleUtils.log(params,"** End domain isolation!");
 		} catch (Exception e) {
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e.getMessage()));
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "FIN. ROLLBACK!"));
+			ConsoleUtils.log(params, e.getMessage() );
+			ConsoleUtils.log(params,"** Rollback!");
 			e.printStackTrace();
 		} finally {
 			if (idsTableInfo != null && idsTableInfo.getCtx() != null) {
 				idsTableInfo.getCtx().close();
 			}
 			if (!params.getErrors().isEmpty()) {
-				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "SE HAN PRODUCIDO INCIDENCIAS"));
-				params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.warning(processId, e)));
+				ConsoleUtils.log(params, "" );
+				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+				ConsoleUtils.log(params,"** Se han producido incidencias!");
+				params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
+				ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
 			}
-			ConsoleUtils.enableForeignKeys(params);
-			ConsoleMessageUtils.end(params.getPrinter());
+			ConsoleUtils.log(params,"** Program ended!");
+			ConsoleUtils.enableForeignKeysAndPrint(params);
 		}
 	}
 	
-	private static void fixTaskHolder(String processId, ConsoleParams params) {
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Fix Task HOLDER table"));
+	private static void fixTaskHolder(ConsoleParams params) {
+		ConsoleUtils.log(params," **** Fix Task HOLDER table");
 		params.getToDslContext()
 			.select( TASK_HOLDER.REGISTRY, TASK_HOLDER.USER_ID )
 			.from( TASK_HOLDER )
@@ -227,8 +196,7 @@ public class ConsoleIsolateDomain {
 						.set(TASK_HOLDER.USER_ID, (Integer) null)
 						.where(TASK_HOLDER.REGISTRY.eq(taskHolderId))
 						.execute();
-					ConsoleMessageUtils.print(params.getPrinter()
-						, ConsoleMessageUtils.message(processId, "- Task HOLDER "+ taskHolderId +" USER set to NULL ("+ count + " rows )"));
+					ConsoleUtils.log(params,"     **** Task HOLDER "+ taskHolderId +" USER set to NULL ("+ count + " rows )");
 				}
 			});
 	}
@@ -351,29 +319,29 @@ public class ConsoleIsolateDomain {
 	
 	
 
-	private static void passHeritableTables(String processId, ConsoleParams params) {
+	private static void passHeritableTables(ConsoleParams params) {
 		params.getScript()
 			.values()
 			.stream()
 			.filter(t -> ConsoleUtils.PARENT_INCLUDED_TABLES.contains(t.getTable().getName()))
 			.filter(t -> hasDomain(t.getTable()))
 			.forEach( t -> {
-				final String procId = processId + "-" +t.getTableName();
 				SelectConditionStep<Record> select = params.getFromDslContext()
 						.select()
 						.from(t.getTable().asTable())
 						.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getParentId()));
-				t.setTotalProgress(  params.getFromDslContext().fetchCount(select) );
-				t.setProgress(0);
+				t.setRows(  params.getFromDslContext().fetchCount(select) );
+				t.setCurrentRow(0);
+				t.setPercent(0);
+				ConsoleUtils.log(params,MessageFormat.format(" **** Parent {0} table:", t.getTableName()));
 				select
-					.fetch()
-					.stream()
-					.forEach( rec -> duplicateRow(procId, params, t, rec));
-				logMainProgress(procId, params);
+				.fetch()
+				.stream()
+				.forEach( rec -> duplicateRow(params, t, rec));
 			});
 	}
 
-	private static void createTempTable(String processId,ConsoleParams params) {
+	private static void createTempTable(ConsoleParams params) {
 		params.getIdsTableInfo().getCtx().getDslContext()
 			.execute("DROP TABLE IF EXISTS `"+params.getIdsTableInfo().getTableName()+"`");
 		String sql =
@@ -385,11 +353,10 @@ public class ConsoleIsolateDomain {
 			+"  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;"
 		;
 		params.getIdsTableInfo().getCtx().getDslContext().execute(sql);
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, 
-			"IDs Table created! [" + params.getIdsTableInfo().getTableName() +"]"));
+		ConsoleUtils.log(params,"** IDs Table created! [" + params.getIdsTableInfo().getTableName() +"]");
 	}
 	
-	private static void createDomain(String processId, ConsoleParams params) {
+	private static void createDomain(ConsoleParams params) {
 		Optional<Record> optRec = params.getFromDslContext().select()
 			.from(DOMAIN)
 			.where(DOMAIN.NAME.equal(params.getFromConnection().getDomainName()))
@@ -411,10 +378,9 @@ public class ConsoleIsolateDomain {
 		);
 		domRec.store();
 		params.getToConnection().setFullDomain( DomainDAO.getDomain(params.getToConnection().getAONContext(), domRec.getId()));
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, 
-			MessageFormat.format("DOMAIN {0} creado con ID {1}"
-					, params.getToConnection().getFullDomain().getName()
-					, params.getToConnection().getFullDomain().getId())));
+		ConsoleUtils.log(params,MessageFormat.format("DOMAIN {0} creado con ID {1}"
+			, params.getToConnection().getFullDomain().getName()
+			, params.getToConnection().getFullDomain().getId()));
 	}
 
 	private static void insertId(ConsoleParams params, Table<?> table, Integer oldId, Integer newId) {
@@ -426,8 +392,9 @@ public class ConsoleIsolateDomain {
 			.execute();
 	}
 
-	private static void duplicateTable(String processId, ConsoleParams params, ScriptTable t) {
+	private static void duplicateTable(ConsoleParams params, ScriptTable t) {
 		if (hasDomain(t.getTable())) {
+			ConsoleUtils.log(params,MessageFormat.format(" **** Duplicating {0} table:", t.getTableName()));
 			AggregateFunction<Integer> countField = DSL.count();
 			Integer selectCount = params.getFromDslContext()
 				.select( countField )
@@ -446,20 +413,21 @@ public class ConsoleIsolateDomain {
 				.select()
 				.from(t.getTable().asTable())
 				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getId()));
-			t.setTotalProgress(  selectCount );
-			t.setProgress(0);
+			t.setRows(  selectCount );
+			t.setCurrentRow(0);
+			t.setPercent(0);
+			ConsoleUtils.log(params,MessageFormat.format(" **** Duplicating {0} table {1} rows", t.getTableName(),selectCount));
 			int offset = 0;
 			int limit = getLimit( t );
 			while (offset < selectCount) {
-				select	
+				select
 					.offset(offset)
 					.limit(limit)
 					.fetch()
 					.stream()
-					.forEach( rec -> duplicateRow(processId + t.getTableName(), params, t, rec));
+					.forEach( rec -> duplicateRow(params, t, rec));
 				offset = offset + limit;
 			}
-			logMainProgress(processId + t.getTableName(), params);
 		}
 	}
 	
@@ -467,14 +435,14 @@ public class ConsoleIsolateDomain {
 		if (AonStringUtils.contains(t.getTableName(), "attach" )) {
 			return 10;
 		}
-		if (t.getTotalProgress() >= 1000) {
+		if (t.getRows() >= 1000) {
 			return 500;
 		}
-		return t.getTotalProgress();
+		return t.getRows();
 	}
 
-	private static void loopRefInvoice(String processId, ConsoleParams params, ScriptTable t) {
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Loop references at invoice table"));
+	private static void loopRefInvoice(ConsoleParams params, ScriptTable t) {
+		ConsoleUtils.log(params," **** Loop references at invoice table");
 		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
@@ -497,8 +465,8 @@ public class ConsoleIsolateDomain {
 			);
 	}
 
-	private static void loopFBatch(String processId, ConsoleParams params, ScriptTable t) {
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Loop references at fbatch table"));
+	private static void loopFBatch(ConsoleParams params, ScriptTable t) {
+		ConsoleUtils.log(params," **** Loop references at fbatch table");
 		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
@@ -521,8 +489,8 @@ public class ConsoleIsolateDomain {
 			);
 	}
 	
-	private static void loopBankStatementLinkFinanceTracking(String processId, ConsoleParams params, ScriptTable t) {
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Loop references at BankStatementLink --> FinanceTracking table"));
+	private static void loopBankStatementLinkFinanceTracking(ConsoleParams params, ScriptTable t) {
+		ConsoleUtils.log(params," **** Loop references at BankStatementLink --> FinanceTracking table");
 		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
@@ -543,8 +511,8 @@ public class ConsoleIsolateDomain {
 			);
 	}
   
-	private static void loopAccAppParamAccount(String processId, ConsoleParams params, ScriptTable t) {
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"ACC Params --> Account table"));
+	private static void loopAccAppParamAccount(ConsoleParams params, ScriptTable t) {
+		ConsoleUtils.log(params," **** ACC Params --> Account table");
 		params.getToDslContext().select()
 			.from(t.getTable())
 			.where(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
@@ -606,29 +574,11 @@ public class ConsoleIsolateDomain {
 			.orElse(null);
 	}
 	
-	private static void duplicateRow(String processId, ConsoleParams params, ScriptTable scriptTable, Record rec) {
+	private static void duplicateRow(ConsoleParams params, ScriptTable scriptTable, Record rec) {
 		Table<?> table = scriptTable.getTable();
-		duplicateRow(params, table, rec);
-		scriptTable.setProgress((scriptTable.getProgress() + 1));		
-		int percent = (scriptTable.getProgress() * 100 / scriptTable.getTotalProgress());
-		if ( percent != scriptTable.getLastMessagePercent()) { 	
-			scriptTable.setLastMessagePercent(percent);
-			String msg = "- Duplicando tabla " + scriptTable.getTableName();
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId
-					,scriptTable.getTotalProgress()
-					,scriptTable.getProgress() )
-					.setMessage(msg));
-		}
+		duplicateRow(params, table, rec);	
+		ConsoleUtils.printInfo( params, scriptTable);
 	}
-	
-	private static void logMainProgress(String processId, ConsoleParams params) {
-		params.setTotalProgress((params.getTotalProgress() + 1));		
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.mainProgress(processId
-				,params.getTotalCount()
-				,params.getTotalProgress() )
-				.setMessage("- Duplicando dominio"));
-	}
-
 	
 	private static Integer duplicateRow(ConsoleParams params, Table<?> table, Record rec) {
 		Field<Integer> pkField = getPrimaryKey(params,table);
@@ -710,21 +660,25 @@ public class ConsoleIsolateDomain {
 	// **************************************************************
 	// ************* [METHODS  FOR GETTING SCRIPT ] *****************
 	// **************************************************************
-	private static void fillScript(String processId, ConsoleParams params) {
-		fillScript(processId, params,new LinkedList<>());
+	private static void fillScript(ConsoleParams params) {
+		fillScript(params,new LinkedList<>());
 	}
 	
-	private static void fillScript(String processId, ConsoleParams params, Deque<Table<?>> stack) {
+	private static void fillScript(ConsoleParams params, Deque<Table<?>> stack) {
 		List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Generating tables script"));
+		ConsoleUtils.log(params,"** Generating tables script");
+		ConsoleUtils.log(params,"** ------------------------");
 		tables.stream()
 			.filter(t -> t.field(DOMAIN_FIELD) != null )
 			.forEach(t -> addTable(params, t, stack));
+		ConsoleUtils.log(params," [DONE!]");
+		ConsoleUtils.log(params,"");
 	}
 
 	
 	@SuppressWarnings("unchecked")
 	private static void addTable(ConsoleParams params, Table<?> table, Deque<Table<?>> stack) {
+		ConsoleUtils.logf(params,".");
 		if (!params.getScript().containsKey(table.getName()) && !stack.contains(table)) {
 			Table<Record> tab = (Table<Record>) table.asTable();
 			stack.addFirst(table);
@@ -745,7 +699,7 @@ public class ConsoleIsolateDomain {
 		}
 	}
 
-	private static void createLoginUser(String processId, ConsoleParams params) {
+	private static void createLoginUser(ConsoleParams params) {
 		int newUserId = params.getToDslContext().insertInto(USER)
 				.set(USER.DOMAIN , params.getToConnection().getFullDomain().getId())
 				.set(USER.NAME, "DEFAULT USER")
@@ -754,7 +708,8 @@ public class ConsoleIsolateDomain {
 				.returning(USER.ID)
 				.fetchOne()
 				.getId();
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"User insertado correctamente"));
+		ConsoleUtils.log(params,"**** User insertado correctamente");
+		
 		params.getToDslContext().select( SCOPE.ID)
 			.from(SCOPE)
 			.where(SCOPE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
@@ -766,8 +721,8 @@ public class ConsoleIsolateDomain {
 				.set(USER_SCOPE.DOMAIN , params.getToConnection().getFullDomain().getId())
 				.set(USER_SCOPE.SCOPE, scopeId)
 				.execute());
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"User Scope insertado correctamente"));
-		
+		ConsoleUtils.log(params,"**** User Scope insertado correctamente");
+
 		params.getToDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
 			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
@@ -789,8 +744,8 @@ public class ConsoleIsolateDomain {
 					.returning(DOMAIN_APPLICATION.ID)
 					.fetchOne()
 					.getId());
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Aplicacion de usuario insertada correctamente"));
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Perfil de usuario en la aplicación insertada correctamente"));
+		ConsoleUtils.log(params,"**** Aplicacion de usuario insertada correctamente");
+		ConsoleUtils.log(params,"**** Perfil de usuario en la aplicación insertada correctamente");
 	}
-    
+*/    
 }

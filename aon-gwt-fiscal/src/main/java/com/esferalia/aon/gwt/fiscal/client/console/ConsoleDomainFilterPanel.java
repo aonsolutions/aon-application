@@ -39,6 +39,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private AonDateBox toLastAccessBox;
 	private AonDateBox fromExpirationDateBox;
 	private AonDateBox toExpirationDateBox;
+	private String[] schemas;
 	
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
@@ -61,6 +62,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			
 			@Override
 			public void onSuccess(String[] schemas) {
+				ConsoleDomainFilterPanel.this.schemas = schemas;
 				schemaBox.clear();
 				schemaBox.addItem(AonStringUtils.EMPTY);
 				for (String sch : schemas) {
@@ -89,6 +91,15 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		
 		
 		
+	}
+
+	public String getSchema() {
+		return schemaBox != null? schemaBox.getSelectedValue() : null;
+	}
+
+
+	public String[]getSchemas() {
+		return this.schemas;
 	}
 
 	private void defineFields(ConsoleModuleOptions opt) {

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -22,6 +23,8 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 	}
 	
 	interface ConsoleDomainTableCallback {
+		public String getSchema();
+		public String[] getSchemas();
 		public int addCount();
 		public void check(ConsoleDomainTableRow row);
 		public boolean isRunning();
@@ -31,6 +34,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void showInfo(String message);
 		public void onMultipleDelete();
 		public void onDelete(Integer domainId, String descrption, AsyncCallback<Boolean> cbk);
+		public void onDuplicate(DomainParams origin, DomainParams target);
 		public void onInfo(Integer domainId);
 		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
 		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
@@ -62,6 +66,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 			.addCell(new Label("\u00FAlt. Acceso"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 			.addCell(new Label("Expira"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 			.addCell(new Label(""),AON.CSS.aonWidth100())
+			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label(""),AON.CSS.aonWidth20())
 		;
 	}

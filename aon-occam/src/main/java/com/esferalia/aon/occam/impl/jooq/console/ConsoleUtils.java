@@ -56,7 +56,6 @@ import static com.esferalia.aon.jooq.tables.TaxDetail.TAX_DETAIL;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 
 import java.io.PrintStream;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -72,7 +71,6 @@ import org.jooq.UniqueKey;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 class ConsoleUtils {
@@ -85,20 +83,20 @@ class ConsoleUtils {
 		params.getToDslContext().execute(cmd);
 	}
 
-	static void disableForeignKeysAndPrint(ConsoleParams params) {
-		disableForeignKeys(params);
-		ConsoleUtils.log(params,"** Foreign keys disabled");
-	}
+//	static void disableForeignKeysAndPrint(ConsoleParams params) {
+//		disableForeignKeys(params);
+//		ConsoleUtils.log(params,"** Foreign keys disabled");
+//	}
 	
 	static void enableForeignKeys(ConsoleParams params) {
 		String cmd = "SET FOREIGN_KEY_CHECKS=1";
 		params.getToDslContext().execute(cmd);
 	}
 
-	static void enableForeignKeysAndPrint(ConsoleParams params) {
-		enableForeignKeys(params);
-		ConsoleUtils.log(params,"** Foreign keys enabled");
-	}
+//	static void enableForeignKeysAndPrint(ConsoleParams params) {
+//		enableForeignKeys(params);
+//		ConsoleUtils._log(params,"** Foreign keys enabled");
+//	}
 
 	
     static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(UniqueKey<U> key,
@@ -153,33 +151,34 @@ class ConsoleUtils {
 	static PrintStream getPrinter(ConsoleParams params) {
 		return Objects.requireNonNullElse(params.getPrinter(), new PrintStream(System.out));
 	}
-	static void log(ConsoleParams params,String msg) {
-		params.setPartialCount(0); 
-		getPrinter(params).println(msg);
-		getPrinter(params).flush();
-	}
-	static void logf(ConsoleParams params,String msg) {
-		if (params.getPartialProgress() == 80) {
-			params.setPartialProgress(0); 
-			getPrinter(params).println();
-			getPrinter(params).flush();
-		}
-		getPrinter(params).print(msg);
-		getPrinter(params).flush();
-		params.addPartialProgress();
-	}
-	static void printInfo(ConsoleParams params, ScriptTable scriptTable) {
-		scriptTable.setCurrentRow((scriptTable.getCurrentRow() + 1));
-		int percent = (scriptTable.getCurrentRow() * 100 / scriptTable.getRows());
-		if ( percent != scriptTable.getPercent() && percent % 2 == 0) {
-			scriptTable.setPercent( percent );
-			log(params,MessageFormat.format(("\t [" + AonStringUtils.repeat('*', percent/2) + AonStringUtils.repeat(' ', 50 - percent/2) + "] {0}%  ( {1} / {2} )")
-					, percent
-					, Integer.toString(scriptTable.getCurrentRow())
-					, Integer.toString(scriptTable.getRows())));
-		}
-		getPrinter(params).flush();
-	}
+//	static void _log(ConsoleParams params,String msg) {
+//		params.setPartialCount(0); 
+//		getPrinter(params).println(msg);
+//		getPrinter(params).flush();
+//	}
+//	static void _logf(ConsoleParams params,String msg) {
+//		if (params.getPartialProgress() == 80) {
+//			params.setPartialProgress(0); 
+//			getPrinter(params).println();
+//			getPrinter(params).flush();
+//		}
+//		getPrinter(params).print(msg);
+//		getPrinter(params).flush();
+//		params.addPartialProgress();
+//	}
+//	
+//	static void _printInfo(ConsoleParams params, ScriptTable scriptTable) {
+//		scriptTable.setCurrentRow((scriptTable.getCurrentRow() + 1));
+//		int percent = (scriptTable.getCurrentRow() * 100 / scriptTable.getRows());
+//		if ( percent != scriptTable.getPercent() && percent % 2 == 0) {
+//			scriptTable.setPercent( percent );
+//			_log(params,MessageFormat.format(("\t [" + AonStringUtils.repeat('*', percent/2) + AonStringUtils.repeat(' ', 50 - percent/2) + "] {0}%  ( {1} / {2} )")
+//					, percent
+//					, Integer.toString(scriptTable.getCurrentRow())
+//					, Integer.toString(scriptTable.getRows())));
+//		}
+//		getPrinter(params).flush();
+//	}
 
 	static ConsoleIDsTableInfo initializeConsoleIDsTableInfo( ConsoleIDsTableInfo info, ConsoleParams params ) {
 		String schema = params.getFromConnection().getSchemaName();

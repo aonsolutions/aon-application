@@ -25,6 +25,10 @@ class ConsoleMessageUtils {
 		return get(id,ConsoleMessageType.ERROR,msg);
 	}
 
+	public static ConsoleMessage warning(String id,String msg) {
+		return get(id,ConsoleMessageType.WARNING,msg);
+	}
+
 	public static ConsoleMessage ok(String id,String msg) {
 		return get(id,ConsoleMessageType.OK,msg);
 	}
@@ -53,8 +57,18 @@ class ConsoleMessageUtils {
 			.setPercent(percent);
 	}
 	
+	public static ConsoleMessage mainProgress(String id,int count, int progress) {
+		double percent = AonMathUtils.round( (double) progress * 100 / count);
+		return get(id,ConsoleMessageType.MAIN_PROGRESS,"")
+			.setCount(count)
+			.setProgress(progress)
+			.setPercent(percent);
+	}
+
 	static void print(PrintStream stream, ConsoleMessage msg) {
-		stream.print( ConsoleMessageJSON.toJSON(msg).toString() );
+		String json = ConsoleMessageJSON.toJSON(msg).toString();
+//		System.out.println( json );
+		stream.print( json );
 		stream.println( "," );
 		stream.flush();
 	}

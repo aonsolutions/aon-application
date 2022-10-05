@@ -55,6 +55,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private AonTableButton validateButton;
 	private AonTableButton infoButton;
 	private AonTableButton remoteAccessButton;
+	private AonTableButton duplicateButton;
 	
 	
 	
@@ -157,6 +158,10 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			}
 		}));
 		
+		duplicateButton= new AonTableButton(AON.MSG.duplicate(), AON.CSS.aonIconCopy());		 
+		duplicateButton.addClickHandler(e -> duplicate(domain));
+
+		
 		buttons.addRow()
 			.addCell(deleteButton)
 			.addCell(validateButton)
@@ -182,6 +187,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( expirationDateBox )
 			.addCell( buttons )
 			.addCell( remoteAccessButton )
+			.addCell( duplicateButton )
 		;
 
 		
@@ -251,17 +257,14 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	}
 	
 	private void decorateRemoteAccess(boolean remoteAccessEnabled) {
-		ROW_LOGGER.info("remoteAccessEnabled ..:" + remoteAccessEnabled );
 		if (remoteAccessEnabled) {
 			remoteAccessButton.setTitle("Acceso remoto HABILITADO");
 			remoteAccessButton.addStyleName(AON.CSS.aonIconRedWrench());
 			remoteAccessButton.removeStyleName(AON.CSS.aonIconWrench());
-			ROW_LOGGER.info("1.- remoteAccessEnabled ..:" + remoteAccessEnabled );
 		} else {
 			remoteAccessButton.setTitle("Acceso remoto DESHABILITADO");
 			remoteAccessButton.addStyleName(AON.CSS.aonIconWrench());
 			remoteAccessButton.removeStyleName(AON.CSS.aonIconRedWrench());
-			ROW_LOGGER.info("2.- remoteAccessEnabled ..:" + remoteAccessEnabled );
 		}
 	}
 
@@ -388,7 +391,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		String tab =  (AonStringUtils.isBlank( tabLabel))
 			?AonStringUtils.abbreviate(domain.getDescription(), 30)
 			:tabLabel;
-		decorateRowAsPendingDeleted();
+		decorateRowAsPendingDeleted("PENDIENTE");
 		callback.onDelete( domainId , tab, cbk);
 	}
 	
@@ -434,6 +437,17 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		}
 	}
 	
+	// -----------------------------------------------------------------------
+	// 												  			   [DUPLICATE]
+	// -----------------------------------------------------------------------
+	private void duplicate(JsConsoleDomain domain) {
+		if (canRunElseNotify()) {
+			ConsoleDomainIsolateDialog dialog = new ConsoleDomainIsolateDialog(domain, callback);
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
 	private void decorateRowAsPending() {
 		typeLabel.removeStyleName(AON.CSS.aonTextLineThrough());
 		parentIdLabel.removeStyleName(AON.CSS.aonTextLineThrough());
@@ -449,16 +463,12 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		;
 	}
 
-	private void decorateRowAsPendingDeleted() {
-		typeLabel.addStyleName(AON.CSS.aonTextLineThrough());
-		parentIdLabel.addStyleName(AON.CSS.aonTextLineThrough());
-		nameAnchor.addStyleName(AON.CSS.aonTextLineThrough());
-		lastAccessLabel.addStyleName(AON.CSS.aonTextLineThrough());
+	private void decorateRowAsPendingDeleted(String msg) {
 		expirationDateBox.setEnabled(false);
 		activeButton.setEnabled(false);
 		remoteAccessButton.setVisible(true);
 		buttons.clear();
-		Label deletedLabel = new Label("PENDIENTE");
+		Label deletedLabel = new Label(msg);
 		deletedLabel.setStyleName(AON.CSS.aonColorOrange());
 		deletedLabel.addStyleName(AON.CSS.aonBold());
 		buttons.add(deletedLabel);
