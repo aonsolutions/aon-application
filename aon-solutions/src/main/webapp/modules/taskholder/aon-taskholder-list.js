@@ -1,24 +1,17 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonTable } from "../../components/aon-table.js";
-import { getLocation, getTastHolders, getTastHoldersList, getUserList, saveTastHolder } from "../../services/service.js";
-// import { SIGNIN_VIEWS } from "./TaskHolderEnums.js";
-import { CONSTANT, MSG } from "../../environments/environments.js";
+import { getTastHoldersList, getUserList, saveTastHolder } from "../../services/service.js";
+import { CONSTANT, MSG, EVENT } from "../../environments/environments.js";
 import { TaskHolderEnums } from "./TaskHolderEnums.js";
 import { CreateComponent } from "../../components/CreateComponent.js";
+import { TaskHolder } from "../../models/project/TaskHolder.js";
 
 
 export class AonTaskHolderList extends AonElement {
   TABLE;
+  filter;
   static get observedAttributes() {
-    return [CONSTANT.FILTER];
-  }
-
-  get filter() {
-    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
+    return [];
   }
 
   get id() {
@@ -29,18 +22,14 @@ export class AonTaskHolderList extends AonElement {
     this.setAttribute(CONSTANT.ID, id);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.FILTER === name) this.getTable();
-  }
+  attributeChangedCallback(name, oldValue, newValue) {}
 
   constructor() {
     super();
-    this.id = this.id || TaskHolderEnums.TASK_HOLDER_VIEWS.AON_TASK_HOLDER_LIST;
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
   }
 
   connectedCallback() {
+    this.initialize();
     this.build();
   }
 
@@ -50,6 +39,12 @@ export class AonTaskHolderList extends AonElement {
     this.TABLE = new AonTable();
     this.TABLE.id = this.id + "Table";
     this.appendChild(this.TABLE);
+  }
+  
+  initialize(){
+    this.id = this.id || TaskHolderEnums.TASK_HOLDER_VIEWS.AON_TASK_HOLDER_LIST;
+    this.applicationEl = this.getApplication();
+    this.applicationParentEl = this.getApplicationParent();
   }
 
   build() {
@@ -64,6 +59,20 @@ export class AonTaskHolderList extends AonElement {
     const {TaskHolderSidenav} = TaskHolderEnums;
 
     this.applicationEl.addToolbarOption2(TaskHolderSidenav.ADD, () => this.add());
+    this.buildSearch();
+  }
+
+  buildSearch(){
+    let timeOut = null;
+
+    const btnSearch = this.applicationEl.addSearchOption();
+
+    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
+        clearTimeout(timeOut);
+        timeOut = setTimeout(() => {
+           this.setFilter({active:true, search:detail});
+        }, 300);
+    });
   }
 
   async getTable() {
@@ -79,7 +88,7 @@ export class AonTaskHolderList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn(MSG.NAME, "string", "name", "30%");
-      aonTable.addColumn("Alias", "string", "alias", "30%");
+      aonTable.addColumn(MSG.ALIAS, "string", "alias", "30%");
       aonTable.addColumn(MSG.DOCUMENT, "string", "document", "30%");
       try {
         const resp = await this.getData();
@@ -97,7 +106,7 @@ export class AonTaskHolderList extends AonElement {
     this.applicationEl.startLoader();
     let data = [];
     try {
-      data = await getTastHoldersList({active:true});
+      data = await getTastHoldersList(this.getFilter());
     } catch (e) {
       console.log(e);
     }
@@ -136,11 +145,16 @@ export class AonTaskHolderList extends AonElement {
     });
 
     dialog.addSendAction(() =>{
-      const value = aonSelect.value;
-
-        if(value){
+      const detail = aonSelect.getDetail();
+        if(detail.id){
           application.startLoading();
-          saveTastHolder({user:value, active:true})
+          
+          let taskHolder = new TaskHolder();
+          taskHolder.setUser(detail.id);
+          taskHolder.setDocument(detail.document);
+          taskHolder.setName(detail.name);
+          
+          saveTastHolder(taskHolder)
           .then(th => {
             this.showMessage();
             this.edit({id:th.id});
@@ -157,6 +171,15 @@ export class AonTaskHolderList extends AonElement {
 
     dialog.open();
   }
+
+	getFilter() {
+		return this.filter || {active:true};
+	}
+
+	setFilter(filter) {
+		this.filter = filter;
+		this.getTable();
+	}
 
   edit(data){
     this.applicationParentEl.showView(TaskHolderEnums.TASK_HOLDER_VIEWS.AON_TASK_HOLDER, data);
