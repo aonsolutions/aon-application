@@ -1356,6 +1356,7 @@ public class PropertiesDAO {
  		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.SCOPE);}
 
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.REGISTRY);}
+		@Override public Property<Integer> getTaskHolderDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.DOMAIN);}
 		@Override public Property<Byte> getTaskHolderActiveProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.ACTIVE);}
 	}
 	
