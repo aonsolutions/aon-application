@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 
 
@@ -172,6 +173,12 @@ public class ConsoleParams {
 	}
 	public DSLContext getToDslContext() {
 		return ensureToConnection().getAONContext().getDslContext();
+	}
+	public Domain getFromDomain() {
+		return getFromConnection() != null ? getFromConnection().getFullDomain() : null;
+	}
+	public Domain getToDomain() {
+		return getToConnection() != null ? getToConnection().getFullDomain() : null;
 	}
 	
 }

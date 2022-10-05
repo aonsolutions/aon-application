@@ -7,34 +7,72 @@ import com.esferalia.aon.occam.api.model.console.ConsoleMessageType.Visitor;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class AonConsoleProgress extends ScrollPanel {
+class AonConsoleProgress extends DockLayoutPanel {
 	
+	private final ScrollPanel scrollPanel;
 	private final FlowPanel container;
+	private Label title; 
+	private Label subtitle;
+	private AonConsoleProgressPanel main;
 	private final HashMap<String,AonConsoleProgressPanel> labels = new HashMap<>();
 	
 	AonConsoleProgress() {
+		super(Unit.PX);
+		
+		FlowPanel headerPanel = new FlowPanel();
+		headerPanel.setStyleName(AON.CSS.aonBorderBottom());
+		headerPanel.addStyleName(AON.CSS.aonPadding());
+		
+		title = new Label();
+		title.setStyleName(AON.CSS.aonFontLarger());
+		title.addStyleName(AON.CSS.aonBold());
+		title.addStyleName(AON.CSS.aonTextUnderline());
+		title.addStyleName(AON.CSS.aonMarginBottom());
+		headerPanel.add(title);
+		
+		subtitle = new Label();
+		subtitle.setStyleName(AON.CSS.aonBold());
+		subtitle.addStyleName(AON.CSS.aonMarginBottom());
+		headerPanel.add(subtitle);
+
+		main = new AonConsoleProgressPanel();
+		main.addStyleName(AON.CSS.aonWidth600());
+		headerPanel.add(main);
+		addNorth(headerPanel, 90);
+		
+
+		SimpleLayoutPanel slp = new SimpleLayoutPanel();
+		scrollPanel = new ScrollPanel();
 		setStyleName(AON.CSS.aonScrollArea());
 		container = new FlowPanel();
 		container.setStyleName(AON.CSS.aonPadding());
-		setWidget(container);
+		scrollPanel.add(container);
+		slp.setWidget(scrollPanel);
+		add(slp);
+	}
+
+	public void setMainProgress(double percent, String msg) {
+		main.setProgress(percent,msg);
 	}
 
 	void log(JsConsoleMessage message) {
 		
 		if (message != null) {
-			final Label messageLabel = new Label();
 			message.getType().visit( new Visitor() {
 				
 				private AonConsoleProgressPanel getProgressPanel() {
 					return labels.computeIfAbsent(message.getProcessId()
 						, k -> {
 							AonConsoleProgressPanel w = new AonConsoleProgressPanel();
+							w.addStyleName(AON.CSS.aonWidth600());
 							container.add(w);
 							return w;
 					});
@@ -42,17 +80,22 @@ class AonConsoleProgress extends ScrollPanel {
 				
 				@Override
 				public void visitTitle() {
-					getProgressPanel().addTitleMessage(message.getMessage());
+					title.setText(message.getMessage());
 				}
 				
 				@Override
 				public void visitSubtitle() {
-					getProgressPanel().addSubtitleMessage(message.getMessage());
+					subtitle.setText(message.getMessage());
 				}
 				
 				@Override
 				public void visitMessage() {
-					getProgressPanel().addMessage(message.getMessage());
+					container.add(new Label(message.getMessage()));
+				}
+
+				@Override
+				public void visitMainProgress() {
+					setMainProgress(message.getPercent(), message.getMessage());
 				}
 
 				@Override
@@ -62,108 +105,73 @@ class AonConsoleProgress extends ScrollPanel {
 				
 				@Override
 				public void visitOk() {
-					getProgressPanel().addOK(message.getMessage());
+					Label messageLabel = new Label(message.getMessage());
+					messageLabel.setStyleName(AON.CSS.aonColorGreen());
+					messageLabel.addStyleName(AON.CSS.aonBold());
+					container.add(messageLabel);
 				}
 				
 				@Override
+				public void visitWarning() {
+					Label messageLabel = new Label(message.getMessage());
+					messageLabel.setStyleName(AON.CSS.aonColorOrange());
+					messageLabel.addStyleName(AON.CSS.aonBold());
+					container.add(messageLabel);
+				}
+
+				@Override
 				public void visitError() {
-					getProgressPanel().addError(message.getMessage());
+					Label messageLabel = new Label(message.getMessage());
+					messageLabel.setStyleName(AON.CSS.aonColorRed());
+					messageLabel.addStyleName(AON.CSS.aonBold());
+					container.add(messageLabel);
 				}
 			});
-			container.add(messageLabel);
 		}
-		scrollToBottom();
+		scrollPanel.scrollToBottom();
 	}
 	
 	static class AonConsoleProgressPanel extends FlowPanel {
-		private AonConsoleProgressBar bar;
-		private InlineLabel label;
+		private InlineLabel messageLabel = new InlineLabel();
+		private AonConsoleProgressBar bar = new AonConsoleProgressBar();
 		
 		AonConsoleProgressPanel() {
 			setStyleName(AON.CSS.aonMargin());
-			addStyleName(AON.CSS.aonBorder());
-			addStyleName(AON.CSS.aonMargin());
-		}
-		
-		void addTitleMessage(String message) {
-			Label messageLabel = new Label(message);
-			messageLabel.setStyleName(AON.CSS.aonFontLarger());
-			messageLabel.addStyleName(AON.CSS.aonBold());
-			messageLabel.addStyleName(AON.CSS.aonTextUnderline());
-			messageLabel.addStyleName(AON.CSS.aonMarginBottom());
+			messageLabel.setStyleName(AON.CSS.aonItalic());
 			messageLabel.addStyleName(AON.CSS.aonPaddingLeft());
-			add(messageLabel);
-		}
-
-		void addSubtitleMessage(String message) {
-			Label messageLabel = new Label(message);
-			messageLabel.setStyleName(AON.CSS.aonBold());
-			messageLabel.addStyleName(AON.CSS.aonMarginBottom());
-			messageLabel.addStyleName(AON.CSS.aonPaddingLeft());
+			bar.setWidth("200px");
+			add(bar);
 			add(messageLabel);
 		}
 		
-		void addMessage(String message) {
-			Label messageLabel = new Label(message);
-			messageLabel.setStyleName(AON.CSS.aonPaddingLeft());
-			add(messageLabel);
-		}
-		
-		void addOK(String message) {
-			Label messageLabel = new Label(message);
-			messageLabel.setStyleName(AON.CSS.aonColorGreen());
-			messageLabel.addStyleName(AON.CSS.aonBold());
-			messageLabel.addStyleName(AON.CSS.aonPaddingLeft());
-			add(messageLabel);
-		}
-		void addError(String message) {
-			Label messageLabel = new Label(message);
-			messageLabel.setStyleName(AON.CSS.aonColorRed());
-			messageLabel.addStyleName(AON.CSS.aonBold());
-			messageLabel.addStyleName(AON.CSS.aonPaddingLeft());
-			add(messageLabel);
+		void setMesssageLabel(String message) {
+			messageLabel.setText(message);
 		}
 		
 		public void setProgress(double percent, String msg) {
-			if (bar == null) {
-				bar = new AonConsoleProgressBar(percent);
-				bar.getElement().getStyle().setWidth(30.0, Unit.PCT);
-				label = new InlineLabel( msg );
-				label.setStyleName(AON.CSS.aonMarginLeft());
-				FlowPanel progressPanel = new FlowPanel();
-				progressPanel.addStyleName(AON.CSS.aonPaddingLeft());
-				progressPanel.add(bar);
-				progressPanel.add(label);
-				add(progressPanel);
-			}
-			setProgress(percent);
-			label.setText(msg);
+			bar.setProgress(percent);
+			messageLabel.setText(" (" + AON.FMT.format(percent) +  "% ) " + msg);
 		}
 		
-		public void setProgress(double percent) {
-			bar.setProgress(percent);
-		}
 	}
+	
 	
 	static class AonConsoleProgressBar extends Widget {
 		private static final double MAX = 100;
 	    private final Element progress;
-	    private final Element percentageLabel;
 
-	    public AonConsoleProgressBar(double percent) {
+	    public AonConsoleProgressBar() {
+	    	this(0.0);
+	    }
+	    public AonConsoleProgressBar(double  percent) {
 	        progress = DOM.createElement("progress");
 	        progress.setAttribute("max", Double.toString(MAX));
 	        progress.setAttribute("value", Double.toString(percent));
-	        percentageLabel = DOM.createElement("span");
-	        percentageLabel.setInnerHTML(AON.FMT.format(percent));
-	        progress.insertFirst(percentageLabel);
 	        setElement(progress);
-	        
 	    }
 
-	    public void setProgress(double percent) {
+	    public void setProgress(double  percent) {
 	        progress.setAttribute("value", Double.toString(percent));
-	        percentageLabel.setInnerHTML(AON.FMT.format(percent));
 	    }
 
 	}

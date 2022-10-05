@@ -4,12 +4,14 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ConsoleMessageType {
 
-	TITLE 		{ @Override public void visit(Visitor visitor) {visitor.visitTitle(); }},
-	SUBTITLE	{ @Override public void visit(Visitor visitor) {visitor.visitSubtitle(); }},
-	MESSAGE		{ @Override public void visit(Visitor visitor) {visitor.visitMessage(); }},
-	PROGRESS	{ @Override public void visit(Visitor visitor) {visitor.visitProgress(); }},
-	ERROR		{ @Override public void visit(Visitor visitor) {visitor.visitError(); }},
-	OK			{ @Override public void visit(Visitor visitor) {visitor.visitOk(); }},
+	TITLE 			{ @Override public void visit(Visitor visitor) {visitor.visitTitle(); }},
+	SUBTITLE		{ @Override public void visit(Visitor visitor) {visitor.visitSubtitle(); }},
+	MESSAGE			{ @Override public void visit(Visitor visitor) {visitor.visitMessage(); }},
+	MAIN_PROGRESS	{ @Override public void visit(Visitor visitor) {visitor.visitMainProgress(); }},
+	PROGRESS		{ @Override public void visit(Visitor visitor) {visitor.visitProgress(); }},
+	ERROR			{ @Override public void visit(Visitor visitor) {visitor.visitError(); }},
+	WARNING			{ @Override public void visit(Visitor visitor) {visitor.visitWarning(); }},
+	OK				{ @Override public void visit(Visitor visitor) {visitor.visitOk(); }},
 	;
 
 	private ConsoleMessageType() {
@@ -43,7 +45,9 @@ public enum ConsoleMessageType {
 		void visitTitle();
 		void visitSubtitle();
 		void visitMessage();
+		void visitMainProgress();
 		void visitProgress();
+		void visitWarning();
 		void visitError();
 		void visitOk();
 	}

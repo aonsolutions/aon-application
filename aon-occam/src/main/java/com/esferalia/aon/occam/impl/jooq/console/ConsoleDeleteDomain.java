@@ -47,9 +47,8 @@ public class ConsoleDeleteDomain {
 	private static boolean deleteDomain(ConsoleParams params) {
 		String processId = AonRandomStringUtils.randomAlphabetic(4) + "_" + (new Date()).getTime();
 		try {
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "BORRADO DE DOMINIO"));
-
 			ConsoleMessageUtils.start(params.getPrinter());
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "BORRADO DE DOMINIO"));
 			
 			String title = "Start domain validation deletion";
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, title));

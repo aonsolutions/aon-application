@@ -10,6 +10,8 @@ public class DomainParams implements Serializable {
 	private String schema;
 	private Integer id;
 	private String query;
+	private String name;
+	private String description;
 	private Integer type;
 	private Integer parent;
 	private Boolean orphan;	
@@ -20,6 +22,9 @@ public class DomainParams implements Serializable {
 	private Date toLastAccess;
 	private Date fromExpirationDate;
 	private Date toExpirationDate;
+	
+	private boolean validate;
+	private boolean mustFlatten;
 	
 	private int limit = 50;
 	private int offset;
@@ -41,6 +46,21 @@ public class DomainParams implements Serializable {
 		return this;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	public DomainParams setName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public DomainParams setDescription(String description) {
+		this.description = description;
+		return this;
+	}
 	public String getQuery() {
 		return query;
 	}
@@ -126,6 +146,21 @@ public class DomainParams implements Serializable {
 	}
 	public DomainParams setToExpirationDate(Date toExpirationDate) {
 		this.toExpirationDate = toExpirationDate;
+		return this;
+	}
+	
+	public boolean isValidate() {
+		return validate;
+	}
+	public DomainParams setValidate(boolean validate) {
+		this.validate = validate;
+		return this;
+	}
+	public boolean mustFlatten() {
+		return mustFlatten;
+	}
+	public DomainParams setMustFlatten(boolean mustFlatten) {
+		this.mustFlatten = mustFlatten;
 		return this;
 	}
 	
