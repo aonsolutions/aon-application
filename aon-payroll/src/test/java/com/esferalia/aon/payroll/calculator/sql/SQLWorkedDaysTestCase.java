@@ -1878,6 +1878,73 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testContextWorkDaysMinusHolidaysWithSections() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date startDate = getFirstDayOfYear(getToday());
+
+		AgreementRecord agreement = newAgreement(aonContext);
+		AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
+		
+		addData(aonContext, agreement, startDate, new HashMap<String, String>(){
+			{
+				put("DIAS_NO_TRABAJADOS", "DIAS_VACACIONES");
+			}
+		});
+
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(
+				aonContext, 
+				startDate,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),format("\"%s\"", random(FULL_TIME) .getValue()));
+					}
+				},
+				new String[0],
+				new String[0],
+				category
+				);
+		
+		Date holidaysStartDate = add(startDate, Calendar.DAY_OF_MONTH, 9);
+		Date holidaysEndDate = add(holidaysStartDate, Calendar.DAY_OF_MONTH, 9);
+		
+		addData(aonContext, contract, holidaysStartDate, holidaysEndDate, "DIAS_VACACIONES", "10.00");
+
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<Double>> results = 
+		ctx.getExpressionContext()
+		.eval("DIAS_VACACIONES", holidaysStartDate, holidaysStartDate, Double.class);
+		
+		results.forEach( result -> {
+			org.junit.Assert.assertEquals(1.00, result.getValue(), 0.00);
+			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getStart());
+			org.junit.Assert.assertEquals(holidaysStartDate, result.getPeriod().getEnd());
+		});
+
+		results = 
+		ctx.getExpressionContext()
+		.eval("DIAS_TRABAJADOS", startDate, endDate, Double.class);
+		
+		org.junit.Assert.assertEquals(2, results.size());
+		org.junit.Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		org.junit.Assert.assertEquals(add(holidaysStartDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+		org.junit.Assert.assertEquals(9.00, results.get(0).getValue(), 0.00);
+		
+		org.junit.Assert.assertEquals(add(holidaysEndDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		org.junit.Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		
+		org.junit.Assert.assertEquals(get(endDate, Calendar.DAY_OF_MONTH) - 19, results.get(1).getValue(), 0.00);
+		
+
+	}
+
 	// ------------------------------------------------------------------------
 	protected void testWorkedDays(ContractRecord contract, double coefficient,
 			Double monthdays, Double firstMonthDays) throws ExpressionException, SQLException {

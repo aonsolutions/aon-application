@@ -3449,7 +3449,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			Period period = holidays.getPeriod();
 			Object value = holidays.getValue(period);
-			int days = Integer.parseInt(value.toString());
+			int days = (int) Double.parseDouble(value.toString());
 
 			Calendar holiday = Calendar.getInstance();
 			holiday.setTime(period.getStart());
@@ -5315,6 +5315,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		}
 		
+		overrideHolidaysContextVariable(ctx);
+		
 	}
 
 	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var, Predicate<Object>  predicate) {
@@ -5425,6 +5427,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	private void overrideHolidaysContextVariable(ContractExpressionContext ctx) {
+		ctx.getVariables(HOLIDAYS).forEach( v -> {
+			ctx.removeVariable(HOLIDAYS, v.getPeriod().getStart(), v.getPeriod().getEnd());
+			ctx.putVariable(HOLIDAYS, new ITimedVariable<Double>() {
+
+				@Override
+				public Period getPeriod() {
+					return v.getPeriod();
+				}
+
+				@Override
+				public Double getValue(Period period) {
+					return Math.min( period.getDays(), (( Number) v.getValue(period)).doubleValue());
+				}
+			});
+		});
+		;
+
+	}
 
 	private double getContexVariable(ExpressionContext ctx, Period p, ContextVariable var) {
 		ITimedVariable<?> timedVariable = ctx.getVariable(var, p.getStart(), p.getEnd());

@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -187,6 +188,89 @@ public class SQLPaymentsTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCompositeDescriptionJOOQII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+
+		
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+
+		addPayment(aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		null,
+		"SALARIO BASE",
+		"1000.00 * DIAS_TRABAJADOS / DIAS_MES", 
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, 
+		contract.getStartDate(), 
+		null, 
+		"VACACIONES @{DIAS_VACACIONES} DÍAS", 
+		"/*read-only*/DIAS_VACACIONES * 66.66/**/", 
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startHolidaysDate = add(startDate, Calendar.DAY_OF_MONTH, 5 );
+		for ( int i = 0; i < 5 ; i++ ) {
+			Date holidaysDate = add(startHolidaysDate, Calendar.DAY_OF_MONTH,i);
+			addData(aonContext, contract, holidaysDate, holidaysDate, HOLIDAYS, "1");
+		}
+
+		startHolidaysDate = add(startDate, Calendar.DAY_OF_MONTH, 15 );
+		for ( int i = 0; i < 5 ; i++ ) {
+			Date holidaysDate = add(startHolidaysDate, Calendar.DAY_OF_MONTH,i);
+			addData(aonContext, contract, holidaysDate, holidaysDate, HOLIDAYS, "1");
+		}
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection) {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date start, java.util.Date end, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + ": " + amount + "[" + start + "..." + end + "]");
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		};
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()));
+		
+		salaries.forEach( salary -> {
+			salary.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
+			salary.getPayments().forEach( p -> {
+				if ( p.getDescription().contains("VACACIONES"))
+					org.junit.Assert.assertEquals("VACACIONES 10 DÍAS", p.getDescription());
+			} );
+		});
+		
+		
+
+	}
 	
 	@Test
 	public void testSalaryInKindIRPF() throws ExpressionException, SQLException,
