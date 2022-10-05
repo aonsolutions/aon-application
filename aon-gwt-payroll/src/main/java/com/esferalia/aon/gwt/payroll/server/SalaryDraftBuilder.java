@@ -1552,6 +1552,7 @@ public class SalaryDraftBuilder
 		
 		Variable vars [] = findVariable(name, value, startDate, endDate)
 		.filter(var->var.getScope().equals(scope))
+		.filter(var->!(var.getValue() instanceof Number))
 		.filter(var->AonStringUtils.equals(var.getExpression(),expression))
 		.toArray(Variable[]::new);
 		for ( Variable var : vars ){ 
@@ -1569,6 +1570,7 @@ public class SalaryDraftBuilder
 				defined);
 	}
 	
+
 	private void replaceNETO(Double totalPayment) {
 		salaryDraft.getPayments().stream()
 		.filter(p -> p.getExpression() != null )
@@ -1581,7 +1583,7 @@ public class SalaryDraftBuilder
 	}
 	
 	private String getCompositeDescription(Payment payment1, Payment payment2) {
-		if ( AonStringUtils.equals(payment1.getDescription(), payment2.getDescription()) )
+		if ( AonStringUtils.equals(payment2.getDescriptionTemplate(), payment2.getDescription()) )
 				return payment1.getDescription();
 		
 		
