@@ -62,7 +62,8 @@ public class SECURITY {
 	}
 	
 	public static JSONObject decodeJWT(String token) {
-		DecodedJWT jwt = JWT.decode(token);	
+		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+		DecodedJWT jwt = JWT.require(algorithm).build().verify(token);	
 		return new JSONObject(jwt.getSubject())
 				.put("expired", jwt.getExpiresAt() != null
 					&& jwt.getExpiresAt().before(new Date()));
