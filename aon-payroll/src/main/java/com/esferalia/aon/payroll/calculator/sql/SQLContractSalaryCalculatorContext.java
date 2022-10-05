@@ -3449,7 +3449,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			Period period = holidays.getPeriod();
 			Object value = holidays.getValue(period);
-			int days = Integer.parseInt(value.toString());
+			int days = (int) Double.parseDouble(value.toString());
 
 			Calendar holiday = Calendar.getInstance();
 			holiday.setTime(period.getStart());
