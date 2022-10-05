@@ -1528,7 +1528,9 @@ public class SalaryDraftBuilder
 
 	private void addVariable(String name, Object value, Date startDate, Date endDate ) {
 		
-		Variable vars [] = findVariable(name, value, startDate, endDate).toArray(Variable[]::new);
+		Variable vars [] = findVariable(name, value, startDate, endDate)
+		.filter(var->!(var.getValue() instanceof Number))
+		.toArray(Variable[]::new);
 		for ( Variable var : vars ){ 
 			salaryDraft.getContext().remove(var);
 			endDate = Period.max(endDate,var.getEndDate());
