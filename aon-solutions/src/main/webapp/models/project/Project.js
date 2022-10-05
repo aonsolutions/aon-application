@@ -177,4 +177,12 @@ export class Project {
         this.dirty = dirty;
         return this;
     }
+
+    /**
+     * 
+     * @returns Project
+     */
+    clone() {
+        return new Project(this);
+    }
 }
