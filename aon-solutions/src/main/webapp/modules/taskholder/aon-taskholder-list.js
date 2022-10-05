@@ -70,7 +70,7 @@ export class AonTaskHolderList extends AonElement {
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
         clearTimeout(timeOut);
         timeOut = setTimeout(() => {
-           this.setFilter({active:true, search:detail});
+          this.setFilter({active:true, search:detail});
         }, 300);
     });
   }
@@ -157,7 +157,7 @@ export class AonTaskHolderList extends AonElement {
           saveTastHolder(taskHolder)
           .then(th => {
             this.showMessage();
-            this.edit({id:th.id});
+            this.edit(th);
           })
           .catch(err => this.showError(err))
           .finally(() =>{

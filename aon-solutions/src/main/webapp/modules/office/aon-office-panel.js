@@ -1,8 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { OfficeEnums } from './OfficeEnums.js';
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
-import { getProjectTypes, saveProjectType } from '../../services/projectService.js';
+import { CONSTANT, EVENT, MSG } from '../../environments/environments.js';
+import { getProjectTypes, saveProject, saveProjectType } from '../../services/projectService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { ProjectType } from '../../models/project/ProjectType.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
@@ -19,6 +19,19 @@ export class AonOfficePanel extends AonElement {
     projectTypes;
     workgroups;
     taskHolders;
+    customerSelected;
+
+    setCustomerSelected(customerSelected){
+        this.customerSelected = customerSelected;
+    }
+
+    getCustomerSelected(){
+        return this.customerSelected
+        .filter((value,index) => // remove repeated customersSelected
+            this.customerSelected.findIndex((m) => m.id === value.id) === index 
+        ) 
+    }
+
 	constructor () {
 		super();
 	}
@@ -33,6 +46,7 @@ export class AonOfficePanel extends AonElement {
         this.projectTypes = [];
         this.workgroups   = [];
         this.taskHolders  = [];
+        this.setCustomerSelected([]);
 	}
 
  	build() {
@@ -40,13 +54,17 @@ export class AonOfficePanel extends AonElement {
         this.buildSidenav();
         
         this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST);
+
+        // let observer = new MutationObserver((mutations)=> this.mutate(mutations));
+        // let config = { childList: true};
+      
+        // observer.observe(this.getApplication().getContent(), config);
 	}
 
     buildSidenav() {
         const application = this.getApplication();
 
         const {OfficeViews, OfficeOptions} = OfficeEnums;
-        
  
         let options = [];
 
@@ -66,7 +84,8 @@ export class AonOfficePanel extends AonElement {
 
 
     loadProjectType() {
-        getProjectTypes({}).then(types => {
+        getProjectTypes({})
+        .then(types => {
             this.projectTypes = (types || []).map((r) => ({...r, name: r.description, value: r.id}));
             
             this.clearElementById(this.getApplication().SIDENAV + DocumentalSidenav.TYPES.id + 'List');
@@ -110,91 +129,64 @@ export class AonOfficePanel extends AonElement {
         d.open();
     }
 
-    showView(view, data = undefined, filter = undefined){
-        const officeViews = OfficeEnums.OfficeViews;
-		return new Promise(async(resolve)=>{
-			let aonView = undefined;
-			switch(view){
-                case officeViews.AON_OFFICE_PANEL:
-					aonView = new AonOfficePanel();
-				break;
-                case officeViews.AON_CUSTOMER:
-					aonView = new AonCustomer();
-				break;
-                case officeViews.AON_CUSTOMER_LIST:
-					aonView = new AonCustomerList();
-                    this.addEventSelectable(aonView);
-				break;
-                case officeViews.AON_TASK_HOLDER:
-					aonView = new AonTaskHolder();
-				break;
-                case officeViews.AON_TASK_HOLDER_LIST:
-					aonView = new AonTaskHolderList();
-				break;
-			}
-			if(aonView){
-				aonView.id = view;
-				if(filter) aonView.setFilter(filter);
-				if(data) aonView.data = data;
-				this.getApplication().setContent(aonView);
-
-                this.buildToobar(view);
-			}
-			resolve(aonView);
-		});
-    }
-
-    addEventSelectable(view){
+    addCustomerListSelectable(view){
+        const application = this.getApplication();
         view.selectable = true;
         view.addEventListener("select", ({detail}) => {
-            let {parent, table} = detail;
+            let {table:{selected}} = detail;
 
-            let selected = table.selected;
+            this.setCustomerSelected(selected);
 
-            if(selected.length >= 1) {
-				this.addCustomerActions(selected);
-			} else if(selected.length === 0){
-				this.removeCustomerActions();
-			}
+            if(selected.length > 0 ) {
+                application.addToolbarOption2(OfficeEnums.OfficeSidenav.ADD_FOLDER, () => OfficeUtils.buildDialog(this));
+			} else {
+                this.removeActionFolder();
+			}   
         });
     }
 
-	addCustomerActions(selected) {
-        const application = this.getApplication();
-        const toolbar = application.getToolbar();
-        if(toolbar){
-            this.removeCustomerActions();
-
-            toolbar.addSeparator();
-            application.addToolbarOption2(SigninSidenav.ADD, () =>this.showView(officeViews.AON_CUSTOMER) );
-
-            toolbar.addSeparator();
-            application.addToolbarOption2(OfficeEnums.OfficeSidenav.ADD_FOLDER, () =>{ 
-                OfficeUtils.buildDialog(this, selected);
-            });
-        }
-	}
-
-	removeCustomerActions() {
-        const application = this.getApplication();
-        const toolbar = application.getToolbar();
-        if(toolbar){
-            toolbar.removeSeparators();
-            application.removeToolbarOption(OfficeEnums.OfficeSidenav.ADD_FOLDER);
-        }
-	}
-    
+    removeActionFolder(){
+        this.setCustomerSelected([]);
+        this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.ADD_FOLDER);
+    }
 
     buildToobar(view){
         const application = this.getApplication();
+        const toolbar = application.getToolbar();
         const officeViews = OfficeEnums.OfficeViews;
-
+        
         if([officeViews.AON_CUSTOMER, officeViews.AON_CUSTOMER_LIST].includes(view)){
 
-            application.removeFloatOption();
-            application.removeToolbarOptions();
+            application.addToolbarOption2(SigninSidenav.ADD, () => this.showView(officeViews.AON_CUSTOMER) );
 
-            application.addToolbarOption2(SigninSidenav.ADD, () =>this.showView(officeViews.AON_CUSTOMER) );
+            if(officeViews.AON_CUSTOMER_LIST === view && !toolbar.getSearchButton()){
+                let aonView = this.getElement(officeViews.AON_CUSTOMER_LIST);
+                let timeOut = null;
+
+                const btnSearch = application.addSearchOption();
+
+                btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
+                    clearTimeout(timeOut);
+                    timeOut = setTimeout(() => {
+                        aonView.setFilter({page:1, perPage:50, value:detail});
+                    }, 300);
+                });
+            }
+        }
+    }
+
+    async onSaveExpedientes(project){
+        let selected = this.getCustomerSelected();
+        let projects = selected
+        .map(registry=> 
+            project.clone()
+            .setRegistry(registry)
+        );
+
+        if(projects.length){
+            await saveProject({projects});
+
+            this.showMessage();
         }
     }
 
@@ -217,6 +209,77 @@ export class AonOfficePanel extends AonElement {
 		} 
 		return this.taskHolders;
 	}
+
+    showView(view, data = undefined, filter = undefined){
+        const officeViews = OfficeEnums.OfficeViews;
+        const application = this.getApplication();
+        this.removeActionFolder();
+		return new Promise(async(resolve)=>{
+			let aonView = undefined;
+    
+			switch(view){
+                case officeViews.AON_OFFICE_PANEL:
+					aonView = new AonOfficePanel();
+				break;
+                case officeViews.AON_CUSTOMER:
+					aonView = new AonCustomer();
+                    aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST); // overwrite function
+				break;
+                case officeViews.AON_CUSTOMER_LIST:
+					aonView = new AonCustomerList();
+                    this.addCustomerListSelectable(aonView);
+                    aonView.buildRegistry = (registry) =>{// overwrite function
+                        application.startLoader();
+                        aonView.getCustomerCustom(registry)
+                        .then(customer => 
+                            this.showView(officeViews.AON_CUSTOMER, {customer})
+                        )
+                        .catch(err => this.showError(err))
+                        .finally(() => application.stopLoader());
+                    }
+				break;
+                case officeViews.AON_TASK_HOLDER:
+					aonView = new AonTaskHolder();
+				break;
+                case officeViews.AON_TASK_HOLDER_LIST:
+					aonView = new AonTaskHolderList();
+				break;
+			}
+			if(aonView){
+				aonView.id = view;
+				if(filter) aonView.setFilter(filter);
+                if(data){
+                    if(data.customer){
+                        aonView.setCustomer(data.customer);
+                    } else {
+                        aonView.data = data;
+                    }
+                }
+          
+				application.setContent(aonView);
+
+                this.buildToobar(view);
+			}
+
+			resolve(aonView);
+		});
+    }
+
+    // mutate(mutations) {
+    //     mutations.forEach((mutation)=> {
+    //         if ( mutation.type === 'childList' ) {
+    //             const nodes = mutation.addedNodes;
+    //             for(const node of nodes) {
+    //                 const tagName = node.tagName  ? node.tagName.toLowerCase(): undefined;
+    //                 if(tagName === 'aon-customer'){
+    //                     this.removeActionFolder();
+    //                     break;
+    //                 } 
+    //             }
+    //         }
+    //     });
+    // }
+      
 }
 if(!window.customElements.get("aon-office-panel")) {
 	window.customElements.define("aon-office-panel", AonOfficePanel);

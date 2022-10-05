@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import {  getTaskHolderNoCache, saveTastHolder } from "../../services/service.js";
+import {  saveTastHolder } from "../../services/service.js";
 import { ToolbarType } from "./../../models/enums.js";
 import { TaskHolderEnums } from "./TaskHolderEnums.js";
 import { TaskHolderComponent } from "./TaskHolderComponent.js";
@@ -49,16 +49,12 @@ export class AonTaskHolder extends AonElement {
   build() {
     this.initialize();
 
-    if(this.data && this.data.id){
-      getTaskHolderNoCache({id:this.data.id})
-      .then((th)=>{
-        this.taskholder = new TaskHolder(th);
-        this.buildToolbar();
-        this.buildTabs();
-        this.buildContent();
-        this.buildFormData();
-      });
-    }
+    this.taskholder = new TaskHolder(this.data || undefined);
+
+    this.buildToolbar();
+    this.buildTabs();
+    this.buildContent();
+    this.buildFormData();
   }
 
   initialize(){

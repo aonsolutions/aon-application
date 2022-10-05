@@ -17,12 +17,17 @@ export class AonCustomerList extends AonRegistryList {
 		return getCustomers(this.filter);
 	}
 
-	buildRegistry(registry) {
+	getCustomerCustom(registry){
 		let data = {
 			id: registry.id,
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
 		};
-		getCustomer(data).then(r => {
+		return getCustomer(data);
+	}
+
+	buildRegistry(registry) {
+		this.getCustomerCustom(registry)
+		.then(r => {
 			let aonCustomer = new AonCustomer();
 			aonCustomer.id = this.getApplication().id + 'Customer';
 			aonCustomer.setCustomer(r);
