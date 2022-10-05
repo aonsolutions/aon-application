@@ -1090,7 +1090,7 @@ public class InvoiceImport {
 				.setDescription(!AonStringUtils.isBlank(accountName) 
 						? accountName : "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
 				.setAlias(!AonStringUtils.isBlank(accountName) 
-						? accountName : "SIN DESCRIPCIÓN")
+						? accountName.substring(0, 32) : "SIN DESCRIPCIÓN")
 				.setDomain(domain.getId())
 				.setActive(true);
 			account = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
