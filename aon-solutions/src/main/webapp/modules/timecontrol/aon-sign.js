@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
+import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
@@ -44,6 +44,9 @@ export class AonSign extends AonElement {
     this.parent = this.parent || false;
     console.log("PARENT -> " + this.parent);
     getTaskHolder({reload:true});
+    if(this.isMobile()){
+      getPosition().catch(console.error);  // GET POSITION
+    }
     if(this.parent) {
       getTaskHoldersUser().then(r => {
         if(r.length > 0) {
@@ -71,6 +74,7 @@ export class AonSign extends AonElement {
     let divGeneral = this.createElement(TAG.DIV);
     divGeneral.style.textAlign = "center";   
     this.appendChild(divGeneral);
+
     if(this.isMobile()){
       this.parentNode.style.marginLeft = 0;
     } else {
@@ -82,16 +86,18 @@ export class AonSign extends AonElement {
       company.style.marginLeft = '20px';
       company.style.width = '200px';
       divGeneral.appendChild(company);
+
       let select = new AonSelect();
       select.id = this.AON_SIGN +'Select2';
       select.title = MSG.COMPANY;
-      select.options = JSON.stringify(this._taskHolders.map(c => ({value: c.id, name: c.company})
-      ));
+      select.setOptions(this._taskHolders.map(c => ({value: c.id, name: c.company}) ) );
+      company.appendChild(select);
+      
       select.addEventListener(EVENT.CHANGE, () => {
         this._taskHolder = select.value;
         getTimeControl({parent:true, task_holder: this._taskHolder}).then(r => this.buildSignin(r));
       });
-      company.appendChild(select);
+      
       select.value = this._taskHolders[0].id
     }
 
@@ -104,11 +110,16 @@ export class AonSign extends AonElement {
     }
 
     let div = this.createElement(TAG.DIV);
-    if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
+    if(this.isMobile()) {
+      div.style.marginTop = "5px";
+    }
+
     divGeneral.appendChild(div);
-    if(this.tc)
+
+    if(this.tc){
       this.buildSignin(this.tc);
+    }
   }
 
   entrada() {
@@ -181,14 +192,37 @@ export class AonSign extends AonElement {
   async saveTimeCtrl(status){
     let signin = {status, task_holder: this._taskHolder, parent: this.parent}
     this.disabledButton(true);
-    try{
-      const position = await getPosition(); 
-      if(position && position.latitude && position.longitude)
+
+    let timeOutPosition = false;
+
+    await getPosition()
+    .then(position=>{
+      if(position){
         signin.coordinates = position.latitude + ',' + position.longitude;
-    } catch (error) {
+      }
+    })
+    .catch(error=>{
+      timeOutPosition = error && error.timeout;
       this.showToast(error);
+    }); 
+
+    const resp = await saveTimeControl(signin);
+
+    if(timeOutPosition && this.isMobile() && resp && resp.id){
+      getPosition()
+      .then(position=>{
+        if(position){
+          r.coordinates = position.latitude + ',' + position.longitude;
+          saveTimeControl({...resp, ...signin})
+          .then(console.log)
+          .catch(console.error);
+        }
+      })
+      .catch(console.error);
     }
-    await saveTimeControl(signin).then(r => this.buildSignin(r));
+
+    this.buildSignin(resp);
+
     this.disabledButton(false);
   }
 
