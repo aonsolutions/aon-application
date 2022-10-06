@@ -52,44 +52,49 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class ConsoleIsolateDomain {
+public class ConsoleDomainIsolate {
 	private static final String DOMAIN_FIELD = "domain";
 	
-	private ConsoleIsolateDomain() {
+	private ConsoleDomainIsolate() {
 	}
 	
 	public static void isolate(ConsoleParams params) {
 		String processId = AonRandomStringUtils.randomAlphabetic(4) + "_" + (new Date()).getTime();
-		if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
+		try {
 			ConsoleMessageUtils.start(params.getPrinter());
-			String msg = "[ERROR]: No se ha definido la conexión origen a la BD";
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
-			ConsoleMessageUtils.end(params.getPrinter());
-			throw new AonCoreException(msg);
-		}
-		if (params.isValidate()) {
-			ConsoleDomainCheckIntegrity.check(processId, params);
-			if (!params.hasErrors()) {
-				isolateDomain(processId, params);		
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "DUPLICADO DE DOMINIO"));
+			
+			if (params.getFromConnection() == null || params.getFromConnection().getAONContext().getDslContext() == null) {
+				String msg = "[ERROR]: No se ha definido la conexión origen a la BD";
+				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+				throw new AonCoreException(msg);
 			}
-		} else {
-			isolateDomain(processId, params);
+			
+			if (params.isValidate()) {
+				ConsoleDomainCheckIntegrity.check(processId, params);
+				if (!params.hasErrors()) {
+					isolateDomain(processId, params);		
+				}
+			} else {
+				isolateDomain(processId, params);
+			}
+		} finally {
+			ConsoleMessageUtils.end(params.getPrinter());
 		}
+		
 	}
 
 	private static void isolateDomain(String processId, ConsoleParams params) {
-		ConsoleMessageUtils.start(params.getPrinter());
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "DUPLICADO DE DOMINIO"));
 		ConsoleIDsTableInfo idsTableInfo = new ConsoleIDsTableInfo();
 		try {
-			Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
-					, p -> p.getNameProperty().eq(params.getFromConnection().getDomainName()));
+			Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext(), params.getFromConnection().getDomainId());
 			if (fullDomain == null) {
 				String msg = "No se ha encontrado el dominio \"" + params.getFromConnection().getDomainName() + "\"";
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
 				throw new AonCoreException(msg);
 			}
-			params.getFromConnection().setFullDomain(fullDomain);
+			params.getFromConnection().setDomain(fullDomain);
+			
 			params.setScript( new LinkedHashMap<>() );
 			DomainValidator domainValidator = DomainValidator.getInstance(true);
 			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
@@ -113,7 +118,7 @@ public class ConsoleIsolateDomain {
 				.filter(t -> !ACTION_ENTRY.getName().equals(t.getTable().getName()))
 				.count());
 			
-			if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
+			if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
 				long parentTables = params.getScript()
 					.values()
 					.stream()
@@ -143,11 +148,11 @@ public class ConsoleIsolateDomain {
 				logMainProgress(processId, params);
 				
 				insertId(params, DOMAIN,
-					params.getFromConnection().getFullDomain().getId(),
-					params.getToConnection().getFullDomain().getId());
+					params.getFromConnection().getDomain().getId(),
+					params.getToConnection().getDomain().getId());
 
 				
-				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
+				if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
 					passHeritableTables( processId, params );
 				}
 				
@@ -172,7 +177,7 @@ public class ConsoleIsolateDomain {
 				logMainProgress(processId, params);
 				loopAccAppParamAccount(processId,params,params.getScript().get("app_param"));
 				logMainProgress(processId, params);
-				if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
+				if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
 					fixTaskHolder(processId, params );
 					logMainProgress(processId, params);
 				}
@@ -195,7 +200,6 @@ public class ConsoleIsolateDomain {
 				params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.warning(processId, e)));
 			}
 			ConsoleUtils.enableForeignKeys(params);
-			ConsoleMessageUtils.end(params.getPrinter());
 		}
 	}
 	
@@ -204,7 +208,7 @@ public class ConsoleIsolateDomain {
 		params.getToDslContext()
 			.select( TASK_HOLDER.REGISTRY, TASK_HOLDER.USER_ID )
 			.from( TASK_HOLDER )
-			.where( TASK_HOLDER.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
+			.where( TASK_HOLDER.DOMAIN.eq(params.getToConnection().getDomain().getId()))
 			.and( TASK_HOLDER.USER_ID.isNotNull() )
 			.fetch()
 			.stream()
@@ -214,7 +218,7 @@ public class ConsoleIsolateDomain {
 				Integer targetId = params.getToDslContext()
 					.select( USER.ID, USER.DOMAIN )
 					.from( USER )
-					.where(USER.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
+					.where(USER.DOMAIN.eq(params.getToConnection().getDomain().getId()))
 					.and(USER.ID.eq(userId))
 					.fetch()
 					.stream()
@@ -268,8 +272,8 @@ public class ConsoleIsolateDomain {
 				.select( CONTRACT.AGREEMENT_LEVEL, count )
 				.from(CONTRACT)
 				.innerJoin(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
-				.where(CONTRACT.DOMAIN.eq(params.getFromConnection().getFullDomain().getId()))
-				.and(AGREEMENT_LEVEL.DOMAIN.eq(params.getFromConnection().getFullDomain().getParentId()))
+				.where(CONTRACT.DOMAIN.eq(params.getFromConnection().getDomain().getId()))
+				.and(AGREEMENT_LEVEL.DOMAIN.eq(params.getFromConnection().getDomain().getParentId()))
 				.groupBy(CONTRACT.AGREEMENT_LEVEL)
 				.having(count.gt(0))
 				.fetch()
@@ -284,8 +288,8 @@ public class ConsoleIsolateDomain {
 					.select( PAYROLL_WORKPLACE.AGREEMENT, count1 )
 					.from(PAYROLL_WORKPLACE)
 					.innerJoin(AGREEMENT).on(AGREEMENT.ID.eq(PAYROLL_WORKPLACE.AGREEMENT))
-					.where(PAYROLL_WORKPLACE.DOMAIN.eq(params.getFromConnection().getFullDomain().getId()))
-					.and(AGREEMENT.DOMAIN.eq(params.getFromConnection().getFullDomain().getParentId()))
+					.where(PAYROLL_WORKPLACE.DOMAIN.eq(params.getFromConnection().getDomain().getId()))
+					.and(AGREEMENT.DOMAIN.eq(params.getFromConnection().getDomain().getParentId()))
 					.groupBy(PAYROLL_WORKPLACE.AGREEMENT)
 					.having(count1.gt(0))
 					.fetch()
@@ -300,14 +304,14 @@ public class ConsoleIsolateDomain {
 	}
 
 	private static void checkProductIndex(ConsoleParams params) {
-		if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
+		if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
 			AggregateFunction<Integer> count = DSL.count(PRODUCT.ID);
 			params.getFromDslContext()
 				.select( PRODUCT.CODE, count )
 				.from(PRODUCT)
 				.where(PRODUCT.DOMAIN.in(
-					params.getFromConnection().getFullDomain().getId()
-					,params.getFromConnection().getFullDomain().getParentId()))
+					params.getFromConnection().getDomain().getId()
+					,params.getFromConnection().getDomain().getParentId()))
 				.groupBy(PRODUCT.CODE)
 				.having(count.gt(1))
 				.fetch()
@@ -321,11 +325,11 @@ public class ConsoleIsolateDomain {
 	
 	private static void checkNoticeRecipient(ConsoleParams params ) {
 		Integer[] domainIds = null;
-		if (params.getFromConnection().getFullDomain().isEnableHeredity() && params.mustFlatten()) {
-			domainIds = new Integer[] {params.getFromConnection().getFullDomain().getId()
-				,params.getFromConnection().getFullDomain().getParentId()};
+		if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
+			domainIds = new Integer[] {params.getFromConnection().getDomain().getId()
+				,params.getFromConnection().getDomain().getParentId()};
 		} else {
-			domainIds = new Integer[] {params.getFromConnection().getFullDomain().getId()};
+			domainIds = new Integer[] {params.getFromConnection().getDomain().getId()};
 			
 		}
 		
@@ -334,8 +338,8 @@ public class ConsoleIsolateDomain {
 			.from(NOTICE)
 			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
 			.where(NOTICE.DOMAIN.in(domainIds))
-			.and(USER.DOMAIN.notIn(params.getFromConnection().getFullDomain().getId()
-					,params.getFromConnection().getFullDomain().getParentId()))
+			.and(USER.DOMAIN.notIn(params.getFromConnection().getDomain().getId()
+					,params.getFromConnection().getDomain().getParentId()))
 			.fetch()
 			.stream()
 			.map(rec -> MessageFormat.format("Existe un aviso (tabla \"notice\") cuyo destinatario no pertence al dominio. [id: {0}, dominio: {1}, fecha: \"{2}\", subject: \"{3}\"] "
@@ -362,7 +366,7 @@ public class ConsoleIsolateDomain {
 				SelectConditionStep<Record> select = params.getFromDslContext()
 						.select()
 						.from(t.getTable().asTable())
-						.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getParentId()));
+						.where(getDomainField(t.getTable()).equal(params.getFromConnection().getDomain().getParentId()));
 				t.setTotalProgress(  params.getFromDslContext().fetchCount(select) );
 				t.setProgress(0);
 				select
@@ -392,12 +396,12 @@ public class ConsoleIsolateDomain {
 	private static void createDomain(String processId, ConsoleParams params) {
 		Optional<Record> optRec = params.getFromDslContext().select()
 			.from(DOMAIN)
-			.where(DOMAIN.NAME.equal(params.getFromConnection().getDomainName()))
+			.where(DOMAIN.ID.equal(params.getFromConnection().getDomain().getId()))
 			.fetch()
 			.stream()
 			.findFirst();
 		if (optRec.isEmpty()) {
-			throw new IllegalArgumentException("Ya existe el dominio \"" + params.getToConnection().getDomainName() + "\"");
+			throw new IllegalArgumentException("No existe el dominio \"" + params.getFromConnection().getDomainName() + "\"");
 		}
 		DomainRecord domRec = optRec.get().into(DOMAIN);
 		domRec.attach(params.getToDslContext().configuration());
@@ -410,11 +414,11 @@ public class ConsoleIsolateDomain {
 			:domRec.getEnableheredity()
 		);
 		domRec.store();
-		params.getToConnection().setFullDomain( DomainDAO.getDomain(params.getToConnection().getAONContext(), domRec.getId()));
+		params.getToConnection().setDomain( DomainDAO.getDomain(params.getToConnection().getAONContext(), domRec.getId()));
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, 
 			MessageFormat.format("DOMAIN {0} creado con ID {1}"
-					, params.getToConnection().getFullDomain().getName()
-					, params.getToConnection().getFullDomain().getId())));
+					, params.getToConnection().getDomain().getName()
+					, params.getToConnection().getDomain().getId())));
 	}
 
 	private static void insertId(ConsoleParams params, Table<?> table, Integer oldId, Integer newId) {
@@ -432,7 +436,7 @@ public class ConsoleIsolateDomain {
 			Integer selectCount = params.getFromDslContext()
 				.select( countField )
 				.from(t.getTable().asTable())
-				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getId()))
+				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getDomain().getId()))
 				.fetch()
 				.stream()
 				.map(rec -> rec.getValue(countField))
@@ -445,7 +449,7 @@ public class ConsoleIsolateDomain {
 			SelectConditionStep<Record> select = params.getFromDslContext()
 				.select()
 				.from(t.getTable().asTable())
-				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getFullDomain().getId()));
+				.where(getDomainField(t.getTable()).equal(params.getFromConnection().getDomain().getId()));
 			t.setTotalProgress(  selectCount );
 			t.setProgress(0);
 			int offset = 0;
@@ -477,7 +481,7 @@ public class ConsoleIsolateDomain {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Loop references at invoice table"));
 		params.getToDslContext().select()
 			.from(t.getTable())
-			.where(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
+			.where(INVOICE.DOMAIN.eq(params.getToConnection().getDomain().getId()) )
 			.and(INVOICE.RECTIFICATION_INVOICE.isNotNull())
 			.fetch()
 			.stream()
@@ -492,7 +496,7 @@ public class ConsoleIsolateDomain {
 					.update( INVOICE )
 					.set(INVOICE.RECTIFICATION_INVOICE, rec.getValue(INVOICE.RECTIFICATION_INVOICE))
 					.where(INVOICE.ID.eq(rec.getValue(INVOICE.ID)))
-					.and(INVOICE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
+					.and(INVOICE.DOMAIN.eq(params.getToConnection().getDomain().getId()) )
 					.execute()
 			);
 	}
@@ -501,7 +505,7 @@ public class ConsoleIsolateDomain {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Loop references at fbatch table"));
 		params.getToDslContext().select()
 			.from(t.getTable())
-			.where(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId()) )
+			.where(FBATCH.DOMAIN.eq(params.getToConnection().getDomain().getId()) )
 			.and(FBATCH.BANK_STATEMENT_LINK.isNotNull())
 			.fetch()
 			.stream()
@@ -516,7 +520,7 @@ public class ConsoleIsolateDomain {
 					.update( FBATCH )
 					.set(FBATCH.BANK_STATEMENT_LINK, rec.getValue(FBATCH.BANK_STATEMENT_LINK))
 					.where(FBATCH.ID.eq(rec.getValue(FBATCH.ID)))
-					.and(FBATCH.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
+					.and(FBATCH.DOMAIN.eq(params.getToConnection().getDomain().getId() ) )
 					.execute()
 			);
 	}
@@ -525,7 +529,7 @@ public class ConsoleIsolateDomain {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Loop references at BankStatementLink --> FinanceTracking table"));
 		params.getToDslContext().select()
 			.from(t.getTable())
-			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
+			.where(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getDomain().getId() ) )
 			.and(BANK_STATEMENT_LINK.SOURCE.eq((byte) 0))
 			.and(BANK_STATEMENT_LINK.SOURCE_ID.isNotNull())
 			.fetch()
@@ -538,7 +542,7 @@ public class ConsoleIsolateDomain {
 					.update( BANK_STATEMENT_LINK )
 					.set(BANK_STATEMENT_LINK.SOURCE_ID, rec.getValue(BANK_STATEMENT_LINK.SOURCE_ID))
 					.where(BANK_STATEMENT_LINK.ID.eq(rec.getValue(BANK_STATEMENT_LINK.ID)))
-					.and(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
+					.and(BANK_STATEMENT_LINK.DOMAIN.eq(params.getToConnection().getDomain().getId() ) )
 					.execute()
 			);
 	}
@@ -547,7 +551,7 @@ public class ConsoleIsolateDomain {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"ACC Params --> Account table"));
 		params.getToDslContext().select()
 			.from(t.getTable())
-			.where(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
+			.where(APP_PARAM.DOMAIN.eq(params.getToConnection().getDomain().getId() ) )
 			.and(APP_PARAM.NAME.like("ACC%ACC"))
 			.and(APP_PARAM.VALUE.isNotNull())
 			.fetch()
@@ -559,7 +563,7 @@ public class ConsoleIsolateDomain {
 				.update( APP_PARAM )
 				.set(APP_PARAM.VALUE, rec.getValue(APP_PARAM.VALUE))
 				.where(APP_PARAM.ID.eq(rec.getValue(APP_PARAM.ID)))
-				.and(APP_PARAM.DOMAIN.eq(params.getToConnection().getFullDomain().getId() ) )
+				.and(APP_PARAM.DOMAIN.eq(params.getToConnection().getDomain().getId() ) )
 				.execute());
 	}
 
@@ -670,7 +674,7 @@ public class ConsoleIsolateDomain {
 	
 	private static Record duplicateForeignKey( ConsoleParams params, ForeignKey<Record, ?> fk, Record rec) {
 		if (isDomainTable(fk.getKey().getTable())) {
-			rec.setValue(getDomainField(fk.getTable()), params.getToConnection().getFullDomain().getId());
+			rec.setValue(getDomainField(fk.getTable()), params.getToConnection().getDomain().getId());
 		} else {
 			duplicateOtherForeignKey(params, fk, rec);
 		}
@@ -747,7 +751,7 @@ public class ConsoleIsolateDomain {
 
 	private static void createLoginUser(String processId, ConsoleParams params) {
 		int newUserId = params.getToDslContext().insertInto(USER)
-				.set(USER.DOMAIN , params.getToConnection().getFullDomain().getId())
+				.set(USER.DOMAIN , params.getToConnection().getDomain().getId())
 				.set(USER.NAME, "DEFAULT USER")
 				.set(USER.LOGIN, "aon")
 				.set(USER.PASSWORD, "0jtZh1BMGz3khL8uR8dvdau3lNM=") // org
@@ -757,25 +761,25 @@ public class ConsoleIsolateDomain {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"User insertado correctamente"));
 		params.getToDslContext().select( SCOPE.ID)
 			.from(SCOPE)
-			.where(SCOPE.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
+			.where(SCOPE.DOMAIN.eq(params.getToConnection().getDomain().getId()))
 			.fetch()
 			.stream()
 			.map( rec -> rec.getValue( SCOPE.ID ))
 			.forEach( scopeId ->params.getToDslContext().insertInto(USER_SCOPE)
 				.set(USER_SCOPE.USER_ID, newUserId)
-				.set(USER_SCOPE.DOMAIN , params.getToConnection().getFullDomain().getId())
+				.set(USER_SCOPE.DOMAIN , params.getToConnection().getDomain().getId())
 				.set(USER_SCOPE.SCOPE, scopeId)
 				.execute());
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"User Scope insertado correctamente"));
 		
 		params.getToDslContext().select( DOMAIN_APPLICATION.ID)
 			.from(DOMAIN_APPLICATION)
-			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getToConnection().getFullDomain().getId()))
+			.where(DOMAIN_APPLICATION.DOMAIN.eq(params.getToConnection().getDomain().getId()))
 			.fetch()
 			.stream()
 			.map( rec -> rec.getValue( DOMAIN_APPLICATION.ID ))
 			.map( domainApplicationId -> params.getToDslContext().insertInto(APPLICATION_USER)
-				.set(APPLICATION_USER.DOMAIN, params.getToConnection().getFullDomain().getId())
+				.set(APPLICATION_USER.DOMAIN, params.getToConnection().getDomain().getId())
 				.set(APPLICATION_USER.USER_ID, newUserId)
 				.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplicationId)
 				.set(APPLICATION_USER.ACTIVE, (byte) 1)
@@ -783,7 +787,7 @@ public class ConsoleIsolateDomain {
 				.fetchOne()
 				.getId())
 			.forEach(applicationUserId -> params.getToDslContext().insertInto(APPLICATION_USER_PROFILE)
-					.set(APPLICATION_USER_PROFILE.DOMAIN, params.getToConnection().getFullDomain().getId())
+					.set(APPLICATION_USER_PROFILE.DOMAIN, params.getToConnection().getDomain().getId())
 					.set(APPLICATION_USER_PROFILE.APPLICATION_USER, applicationUserId)
 					.set(APPLICATION_USER_PROFILE.PROFILE, 71)
 					.returning(DOMAIN_APPLICATION.ID)

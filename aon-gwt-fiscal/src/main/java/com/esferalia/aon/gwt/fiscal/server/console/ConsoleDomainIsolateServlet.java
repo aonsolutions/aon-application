@@ -12,11 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.Schema;
 
+import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
-import com.esferalia.aon.occam.impl.jooq.console.ConsoleIsolateDomain;
+import com.esferalia.aon.occam.impl.jooq.console.ConsoleDomainIsolate;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 
 @WebServlet(name = "Console Domain Isolate Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/ConsoleDomainIsolateServlet" })
@@ -28,52 +31,60 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String schemaName = req.getParameter(IRequestParamsNames.SCHEMA);
-		String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
+		
+		String domainParamsParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
 		String newSchemaName = req.getParameter(IRequestParamsNames.NEW_SCHEMA);
 		String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
-		String validate = req.getParameter(IRequestParamsNames.VALIDATE);
-		String mustFlatten = req.getParameter(IRequestParamsNames.MUST_FLATTEN);
 		ConsoleParams params = new ConsoleParams( )
-			.setValidate( Boolean.valueOf(validate))
-			.setMustFlatten( Boolean.valueOf(mustFlatten));
-		try (
-			CloseableAONContext fromCtx = AONContext.getAONContext(schemaName);
-			CloseableAONContext toCtx = AONContext.getAONContext(newSchemaName) ) {
+			.setPrinter(new PrintStream(resp.getOutputStream()));
+		DomainParams domainParams = null;
+		try {
+			domainParams = JsonParser.parseDomainParams(domainParamsParam);
 			
+			CloseableAONContext fromCtx = AONContext.getAONContext(domainParams.getSchema());
 			Schema fromSchema = fromCtx.getDslContext().meta()
-				.getSchemas(schemaName)
+				.getSchemas(domainParams.getSchema())
 				.stream()
 				.findFirst()
 				.orElse(null);
-			
-			params.setFromConnection(new ConsoleConnectionParams()
+			ConsoleConnectionParams fromParams = new ConsoleConnectionParams()
 				.setAONContext(fromCtx)
-				.setSchemaName( schemaName )
-				.setSchema( fromSchema )
-				.setDomainName(domainName)
+				.setSchemaName(domainParams.getSchema())
+				.setSchema(fromSchema)
+				.setDomain(new Domain()
+					.setId(domainParams.getId())
+					.setName(domainParams.getName())
+					.setDescription(domainParams.getDescription())
 				);
 			
+			CloseableAONContext toCtx = AONContext.getAONContext(newSchemaName);
 			Schema toSchema = toCtx.getDslContext().meta()
 				.getSchemas(newSchemaName)
 				.stream()
 				.findFirst()
 				.orElse(null);
-			params.setToConnection(new ConsoleConnectionParams()
+			ConsoleConnectionParams toParams = new ConsoleConnectionParams()
 				.setAONContext(toCtx)
 				.setSchemaName( newSchemaName )
 				.setSchema(toSchema)
-				.setDomainName(newDomainName)
-				);
-			params.setPrinter(new PrintStream(resp.getOutputStream()));
+				.setDomain(new Domain().setName(newDomainName));	
+
+			params
+				.setFromConnection(fromParams)
+				.setToConnection(toParams)
+				.setValidate(domainParams.isValidate())
+				.setMustFlatten(domainParams.mustFlatten())
+			;
+			
 			LOGGER.log(Level.INFO, "ConsoleDomainIsolateServlet domain \"{0}\".\"{1}\" to \"{2}\".\"{3}\"", new String[] {
 				 params.getFromConnection().getSchemaName()
 				,params.getFromConnection().getDomainName()
 				,params.getToConnection().getSchemaName()
 				,params.getToConnection().getDomainName()});
-			ConsoleIsolateDomain.isolate(params);
+			ConsoleDomainIsolate.isolate(params);
 			resp.flushBuffer();
 		} catch (Exception e) {
+			e.printStackTrace();
 			params.getPrinter().println(e.getMessage());
 			params.getPrinter().println();
 			LOGGER.log(Level.SEVERE, "ConsoleDomainIsolateServlet {0}!",e.getMessage());

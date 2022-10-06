@@ -81,7 +81,7 @@ public class ConsoleDeleteDomain {
 				params.getFromConnection().setSchema( fromSchema );
 			}
 
-			Domain domain = params.getFromConnection().getFullDomain();
+			Domain domain = params.getFromConnection().getDomain();
 			if (domain == null || domain.getId() == null) {
 				String msg = "No se ha indicado un dominio que borrar.";
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
@@ -119,14 +119,14 @@ public class ConsoleDeleteDomain {
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
 				throw new AonCoreException(msg);
 			}
-			params.getFromConnection().setFullDomain(domain);
+			params.getFromConnection().setDomain(domain);
 			
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "End domain validation!"));
 			
 			String msg1 = MessageFormat.format(" COMIENZA EL BORRADO DEL DOMINIO \"{0}\" - {1} ({2}) !"
-					, params.getFromConnection().getFullDomain().getDescription()
-					, params.getFromConnection().getFullDomain().getId()
-					, params.getFromConnection().getFullDomain().getName());
+					, params.getFromConnection().getDomain().getDescription()
+					, params.getFromConnection().getDomain().getId()
+					, params.getFromConnection().getDomain().getName());
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, msg1));
 			
 			
@@ -149,13 +149,13 @@ public class ConsoleDeleteDomain {
 				
 				params.getFromDslContext()
 					.delete(DOMAIN)
-					.where( DOMAIN.ID.equal(params.getFromConnection().getFullDomain().getId()))
+					.where( DOMAIN.ID.equal(params.getFromConnection().getDomain().getId()))
 					.execute();
 				
 				String msg = MessageFormat.format(" DOMINIO \"{0}\" - {1} ({2}) BORRADO!"
-					, params.getFromConnection().getFullDomain().getDescription()
-					, params.getFromConnection().getFullDomain().getId()
-					, params.getFromConnection().getFullDomain().getName());
+					, params.getFromConnection().getDomain().getDescription()
+					, params.getFromConnection().getDomain().getId()
+					, params.getFromConnection().getDomain().getName());
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, msg));
 				
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Commit"));
@@ -204,7 +204,7 @@ public class ConsoleDeleteDomain {
 	    
 		params.getFromDslContext()
 			.delete(t)
-			.where( getDomainField(t).equal(params.getFromConnection().getFullDomain().getId()))
+			.where( getDomainField(t).equal(params.getFromConnection().getDomain().getId()))
 			.execute();
 		
 		timer.cancel();

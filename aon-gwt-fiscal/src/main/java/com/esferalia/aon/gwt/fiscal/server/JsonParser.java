@@ -807,6 +807,16 @@ public class JsonParser {
 			params.setQuery(query);
 		}
 
+		String name = (String) jsonParams.get(IRequestParamsNames.NAME);
+		if (AonStringUtils.isNotBlank(name)) {
+			params.setName(name);
+		}
+
+		String description = (String) jsonParams.get(IRequestParamsNames.DESCRIPTION);
+		if (AonStringUtils.isNotBlank(description)) {
+			params.setDescription(description);
+		}
+
 		Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
 		if (type!= null) {
 			params.setType(type.intValue());	
@@ -865,6 +875,16 @@ public class JsonParser {
 		Long limit = (Long) jsonParams.get(IRequestParamsNames.LIMIT);
 		if (parent!= null) {
 			params.setLimit(limit.intValue());
+		}
+
+		Long validate = (Long) jsonParams.get(IRequestParamsNames.VALIDATE);
+		if (validate != null) {
+			params.setValidate(validate == 1);
+		}
+
+		Long mustFlatten = (Long) jsonParams.get(IRequestParamsNames.MUST_FLATTEN);
+		if (mustFlatten != null) {
+			params.setMustFlatten(mustFlatten==1);
 		}
 
 		return params;

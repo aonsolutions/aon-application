@@ -258,6 +258,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.SCHEMA	,AonStringUtils.isBlank(params.getSchema())? JSON_NULL : new JSONString( params.getSchema()));
 		json.put(IRequestParamsNames.ID		,params.getId()	== null? JSON_NULL : new JSONNumber( params.getId()));
 		json.put(IRequestParamsNames.QUERY	,AonStringUtils.isBlank(params.getQuery())? JSON_NULL : new JSONString( params.getQuery()));
+		json.put(IRequestParamsNames.NAME	,AonStringUtils.isBlank(params.getName())? JSON_NULL : new JSONString( params.getName()));
+		json.put(IRequestParamsNames.DESCRIPTION,AonStringUtils.isBlank(params.getDescription())? JSON_NULL : new JSONString( params.getDescription()));
 		json.put(IRequestParamsNames.TYPE	,params.getType()	== null? JSON_NULL : new JSONNumber( params.getType()));
 		json.put(IRequestParamsNames.PARENT	,params.getParent()	== null? JSON_NULL : new JSONNumber( params.getParent()));
 		json.put(IRequestParamsNames.ORPHAN ,params.getOrphan()	== null? JSON_NULL : new JSONNumber( AonNumberUtils.toInteger( params.getOrphan())));
@@ -270,6 +272,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.TO_EXPIRATION_DATE,params.getToExpirationDate()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToExpirationDate())));
 		json.put(IRequestParamsNames.OFFSET,new JSONNumber( params.getOffset()));
 		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
+		json.put(IRequestParamsNames.VALIDATE,new JSONNumber( AonNumberUtils.toInteger( params.isValidate())));
+		json.put(IRequestParamsNames.MUST_FLATTEN,new JSONNumber( AonNumberUtils.toInteger( params.mustFlatten())));
 		return json.toString();
 	}
 }

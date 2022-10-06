@@ -11,8 +11,7 @@ public class ConsoleConnectionParams {
 	private String schemaName;
 	private Schema schema;
 	private AONContext ctx;
-	private String domainName;
-	private Domain fullDomain;
+	private Domain domain;
 	
 	public String getSchemaName() {
 		return schemaName;
@@ -38,19 +37,19 @@ public class ConsoleConnectionParams {
 		return this;
 	}
 	
-	public String getDomainName() {
-		return domainName;
+	public Domain getDomain() {
+		return domain;
 	}
-	public ConsoleConnectionParams setDomainName(String domainName) {
-		this.domainName = domainName;
+	public ConsoleConnectionParams setDomain(Domain domain) {
+		this.domain = domain;
 		return this;
 	}
 	
-	public Domain getFullDomain() {
-		return fullDomain;
+	public Integer getDomainId() {
+		return getDomain()==null?null:getDomain().getId();
 	}
-	public ConsoleConnectionParams setFullDomain(Domain fullDomain) {
-		this.fullDomain = fullDomain;
-		return this;
+	public String getDomainName() {
+		return getDomain()==null?null:getDomain().getName();
 	}
+	
 }

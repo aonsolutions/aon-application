@@ -8,12 +8,12 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-class AonConsoleWidget extends ScrollPanel {
+class OLD_AonConsoleWidget extends ScrollPanel {
 	
 	private final HTMLPanel consoleWidget;
 	private int lastIndex = 0;
 	
-	public AonConsoleWidget() {
+	public OLD_AonConsoleWidget() {
 		setStyleName(AON.CSS.aonScrollArea());
 		consoleWidget = new HTMLPanel("pre","");
 		consoleWidget.setStyleName(AON.CSS.aonPadding());

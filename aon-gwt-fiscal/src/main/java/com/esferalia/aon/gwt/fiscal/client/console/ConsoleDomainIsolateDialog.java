@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
@@ -121,7 +122,7 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 			if (validate()) {
 				DomainParams params = new DomainParams()
 					.setSchema(callback.getSchema())
-					.setId(domain.getId())
+					.setId(AonNumberUtils.toInteger("" +  domain.getId()))
 					.setName(domain.getName())
 					.setDescription(domain.getDescription())
 					.setValidate(validate.getValue().booleanValue())
