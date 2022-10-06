@@ -923,6 +923,13 @@ const openDialogBranch = (task)=> {
       application.startLoading();
       try {
         const domain = task.domain;
+        let newDomain = {};
+
+        if(domain){
+          newDomain.domainId = domain.id;
+          newDomain.domainName = domain.name;
+          newDomain.domainType = domain.domainType || undefined;
+        }
 
         let params = {
           ...task.getWorkflowTmp(),
@@ -932,9 +939,8 @@ const openDialogBranch = (task)=> {
           comment: note.value
         };
 
-        if(domain){
-          params.domainId = domain.id;
-          params.domainName = domain.name;
+        if(newDomain.domainId){
+          Object.assign(params, newDomain);
         }
 
         await saveTaskBranch(params);
@@ -942,9 +948,8 @@ const openDialogBranch = (task)=> {
         
         let param = { id: task.id };
     
-        if(domain){
-          param.domainId = domain.id;
-          param.domainName = domain.name;
+        if(newDomain.domainId){
+          Object.assign(param, newDomain);
         }
 
         const data = await getTaskOne(param);
