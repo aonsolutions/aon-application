@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class AuthAttach {
+public class AuthAttach implements Serializable{
 
 	Integer id;
 	byte[] auth;
