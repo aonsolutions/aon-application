@@ -152,14 +152,15 @@ export class AonOfficePanel extends AonElement {
 
     buildToobar(view){
         const application = this.getApplication();
-        const toolbar = application.getToolbar();
         const officeViews = OfficeEnums.OfficeViews;
         
         if([officeViews.AON_CUSTOMER, officeViews.AON_CUSTOMER_LIST].includes(view)){
 
+            application.removeToolbarOptions();
+
             application.addToolbarOption2(SigninSidenav.ADD, () => this.showView(officeViews.AON_CUSTOMER) );
 
-            if(officeViews.AON_CUSTOMER_LIST === view && !toolbar.getSearchButton()){
+            if(officeViews.AON_CUSTOMER_LIST === view){
                 let aonView = this.getElement(officeViews.AON_CUSTOMER_LIST);
                 let timeOut = null;
 
