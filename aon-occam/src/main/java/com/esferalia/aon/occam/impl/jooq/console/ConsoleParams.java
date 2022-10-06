@@ -51,8 +51,8 @@ public class ConsoleParams {
 	
 	public Occam getOccam(ConsoleConnectionParams conn) {
 		return new Occam()
-			.setDomainName( conn.getFullDomain().getName())
-			.setDomain( conn.getFullDomain().getId());
+			.setDomainName( conn.getDomain().getName())
+			.setDomain( conn.getDomain().getId());
 	}
 	
 	public Occam getFromOccam() {
@@ -175,10 +175,10 @@ public class ConsoleParams {
 		return ensureToConnection().getAONContext().getDslContext();
 	}
 	public Domain getFromDomain() {
-		return getFromConnection() != null ? getFromConnection().getFullDomain() : null;
+		return getFromConnection() != null ? getFromConnection().getDomain() : null;
 	}
 	public Domain getToDomain() {
-		return getToConnection() != null ? getToConnection().getFullDomain() : null;
+		return getToConnection() != null ? getToConnection().getDomain() : null;
 	}
 	
 }

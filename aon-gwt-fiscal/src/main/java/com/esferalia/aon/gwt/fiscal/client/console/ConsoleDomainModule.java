@@ -233,37 +233,47 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		@Override
 		public void onValidate(Integer domainId, String name, String description, AsyncCallback<Boolean> cbk) {
 			DomainParams params = filterPanel.getParams(options);
-			validate(params.getSchema(), domainId, name, description,cbk);
+			String tabLabel = AonStringUtils.abbreviate(description, 30);
+			validate(params.getSchema(), domainId, tabLabel, cbk);
 		}
 
-		private void validate(String schema,Integer domainId, String name, String description, AsyncCallback<Boolean> cbk) {
+		private void validate(String schema,Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
 			try {
-				AonConsoleWidget aonConsole = new AonConsoleWidget();
-				String tabLabel = AonStringUtils.abbreviate(description, 30);
-				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-				tabLayout.add(aonConsole, closeTab, tabLabel);
-				closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
+//				AonConsoleWidget aonConsole = new AonConsoleWidget();
+//				String tabLabel = AonStringUtils.abbreviate(description, 30);
+//				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+//				tabLayout.add(aonConsole, closeTab, tabLabel);
+//				closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
+//				tabLayout.selectTab(aonConsole);
+//				openFootPanelIfNeeded();
+				AonConsoleProgress tabWidget = (AonConsoleProgress) tabLayout.getWidget(tabLabel);
+				if (tabWidget == null) {
+					tabWidget = new AonConsoleProgress();
+					AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+					closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
+					tabLayout.add(tabWidget, closeTab, tabLabel);
+				}
+				final AonConsoleProgress aonConsole = tabWidget; 
 				tabLayout.selectTab(aonConsole);
 				openFootPanelIfNeeded();
 				
 				XMLHttpRequest xhreq = XMLHttpRequest.create();
 				xhreq.open(FormPanel.METHOD_POST, CHECK_DOMAIN_INTEGRITY_SERVLET);
 				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
-				xhreq.setOnReadyStateChange( xhr -> {
-					int state = xhr.getReadyState();
-					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
-						String text = xhr.getResponseText();
-						aonConsole.log(text);
-					}
-					if (state == XMLHttpRequest.DONE) {
-						cbk.onSuccess( true );
-					}
-				});
+				xhreq.setOnReadyStateChange(  new ConsoleReadyStateChangeHandler( aonConsole, cbk));
+//				xhreq.setOnReadyStateChange( xhr -> {
+//					int state = xhr.getReadyState();
+//					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
+//						String text = xhr.getResponseText();
+//						aonConsole.log(text);
+//					}
+//					if (state == XMLHttpRequest.DONE) {
+//						cbk.onSuccess( true );
+//					}
+//				});
 				StringBuilder requestData = new StringBuilder();
-				requestData.append("&"+IRequestParamsNames.SCHEMA  				+"=" + schema );
-				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME  		+"=" + name );
-				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + domainId );
-				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
+				DomainParams params = filterPanel.getParams(options).setId(domainId);
+				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(params));
 				xhreq.send(requestData.toString());
 			} catch (Exception e){
 				cbk.onFailure(e);		
@@ -322,15 +332,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					
 				}));
 				StringBuilder requestData = new StringBuilder();
-				requestData.append("&"+IRequestParamsNames.SCHEMA  				+"=" + origin.getSchema() );
-				requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + origin.getName() );
-				requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + origin.getId() );
-				
+				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(origin));				
 				requestData.append("&"+IRequestParamsNames.NEW_SCHEMA  			+"=" + target.getSchema() );
 				requestData.append("&"+IRequestParamsNames.NEW_DOMAIN_NAME		+"=" + target.getName() );
-				requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
-				requestData.append("&"+IRequestParamsNames.VALIDATE				+"=" + Boolean.toString( origin.isValidate() ));
-				requestData.append("&"+IRequestParamsNames.MUST_FLATTEN			+"=" + Boolean.toString( origin.mustFlatten() ));
 				xhreq.send(requestData.toString());
 			} catch (Exception e){
 				setRunning(false);

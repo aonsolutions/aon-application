@@ -35,11 +35,11 @@ public class ConsoleIDsTableInfo {
 		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.substringBefore(params.getFromConnection().getSchemaName(), AonStringUtils.HYPHEN));
 		buf.append(AonStringUtils.UNDERSCORE);
-		buf.append(params.getFromConnection().getFullDomain().getId());
+		buf.append(params.getFromConnection().getDomain().getId());
 		buf.append(AonStringUtils.UNDERSCORE);
 		buf.append(AonStringUtils.substringBefore(params.getToConnection().getSchemaName(), AonStringUtils.HYPHEN));
 		buf.append(AonStringUtils.UNDERSCORE);
-		buf.append(params.getToConnection().getFullDomain().getId());
+		buf.append(params.getToConnection().getDomain().getId());
 		return buf.toString();
 	}
 	

@@ -44,7 +44,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 		headerPanel.add(subtitle);
 
 		main = new AonConsoleProgressPanel();
-		main.addStyleName(AON.CSS.aonWidth600());
+		main.addStyleName(AON.CSS.aonWidthAlmostAll());
 		headerPanel.add(main);
 		addNorth(headerPanel, 90);
 		
@@ -72,7 +72,6 @@ class AonConsoleProgress extends DockLayoutPanel {
 					return labels.computeIfAbsent(message.getProcessId()
 						, k -> {
 							AonConsoleProgressPanel w = new AonConsoleProgressPanel();
-							w.addStyleName(AON.CSS.aonWidth600());
 							container.add(w);
 							return w;
 					});

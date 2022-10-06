@@ -40,7 +40,7 @@ public class CONSOLE {
 			ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 				.setAONContext(ctx)
 				.setSchemaName(params.getSchema())
-				.setFullDomain(new Domain().setId(domainId));
+				.setDomain(new Domain().setId(domainId));
 			consoleParams.setFromConnection(conParams);
 			return getConsole().deleteDomain(consoleParams);
 		}

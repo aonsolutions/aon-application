@@ -42,7 +42,7 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 					.setAONContext(ctx)
 					.setSchemaName(domainParams.getSchema())
-					.setFullDomain(new Domain().setId(domainParams.getId()));
+					.setDomain(new Domain().setId(domainParams.getId()));
 				consoleParams.setFromConnection(conParams);
 				ConsoleDeleteDomain.delete(consoleParams);
 			} catch (Exception e) {

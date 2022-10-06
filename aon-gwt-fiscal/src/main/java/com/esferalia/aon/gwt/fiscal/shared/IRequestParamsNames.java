@@ -46,6 +46,7 @@ public interface IRequestParamsNames {
 	String DEBIT = "debit";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DESCRIPTION = "description";
 	String DOCUMENT_COUNTRY = "documentCountry";
 	String DOCUMENT = "document";
 	String DOCUMENT_TYPE = "documentType";
