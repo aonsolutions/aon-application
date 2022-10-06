@@ -293,7 +293,6 @@ public class UserServlet extends AonApiHttpServlet {
 			.or(f.getTaskHolderActiveProperty().eq((byte)0))
 			.or(f.getTaskHolderDomainProperty().eq(api.getDomain().getParentId()));
 			
-
 			filter = filter.and(newFilter);
 		}
 		
