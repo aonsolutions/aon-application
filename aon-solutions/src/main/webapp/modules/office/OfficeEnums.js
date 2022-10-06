@@ -16,8 +16,8 @@ const AON_TASK_HOLDER = {
   
 
 const OfficeViews = {
-    AON_CUSTOMER: "aonCustomer",
-    AON_CUSTOMER_LIST: "aonCustomerList",
+    AON_CUSTOMER: "aonCustomerOffice",
+    AON_CUSTOMER_LIST: "aonCustomerListOffice",
     AON_OFFICE_PANEL: "aonOfficePanel",
     AON_TASK_HOLDER: "aonTaskHolder",
     AON_TASK_HOLDER_LIST: "aonTaskHolderList",

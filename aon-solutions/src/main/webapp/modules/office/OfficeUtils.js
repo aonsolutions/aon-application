@@ -2,44 +2,44 @@ import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
 
-
-const buildDialog = (aonOfficePanel, selected) => {
+/**
+ * 
+ * @param {AonOfficePanel} aonOfficePanel 
+ */
+const buildDialog = (aonOfficePanel) => {
 
     const application = aonOfficePanel.getApplication();
     const dialog = application.getDialog();
-    dialog.width = '40%';
-    
-    dialog.clear();
-    dialog.setTitle("Expediente");
-        
-    dialog.setContent(buildFormExpediente(aonOfficePanel, selected));
-
-    
-    dialog.addSendAction(async()=>{
-        application.startLoading();
-        // const success = await aonCategoryAdd.save();
-        // if(success) {
-        //     aonOfficePanel.getCategorys();
-            dialog.close();
-        // }
-
-        application.stopLoading();
-
-        application.development();
-  
-    }, MSG.SAVE);
-
-
-        
-    dialog.open();
-}   
-
-const buildFormExpediente = (aonOfficePanel, selected) => {
 
     let project = new Project();
 
+    dialog.width = '40%';
+    
+    dialog.clear();
+    dialog.setTitle("Asignar expediente");
+        
+    dialog.setContent(buildFormExpediente(aonOfficePanel, project));
+    
+    dialog.addSendAction(async()=>{
 
-	// project.setRegistry(this.registry);
+        application.startLoading();
+
+        await aonOfficePanel
+        .onSaveExpedientes(project)
+        .catch(err=> aonOfficePanel.showError(err));
+    
+        dialog.close();
+
+        application.stopLoading();
+
+ 
+    }, MSG.SAVE);
+
+    dialog.open();
+}   
+
+const buildFormExpediente = (aonOfficePanel, project) => {
+
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 

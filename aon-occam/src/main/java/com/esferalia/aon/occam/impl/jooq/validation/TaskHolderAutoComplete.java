@@ -37,7 +37,7 @@ public class TaskHolderAutoComplete {
 	public static BiConsumer<AONContext, TaskHolder> COMPLETE_REGISTRY = (ctx, taskHolder) -> {
 		if (taskHolder.getId() == null && taskHolder.getUserId() != null) {
 			User user = SecurityDAO.getUser(ctx, taskHolder.getUserId());
-			if(user.getRegistry() != null) {
+			if(user.getRegistry() != null && user.getDomain().equals(taskHolder.getDomain().getId())) {
 				Registry registry = RegistryDAO.get(ctx, user.getRegistry());
 				taskHolder
 				.copy(registry)

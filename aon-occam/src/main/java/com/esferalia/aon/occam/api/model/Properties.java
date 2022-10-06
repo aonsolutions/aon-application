@@ -1459,6 +1459,7 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 		
 		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getTaskHolderDomainProperty();
 		Property<Byte> getTaskHolderActiveProperty();
 	}
 	

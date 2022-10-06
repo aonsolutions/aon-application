@@ -179,11 +179,10 @@ export class AonToolbar extends AonElement {
 	}
 
 	addSearchButton(opened=false) {
-		const id = this.TOOL_SECTION + 'Search';
-		let search = this.getElement(id);
+		let search = this.getSearchButton();
 		if(!search) {
 			search = new AonSearch();
-			search.id = id;
+			search.id = this.TOOL_SECTION + 'Search';
 			const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
 			const searchValueFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE, { detail: event.detail }));
 
@@ -211,12 +210,15 @@ export class AonToolbar extends AonElement {
 	}
 
 	cleanSearchValue() {
-		const id = this.TOOL_SECTION + 'Search';
-		let search = this.getElement(id);
+		let search = this.getSearchButton();
 		if(search) {
 			let input = this.getElement(search.SEARCH_INPUT);
 			input.value = '';
 		}
+	}
+
+	getSearchButton(){
+		return this.getElement(this.TOOL_SECTION + 'Search');
 	}
 
 	addButton2(action, fn) {

@@ -64,7 +64,6 @@ const createFormAdd = (aonTaskHolder, parent, taskholder)=> {
       },
       events:{
         input: ({target}) => {
-          console.log(target.value);
           taskholder.setAlias(target.value);
         }
       }

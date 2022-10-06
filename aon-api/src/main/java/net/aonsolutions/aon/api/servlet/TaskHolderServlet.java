@@ -153,12 +153,14 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		Optional<TaskHolder> opt = Optional.empty();
 		if(th.getUserId()!=null && th.getId()==null) {
 			opt = AON.getTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-					f-> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(th.getUserId())))
+					f-> f.getDomainProperty().eq(domain.getId())
+					.and(f.getUserIdProperty().eq(th.getUserId())))
 			.findFirst();	
+
 		}
 		
 		TaskHolder taskHolder = opt.isPresent() ? opt.get().setActive(th.isActive()) : th;
-	
+
 		return TaskHolderJSON.toJSON( 
 				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), taskHolder)
 		);
@@ -167,9 +169,11 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	public static Filter filter(AonApiData api, TaskHolderProperties f) {
 		JSONObject params  = api.getData();
 
-		Filter filter      = f.getDomainProperty().eq(api.getDomain().getId());
-		
 		Integer id = params.optInt(IJsonNames.ID);
+		String search = params.optString(IJsonNames.SEARCH);
+		
+		
+		Filter filter  = f.getDomainProperty().eq(api.getDomain().getId());
 		
 		if(id!=0) {
 			filter = filter.and(f.getIdProperty().eq(id));
@@ -179,6 +183,12 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getActiveProperty().eq( (byte)(params.optBoolean(IJsonNames.ACTIVE) ? 1 : 0)) );
 		}
 		
+		if(!search.isEmpty()) {
+			Filter searchFilter = f.getNameProperty().like("%" + search + "%")
+					.or(f.getDocumentProperty().like("%" + search + "%"))
+					.or(f.getAliasProperty().like("%" + search + "%"));
+			filter = filter.and(searchFilter);
+		}
 		
 		return filter;
 	}	
