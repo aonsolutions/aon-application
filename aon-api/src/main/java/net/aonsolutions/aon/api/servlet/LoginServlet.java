@@ -39,7 +39,7 @@ public class LoginServlet extends AonApiHttpServlet{
 		Boolean ok = false;
 		Auth auth = new Auth();
 	    if(Utils.isEmail(username)) {
-	    	List<String> schemas = AONContext.getSchemas();
+	       	List<String> schemas = AONContext.getSchemas();
 	    	if(!AonStringUtils.isBlank(login)) {
 	    		for(String schema: schemas) {
 	    			String domain = AONContext.getSchemaFirstDomain(schema);
@@ -53,6 +53,14 @@ public class LoginServlet extends AonApiHttpServlet{
 	    			}
 	    		}
 	    	}
+	    	
+// TODO AUTH with dynamodb
+//	    	if(auth.isEmpty()) {
+//		    	auth = AuthDyn.getAuth(username);
+//	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
+//				ok = pass.equals(auth.getPassword());
+//	    	}
+	    	
 	    	for(String schema: schemas) {
 	    		String domain = AONContext.getSchemaFirstDomain(schema);
 	    		
