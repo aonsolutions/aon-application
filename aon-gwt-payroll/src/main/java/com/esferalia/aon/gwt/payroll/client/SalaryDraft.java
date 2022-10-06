@@ -7922,11 +7922,11 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private static String getDebugId(Item<?> item) {
+		String name = item.getName();
 		Enum<?> type = item.getType();
 		if ( type == null )
-			return "unknown";
+			return AonStringUtils.defaultIfBlank(name, "unknown");
 		
-		String name = item.getName();
 		if ( AonStringUtils.equalsIgnoreCase(name, "IT_E"))
 			return "it";
 		if ( AonStringUtils.equalsIgnoreCase(name, "IMS_E"))

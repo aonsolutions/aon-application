@@ -2080,11 +2080,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		addBonus(getStartDate(), null, description, expression);
 	}
 
+	public void addBonus (String name, String description, String expression) {
+		addBonus(name, getStartDate(), null, description, expression);
+	}
+
 	public void addBonus (Date startDate, String description, String expression) {
 		addBonus(startDate, null, description, expression);
 	}
 	
 	public void addBonus (Date startDate, Date endDate, String description, String expression) {
+		addBonus(null, startDate, endDate, description, expression);
+	}
+	
+	public void addBonus (String name, Date startDate, Date endDate, String description, String expression) {
 		IContractBonus bonus = new IContractBonus() {
 			
 			@Override
@@ -2099,7 +2107,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			@Override
 			public BonusType getType() {
-				return BonusType.ERE;
+				return null;
 			}
 			
 			@Override
@@ -2119,7 +2127,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			@Override
 			public String getName() {
-				return null;
+				return name;
 			}
 			
 			@Override
@@ -2168,7 +2176,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		contextBonus.add(bonus);
 	}
-	
+
 	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
 		
 		
