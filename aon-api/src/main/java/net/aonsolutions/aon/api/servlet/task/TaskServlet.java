@@ -730,11 +730,16 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		int domainId = params.optInt(IJsonNames.DOMAIN_ID);
 		String domainName = params.optString(IJsonNames.DOMAIN_NAME);
+		String domainType = params.optString(IJsonNames.DOMAIN_TYPE);
 		
 		if(domainId!=0 && !domainName.isEmpty()) {
 			Domain domain = new Domain()
 			.setId(domainId)
 			.setName(domainName);
+			
+			if(!domainType.isEmpty()) {
+				domain.setDomainType(DomainType.safeValueOf(domainType));
+			}
 	
 			api.setDomain(domain);
 		}
