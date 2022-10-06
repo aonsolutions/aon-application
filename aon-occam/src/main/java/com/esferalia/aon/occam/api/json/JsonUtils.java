@@ -60,7 +60,7 @@ public class JsonUtils {
 		return null;
 	}
 	
-	public static Boolean getboolean(JSONObject json, String key ) {
+	public static boolean getboolean(JSONObject json, String key ) {
 		String value = json != null && json.opt(key) != null ? json.optString(key,null) : null;
 		if (AonStringUtils.isNotBlank(value)) {
 			Boolean ret = Boolean.valueOf( json.optBoolean(key));
