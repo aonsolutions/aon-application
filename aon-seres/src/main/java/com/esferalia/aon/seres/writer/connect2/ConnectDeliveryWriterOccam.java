@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
@@ -350,7 +351,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		List<SEH1B> list = new ArrayList<>();
 		if(isEroski(delivery.getCustomer().getDocument())) {
 			for (DeliveryDetail detail : delivery.getDetails()) {
-				list.add(createSEH1BRecord(detail));
+				if(!ProductType.AUXILIARY.equals(detail.getItem().getProduct().getType()))
+						list.add(createSEH1BRecord(detail));
 			}
 		}
 		return list;

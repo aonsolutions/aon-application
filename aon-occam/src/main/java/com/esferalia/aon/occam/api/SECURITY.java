@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SECURITY {
 
@@ -38,7 +39,9 @@ public class SECURITY {
 	public static AonToken getAonToken(String token) {
 		JSONObject json = SECURITY.decodeJWT(token);
 		AonToken aonToken = AonToken.parse(json);
-		aonToken.setAuth(hexStringToByteArray(aonToken.getUuid()));
+		if(!AonStringUtils.isBlank(aonToken.getUuid())) {
+			aonToken.setAuth(hexStringToByteArray(aonToken.getUuid()));
+		}
 		return aonToken;
 	}
 	
