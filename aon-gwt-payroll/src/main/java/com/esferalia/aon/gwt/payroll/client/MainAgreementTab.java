@@ -31,6 +31,7 @@ import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -89,13 +90,16 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
-			new AgreementsCleanDialog(AgreementCleanType.DELETED) {
+			AgreementsCleanDialog dialog = new AgreementsCleanDialog(AgreementCleanType.DELETED) {
 				
 				@Override
 				public void onAccept() {
 					mainTrashAgreement.getAgreements().getAgreements(s -> {});
 				}
 			};
+			
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -103,13 +107,16 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
-			new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
+			AgreementsCleanDialog dialog = new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
 				
 				@Override
 				public void onAccept() {
 					mainTrashAgreement.getAgreements().getAgreements(s -> {});
 				}
 			};
+			
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -200,6 +207,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		@Override
 		public void execute() {
 			AonDialog dialog = new AonDialog("Descargar convenio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -318,6 +327,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	interface MyStyle extends CssResource {
 		String borderR();
 		String cmdBtn();
+		String dialogGlass();
+		String dialogZIndex();
 		String tabSelected();
 		String tabNotSelected();
 	}
@@ -689,6 +700,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 						@Override
 						public void onSuccess(String message) {
 							AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+							dialog.setGlassStyleName(style.dialogGlass());
+							dialog.addStyleName(style.dialogZIndex());
 							dialog.confirm(new AonAcceptDialogCallback() {
 								
 								@Override
@@ -719,6 +732,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		} else {
 			String message = "Este convenio ser\u00E1 eliminado de forma permanente.<br>\u00BFDesea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
 			AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -784,12 +799,26 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	public void onCollapseMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 0);
 		splitLayoutPanel.animate(500);
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				agreementPreview.setTablesWidthCollapseMenu();
+			}
+		};
+		timer.schedule(500);
 	}
 
 	@Override
 	public void onShowMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 350);
 		splitLayoutPanel.animate(500);
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				agreementPreview.setTablesWidth();
+			}
+		};
+		timer.schedule(500);
 	}
 
 	@Override
@@ -827,6 +856,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 			
 		};
 		
+		serviAgreementDialog.setGlassStyleName(style.dialogGlass());
+		serviAgreementDialog.addStyleName(style.dialogZIndex());
 		serviAgreementDialog.setMessageVisible(!userRoles.isConvenios());
 	}
 
@@ -959,6 +990,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	
 	private void showWarnSave(Consumer<Void> accept) {
 		AonDialog warnDialog = new AonDialog("Cambios sin guardar", new HTMLPanel("Esta abandonando una pesta\u00f1a con cambios no guardados. \u00bfEst\u00e1 seguro de que desea continuar sin guardar\u003f"));
+		warnDialog.setGlassStyleName(style.dialogGlass());
+		warnDialog.addStyleName(style.dialogZIndex());
 		warnDialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override

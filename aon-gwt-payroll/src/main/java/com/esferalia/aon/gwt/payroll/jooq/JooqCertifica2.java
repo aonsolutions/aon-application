@@ -568,6 +568,7 @@ public class JooqCertifica2 {
 			// Ya has cumplido los 180 dias de registro
 			if (maxDays + salaryDaysBetween > 180) {
 				Long restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
+				if(0 == restDays) continue;
 
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
 						monthDateFormat.format(salaryStartDate), restDays.intValue(),

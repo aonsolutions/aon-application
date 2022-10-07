@@ -46,6 +46,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String cellWidth();
+		String dialogGlass();
+		String dialogZIndex();
 		String gridTitle();
 		String headerColor();
 		String headerFSize();
@@ -184,6 +186,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 			deleteBtn.addClickHandler(event -> {
 				AonDialog deleteDialog = new AonDialog("Borrar nivel", new HTMLPanel("\u00bfDesea realmente eliminar el nivel <b>" + level.getDescription() +"</b>\u003f"));
+				deleteDialog.setGlassStyleName(style.dialogGlass());
+				deleteDialog.addStyleName(style.dialogZIndex());
 				deleteDialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
@@ -240,6 +244,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			panel.add(description);
 			panel.add(levelDescription);
 			AonDialog dialog = new AonDialog("Nuevo nivel", panel);
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override

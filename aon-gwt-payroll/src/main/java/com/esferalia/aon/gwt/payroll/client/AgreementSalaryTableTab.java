@@ -54,6 +54,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		String columnBorder();
 		String datePickerPanel();
 		String deleteFixed();
+		String dialogGlass();
+		String dialogZIndex();
 		String gridCell();
 		String gridTitle();
 		String headerDeleteFixed();
@@ -228,6 +230,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 			deleteBtn.addClickHandler(event -> {
 				AonDialog deleteDialog = new AonDialog("Borrar nivel", new HTMLPanel("\u00bfDesea realmente eliminar el nivel <b>" + level.getDescription() +"</b>\u003f"));
+				deleteDialog.setGlassStyleName(style.dialogGlass());
+				deleteDialog.addStyleName(style.dialogZIndex());
 				deleteDialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
@@ -308,6 +312,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		deleteDateBtn = new AonToolbarSmallButton(AON.MSG.deleteAction() + " tramo", AON.CSS.aonIconDelete());
 		deleteDateBtn.addClickHandler(e -> {
 			AonDialog deleteDialog = new AonDialog("Borrar tramo", new HTMLPanel("\u00bfDesea realmente eliminar el tramo <b>" + datesLB.getSelectedValue() +"</b> de la tabla salarial\u003f"));
+			deleteDialog.setGlassStyleName(style.dialogGlass());
+			deleteDialog.addStyleName(style.dialogZIndex());
 			deleteDialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -349,6 +355,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					createSalaryTable();	
 				}
 			};
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.setShowVariables(agreement.getShownVariables());
 		});
 		
