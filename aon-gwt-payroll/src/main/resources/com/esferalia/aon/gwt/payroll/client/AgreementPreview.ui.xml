@@ -28,7 +28,7 @@
 		}
 		
 		.dateGap {
-			gap: 2px !important;
+			gap: 0px !important;
 			align-items: center;
 		}
 		
@@ -85,18 +85,30 @@
 		
 		.dateNoSelected {
 			padding: .3rem;
-			background-color: #eee;
+			background-color: white;
+			border: 1px solid #eee;
 			font-weight: bold;
 			cursor: pointer;
 		}
 		
 		.dateSelected {
-			background-color: white;
+			background-color: #eee;
 			border: 1px solid #eee;
 		}
 		
 		.datePanel {
 			gap: .3rem !important;
+		}
+		
+		.dialogGlass {
+			z-index: 7;
+			background-color: #000;
+			opacity: 0.2;
+			filter: opacity(45%);
+		}
+		
+		.dialogZIndex {
+			z-index: 8;
 		}
 		
 		.extraCellHeight{
@@ -139,6 +151,10 @@
 			height: 1.5rem;
 			font-size: .7rem;
 			background-color: #eee;
+		}
+		
+		.levelDefaultValue {
+			color: #5b93dc !important;
 		}
 
 		.levelFixed {
@@ -208,7 +224,7 @@
 						   </g:customHeader>
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
 						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex} {style.datePanel}" />
-								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter}">
+								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter} {style.heigthAll}">
 									<g:ScrollPanel ui:field="salaryScrollPanel">
 										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
 									</g:ScrollPanel>

@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -71,6 +72,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 		String dateNoSelected();
 		String dateSelected();
 		String datePanel();
+		String dialogGlass();
+		String dialogZIndex();
 		String extraCellHeight();
 		String flex();
 		String gridCell();
@@ -79,6 +82,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		String headerFixed();
 		String headerFSize();
 		String headerLevelFixed();
+		String levelDefaultValue();
 		String levelFixed();
 		String oddRow();
 		String textCenter();
@@ -245,6 +249,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 		if(agreement.getActivePayments().isEmpty()) showPaymentMessage();
 		else createPaymentTable();
 		
+		setTablesWidth();
+		
 	}
 	
 	// ------------------------------------------ serviAgreementPanel
@@ -315,8 +321,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			showSalaryTableMessage();
 		else {
 			hideLevelSalaryMessage();
-			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-			salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
 			getSalaryTableHeader();
 			fillSalaryTable();
 			salaryTableWidth();
@@ -397,10 +401,17 @@ public abstract class AgreementPreview extends ResizeComposite {
 			
 			for(String variable : agreement.getVariablesByDate(selectedDate)) {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
-				TextBox cell = new ExpressionBox();
+				Label cell = new Label();
 				cell.addStyleName(style.gridCell());
-				cell.setValue(null == levelData ? null : levelData.getExpression());
-				cell.setReadOnly(true);
+				cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
+				
+				// check if level 0 or default value
+				if(level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
+					levelData = agreement.getDefaultLevelData(variable, selectedDate);
+					cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
+					cell.setTitle("Valor por defecto");
+					cell.addStyleName(style.levelDefaultValue());
+				}
 						
 				salaryGrid.setWidget(row, col, cell);
 				if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
@@ -418,6 +429,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		salaryGrid.getColumnFormatter().setWidth(0, "100px");
 	}
 	
+	
 	private void filterSelectedLevel() {
 		String levelId = levelLB.getSelectedValue();
 		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(levelLB.getSelectedValue())));
@@ -431,7 +443,6 @@ public abstract class AgreementPreview extends ResizeComposite {
 			showLevelMessage();
 		else {
 			hideLevelSalaryMessage();
-			levelScrollPanel.setWidth("100%");
 			getCategoryTableHeader();
 			fillCategoryTable();
 			categoryTableWidth();
@@ -504,12 +515,11 @@ public abstract class AgreementPreview extends ResizeComposite {
 
 	private void createPaymentTable() {
 		hidePaymentMessage();
-		paymentScrollPanel.setWidth("100%");
 		getPaymentTableHeader();
 		fillPaymentTable();
 		paymentTableWidth();
 	}
-
+	
 	private void getPaymentTableHeader() {
 		paymentGrid.clear();
 		paymentGrid.resize(0, 4);
@@ -583,9 +593,15 @@ public abstract class AgreementPreview extends ResizeComposite {
 
 	private String getExtraMessage(Payment payment) {
 		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-		if(null == extra) return "";
+		if(	null == extra && 
+			!payment.getType().equals(Payment.Type.CRA_0004) && 
+			!payment.getType().equals(Payment.Type.CRA_0005)) return "";
 		
-		String period = getExtraPeriod(extra);
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
+		
+		String period = null == extra ? "" : getExtraPeriod(extra);
 		
 		return extra.getIssueDate() + period;
 	}
@@ -601,7 +617,13 @@ public abstract class AgreementPreview extends ResizeComposite {
 
 	private String getExtraTitle(Payment payment) {
 		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-		if(null == extra) return "";
+		if(	null == extra && 
+				!payment.getType().equals(Payment.Type.CRA_0004) && 
+				!payment.getType().equals(Payment.Type.CRA_0005)) return "";
+			
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
 		
 		return "Devenga desde: " + parseExtraDate(extra.getStartDate()) + ", hasta: " + parseExtraDate(extra.getEndDate());
 	}
@@ -614,6 +636,22 @@ public abstract class AgreementPreview extends ResizeComposite {
 		} else return date;
 	}
 	
+	// ------------------------------------------ tables widht
+	
+	public void setTablesWidth() {
+		levelScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+		salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
+		salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+		paymentScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+	}
+	
+	public void setTablesWidthCollapseMenu() {
+		levelScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
+		salaryTableButtons.setWidth((Window.getClientWidth() - 150) + "px");
+		salaryScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
+		paymentScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
+	}
+
 	// ------------------------------------------ deckLayoutPanel
 	
 	private void showAgreementPreview() {
@@ -716,6 +754,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 				@Override
 				public void onSuccess(String message) {
 					AonDialog dialog = new AonDialog(agreement.getDescription(), new HTML(message));
+					dialog.setGlassStyleName(style.dialogGlass());
+					dialog.addStyleName(style.dialogZIndex());
 					dialog.info();
 				}
 				
@@ -735,7 +775,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 				@Override
 				public void onSuccess(DomainUserRoles userRole) {
 					if(userRole.isConvenios()) {
-						new PaymentsCleanDialog(agreement.getPayments()) {
+						PaymentsCleanDialog dialog = new PaymentsCleanDialog(agreement.getPayments()) {
 							
 							@Override
 							public void onAccept() {
@@ -756,16 +796,16 @@ public abstract class AgreementPreview extends ResizeComposite {
 						
 						};
 						
-					} else {
-						AonDialog error = new AonDialog("Actualizaci\u00f3n no disponible", new HTMLPanel("Para poder actualizar un convenio a traves de ServiConvenios debe tener contrato el m\u00f3dulo."));
-						error.warning();
-					}
+						dialog.setGlassStyleName(style.dialogGlass());
+						dialog.addStyleName(style.dialogZIndex());
+						
+					} else 
+						showError("Actualizaci\u00f3n no disponible", "Para poder actualizar un convenio a traves de ServiConvenios debe tener contrato el m\u00f3dulo.");
 				}
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					AonDialog error = new AonDialog("Error", new HTMLPanel(caught.getMessage()));
-					error.warning();
+					showError("Error", caught.getMessage());
 				}
 			})
 		);

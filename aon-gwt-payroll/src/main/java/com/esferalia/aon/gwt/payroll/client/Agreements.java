@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -308,12 +309,12 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 
 					@Override
 					public void onSuccess(List<Agreement> agreements) {
-//						Agreement selectedAgreement = null == agreementsTree.getTree().getSelectedItem()
-//								? null : (Agreement) agreementsTree.getTree().getSelectedItem().getUserObject();
+						Agreement selectedAgreement = null == agreementsTree.getTree().getSelectedItem()
+								? null : (Agreement) agreementsTree.getTree().getSelectedItem().getUserObject();
 						
 						agreementsTree.getTree().clear();
-//						if(null != selectedAgreement)
-//							addAgreementItem(selectedAgreement);
+						if(null != selectedAgreement && !existAgreement(agreements, selectedAgreement))
+							addAgreementItem(selectedAgreement);
 						
 						for (int i = 0; i < agreements.size(); i++) {
 							Agreement agreement = agreements.get(i);
@@ -322,15 +323,40 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 						}
 						
 						// Select the first one.
-						if (agreementsTree.getTree().getItemCount() > 0)
+						if (agreementsTree.getTree().getItemCount() > 0 && null == selectedAgreement)
 							agreementsTree.getTree().setSelectedItem(
 									agreementsTree.getTree().getItem(0), 
 									true);
+						else
+							selectAgreementSelected(selectedAgreement);
 						
 						toolbar.setVisibleLoadingButton(false);
 						success.accept(agreements);
 					}
+
 				});
+	}
+
+	private boolean existAgreement(List<Agreement> agreements, Agreement selectedAgreement) {
+		Optional<Agreement> agreementFind = agreements.stream().filter(agreement -> agreement.getId().equals(selectedAgreement.getId())).findAny();
+		return agreementFind.isPresent();
+	}
+	
+	private void selectAgreementSelected(Agreement selectedAgreement) {
+		if(null == selectedAgreement)
+			agreementsTree.getTree().setSelectedItem(
+					agreementsTree.getTree().getItem(0), 
+					true);
+		else
+			for ( int i = 0; i < agreementsTree.getTree().getItemCount(); i++ ) {
+				TreeItem item = agreementsTree.getTree().getItem(i);
+				Agreement agreement = (Agreement) item.getUserObject();
+				
+				if(AonNumberUtils.equals(selectedAgreement.getId(), agreement.getId())) {
+					agreementsTree.tree.setSelectedItem(item, true);
+					return;
+				}
+			}
 	}
 	
 	private static String getId(Agreement agreement) {

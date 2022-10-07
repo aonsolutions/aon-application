@@ -461,6 +461,16 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		return null;
 	}
 	
+	public LevelData getDefaultLevelData(String variable, Date date) {
+		Set<LevelData> levelDatas = getLevelDatasMap().get(0);
+		if(null == levelDatas) return null;
+		
+		for(LevelData levelData : levelDatas)
+			if(AonStringUtils.equalsIgnoreCase(levelData.getName(), variable) && levelData.getStartDate().equals(date))
+				return levelData;
+		return null;
+	}
+	
 	public void createLevelData(Integer levelId, String variable, String expression, Date selectedDate) {
 		Set<LevelData> levelDatas = getLevelDatasMap().get(levelId);
 		if(null == levelDatas) levelDatas = new HashSet<>();
