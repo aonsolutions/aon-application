@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.tgss.HomeQuote2022Update;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2022FixII;
 
 public class Up2Date {
@@ -266,10 +267,11 @@ public class Up2Date {
     		//ContractExtraCreation.CONTRACTEXTRACREATION,
     		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
     		//TrainingBases2022Fix.TRAININGBASES2022FIX,
-    		TrainingBases2022FixII.TRAININGBASES2022FIXII
+    		//TrainingBases2022FixII.TRAININGBASES2022FIXII
     		//UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
     		//SevenConsultingDomainNameUpdate.SEVEN_CONSULTING_DOMAIN_NAME_UPDATE,
     		//InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
+    		HomeQuote2022Update.HOMEQUOTE2022UPDATE
     		
     };
 

@@ -46,6 +46,8 @@ public final class IJsonNames {
 	public static final String ATTACH_MODULE = "attachModule";
 	public static final String ATTACH_TYPE = "attachType";
 	public static final String AUTH = "auth";
+	public static final String AVATAR = "avatar";
+	
 	// ---------------------------------------------------------------------------------------------	[B] 
 	public static final String BACKGROUND = "background";
 	public static final String BACKGROUND_ATTACH = "backgroundAttach";

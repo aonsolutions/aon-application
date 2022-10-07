@@ -1085,12 +1085,15 @@ public class InvoiceImport {
 	private static Account getAccount(Domain domain, User user, String accountCode, String accountName) {
 		Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), accountCode);
 		if(account == null) {
+			String alias = !AonStringUtils.isBlank(accountName) && accountName.length()> 32 
+				? accountName.substring(0, 32) : accountName;
+					
 			account = new Account()
 				.setCode(accountCode)
 				.setDescription(!AonStringUtils.isBlank(accountName) 
 						? accountName : "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
 				.setAlias(!AonStringUtils.isBlank(accountName) 
-						? accountName.substring(0, 32) : "SIN DESCRIPCIÓN")
+						? alias : "SIN DESCRIPCIÓN")
 				.setDomain(domain.getId())
 				.setActive(true);
 			account = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.model.security.AuthAttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -40,7 +42,12 @@ public class AuthServlet extends AonApiHttpServlet{
 			AonToken aonToken = null;
 			Auth auth;
 			if(api.getData().opt(IJsonNames.EMAIL) != null) {
-				auth = AON_SOLUTIONS.getAuth(api.getData().optString(IJsonNames.EMAIL));
+// TODO AUTH with dynamodb
+//				auth = AuthDyn.getAuth(JsonUtils.getString(api.getData(), IJsonNames.EMAIL));
+//				if(auth.isEmpty())
+					auth = AON_SOLUTIONS.getAuth(api.getData().optString(IJsonNames.EMAIL));
+//				else if(JsonUtils.getboolean(api.getData(), IJsonNames.AVATAR)) 
+//					auth.setAvatar(S3.getPresignedURL(S3.AUTH_ATTACH_BUCKET, auth.getUuid(), AonDateUtils.addDays(new Date(), 1)));
 			} else if(api.getData().opt("task_holder") != null){
 				TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 						f -> f.getIdProperty().eq(api.getData().optInt("task_holder")));
@@ -49,23 +56,34 @@ public class AuthServlet extends AonApiHttpServlet{
 				auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());	
 			} else {
 				aonToken = SECURITY.getAonToken(api.getToken());
-				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+// TODO AUTH with dynamodb
+//				auth = AuthDyn.getAuthByUuid(aonToken.getUuid());
+//				if(auth.isEmpty())
+					auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+//				else if(JsonUtils.getboolean(api.getData(), IJsonNames.AVATAR)) 
+//					auth.setAvatar(S3.getPresignedURL(S3.AUTH_ATTACH_BUCKET, auth.getUuid(), AonDateUtils.addDays(new Date(), 1)));
+			}
+			
+			if(JsonUtils.getboolean(api.getData(), IJsonNames.AVATAR) && AonStringUtils.isBlank(auth.getAvatar())) {
+				byte[] a = auth.getAuth();
+				if(auth.getSchema() == null && aonToken != null) {
+					auth.setSchema(aonToken.getSchema());
+				}
+				
+				AuthAttach aa = AON_SOLUTIONS.getAuthAttach(auth, f-> f.getAuthProperty().eq(a).and(f.getTypeProperty().eq(AuthAttachType.AVATAR.value())));
+			
+				if(aa.getId() != null) {
+					JSONObject data = new JSONObject();
+					data.put("session_id", api.getToken());
+					String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+					String url =  "ms/api/auth_avatar/" +  result;
+					auth.setAvatar(url);
+				}
 			}
 			
 			JSONObject json = AuthJSON.toJSON(auth);
 			
-			byte[] a = auth.getAuth();
-			if(auth.getSchema() == null && aonToken != null) {
-				auth.setSchema(aonToken.getSchema());
-			}
-			AuthAttach aa = AON_SOLUTIONS.getAuthAttach(auth, f-> f.getAuthProperty().eq(a).and(f.getTypeProperty().eq(AuthAttachType.AVATAR.value())));
-			if(aa.getId() != null) {
-				JSONObject data = new JSONObject();
-				data.put("session_id", api.getToken());
-				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-				String url =  "ms/api/auth_avatar/" +  result;
-				json.put("avatar", url);
-			}
+			
 			response(req, resp, json);
 		} catch (Exception e) {
 			error(req, resp, e);

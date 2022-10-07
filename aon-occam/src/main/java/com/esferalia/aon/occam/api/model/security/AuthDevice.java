@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.api.model.security;
 
-import org.json.JSONObject;
-public class AuthDevice {
+import java.io.Serializable;
+
+public class AuthDevice implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	public AuthDevice() {}
 
 	private Integer id;
@@ -45,13 +49,4 @@ public class AuthDevice {
 		return deviceToken;
 	}
 
-
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("id", getId());
-		json.put("auth", getAuth());
-		json.put("device_type", getDeviceType().value());
-		json.put("device_token", getDeviceToken());
-		return json;
-	}
 }

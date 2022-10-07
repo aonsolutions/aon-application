@@ -1372,7 +1372,7 @@ public class SalaryDraftBuilder
 		Bonus bonus = new Bonus();
 		bonus.setId(contractBonus.getId());
 		bonus.setScope(getScope(contractBonus.getScope()));
-		bonus.setName(bonus.getName());
+		bonus.setName(contractBonus.getName());
 		bonus.setExpression(contractBonus.getExpression());
 		bonus.setType(getBonusType(contractBonus.getType()));
 		bonus.setDescriptionTemplate(contractBonus.getDescription());
