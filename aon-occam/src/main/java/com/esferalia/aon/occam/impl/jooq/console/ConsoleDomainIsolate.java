@@ -44,6 +44,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonRandomStringUtils;
@@ -71,7 +73,7 @@ public class ConsoleDomainIsolate {
 			}
 			
 			if (params.isValidate()) {
-				ConsoleDomainCheckIntegrity.check(processId, params);
+				ConsoleDomainCheckIntegrity.check(processId, params, true);
 				if (!params.hasErrors()) {
 					isolateDomain(processId, params);		
 				}
@@ -197,7 +199,7 @@ public class ConsoleDomainIsolate {
 			}
 			if (!params.getErrors().isEmpty()) {
 				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "SE HAN PRODUCIDO INCIDENCIAS"));
-				params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.warning(processId, e)));
+				params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e)));
 			}
 			ConsoleUtils.enableForeignKeys(params);
 		}
@@ -278,10 +280,15 @@ public class ConsoleDomainIsolate {
 				.having(count.gt(0))
 				.fetch()
 				.stream()
-				.forEach( rec -> params.addError("Existen \"" + rec.getValue(count) + "\" "
-					+ "contratos que referencian "
-					+ "al agreement_level " + rec.getValue(CONTRACT.AGREEMENT_LEVEL)))
-				;
+				.forEach( rec -> params.addError(
+						new ConsoleDomainMessage()
+							.setType(ConsoleDomainMessageType.AGREEMENT)
+							.setSchema(params.getFromConnection().getSchemaName())
+							.setDomainId(params.getFromConnection().getDomain().getId())
+							.setMessage("Existen \"" + rec.getValue(count) + "\" "
+								+ "contratos que referencian "
+								+ "al agreement_level " + rec.getValue(CONTRACT.AGREEMENT_LEVEL))
+				));
 				
 			AggregateFunction<Integer> count1 = DSL.count(PAYROLL_WORKPLACE.ID);
 				params.getFromDslContext()
@@ -294,9 +301,15 @@ public class ConsoleDomainIsolate {
 					.having(count1.gt(0))
 					.fetch()
 					.stream()
-					.forEach( rec -> params.addError("Existen \"" + rec.getValue(count1) + "\" "
-						+"centros de trabajo que referencian "
-						+ "al convenio " + rec.getValue(PAYROLL_WORKPLACE.AGREEMENT)));
+					.forEach( rec -> params.addError(
+						new ConsoleDomainMessage()
+							.setType(ConsoleDomainMessageType.AGREEMENT)
+							.setSchema(params.getFromConnection().getSchemaName())
+							.setDomainId(params.getFromConnection().getDomain().getId())
+							.setMessage("Existen \"" + rec.getValue(count1) + "\" "
+								+"centros de trabajo que referencian "
+								+ "al convenio " + rec.getValue(PAYROLL_WORKPLACE.AGREEMENT)
+					)));
 				if (params.hasErrors()) {
 					throw new AonCoreException("Revisar convenios");
 				}
@@ -316,7 +329,14 @@ public class ConsoleDomainIsolate {
 				.having(count.gt(1))
 				.fetch()
 				.stream()
-				.forEach( rec -> params.addError("El producto \"" + rec.getValue(PRODUCT.CODE) + "\" se encuentra definido en el padre y en el hijo"));
+				.forEach( rec -> params.addError(
+					new ConsoleDomainMessage()
+						.setType(ConsoleDomainMessageType.PRODUCT)
+						.setSchema(params.getFromConnection().getSchemaName())
+						.setDomainId(params.getFromConnection().getDomain().getId())
+						.setPkCode(rec.getValue(PRODUCT.CODE))
+						.setMessage("El producto \"" + rec.getValue(PRODUCT.CODE) + "\" se encuentra definido en el padre y en el hijo")
+				));
 			if (params.hasErrors()) {
 				throw new AonCoreException("Productos duplicados");
 			}
@@ -334,7 +354,7 @@ public class ConsoleDomainIsolate {
 		}
 		
 		params.getFromDslContext()
-			.select( NOTICE.ID,NOTICE.DATE,NOTICE.SUBJECT,NOTICE.DOMAIN )
+			.select( NOTICE.ID,NOTICE.DOMAIN,NOTICE.RECIPIENT,NOTICE.DATE,NOTICE.SUBJECT, USER.DOMAIN )
 			.from(NOTICE)
 			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
 			.where(NOTICE.DOMAIN.in(domainIds))
@@ -342,12 +362,26 @@ public class ConsoleDomainIsolate {
 					,params.getFromConnection().getDomain().getParentId()))
 			.fetch()
 			.stream()
-			.map(rec -> MessageFormat.format("Existe un aviso (tabla \"notice\") cuyo destinatario no pertence al dominio. [id: {0}, dominio: {1}, fecha: \"{2}\", subject: \"{3}\"] "
-				,rec.getValue(NOTICE.ID)
-				,rec.getValue(NOTICE.DOMAIN)
-				,rec.getValue(NOTICE.DATE)
-				,rec.getValue(NOTICE.SUBJECT)) )
-			.forEach( params::addError);
+			.forEach( rec -> params.addError(
+				new ConsoleDomainMessage()
+					.setType(ConsoleDomainMessageType.INTEGRITY)
+					.setSchema( params.getFromConnection().getSchemaName() )
+					.setDomainId( rec.getValue(NOTICE.DOMAIN) )
+					.setTable( NOTICE.getName() )
+					.setPkId( rec.getValue(NOTICE.ID))
+					.setFkTable( USER.getName() )
+					.setFkColumn(NOTICE.RECIPIENT.getName())
+					.setFkId( rec.getValue(NOTICE.RECIPIENT))
+					.setWrongDomainId( rec.getValue(USER.DOMAIN))
+					.setMessage(
+						MessageFormat.format("Existe un aviso (tabla \"notice\") cuyo destinatario no "
+								+ "pertence al dominio. [id: {0}, dominio: {1}, fecha: \"{2}\", subject: \"{3}\"] "
+							,rec.getValue(NOTICE.ID)
+							,rec.getValue(NOTICE.DOMAIN)
+							,rec.getValue(NOTICE.DATE)
+							,rec.getValue(NOTICE.SUBJECT))							
+					)
+			));
 		if (params.hasErrors()) {
 			throw new AonCoreException("Avisos incoherentes");
 		}
@@ -617,7 +651,7 @@ public class ConsoleDomainIsolate {
 		int percent = (scriptTable.getProgress() * 100 / scriptTable.getTotalProgress());
 		if ( percent != scriptTable.getLastMessagePercent()) { 	
 			scriptTable.setLastMessagePercent(percent);
-			String msg = "- Duplicando tabla " + scriptTable.getTableName();
+			String msg = "- Duplicando tabla " + scriptTable.getTableName() + " (" + scriptTable.getTotalProgress() + " rows )";
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId
 					,scriptTable.getTotalProgress()
 					,scriptTable.getProgress() )

@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.fiscal.client.console;
 import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType.Visitor;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
@@ -18,11 +20,13 @@ import com.google.gwt.user.client.ui.Widget;
 class AonConsoleProgress extends DockLayoutPanel {
 	
 	private final ScrollPanel scrollPanel;
-	private final FlowPanel container;
+	private final FlowPanel topContainer;
+	private final FlowPanel bottomContainer;
 	private Label title; 
 	private Label subtitle;
 	private AonConsoleProgressPanel main;
 	private final HashMap<String,AonConsoleProgressPanel> labels = new HashMap<>();
+	private AonDisplayGrid grid = new AonDisplayGrid();
 	
 	AonConsoleProgress() {
 		super(Unit.PX);
@@ -48,15 +52,34 @@ class AonConsoleProgress extends DockLayoutPanel {
 		headerPanel.add(main);
 		addNorth(headerPanel, 90);
 		
-
 		SimpleLayoutPanel slp = new SimpleLayoutPanel();
 		scrollPanel = new ScrollPanel();
 		setStyleName(AON.CSS.aonScrollArea());
-		container = new FlowPanel();
+		FlowPanel container = new FlowPanel();
 		container.setStyleName(AON.CSS.aonPadding());
 		scrollPanel.add(container);
+		topContainer = new FlowPanel();
+		container.add(topContainer);
+		bottomContainer = new FlowPanel();
+		container.add(bottomContainer);
+		
+		grid.addStyleName(AON.CSS.aonMarginTop());
+		
+		grid.addHeaderRow()
+			.addCell(new Label("Tipo"),AON.CSS.aonWidth80())
+			.addCell(new Label("Tabla"),AON.CSS.aonWidth200())
+			.addCell(new Label("ID"),AON.CSS.aonWidth40())
+			.addCell(new Label("Tabla Ref."))
+			.addCell(new Label("Columna"))
+			.addCell(new Label("ID Ref."),AON.CSS.aonWidth40())
+			.addCell(new Label("ID Dominio Error."),AON.CSS.aonWidth40())
+			.addCell(new Label("Mensaje."));
+		grid.setVisible(false);
+		bottomContainer.add(grid);
+		
 		slp.setWidget(scrollPanel);
 		add(slp);
+		
 	}
 
 	public void setMainProgress(double percent, String msg) {
@@ -72,7 +95,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 					return labels.computeIfAbsent(message.getProcessId()
 						, k -> {
 							AonConsoleProgressPanel w = new AonConsoleProgressPanel();
-							container.add(w);
+							topContainer.add(w);
 							return w;
 					});
 				}
@@ -89,7 +112,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 				
 				@Override
 				public void visitMessage() {
-					container.add(new Label(message.getMessage()));
+					topContainer.add(new Label(message.getMessage()));
 				}
 
 				@Override
@@ -107,7 +130,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 					Label messageLabel = new Label(message.getMessage());
 					messageLabel.setStyleName(AON.CSS.aonColorGreen());
 					messageLabel.addStyleName(AON.CSS.aonBold());
-					container.add(messageLabel);
+					topContainer.add(messageLabel);
 				}
 				
 				@Override
@@ -115,7 +138,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 					Label messageLabel = new Label(message.getMessage());
 					messageLabel.setStyleName(AON.CSS.aonColorOrange());
 					messageLabel.addStyleName(AON.CSS.aonBold());
-					container.add(messageLabel);
+					topContainer.add(messageLabel);
 				}
 
 				@Override
@@ -123,7 +146,35 @@ class AonConsoleProgress extends DockLayoutPanel {
 					Label messageLabel = new Label(message.getMessage());
 					messageLabel.setStyleName(AON.CSS.aonColorRed());
 					messageLabel.addStyleName(AON.CSS.aonBold());
-					container.add(messageLabel);
+					topContainer.add(messageLabel);
+				}
+				
+				@Override
+				public void visitConsoleMessage() {
+					if (message.getConsoleDomainMessage() != null) {
+						JsConsoleDomainMessage domainMessage = message.getConsoleDomainMessage();
+						if (domainMessage.getType() == ConsoleDomainMessageType.INTEGRITY) {
+							grid.setVisible(true);
+							grid.addRow()
+								.addCell(new Label("Integridad"))
+								.addCell(new Label(domainMessage.getTable()))
+								.addCell(new Label(""+domainMessage.getPkId()))
+								
+								.addCell(new Label(domainMessage.getFkTable()))
+								.addCell(new Label(domainMessage.getFkColumn()))
+								.addCell(new Label(""+domainMessage.getFkId()))
+								
+								.addCell(new Label(""+domainMessage.getWrongDomainId()))
+								
+								.addCell(new Label(domainMessage.getMessage()))
+							;
+						} else { 
+							Label messageLabel = new Label(message.getMessage());
+							messageLabel.setStyleName(AON.CSS.aonColorRed());
+							messageLabel.addStyleName(AON.CSS.aonBold());
+							bottomContainer.add(messageLabel);
+						}
+					}
 				}
 			});
 		}

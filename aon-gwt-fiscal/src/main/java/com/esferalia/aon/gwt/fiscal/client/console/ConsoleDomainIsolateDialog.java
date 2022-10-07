@@ -32,6 +32,7 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 	private ListBox newSchemaBox = new ListBox();
 	private AonTextBox newDomainBox = new AonTextBox();
 	private JsConsoleDomain domain;
+	private boolean accepted;
 
 	public ConsoleDomainIsolateDialog(JsConsoleDomain domain, ConsoleDomainTableCallback callback) {
 		this.domain = domain;
@@ -44,53 +45,50 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
 		
-		AonDisplayTable table = new AonDisplayTable();
-		FlowPanel flattenContainer = new FlowPanel();
-		flattenContainer.setStyleName(AON.CSS.aonTextCenter());
-		flattenContainer.addStyleName(AON.CSS.aonMarginTop());		
-		flattenContainer.addStyleName(AON.CSS.aonPaddingTop());
-		flattenContainer.addStyleName(AON.CSS.aonPaddingBottom());
-		flattenContainer.addStyleName(AON.CSS.aonBlockCenter());
-		flattenContainer.addStyleName(AON.CSS.aonBorder());
-		validate.setValue(true);
-		validate.setStyleName(AON.CSS.aonMarginLeft());
-		
-		mustFlatten.setStyleName(AON.CSS.aonMarginLeft());
-		mustFlatten.setEnabled(false);
-		flattenContainer.add(validate);
-		flattenContainer.add(mustFlatten);
-		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.CSS.aonPadding());
-		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
-		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
-
 		FlowPanel container = new FlowPanel();
-		container.add(table);
-		container.add(flattenContainer);
-		container.add(buttonsPanel);
 		scroll.setWidget(container);
-		table.addStyleName(AON.CSS.aonBlockCenter());
 		
-		Label originLabel = new Label("ORIGEN");
+		Label originLabel = new Label("Origen");
 		originLabel.setStyleName(AON.CSS.aonBold());
-		
-		table.addRow()
-			.addCell(originLabel)
-			.addCell(new Label("Esquema"), AON.CSS.aonInnerLabel())
-			.addCell(new Label( callback.getSchema() ), AON.CSS.aonBold());
-		table.addRow()
-			.addCell(new Label())
-			.addCell(new Label("Dominio"), AON.CSS.aonInnerLabel())
-			.addCell(new Label( domain.getName() ), AON.CSS.aonBold(), AON.CSS.aonFontLarger() );	
-		table.addRow()
-			.addCell(new Label())
-			.addCell(new Label())
-			.addCell(new Label( domain.getDescription() ), AON.CSS.aonBold(), AON.CSS.aonFontLarger());	
+		originLabel.addStyleName(AON.CSS.aonMarginTop());
+		originLabel.addStyleName(AON.CSS.aonBorderBottom());
+		container.add(originLabel);
 			
-		Label targetLabel = new Label("DESTINO");
+		AonDisplayTable originTable = new AonDisplayTable();
+		originTable.setStyleName(AON.CSS.aonWidthAlmostAll());
+		originTable.addStyleName(AON.CSS.aonBlockCenter());
+		originTable.addStyleName(AON.CSS.aonBackgroundLigthGray());
+		container.add(originTable);
+		
+		Label nameLabel = new Label( domain.getName());
+		nameLabel.setStyleName(AON.CSS.aonClickableLabel());
+		nameLabel.setTitle("Copiar valor a nuevo nombre");
+		nameLabel.addClickHandler(e -> newDomainBox.setValue(domain.getName()));
+		
+		originTable.addRow()
+			.addCell(new Label("Esquema"), AON.CSS.aonTableLabel())
+			.addCell(new Label( callback.getSchema() ), AON.CSS.aonBold());
+		originTable.addRow()
+			.addCell(new Label("ID Dominio"), AON.CSS.aonTableLabel())
+			.addCell(new Label( AonNumberUtils.toString(domain.getId())), AON.CSS.aonBold());	
+		originTable.addRow()
+			.addCell(new Label(AON.MSG.name()), AON.CSS.aonTableLabel())
+			.addCell(nameLabel, AON.CSS.aonNowrap() );	
+		originTable.addRow()
+			.addCell(new Label(AON.MSG.description()), AON.CSS.aonTableLabel())
+			.addCell(new Label( domain.getDescription() ));	
+		
+		Label targetLabel = new Label("Destino");
 		targetLabel.setStyleName(AON.CSS.aonBold());
+		targetLabel.addStyleName(AON.CSS.aonMarginTop());
+		targetLabel.addStyleName(AON.CSS.aonBorderBottom());
+		container.add(targetLabel);
 
+		AonDisplayTable targetTable = new AonDisplayTable();
+		targetTable.setStyleName(AON.CSS.aonWidthAlmostAll());
+		targetTable.addStyleName(AON.CSS.aonBlockCenter());
+		container.add(targetTable);
+		
 		newSchemaBox.clear();
 		newSchemaBox.addItem(AonStringUtils.EMPTY);
 		int i = 1;
@@ -103,15 +101,41 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		}
 		newSchemaBox.addChangeHandler( e -> manageMustFlatten(callback));
 		
-		newDomainBox.setVisibleLength(25);
-		table.addRow()
-			.addCell(targetLabel)
-			.addCell(new Label("Esquema"), AON.CSS.aonInnerLabel())
+		newDomainBox.setVisibleLength(40);
+
+		targetTable.addRow()
+			.addCell(new Label("Esquema"), AON.CSS.aonTableLabel())
 			.addCell(newSchemaBox);
-		table.addRow()
-			.addCell(new Label())
-			.addCell(new Label("Dominio"), AON.CSS.aonInnerLabel())
+		targetTable.addRow()
+			.addCell(new Label("Nuevo nombre"), AON.CSS.aonTableLabel())
 			.addCell(newDomainBox);
+		
+		Label optionsLabel = new Label("Opciones");
+		optionsLabel.setStyleName(AON.CSS.aonMarginTop());
+		optionsLabel.addStyleName(AON.CSS.aonBorderBottom());
+		optionsLabel.addStyleName(AON.CSS.aonBold());
+		container.add(optionsLabel);
+		
+		FlowPanel validatePanel = new FlowPanel();
+		container.add(validatePanel);
+		
+		validate.setValue(true);
+		validate.setStyleName(AON.CSS.aonMarginLeft());
+		validatePanel.add(validate);
+
+		FlowPanel mustFlattenPanel = new FlowPanel();
+		container.add(mustFlattenPanel);
+		
+		mustFlatten.setStyleName(AON.CSS.aonMarginLeft());
+		mustFlatten.setEnabled(false);
+		mustFlattenPanel.add(mustFlatten);
+		
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
+		container.add(buttonsPanel);
+
 
 		Button acceptButton = new Button();		
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
@@ -119,23 +143,33 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		
 		acceptButton.addClickHandler(event -> {
 			acceptButton.setEnabled(false);
-			if (validate()) {
-				DomainParams params = new DomainParams()
-					.setSchema(callback.getSchema())
-					.setId(AonNumberUtils.toInteger("" +  domain.getId()))
-					.setName(domain.getName())
-					.setDescription(domain.getDescription())
-					.setValidate(validate.getValue().booleanValue())
-					.setMustFlatten(mustFlatten.getValue().booleanValue())
-					;
-				DomainParams target = new DomainParams()
-					.setSchema(newSchemaBox.getSelectedValue())
-					.setName(newDomainBox.getValue())
-					;
-				hide();
-				callback.onDuplicate(params, target );
-			} else {
+			if (!accepted) {
+				accepted = true;
+				Label acceptLabel = new Label("Pulse \"Aceptar\" si desea continuar");
+				acceptLabel.setStyleName(AON.CSS.aonBold());
+				acceptLabel.addStyleName(AON.CSS.aonMarginTop());
+				acceptLabel.addStyleName(AON.CSS.aonColorBlue());
+				buttonsPanel.add(acceptLabel);				
 				acceptButton.setEnabled(true);
+			} else {
+				if (validate()) {
+					DomainParams params = new DomainParams()
+							.setSchema(callback.getSchema())
+							.setId(AonNumberUtils.toInteger("" +  domain.getId()))
+							.setName(domain.getName())
+							.setDescription(domain.getDescription())
+							.setValidate(validate.getValue().booleanValue())
+							.setMustFlatten(mustFlatten.getValue().booleanValue())
+							;
+					DomainParams target = new DomainParams()
+							.setSchema(newSchemaBox.getSelectedValue())
+							.setName(newDomainBox.getValue())
+							;
+					hide();
+					callback.onDuplicate(params, target );
+				} else {
+					acceptButton.setEnabled(true);
+				}
 			}
 		});
 		buttonsPanel.add(acceptButton);
@@ -147,6 +181,8 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		buttonsPanel.add(cancelButton);
 		
 		setWidget(scroll);
+		
+		manageMustFlatten(callback);
 	}
 
 	private void manageMustFlatten(ConsoleDomainTableCallback callback) {

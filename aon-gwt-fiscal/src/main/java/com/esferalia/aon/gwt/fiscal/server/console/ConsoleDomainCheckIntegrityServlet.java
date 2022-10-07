@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDomainCheckIntegrity;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -33,6 +34,7 @@ public class ConsoleDomainCheckIntegrityServlet extends ConsoleAbstractServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.log(Level.INFO, "ConsoleDomainCheckIntegrityServlet start!");
 		String domainParamsParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
+		resp.setContentType(MimeType.JSON.getName());
 		ConsoleParams consoleParams = new ConsoleParams()
 			.setPrinter(new PrintStream(resp.getOutputStream()));
 		DomainParams domainParams = null;

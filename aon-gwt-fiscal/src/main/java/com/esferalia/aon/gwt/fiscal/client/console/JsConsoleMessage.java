@@ -35,4 +35,8 @@ public class JsConsoleMessage extends JavaScriptObject {
 		return this.percent;
 	}-*/;
 	
+	public final native JsConsoleDomainMessage getConsoleDomainMessage() /*-{
+		return this.consoleDomainMessage;
+	}-*/;
+	
 }

@@ -4,6 +4,7 @@ package com.esferalia.aon.occam.impl.jooq.console;
 import java.io.PrintStream;
 
 import com.esferalia.aon.occam.api.json.ConsoleMessageJSON;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -19,6 +20,11 @@ class ConsoleMessageUtils {
 			.setProcessId(id)
 			.setType(type)
 			.setMessage(msg);
+	}
+
+	public static ConsoleMessage error(String id,ConsoleDomainMessage msg) {
+		return get(id,ConsoleMessageType.CONSOLE_MESSAGE,msg.getMessage())
+			.setConsoleDomainMessage(msg);
 	}
 
 	public static ConsoleMessage error(String id,String msg) {
@@ -67,7 +73,6 @@ class ConsoleMessageUtils {
 
 	static void print(PrintStream stream, ConsoleMessage msg) {
 		String json = ConsoleMessageJSON.toJSON(msg).toString();
-//		System.out.println( json );
 		stream.print( json );
 		stream.println( "," );
 		stream.flush();

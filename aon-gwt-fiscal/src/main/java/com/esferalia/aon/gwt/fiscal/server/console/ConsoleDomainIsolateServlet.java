@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDomainIsolate;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -35,13 +36,16 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		String domainParamsParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
 		String newSchemaName = req.getParameter(IRequestParamsNames.NEW_SCHEMA);
 		String newDomainName = req.getParameter(IRequestParamsNames.NEW_DOMAIN_NAME);
+		resp.setContentType(MimeType.JSON.getName());
 		ConsoleParams params = new ConsoleParams( )
 			.setPrinter(new PrintStream(resp.getOutputStream()));
 		DomainParams domainParams = null;
+		CloseableAONContext fromCtx = null;
+		CloseableAONContext toCtx = null;
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
 			
-			CloseableAONContext fromCtx = AONContext.getAONContext(domainParams.getSchema());
+			fromCtx = AONContext.getAONContext(domainParams.getSchema());
 			Schema fromSchema = fromCtx.getDslContext().meta()
 				.getSchemas(domainParams.getSchema())
 				.stream()
@@ -57,7 +61,7 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 					.setDescription(domainParams.getDescription())
 				);
 			
-			CloseableAONContext toCtx = AONContext.getAONContext(newSchemaName);
+			toCtx = AONContext.getAONContext(newSchemaName);
 			Schema toSchema = toCtx.getDslContext().meta()
 				.getSchemas(newSchemaName)
 				.stream()
@@ -89,6 +93,12 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 			params.getPrinter().println();
 			LOGGER.log(Level.SEVERE, "ConsoleDomainIsolateServlet {0}!",e.getMessage());
 		} finally {
+			if (fromCtx != null) {
+				fromCtx.close();
+			}
+			if (toCtx != null) { 
+				toCtx.close();
+			}
 			params.getPrinter().println("Request ended.");
 			params.getPrinter().println();
 			params.getPrinter().flush();

@@ -101,6 +101,7 @@ public final class IJsonNames {
 	public static final String CONCEPT = "concept";
 	public static final String CONFIDENTIAL = "confidential";
 	public static final String CONFIGURED_VISIBLE = "configuredVisible";
+	public static final String CONSOLE_DOMAIN_MESSAGE = "consoleDomainMessage";
 	public static final String CONSOLIDATION = "consolidation";
 	public static final String CONTACT_DATA = "contactData";
 	public static final String CONTAINER = "container";
@@ -194,6 +195,9 @@ public final class IJsonNames {
 	public static final String FINANCE_PARAMS = "financeParams";
 	public static final String FINANCE_PENDING = "financePending";
 	public static final String FINANCES = "finances";
+	public static final String FK_COLUMN = "fkColumn";
+	public static final String FK_ID = "fkId";
+	public static final String FK_TABLE = "fkTable";
 	public static final String FOOTER = "footer";
 	public static final String FOOTER_TEXT = "footerText";
 	public static final String FORMULA = "formula";
@@ -357,6 +361,8 @@ public final class IJsonNames {
 	public static final String PERIOD = "period";
 	public static final String PERSON = "person";
 	public static final String PHONE = "phone";
+	public static final String PK_CODE = "pkCode";
+	public static final String PK_ID = "pkId";
 	public static final String PLAN = "plan";
 	public static final String PORTAL = "portal";
 	public static final String POSTAL_CODE = "postal_code";
@@ -487,6 +493,7 @@ public final class IJsonNames {
 	public static final String SURNAME = "surname";
 	public static final String SEARCH = "search";
 	// ---------------------------------------------------------------------------------------------	[T] 
+	public static final String TABLE = "table";
 	public static final String TARIFF = "tariff";
 	public static final String TAS = "tas";
 	public static final String TASK = "task";
@@ -545,6 +552,7 @@ public final class IJsonNames {
 	public static final String WORKGROUPS = "workgroups";
 	public static final String WORKPLACE = "workplace";
 	public static final String WORKPLACE_IDS = "workplaceIds";
+	public static final String WRONG_DOMAIN_ID = "wrongDomainId";
 	// ---------------------------------------------------------------------------------------------	[Y]
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 

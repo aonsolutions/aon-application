@@ -13,9 +13,13 @@ public class JsConsoleDomain extends JavaScriptObject {
 	protected JsConsoleDomain() {
 	}
 	
-	public final native Integer getId() /*-{
+	private final native Integer id() /*-{
 		return this.id;
 	}-*/;
+	
+	public final Integer getId(){
+		return AonNumberUtils.toInteger("" +  id());
+	}
 	
 	public final native String getName() /*-{
 		return this.name;

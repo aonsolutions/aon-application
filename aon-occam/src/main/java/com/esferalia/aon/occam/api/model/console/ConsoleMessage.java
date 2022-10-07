@@ -13,6 +13,7 @@ public class ConsoleMessage implements Serializable {
 	private Integer count;
 	private Integer progress;
 	private Double percent;
+	private ConsoleDomainMessage consoleDomainMessage;
 	
 	public String getProcessId() {
 		return processId;
@@ -61,5 +62,12 @@ public class ConsoleMessage implements Serializable {
 		this.percent = percent;
 		return this;
 	}
-	
+
+	public ConsoleDomainMessage getConsoleDomainMessage() {
+		return consoleDomainMessage;
+	}
+	public ConsoleMessage setConsoleDomainMessage(ConsoleDomainMessage consoleDomainMessage) {
+		this.consoleDomainMessage = consoleDomainMessage;
+		return this;
+	}
 }

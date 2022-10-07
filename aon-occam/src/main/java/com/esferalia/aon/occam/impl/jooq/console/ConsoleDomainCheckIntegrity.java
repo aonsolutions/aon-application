@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
+import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
+import static com.esferalia.aon.jooq.tables.Session.SESSION;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,6 +21,8 @@ import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonRandomStringUtils;
@@ -37,13 +42,13 @@ public class ConsoleDomainCheckIntegrity {
 		try {
 			ConsoleMessageUtils.start(params.getPrinter());
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "VALIDACION DE DOMINIO"));
-			check(processId, params);
+			check(processId, params, false);
 		} finally {
 			ConsoleMessageUtils.end(params.getPrinter());
 		}
 	}
 	
-	public static void check(String processId, ConsoleParams params) {
+	public static void check(String processId, ConsoleParams params, boolean beforeIsolate) {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.subtitle(processId, "VALIDACION DE DOMINIO"));
 		Integer domainId = params.getFromConnection().getDomain().getId();
 		Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext(), domainId);
@@ -62,6 +67,8 @@ public class ConsoleDomainCheckIntegrity {
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Generating tables script"));			
 			tables.stream()
 				.filter(Objects::nonNull )
+				.filter(t -> !beforeIsolate || (beforeIsolate && !SESSION.getName().equals(t.getName())))
+				.filter(t -> !beforeIsolate || (beforeIsolate && !ACTION_ENTRY.getName().equals(t.getName())))
 				.forEach(t -> addTable(params, t));
 			
 			params.setPartialCount( params.getScript().size() );
@@ -148,7 +155,6 @@ public class ConsoleDomainCheckIntegrity {
 				,params.getPartialCount()
 				,params.getPartialProgress() )
 				.setMessage(msg));
-		
 		Table<?> fromTable = fk.getTable();
 		String fromTableAlias = "fromTable";
 		Table<?> fromTableSelect = fromTable.as(fromTableAlias);
@@ -195,14 +201,29 @@ public class ConsoleDomainCheckIntegrity {
 				)
 				.forEach( toRec -> {
 					params.addError(
-					MessageFormat.format("Dom: {0}. Tabla \"{1}\",id \"{2}\", columna \"{3}\" ({4}) que referencia a la tabla \"{5}\" apunta al dominio {6}."
-						,toRec.getValue(fromDomainField)
-						,fromTable.getName()
-						,toRec.getValue(pkField)
-						,fkField.getName()
-						,toRec.getValue(fkField)
-						,toTable.getName()
-						,toRec.getValue(toDomainField))
+						new ConsoleDomainMessage()
+							.setType(ConsoleDomainMessageType.INTEGRITY)	
+							.setSchema( params.getFromConnection().getSchemaName() )
+							.setDomainId( toRec.getValue(fromDomainField) )
+							.setTable( fromTable.getName() )
+							.setPkId( Integer.valueOf(Objects.toString(toRec.getValue(pkField)) ))
+							.setFkTable( toTable.getName() )
+							.setFkColumn(fkField.getName())
+							.setFkId(Integer.valueOf(Objects.toString(toRec.getValue(fkField))))
+							.setWrongDomainId(Integer.valueOf(Objects.toString(toRec.getValue(toDomainField))))
+							.setMessage(
+								MessageFormat.format("Dominio: {0} "
+									+ ", tabla: [{1}]"
+									+ ", ID: {2}"
+									+ ", columna [{3}] ({4}) que referencia a la tabla [{5}] apunta al dominio {6}."
+								,Objects.toString(toRec.getValue(fromDomainField))
+								,fromTable.getName()
+								,Objects.toString(toRec.getValue(pkField))
+								,fkField.getName()
+								,Objects.toString(toRec.getValue(fkField))
+								,toTable.getName()
+								,Objects.toString(toRec.getValue(toDomainField)))
+							)
 					);
 				});
 		}

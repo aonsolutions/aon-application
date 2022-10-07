@@ -39,6 +39,7 @@ public class ConsoleMessageJSON {
 			.setCount(JsonUtils.getInt(json, IJsonNames.COUNT))
 			.setProgress(JsonUtils.getInt(json, IJsonNames.PROGRESS))
 			.setPercent(JsonUtils.getdouble(json, IJsonNames.PERCENT))
+			.setConsoleDomainMessage( ConsoleDomainMessageJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CONSOLE_DOMAIN_MESSAGE)) )
 		;
 	}
 
@@ -61,6 +62,7 @@ public class ConsoleMessageJSON {
 			.put(IJsonNames.COUNT, message.getCount())
 			.put(IJsonNames.PROGRESS, message.getProgress())
 			.put(IJsonNames.PERCENT, message.getPercent())
+			.putOpt(IJsonNames.CONSOLE_DOMAIN_MESSAGE, ConsoleDomainMessageJSON.toJSON(message.getConsoleDomainMessage()) )
 			;		
 	}
 

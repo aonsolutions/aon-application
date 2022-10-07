@@ -12,6 +12,7 @@ public enum ConsoleMessageType {
 	ERROR			{ @Override public void visit(Visitor visitor) {visitor.visitError(); }},
 	WARNING			{ @Override public void visit(Visitor visitor) {visitor.visitWarning(); }},
 	OK				{ @Override public void visit(Visitor visitor) {visitor.visitOk(); }},
+	CONSOLE_MESSAGE	{ @Override public void visit(Visitor visitor) {visitor.visitConsoleMessage(); }},
 	;
 
 	private ConsoleMessageType() {
@@ -50,6 +51,7 @@ public enum ConsoleMessageType {
 		void visitWarning();
 		void visitError();
 		void visitOk();
+		void visitConsoleMessage();
 	}
 	
 }
