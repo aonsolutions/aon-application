@@ -14,6 +14,8 @@ import { AonTaskHolderList } from '../taskholder/aon-taskholder-list.js';
 import { OfficeUtils } from './OfficeUtils.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
+import { getScopes } from '../../services/documentalService.js';
+import { AonCheckbox } from '../../components/aon-checkbox.js';
 
 export class AonOfficePanel extends AonElement {
     projectTypes;
@@ -21,6 +23,8 @@ export class AonOfficePanel extends AonElement {
     taskHolders;
     customerSelected;
 
+    filterCustomers;
+    
     setCustomerSelected(customerSelected){
         this.customerSelected = customerSelected;
     }
@@ -30,6 +34,18 @@ export class AonOfficePanel extends AonElement {
         .filter((value,index) => // remove repeated customersSelected
             this.customerSelected.findIndex((m) => m.id === value.id) === index 
         ) 
+    }
+
+    addFilterCustomers(filter){
+        this.filterCustomers = { ...this.filterCustomers, ...filter};
+    }
+
+    setFilterCustomers(filter){
+        this.filterCustomers = filter;
+    }
+
+    getFilterCustomers(){
+        return this.filterCustomers;
     }
 
 	constructor () {
@@ -47,18 +63,19 @@ export class AonOfficePanel extends AonElement {
         this.workgroups   = [];
         this.taskHolders  = [];
         this.setCustomerSelected([]);
+        
+        this.setFilterCustomers({
+            page: 1,
+            perPage:50,
+            status:["ACTIVE", "BLOCKED"]
+        });
 	}
 
  	build() {
         this.createApplication(this.id, MSG.OFFICE, new AonApplication());
         this.buildSidenav();
-        
-        this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST);
 
-        // let observer = new MutationObserver((mutations)=> this.mutate(mutations));
-        // let config = { childList: true};
-      
-        // observer.observe(this.getApplication().getContent(), config);
+        this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST, undefined, this.getFilterCustomers());
 	}
 
     buildSidenav() {
@@ -69,7 +86,7 @@ export class AonOfficePanel extends AonElement {
         let options = [];
 
         let customer = OfficeOptions.AON_CUSTOMER;
-        customer.fn = () => this.showView(OfficeViews.AON_CUSTOMER_LIST);
+        customer.fn = () => this.showView(OfficeViews.AON_CUSTOMER_LIST, undefined, this.getFilterCustomers());
         options.push(customer);
 
         let taskHolder = OfficeOptions.AON_TASK_HOLDER;
@@ -81,8 +98,7 @@ export class AonOfficePanel extends AonElement {
         application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], () => this.createType());
         this.loadProjectType();
     }
-
-
+    
     loadProjectType() {
         getProjectTypes({})
         .then(types => {
@@ -166,15 +182,47 @@ export class AonOfficePanel extends AonElement {
 
                 const btnSearch = application.addSearchOption();
 
-                btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-                    clearTimeout(timeOut);
+                btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
+                    console.log(detail);
+           
                     timeOut = setTimeout(() => {
-                        aonView.setFilter({page:1, perPage:50, value:detail});
+                        this.addFilterCustomers({
+                            value:detail.search,
+                            scope:detail.scope,
+                            status: OfficeUtils.getCustomerStatus(detail)
+                        });
+                        aonView.setFilter(this.getFilterCustomers());
                     }, 300);
                 });
+
+                btnSearch.buildOptionsFilter(OfficeEnums.CustomerFilter);//INPUTS
+                this.searchValueDefault();
             }
         }
     }
+
+    searchValueDefault(){
+        let filter =  this.getFilterCustomers() || {};
+
+		let scopeEl = this.getElement("scope");
+        getScopes().then(scopes=>{
+            scopeEl.setOptions(scopes.map(c=> ({...c, value: c.id})) );
+
+            const value = filter.scope;
+            if(value){
+                scopeEl.value = value;
+            }
+        })
+
+        let active = this.getElement("active");
+        active.value = (filter.status ||  []).includes("ACTIVE");
+        
+        let inactive = this.getElement("inactive");
+        inactive.value = (filter.status ||  []).includes("INACTIVE");
+  
+        let blocked = this.getElement("blocked");
+        blocked.value = (filter.status ||  []).includes("BLOCKED");
+	}
 
     async onSaveExpedientes(project){
         let selected = this.getCustomerSelected();
@@ -224,7 +272,7 @@ export class AonOfficePanel extends AonElement {
 				break;
                 case officeViews.AON_CUSTOMER:
 					aonView = new AonCustomer();
-                    aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST); // overwrite function
+                    aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST, undefined, this.getFilterCustomers()); // overwrite function
 				break;
                 case officeViews.AON_CUSTOMER_LIST:
 					aonView = new AonCustomerList();
@@ -248,7 +296,12 @@ export class AonOfficePanel extends AonElement {
 			}
 			if(aonView){
 				aonView.id = view;
-				if(filter) aonView.setFilter(filter);
+
+				if(filter) {
+                    aonView.filter = filter;
+                    aonView.setFilter(filter);
+                } 
+
                 if(data){
                     if(data.customer){
                         aonView.setCustomer(data.customer);

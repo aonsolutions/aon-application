@@ -94,7 +94,7 @@ export class AonCompanyCostsList extends AonElement {
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
 
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
 
     btnSearch.buildOptionsFilter([PAYROLL_FILTER[0], ...PRESENCE_FILTER]);//INPUTS
     this.searchValueDefault();

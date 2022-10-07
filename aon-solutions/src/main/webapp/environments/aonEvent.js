@@ -30,7 +30,6 @@ export const SELECT_REGISTRY = 'selectRegistry';
 export const SELECT_OPTION = 'selectOption';
 export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
-export const SEARCH_VALUE = 'searchValue';
 export const MORE = 'more';
 export const SCROLL = 'scroll';
 export const UPLOAD = 'upload';
