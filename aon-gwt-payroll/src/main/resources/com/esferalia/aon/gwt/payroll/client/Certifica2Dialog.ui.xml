@@ -174,7 +174,7 @@
 			
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:HTMLPanel styleName="{style.flex}">
-					<g:Label styleName="{style.subTitle}">Días Cotización:</g:Label>
+					<g:Label styleName="{style.subTitle}">Días Cotización (finiquito):</g:Label>
 					<g:Label ui:field="settleQuoteDaysL" />
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.flex}">
@@ -188,7 +188,7 @@
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.flex}"  ui:field="quoteDataListTitlePanel">
-				<g:Label styleName="{style.bold} {style.title}">Tramos Certifica2</g:Label>
+				<g:Label styleName="{style.bold} {style.title}">Tramos Certific@2</g:Label>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel ui:field="quoteDataListPanel" styleName="{style.flexColumn}"/>
