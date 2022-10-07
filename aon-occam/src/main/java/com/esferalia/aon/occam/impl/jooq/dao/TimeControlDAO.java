@@ -317,18 +317,16 @@ public class TimeControlDAO {
 			);
 		
 			if( timeControl.isDirty(tcd) ) {
-			
-				Integer lastMinId = -1;
-				
 				Optional<TimecontrolRecord> last = select(ctx, 
-					f->f.getDomainProperty().eq(tcd.getDomain().getId())
+					f-> f.getDomainProperty().eq(tcd.getDomain().getId())
 					.and(f.getIdProperty().lt(0))
-				).orderBy(TIMECONTROL.ID.asc()).limit(1)
+				)
+				.orderBy(TIMECONTROL.ID.asc())
+				.limit(1)
 				.fetchOptionalInto(TIMECONTROL);
 				
-				if(last.isPresent()) 
-					lastMinId = last.get().getId() - 1; 
-	
+				Integer lastMinId = last.isPresent() ? last.get().getId() : -1;
+
 				timeControl.setId(lastMinId).setModificatedTimeControl(tcd.getId());
 				
 				ctx.log().debug("--------INSERT LOG----------");	
