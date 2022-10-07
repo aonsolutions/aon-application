@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
+import { isEmptyObject, removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
 import { setAttributes} from "../../../../services/utilsComponents.js";
 import { getStatus, getPeriod, getTimeControlDetail } from "../../../../services/service.js";
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
@@ -214,7 +214,14 @@ export class AonEventDetailList extends AonElement {
           const status = getStatus(newStatus);
           const textStatus = status.name;
           const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
-          const nameLocation = resp.location && resp.location.name ? resp.location.name : `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
+    
+          let nameLocation = "";
+          if (resp.location && resp.location.name) {
+            nameLocation = resp.location.name;
+          } else if(!isEmptyObject(resp.coordinates)) {
+            let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
+            nameLocation = aib.outerHTML;
+          }
 
           data.push({
             ...resp,
@@ -224,6 +231,7 @@ export class AonEventDetailList extends AonElement {
             nameLocation,
             dateParse: AonDateUtils.setDateTimestamp(resp.date),
           });
+          
         });
       }
     } catch (error) {

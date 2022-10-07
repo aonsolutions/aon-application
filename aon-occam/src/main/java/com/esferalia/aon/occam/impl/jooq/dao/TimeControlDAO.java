@@ -20,6 +20,7 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
@@ -280,17 +281,30 @@ public class TimeControlDAO {
 	private static TimeControlDetail update(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
 		
-		saveLog(ctx, tcd);
+		boolean updateCoordinates = tcd.getCoordinates()!=null && tcd.getCoordinates().getLatitude()!=null &&  tcd.getCoordinates().getLongitude()!=null;
+		
+		if(!updateCoordinates) {			
+			saveLog(ctx, tcd);
+		}
 
-		ctx.getDslContext().update(TIMECONTROL)
+		UpdateSetMoreStep<TimecontrolRecord> sets = ctx.getDslContext()
+		.update(TIMECONTROL)
 		.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
 		.set(TIMECONTROL.COMMENTS, tcd.getComments())
 		.set(TIMECONTROL.STATUS, tcd.getStatus().value())
 		.set(TIMECONTROL.LOCATION ,tcd.getLocation()!=null ? tcd.getLocation().getId() : null)
 		.set(TIMECONTROL.MODIFICATION_USER, ctx.getUser())
 		.set(TIMECONTROL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
-		.where(TIMECONTROL.ID.eq(tcd.getId()))
+		;
+		
+		if(updateCoordinates) {
+			sets.set(TIMECONTROL.LATITUDE, tcd.getCoordinates().getLatitude())
+			.set(TIMECONTROL.LONGITUDE, tcd.getCoordinates().getLongitude());
+		}
+		
+		sets.where(TIMECONTROL.ID.eq(tcd.getId()))
 		.execute();		
+		
 		ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
 	
 		return tcd;
