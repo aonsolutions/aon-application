@@ -31,6 +31,7 @@ import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
 import * as GWT from '../../gwt/gwt.js';
 import { deleteProject, getProjects, saveProject } from '../../services/projectService.js';
+import { AonProjectList } from '../project/aon-project-list.js';
 
 
 export class AonReg extends AonElement {
@@ -806,20 +807,27 @@ export class AonReg extends AonElement {
 	buildExpedienteData() {
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
+		
+		let aonProjectList = new AonProjectList();
+		aonProjectList.style.width = "100%";
+		aonProjectList.viewholders = true;
+		aonProjectList.filter = { page: 1, perPage: 50, registry:this.registry.getId() };
+		main.appendChild(aonProjectList);
 
-		let card = new AonCard();
-		card.id = this.MEDIA_CARD;
-		card.title = "Expedientes";
-		card.style.width = '100%';
-		main.appendChild(card);
+		// let card = new AonCard();
+		// card.id = this.MEDIA_CARD;
+		// card.title = "Expedientes";
+		// card.style.width = '100%';
+		// main.appendChild(card);
 
-		let div = this.createElement(TAG.DIV);
-		card.setContent(div);
+		// let div = this.createElement(TAG.DIV);
+		// card.setContent(div);
 
-		this.buildExpedientes(div, card);	
+		// this.buildExpedientes(div, card);	
 	}
 
 	async buildExpedientes(parent, card) {
+
 		await Promise.all([
 			this.getProjectTypes(),
 			this.getWorkgroups(),

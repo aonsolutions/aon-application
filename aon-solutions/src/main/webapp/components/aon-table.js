@@ -86,6 +86,8 @@ export class AonTable extends AonElement {
     this.TBODY = this.id + "TableBody";
     this.selected = [];
   }
+
+
   deselectAll() {
     document.querySelectorAll("aon-checkbox").forEach((item, i) => {
       if (item.getValue()) {
@@ -95,6 +97,9 @@ export class AonTable extends AonElement {
     });
   }
 
+  addButton(icon, fn){
+
+  }
 
   paintCheckboxHeader(){
     const idCheckBox = this.getId()+"checkboxHeader";
