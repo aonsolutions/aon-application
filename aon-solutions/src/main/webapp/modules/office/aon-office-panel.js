@@ -75,7 +75,7 @@ export class AonOfficePanel extends AonElement {
         this.createApplication(this.id, MSG.OFFICE, new AonApplication());
         this.buildSidenav();
 
-        this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST, undefined, this.getFilterCustomers());
+        this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST, undefined, {...this.getFilterCustomers(), page:1 });
 	}
 
     buildSidenav() {
@@ -86,7 +86,7 @@ export class AonOfficePanel extends AonElement {
         let options = [];
 
         let customer = OfficeOptions.AON_CUSTOMER;
-        customer.fn = () => this.showView(OfficeViews.AON_CUSTOMER_LIST, undefined, this.getFilterCustomers());
+        customer.fn = () => this.showView(OfficeViews.AON_CUSTOMER_LIST, undefined, {...this.getFilterCustomers(), page:1 });
         options.push(customer);
 
         let taskHolder = OfficeOptions.AON_TASK_HOLDER;
@@ -191,7 +191,7 @@ export class AonOfficePanel extends AonElement {
                             scope:detail.scope,
                             status: OfficeUtils.getCustomerStatus(detail)
                         });
-                        aonView.setFilter(this.getFilterCustomers());
+                        aonView.setFilter({...this.getFilterCustomers(), page:1 });
                     }, 300);
                 });
 
@@ -272,7 +272,7 @@ export class AonOfficePanel extends AonElement {
 				break;
                 case officeViews.AON_CUSTOMER:
 					aonView = new AonCustomer();
-                    aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST, undefined, this.getFilterCustomers()); // overwrite function
+                    aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {...this.getFilterCustomers(), page:1 }); // overwrite function
 				break;
                 case officeViews.AON_CUSTOMER_LIST:
 					aonView = new AonCustomerList();
