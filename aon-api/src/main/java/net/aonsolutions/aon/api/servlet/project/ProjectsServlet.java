@@ -3,6 +3,8 @@ package net.aonsolutions.aon.api.servlet.project;
 import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER;
 import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -27,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.ProjectHolderProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -44,6 +47,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 	private static final String OFFICE = "/office";
 	private static final String TYPE = "/type";
 	private static final String HOLDERS = "/:id/holders";
+	private static final String HOLDER = "/holder";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -82,7 +86,6 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			error(req, resp, e);
 		}
 	}
-	
 
 	private void post(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
@@ -91,6 +94,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			
 			Object object = new AonRouting(api)
 				.addRoute(ROOT, ProjectsServlet::saveProject)
+				.addRoute(HOLDER, ProjectsServlet::saveHolder)
 				.addRoute(TYPE, ProjectsServlet::saveProjectType)
 				.apply();
 			
@@ -100,14 +104,13 @@ public class ProjectsServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-//				.addRoute(CUSTOMERS, ProjectsServlet::saveCustomer)
+//				.addRoute(HOLDER, ProjectsServlet::)
 //				.addRoute(CUSTOMER, ProjectsServlet::saveCustomer)
 				.apply();
 			
@@ -125,6 +128,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			Object object = new AonRouting(api)
 				.addRoute(ROOT, ProjectsServlet::deleteProject)
 				.addRoute(TYPE, ProjectsServlet::deleteProjectType)
+				.addRoute(HOLDER, ProjectsServlet::deleteHolder)
 				.apply();
 			
 			response(req, resp, object);
@@ -226,12 +230,21 @@ public class ProjectsServlet extends AonApiHttpServlet{
     	return new JSONObject();
     }
     
-    
+    private static Object saveHolder(AonApiData api) {
+        return ProjectHolderJSON.toJSON(
+        		AON.saveProjectHolder(api.getDomain(), api.getUser(), ProjectHolderJSON.fromJSON(api.getData()))
+        );
+    }
+   
+    private static Object deleteHolder(AonApiData api) {
+        ProjectHolder holder = ProjectHolderJSON.fromJSON(api.getData());
+        AON.deleteProjectHolder(api.getDomain(), api.getUser(), holder.getId());
+        return new JSONObject();
+    }
 	private static JSONArray getHolders(AonApiData api) {
-		Integer project = api.getData().optInt(IJsonNames.ID);
-		
+	
 		Stream<ProjectHolder> holders = AON.getProjectHolderStream(api.getDomain(), api.getUser().getLogin(), 
-			f -> f.getProjectProperty().eq(project).and(f.getEndDateProperty().isNull())
+			f ->projectHolderFilter(api, f) 
 		);
 	
 		return ProjectHolderJSON.toJSON(holders);
@@ -249,4 +262,25 @@ public class ProjectsServlet extends AonApiHttpServlet{
 
 		return filter;
     }
+    
+    private static Filter projectHolderFilter(AonApiData api, ProjectHolderProperties f) {
+  		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+  		JSONObject params = api.getData();
+  		boolean active = params.optBoolean(IJsonNames.ACTIVE);
+  		Timestamp ts = Timestamp.from(Instant.now());
+
+  
+  		if(params.opt(IJsonNames.PROJECT) != null) {
+  			Integer project = params.optInt(IJsonNames.PROJECT);
+  			filter = filter.and(f.getProjectProperty().eq(project));
+  		}
+  		
+		if(active) {
+			filter = filter.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(ts)));
+		} else {
+			filter = filter.and(f.getEndDateProperty().isNotNull().and(f.getEndDateProperty().le(ts)));
+		}
+
+  		return filter;
+   }
 }
