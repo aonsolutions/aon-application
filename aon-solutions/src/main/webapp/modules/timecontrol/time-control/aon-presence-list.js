@@ -101,7 +101,7 @@ export class AonPresenceList extends AonElement {
       this.searchFilter = detail;
       this.search();
     });
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
       this._list = [];
       if(detail) this.applicationParentEl.setDataFilter(detail);
     });

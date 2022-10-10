@@ -129,5 +129,5 @@ export const AON_MOBILE_PACKAGING = 'aon-mobile-packaging';
 
 export const AON_WAREHOUSE = 'aon-warehouse';
 
-export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA].join(", ");
+export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH, AON_AUTOSIZE_TEXTAREA, AON_CHECKBOX].join(", ");
 

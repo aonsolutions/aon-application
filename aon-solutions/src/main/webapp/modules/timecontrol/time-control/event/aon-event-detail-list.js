@@ -118,7 +118,7 @@ export class AonEventDetailList extends AonElement {
     const searchValueFn = ({detail})=>{
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
     this.searchValueDefault();
   }

@@ -22,6 +22,7 @@ export class AonNotificationIcon extends AonElement {
     DIALOG;
     DIALOG_CONTENT;
     WINDOW_LISTENER;
+    TIMEOUT;
     static get observedAttributes() {
         return [CONSTANT.BADGE];
     }
@@ -268,7 +269,7 @@ export class AonNotificationIcon extends AonElement {
         `;
 
         notification.addEventListener(EVENT.CLICK, ()=>{
-            markReadNotification(data);
+            this.markReadNotification(data);
             this.goNotification(data);
         })
 
@@ -336,8 +337,10 @@ export class AonNotificationIcon extends AonElement {
             font-size: 11px;
             cursor: pointer;
         `;
-        icon.addEventListener(EVENT.CLICK, () => {
-            markReadNotification(data);
+        icon.addEventListener(EVENT.CLICK, (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            this.markReadNotification(data);
             notification.remove();
         })
         notification.appendChild(icon);
@@ -363,8 +366,18 @@ export class AonNotificationIcon extends AonElement {
     }
 
     async getTotalNotification(){
-        this.COUNT = await getTotalNotification();
-        this.changeBadge();
+        clearTimeout(this.TIMEOUT);
+        this.TIMEOUT = setTimeout(async()=>{
+            this.COUNT = await getTotalNotification();
+            this.changeBadge();
+        }, 500);
+    }
+
+    markReadNotification(data){
+        markReadNotification(data)
+        .then(()=>{
+            this.getTotalNotification();
+        });
     }
     
     deleteToken(){

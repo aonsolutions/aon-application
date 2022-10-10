@@ -63,47 +63,7 @@ export class AonTax extends AonElement {
   }
 
   buildToolbar() {
-    // this.applicationEl.removeToolbarOptions();
-    // this.buildToolbarSearch();
-    // this.searchValueDefault();
   }
-
-  // buildToolbarSearch(){
-    // let btnSearch = this.applicationEl.addSearchOption();
-    
-    // const searchFn = ({detail}) => {
-    //   this.searchFilter = detail;
-    //   this.search();
-    // }
-    
-    // const searchValueFn = ({detail})=>{
-    //   this._list = [];
-    //   if(detail) console.log(detail);
-    // }
-
-    // btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-    // btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
-
-    // btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
-
-    // let buttonSearchAccept = btnSearch.querySelector("div>button");
-    // if(buttonSearchAccept) buttonSearchAccept.disabled = true;
-  // }
-
-  // searchValueDefault(){
-  //   let periodEl = this.getElement("period");
-  //   periodEl.options = JSON.stringify(getPeriodLaboral());
-  //   periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-  //     if(detail){
-  //       const {startDate, endDate} = detail;
-  //       setValueName('startDate', startDate);
-  //       setValueName('endDate', endDate);
-  //     }
-  //   });
-
-  //   this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-  //   this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-  // }
 
 
   async getTable() {

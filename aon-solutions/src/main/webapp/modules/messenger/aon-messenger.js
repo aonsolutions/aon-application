@@ -244,21 +244,6 @@ export class AonMessenger extends AonElement {
 		if(this.cau){
 			btnSearch.removeButtonAvanced();
 		} else {
-			btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-			if(detail) {
-				this.setListFilter({
-					...this.getListFilter(), 
-					page:0, 
-					perPage:30, 
-					registry: detail.registry,
-					startDate: detail.startDate,
-					searchtask_holder:detail.searchtask_holder, 
-					searchsender:detail.searchsender, 
-					// workgroup:detail.workgroup
-				});
-				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
-			} 
-			});
 			btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
 			this.searchValueDefault();
 		}
@@ -267,14 +252,10 @@ export class AonMessenger extends AonElement {
 
 	searchValueDefault(){
 
-		// let statusEl = this.getElement("status");
-		// let workgroup = this.getElement("workgroup");
-
 		let registryEl = this.getElement("registry");
 		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
 		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
 		});
-
 
 		let timeOut = null;
 		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
@@ -294,12 +275,6 @@ export class AonMessenger extends AonElement {
 			senderEl.setOptions(ths);
 			taskHolderEl.setOptions(ths);
 		});
-	
-		// this.getMyWorkgroups().then(wgs=>
-		// 	workgroup.setOptions(wgs)
-		// );
-	
-		// statusEl.setOptions(TASK_STATUS_VALUE);
 	}
 
 	inboxNavBar(){

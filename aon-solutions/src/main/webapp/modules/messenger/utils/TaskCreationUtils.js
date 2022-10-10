@@ -166,7 +166,7 @@ const createReceiverDiv = () => newComponent({
 const createMessageBox = (properties) =>{
   let component =  newComponent({
     type: MESSENGER_COMPONENTS.MESSAGE,
-    classes : [CSS.FLEX_COLUMN, CSS.IMG_MAX_WIDTH],
+    classes : [CSS.FLEX_COLUMN, CSS.IMG_MAX_WIDTH, CSS.AON_NOT_RICH],
     styles: {
         margin:"5px",
         padding: '15px',

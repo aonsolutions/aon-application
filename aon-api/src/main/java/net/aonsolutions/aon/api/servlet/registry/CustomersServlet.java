@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
@@ -105,6 +107,25 @@ public class CustomersServlet extends AonApiHttpServlet {
 		
 		if(api.getData().opt(IJsonNames.DOCUMENT) != null) {
 			filter = filter.and(f.getDocumentProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT)));
+		}
+		
+		if(api.getData().opt(IJsonNames.SCOPE) != null) {
+			filter = filter.and(f.getScopeProperty().eq(JsonUtils.getInt(api.getData(), IJsonNames.SCOPE)));
+		}
+		
+		if(api.getData().opt(IJsonNames.STATUS) != null) {
+			ArrayList<String> list = new ArrayList<>();
+			
+			api.getData().optJSONArray(IJsonNames.STATUS)
+			.forEach(str -> list.add(str.toString()));
+				
+			 Byte[] status = RegistryStatus.safeValueOf(list)
+				.stream()
+				.map(RegistryStatus::value)
+				.toArray(Byte[]::new)
+			;
+			
+			filter = filter.and(f.getStatusProperty().in(status));
 		}
 		
 		if(api.getData().opt(IJsonNames.VALUE) != null) {

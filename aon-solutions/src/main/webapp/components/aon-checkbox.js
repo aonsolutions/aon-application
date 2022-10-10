@@ -105,21 +105,30 @@ export class AonCheckbox extends AonElement {
 			this.setAttribute(CONSTANT.VALUE, this.getElement(input.getAttribute(CONSTANT.ID)).checked);
 		});
 
-		let label = this.createElement('label');
-		label.className = 'aonCheckbox';
-		label.style.marginBottom = '0px';
-
-		let span = this.createElement('span');
-		span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
-
-		label.appendChild(input);
-		label.appendChild(span);
+		const labelId = this.id+"Label";
+		let label = this.getElement(labelId);
+		if(!label){
+			label = this.createElement('label');
+			label.id = labelId;
+			label.className = 'aonCheckbox';
+			label.style.marginBottom = '0px';
+	
+			let span = this.createElement('span');
+			span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
+	
+			label.appendChild(input);
+			label.appendChild(span);
+		}
 
 		return label;
 	}
 
 	getValue() {
 		return this.value && this.value === 'true';
+	}
+
+	clear(){
+		this.value = "";
 	}
 
 	focus() {

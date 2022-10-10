@@ -6,10 +6,7 @@ import { AonCustomer } from './aon-customer.js';
 export class AonCustomerList extends AonRegistryList {
 
 	build(){
-		this.filter = {
-			page: 1,
-			perPage: 50		
-		}
+		this.filter = this.filter || { page: 1, perPage: 50 }
 		super.build();
 	}
 

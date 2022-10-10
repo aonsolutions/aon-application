@@ -117,7 +117,7 @@ export class AonNotificationDesk extends AonElement {
 			{
 				...notificationOptions.NOTIFICATION_NOT_READ,
 				fn: () =>{
-          this.setFilter(filter);
+          this.setFilter({...filter, status:"unread"});
           this.loadMore(true);
 				}
 			}
@@ -204,6 +204,10 @@ export class AonNotificationDesk extends AonElement {
     if(res.status ===0){
       markReadNotification(res);
       res.status=1;
+      let aonNotificationIcon = document.querySelector("aon-notification-icon");
+      if (aonNotificationIcon) { 
+        aonNotificationIcon.getTotalNotification();
+      }
     }
   }
 

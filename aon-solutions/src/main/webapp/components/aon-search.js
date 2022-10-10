@@ -202,7 +202,6 @@ export class AonSearch extends AonElement {
 		}
 	}
 
-
 	disabledInputSearch(){
 		let searchButton = this.getElement(this.SEARCH_BUTTON);
 		let input =  this.getElement(this.SEARCH_INPUT);
@@ -225,26 +224,28 @@ export class AonSearch extends AonElement {
 	}
 
 	removeButtonAvanced(){
-		if(this.getButtonAvanced())
+		if(this.getButtonAvanced()){
 			this.getButtonAvanced().remove();
+		}
 	}
-	  /**
-	   * 
-	   * @param {array} inputs  examples [{
-			type: "select",
-			id: "period",
-			name: "period",
-			title: "Período",
-		},{
-			type: "date",
-			name: "startDate",
-			id: "startDate",
-			title: "Desde",
-		}]
-	   */
-	  buildOptionsFilter(inputs){
+	/**
+	 * 
+	 * @param {array} inputs  examples [{
+		type: "select",
+		id: "period",
+		name: "period",
+		title: "Período",
+	},{
+		type: "date",
+		name: "startDate",
+		id: "startDate",
+		title: "Desde",
+	}]
+	*/
+	buildOptionsFilter(inputs){
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.innerHTML = "";
+
 		let input = this.getElement(this.SEARCH_INPUT);
 		inputs.forEach((attributes) => {
 			let el = this.getInput(attributes);
@@ -257,44 +258,41 @@ export class AonSearch extends AonElement {
 		button.style.padding = "0.5rem 1rem"; 
 		button.style.margin = "9px auto 0 auto";
 		button.addEventListener(EVENT.CLICK, ()=>{
-			this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE,{
-				detail: {
-					search:input.value,
-					...this.getValues()
-				}
-			}));
+			this.dispatchEventSearch(input.value)
 			this.openOrClose();
 		});
 		divOpts.appendChild(button);
-	  }
+	}
 
-	  setContent(el){
+	setContent(el){
 		this.clearElementById(this.OPTIONS);
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.appendChild(el);
-	  }
+	}
 
-	  getInput(attributes) {
+	addContent(el){
+		let divOpts = this.getElement(this.OPTIONS);
+		divOpts.insertBefore(divOpts.lastChild, el);
+	}
+
+	getInput(attributes) {
 		let html = undefined;
 		switch (attributes.type) {
-		  case CONSTANT.TEXT:
-			html = setAttributes(new AonInput(), attributes);
+			case CONSTANT.TEXT:
+				html = setAttributes(new AonInput(), attributes);
 			break;
-		  case CONSTANT.SELECT:
-			html = setAttributes(new AonSelect(), attributes);
+			case CONSTANT.SELECT:
+				html = setAttributes(new AonSelect(), attributes);
 			break;
-		  case CONSTANT.DATE:
-			html = setAttributes(new AonDate(), attributes);
+			case CONSTANT.DATE:
+				html = setAttributes(new AonDate(), attributes);
 			break;
-		  case CONSTANT.HTML_ELEMENT:
-			const element = attributes.element;
-			delete attributes.type;
-			delete attributes.element;
-			html = setAttributes(element, attributes);
+			case CONSTANT.HTML_ELEMENT:
+				html = setAttributes(attributes.element, {...attributes, element: ""});
 			break;
 		}
 		return html;
-	  }
+	}
 
 	clearValues() {
 		let divOpts = this.getElement(this.OPTIONS);

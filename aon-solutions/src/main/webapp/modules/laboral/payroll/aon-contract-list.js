@@ -66,7 +66,7 @@ export class AonContractList extends AonElement {
   buildToolbarSearch(){
     const btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail:{contractAll, search}})=>{
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail:{contractAll, search}})=>{
       this._list = [];
       this._filter.contractAll = contractAll;
       this.search(search);

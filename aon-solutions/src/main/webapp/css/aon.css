@@ -1375,3 +1375,8 @@ label.rating:hover {
 .divRowHover:hover{
   background-color: #FAFAFA;
 }
+
+.aonNotRich ol, .aonNotRich ul, .aonNotRich li {
+  margin: revert;
+  padding: revert;
+}

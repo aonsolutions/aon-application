@@ -104,6 +104,27 @@ const buildFormExpediente = (aonOfficePanel, project) => {
 }
 
 
+const getCustomerStatus = (detail) => {
+    let status = [];
+
+    if(detail){
+        if(detail.active == "true"){
+            status.push("ACTIVE");
+        }
+    
+        if(detail.inactive == "true"){
+            status.push("INACTIVE");
+        }
+    
+        if(detail.blocked == "true"){
+            status.push("BLOCKED");
+        }
+    }
+
+    return status.length > 0 ? status : ["ACTIVE", "BLOCKED"];
+}
+
 export const OfficeUtils = {
-    buildDialog
+    buildDialog,
+    getCustomerStatus
 }

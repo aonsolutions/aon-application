@@ -90,7 +90,7 @@ export class AonPayrollList extends AonElement {
     }
 
     btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
 
     
     btnSearch.buildOptionsFilter([

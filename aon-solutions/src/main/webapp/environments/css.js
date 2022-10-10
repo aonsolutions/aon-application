@@ -307,6 +307,7 @@ export const AON_FA_PULSE = 'aonFaPulse';
 
 export const TEXT_DECORATION_NONE = 'textDecorationNone';
 
+export const AON_NOT_RICH = "aonNotRich";
 
 // aon-textarea 
 
