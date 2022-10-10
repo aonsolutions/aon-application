@@ -19,6 +19,7 @@ public class PartTimeParams {
 	public static class PartTimeEntry {
 		private Double ordinary;
 		private Double complementary;
+		private boolean holiday;
 		
 		public Double getOrdinary() {
 			return ordinary;
@@ -34,6 +35,14 @@ public class PartTimeParams {
 			this.complementary = complementary;
 			return this;
 		}
+		public boolean isHoliday() {
+			return holiday;
+		}
+		public PartTimeEntry setHoliday(boolean holiday) {
+			this.holiday = holiday;
+			return this;
+		}
+		
 		
 	}
 	
