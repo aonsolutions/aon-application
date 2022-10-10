@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
@@ -703,11 +705,27 @@ public class JooqPayrollBuilder {
 					.setEnterpriseName(salary.getEnterpriseName())
 					.setEmployeeName(salary.getEmployeeName())
 					.setPaymentDate(salary.getIssueDate());
+			
+			Date salaryStart = salary.getStartDate();
+			Date salaryEnd = salary.getEndDate();
+			Period salaryPeriod = new Period(salaryStart, salaryEnd);
+			
+
+			List<SalaryData> holidays = contractDataTmp.getOrDefault("DIAS_VACACIONES", Collections.emptyList());
+			List<Date> holidayList = listHolidays(holidays, salaryEnd);
+			
+			params.getEntries().entrySet().stream()
+			.filter(entry -> holidayList.stream()
+					.map(AonDateUtils::getDay)
+					.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
+			).forEach(entry -> entry.getValue().setHoliday(true));
+			
+			
 			Set<Date> workedDaysSet = new LinkedHashSet<>();
 			while (date.compareTo(salary.getEndDate()) <= 0) {
 				int day = AonDateUtils.getDay(date);
 				PartTimeEntry entry = new PartTimeEntry();
-				if (isWorkedDay(date, salaryData, salary.getEndDate())) {
+				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList)) {
 					Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
 					entry.setOrdinary(dayHours);
 					if (dayHours != null && dayHours > 0) {
@@ -724,16 +742,34 @@ public class JooqPayrollBuilder {
 			params.setContractHours(contractHours);
 			
 			date = salary.getStartDate();
-			double limit = complementaryLimit.orElse(1d);
+			double limit = complementaryLimit.orElse(0d);
 			
-			List<SalaryData> complementaryHours = salaryData.getOrDefault("HORAS_COMPLEMENTARIAS", Collections.emptyList());
+			List<SalaryData> complementaryHoursSD = salaryDataTmp.getOrDefault("HORAS_COMPLEMENTARIAS", Collections.emptyList());
+			List<SalaryData> complementaryHoursCDNotFiltered = contractDataTmp.getOrDefault("HORAS_COMPLEMENTARIAS", Collections.emptyList());
+			
+			List<SalaryData> complementaryHoursCD = complementaryHoursCDNotFiltered.stream().filter(ch -> {
+				Date chsd = ch.getStartDate();
+				Date ched = ch.getEndDate() != null ? ch.getEndDate() : salaryEnd;
+				Period chper = new Period(chsd, ched);
+				return salaryPeriod.intersects(chper);
+			}).collect(Collectors.toList());
+			
+			Double chCdSum = complementaryHoursCD.stream().map(ch -> getExpressionValue(ch.getExpression())).reduce(0d, (a, b) -> a + b);
+			Double chSdSum = complementaryHoursSD.stream().map(ch -> getExpressionValue(ch.getExpression())).reduce(0d, (a, b) -> a + b);
+			List<SalaryData> complementaryHours = null;
+			if (AonNumberUtils.equals(chCdSum, chSdSum)) {
+				complementaryHours = complementaryHoursCD;
+			} else {
+				complementaryHours = complementaryHoursSD;
+			}
+			
 			
 			for (SalaryData sd : complementaryHours) {
 				Date sdStart = sd.getStartDate();
 				Date sdEnd = sd.getEndDate() != null ? sd.getEndDate() : salary.getEndDate();
 				Period period = new Period(sdStart, sdEnd);
 				Double value = getExpressionValue(sd.getExpression());
-				if (value != null && value > 0) {						
+				if (value != null && value > 0) {
 					List<Date> daysList = workedDaysSet.stream().filter(period::contains).collect(Collectors.toList());
 					if (!daysList.isEmpty()) {
 						int days = daysList.size();
@@ -742,19 +778,43 @@ public class JooqPayrollBuilder {
 							days = daysList.size();
 						}
 						final double valuePerDay = value / days;
-						workedDaysSet.forEach(d -> {
+						double roundedValuePerDay = Math.round(valuePerDay * 100) / 100d;
+						double accumulated = 0;
+						for(int i=0; i<daysList.size(); i++) {
+							Date d = daysList.get(i);
 							int day = AonDateUtils.getDay(d);
-							params.getEntry(day).setComplementary(valuePerDay);
-						});
+							double complValue = roundedValuePerDay;
+							if (i == daysList.size() - 1) {
+								complValue = value - accumulated;
+							}
+							params.getEntry(day).setComplementary(complValue);
+							accumulated += roundedValuePerDay;
+						}
 					}
 				}
 			}
+
 			
 			if (logo != null) {
 				params.setEnterpriseSignature(logo);
 			}
 			payrollBuilder.setPartTimeParams(Optional.of(params));
 		}
+	}
+	
+	private static List<Date> listHolidays(List<SalaryData> holidaysData, Date salaryEndDate) {
+		if (holidaysData != null) {
+			List<Date> dateList = new ArrayList<>();
+			holidaysData.stream().filter(Objects::nonNull).forEach(data -> {
+				Date sd = data.getStartDate();
+				Date ed = data.getEndDate() != null ? data.getEndDate() : salaryEndDate;
+				new Period(sd, ed).forEachDay(cal -> {
+					dateList.add(cal.getTime());
+				});
+			});
+			return dateList;
+		}
+		return Collections.emptyList();
 	}
 	
 	private static Map<String, List<SalaryData>> getContractDataBySalary(AONContext aonContext, final Integer salaryId) {
@@ -843,9 +903,12 @@ public class JooqPayrollBuilder {
 		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)));
 	}
 
-	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {
+	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
+		if (holidayList != null && holidayList.contains(date)) {
+			return false;
+		}
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
 		boolean isInWorkPeriod = workedDays.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
 		if (isInWorkPeriod) {
