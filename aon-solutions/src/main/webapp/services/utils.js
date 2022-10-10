@@ -137,7 +137,7 @@ export const round = (value) => {
 /**
  * 
  * @param {element HTML} form 
- * @returns {Obj} values form 
+ * @returns {Object} values form 
  */
 export const serializeForm = (form) => {
   let inputs = [...form.querySelectorAll(AON_TAGS)];

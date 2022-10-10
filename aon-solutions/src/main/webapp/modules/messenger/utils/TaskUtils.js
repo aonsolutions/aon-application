@@ -183,10 +183,11 @@ const dialogTaskTags = (ev, task) => {
     const tags = aonMessengerChat.getTagsPanel();
     
     const taskTags = task.getTags();
-    
+
     for (let tag of tags) {
         let aonCheckbox = new AonCheckbox();
         aonCheckbox.description = tag.name;
+        aonCheckbox.id = tag.name;
         aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id || tag.name===t.name  ) ? true : false;
         aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
           if(target.checked){

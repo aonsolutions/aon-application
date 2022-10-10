@@ -83,6 +83,7 @@ export class AonProjectList extends AonElement {
 
 	setFilter(filter) {
 		this.filter = filter;
+		this.init();
 	}
 }
 
