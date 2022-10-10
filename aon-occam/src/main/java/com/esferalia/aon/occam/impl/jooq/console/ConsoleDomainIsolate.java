@@ -12,7 +12,6 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -41,6 +40,7 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -107,7 +107,7 @@ public class ConsoleDomainIsolate {
 			
 			params.getToDslContext().transaction(conf -> {
 				checkProductIndex( params );
-				checkNoticeRecipient( params );
+//				checkNoticeRecipient( params );
 				checkAgreements(params);
 			});
 			
@@ -343,49 +343,49 @@ public class ConsoleDomainIsolate {
 		}
 	}
 	
-	private static void checkNoticeRecipient(ConsoleParams params ) {
-		Integer[] domainIds = null;
-		if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
-			domainIds = new Integer[] {params.getFromConnection().getDomain().getId()
-				,params.getFromConnection().getDomain().getParentId()};
-		} else {
-			domainIds = new Integer[] {params.getFromConnection().getDomain().getId()};
-			
-		}
-		
-		params.getFromDslContext()
-			.select( NOTICE.ID,NOTICE.DOMAIN,NOTICE.RECIPIENT,NOTICE.DATE,NOTICE.SUBJECT, USER.DOMAIN )
-			.from(NOTICE)
-			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
-			.where(NOTICE.DOMAIN.in(domainIds))
-			.and(USER.DOMAIN.notIn(params.getFromConnection().getDomain().getId()
-					,params.getFromConnection().getDomain().getParentId()))
-			.fetch()
-			.stream()
-			.forEach( rec -> params.addError(
-				new ConsoleDomainMessage()
-					.setType(ConsoleDomainMessageType.INTEGRITY)
-					.setSchema( params.getFromConnection().getSchemaName() )
-					.setDomainId( rec.getValue(NOTICE.DOMAIN) )
-					.setTable( NOTICE.getName() )
-					.setPkId( rec.getValue(NOTICE.ID))
-					.setFkTable( USER.getName() )
-					.setFkColumn(NOTICE.RECIPIENT.getName())
-					.setFkId( rec.getValue(NOTICE.RECIPIENT))
-					.setWrongDomainId( rec.getValue(USER.DOMAIN))
-					.setMessage(
-						MessageFormat.format("Existe un aviso (tabla \"notice\") cuyo destinatario no "
-								+ "pertence al dominio. [id: {0}, dominio: {1}, fecha: \"{2}\", subject: \"{3}\"] "
-							,rec.getValue(NOTICE.ID)
-							,rec.getValue(NOTICE.DOMAIN)
-							,rec.getValue(NOTICE.DATE)
-							,rec.getValue(NOTICE.SUBJECT))							
-					)
-			));
-		if (params.hasErrors()) {
-			throw new AonCoreException("Avisos incoherentes");
-		}
-	}
+//	private static void checkNoticeRecipient(ConsoleParams params ) {
+//		Integer[] domainIds = null;
+//		if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
+//			domainIds = new Integer[] {params.getFromConnection().getDomain().getId()
+//				,params.getFromConnection().getDomain().getParentId()};
+//		} else {
+//			domainIds = new Integer[] {params.getFromConnection().getDomain().getId()};
+//			
+//		}
+//		
+//		params.getFromDslContext()
+//			.select( NOTICE.ID,NOTICE.DOMAIN,NOTICE.RECIPIENT,NOTICE.DATE,NOTICE.SUBJECT, USER.DOMAIN )
+//			.from(NOTICE)
+//			.innerJoin(USER).on(USER.ID.eq(NOTICE.RECIPIENT))
+//			.where(NOTICE.DOMAIN.in(domainIds))
+//			.and(USER.DOMAIN.notIn(params.getFromConnection().getDomain().getId()
+//					,params.getFromConnection().getDomain().getParentId()))
+//			.fetch()
+//			.stream()
+//			.forEach( rec -> params.addError(
+//				new ConsoleDomainMessage()
+//					.setType(ConsoleDomainMessageType.INTEGRITY)
+//					.setSchema( params.getFromConnection().getSchemaName() )
+//					.setDomainId( rec.getValue(NOTICE.DOMAIN) )
+//					.setTable( NOTICE.getName() )
+//					.setPkId( rec.getValue(NOTICE.ID))
+//					.setFkTable( USER.getName() )
+//					.setFkColumn(NOTICE.RECIPIENT.getName())
+//					.setFkId( rec.getValue(NOTICE.RECIPIENT))
+//					.setWrongDomainId( rec.getValue(USER.DOMAIN))
+//					.setMessage(
+//						MessageFormat.format("Existe un aviso (tabla \"notice\") cuyo destinatario no "
+//								+ "pertence al dominio. [id: {0}, dominio: {1}, fecha: \"{2}\", subject: \"{3}\"] "
+//							,rec.getValue(NOTICE.ID)
+//							,rec.getValue(NOTICE.DOMAIN)
+//							,rec.getValue(NOTICE.DATE)
+//							,rec.getValue(NOTICE.SUBJECT))							
+//					)
+//			));
+//		if (params.hasErrors()) {
+//			throw new AonCoreException("Avisos incoherentes");
+//		}
+//	}
 	
 	
 
@@ -753,7 +753,8 @@ public class ConsoleDomainIsolate {
 	}
 	
 	private static void fillScript(String processId, ConsoleParams params, Deque<Table<?>> stack) {
-		List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
+		// List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
+		List<Table<?>> tables = AonMaster.AON_MASTER.getTables();
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Generating tables script"));
 		tables.stream()
 			.filter(t -> t.field(DOMAIN_FIELD) != null )

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 
 public interface IConsole {
@@ -16,6 +17,7 @@ public interface IConsole {
 	public boolean deleteDomain(ConsoleParams params);
 	public Domain changeActive(CloseableAONContext ctx, Integer domainId, boolean active);
 	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate);
-	public String remoteAccess(CloseableAONContext ctx, Integer domainId);		
+	public String remoteAccess(CloseableAONContext ctx, Integer domainId);
+	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage);		
 	
 }

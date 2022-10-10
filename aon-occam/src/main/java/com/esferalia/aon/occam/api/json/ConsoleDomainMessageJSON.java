@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageFixType;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 
 public class ConsoleDomainMessageJSON {
@@ -34,6 +35,7 @@ public class ConsoleDomainMessageJSON {
 		if(json == null) return new ConsoleDomainMessage();
 		return new ConsoleDomainMessage()
 			.setType( ConsoleDomainMessageType.safeValueOf( JsonUtils.getString(json,IJsonNames.TYPE) ))
+			.setFixType( ConsoleDomainMessageFixType.safeValueOf( JsonUtils.getString(json,IJsonNames.FIX_TYPE) ))
 			.setSchema(JsonUtils.getString(json, IJsonNames.SCHEMA))
 			.setDomainId(JsonUtils.getInteger(json,IJsonNames.DOMAIN_ID))
 			.setTable(JsonUtils.getString(json, IJsonNames.TABLE))
@@ -61,6 +63,7 @@ public class ConsoleDomainMessageJSON {
 		if(message == null) return new JSONObject();
 		return new JSONObject()
 			.putOpt(IJsonNames.TYPE, message.getType() == null? null : message.getType().toString())
+			.putOpt(IJsonNames.FIX_TYPE, message.getFixType() == null? null : message.getFixType().toString())
 			.putOpt(IJsonNames.SCHEMA, message.getSchema())	
 			.putOpt(IJsonNames.DOMAIN_ID, message.getDomainId())	
 			.putOpt(IJsonNames.TABLE, message.getTable())	

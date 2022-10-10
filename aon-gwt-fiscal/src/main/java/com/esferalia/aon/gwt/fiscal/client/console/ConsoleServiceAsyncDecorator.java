@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
@@ -53,5 +54,11 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.remoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void fix(ConsoleDomainMessage consoleMessage, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.fix(consoleMessage, new AsyncCallbackWrapper<>(callback));
 	}
 }

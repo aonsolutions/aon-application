@@ -42,10 +42,6 @@ class ConsoleMessageUtils {
 	public static ConsoleMessage title(String id,String msg) {
 		return get(id,ConsoleMessageType.TITLE,msg);
 	}
-	
-	public static ConsoleMessage subtitle(String id,String msg) {
-		return get(id,ConsoleMessageType.SUBTITLE,msg);
-	}
 
 	public static ConsoleMessage message(String id,String msg) {
 		return get(id,ConsoleMessageType.MESSAGE,msg);

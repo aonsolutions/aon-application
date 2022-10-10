@@ -195,6 +195,7 @@ public final class IJsonNames {
 	public static final String FINANCE_PARAMS = "financeParams";
 	public static final String FINANCE_PENDING = "financePending";
 	public static final String FINANCES = "finances";
+	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
 	public static final String FK_ID = "fkId";
 	public static final String FK_TABLE = "fkTable";
