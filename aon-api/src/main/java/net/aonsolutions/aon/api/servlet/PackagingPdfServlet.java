@@ -80,7 +80,9 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			}
 			 
 //			String separator = "\u001d";
-			char separator = 29; 
+//			char separator = 29; 
+			String separator = "\312";
+
 //			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
 			String ean128 = "(02)" + barcode + "(37)" + boxQuantity.intValue() + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber() + separator;
 			String sscc = container.getSerialNumber();
