@@ -192,20 +192,9 @@ public class ProjectsServlet extends AonApiHttpServlet{
     	if(api.getData().opt(IJsonNames.PROJECTS)!=null) {
     		return saveProjects(api);
     	} else {
-    		Project project = AON.saveProject(api.getDomain(), api.getUser(), ProjectJSON.fromJSON(api.getData()));
-    		
-    		JSONArray holders = api.getData().optJSONArray("projectHolders"); 
-    		if(holders!=null) {
-    			ProjectHolderJSON
-    			.fromJSON(holders)
-    			.forEach(holder->{
-    				holder.setDomain(project.getDomain().getId());
-    				holder.setProject(project.getId());
-    				saveProjectHolder(api, holder);
-    			});
-    		}
-    		
-        	return ProjectJSON.toJSON(project);
+        	return ProjectJSON.toJSON(
+        		AON.saveProject(api.getDomain(), api.getUser(), ProjectJSON.fromJSON(api.getData()))
+        	);
     	}
     }
     

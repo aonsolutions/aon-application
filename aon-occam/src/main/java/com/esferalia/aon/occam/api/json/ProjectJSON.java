@@ -36,6 +36,7 @@ public class ProjectJSON {
 				.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)))
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject(IJsonNames.PROJECT_HOLDER)))
+				.setProjectHolders(ProjectHolderJSON.fromJSON(json.optJSONArray("projectHolders")))
 				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY));
 	}
 	
