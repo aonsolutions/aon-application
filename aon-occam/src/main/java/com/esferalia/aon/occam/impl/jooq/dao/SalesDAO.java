@@ -162,6 +162,7 @@ public class SalesDAO {
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(SALES.SHIPPING_ADDRESS))
 			.where(SALES_PROPERTIES.getConditions(filter));
 	}
 	
