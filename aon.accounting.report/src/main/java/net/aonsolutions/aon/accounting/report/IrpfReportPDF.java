@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.Document;
@@ -32,7 +33,7 @@ public class IrpfReportPDF {
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 7);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
-
+	
 	public void printReport(OutputStream outputStream, IRPFParams params) throws DocumentException {
 		
 		Occam occam = new Occam()
@@ -89,6 +90,7 @@ public class IrpfReportPDF {
 	    
 		Stream<IrpfBreakdown> stream = FISCAL.getIrpfBreakdown(occam, params);
 		stream.forEach(action);
+		action.paintTotals();
 		stream.close();
 	    
 		document.add(table);
@@ -105,6 +107,20 @@ public class IrpfReportPDF {
 		PdfPCell headerCell = new PdfPCell();
 		headerCell.setBorder(0);
 		headerCell.setBorderWidthBottom(1);
+		headerCell.addElement(headerParagrph);
+		return headerCell;
+	}
+
+	private PdfPCell getTotalCell(String t) {
+		return getTotalCell(t,Element.ALIGN_LEFT);
+	}
+
+	private PdfPCell getTotalCell(String text, int align) {
+		Paragraph headerParagrph = new Paragraph(8,text,BODY_FONT_BOLD);
+		headerParagrph.setAlignment( align );
+		PdfPCell headerCell = new PdfPCell();
+		headerCell.setBorder(0);
+		headerCell.setBorderWidthTop(1);
 		headerCell.addElement(headerParagrph);
 		return headerCell;
 	}
@@ -161,6 +177,10 @@ public class IrpfReportPDF {
 		private PdfPTable table;
 		private Integer oldId;
 		
+		private double sumBase;
+		private double sumQuota;
+		
+		
 		public PDFAction(PdfPTable table) {
 			this.table = table;
 		}
@@ -208,6 +228,25 @@ public class IrpfReportPDF {
 			table.addCell(getBodyCell(FMT.format(irpf.getBase()),Element.ALIGN_RIGHT));			
 			table.addCell(getBodyCell(FMT.format(irpf.getPercent()) + "%",Element.ALIGN_RIGHT));			
 			table.addCell(getBodyCell(FMT.format(irpf.getQuota()),Element.ALIGN_RIGHT));
+			
+			sumBase = AonMathUtils.round(sumBase + irpf.getBase());
+			sumQuota = AonMathUtils.round(sumQuota + irpf.getQuota());
+		}
+		
+		private void paintTotals() {
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getTotalCell(FMT.format(sumBase),Element.ALIGN_RIGHT));			
+			table.addCell(getTotalCell(AonStringUtils.SPACE));			
+			table.addCell(getTotalCell(FMT.format(sumQuota),Element.ALIGN_RIGHT));
+			sumBase = 0.0;
+			sumQuota = 0.0;
 		}
 		
 		private PdfPCell getBodyCell(String t) {
