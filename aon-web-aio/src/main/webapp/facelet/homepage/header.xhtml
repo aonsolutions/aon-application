@@ -2073,7 +2073,7 @@
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
 			                </aon:menuGroup>	
-							<aon:if test="#{domainSwitcher.snapshot}">
+							<aon:if test="#{dur.aula}">
 								<aon:menuItem submitMode="none" reRender="aonStatus"
 									rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 									iconClass="aon-icon-menu-help">
@@ -2087,7 +2087,8 @@
 									<aon:htmlCommandLink id="help" value="#{bundle.aon_help}" target="_blank" action="main_help">
 									</aon:htmlCommandLink>
 								</aon:menuItem>
-							</aon:if>						
+							</aon:if>
+														
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
 								iconClass="aon-icon-about"

@@ -60,17 +60,17 @@
 										styleClass="aon-header-title-without-image" />
 								</aon:if>					 -->		
 							</aon:div>
-							<aon:div styleClass="aon-margin-top" columnClasses="aon-version-label">
+							<aon:div styleClass="aon-margin-top" columnClasses="aon-version-label" style="display:flex; width: 100%; justify-content: right;">
 								<aon:if test="#{customize.buildDate != null}" >						
-									<aon:outputFormat style="display:block; color: #000; text-align: right; margin-right: 10%;" value="#{bundle.aon_about_version}" >
+									<aon:outputFormat style="display:block; color: #000; text-align: right; margin-right: 2%;" value="#{bundle.aon_about_version}" >
 										<f:param value="#{customize.buildDate}" />
 									</aon:outputFormat>
 								</aon:if>					
 								<aon:if test="#{customize.buildNumber != null}" >						
 									<aon:outputFormat style="display:block; color: #000; text-align: right; margin-right: 10%;" value="{0}" >
-										<f:param value="#{customize.buildNumber}" />
+										<f:param value="(#{customize.buildNumber})" />
 									</aon:outputFormat>
-								</aon:if>					
+								</aon:if>
 							</aon:div>
 							<aon:div>
 								<aon:outputText value="Datos de contacto:"

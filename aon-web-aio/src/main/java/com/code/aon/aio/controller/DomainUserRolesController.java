@@ -80,6 +80,10 @@ public class DomainUserRolesController implements Serializable {
 		return getDur().hasApp(AonApp.BANK);
 	}
 	
+	public boolean isAula() {
+		return getDur().hasApp(AonApp.AULA);
+	}
+	
 	public String getToken() {
 		if(token == null && getDur().getUser().getAuth().isEmpty()) {
 			token = AonToken.build(getDur().getUser(), AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
