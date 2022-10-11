@@ -39,17 +39,21 @@ useSSL=false
 EOF
 	fi
 
+	if [ -n "${AWS_REGION+x}" ]; then
 	: ${AWS_REGION:=eu-west-1}
         cat << EOF > $AWS_HOME/config
 [default]
 region = $AWS_REGION
 EOF
+	fi
 
+	if [ -n "${AWS_ACCESS_KEY_ID+x}" ]; then
         cat << EOF > $AWS_HOME/credentials
 [default]
 aws_access_key_id = $AWS_ACCESS_KEY_ID \
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 EOF
+	fi
 
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
 CATALINA_OPTS="-Duser.language=es \

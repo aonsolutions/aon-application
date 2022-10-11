@@ -19,9 +19,12 @@ import javax.servlet.http.Part;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.doc.DOC;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -205,6 +208,23 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		
 		// Get currentUser
 		Integer attachId = Integer.parseInt(req.getParameter("attachId"));
+		
+		try ( CloseableAONContext aonCtx = AONContext.getAONContext(domainName, login) ) {
+			DOC.getContratDoc(aonCtx.getDslContext(), attachId)
+			.ifPresent( doc -> {
+				try {
+					resp.sendRedirect(doc.getDownloadURL( "attachment; filename=\"" + doc.getDescription() + "." + doc.getMimeType(MimeType.class).getExtension() +"\";").toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+			if ( resp.isCommitted() ) {
+				return;
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+		
 		
 		try {
 			Attach attach = AON.getAttach(domainName, domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
