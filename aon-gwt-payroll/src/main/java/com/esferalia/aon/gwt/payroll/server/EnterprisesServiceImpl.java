@@ -135,6 +135,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -143,6 +144,8 @@ import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.doc.DOC;
+import com.esferalia.aon.occam.api.model.doc.IDoc;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -2361,6 +2364,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public String getAttachData(String domainName, String login, Integer attachId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			try ( CloseableAONContext aonCtx = AONContext.getAONContext(domainName, login) ) {
+				Optional<IDoc<?>> doc = DOC.getContratDoc(aonCtx.getDslContext(), attachId);
+				if ( doc.isPresent()  ) {
+					return doc.get().getDownloadURL().toString();
+				}
+			} catch ( Exception e ) {
+				
+			}
+			
+			
 			com.esferalia.aon.occam.api.model.attachment.Attach attach = AON.getAttach(domainName, domainId, login,  f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
 			String base64Pdf = Base64.getEncoder().encodeToString(attach.getData());
 			

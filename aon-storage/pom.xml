@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions</groupId>
+	<artifactId>aon.storage</artifactId>
+	<name>AON STORAGE</name>
+	<description>
+	</description>
+	<build>
+		<plugins>
+		</plugins>
+	</build>
+	
+	<dependencies>
+
+		<dependency>
+		    <groupId>com.amazonaws</groupId>
+		    <artifactId>aws-java-sdk-s3</artifactId>
+		    <version>1.12.311</version>
+			<scope>compile</scope>
+		</dependency>
+	
+		<dependency>
+		    <groupId>commons-cli</groupId>
+		    <artifactId>commons-cli</artifactId>
+		    <version>1.5.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.esferalia.aon</groupId>
+		    <artifactId>aon.master.jooq</artifactId>
+      		<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+        <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.13</version>
+                <scope>runtime</scope>
+        </dependency>
+
+		<!-- **** TEST DEPENDENCIES **** -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junitVersion}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

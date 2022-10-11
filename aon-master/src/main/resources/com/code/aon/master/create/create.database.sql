@@ -1757,6 +1757,30 @@ CREATE TABLE `contract_attach` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de contratos';
 
 #
+# Table structure for table `contract_doc`
+#
+
+CREATE TABLE `contract_doc` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Documento del contrato',
+  `domain` int NOT NULL COMMENT 'Identificador del Dominio',
+  `contract` int NOT NULL DEFAULT '0' COMMENT 'Identificador del Contrato',
+  `mimeType` tinyint DEFAULT '0' COMMENT 'Mime Type del Documento',
+  `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Documento',
+  `type` tinyint DEFAULT NULL COMMENT 'Tipo de Documento (TA, IDC...)',
+  `scope` int DEFAULT NULL COMMENT 'Ambito del Documento',
+  `security_level` tinyint DEFAULT '0' COMMENT 'Nivel de seguridad del Documento',
+  `attach_date` datetime DEFAULT NULL COMMENT 'Fecha del Documento',
+  `s3_key` varchar(1024) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Amazon S3 Object key',
+  PRIMARY KEY (`id`),
+  KEY `IDX_CONTRACT_DOC_CONTRACT` (`contract`),
+  KEY `IDX_CONTRACT_DOC_SCOPE` (`scope`),
+  KEY `IDX_CONTRACT_DOC_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_DOC_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
+  CONSTRAINT `FK_CONTRACT_DOC_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_DOC_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Documentos del contrato';
+
+#
 # Table structure for table `contract_batch`
 #
 
