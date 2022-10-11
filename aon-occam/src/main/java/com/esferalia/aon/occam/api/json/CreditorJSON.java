@@ -31,7 +31,7 @@ public class CreditorJSON {
 		return new Creditor()
 			.copy(RegistryJSON.fromJSON(json))
 			.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
-			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
+			.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
 			.setTransaction(InvoiceTransactionType.safeValueOf(JsonUtils.getString(json, IJsonNames.TRANSACTION)))
 			.setWithholding(JsonUtils.getboolean(json, IJsonNames.WITHHOLDING))
 			.setStatus(RegistryStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
@@ -54,7 +54,7 @@ public class CreditorJSON {
 			.put(IJsonNames.WITHHOLDING, creditor.isWithholding())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, creditor.isVatAccrualPayment())
 			.put(IJsonNames.ACCOUNT, creditor.getAccount())
-			.put(IJsonNames.SCOPE, creditor.getScope())
+			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(creditor.getScope()))
 			.put(IJsonNames.TRANSACTION, creditor.getTransaction().getTediName())
 			.put(IJsonNames.STATUS, creditor.getStatus().name());
 	}

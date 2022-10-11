@@ -6,6 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.IAccountId;
 import com.esferalia.aon.occam.api.model.IScopable;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
@@ -17,7 +18,7 @@ public class Creditor extends Registry implements Serializable, HasAudit, IScopa
 	private boolean vatAccrualPayment;
 	private InvoiceTransactionType transaction;
 	private RegistryStatus status;
-	private Integer scope;
+	private Scope scope;
 	private Integer account;
 	
 	private String creationUser;
@@ -74,11 +75,14 @@ public class Creditor extends Registry implements Serializable, HasAudit, IScopa
 	}
 
 	@Override
-	public Integer getScope() {
+	public Scope getScope() {
+		if(scope == null) {
+			scope = new Scope();
+		}
 		return scope;
 	}
 	@Override
-	public Creditor setScope(Integer scope) {
+	public Creditor setScope(Scope scope) {
 		this.scope = scope;
 		return this;
 	}

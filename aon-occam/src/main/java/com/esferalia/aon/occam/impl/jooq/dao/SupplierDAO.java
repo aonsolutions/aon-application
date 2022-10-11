@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -65,7 +66,7 @@ public class SupplierDAO {
 	}
 
 	
-	protected static class SupplierFiller implements Function<Record, Supplier> {
+	public static class SupplierFiller implements Function<Record, Supplier> {
 
 		@Override
 		public Supplier apply(Record r) {
@@ -92,7 +93,7 @@ public class SupplierDAO {
 					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT)==1)
 					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(SUPPLIER.TRANSACTION)))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
-					.setScope(r.getValue(SUPPLIER.SCOPE))
+					.setScope(new Scope().setId(r.getValue(SUPPLIER.SCOPE)))
 					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED)==1)
 					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
@@ -160,7 +161,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(supplier.isVatAccrualPayment()))
 			.set(SUPPLIER.TRANSACTION,AonEnumUtils.getByte(supplier.getTransaction()))
 			.set(SUPPLIER.STATUS, supplier.getStatus().value())
-			.set(SUPPLIER.SCOPE,supplier.getScope())
+			.set(SUPPLIER.SCOPE,supplier.getScope().getId())
 			.set(SUPPLIER.PURCHASE_VALUATED,AonEnumUtils.getByte(supplier.isPurchaseValuated()))
 			.set(SUPPLIER.ACCOUNT,supplier.getAccount())
 			.set(SUPPLIER.CREATION_USER,ctx.getUser())
@@ -179,7 +180,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(supplier.isVatAccrualPayment()))
 			.set(SUPPLIER.TRANSACTION,AonEnumUtils.getByte(supplier.getTransaction()))
 			.set(SUPPLIER.STATUS, supplier.getStatus().value())
-			.set(SUPPLIER.SCOPE,supplier.getScope())
+			.set(SUPPLIER.SCOPE,supplier.getScope().getId())
 			.set(SUPPLIER.PURCHASE_VALUATED,AonEnumUtils.getByte(supplier.isPurchaseValuated()))
 			.set(SUPPLIER.ACCOUNT,supplier.getAccount())
 			.set(SUPPLIER.MODIFICATION_USER,ctx.getUser())

@@ -19,6 +19,10 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
+/**
+ * @deprecated  Replaced by SuppliersServlet
+ */
+@Deprecated(forRemoval = true )
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiSupplierServlet", urlPatterns = {"/ms/api/supplier/*"})
 public class SupplierServlet extends AonApiHttpServlet {
