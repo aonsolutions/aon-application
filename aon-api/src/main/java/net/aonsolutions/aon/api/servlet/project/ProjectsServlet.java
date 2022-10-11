@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ProjectHolderProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -219,14 +220,14 @@ public class ProjectsServlet extends AonApiHttpServlet{
 	}
     
     private static JSONObject saveProjectType(AonApiData api) {
+    	ProjectType projectType = ProjectTypeJSON.fromJSON(api.getData());
     	return ProjectTypeJSON.toJSON(
-    		AON.saveProjectType(api.getDomain(), api.getUser(), 
-    			ProjectTypeJSON.fromJSON(api.getData())));
+    		AON.saveProjectType(api.getDomain(), api.getUser(), projectType)
+    	);
     }
     
     private static JSONObject deleteProjectType(AonApiData api) {
-    	AON.deleteProjectType(api.getDomain(), api.getUser(), 
-    			JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
+    	AON.deleteProjectType(api.getDomain(), api.getUser(), JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
     	return new JSONObject();
     }
     
@@ -269,7 +270,6 @@ public class ProjectsServlet extends AonApiHttpServlet{
   		boolean active = params.optBoolean(IJsonNames.ACTIVE);
   		Timestamp ts = Timestamp.from(Instant.now());
 
-  
   		if(params.opt(IJsonNames.PROJECT) != null) {
   			Integer project = params.optInt(IJsonNames.PROJECT);
   			filter = filter.and(f.getProjectProperty().eq(project));
