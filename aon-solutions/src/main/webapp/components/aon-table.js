@@ -137,12 +137,13 @@ export class AonTable extends AonElement {
     header.appendChild(th);
   }
 
-  addColumnIcon(name, type, id, width, fn) {
+  addColumnIcon({name, title, type, id, width}, fn) {
     let header = this.getElement(this.getId() + "TableHeader");
     let th = this.createElement(TAG.TH);
     let aonIconB = new AonIconButton();
     aonIconB.id = this.getId()+"Back";
     aonIconB.icon = name;
+    aonIconB.title = title;
     aonIconB.noHover = "true";
     th.appendChild(aonIconB);
     th.style.width = width;

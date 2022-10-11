@@ -1,4 +1,4 @@
-import { CONSTANT, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import {AonElement} from './AonElement.js';
 
 export class AonCheckbox extends AonElement {
@@ -62,8 +62,12 @@ export class AonCheckbox extends AonElement {
 		if(CONSTANT.VALUE === name){
 			let input = this.getElement(this.getAttribute(CONSTANT.ID) + 'Input');
 			if(this.hasAttribute(CONSTANT.VALUE) && "true" === this.getAttribute(CONSTANT.VALUE)){
-				input.setAttribute('checked', 'checked');
-			} else input.removeAttribute('checked');
+				input.setAttribute(CONSTANT.CHECKED, CONSTANT.CHECKED);
+			} else {
+				input.removeAttribute(CONSTANT.CHECKED);
+			}
+			
+			this.dispatchEvent(new Event(EVENT.CHANGE));
 		}
 	}
 

@@ -5,7 +5,7 @@ import { getStatus, getPeriod, getTimeControlDetail } from "../../../../services
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
 import { AonFilter } from "../../../../components/aon-filter.js";
 import { AonToolbar } from "../../../../components/aon-toolbar.js";
@@ -155,7 +155,7 @@ export class AonEventDetailList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
+      aonTable.addColumnIcon({title:MSG.BACK, name:MATERIAL_ICONS.ARROW_BACK, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.STATUS, "string", "textStatus", "10%");
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "20%");
       aonTable.addColumn(MSG.LOCATION, "string", "nameLocation", "30%");

@@ -14,7 +14,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environme
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
-import { CONFIGURATION, INVOICE, MESSENGER, AON_SALTRA, COMUNICA, API_SERVICE } from "../../services/app.js";
+import { CONFIGURATION, INVOICE, MESSENGER, AON_SALTRA, COMUNICA } from "../../services/app.js";
 import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
@@ -26,7 +26,6 @@ import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
 import { AonInput } from "../../components/aon-input.js";
-import { AonDate } from "../../components/aon-date.js";
 import { AonNewsList } from "../news/news/aon-news-list.js";
 
 export class AonConfiguration extends AonElement {

@@ -95,7 +95,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			
 			Object object = new AonRouting(api)
 				.addRoute(ROOT, ProjectsServlet::saveProject)
-				.addRoute(HOLDER, ProjectsServlet::saveHolder)
+				.addRoute(HOLDER, ProjectsServlet::saveProjectHolder)
 				.addRoute(TYPE, ProjectsServlet::saveProjectType)
 				.apply();
 			
@@ -192,8 +192,20 @@ public class ProjectsServlet extends AonApiHttpServlet{
     	if(api.getData().opt(IJsonNames.PROJECTS)!=null) {
     		return saveProjects(api);
     	} else {
-        	return ProjectJSON.toJSON(AON.saveProject(api.getDomain(), api.getUser(), 
-        			ProjectJSON.fromJSON(api.getData())));
+    		Project project = AON.saveProject(api.getDomain(), api.getUser(), ProjectJSON.fromJSON(api.getData()));
+    		
+    		JSONArray holders = api.getData().optJSONArray("projectHolders"); 
+    		if(holders!=null) {
+    			ProjectHolderJSON
+    			.fromJSON(holders)
+    			.forEach(holder->{
+    				holder.setDomain(project.getDomain().getId());
+    				holder.setProject(project.getId());
+    				saveProjectHolder(api, holder);
+    			});
+    		}
+    		
+        	return ProjectJSON.toJSON(project);
     	}
     }
     
@@ -231,9 +243,13 @@ public class ProjectsServlet extends AonApiHttpServlet{
     	return new JSONObject();
     }
     
-    private static Object saveHolder(AonApiData api) {
+    private static Object saveProjectHolder(AonApiData api) {
+        return saveProjectHolder(api, ProjectHolderJSON.fromJSON(api.getData()));
+    }
+    
+    private static Object saveProjectHolder(AonApiData api, ProjectHolder holder) {
         return ProjectHolderJSON.toJSON(
-        		AON.saveProjectHolder(api.getDomain(), api.getUser(), ProjectHolderJSON.fromJSON(api.getData()))
+        		AON.saveProjectHolder(api.getDomain(), api.getUser(), holder)
         );
     }
    

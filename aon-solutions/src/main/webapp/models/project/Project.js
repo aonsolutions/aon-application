@@ -1,6 +1,4 @@
-import * as LS from '../../services/localStorageService.js';
 import { Domain } from '../Domain.js';
-import { RegistryType } from '../enums.js';
 import { Registry } from '../registry/Registry.js';
 import { ProjectHolder } from './ProjectHolder.js';
 import { ProjectType } from './ProjectType.js';
