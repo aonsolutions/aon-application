@@ -74,7 +74,13 @@
 		<version>${project.version}</version>
 		<scope>test</scope>
 	 </dependency>		
-
+	 
+	<dependency>
+    	<groupId>net.sourceforge.barbecue</groupId>
+    	<artifactId>barbecue</artifactId>
+    	<version>1.5-beta1</version>
+	</dependency>
+	 
 	<dependency>
 		<groupId>solutions.aon</groupId>
 		<artifactId>aon.seg.social</artifactId>
