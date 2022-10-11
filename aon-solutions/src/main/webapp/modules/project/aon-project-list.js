@@ -3,10 +3,13 @@ import {AonElement} from '../../components/AonElement.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import { AonProject } from './aon-project.js';
-import { getProjects } from '../../services/projectService.js';
-import { AonSearch } from '../../components/aon-search.js';
+import { deleteProject, getProjects, getProjectTypes, saveProject } from '../../services/projectService.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonHolderSimpleList} from './aon-holder-simple-list.js';
+import { ProjectUtils } from './ProjectUtils.js';
+import { Project } from '../../models/project/Project.js';
+import { getWorkgroups } from '../../services/workgroupService.js';
+import { getTastHolders } from '../../services/taskHolderService.js';
 
 export class AonProjectList extends AonElement {
 
@@ -16,6 +19,9 @@ export class AonProjectList extends AonElement {
 	TABLE;
 	holders;
 	HOLDERS_DIV;
+	projectTypes;
+	workgroups;
+    taskHolders;
 
 	connectedCallback () {
 		this.initialize();
@@ -25,6 +31,9 @@ export class AonProjectList extends AonElement {
 	initialize() {
 		this.more = true;
 		this.holders = [];
+		this.projectTypes = [];
+		this.workgroups = [];
+		this.taskHolders = [];
 		this.filter = this.filter || {
 			page: 1,
 			perPage: 50		
@@ -37,7 +46,7 @@ export class AonProjectList extends AonElement {
 		this.TABLE.style.width = "100%";
 		this.TABLE.id = 'aonRegistryTable';
 
-		if(this.viewholders){
+		if(this.registry){
 			this.buildHolderTable();
 		} else {
 			this.buildTable();
@@ -68,9 +77,13 @@ export class AonProjectList extends AonElement {
 		div.appendChild(this.TABLE);
 		this.TABLE.addColumn(MSG.TYPE, 'string', 'typeName', '30%');
 		this.TABLE.addColumn(MSG.DATE, 'date', 'date', '20%');
-		this.TABLE.addColumnIcon(MATERIAL_ICONS.ADD, "string", "lettersHtml", "1%", ()=>{
-			this.getApplication().development();
-			console.log("add");
+		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"html", id:"lettersHtml", width:"5%"}, 
+		()=>{
+			let project = new Project();
+			if(this.registry){
+				project.setRegistry(this.registry);
+			}
+			ProjectUtils.buildDialogProject(this, project);
 		});
 
         this.HOLDERS_DIV = this.createElement(TAG.DIV);
@@ -84,7 +97,7 @@ export class AonProjectList extends AonElement {
 		this.more = false;
 		if(this.TABLE && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			getProjects(this.filter)
+			this.getData(this.filter)
 			.then(projects => {
 				if(projects.length > 0)
 					this.more = true;
@@ -98,9 +111,9 @@ export class AonProjectList extends AonElement {
 	init() {
 		if(this.TABLE) {
 			this.TABLE.removeRows();
-			getProjects(this.getFilter())
+			this.getData(this.getFilter())
 			.then(projects => {
-				projects.map(p => ({...p, typeName:p.type.description, registryName:p.registry.name}))
+				projects
 				.forEach((project, i) => {
 					this.TABLE.addRow(project, () => this.buildProject(project));
 				});
@@ -108,8 +121,37 @@ export class AonProjectList extends AonElement {
 		}
 	}
 
+	async getData(filter){
+		try {
+			const data = await getProjects(filter);
+			return data
+			.sort((a, b) => (a.name > b.name) - (a.name < b.name))
+			.map(p =>{
+				p.typeName = p.type.description;
+				p.registryName = p.registry.name;
+			
+				let removeIcon = new AonIconButton();
+				removeIcon.id = p.id;
+				removeIcon.title = MSG.DELETE;
+				removeIcon.icon = MATERIAL_ICONS.CLOSE;
+				removeIcon.addEventListener(EVENT.CLICK, (ev) => {
+					ev.preventDefault();
+					ev.stopPropagation();
+					this.onDeleteProject(p);
+				});
+
+				p.lettersHtml = removeIcon;
+
+				return p;
+			});
+		} catch (error) {
+			this.showError(error);
+		}
+		return [];
+	}
+
 	buildProject(project) {
-		if(this.viewholders){
+		if(this.registry){
 			this.buildHolders(project);
 		} else {
 			let aonProject = new AonProject();
@@ -126,12 +168,13 @@ export class AonProjectList extends AonElement {
 
         let div = this.createElement(TAG.DIV);
         div.style.borderBottom = '1px solid #ddd';
-        div.style.height = '48px';
+        div.style.height = '50px';
+		div.style.display = 'flex';
         this.HOLDERS_DIV.appendChild(div);
         
         let span = this.createElement(TAG.SPAN);
-        span.innerHTML = project.name;
-        span.style.position = 'absolute';
+        span.innerHTML = MSG.ADVISERS+" de "+ project.name;
+        span.style.top = '5px';
         span.style.margin =  '20px';
         span.style.fontWeight = '500';
         span.style.color = 'rgb(95, 99, 104)';
@@ -140,16 +183,17 @@ export class AonProjectList extends AonElement {
 
         let holderIcon = new AonIconButton();
         holderIcon.id =  'holderIcon';
+		holderIcon.title = MSG.ADD+" "+MSG.ADVISER;
         holderIcon.icon = MATERIAL_ICONS.ADD;
-        holderIcon.style.top = '6px';
-		holderIcon.style.position = 'absolute';
-        holderIcon.classList.add(CSS.AON_RIGHT_20);
+		holderIcon.style.marginLeft = 'auto';
+        holderIcon.style.top = '10px';
+		holderIcon.style.position = 'relative';
+		holderIcon.style.right = '4px';
         div.appendChild(holderIcon);
 
 
 		const holderList = this.loadHolderList(project);
 		this.HOLDERS_DIV.appendChild(holderList);
-
 
 		holderIcon.addEventListener(EVENT.CLICK, () => {
 			holderList.buildAdd({project: project.id});
@@ -173,6 +217,69 @@ export class AonProjectList extends AonElement {
 	setFilter(filter) {
 		this.filter = filter;
 		this.init();
+	}
+
+    async onSaveProject(project){
+        this.getApplication().startLoading();
+        try {
+			await saveProject(project);
+            this.showMessage();
+            this.init();
+        } catch (error) {
+            this.showError(error);
+        }
+        this.getApplication().stopLoading();
+    }
+
+	onDeleteProject(project) {
+		this.getApplication()
+		.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async ()=>{
+			this.getApplication().startLoading();
+			try {
+				await deleteProject(project);
+				this.showToast({ message: MSG.DELETED_DATA });
+				this.init();
+			} catch (error) {
+				this.showError(error);
+			}
+			this.getApplication().stopLoading();	
+		});
+	}
+
+	async getProjectTypes(){
+		if(!this.projectTypes.length){
+			const types = await getProjectTypes({})
+			.catch((error)=> {
+				this.showError(error);
+				return [];
+			});
+			this.projectTypes = types.map((r) => ({...r, name: r.description, value: r.id}));
+		}
+		return this.projectTypes;
+	}
+
+    async getWorkgroups(){
+		if(this.workgroups.length==0){
+			let wgs = await getWorkgroups()
+			.catch((error)=> {
+				this.showError(error);
+				return [];
+			});
+			this.workgroups = wgs.map((r) => ({...r, name: r.description, value: r.id}))
+		} 
+		return this.workgroups;
+	}
+
+	async getTaskHolders(){
+		if(this.taskHolders.length==0){
+			let ths = await getTastHolders()
+			.catch((error)=> {
+				this.showError(error);
+				return [];
+			});
+			this.taskHolders = ths.map((r) => ({...r, value: r.id}))
+		} 
+		return this.taskHolders;
 	}
 }
 

@@ -1,6 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-import {Project} from '../../models/project/Project.js';
 import '../../components/aon-address.js';
 import '../../components/aon-input.js';
 
@@ -30,7 +29,6 @@ import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
 import * as GWT from '../../gwt/gwt.js';
-import { deleteProject, getProjects, saveProject } from '../../services/projectService.js';
 import { AonProjectList } from '../project/aon-project-list.js';
 
 
@@ -43,7 +41,6 @@ export class AonReg extends AonElement {
 	logo;
 	options;
 
-	projects;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -135,7 +132,6 @@ export class AonReg extends AonElement {
 			{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
 		];
 
-		this.projects = [];
 	}
 
 	build() {
@@ -810,175 +806,9 @@ export class AonReg extends AonElement {
 		
 		let aonProjectList = new AonProjectList();
 		aonProjectList.style.width = "100%";
-		aonProjectList.viewholders = true;
-		aonProjectList.filter = { page: 1, perPage: 50, registry:this.registry.getId() };
+		aonProjectList.registry = this.registry;
+		aonProjectList.filter = { page: 1, perPage: 500, registry:this.registry.getId() };
 		main.appendChild(aonProjectList);
-
-		// let card = new AonCard();
-		// card.id = this.MEDIA_CARD;
-		// card.title = "Expedientes";
-		// card.style.width = '100%';
-		// main.appendChild(card);
-
-		// let div = this.createElement(TAG.DIV);
-		// card.setContent(div);
-
-		// this.buildExpedientes(div, card);	
-	}
-
-	async buildExpedientes(parent, card) {
-
-		await Promise.all([
-			this.getProjectTypes(),
-			this.getWorkgroups(),
-			this.getTaskHolders()
-		]);
-
-		let table = new AonBasicTable();
-		parent.appendChild(table);
-
-		if(this.registry.getId()){
-			
-			card.addTitleButton(MSG.ADD, MATERIAL_ICONS.ADD_CIRCLE_OUTLINE, false, () => {
-				let project = new Project();
-				this.projects.push(project);
-				this.buildExpendiente(table, project);
-			});
-			
-			getProjects({page:1, perPage:200, registry: this.registry.getId()})
-			.then(projects => {
-				this.projects = [];
-	
-				projects
-				.filter(({type}) => type && type.description )
-				.sort((a,b) => a.type.description.toLowerCase() > b.type.description.toLowerCase() ? 1 : -1 )
-				.forEach(p => {
-					let project = new Project(p);
-					this.projects.push(project);
-					this.buildExpendiente(table, project);
-				});
-			})
-		}
-	}
-
-	buildExpendiente(table, project) {
-		const projectHolder = project.getProjectHolder();
-
-		project.setRegistry(this.registry);
-
-		const rowNum = table.addRow();
-
-		const idRandom = Math.floor(Math.random() * 10000000) + 1;
-
-		project.idRandom = idRandom;
-
-		let type = new AonSelect();
-		type.title = MSG.TYPE;
-		type.autocomplete = true;
-		type.id = "projectType"+idRandom;
-		table.addCell(type);
-	
-		let workgroup = new AonSelect();
-		workgroup.title = MSG.WORKGROUP;
-		workgroup.autocomplete = true;
-		workgroup.id = "workgroup"+idRandom;
-		workgroup.default = true;
-		table.addCell(workgroup);
-
-			
-		let taskHolder = new AonSelect();
-		taskHolder.title = "Asignar a";
-		taskHolder.autocomplete = true;
-		taskHolder.id = "taskHolder"+idRandom;
-		taskHolder.default = true;
-		table.addCell(taskHolder);
-
-
-		this.getProjectTypes().
-		then(types=>{
-			const typeId = project.getType().getId() || 0;
-			let options = types
-			.filter(r=> 
-				!this.projects.some(({type}) =>
-					(type && type.id === r.id) && typeId!==r.id 
-				) 
-			);
-
-			type.setOptions(options);
-
-			if(typeId){
-				type.value = typeId;
-			} 
-
-			type.addEventListener(EVENT.CHANGE, () => {
-		
-				const detail = type.getDetail();
-				project.setType(detail);
-
-				project.setName(detail.description);
-
-			});
-
-			if(!typeId && options.length===1){
-				type.setIndexOf(0);
-			}
-		});
-
-		this.getWorkgroups().then(wgs=>{
-			let options = wgs;
-			
-			workgroup.setOptions(options);
-
-			if(projectHolder.getWorkgroup().getId() ){
-				workgroup.value = projectHolder.getWorkgroup().getId();
-			} 
-
-			workgroup.addEventListener(EVENT.CHANGE, () => project.getProjectHolder().setWorkgroup(workgroup.getDetail()));
-		});
-
-		this.getTaskHolders().then(ths=>{
-			taskHolder.setOptions(ths);
-
-			if(projectHolder.getTaskHolder().getId() ){
-				taskHolder.value = projectHolder.getTaskHolder().getId();
-			}
-
-			taskHolder.addEventListener(EVENT.CHANGE, () => project.getProjectHolder().setTaskHolder(taskHolder.getDetail()));
-		});
-
-		let remove = new AonIconButton();
-		remove.id = "remove"+idRandom;
-		remove.title = MSG.DELETE_DETAIL;
-		remove.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
-		remove.addEventListener(EVENT.CLICK, () => {
-			let newProjects = this.projects.filter(p => (p.getId() !== project.getId()) || (p.idRandom !== project.idRandom));;
-			if(project.getId()){
-				this.getApplication()
-				.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, ()=>{
-					table.removeRow(rowNum);
-					if(project.getId()){
-						deleteProject(project);
-					}
-					this.projects = newProjects
-				});
-			} else {
-				table.removeRow(rowNum);
-				this.projects = newProjects;
-			}
-		});
-		table.addCell(remove);
-	}
-
-	getProjectTypes(){
-		return this.getApplicationParent().getProjectTypes();
-	}
-
-	getWorkgroups(){
-		return this.getApplicationParent().getWorkgroups();
-	}
-
-	getTaskHolders(){
-		return this.getApplicationParent().getTaskHolders();
 	}
 	
 	buildWeb(table, web, i) {
@@ -1043,7 +873,6 @@ export class AonReg extends AonElement {
 
 		saveRegistry(this.registry).then(registry => {
 			this.registry.id = registry.id;
-			this.saveProjects();
 			this.showToast({
 				type: 'success',
 	 			message: 'Datos Guardados Correctamente'
@@ -1051,18 +880,6 @@ export class AonReg extends AonElement {
 		}).catch(error => {
 	 		this.showToast(error);
 	 	});
-	}
-
-	saveProjects(){
-		if(this.projects.length>0){
-			saveProject({projects:this.projects})
-			.then(projects=>{
-				this.projects = projects.map(p => new Project(p));
-			})
-			.catch(err=>{
-				this.showError(err);
-			});
-		}
 	}
 
 	setRegistry(registry) {

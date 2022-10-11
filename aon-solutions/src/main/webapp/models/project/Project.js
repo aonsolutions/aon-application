@@ -16,6 +16,7 @@ export class Project {
     reservation;
     active;
     projectHolder;
+    projectHolders;
     dirty;
 
     constructor(project) {
@@ -124,6 +125,15 @@ export class Project {
     setDate(date) {
         this.setDirty(true);
         this.date = date;
+        return this;
+    }
+
+    getProjectHolders() {
+        return this.projectHolders || [];
+    }
+
+    setProjectHolders(projectHolders) {
+        this.projectHolders = projectHolders.map(holder => new ProjectHolder(holder).setDirty(true));
         return this;
     }
 

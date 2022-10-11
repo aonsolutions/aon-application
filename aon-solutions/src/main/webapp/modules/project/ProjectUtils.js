@@ -1,7 +1,123 @@
 import { AonDate } from "../../components/aon-date.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
+import { ProjectHolder } from "../../models/project/ProjectHolder.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+
+
+
+/**
+ * 
+ * @param {AonProjectList} parent 
+ */
+ const buildDialogProject = (parent, project) => {
+
+    const application = parent.getApplication();
+    const dialog = application.getDialog();
+
+    dialog.width = '40%';
+    
+    dialog.clear();
+    dialog.setTitle(MSG.ADD+" expediente");
+
+    let div = document.createElement('div');
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+        
+    dialog.setContent(div);
+
+    buildFormProject(parent, div, project);
+    
+    dialog.addSendAction(async()=>{
+
+        await parent.onSaveProject(project)
+
+        dialog.close();
+
+    }, MSG.SAVE);
+
+    dialog.open();
+}   
+
+/**
+ * 
+ * @param {AonProjectList} parent 
+ * @param {HTMLElement} div 
+ * @param {Project} project
+ */
+const buildFormProject = (parent, div, project) => {
+    const projectHolder = project.getProjectHolder();
+
+    const idRandom = Math.floor(Math.random() * 10000000) + 1;
+
+    let type = new AonSelect();
+    type.title = MSG.TYPE;
+    type.autocomplete = true;
+    type.id = "projectType2"+idRandom;
+    div.appendChild(type);
+    
+    let workgroup = new AonSelect();
+    workgroup.title = MSG.WORKGROUP;
+    workgroup.autocomplete = true;
+    workgroup.id = "workgroup2"+idRandom;
+    workgroup.default = true;
+    div.appendChild(workgroup);
+
+    let taskHolder = new AonSelect();
+    taskHolder.title = "Asignar a";
+    taskHolder.autocomplete = true;
+    taskHolder.id = "taskHolder2"+idRandom;
+    taskHolder.default = true;
+    taskHolder.multiple = true;
+    div.appendChild(taskHolder);
+
+    parent.getProjectTypes().
+    then(types=>{
+        const typeId = project.getType().getId() || 0;
+
+        type.setOptions(types);
+
+        if(typeId){
+            type.value = typeId;
+        } 
+
+        type.addEventListener(EVENT.CHANGE, () => {
+    
+            const detail = type.getDetail();
+            project.setType(detail);
+
+            project.setName(detail.description);
+
+        });
+
+        if(!typeId && types.length===1){
+            type.setIndexOf(0);
+        }
+    });
+
+    parent.getWorkgroups().then(wgs=>{
+        const workgroupId = projectHolder.getWorkgroup().getId();
+
+        workgroup.setOptions(wgs);
+
+        if(workgroupId){
+            workgroup.value = workgroupId;
+        } 
+
+        workgroup.addEventListener(EVENT.CHANGE, () => projectHolder.setWorkgroup(workgroup.getDetail()));
+    });
+
+
+    parent.getTaskHolders().then(ths=>{
+        taskHolder.setOptions(ths);
+
+        taskHolder.addEventListener(EVENT.SELECT, ({detail}) => {
+            let projectHolders = (detail || []).map(taskHolder => new ProjectHolder({taskHolder}));
+            project.setProjectHolders(projectHolders);
+        });
+    });
+
+}
 
 /**
  * 
@@ -15,7 +131,7 @@ const buildDialogHolder = (parent, holder) => {
     dialog.width = '40%';
     
     dialog.clear();
-    dialog.setTitle("Asignar responsables");
+    dialog.setTitle(MSG.ADD+" "+MSG.ADVISER);
 
     let div = document.createElement('div');
     div.style.display = "flex";
@@ -23,7 +139,7 @@ const buildDialogHolder = (parent, holder) => {
         
     dialog.setContent(div);
 
-    buildFormExpediente(parent, div, holder);
+    buildFormHolder(parent, div, holder);
     
     dialog.addSendAction(async()=>{
 
@@ -42,7 +158,7 @@ const buildDialogHolder = (parent, holder) => {
     dialog.open();
 }   
 
-const buildFormExpediente = (parent, div, holder) => {
+const buildFormHolder = (parent, div, holder) => {
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 
@@ -99,7 +215,7 @@ const buildFormExpediente = (parent, div, holder) => {
 }
 
 
-
 export const ProjectUtils = {
+    buildDialogProject,
     buildDialogHolder
 }
