@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -61,6 +62,12 @@ public class CONSOLE {
 	public static String remoteAccess(DomainParams params, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().remoteAccess(ctx,domainId);
+		}
+	}
+
+	public static Boolean fix(ConsoleDomainMessage consoleMessage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(consoleMessage.getSchema())) {
+			return getConsole().fix(ctx,consoleMessage);
 		}
 	}
 	

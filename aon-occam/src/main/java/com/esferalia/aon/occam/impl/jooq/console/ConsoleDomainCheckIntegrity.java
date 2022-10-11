@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.console;
 
-import static com.esferalia.aon.jooq.tables.ActionEntry.ACTION_ENTRY;
-import static com.esferalia.aon.jooq.tables.Session.SESSION;
-
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,7 +46,6 @@ public class ConsoleDomainCheckIntegrity {
 	}
 	
 	public static void check(String processId, ConsoleParams params, boolean beforeIsolate) {
-		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.subtitle(processId, "VALIDACION DE DOMINIO"));
 		Integer domainId = params.getFromConnection().getDomain().getId();
 		Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext(), domainId);
 		if (fullDomain == null) {
@@ -62,13 +58,15 @@ public class ConsoleDomainCheckIntegrity {
 		params.getFromConnection().setDomain(fullDomain);
 		params.setScript( new LinkedHashMap<>() );
 		params.getFromDslContext().transaction(conf -> {
-			
+//			AonMaster.AON_MASTER.getTables()
 			List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Generating tables script"));			
-			tables.stream()
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Generando lista de tablas"));			
+			tables
+			
+				.stream()
 				.filter(Objects::nonNull )
-				.filter(t -> !beforeIsolate || (beforeIsolate && !SESSION.getName().equals(t.getName())))
-				.filter(t -> !beforeIsolate || (beforeIsolate && !ACTION_ENTRY.getName().equals(t.getName())))
+//				.filter(t -> !beforeIsolate || (beforeIsolate && !SESSION.getName().equals(t.getName())))
+//				.filter(t -> !beforeIsolate || (beforeIsolate && !ACTION_ENTRY.getName().equals(t.getName())))
 				.forEach(t -> addTable(params, t));
 			
 			params.setPartialCount( params.getScript().size() );
@@ -83,7 +81,10 @@ public class ConsoleDomainCheckIntegrity {
 		});
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Final del proceso de chequeo de integridad de dominios"));
 		if (!params.getErrors().isEmpty()) {
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, "Se han encontrado incidencias"));
+			String msg = (params.getErrors().size() == 1)
+				?"Se ha encontrado 1 incidencia."
+				:"Se han encontrado "+ params.getErrors().size() +" incidencias.";
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
 			params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e)));
 		} else {
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "NO se han encontrado incidencias!"));
@@ -206,19 +207,15 @@ public class ConsoleDomainCheckIntegrity {
 							.setSchema( params.getFromConnection().getSchemaName() )
 							.setDomainId( toRec.getValue(fromDomainField) )
 							.setTable( fromTable.getName() )
-							.setPkId( Integer.valueOf(Objects.toString(toRec.getValue(pkField)) ))
+							.setPkId( AonNumberUtils.toInteger(Objects.toString(toRec.getValue(pkField)) ))
 							.setFkTable( toTable.getName() )
 							.setFkColumn(fkField.getName())
 							.setFkId(Integer.valueOf(Objects.toString(toRec.getValue(fkField))))
-							.setWrongDomainId(Integer.valueOf(Objects.toString(toRec.getValue(toDomainField))))
+							.setWrongDomainId(AonNumberUtils.toInteger(toRec.getValue(toDomainField)))
 							.setMessage(
-								MessageFormat.format("Dominio: {0} "
-									+ ", tabla: [{1}]"
-									+ ", ID: {2}"
-									+ ", columna [{3}] ({4}) que referencia a la tabla [{5}] apunta al dominio {6}."
-								,Objects.toString(toRec.getValue(fromDomainField))
-								,fromTable.getName()
+								MessageFormat.format("ID: {0}. Columna: [{1}.{2}] con valor: {3} que referencia a la tabla [{4}] apunta al dominio {5}."
 								,Objects.toString(toRec.getValue(pkField))
+								,fromTable.getName()
 								,fkField.getName()
 								,Objects.toString(toRec.getValue(fkField))
 								,toTable.getName()

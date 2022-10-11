@@ -146,6 +146,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			String tabLabel = "Multiple";
 			final MutableInt processes = new MutableInt(checkedList.size()); 
 			setRunning(true);
+			hideErrorPanel();
 			checkedList.values()
 				.stream()
 				.forEach( row -> row.doDelete( tabLabel, new AsyncCallback<Boolean>() {
@@ -169,33 +170,19 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 							setRunning(false);				
 						}
 					}
-					
-					
-					
 				}));
 
 		}
 		
 		@Override
 		public void onDelete(Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
-			DomainParams params = filterPanel.getParams(options);
-			deleteDomain(params.getSchema(), domainId, tabLabel, cbk);
-			
+			hideErrorPanel();
+			deleteDomain(domainId, tabLabel, cbk);
 		}
 
-		private void deleteDomain(String schema,Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
+		private void deleteDomain(Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
 			try {
-				AonConsoleProgress tabWidget = (AonConsoleProgress) tabLayout.getWidget(tabLabel);
-				if (tabWidget == null) {
-					tabWidget = new AonConsoleProgress();
-					AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-					closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
-					tabLayout.add(tabWidget, closeTab, tabLabel);
-				}
-				final AonConsoleProgress aonConsole = tabWidget; 
-				tabLayout.selectTab(aonConsole);
-				openFootPanelIfNeeded();
-				
+				final AonConsoleProgress aonConsole = getAonConsoleProgress(tabLabel);
 				XMLHttpRequest xhreq = XMLHttpRequest.create();
 				xhreq.open(FormPanel.METHOD_POST, DOMAIN_DELETE_SERVLET);
 				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
@@ -232,45 +219,18 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		// -----------------------------------------------------------------------
 		@Override
 		public void onValidate(Integer domainId, String name, String description, AsyncCallback<Boolean> cbk) {
-			DomainParams params = filterPanel.getParams(options);
 			String tabLabel = AonStringUtils.abbreviate(description, 30);
-			validate(params.getSchema(), domainId, tabLabel, cbk);
+			validate(domainId, tabLabel, cbk);
 		}
 
-		private void validate(String schema,Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
+		private void validate(Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
 			try {
-//				AonConsoleWidget aonConsole = new AonConsoleWidget();
-//				String tabLabel = AonStringUtils.abbreviate(description, 30);
-//				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-//				tabLayout.add(aonConsole, closeTab, tabLabel);
-//				closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
-//				tabLayout.selectTab(aonConsole);
-//				openFootPanelIfNeeded();
-				AonConsoleProgress tabWidget = (AonConsoleProgress) tabLayout.getWidget(tabLabel);
-				if (tabWidget == null) {
-					tabWidget = new AonConsoleProgress();
-					AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-					closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
-					tabLayout.add(tabWidget, closeTab, tabLabel);
-				}
-				final AonConsoleProgress aonConsole = tabWidget; 
-				tabLayout.selectTab(aonConsole);
-				openFootPanelIfNeeded();
-				
+				hideErrorPanel();
+				final AonConsoleProgress aonConsole = getAonConsoleProgress(tabLabel); 
 				XMLHttpRequest xhreq = XMLHttpRequest.create();
 				xhreq.open(FormPanel.METHOD_POST, CHECK_DOMAIN_INTEGRITY_SERVLET);
 				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
 				xhreq.setOnReadyStateChange(  new ConsoleReadyStateChangeHandler( aonConsole, cbk));
-//				xhreq.setOnReadyStateChange( xhr -> {
-//					int state = xhr.getReadyState();
-//					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
-//						String text = xhr.getResponseText();
-//						aonConsole.log(text);
-//					}
-//					if (state == XMLHttpRequest.DONE) {
-//						cbk.onSuccess( true );
-//					}
-//				});
 				StringBuilder requestData = new StringBuilder();
 				DomainParams params = filterPanel.getParams(options).setId(domainId);
 				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(params));
@@ -303,15 +263,9 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		public void onDuplicate(DomainParams origin, DomainParams target ) {
 			try {
 				setRunning(true);
+				hideErrorPanel();
 				String tabLabel = AonStringUtils.abbreviate(origin.getDescription(), 30);
-				AonConsoleProgress tabWidget = (AonConsoleProgress) tabLayout.getWidget(tabLabel);
-				if (tabWidget == null) {
-					tabWidget = new AonConsoleProgress();
-					AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
-					closeTab.addCloseHandler(e -> {if (!isRunning()) tabLayout.remove(tabLabel);});
-					tabLayout.add(tabWidget, closeTab, tabLabel);
-				}
-				final AonConsoleProgress aonConsole = tabWidget; 
+				final AonConsoleProgress aonConsole = getAonConsoleProgress(tabLabel);
 				tabLayout.selectTab(aonConsole);
 				openFootPanelIfNeeded();
 				
@@ -341,7 +295,28 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				showError("No se pudo duplicar el dominio. " + e.getMessage());
 			}
 		}
+		
+		private AonConsoleProgress getAonConsoleProgress(String tabLabel) {
+			AonConsoleProgress tabWidget = (AonConsoleProgress) tabLayout.getWidget(tabLabel);
+			if (tabWidget != null) {
+				tabWidget.reset();
+			} else {
+				tabWidget = new AonConsoleProgress();
+				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+				closeTab.addCloseHandler(e -> {if (!isRunning()) {
+					tabLayout.remove(tabLabel);
+					if ( tabLayout.getWidgetCount() == 0) {
+						closeFootPanel();
+					}
+				}});
+				tabLayout.add(tabWidget, closeTab, tabLabel);
+			}
+			tabLayout.selectTab(tabWidget);
+			openFootPanelIfNeeded();
+			return tabWidget; 
+		}
 	}
+	
 
 	public ConsoleDomainModule(ConsoleModuleOptions options) {
 		this.options = options;
@@ -396,7 +371,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		splitLayoutPanel.animate(500);
 	}
 	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 3.0);
 		splitLayoutPanel.animate(500);
 	}
 	private void openFootPanelIfNeeded() {
@@ -464,7 +439,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	}
 	private boolean canRunElseNotify() {
 		if (!canRun()) {
-			AonMessageDialog.show("AVISO","Hay una proceso ejecut\u00E1ndose. Un momento, por favor.");
+			AonMessageDialog.show(AVISO,"Hay una proceso ejecut\u00E1ndose. Un momento, por favor.");
 			return false;
 		}
 		return true;
@@ -571,7 +546,6 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	}
 
 	private Object duplicateDomain() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -609,7 +583,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				if (cbk != null && hasError) {
 					cbk.onFailure(new AonCoreException(errorMessage));
 				} else {
-					cbk.onSuccess(true);
+					if (cbk != null) cbk.onSuccess(true);
 				}
 			}
 		}

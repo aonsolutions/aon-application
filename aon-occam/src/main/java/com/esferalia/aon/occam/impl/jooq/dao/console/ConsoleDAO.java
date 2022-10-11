@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.console;
 
+import static com.esferalia.aon.jooq.AonMaster.AON_MASTER;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.User.USER;
@@ -18,18 +19,24 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Schema;
 import org.jooq.Table;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.json.ConsoleDomainMessageJSON;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageFixType;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -260,6 +267,84 @@ public class ConsoleDAO {
 				.collect(Collectors.joining(", "));
 			;
 			return AonStringUtils.defaultIfBlank(users, "No hay usuarios activos en el dominio");
+		}
+		
+	}
+
+	public static Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+		try {
+			System.out.println( ConsoleDomainMessageJSON.toJSON(cm) );
+			for ( ConsoleDomainMessageVisitor cmt : ConsoleDomainMessageVisitor.values()) {
+				if (cmt.fix( ctx, cm)) {
+					return true;		
+				}; 			
+			}
+			return false;
+		} catch (Exception e) {
+			throw new AonCoreException( e );	
+		}
+	}
+	
+	private enum ConsoleDomainMessageVisitor {
+		INTEGRITY {
+			@Override
+			boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+				if (cm.getType() == ConsoleDomainMessageType.INTEGRITY) {
+					if (cm.getFixType() == ConsoleDomainMessageFixType.DELETE) {
+						return  deleteRow( ctx, cm);
+					} else if (cm.getFixType() == ConsoleDomainMessageFixType.SET_NULL) {
+						return  setNull( ctx, cm);
+					}
+					return true;
+				}
+				return false;
+			}
+		},
+		PRODUCT {
+			boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+				if (cm.getType() == ConsoleDomainMessageType.PRODUCT) {
+					return false;
+				}
+				return false;
+			}
+		},
+		AGREEMENT {
+			@Override
+			boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+				if (cm.getType() == ConsoleDomainMessageType.AGREEMENT) {
+					return false;
+				}
+				return false;
+			}
+		};
+
+		private ConsoleDomainMessageVisitor() {
+			
+		}
+		
+		abstract boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm);
+		
+		boolean deleteRow(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+			Table<?> table = AON_MASTER.getTable(cm.getTable());
+			@SuppressWarnings("unchecked")
+			TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
+			int count = ctx.getDslContext().delete(table)
+				.where(pkField.eq(cm.getPkId()))
+				.execute();
+			return (count>0);
+		}
+		
+		boolean setNull(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+			Table<?> table = AON_MASTER.getTable(cm.getTable());
+			@SuppressWarnings("unchecked")
+			TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
+			Field<?> fkField = table.field( cm.getFkColumn() );
+			int count = ctx.getDslContext()
+				.update(table)
+				.setNull( fkField )
+				.where(pkField.eq(cm.getPkId()))
+				.execute();
+			return (count>0);
 		}
 		
 	}

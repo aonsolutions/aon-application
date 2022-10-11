@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Aon MS Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Console" })
@@ -49,5 +50,9 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public String remoteAccess(DomainParams params, Integer domainId) {
 		return CONSOLE.remoteAccess(params, domainId);
+	}
+	@Override
+	public Boolean fix(ConsoleDomainMessage consoleMessage) throws AonCoreException {
+		return CONSOLE.fix(consoleMessage);
 	}
 }

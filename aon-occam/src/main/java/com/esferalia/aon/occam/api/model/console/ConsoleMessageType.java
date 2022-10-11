@@ -5,7 +5,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public enum ConsoleMessageType {
 
 	TITLE 			{ @Override public void visit(Visitor visitor) {visitor.visitTitle(); }},
-	SUBTITLE		{ @Override public void visit(Visitor visitor) {visitor.visitSubtitle(); }},
 	MESSAGE			{ @Override public void visit(Visitor visitor) {visitor.visitMessage(); }},
 	MAIN_PROGRESS	{ @Override public void visit(Visitor visitor) {visitor.visitMainProgress(); }},
 	PROGRESS		{ @Override public void visit(Visitor visitor) {visitor.visitProgress(); }},
@@ -44,7 +43,6 @@ public enum ConsoleMessageType {
 	
 	public static interface Visitor {
 		void visitTitle();
-		void visitSubtitle();
 		void visitMessage();
 		void visitMainProgress();
 		void visitProgress();

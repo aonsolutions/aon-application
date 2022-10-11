@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf.maker.warehouse;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,11 +30,10 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.Writer;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.oned.Code128Writer;
+
+import net.sourceforge.barbecue.Barcode;
+import net.sourceforge.barbecue.BarcodeFactory;
+import net.sourceforge.barbecue.BarcodeImageHandler;
 
 public class WarehouseTemplate implements AutoCloseable {
 	
@@ -98,7 +98,7 @@ public class WarehouseTemplate implements AutoCloseable {
 		}
 	}
 	
-	private void draw() throws IOException, WriterException {
+	private void draw() throws Exception {
 		this.x = 0;
 		this.y = this.getPageHeight() - this.marginTop;
 		
@@ -370,7 +370,7 @@ public class WarehouseTemplate implements AutoCloseable {
 		}
 	}
 	
-	private void drawBarcodes() throws IOException, WriterException {
+	private void drawBarcodes() throws Exception {
 		
 		if (!AonStringUtils.isBlank(this.ean128)) {			
 			this.y -= this.heightBarCode + this.heightBarCode * 1/3;
@@ -385,30 +385,41 @@ public class WarehouseTemplate implements AutoCloseable {
 	
 	//---------------------
 	
-	public static byte[] createBarcode(String datos, int ancho, int altura) throws WriterException, IOException {
-	    BitMatrix matrix;
-	    Writer escritor = new Code128Writer();
-	    matrix = escritor.encode(datos, BarcodeFormat.CODE_128, ancho, altura);
-	         
-	    BufferedImage imagen = new BufferedImage(ancho, altura, BufferedImage.TYPE_INT_RGB);
-	    
-	    for(int y = 0; y < altura; y++) {
-	        for(int x = 0; x < ancho; x++) {
-	            int grayValue = (matrix.get(x, y) ? 0 : 1) & 0xff;
-	            imagen.setRGB(x, y, (grayValue == 0 ? 0 : 0xFFFFFF));
-	        }
-	    }
+	public static byte[] createBarcode(String datos, int ancho, int altura) throws Exception {
+		BufferedImage imagen = generateCode128BarCodeImage(datos);
+		
+//	    BitMatrix matrix;
+//	    Writer escritor = new Code128Writer();
+//	    Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+//	    hints.put(EncodeHintType.GS1_FORMAT, true);
+//	    
+//	    matrix = escritor.encode(datos, BarcodeFormat.CODE_128, ancho, altura, hints);
+//
+//	    BufferedImage imagen = new BufferedImage(ancho, altura, BufferedImage.TYPE_INT_RGB);
+//	    
+//	    for(int y = 0; y < altura; y++) {
+//	        for(int x = 0; x < ancho; x++) {
+//	            int grayValue = (matrix.get(x, y) ? 0 : 1) & 0xff;
+//	            imagen.setRGB(x, y, (grayValue == 0 ? 0 : 0xFFFFFF));
+//	        }
+//	    }
 	         
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    ImageIO.write(imagen, "PNG", baos);
 	    return baos.toByteArray();        
 	}
 	
-	private void drawBarcode(String code) throws IOException, WriterException {
+	public static BufferedImage generateCode128BarCodeImage(final String barcodeText) throws Exception {
+		final Barcode barcode = BarcodeFactory.createUCC128(barcodeText.substring(0,2), barcodeText.substring(2));
+        barcode.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 0));
+        barcode.setLabel(" ");
+        return BarcodeImageHandler.getImage(barcode);
+    }
+	
+	private void drawBarcode(String code) throws Exception {
 		this.x = this.marginBarCode;
 		float maxWidth = this.getPageWidth() - 2 * this.marginBarCode;
-		
-		byte[] barcodeBytes = createBarcode("]C1" + code.replace("(", "").replace(")", ""), (int) maxWidth, (int) this.heightBarCode + 1);
+		byte[] barcodeBytes = createBarcode( code.replace("(", "").replace(")", ""), (int) maxWidth, (int) this.heightBarCode + 1);
 		
 		PDFToolkit.drawImage(this.document, this.contents, barcodeBytes, this.x, this.y, maxWidth, this.heightBarCode);
 		
@@ -418,7 +429,7 @@ public class WarehouseTemplate implements AutoCloseable {
 		PDFToolkit.drawTextCenter(
 				this.contents,
 				new PDRectangle(this.x, this.y, maxWidth, codeFontSize),
-				code.replace("\u001d", ""),
+				code.replace("\u001d", "").replace("\312", ""),
 				DEFAULT_FONT_COLOR,
 				DEFAULT_FONT,
 				codeFontSize,

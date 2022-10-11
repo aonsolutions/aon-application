@@ -175,7 +175,10 @@ public class ConsoleDeleteDomain {
 	}
 
 	private static Stream<Table<?>> getStream(ConsoleParams params) {
-		return params.getFromConnection()
+//			AonMaster.AON_MASTER
+//			.getTables()
+		return 
+			params.getFromConnection()
 			.getSchema()
 			.getTables()
 			.stream()
