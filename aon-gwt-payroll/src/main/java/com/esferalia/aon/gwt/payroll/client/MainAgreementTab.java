@@ -437,6 +437,15 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
+			
+			@Override
+			public void onSaved() {
+				saveAgreement(agreementInfo -> {
+					agreementSelected = agreementInfo;
+					agreementPreview.setAgreementPreview(agreementSelected);
+					agreementPreview.showSuccess("Convenio", "Convenio guardado correctamente");
+				}, error -> agreementPreview.showError("Error guardando", error.getMessage()));
+			}
 		};
 		
 		agreementLevelTab = new AgreementLevelTab() {
@@ -447,7 +456,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementSelected = agreementInfo;
 					agreementLevelTab.setAgreementLevel(agreementSelected);
 					agreementLevelTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				});
+				}, error -> agreementLevelTab.showError("Error guardando", error.getMessage()));
 			}
 			
 		};
@@ -460,7 +469,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementSelected = agreementInfo;
 					agreementSalaryTableTab.setAgreementSalaryTable(agreementSelected);
 					agreementSalaryTableTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				});
+				}, error -> agreementSalaryTableTab.showError("Error guardando", error.getMessage()));
 			}
 			
 			@Override
@@ -481,7 +490,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementSelected = agreementInfo;
 					agreementPaymentTab.setAgreementPayment(agreementSelected);
 					agreementPaymentTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				});
+				}, error -> agreementPaymentTab.showError("Error guardando", error.getMessage()));
 			}
 		};
 		
@@ -904,12 +913,12 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	}
 
 	
-	private void saveAgreement(Consumer<AgreementInfo> success) {
+	private void saveAgreement(Consumer<AgreementInfo> success,  Consumer<Throwable> failure) {
 		impl.setAgreementInfo(agreementSelected, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				agreementPreview.showError("Error guardando convenio", caught.getMessage());
+				failure.accept(caught);
 			}
 
 			@Override
@@ -1027,6 +1036,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.addStyleName(style.tabNotSelected());
 		
 		agreementPreview.setAgreementPreview(agreementSelected);
+		agreementPreview.setHasChange(false);
 	}
 	
 	private void selectLevelTab() {

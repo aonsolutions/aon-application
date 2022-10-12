@@ -51,6 +51,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.itextpdf.text.log.SysoLogger;
 
 public abstract class AgreementPaymentTab extends ResizeComposite {
 	
@@ -61,6 +62,23 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	interface AgreementPaymentTabUiBinder extends UiBinder<Widget, AgreementPaymentTab> {}
 	
 	// ------------------------------------------ ScheduledCommand
+	
+	class AddAonPaymentCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			new AgreementSuggestPaymentDialog() {
+				
+				@Override
+				protected void onAccept(Payment payment) {
+					agreement.addPayment(payment);
+					setAgreementPayment(agreement);
+					setHasChange(true);
+				}
+				
+			};
+		}
+	}
 	
 	class AddBasicSalaryCommand implements ScheduledCommand {
 
@@ -217,6 +235,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	class AddPaymentContextMenu extends ContextMenu {
 				
+		private MenuItem addAonPayment = null;
 		private MenuItem addBasicSalary = null;
 		private MenuItem addPlusesSalary = null;
 		private MenuItem addPlusesExtraSalary = null;
@@ -225,7 +244,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		
 		public AddPaymentContextMenu() {
 			
-			addBasicSalary = addItem("Salario Base", new AddBasicSalaryCommand(), 
+			addAonPayment = addItem("Buscagor Devengos", new AddAonPaymentCommand(), 
+					AON.CSS.aonIconSearch(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			addAonPayment.ensureDebugId("addAonPayment");
+			
+			addBasicSalary = addItem("Salario Base", new AddBasicSalaryCommand(),
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			addBasicSalary.ensureDebugId("addBasicSalary");
 			
@@ -359,6 +382,22 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		descriptionColumn.setSortable(true);
 		agreementPaymentDG.setColumnWidth(descriptionColumn, 30, Unit.PCT);
 		
+		// Pay column.
+		TextColumn<Payment> payColumn = new TextColumn<Payment>() {
+			@Override
+			public String getValue(Payment payment) {
+				return getPayType(payment);
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<div title=\"" + getPayDescription(payment) + "\">" + getPayType(payment) + "</div>");
+			}
+		};
+		
+		payColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementPaymentDG.setColumnWidth(payColumn, 5, Unit.PCT);
+		
 		// Taxed column.
 		TextColumn<Payment> taxedColumn = new TextColumn<Payment>() {
 			@Override
@@ -400,7 +439,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 
 	    expressionColumn.setSortable(true);
-	    agreementPaymentDG.setColumnWidth(expressionColumn, 35, Unit.PCT);
+	    agreementPaymentDG.setColumnWidth(expressionColumn, 30, Unit.PCT);
 	    
 	    // Visibility column.
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
@@ -471,11 +510,12 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		agreementPaymentDG.addColumn(editColumn, "");
 		agreementPaymentDG.addColumn(codeColumn, "CRA");
 		agreementPaymentDG.addColumn(descriptionColumn, "Descripci\u00F3n");
+		agreementPaymentDG.addColumn(payColumn, "Pago");
 		agreementPaymentDG.addColumn(taxedColumn, "Tributa");
 		agreementPaymentDG.addColumn(quoteColumn, "Cotiza");
 		agreementPaymentDG.addColumn(expressionColumn, "Expresi\u00F3n");
 		
-		agreementPaymentDG.addColumn(visibilityColumn, "");  
+		agreementPaymentDG.addColumn(visibilityColumn, "Estado");  
 		agreementPaymentDG.addColumn(deleteColumn, "");  
 	}
 	
@@ -485,8 +525,20 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra) {
 				updatePaymentExpresion(isHide, payment, updatedPayment);
+				Window.alert("onAccept");
 				agreement.replacePayment(payment);
-				if(null != extra) agreement.replaceExtra(extra);
+				Window.alert("onAccept 2");
+				agreement.syncPayment(payment, extra);
+				Window.alert("onAccept 3");
+				if(null != extra) {
+					Window.alert("onAccept 4");
+					agreement.replaceExtra(extra); 
+					Window.alert("onAccept 5");
+					agreement.syncExtras(extra);
+					Window.alert("onAccept 6");
+				}
+				agreement.getExtras().forEach(extraIt -> Window.alert("---- Extra ----\nId : " + extraIt.getId() + "\nisDeleted : " + extraIt.isDeleted()
+				 + "\nstartDate : " + extraIt.getStartDate() + "\nendDate : " + extraIt.getEndDate() + "\nissueDate : " + extraIt.getIssueDate()));
 				setAgreementPayment(agreement);
 				setHasChange(true);
 			}
@@ -529,6 +581,66 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				"HIDE(\"<div>" + payment.getDescription() + " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
 		
 		payment.setExpression(expression);
+	}
+	
+	private String getPayType(Payment payment) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(	null == extra && 
+				!payment.getType().equals(Payment.Type.CRA_0004) && 
+				!payment.getType().equals(Payment.Type.CRA_0005)) return "";
+			
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "P";
+		
+		return extra.isDeleted() ? "P" : getExtraPeriod(extra);
+	}
+	
+	private String getExtraPeriod(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
+		
+		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		
+		switch (endMonth - startMonth) {
+		case 11:
+			return "A";
+		case 5:
+			return "S";
+		default:
+			return (endMonth - startMonth) + "";
+		}
+	}
+	
+	private String getPayDescription(Payment payment) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(	null == extra && 
+				!payment.getType().equals(Payment.Type.CRA_0004) && 
+				!payment.getType().equals(Payment.Type.CRA_0005)) return "";
+			
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
+		
+		return extra.isDeleted() ? "Prorrateado" : getExtraPeriodTitle(extra);
+	}
+	
+	private String getExtraPeriodTitle(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
+		
+		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		
+		switch (endMonth - startMonth) {
+		case 11:
+			return "Anual";
+		case 5:
+			return "Semestral";
+		default:
+			return (endMonth - startMonth) + " meses";
+		}
 	}
 
 	private String getTaxedType(String irpfExpression) {

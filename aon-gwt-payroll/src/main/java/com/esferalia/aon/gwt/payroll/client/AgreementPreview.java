@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementOwner;
@@ -33,6 +34,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -102,10 +104,10 @@ public abstract class AgreementPreview extends ResizeComposite {
 	ScrollPanel scrollPanel;
 	
 	@UiField
-	Label description;
+	TextBox description;
 	
 	@UiField
-	Label ssNumber;
+	TextBox ssNumber;
 	
 	@UiField
 	HTMLPanel serviAgreementPanel;
@@ -193,6 +195,9 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementUpdateButton;
 	
+	private boolean hasChange = false;
+	private AonToolbarSmallButton saveBtn;
+	
 	private ListBox tc2ListBox;
 	private ListBox levelListBox;
 	private TextBox partialTextBox;
@@ -234,7 +239,15 @@ public abstract class AgreementPreview extends ResizeComposite {
 			printPreviewButton.setVisible(false);
 		
 		description.setText(agreement.getDescription());
+		description.addValueChangeHandler(e -> {
+			agreement.setDescription(e.getValue());
+			setHasChange(true);
+		});
 		ssNumber.setText(agreement.getSSNumber());
+		ssNumber.addValueChangeHandler(e -> {
+			agreement.setSSNumber(e.getValue());
+			setHasChange(true);
+		});
 		
 		if(agreement.getOwner().equals(AgreementOwner.SERVICONVENIOS))
 			createServiAgreementPanel();
@@ -747,6 +760,15 @@ public abstract class AgreementPreview extends ResizeComposite {
 	private void createToolbar() {
 		toolbar = new AonToolbar("Convenio");
 		
+		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn.addClickHandler(e -> {
+			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+			setHasChange(false);
+			onSaved();
+		});
+		
+		toolbar.add(saveBtn);
+		
 		AonToolbarButton agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
 		agreementInfoButton.addClickHandler(e -> 
 			impl.getAgreementUsedInfo(agreement.getId(), agreement.getDescription(), new AsyncCallback<String>() {
@@ -974,9 +996,28 @@ public abstract class AgreementPreview extends ResizeComposite {
 		}
 	}
 	
+	// ------------------------------------------ HasChange
+	
+	public boolean hasChange() {
+		return hasChange;
+	}
+
+	public void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		saveBtn.setEnabled(hasChange());
+		if(!hasChange()) {
+			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
+			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		}
+	}
+	
+	// ------------------------------------------ Abstract methods
+	
+	public abstract void onSaved();	
+	
 	// ------------------------------------------------- Aon Messages panel
 
-	private void showSuccess(String title, String message) {
+	public void showSuccess(String title, String message) {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put(title, message);
 		AonMessagePanel.showSuccess(messagePanel, successMap);
