@@ -377,7 +377,7 @@ export const AULA = {
   color: "#000000",
   moreInfo: "https://faqs.aonsolutions.es/",
   price: " ", // '-',
-  disabled: true,
+  disabled: false,
 };
 
 export const CUSTOM_VIEW = {

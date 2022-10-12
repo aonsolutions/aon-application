@@ -2212,7 +2212,7 @@
 								</aon:if>
 							</aon:menuGroup>	
 													
-							<aon:if test="#{dur.aula}">
+							<aon:if test="#{dur.aula or domainSwitcher.snapshot}">
 								<aon:menuItem submitMode="none" reRender="aonStatus"
 									rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 									iconClass="aon-icon-menu-help">
