@@ -32,7 +32,7 @@ public class SupplierJSON {
 			.copy(RegistryJSON.fromJSON(json))
 			.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
 			.setPurchaseValuated(JsonUtils.getboolean(json, IJsonNames.PURCHASE_VALUATED))
-			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
+			.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
 			.setTariff(JsonUtils.getInteger(json, IJsonNames.TARIFF))
 			.setTransaction(InvoiceTransactionType.safeValueOf(JsonUtils.getString(json, IJsonNames.TRANSACTION)))
 			.setWithholding(JsonUtils.getboolean(json, IJsonNames.WITHHOLDING))
@@ -59,7 +59,7 @@ public class SupplierJSON {
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, supplier.isVatAccrualPayment())
 			.put(IJsonNames.PURCHASE_VALUATED, supplier.isPurchaseValuated())
 			.put(IJsonNames.ACCOUNT, supplier.getAccount())
-			.put(IJsonNames.SCOPE, supplier.getScope())
+			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(supplier.getScope()))
 			.put(IJsonNames.TARIFF, supplier.getTariff())
 			.put(IJsonNames.TRANSACTION, supplier.getTransaction().getTediName())
 			.put(IJsonNames.STATUS, supplier.getStatus().name());

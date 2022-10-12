@@ -323,7 +323,7 @@ public class Asserts {
 		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
 		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
 		assertEquals("Status",expected.getStatus(),actual.getStatus());
-		assertEquals("Scope",expected.getScope(),actual.getScope());
+		assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
 		assertEquals("EInvoice",expected.isEInvoice(),actual.isEInvoice());
 		assertEquals("InvoicingGroup",expected.getInvoicingGroup(),actual.getInvoicingGroup());
 		assertEquals("ProjectGrouped",expected.isProjectGrouped(),actual.isProjectGrouped());
@@ -339,7 +339,7 @@ public class Asserts {
 		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
 		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
 		assertEquals("Status",expected.getStatus(),actual.getStatus());
-		assertEquals("Scope",expected.getScope(),actual.getScope());
+		assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
 		assertEquals("Account",expected.getAccount(),actual.getAccount());
 	}
 
@@ -360,7 +360,7 @@ public class Asserts {
 		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
 		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
 		assertEquals("Status",expected.getStatus(),actual.getStatus());
-		assertEquals("Scope",expected.getScope(),actual.getScope());
+		assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
 		assertEquals("PurchaseValuated",expected.isPurchaseValuated(),actual.isPurchaseValuated());
 		assertEquals("Account",expected.getAccount(),actual.getAccount());
 	}

@@ -436,7 +436,7 @@ public class RegistryImport extends Import {
 					Customer c = new Customer()
 							.setAccount(acc.getId())
 							.copy(reg)
-							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+							.setScope(new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
 							.setStatus(RegistryStatus.ACTIVE);
 					c.setDomain(domain);
 					AON.saveCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
@@ -458,7 +458,7 @@ public class RegistryImport extends Import {
 					Supplier sup = new Supplier()
 							.copy(reg)
 							.setAccount(acc.getId())
-							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+							.setScope(new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
 							.setStatus(RegistryStatus.ACTIVE);
 					sup.setId(registryId);
 					sup.setDomain(domain);
@@ -474,7 +474,7 @@ public class RegistryImport extends Import {
 					Creditor cre = new Creditor()
 							.copy(reg)
 							.setAccount(acc==null?null:acc.getId())
-							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+							.setScope( new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
 							.setStatus(RegistryStatus.ACTIVE);
 					cre.setId(registryId);
 					cre.copy(reg);

@@ -10,7 +10,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class SupplierValidation {
 	
 	public static BiConsumer<Supplier,AONContext> EMPTY_SCOPE = (supplier,ctx) -> {
-		if (supplier.getScope() == null) 
+		if (supplier.getScope().isEmpty()) 
 			throw new AonCoreException(AonError.EMPTY_SCOPE.getMessage());
 	};
 	

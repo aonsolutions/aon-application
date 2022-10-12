@@ -10,7 +10,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class CreditorValidation {
 	
 	public static BiConsumer<Creditor,AONContext> EMPTY_SCOPE = (creditor,ctx) -> {
-		if (creditor.getScope() == null) 
+		if (creditor.getScope().isEmpty()) 
 			throw new AonCoreException(AonError.EMPTY_SCOPE.getMessage());
 	};
 	

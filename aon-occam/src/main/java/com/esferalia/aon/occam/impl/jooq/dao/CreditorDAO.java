@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -95,7 +96,7 @@ public class CreditorDAO {
 					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT)==1)
 					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CREDITOR.TRANSACTION)))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(CREDITOR.STATUS)))
-					.setScope(r.getValue(CREDITOR.SCOPE))
+					.setScope(new Scope().setId(r.getValue(CREDITOR.SCOPE)))
 					.setAccount(r.getValue(CREDITOR.ACCOUNT))
 					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
 					.setCreationDate(r.getValue(CREDITOR.CREATION_DATE))
@@ -156,7 +157,7 @@ public class CreditorDAO {
 			.set(CREDITOR.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(creditor.isVatAccrualPayment()))
 			.set(CREDITOR.TRANSACTION,AonEnumUtils.getByte(creditor.getTransaction()))
 			.set(CREDITOR.STATUS, creditor.getStatus().value())
-			.set(CREDITOR.SCOPE,creditor.getScope())
+			.set(CREDITOR.SCOPE,creditor.getScope().getId())
 			.set(CREDITOR.ACCOUNT,creditor.getAccount())
 			.set(CREDITOR.CREATION_USER,ctx.getUser())
 			.set(CREDITOR.CREATION_DATE,new Timestamp(new Date().getTime()))
@@ -172,7 +173,7 @@ public class CreditorDAO {
 			.set(CREDITOR.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(creditor.isVatAccrualPayment()))
 			.set(CREDITOR.TRANSACTION,AonEnumUtils.getByte(creditor.getTransaction()))
 			.set(CREDITOR.STATUS, creditor.getStatus().value())
-			.set(CREDITOR.SCOPE,creditor.getScope())
+			.set(CREDITOR.SCOPE,creditor.getScope().getId())
 			.set(CREDITOR.ACCOUNT,creditor.getAccount())
 			.set(CREDITOR.MODIFICATION_USER,ctx.getUser())
 			.set(CREDITOR.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
