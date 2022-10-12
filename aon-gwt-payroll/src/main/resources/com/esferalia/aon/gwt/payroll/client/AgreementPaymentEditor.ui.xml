@@ -44,6 +44,7 @@
 			display: flex;
 			justify-content: space-between;
 			gap: .5rem;
+			align-items: center;
 		}
 		
 		.date{
@@ -61,6 +62,22 @@
 		    background-size: 20px;
 		    border: none;
 			cursor: pointer;
+		}
+		
+		.dateBox {
+			width: 50px;
+			text-align: center;
+			height: 1.5rem;
+		}
+		
+		.issueBox {
+			width: 80px;
+			text-align: center;
+			height: 1.5rem;
+		}
+		
+		.listBox {
+			width: 105px;
 		}
 		
 	</ui:style>
@@ -104,19 +121,25 @@
 			<g:HTMLPanel styleName="{style.flex}" ui:field="extraPanel">
 				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
 					<g:Label styleName="{style.title}">Prorratear</g:Label>
-					<g:Button ui:field="prorratExtra"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label styleName="{style.title}">Fecha Incio</g:Label>
-					<g:TextBox ui:field="extraStartDate"/>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-					<g:TextBox ui:field="extraEndDate"/>
+					<g:ListBox ui:field="extraType"/>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
 					<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
-					<g:TextBox ui:field="extraIssueDate"/>
+					<g:TextBox ui:field="extraIssueDate" styleName="{style.issueBox}"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label styleName="{style.title}">Fecha Incio</g:Label>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:TextBox ui:field="extraStartDate" styleName="{style.dateBox}"/>
+						<g:ListBox ui:field="extraStartDateYear" styleName="{style.listBox}"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:TextBox ui:field="extraEndDate" styleName="{style.dateBox}"/>
+						<g:ListBox ui:field="extraEndDateYear" styleName="{style.listBox}"/>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HTMLPanel>
