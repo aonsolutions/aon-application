@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,10 +24,10 @@ import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.json.ConsoleDomainMessageJSON;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
@@ -273,58 +276,58 @@ public class ConsoleDAO {
 
 	public static Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
 		try {
-			System.out.println( ConsoleDomainMessageJSON.toJSON(cm) );
-			for ( ConsoleDomainMessageVisitor cmt : ConsoleDomainMessageVisitor.values()) {
-				if (cmt.fix( ctx, cm)) {
-					return true;		
-				}; 			
-			}
-			return false;
+			return cm != null
+				&& cm.getType() != null 
+				&& cm.getType().visit( new ConsoleDomainMessageVisitor(ctx, cm) );
 		} catch (Exception e) {
 			throw new AonCoreException( e );	
 		}
 	}
 	
-	private enum ConsoleDomainMessageVisitor {
-		INTEGRITY {
-			@Override
-			boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
-				if (cm.getType() == ConsoleDomainMessageType.INTEGRITY) {
-					if (cm.getFixType() == ConsoleDomainMessageFixType.DELETE) {
-						return  deleteRow( ctx, cm);
-					} else if (cm.getFixType() == ConsoleDomainMessageFixType.SET_NULL) {
-						return  setNull( ctx, cm);
-					}
-					return true;
+	private static class ConsoleDomainMessageVisitor implements ConsoleDomainMessageType.Visitor<Boolean> {
+		private CloseableAONContext ctx;
+		private ConsoleDomainMessage cm;
+		
+		private ConsoleDomainMessageVisitor( CloseableAONContext ctx, ConsoleDomainMessage cm) {
+			this.ctx = ctx;
+			this.cm = cm;
+		}
+		@Override
+		public Boolean visitIntegrity() {
+			return cm.getFixType().visit(new ConsoleDomainMessageFixType.Visitor<Boolean>() {
+				
+				@Override
+				public Boolean visitSetNull() {
+					return setNull( ctx, cm.getTable(), cm.getPkId(), cm.getFkColumn());
 				}
-				return false;
-			}
-		},
-		PRODUCT {
-			boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
-				if (cm.getType() == ConsoleDomainMessageType.PRODUCT) {
-					return false;
+				
+				@Override
+				public Boolean visitNewValue() {
+					return setValue( ctx, cm.getTable(), cm.getPkId(), cm.getFkColumn(), cm.getNewValue() );
 				}
-				return false;
-			}
-		},
-		AGREEMENT {
-			@Override
-			boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
-				if (cm.getType() == ConsoleDomainMessageType.AGREEMENT) {
-					return false;
+				
+				@Override
+				public Boolean visitDelete() {
+					return deleteRow( ctx, cm);
 				}
-				return false;
-			}
-		};
-
-		private ConsoleDomainMessageVisitor() {
-			
+			});
 		}
 		
-		abstract boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm);
+		@Override
+		public Boolean visitProduct() {
+//			return setValue( ctx, cm.getTable(), cm.getPkId(), PRODUCT.CODE.getName(), cm.getNewValue() );
+			return false;
+		}
 		
-		boolean deleteRow(CloseableAONContext ctx, ConsoleDomainMessage cm) {
+		@Override
+		public Boolean visitAgreement() {
+			return false;
+		}
+			
+	}
+		
+		
+	private static boolean deleteRow(CloseableAONContext ctx, ConsoleDomainMessage cm) {
 			Table<?> table = AON_MASTER.getTable(cm.getTable());
 			@SuppressWarnings("unchecked")
 			TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
@@ -332,21 +335,72 @@ public class ConsoleDAO {
 				.where(pkField.eq(cm.getPkId()))
 				.execute();
 			return (count>0);
+	}
+	
+	private static boolean setNull(CloseableAONContext ctx, String tableName, Integer id, String columnName) {
+		Table<?> table = AON_MASTER.getTable(tableName);
+		TableField<?, Integer> pkField = getPkField(tableName);
+		Field<?> fkField = table.field( columnName );
+		int count = ctx.getDslContext()
+			.update(table)
+			.setNull( fkField )
+			.where(pkField.eq(id))
+			.execute();
+		return (count>0);
+	}
+	
+	private static boolean setValue(CloseableAONContext ctx, String tableName, Integer id, String columnName, Integer newValue) {
+		Table<?> table = AON_MASTER.getTable(tableName);
+		TableField<?, Integer> pkField = getPkField(tableName);
+		@SuppressWarnings("unchecked")
+		Field<Integer> fkField = (Field<Integer>) table.field( columnName );
+		int count = ctx.getDslContext()
+			.update(table)
+			.set( fkField, newValue )
+			.where(pkField.eq(id))
+			.execute();
+		return (count>0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static TableField<?, Integer> getPkField(String tableName) {
+		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).getPrimaryKey().getFields().get(0);
+	}
+	
+	public static LinkedHashMap<String, Object> viewRow(CloseableAONContext ctx, String tableName, Integer id) {
+		Table<?> table = AON_MASTER.getTable(tableName);
+		TableField<?, Integer> pkField = getPkField(tableName);
+		List<Field<?>> selectedFields = new LinkedList<>();
+		List<Field<?>> excludedFields = new LinkedList<>();
+		for (Field<?> field : table.fields()) {
+			if (field.getDataType() != null && field.getDataType().getSQLDataType() == SQLDataType.BLOB) {
+				excludedFields.add( field );
+			} else {
+				selectedFields.add( field );				
+			}
 		}
-		
-		boolean setNull(CloseableAONContext ctx, ConsoleDomainMessage cm) {
-			Table<?> table = AON_MASTER.getTable(cm.getTable());
-			@SuppressWarnings("unchecked")
-			TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
-			Field<?> fkField = table.field( cm.getFkColumn() );
-			int count = ctx.getDslContext()
-				.update(table)
-				.setNull( fkField )
-				.where(pkField.eq(cm.getPkId()))
-				.execute();
-			return (count>0);
+		final LinkedHashMap<String, Object> fieldsMap = new LinkedHashMap<>();
+		ctx.getDslContext().select( selectedFields )
+			.from(table)
+			.where(pkField.eq(id))
+			.stream()
+			.forEach( rec -> selectedFields
+				.stream()
+				.forEach( field -> fieldsMap.put( field.getName(), toSerializable(rec.getValue(field)) )));
+		if ( !excludedFields.isEmpty() ) {
+			excludedFields.stream().forEach( field -> fieldsMap.put( field.getName(), "[BLOB NO BUSCADO]"));
 		}
-		
+		return fieldsMap;
+	}
+
+	private static Object toSerializable(Object value) {
+		if (value == null) return null;
+		if (value instanceof Byte) {
+			return AonNumberUtils.toInteger( (Byte) value);
+		} else if (value instanceof Short) {
+			return AonNumberUtils.toInteger( (Short) value);
+		}
+		return value;
 	}
 	
 }

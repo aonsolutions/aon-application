@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -18,6 +19,7 @@ public interface IConsole {
 	public Domain changeActive(CloseableAONContext ctx, Integer domainId, boolean active);
 	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate);
 	public String remoteAccess(CloseableAONContext ctx, Integer domainId);
-	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage);		
+	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage);
+	public LinkedHashMap<String, Object> viewRow(CloseableAONContext ctx, String tableName, Integer id);		
 	
 }

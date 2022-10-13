@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -60,5 +61,11 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void fix(ConsoleDomainMessage consoleMessage, AsyncCallback<Boolean> callback) {
 		AON.start();
 		fsa.fix(consoleMessage, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void viewRow(String schema, String tableName, Integer id, AsyncCallback<LinkedHashMap<String, Object>> callback) {
+		AON.start();
+		fsa.viewRow(schema, tableName, id, new AsyncCallbackWrapper<>(callback));
 	}
 }
