@@ -19,6 +19,7 @@ public class ProjectJSON {
 	
 	public static List<Project> fromJSON(JSONArray json) {
 		LinkedList<Project> list = new LinkedList<>();
+		if(json==null) return list;
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
 		}

@@ -18,6 +18,7 @@ public class ProjectHolderJSON {
 
 	public static List<ProjectHolder> fromJSON(JSONArray json) {
 		LinkedList<ProjectHolder> list = new LinkedList<>();
+		if(json==null) return list;
 		for (Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
 		}
