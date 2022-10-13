@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
@@ -74,7 +75,8 @@ public class CustomerDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}	
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}
+        @Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}	
 	}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
@@ -111,12 +113,15 @@ public class CustomerDAO {
 	}
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
-		
-		return ctx.getDslContext().select()
-				.from(CUSTOMER)
-				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-				.join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-				.where(CUSTOMER_PROPERTIES.getConditions(filter));
+	    return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	        .from(CUSTOMER)
+	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}
 	
