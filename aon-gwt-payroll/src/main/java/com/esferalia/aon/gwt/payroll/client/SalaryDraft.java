@@ -2990,6 +2990,12 @@ public class SalaryDraft extends ResizeComposite
 	
 	private List<Listener> listeners;
 	
+	
+	private Date salaryEndDate;
+	private Date salaryStartDate;
+	private double salaryPartialFactor;
+	
+	
 //	private boolean dummies = false;
 //	private MenuItem dummiesMenuItem;
 	
@@ -3161,9 +3167,31 @@ public class SalaryDraft extends ResizeComposite
 
 		Payment draftPayment = new Payment();
 
-		String expression = totalLiquidLabel.getValue();
+		
+		
 
-		draftPayment.setExpression("/*read-only*/NETO(" + (StringUtils.isBlank(expression) ? "0.00" : expression + " * DIAS_TRABAJADOS/DIAS_MES" ) + ")/**/");
+		String expression = totalLiquidLabel.getValue();
+		if ( AonStringUtils.isBlank(expression) ) {
+			expression = "0.00";
+		}
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(salaryEndDate);
+		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(salaryStartDate);
+		if ( salaryEndDate.equals(lastDayOfMonth) 
+			&& salaryStartDate.equals(firstDayOfMonth) ) {
+			// User is setting the liquid for a complete month. We prepare for incomplete ones. 
+			expression = "( " + expression + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+		} else if ( salaryEndDate.equals(lastDayOfMonth )) {
+			// User is setting the liquid for the first month ( that's not complete ). We prepare for next ones.
+			double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+			double monthDays = getValuesOf("DIAS_MES").map(AonNumberUtils::todouble).findFirst()
+							.orElse((double)DateUtils.getDaysBetween(firstDayOfMonth, lastDayOfMonth)+1);
+			expression = "( (" + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+		}
+
+		salaryDraftObject.getEndDate();
+		salaryDraftObject.getStartDate();
+
+		draftPayment.setExpression("/*read-only*/NETO(" + expression + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
@@ -3573,9 +3601,9 @@ public class SalaryDraft extends ResizeComposite
 		employeeSeniorityLabel.setText(format(salaryDraftObject.getEmployeeSeniorityDate()) );
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
-		Date startDate = salaryDraftObject.getStartDate();
-		Date endDate = salaryDraftObject.getEndDate();
-		periodLabel.setText(format(startDate) + " - " + format(endDate));
+		salaryStartDate = salaryDraftObject.getStartDate();
+		salaryEndDate = salaryDraftObject.getEndDate();
+		periodLabel.setText(format(salaryStartDate) + " - " + format(salaryEndDate));
 		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
 
 		Double cgcBase = salaryDraftObject.getCgcBase();
@@ -3652,7 +3680,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		Variable partialFactorsVars [] = getVariablesOf("COEFICIENTE_PARCIALIDAD").toArray(Variable[]::new);
 
-		double partialFactor = 
+		salaryPartialFactor = 
 		Arrays.stream(partialFactorsVars)
 		.flatMapToDouble( v -> DoubleStream.generate(()-> AonNumberUtils.todouble(v.getValue())).limit( DateUtils.getDaysBetween(v.getStartDate(), v.getEndDate())+1l) )
 		.average().orElse(1.00);
@@ -3660,18 +3688,18 @@ public class SalaryDraft extends ResizeComposite
 		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
 		employeePartialFactorWidget.removeFromParent();
-		employeePartialFactorWidget = (partialFactor != 1.00  && partialFactorsVars.length == 1) ? getVariableWidget(partialFactorsVars[0], partialFactorsVars[0].getScope(), true ): new Label();
-		employeePartialFactorWidget.setVisible(isSalary() && !hoursBase  && partialFactor != 1.00 && partialFactorsVars.length == 1); 
+		employeePartialFactorWidget = (salaryPartialFactor != 1.00  && partialFactorsVars.length == 1) ? getVariableWidget(partialFactorsVars[0], partialFactorsVars[0].getScope(), true ): new Label();
+		employeePartialFactorWidget.setVisible(isSalary() && !hoursBase  && salaryPartialFactor != 1.00 && partialFactorsVars.length == 1); 
 		employeeHoursFactorDaysPanel.add(employeePartialFactorWidget);
 		
-		employeePartialFactorLabel.setText(formatValue(partialFactor));
-		employeePartialFactorLabel.setVisible(isSalary() && !hoursBase  && partialFactor != 1.00 && partialFactorsVars.length > 1 );
+		employeePartialFactorLabel.setText(formatValue(salaryPartialFactor));
+		employeePartialFactorLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor != 1.00 && partialFactorsVars.length > 1 );
 		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
 		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
 		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
-		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && partialFactor == 1.00 && workDays > 0 );
+		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
 		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
 		double dbWorkDays = getDbValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
@@ -3728,7 +3756,7 @@ public class SalaryDraft extends ResizeComposite
 		//visibleContext.addAll(constants);
 		visibleContext.addAll(variables);
 		/* employeePartialFactorWidget */
-		if ( partialFactor != 1.00  && !employeePartialFactorWidget.isVisible()) {
+		if ( salaryPartialFactor != 1.00  && !employeePartialFactorWidget.isVisible()) {
 			List<Variable> partialVariables = getVariablesOf("COEFICIENTE_PARCIALIDAD").collect(Collectors.toList()); 
 			visibleContext.removeAll(partialVariables);
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
