@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDomainCompanies, getRegistry} from '../../services/service.js';
+import { getRegistry} from '../../services/service.js';
 
 import '../../components/aon-table.js';
 

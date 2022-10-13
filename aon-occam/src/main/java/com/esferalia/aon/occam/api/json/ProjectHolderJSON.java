@@ -28,7 +28,7 @@ public class ProjectHolderJSON {
 		if(json == null) return new ProjectHolder();
 		return new ProjectHolder().setId(JsonUtils.optInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
-				.setStartDate(JsonUtils.getDateTime(json, IJsonNames.START_DATE))
+				.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE))
 				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
 				.setProject(JsonUtils.optInteger(json, IJsonNames.PROJECT))
 				.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))

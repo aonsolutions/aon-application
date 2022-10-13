@@ -208,10 +208,20 @@ public class ProjectDAO {
 				? update(ctx, project)
 				: insert(ctx, project);
 		}
-		if(!project.getProjectHolder().isEmpty()) {
-			project.getProjectHolder().setProject(project.getId());
+		
+		Integer projectId = project.getId();
+		
+		if(!project.getProjectHolders().isEmpty()) {
+			project.getProjectHolders()
+			.forEach(holder->{				
+				holder.setProject(projectId);
+				ProjectHolderDAO.save(ctx, holder);
+			});
+	    } else if(!project.getProjectHolder().isEmpty()) {
+			project.getProjectHolder().setProject(projectId);
 			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
 		}
+		
 		return project.setDirty(false);
 	}
 	

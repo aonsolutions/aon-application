@@ -45,5 +45,6 @@ public interface IProject {
 	public ProjectHolder getProjectHolder(AONContext ctx, ProjectHolderFilter filter);
 	public Stream<ProjectHolder> getProjectHolderStream(AONContext ctx, ProjectHolderFilter filter);
 	public List<ProjectHolder> getProjectHolderList(AONContext ctx, ProjectHolderFilter filter);
-
+	public ProjectHolder saveProjectHolder(AONContext ctx, ProjectHolder holder);
+	public void deleteProjectHolder(AONContext ctx, Integer id);
 }

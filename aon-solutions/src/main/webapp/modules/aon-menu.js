@@ -603,8 +603,9 @@ export class AonMenu extends AonElement {
 			return this.getDur().isMessenger();
 		else if(MenuApps.TOOLS.app === app.app ||MenuApps.NOTES.app === app.app)
 			return true;
-		else if(MenuApps.OFFICE.app === app.app)
-			return this.isBeta() && this.getDur().getDomain().isOffice();
+		else if(MenuApps.OFFICE.app === app.app){
+			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+		}
 		else return false;
 	}
 

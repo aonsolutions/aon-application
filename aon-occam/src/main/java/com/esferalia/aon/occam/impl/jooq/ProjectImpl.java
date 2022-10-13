@@ -134,6 +134,16 @@ public class ProjectImpl implements IProject{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectHolderDAO.getList(ctx, filter));
 	}
+
+	@Override
+	public ProjectHolder saveProjectHolder(AONContext ctx, ProjectHolder holder) {
+		return ctx.getDslContext().transactionResult(configuration -> ProjectHolderDAO.save(ctx, holder));
+	}
 	
 	
+	@Override
+	public void deleteProjectHolder(AONContext ctx, Integer holderId) {
+		ctx.getDslContext().transaction(
+				configuration -> ProjectHolderDAO.delete(ctx, holderId));
+	}
 }

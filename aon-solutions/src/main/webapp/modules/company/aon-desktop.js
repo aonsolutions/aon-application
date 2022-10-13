@@ -147,7 +147,7 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
-		if(this.isBeta()) {
+		if(this.isBeta() && !this.getDur().getDomain().isOffice()) {
 			let myGestor = {
 				id: 'Gestor',
 				name: 'MI GESTOR'
