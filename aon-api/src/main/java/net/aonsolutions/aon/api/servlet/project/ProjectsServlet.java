@@ -261,9 +261,15 @@ public class ProjectsServlet extends AonApiHttpServlet{
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getProjectTypeProperty().isNotNull());
 		
-		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
-			Integer registry = JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY);
+		Integer registry = api.getData().optInt(IJsonNames.REGISTRY);
+		Integer projectType = api.getData().optInt("projectType");
+		
+		if(registry!=0) {
 			filter = filter.and(f.getRegistryProperty().eq(registry));
+		}
+		
+		if(projectType!=0) {
+			filter = filter.and(f.getProjectTypeProperty().eq(projectType));
 		}
 
 		return filter;
