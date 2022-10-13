@@ -889,11 +889,53 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE, 2016);
 		assertValue("totalPaymentLabel", 1500.00);
 
+		draft("BRUTO CONSTANTE, 1 DÍA");
+		calculate(Calendar.OCTOBER, 2022);
+		setValue("totalPaymentLabel", "100.00");
+		wait4Id("description-box-1");
+		assertValue("totalPaymentLabel", 100.00);
+
+		draft("BRUTO CONSTANTE, COMPLETO");
+		calculate(Calendar.OCTOBER, 2022);
+		setValue("totalPaymentLabel", "1900.00");
+		wait4Id("description-box-1");
+		assertValue("totalPaymentLabel", 1900.00);
+		calculate(Calendar.NOVEMBER, 2022);
+		assertValue("totalPaymentLabel", 3000.00);
+
+		draft("BRUTO CONSTANTE, PARCIAL");
+		calculate(Calendar.OCTOBER, 2022);
+		setValue("totalPaymentLabel", "950.00");
+		wait4Id("description-box-1");
+		assertValue("totalPaymentLabel", 950.00);
+		calculate(Calendar.NOVEMBER, 2022);
+		assertValue("totalPaymentLabel", 1500.00);
+		setValue("editor-coeficiente_parcialidad", "1.0");
+		calculate(Calendar.OCTOBER, 2022);
+		assertValue("totalPaymentLabel", 1900.00);
+		calculate(Calendar.NOVEMBER, 2022);
+		assertValue("totalPaymentLabel", 3000.00);
+
 		draft("NETO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		calculate(Calendar.MAY, 2016);
 		assertValue("totalLiquidLabel", 2125.00);
 		calculate(Calendar.JUNE, 2016);
 		assertValue("totalLiquidLabel", 2125.00);
+		
+		draft("NETO CONSTANTE, 1 DÍA");
+		calculate(Calendar.OCTOBER, 2022);
+		setValue("totalLiquidLabel", "100.00");
+		wait4Id("description-box-1");
+		assertValue("totalLiquidLabel", 100.00);
+
+		draft("NETO CONSTANTE, COMPLETO");
+		calculate(Calendar.OCTOBER, 2022);
+		setValue("totalLiquidLabel", "1900.00");
+		wait4Id("description-box-1");
+		assertValue("totalLiquidLabel", 1900.00);
+		calculate(Calendar.NOVEMBER, 2022);
+		setValue("totalLiquidLabel", "3000.00");
+		assertValue("totalLiquidLabel", 3000.00);
 
 	}
 
