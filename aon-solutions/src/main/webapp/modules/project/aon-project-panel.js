@@ -8,6 +8,7 @@ import { getProjectTypes, saveProjectType } from '../../services/projectService.
 import { AonInput } from '../../components/aon-input.js';
 import * as LS from '../../services/localStorageService.js';
 import { ProjectType } from '../../models/project/ProjectType.js';
+import { ProjectUtils } from './ProjectUtils.js';
 
 export class AonProjectPanel extends AonElement {
 
@@ -60,11 +61,11 @@ export class AonProjectPanel extends AonElement {
     // PROJECT TYPE
 
     addTypeOptions() {
-        this.getApplication().addSidenavOptions2(DocumentalSidenav.TYPES, [], () => this.createType());
-        this.loadTypes();
+        this.getApplication().addSidenavOptions2(DocumentalSidenav.TYPES, [], () => ProjectUtils.buildDialogProjectType(this));
+        this.loadProjectType();
     }
   
-    loadTypes() {
+    loadProjectType() {
         getProjectTypes({}).then(types => {
             this.clearElementById(this.getApplication().SIDENAV + DocumentalSidenav.TYPES.id + 'List');
             types.forEach(item => {
@@ -75,46 +76,17 @@ export class AonProjectPanel extends AonElement {
                     actions: [{
                       id: 'Delete',
                       icon: 'delete',
-                      action: () => this.deleteType(item)
+                      action: () => ProjectUtils.projectTypeDelete(this, item)
                     },{
                       id: 'Edit',
                       icon: 'edit',
-                      action: () => this.editType(item)
+                      action: () =>  ProjectUtils.buildDialogProjectType(this, item)
                     }]
                 };
                 this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.TYPES, option);
            });
        });
     }
-
-    createType() {
-        let d = document.getElementById(this.getApplication().DIALOG);
-        d.clear();
-        d.width = '400px';
-        d.setTitle(MSG.ADD_TYPE);
-        let aonInput = new AonInput();
-        aonInput.id = this.id + 'AddType';
-        aonInput.description = MSG.TYPE;
-        d.setContent(aonInput);
-        d.addAcceptAction(() => {
-            if(!aonInput.value.isEmpty()){
-                let data = new ProjectType().setDescription(aonInput.value);
-                saveProjectType(data).then(() => {
-                    this.loadTypes();
-                });
-            }
-        });
-        d.open();
-    }
-    
-    deleteType() {
-        alert("DELETE TYPE");
-    }
-
-    editType(){
-        alert("EDIT TYPE");
-    }
-
 }
 if(!window.customElements.get(TAG.AON_PROJECT_PANEL)) {
 	window.customElements.define(TAG.AON_PROJECT_PANEL, AonProjectPanel);

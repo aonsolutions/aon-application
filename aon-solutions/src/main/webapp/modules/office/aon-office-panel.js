@@ -1,10 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { OfficeEnums } from './OfficeEnums.js';
-import { CONSTANT, EVENT, MSG } from '../../environments/environments.js';
-import { getProjectTypes, saveProject, saveProjectType } from '../../services/projectService.js';
-import { AonInput } from '../../components/aon-input.js';
-import { ProjectType } from '../../models/project/ProjectType.js';
+import { EVENT, MSG } from '../../environments/environments.js';
+import { getProjectTypes, saveProject} from '../../services/projectService.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
 import { AonCustomer } from '../registry/customer/aon-customer.js';
 import { AonCustomerList } from '../registry/customer/aon-customer-list.js';
@@ -15,7 +13,7 @@ import { OfficeUtils } from './OfficeUtils.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { getScopes } from '../../services/documentalService.js';
-import { AonCheckbox } from '../../components/aon-checkbox.js';
+import { ProjectUtils } from '../project/ProjectUtils.js';
 
 export class AonOfficePanel extends AonElement {
     projectTypes;
@@ -95,7 +93,7 @@ export class AonOfficePanel extends AonElement {
 
         application.addSidenavOptions(MSG.OFFICE, options);
 
-        application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], () => this.createType());
+        application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], () => ProjectUtils.buildDialogProjectType(this));
         this.loadProjectType();
     }
     
@@ -113,36 +111,16 @@ export class AonOfficePanel extends AonElement {
                     actions: [{
                       id: 'Delete',
                       icon: 'delete',
-                      action: () => this.getApplication().development()
+                      action: () => ProjectUtils.projectTypeDelete(this, item)
                     },{
                       id: 'Edit',
                       icon: 'edit',
-                      action: () => this.getApplication().development()
+                      action: () => ProjectUtils.buildDialogProjectType(this, item)
                     }]
                 };
                 this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.TYPES, option);
            });
        });
-    }
-
-    createType() {
-        let d = this.getApplication().getDialog();
-        d.clear();
-        d.width = '400px';
-        d.setTitle(MSG.ADD_TYPE);
-        let aonInput = new AonInput();
-        aonInput.id = this.id + 'AddType';
-        aonInput.description = MSG.TYPE;
-        d.setContent(aonInput);
-        d.addAcceptAction(() => {
-            if(!aonInput.value.isEmpty()){
-                let data = new ProjectType().setDescription(aonInput.value);
-                saveProjectType(data).then(() => {
-                    this.loadProjectType();
-                });
-            }
-        });
-        d.open();
     }
 
     addCustomerListSelectable(view){
@@ -183,12 +161,12 @@ export class AonOfficePanel extends AonElement {
                 const btnSearch = application.addSearchOption();
 
                 btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
-                    console.log(detail);
-           
+                    clearTimeout(timeOut);
                     timeOut = setTimeout(() => {
                         this.addFilterCustomers({
                             value:detail.search,
                             scope:detail.scope,
+                            projectType: detail.projectType,
                             status: OfficeUtils.getCustomerStatus(detail)
                         });
                         aonView.setFilter({...this.getFilterCustomers(), page:1 });
@@ -213,6 +191,20 @@ export class AonOfficePanel extends AonElement {
                 scopeEl.value = value;
             }
         })
+
+        let projectTypeEl = this.getElement("projectType");
+        getProjectTypes({})
+        .then(t => {
+            let types = (t || []).map((r) => ({...r, name: r.description, value: r.id}));
+
+            projectTypeEl.setOptions(types);
+
+            const value = filter.projectType;
+            if(value){
+                projectTypeEl.value = value;
+            }
+        })
+
 
         let active = this.getElement("active");
         active.value = (filter.status ||  []).includes("ACTIVE");
@@ -317,23 +309,7 @@ export class AonOfficePanel extends AonElement {
 
 			resolve(aonView);
 		});
-    }
-
-    // mutate(mutations) {
-    //     mutations.forEach((mutation)=> {
-    //         if ( mutation.type === 'childList' ) {
-    //             const nodes = mutation.addedNodes;
-    //             for(const node of nodes) {
-    //                 const tagName = node.tagName  ? node.tagName.toLowerCase(): undefined;
-    //                 if(tagName === 'aon-customer'){
-    //                     this.removeActionFolder();
-    //                     break;
-    //                 } 
-    //             }
-    //         }
-    //     });
-    // }
-      
+    }  
 }
 if(!window.customElements.get("aon-office-panel")) {
 	window.customElements.define("aon-office-panel", AonOfficePanel);

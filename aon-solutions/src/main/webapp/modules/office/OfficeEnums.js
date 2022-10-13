@@ -2,7 +2,6 @@ import { AonCheckbox } from "../../components/aon-checkbox.js";
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 
-
 const AON_CUSTOMER = {
     id: 'sideNavcustomer',
     name: MSG.CUSTOMERS,
@@ -68,7 +67,7 @@ const getButtonsStatus = () => {
     return div;
 }
 
-const CustomerFilter =[
+const CustomerFilter = [
     {
       type: CONSTANT.SELECT,
       id: "scope",
@@ -77,6 +76,15 @@ const CustomerFilter =[
       autocomplete: true,
       default:true,
       emptyclear:true
+    },
+    {
+        type:CONSTANT.SELECT,
+        id: "projectType",
+        name: "projectType",
+        title: "Tipo de expediente",
+        autocomplete: true,
+        default:true,
+        emptyclear:true
     },
     {
         type: CONSTANT.HTML_ELEMENT,
