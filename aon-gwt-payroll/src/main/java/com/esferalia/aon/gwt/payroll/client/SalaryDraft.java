@@ -3171,22 +3171,7 @@ public class SalaryDraft extends ResizeComposite
 		
 
 		String expression = totalLiquidLabel.getValue();
-		if ( AonStringUtils.isBlank(expression) ) {
-			expression = "0.00";
-		}
-		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(salaryEndDate);
-		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(salaryStartDate);
-		if ( salaryEndDate.equals(lastDayOfMonth) 
-			&& salaryStartDate.equals(firstDayOfMonth) ) {
-			// User is setting the liquid for a complete month. We prepare for incomplete ones. 
-			expression = "( " + expression + " ) * DIAS_TRABAJADOS / DIAS_MES ";
-		} else if ( salaryEndDate.equals(lastDayOfMonth )) {
-			// User is setting the liquid for the first month ( that's not complete ). We prepare for next ones.
-			double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
-			double monthDays = getValuesOf("DIAS_MES").map(AonNumberUtils::todouble).findFirst()
-							.orElse((double)DateUtils.getDaysBetween(firstDayOfMonth, lastDayOfMonth)+1);
-			expression = "( (" + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
-		}
+		expression = getNetoOrBrutoExpression(expression);
 
 		salaryDraftObject.getEndDate();
 		salaryDraftObject.getStartDate();
@@ -3320,8 +3305,9 @@ public class SalaryDraft extends ResizeComposite
 		Payment draftPayment = new Payment();
 
 		String expression = totalPaymentLabel.getValue();
+		expression = getNetoOrBrutoExpression(expression);
 
-		draftPayment.setExpression("/*read-only*/BRUTO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")/**/");
+		draftPayment.setExpression("/*read-only*/BRUTO(" + expression + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
@@ -6997,6 +6983,27 @@ public class SalaryDraft extends ResizeComposite
 		contentScrollPanel.setHeight(Integer.toString(height)+"px");
 		//LOGGER.info("contentScrollPanel : " + height );
 	}
+
+	private String getNetoOrBrutoExpression(String expression) {
+		if ( AonStringUtils.isBlank(expression) ) {
+			expression = "0.00";
+		}
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(salaryEndDate);
+		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(salaryStartDate);
+		if ( salaryEndDate.equals(lastDayOfMonth) 
+			&& salaryStartDate.equals(firstDayOfMonth) ) {
+			// User is setting the value for a complete month. We prepare for incomplete ones. 
+			expression = "( " + expression + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+		} else if ( salaryEndDate.equals(lastDayOfMonth )) {
+			// User is setting the value for the first month ( that's not complete ). We prepare for next ones.
+			double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+			double monthDays = getValuesOf("DIAS_MES").map(AonNumberUtils::todouble).findFirst()
+							.orElse((double)DateUtils.getDaysBetween(firstDayOfMonth, lastDayOfMonth)+1);
+			expression = "( (" + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+		}
+		return expression;
+	}
+
 
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {
