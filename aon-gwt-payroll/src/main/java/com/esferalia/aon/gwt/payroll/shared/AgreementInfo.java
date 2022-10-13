@@ -712,10 +712,72 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		getPayments().removeIf(paymentIt -> paymentIt.getId().equals(payment.getId()));
 		getPayments().add(payment);
 	}
+	
+	public void syncPayment(Payment payment, AgreementExtra extra) {
+		if(payment.getType() == Payment.Type.CRA_0004 && (extra == null || extra.isDeleted())) {
+			getExtras().forEach(extraIt -> {
+				Payment paymentIt = getPaymentById(extraIt.getAgreementPayment());
+				if(paymentIt.getType() == Payment.Type.CRA_0004) {
+					paymentIt.setMonth(null);
+					extraIt.setDeleted(true);
+				}
+			});
+		}
+	}
 
 	public void replaceExtra(AgreementExtra extra) {
 		getExtras().removeIf(extraIt -> extraIt.getId().equals(extra.getId()));
 		getExtras().add(extra);
+	}
+	
+	public void syncExtras(AgreementExtra extra) {
+		String issueDate = extra.getIssueDate();
+		// Summer = 0 || Winter = 1
+		Byte winterSummer = AonStringUtils.containsIgnoreCase(issueDate, "12") ? (byte)1 : (byte)0;
+		String period = getExtraPeriod(extra);
+		
+		if(winterSummer == (byte)0)
+			syncWinterExtra(period);
+		else
+			syncSummerExtra(period);
+	}
+	
+	private void syncSummerExtra(String period) {
+		Optional<AgreementExtra> summerExtra = getExtras().stream()
+			.filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getEndDate(), "6") || AonStringUtils.containsIgnoreCase(extraIt.getEndDate(), "7"))
+			.findFirst();
+		
+		if(summerExtra.isPresent()) {
+			summerExtra.get().setStartDate(AonStringUtils.equalsIgnoreCase(period, "A") ? "01/07 -1" : "01/01");
+			summerExtra.get().setEndDate("30/06");
+		}
+	}
+
+	private void syncWinterExtra(String period) {
+		Optional<AgreementExtra> winterExtra = getExtras().stream()
+			.filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getEndDate(), "12"))
+			.findFirst();
+		
+		if(winterExtra.isPresent()) {
+			winterExtra.get().setStartDate(AonStringUtils.equalsIgnoreCase(period, "A") ? "01/01" : "01/07");
+			winterExtra.get().setEndDate("31/12");
+		}
+	}
+
+	private String getExtraPeriod(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
+		
+		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		
+		switch (endMonth - startMonth) {
+		case 11:
+			return "A";
+		case 5:
+			return "S";
+		default:
+			return null;
+		}
 	}
 
 }

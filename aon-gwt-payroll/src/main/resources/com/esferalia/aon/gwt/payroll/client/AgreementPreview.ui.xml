@@ -74,7 +74,12 @@
 		
 		.message {
 			font-weight: bold;
-		}		
+		}	
+		
+		.textBox {
+			width: auto;
+			border: none;
+		}	
 				
 		/* Class AgreementPreview.Style */
 		
@@ -189,11 +194,11 @@
 					<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label text="Descripción" styleName="{style.inputTitle}" />
-							<g:Label ui:field="description" />
+							<g:TextBox ui:field="description" styleName="{style.textBox} {style.widthAll}" />
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label text="Código SS" styleName="{style.inputTitle}" />
-							<g:Label ui:field="ssNumber" />
+							<g:TextBox ui:field="ssNumber" styleName="{style.textBox}" />
 							<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}" />
 						</g:HTMLPanel>
 						<g:DisclosurePanel ui:field="levelDiscPanel">

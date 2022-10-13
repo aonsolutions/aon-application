@@ -1190,8 +1190,8 @@
 }
 .aon_custom_dialog_header {
 	margin: 0px;
-	padding-top: 15px;
-	padding-left: 20px;
+	padding: 1rem;
+	padding-bottom: 0;
 	width: auto;
 	display: flex;
 	align-items: center;

@@ -1,0 +1,38 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementSuggestPaymentDialog.MyStyle">
+	
+		.form {
+			padding: 10px;
+			display: flex;
+			flex-direction: column;
+			min-width: 400px;
+		}
+		
+		.center {
+			text-align: center;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin-top: 10px;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:HTMLPanel ui:field="messagePanel" />
+
+		<g:HTMLPanel ui:field="suggestPanel" styleName="{style.center}" />
+	    
+	   	<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>
