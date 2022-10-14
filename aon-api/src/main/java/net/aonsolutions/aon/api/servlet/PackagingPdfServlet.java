@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -84,7 +85,10 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			String separator = "\312";
 
 //			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
-			String ean128 = "(02)" + barcode + "(37)" + boxQuantity.intValue() + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber() + separator;
+
+			String boxQ = toParChar(Integer.toString(boxQuantity.intValue()));
+			String serialNumber = toParChar(item.getSerialNumber());
+			String ean128 = "(02)" + barcode + "(37)" + boxQ + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + serialNumber ;
 			String sscc = container.getSerialNumber();
 			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, boxQuantity, ean128, sscc);
 
@@ -94,6 +98,11 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 		}
 	}
 
+	private String toParChar(String text) {
+	    if(AonNumberUtils.isPar(text.length())) return text;
+	    else return "0" + text;
+    }
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		doGet(req, resp);
