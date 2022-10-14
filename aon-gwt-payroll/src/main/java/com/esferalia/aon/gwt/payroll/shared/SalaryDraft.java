@@ -79,8 +79,8 @@ public class SalaryDraft extends SalaryPreview {
 	private Double totalDeduction;
 	private Double dbTotalDeduction;
 	private Double totalEnterprise;
-	private Double dbTotalEnterPrise;
-	private Double ssTotalEnterPrise;
+	private Double dbTotalEnterprise;
+	private Double ssTotalEnterprise;
 
 	private List<Variable> context;
 	private List<Variable> dbContext;
@@ -829,6 +829,15 @@ public class SalaryDraft extends SalaryPreview {
 
 	public Double getDbTotalDeduction() {
 		return dbTotalDeduction;
+	}
+
+	public SalaryDraft setDbTotalEnterprise(Double dbTotalEnterprise) {
+		this.dbTotalEnterprise = dbTotalEnterprise;
+		return this;
+	}
+
+	public Double getDbTotalEnterprise() {
+		return dbTotalEnterprise;
 	}
 
 	public Double getCgpBase() {

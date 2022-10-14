@@ -235,6 +235,7 @@ public class SalaryDraftBuilder
 		salaryDraft.setDbTotalLiquid(dbSalary.getTotalLiquid());
 		salaryDraft.setDbTotalPayment(dbSalary.getTotalPayment());
 		salaryDraft.setDbTotalDeduction(dbSalary.getTotalDeduction());
+		salaryDraft.setDbTotalEnterprise(dbSalary.getTotalEnterprise());
 
 		// match up draft payments & db payments
 		
