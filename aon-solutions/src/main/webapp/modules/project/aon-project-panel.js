@@ -1,13 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { AonProjectList } from './aon-project-list.js';
 import { AonProject } from './aon-project.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
-import { getProjectTypes, saveProjectType } from '../../services/projectService.js';
-import { AonInput } from '../../components/aon-input.js';
-import * as LS from '../../services/localStorageService.js';
-import { ProjectType } from '../../models/project/ProjectType.js';
+import { getProjectTypes } from '../../services/projectService.js';
 import { ProjectUtils } from './ProjectUtils.js';
 
 export class AonProjectPanel extends AonElement {
@@ -37,8 +34,22 @@ export class AonProjectPanel extends AonElement {
 	}
 
     buildToolbar() {
-        this.getApplication().removeToolbarOptions();
-        this.getApplication().addToolbarOption('Add', 'add', () => this.addProject());
+        let application = this.getApplication();
+        let timeOut = undefined;
+        application.removeToolbarOptions();
+        application.addToolbarOption('Add', 'add', () => this.addProject());
+
+        const btnSearch = application.addSearchOption();
+        btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
+            clearTimeout(timeOut);
+            timeOut = setTimeout(() => {
+                this.buildContent({
+                    page: 1,
+                    perPage: 50,
+                    search: detail.search	
+                });
+            }, 300);
+        });
     }
 
     buildSidenav() {
@@ -46,9 +57,12 @@ export class AonProjectPanel extends AonElement {
     }
 
 
-    buildContent() {
+    buildContent(filter) {
         let list = new AonProjectList();
         list.id = this.AON_PROJECT_LIST;
+        if(filter){
+            list.filter = filter;
+        }
         this.getApplication().setContent(list);
     }
 
@@ -57,8 +71,6 @@ export class AonProjectPanel extends AonElement {
 		aonProject.id = this.getApplication().id + 'Project';
 		this.getApplication().setContent(aonProject);
     }
-
-    // PROJECT TYPE
 
     addTypeOptions() {
         this.getApplication().addSidenavOptions2(DocumentalSidenav.TYPES, [], () => ProjectUtils.buildDialogProjectType(this));

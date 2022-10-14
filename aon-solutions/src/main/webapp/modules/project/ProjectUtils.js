@@ -12,9 +12,9 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
 /**
  * 
  * @param {AonProjectList} parent 
+ * @param {Project} project 
  */
  const buildDialogProject = (parent, project) => {
-
     const application = parent.getApplication();
     const dialog = application.getDialog();
 
@@ -107,24 +107,46 @@ const buildFormProject = (parent, div, project) => {
             workgroup.value = workgroupId;
         } 
 
-        workgroup.addEventListener(EVENT.CHANGE, () => projectHolder.setWorkgroup(workgroup.getDetail()));
+        workgroup.addEventListener(EVENT.CHANGE, () =>{
+            projectHolder.setWorkgroup(workgroup.getDetail());
+            
+            onChangeTaskHolder(project, workgroup, taskHolder.getSelectable())
+        });
     });
 
 
     parent.getTaskHolders().then(ths=>{
         taskHolder.setOptions(ths);
-
-        taskHolder.addEventListener(EVENT.SELECT, ({detail}) => {
-            let projectHolders = (detail || []).map(taskHolder => new ProjectHolder({taskHolder}));
-            project.setProjectHolders(projectHolders);
+        taskHolder.addEventListener(EVENT.SELECT, () => {
+            onChangeTaskHolder(project, workgroup, taskHolder.getSelectable())
         });
     });
+}
 
+/**
+ * 
+ * @param {Project} project 
+ * @param {HTMLElement} selectWorkgroup 
+ * @param {Array} selectable 
+ */
+const onChangeTaskHolder = (project, selectWorkgroup, selectable) => {
+    const projectHolder = project.getProjectHolder();
+
+    let workgroup = null;
+    if(selectWorkgroup.getDetail() && selectWorkgroup.getDetail().id){
+        workgroup = selectWorkgroup.getDetail();
+    } else if(projectHolder.getWorkgroup().getId()){
+        workgroup = projectHolder.getWorkgroup();
+    }
+
+    let projectHolders = (selectable || []).map(taskHolder => new ProjectHolder({taskHolder, workgroup}));
+    project.setProjectHolders(projectHolders);
 }
 
 /**
  * 
  * @param {AonHolderSimpleList} parent 
+ * @param {ProjectHolder} holder 
  */
 const buildDialogHolder = (parent, holder) => {
 
@@ -161,6 +183,12 @@ const buildDialogHolder = (parent, holder) => {
     dialog.open();
 }   
 
+/**
+ * 
+ * @param {AonHolderSimpleList} parent 
+ * @param {HTMLElement} div 
+ * @param {ProjectHolder} holder 
+ */
 const buildFormHolder = (parent, div, holder) => {
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
