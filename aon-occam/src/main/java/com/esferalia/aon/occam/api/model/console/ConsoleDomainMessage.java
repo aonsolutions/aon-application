@@ -18,6 +18,7 @@ public class ConsoleDomainMessage implements Serializable {
 	private Integer fkId;
 	private Integer wrongDomainId;
 	private String message;
+	private Integer newValue;
 	
 	public ConsoleDomainMessageType getType() {
 		return type;
@@ -115,5 +116,12 @@ public class ConsoleDomainMessage implements Serializable {
 		return this;
 	}
 	
+	public Integer getNewValue() {
+		return newValue;
+	}
+	public ConsoleDomainMessage setNewValue(Integer newValue) {
+		this.newValue = newValue;
+		return this;
+	}
 	
 }

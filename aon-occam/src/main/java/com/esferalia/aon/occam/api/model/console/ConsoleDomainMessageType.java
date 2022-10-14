@@ -4,9 +4,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ConsoleDomainMessageType {
 	
-	INTEGRITY,
-	PRODUCT,
-	AGREEMENT;
+	INTEGRITY 	{ @Override public <T> T visit(Visitor<T> visitor) { return visitor.visitIntegrity(); }},
+	PRODUCT 	{ @Override public <T> T visit(Visitor<T> visitor) { return visitor.visitProduct(); }},
+	AGREEMENT 	{ @Override public <T> T visit(Visitor<T> visitor) { return visitor.visitAgreement(); }};
 
 	public static ConsoleDomainMessageType safeValueOf( String i ) {
 		if(AonStringUtils.isBlank(i)) return null;
@@ -17,4 +17,11 @@ public enum ConsoleDomainMessageType {
 		return null;
 	}
 
+	public abstract <T> T visit(Visitor<T> visitor);
+	
+	public static interface Visitor<T> {
+		T visitIntegrity();
+		T visitProduct();
+		T visitAgreement();
+	}
 }

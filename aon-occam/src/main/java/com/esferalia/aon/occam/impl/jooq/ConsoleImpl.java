@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 import org.jooq.Named;
@@ -8,7 +9,6 @@ import org.jooq.Named;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IConsole;
-import com.esferalia.aon.occam.api.json.ConsoleDomainMessageJSON;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
@@ -54,5 +54,10 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage) {
 		return ConsoleDAO.fix(ctx, consoleMessage);
+	}
+	
+	@Override
+	public LinkedHashMap<String, Object> viewRow(CloseableAONContext ctx, String tableName, Integer id) {
+		return ConsoleDAO.viewRow(ctx, tableName, id);
 	}
 }

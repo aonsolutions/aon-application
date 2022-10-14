@@ -11,7 +11,6 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
@@ -67,7 +66,7 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		closeDialog.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 		dialogBar.add(closeDialog);
 		
-		listeners = new LinkedList<AonCustomDialogListener>();
+		listeners = new LinkedList<>();
 		FocusPanel focusBar = new FocusPanel(dialogBar);
 		flowPanel.add(focusBar);
 
@@ -103,6 +102,7 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 	}
 
 	public void handleMaximize() {
+		// nothing
 	}
 
 	@Override
@@ -182,19 +182,11 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		final TextBox inputTextBox = new TextBox();
 		htmlPanel.add(inputTextBox, inputDivId);
 		final Button cancelButton = new Button("Cancelar");
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-			}
-		});
+		cancelButton.addClickHandler(event -> inputDialog.hide());
 		final Button acceptButton = new Button("Aceptar");
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-				cb.onSuccess(inputTextBox.getText());
-			}
+		acceptButton.addClickHandler(event -> {
+			inputDialog.hide();
+			cb.onSuccess(inputTextBox.getText());
 		});
 
 		htmlPanel.add(cancelButton, buttonsDivId);
@@ -240,19 +232,11 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		htmlPanel.add(listBox, inputDivId);
 
 		final Button cancelButton = new Button("Cancelar");
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-			}
-		});
+		cancelButton.addClickHandler(event -> inputDialog.hide());
 		final Button acceptButton = new Button("Aceptar");
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-				cb.onSuccess(listBox.getSelectedValue());
-			}
+		acceptButton.addClickHandler(event -> {
+			inputDialog.hide();
+			cb.onSuccess(listBox.getSelectedValue());
 		});
 
 		htmlPanel.add(cancelButton, buttonsDivId);
@@ -273,8 +257,8 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 
 		@Override
 		public void onResize() {
-			Widget child = getWidget();
-			if ((child != null) && (child instanceof RequiresResize)) {
+			Widget child = super.getWidget();
+			if (child instanceof RequiresResize) {
 				((RequiresResize) child).onResize();
 			}
 		}

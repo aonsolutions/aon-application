@@ -1,9 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
@@ -14,6 +18,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -33,6 +38,8 @@ class AonConsoleProgress extends DockLayoutPanel {
 	private final AonConsoleProgressPanel main;
 	private final HashMap<String,AonConsoleProgressPanel> labels = new HashMap<>();
 	private AonDisplayGrid grid = new AonDisplayGrid();
+	private int gridCount;
+	private boolean gridDisabled;
 	
 	AonConsoleProgress() {
 		super(Unit.PX);
@@ -90,11 +97,11 @@ class AonConsoleProgress extends DockLayoutPanel {
 		grid.addHeaderRow()
 			.addCell(new Label("Tipo"),AON.CSS.aonWidth80())
 			.addCell(new Label(""),AON.CSS.aonWidth20())
-			.addCell(new Label("Tabla"),AON.CSS.aonWidth150())
-			.addCell(new Label("ID"),AON.CSS.aonWidth80())
-			.addCell(new Label("Columna"),AON.CSS.aonWidth150())
+			.addCell(new Label("Tabla"),AON.CSS.aonWidth120())
+			.addCell(new Label("ID"),AON.CSS.aonWidth120())
+			.addCell(new Label("Columna"),AON.CSS.aonWidth120())
 			.addCell(new Label("Tabla Ref."),AON.CSS.aonWidth150())
-			.addCell(new Label("ID Ref."),AON.CSS.aonWidth80())
+			.addCell(new Label("ID Ref."),AON.CSS.aonWidth120())
 			.addCell(new Label("ID Dominio Error."),AON.CSS.aonWidth40())
 			.addCell(new Label("Mensaje."));
 		grid.setVisible(false);
@@ -150,10 +157,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 				
 				@Override
 				public void visitWarning() {
-					Label messageLabel = new Label(message.getMessage());
-					messageLabel.setStyleName(AON.CSS.aonColorOrange());
-					messageLabel.addStyleName(AON.CSS.aonBold());
-					topContainer.add(messageLabel);
+					AonConsoleProgress.this.showWarning( message.getMessage() );
 				}
 
 				@Override
@@ -190,44 +194,77 @@ class AonConsoleProgress extends DockLayoutPanel {
 				
 				@Override
 				public void visitConsoleMessage() {
-					if (message.getConsoleDomainMessage() != null) {
-						JsConsoleDomainMessage domainMessage = message.getConsoleDomainMessage();
-						if (domainMessage.getType() == ConsoleDomainMessageType.INTEGRITY) {
-							grid.setVisible(true);
-							FlowPanel buttons = new FlowPanel();
-							AonTableButton setNullButton = new AonTableButton("Poner la columna \"" + domainMessage.getFkColumn() + "\" a NULL", AON.CSS.aonIconBlock());
-							setNullButton.addClickHandler( event -> {
-								setNullButton.setEnabled(false);
-								ConsoleModule.CONSOLE_SERVICE.fix(getConsoleDomainMessage(domainMessage
-									, ConsoleDomainMessageFixType.SET_NULL)
-									,new VisitorCallback(buttons,setNullButton));
-							});
-							
-							AonTableButton deleteButton = new AonTableButton("Borrar fila", AON.CSS.aonIconDelete());
-							deleteButton.addClickHandler( event -> {
-								deleteButton.setEnabled(false);
-								ConsoleModule.CONSOLE_SERVICE.fix(getConsoleDomainMessage(domainMessage
-									, ConsoleDomainMessageFixType.DELETE)
-									,new VisitorCallback(buttons,deleteButton));
-							});
-							
-							buttons.add(setNullButton);
-							buttons.add(deleteButton);
-							
-							grid.addRow()
-								.addCell(new Label("Integridad"))
-								.addCell(buttons)
-								.addCell(new Label(domainMessage.getTable()))
-								.addCell(new Label(""+domainMessage.getPkId()))
-								.addCell(new Label(domainMessage.getFkColumn()))
+					if (!gridDisabled) {
+						if (message.getConsoleDomainMessage() != null) {
+							JsConsoleDomainMessage domainMessage = message.getConsoleDomainMessage();
+							if (domainMessage.getType() == ConsoleDomainMessageType.INTEGRITY) {
+								grid.setVisible(true);
+								FlowPanel buttons = new FlowPanel();
+								AonTableButton setNullButton = new AonTableButton("Poner la columna \"" + domainMessage.getFkColumn() + "\" a NULL", AON.CSS.aonIconBlock());
+								setNullButton.addClickHandler( event -> {
+									setNullButton.setEnabled(false);
+									ConsoleModule.CONSOLE_SERVICE.fix(getConsoleDomainMessage(domainMessage
+										, ConsoleDomainMessageFixType.SET_NULL)
+										,new VisitorCallback(buttons,setNullButton));
+								});
 								
-								.addCell(new Label(domainMessage.getFkTable()))
-								.addCell(new Label(""+domainMessage.getFkId()))
+								AonTableButton deleteButton = new AonTableButton("Borrar fila", AON.CSS.aonIconDelete());
+								deleteButton.addClickHandler( event -> {
+									deleteButton.setEnabled(false);
+									ConsoleModule.CONSOLE_SERVICE.fix(getConsoleDomainMessage(domainMessage
+										, ConsoleDomainMessageFixType.DELETE)
+										,new VisitorCallback(buttons,deleteButton));
+								});
 								
-								.addCell(new Label(""+domainMessage.getWrongDomainId()))
+								buttons.add(setNullButton);
+								buttons.add(deleteButton);
 								
-								.addCell(new Label(domainMessage.getMessage()))
-							;
+								FlowPanel idPanel = new FlowPanel();
+								idPanel.setStyleName(AON.CSS.aonNowrap());
+								idPanel.addStyleName(AON.CSS.aonDisplayFlex());
+								InlineLabel idLabel = new InlineLabel( ""+domainMessage.getPkId());
+								idLabel.addStyleName(AON.CSS.aonFlexGrow1());
+								idPanel.add( idLabel);
+								AonTableButton idSearch = new AonTableButton("Ver Fila", AON.CSS.aonIconSearch() );
+								idSearch.addClickHandler(e -> showPkRow(domainMessage));
+								idPanel.add( idSearch );
+								
+								FlowPanel fkPanel = new FlowPanel();
+								fkPanel.setStyleName(AON.CSS.aonNowrap());
+								AonTableButton fkSearch = new AonTableButton("Ver Fila", AON.CSS.aonIconSearch() );
+								fkSearch.addClickHandler(e -> showFkRow(domainMessage));
+								fkPanel.add( fkSearch );
+								AonIntegerBox fkIdBox = new AonIntegerBox();
+								fkIdBox.setMaxLength( 10 );
+								fkIdBox.setVisibleLength( 6 );
+								fkIdBox.setValue( AonNumberUtils.toInteger( ""+domainMessage.getFkId() ));
+								fkPanel.add( fkIdBox);
+								AonTableButton fkChange = new AonTableButton("Modificar Dato", AON.CSS.aonIconSave() );
+								fkChange.addClickHandler(e -> {
+									Window.alert("Cambio de valor. Accion pendiente");
+								});
+								fkPanel.add( fkChange );
+								
+								grid.addRow()
+									.addCell(new Label("Integridad"))
+									.addCell(buttons)
+									.addCell(new Label(domainMessage.getTable()))
+									.addCell(idPanel)
+									.addCell(new Label(domainMessage.getFkColumn()))
+									.addCell(new Label(domainMessage.getFkTable()))
+									.addCell(fkPanel)
+									.addCell(new Label(""+domainMessage.getWrongDomainId()))
+									.addCell(new Label(domainMessage.getMessage()))
+								;
+								gridCount++;
+								if (gridCount >= 500) {
+									gridDisabled = true;
+									Label messageLabel = new Label("Solo se muestran 500 mensajes");
+									messageLabel.setStyleName(AON.CSS.aonColorRed());
+									messageLabel.addStyleName(AON.CSS.aonBold());
+									bottomContainer.add(messageLabel);
+								}
+							}
 						} else { 
 							Label messageLabel = new Label(message.getMessage());
 							messageLabel.setStyleName(AON.CSS.aonColorRed());
@@ -235,6 +272,39 @@ class AonConsoleProgress extends DockLayoutPanel {
 							bottomContainer.add(messageLabel);
 						}
 					}
+				}
+
+				private void showPkRow(JsConsoleDomainMessage domainMessage) {
+					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage, null);
+					showRow(cm.getSchema(), cm.getTable(),cm.getPkId());
+				}
+
+				private void showFkRow(JsConsoleDomainMessage domainMessage) {
+					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage, null);
+					showRow(cm.getSchema(), cm.getFkTable(),cm.getFkId());
+				}
+
+				private void showRow(String schema, String tableName, Integer id) {
+					
+					ConsoleModule.CONSOLE_SERVICE.viewRow(schema, tableName, id
+							,new AsyncCallback<LinkedHashMap<String, Object>>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessageDialog.error(caught.getMessage());
+								}
+
+								@Override
+								public void onSuccess(LinkedHashMap<String, Object> result) {
+									if (result == null || result.isEmpty()) {
+										AonMessageDialog.error("Fila no encontrada");	
+									} else {
+										AonConsoleProgress.this.showRow(tableName, id ,result);
+									}
+								}
+
+					});
+					
 				}
 
 				private ConsoleDomainMessage getConsoleDomainMessage(JsConsoleDomainMessage domainMessage, ConsoleDomainMessageFixType fixType) {
@@ -262,6 +332,13 @@ class AonConsoleProgress extends DockLayoutPanel {
 		scrollPanel.scrollToBottom();
 	}
 	
+	protected void showWarning(String message) {
+		Label messageLabel = new Label(message);
+		messageLabel.setStyleName(AON.CSS.aonColorOrange());
+		messageLabel.addStyleName(AON.CSS.aonBold());
+		topContainer.add(messageLabel);
+	}
+
 	static class AonConsoleProgressPanel extends FlowPanel {
 		private InlineLabel messageLabel = new InlineLabel();
 		private AonConsoleProgressBar bar = new AonConsoleProgressBar();
@@ -305,6 +382,47 @@ class AonConsoleProgress extends DockLayoutPanel {
 	        progress.setAttribute("value", Double.toString(percent));
 	    }
 
+	}
+	
+	private void showRow(String table, Integer id, LinkedHashMap<String, Object> result) {
+		AonCustomPopup popup = new AonCustomPopup();
+		popup.setWidth("600px");
+		popup.setHeight("300px");
+		popup.setCaption("Detalles de la fila");
+		popup.add( new AonConsoleRowViewer(table, id, result));
+		popup.center();
+		popup.show();
+	}
+	
+	static class AonConsoleRowViewer extends SimpleLayoutPanel {
+
+		public AonConsoleRowViewer(String table, Integer id, LinkedHashMap<String, Object> result) {
+			setStyleName(AON.CSS.aonScrollArea());
+			
+			ScrollPanel scroll = new ScrollPanel();
+			add( scroll);
+			FlowPanel container = new FlowPanel();
+			container.setStyleName(AON.CSS.aonMarginBottom());
+			scroll.setWidget( container );
+			
+			Label title = new Label( "Tabla: " + table + " ID: " + id);
+			title.setStyleName(AON.CSS.aonFontLarger());
+			title.addStyleName(AON.CSS.aonBold());
+			title.addStyleName(AON.CSS.aonTextCenter());
+			title.addStyleName(AON.CSS.aonMarginBottom());
+			container.add(title);
+			
+			AonDisplayGrid grid = new AonDisplayGrid();
+			grid.addStyleName(AON.CSS.aonBlockCenter());
+			container.add(grid);
+			result.keySet()
+				.stream()
+				.forEach( column  -> grid.addRow()
+					.addCell( new Label(column) , AON.CSS.aonTableLabel())
+					.addCell( new Label(Objects.toString(result.get(column),"<NULL>")) )
+			);
+		}
+		
 	}
 	
 }

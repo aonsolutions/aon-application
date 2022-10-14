@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server.console;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -54,5 +55,10 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public Boolean fix(ConsoleDomainMessage consoleMessage) throws AonCoreException {
 		return CONSOLE.fix(consoleMessage);
+	}
+	
+	@Override
+	public LinkedHashMap<String, Object> viewRow(String schema, String tableName, Integer id) throws AonCoreException {
+		return CONSOLE.viewRow(schema, tableName, id);
 	}
 }

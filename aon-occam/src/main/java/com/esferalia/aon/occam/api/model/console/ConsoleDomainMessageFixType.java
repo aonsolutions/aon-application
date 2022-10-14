@@ -4,8 +4,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ConsoleDomainMessageFixType {
 	
-	DELETE,
-	SET_NULL,
+	DELETE		{ @Override public <T> T visit(Visitor<T> visitor) { return visitor.visitDelete(); }},
+	SET_NULL	{ @Override public <T> T visit(Visitor<T> visitor) { return visitor.visitSetNull(); }},
+	NEW_VALUE	{ @Override public <T> T visit(Visitor<T> visitor) { return visitor.visitNewValue(); }}
 	;
 
 	public static ConsoleDomainMessageFixType safeValueOf( String i ) {
@@ -17,4 +18,11 @@ public enum ConsoleDomainMessageFixType {
 		return null;
 	}
 
+	public abstract <T> T visit(Visitor<T> visitor);
+	
+	public static interface Visitor<T> {
+		T visitDelete();
+		T visitSetNull();
+		T visitNewValue();
+	}
 }
