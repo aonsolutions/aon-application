@@ -63,6 +63,9 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getReservationProperty();
 		Property<Byte> getTasProperty();
+		
+		Property<String> getRegistryNameProperty();
+		Property<String> getTypeDescriptionProperty();
 	}
 	
 	public interface ProjectHolderProperties {
