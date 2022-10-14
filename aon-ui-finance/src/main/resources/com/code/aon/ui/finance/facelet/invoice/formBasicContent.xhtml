@@ -20,7 +20,7 @@
 					<ui:param name="sfc_seriesValid" value="#{invoiceController.seriesValid}" />
 					<ui:param name="sfc_editable" value="#{!invoiceController.readOnly and financeController.allPending}" />								
 					<ui:param name="sfc_numberReset" value="#{invoiceController.nevv}" />								
-					<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai}"/>
+					<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai or invoiceController.firstNumberOfSeries}"/>
 					<ui:define name="additionalSeriesContent">
 						<aon:commandButton id="Invoice_NextNumber" immediate="#{true}"
 							title="#{bundle.finance_invoice_find_next_number}"
