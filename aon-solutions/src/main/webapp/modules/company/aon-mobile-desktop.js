@@ -8,6 +8,7 @@ import '../invoice/aon-invoice-panel.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 import { Apps, getAppsByDur } from '../../services/app.js';
 import { AonSaltra } from '../laboral/aon-saltra.js';
+import { getPosition } from '../../services/maps.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -239,6 +240,9 @@ export class AonMobileDesktop extends AonElement {
 
 	async buildTimeControl() {
 		if(this.getDur().isTimecontrol()) {
+
+			getPosition().then(console.log).catch(console.error); // GET POSITION
+
 			const r = await getTimeControl();
 			let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
 			div2.id = this.TIMECONTROL_TITLE;
