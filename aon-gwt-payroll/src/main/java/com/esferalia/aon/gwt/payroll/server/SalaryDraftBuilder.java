@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -1633,7 +1635,22 @@ public class SalaryDraftBuilder
 	}
 
 	private static void replaceNETO(Payment p, Double totalPayment) {
-		p.setExpression(p.getExpression().replaceAll("NETO\\s*\\(", String.format(Locale.ROOT,"NETO(%.2f,", totalPayment)));
+		
+		String partialExpression = null;
+		try {
+			Matcher matcher = 
+			Pattern.compile("\\(\\s*\\([^)]+\\)\\s*(?<partial>/\\s*[0-9.]+\\s*\\*\\s*[0-9.]+)\\s*\\)\\s*\\*\\s*DIAS_TRABAJADOS\\s*/\\s*DIAS_MES", Pattern.CASE_INSENSITIVE)
+			.matcher(p.getExpression());
+			if ( matcher.find() ) {
+				partialExpression = matcher.group("partial");
+			}
+		} catch ( Exception e ) {
+			
+		}
+		
+		partialExpression = AonStringUtils.defaultIfBlank(partialExpression, "");
+		
+		p.setExpression(p.getExpression().replaceAll("NETO\\s*\\(", String.format(Locale.ROOT,"NETO(%.2f %s * DIAS_TRABAJADOS / DIAS_MES,", totalPayment, partialExpression)));
 	}
 
 	private static Payment.Type getPaymentType(PaymentType type) {

@@ -6990,16 +6990,13 @@ public class SalaryDraft extends ResizeComposite
 		}
 		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(salaryEndDate);
 		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(salaryStartDate);
-		if ( salaryEndDate.equals(lastDayOfMonth) 
-			&& salaryStartDate.equals(firstDayOfMonth) ) {
-			// User is setting the value for a complete month. We prepare for incomplete ones. 
-			expression = "( " + expression + " ) * DIAS_TRABAJADOS / DIAS_MES ";
-		} else if ( salaryEndDate.equals(lastDayOfMonth )) {
+		if ( salaryEndDate.equals(lastDayOfMonth )) {
 			// User is setting the value for the first month ( that's not complete ). We prepare for next ones.
 			double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 			double monthDays = getValuesOf("DIAS_MES").map(AonNumberUtils::todouble).findFirst()
 							.orElse((double)DateUtils.getDaysBetween(firstDayOfMonth, lastDayOfMonth)+1);
-			expression = "( (" + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+			expression = "( ( " + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+			
 		}
 		return expression;
 	}
