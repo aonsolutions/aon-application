@@ -1,28 +1,26 @@
 import {AonElement} from '../../components/AonElement.js';
 import { getRegistry} from '../../services/service.js';
-
-import '../../components/aon-table.js';
-
-import { CONSTANT, MSG, TAG} from '../../environments/environments.js';
+import { MSG, TAG, EVENT} from '../../environments/environments.js';
 import { AonReg } from './aon-reg.js';
+import { AonTable } from '../../components/aon-table.js';
 
 export class AonRegistryList extends AonElement {
 
-	AON_REGISTRY_TABLE;
+	TABLE;
 	more;
 	filter;	
 
 	connectedCallback () {
 		this.initialize();
-		this.innerHTML = `
-			<aon-table id='${this.AON_REGISTRY_TABLE}'></aon-table>
-			`;
+
+		this.TABLE = new AonTable();
+		this.TABLE.id = 'aonRegistryTable';
+		this.appendChild(this.TABLE);
 		this.build();
  	}
 
 	initialize() {
 		this.more = true;
-		this.AON_REGISTRY_TABLE = 'aonRegistryTable';
 		this.filter = this.filter || {
 			page: 1,
 			perPage: 50		
@@ -30,50 +28,47 @@ export class AonRegistryList extends AonElement {
 	}
 
 	build() {
-		let aonTable = this.getElement(this.AON_REGISTRY_TABLE);
-		this.selectabledTable(aonTable);
+		this.selectabledTable();
 
-		aonTable.addColumn(MSG.DOCUMENT, 'string', 'document', '20%');
-		aonTable.addColumn(MSG.NAME, 'string', 'name', '40%');
-		aonTable.addColumn(MSG.ALIAS, 'string', 'alias', '40%');
-		aonTable.addEventListener('more', () => {
+		this.TABLE.addColumn(MSG.DOCUMENT, 'string', 'document', '20%');
+		this.TABLE.addColumn(MSG.NAME, 'string', 'name', '40%');
+		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '40%');
+		this.TABLE.addEventListener(EVENT.MORE, () => {
 			if(this.more) this.loadMore()
 		});
 		this.init();
  	}
 
-	selectabledTable(aonTable){
+	selectabledTable(){
 		if(this.selectable){
-			aonTable.selectable = true;
-			aonTable.addEventListener('select', () => {
-				this.dispatchEvent(new CustomEvent("select", {detail: {parent:this, table:aonTable}}));
+			this.TABLE.selectable = true;
+			this.TABLE.addEventListener(EVENT.SELECT, () => {
+				this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: {parent:this, table:this.TABLE}}));
 			});
 		}
 	}
 
 	loadMore() {
 		this.more = false;
-		let table = this.getElement(this.AON_REGISTRY_TABLE);
-		if(table && this.filter.page) {
+		if(this.TABLE && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
 			this.getRegistries(this.filter).then(registries => {
 				if(registries.length > 0)
 					this.more = true;
 				
 				registries.forEach((registry, i) => {
-					table.addRow(registry, () => this.buildRegistry(registry));
+					this.TABLE.addRow(registry, () => this.buildRegistry(registry));
 				});
 			});
 		}
 	}
 
 	init() {
-		let table = this.getElement(this.AON_REGISTRY_TABLE);
-		if(table) {
-			table.removeRows();
+		if(this.TABLE) {
+			this.TABLE.removeRows();
 			this.getRegistries(this.getFilter()).then(registries => {
-				registries.forEach((registry, i) => {
-					table.addRow(registry, () => this.buildRegistry(registry));
+				registries.forEach((registry) => {
+					this.TABLE.addRow(registry, () => this.buildRegistry(registry));
 				});
 			});	
 		}

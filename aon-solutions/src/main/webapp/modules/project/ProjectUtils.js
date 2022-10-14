@@ -1,7 +1,10 @@
 import { AonDate } from "../../components/aon-date.js";
+import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { ProjectHolder } from "../../models/project/ProjectHolder.js";
+import { ProjectType } from "../../models/project/ProjectType.js";
+import { deleteProjectType, saveProjectType } from "../../services/projectService.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 
@@ -9,9 +12,9 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
 /**
  * 
  * @param {AonProjectList} parent 
+ * @param {Project} project 
  */
  const buildDialogProject = (parent, project) => {
-
     const application = parent.getApplication();
     const dialog = application.getDialog();
 
@@ -104,24 +107,46 @@ const buildFormProject = (parent, div, project) => {
             workgroup.value = workgroupId;
         } 
 
-        workgroup.addEventListener(EVENT.CHANGE, () => projectHolder.setWorkgroup(workgroup.getDetail()));
+        workgroup.addEventListener(EVENT.CHANGE, () =>{
+            projectHolder.setWorkgroup(workgroup.getDetail());
+            
+            onChangeTaskHolder(project, workgroup, taskHolder.getSelectable())
+        });
     });
 
 
     parent.getTaskHolders().then(ths=>{
         taskHolder.setOptions(ths);
-
-        taskHolder.addEventListener(EVENT.SELECT, ({detail}) => {
-            let projectHolders = (detail || []).map(taskHolder => new ProjectHolder({taskHolder}));
-            project.setProjectHolders(projectHolders);
+        taskHolder.addEventListener(EVENT.SELECT, () => {
+            onChangeTaskHolder(project, workgroup, taskHolder.getSelectable())
         });
     });
+}
 
+/**
+ * 
+ * @param {Project} project 
+ * @param {HTMLElement} selectWorkgroup 
+ * @param {Array} selectable 
+ */
+const onChangeTaskHolder = (project, selectWorkgroup, selectable) => {
+    const projectHolder = project.getProjectHolder();
+
+    let workgroup = null;
+    if(selectWorkgroup.getDetail() && selectWorkgroup.getDetail().id){
+        workgroup = selectWorkgroup.getDetail();
+    } else if(projectHolder.getWorkgroup().getId()){
+        workgroup = projectHolder.getWorkgroup();
+    }
+
+    let projectHolders = (selectable || []).map(taskHolder => new ProjectHolder({taskHolder, workgroup}));
+    project.setProjectHolders(projectHolders);
 }
 
 /**
  * 
  * @param {AonHolderSimpleList} parent 
+ * @param {ProjectHolder} holder 
  */
 const buildDialogHolder = (parent, holder) => {
 
@@ -158,6 +183,12 @@ const buildDialogHolder = (parent, holder) => {
     dialog.open();
 }   
 
+/**
+ * 
+ * @param {AonHolderSimpleList} parent 
+ * @param {HTMLElement} div 
+ * @param {ProjectHolder} holder 
+ */
 const buildFormHolder = (parent, div, holder) => {
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
@@ -215,7 +246,59 @@ const buildFormHolder = (parent, div, holder) => {
 }
 
 
+const buildDialogProjectType = (parent, type) => {
+    let projectType = new ProjectType(type);
+    const isEdit = projectType.getId();
+    const application = parent.getApplication();
+    const d = application.getDialog();
+    d.clear();
+    if(!parent.isMobile()) {
+        d.width = '400px';
+    }
+    d.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
+
+    let aonInput = new AonInput();
+    aonInput.id = "eeeInputType";
+    aonInput.description = MSG.TYPE;
+    if(projectType.getDescription()) {
+        aonInput.value = projectType.getDescription();
+    }
+
+    d.setContent(aonInput);
+    d.addAcceptAction(() => {
+        if(aonInput.value){
+            projectType.setDescription(aonInput.value);
+            projectType.setDirty(true);
+            saveProjectType(projectType).then(() => {
+                parent.showMessage();
+                parent.loadProjectType();
+            }).catch(err=>{
+                parent.showError(err);
+            });
+        }
+    });
+    d.open();
+}
+
+
+const projectTypeDelete = (parent, type) => {
+    let application = parent.getApplication();
+    application.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+        application.startLoading();
+        try {
+          await deleteProjectType(type);
+          parent.showToast({ message: MSG.DELETED_DATA });
+          parent.loadProjectType();
+        } catch (error) {
+          parent.showToast(error);
+        }
+      application.stopLoading();
+    });
+}
+
 export const ProjectUtils = {
     buildDialogProject,
-    buildDialogHolder
+    buildDialogHolder,
+    buildDialogProjectType,
+    projectTypeDelete
 }

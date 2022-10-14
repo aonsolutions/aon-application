@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-
+import * as ACTION from '../actions.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import { AonProject } from './aon-project.js';
@@ -12,8 +12,6 @@ import { getWorkgroups } from '../../services/workgroupService.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 
 export class AonProjectList extends AonElement {
-
-	AON_PROJECT_TABLE;
 	more;
 	filter;	
 	TABLE;
@@ -77,7 +75,7 @@ export class AonProjectList extends AonElement {
 		div.appendChild(this.TABLE);
 		this.TABLE.addColumn(MSG.TYPE, 'string', 'typeName', '30%');
 		this.TABLE.addColumn(MSG.DATE, 'date', 'date', '20%');
-		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"html", id:"lettersHtml", width:"5%"}, 
+		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"string", width:"5%", id:"lettersHtml"}, 
 		()=>{
 			let project = new Project();
 			if(this.registry){
@@ -87,10 +85,8 @@ export class AonProjectList extends AonElement {
 		});
 
         this.HOLDERS_DIV = this.createElement(TAG.DIV);
-        this.HOLDERS_DIV.style.display = 'none';
-        this.HOLDERS_DIV.style.width = "50%";
-        this.HOLDERS_DIV.style.borderLeft = '1px solid #ddd';
         div.appendChild(this.HOLDERS_DIV);
+		this.clearHolderList();
 	}
 
 	loadMore() {
@@ -101,8 +97,8 @@ export class AonProjectList extends AonElement {
 			.then(projects => {
 				if(projects.length > 0)
 					this.more = true;
-				projects.forEach((project, i) => {
-					this.TABLE.addRow(project, () => this.buildProject(project));
+				projects.forEach((project) => {
+					this.TABLE.addRow(project, () => this.buildProject(project), (e) => this.aonProjectContextMenu(e, project));
 				});
 			});
 		}
@@ -113,9 +109,8 @@ export class AonProjectList extends AonElement {
 			this.TABLE.removeRows();
 			this.getData(this.getFilter())
 			.then(projects => {
-				projects
-				.forEach((project, i) => {
-					this.TABLE.addRow(project, () => this.buildProject(project));
+				projects.forEach((project) => {
+					this.TABLE.addRow(project, () => this.buildProject(project), (e) => this.aonProjectContextMenu(e, project));
 				});
 			});	
 		}
@@ -129,19 +124,6 @@ export class AonProjectList extends AonElement {
 			.map(p =>{
 				p.typeName = p.type.description;
 				p.registryName = p.registry.name;
-			
-				let removeIcon = new AonIconButton();
-				removeIcon.id = p.id;
-				removeIcon.title = MSG.DELETE;
-				removeIcon.icon = MATERIAL_ICONS.CLOSE;
-				removeIcon.addEventListener(EVENT.CLICK, (ev) => {
-					ev.preventDefault();
-					ev.stopPropagation();
-					this.onDeleteProject(p);
-				});
-
-				p.lettersHtml = removeIcon;
-
 				return p;
 			});
 		} catch (error) {
@@ -200,6 +182,14 @@ export class AonProjectList extends AonElement {
         });
     }
 
+	clearHolderList(){
+		if(this.TABLE && this.HOLDERS_DIV){
+			this.TABLE.style.width = "100%";
+			this.HOLDERS_DIV.style.display = 'none';
+			this.HOLDERS_DIV.style.width = "50%";
+			this.HOLDERS_DIV.style.borderLeft = '1px solid #ddd';
+		}
+	}
 
 	loadHolderList(project) {
 		const id = "holderList";
@@ -219,12 +209,13 @@ export class AonProjectList extends AonElement {
 		this.init();
 	}
 
-    async onSaveProject(project){
+    async onSaveProject(p){
         this.getApplication().startLoading();
         try {
-			await saveProject(project);
+			let project = await saveProject(p);
             this.showMessage();
             this.init();
+			this.buildProject(project);
         } catch (error) {
             this.showError(error);
         }
@@ -239,11 +230,37 @@ export class AonProjectList extends AonElement {
 				await deleteProject(project);
 				this.showToast({ message: MSG.DELETED_DATA });
 				this.init();
+				this.clearHolderList();
 			} catch (error) {
 				this.showError(error);
 			}
 			this.getApplication().stopLoading();	
 		});
+	}
+
+	aonProjectContextMenu(e, project) {
+		e.preventDefault();
+		e.stopPropagation();
+		let d = this.getApplication().getOptionDialog();
+		let rect = e.target.getBoundingClientRect();
+    	let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+
+	    const top  = rect.top + y;
+	    const left = rect.left + x;
+
+		let edit = ACTION.EDIT;
+		edit.fn = () =>{
+			ProjectUtils.buildDialogProject(this,  new Project(project))
+		};
+
+		let remove = ACTION.DELETE;
+		remove.fn = () => this.onDeleteProject(project);
+
+		let actions = [edit, remove];
+		
+		d.setMenuOptions(actions, top, left);
+		d.open();
 	}
 
 	async getProjectTypes(){
