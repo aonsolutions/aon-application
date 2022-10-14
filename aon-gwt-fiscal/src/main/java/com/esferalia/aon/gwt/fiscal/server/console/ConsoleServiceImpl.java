@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Aon MS Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Console" })
@@ -58,7 +59,7 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 	
 	@Override
-	public LinkedHashMap<String, Object> viewRow(String schema, String tableName, Integer id) throws AonCoreException {
+	public ConsoleTableRow viewRow(String schema, String tableName, Integer id) throws AonCoreException {
 		return CONSOLE.viewRow(schema, tableName, id);
 	}
 }

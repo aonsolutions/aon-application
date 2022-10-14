@@ -1,24 +1,20 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Objects;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageFixType;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType.Visitor;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -225,24 +221,18 @@ class AonConsoleProgress extends DockLayoutPanel {
 								InlineLabel idLabel = new InlineLabel( ""+domainMessage.getPkId());
 								idLabel.addStyleName(AON.CSS.aonFlexGrow1());
 								idPanel.add( idLabel);
-								AonTableButton idSearch = new AonTableButton("Ver Fila", AON.CSS.aonIconSearch() );
+								AonTableButton idSearch = new AonTableButton("Ver/Modificar Fila", AON.CSS.aonIconSwap() );
 								idSearch.addClickHandler(e -> showPkRow(domainMessage));
 								idPanel.add( idSearch );
 								
 								FlowPanel fkPanel = new FlowPanel();
 								fkPanel.setStyleName(AON.CSS.aonNowrap());
-								AonTableButton fkSearch = new AonTableButton("Ver Fila", AON.CSS.aonIconSearch() );
-								fkSearch.addClickHandler(e -> showFkRow(domainMessage));
-								fkPanel.add( fkSearch );
-								AonIntegerBox fkIdBox = new AonIntegerBox();
-								fkIdBox.setMaxLength( 10 );
-								fkIdBox.setVisibleLength( 6 );
-								fkIdBox.setValue( AonNumberUtils.toInteger( ""+domainMessage.getFkId() ));
-								fkPanel.add( fkIdBox);
-								AonTableButton fkChange = new AonTableButton("Modificar Dato", AON.CSS.aonIconSave() );
-								fkChange.addClickHandler(e -> {
-									Window.alert("Cambio de valor. Accion pendiente");
-								});
+								fkPanel.addStyleName(AON.CSS.aonDisplayFlex());
+								InlineLabel fkLabel = new InlineLabel( ""+domainMessage.getFkId());
+								fkLabel.addStyleName(AON.CSS.aonFlexGrow1());
+								fkPanel.add( fkLabel);
+								AonTableButton fkChange = new AonTableButton("Ver/Modificar datos", AON.CSS.aonIconSwap() );
+								fkChange.addClickHandler(e -> showFkRow(domainMessage));
 								fkPanel.add( fkChange );
 								
 								grid.addRow()
@@ -287,7 +277,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 				private void showRow(String schema, String tableName, Integer id) {
 					
 					ConsoleModule.CONSOLE_SERVICE.viewRow(schema, tableName, id
-							,new AsyncCallback<LinkedHashMap<String, Object>>() {
+							,new AsyncCallback<ConsoleTableRow>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
@@ -295,11 +285,11 @@ class AonConsoleProgress extends DockLayoutPanel {
 								}
 
 								@Override
-								public void onSuccess(LinkedHashMap<String, Object> result) {
-									if (result == null || result.isEmpty()) {
+								public void onSuccess(ConsoleTableRow tableRow) {
+									if (tableRow == null) {
 										AonMessageDialog.error("Fila no encontrada");	
 									} else {
-										AonConsoleProgress.this.showRow(tableName, id ,result);
+										AonConsoleProgress.this.showRow(tableRow);
 									}
 								}
 
@@ -384,45 +374,10 @@ class AonConsoleProgress extends DockLayoutPanel {
 
 	}
 	
-	private void showRow(String table, Integer id, LinkedHashMap<String, Object> result) {
-		AonCustomPopup popup = new AonCustomPopup();
-		popup.setWidth("600px");
-		popup.setHeight("300px");
-		popup.setCaption("Detalles de la fila");
-		popup.add( new AonConsoleRowViewer(table, id, result));
+	private void showRow(ConsoleTableRow tableRow) {
+		AonConsoleRowViewer popup = new AonConsoleRowViewer( tableRow );
 		popup.center();
 		popup.show();
-	}
-	
-	static class AonConsoleRowViewer extends SimpleLayoutPanel {
-
-		public AonConsoleRowViewer(String table, Integer id, LinkedHashMap<String, Object> result) {
-			setStyleName(AON.CSS.aonScrollArea());
-			
-			ScrollPanel scroll = new ScrollPanel();
-			add( scroll);
-			FlowPanel container = new FlowPanel();
-			container.setStyleName(AON.CSS.aonMarginBottom());
-			scroll.setWidget( container );
-			
-			Label title = new Label( "Tabla: " + table + " ID: " + id);
-			title.setStyleName(AON.CSS.aonFontLarger());
-			title.addStyleName(AON.CSS.aonBold());
-			title.addStyleName(AON.CSS.aonTextCenter());
-			title.addStyleName(AON.CSS.aonMarginBottom());
-			container.add(title);
-			
-			AonDisplayGrid grid = new AonDisplayGrid();
-			grid.addStyleName(AON.CSS.aonBlockCenter());
-			container.add(grid);
-			result.keySet()
-				.stream()
-				.forEach( column  -> grid.addRow()
-					.addCell( new Label(column) , AON.CSS.aonTableLabel())
-					.addCell( new Label(Objects.toString(result.get(column),"<NULL>")) )
-			);
-		}
-		
 	}
 	
 }

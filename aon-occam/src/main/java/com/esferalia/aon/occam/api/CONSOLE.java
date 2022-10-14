@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -10,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -72,9 +72,9 @@ public class CONSOLE {
 		}
 	}
 
-	public static LinkedHashMap<String, Object> viewRow(String schema,String tableName, Integer id) {
+	public static ConsoleTableRow viewRow(String schema,String tableName, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
-			return getConsole().viewRow(ctx,tableName, id);
+			return getConsole().viewRow(ctx,schema,tableName, id);
 		}
 	}
 	
