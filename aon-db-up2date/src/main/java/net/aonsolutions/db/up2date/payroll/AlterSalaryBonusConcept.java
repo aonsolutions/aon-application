@@ -1,0 +1,33 @@
+package net.aonsolutions.db.up2date.payroll;
+
+import java.sql.Connection;
+
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.ParamType;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+
+import net.aonsolutions.db.up2date.Update;
+
+public class AlterSalaryBonusConcept implements Update {
+
+	public static final AlterSalaryBonusConcept ALTERSALARYBONUSCONCEPT = new AlterSalaryBonusConcept();
+	
+	private AlterSalaryBonusConcept() {}
+	
+	@Override
+	public void upgrade(Connection connection) {
+		Settings settings ; 
+		DSLContext dslContext;
+		
+		settings = new Settings();
+		settings.setRenderSchema(false);
+		settings.setParamType(ParamType.INLINED);
+		
+		dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
+		
+		dslContext.execute("ALTER TABLE `salary_bonus` MODIFY `bonus_concept` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto'");
+	}
+
+}
