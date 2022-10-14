@@ -717,7 +717,7 @@
 										<g:customCell>
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">TOTAL
-													( A + B + C )</g:Label>
+													( A + C )</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML 
 														changeDisplayStyleName="{style.value-changed}" debugId="totalLabel" ui:field="totalLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>												

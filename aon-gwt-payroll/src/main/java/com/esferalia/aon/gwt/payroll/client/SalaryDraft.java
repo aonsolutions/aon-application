@@ -3656,11 +3656,9 @@ public class SalaryDraft extends ResizeComposite
 
 		double total =  0.00; 
 		total += AonNumberUtils.todouble(salaryDraftObject.getTotalPayment());
-		total += AonNumberUtils.todouble(salaryDraftObject.getTotalDeduction());
 		total += AonNumberUtils.todouble(salaryDraftObject.getTotalEnterprise());
 		double dbTotal = 0.00; 
 		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalPayment());
-		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalDeduction());
 		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalEnterprise());
 		
 		totalLabel.setText(format(total), displayChanges);
