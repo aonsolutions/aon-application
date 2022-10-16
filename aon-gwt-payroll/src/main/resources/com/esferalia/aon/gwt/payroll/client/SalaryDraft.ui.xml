@@ -567,7 +567,7 @@
 									<g:row styleName="aon-dataTable-row-odd">
 										<g:customCell>
 											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">RENUMERACIÓN
+												<g:Label styleName="{style.cell-label}">REMUNERACIÓN
 													TOTAL</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
@@ -710,6 +710,36 @@
 													<g:InlineHTML debugId="dbTotalLiquidLabel" ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>
+											</g:HTMLPanel>
+										</g:customCell>
+									</g:row>
+									<g:row styleName="aon-dataTable-row-odd">
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">TOTAL
+													( A + C )</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<e:ValueInlineHTML 
+														changeDisplayStyleName="{style.value-changed}" debugId="totalLabel" ui:field="totalLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>												
+													<g:InlineHTML debugId="dbTotalLabel" ui:field="dbTotalLabel"
+														visible="false" />
+												</g:HTMLPanel>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
+												<g:Label styleName="{style.cell-label}">C. TOTAL
+													EMPRESA</g:Label>
+												<g:HTMLPanel tag="div" styleName="aon-text-center">
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalEnterpriseLabel" debugId="totalEnterpriseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+													<g:InlineHTML debugId="dbTotalEnterpriseLabel" ui:field="dbTotalEnterpriseLabel"
+														visible="false" />
+												</g:HTMLPanel>
+											</g:HTMLPanel>
+										</g:customCell>
+										<g:customCell>
+											<g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
 									</g:row>

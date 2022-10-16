@@ -2891,6 +2891,15 @@ public class SalaryDraft extends ResizeComposite
 	ValueLabel totalDeductionLabel;
 	@UiField
 	Label dbTotalDeductionLabel;
+	
+	@UiField
+	ValueLabel totalEnterpriseLabel;
+	@UiField
+	Label dbTotalEnterpriseLabel;
+	@UiField
+	ValueLabel totalLabel;
+	@UiField
+	Label dbTotalLabel;
 
 	@UiField
 	Button acceptButton;
@@ -3406,6 +3415,8 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalDeductionLabel.setVisible(visible);
 		dbTotalLiquidLabel.setVisible(visible);
 		dbTotalPaymentLabel.setVisible(visible);
+		dbTotalEnterpriseLabel.setVisible(visible);
+		dbTotalLabel.setVisible(visible);
 		
 		dbEmployeeContractLabel.setVisible(visible);
 		dbEmployeeGroupLabel.setVisible(visible);
@@ -3639,6 +3650,21 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalLiquidLabel.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
 		
+		totalEnterpriseLabel.setText(format(salaryDraftObject.getTotalEnterprise()), displayChanges);
+		dbTotalEnterpriseLabel.setText(format(salaryDraftObject.getDbTotalEnterprise()));
+		setDbStyleName(dbTotalEnterpriseLabel, totalEnterpriseLabel);
+
+		double total =  0.00; 
+		total += AonNumberUtils.todouble(salaryDraftObject.getTotalPayment());
+		total += AonNumberUtils.todouble(salaryDraftObject.getTotalEnterprise());
+		double dbTotal = 0.00; 
+		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalPayment());
+		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalEnterprise());
+		
+		totalLabel.setText(format(total), displayChanges);
+		dbTotalLabel.setText(format(dbTotal));
+		setDbStyleName(dbTotalLabel, totalLabel);
+
 		employeeContractLabel.setText(getValueOf("TC2"));
 		employeeContractLabel.setTitle(getTitleOfTC2());
 		dbEmployeeContractLabel.setText(getDbValueOf("TC2"));
@@ -4863,7 +4889,13 @@ public class SalaryDraft extends ResizeComposite
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		amountsPanel.getElement().getStyle().setWidth(100, Unit.PCT);
-		amountsPanel.add(amountBox);
+
+		if( item instanceof Bonus ) { 
+			addBonusAmountItem(amountBox, amountsPanel);
+		} else {
+			amountsPanel.add(amountBox);
+		}
+
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
@@ -4983,6 +5015,18 @@ public class SalaryDraft extends ResizeComposite
 			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		} // highlight dirty, not saved items.
 		
+	}
+
+	private void addBonusAmountItem(Widget amountWidget, HorizontalPanel amountsPanel) {
+		HorizontalPanel minusPanel = new HorizontalPanel();
+		minusPanel.setWidth("100%");
+		InlineHTML minusHTML = new InlineHTML("&minus;");
+		minusPanel.add( minusHTML );
+		minusPanel.add( amountWidget );
+		minusPanel.setCellWidth(minusHTML, "99%");
+		minusPanel.setCellHorizontalAlignment(minusHTML, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		minusPanel.setCellHorizontalAlignment(amountWidget, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		amountsPanel.add(minusPanel);
 	}
 	
 	private <I extends Item> HorizontalPanel createSpecialPay(I item, TextBox descriptionBox, int row, ItemChangeHandler<TextBox, I> handler) {
@@ -5183,14 +5227,19 @@ public class SalaryDraft extends ResizeComposite
 		ssAmountLabel.setText(format(item.getSsAmount()));
 		setDbStyleName(ssAmountLabel, amountLabel);
 
-		amountsPanel.add(amountLabel);
+		if( item instanceof Bonus ) {
+			addBonusAmountItem(amountLabel, amountsPanel);
+		} else {
+			amountsPanel.add(amountLabel);
+			amountsPanel.setCellHorizontalAlignment(amountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		}
+
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.add(ssAmountLabel);
 
 		amountsPanel.setWidth("100%");
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellWidth(ssAmountLabel, "50%");
-		amountsPanel.setCellHorizontalAlignment(amountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.setCellHorizontalAlignment(ssAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 
@@ -6990,16 +7039,13 @@ public class SalaryDraft extends ResizeComposite
 		}
 		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(salaryEndDate);
 		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(salaryStartDate);
-		if ( salaryEndDate.equals(lastDayOfMonth) 
-			&& salaryStartDate.equals(firstDayOfMonth) ) {
-			// User is setting the value for a complete month. We prepare for incomplete ones. 
-			expression = "( " + expression + " ) * DIAS_TRABAJADOS / DIAS_MES ";
-		} else if ( salaryEndDate.equals(lastDayOfMonth )) {
+		if ( salaryEndDate.equals(lastDayOfMonth )) {
 			// User is setting the value for the first month ( that's not complete ). We prepare for next ones.
 			double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 			double monthDays = getValuesOf("DIAS_MES").map(AonNumberUtils::todouble).findFirst()
 							.orElse((double)DateUtils.getDaysBetween(firstDayOfMonth, lastDayOfMonth)+1);
-			expression = "( (" + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+			expression = "( ( " + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+			
 		}
 		return expression;
 	}

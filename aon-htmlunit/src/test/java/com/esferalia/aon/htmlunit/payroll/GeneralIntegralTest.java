@@ -915,6 +915,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 1900.00);
 		calculate(Calendar.NOVEMBER, 2022);
 		assertValue("totalPaymentLabel", 3000.00);
+		
 
 		draft("NETO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		calculate(Calendar.MAY, 2016);
@@ -934,9 +935,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("description-box-1");
 		assertValue("totalLiquidLabel", 1900.00);
 		calculate(Calendar.NOVEMBER, 2022);
-		setValue("totalLiquidLabel", "3000.00");
 		assertValue("totalLiquidLabel", 3000.00);
 
+		draft("NETO CONSTANTE, PARCIAL");
+		calculate(Calendar.OCTOBER, 2022);
+		//setValue("irpfPercentTexTBox", "10.00");
+		setValue("totalLiquidLabel", "950.00");
+		wait4Id("description-box-1");
+		assertValue("totalLiquidLabel", 950.00);
+		calculate(Calendar.NOVEMBER, 2022);
+		assertValue("totalLiquidLabel", 1500.00);
+		setValue("editor-coeficiente_parcialidad", "1.0");
+		calculate(Calendar.OCTOBER, 2022);
+		assertValue("totalLiquidLabel", 1900.00);
+		calculate(Calendar.NOVEMBER, 2022);
+		assertValue("totalLiquidLabel", 3000.00);
 	}
 
 	@Test
