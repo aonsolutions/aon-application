@@ -150,15 +150,17 @@ export class AonOfficePanel extends AonElement {
         
         if([officeViews.AON_CUSTOMER, officeViews.AON_CUSTOMER_LIST].includes(view)){
 
-            application.removeToolbarOptions();
+            // application.removeToolbarOptions();
 
             application.addToolbarOption2(SigninSidenav.ADD, () => this.showView(officeViews.AON_CUSTOMER) );
 
-            if(officeViews.AON_CUSTOMER_LIST === view){
+            let btnSearch = application.getSearchButton();
+
+            if(!btnSearch && officeViews.AON_CUSTOMER_LIST === view){
                 let aonView = this.getElement(officeViews.AON_CUSTOMER_LIST);
                 let timeOut = null;
 
-                const btnSearch = application.addSearchOption();
+                btnSearch = application.addSearchOption();
 
                 btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
                     clearTimeout(timeOut);
@@ -264,6 +266,7 @@ export class AonOfficePanel extends AonElement {
 				break;
                 case officeViews.AON_CUSTOMER:
 					aonView = new AonCustomer();
+                    aonView.setCustomer();
                     aonView.back = () => this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {...this.getFilterCustomers(), page:1 }); // overwrite function
 				break;
                 case officeViews.AON_CUSTOMER_LIST:
