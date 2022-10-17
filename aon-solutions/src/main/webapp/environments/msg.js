@@ -51,6 +51,7 @@ export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_TYPE = "Añadir Tipo"; // TODO
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
+export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
 export const ADDRESS = MSG.ADDRESS;
 export const ALIAS = 'Alias';// TODO
 export const ALL_FILES = MSG.ALL_FILES;
