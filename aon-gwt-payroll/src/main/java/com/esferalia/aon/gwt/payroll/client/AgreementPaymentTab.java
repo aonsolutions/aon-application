@@ -51,7 +51,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.itextpdf.text.log.SysoLogger;
 
 public abstract class AgreementPaymentTab extends ResizeComposite {
 	
@@ -71,6 +70,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(Payment payment) {
+					payment.setModify(true);
 					agreement.addPayment(payment);
 					setAgreementPayment(agreement);
 					setHasChange(true);
@@ -88,8 +88,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -115,8 +117,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -142,8 +146,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -169,8 +175,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -201,8 +209,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAcceptExtra(List<Payment> payments, List<Extra> extras) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					
 					for(Extra extra : extras)
 						agreement.addExtra(extra);
@@ -244,10 +254,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		
 		public AddPaymentContextMenu() {
 			
-			addAonPayment = addItem("Buscagor Devengos", new AddAonPaymentCommand(), 
-					AON.CSS.aonIconSearch(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			addAonPayment.ensureDebugId("addAonPayment");
-			
 			addBasicSalary = addItem("Salario Base", new AddBasicSalaryCommand(),
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			addBasicSalary.ensureDebugId("addBasicSalary");
@@ -267,6 +273,13 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			addExtrasSalary = addItem("Pagas Extras", new AddExtrasSalaryCommand(), 
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			addExtrasSalary.ensureDebugId("addExtrasSalary");
+			
+			addSeparator();
+			
+			addAonPayment = addItem("Devengos Predefinidos", new AddAonPaymentCommand(), 
+					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			addAonPayment.ensureDebugId("addAonPayment");
+			
 		}
 	}
 
@@ -277,6 +290,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String cmdBtn();
+		String modify();
 	}
 	
 	@UiField
@@ -444,6 +458,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    // Visibility column.
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
 	    	showHidePayment(payment);
+	    	payment.setModify(true);
 	    	agreementPaymentDG.redraw();
 			setHasChange(true);
 	    });
@@ -506,6 +521,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		agreementPaymentDG.setColumnWidth(deleteColumn, 5, Unit.PCT);
 		
+		agreementPaymentDG.setRowStyles((payment, rowIdx) -> {
+			if(payment.isModify()) return style.modify();
+			else return null;
+		});
+		
 	    // Add the columns.
 		agreementPaymentDG.addColumn(editColumn, "");
 		agreementPaymentDG.addColumn(codeColumn, "CRA");
@@ -521,24 +541,32 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	private void openDialog(Payment payment) {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE");
-    	AgreementPaymentEditor paymentEditor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId())) {
+    	AgreementPaymentEditor paymentEditor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
 			@Override
-			protected void onAccept(Payment updatedPayment, AgreementExtra extra) {
+			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
+//				Window.alert(null == extra ? "---- Extra NULL ----" : "---- Extra ----\nId : " + extra.getId() + "\nisDeleted : " + extra.isDeleted()
+//				 + "\nstartDate : " + extra.getStartDate() + "\nendDate : " + extra.getEndDate() + "\nissueDate : " + extra.getIssueDate() + "\nagreementPayment : " + extra.getAgreementPayment());
+//				
+//				Window.alert(null == associatedExtra ? "---- Associated Extra NULL ----" : "---- Associated Extra ----\nId : " + associatedExtra.getId() + "\nisDeleted : " + associatedExtra.isDeleted()
+//				 + "\nstartDate : " + associatedExtra.getStartDate() + "\nendDate : " + associatedExtra.getEndDate() + "\nissueDate : " + associatedExtra.getIssueDate() + "\nagreementPayment : " + associatedExtra.getAgreementPayment());
+				
 				updatePaymentExpresion(isHide, payment, updatedPayment);
-				Window.alert("onAccept");
 				agreement.replacePayment(payment);
-				Window.alert("onAccept 2");
-				agreement.syncPayment(payment, extra);
-				Window.alert("onAccept 3");
-				if(null != extra) {
-					Window.alert("onAccept 4");
-					agreement.replaceExtra(extra); 
-					Window.alert("onAccept 5");
-					agreement.syncExtras(extra);
-					Window.alert("onAccept 6");
-				}
-				agreement.getExtras().forEach(extraIt -> Window.alert("---- Extra ----\nId : " + extraIt.getId() + "\nisDeleted : " + extraIt.isDeleted()
-				 + "\nstartDate : " + extraIt.getStartDate() + "\nendDate : " + extraIt.getEndDate() + "\nissueDate : " + extraIt.getIssueDate()));
+				
+				if(null != extra && null != extra.getId() && extra.getId() > 0) agreement.replaceExtra(extra); 
+				if(null != extra && null != extra.getId()) agreement.addExtra(extra);
+				
+				if(null != associatedExtra && null != associatedExtra.getId() && associatedExtra.getId() > 0) agreement.replaceExtra(associatedExtra); 
+				
+				if(null != associatedPayment) agreement.addPayment(associatedPayment);
+				if(null != associatedExtra && (null == associatedExtra.getId() || associatedExtra.getId() < 0)) agreement.addExtra(associatedExtra);
+				
+//				agreement.getPayments().forEach(paymentIt -> Window.alert("---- Payment ----\nId : " + paymentIt.getId() + "\nisDeleted : " + paymentIt.isDeleted()
+//				 + "\ndescription : " + paymentIt.getDescription() + "\nexpression : " + paymentIt.getExpression() + "\nmonth : " + paymentIt.getMonth()));
+//				
+//				agreement.getExtras().forEach(extraIt -> Window.alert("---- Extra ----\nId : " + extraIt.getId() + "\nisDeleted : " + extraIt.isDeleted()
+//				 + "\nstartDate : " + extraIt.getStartDate() + "\nendDate : " + extraIt.getEndDate() + "\nissueDate : " + extraIt.getIssueDate()));
+				
 				setAgreementPayment(agreement);
 				setHasChange(true);
 			}
@@ -594,7 +622,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
 				payment.getType().equals(Payment.Type.CRA_0005))) return "P";
 		
-		return extra.isDeleted() ? "P" : getExtraPeriod(extra);
+		return (extra == null || extra.isDeleted()) ? "P" : getExtraPeriod(extra);
 	}
 	
 	private String getExtraPeriod(AgreementExtra extra) {
@@ -624,7 +652,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
 				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
 		
-		return extra.isDeleted() ? "Prorrateado" : getExtraPeriodTitle(extra);
+		return (extra == null || extra.isDeleted()) ? "Prorrateado" : getExtraPeriodTitle(extra);
 	}
 	
 	private String getExtraPeriodTitle(AgreementExtra extra) {
@@ -765,6 +793,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					
 					@Override
 					protected void onAccept(Payment payment) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
 						setAgreementPayment(agreement);
 						setHasChange(true);
@@ -772,6 +801,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 
 					@Override
 					protected void onExtraAccept(Payment payment, Extra extra) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
 						
 						if(null != extra)
@@ -785,8 +815,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					@Override
 					protected void onGtzdoAccept(List<Payment> payments) {
 						if(!payments.isEmpty()) {
-							for(Payment payment : payments)
+							for(Payment payment : payments) {
+								payment.setModify(true);
 								agreement.addPayment(payment);
+							}
 						}
 						setAgreementPayment(agreement);
 						setHasChange(true);

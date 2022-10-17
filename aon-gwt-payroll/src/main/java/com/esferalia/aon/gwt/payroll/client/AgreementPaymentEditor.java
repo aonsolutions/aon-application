@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -21,7 +22,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -78,19 +78,40 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	ListBox extraType;
 
 	@UiField
-	TextBox extraStartDate;
+	ListBox extraStartDateMonth;
 	
 	@UiField
 	ListBox extraStartDateYear;
 
 	@UiField
-	TextBox extraEndDate;
+	ListBox extraEndDateMonth;
 	
 	@UiField
 	ListBox extraEndDateYear;
 
 	@UiField
 	TextBox extraIssueDate;
+
+	@UiField
+	HTMLPanel extraAssociatedPanel;
+	
+	@UiField
+	ListBox extraStartDateMonthAssociated;
+	
+	@UiField
+	ListBox extraStartDateYearAssociated;
+
+	@UiField
+	ListBox extraEndDateMonthAssociated;
+	
+	@UiField
+	ListBox extraEndDateYearAssociated;
+
+	@UiField
+	TextBox extraIssueDateAssociated;
+	
+	@UiField
+	ListBox extraAssociated;
 
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -102,14 +123,19 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private ContractConcept selectedConcept;
 	private Payment payment;
 	private AgreementExtra extra;
+	private AgreementExtra associatedExtra;
+	private Payment associatedPayment;
 
 	private TypeListBox<Payment.Type> paymentTypeLB;
+	
+	private Set<Payment> allPayments;
+	private Set<AgreementExtra> allExtras;
 	
 	private Button acceptDialog;
 
 	// ----------------------------------------- Constructor
 
-	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra) {
+	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras) {
 		setCaption("Devengo");
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
@@ -117,7 +143,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		this.payment = payment;
 		this.extra = extra;
 		
+		this.allPayments = allPayments;
+		this.allExtras = allExtras;
+		
 		initializeExtraPanel();
+		initializeExtraAssociatedPanel();
 		
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
 
@@ -128,6 +158,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				providedPayment();
 				fillPayment();
 				if(null != extra) fillExtra();
+				else {
+					setSelectedValueLB(extraType, getExtraType(extra));
+					DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraType);
+				}
 				showDialog();
 			}
 
@@ -139,13 +173,101 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		});
 	}
 
+	private void initializeExtraAssociatedPanel() {
+		extraAssociated.clear();
+		extraAssociated.addItem("Extra sin asociar", "");
+		extraAssociated.addItem("Crear extra asociada", "new");
+		if(null != extra)
+			allExtras.stream().filter(extraIt -> !extraIt.getId().equals(extra.getId())).forEach(extraIt -> {
+				Payment paymentIt = getPaymentById(extraIt.getAgreementPayment());
+				extraAssociated.addItem(paymentIt.getDescription(), extraIt.getId().toString());
+			});
+		else
+			allPayments.stream().filter(paymentIt -> !paymentIt.getId().equals(payment.getId()) && !paymentIt.isDeleted() && (paymentIt.getType().equals(Type.CRA_0004) || paymentIt.getType().equals(Type.CRA_0005))).forEach(paymentIt -> {
+				extraAssociated.addItem(paymentIt.getDescription(), paymentIt.getId().toString());
+			});
+		
+		extraAssociated.addChangeHandler(e -> fillExtraAssociated());
+	}
+	
+	private void fillExtraAssociated() {
+		if(AonStringUtils.isBlank(extraAssociated.getSelectedValue())) {
+			extraAssociatedPanel.setVisible(false);
+			associatedExtra = null;
+		} else if(AonStringUtils.equalsIgnoreCase(extraAssociated.getSelectedValue(), "new")) { 
+			extraAssociatedPanel.setVisible(true);
+			
+			if(null == extra) createExtra();
+			
+			if(!AonStringUtils.equalsIgnoreCase(extraType.getSelectedValue(), "Prorrateada")) {
+				associatedExtra = new AgreementExtra();
+				associatedExtra.setIssueDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "30/06" : "31/12");
+				if(AonStringUtils.equalsIgnoreCase(extraType.getSelectedValue(), "Anual")) {
+					associatedExtra.setStartDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "01/07 -1" : "01/01");
+					associatedExtra.setEndDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "30/06" : "31/12");
+				} else {
+					associatedExtra.setStartDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "01/01" : "01/07");
+					associatedExtra.setEndDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "30/06" : "31/12");
+				}
+			}
+			
+		}else {
+			extraAssociatedPanel.setVisible(true);
+			
+			if(null == extra) createExtra();
+			
+			int extraAssociatedId = Integer.parseInt(extraAssociated.getSelectedValue());
+			Optional<AgreementExtra> extraAssoc = allExtras.stream().filter(extraIt -> extraIt.getId().equals(extraAssociatedId)).findFirst();
+			
+			if(extraAssoc.isPresent())
+				associatedExtra = extraAssoc.get();
+			else {
+				associatedExtra = new AgreementExtra();
+				associatedExtra.setIssueDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "30/06" : "31/12");
+				if(AonStringUtils.equalsIgnoreCase(extraType.getSelectedValue(), "Anual")) {
+					associatedExtra.setStartDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "01/07 -1" : "01/01");
+					associatedExtra.setEndDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "30/06" : "31/12");
+				} else {
+					associatedExtra.setStartDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "01/01" : "01/07");
+					associatedExtra.setEndDate(AonStringUtils.containsIgnoreCase(extraIssueDate.getValue(), "12") ? "30/06" : "31/12");
+				}
+			}
+			
+		}
+		
+		if(null != associatedExtra) {
+			String startMonth = associatedExtra.getStartDate();
+			if(AonStringUtils.isNotBlank(startMonth) && AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
+			if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
+			if(startMonth.length() < 2) startMonth = AonStringUtils.leftPad(startMonth, 2, '0');
+			
+			setSelectedValueLB(extraStartDateMonthAssociated, startMonth);
+			extraStartDateMonthAssociated.setEnabled(false);
+			extraStartDateYearAssociated.setSelectedIndex((AonStringUtils.isNotBlank(extra.getStartDate()) && AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) ? 1 : 0);
+			extraStartDateYearAssociated.setEnabled(false);
+			
+			String endMonth = associatedExtra.getEndDate();
+			if(AonStringUtils.isNotBlank(endMonth) && AonStringUtils.containsIgnoreCase(endMonth, "-1")) endMonth = endMonth.split(" ")[0];
+			if(AonStringUtils.containsIgnoreCase(endMonth, "/")) endMonth = endMonth.split("/")[1];
+			if(endMonth.length() < 2) endMonth = AonStringUtils.leftPad(endMonth, 2, '0');
+			
+			setSelectedValueLB(extraEndDateMonthAssociated, endMonth);
+			extraEndDateMonthAssociated.setEnabled(false);
+			extraEndDateYearAssociated.setSelectedIndex((AonStringUtils.isNotBlank(extra.getEndDate()) && AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) ? 1 : 0);
+			extraEndDateYearAssociated.setEnabled(false);
+			
+			extraIssueDateAssociated.setValue(associatedExtra.getIssueDate());
+			extraIssueDateAssociated.setEnabled(false);
+		}
+	}
+
+	private Payment getPaymentById(Integer paymentId) {
+		return allPayments.stream().filter(agreementPayment -> agreementPayment.getId().equals(paymentId)).findFirst().get();
+	}
+
 	private void initializeExtraPanel() {
 		initializeExtraListBoxes();
-		
 		extraPanel.setVisible(null != extra || payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005));
-		
-		extraStartDate.getElement().setPropertyString("placeholder", "dd/mm");
-		extraEndDate.getElement().setPropertyString("placeholder", "dd/mm");
 		extraIssueDate.getElement().setPropertyString("placeholder", "dd/mm");
 	}
 	
@@ -155,13 +277,77 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		extraType.addItem("Semestral", "Semestral");
 		extraType.addItem("Prorrateada", "Prorrateada");
 		
+		extraStartDateMonth.clear();
+		extraStartDateMonth.addItem("Ene.", "01");
+		extraStartDateMonth.addItem("Feb.", "02");
+		extraStartDateMonth.addItem("Mar.", "03");
+		extraStartDateMonth.addItem("Abr.", "04");
+		extraStartDateMonth.addItem("May.", "05");
+		extraStartDateMonth.addItem("Jun.", "06");
+		extraStartDateMonth.addItem("Jul.", "07");
+		extraStartDateMonth.addItem("Ago.", "08");
+		extraStartDateMonth.addItem("Sep.", "09");
+		extraStartDateMonth.addItem("Oct.", "10");
+		extraStartDateMonth.addItem("Nov.", "11");
+		extraStartDateMonth.addItem("Dic.", "12");
+		
+		extraStartDateMonthAssociated.clear();
+		extraStartDateMonthAssociated.addItem("Ene.", "01");
+		extraStartDateMonthAssociated.addItem("Feb.", "02");
+		extraStartDateMonthAssociated.addItem("Mar.", "03");
+		extraStartDateMonthAssociated.addItem("Abr.", "04");
+		extraStartDateMonthAssociated.addItem("May.", "05");
+		extraStartDateMonthAssociated.addItem("Jun.", "06");
+		extraStartDateMonthAssociated.addItem("Jul.", "07");
+		extraStartDateMonthAssociated.addItem("Ago.", "08");
+		extraStartDateMonthAssociated.addItem("Sep.", "09");
+		extraStartDateMonthAssociated.addItem("Oct.", "10");
+		extraStartDateMonthAssociated.addItem("Nov.", "11");
+		extraStartDateMonthAssociated.addItem("Dic.", "12");
+		
 		extraStartDateYear.clear();
 		extraStartDateYear.addItem("A\u00f1o en curso", "");
 		extraStartDateYear.addItem("A\u00f1o anterior", " -1");
 		
+		extraStartDateYearAssociated.clear();
+		extraStartDateYearAssociated.addItem("A\u00f1o en curso", "");
+		extraStartDateYearAssociated.addItem("A\u00f1o anterior", " -1");
+		
+		extraEndDateMonth.clear();
+		extraEndDateMonth.addItem("Ene.", "01");
+		extraEndDateMonth.addItem("Feb.", "02");
+		extraEndDateMonth.addItem("Mar.", "03");
+		extraEndDateMonth.addItem("Abr.", "04");
+		extraEndDateMonth.addItem("May.", "05");
+		extraEndDateMonth.addItem("Jun.", "06");
+		extraEndDateMonth.addItem("Jul.", "07");
+		extraEndDateMonth.addItem("Ago.", "08");
+		extraEndDateMonth.addItem("Sep.", "09");
+		extraEndDateMonth.addItem("Oct.", "10");
+		extraEndDateMonth.addItem("Nov.", "11");
+		extraEndDateMonth.addItem("Dic.", "12");
+		
+		extraEndDateMonthAssociated.clear();
+		extraEndDateMonthAssociated.addItem("Ene.", "01");
+		extraEndDateMonthAssociated.addItem("Feb.", "02");
+		extraEndDateMonthAssociated.addItem("Mar.", "03");
+		extraEndDateMonthAssociated.addItem("Abr.", "04");
+		extraEndDateMonthAssociated.addItem("May.", "05");
+		extraEndDateMonthAssociated.addItem("Jun.", "06");
+		extraEndDateMonthAssociated.addItem("Jul.", "07");
+		extraEndDateMonthAssociated.addItem("Ago.", "08");
+		extraEndDateMonthAssociated.addItem("Sep.", "09");
+		extraEndDateMonthAssociated.addItem("Oct.", "10");
+		extraEndDateMonthAssociated.addItem("Nov.", "11");
+		extraEndDateMonthAssociated.addItem("Dic.", "12");
+		
 		extraEndDateYear.clear();
 		extraEndDateYear.addItem("A\u00f1o en curso", "");
 		extraEndDateYear.addItem("A\u00f1o anterior", " -1");
+		
+		extraEndDateYearAssociated.clear();
+		extraEndDateYearAssociated.addItem("A\u00f1o en curso", "");
+		extraEndDateYearAssociated.addItem("A\u00f1o anterior", " -1");
 		
 		extraType.addChangeHandler(e -> updateExtraDates());
 		
@@ -170,22 +356,23 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void updateExtraDates() {
 		String extraTypeValue = extraType.getSelectedValue();
+		
 		if(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada")) {
-			extraStartDate.setValue("");
-			extraStartDate.setEnabled(false);
+			extraStartDateMonth.setEnabled(false);
 			extraStartDateYear.setEnabled(false);
 			
-			extraEndDate.setValue("");
-			extraEndDate.setEnabled(false);
+			extraEndDateMonth.setEnabled(false);
 			extraEndDateYear.setEnabled(false);
 			
 			extraIssueDate.setValue("");
 			extraIssueDate.setEnabled(false);
+			
+			extraIssueDateAssociated.setValue("");
 		} else {
 			extraStartDateYear.setEnabled(true);
 			extraEndDateYear.setEnabled(true);
-			extraStartDate.setEnabled(true);
-			extraEndDate.setEnabled(true);
+			extraStartDateMonth.setEnabled(true);
+			extraEndDateMonth.setEnabled(true);
 			extraIssueDate.setEnabled(true);
 			
 			String issueDate = extraIssueDate.getValue();
@@ -212,17 +399,33 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private void updateSummerValues() {
 		String extraTypeValue = extraType.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Anual")) {
-			extraStartDate.setValue("01/07");
+			setSelectedValueLB(extraStartDateMonth, "07");
 			extraStartDateYear.setSelectedIndex(1);
 			
-			extraEndDate.setValue("30/06");
+			setSelectedValueLB(extraEndDateMonth, "06");
 			extraEndDateYear.setSelectedIndex(0);
+
+			setSelectedValueLB(extraStartDateMonthAssociated, "01");
+			extraStartDateYearAssociated.setSelectedIndex(0);
+			
+			setSelectedValueLB(extraEndDateMonthAssociated, "12");
+			extraEndDateYearAssociated.setSelectedIndex(0);
+			
+			extraIssueDateAssociated.setValue("31/12");
 		} else if(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Semestral")) {
-			extraStartDate.setValue("01/01");
+			setSelectedValueLB(extraStartDateMonth, "01");
 			extraStartDateYear.setSelectedIndex(0);
 			
-			extraEndDate.setValue("30/06");
+			setSelectedValueLB(extraEndDateMonth, "06");
 			extraEndDateYear.setSelectedIndex(0);
+			
+			setSelectedValueLB(extraStartDateMonthAssociated, "07");
+			extraStartDateYearAssociated.setSelectedIndex(0);
+			
+			setSelectedValueLB(extraEndDateMonthAssociated, "12");
+			extraEndDateYearAssociated.setSelectedIndex(0);
+			
+			extraIssueDateAssociated.setValue("31/12");
 		}
 		
 	}
@@ -230,17 +433,33 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private void updateWinterValues() {
 		String extraTypeValue = extraType.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Anual")) {
-			extraStartDate.setValue("01/01");
+			setSelectedValueLB(extraStartDateMonth, "01");
 			extraStartDateYear.setSelectedIndex(0);
 			
-			extraEndDate.setValue("31/12");
+			setSelectedValueLB(extraEndDateMonth, "12");
 			extraEndDateYear.setSelectedIndex(0);
+			
+			setSelectedValueLB(extraStartDateMonthAssociated, "07");
+			extraStartDateYearAssociated.setSelectedIndex(1);
+			
+			setSelectedValueLB(extraEndDateMonthAssociated, "06");
+			extraEndDateYearAssociated.setSelectedIndex(0);
+			
+			extraIssueDateAssociated.setValue("30/06");
 		} else if(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Semestral")) {
-			extraStartDate.setValue("01/07");
+			setSelectedValueLB(extraStartDateMonth, "07");
 			extraStartDateYear.setSelectedIndex(0);
 			
-			extraEndDate.setValue("31/12");
+			setSelectedValueLB(extraEndDateMonth, "12");
 			extraEndDateYear.setSelectedIndex(0);
+			
+			setSelectedValueLB(extraStartDateMonthAssociated, "01");
+			extraStartDateYearAssociated.setSelectedIndex(0);
+			
+			setSelectedValueLB(extraEndDateMonthAssociated, "06");
+			extraEndDateYearAssociated.setSelectedIndex(0);
+			
+			extraIssueDateAssociated.setValue("30/06");
 		}
 	}
 
@@ -258,6 +477,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentTypeLB.setSelected(Payment.Type.DEFAULT);
 		paymentTypeLB.addStyleName("aon-selectOneMenu");
 		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentTypeLB.setHeight("1.5rem");
 		paymentTypePanel.clear();
 		paymentTypePanel.add(paymentTypeLB);
 	}
@@ -423,16 +643,58 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		setSelectedValueLB(extraType, getExtraType(extra));
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraType);
 		
-		extraStartDate.setValue((AonStringUtils.isNotBlank(extra.getStartDate()) && AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) ? extra.getStartDate().split(" ")[0] : extra.getStartDate());
+		String startMonth = extra.getStartDate();
+		if(AonStringUtils.isNotBlank(startMonth) && AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
+		if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
+		if(startMonth.length() < 2) startMonth = AonStringUtils.leftPad(startMonth, 2, '0');
+		
+		setSelectedValueLB(extraStartDateMonth, startMonth);
 		extraStartDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getStartDate()) && AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) ? 1 : 0);
-		extraEndDate.setValue((AonStringUtils.isNotBlank(extra.getEndDate()) && AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) ? extra.getEndDate().split(" ")[0] : extra.getEndDate());
+		
+		String endMonth = extra.getEndDate();
+		if(AonStringUtils.isNotBlank(endMonth) && AonStringUtils.containsIgnoreCase(endMonth, "-1")) endMonth = endMonth.split(" ")[0];
+		if(AonStringUtils.containsIgnoreCase(endMonth, "/")) endMonth = endMonth.split("/")[1];
+		if(endMonth.length() < 2) endMonth = AonStringUtils.leftPad(endMonth, 2, '0');
+		
+		setSelectedValueLB(extraEndDateMonth, endMonth);
 		extraEndDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getEndDate()) && AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) ? 1 : 0);
 		
 		extraIssueDate.setValue(extra.getIssueDate());
+		
+		chekExtraAssociated();
 	}
 	
+	private void chekExtraAssociated() {
+		
+		String issueDate = extra.getIssueDate();
+		if(AonStringUtils.isBlank(issueDate) || extra.isDeleted()) extraAssociated.setSelectedIndex(0);
+		else {
+			if(AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7")) {
+				AgreementExtra winterExtra = findWinterExtra();
+				if(null == winterExtra) extraAssociated.setSelectedIndex(0);
+				else setSelectedValueLB(extraAssociated, null == winterExtra ? null : winterExtra.getId().toString());
+			} else if(AonStringUtils.containsIgnoreCase(issueDate, "12")) {
+				AgreementExtra summerExtra = findSummerExtra();
+				if(null == summerExtra) extraAssociated.setSelectedIndex(0);
+				else setSelectedValueLB(extraAssociated, null == summerExtra ? null : summerExtra.getId().toString());
+			}
+		}
+		
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraAssociated);	
+	}
+
+	private AgreementExtra findSummerExtra() {
+		Optional<AgreementExtra> extraOpt = allExtras.stream().filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "6") || AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "7")).findFirst();
+		return extraOpt.isPresent() ? extraOpt.get() : null;
+	}
+
+	private AgreementExtra findWinterExtra() {
+		Optional<AgreementExtra> extraOpt = allExtras.stream().filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "12")).findFirst();
+		return extraOpt.isPresent() ? extraOpt.get() : null;
+	}
+
 	private String getExtraType(AgreementExtra extra) {
-		if(null == extra || AonStringUtils.isBlank(extra.getIssueDate())) return "Prorrateada";
+		if(null == extra || AonStringUtils.isBlank(extra.getIssueDate()) || extra.isDeleted()) return "Prorrateada";
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
 		
 		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
@@ -468,9 +730,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		acceptDialog.addClickHandler(e -> {
 			hide();
 			createPayment();
-			if(payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005))
+			if(payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005)) {
 				createExtra();
-			onAccept(payment, extra);
+				createAssociatedExtra();
+			}
+			onAccept(payment, extra, associatedPayment, associatedExtra);
 		});
 
 		buttonsPanel.add(acceptDialog);
@@ -485,6 +749,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			this.payment = new Payment();
 			Random rand = new Random();
 			int newPaymentId = rand.nextInt(1000) * -1;
+			if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
 			this.payment.setId(newPaymentId);
 		}
 		
@@ -503,7 +768,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 	
 	private void createExtra() {
-		Window.alert("createExtra start");
 		if(null == this.extra) {
 			this.extra = new AgreementExtra();
 			Random rand = new Random();
@@ -515,8 +779,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		String extraTypeValue = extraType.getSelectedValue();
 		extra.setDeleted(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada"));
 		if(!extra.isDeleted()) {
-			extra.setStartDate(extraStartDate.getValue() + extraStartDateYear.getSelectedValue());
-			extra.setEndDate(extraEndDate.getValue() + extraEndDateYear.getSelectedValue());
+			String startMonth = extraStartDateMonth.getSelectedValue();
+			if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
+			else if(AonStringUtils.equalsIgnoreCase(startMonth, "07")) startMonth = "01/07";
+			extra.setStartDate(startMonth + extraStartDateYear.getSelectedValue());
+			
+			String endMonth = extraEndDateMonth.getSelectedValue();
+			if(AonStringUtils.equalsIgnoreCase(endMonth, "06")) endMonth = "30/06";
+			else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
+			extra.setEndDate(endMonth + extraEndDateYear.getSelectedValue());
 			extra.setIssueDate(extraIssueDate.getValue());
 		}
 		
@@ -527,9 +798,91 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			payment.setMonth(month);
 		} else
 			payment.setMonth(null);
+	}
+	
+	private void createAssociatedExtra() {
+		String extraAssociatedValue = extraAssociated.getSelectedValue();
+		if(!AonStringUtils.isBlank(extraAssociatedValue) && AonStringUtils.equalsIgnoreCase(extraAssociatedValue, "new")) {
+			createAssociatedPayment();
+			
+			this.associatedExtra = new AgreementExtra();
+			String extraTypeValue = extraType.getSelectedValue();
+			associatedExtra.setDeleted(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada"));
+			if(!associatedExtra.isDeleted()) {
+				Random rand = new Random();
+				int newExtraId = rand.nextInt(1000) * -1;
+				this.associatedExtra.setId(newExtraId);
+				this.associatedExtra.setAgreementPayment(associatedPayment.getId());
+	
+				String startMonth = extraStartDateMonthAssociated.getSelectedValue();
+				if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
+				else if(AonStringUtils.equalsIgnoreCase(startMonth, "07")) startMonth = "01/07";
+				associatedExtra.setStartDate(startMonth + extraStartDateYearAssociated.getSelectedValue());
+				
+				String endMonth = extraEndDateMonthAssociated.getSelectedValue();
+				if(AonStringUtils.equalsIgnoreCase(endMonth, "06")) endMonth = "30/06";
+				else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
+				associatedExtra.setEndDate(endMonth + extraEndDateYearAssociated.getSelectedValue());
+				associatedExtra.setIssueDate(extraIssueDateAssociated.getValue());
+			}
+			
+			if(AonStringUtils.isNotBlank(extraIssueDateAssociated.getValue())) {
+				String issueDate = extraIssueDateAssociated.getValue();
+				Short month = Short.parseShort(issueDate.split("/")[1]);
+				month--;
+				associatedPayment.setMonth(month);
+			} else
+				associatedPayment.setMonth(null);
+		} else if(!AonStringUtils.isBlank(extraAssociatedValue)) {
+			if(null == associatedExtra.getId()) {
+				Random rand = new Random();
+				int newExtraId = rand.nextInt(1000) * -1;
+				this.associatedExtra.setId(newExtraId);
+			}
+			
+			String extraTypeValue = extraType.getSelectedValue();
+			if(null == associatedExtra.getAgreementPayment()) {
+				int extraAssociatedId = Integer.parseInt(extraAssociated.getSelectedValue());
+				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> paymentIt.getId().equals(extraAssociatedId)).findFirst();
+				
+				associatedExtra.setAgreementPayment(paymentAux.isPresent() ? paymentAux.get().getId() : null);
+			}
+			associatedExtra.setDeleted(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada"));
+			if(!associatedExtra.isDeleted()) {
+				String startMonth = extraStartDateMonthAssociated.getSelectedValue();
+				if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
+				else if(AonStringUtils.equalsIgnoreCase(startMonth, "07")) startMonth = "01/07";
+				associatedExtra.setStartDate(startMonth + extraStartDateYearAssociated.getSelectedValue());
+				
+				String endMonth = extraEndDateMonthAssociated.getSelectedValue();
+				if(AonStringUtils.equalsIgnoreCase(endMonth, "06")) endMonth = "30/06";
+				else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
+				associatedExtra.setEndDate(endMonth + extraEndDateYearAssociated.getSelectedValue());
+				associatedExtra.setIssueDate(extraIssueDateAssociated.getValue());
+			}
+		}
+	}
+
+	private void createAssociatedPayment() {
+		this.associatedPayment = new Payment();
+		Random rand = new Random();
+		int newPaymentId = rand.nextInt(1000) * -1;
+		if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
+		this.associatedPayment.setId(newPaymentId);
+		this.associatedPayment.setModify(true);
 		
-		Window.alert("createExtra end");
+		associatedPayment.setType(paymentTypeLB.getSelected());
+		if (null != selectedConcept) {
+			associatedPayment.setConceptId(selectedConcept.getId());
+			associatedPayment.setName(selectedConcept.getCode());
+		} else
+			associatedPayment.setName(paymentConceptSB.getValue());
 		
+		associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
+		associatedPayment.setExpression(paymentExpressionTB.getValue());
+		associatedPayment.setIrpfExpression(paymentTaxedExpression.getValue());
+		associatedPayment.setQuoteExpression(paymentQuoteExpression.getValue());
+		associatedPayment.setMonth(null);
 	}
 
 	// ----------------------------------------- Auxiliar methods
@@ -548,6 +901,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- AbstractMehtods
 
-	protected abstract void onAccept(Payment payment, AgreementExtra extra);
+	protected abstract void onAccept(Payment payment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra);
 
 }
