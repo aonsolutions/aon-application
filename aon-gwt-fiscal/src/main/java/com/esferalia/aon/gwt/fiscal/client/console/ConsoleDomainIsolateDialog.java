@@ -5,13 +5,13 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -31,6 +31,7 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 	
 	private ListBox newSchemaBox = new ListBox();
 	private AonTextBox newDomainBox = new AonTextBox();
+	private AonTextBox passwordBox = new AonTextBox();
 	private JsConsoleDomain domain;
 	private boolean accepted;
 
@@ -109,6 +110,9 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		targetTable.addRow()
 			.addCell(new Label("Nuevo nombre"), AON.CSS.aonTableLabel())
 			.addCell(newDomainBox);
+		targetTable.addRow()
+			.addCell(new Label("Clave seguridad"), AON.CSS.aonTableLabel())
+			.addCell(passwordBox);
 		
 		Label optionsLabel = new Label("Opciones");
 		optionsLabel.setStyleName(AON.CSS.aonMarginTop());
@@ -130,13 +134,15 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		mustFlatten.setEnabled(false);
 		mustFlattenPanel.add(mustFlatten);
 		
+		
+		
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.CSS.aonPadding());
 		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
 		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
 		container.add(buttonsPanel);
 
-
+		
 		Button acceptButton = new Button();		
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText( AON.MSG.accept());
@@ -201,7 +207,11 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 	
 	private boolean validate() {
 		if (AonStringUtils.isBlank(newDomainBox.getValue())) {
-			Window.alert("El nuevo nombre del dominio debe tener valor");			
+			AonMessageDialog.error("El nuevo nombre del dominio debe tener valor");			
+			return false;
+		}
+		if (AonStringUtils.notEquals("40ns0lut10ns",passwordBox.getValue())) {
+			AonMessageDialog.error("Clave de seguridad no v\u00E1lida");			
 			return false;
 		}
 		return true;

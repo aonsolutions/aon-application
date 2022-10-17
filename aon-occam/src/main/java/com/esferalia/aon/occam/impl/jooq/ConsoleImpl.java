@@ -8,11 +8,11 @@ import org.jooq.Named;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IConsole;
-import com.esferalia.aon.occam.api.json.ConsoleDomainMessageJSON;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 import com.esferalia.aon.occam.impl.jooq.dao.console.ConsoleDAO;
@@ -54,5 +54,10 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage) {
 		return ConsoleDAO.fix(ctx, consoleMessage);
+	}
+	
+	@Override
+	public ConsoleTableRow viewRow(CloseableAONContext ctx, String schema, String tableName, Integer id) {
+		return ConsoleDAO.viewRow(ctx, schema, tableName, id);
 	}
 }

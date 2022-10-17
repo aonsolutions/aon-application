@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server.console;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Aon MS Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Console" })
@@ -54,5 +56,10 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public Boolean fix(ConsoleDomainMessage consoleMessage) throws AonCoreException {
 		return CONSOLE.fix(consoleMessage);
+	}
+	
+	@Override
+	public ConsoleTableRow viewRow(String schema, String tableName, Integer id) throws AonCoreException {
+		return CONSOLE.viewRow(schema, tableName, id);
 	}
 }

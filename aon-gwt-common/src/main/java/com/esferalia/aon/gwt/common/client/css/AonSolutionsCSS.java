@@ -6,6 +6,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	/* ICONS */
 	
+	@ClassName("aon_icon_key")
+	String aonIconKey();
+
 	@ClassName("aon_icon_verify")
 	String aonIconVerify();
 	

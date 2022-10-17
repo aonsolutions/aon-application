@@ -66,6 +66,10 @@ public class ProjectDAO {
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.REGISTRY);}
 		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.RESERVATION);}
 		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.TAS);}
+		
+		
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getTypeDescriptionProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_TYPE.DESCRIPTION);}
 	}
 	
 	protected static class ProjectCommercialPropertiesDAO implements ProjectCommercialProperties {

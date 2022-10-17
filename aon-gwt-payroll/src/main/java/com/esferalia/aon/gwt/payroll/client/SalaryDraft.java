@@ -2891,6 +2891,15 @@ public class SalaryDraft extends ResizeComposite
 	ValueLabel totalDeductionLabel;
 	@UiField
 	Label dbTotalDeductionLabel;
+	
+	@UiField
+	ValueLabel totalEnterpriseLabel;
+	@UiField
+	Label dbTotalEnterpriseLabel;
+	@UiField
+	ValueLabel totalLabel;
+	@UiField
+	Label dbTotalLabel;
 
 	@UiField
 	Button acceptButton;
@@ -2989,6 +2998,12 @@ public class SalaryDraft extends ResizeComposite
 	private MenuItem autoSaveMenuItem;
 	
 	private List<Listener> listeners;
+	
+	
+	private Date salaryEndDate;
+	private Date salaryStartDate;
+	private double salaryPartialFactor;
+	
 	
 //	private boolean dummies = false;
 //	private MenuItem dummiesMenuItem;
@@ -3161,9 +3176,16 @@ public class SalaryDraft extends ResizeComposite
 
 		Payment draftPayment = new Payment();
 
-		String expression = totalLiquidLabel.getValue();
+		
+		
 
-		draftPayment.setExpression("/*read-only*/NETO(" + (StringUtils.isBlank(expression) ? "0.00" : expression + " * DIAS_TRABAJADOS/DIAS_MES" ) + ")/**/");
+		String expression = totalLiquidLabel.getValue();
+		expression = getNetoOrBrutoExpression(expression);
+
+		salaryDraftObject.getEndDate();
+		salaryDraftObject.getStartDate();
+
+		draftPayment.setExpression("/*read-only*/NETO(" + expression + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
@@ -3292,8 +3314,9 @@ public class SalaryDraft extends ResizeComposite
 		Payment draftPayment = new Payment();
 
 		String expression = totalPaymentLabel.getValue();
+		expression = getNetoOrBrutoExpression(expression);
 
-		draftPayment.setExpression("/*read-only*/BRUTO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")/**/");
+		draftPayment.setExpression("/*read-only*/BRUTO(" + expression + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
@@ -3392,6 +3415,8 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalDeductionLabel.setVisible(visible);
 		dbTotalLiquidLabel.setVisible(visible);
 		dbTotalPaymentLabel.setVisible(visible);
+		dbTotalEnterpriseLabel.setVisible(visible);
+		dbTotalLabel.setVisible(visible);
 		
 		dbEmployeeContractLabel.setVisible(visible);
 		dbEmployeeGroupLabel.setVisible(visible);
@@ -3573,9 +3598,9 @@ public class SalaryDraft extends ResizeComposite
 		employeeSeniorityLabel.setText(format(salaryDraftObject.getEmployeeSeniorityDate()) );
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
-		Date startDate = salaryDraftObject.getStartDate();
-		Date endDate = salaryDraftObject.getEndDate();
-		periodLabel.setText(format(startDate) + " - " + format(endDate));
+		salaryStartDate = salaryDraftObject.getStartDate();
+		salaryEndDate = salaryDraftObject.getEndDate();
+		periodLabel.setText(format(salaryStartDate) + " - " + format(salaryEndDate));
 		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
 
 		Double cgcBase = salaryDraftObject.getCgcBase();
@@ -3625,6 +3650,21 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalLiquidLabel.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
 		
+		totalEnterpriseLabel.setText(format(salaryDraftObject.getTotalEnterprise()), displayChanges);
+		dbTotalEnterpriseLabel.setText(format(salaryDraftObject.getDbTotalEnterprise()));
+		setDbStyleName(dbTotalEnterpriseLabel, totalEnterpriseLabel);
+
+		double total =  0.00; 
+		total += AonNumberUtils.todouble(salaryDraftObject.getTotalPayment());
+		total += AonNumberUtils.todouble(salaryDraftObject.getTotalEnterprise());
+		double dbTotal = 0.00; 
+		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalPayment());
+		dbTotal += AonNumberUtils.todouble(salaryDraftObject.getDbTotalEnterprise());
+		
+		totalLabel.setText(format(total), displayChanges);
+		dbTotalLabel.setText(format(dbTotal));
+		setDbStyleName(dbTotalLabel, totalLabel);
+
 		employeeContractLabel.setText(getValueOf("TC2"));
 		employeeContractLabel.setTitle(getTitleOfTC2());
 		dbEmployeeContractLabel.setText(getDbValueOf("TC2"));
@@ -3652,7 +3692,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		Variable partialFactorsVars [] = getVariablesOf("COEFICIENTE_PARCIALIDAD").toArray(Variable[]::new);
 
-		double partialFactor = 
+		salaryPartialFactor = 
 		Arrays.stream(partialFactorsVars)
 		.flatMapToDouble( v -> DoubleStream.generate(()-> AonNumberUtils.todouble(v.getValue())).limit( DateUtils.getDaysBetween(v.getStartDate(), v.getEndDate())+1l) )
 		.average().orElse(1.00);
@@ -3660,18 +3700,18 @@ public class SalaryDraft extends ResizeComposite
 		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
 		employeePartialFactorWidget.removeFromParent();
-		employeePartialFactorWidget = (partialFactor != 1.00  && partialFactorsVars.length == 1) ? getVariableWidget(partialFactorsVars[0], partialFactorsVars[0].getScope(), true ): new Label();
-		employeePartialFactorWidget.setVisible(isSalary() && !hoursBase  && partialFactor != 1.00 && partialFactorsVars.length == 1); 
+		employeePartialFactorWidget = (salaryPartialFactor != 1.00  && partialFactorsVars.length == 1) ? getVariableWidget(partialFactorsVars[0], partialFactorsVars[0].getScope(), true ): new Label();
+		employeePartialFactorWidget.setVisible(isSalary() && !hoursBase  && salaryPartialFactor != 1.00 && partialFactorsVars.length == 1); 
 		employeeHoursFactorDaysPanel.add(employeePartialFactorWidget);
 		
-		employeePartialFactorLabel.setText(formatValue(partialFactor));
-		employeePartialFactorLabel.setVisible(isSalary() && !hoursBase  && partialFactor != 1.00 && partialFactorsVars.length > 1 );
+		employeePartialFactorLabel.setText(formatValue(salaryPartialFactor));
+		employeePartialFactorLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor != 1.00 && partialFactorsVars.length > 1 );
 		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
 		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
 		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
-		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && partialFactor == 1.00 && workDays > 0 );
+		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
 		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
 		double dbWorkDays = getDbValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
@@ -3728,7 +3768,7 @@ public class SalaryDraft extends ResizeComposite
 		//visibleContext.addAll(constants);
 		visibleContext.addAll(variables);
 		/* employeePartialFactorWidget */
-		if ( partialFactor != 1.00  && !employeePartialFactorWidget.isVisible()) {
+		if ( salaryPartialFactor != 1.00  && !employeePartialFactorWidget.isVisible()) {
 			List<Variable> partialVariables = getVariablesOf("COEFICIENTE_PARCIALIDAD").collect(Collectors.toList()); 
 			visibleContext.removeAll(partialVariables);
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
@@ -4849,7 +4889,13 @@ public class SalaryDraft extends ResizeComposite
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		amountsPanel.getElement().getStyle().setWidth(100, Unit.PCT);
-		amountsPanel.add(amountBox);
+
+		if( item instanceof Bonus ) { 
+			addBonusAmountItem(amountBox, amountsPanel);
+		} else {
+			amountsPanel.add(amountBox);
+		}
+
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
@@ -4969,6 +5015,18 @@ public class SalaryDraft extends ResizeComposite
 			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		} // highlight dirty, not saved items.
 		
+	}
+
+	private void addBonusAmountItem(Widget amountWidget, HorizontalPanel amountsPanel) {
+		HorizontalPanel minusPanel = new HorizontalPanel();
+		minusPanel.setWidth("100%");
+		InlineHTML minusHTML = new InlineHTML("&minus;");
+		minusPanel.add( minusHTML );
+		minusPanel.add( amountWidget );
+		minusPanel.setCellWidth(minusHTML, "99%");
+		minusPanel.setCellHorizontalAlignment(minusHTML, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		minusPanel.setCellHorizontalAlignment(amountWidget, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		amountsPanel.add(minusPanel);
 	}
 	
 	private <I extends Item> HorizontalPanel createSpecialPay(I item, TextBox descriptionBox, int row, ItemChangeHandler<TextBox, I> handler) {
@@ -5169,14 +5227,19 @@ public class SalaryDraft extends ResizeComposite
 		ssAmountLabel.setText(format(item.getSsAmount()));
 		setDbStyleName(ssAmountLabel, amountLabel);
 
-		amountsPanel.add(amountLabel);
+		if( item instanceof Bonus ) {
+			addBonusAmountItem(amountLabel, amountsPanel);
+		} else {
+			amountsPanel.add(amountLabel);
+			amountsPanel.setCellHorizontalAlignment(amountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		}
+
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.add(ssAmountLabel);
 
 		amountsPanel.setWidth("100%");
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellWidth(ssAmountLabel, "50%");
-		amountsPanel.setCellHorizontalAlignment(amountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.setCellHorizontalAlignment(ssAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 
@@ -6969,6 +7032,24 @@ public class SalaryDraft extends ResizeComposite
 		contentScrollPanel.setHeight(Integer.toString(height)+"px");
 		//LOGGER.info("contentScrollPanel : " + height );
 	}
+
+	private String getNetoOrBrutoExpression(String expression) {
+		if ( AonStringUtils.isBlank(expression) ) {
+			expression = "0.00";
+		}
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(salaryEndDate);
+		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(salaryStartDate);
+		if ( salaryEndDate.equals(lastDayOfMonth )) {
+			// User is setting the value for the first month ( that's not complete ). We prepare for next ones.
+			double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+			double monthDays = getValuesOf("DIAS_MES").map(AonNumberUtils::todouble).findFirst()
+							.orElse((double)DateUtils.getDaysBetween(firstDayOfMonth, lastDayOfMonth)+1);
+			expression = "( ( " + expression + " ) / " + workDays + " * " + monthDays + " ) * DIAS_TRABAJADOS / DIAS_MES ";
+			
+		}
+		return expression;
+	}
+
 
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {

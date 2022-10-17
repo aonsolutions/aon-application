@@ -219,7 +219,9 @@ export class AonSelect extends AonElement {
        
       input.onInput(({target})=>{
         if(this.disableKeyUp) {
-          let optios = this.getOptions().filter(opt => opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()))
+          let optios = this.getOptions().filter(opt => {
+            return opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()) || this.checkSelectable(opt);
+          })
           this.buildOptions(optios);
         }
       });
@@ -262,7 +264,7 @@ export class AonSelect extends AonElement {
 
     const isMultiple = this.multiple;
     for (const option of options) {
-      isMultiple ? this.buildLiMultiple(option, ul, div) : this.buildLi(option, ul, div);
+      isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
     }
 
     
@@ -297,7 +299,7 @@ export class AonSelect extends AonElement {
     return li;
   }
 
-  buildLiMultiple(option, ul, div){
+  buildLiMultiple(option, ul){
     const valueAlias = option[this.valueAlias];
     let li = this.createElement(TAG.LI);
     li.className = 'aonInputListOptionsItem';
@@ -314,7 +316,7 @@ export class AonSelect extends AonElement {
       checkbox.name = "checkbox"+valueAlias;
       li.appendChild(checkbox);
       checkbox.value = this.isSelectable(option);
-  
+
       checkbox.addEventListener(EVENT.CHANGE, (ev)=>{
         let check = checkbox.getValue();
         if(check){
@@ -436,9 +438,16 @@ export class AonSelect extends AonElement {
     const options = this.options ? this.options : "[]";
     return JSON.parse(options);
   }
+
+  checkSelectable(opt){
+    try {
+      return this.getSelectable().some(select =>  opt[this.nameAlias].toUpperCase().includes(select.name.toUpperCase()));
+    } catch (error) { console.log(error); }
+    return false;
+  }
   
   getSelectable(){
-    return this.selectable;
+    return this.selectable || [];
   }
 
   addSelectable(option){
@@ -446,11 +455,11 @@ export class AonSelect extends AonElement {
   }
   
   removeSelectable(option){
-    this.selectable = this.selectable.filter(opt => opt !==option);
+    this.selectable = this.selectable.filter(opt => opt.value !=option.value);
   }
 
   isSelectable(option){
-    return this.selectable.some(p => p.value === option.value);
+    return this.selectable.some(p => p.value == option.value);
   }
 
   setEnumOptions(options) {

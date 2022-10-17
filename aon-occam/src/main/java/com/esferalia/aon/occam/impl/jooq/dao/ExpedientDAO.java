@@ -56,7 +56,11 @@ public class ExpedientDAO {
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.REGISTRY);}
 		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.RESERVATION);}
 		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.TAS);}
+		
+		@Override public Property<String> getRegistryNameProperty() {return null;}
+		@Override public Property<String> getTypeDescriptionProperty() {return null;}
 	}
+	
 	public static Stream<Expedient> resumeExpedient(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return resumeInvoice(ctx, domain, filter)
 		.union(resumeIncome(ctx, domain, filter))
