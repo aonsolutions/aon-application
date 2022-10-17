@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -68,6 +69,12 @@ public class CONSOLE {
 	public static Boolean fix(ConsoleDomainMessage consoleMessage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(consoleMessage.getSchema())) {
 			return getConsole().fix(ctx,consoleMessage);
+		}
+	}
+
+	public static ConsoleTableRow viewRow(String schema,String tableName, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			return getConsole().viewRow(ctx,schema,tableName, id);
 		}
 	}
 	

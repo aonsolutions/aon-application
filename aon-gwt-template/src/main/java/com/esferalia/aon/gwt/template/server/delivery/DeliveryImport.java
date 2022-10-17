@@ -1078,7 +1078,7 @@ public class DeliveryImport {
 				}
 				customer = new Customer()
 						.copy(registry)
-						.setScope(scope)
+						.setScope(new Scope().setId(scope))
 						.setStatus(RegistryStatus.ACTIVE)
 						.setTransaction( r.getTransaccion()!= null ? InvoiceTransactionType.safeValueOf(r.getTransaccion()) : InvoiceTransactionType.NATIONAL)
 						.setAccount(account)

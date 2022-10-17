@@ -19,6 +19,7 @@ public class ProjectJSON {
 	
 	public static List<Project> fromJSON(JSONArray json) {
 		LinkedList<Project> list = new LinkedList<>();
+		if(json==null) return list;
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
 		}
@@ -36,6 +37,7 @@ public class ProjectJSON {
 				.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)))
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject(IJsonNames.PROJECT_HOLDER)))
+				.setProjectHolders(ProjectHolderJSON.fromJSON(json.optJSONArray("projectHolders")))
 				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY));
 	}
 	

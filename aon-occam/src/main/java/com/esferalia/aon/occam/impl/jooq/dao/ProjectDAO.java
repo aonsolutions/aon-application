@@ -66,6 +66,10 @@ public class ProjectDAO {
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.REGISTRY);}
 		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.RESERVATION);}
 		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.TAS);}
+		
+		
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getTypeDescriptionProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_TYPE.DESCRIPTION);}
 	}
 	
 	protected static class ProjectCommercialPropertiesDAO implements ProjectCommercialProperties {
@@ -208,10 +212,20 @@ public class ProjectDAO {
 				? update(ctx, project)
 				: insert(ctx, project);
 		}
-		if(!project.getProjectHolder().isEmpty()) {
-			project.getProjectHolder().setProject(project.getId());
+		
+		Integer projectId = project.getId();
+		
+		if(!project.getProjectHolders().isEmpty()) {
+			project.getProjectHolders()
+			.forEach(holder->{				
+				holder.setProject(projectId);
+				ProjectHolderDAO.save(ctx, holder);
+			});
+	    } else if(!project.getProjectHolder().isEmpty()) {
+			project.getProjectHolder().setProject(projectId);
 			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
 		}
+		
 		return project.setDirty(false);
 	}
 	

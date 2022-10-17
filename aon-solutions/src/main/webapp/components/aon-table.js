@@ -86,6 +86,8 @@ export class AonTable extends AonElement {
     this.TBODY = this.id + "TableBody";
     this.selected = [];
   }
+
+
   deselectAll() {
     document.querySelectorAll("aon-checkbox").forEach((item, i) => {
       if (item.getValue()) {
@@ -95,6 +97,9 @@ export class AonTable extends AonElement {
     });
   }
 
+  addButton(icon, fn){
+
+  }
 
   paintCheckboxHeader(){
     const idCheckBox = this.getId()+"checkboxHeader";
@@ -132,12 +137,13 @@ export class AonTable extends AonElement {
     header.appendChild(th);
   }
 
-  addColumnIcon(name, type, id, width, fn) {
+  addColumnIcon({name, title, type, id, width}, fn) {
     let header = this.getElement(this.getId() + "TableHeader");
     let th = this.createElement(TAG.TH);
     let aonIconB = new AonIconButton();
     aonIconB.id = this.getId()+"Back";
     aonIconB.icon = name;
+    aonIconB.title = title;
     aonIconB.noHover = "true";
     th.appendChild(aonIconB);
     th.style.width = width;
@@ -209,9 +215,8 @@ export class AonTable extends AonElement {
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
-            
             let cb = this.getElement(checkBoxId + "Input");
-            if(!cb.checked){
+            if(cb && !cb.checked){
               this.deselectAll();
               cb.click();
             } 
@@ -223,9 +228,8 @@ export class AonTable extends AonElement {
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
-            
             let cb = this.getElement(checkBoxId + "Input");
-            if(!cb.checked){
+            if(cb && !cb.checked){
               this.deselectAll();
               cb.click();
             } 

@@ -1,6 +1,4 @@
-import * as LS from '../../services/localStorageService.js';
 import { Domain } from '../Domain.js';
-import { RegistryType } from '../enums.js';
 import { Registry } from '../registry/Registry.js';
 import { ProjectHolder } from './ProjectHolder.js';
 import { ProjectType } from './ProjectType.js';
@@ -18,6 +16,7 @@ export class Project {
     reservation;
     active;
     projectHolder;
+    projectHolders;
     dirty;
 
     constructor(project) {
@@ -126,6 +125,15 @@ export class Project {
     setDate(date) {
         this.setDirty(true);
         this.date = date;
+        return this;
+    }
+
+    getProjectHolders() {
+        return this.projectHolders || [];
+    }
+
+    setProjectHolders(projectHolders) {
+        this.projectHolders = projectHolders.map(holder => new ProjectHolder(holder).setDirty(true));
         return this;
     }
 

@@ -639,7 +639,7 @@ public class TediParser {
 			for ( TediInvoiceTax tediTax : result.getTedi().getTaxes()) {
 				if (tediTax.getTaxType() == TediTaxType.IVA) {
 					double base = result.getInvoice().isUndeductible()
-							?AonMathUtils.round(AonNumberUtils.zeroIfNull(tediTax.getBase() + AonNumberUtils.zeroIfNull(tediTax.getQuota())))
+							?AonMathUtils.round(AonNumberUtils.zeroIfNull(AonNumberUtils.zeroIfNull(tediTax.getBase()) + AonNumberUtils.zeroIfNull(tediTax.getQuota())))
 							:AonNumberUtils.zeroIfNull(tediTax.getBase());
 					double percent = result.getInvoice().isUndeductible()
 							?0.0

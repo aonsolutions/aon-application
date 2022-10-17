@@ -40,7 +40,6 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -753,8 +752,8 @@ public class ConsoleDomainIsolate {
 	}
 	
 	private static void fillScript(String processId, ConsoleParams params, Deque<Table<?>> stack) {
-		// List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
-		List<Table<?>> tables = AonMaster.AON_MASTER.getTables();
+		// List<Table<?>> tables = AonMaster.AON_MASTER.getTables();
+		List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Generating tables script"));
 		tables.stream()
 			.filter(t -> t.field(DOMAIN_FIELD) != null )

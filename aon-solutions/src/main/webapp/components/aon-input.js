@@ -242,6 +242,7 @@ export class AonInput extends AonElement {
     label.className = this.isFilled() ? CSS.AON_INPUT_FILLED : CSS.AON_INPUT_UNDERLINED;
     label.style.marginBottom = "0px";
     label.style.width = "100%";
+    label.style.position = "relative";
 
     let input = this.createElement(TAG.INPUT);
 
@@ -453,6 +454,30 @@ export class AonInput extends AonElement {
         div.classList.remove(CSS.IS_VISIBLE);
       }
     });
+  }
+
+  setLabelCount(count){
+    const label = this.getElement(this.LABEL);
+    const idSpan = this.id+"SpanCount";
+    
+    let span = this.getElement(idSpan);
+    if(span){
+      span.remove();
+    }
+
+    if(count){
+      span = this.createElement('span');
+      span.id = idSpan;
+      span.innerText = `(+${count})`;
+      span.style.color      = CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST);
+      span.style.position   = "absolute";
+      span.style.opacity    = "0.75";
+      span.style.fontSize   = "0.75em";
+      span.style.right      = "10px";
+      span.style.top        = "7px";
+      span.style.fontWeight = "500";
+      label.appendChild(span);
+    }
   }
 
   onChange(fn) {

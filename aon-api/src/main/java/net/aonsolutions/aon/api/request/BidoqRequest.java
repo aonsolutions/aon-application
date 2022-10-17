@@ -156,7 +156,7 @@ public class BidoqRequest {
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 		
 			Invoice invoice = new Invoice();
-			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+			invoice.setScope(getScope(domain, user));
 			//	invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
 			invoice.setTransaction(InvoiceTransactionType.safeValueOf(selfInvoice.optString("transaction")));
 			
@@ -410,28 +410,26 @@ public class BidoqRequest {
 	}
 	
 	
-	private static Integer getScopeId(Domain domain, User user) {
-		Integer scope = domain.getScope();
+	private static Scope getScope(Domain domain, User user) {
+		Scope scope = new Scope();
 		if(domain.getScope() == null) {
-
-			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
-					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
-			if(s == null) {
+			scope = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
+					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(new Scope());
+			if(scope.isEmpty()) {
 				Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 				if(scopes != null && scopes.length > 0)
-					scope = scopes[0];
+					scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), scopes[0]);
 				else {
-					s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),  f ->
-						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(null);
-					if(s == null) {
-						s = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
+					scope = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),  f ->
+						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
+					if(scope.isEmpty()) {
+						scope = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
 							.setDescription("GENERAL")
 							.setDomain(domain.getId()));
 					}
-					scope = s.getId();
 				}
-			} else scope = s.getId();
-		}
+			}
+		} else scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), domain.getScope());
 		return scope;
 	}
 	
@@ -590,7 +588,7 @@ public class BidoqRequest {
 			.setAccount(acc==null?null:acc.getId())
 			.setTransaction(transaction)
 			.setStatus(RegistryStatus.ACTIVE)
-			.setScope(getScopeId(domain, user));
+			.setScope(getScope(domain, user));
 		creditor.setDomain(domain);
 		creditor.setId(reg.getId());
 		return AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), creditor);
@@ -606,7 +604,7 @@ public class BidoqRequest {
 				.copy(reg)
 				.setStatus(RegistryStatus.ACTIVE)
 				.setTransaction( transaction )
-				.setScope(getScopeId(domain, user));
+				.setScope(getScope(domain, user));
 			customer.setDomain(domain);
 			customer.setName(reg.getName());
 			customer.setId(reg.getId());
@@ -622,7 +620,7 @@ public class BidoqRequest {
 		Supplier supplier = new Supplier()
 				.setTransaction(transaction)
 				.setStatus(RegistryStatus.ACTIVE)
-				.setScope(getScopeId(domain, user))
+				.setScope(getScope(domain, user))
 				.setAccount(acc.getId());
 		supplier.setDomain(domain);
 		supplier.setId(reg.getId());
@@ -1282,7 +1280,7 @@ public class BidoqRequest {
 		String category = ti.optString("category");
 
 		Invoice invoice = new Invoice();
-		invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+		invoice.setScope(getScope(domain, user));
 		// invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())||
 		// InvoiceOpType.AIS.equals(ivs.get(i).getType()));
 		invoice.setTransaction(InvoiceTransactionType.safeValueOf(ti.optString("transaction")));

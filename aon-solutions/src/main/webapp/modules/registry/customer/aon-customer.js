@@ -100,7 +100,6 @@ export class AonCustomer extends AonReg {
 			saveCustomer(this.registry).then(registry => {
 				this.registry.id = registry.id;
 				this.saveBool = true;
-				this.saveProjects();
 				this.showToast({
 					type: 'success',
 					 message: 'Datos Guardados Correctamente'

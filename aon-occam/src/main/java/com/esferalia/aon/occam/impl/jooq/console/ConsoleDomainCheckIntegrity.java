@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import org.jooq.Condition;
@@ -16,7 +17,6 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
@@ -58,11 +58,11 @@ public class ConsoleDomainCheckIntegrity {
 		params.getFromConnection().setDomain(fullDomain);
 		params.setScript( new LinkedHashMap<>() );
 		params.getFromDslContext().transaction(conf -> {
-//			List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Generating tables script"));			
-//			tables
+//			AonMaster.AON_MASTER.getTables()
+			List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Generando lista de tablas"));			
+			tables
 			
-			AonMaster.AON_MASTER.getTables()
 				.stream()
 				.filter(Objects::nonNull )
 //				.filter(t -> !beforeIsolate || (beforeIsolate && !SESSION.getName().equals(t.getName())))
@@ -81,7 +81,10 @@ public class ConsoleDomainCheckIntegrity {
 		});
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Final del proceso de chequeo de integridad de dominios"));
 		if (!params.getErrors().isEmpty()) {
-			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, "Se han encontrado incidencias"));
+			String msg = (params.getErrors().size() == 1)
+				?"Se ha encontrado 1 incidencia."
+				:"Se han encontrado "+ params.getErrors().size() +" incidencias.";
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
 			params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e)));
 		} else {
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "NO se han encontrado incidencias!"));

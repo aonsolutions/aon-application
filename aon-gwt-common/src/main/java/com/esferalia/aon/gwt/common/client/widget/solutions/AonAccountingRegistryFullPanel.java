@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -503,7 +504,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 		cf.setRegistry(customer);
 		fill(cf, rf);
 		customer
-		.setScope(rf.getScope())
+		.setScope(new Scope().setId(rf.getScope()))
 		.setTransaction(rf.getTransaction())
 		.setSurcharge(rf.isSurcharge())
 		.setWithholding(rf.isWithholding())
@@ -525,7 +526,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 		customerFull.setRegistry(creditor);
 		fill(customerFull, rf);		
 		creditor
-			.setScope(rf.getScope())
+			.setScope(new Scope().setId(rf.getScope()))
 			.setTransaction(rf.getTransaction())
 			.setWithholding(rf.isWithholding())
 			.setVatAccrualPayment(rf.isVatAccrualPayment())
@@ -547,7 +548,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 		supplierFull.setRegistry(supplier);
 		fill(supplierFull, rf);
 		supplier
-			.setScope(rf.getScope())
+			.setScope(new Scope().setId(rf.getScope()))
 			.setTransaction(rf.getTransaction())
 			.setWithholding(rf.isWithholding())
 			.setWithholdingFarmer(rf.isWithholdingFarmer())
@@ -575,7 +576,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 			.setDocumentType(customer.getDocumentType())
 			.setNationality(customer.getNationality())
 			.setName(customer.getName())
-			.setScope(customer.getScope())
+			.setScope(customer.getScope().getId())
 			.setTransaction(customer.getTransaction())
 			.setSurcharge(customer.isSurcharge())
 			.setWithholding(customer.isWithholding())
@@ -597,7 +598,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 			.setDocumentType(supplier.getDocumentType())
 			.setNationality(supplier.getNationality())
 			.setName(supplier.getName())
-			.setScope(supplier.getScope())
+			.setScope(supplier.getScope().getId())
 			.setTransaction(supplier.getTransaction())
 			.setSurcharge(false)
 			.setWithholding(supplier.isWithholding())
@@ -620,7 +621,7 @@ public class AonAccountingRegistryFullPanel extends DockLayoutPanel implements F
 			.setDocumentType(creditor.getDocumentType())
 			.setNationality(creditor.getNationality())
 			.setName(creditor.getName())
-			.setScope(creditor.getScope())
+			.setScope(creditor.getScope().getId())
 			.setTransaction(creditor.getTransaction())
 			.setSurcharge(false)
 			.setWithholding(creditor.isWithholding())

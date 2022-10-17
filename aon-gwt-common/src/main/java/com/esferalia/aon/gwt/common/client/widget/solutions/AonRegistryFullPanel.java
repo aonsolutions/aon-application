@@ -625,7 +625,7 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 	
 	protected void addScopeRow(AonDisplayTable displayTab, AonModuleOptions<?> options, IScopable<?> scopable) {
 		if ( options.getConfiguration().hasAvailableScopes()) {
-			scopable.setScope( options.getConfiguration().getAvailableScopes().get(0).getId() ); 
+			scopable.setScope( options.getConfiguration().getAvailableScopes().get(0)); 
 			final ListBox scopeBox = new ListBox();
 			for (Scope scope : options.getConfiguration().getAvailableScopes()) {
 				scopeBox.addItem(scope.getDescription(),AonNumberUtils.toString(scope.getId()));
@@ -634,7 +634,11 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					scopable.setScope(AonNumberUtils.toint(scopeBox.getSelectedValue()));
+					Integer scopeId = AonNumberUtils.toint(scopeBox.getSelectedValue());
+					Scope scope = options.getConfiguration().getAvailableScopes().stream()
+						.filter(f -> f.getId().equals(scopeId))
+						.findFirst().orElse(new Scope());
+					scopable.setScope(scope);
 				}
 			});
 			addBasicRow(displayTab, new InlineLabel(AON.MSG.scope()),scopeBox);				

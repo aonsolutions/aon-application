@@ -171,6 +171,8 @@
 		<!-- JS MODULES -->
 		<module>aon-js-payroll</module>
 
+		<module>aon-storage</module>
+
 		<!-- GWT MODULES -->
 		<module>aon-gwt-pdfjs</module>
 		<module>aon-gwt-aio</module>
@@ -196,6 +198,7 @@
 		<module>aon-gwt-seres</module>
 		<module>aon-gwt-commercial</module>
 		<module>aon-gwt-communication</module>
+
 
 		<!-- API -->
 		<module>aon-api</module>

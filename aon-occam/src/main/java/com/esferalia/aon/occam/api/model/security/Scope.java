@@ -34,7 +34,7 @@ public class Scope implements Serializable {
 		return this;
 	}
 	
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return getId() == null 
 			&& getDomain() == null 
 			&& getDescription() == null;

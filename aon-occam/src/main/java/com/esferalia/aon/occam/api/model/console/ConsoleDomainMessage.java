@@ -19,6 +19,8 @@ public class ConsoleDomainMessage implements Serializable {
 	private Integer wrongDomainId;
 	private String message;
 	
+	private ConsoleTableField field;
+	
 	public ConsoleDomainMessageType getType() {
 		return type;
 	}
@@ -115,5 +117,12 @@ public class ConsoleDomainMessage implements Serializable {
 		return this;
 	}
 	
+	public ConsoleTableField getField() {
+		return field;
+	}
+	public ConsoleDomainMessage setField(ConsoleTableField field) {
+		this.field = field;
+		return this;
+	}
 	
 }

@@ -47,6 +47,6 @@ public class ScopeJSON {
 				.put(IJsonNames.ID, object.getId())
 				.put(IJsonNames.DOMAIN, object.getDomain())
 				.put(IJsonNames.DESCRIPTION, object.getDescription())
-				;
+				.put(IJsonNames.NAME, object.getDescription()); // DEPRECATED use desription.
 	}
 }

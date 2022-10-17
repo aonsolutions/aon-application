@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -73,7 +75,8 @@ public class CustomerDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}	
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}
+        @Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}	
 	}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
@@ -100,7 +103,7 @@ public class CustomerDAO {
 					.setModificationDate(getValue(r, CUSTOMER.MODIFICATION_DATE))
 					.setModificationUser(getValue(r, CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(getBoolean(r, CUSTOMER.PROJECT_GROUPED))
-					.setScope(getValue(r, CUSTOMER.SCOPE))
+					.setScope(new Scope().setId(getValue(r, CUSTOMER.SCOPE)))
 					.setSurcharge(getBoolean(r, CUSTOMER.SURCHARGE))
 					.setTariff(getValue(r, CUSTOMER.TARIFF))
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
@@ -110,12 +113,15 @@ public class CustomerDAO {
 	}
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
-		
-		return ctx.getDslContext().select()
-				.from(CUSTOMER)
-				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-				.join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-				.where(CUSTOMER_PROPERTIES.getConditions(filter));
+	    return ctx.getDslContext()
+	            .selectDistinct(CUSTOMER.fields())
+	            .select(REGISTRY.fields())
+	            .select(DOMAIN.fields())
+	        .from(CUSTOMER)
+	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}
 	
@@ -170,15 +176,15 @@ public class CustomerDAO {
 			.set(CUSTOMER.WITHHOLDING,AonEnumUtils.getByte(customer.isWithholding()))
 			.set(CUSTOMER.TRANSACTION,AonEnumUtils.getByte(customer.getTransaction()))
 			.set(CUSTOMER.STATUS, customer.getStatus().value())
-			.set(CUSTOMER.SCOPE,customer.getScope())
-			.set(CUSTOMER.E_INVOICE,AonEnumUtils.getByte(customer.isEInvoice()))
-			.set(CUSTOMER.INVOICING_GROUP,customer.getInvoicingGroup())
-			.set(CUSTOMER.PROJECT_GROUPED,AonEnumUtils.getByte(customer.isProjectGrouped()))
-			.set(CUSTOMER.DELIVERY_GROUPED,AonEnumUtils.getByte(customer.isDeliveryGrouped()))
-			.set(CUSTOMER.DELIVERY_VALUATED,AonEnumUtils.getByte(customer.isDeliveryValuated()))
-			.set(CUSTOMER.ACCOUNT,customer.getAccount())
-			.set(CUSTOMER.CREATION_USER,ctx.getUser())
-			.set(CUSTOMER.CREATION_DATE,new Timestamp(new Date().getTime()))
+			.set(CUSTOMER.SCOPE, customer.getScope().getId())
+			.set(CUSTOMER.E_INVOICE, AonEnumUtils.getByte(customer.isEInvoice()))
+			.set(CUSTOMER.INVOICING_GROUP, customer.getInvoicingGroup())
+			.set(CUSTOMER.PROJECT_GROUPED, AonEnumUtils.getByte(customer.isProjectGrouped()))
+			.set(CUSTOMER.DELIVERY_GROUPED, AonEnumUtils.getByte(customer.isDeliveryGrouped()))
+			.set(CUSTOMER.DELIVERY_VALUATED, AonEnumUtils.getByte(customer.isDeliveryValuated()))
+			.set(CUSTOMER.ACCOUNT, customer.getAccount())
+			.set(CUSTOMER.CREATION_USER, ctx.getUser())
+			.set(CUSTOMER.CREATION_DATE, new Timestamp(new Date().getTime()))
 			.execute();
 		ctx.log().debug("INSERT CUSTOMER id: {0}", customer.getId());		
 		return customer;
@@ -186,24 +192,24 @@ public class CustomerDAO {
 
 	private static Customer update(AONContext ctx, Customer customer){
 		int count = ctx.getDslContext().update(CUSTOMER)
-			.set(CUSTOMER.DOMAIN,customer.getDomain().getId())
-			.set(CUSTOMER.TARIFF,customer.getTariff())
-			.set(CUSTOMER.SURCHARGE,AonEnumUtils.getByte(customer.isSurcharge()))
-			.set(CUSTOMER.WITHHOLDING,AonEnumUtils.getByte(customer.isWithholding()))
-			.set(CUSTOMER.TRANSACTION,AonEnumUtils.getByte(customer.getTransaction()))
+			.set(CUSTOMER.DOMAIN, customer.getDomain().getId())
+			.set(CUSTOMER.TARIFF, customer.getTariff())
+			.set(CUSTOMER.SURCHARGE, AonEnumUtils.getByte(customer.isSurcharge()))
+			.set(CUSTOMER.WITHHOLDING, AonEnumUtils.getByte(customer.isWithholding()))
+			.set(CUSTOMER.TRANSACTION, AonEnumUtils.getByte(customer.getTransaction()))
 			.set(CUSTOMER.STATUS, customer.getStatus().value())
-			.set(CUSTOMER.SCOPE,customer.getScope())
+			.set(CUSTOMER.SCOPE, customer.getScope().getId())
 			.set(CUSTOMER.E_INVOICE,AonEnumUtils.getByte(customer.isEInvoice()))
-			.set(CUSTOMER.INVOICING_GROUP,customer.getInvoicingGroup())
-			.set(CUSTOMER.PROJECT_GROUPED,AonEnumUtils.getByte(customer.isProjectGrouped()))
-			.set(CUSTOMER.DELIVERY_GROUPED,AonEnumUtils.getByte(customer.isDeliveryGrouped()))
-			.set(CUSTOMER.DELIVERY_VALUATED,AonEnumUtils.getByte(customer.isDeliveryValuated()))
-			.set(CUSTOMER.ACCOUNT,customer.getAccount())
-			.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
-			.set(CUSTOMER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
+			.set(CUSTOMER.INVOICING_GROUP, customer.getInvoicingGroup())
+			.set(CUSTOMER.PROJECT_GROUPED, AonEnumUtils.getByte(customer.isProjectGrouped()))
+			.set(CUSTOMER.DELIVERY_GROUPED, AonEnumUtils.getByte(customer.isDeliveryGrouped()))
+			.set(CUSTOMER.DELIVERY_VALUATED, AonEnumUtils.getByte(customer.isDeliveryValuated()))
+			.set(CUSTOMER.ACCOUNT, customer.getAccount())
+			.set(CUSTOMER.MODIFICATION_USER, ctx.getUser())
+			.set(CUSTOMER.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
 			.where(CUSTOMER.REGISTRY.eq(customer.getId()))
 			.execute();
-		ctx.log().debug("UPDATE CUSTOMER id: {0} ({1} rows)",customer.getId(),count);		
+		ctx.log().debug("UPDATE CUSTOMER id: {0} ({1} rows)", customer.getId(),count);		
 		return customer;
 	}
 

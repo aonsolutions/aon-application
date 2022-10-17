@@ -16,7 +16,6 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -176,11 +175,12 @@ public class ConsoleDeleteDomain {
 	}
 
 	private static Stream<Table<?>> getStream(ConsoleParams params) {
-		return AonMaster.AON_MASTER
-			.getTables()
-//			params.getFromConnection()
-//			.getSchema()
+//			AonMaster.AON_MASTER
 //			.getTables()
+		return 
+			params.getFromConnection()
+			.getSchema()
+			.getTables()
 			.stream()
 			.filter( ConsoleDeleteDomain::hasDomain );
 	}

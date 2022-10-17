@@ -272,7 +272,6 @@ export class AonInvoice extends AonElement {
 	}
 
 	focus() {
-		console.log(this.focusId);
 		if(this.focusId)
 			this.getElement(this.focusId).focus();
 	}
@@ -701,7 +700,6 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isEmitida()) {
 
 			// ----- SERIE
-			
 			let serie = this.createAonElement(new AonSuggestion(), this.SERIE, MSG.SERIE);
 			table.addCell(serie);
 			serie.setMaxlength(5);
@@ -783,10 +781,9 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isEmitida()) {
 			let customer = new AonCustomerSuggestion();	
 			customer.id = this.REGISTRY;
-			console.log(this.invoice.getRegistry());	
 			customer.showAddress = true;
 			customer.readonly = this.invoice.isReadonly();
-			customer.customer = this.invoice.getRegistry();
+			customer.setCustomer(this.invoice.getRegistry())
 			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
 			table.addCell(customer, '4');	
 
@@ -1294,7 +1291,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		description.addEventListener(EVENT.SELECT,(e) => {
-			console.log(e.detail);
 			detail.description = e.detail.name;
 			detail.item = e.detail.item.id;
 			detail.price = e.detail.item.price;
@@ -1412,7 +1408,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		description.addEventListener(EVENT.SELECT,(e) => {
-			console.log(e.detail);
 			detail.description = e.detail.name;
 			detail.item = e.detail.item.id;
 			detail.price = e.detail.item.price;

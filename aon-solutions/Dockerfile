@@ -103,7 +103,6 @@ EXPOSE 8080
 
 ENV JAVA_OPTS="${JAVA_OPTS} -Duser.language=es -Duser.country=ES"
 
-VOLUME [$AON_SOLUTIONS_CONF]
 
 CMD ["catalina.sh", "run"]
 	

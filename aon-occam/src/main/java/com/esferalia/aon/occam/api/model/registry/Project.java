@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
@@ -25,6 +27,8 @@ public class Project implements Serializable {
 	private boolean active;
 	
 	private ProjectHolder projectHolder;
+	
+	private List<ProjectHolder> projectHolders;
 
 	private boolean dirty;
 	
@@ -177,6 +181,19 @@ public class Project implements Serializable {
 	public Project setProjectHolder(ProjectHolder projectHolder) {
 		setDirty(true);
 		this.projectHolder = projectHolder;
+		return this;
+	}
+	
+	public List<ProjectHolder> getProjectHolders() {
+		if(this.projectHolders == null) {
+			this.projectHolders = new ArrayList<>();
+		}
+		return projectHolders;
+ 	}
+	
+	public Project setProjectHolders(List<ProjectHolder> projectHolders) {
+		setDirty(true);
+		this.projectHolders = projectHolders;
 		return this;
 	}
 	

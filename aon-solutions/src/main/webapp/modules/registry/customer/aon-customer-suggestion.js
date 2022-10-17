@@ -58,6 +58,10 @@ export class AonCustomerSuggestion extends AonElement {
     this.init();
 	}
 
+  setCustomer(customer){
+    this.customer = customer;
+  }
+
   initialize() {
     this.id = this.id || 'aonCustomerSuggestion';
     this.OPTIONS = this.id + 'Options';
@@ -411,8 +415,10 @@ export class AonCustomerSuggestion extends AonElement {
           additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
         };
         getCustomer(data).then(r => {
+          let address = this.customer.address;
           this.customer = r;
-          if(this.customer && this.customer.addresses) {
+          this.customer.address = address;
+          if(this.customer && this.customer.addresses && this.customer.addresses.length > 0) {
             this.customer.address = this.customer.addresses.filter(f => f.main)[0]; 
           }
           this.build();

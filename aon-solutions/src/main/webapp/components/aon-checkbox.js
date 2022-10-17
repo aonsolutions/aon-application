@@ -1,4 +1,4 @@
-import { CONSTANT, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import {AonElement} from './AonElement.js';
 
 export class AonCheckbox extends AonElement {
@@ -62,8 +62,12 @@ export class AonCheckbox extends AonElement {
 		if(CONSTANT.VALUE === name){
 			let input = this.getElement(this.getAttribute(CONSTANT.ID) + 'Input');
 			if(this.hasAttribute(CONSTANT.VALUE) && "true" === this.getAttribute(CONSTANT.VALUE)){
-				input.setAttribute('checked', 'checked');
-			} else input.removeAttribute('checked');
+				input.setAttribute(CONSTANT.CHECKED, CONSTANT.CHECKED);
+			} else {
+				input.removeAttribute(CONSTANT.CHECKED);
+			}
+			
+			this.dispatchEvent(new Event(EVENT.CHANGE));
 		}
 	}
 
@@ -101,19 +105,20 @@ export class AonCheckbox extends AonElement {
 		if(this.hasAttribute(CONSTANT.DISABLED)){
 			input.setAttribute(CONSTANT.DISABLED, CONSTANT.DISABLED);
 		}
-		input.addEventListener('change', () => {
+		input.addEventListener(EVENT.CHANGE, () => {
 			this.setAttribute(CONSTANT.VALUE, this.getElement(input.getAttribute(CONSTANT.ID)).checked);
 		});
 
 		const labelId = this.id+"Label";
 		let label = this.getElement(labelId);
 		if(!label){
-			label = this.createElement('label');
+			label = this.createElement(TAG.LABEL);
 			label.id = labelId;
 			label.className = 'aonCheckbox';
 			label.style.marginBottom = '0px';
 	
-			let span = this.createElement('span');
+			let span = this.createElement(TAG.SPAN);
+			span.id = this.id+"Span";
 			span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
 	
 			label.appendChild(input);

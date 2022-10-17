@@ -36,7 +36,7 @@ public class CustomerJSON {
 			.setEInvoice(JsonUtils.getboolean(json, IJsonNames.E_INVOICE))
 			.setInvoicingGroup(JsonUtils.getInteger(json, IJsonNames.INVOICING_GROUP))
 			.setProjectGrouped(JsonUtils.getboolean(json, IJsonNames.PROJECT_GROUPED))
-			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
+			.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
 			.setSurcharge(JsonUtils.getboolean(json, IJsonNames.SURCHARGE))
 			.setTariff(JsonUtils.getInteger(json, IJsonNames.TARIFF))
 			.setTransaction(InvoiceTransactionType.safeValueOf(JsonUtils.getString(json, IJsonNames.TRANSACTION)))
@@ -65,7 +65,7 @@ public class CustomerJSON {
 			.put(IJsonNames.E_INVOICE, customer.isEInvoice())
 			.put(IJsonNames.INVOICING_GROUP, customer.getInvoicingGroup())
 			.put(IJsonNames.PROJECT_GROUPED, customer.isProjectGrouped())
-			.put(IJsonNames.SCOPE, customer.getScope())
+			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(customer.getScope()))
 			.put(IJsonNames.TARIFF, customer.getTariff())
 			.put(IJsonNames.TRANSACTION, customer.getTransaction().getTediName())
 			.put(IJsonNames.STATUS, customer.getStatus() != null 

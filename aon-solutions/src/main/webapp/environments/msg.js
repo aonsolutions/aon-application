@@ -39,6 +39,7 @@ export const ACTIVITY_SUMMARY = MSG.ACTIVITY_SUMMARY;
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
+export const ADD_PROJECT = "Añadir proyecto";// TODO
 export const ADD_COMPOSITION = 'Añadir Composición'; // TODO
 export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
@@ -65,6 +66,8 @@ export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = MSG.ATTACH_FILES_DRAGGING_DRO
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
 export const ASSIGN = "Asignar";// TODO
+export const ADVISER = "Asesor"; //TODO
+export const ADVISERS = "Asesores"; //TODO
 
 // ----- B
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
@@ -16,7 +17,7 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	private boolean withholding;
 	private InvoiceTransactionType transaction;
 	private RegistryStatus status;
-	private Integer scope;
+	private Scope scope;
 	private boolean eInvoice;
 	private Integer invoicingGroup;
 	private boolean projectGrouped;
@@ -87,11 +88,14 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	}
 	
 	@Override 
-	public Integer getScope() {
+	public Scope getScope() {
+		if(scope == null) {
+			scope = new Scope();
+		}
 		return scope;
 	}
 	@Override 
-	public Customer setScope(Integer scope) {
+	public Customer setScope(Scope scope) {
 		this.scope = scope;
 		return this;
 	}
