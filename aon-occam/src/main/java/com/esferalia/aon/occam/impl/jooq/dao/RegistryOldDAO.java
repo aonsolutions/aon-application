@@ -1035,6 +1035,11 @@ public class RegistryOldDAO {
 			.fetch().stream().map(new RegistryAddInfoFiller()).findFirst().orElse(new RegistryAddInfo());
 	}
 	
+	public static void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId){
+		int i = ctx.getDslContext().delete(RADDINFO).where(RADDINFO.ID.eq(raddinfoId)).execute();
+		ctx.log().info("DELETE RBANK ("+i+") id: " + raddinfoId);
+	}
+	
 	// ------------------- RDIRSTAFF
 	
 //	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){
