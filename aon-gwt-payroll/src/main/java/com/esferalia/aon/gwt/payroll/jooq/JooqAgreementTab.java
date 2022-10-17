@@ -52,6 +52,7 @@ public class JooqAgreementTab {
 
 	private static Settings settings = null;
 	private static Map<java.util.Date, Set<String>> variables = new TreeMap<java.util.Date, Set<String>>();
+	private static final Date DEFAULT_START_DATE = new Date(100, 0, 1);
 	
 	protected static Settings getDefaultSettings() {
 		if (settings == null) {
@@ -485,7 +486,7 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
 					.set(AGREEMENT_PAYMENT.MONTH, null == payment.getMonth() ? null : payment.getMonth().byteValue())
-					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.getSalaryType().ordinal())
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE,null == payment.getSalaryType() ? (byte) Salary.Type.SALARY.ordinal() : (byte) payment.getSalaryType().ordinal())
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
 					.returning(AGREEMENT_PAYMENT.ID)
@@ -503,7 +504,7 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) payment.getType().ordinal())
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.getDescription())
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
-					.set(AGREEMENT_PAYMENT.START_DATE, parseToSqlDate(payment.getStartDate()))
+					.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
 					.set(AGREEMENT_PAYMENT.MONTH, null == payment.getMonth() ? null : payment.getMonth().byteValue())
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.getSalaryType().ordinal())
@@ -521,7 +522,29 @@ public class JooqAgreementTab {
 				dslContext.delete(AGREEMENT_EXTRA)
 					.where(AGREEMENT_EXTRA.ID.eq(extra.getId()))
 					.execute();
-			else if(null == extra.getId() || extra.getId() < 0)
+			else if(null == extra.getId() || extra.getId() < 0) {
+				Payment payment = agreementInfo.getPaymentById(extra.getAgreementPayment());
+				
+				if(null == payment.getId() || payment.getId() < 0) {
+					Integer newPaymentId = dslContext.insertInto(AGREEMENT_PAYMENT)
+							.set(AGREEMENT_PAYMENT.DOMAIN, agreementInfo.getDomain())
+							.set(AGREEMENT_PAYMENT.AGREEMENT, agreementInfo.getId())
+							.set(AGREEMENT_PAYMENT.TYPE, (byte) payment.getType().ordinal())
+							.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.getDescription())
+							.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
+							.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
+							.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
+							.set(AGREEMENT_PAYMENT.MONTH, null == payment.getMonth() ? null : payment.getMonth().byteValue())
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE, null == payment.getSalaryType() ? (byte) Salary.Type.SALARY.ordinal() : (byte) payment.getSalaryType().ordinal())
+							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
+							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
+							.returning(AGREEMENT_PAYMENT.ID)
+							.fetchOne(AGREEMENT_PAYMENT.ID);
+					
+					extra.setAgreementPayment(newPaymentId);
+					payment.setId(newPaymentId);
+				}
+				
 				dslContext.insertInto(AGREEMENT_EXTRA)
 					.set(AGREEMENT_EXTRA.DOMAIN, agreementInfo.getDomain())
 					.set(AGREEMENT_EXTRA.AGREEMENT, agreementInfo.getId())
@@ -530,7 +553,7 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_EXTRA.END_DATE, extra.getEndDate())
 					.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.getIssueDate())
 					.execute();
-			else
+			} else
 				dslContext.update(AGREEMENT_EXTRA)
 					.set(AGREEMENT_EXTRA.START_DATE, extra.getStartDate())
 					.set(AGREEMENT_EXTRA.END_DATE, extra.getEndDate())

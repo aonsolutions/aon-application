@@ -76,6 +76,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	List<Payment> availablePaymens;
 	MultiWordSuggestOracle paymentDescriptionOracle;
 	PaymentSuggestionDisplay paymentSuggestionDisplay;
+	SuggestBox descriptionSuggest;
  	
 	private Payment payment;
 	
@@ -84,7 +85,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	// --------------------- Constructor
 	
 	protected AgreementSuggestPaymentDialog() {
-		setCaption("Importador devengos");
+		setCaption("Devengos Predefinidos");
 		setWidget(binder.createAndBindUi(this));
 		getButtonsPanel();
 		
@@ -120,7 +121,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		
-		SuggestBox descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox, paymentSuggestionDisplay);
+		descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox, paymentSuggestionDisplay);
 		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
 		
@@ -197,7 +198,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	
 	private void getButtonsPanel() {
 		acceptBtn = new Button();
-		acceptBtn.setText("Importar devengo");
+		acceptBtn.setText("Guardar");
 		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtn.addClickHandler(e -> {
 			hide();
@@ -213,6 +214,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		Scheduler.get().scheduleDeferred(() -> {
 			center();
 			show();
+			descriptionSuggest.setFocus(true);
 		});
 	}
 

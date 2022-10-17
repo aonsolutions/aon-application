@@ -13,8 +13,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
@@ -62,7 +64,9 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		String headerFixed();
 		String headerFSize();
 		String headerLevelFixed();
+		String levelDefaultValue();
 		String levelFixed();
+		String modify();
 		String oddRow();
 		String textCenter();
 		String widthAll();
@@ -87,6 +91,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
+	
+	private ListBox levelLB;
 	
 	private boolean hasChange = false;
 	
@@ -159,7 +165,9 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			label.addStyleName(style.cellWidth());
 			label.addStyleName(style.headerFSize());
 			salaryGrid.setWidget(row, col, label);
-			salaryGrid.getColumnFormatter().setWidth(col, "120px");
+			
+			salaryGrid.getColumnFormatter().removeStyleName(col, style.widthAll());
+
 			salaryGrid.getColumnFormatter().addStyleName(col, style.columnBorder());
 			salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 			
@@ -183,14 +191,33 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 		
 		for(Level level : agreement.getLevels()) {
-			if(level.isDeleted()) continue;
+			if(level.getId() != 0 && (level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId())))) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 			
-			Label levelCell = new Label(level.getDescription());
-			levelCell.addStyleName(style.gridTitle());
-			levelCell.addStyleName(style.gridCell());
-			levelCell.addStyleName(style.cellWidth());
+			Widget levelCell;
+			
+			if(level.getId() == 0) {
+				levelLB = new ListBox();
+				levelLB.getElement().getStyle().setHeight(1.7, Unit.EM);
+				levelLB.getElement().getStyle().setWidth(100, Unit.PX);
+				levelLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+				levelLB.addItem("Todos", "");
+				agreement.getLevels().forEach(levelIn -> {
+					if(levelIn.getId() == 0) levelLB.addItem("Por defecto", levelIn.getId().toString());
+					else levelLB.addItem(levelIn.getDescription(), levelIn.getId().toString());
+				});
+				setSelectedValueLB(levelLB, null == agreement.getSelectedLevel() ? "" : String.valueOf(agreement.getSelectedLevel().getId()));
+				levelLB.setVisible(!agreement.getLevels().isEmpty());
+				
+				levelLB.addChangeHandler(e -> filterSelectedLevel());
+				
+				levelCell = levelLB;
+			} else {
+				levelCell = new Label(level.getDescription());
+				levelCell.addStyleName(style.gridTitle());
+				levelCell.addStyleName(style.gridCell());
+			}
 			
 			salaryGrid.setWidget(row, 0, levelCell);
 			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
@@ -203,9 +230,18 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 				TextBox cell = new ExpressionBox();
 				cell.addStyleName(style.gridCell());
 				cell.setValue(null == levelData ? null : levelData.getExpression());
-				cell.addStyleName(style.cellWidth());
 				if(row % 2 == 0 ) cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && SpecialExpresion.parse(levelData.getExpression()).getInput().length() > 16)
+					cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
+				else
+					cell.setWidth("100%");
+				
+				if(levelData != null && levelData.isModify())
+					cell.addStyleName(style.modify());
+				else
+					cell.removeStyleName(style.modify());
+				
 				cell.addValueChangeHandler(event -> {
 					if(null == levelData || null == levelData.getId())
 						agreement.createLevelData(level.getId(), variable, event.getValue(), selectedDate);
@@ -215,6 +251,19 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					setAgreementSalaryTable(agreement);
 					setHasChange(true);
 				});
+				
+				// check if level 0 or default value
+				if(level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
+					LevelData levelDataDefault = agreement.getDefaultLevelData(variable, selectedDate);
+					cell.setText(null == levelDataDefault ? null : SpecialExpresion.parse(levelDataDefault.getExpression()).getInput());
+					cell.setTitle("Valor por defecto");
+					cell.addStyleName(style.levelDefaultValue());
+					
+					if(null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression()) && cell.getText().length() > 20)
+						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
+					else
+						cell.setWidth("100%");
+				}
 						
 				salaryGrid.setWidget(row, col, cell);
 				if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
@@ -257,6 +306,24 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 
 	private void salaryTableWidth() {
 		salaryGrid.getColumnFormatter().setWidth(0, "120px");
+	}
+	
+	private void filterSelectedLevel() {
+		String levelId = levelLB.getSelectedValue();
+		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(levelLB.getSelectedValue())));
+		setAgreementSalaryTable(agreement);
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
 	}
 	
 	// ------------------------------------------ toolbar

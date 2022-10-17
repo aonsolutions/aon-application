@@ -385,6 +385,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 		setWidget(binder.createAndBindUi(this));
 
+		showCloseButton(true);
 		setAvailablePayments(aviablePayments);
 		initFooterButtons();
 
