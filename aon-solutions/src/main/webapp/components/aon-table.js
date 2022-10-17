@@ -210,6 +210,7 @@ export class AonTable extends AonElement {
       } else if(item.type && item.type ==="list") {
         let list = value[id];
         let ulList = this.createElement(TAG.UL);
+        ulList.style.marginTop = "6px";
         td.appendChild(ulList);
 
         list.forEach(d => {
