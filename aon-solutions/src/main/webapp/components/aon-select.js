@@ -473,6 +473,10 @@ export class AonSelect extends AonElement {
     this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(opts));
   }
 
+  getValueObject() {
+    return this.getOptions().filter(f => f[this.valueAlias] == this.value)[0];
+  }
+
   getDisabled(){
     return CONSTANT.TRUE == this.disabled;
   }

@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -1006,15 +1006,18 @@ export class AonInvoice extends AonElement {
 		activity.id = this.ACTIVITY;
 		activity.title = MSG.ACTIVITY;
 		activity.readonly = this.invoice.isReadonly();
+		activity.setAlias("id", "description");
 		activity.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setActivity(activity.value);
+			this.invoice.setActivity(activity.getValueObject());
 			if(this.autosave) this.save();
 		});
 		table.addCell(activity, '2');
 		getCompanyActivities({}).then(activities => {
-			let acts = activities.map(a => { return {value: a.id, name: a.description}});
-			activity.options = JSON.stringify(acts);
-			activity.value = this.invoice.getActivity();
+			if(activities.length > 0) {
+				this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
+				activity.setOptions(activities);
+				activity.value = this.invoice.getActivity().id;
+			}
 		});
 
 		// ----- SURCHARGE
@@ -1452,7 +1455,7 @@ export class AonInvoice extends AonElement {
 		amount.readonly = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional()) {
+		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
 			let vat = new AonSelect();
 			vat.id = this.DETAIL_VAT + i;
 			vat.title = '%IVA';
@@ -1604,7 +1607,7 @@ export class AonInvoice extends AonElement {
 		prepayment.checked = detail.prepayment;
 
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional()) {
+		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
 			let vat = new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
@@ -2397,6 +2400,12 @@ export class AonInvoice extends AonElement {
 			};
 			sendInvoice2Mail(message).then(() => {});
 		});
+		if(this.invoice.isEmitida()) {
+			getCustomerEmails(this.invoice.getRegistry()).then(emails => {
+				let mail = this.getElement('sendInvoicesMail');
+				mail.value = emails[0] || ''; 
+			});
+		}
 		d.open();
 	}
 
