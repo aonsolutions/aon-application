@@ -21,7 +21,13 @@ import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class GeoZoneDAO {
+
 	private static final GeoZonePropertiesDAO GEOZONE_PROPERTIES = new GeoZonePropertiesDAO();
+	
+	private GeoZoneDAO() {
+
+	}
+	
 	private static class GeoZonePropertiesDAO implements GeoZoneProperties {
 		private Condition[] getConditions(GeoZoneFilter filter) {
 			if (filter == null) return new Condition[0];
@@ -29,30 +35,31 @@ public class GeoZoneDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(GEOZONE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(GEOZONE.DOMAIN);}
-		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(GEOZONE.CODE);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(GEOZONE.NAME);}
-		@Override public Property<Byte> getSystemProperty() {return new FilterDAO.PropertyDAO<Byte>(GEOZONE.SYSTEM);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.DOMAIN);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.CODE);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.NAME);}
+		@Override public Property<Byte> getSystemProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.SYSTEM);}
 	}
 	
-	public static class GeoZoneFiller  implements Function<Record,GeoZone> {
+	public static class GeoZoneFiller extends Filler implements Function<Record,GeoZone> {
+		
 		@Override
-		public GeoZone apply(Record record) {
-			return build(record);
+		public GeoZone apply(Record r) {
+			return build(r);
 		}
 		
-		public static GeoZone build(Record record) {
-			return build(record, GEOZONE);
+		public static GeoZone build(Record r) {
+			return build(r, GEOZONE);
 		}
 		
-		public static GeoZone build(Record record, Geozone geozone) {
+		public static GeoZone build(Record r, Geozone geozone) {
 			return new GeoZone()
-				.setId(record.getValue(geozone.ID))
-				.setDomain(record.getValue(geozone.DOMAIN))
-				.setCode(record.getValue(geozone.CODE))
-				.setName(record.getValue(geozone.NAME))
-				.setSystem(AonEnumUtils.getBoolean(record.getValue(geozone.SYSTEM)));
+				.setId(getValue(r, geozone.ID))
+				.setDomain(getValue(r, geozone.DOMAIN))
+				.setCode(getValue(r, geozone.CODE))
+				.setName(getValue(r, geozone.NAME))
+				.setSystem(getBoolean(r, geozone.SYSTEM));
 		}
 	}
 	private static SelectConditionStep<GeozoneRecord> select(AONContext ctx, GeoZoneFilter filter) {
