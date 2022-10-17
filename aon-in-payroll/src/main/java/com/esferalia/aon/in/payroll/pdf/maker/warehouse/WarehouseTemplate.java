@@ -32,8 +32,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.sourceforge.barbecue.Barcode;
-import net.sourceforge.barbecue.BarcodeFactory;
 import net.sourceforge.barbecue.BarcodeImageHandler;
+import net.sourceforge.barbecue.linear.ean.UCCEAN128Barcode;
 
 public class WarehouseTemplate implements AutoCloseable {
 	
@@ -410,7 +410,7 @@ public class WarehouseTemplate implements AutoCloseable {
 	}
 	
 	public static BufferedImage generateCode128BarCodeImage(final String barcodeText) throws Exception {
-		final Barcode barcode = BarcodeFactory.createUCC128(barcodeText.substring(0,2), barcodeText.substring(2));
+		final Barcode barcode = new UCCEAN128Barcode(barcodeText.substring(0,2), barcodeText.substring(2), false);
         barcode.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 0));
         barcode.setLabel(" ");
         return BarcodeImageHandler.getImage(barcode);

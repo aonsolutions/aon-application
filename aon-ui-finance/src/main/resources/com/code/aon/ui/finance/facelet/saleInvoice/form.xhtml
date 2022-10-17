@@ -35,7 +35,7 @@
 										value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
-						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
+						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
 							<aon:commandButton id="accept"	
 								value="Emitir"
 								action="#{saleInvoice.tbai}"

@@ -2031,6 +2031,29 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return null;
 	}
 	
+	public boolean isFirstNumberOfSeries() {
+	    Integer domainId = DomainManager.getCurrentDomain();
+        String domainName = AonUtil.getDomainName();
+        String login = UserUtils.getInstance().getLoggedUser().getLogin();
+        Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+        int number = AON.getInvoiceNextNumber(domainName, domainId, login, types, getInvoice().getSeries());
+        return number <= 1;
+	}
+	
+	Boolean uniqueNumberOfSeries;
+	public boolean isUniqueNumberOfSeries() {
+	    if(uniqueNumberOfSeries == null) {
+	        Integer domainId = DomainManager.getCurrentDomain();
+	        String domainName = AonUtil.getDomainName();
+	        String login = UserUtils.getInstance().getLoggedUser().getLogin();
+	        long l = AON.getInvoiceStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
+	            .and(f.getTypeProperty().eq(com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()))
+	            .and(f.getSeriesProperty().eq(getInvoice().getSeries()))).count();
+	        uniqueNumberOfSeries = l <= 1;
+	    }
+	    return uniqueNumberOfSeries;
+	}
+	    
 	public boolean isTbaiInvoice() {
 		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
 	}

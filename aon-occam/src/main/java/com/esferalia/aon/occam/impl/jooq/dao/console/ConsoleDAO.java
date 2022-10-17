@@ -7,10 +7,12 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +25,9 @@ import org.jooq.Record3;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.UpdateSetFirstStep;
+import org.jooq.UpdateSetMoreStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
@@ -34,6 +39,9 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageFixType;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -268,7 +276,6 @@ public class ConsoleDAO {
 				.stream()
 				.map(rec -> "(" + rec.getValue(USER.LOGIN)+ ")")
 				.collect(Collectors.joining(", "));
-			;
 			return AonStringUtils.defaultIfBlank(users, "No hay usuarios activos en el dominio");
 		}
 		
@@ -298,18 +305,49 @@ public class ConsoleDAO {
 				
 				@Override
 				public Boolean visitSetNull() {
-					return setNull( ctx, cm.getTable(), cm.getPkId(), cm.getFkColumn());
+					Table<?> table = AON_MASTER.getTable(cm.getTable());
+					TableField<?, Integer> pkField = getPkField(cm.getTable());
+					Field<?> fkField = table.field( cm.getFkColumn() );
+					int count = ctx.getDslContext()
+						.update(table)
+						.setNull( fkField )
+						.where(pkField.eq(cm.getPkId()))
+						.execute();
+					return (count>0);
 				}
 				
 				@Override
 				public Boolean visitNewValue() {
-					return setValue( ctx, cm.getTable(), cm.getPkId(), cm.getFkColumn(), cm.getNewValue() );
+					Table<?> table = AON_MASTER.getTable(cm.getTable());
+					TableField<?, Integer> pkField = getPkField(cm.getTable());
+					Field<?> fkField = table.field( cm.getFkColumn() );
+					System.out.println(
+						updateField( ctx.getDslContext().update(table) , fkField, cm.getField().getNewValue())
+							.where(pkField.eq(cm.getPkId()))
+							.getSQL(ParamType.INLINED) 
+					);
+					int count = updateField( ctx.getDslContext().update(table) , fkField, cm.getField().getNewValue())
+						.where(pkField.eq(cm.getPkId()))
+						.execute();
+					return (count>0);
 				}
+				
+				private <T> UpdateSetMoreStep<?> updateField(UpdateSetFirstStep<?> update, Field<T> field, Object value) {
+				    return update.set(field, field.getType().cast(value));
+				}	
 				
 				@Override
 				public Boolean visitDelete() {
-					return deleteRow( ctx, cm);
+					Table<?> table = AON_MASTER.getTable(cm.getTable());
+					@SuppressWarnings("unchecked")
+					TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
+					int count = ctx.getDslContext().delete(table)
+						.where(pkField.eq(cm.getPkId()))
+						.execute();
+					return (count>0);
 				}
+				
+				
 			});
 		}
 		
@@ -325,82 +363,88 @@ public class ConsoleDAO {
 		}
 			
 	}
-		
-		
-	private static boolean deleteRow(CloseableAONContext ctx, ConsoleDomainMessage cm) {
-			Table<?> table = AON_MASTER.getTable(cm.getTable());
-			@SuppressWarnings("unchecked")
-			TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
-			int count = ctx.getDslContext().delete(table)
-				.where(pkField.eq(cm.getPkId()))
-				.execute();
-			return (count>0);
-	}
-	
-	private static boolean setNull(CloseableAONContext ctx, String tableName, Integer id, String columnName) {
-		Table<?> table = AON_MASTER.getTable(tableName);
-		TableField<?, Integer> pkField = getPkField(tableName);
-		Field<?> fkField = table.field( columnName );
-		int count = ctx.getDslContext()
-			.update(table)
-			.setNull( fkField )
-			.where(pkField.eq(id))
-			.execute();
-		return (count>0);
-	}
-	
-	private static boolean setValue(CloseableAONContext ctx, String tableName, Integer id, String columnName, Integer newValue) {
-		Table<?> table = AON_MASTER.getTable(tableName);
-		TableField<?, Integer> pkField = getPkField(tableName);
-		@SuppressWarnings("unchecked")
-		Field<Integer> fkField = (Field<Integer>) table.field( columnName );
-		int count = ctx.getDslContext()
-			.update(table)
-			.set( fkField, newValue )
-			.where(pkField.eq(id))
-			.execute();
-		return (count>0);
-	}
 	
 	@SuppressWarnings("unchecked")
 	private static TableField<?, Integer> getPkField(String tableName) {
 		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).getPrimaryKey().getFields().get(0);
 	}
 	
-	public static LinkedHashMap<String, Object> viewRow(CloseableAONContext ctx, String tableName, Integer id) {
+	public static ConsoleTableRow viewRow(CloseableAONContext ctx, String schema, String tableName, Integer id) {
+		ConsoleTableRow tableRow = new ConsoleTableRow()
+			.setSchema(schema)
+			.setTable( tableName )
+			.setId( id );
+		
 		Table<?> table = AON_MASTER.getTable(tableName);
-		TableField<?, Integer> pkField = getPkField(tableName);
+		Arrays.stream( table.fields() )
+			.map( field -> new ConsoleTableField().setColumn( field.getName() ).setType( getConsoleTableFieldType(field)))
+			.forEach( tableRow::add );
+		table
+			.getPrimaryKey()
+			.getFields()
+			.stream()
+			.map( f -> tableRow.getField( f.getName() ) )
+			.forEach( tr -> tr.setPrimaryKey(true) );
+		table
+			.getReferences()
+			.stream()
+			.forEach(fk -> {
+				for (int i = 0; i < fk.getFields().size(); i++ ) {
+					TableField<?, ?> f = fk.getFields().get(i);
+					tableRow.getField( f.getName() )
+						.setForeignKey(true)
+						.setForeignTable( fk.getKey().getTable().getName() )
+						.setForeignColumn( fk.getKeyFields().get(i).getName() )
+						;		
+				}
+			});  
+			;
+		;
 		List<Field<?>> selectedFields = new LinkedList<>();
-		List<Field<?>> excludedFields = new LinkedList<>();
-		for (Field<?> field : table.fields()) {
-			if (field.getDataType() != null && field.getDataType().getSQLDataType() == SQLDataType.BLOB) {
-				excludedFields.add( field );
-			} else {
-				selectedFields.add( field );				
-			}
-		}
-		final LinkedHashMap<String, Object> fieldsMap = new LinkedHashMap<>();
-		ctx.getDslContext().select( selectedFields )
+		tableRow.getFields()
+			.values()
+			.stream()
+			.filter( f -> f.getType() != ConsoleTableFieldType.BINARY)
+			.forEach( f -> selectedFields.add(table.field( f.getColumn() ) ));
+		
+		TableField<?, Integer> pkField = getPkField(tableName);
+		Optional<Record> rec = ctx.getDslContext().select( selectedFields )
 			.from(table)
 			.where(pkField.eq(id))
+			.limit(1)
 			.stream()
-			.forEach( rec -> selectedFields
+			.findFirst();
+			
+		if (rec.isPresent()) {
+			selectedFields	
 				.stream()
-				.forEach( field -> fieldsMap.put( field.getName(), toSerializable(rec.getValue(field)) )));
-		if ( !excludedFields.isEmpty() ) {
-			excludedFields.stream().forEach( field -> fieldsMap.put( field.getName(), "[BLOB NO BUSCADO]"));
-		}
-		return fieldsMap;
+				.forEach( field -> tableRow.getField( field.getName() ).setValue( toSerializable(rec.get().getValue(field)) ));
+			return tableRow; 
+		} 
+		return null;
 	}
 
-	private static Object toSerializable(Object value) {
+	private static ConsoleTableFieldType getConsoleTableFieldType(Field<?> field) {
+		if (field.getDataType() == null ) return null;
+		if (field.getDataType().getSQLDataType().isString()) return ConsoleTableFieldType.STRING;
+		else if (field.getDataType().getSQLDataType().isNumeric() &&
+				field.getDataType().getSQLDataType() == SQLDataType.DOUBLE ) return ConsoleTableFieldType.DECIMAL;
+		else if (field.getDataType().getSQLDataType().isNumeric() &&
+			!field.getDataType().getSQLDataType().hasPrecision()) return ConsoleTableFieldType.NUMBER;
+		else if (field.getDataType().getSQLDataType().isDate()) return ConsoleTableFieldType.DATE;
+		else if (field.getDataType().getSQLDataType().isTime()) return ConsoleTableFieldType.TIMESTAMP;
+		else if (field.getDataType().getSQLDataType().isBinary()) return ConsoleTableFieldType.BINARY; 
+		return null;
+	}
+
+	private static String toSerializable(Object value) {
 		if (value == null) return null;
 		if (value instanceof Byte) {
-			return AonNumberUtils.toInteger( (Byte) value);
+			return AonNumberUtils.toString( (Byte) value);
 		} else if (value instanceof Short) {
-			return AonNumberUtils.toInteger( (Short) value);
+			return AonNumberUtils.toString( (Short) value);
 		}
-		return value;
+		return Objects.toString(value, null ) ;
 	}
 	
 }
