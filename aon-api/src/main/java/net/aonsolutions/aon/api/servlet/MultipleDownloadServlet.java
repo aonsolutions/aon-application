@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -175,7 +176,11 @@ public class MultipleDownloadServlet extends HttpServlet{
     						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
     						FileOutputStream out = new FileOutputStream(file);
     						
-    						String qrUrl = domain.getName() + "/dip?source=invoice&id=" + id;  
+    						String qrUrl = domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
+    								+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
+    								+ "&s=" + invoice.getSeries()
+    								+ "&n=" + invoice.getNumber()
+    								+ "&t=" + invoice.getTotal();  
     						TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
     						String tbaiId = "";
     						if(tbai.isActive()) {	
