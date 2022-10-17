@@ -86,6 +86,7 @@ export const BIC_SWIFT = 'Bic / Swift';// TODO
 export const BARCODE = MSG.BARCODE;
 export const BILLING = MSG.BILLING;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
+export const BLOCKED = "Bloqueado";// TODO
 export const BOOKING = MSG.BOOKING;
 export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;

@@ -191,10 +191,7 @@ export class AonTable extends AonElement {
     this.columns.forEach((item, i) => {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
-      // if("number" === item.type) {
-      //   td.style.textAlign = "right";
-      //   td.style.paddingRight = "2%";
-      // }
+
       let id = item.id;
       if ("option" === id && value[id]) {
         let aonIconB = new AonIconButton();
@@ -210,6 +207,20 @@ export class AonTable extends AonElement {
         icon.style.color = value.icon_color || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
+      } else if(item.type && item.type ==="list") {
+        let list = value[id];
+        let ulList = this.createElement(TAG.UL);
+        td.appendChild(ulList);
+
+        list.forEach(d => {
+          let li = this.createElement(TAG.LI);
+          li.innerHTML = d.name;
+          if(d.fn){
+            li.addEventListener(EVENT.CLICK, d.fn);
+          }
+          ulList.appendChild(li);
+        });
+      
       } else if(item.type && item.type ==="html") {
         td.appendChild(value[id])
         td.addEventListener(EVENT.CLICK, fn);
