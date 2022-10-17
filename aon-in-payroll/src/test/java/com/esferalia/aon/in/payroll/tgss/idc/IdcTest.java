@@ -32,10 +32,13 @@ import java.io.OutputStream;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -3693,6 +3696,318 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testSyncIdcXXIVBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException, ParseException {
+		
+		String [] idcs = {
+			"idcXXIV-22-04-2019.pdf"	
+			,"idcXXIV-06-08-2019.pdf"	
+			,"idcXXIV-14-03-2020.pdf"	
+			,"idcXXIV-13-07-2020.pdf"	
+			,"idcXXIV-01-11-2021.pdf"	
+			,"idcXXIV-01-08-2022.pdf"	
+			,"idcXXIV-01-10-2022.pdf"	
+		};
+		
+		AONContext aonContext = new AONContext(getConnection());
+		               	
+		String ccc = "06114494121";
+		String naf = "061010662603";
+		Date contractStartDate = getDate(22, Calendar.APRIL, 2019);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractStartDate, ccc, naf);
+		Integer domainId = contract.getDomain();
+		
+		for (String idc : idcs) {
+			try (InputStream is = IdcTest.class.getResourceAsStream(idc) ) {
+				byte data []  = is.readAllBytes();
+				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19)); 
+				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
+				System.out.println(idc + " : " + date);
+			}
+		}
+		
+		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
+		
+		Arrays.sort(bonuses, (b1,b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
+		
+		Arrays.stream(bonuses).forEach(b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate() ));
+
+		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
+		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
+
+		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
+		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
+		
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
+		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
+		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
+		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
+		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
+		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
+		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
+
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
+		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
+		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
+		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
+		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
+		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
+		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
+	
+		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
+		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
+
+		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
+		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
+	
+		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
+		Assert.assertNull(bonuses[13].getEndDate());
+	}
+
+	@Test
+	public void testSyncIdcXXIVBonusTwice() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException, ParseException {
+		
+		String [] idcs = {
+			"idcXXIV-22-04-2019.pdf"	
+			,"idcXXIV-06-08-2019.pdf"	
+			,"idcXXIV-14-03-2020.pdf"	
+			,"idcXXIV-13-07-2020.pdf"	
+			,"idcXXIV-01-11-2021.pdf"	
+			,"idcXXIV-01-08-2022.pdf"	
+			,"idcXXIV-01-10-2022.pdf"	
+		};
+		
+		AONContext aonContext = new AONContext(getConnection());
+		               	
+		String ccc = "06114494121";
+		String naf = "061010662603";
+		Date contractStartDate = getDate(22, Calendar.APRIL, 2019);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractStartDate, ccc, naf);
+		Integer domainId = contract.getDomain();
+		
+		for (String idc : idcs) {
+			try (InputStream is = IdcTest.class.getResourceAsStream(idc) ) {
+				byte data []  = is.readAllBytes();
+				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19)); 
+				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
+				System.out.println(idc + " : " + date);
+			}
+		}
+		for (String idc : idcs) {
+			try (InputStream is = IdcTest.class.getResourceAsStream(idc) ) {
+				byte data []  = is.readAllBytes();
+				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19)); 
+				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
+				System.out.println(idc + " : " + date);
+			}
+		}
+
+		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
+		
+		Arrays.sort(bonuses, (b1,b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
+		
+		Arrays.stream(bonuses).forEach(b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate() ));
+		int i = 0;
+		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+
+		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+	
+		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+
+		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i++].getEndDate()));
+	
+		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[i].getStartDate()));
+		Assert.assertNull(bonuses[i++].getEndDate());
+	}
+
+	@Test
+	public void testSyncIdcXXIVBonusReverse() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException, ParseException {
+		
+		String [] idcs = {
+			"idcXXIV-22-04-2019.pdf"	
+			,"idcXXIV-06-08-2019.pdf"	
+			,"idcXXIV-14-03-2020.pdf"	
+			,"idcXXIV-13-07-2020.pdf"	
+			,"idcXXIV-01-11-2021.pdf"	
+			,"idcXXIV-01-08-2022.pdf"	
+			,"idcXXIV-01-10-2022.pdf"	
+		};
+		
+		AONContext aonContext = new AONContext(getConnection());
+		               	
+		String ccc = "06114494121";
+		String naf = "061010662603";
+		Date contractStartDate = getDate(22, Calendar.APRIL, 2019);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractStartDate, ccc, naf);
+		Integer domainId = contract.getDomain();
+		
+		for (int i = idcs.length -1 ; i >= 0; i--) {
+			String idc = idcs[i];
+			try (InputStream is = IdcTest.class.getResourceAsStream(idc) ) {
+				byte data []  = is.readAllBytes();
+				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19)); 
+				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
+				System.out.println(idc + " : " + date);
+			}
+		}
+		
+		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
+		
+		Arrays.sort(bonuses, (b1,b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
+		
+		Arrays.stream(bonuses).forEach(b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate() ));
+
+		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
+		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
+
+		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
+		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
+		
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
+		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
+		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
+		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
+		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
+		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
+		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
+
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
+		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
+		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
+		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
+		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
+		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
+		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
+	
+		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
+		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
+
+		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
+		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
+	
+		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
+		Assert.assertNull(bonuses[13].getEndDate());
+	}
+
+	@Test
+	public void testSyncIdcXXIVBonusReverseTwice() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException, ParseException {
+		
+		String [] idcs = {
+			"idcXXIV-22-04-2019.pdf"	
+			,"idcXXIV-06-08-2019.pdf"	
+			,"idcXXIV-14-03-2020.pdf"	
+			,"idcXXIV-13-07-2020.pdf"	
+			,"idcXXIV-01-11-2021.pdf"	
+			,"idcXXIV-01-08-2022.pdf"	
+			,"idcXXIV-01-10-2022.pdf"	
+		};
+		
+		AONContext aonContext = new AONContext(getConnection());
+		               	
+		String ccc = "06114494121";
+		String naf = "061010662603";
+		Date contractStartDate = getDate(22, Calendar.APRIL, 2019);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractStartDate, ccc, naf);
+		Integer domainId = contract.getDomain();
+		
+		for (int i = idcs.length -1 ; i >= 0; i--) {
+			String idc = idcs[i];
+			try (InputStream is = IdcTest.class.getResourceAsStream(idc) ) {
+				byte data []  = is.readAllBytes();
+				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19)); 
+				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
+				System.out.println(idc + " : " + date);
+			}
+		}
+		
+		for (int i = idcs.length -1 ; i >= 0; i--) {
+			String idc = idcs[i];
+			try (InputStream is = IdcTest.class.getResourceAsStream(idc) ) {
+				byte data []  = is.readAllBytes();
+				Date date = new SimpleDateFormat("dd-MM-yyyy").parse(idc.substring(8, 19)); 
+				SistemaRED2AON.syncWithIdc(data, "userLogin", domainName, domainId, date, ccc, naf);
+				System.out.println(idc + " : " + date);
+			}
+		}
+
+		Bonus[] bonuses = PAYROLL.getBonuses(domainName, domainId, "userLogin", contract.getId());
+		
+		Arrays.sort(bonuses, (b1,b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
+		
+		Arrays.stream(bonuses).forEach(b -> System.out.println(b.getDescription() + " : " + b.getStartDate() + "..." + b.getEndDate() ));
+
+		Assert.assertEquals("22-04-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getStartDate()));
+		Assert.assertEquals("05-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[0].getEndDate()));
+
+		Assert.assertEquals("06-08-2019", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getStartDate()));
+		Assert.assertEquals("13-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[1].getEndDate()));
+		
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[2].getEndDate()));
+		Assert.assertEquals("14-03-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getStartDate()));
+		Assert.assertEquals("30-04-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[3].getEndDate()));
+		Assert.assertEquals("01-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getStartDate()));
+		Assert.assertEquals("31-05-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[4].getEndDate()));
+		Assert.assertEquals("01-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getStartDate()));
+		Assert.assertEquals("30-06-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[5].getEndDate()));
+		Assert.assertEquals("01-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getStartDate()));
+		Assert.assertEquals("12-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[6].getEndDate()));
+
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getStartDate()));
+		Assert.assertEquals("31-10-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[7].getEndDate()));
+		Assert.assertEquals("13-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getStartDate()));
+		Assert.assertEquals("31-07-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[8].getEndDate()));
+		Assert.assertEquals("01-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getStartDate()));
+		Assert.assertEquals("31-08-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[9].getEndDate()));
+		Assert.assertEquals("01-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getStartDate()));
+		Assert.assertEquals("30-09-2020", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[10].getEndDate()));
+	
+		Assert.assertEquals("01-11-2021", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getStartDate()));
+		Assert.assertEquals("31-07-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[11].getEndDate()));
+
+		Assert.assertEquals("01-08-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getStartDate()));
+		Assert.assertEquals("30-09-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[12].getEndDate()));
+	
+		Assert.assertEquals("01-10-2022", new SimpleDateFormat("dd-MM-yyyy").format(bonuses[13].getStartDate()));
+		Assert.assertNull(bonuses[13].getEndDate());
+	}
+
 	public static final DomainRecord newDomain(AONContext aonContext, String name ) {
 		return aonContext.getDslContext()
 				.insertInto(DOMAIN)
@@ -4104,6 +4419,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
+
 
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());

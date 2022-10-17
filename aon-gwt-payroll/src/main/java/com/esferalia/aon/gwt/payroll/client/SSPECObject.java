@@ -50,8 +50,14 @@ public class SSPECObject {
 		});
 	}
 	
-	public void syncSSPECData(Consumer<List<SSPECData>> success, Consumer<Throwable> failure) {
-		impl.syncEmployeeSSPECs(this.contractId, new AsyncCallback<List<SSPECData>>() {
+	public void syncSSPECData(Date startDate, Date endDate, Consumer<List<SSPECData>> success, Consumer<Throwable> failure) {
+		if ( startDate == null ) {
+			startDate = this.getContractStartDate();
+		}
+		if ( endDate == null ) {
+			endDate = this.getContractEndDate();
+		}
+		impl.syncEmployeeSSPECs(this.contractId, startDate, endDate, new AsyncCallback<List<SSPECData>>() {
 			
 			@Override
 			public void onSuccess(List<SSPECData> result) {

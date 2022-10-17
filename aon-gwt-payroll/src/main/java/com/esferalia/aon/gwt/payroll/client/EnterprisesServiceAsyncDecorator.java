@@ -463,9 +463,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void syncEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) throws IllegalArgumentException {
+	public void syncEmployeeSSPECs(String domain, String user, Integer contractId, Date startDate, Date endDate, AsyncCallback<List<SSPECData>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.syncEmployeeSSPECs(domain, user, contractId, new AsyncCallbackWrapper<List<SSPECData>>(callback));
+		enterprisesServiceAsync.syncEmployeeSSPECs(domain, user, contractId, startDate, endDate, new AsyncCallbackWrapper<List<SSPECData>>(callback));
 	}
 
 	@Override

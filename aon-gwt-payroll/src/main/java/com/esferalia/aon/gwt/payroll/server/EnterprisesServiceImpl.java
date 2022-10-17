@@ -1991,10 +1991,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<SSPECData> syncEmployeeSSPECs(String domainName, String user, Integer contractId) throws IllegalArgumentException {
+	public List<SSPECData> syncEmployeeSSPECs(String domainName, String user, Integer contractId, java.util.Date startDate, java.util.Date endDate) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			syncWithIdcs(domainName, user, contractId, connection);
+			syncWithIdcs(domainName, user, contractId, startDate, endDate, connection);
 			return getPECs(domainName, domainId, user, contractId);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -2904,6 +2904,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				contract.getEnterpriseCCC(), 
 				contract.getPersonSsNumber(),
 				contract.getEndDate() ) );
+	}
+
+	private static void syncWithIdcs(String currentDomainName, String currentUser, Integer contractId, java.util.Date startDate, java.util.Date endDate, Connection connection)
+			throws Exception {
+		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
+		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
+		Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
+		
+		PAYROLL.getContract(
+				currentDomainName, 
+				parentDomainId, 
+				currentUser, 
+				p -> p.getIdProperty().eq(contractId))
+		.ifPresent( contract -> SistemaRED2AON.syncWithIdcs(
+				currentUser, 
+				currentDomainName, 
+				domainId, 
+				userId, 
+				contract.getEnterpriseCCCRegime().getCode(), 
+				contract.getEnterpriseCCC(), 
+				contract.getPersonSsNumber(),
+				startDate,
+				endDate) );
 	}
 
 	@Override

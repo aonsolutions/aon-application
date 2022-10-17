@@ -433,7 +433,10 @@ public abstract class EmployeeDraft extends Composite {
 
 		@Override
 		public void execute() {
-			new SSPECDialog(employeeDraftObject.getContractId());
+			new SSPECDialog(
+					employeeDraftObject.getContractId(), 
+					employeeDraftObject.getContractStartDate(),
+					employeeDraftObject.getContractEndDate());
 		}
 	}
 	
