@@ -221,7 +221,8 @@ public class LROE240_1_1 extends LROE240 {
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 	
-		cabecera.setNumFactura(invoice.getReferenceCode());
+		cabecera.setSerieFactura(invoice.getSeries());
+        cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
 		return cabecera;
 	}
 	

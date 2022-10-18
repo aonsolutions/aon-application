@@ -248,8 +248,7 @@ public class LROE140_1_1 extends LROE140 {
 		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-	
-		cabecera.setNumFactura(invoice.getReferenceCode());
+
 		cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
 		return cabecera;
