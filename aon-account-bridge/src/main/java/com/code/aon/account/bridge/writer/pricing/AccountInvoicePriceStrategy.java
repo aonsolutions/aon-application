@@ -38,9 +38,11 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null) {
 			Tax tax = (taxType.equals(TaxType.RETENTION)) ? item.getProduct().getRetention() : item.getProduct().getVat();
-			Account taxAccount = (invoiceType.equals(InvoiceType.SALES)) ? tax.getSalesAccount() : tax.getPurchaseAccount();
-			if (taxAccount != null && taxAccount.getId() != null) {
-				return taxAccount;
+			if(tax != null) {
+				Account taxAccount = (invoiceType.equals(InvoiceType.SALES)) ? tax.getSalesAccount() : tax.getPurchaseAccount();
+				if (taxAccount != null && taxAccount.getId() != null) {
+					return taxAccount;
+				}
 			}
 		}
 		
