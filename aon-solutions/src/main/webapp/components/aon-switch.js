@@ -172,6 +172,10 @@ export class AonSwitch extends AonElement {
     let label = this.getElement(this.LABEL);
     if(label) label.style.width = mb;
   }
+
+  clear(){
+  
+  }
 }
 if(!window.customElements.get('aon-switch')){
 	window.customElements.define('aon-switch',  AonSwitch);
