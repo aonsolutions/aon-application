@@ -791,9 +791,10 @@ public class Mod130DAO extends FiscalModelDAO {
 		double c15 = 0.0; 
 		if (c14 > 0) {
 			c15 = getPreviousModels(ctx, mod)
-				.mapToDouble(fm -> AonMathUtils.round(
-					AonMathUtils.absRounded(fm.getAmount(Mod130Key.C19)>0?0:(fm.getAmount(Mod130Key.C19))
-					- fm.getAmount(Mod130Key.C15) )))
+				.mapToDouble(fm -> {
+					double x19 = AonMathUtils.absRounded(fm.getAmount(Mod130Key.C19)>0?0:(fm.getAmount(Mod130Key.C19)));  
+					return AonMathUtils.round(x19 - fm.getAmount(Mod130Key.C15));
+				})
 				.sum()
 			;
 			c15 = c15>c14?c14:c15;

@@ -23,15 +23,14 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.jooq.tools.json.JSONArray;
-import org.jooq.tools.json.JSONObject;
-import org.jooq.tools.json.JSONParser;
-import org.jooq.tools.json.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
@@ -79,94 +78,93 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 
 	}
 	
-	private AccountingReportParams parseParams(String accountReportParams) throws ParseException, java.text.ParseException {
+	private AccountingReportParams parseParams(String accountReportParams) throws  java.text.ParseException {
 		AccountingReportParams params = new AccountingReportParams();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonParams =  (JSONObject) parser.parse(accountReportParams);
+		JSONObject jsonParams = new JSONObject(accountReportParams);
 		
 		// ******************* DOMAIN ******************* 
-		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-		params.setDomain(domain.intValue());
+		Integer domain = JsonUtils.getInteger(jsonParams, IRequestParamsNames.DOMAIN);
+		params.setDomain(domain);
 
 		// ******************* PERIOD ******************* 
-		Long period = (Long) jsonParams.get(IRequestParamsNames.PERIOD);
+		Integer period = JsonUtils.getInteger(jsonParams, IRequestParamsNames.PERIOD);
 		if (period != null) {
 			params.setPeriod(period.intValue());	
 		}
 		// ******************* FROMDATE ******************* 
-		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
+		String fromDate = JsonUtils.getString(jsonParams, IRequestParamsNames.FROM_DATE);
 		if (AonStringUtils.isNotBlank(fromDate)) {
 			params.setFromDate( FORMATTER.parse(fromDate));			
 		}
 		// ******************* TODATE ******************* 
-		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
+		String toDate = JsonUtils.getString(jsonParams, IRequestParamsNames.TO_DATE);
 		if (AonStringUtils.isNotBlank(toDate)) {
 			params.setToDate( FORMATTER.parse(toDate));			
 		}
 		// ******************* ACCOUNT ******************* 
-		Long accountId = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT);
+		Integer accountId = JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACCOUNT);
 		if (accountId != null) {
 			params.setAccount( new Account().setId(accountId.intValue()));
 		}
-		String accountCode = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_CODE);
+		String accountCode = JsonUtils.getString(jsonParams, IRequestParamsNames.ACCOUNT_CODE);
 		if (AonStringUtils.isNotBlank(accountCode)) {
 			if (params.getAccount() == null) params.setAccount( new Account());
 			params.getAccount().setCode(accountCode);
 		}
-		String accountDescription = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_DESCRIPTION);
+		String accountDescription = JsonUtils.getString(jsonParams, IRequestParamsNames.ACCOUNT_DESCRIPTION);
 		if (AonStringUtils.isNotBlank(accountDescription)) {
 			if (params.getAccount() == null) params.setAccount( new Account());
 			params.getAccount().setDescription(accountDescription);
 		}
 		// ******************* LEVEL ******************* 
-		Long level = (Long) jsonParams.get(IRequestParamsNames.LEVEL);
+		Integer level = JsonUtils.getInteger(jsonParams, IRequestParamsNames.LEVEL);
 		if (level != null) {
 			params.setLevel(level.intValue());	
 		}
 		// ******************* ACTIVITY ******************* 
-		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
+		Integer activity = JsonUtils.getInteger(jsonParams, IRequestParamsNames.ACTIVITY);
 		if (activity != null) {
 			params.setActivity(activity.intValue());	
 		}
 		// ******************* SECURITYLEVEL ******************* 
-		Long confidential = (Long) jsonParams.get(IRequestParamsNames.CONFIDENTIAL);
+		Integer confidential = JsonUtils.getInteger(jsonParams, IRequestParamsNames.CONFIDENTIAL);
 		if (confidential != null) {
 			params.setSecurityLevel( SecurityLevel.safeValueOf( confidential.intValue() ));
 		}
 		// ******************* DOCUMENTNUMBER ******************* 
-		String document = (String) jsonParams.get(IRequestParamsNames.DOCUMENT);
+		String document = JsonUtils.getString(jsonParams, IRequestParamsNames.DOCUMENT);
 		if (document != null) {
 			params.setDocumentNumber(document);	
 		}
 		// ******************* PREVIOUSPERIODS ******************* 
-		Long previousPeriods = (Long) jsonParams.get(IRequestParamsNames.PREVIOUS_PERIODS);
+		Integer previousPeriods = JsonUtils.getInteger(jsonParams, IRequestParamsNames.PREVIOUS_PERIODS);
 		if (previousPeriods != null) {
 			params.setPreviousPeriods(previousPeriods.intValue());	
 		}
 		// ******************* LOWLEVELACCOUNTVISIBLE ******************* 
-		Long lowLevelAccountVisible = (Long) jsonParams.get(IRequestParamsNames.LOW_LEVEL_ACCOUNT_VISIBLE);
+		Integer lowLevelAccountVisible = JsonUtils.getInteger(jsonParams, IRequestParamsNames.LOW_LEVEL_ACCOUNT_VISIBLE);
 		if (lowLevelAccountVisible != null) {
 			params.setLowLevelAccountVisible(lowLevelAccountVisible.intValue() == 1);	
 		}
 		// ******************* NOACTIVITYACCOUNTVISIBLE ******************* 
-		Long noActivityAccountVisible = (Long) jsonParams.get(IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE);
+		Integer noActivityAccountVisible = JsonUtils.getInteger(jsonParams, IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE);
 		if (noActivityAccountVisible != null) {
 			params.setNoActivityAccountVisible(noActivityAccountVisible.intValue() == 1);	
 		}
 		// ******************* percentsEnabled ******************* 
-		Long percentsEnabled = (Long) jsonParams.get(IRequestParamsNames.PERCENTS_ENABLED);
+		Integer percentsEnabled = JsonUtils.getInteger(jsonParams, IRequestParamsNames.PERCENTS_ENABLED);
 		if (percentsEnabled != null) {
 			params.setPercentsEnabled(percentsEnabled.intValue() == 1);	
 		}
 		// *******************  BYMONTH ******************* 
-		Long byMonth = (Long) jsonParams.get(IRequestParamsNames.BY_MONTH);
+		Integer byMonth = JsonUtils.getInteger(jsonParams, IRequestParamsNames.BY_MONTH);
 		if (byMonth != null) {
 			params.setByMonth(byMonth.intValue() == 1);	
 		}
 		// *******************  COSTCENTERS *******************
-		JSONArray costCenters = (JSONArray) jsonParams.get(IRequestParamsNames.COST_CENTERS);
-		if (costCenters != null && costCenters.size() > 0) {
-			for (int i = 0; i < costCenters.size(); i++) {
+		JSONArray costCenters = JsonUtils.getJSONArray(jsonParams, IRequestParamsNames.COST_CENTERS);
+		if (costCenters != null && costCenters.length() > 0) {
+			for (int i = 0; i < costCenters.length(); i++) {
 				params.addCostCenter(costCenters.get(i).toString());
 			}
 		}

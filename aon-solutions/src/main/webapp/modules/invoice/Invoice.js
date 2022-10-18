@@ -280,7 +280,8 @@ export class Invoice {
   }
 
   isExempt() {
-    return false;
+    return this.activity && this.activity.vatRegime 
+      && "EXEMPT" === this.activity.vatRegime;
   }
   
   isCcm() {

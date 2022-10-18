@@ -52,7 +52,7 @@ public class AonRoute {
 		if(arr1.length != arr2.length) return false;
 		for(Integer i = 1; i < arr1.length; i++) {
 			if(isVariable(arr1[i])) {
-				getVariables().put(arr1[i], arr2[i]);
+				getVariables().put(arr1[i].replace(":", ""), arr2[i]);
 			} else if(!arr1[i].equalsIgnoreCase(arr2[i])) {
 				return false;
 			}
