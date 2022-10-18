@@ -225,6 +225,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private List<IT> itList = Collections.emptyList();
 	private IT it;
+	private IT itCopy;
 	private ITEmployee itEmployee;
 	
 	private List<ITEmployee> itEmployeeList = Collections.emptyList();
@@ -490,7 +491,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		initConfirmationsTable();
 		
 		// Check if exist IT
-		this.it = null != it ? it : this.itDialogObject.checkIfIsOpenIt();
+		this.itCopy = copyIT(null != it ? it : this.itDialogObject.checkIfIsOpenIt());
+		this.it = copyIT(null != it ? it : this.itDialogObject.checkIfIsOpenIt());
 		
 		checkAndPaintIT();
 		
@@ -499,7 +501,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		showDialog();
 	}
-	
+
 	public void setITDialogObject(ITDialogObject itDialogObject, IT it, boolean showAll) {
 		this.itDialogObject = itDialogObject;
 		
@@ -507,7 +509,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		initConfirmationsTable();
 		
 		// Check if exist IT
-		this.it = it;
+		this.itCopy = copyIT(it);
+		this.it = copyIT(it);
 		checkAndPaintIT();
 		
 		// Check type of part
@@ -515,6 +518,39 @@ public abstract class ITDialog extends AonCustomDialog {
 		createEmployeePanel(itDialogObject.getEmployeeinfo());
 		
 		showDialog();
+	}
+	
+	private IT copyIT(IT originalIT) {
+		if(null == originalIT) return null;
+		
+		IT itCopy = new IT();
+		itCopy.setId(originalIT.getId());
+		itCopy.setDomain(originalIT.getDomain());
+		itCopy.setTypeLowPart(originalIT.getTypeLowPart());
+		itCopy.setContract(originalIT.getContract());
+		itCopy.setDescription(originalIT.getDescription());
+		itCopy.setStartDate(originalIT.getStartDate());
+		itCopy.setEndDate(originalIT.getEndDate());
+		itCopy.setDailyCGCBase(originalIT.getDailyCGCBase());
+		itCopy.setDailyCGPBase(originalIT.getDailyCGPBase());
+		itCopy.setParent(originalIT.getParent());
+		itCopy.setDailyREGBase(originalIT.getDailyREGBase());
+		itCopy.setTypeHighPart(originalIT.getTypeHighPart());
+		itCopy.setIsParent(originalIT.getIsParent());
+		itCopy.setMaternityType(originalIT.getMaternityType());
+		itCopy.setMaternityReason(originalIT.getMaternityReason());
+		itCopy.setRegulationBase(originalIT.getRegulationBase());
+		itCopy.setPartialityCoef(originalIT.getPartialityCoef());
+		itCopy.setQuoteDays(originalIT.getQuoteDays());
+		itCopy.setComunicationDate(originalIT.getComunicationDate());
+		itCopy.setIsComunicate(originalIT.isComunicate());
+		itCopy.setDirectPayDate(originalIT.getDirectPayDate());
+		itCopy.setFullName(originalIT.getFullName());
+		itCopy.setContractStartDate(originalIT.getContractStartDate());
+		itCopy.setContractEndDate(originalIT.getContractEndDate());
+		itCopy.setITParts(originalIT.getITParts());
+		
+		return itCopy;
 	}
 	
 	private void showDialog() {
@@ -1797,6 +1833,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void onCloseDialog(ClickEvent event) {
 		normalizeITToSave();
+		this.it = this.itCopy;
 		hide();
 	}
 	
