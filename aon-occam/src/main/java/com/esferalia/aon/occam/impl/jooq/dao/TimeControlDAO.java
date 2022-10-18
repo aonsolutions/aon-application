@@ -283,9 +283,9 @@ public class TimeControlDAO {
 		
 		boolean updateCoordinates = tcd.getCoordinates()!=null && tcd.getCoordinates().getLatitude()!=null &&  tcd.getCoordinates().getLongitude()!=null;
 		
-		if(!updateCoordinates) {			
+//		if(!updateCoordinates) {			
 			saveLog(ctx, tcd);
-		}
+//		}
 
 		UpdateSetMoreStep<TimecontrolRecord> sets = ctx.getDslContext()
 		.update(TIMECONTROL)
@@ -325,9 +325,9 @@ public class TimeControlDAO {
 				.limit(1)
 				.fetchOptionalInto(TIMECONTROL);
 				
-				Integer lastMinId = last.isPresent() ? last.get().getId() : -1;
+				Integer lastMinId = last.isPresent() ? last.get().getId() : 0;
 
-				timeControl.setId(lastMinId).setModificatedTimeControl(tcd.getId());
+				timeControl.setId(lastMinId-1).setModificatedTimeControl(tcd.getId());
 				
 				ctx.log().debug("--------INSERT LOG----------");	
 				insert(ctx, timeControl);
@@ -361,7 +361,7 @@ public class TimeControlDAO {
 		TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getTaskHolderProperty().eq(taskHolderId)).and(f.getIdProperty().ge(0)));
 
-		if(tc.getDetail().size() == 0 && TimeControlStatus.IN.equals(tcd.getStatus())  
+		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
 			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
 			tc.setInDate(AonDateUtils.getDateWithoutTime(new Date()));
 			tc.setStatus(TimeControlStatus.IN);

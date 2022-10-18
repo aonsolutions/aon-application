@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
@@ -139,16 +140,12 @@ public class ProjectsServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONArray getProjects(AonApiData api) {
-		JSONArray arr = new JSONArray();
-		AON.getProjectStream(api.getDomain(), "", f -> projectFilter(api, f))
-		.forEach(project -> {
-			ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", 
-				f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull())
-			);
-			project.setProjectHolder(holder);
-			arr.put(ProjectJSON.toJSON(project));	
-		});
-		return arr;
+	
+		List<Project> projects = AON.getProjectStream(api.getDomain(), "", f -> projectFilter(api, f)).collect(Collectors.toList());
+
+		setHoldersByProjects(api, projects);
+	
+		return ProjectJSON.toJSON(projects);
 	}
 	
 	private static JSONArray getOfficeProjects(AonApiData api) {
@@ -247,6 +244,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
         AON.deleteProjectHolder(api.getDomain(), api.getUser(), holder.getId());
         return new JSONObject();
     }
+    
 	private static JSONArray getHolders(AonApiData api) {
 	
 		Stream<ProjectHolder> holders = AON.getProjectHolderStream(api.getDomain(), api.getUser().getLogin(), 
@@ -256,6 +254,25 @@ public class ProjectsServlet extends AonApiHttpServlet{
 		return ProjectHolderJSON.toJSON(holders);
 	}
 	
+    
+	private static void setHoldersByProjects(AonApiData api, List<Project>projects) {
+		Timestamp ts = Timestamp.from(Instant.now());
+		
+	    Integer[] projectIds  = projects.stream().map(Project::getId).toArray(Integer[]::new);
+	    
+		if(projectIds!=null && projectIds.length>0) {
+			List<ProjectHolder> holders = AON.getProjectHolderList(api.getDomain(), api.getUser(),  
+					f-> f.getProjectProperty().in(projectIds)
+					.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(ts)))
+			);
+			
+			projects.forEach(project->
+				holders.stream()
+				.filter(t-> t.getProject().equals(project.getId()))
+				.forEach(project::addProjectHolder)
+			);
+		}
+	}
 	
     private static Filter projectFilter(AonApiData api, ProjectProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId())

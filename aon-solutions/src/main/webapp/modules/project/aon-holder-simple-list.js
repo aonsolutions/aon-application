@@ -1,5 +1,5 @@
 import { AonSimpleList } from '../../components/aon-simple-list.js';
-import { MATERIAL_ICONS, MSG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 import { ProjectHolder } from '../../models/project/ProjectHolder.js';
 import { getProjectsHolders, saveProjectHolder, deleteProjectHolder } from '../../services/projectService.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
@@ -13,6 +13,7 @@ export class AonHolderSimpleList extends AonSimpleList {
     option;
     workgroups;
     taskHolders;
+    data;
 
     constructor () {
         super();
@@ -20,7 +21,13 @@ export class AonHolderSimpleList extends AonSimpleList {
 
     connectedCallback () {
         this.initialize();
-        this.init();
+
+        if(this.data.length){
+            this.initData();
+        } else {
+            this.init();
+        }
+
         this.addEventListener('more', () => {
     		if(this.more)
     			this.loadMore()
@@ -31,6 +38,7 @@ export class AonHolderSimpleList extends AonSimpleList {
         this.more = false;
         this.workgroups = [];
         this.taskHolders = [];
+        this.data = this.data || [];
     }
 
     loadMore() {
@@ -57,6 +65,15 @@ export class AonHolderSimpleList extends AonSimpleList {
         });
     }
 
+    initData() {
+        this.initialize();
+        this.build();
+
+        this.data.forEach((holder, i) => {
+            this.addRow(this.parseHolderData(holder, i));
+        })
+    }
+
     addRow(holder, i) {
         let liValue = {
             icon: holder.icon,
@@ -79,26 +96,37 @@ export class AonHolderSimpleList extends AonSimpleList {
         this.filter = filter;
 	}
 
+    setData(data){
+        this.data = data;
+    }
+
     async getData(filter){
         try {
             const resp = await getProjectsHolders(filter);
-            return resp.map(holder=>{
-                const taskHolderName = holder.taskHolder && holder.taskHolder.name ? holder.taskHolder.name : undefined;
-                const workgroupName  = holder.workgroup && holder.workgroup.description ? holder.workgroup.description : undefined;
-
-                holder.icon = taskHolderName ? MATERIAL_ICONS.PERSON : MATERIAL_ICONS.PEOPLE;
-                holder.title = taskHolderName || workgroupName;
-                holder.date = AonDateUtils.setDate(holder.start_date);
-                return holder;
-            });
+            return resp.map(holder=> this.parseHolderData(holder));
         } catch (error) {
             this.showError(error);
         } 
     }
 
-    buildAdd(h){
-        let holder = new ProjectHolder(h);
-        ProjectUtils.buildDialogHolder(this, holder);
+    parseHolderData(holder){
+        const taskHolderName = holder.taskHolder && holder.taskHolder.name ? holder.taskHolder.name : undefined;
+        const workgroupName  = holder.workgroup && holder.workgroup.description ? holder.workgroup.description : undefined;
+
+        holder.icon  = taskHolderName ? MATERIAL_ICONS.PERSON : MATERIAL_ICONS.PEOPLE;
+        holder.title = taskHolderName || workgroupName;
+
+        if(holder.end_date){
+            holder.date = AonDateUtils.setDate(holder.start_date)+ " - "+AonDateUtils.setDate(holder.end_date);
+        } else {
+            holder.date = AonDateUtils.setDate(holder.start_date);
+        }
+
+        return holder;
+    }
+
+    buildAdd(holder){
+        ProjectUtils.buildDialogHolder(this, new ProjectHolder(holder));
     }
 
     async getWorkgroups(){
@@ -123,6 +151,7 @@ export class AonHolderSimpleList extends AonSimpleList {
             await saveProjectHolder(holder);
             this.showMessage();
             this.init();
+            this.dispatchEvent(new Event(EVENT.CHANGE));
         } catch (error) {
             this.showError(error);
         }
@@ -136,6 +165,7 @@ export class AonHolderSimpleList extends AonSimpleList {
             await deleteProjectHolder(holder);
             this.showToast({ message: MSG.DELETED_DATA });
             this.init();
+            this.dispatchEvent(new Event(EVENT.CHANGE));
           } catch (error) {
             this.showToast(error);
           }

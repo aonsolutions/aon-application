@@ -42,7 +42,7 @@ export class AonProjectList extends AonElement {
 	build() {
 		this.TABLE = new AonTable();
 		this.TABLE.style.width = "100%";
-		this.TABLE.id = 'aonRegistryTable';
+		this.TABLE.id = 'aoProjectListTable';
 
 		if(this.registry){
 			this.buildHolderTable();
@@ -63,7 +63,8 @@ export class AonProjectList extends AonElement {
 		this.appendChild(this.TABLE);
 		this.TABLE.addColumn(MSG.TYPE, 'string', 'typeName', '20%');
 		this.TABLE.addColumn(MSG.NAME, 'string', 'name', '40%');
-		this.TABLE.addColumn(MSG.HOLDER, 'string', 'registryName', '40%');
+		this.TABLE.addColumn(MSG.HOLDER, 'string', 'registryName', '38%');
+		this.TABLE.addColumn("Opción", "fn", "option", "2%");
 	}
 
 	buildHolderTable(){
@@ -75,7 +76,8 @@ export class AonProjectList extends AonElement {
 		div.appendChild(this.TABLE);
 		this.TABLE.addColumn(MSG.TYPE, 'string', 'typeName', '30%');
 		this.TABLE.addColumn(MSG.DATE, 'date', 'date', '20%');
-		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"string", width:"5%", id:"lettersHtml"}, 
+		this.TABLE.addColumn("Asesores", 'list', 'projectHolders', '30%');
+		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"string", width:"5%", id:"option"}, 
 		()=>{
 			let project = new Project();
 			if(this.registry){
@@ -83,6 +85,7 @@ export class AonProjectList extends AonElement {
 			}
 			ProjectUtils.buildDialogProject(this, project);
 		});
+		
 
         this.HOLDERS_DIV = this.createElement(TAG.DIV);
         div.appendChild(this.HOLDERS_DIV);
@@ -98,7 +101,8 @@ export class AonProjectList extends AonElement {
 				if(projects.length > 0)
 					this.more = true;
 				projects.forEach((project) => {
-					this.TABLE.addRow(project, () => this.buildProject(project), (e) => this.aonProjectContextMenu(e, project));
+					project.option  = this.getOptions(project);
+					this.TABLE.addRow(project, () => this.buildProject(project));
 				});
 			});
 		}
@@ -106,11 +110,12 @@ export class AonProjectList extends AonElement {
 
 	init() {
 		if(this.TABLE) {
-			this.TABLE.removeRows();
 			this.getData(this.getFilter())
 			.then(projects => {
+				this.TABLE.removeRows();
 				projects.forEach((project) => {
-					this.TABLE.addRow(project, () => this.buildProject(project), (e) => this.aonProjectContextMenu(e, project));
+					project.option  = this.getOptions(project);
+					this.TABLE.addRow(project, () => this.buildProject(project));
 				});
 			});	
 		}
@@ -124,6 +129,9 @@ export class AonProjectList extends AonElement {
 			.map(p =>{
 				p.typeName = p.type.description;
 				p.registryName = p.registry.name;
+				if(p.projectHolders && p.projectHolders.length){
+					p.projectHolders = p.projectHolders.map(holder => this.parseHolderData(holder));
+				}
 				return p;
 			});
 		} catch (error) {
@@ -142,6 +150,13 @@ export class AonProjectList extends AonElement {
 			this.getApplication().setContent(aonProject);
 		}
 	}
+
+	parseHolderData(holder){
+        const taskHolderName = holder.taskHolder && holder.taskHolder.name ? holder.taskHolder.name : undefined;
+        const workgroupName  = holder.workgroup && holder.workgroup.description ? holder.workgroup.description : undefined;
+        holder.name = taskHolderName || workgroupName;
+        return holder;
+    }
 
 	buildHolders(project) {
         this.HOLDERS_DIV.innerHTML = "";
@@ -193,9 +208,18 @@ export class AonProjectList extends AonElement {
 
 	loadHolderList(project) {
 		const id = "holderList";
+
 		let holderList = this.getElement(id) || new AonHolderSimpleList();
         holderList.id = id;
-		holderList.filter = {project: project.id, active:true}
+		holderList.filter = {project: project.id, active:true};
+		holderList.addEventListener(EVENT.CHANGE,() => {
+			this.init();
+		});
+
+		// let projectHolders = project.projectHolders;
+		// if(projectHolders && projectHolders.length){
+		// 	holderList.setData(projectHolders);
+		// }
   
         return holderList;
     }
@@ -238,40 +262,35 @@ export class AonProjectList extends AonElement {
 		});
 	}
 
-	aonProjectContextMenu(e, project) {
-		e.preventDefault();
-		e.stopPropagation();
-		let d = this.getApplication().getOptionDialog();
-		let rect = e.target.getBoundingClientRect();
-    	let x = e.clientX - rect.left;
-		let y = e.clientY - rect.top;
+	getOptions(project) {
+		let option = [
+			{
+				...ACTION.EDIT,
+				fn: () => ProjectUtils.buildDialogProject(this,  new Project(project))
+			},
+			{
+				...ACTION.EDIT,
+				name:"Asesores",
+				fn: () => this.buildProject(project)
+			},
+			{
+				...ACTION.DELETE,
+				fn: () => this.onDeleteProject(project)
+			}
+		];
 
-	    const top  = rect.top + y;
-	    const left = rect.left + x;
-
-		let edit = ACTION.EDIT;
-		edit.fn = () =>{
-			ProjectUtils.buildDialogProject(this,  new Project(project))
-		};
-
-		let remove = ACTION.DELETE;
-		remove.fn = () => this.onDeleteProject(project);
-
-		let actions = [edit, remove];
-		
-		d.setMenuOptions(actions, top, left);
-		d.open();
+		return option;
 	}
 
 	async getProjectTypes(){
-		if(!this.projectTypes.length){
+		// if(!this.projectTypes.length){
 			const types = await getProjectTypes({})
 			.catch((error)=> {
 				this.showError(error);
 				return [];
 			});
 			this.projectTypes = types.map((r) => ({...r, name: r.description, value: r.id}));
-		}
+		// }
 		return this.projectTypes;
 	}
 

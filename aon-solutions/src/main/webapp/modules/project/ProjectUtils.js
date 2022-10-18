@@ -8,7 +8,6 @@ import { deleteProjectType, saveProjectType } from "../../services/projectServic
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 
-
 /**
  * 
  * @param {AonProjectList} parent 
@@ -21,7 +20,9 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
     dialog.width = '40%';
     
     dialog.clear();
-    dialog.setTitle(MSG.ADD+" expediente");
+
+    const title = (project && project.id ? MSG.EDIT : MSG.ADD)+" expediente";
+    dialog.setTitle(title);
 
     let div = document.createElement('div');
     div.style.display = "flex";
@@ -58,7 +59,7 @@ const buildFormProject = (parent, div, project) => {
     type.autocomplete = true;
     type.id = "projectType2"+idRandom;
     div.appendChild(type);
-    
+
     let workgroup = new AonSelect();
     workgroup.title = MSG.WORKGROUP;
     workgroup.autocomplete = true;
@@ -74,23 +75,18 @@ const buildFormProject = (parent, div, project) => {
     taskHolder.multiple = true;
     div.appendChild(taskHolder);
 
-    parent.getProjectTypes().
-    then(types=>{
-        const typeId = project.getType().getId() || 0;
-
+    parent.getProjectTypes().then(types=>{
         type.setOptions(types);
 
+        const typeId = project.getType().getId() || 0;
         if(typeId){
             type.value = typeId;
         } 
 
         type.addEventListener(EVENT.CHANGE, () => {
-    
             const detail = type.getDetail();
             project.setType(detail);
-
             project.setName(detail.description);
-
         });
 
         if(!typeId && types.length===1){
@@ -99,24 +95,22 @@ const buildFormProject = (parent, div, project) => {
     });
 
     parent.getWorkgroups().then(wgs=>{
-        const workgroupId = projectHolder.getWorkgroup().getId();
-
         workgroup.setOptions(wgs);
 
+        const workgroupId = projectHolder.getWorkgroup().getId();
         if(workgroupId){
             workgroup.value = workgroupId;
         } 
-
         workgroup.addEventListener(EVENT.CHANGE, () =>{
             projectHolder.setWorkgroup(workgroup.getDetail());
-            
+
             onChangeTaskHolder(project, workgroup, taskHolder.getSelectable())
         });
     });
-
-
+ 
     parent.getTaskHolders().then(ths=>{
-        taskHolder.setOptions(ths);
+        let options = ths.filter(th => !isRepeatTaskHolder(project, th));
+        taskHolder.setOptions(options);
         taskHolder.addEventListener(EVENT.SELECT, () => {
             onChangeTaskHolder(project, workgroup, taskHolder.getSelectable())
         });
@@ -154,9 +148,12 @@ const buildDialogHolder = (parent, holder) => {
     const dialog = application.getDialog();
 
     dialog.width = '40%';
-    
+
     dialog.clear();
-    dialog.setTitle(MSG.ADD+" "+MSG.ADVISER);
+
+    const title = (holder && holder.id ? MSG.EDIT : MSG.ADD)+" "+MSG.ADVISER;
+
+    dialog.setTitle(title);
 
     let div = document.createElement('div');
     div.style.display = "flex";
@@ -207,17 +204,35 @@ const buildFormHolder = (parent, div, holder) => {
     taskHolder.default = true;
     div.appendChild(taskHolder);
 
+    let datesDiv = document.createElement("div");
+    datesDiv.style.display   = "flex";
+    datesDiv.style.columnGap = "10px";
+    div.appendChild(datesDiv);
+
     let startDate = new AonDate();
-    startDate.id = "date2"+idRandom;
+    startDate.id = "date2startDate"+idRandom;
     startDate.title = "Desde"; 
+    startDate.style.width = "50%";
     startDate.addEventListener(EVENT.CHANGE, () => {
         holder.setStartDate(startDate.value);
     });
-    div.appendChild(startDate);
+    datesDiv.appendChild(startDate);
 
-    
     if(holder.getStartDate()){
         startDate.value = AonDateUtils.formatDateOrigin(holder.getStartDate());
+    }
+
+    let endDate = new AonDate();
+    endDate.id = "date2EndDate"+idRandom;
+    endDate.title = `Hasta (${MSG.OPTIONAL})`; 
+    endDate.style.width = "50%";
+    endDate.addEventListener(EVENT.CHANGE, () => {
+        holder.setEndDate(endDate.value);
+    });
+    datesDiv.appendChild(endDate);
+    
+    if(holder.getEndDate()){
+        endDate.value = AonDateUtils.formatDateOrigin(holder.getEndDate());
     }
 
     parent.getWorkgroups().then(wgs=>{
@@ -294,6 +309,10 @@ const projectTypeDelete = (parent, type) => {
         }
       application.stopLoading();
     });
+}
+
+const isRepeatTaskHolder = (project, th) => {
+    return project.getProjectHolders().some(holder => holder.taskHolder && holder.taskHolder.id && holder.taskHolder.id == th.id);
 }
 
 export const ProjectUtils = {

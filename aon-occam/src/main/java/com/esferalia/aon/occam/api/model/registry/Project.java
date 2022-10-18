@@ -190,12 +190,17 @@ public class Project implements Serializable {
 		}
 		return projectHolders;
  	}
-	
+
 	public Project setProjectHolders(List<ProjectHolder> projectHolders) {
 		setDirty(true);
 		this.projectHolders = projectHolders;
 		return this;
 	}
+	
+	public void addProjectHolder(ProjectHolder projectHolder) {
+		setDirty(true);
+		getProjectHolders().add(projectHolder);
+ 	}
 	
 	public boolean isDirty() {
 		return dirty;
