@@ -31,6 +31,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
+import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
@@ -318,18 +319,28 @@ public class ConsoleDAO {
 				
 				@Override
 				public Boolean visitNewValue() {
+					System.out.println( "visitNewValue()" );
 					Table<?> table = AON_MASTER.getTable(cm.getTable());
 					TableField<?, Integer> pkField = getPkField(cm.getTable());
 					Field<?> fkField = table.field( cm.getFkColumn() );
-					System.out.println(
-						updateField( ctx.getDslContext().update(table) , fkField, cm.getField().getNewValue())
-							.where(pkField.eq(cm.getPkId()))
-							.getSQL(ParamType.INLINED) 
-					);
-					int count = updateField( ctx.getDslContext().update(table) , fkField, cm.getField().getNewValue())
-						.where(pkField.eq(cm.getPkId()))
-						.execute();
-					return (count>0);
+					try {
+						System.out.println(
+							updateField( ctx.getDslContext().update(table) 
+								, fkField
+								, fromString( cm.getField().getType(), cm.getField().getNewValue()))
+								.where(pkField.eq(cm.getPkId()))
+								.getSQL(ParamType.INLINED) 
+						);
+						int count = updateField( ctx.getDslContext().update(table) 
+								, fkField
+								, fromString( cm.getField().getType(), cm.getField().getNewValue()))
+								.where(pkField.eq(cm.getPkId()))
+								.execute();
+						return (count>0);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw e;
+					}
 				}
 				
 				private <T> UpdateSetMoreStep<?> updateField(UpdateSetFirstStep<?> update, Field<T> field, Object value) {
@@ -369,13 +380,98 @@ public class ConsoleDAO {
 		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).getPrimaryKey().getFields().get(0);
 	}
 	
-	public static ConsoleTableRow viewRow(CloseableAONContext ctx, String schema, String tableName, Integer id) {
-		ConsoleTableRow tableRow = new ConsoleTableRow()
-			.setSchema(schema)
-			.setTable( tableName )
-			.setId( id );
+	public static ConsoleTableRow getTableRow(CloseableAONContext ctx, ConsoleTableRow params) {
+		ConsoleTableRow tableRow = getTableRowMetadata( ctx, params );
+		Table<?> table = AON_MASTER.getTable(params.getTable());
+		List<Field<?>> selectedFields = new LinkedList<>();
+		tableRow.getFields()
+			.values()
+			.stream()
+			.filter( f -> f.getType() != ConsoleTableFieldType.BINARY)
+			.forEach( f -> selectedFields.add(table.field( f.getColumn() ) ));
+		Optional<Record> rec = ctx.getDslContext().select( selectedFields )
+			.from(table)
+			.where( getConditions(params))
+			.limit(1)
+			.stream()
+			.findFirst();
+		if (rec.isPresent()) {
+			Field<?> pkField = getPkField(params.getTable());
+			tableRow.setId( (Integer) rec.get().getValue(pkField) );
+			selectedFields	
+				.stream()
+				.forEach( field -> tableRow.getField( field.getName() ).setValue( toString(
+						tableRow.getField( field.getName() ).getType(),
+						rec.get().getValue(field)) ));
+			return tableRow; 
+		} 
+		return null;
+	}
+	
+	private static ConsoleTableFieldType getConsoleTableFieldType(Field<?> field) {
+		if (field.getDataType() == null ) return null;
+		if (field.getDataType().getSQLDataType().isString()) return ConsoleTableFieldType.STRING;
+		else if (field.getDataType().getSQLDataType() == SQLDataType.DOUBLE) return ConsoleTableFieldType.DOUBLE;
+		else if (field.getDataType().getSQLDataType() == SQLDataType.DECIMAL) return ConsoleTableFieldType.DECIMAL;
+		else if (field.getDataType().getSQLDataType() == SQLDataType.TINYINT) return ConsoleTableFieldType.BYTE;
+		else if (field.getDataType().getSQLDataType() == SQLDataType.SMALLINT) return ConsoleTableFieldType.SHORT;
+		else if (field.getDataType().getSQLDataType().isInteger()) return ConsoleTableFieldType.INTEGER;
+		else if (field.getDataType().getSQLDataType().isDate()) return ConsoleTableFieldType.DATE;
+		else if (field.getDataType().getSQLDataType().isTimestamp()) return ConsoleTableFieldType.TIMESTAMP;
+		else if (field.getDataType().getSQLDataType().isBinary()) return ConsoleTableFieldType.BINARY;
 		
-		Table<?> table = AON_MASTER.getTable(tableName);
+		throw new AonCoreException("El tipo SQL [" + field.getDataType().getSQLDataType().getName() + "] no está soportado.");
+	}
+	private static Object fromString(ConsoleTableFieldType type, String value) {
+		if (type== null) return null;
+		if (value == null) return null;
+		return type.visit(new ConsoleTableFieldType.Visitor<Object>() {
+			@Override public Object visitString() { return value; }
+			@Override public Object visitByte() { return  AonNumberUtils.toByte( value); }
+			@Override public Object visitShort() { return  AonNumberUtils.toShort( value); }
+			@Override public Object visitInteger() { return  AonNumberUtils.toInteger( value); }
+			@Override public Object visitDouble(){ return  AonNumberUtils.toDouble( value); }
+			@Override public Object visitDecimal(){ return  BigDecimal.valueOf( AonNumberUtils.toDouble( value) ); }
+			@Override public Object visitDate() {return AonDateUtils.toSql( AonDateUtils.simpleParse( value ) ); }
+			@Override public Object visitTimestamp() {return AonDateUtils.dateTimeParse( value ); }
+			@Override public Object visitBinary() { return null; }
+		});
+	}
+	
+	private static String toString(ConsoleTableFieldType type, Object value) {
+		if (type== null) return null;
+		if (value == null) return null;
+		return type.visit(new ConsoleTableFieldType.Visitor<String>() {
+
+			@Override public String visitString() { return Objects.toString(value, null ); }
+			@Override public String visitByte() { return visitNumber(); }
+			@Override public String visitShort() { return visitNumber(); }
+			@Override public String visitInteger() { return visitNumber(); }
+			@Override public String visitDouble() { return visitNumber(); }
+			@Override public String visitDecimal() { return visitNumber(); }
+			@Override public String visitDate() {return AonDateUtils.simpleFormat( (Date) value );}
+			@Override public String visitTimestamp() {return AonDateUtils.dateTimeFormat( (Date) value );}
+			@Override public String visitBinary() {return "<BLOB>";}
+			
+			private String visitNumber() { return AonNumberUtils.toString( (Number) value); }
+
+		});
+	}
+
+	public static String[] getAonTables() {
+		return AonMaster.AON_MASTER.getTables()
+			.stream()
+			.map( table -> table.getName() )
+			.toArray(tableName -> new String[tableName]);
+	}
+
+	public static ConsoleTableRow getTableRowMetadata(CloseableAONContext ctx, ConsoleTableRow params) {
+		ConsoleTableRow tableRow = new ConsoleTableRow()
+				.setSchema(params.getSchema())
+				.setTable( params.getTable() )
+				.setId( params.getId() );
+			
+		Table<?> table = AON_MASTER.getTable(params.getTable());
 		Arrays.stream( table.fields() )
 			.map( field -> new ConsoleTableField().setColumn( field.getName() ).setType( getConsoleTableFieldType(field)))
 			.forEach( tableRow::add );
@@ -398,53 +494,41 @@ public class ConsoleDAO {
 						;		
 				}
 			});  
-			;
-		;
-		List<Field<?>> selectedFields = new LinkedList<>();
-		tableRow.getFields()
-			.values()
-			.stream()
-			.filter( f -> f.getType() != ConsoleTableFieldType.BINARY)
-			.forEach( f -> selectedFields.add(table.field( f.getColumn() ) ));
-		
-		TableField<?, Integer> pkField = getPkField(tableName);
-		Optional<Record> rec = ctx.getDslContext().select( selectedFields )
-			.from(table)
-			.where(pkField.eq(id))
-			.limit(1)
-			.stream()
-			.findFirst();
-			
-		if (rec.isPresent()) {
-			selectedFields	
-				.stream()
-				.forEach( field -> tableRow.getField( field.getName() ).setValue( toSerializable(rec.get().getValue(field)) ));
-			return tableRow; 
-		} 
-		return null;
+		return tableRow;
 	}
 
-	private static ConsoleTableFieldType getConsoleTableFieldType(Field<?> field) {
-		if (field.getDataType() == null ) return null;
-		if (field.getDataType().getSQLDataType().isString()) return ConsoleTableFieldType.STRING;
-		else if (field.getDataType().getSQLDataType().isNumeric() &&
-				field.getDataType().getSQLDataType() == SQLDataType.DOUBLE ) return ConsoleTableFieldType.DECIMAL;
-		else if (field.getDataType().getSQLDataType().isNumeric() &&
-			!field.getDataType().getSQLDataType().hasPrecision()) return ConsoleTableFieldType.NUMBER;
-		else if (field.getDataType().getSQLDataType().isDate()) return ConsoleTableFieldType.DATE;
-		else if (field.getDataType().getSQLDataType().isTime()) return ConsoleTableFieldType.TIMESTAMP;
-		else if (field.getDataType().getSQLDataType().isBinary()) return ConsoleTableFieldType.BINARY; 
-		return null;
-	}
-
-	private static String toSerializable(Object value) {
-		if (value == null) return null;
-		if (value instanceof Byte) {
-			return AonNumberUtils.toString( (Byte) value);
-		} else if (value instanceof Short) {
-			return AonNumberUtils.toString( (Short) value);
-		}
-		return Objects.toString(value, null ) ;
+	private static Condition add(Condition left, Condition right) {
+		return left == null ? right : left.and(right);
 	}
 	
+	private static <T> Condition getCondition(Field<T> field, Object value ) {
+		return field.eq( field.getType().cast( value ) );
+	}
+
+	private static Condition getConditions(ConsoleTableRow params) {
+		
+		Condition c = null;
+		if (params.getFields() != null && !params.getFields().isEmpty() ) {
+			LinkedList<Condition> conditions =  params.getFields().values()
+				.stream()
+				.filter( f -> AonStringUtils.isNotEmpty( f.getValue() ))
+				.map( f -> getCondition(
+					AON_MASTER.getTable(params.getTable()).field( f.getColumn() )
+					,fromString(f.getType(), f.getValue())))
+				.collect(Collectors.toCollection(LinkedList::new));
+			if (conditions != null && !conditions.isEmpty()) {
+				for (Condition cc : conditions) {
+					c = add(c,cc);
+				}
+			}
+		}
+		if ( params.getId() != null) {
+			TableField<?, Integer> pkField = getPkField(params.getTable());
+			c = add( c, pkField.eq(params.getId()));
+		}
+		if (c == null) {
+			throw new AonCoreException("No se ha indicado ninguna condición");
+		}
+		return c;
+	}
 }

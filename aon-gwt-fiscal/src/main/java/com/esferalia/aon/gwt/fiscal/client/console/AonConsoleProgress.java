@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.console;
 import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -266,33 +267,37 @@ class AonConsoleProgress extends DockLayoutPanel {
 
 				private void showPkRow(JsConsoleDomainMessage domainMessage) {
 					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage, null);
-					showRow(cm.getSchema(), cm.getTable(),cm.getPkId());
+					ConsoleTableRow row = new ConsoleTableRow()
+							.setSchema(cm.getSchema())
+							.setTable(cm.getTable())
+							.setId(cm.getPkId());
+					showRow( row );
 				}
 
 				private void showFkRow(JsConsoleDomainMessage domainMessage) {
 					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage, null);
-					showRow(cm.getSchema(), cm.getFkTable(),cm.getFkId());
+					ConsoleTableRow row = new ConsoleTableRow()
+						.setSchema(cm.getSchema())
+						.setTable(cm.getTable())
+						.setId(cm.getFkId());
+					showRow(row);
 				}
 
-				private void showRow(String schema, String tableName, Integer id) {
-					
-					ConsoleModule.CONSOLE_SERVICE.viewRow(schema, tableName, id
-							,new AsyncCallback<ConsoleTableRow>() {
+				private void showRow(ConsoleTableRow row) {
+					ConsoleModule.CONSOLE_SERVICE.getTableRow(row ,new AsyncCallback<ConsoleTableRow>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessageDialog.error(caught.getMessage());
+						}
 
-								@Override
-								public void onFailure(Throwable caught) {
-									AonMessageDialog.error(caught.getMessage());
-								}
-
-								@Override
-								public void onSuccess(ConsoleTableRow tableRow) {
-									if (tableRow == null) {
-										AonMessageDialog.error("Fila no encontrada");	
-									} else {
-										AonConsoleProgress.this.showRow(tableRow);
-									}
-								}
-
+						@Override
+						public void onSuccess(ConsoleTableRow tableRow) {
+							if (tableRow == null) {
+								AonMessageDialog.error("Fila no encontrada");	
+							} else {
+								AonConsoleProgress.this.showRow(tableRow);
+							}
+						}
 					});
 					
 				}
@@ -375,7 +380,10 @@ class AonConsoleProgress extends DockLayoutPanel {
 	}
 	
 	private void showRow(ConsoleTableRow tableRow) {
-		AonConsoleRowViewer popup = new AonConsoleRowViewer( tableRow );
+		AonCustomPopup popup = new AonCustomPopup(true); 
+		popup.setWidth("600px");
+		popup.setHeight("600px");
+		popup.add(new ConsoleRowQueryViewer( tableRow ));
 		popup.center();
 		popup.show();
 	}

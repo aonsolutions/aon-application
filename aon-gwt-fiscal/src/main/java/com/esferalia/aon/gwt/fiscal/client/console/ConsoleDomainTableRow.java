@@ -56,6 +56,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private AonTableButton infoButton;
 	private AonTableButton remoteAccessButton;
 	private AonTableButton duplicateButton;
+	private AonTableButton editButton;
 	
 	
 	
@@ -161,6 +162,8 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		duplicateButton= new AonTableButton(AON.MSG.duplicate(), AON.CSS.aonIconCopy());		 
 		duplicateButton.addClickHandler(e -> duplicate(domain));
 
+		editButton= new AonTableButton( "Editar datos" , AON.CSS.aonIconEdit());		 
+		editButton.addClickHandler(e -> callback.onEditDomain(id, domain.getDescription()));
 		
 		buttons.addRow()
 			.addCell(deleteButton)
@@ -187,6 +190,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( expirationDateBox )
 			.addCell( buttons )
 			.addCell( remoteAccessButton )
+			.addCell( editButton )
 			.addCell( duplicateButton )
 		;
 
