@@ -10,6 +10,7 @@ import { AonTable } from "../../../components/aon-table.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import Apps from "../../../services/app.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -213,10 +214,14 @@ export class AonPresenceList extends AonElement {
     let options = [{
       name: "Registro de jornada",
       aonIcon: 'aon_excel',
+      permission:true,
+      backgroundColor: Apps.TIMECONTROL.color,
       fn: () => modalReport(this.applicationEl, this, "excel")
     }, {
       name: "Plantilla fichajes",
       aonIcon: 'aon_pdf',
+      permission:true,
+      backgroundColor: Apps.TIMECONTROL.color,
       fn: () => modalReport(this.applicationEl, this, "pdf")
     }];
 

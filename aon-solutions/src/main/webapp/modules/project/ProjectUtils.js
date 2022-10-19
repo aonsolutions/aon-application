@@ -16,10 +16,10 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
  const buildDialogProject = (parent, project) => {
     const application = parent.getApplication();
     const dialog = application.getDialog();
+    dialog.clear();
 
     dialog.width = '40%';
-    
-    dialog.clear();
+    dialog.autoclose = false;
 
     const title = (project && project.id ? MSG.EDIT : MSG.ADD)+" expediente";
     dialog.setTitle(title);

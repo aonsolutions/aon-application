@@ -118,7 +118,7 @@ export class AonAltaDirecta extends AonElement {
         }
 
         if(this.isEdit() && this.isAlta() && this.isManager()) { 
-            toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
+            toolbar.addButton2(ACTION_COMUNICA.BAJA, () => this.openDialogBaja());
         }
     
         if( this.isAlta() || !this.data ){ // ALTA
@@ -616,13 +616,15 @@ export class AonAltaDirecta extends AonElement {
             const codBajaEl = this.getElement("codBaja");
             const frv = this.getElement("frv");
             const asociativeSA = this.getElement("asociativeSA");
-            const resp = await sendBaja({
+            const params = {
                 ...this.data, 
                 fechaBaja: fechaBajaEl.value, 
                 situation: codBajaEl.value, 
                 frv: frv.value ? frv.value : undefined, 
                 asociativeSA: asociativeSA && asociativeSA.value ? asociativeSA.value : undefined
-            });
+            };
+
+            const resp = await sendBaja(params);
 
             this.applicationParentEl._movements = [];
             this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
@@ -634,10 +636,14 @@ export class AonAltaDirecta extends AonElement {
             }
 
             this.back();
+
+            return true;
         } catch (error) {
             this.showToast(error);
         }
         this.applicationEl.stopLoading();
+
+        return false;
     }
 
     async update() {
@@ -707,28 +713,29 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    openDialogBaja(ev){
-		const rect = ev.target.getBoundingClientRect();
-		const x = ev.clientX - rect.left + 180;
-		const y = ev.clientY - rect.top;
-		const top  = rect.top + y;
-		let left = rect.left + x;
-        const dialog = this.applicationEl.getOptionDialog();
-        const content = dialog.getContent();
-        dialog.clear();
-        content.style.textAlign = "center";
-        content.style.width = "250px";
-        dialog.setContentTitle("Dar Baja");
-        const div = createBajaDialogContent();
-        dialog.setContent(div);
-        dialog.openPosition({top, left});
-        
-        if(this.isMobile()) {
-            content.style.left = 0;
-            content.style.right = 0;
-        }
+    openDialogBaja(){
+        let application = this.getApplication();
 
-        const button = this.getElement("btnSubmitBaja");
+        const dialog = application.getDialog();
+        dialog.clear();
+
+        if (!application.isMobile()) 
+            dialog.width = '40%';
+
+        dialog.setTitle("Datos de Baja");
+    
+        dialog.setContent(createBajaDialogContent());
+        dialog.open();
+        
+        const button = dialog.addSendAction(()=>{
+            this.ACTION = "BAJA";
+            this.baja()
+            .then(s=>{
+                if(s){
+                    dialog.close();
+                }
+            });
+        }, MSG.COMMUNICATE);
 
         const fechaEl = this.getElement("fechaBaja");
         fechaEl.value = AonDateUtils.formatDateOrigin(new Date());
@@ -764,11 +771,6 @@ export class AonAltaDirecta extends AonElement {
                 createAsociativeSA();
             }
         });
-
-        button.addEventListener(EVENT.CLICK, ()=>{
-            this.ACTION = "BAJA";
-            this.formSubmit();
-        })
     }
 
     setStyleIconSegSocial(toolbar, id){
