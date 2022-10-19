@@ -352,7 +352,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )";
 
 	private static final String EMBARGO_SQL = "SELECT *"
-			+ ", ( SELECT sum(amount) FROM salary_embargo INNER JOIN salary on ( salary_embargo.salary = salary.id ) WHERE contract_embargo=contract_embargo.id AND issue_date <= ? ) AS "
+			+ ", ( SELECT sum(amount) FROM salary_embargo INNER JOIN salary on ( salary_embargo.salary = salary.id ) WHERE contract_embargo=contract_embargo.id AND issue_date < ? ) AS "
 			+ EMBARGO_PAID + " FROM contract_embargo" + " WHERE contract = ? " + " AND start_date <= ? "
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )" + " ORDER BY start_date"; // ORDER
 																							// BY

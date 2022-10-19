@@ -77,7 +77,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		addEmbargo(aonContext, contract, "TRACE('%f\r\n', (EMBARGADO));EMBARGAR(IMPORTE_EMBARGO)");
+		addEmbargo(aonContext, contract, "TRACE('PENDIENTE: %f\r\n', (IMPORTE_EMBARGO +EMBARGADO));EMBARGAR(IMPORTE_EMBARGO)");
 		
 		
 		addData(aonContext, contract, 
