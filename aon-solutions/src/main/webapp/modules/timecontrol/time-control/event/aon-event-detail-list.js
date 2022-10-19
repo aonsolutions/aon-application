@@ -71,10 +71,6 @@ export class AonEventDetailList extends AonElement {
   }
 
   paintView() {
-    let aonFilter = new AonFilter();
-    aonFilter.id = this.id+"Filter";
-    aonFilter.title = MSG.FILTERS;
-    this.appendChild(aonFilter);
     
     if (this.isMobile()) {
       let aonToolbar =  new AonToolbar();
