@@ -1,4 +1,3 @@
-import * as LS from '../../services/localStorageService.js';
 import { Registry } from '../registry/Registry.js';
 
 export class TaskHolder extends Registry {
@@ -18,7 +17,6 @@ export class TaskHolder extends Registry {
             this.active = taskHolder.active;
             this.costProfile = taskHolder.costProfile;
         } else {
-            this.domain = LS.getDomainId();
             this.active = true;
         }
     }

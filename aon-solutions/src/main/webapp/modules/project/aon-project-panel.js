@@ -1,13 +1,11 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { AonProjectList } from './aon-project-list.js';
 import { AonProject } from './aon-project.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
-import { getProjectTypes, saveProjectType } from '../../services/projectService.js';
-import { AonInput } from '../../components/aon-input.js';
-import * as LS from '../../services/localStorageService.js';
-import { ProjectType } from '../../models/project/ProjectType.js';
+import { getProjectTypes } from '../../services/projectService.js';
+import { ProjectUtils } from './ProjectUtils.js';
 
 export class AonProjectPanel extends AonElement {
 
@@ -36,18 +34,34 @@ export class AonProjectPanel extends AonElement {
 	}
 
     buildToolbar() {
-        this.getApplication().removeToolbarOptions();
-        this.getApplication().addToolbarOption('Add', 'add', () => this.addProject());
+        let application = this.getApplication();
+        let timeOut = undefined;
+        application.removeToolbarOptions();
+        application.addToolbarOption('Add', 'add', () => this.addProject());
+
+        const btnSearch = application.addSearchOption();
+        btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
+            clearTimeout(timeOut);
+            timeOut = setTimeout(() => {
+                this.buildContent({
+                    page: 1,
+                    perPage: 50,
+                    search: detail.search	
+                });
+            }, 300);
+        });
     }
 
     buildSidenav() {
         this.addTypeOptions();
     }
 
-
-    buildContent() {
+    buildContent(filter) {
         let list = new AonProjectList();
         list.id = this.AON_PROJECT_LIST;
+        if(filter){
+            list.filter = filter;
+        }
         this.getApplication().setContent(list);
     }
 
@@ -57,14 +71,12 @@ export class AonProjectPanel extends AonElement {
 		this.getApplication().setContent(aonProject);
     }
 
-    // PROJECT TYPE
-
     addTypeOptions() {
-        this.getApplication().addSidenavOptions2(DocumentalSidenav.TYPES, [], () => this.createType());
-        this.loadTypes();
+        this.getApplication().addSidenavOptions2(DocumentalSidenav.TYPES, [], () => ProjectUtils.buildDialogProjectType(this));
+        this.loadProjectType();
     }
   
-    loadTypes() {
+    loadProjectType() {
         getProjectTypes({}).then(types => {
             this.clearElementById(this.getApplication().SIDENAV + DocumentalSidenav.TYPES.id + 'List');
             types.forEach(item => {
@@ -75,46 +87,17 @@ export class AonProjectPanel extends AonElement {
                     actions: [{
                       id: 'Delete',
                       icon: 'delete',
-                      action: () => this.deleteType(item)
+                      action: () => ProjectUtils.projectTypeDelete(this, item)
                     },{
                       id: 'Edit',
                       icon: 'edit',
-                      action: () => this.editType(item)
+                      action: () =>  ProjectUtils.buildDialogProjectType(this, item)
                     }]
                 };
                 this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.TYPES, option);
            });
        });
     }
-
-    createType() {
-        let d = document.getElementById(this.getApplication().DIALOG);
-        d.clear();
-        d.width = '400px';
-        d.setTitle(MSG.ADD_TYPE);
-        let aonInput = new AonInput();
-        aonInput.id = this.id + 'AddType';
-        aonInput.description = MSG.TYPE;
-        d.setContent(aonInput);
-        d.addAcceptAction(() => {
-            if(!aonInput.value.isEmpty()){
-                let data = new ProjectType().setDescription(aonInput.value);
-                saveProjectType(data).then(() => {
-                    this.loadTypes();
-                });
-            }
-        });
-        d.open();
-    }
-    
-    deleteType() {
-        alert("DELETE TYPE");
-    }
-
-    editType(){
-        alert("EDIT TYPE");
-    }
-
 }
 if(!window.customElements.get(TAG.AON_PROJECT_PANEL)) {
 	window.customElements.define(TAG.AON_PROJECT_PANEL, AonProjectPanel);

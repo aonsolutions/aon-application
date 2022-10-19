@@ -14,9 +14,9 @@ class ScriptTable {
 	private Field<Integer> primaryKey;
 	private List<ForeignKey<Record,?>> references;
 	private HashSet<Field<?>> referenceColumns;
-	private int rows;
-	private int currentRow;
-	private int percent;
+	private int totalProgress;
+	private int progress;
+	private int lastMessagePercent;
 	
 	public ScriptTable(Table<Record> table) {
 		this.table = table;
@@ -24,9 +24,11 @@ class ScriptTable {
 	public Table<Record> getTable() {
 		return table;
 	}
+
 	public String getTableName() {
 		return table.getName();
 	}
+	
 	public Field<Integer> getPrimaryKey() {
 		return primaryKey;
 	}
@@ -34,6 +36,7 @@ class ScriptTable {
 		this.primaryKey = primaryKey;
 		return this;
 	}
+	
 	public List<ForeignKey<Record,?>> getReferences() {
 		return references;
 	}
@@ -49,26 +52,27 @@ class ScriptTable {
 		this.referenceColumns = referenceColumns;
 		return this;
 	}
-	public int getRows() {
-		return rows;
+	
+	public int getTotalProgress() {
+		return totalProgress;
 	}
-	public ScriptTable setRows(int rows) {
-		this.rows = rows;
-		return this;
-	}
-	public int getCurrentRow() {
-		return currentRow;
-	}
-	public ScriptTable setCurrentRow(int currentRow) {
-		this.currentRow = currentRow;
-		return this;
-	}
-	public int getPercent() {
-		return percent;
-	}
-	public ScriptTable setPercent(int percent) {
-		this.percent = percent;
+	public ScriptTable setTotalProgress(int rows) {
+		this.totalProgress = rows;
 		return this;
 	}
 	
+	public int getProgress() {
+		return progress;
+	}
+	public ScriptTable setProgress(int currentRow) {
+		this.progress = currentRow;
+		return this;
+	}
+	
+	public int getLastMessagePercent() {
+		return lastMessagePercent;
+	}
+	public void setLastMessagePercent(int lastMessagePercent) {
+		this.lastMessagePercent = lastMessagePercent;
+	}
 }

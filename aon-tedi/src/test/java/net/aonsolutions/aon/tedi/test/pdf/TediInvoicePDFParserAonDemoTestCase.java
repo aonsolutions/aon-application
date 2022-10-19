@@ -119,7 +119,7 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 					creditor.setDomain(new Domain().setId(DOMAIN_ID));
 					creditor.setDocument(template.getSenderDocument());
 					creditor.setName(template.getSenderName());
-					creditor.setScope(configuration.getAvailableScopes().get(0).getId());
+					creditor.setScope(configuration.getAvailableScopes().get(0));
 					CreditorDAO.save(ctx, creditor);	
 				}
 			} else if (template.getInvoiceType() == InvoiceType.SALES) {
@@ -130,7 +130,7 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 					customer.setDomain(new Domain().setId(DOMAIN_ID));
 					customer.setDocument(template.getReceiverDocument());
 					customer.setName(template.getReceiverName());
-					customer.setScope(configuration.getAvailableScopes().get(0).getId());
+					customer.setScope(configuration.getAvailableScopes().get(0));
 					CustomerDAO.save(ctx, customer);	
 				}
 			}

@@ -4,17 +4,22 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class JsDomain extends JavaScriptObject {
+public class JsConsoleDomain extends JavaScriptObject {
 	
-	protected JsDomain() {
+	protected JsConsoleDomain() {
 	}
 	
-	public final native Integer getId() /*-{
+	private final native Integer id() /*-{
 		return this.id;
 	}-*/;
+	
+	public final Integer getId(){
+		return AonNumberUtils.toInteger("" +  id());
+	}
 	
 	public final native String getName() /*-{
 		return this.name;
@@ -117,6 +122,13 @@ public class JsDomain extends JavaScriptObject {
 	public final Date getModificationDate() {
 		return AonStringUtils.mapIfNotBlank(getModificationDateString(), AonDateUtils::parseDateTime );
 	}
+	
+	public final native Integer getChildCount() /*-{
+		return this.childCount;
+	}-*/;
+	public final native Integer getActiveChildCount() /*-{
+		return this.activeChildCount;
+	}-*/;
 
 	public final boolean isStandalone() {
 		return getParentId() == null && !isDomainManagement();
@@ -125,5 +137,14 @@ public class JsDomain extends JavaScriptObject {
 		return getParentId() == null && isDomainManagement();
 	}
 
+	public final boolean hasChild() {
+		if (getChildCount() == null) return false;
+		Integer cc = AonNumberUtils.toInteger("" + getChildCount());
+		return cc.intValue() > 0;
+	}
+
+	public final native boolean isRemoteAccessEnabled() /*-{
+		return this.remoteAccessEnabled;
+	}-*/;
 	
 }

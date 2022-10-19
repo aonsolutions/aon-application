@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -35,7 +34,6 @@ import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.function.Function;
@@ -73,7 +71,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -97,7 +94,6 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -129,29 +125,33 @@ public class FillerDAO {
 			return buildDomain(r, DOMAIN);
 		}
 		
-		public static Domain buildDomain(Record r, com.esferalia.aon.jooq.tables.Domain domain) {
-			return new Domain()
-				.setId(r.getValue(domain.ID))
-				.setName(r.getValue(domain.NAME))
-				.setDescription(r.getValue(domain.DESCRIPTION))
-				.setParentId(r.getValue(domain.PARENT))
-				.setDomainType(DomainType.safeValueOf(r.getValue(domain.TYPE)))
-				.setScope(r.getValue(domain.SCOPE))
-				.setEnableHeredity(getBoolean(r, domain.ENABLEHEREDITY))
-				.setDomainManagement(getBoolean(r, domain.DOMAINMANAGEMENT))
-				.setDisableDomainManagement(getBoolean(r, domain.DISABLEDOMAINMANAGEMENT))
-				.setMaxDocumentSize(getValue(r, domain.MAXDOCUMENTSIZE))
-				.setMaxTotalDocumentSize(getValue(r, domain.MAXTOTALDOCUMENTSIZE))
-				.setMaxDefinedUsers(r.getValue(domain.MAXDEFINEDUSERS))
-				.setActive(getBoolean(r, domain.ACTIVE))
-				.setOwner(getValue(r, domain.OWNER))
-				.setCreationUser(getValue(r, domain.CREATION_USER))
-				.setCreationDate(getValue(r, domain.CREATION_DATE))
-				.setModificationUser(getValue(r, domain.MODIFICATION_USER))
-				.setModificationDate(getValue(r, domain.MODIFICATION_DATE))
-				.setLastAccessUser(getValue(r, domain.LASTACCESS_USER))
-				.setLastAccessDate(getValue(r, domain.LASTACCESS_DATE))
-				.setExpirationDate(getValue(r, domain.EXPIRATIONDATE))
+		public static Domain buildDomain(Record r, com.esferalia.aon.jooq.tables.Domain domainTable) {
+			return fillDomain(r, new Domain(), domainTable);
+		}
+		
+		public static Domain fillDomain(Record r, Domain domain, com.esferalia.aon.jooq.tables.Domain domainTable) {
+			return domain
+				.setId(r.getValue(domainTable.ID))
+				.setName(r.getValue(domainTable.NAME))
+				.setDescription(r.getValue(domainTable.DESCRIPTION))
+				.setParentId(r.getValue(domainTable.PARENT))
+				.setDomainType(DomainType.safeValueOf(r.getValue(domainTable.TYPE)))
+				.setScope(r.getValue(domainTable.SCOPE))
+				.setEnableHeredity(getBoolean(r, domainTable.ENABLEHEREDITY))
+				.setDomainManagement(getBoolean(r, domainTable.DOMAINMANAGEMENT))
+				.setDisableDomainManagement(getBoolean(r, domainTable.DISABLEDOMAINMANAGEMENT))
+				.setMaxDocumentSize(getValue(r, domainTable.MAXDOCUMENTSIZE))
+				.setMaxTotalDocumentSize(getValue(r, domainTable.MAXTOTALDOCUMENTSIZE))
+				.setMaxDefinedUsers(r.getValue(domainTable.MAXDEFINEDUSERS))
+				.setActive(getBoolean(r, domainTable.ACTIVE))
+				.setOwner(getValue(r, domainTable.OWNER))
+				.setCreationUser(getValue(r, domainTable.CREATION_USER))
+				.setCreationDate(getValue(r, domainTable.CREATION_DATE))
+				.setModificationUser(getValue(r, domainTable.MODIFICATION_USER))
+				.setModificationDate(getValue(r, domainTable.MODIFICATION_DATE))
+				.setLastAccessUser(getValue(r, domainTable.LASTACCESS_USER))
+				.setLastAccessDate(getValue(r, domainTable.LASTACCESS_DATE))
+				.setExpirationDate(getValue(r, domainTable.EXPIRATIONDATE))
 				;	
 		}
 	}
@@ -218,66 +218,6 @@ public class FillerDAO {
 					.setNationality(null) // TODO
 					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)))
 					.setLegalPerson(AonEnumUtils.getBoolean( r.getValue(REGISTRY.TYPE)));			
-		}
-	}
-	
-	/**
-	 * @deprecated  Use SupplierDAO.SupplierFiller
-	 */
-	@Deprecated
-	public static class SupplierFiller implements Function<Record, Supplier> {
-		@Override
-		public Supplier apply(Record r) {
-			Supplier supplier = new Supplier();
-			supplier.setAlias(r.getValue(REGISTRY.ALIAS));
-			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			supplier.setDocumentCountry(null); // TODO
-			supplier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			supplier.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
-			supplier.setId(r.getValue(REGISTRY.ID));
-			supplier.setName(r.getValue(REGISTRY.NAME));
-			supplier.setNationality(null); // TODO
-			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			supplier.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
-			return supplier.setScope(r.getValue(SUPPLIER.SCOPE))
-					.setTariff(r.getValue(SUPPLIER.TARIFF))
-					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
-					.setWithholding(r.getValue(SUPPLIER.WITHHOLDING).shortValue() == 1)
-					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER).shortValue() == 1)
-					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
-					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(SUPPLIER.TRANSACTION).intValue()))
-					.setStatus(RegistryStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
-					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue() == 1)
-					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
-					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
-					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER));				
-		}
-	}
-	
-	/**
-	 * @deprecated  Use CreditorDAO.CreditorFiller
-	 */
-	@Deprecated
-	public static class CreditorFiller implements Function<Record, Creditor> {
-		@Override
-		public Creditor apply(Record r) {
-			Creditor creditor = new Creditor();
-			creditor.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
-			creditor.setId(r.getValue(REGISTRY.ID));
-			creditor.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			creditor.setName(r.getValue(REGISTRY.NAME));
-			return creditor.setScope(r.getValue(CREDITOR.SCOPE))
-					.setAccount(r.getValue(CREDITOR.ACCOUNT))
-					.setWithholding(r.getValue(CREDITOR.WITHHOLDING).shortValue() == 1)
-					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
-					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(CREDITOR.TRANSACTION).intValue()))
-					.setStatus(RegistryStatus.safeValueOf(r.getValue(CREDITOR.STATUS)))
-					.setCreationDate(r.getValue(CREDITOR.CREATION_DATE))
-					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
-					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER));				
 		}
 	}
 	

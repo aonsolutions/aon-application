@@ -412,83 +412,112 @@ export class AonInvoicePanel extends AonElement {
 
 		let d = document.getElementById('aonDialogAddOption');
 
-		let options = [{
+		const newEmitida = {
 			name: 'Emitidas',
+			title:"Emitidas",
 			icon: 'unarchive',
+			permission: true,
+			backgroundColor: "#4472C4",
 			fn: () => this.aonInvoice('emitida')
-		}, {
+		  };
+
+		  const newRecibidas = {
 			name: 'Recibidas',
+			title:"Recibidas",
 			icon: 'archive',
-			fn: () => this.aonInvoice('recibida')
-		}, {
-			name: 'Tickets/Justificantes',
+			permission: true,
+			backgroundColor: "#4472C4",
+			fn : () => this.aonInvoice('recibida')
+		  };
+
+		  const newTicket = {
+			name: "Tickets / Justificantes",
+			title: "Tickets / Justificantes",
 			icon: 'receipt',
-			fn: () => this.aonInvoice('ticket')
-		}];
+			permission: true,
+			backgroundColor: "#4472C4",
+			fn :  () => this.aonInvoice('ticket')
+		  };
+	  
+		let options = [newEmitida, newRecibidas, newTicket];
 		if(ayudat) {
-			options.push({
-					name: 'Importación Selfconta',
-					icon: 'import_export',
-					fn: () => {
-						let div = this.createElement(TAG.DIV);
-						div.id = "aonInvoiceSelfcontaDiv"; 
-			
-						let div2 = this.createElement(TAG.DIV);
-						div2.id = "aonInvoiceSelfcontaDiv2"; 
-						div2.innerHTML = "¿Desea importar las facturas?"
-						div.appendChild(div2);
-
-						let yearSelect = new AonSelect();
-						yearSelect.id = "aonInvoiceSelfcontaYear";
-    					yearSelect.title = MSG.YEAR;
-						yearSelect.options = JSON.stringify([
-							{name:'2022', value:2022},
-							{name:'2021', value:2021},
-							{name:'2020', value:2020},
-							{name:'2019', value:2019},
-							{name:'2018', value:2018}
-						]);
-						div.appendChild(yearSelect);
-
-						let aonApplication = this.getApplication();
-						let d = aonApplication.getDialog();
-						d.clear();
-						if(!this.isMobile()) d.width = '400px';
-						d.setTitle("Importar");
-						d.setContent(div);
-						d.addAcceptAction(async() => {
-							aonApplication.startLoading();
-							try {
-								await selfconta(yearSelect.value);
-								this.showToast({
-									type: 'success',
-									message: 'Datos Importados. Revisa las facturas rechazadas.'
-								});
-							} catch (error) {
-								this.showToast(error);
-							}
-							aonApplication.stopLoading();
-						});
-						d.open();
-					}
-				});
+			let importSelfconta = {
+				name: 'Importación Selfconta',
+				title: 'Importación Selfconta',
+				icon: 'import_export',
+				permission: ayudat,
+				backgroundColor: "#4472C4",
+				fn: () => this.importSelfconta()
+			}
+			options.push(importSelfconta);
 		}
 
 		if(this.isMobile()) {
-			
-			options.push({
+			let uploadFile = {
 				name: MSG.UPLOAD_FILE,
+				title: MSG.UPLOAD_FILE,
 				icon: MATERIAL_ICONS.FILE_UPLOAD,
-				fn: () => this.addInvoiceFile()
-			});
+				permission: true,
+				backgroundColor: "#4472C4",
+				fn :  () => this.addInvoiceFile()
+			}
 
-			options.push({
+			options.push(uploadFile);
+
+			let openCamera = {
 				name: 'Camara',
+				title: 'Camara',
 				icon: 'camera_alt',
-				fn: () => this.openCamera()
-			});
+				permission: true,
+				backgroundColor: "#4472C4",
+				fn :  () => this.openCamera()
+			}
+			options.push(openCamera);
 		}
 		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+	
+	importSelfconta() {
+		let div = this.createElement(TAG.DIV);
+		div.id = "aonInvoiceSelfcontaDiv"; 
+
+		let div2 = this.createElement(TAG.DIV);
+		div2.id = "aonInvoiceSelfcontaDiv2"; 
+		div2.innerHTML = "¿Desea importar las facturas?"
+		div.appendChild(div2);
+
+		let yearSelect = new AonSelect();
+		yearSelect.id = "aonInvoiceSelfcontaYear";
+		yearSelect.title = MSG.YEAR;
+		yearSelect.options = JSON.stringify([
+			{name:'2022', value:2022},
+			{name:'2021', value:2021},
+			{name:'2020', value:2020},
+			{name:'2019', value:2019},
+			{name:'2018', value:2018}
+		]);
+		div.appendChild(yearSelect);
+
+		let aonApplication = this.getApplication();
+		let d = aonApplication.getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("Importar");
+		d.setContent(div);
+		d.addAcceptAction(async() => {
+			aonApplication.startLoading();
+			try {
+				await selfconta(yearSelect.value);
+				this.showToast({
+					type: 'success',
+					message: 'Datos Importados. Revisa las facturas rechazadas.'
+				});
+			} catch (error) {
+				this.showToast(error);
+			}
+			aonApplication.stopLoading();
+		});
 		d.open();
 	}
 

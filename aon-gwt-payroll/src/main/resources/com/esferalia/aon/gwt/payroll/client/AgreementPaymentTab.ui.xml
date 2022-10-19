@@ -31,6 +31,11 @@
 			margin: 0 1rem;
 		}
 		
+		.modify {
+			background-color: lightyellow !important;
+    		border: 0.5px solid yellow !important;
+		}
+		
 	</ui:style>
 	
 	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">

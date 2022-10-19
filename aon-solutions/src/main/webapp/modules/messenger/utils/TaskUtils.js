@@ -176,17 +176,17 @@ const dialogTaskTags = (ev, task) => {
 
     const dialog = aonMessengerChat.getApplication().getOptionDialog();
     dialog.clear();
-    dialog.setContentTitle(MSG.TAGS);
 
     const div = setStyles(document.createElement("div"),{ margin:"5px", display:"flex", flexDirection:"column" });
 
     const tags = aonMessengerChat.getTagsPanel();
     
     const taskTags = task.getTags();
-    
+
     for (let tag of tags) {
         let aonCheckbox = new AonCheckbox();
         aonCheckbox.description = tag.name;
+        aonCheckbox.id = tag.name;
         aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id || tag.name===t.name  ) ? true : false;
         aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
           if(target.checked){
@@ -198,8 +198,8 @@ const dialogTaskTags = (ev, task) => {
         div.appendChild(aonCheckbox);
     }
 
-    dialog.setContent(div);
-    dialog.openPosition({top, left});
+    dialog.setContent(div, top, left);
+    dialog.open();
 }
 
 /**
@@ -339,8 +339,7 @@ const checkFilesAddEventClick = ({id}, parent)=>{
         .forEach(element=>{
             const tagName = element.tagName;
             if(tagName && tagName.toLowerCase() === TAG.IMG){
-                // parent.style.position = "relative";
-                // magnify(element, 3);
+                element.classList.add(CSS.AON_IMG_COMMENT);
             }
 
             let url = element.src || element.href;      
@@ -1134,7 +1133,7 @@ const addInfoDomain = (task, dinamicDiv)=> {
             if(!isCau){
                 const domainName = task.id && company && company.domain && company.domain.name ? company.domain.name : undefined;
                 const domainIsEditable = !domainName && isEditable;
-                let {label, anchor} = createLabelAnchor(MSG.DOMAIN, domainName, false, true);
+                let {label, anchor} = createLabelAnchor(MSG.DOMAIN, domainName, true, domainIsEditable);
                 fn(dinamicDiv, label, {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
                 if(domainIsEditable){
                     anchor.addEventListener(EVENT.INPUT, ({target})=>{

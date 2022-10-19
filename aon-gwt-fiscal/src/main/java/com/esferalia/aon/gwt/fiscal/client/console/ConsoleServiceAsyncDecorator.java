@@ -5,9 +5,12 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
@@ -25,7 +28,7 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void getDomains(DomainParams params, AsyncCallback<LinkedList<Domain>> callback) {
+	public void getDomains(DomainParams params, AsyncCallback<LinkedList<ConsoleDomain>> callback) {
 		AON.start();
 		fsa.getDomains(params, new AsyncCallbackWrapper<>(callback));
 	}
@@ -46,5 +49,35 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback) {
 		AON.start();
 		fsa.changeExpirationDate(params, domainId, expireDate, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.remoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void fix(ConsoleDomainMessage consoleMessage, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.fix(consoleMessage, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback) {
+		AON.start();
+		fsa.getTableRow(row, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback) {
+		AON.start();
+		fsa.getTableRowMetadata(row, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAonTables(AsyncCallback<String[]> callback) {
+		AON.start();
+		fsa.getAonTables(new AsyncCallbackWrapper<>(callback));
 	}
 }

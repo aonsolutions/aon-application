@@ -19,8 +19,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.CONSOLE;
-import com.esferalia.aon.occam.api.json.DomainJSON;
-import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.json.ConsoleDomainJSON;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
@@ -33,7 +33,7 @@ public class ConsoleDomainFlatStreamServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Stream<Domain> stream = null;
+		Stream<ConsoleDomain> stream = null;
 		try {
 			String domainParams = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
 			DomainParams params = JsonParser.parseDomainParams(domainParams);
@@ -43,7 +43,7 @@ public class ConsoleDomainFlatStreamServlet extends HttpServlet {
 			final MutableBoolean first = new MutableBoolean(true);
 			stream =  CONSOLE.getDomains(params);
 			out.write('[');
-			stream.map( DomainJSON::toJSON )
+			stream.map( ConsoleDomainJSON::toJSON )
 				.forEach(json -> write(out,json,first));
 			out.write(']');
 			

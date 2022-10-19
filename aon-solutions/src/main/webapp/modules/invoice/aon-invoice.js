@@ -1,7 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getPaymethod} from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -30,6 +31,8 @@ import { AonSuggestion } from '../../components/aon-suggestion.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonTab } from '../../components/aon-tab.js';
 import { AonAutosizeTextarea } from '../../components/aon-autosize-textarea.js';
+
+import {INVOICE} from  '../../services/app.js';
 
 export class AonInvoice extends AonElement {
 
@@ -272,7 +275,6 @@ export class AonInvoice extends AonElement {
 	}
 
 	focus() {
-		console.log(this.focusId);
 		if(this.focusId)
 			this.getElement(this.focusId).focus();
 	}
@@ -344,37 +346,53 @@ export class AonInvoice extends AonElement {
 			let moreActions = [];
 			if(this.getInvoice().isInbox() ){
 				let remarks = ACTION.REMARKS;
+				remarks.permission = true;
+				remarks.backgroundColor = INVOICE.color;
 				remarks.fn = () => this.addInvoiceRemarks();
 				moreActions.push(remarks);
 			}
 
 			let comment = ACTION.COMMENT;
+			comment.permission = true;
+			comment.backgroundColor = INVOICE.color;
 			comment.fn = () => this.addInvoiceComment();
 			moreActions.push(comment);
 
 			let send = ACTION.SEND_INVOICE;
+			send.permission = true;
+			send.backgroundColor = INVOICE.color;
 			send.fn = () => this.sendInvoice();
 			moreActions.push(send);
 
 			if(!this.getInvoice().isRawdoc()){
 				let rectify = ACTION.RECTIFY_INVOICE;
+				rectify.permission = true;
+				rectify.backgroundColor = INVOICE.color;
 				rectify.fn = () => this.rectifyInvoice();
 				moreActions.push(rectify);
 			}
 
 			let duplicate = ACTION.DUPLICATE_INVOICE;
+			duplicate.permission = true;
+			duplicate.backgroundColor = INVOICE.color;
 			duplicate.fn = () => this.duplicateInvoice();
 			moreActions.push(duplicate);
 			if(this.getInvoice().isInbox() ){
 				let changeType = ACTION.CHANGE_TYPE;
+				changeType.permission = true;
+				changeType.backgroundColor = INVOICE.color;
 				changeType.fn = () => this.changeType();
 				moreActions.push(changeType);
 			}
 			if(!this.getInvoice().isRawdoc() && this.getInvoice().isEmitida()){
 				let sign = ACTION.SIGN_INVOICE;
+				sign.permission = true;
+				sign.backgrounColor = INVOICE.color;
 				sign.fn = () => this.signInvoice();
 				moreActions.push(sign);
 				let face = ACTION.FACTURAE;
+				face.permission = true;
+				face.backgrounColor = INVOICE.color;
 				face.fn = () => this.facturae();
 				moreActions.push(face);
 			}
@@ -701,7 +719,6 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isEmitida()) {
 
 			// ----- SERIE
-			
 			let serie = this.createAonElement(new AonSuggestion(), this.SERIE, MSG.SERIE);
 			table.addCell(serie);
 			serie.setMaxlength(5);
@@ -783,10 +800,9 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isEmitida()) {
 			let customer = new AonCustomerSuggestion();	
 			customer.id = this.REGISTRY;
-			console.log(this.invoice.getRegistry());	
 			customer.showAddress = true;
 			customer.readonly = this.invoice.isReadonly();
-			customer.customer = this.invoice.getRegistry();
+			customer.setCustomer(this.invoice.getRegistry())
 			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
 			table.addCell(customer, '4');	
 
@@ -803,11 +819,22 @@ export class AonInvoice extends AonElement {
 			});
 			registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
 				this.invoice.setRegistry(registry.getRegistry());
-				
 				getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
 					this.invoice.setPaymethod(rpm.paymethod.id);
-					this.invoice.setBankAccount(rpm.rbank.bank_account);
-					this.reload();
+					getPaymethod(rpm.paymethod.id).then(pm => {
+						if(pm.type === 'NEGOTIABLE_DOCUMENT') {
+							getRegistryBanks(this.company.id).then(r => {
+								this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
+								this.reload();
+							});	
+						} else if(pm.type === 'BANK_TRANSFER'){
+							this.invoice.setBankAccount(rpm.rbank.bank_account);
+							this.reload();
+						} else {
+							this.invoice.setBankAccount("");
+							this.reload();
+						}
+					});
 				});
 				if(this.autosave) this.save();
 			});
@@ -1009,15 +1036,18 @@ export class AonInvoice extends AonElement {
 		activity.id = this.ACTIVITY;
 		activity.title = MSG.ACTIVITY;
 		activity.readonly = this.invoice.isReadonly();
+		activity.setAlias("id", "description");
 		activity.addEventListener(EVENT.SELECT, () => {
-			this.invoice.setActivity(activity.value);
+			this.invoice.setActivity(activity.getValueObject());
 			if(this.autosave) this.save();
 		});
 		table.addCell(activity, '2');
 		getCompanyActivities({}).then(activities => {
-			let acts = activities.map(a => { return {value: a.id, name: a.description}});
-			activity.options = JSON.stringify(acts);
-			activity.value = this.invoice.getActivity();
+			if(activities.length > 0) {
+				this.invoice.setActivity(this.invoice.getActivity() || activities[0]);
+				activity.setOptions(activities);
+				activity.value = this.invoice.getActivity().id;
+			}
 		});
 
 		// ----- SURCHARGE
@@ -1148,7 +1178,33 @@ export class AonInvoice extends AonElement {
 
 	onChangeRegistry(registry) { 
 		this.invoice.setRegistry(registry);
-		if(registry.paymethod) this.invoice.setPaymethod(registry.paymethod.paymethod);
+		if(registry.paymethod) {
+			this.invoice.setPaymethod(registry.paymethod.paymethod);
+			this.invoice.finances.forEach((finance, i) => {
+				getPaymethod(finance.paymethod).then(pm => {
+					if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
+						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
+				   		getRegistryBanks(this.company.id).then(r => {
+					   		let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+					   		ba.value = r[0] ? r[0].bank_account : "";
+					   		finance.bank_account = ba.value;
+					   		this.invoice.setFinance(finance, i);
+				   		});	
+			   		} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
+				 		|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
+				   		getRegistryBanks(this.invoice.getRegistry().id).then(r => {
+					   		let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+					   		ba.value = r[0] ? r[0].bank_account : "";
+					   		finance.bank_account = ba.value;
+					   		this.invoice.setFinance(finance, i);
+				   		});
+					} else { 
+						finance.bank_account = "";
+						this.invoice.setFinance(finance, i);
+					}
+				})				
+			});
+		}
 		if(registry.transaction) this.invoice.setTransaction(registry.transaction);
 		if(registry.withholding) this.invoice.setWithholding(registry.withholding);
 		if(registry.surcharge) this.invoice.setSurcharge(registry.surcharge);
@@ -1294,7 +1350,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		description.addEventListener(EVENT.SELECT,(e) => {
-			console.log(e.detail);
 			detail.description = e.detail.name;
 			detail.item = e.detail.item.id;
 			detail.price = e.detail.item.price;
@@ -1412,7 +1467,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		description.addEventListener(EVENT.SELECT,(e) => {
-			console.log(e.detail);
 			detail.description = e.detail.name;
 			detail.item = e.detail.item.id;
 			detail.price = e.detail.item.price;
@@ -1457,7 +1511,7 @@ export class AonInvoice extends AonElement {
 		amount.readonly = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional()) {
+		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
 			let vat = new AonSelect();
 			vat.id = this.DETAIL_VAT + i;
 			vat.title = '%IVA';
@@ -1609,7 +1663,7 @@ export class AonInvoice extends AonElement {
 		prepayment.checked = detail.prepayment;
 
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional()) {
+		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
 			let vat = new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
@@ -1955,13 +2009,27 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 			const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
-			if(pm.type === 'BANK_TRANSFER') {
+			if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
+				 	|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
 				getRegistryBanks(this.company.id).then(r => {
 					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
 					ba.value = r[0] ? r[0].bank_account : "";
 					finance.bank_account = ba.value;
 					this.invoice.setFinance(finance, i);
 				});	
+			} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
+				|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) { 
+				getRegistryBanks(this.invoice.getRegistry().id).then(r => {
+					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+					ba.value = r[0] ? r[0].bank_account : "";
+					finance.bank_account = ba.value;
+					this.invoice.setFinance(finance, i);
+				});
+			} else {
+				let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+				ba.value = "";
+				finance.bank_account = "";
+				this.invoice.setFinance(finance, i);
 			}
 		});
 		let paymethodCell = table.addCell(paymethod);
@@ -2402,6 +2470,12 @@ export class AonInvoice extends AonElement {
 			};
 			sendInvoice2Mail(message).then(() => {});
 		});
+		if(this.invoice.isEmitida()) {
+			getCustomerEmails(this.invoice.getRegistry()).then(emails => {
+				let mail = this.getElement('sendInvoicesMail');
+				mail.value = emails[0] || ''; 
+			});
+		}
 		d.open();
 	}
 

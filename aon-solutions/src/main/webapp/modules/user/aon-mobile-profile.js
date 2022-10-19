@@ -28,7 +28,7 @@ export class AonMobileProfile extends AonElement {
 
 	connectedCallback () {
         this.initialize();
-        getAuth().then((user) => {
+        getAuth({avatar: true}).then((user) => {
             this.build(user);
         });
     }

@@ -224,7 +224,7 @@ public class InvoiceAutoComplete {
 						inv.setRegistry(c.getId());
 					} else {
 						c = CustomerDAO.save(ctx.getContext(), new Customer()
-							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
+							.copy(inv.getRegistryData()).setScope(inv.getScope()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							if(!inv.getAddress().isEmpty())
@@ -242,7 +242,7 @@ public class InvoiceAutoComplete {
 						inv.setRegistry(s.getId());
 					} else {
 						s = SupplierDAO.save(ctx.getContext(), new Supplier()
-							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
+							.copy(inv.getRegistryData()).setScope(inv.getScope()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
 							if ( !inv.getAddress().isEmpty() ) {
@@ -262,7 +262,7 @@ public class InvoiceAutoComplete {
 						inv.setRegistry(c.getId());
 					} else {
 						c = CreditorDAO.save(ctx.getContext(), new Creditor()
-							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
+							.copy(inv.getRegistryData()).setScope(inv.getScope()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 							if(!inv.getAddress().isEmpty())
@@ -282,16 +282,37 @@ public class InvoiceAutoComplete {
 			inv.setRegistryData(registry);
 			if(InvoiceType.SALES.equals(inv.getType())) {
 				CustomerDAO.save(ctx.getContext(), new Customer()
-						.copy(registry).setScope(inv.getScope().getId()));
+						.copy(registry).setScope(inv.getScope()));
 			} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
 				SupplierDAO.save(ctx.getContext(), new Supplier()
-						.copy(registry).setScope(inv.getScope().getId()));
+						.copy(registry).setScope(inv.getScope()));
 			} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
 					|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
 				CreditorDAO.save(ctx.getContext(), new Creditor()
-						.copy(registry).setScope(inv.getScope().getId()));
+						.copy(registry).setScope(inv.getScope()));
 			}	
 		}
+	
+		if(InvoiceType.SALES.equals(inv.getType())) {
+			Customer customer = CustomerDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			if(customer.isEmpty()) {
+				CustomerDAO.save(ctx.getContext(), new Customer()
+					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+			}
+		} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
+			Supplier supplier = SupplierDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			if(supplier.isEmpty()) {
+				SupplierDAO.save(ctx.getContext(), new Supplier()
+					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+			}
+		} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
+				|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
+			Creditor creditor = CreditorDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			if(creditor.isEmpty()) {
+				CreditorDAO.save(ctx.getContext(), new Creditor()
+					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
+			}
+		}	
 	};
 	
 	/**

@@ -31,6 +31,7 @@ import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -89,13 +90,16 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
-			new AgreementsCleanDialog(AgreementCleanType.DELETED) {
+			AgreementsCleanDialog dialog = new AgreementsCleanDialog(AgreementCleanType.DELETED) {
 				
 				@Override
 				public void onAccept() {
 					mainTrashAgreement.getAgreements().getAgreements(s -> {});
 				}
 			};
+			
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -103,13 +107,16 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
-			new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
+			AgreementsCleanDialog dialog = new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
 				
 				@Override
 				public void onAccept() {
 					mainTrashAgreement.getAgreements().getAgreements(s -> {});
 				}
 			};
+			
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -200,6 +207,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		@Override
 		public void execute() {
 			AonDialog dialog = new AonDialog("Descargar convenio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -318,6 +327,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	interface MyStyle extends CssResource {
 		String borderR();
 		String cmdBtn();
+		String dialogGlass();
+		String dialogZIndex();
 		String tabSelected();
 		String tabNotSelected();
 	}
@@ -426,6 +437,15 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
+			
+			@Override
+			public void onSaved() {
+				saveAgreement(agreementInfo -> {
+					agreementSelected = agreementInfo;
+					agreementPreview.setAgreementPreview(agreementSelected);
+					agreementPreview.showSuccess("Convenio", "Convenio guardado correctamente");
+				}, error -> agreementPreview.showError("Error guardando", error.getMessage()));
+			}
 		};
 		
 		agreementLevelTab = new AgreementLevelTab() {
@@ -436,7 +456,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementSelected = agreementInfo;
 					agreementLevelTab.setAgreementLevel(agreementSelected);
 					agreementLevelTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				});
+				}, error -> agreementLevelTab.showError("Error guardando", error.getMessage()));
 			}
 			
 		};
@@ -449,7 +469,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementSelected = agreementInfo;
 					agreementSalaryTableTab.setAgreementSalaryTable(agreementSelected);
 					agreementSalaryTableTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				});
+				}, error -> agreementSalaryTableTab.showError("Error guardando", error.getMessage()));
 			}
 			
 			@Override
@@ -470,7 +490,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 					agreementSelected = agreementInfo;
 					agreementPaymentTab.setAgreementPayment(agreementSelected);
 					agreementPaymentTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				});
+				}, error -> agreementPaymentTab.showError("Error guardando", error.getMessage()));
 			}
 		};
 		
@@ -689,6 +709,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 						@Override
 						public void onSuccess(String message) {
 							AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+							dialog.setGlassStyleName(style.dialogGlass());
+							dialog.addStyleName(style.dialogZIndex());
 							dialog.confirm(new AonAcceptDialogCallback() {
 								
 								@Override
@@ -719,6 +741,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		} else {
 			String message = "Este convenio ser\u00E1 eliminado de forma permanente.<br>\u00BFDesea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
 			AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -738,6 +762,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 						@Override
 						public void onSuccess(Void result) {
+							MainAgreementTab.this.agreements.setViewAgreements(false);
 							MainAgreementTab.this.agreements.resetTypeView();
 							MainAgreementTab.this.agreements.reloadAgreements();
 //							showSelectAgreementMessage();
@@ -783,12 +808,26 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	public void onCollapseMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 0);
 		splitLayoutPanel.animate(500);
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				agreementPreview.setTablesWidthCollapseMenu();
+			}
+		};
+		timer.schedule(500);
 	}
 
 	@Override
 	public void onShowMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 350);
 		splitLayoutPanel.animate(500);
+		Timer timer = new Timer() {
+			@Override
+			public void run() {
+				agreementPreview.setTablesWidth();
+			}
+		};
+		timer.schedule(500);
 	}
 
 	@Override
@@ -803,7 +842,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 			@Override
 			protected void onAccept(String serviAgreementCode, List<Integer> selectedDates) {
-				AonMessagePanel.showLoading(messagePanel, "Descargando convenio desde ServiConvenios...");
+				agreementPreview.showLoading("Descargando convenio desde ServiConvenios...");
 				
 				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, selectedDates,
 						new AsyncCallback<Integer>() {
@@ -816,7 +855,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 					@Override
 					public void onSuccess(Integer importedAgreementId) {
-						AonMessagePanel.showLoading(messagePanel, "Cargando visualizaci\u00F3n convenio...");
+						agreementPreview.showLoading("Cargando visualizaci\u00F3n convenio...");
 						agreements.getAgreementsAndSelectImported(
 								importedAgreementId, 
 								s -> AonMessagePanel.hideMessage(messagePanel));
@@ -826,6 +865,8 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 			
 		};
 		
+		serviAgreementDialog.setGlassStyleName(style.dialogGlass());
+		serviAgreementDialog.addStyleName(style.dialogZIndex());
 		serviAgreementDialog.setMessageVisible(!userRoles.isConvenios());
 	}
 
@@ -872,12 +913,12 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	}
 
 	
-	private void saveAgreement(Consumer<AgreementInfo> success) {
+	private void saveAgreement(Consumer<AgreementInfo> success,  Consumer<Throwable> failure) {
 		impl.setAgreementInfo(agreementSelected, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				agreementPreview.showError("Error guardando convenio", caught.getMessage());
+				failure.accept(caught);
 			}
 
 			@Override
@@ -920,22 +961,65 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	
 	@UiHandler("agreementTab")
 	void onAgreementTabClick(ClickEvent event) {
-		selectAgreementTab();
+		if(!handleSave()) selectAgreementTab();
+		else showWarnSave(accept -> selectAgreementTab());
 	}
 	
 	@UiHandler("paymentTab")
 	void onPaymentTabClick(ClickEvent event) {
-		selectPaymentTab();
+		if(!handleSave()) selectPaymentTab();
+		else showWarnSave(accept -> selectPaymentTab());
 	}
 	
 	@UiHandler("salaryTableTab")
 	void onSalaryTableTabClick(ClickEvent event) {
-		selectSalaryTableTab();
+		if(!handleSave()) selectSalaryTableTab();
+		else showWarnSave(accept -> selectSalaryTableTab());
 	}
 	
 	@UiHandler("levelTab")
 	void onLevelTabClick(ClickEvent event) {
-		selectLevelTab();
+		if(!handleSave()) selectLevelTab();
+		else showWarnSave(accept -> selectLevelTab());
+	}
+	
+	private boolean handleSave() {
+		int widgetIdx = mainDeckPanel.getVisibleWidget();
+		switch (widgetIdx) {
+		case 1:
+			return agreementLevelTab.hasChange();
+		case 2:
+			return agreementSalaryTableTab.hasChange();
+		case 3:
+			return agreementPaymentTab.hasChange();
+		default:
+			return false;
+		}
+	}
+	
+	private void showWarnSave(Consumer<Void> accept) {
+		AonDialog warnDialog = new AonDialog("Cambios sin guardar", new HTMLPanel("Esta abandonando una pesta\u00f1a con cambios no guardados. \u00bfEst\u00e1 seguro de que desea continuar sin guardar\u003f"));
+		warnDialog.setGlassStyleName(style.dialogGlass());
+		warnDialog.addStyleName(style.dialogZIndex());
+		warnDialog.confirm(new AonAcceptDialogCallback() {
+			
+			@Override
+			public void onCancel() {
+				// Nothing to do here
+			}
+			
+			@Override
+			public void onAccept() {
+				// Recargando el convenio para omitir cambios
+				getAgreement(agreementSelected.getId(), agreementInfo -> {
+					agreementSelected = agreementInfo;
+					accept.accept(null);
+				});
+				
+				// NO recargando el convenio para omitir cambios
+				// accept.accept(null);
+			}
+		});
 	}
 	
 	private void selectAgreementTab() {
@@ -952,6 +1036,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.addStyleName(style.tabNotSelected());
 		
 		agreementPreview.setAgreementPreview(agreementSelected);
+		agreementPreview.setHasChange(false);
 	}
 	
 	private void selectLevelTab() {
@@ -968,6 +1053,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.addStyleName(style.tabNotSelected());
 		
 		agreementLevelTab.setAgreementLevel(agreementSelected);
+		agreementLevelTab.setHasChange(false);
 	}
 	
 	private void selectSalaryTableTab() {
@@ -984,6 +1070,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		paymentTab.addStyleName(style.tabNotSelected());
 		
 		agreementSalaryTableTab.setAgreementSalaryTable(agreementSelected);
+		agreementSalaryTableTab.setHasChange(false);
 	}
 	
 	private void selectPaymentTab() {
@@ -1000,6 +1087,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		salaryTableTab.addStyleName(style.tabNotSelected());
 		
 		agreementPaymentTab.setAgreementPayment(agreementSelected);
+		agreementPaymentTab.setHasChange(false);
 	}
 	
 }

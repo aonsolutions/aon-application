@@ -20,6 +20,7 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
@@ -280,17 +281,30 @@ public class TimeControlDAO {
 	private static TimeControlDetail update(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
 		
-		saveLog(ctx, tcd);
+		boolean updateCoordinates = tcd.getCoordinates()!=null && tcd.getCoordinates().getLatitude()!=null &&  tcd.getCoordinates().getLongitude()!=null;
+		
+//		if(!updateCoordinates) {			
+			saveLog(ctx, tcd);
+//		}
 
-		ctx.getDslContext().update(TIMECONTROL)
+		UpdateSetMoreStep<TimecontrolRecord> sets = ctx.getDslContext()
+		.update(TIMECONTROL)
 		.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
 		.set(TIMECONTROL.COMMENTS, tcd.getComments())
 		.set(TIMECONTROL.STATUS, tcd.getStatus().value())
 		.set(TIMECONTROL.LOCATION ,tcd.getLocation()!=null ? tcd.getLocation().getId() : null)
 		.set(TIMECONTROL.MODIFICATION_USER, ctx.getUser())
 		.set(TIMECONTROL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
-		.where(TIMECONTROL.ID.eq(tcd.getId()))
+		;
+		
+		if(updateCoordinates) {
+			sets.set(TIMECONTROL.LATITUDE, tcd.getCoordinates().getLatitude())
+			.set(TIMECONTROL.LONGITUDE, tcd.getCoordinates().getLongitude());
+		}
+		
+		sets.where(TIMECONTROL.ID.eq(tcd.getId()))
 		.execute();		
+		
 		ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
 	
 		return tcd;
@@ -303,19 +317,17 @@ public class TimeControlDAO {
 			);
 		
 			if( timeControl.isDirty(tcd) ) {
-			
-				Integer lastMinId = -1;
-				
 				Optional<TimecontrolRecord> last = select(ctx, 
-					f->f.getDomainProperty().eq(tcd.getDomain().getId())
+					f-> f.getDomainProperty().eq(tcd.getDomain().getId())
 					.and(f.getIdProperty().lt(0))
-				).orderBy(TIMECONTROL.ID.asc()).limit(1)
+				)
+				.orderBy(TIMECONTROL.ID.asc())
+				.limit(1)
 				.fetchOptionalInto(TIMECONTROL);
 				
-				if(last.isPresent()) 
-					lastMinId = last.get().getId() - 1; 
-	
-				timeControl.setId(lastMinId).setModificatedTimeControl(tcd.getId());
+				Integer lastMinId = last.isPresent() ? last.get().getId() : 0;
+
+				timeControl.setId(lastMinId-1).setModificatedTimeControl(tcd.getId());
 				
 				ctx.log().debug("--------INSERT LOG----------");	
 				insert(ctx, timeControl);
@@ -349,7 +361,7 @@ public class TimeControlDAO {
 		TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getTaskHolderProperty().eq(taskHolderId)).and(f.getIdProperty().ge(0)));
 
-		if(tc.getDetail().size() == 0 && TimeControlStatus.IN.equals(tcd.getStatus())  
+		if(tc.getDetail().isEmpty() && TimeControlStatus.IN.equals(tcd.getStatus())  
 			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
 			tc.setInDate(AonDateUtils.getDateWithoutTime(new Date()));
 			tc.setStatus(TimeControlStatus.IN);

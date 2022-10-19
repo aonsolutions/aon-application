@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Auth implements Serializable {
@@ -15,8 +16,11 @@ public class Auth implements Serializable {
 	String document;
 	String phone;
 	String schema;
+	String avatar;
 	
 	LinkedList<User> users;
+	List<AuthDevice> devices;
+	AuthAttach attach;
 	
 	public Auth() { }
 
@@ -107,6 +111,33 @@ public class Auth implements Serializable {
 	
 	public Auth setSchema(String schema) {
 		this.schema = schema;
+		return this;
+	}
+	
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public Auth setAvatar(String avatar) {
+		this.avatar = avatar;
+		return this;
+	}
+	
+	public List<AuthDevice> getDevices() {
+		return devices;
+	}
+	
+	public Auth setDevices(List<AuthDevice> devices) {
+		this.devices = devices;
+		return this;
+	}
+	
+	public AuthAttach getAttach() {
+		return attach;
+	}
+	
+	public Auth setAttach(AuthAttach attach) {
+		this.attach = attach;
 		return this;
 	}
 	

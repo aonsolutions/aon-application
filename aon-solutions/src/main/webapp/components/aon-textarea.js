@@ -164,25 +164,34 @@ export class AonTextArea extends AonElement {
 		return userSelection;
 	} 
 
-	getSelectionForAdd(){
-		const textArea = this.TEXTAREA;
-		const range = this.getSelection().getRangeAt(0);
-		const selectedText = range.extractContents();
+	addValueForSelection(element, parent){
+		if(parent){
+			parent.appendChild(element); //APPEND ELEMENT
+			parent.appendChild(document.createElement(TAG.BR));
+		} else {
+			const textArea = this.TEXTAREA;
+			const html = element.outerHTML;
 
-		if(range && range.toString()!=""){
-			let div = document.createElement(TAG.DIV); 
-			div.appendChild(selectedText);
-			range.insertNode(div);
+			const range = this.getSelection().getRangeAt(0);
+			const selectedText = range.extractContents();
+		
+			if(range && range.toString()!=""){
+				let div = document.createElement(TAG.DIV); 
+				div.appendChild(selectedText);
+				range.insertNode(div);
+		
+				const baseSelection = this.getSelection().baseNode;
+
+				const inside = textArea.contains(baseSelection);
 	
-			const baseSelection = this.getSelection().baseNode;
-	
-			const inside = textArea.contains(baseSelection);
-			if(inside) {//  inside
-				return div; 
+				if(inside) {//  inside
+					document.execCommand("insertHTML", false, html); //APPEND ELEMENT
+					return;
+				}
 			}
-		}
 
-		return textArea;
+			this.addValueHtml(html); //APPEND ELEMENT
+		}
 	}
 
 	buildGenerateTextArea(){
@@ -212,7 +221,7 @@ export class AonTextArea extends AonElement {
 				},
 				
 				paste: (ev)=>{
-					// this.interceptorPaste(ev);
+					this.interceptorPaste(ev);
 				}
 			},
 			styles : {
@@ -427,7 +436,6 @@ export class AonTextArea extends AonElement {
 		this.loading(true);
 
 		try {
-			let div = parent || this.getSelectionForAdd();
 
 			let reader = await getReader(file).catch(()=>null);
 			
@@ -477,8 +485,8 @@ export class AonTextArea extends AonElement {
 					element.dataset.id = fileId;
 					element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
 					element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-					div.appendChild(element);
-					div.appendChild(document.createElement(TAG.BR));
+
+					this.addValueForSelection(element, parent);
 	
 					this.dispatchEvent(new CustomEvent(EVENT.INPUT));
 				}
@@ -551,68 +559,50 @@ export class AonTextArea extends AonElement {
 	}
 
 	interceptorPaste(ev){
-		// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
-		// const html  = clipboardData.getData('text/html');
-		// console.log(html);
-		// setTimeout(()=>{
-		// 	this.setValueHtml(html);
-		// 	console.log(html);
-		// }, 5000);
 
+		const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
 
-		// let items = Object.values(clipboardData.items || []).filter(item => item && item.kind);
+		const items = Object.values(clipboardData.items || []).filter(item => item && item.kind);
 
-		// const existFile = items.some(item => item.kind === 'file');
+		const isFile = items.some(item => item.kind === 'file');
 
-		// if(!existFile){
-		// 	preventDefault(ev);
-		// 	items =  items.filter(item => item.kind !== 'file');
-		// 	if(items && items.length){
-		// 		for (let index in items) {
-		// 			let item = items[index];
-		// 			console.log("HTML");
-		// 			item.getAsString( (html)=>{
-		// 			});
-		// 		}
-		// 	}
-		// }
-		// let newHtml = html || this.value || '';
-		// let newValue = newHtml.replace(/src=\"([^\"]*)\"/g, (match, url) =>{ // eslint-disable-line
-		// 	let newUrl = url.replaceAll("&amp;", "&");
+		if(!isFile){
+			ev.preventDefault();
+			ev.stopPropagation();
+	
+			const html  = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
 
-		// 	// console.log(match);
-		// 	console.log(newUrl);
-		// 	this.getBase64FromUrl(newUrl).then(base64=>{
-		// 		console.log(base64);
-		// 	})
-			// let codec, extension;
-			// if (url.indexOf('data:image/png;base64,') == 0) {
-			// 	codec = 'png';
-			// 	extension = '.png';
-			// } else if (url.indexOf('data:image/jpeg;base64,') == 0) {
-			// 	codec = 'jpeg';
-			// 	extension = '.jpg';
-			// }
-			// if (codec) {
-			// 	let name = 'image' + images.length + extension,
-			// 	base64 = url.replace('data:image/' + codec + ';base64,', ''),
-			// 	buffer = new Buffer(base64, 'base64');
-			// 	images.push(new mailgun_client.Attachment({
-			// 	contentType: 'image/' + codec,
-			// 	filename: name,
-			// 	data: buffer,
-			// 	knownLength: buffer.length,
-			// 	}));
-			// 	return match.replace(url, 'cid:' + name);
-			// }
-			// return match.replace(url, `${newUrl}" onerror="this.remove()" referrerpolicy="no-referrer`);
-		// });
-// 
-		// if(newValue && newValue.trim()) {
-			// newHtml = newValue;
-		// }
-// 
-		// this.setValueHtml(newValue)
+			let div   = document.createElement(TAG.DIV);
+			div.innerHTML = html;
+	
+			setTimeout(()=>{
+				div = this.removeStyles(div);
+				document.execCommand("insertHTML", false, div.outerHTML);
+			});
+		}
+	}
+
+	removeStyles(parent) {
+		if(parent){
+			//-------------REMOVE INPUTS------------------
+			const inputs = `toolbar, textarea, input, aon-input, aon-select, aon-switch, aon-toolbar, aon-select, aon-textarea, aon-autosize-textarea, aon-date, aon-icon-button, aon-upload`;
+			parent.querySelectorAll(inputs)
+			.forEach(element=>element.remove());
+
+			//-------------REMOVE STYLES AND CLASS------------------
+			const styles = `*`;
+			parent.querySelectorAll(`${styles}:not(img, source)`)
+			.forEach(element=>{
+				if(element.tagName && element.tagName.toLowerCase() === TAG.A){
+					element.className = CSS.AON_LINK;
+					element.target = "_system";
+				} else {
+					element.removeAttribute("style");
+					element.removeAttribute("class");
+				}
+			});
+		}
+		return parent;
 	}
 
 	async checkFileBase64() {

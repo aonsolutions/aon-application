@@ -158,7 +158,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 	
 	public Certifica2Dialog(Integer contractId) {
 		
-		setCaption("Certifica2");
+		setCaption("Certific\u00402");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -393,14 +393,14 @@ public class Certifica2Dialog extends AonCustomDialog {
 				if(!isSuspensionCode())
 					return;
 				
-				messageL.setText("Generando Certifica2...");
+				messageL.setText("Generando Certific\u00402...");
 				messagesPanel.setVisible(true);
 				
 				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {
-						messageL.setText("Descargando XML Certifica2...");
+						messageL.setText("Descargando XML Certific\u00402...");
 						hasChange = false;
 						formPanelXML.submit();
 					}
@@ -414,14 +414,14 @@ public class Certifica2Dialog extends AonCustomDialog {
 		
 		toolbar.add(downloadCertifica2);
 		
-		comunicateCertifica2 = new AonToolbarSmallButton("Comunicar Certifica2", AON.CSS.aonIconSend());
+		comunicateCertifica2 = new AonToolbarSmallButton("Comunicar Certific\u00402", AON.CSS.aonIconSend());
 		comunicateCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		comunicateCertifica2.addClickHandler(e -> {
 			if(!isSuspensionCode())
 				return;
 			
 			if(hasChange) {
-				messageL.setText("Generando nuevo Certifica2...");
+				messageL.setText("Generando nuevo Certific\u00402...");
 				messagesPanel.setVisible(true);
 				
 				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<Void>() {
@@ -429,7 +429,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 					@Override
 					public void onSuccess(Void result) {
 						hasChange = false;
-						messageL.setText("Comunicando Certifica2 al SEPE...");
+						messageL.setText("Comunicando Certific\u00402 al SEPE...");
 						messagesPanel.setVisible(true);
 						
 						employeesService.sendCertifica2(contractId, certifica2Info, new AsyncCallback<Void>() {
@@ -438,7 +438,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 							public void onSuccess(Void result) {
 								messagesPanel.setVisible(false);
 								comunicateCertifica2PDF.setVisible(true);
-								AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente"));
+								AonDialog dialog = new AonDialog("Comunic@", new HTML("Certific\u00402 comunicado correctamente"));
 								dialog.info();
 							}
 							
@@ -459,7 +459,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 				});
 			} else {
 			
-				messageL.setText("Comunicando Certifica2 al SEPE...");
+				messageL.setText("Comunicando Certific\u00402 al SEPE...");
 				messagesPanel.setVisible(true);
 				
 				employeesService.sendCertifica2(contractId, certifica2Info, new AsyncCallback<Void>() {
@@ -468,7 +468,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 					public void onSuccess(Void result) {
 						messagesPanel.setVisible(false);
 						comunicateCertifica2PDF.setVisible(true);
-						AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente. Puede consultar la respuesta en el apartado de Documentos"));
+						AonDialog dialog = new AonDialog("Comunic\u0040", new HTML("Certific\u00402 comunicado correctamente. Puede consultar la respuesta en el apartado de Documentos"));
 						dialog.info();
 					}
 					
@@ -476,7 +476,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 					public void onFailure(Throwable caught) {
 						messagesPanel.setVisible(false);
 						comunicateCertifica2PDF.setVisible(false);
-						AonDialog dialog = new AonDialog("Error Certifica2", new HTML(caught.getMessage()));
+						AonDialog dialog = new AonDialog("Error Certific\u00402", new HTML(caught.getMessage()));
 						dialog.warning();
 					}
 				});
@@ -485,10 +485,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 		
 		toolbar.add(comunicateCertifica2);
 		
-		manualCertifica2PDF = new AonToolbarSmallButton("Certifica2 PDF (Manual)", AON.CSS.aonIconPdf());
+		manualCertifica2PDF = new AonToolbarSmallButton("Certific\u00402 PDF (Manual)", AON.CSS.aonIconPdf());
 		manualCertifica2PDF.addClickHandler(e -> {
 			
-			messageL.setText("Generando Certifica2 PDF...");
+			messageL.setText("Generando Certific\u00402 PDF...");
 			messagesPanel.setVisible(true);
 			
 			formPanelManual.submit();
@@ -496,11 +496,11 @@ public class Certifica2Dialog extends AonCustomDialog {
 		
 		toolbar.add(manualCertifica2PDF);
 		
-		comunicateCertifica2PDF = new AonToolbarSmallButton("Certifica2 PDF", AON.CSS.aonIconPdf());
+		comunicateCertifica2PDF = new AonToolbarSmallButton("Certific\u00402 PDF", AON.CSS.aonIconPdf());
 		comunicateCertifica2PDF.setVisible(false);
 		comunicateCertifica2PDF.addClickHandler(e -> {
 			
-			messageL.setText("Obteniendo Certifica2 PDF del SEPE...");
+			messageL.setText("Obteniendo Certific\u00402 PDF del SEPE...");
 			messagesPanel.setVisible(true);
 			
 			formPanelPDF.submit();
@@ -522,7 +522,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 
 	private boolean isSuspensionCode() {
 		if(suspensionCodeLB.getSelectedIndex() == 0) {
-			AonDialog dialog = new AonDialog("Certific@2", new HTML("El c\u00F3digo de suspensi\u00F3n es obligatorio"));
+			AonDialog dialog = new AonDialog("Certific\u00402", new HTML("El c\u00F3digo de suspensi\u00F3n es obligatorio"));
 			dialog.warning();
 			return false;
 		}

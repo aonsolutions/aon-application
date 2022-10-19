@@ -46,6 +46,7 @@ public interface IRequestParamsNames {
 	String DEBIT = "debit";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DESCRIPTION = "description";
 	String DOCUMENT_COUNTRY = "documentCountry";
 	String DOCUMENT = "document";
 	String DOCUMENT_TYPE = "documentType";
@@ -110,6 +111,7 @@ public interface IRequestParamsNames {
 	String ORDER_STATUS_INVOICED = "orderStatusInvoiced";
 	String ORDER_STATUS_PENDING = "orderStatusPending";
 	String ORDER_STATUS_SERVED = "orderStatusServed";
+	String ORPHAN = "orphan";
 	String OUTPUT = "output";
 	String PAGE_OFFSET = "pageOffset";
 	String PAGE_OFFSET_TEXT = "pageOffsetText";
@@ -127,6 +129,7 @@ public interface IRequestParamsNames {
 	String QUERY = "query";
 	String RECTIFICATION = "rectification";
 	String REFERENCE_CODE = "referenceCode";
+	String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";

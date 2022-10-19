@@ -21,10 +21,12 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.IConstants;
@@ -73,6 +75,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 						.and(f.getIdProperty().eq(id))).findFirst().orElse(new Rawdoc());
 				if(r.getId() != null) json = new JSONObject(r.getJson());
 				invoice = InvoiceJSON.fromJSON(json);
+				invoice = setPaymethod(domainName, domainId, login, invoice);
 			} else if(json.opt(IConstants.ID) != null){
 				invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
 			}
@@ -86,7 +89,11 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
 
-			String qrUrl = domainName + "/dip?source=" + source + "&id=" + id;  
+			String qrUrl = domainName + "/dip?d=" + company.getRegistry().getDocument() 
+						+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
+						+ "&s=" + invoice.getSeries()
+						+ "&n=" + invoice.getNumber()
+						+ "&t=" + invoice.getTotal();  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
 			String tbaiId = "";
 			if(tbai.isActive()) {
@@ -107,4 +114,16 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		doGet(req, resp);
 	}
+	
+	private Invoice setPaymethod(String domainName, Integer domainId, String login, Invoice invoice) {
+		for(Integer i = 0; i < invoice.getFinances().size(); i++) {
+			Integer paymethod = invoice.getFinances().get(i).getPayMethod();
+			if(paymethod != null) {
+				PayMethod pm = AON.getPayMethod(domainName, domainId, login, f -> f.getIdProperty().eq(paymethod));
+				invoice.getFinances().get(i).setPayMethodName(pm.getName());
+			}
+		}
+		return invoice;
+	}
+	
 }

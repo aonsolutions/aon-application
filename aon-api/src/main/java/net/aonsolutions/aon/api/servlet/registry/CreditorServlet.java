@@ -19,6 +19,10 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
+/**
+ * @deprecated  Replaced by CreditorsServlet
+ */
+@Deprecated(forRemoval = true )
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiCreditorServlet", urlPatterns = {"/ms/api/creditor/*"})
 public class CreditorServlet extends AonApiHttpServlet {

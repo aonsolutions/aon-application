@@ -5,6 +5,10 @@
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
     <ui:style>
+    
+    	.inputHeight { height: 1.5rem; }
+    	
+    	.quoteTaxedWidth { width: 170px; }
 
 		.form{
 			width: 40rem;
@@ -42,8 +46,12 @@
 		.flex{
 			width: 100%;
 			display: flex;
-			justify-content: space-between;
 			gap: .5rem;
+			align-items: center;
+		}
+		
+		.flexBetween {
+			justify-content: space-between;
 		}
 		
 		.date{
@@ -63,6 +71,22 @@
 			cursor: pointer;
 		}
 		
+		.dateBox {
+			width: 50px;
+			text-align: center;
+			height: 1.5rem;
+		}
+		
+		.issueBox {
+			width: 80px;
+			text-align: center;
+			height: 1.5rem;
+		}
+		
+		.listBox {
+			width: 105px;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
@@ -76,11 +100,11 @@
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Concepto</g:Label>
-				<g:SuggestBox ui:field="paymentConceptSB"/>
+				<g:SuggestBox ui:field="paymentConceptSB" styleName="{style.inputHeight}"/>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Descripción</g:Label>
-				<g:TextBox ui:field="paymentDescriptionTB"/>
+				<g:TextBox ui:field="paymentDescriptionTB" styleName="{style.inputHeight}"/>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Expresión</g:Label>
@@ -89,36 +113,80 @@
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Tributa</g:Label>
 				<g:HTMLPanel styleName="{style.flex}">
-					<g:ListBox ui:field="paymentTaxedTypeLB"/>
-					<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll}"/>
+					<g:ListBox ui:field="paymentTaxedTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
+					<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll} {style.inputHeight}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Cotiza</g:Label>
 				<g:HTMLPanel styleName="{style.flex}">
-					<g:ListBox ui:field="paymentQuoteTypeLB"/>
-					<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll}"/>
+					<g:ListBox ui:field="paymentQuoteTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
+					<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll} {style.inputHeight}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
-			<g:HTMLPanel styleName="{style.flex}" ui:field="extraPanel">
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label styleName="{style.title}">Prorratear</g:Label>
-					<g:Button ui:field="prorratExtra"/>
+			<g:HTMLPanel styleName="{style.flexColumn}" ui:field="extraPanel">
+				<g:HTMLPanel styleName="{style.flex} {style.flexBetween}">
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
+							<g:TextBox ui:field="extraIssueDate" styleName="{style.issueBox} {style.inputHeight}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Cotización</g:Label>
+							<g:ListBox ui:field="extraType" styleName="{style.inputHeight}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha Incio Cotización</g:Label>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:ListBox ui:field="extraStartDateMonth" styleName="{style.inputHeight}"/>
+								<g:ListBox ui:field="extraStartDateYear" styleName="{style.listBox} {style.inputHeight}"/>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha Fin Cotización</g:Label>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:ListBox ui:field="extraEndDateMonth" styleName="{style.inputHeight}"/>
+								<g:ListBox ui:field="extraEndDateYear" styleName="{style.listBox} {style.inputHeight}"/>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label styleName="{style.title}">Fecha Incio</g:Label>
-					<g:TextBox ui:field="extraStartDate"/>
+				
+				<g:HTMLPanel styleName="{style.element}">
+					<g:Label styleName="{style.title}">Extra asociada</g:Label>
+					<g:ListBox ui:field="extraAssociated" styleName="{style.widthAll} {style.inputHeight}"/>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label styleName="{style.title}">Fecha Fin</g:Label>
-					<g:TextBox ui:field="extraEndDate"/>
+				
+				<g:HTMLPanel styleName="{style.flex} {style.flexBetween}" ui:field="extraAssociatedPanel">
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
+							<g:TextBox ui:field="extraIssueDateAssociated" styleName="{style.issueBox} {style.inputHeight}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha Incio Cotización</g:Label>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:ListBox ui:field="extraStartDateMonthAssociated" styleName="{style.inputHeight}"/>
+								<g:ListBox ui:field="extraStartDateYearAssociated" styleName="{style.listBox} {style.inputHeight}"/>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha Fin Cotización</g:Label>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:ListBox ui:field="extraEndDateMonthAssociated" styleName="{style.inputHeight}"/>
+								<g:ListBox ui:field="extraEndDateYearAssociated" styleName="{style.listBox} {style.inputHeight}"/>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
-					<g:TextBox ui:field="extraIssueDate"/>
-				</g:HTMLPanel>
+				
 			</g:HTMLPanel>
+			
 		</g:HTMLPanel>
 			
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"/>

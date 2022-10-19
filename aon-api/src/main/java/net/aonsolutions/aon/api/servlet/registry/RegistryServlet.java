@@ -153,8 +153,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 				}
 			
 				if(RegistryAdditionalInfo.PAYMETHOD.equals(rai)) {
-					RegistryPayMethod rpm = AON.getRPayMethod(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-						f.getRegistryProperty().eq(registryId));
+				    RegistryPayMethod rpm = AON.getRegistryPayMethod(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(registryId));
 					object.put(rai.name().toLowerCase(), RegistryPaymethodJSON.toJSON(rpm));
 				}
 			

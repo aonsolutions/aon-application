@@ -82,14 +82,13 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PersonFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesDAO;
@@ -103,6 +102,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RBankPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -770,7 +770,7 @@ public class RegistryOldDAO {
 					,customer.getInvoicingGroup()
 					,AonEnumUtils.getByte(customer.isProjectGrouped())
 					,customer.getId()
-					,customer.getScope(), customer.getStatus().value()
+					,customer.getScope().getId(), customer.getStatus().value()
 					,AonEnumUtils.getByte(customer.isSurcharge())
 					,customer.getTariff()
 					,AonEnumUtils.getByte(customer.getTransaction())
@@ -848,7 +848,7 @@ public class RegistryOldDAO {
 				CREDITOR.SCOPE, CREDITOR.STATUS, CREDITOR.TRANSACTION, CREDITOR.WITHHOLDING,
 				CREDITOR.CREATION_USER, CREDITOR.CREATION_DATE, CREDITOR.MODIFICATION_USER, CREDITOR.MODIFICATION_DATE)
 			.values(creditor.getAccount(), creditor.getDomain().getId(), creditor.getId(),
-					creditor.getScope(), creditor.getStatus().value(), creditor.getTransaction().value(),
+					creditor.getScope().getId(), creditor.getStatus().value(), creditor.getTransaction().value(),
 					AonEnumUtils.getByte(creditor.isWithholding()),ctx.getUser(), new Timestamp(new Date().getTime()),
 					ctx.getUser(), new Timestamp(new Date().getTime()))
 			.execute();
@@ -882,7 +882,7 @@ public class RegistryOldDAO {
 					AonEnumUtils.getByte(supplier.isWithholdingFarmer()),
 					AonEnumUtils.getByte(supplier.isVatAccrualPayment()),
 					AonEnumUtils.getByte(supplier.getTransaction()), 
-					supplier.getStatus().value(), supplier.getScope(), 
+					supplier.getStatus().value(), supplier.getScope().getId(), 
 					AonEnumUtils.getByte(supplier.isPurchaseValuated()), 
 					supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
 					new Timestamp(new Date().getTime())).execute();

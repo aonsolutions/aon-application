@@ -439,7 +439,7 @@ public class TaskUtils {
 	public static boolean isExternal(Task task, Domain domain) {
 		return !task.getDomain().getId().equals(domain.getId()) ||
 		(
-			domain.getDomainType().equals(DomainType.OFFICE) && 
+			domain.getDomainType()!=null && domain.getDomainType().equals(DomainType.OFFICE) && 
 			task.getRegistry()!=null && 
 			task.getRegistry().getId()!=null &&
 			!(task.getSender()!=null && task.getSender().getId()!=null)

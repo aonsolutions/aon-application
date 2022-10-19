@@ -82,7 +82,7 @@ export class AonApplication extends AonElement {
   connectedCallback() {
     this.initialize();
     this.build();
-    this.getObserverContent();
+    // this.getObserverContent();
   }
 
   initialize() {
@@ -98,28 +98,28 @@ export class AonApplication extends AonElement {
     this.MOBILE_SIDENAV_CONTENT = this.MOBILE_SIDENAV + 'Content';
   }
 
-  getObserverContent() {
-    let observer = new MutationObserver((mutations) => {
-      mutations.forEach(mutation=>{
-        if(mutation.addedNodes.length > 0){
-          let target = null;
-          try {target = mutation.addedNodes[0]; } catch (error) {}
-          this.VIEWS.push(target);
-        }
-      })
-    });
-    observer.observe(this.getElement(this.CONTENT), { childList: true });
-  }
+  // getObserverContent() {
+  //   let observer = new MutationObserver((mutations) => {
+  //     mutations.forEach(mutation=>{
+  //       if(mutation.addedNodes.length > 0){
+  //         let target = null;
+  //         try {target = mutation.addedNodes[0]; } catch (error) {}
+  //         this.VIEWS.push(target);
+  //       }
+  //     })
+  //   });
+  //   observer.observe(this.getElement(this.CONTENT), { childList: true });
+  // }
 
-  back() {
-    let count = this.VIEWS.length;
-    if(count > 0){
-      const last = count > 1 ? count - 2 : 0;
-      let eleLastView = this.VIEWS[last];
-      this.setContent(eleLastView);
-      this.VIEWS = this.VIEWS.slice(0, last);
-    }
-  }
+  // back() {
+  //   let count = this.VIEWS.length;
+  //   if(count > 0){
+  //     const last = count > 1 ? count - 2 : 0;
+  //     let eleLastView = this.VIEWS[last];
+  //     this.setContent(eleLastView);
+  //     this.VIEWS = this.VIEWS.slice(0, last);
+  //   }
+  // }
 
   build() {
     this.innerHTML = `
@@ -671,6 +671,11 @@ export class AonApplication extends AonElement {
     return toolbar.cleanSearchValue();
   }
 
+  getSearchButton() {
+    let toolbar = this.getElement(this.TOOLBAR);
+    return toolbar.getSearchButton();
+  }
+  
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
     if (toolbar) {

@@ -1,6 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-
 import '../../components/aon-address.js';
 import '../../components/aon-input.js';
 
@@ -30,6 +29,8 @@ import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
 import * as GWT from '../../gwt/gwt.js';
+import { AonProjectList } from '../project/aon-project-list.js';
+
 
 export class AonReg extends AonElement {
 
@@ -39,6 +40,7 @@ export class AonReg extends AonElement {
 	oneAddress;
 	logo;
 	options;
+
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -129,6 +131,7 @@ export class AonReg extends AonElement {
 			{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()},
 			{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
 		];
+
 	}
 
 	build() {
@@ -190,6 +193,7 @@ export class AonReg extends AonElement {
 		this.buildRegistralCard(div);
 	}
 
+
 	buildGeneralCard(parent){
 		let card = new AonCard();
 		card.id = this.GENERAL_CARD;
@@ -203,6 +207,15 @@ export class AonReg extends AonElement {
 		let table = new AonBasicTable();
 		table.id = this.GENERAL_TABLE;
 		div.appendChild(table);
+
+		table.addRow();
+
+		let nameInput = new AonInput();
+		nameInput.id = 'aonConfigurationGeneralName';
+		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
+		nameInput.value = this.registry.getName();
+		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
+		table.addCell(nameInput, 3);
 
 		table.addRow();
 
@@ -238,13 +251,19 @@ export class AonReg extends AonElement {
 		td1.style.width = '55%';
 
 		table.addRow();
+		
+		let statusSelect = new AonSelect();
+		statusSelect.id = 'aonConfigurationGeneralStatus';
+		statusSelect.title = MSG.STATUS;
+		statusSelect.setOptions([
+			{ name: MSG.ACTIVE, value:"ACTIVE" },
+			{ name: MSG.INACTIVE, value:"INACTIVE" },
+			{ name: MSG.BLOCKED, value:"BLOCKED" },
+		]);
 
-		let nameInput = new AonInput();
-		nameInput.id = 'aonConfigurationGeneralName';
-		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
-		nameInput.value = this.registry.getName();
-		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
-		table.addCell(nameInput, 3);
+		statusSelect.value = this.registry.getStatus();
+		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.setStatus(statusSelect.value));
+		table.addCell(statusSelect, 3);
 
 		this.buildAddresses(div);
 
@@ -793,6 +812,23 @@ export class AonReg extends AonElement {
 				this.buildWeb(table, web, i));
 		}
 	}
+
+	//EXPEDIENTE
+
+	buildExpedienteData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let registryId = this.registry.getId();
+		
+		if(registryId){
+			let aonProjectList = new AonProjectList();
+			aonProjectList.style.width = "100%";
+			aonProjectList.registry = this.registry;
+			aonProjectList.filter = { page: 1, perPage: 500, registry:registryId};
+			main.appendChild(aonProjectList);
+		}
+	}
 	
 	buildWeb(table, web, i) {
 		if(!web.isRemoved()){
@@ -850,6 +886,7 @@ export class AonReg extends AonElement {
 	}
 
 	save() {
+
 		let medias = this.emails.concat(this.phones).concat(this.webs);
 		this.registry.setMedia(medias);
 

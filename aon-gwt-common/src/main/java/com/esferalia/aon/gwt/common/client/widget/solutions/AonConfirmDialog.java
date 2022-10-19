@@ -20,7 +20,9 @@ public class AonConfirmDialog extends AonCustomDialog {
     
 	public static interface AonConfirmDialogCallback {
 		void onAccept();
-		void onCancel();
+		default void onCancel() {
+			// Nothing
+		};
 		default void onClose() {
 			this.onCancel();
 		}
@@ -167,5 +169,13 @@ public class AonConfirmDialog extends AonCustomDialog {
 	        }
 	    });
     }
+	
+	public static void showConfirm(String title, String msg,final AonConfirmDialogCallback callback) {
+		new AonConfirmDialog().confirm(title, msg, callback);
+	}
+
+	public static void showConfirm(String msg, final AonConfirmDialogCallback callback) {
+		new AonConfirmDialog().confirm(msg, callback);
+	}
 	
 }

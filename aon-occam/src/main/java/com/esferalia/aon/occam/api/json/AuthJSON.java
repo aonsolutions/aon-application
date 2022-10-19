@@ -14,7 +14,8 @@ public class AuthJSON {
 				.setName(JsonUtils.getString(json, IJsonNames.NAME))
 				.setSurname(JsonUtils.getString(json, IJsonNames.SURNAME))
 				.setDocument(JsonUtils.getString(json, IJsonNames.DOCUMENT))
-				.setPhone(JsonUtils.getString(json, IJsonNames.PHONE));
+				.setPhone(JsonUtils.getString(json, IJsonNames.PHONE))
+				.setAvatar(JsonUtils.getString(json, IJsonNames.AVATAR));
 	}
 	
 	public static JSONObject toJSON(Auth auth) {
@@ -24,6 +25,7 @@ public class AuthJSON {
 				.put(IJsonNames.NAME, auth.getName() != null ? auth.getName() : "")
 				.put(IJsonNames.SURNAME, auth.getSurname() != null ? auth.getSurname() : "")
 				.put(IJsonNames.DOCUMENT, auth.getDocument() != null ? auth.getDocument() : "")
-				.put(IJsonNames.PHONE, auth.getPhone() != null ? auth.getPhone() : "");
+				.put(IJsonNames.PHONE, auth.getPhone() != null ? auth.getPhone() : "")
+				.put(IJsonNames.AVATAR, auth.getAvatar());
 	}
 }

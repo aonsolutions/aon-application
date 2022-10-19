@@ -3814,6 +3814,18 @@ public class AON {
 		}
 	}
 	
+	public static ProjectHolder saveProjectHolder(Domain domain, User user, ProjectHolder holder) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getProject().saveProjectHolder(ctx, holder);
+		}
+	}
+	
+	public static void deleteProjectHolder(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			getProject().deleteProjectHolder(ctx, id);
+		}
+	}
+	
 	// ---------- PROJECT COMMERCIAL
 	
 	public static Integer insertProjectCommercial(String domainName, Integer domainId,
@@ -6099,6 +6111,9 @@ public class AON {
 	}
 	
 	// ------------------- TASK HOLDER
+	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter){
+		return getTaskHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
 
 	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter){
 		CloseableAONContext ctx = null;

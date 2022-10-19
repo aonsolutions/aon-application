@@ -166,7 +166,7 @@ const createReceiverDiv = () => newComponent({
 const createMessageBox = (properties) =>{
   let component =  newComponent({
     type: MESSENGER_COMPONENTS.MESSAGE,
-    classes : [CSS.FLEX_COLUMN, CSS.IMG_MAX_WIDTH],
+    classes : [CSS.FLEX_COLUMN, CSS.IMG_MAX_WIDTH, CSS.AON_NOT_RICH],
     styles: {
         margin:"5px",
         padding: '15px',
@@ -883,12 +883,14 @@ const openDialogBranch = (task)=> {
   // div.appendChild(email);
 
   const workgroup  = createSelectCau(MSG.WORKGROUP, MSG.WORKGROUP+"Random", MSG.WORKGROUP);
+  workgroup.autocomplete = true;
   div.appendChild(workgroup);
   aonMessengerChat.getWorkgroup().then(options=>{
     workgroup.setOptions(options);
   })
 
   const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
+  taskHolder.autocomplete = true;
   div.appendChild(taskHolder);
 
   const myTaskHolder =  aonMessengerChat.MY_TASKHOLDER;
@@ -921,6 +923,13 @@ const openDialogBranch = (task)=> {
       application.startLoading();
       try {
         const domain = task.domain;
+        let newDomain = {};
+
+        if(domain){
+          newDomain.domainId = domain.id;
+          newDomain.domainName = domain.name;
+          newDomain.domainType = domain.domainType || undefined;
+        }
 
         let params = {
           ...task.getWorkflowTmp(),
@@ -930,9 +939,8 @@ const openDialogBranch = (task)=> {
           comment: note.value
         };
 
-        if(domain){
-          params.domainId = domain.id;
-          params.domainName = domain.name;
+        if(newDomain.domainId){
+          Object.assign(params, newDomain);
         }
 
         await saveTaskBranch(params);
@@ -940,9 +948,8 @@ const openDialogBranch = (task)=> {
         
         let param = { id: task.id };
     
-        if(domain){
-          param.domainId = domain.id;
-          param.domainName = domain.name;
+        if(newDomain.domainId){
+          Object.assign(param, newDomain);
         }
 
         const data = await getTaskOne(param);

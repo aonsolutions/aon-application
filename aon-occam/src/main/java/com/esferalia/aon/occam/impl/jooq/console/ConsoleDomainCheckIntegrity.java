@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.console;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -14,76 +15,85 @@ import org.jooq.ForeignKey;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class ConsoleDomainCheckIntegrity {
-	
+
 	private static final String DOMAIN_LABEL = "domain";
 	
 	private ConsoleDomainCheckIntegrity() {
 	}
 	
 	public static void check(ConsoleParams params) {
-		String domainName = params.getFromConnection().getDomainName();
-		Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext()
-				, p -> p.getNameProperty().eq(domainName));
-		if (fullDomain == null) {
-			throw new IllegalArgumentException("No se ha encontrado el dominio \"" + domainName + "\"");
+		String processId = AonRandomStringUtils.randomAlphabetic(4) + "_" + (new Date()).getTime();
+		try {
+			ConsoleMessageUtils.start(params.getPrinter());
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.title(processId, "VALIDACION DE DOMINIO"));
+			check(processId, params, false);
+		} finally {
+			ConsoleMessageUtils.end(params.getPrinter());
 		}
-		ConsoleUtils.log(params,MessageFormat.format("Dominio {0} encontrado", domainName));
-		ConsoleUtils.log(params,MessageFormat.format("Dominio. Herencia:  {0}", fullDomain.isEnableHeredity()));
-		params.getFromConnection().setFullDomain(fullDomain);
+	}
+	
+	public static void check(String processId, ConsoleParams params, boolean beforeIsolate) {
+		Integer domainId = params.getFromConnection().getDomain().getId();
+		Domain fullDomain = DomainDAO.getDomain(params.getFromConnection().getAONContext(), domainId);
+		if (fullDomain == null) {
+			String msg = "No se ha encontrado el dominio \"" + domainId + "\"";
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+			throw new AonCoreException(msg);
+		}
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, MessageFormat.format("Dominio {0} encontrado", domainId)));		
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, MessageFormat.format("Dominio. Herencia:  {0}", fullDomain.isEnableHeredity())));
+		params.getFromConnection().setDomain(fullDomain);
 		params.setScript( new LinkedHashMap<>() );
 		params.getFromDslContext().transaction(conf -> {
+//			AonMaster.AON_MASTER.getTables()
+			List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Generando lista de tablas"));			
+			tables
 			
-			fillScript(params);
+				.stream()
+				.filter(Objects::nonNull )
+//				.filter(t -> !beforeIsolate || (beforeIsolate && !SESSION.getName().equals(t.getName())))
+//				.filter(t -> !beforeIsolate || (beforeIsolate && !ACTION_ENTRY.getName().equals(t.getName())))
+				.forEach(t -> addTable(params, t));
 			
-			ConsoleUtils.log(params,MessageFormat.format("Se van a chequear {0} tables", params.getScript().size()));
+			params.setPartialCount( params.getScript().size() );
+			params.setPartialProgress(0);
 			
-			ConsoleUtils.log(params,"Inicio del proceso de chequeo de integridad de dominios");
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, MessageFormat.format("Se van a chequear {0} tables", params.getScript().size())));			
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Inicio del proceso de chequeo de integridad de dominios"));
 			params.getScript()
 				.values()
 				.stream()
-				.forEach(t -> checkTable(params, t));
+				.forEach(t -> checkTable(processId, params, t));
 		});
-		
-		ConsoleUtils.log(params,"Final del proceso de chequeo de integridad de dominios");
-		
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Final del proceso de chequeo de integridad de dominios"));
 		if (!params.getErrors().isEmpty()) {
-			ConsoleUtils.log(params, "" );
-			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-			ConsoleUtils.log(params,"** Se han encontrado incidencias!");
-			params.getErrors().stream().forEach( e -> ConsoleUtils.log(params,e));
-			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+			String msg = (params.getErrors().size() == 1)
+				?"Se ha encontrado 1 incidencia."
+				:"Se han encontrado "+ params.getErrors().size() +" incidencias.";
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+			params.getErrors().stream().forEach( e -> ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, e)));
 		} else {
-			ConsoleUtils.log(params, "" );
-			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
-			ConsoleUtils.log(params,"** NO se han encontrado incidencias!");
-			ConsoleUtils.log(params, AonStringUtils.repeat('*',60));
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.ok(processId, "NO se han encontrado incidencias!"));
 		}
 	}
 	
 	// **************************************************************
 	// ************* [METHODS  FOR GETTING SCRIPT ] *****************
 	// **************************************************************
-	private static void fillScript(ConsoleParams params) {
-		List<Table<?>> tables = params.getFromConnection().getSchema().getTables();
-		ConsoleUtils.log(params,"** Generating tables script");
-		ConsoleUtils.log(params,"** ------------------------");
-		tables.stream()
-			.filter(Objects::nonNull )
-			.forEach(t -> addTable(params, t));
-		ConsoleUtils.log(params," [DONE!]");
-		ConsoleUtils.log(params,"");
-	}
-
 	@SuppressWarnings("unchecked")
 	private static void addTable(ConsoleParams params, Table<?> table) {
 		Table<Record> tab = (Table<Record>) table.asTable();
@@ -117,27 +127,35 @@ public class ConsoleDomainCheckIntegrity {
 		}
 		scriptTable.setReferenceColumns(columns);	
 		params.getScript().put(table.getName(), scriptTable);
-		ConsoleUtils.logf(params,".");
 	}
 
-	private static void checkTable(ConsoleParams params, ScriptTable table) {
+	private static void checkTable(String processId, ConsoleParams params, ScriptTable table) {
+		String msg = MessageFormat.format("Checking {0} table:", table.getTableName());
+		params.setPartialProgress((params.getPartialProgress() + 1));
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId
+			,params.getPartialCount()
+			,params.getPartialProgress() )
+			.setMessage(msg));
 		if (hasDomain(table.getTable()) && hasPrimaryKey(table.getTable())) {
-			ConsoleUtils.log(params,MessageFormat.format(" **** Checking {0} table:", table.getTableName()));			
 			params.getScript().get(table.getTableName())
 				.getReferences()
 				.stream()
 				.filter(fk -> !DOMAIN_LABEL.equals(fk.getKey().getName()))
-				.forEach(fk -> checkForeignKey(params,fk,null));
+				.forEach(fk -> checkForeignKey(processId, params,fk,null));
 			if (ConsoleUtils.CUSTOM_FOREIGN_MAP.containsKey(table.getTableName())) {
 				Arrays.stream( ConsoleUtils.CUSTOM_FOREIGN_MAP.get(table.getTableName()))
-					.forEach(fk -> checkForeignKey(params,fk.getForeignKey(),fk)
+					.forEach(fk -> checkForeignKey(processId, params,fk.getForeignKey(),fk)
 				); 
 			}
 		}
 	}
 	
-	private static void checkForeignKey( ConsoleParams params, ForeignKey<Record, ?> fk, CustomForeignKey customFk) {
-		ConsoleUtils.log(params,MessageFormat.format(" \t Checking {0} Foreign key:", fk.getName()));			
+	private static void checkForeignKey(String processId ,ConsoleParams params, ForeignKey<Record, ?> fk, CustomForeignKey customFk) {
+		String msg = MessageFormat.format("Checking {0} Foreign key:", fk.getName());
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId
+				,params.getPartialCount()
+				,params.getPartialProgress() )
+				.setMessage(msg));
 		Table<?> fromTable = fk.getTable();
 		String fromTableAlias = "fromTable";
 		Table<?> fromTableSelect = fromTable.as(fromTableAlias);
@@ -154,9 +172,9 @@ public class ConsoleDomainCheckIntegrity {
 			selectFields.add(fromDomainField);
 			selectFields.add(toDomainField);
 			selectFields.add(fkField);
-			Integer domain = params.getFromConnection().getFullDomain().getId();
-			Integer parent = params.getFromConnection().getFullDomain().getParentId();
-			Condition mainCondition = params.getFromConnection().getFullDomain().isEnableHeredity()
+			Integer domain = params.getFromConnection().getDomain().getId();
+			Integer parent = params.getFromConnection().getDomain().getParentId();
+			Condition mainCondition = params.getFromConnection().getDomain().isEnableHeredity()
 					?fromDomainField.in(domain,parent)
 					:fromDomainField.eq(domain);
 			if (customFk != null) {
@@ -167,20 +185,10 @@ public class ConsoleDomainCheckIntegrity {
 			mainCondition = mainCondition.and(fkField.isNotNull());
 			mainCondition = mainCondition.and(DSL.trim(DSL.cast(fkField, String.class)).notEqual(AonStringUtils.EMPTY));
 			mainCondition = mainCondition.and(
-					(params.getFromConnection().getFullDomain().isEnableHeredity()
+					(params.getFromConnection().getDomain().isEnableHeredity()
 						?toDomainField.notIn(0,domain,parent)
 						:toDomainField.notIn(0,domain)).or(fkPkField.isNull())
 					);
-			
-//			System.out.println( 
-//					params.getFromDslContext()
-//					.select( selectFields )
-//					.from(fromTableSelect)
-//					.leftOuterJoin(toTableSelect).onKey(fk)
-//					.where(mainCondition)
-//					.getSQL(ParamType.INLINED)
-//					);
-			
 			params.getFromDslContext()
 				.select( selectFields )
 				.from(fromTableSelect)
@@ -194,14 +202,25 @@ public class ConsoleDomainCheckIntegrity {
 				)
 				.forEach( toRec -> {
 					params.addError(
-					MessageFormat.format("Dom: {0}. Tabla \"{1}\",id \"{2}\", columna \"{3}\" ({4}) que referencia a la tabla \"{5}\" apunta al dominio {6}."
-						,toRec.getValue(fromDomainField)
-						,fromTable.getName()
-						,toRec.getValue(pkField)
-						,fkField.getName()
-						,toRec.getValue(fkField)
-						,toTable.getName()
-						,toRec.getValue(toDomainField))
+						new ConsoleDomainMessage()
+							.setType(ConsoleDomainMessageType.INTEGRITY)	
+							.setSchema( params.getFromConnection().getSchemaName() )
+							.setDomainId( toRec.getValue(fromDomainField) )
+							.setTable( fromTable.getName() )
+							.setPkId( AonNumberUtils.toInteger(Objects.toString(toRec.getValue(pkField)) ))
+							.setFkTable( toTable.getName() )
+							.setFkColumn(fkField.getName())
+							.setFkId(Integer.valueOf(Objects.toString(toRec.getValue(fkField))))
+							.setWrongDomainId(AonNumberUtils.toInteger(toRec.getValue(toDomainField)))
+							.setMessage(
+								MessageFormat.format("ID: {0}. Columna: [{1}.{2}] con valor: {3} que referencia a la tabla [{4}] apunta al dominio {5}."
+								,Objects.toString(toRec.getValue(pkField))
+								,fromTable.getName()
+								,fkField.getName()
+								,Objects.toString(toRec.getValue(fkField))
+								,toTable.getName()
+								,Objects.toString(toRec.getValue(toDomainField)))
+							)
 					);
 				});
 		}

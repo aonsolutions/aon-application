@@ -17,6 +17,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -44,11 +45,13 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String cellWidth();
+		String dialogGlass();
+		String dialogZIndex();
 		String gridTitle();
 		String headerColor();
 		String headerFSize();
 		String headerSticky();
+		String modify();
 		String oddRow();
 		String textCenter();
 	}
@@ -71,6 +74,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	// ------------------------------------------ Variables
 	
 	private AgreementInfo agreement;
+	private boolean hasChange = false;
+	private AonToolbarSmallButton saveBtn;
 	
 	// ------------------------------------------ Constructor
 
@@ -109,7 +114,6 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 		
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
-		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.textCenter());
 		level.addStyleName(style.headerFSize());
 		levelGrid.setWidget(row, 0, level);
@@ -120,7 +124,6 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 		levelGrid.setWidget(row, 1, category);
 		
 		Label delete = new Label("");
-		delete.addStyleName(style.gridTitle());
 		levelGrid.setWidget(row, 2, delete);
 		
 		levelGrid.getRowFormatter().addStyleName(row, style.headerSticky());
@@ -147,16 +150,25 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			TextBox levelCell = new TextBox();
 			levelCell.setValue(level.getDescription());
 			levelCell.addStyleName(style.gridTitle());
-			levelCell.addStyleName(style.cellWidth());
 			levelCell.addStyleName(style.textCenter());
 			levelCell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 			if(row % 2 == 0 ) levelCell.addStyleName(style.oddRow());
+			
+			if(level != null && level.isModify())
+				levelCell.addStyleName(style.modify());
+			else
+				levelCell.removeStyleName(style.modify());
+			
 			levelCell.addValueChangeHandler(ev -> {
 				if(AonStringUtils.isBlank(ev.getValue()) || agreement.existLevel(ev.getValue())) {
 					showWarning("Nivel existente", "La descripci\u00f3n no puede ser vacia o coincidir con la de otro nivel ya existente");
 					levelCell.setValue(level.getDescription());
-				} else
+				} else {
 					level.setDescription(ev.getValue());
+					level.setModify(true);
+					setAgreementLevel(agreement);
+					setHasChange(true);
+				}
 			});
 			
 			TextBox categoryCell = new TextBox();
@@ -165,12 +177,22 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			categoryCell.setValue(categoriesBuilder.toString());
 			categoryCell.setTitle("Categorias nivel " + level.getDescription());
 			if(row % 2 == 0 ) categoryCell.addStyleName(style.oddRow());
+			
+			if(level != null && level.isCatModify())
+				categoryCell.addStyleName(style.modify());
+			else
+				categoryCell.removeStyleName(style.modify());
+			
 			categoryCell.addValueChangeHandler(categoryValue -> {
 				if(AonStringUtils.isNotBlank(categoryValue.getValue())) {
 					agreement.getCategoriesMap().remove(level.getId());
 					String[] categorySplit = AonStringUtils.split(categoryValue.getValue(), ',');
 					for(int i = 0; i < categorySplit.length; i++)
 						agreement.addCategory(level.getId(), categorySplit[i].trim());
+					
+					level.setCatModify(true);
+					setAgreementLevel(agreement);
+					setHasChange(true);
 				}
 				
 			});
@@ -178,6 +200,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 			deleteBtn.addClickHandler(event -> {
 				AonDialog deleteDialog = new AonDialog("Borrar nivel", new HTMLPanel("\u00bfDesea realmente eliminar el nivel <b>" + level.getDescription() +"</b>\u003f"));
+				deleteDialog.setGlassStyleName(style.dialogGlass());
+				deleteDialog.addStyleName(style.dialogZIndex());
 				deleteDialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
@@ -189,6 +213,7 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 					public void onAccept() {
 						agreement.deleteLevel(level.getId());
 						setAgreementLevel(agreement);
+						setHasChange(true);
 					}
 				});
 			});
@@ -205,8 +230,9 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 
 	private void categoryTableWidth() {
 		levelGrid.setWidth("100%");
-		levelGrid.getColumnFormatter().setWidth(0, "20%");
-		levelGrid.getColumnFormatter().setWidth(1, "80%");
+		levelGrid.getColumnFormatter().setWidth(0, "120px");
+		levelGrid.getColumnFormatter().setWidth(1, "75%");
+		levelGrid.getColumnFormatter().setWidth(2, "5%");
 	}
 	
 	// ------------------------------------------ toolbar
@@ -214,9 +240,10 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	private void createToolbar() {
 		toolbar = new AonToolbar("Nivel / Categoria");
 		
-		AonToolbarSmallButton saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+			setHasChange(false);
 			onSaved();
 		});
 		
@@ -231,6 +258,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			panel.add(description);
 			panel.add(levelDescription);
 			AonDialog dialog = new AonDialog("Nuevo nivel", panel);
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -242,6 +271,7 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 				public void onAccept() {
 					agreement.createLevel(levelDescription.getValue());
 					setAgreementLevel(agreement);
+					setHasChange(true);
 				}
 			});
 		});
@@ -261,6 +291,21 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 		agreementLevelMessage.getElement().getStyle().clearDisplay();
 	}
 	
+	// ------------------------------------------ HasChange
+	
+	public boolean hasChange() {
+		return hasChange;
+	}
+
+	public void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		saveBtn.setEnabled(hasChange());
+		if(!hasChange()) {
+			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
+			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		}
+	}
+
 	// ------------------------------------------ Abstract methods
 	
 	public abstract void onSaved();

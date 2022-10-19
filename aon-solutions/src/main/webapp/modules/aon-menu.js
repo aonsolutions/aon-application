@@ -18,6 +18,7 @@ import { AonIcon } from '../components/aon-icon.js';
 import { AonNote } from './note/aon-note.js';
 import { AonInvoicePanel } from './invoice/aon-invoice-panel.js';
 import { AonBooking } from './marketplace/aon-booking.js';
+import { AonOfficePanel } from './office/aon-office-panel.js';
 
 // import './example/aon-example.js';
 // import './faqs/aon-faqs.js';
@@ -157,6 +158,9 @@ export class AonMenu extends AonElement {
 				break;
 			case Apps.NOTES.app:
 				this.buildNoteMenu(Apps.NOTES);
+			break;
+			case Apps.OFFICE.app:
+				this.rootPanel(new AonOfficePanel());
 			break;
 		}
 	}
@@ -599,6 +603,9 @@ export class AonMenu extends AonElement {
 			return this.getDur().isMessenger();
 		else if(MenuApps.TOOLS.app === app.app ||MenuApps.NOTES.app === app.app)
 			return true;
+		else if(MenuApps.OFFICE.app === app.app){
+			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+		}
 		else return false;
 	}
 

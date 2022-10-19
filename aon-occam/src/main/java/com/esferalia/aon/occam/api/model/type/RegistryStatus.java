@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IRegistryStatusVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -54,4 +56,15 @@ public enum RegistryStatus implements Serializable {
 		return ACTIVE;
 	}
 	
+	public static List<RegistryStatus> safeValueOf( List<String> str) {
+		List<RegistryStatus> list = new ArrayList<>();
+		
+		for (RegistryStatus rs : values()) {
+			if(str.contains(rs.name()) || str.contains(rs.getDescription())) {
+				list.add(rs);
+			}
+		}
+		
+		return list;
+	}
 }

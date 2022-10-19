@@ -126,7 +126,7 @@ export class AonEventList extends AonElement {
     const searchValueFn = ({detail})=>{
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
     btnSearch.buildOptionsFilter(EVENT_LIST_FILTER);//INPUTS
     this.searchValueDefault();
   }
@@ -156,7 +156,7 @@ export class AonEventList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       const iconBack = !this.applicationParentEl.isEmployee() ? "arrow_back" : "";
-      aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
+      aonTable.addColumnIcon({title:MSG.BACK, name:iconBack, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "30%");
       aonTable.addColumn(MSG.DURATION, "string", "durationParse", "10%");
       aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");

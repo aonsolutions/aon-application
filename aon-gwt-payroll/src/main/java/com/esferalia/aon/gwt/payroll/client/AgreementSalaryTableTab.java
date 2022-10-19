@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -14,12 +13,15 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -54,13 +56,17 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		String columnBorder();
 		String datePickerPanel();
 		String deleteFixed();
+		String dialogGlass();
+		String dialogZIndex();
 		String gridCell();
 		String gridTitle();
 		String headerDeleteFixed();
 		String headerFixed();
 		String headerFSize();
 		String headerLevelFixed();
+		String levelDefaultValue();
 		String levelFixed();
+		String modify();
 		String oddRow();
 		String textCenter();
 		String widthAll();
@@ -86,6 +92,11 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
 	
+	private ListBox levelLB;
+	
+	private boolean hasChange = false;
+	
+	private AonToolbarSmallButton saveBtn;
 	private AonToolbarSmallButton newDateBtn;
 	private ListBox datesLB;
 	private AonToolbarSmallButton deleteDateBtn;
@@ -154,7 +165,9 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			label.addStyleName(style.cellWidth());
 			label.addStyleName(style.headerFSize());
 			salaryGrid.setWidget(row, col, label);
-			salaryGrid.getColumnFormatter().setWidth(col, "120px");
+			
+			salaryGrid.getColumnFormatter().removeStyleName(col, style.widthAll());
+
 			salaryGrid.getColumnFormatter().addStyleName(col, style.columnBorder());
 			salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 			
@@ -177,16 +190,34 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private void fillSalaryTable() {
 		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 		
-		for(Entry<Integer, Set<LevelData>> e : agreement.getLevelDatasMap().entrySet()) {
-			Level level = agreement.getLevelById(e.getKey());
-			if(level.isDeleted()) continue;
+		for(Level level : agreement.getLevels()) {
+			if(level.getId() != 0 && (level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId())))) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 			
-			Label levelCell = new Label(level.getDescription());
-			levelCell.addStyleName(style.gridTitle());
-			levelCell.addStyleName(style.gridCell());
-			levelCell.addStyleName(style.cellWidth());
+			Widget levelCell;
+			
+			if(level.getId() == 0) {
+				levelLB = new ListBox();
+				levelLB.getElement().getStyle().setHeight(1.7, Unit.EM);
+				levelLB.getElement().getStyle().setWidth(100, Unit.PX);
+				levelLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+				levelLB.addItem("Todos", "");
+				agreement.getLevels().forEach(levelIn -> {
+					if(levelIn.getId() == 0) levelLB.addItem("Por defecto", levelIn.getId().toString());
+					else levelLB.addItem(levelIn.getDescription(), levelIn.getId().toString());
+				});
+				setSelectedValueLB(levelLB, null == agreement.getSelectedLevel() ? "" : String.valueOf(agreement.getSelectedLevel().getId()));
+				levelLB.setVisible(!agreement.getLevels().isEmpty());
+				
+				levelLB.addChangeHandler(e -> filterSelectedLevel());
+				
+				levelCell = levelLB;
+			} else {
+				levelCell = new Label(level.getDescription());
+				levelCell.addStyleName(style.gridTitle());
+				levelCell.addStyleName(style.gridCell());
+			}
 			
 			salaryGrid.setWidget(row, 0, levelCell);
 			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
@@ -199,9 +230,18 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 				TextBox cell = new ExpressionBox();
 				cell.addStyleName(style.gridCell());
 				cell.setValue(null == levelData ? null : levelData.getExpression());
-				cell.addStyleName(style.cellWidth());
 				if(row % 2 == 0 ) cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && SpecialExpresion.parse(levelData.getExpression()).getInput().length() > 16)
+					cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
+				else
+					cell.setWidth("100%");
+				
+				if(levelData != null && levelData.isModify())
+					cell.addStyleName(style.modify());
+				else
+					cell.removeStyleName(style.modify());
+				
 				cell.addValueChangeHandler(event -> {
 					if(null == levelData || null == levelData.getId())
 						agreement.createLevelData(level.getId(), variable, event.getValue(), selectedDate);
@@ -209,7 +249,21 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 						agreement.updateLevelData(level.getId(), levelData.getId(), event.getValue());
 					
 					setAgreementSalaryTable(agreement);
+					setHasChange(true);
 				});
+				
+				// check if level 0 or default value
+				if(level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
+					LevelData levelDataDefault = agreement.getDefaultLevelData(variable, selectedDate);
+					cell.setText(null == levelDataDefault ? null : SpecialExpresion.parse(levelDataDefault.getExpression()).getInput());
+					cell.setTitle("Valor por defecto");
+					cell.addStyleName(style.levelDefaultValue());
+					
+					if(null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression()) && cell.getText().length() > 20)
+						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
+					else
+						cell.setWidth("100%");
+				}
 						
 				salaryGrid.setWidget(row, col, cell);
 				if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
@@ -225,6 +279,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 			deleteBtn.addClickHandler(event -> {
 				AonDialog deleteDialog = new AonDialog("Borrar nivel", new HTMLPanel("\u00bfDesea realmente eliminar el nivel <b>" + level.getDescription() +"</b>\u003f"));
+				deleteDialog.setGlassStyleName(style.dialogGlass());
+				deleteDialog.addStyleName(style.dialogZIndex());
 				deleteDialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
@@ -236,6 +292,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					public void onAccept() {
 						agreement.deleteLevel(level.getId());
 						createSalaryTable();
+						setHasChange(true);
 					}
 				});
 			});
@@ -251,14 +308,33 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		salaryGrid.getColumnFormatter().setWidth(0, "120px");
 	}
 	
+	private void filterSelectedLevel() {
+		String levelId = levelLB.getSelectedValue();
+		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(levelLB.getSelectedValue())));
+		setAgreementSalaryTable(agreement);
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
 	// ------------------------------------------ toolbar
 
 	private void createToolbar() {
 		toolbar = new AonToolbar("Tabla Salarial");
 		
-		AonToolbarSmallButton saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+			setHasChange(false);
 			onSaved();
 		});
 		
@@ -279,6 +355,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					agreement.createNewPeriod(newPeriod);
 					agreement.setFilteredAllVariables();
 					setAgreementSalaryTable(agreement);
+					setHasChange(true);
 				} else {
 					Date maxDate = agreement.getSortedDates().stream().findFirst().get();
 					if(maxDate.after(newPeriod) || maxDate.equals(newPeriod))
@@ -286,6 +363,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					else {
 						agreement.createNewPeriod(newPeriod);
 						setAgreementSalaryTable(agreement);
+						setHasChange(true);
 					}
 				}
 			});
@@ -301,6 +379,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		deleteDateBtn = new AonToolbarSmallButton(AON.MSG.deleteAction() + " tramo", AON.CSS.aonIconDelete());
 		deleteDateBtn.addClickHandler(e -> {
 			AonDialog deleteDialog = new AonDialog("Borrar tramo", new HTMLPanel("\u00bfDesea realmente eliminar el tramo <b>" + datesLB.getSelectedValue() +"</b> de la tabla salarial\u003f"));
+			deleteDialog.setGlassStyleName(style.dialogGlass());
+			deleteDialog.addStyleName(style.dialogZIndex());
 			deleteDialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -313,6 +393,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 					agreement.deletePeriod(selectedDate);
 					setAgreementSalaryTable(agreement);
+					setHasChange(true);
 				}
 			});
 		});
@@ -341,6 +422,8 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					createSalaryTable();	
 				}
 			};
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
 			dialog.setShowVariables(agreement.getShownVariables());
 		});
 		
@@ -371,6 +454,21 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		datesLB.setVisible(false);
 		deleteDateBtn.setVisible(false);
 		variablesVisivility.setVisible(false);
+	}
+	
+	// ------------------------------------------ HasChange
+	
+	public boolean hasChange() {
+		return hasChange;
+	}
+
+	public void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		saveBtn.setEnabled(hasChange());
+		if(!hasChange()) {
+			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
+			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		}
 	}
 	
 	// ------------------------------------------ Abstract methods

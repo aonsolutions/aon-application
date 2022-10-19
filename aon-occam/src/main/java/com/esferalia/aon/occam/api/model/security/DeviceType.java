@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum DeviceType {
+public enum DeviceType implements Serializable{
 	WEB,
 	ANDROID, 
 	IPHONE,

@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
@@ -25,6 +27,8 @@ public class Project implements Serializable {
 	private boolean active;
 	
 	private ProjectHolder projectHolder;
+	
+	private List<ProjectHolder> projectHolders;
 
 	private boolean dirty;
 	
@@ -180,6 +184,24 @@ public class Project implements Serializable {
 		return this;
 	}
 	
+	public List<ProjectHolder> getProjectHolders() {
+		if(this.projectHolders == null) {
+			this.projectHolders = new ArrayList<>();
+		}
+		return projectHolders;
+ 	}
+
+	public Project setProjectHolders(List<ProjectHolder> projectHolders) {
+		setDirty(true);
+		this.projectHolders = projectHolders;
+		return this;
+	}
+	
+	public void addProjectHolder(ProjectHolder projectHolder) {
+		setDirty(true);
+		getProjectHolders().add(projectHolder);
+ 	}
+	
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -206,6 +228,23 @@ public class Project implements Serializable {
 		}
 		return child;
 	}
+	
+	public void setValues(Project project) {
+		setId(project.getId());
+		setDomain(project.getDomain());
+		setName(project.getName());
+		setAlias(project.getAlias());
+		setRegistry(project.getRegistry());
+		setDate(project.getDate());
+		setType(project.getType());
+		setActive(project.isActive());
+		setCommercial(project.isCommercial());
+		setReservation(project.isReservation());
+		setTas(project.isTas());
+		setDirty(project.isDirty());
+		setProjectHolder(project.getProjectHolder());
+	}
+	
 	
 	public boolean isEmpty() {
 		return getId() == null && getDomain().getId() == null

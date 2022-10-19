@@ -135,7 +135,7 @@ public class UserDAO {
 				.setLogin(r.getValue(USER.LOGIN))
 				.setActive(AonEnumUtils.getBoolean(r.getValue(USER.ACTIVE)))
 				.setRegistry(r.getValue(USER.REGISTRY))
-				.setAuth(checkField(r, AUTH.ID)
+				.setAuth(checkField(r, AUTH.ID) && getValue(r, AUTH.ID) != null
 						? AuthFiller.build(r)
 						: new Auth().setAuth(r.getValue(USER.AUTH)))
 				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))

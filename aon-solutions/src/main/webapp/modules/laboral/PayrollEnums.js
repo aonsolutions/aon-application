@@ -1,5 +1,6 @@
 import { MATERIAL_ICONS } from "../../environments/environments.js";
 import * as MSG from "../../environments/msg.js";
+import Apps from "../../services/app.js";
 
 export const PAYSHEET = {
   id: 'Paysheet',
@@ -84,22 +85,30 @@ export const CONTRACT_OPTIONS = {
   CONTRACT:{
     name: "Contrato",
     aonIcon: "aon_cto",
-    id:"aon_cto"
+    id:"aon_cto",
+    permission:true,
+    backgroundColor: Apps.PAYROLL.color
   },
   TA:{
     name: "Obtener TA",
     aonIcon: "aon_ta",
-    id: 'Ta'
+    id: 'Ta',
+    permission:true,
+    backgroundColor: Apps.PAYROLL.color
   },
   IDC:{
     name: 'Obtener IDC',
     aonIcon: 'aon_idc',
     id: 'Idc',
+    permission:true,
+    backgroundColor: Apps.PAYROLL.color
   },
   DELETE:{
     id: 'Delete',
     name: 'Anular',
     icon: 'delete_forever',
+    permission:true,
+    backgroundColor: Apps.PAYROLL.color
   }
 };
 
@@ -121,7 +130,7 @@ export const ACTION_COMUNICA = {
   },
   BAJA:{
     id: 'Baja',
-    name: 'Dar baja',
+    name: 'Baja',
     icon: MATERIAL_ICONS.CANCEL_SCHEDULE_SEND
   },
   DUPLICATE:{

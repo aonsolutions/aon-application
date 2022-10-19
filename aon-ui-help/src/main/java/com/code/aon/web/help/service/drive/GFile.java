@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.model.File;
 
 public class GFile implements Serializable {
@@ -61,7 +63,7 @@ public class GFile implements Serializable {
 	}
 	
 	public boolean isFaqFolder() {
-		return "FAQs".equals(name);
+		return AonStringUtils.equalsIgnoreCase("FAQs", name);
 	}
 	
 	

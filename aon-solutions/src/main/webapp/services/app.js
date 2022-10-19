@@ -24,13 +24,13 @@ export const TIMECONTROL = {
     },
   ],
   price: " ", //  '-',
-  disabled: true,
+  disabled: false,
   options: {
     menu: false,
     add: false,
     upload: false,
     stat: false,
-  },
+  }
 };
 
 export const ACCOUNTING = {
@@ -136,7 +136,7 @@ export const COMUNICA = {
       name: "Empleado",
     },
   ],
-  apps: [TIMECONTROL],
+// apps: [TIMECONTROL],
   price: " ", // '60€/mes'
 };
 
@@ -162,9 +162,8 @@ export const DOCUMENTAL = {
     },
   ],
   price: " ", // '-',
-  disabled: true
+  disabled: false
 };
-
 
 export const WAREHOUSE = {
   app: CONSTANT.WAREHOUSE,
@@ -206,7 +205,7 @@ export const INVOICE = {
     },
   ],
   price: " ", // '-',
-  disabled: true,
+  disabled: false,
   options: {
     menu: false,
     add: true,
@@ -245,7 +244,7 @@ export const MESSENGER = {
     },
   ],
   price: " ", // '-',
-  disabled: true,
+  disabled: false,
   options: {
     menu: false,
     add: true,
@@ -353,6 +352,14 @@ export const BANK = {
   price: " ", // 'Desde 45€/mes'
 };
 
+export const OFFICE = {
+  app: "office",
+  icon: AON_ICONS.AON_OFFICE,
+  title: "Despacho",
+  color: "black",
+  domainType: true,
+};
+
 export const API_SERVICE = {
   app: "api_service",
   title: "Cuentas de Servicio | Acceso API",
@@ -370,7 +377,7 @@ export const AULA = {
   color: "#000000",
   moreInfo: "https://faqs.aonsolutions.es/",
   price: " ", // '-',
-  disabled: true,
+  disabled: false,
 };
 
 export const CUSTOM_VIEW = {
@@ -383,6 +390,7 @@ export const CUSTOM_VIEW = {
 };
 
 export const MenuApps = {
+  OFFICE,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -435,6 +443,7 @@ export const EnterpriseApps = [
 ];
 
 export const Apps = {
+  OFFICE,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -1071,7 +1080,7 @@ export const Packs = {
     app: "pack_suite",
     icon: "aon_app",
     title: "Suite Completa",
-    subtitle: " Portal Asesor | Pack Cotización | Pack Tributación",
+    subtitle: " Pack Portal | Pack Cotización | Pack Tributación",
     color: "black",
     apps: [
       Apps.ACCOUNTING,
@@ -1105,7 +1114,7 @@ export const Packs = {
     app: "pack_payroll",
     icon: AON_ICONS.AON_PACK,
     title: "Pack Cotización",
-    subtitle: " Laboral | Comunic@ | Horario",
+    subtitle: " Laboral | Comunic@",
     color: "#002469",
     apps: [Apps.PAYROLL, Apps.COMUNICA, Apps.TIMECONTROL, Apps.NOTES],
     price: " ", // '120€/mes'
@@ -1189,13 +1198,7 @@ export const ENTERPRISE = {
   domainType: true,
 };
 
-export const OFFICE = {
-  app: "office",
-  icon: AON_ICONS.AON_OFFICE,
-  title: "Despacho",
-  color: "black",
-  domainType: true,
-};
+
 
 export const ACADEMY = {
   app: "academy",

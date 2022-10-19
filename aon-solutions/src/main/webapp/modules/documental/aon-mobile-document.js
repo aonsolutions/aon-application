@@ -10,6 +10,8 @@ import { MSG, CSS } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 
+import {DOCUMENTAL} from  '../../services/app.js';
+
 export class AonMobileDocument extends AonDocument {
 
   FILE_CARD;
@@ -56,12 +58,18 @@ export class AonMobileDocument extends AonDocument {
       let d = document.getElementById(aonDocumental.OPTION_DIALOG);
 
       let send = ACTION.SEND_FILE;
+      send.permission = true;
+			send.backgroundColor = DOCUMENTAL.color;
       send.fn = () => this.send();
 
       let download = ACTION.DOWNLOAD_FILE;
+      download.permission = true;
+			download.backgroundColor = DOCUMENTAL.color;
       download.fn = () => this.download();
 
       let remove = ACTION.DELETE_FILE;
+      remove.permission = true;
+			remove.backgroundColor = DOCUMENTAL.color;
       remove.fn = () => this.remove();
 
       let actions = [send, download];

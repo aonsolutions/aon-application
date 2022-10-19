@@ -375,4 +375,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement) throws IllegalArgumentException;
 
+	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
+	
+
 }

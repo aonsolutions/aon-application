@@ -50,4 +50,8 @@ public enum DomainType {
 		return null;
 	}
 	
+	public static String getName( DomainType type) {
+		if (type == null) return null;
+		return type.getName();
+	}
 }

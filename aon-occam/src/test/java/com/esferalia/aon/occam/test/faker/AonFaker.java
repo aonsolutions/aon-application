@@ -240,7 +240,7 @@ public class AonFaker {
 			.setWithholding( AonRandom.gt(85) )
 			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
 			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.getRandomRegistryStatus())
-			.setScope( scope == null ? null : scope.getId() )
+			.setScope( scope == null ? new Scope() : scope)
 			.setEInvoice( AonRandom.gt(40) )
 			// TODO
 			.setInvoicingGroup( null )
@@ -266,7 +266,7 @@ public class AonFaker {
 			.setVatAccrualPayment( AonRandom.gt(98) )
 			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
 			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.getRandomRegistryStatus())
-			.setScope( scope == null ? null : scope.getId() )
+			.setScope( scope == null ? new Scope() : scope)
 			.setAccount( account == null? null : account.getId() );
 	}
 
@@ -301,7 +301,7 @@ public class AonFaker {
 			.setVatAccrualPayment( AonRandom.gt(92) )
 			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
 			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.getRandomRegistryStatus())
-			.setScope( scope == null ? null : scope.getId() )
+			.setScope( scope == null ? new Scope() : scope)
 			.setPurchaseValuated(AonRandom.gt(50) )
 			.setAccount( account == null? null : account.getId() );
 	}
@@ -640,7 +640,7 @@ public class AonFaker {
 				.setCustomer(customer)
 				.setWorkplace(workplace)
 				.setStatus(DeliveryStatus.PENDING)
-				.setScope(new Scope().setId(customer.getScope()));		
+				.setScope(customer.getScope());		
 	}
 	
 	public static DeliveryDetail getDeliveryDetail(AONContext ctx, Delivery delivery) {
@@ -682,7 +682,7 @@ public class AonFaker {
 				.setWorkplace(workplace)
 				.setStatus(SalesStatus.PENDING)
 				.setShippingPeriod(ShipmentPeriod.NOON)
-				.setScope(new Scope().setId(customer.getScope()));		
+				.setScope(customer.getScope());		
 	}
 	
 	public static SalesDetail getSalesDetail(AONContext ctx) {

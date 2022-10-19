@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
+import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
@@ -44,6 +44,9 @@ export class AonSign extends AonElement {
     this.parent = this.parent || false;
     console.log("PARENT -> " + this.parent);
     getTaskHolder({reload:true});
+    if(this.isMobile()){
+      getPosition().catch(console.error);  // GET POSITION
+    }
     if(this.parent) {
       getTaskHoldersUser().then(r => {
         if(r.length > 0) {
@@ -71,6 +74,7 @@ export class AonSign extends AonElement {
     let divGeneral = this.createElement(TAG.DIV);
     divGeneral.style.textAlign = "center";   
     this.appendChild(divGeneral);
+
     if(this.isMobile()){
       this.parentNode.style.marginLeft = 0;
     } else {
@@ -82,16 +86,18 @@ export class AonSign extends AonElement {
       company.style.marginLeft = '20px';
       company.style.width = '200px';
       divGeneral.appendChild(company);
+
       let select = new AonSelect();
       select.id = this.AON_SIGN +'Select2';
       select.title = MSG.COMPANY;
-      select.options = JSON.stringify(this._taskHolders.map(c => ({value: c.id, name: c.company})
-      ));
+      select.setOptions(this._taskHolders.map(c => ({value: c.id, name: c.company}) ) );
+      company.appendChild(select);
+      
       select.addEventListener(EVENT.CHANGE, () => {
         this._taskHolder = select.value;
         getTimeControl({parent:true, task_holder: this._taskHolder}).then(r => this.buildSignin(r));
       });
-      company.appendChild(select);
+      
       select.value = this._taskHolders[0].id
     }
 
@@ -104,11 +110,16 @@ export class AonSign extends AonElement {
     }
 
     let div = this.createElement(TAG.DIV);
-    if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
+    if(this.isMobile()) {
+      div.style.marginTop = "5px";
+    }
+
     divGeneral.appendChild(div);
-    if(this.tc)
+
+    if(this.tc){
       this.buildSignin(this.tc);
+    }
   }
 
   entrada() {
@@ -181,20 +192,52 @@ export class AonSign extends AonElement {
   async saveTimeCtrl(status){
     let signin = {status, task_holder: this._taskHolder, parent: this.parent}
     this.disabledButton(true);
-    try{
-      const position = await getPosition(); 
-      if(position && position.latitude && position.longitude)
+
+    let timeOutPosition = false;
+
+    await getPosition()
+    .then(position=>{
+      if(position){
         signin.coordinates = position.latitude + ',' + position.longitude;
-    } catch (error) {
+      }
+    })
+    .catch(error=>{
+      timeOutPosition = error && error.timeout;
       this.showToast(error);
+    }); 
+
+    const resp = await saveTimeControl(signin);
+
+    if(timeOutPosition && this.isMobile() && resp && resp.id){
+      getPosition()
+      .then(position=>{
+        if(position){
+          r.coordinates = position.latitude + ',' + position.longitude;
+          saveTimeControl({...resp, ...signin})
+          .then(console.log)
+          .catch(console.error);
+        }
+      })
+      .catch(console.error);
     }
-    await saveTimeControl(signin).then(r => this.buildSignin(r));
+
+    this.buildSignin(resp);
+
     this.disabledButton(false);
   }
 
   disabledButton(disabled){
-    let content = this.getElement(this.CONTENT);
-    if(content) [...content.querySelectorAll('button')].map(el => el.disabled = disabled);
+    const content = this.getElement(this.CONTENT);
+    if(content){
+      content.querySelectorAll('.aonButton')
+      .forEach(element => {
+        if(disabled){
+          element.setAttribute(CONSTANT.DISABLED, true);
+        } else {
+          element.removeAttribute(CONSTANT.DISABLED);
+        }
+      });
+    }
   }
 
   buildSignin(signin) {
@@ -202,23 +245,30 @@ export class AonSign extends AonElement {
 		const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
+
     let time = signin.time;
     localStorage.removeItem(this.TIME_ID);
+
+    let color = '#DC4D30';
+
     if(signin.status === 'in') {
+      color =  '#86D364';
       time = signin.time + (new Date().getTime() - signin.in_date);
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
       let timeId =  Math.random();
       localStorage.setItem(this.TIME_ID, timeId);
       this.timeAction(time, timeId);
     } else if(signin.status === 'pause') {
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
+      color = '#F39F1D';
       this.vuelta();
     } else {
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
     }
-    
+
+    if(aonUserConnected) {
+      aonUserConnected.style.backgroundColor = color;
+    }
+
     this.changeTime(time);
     this.divLastTime(signin);
   }

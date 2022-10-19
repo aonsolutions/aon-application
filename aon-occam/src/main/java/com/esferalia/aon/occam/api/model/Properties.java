@@ -63,6 +63,9 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getReservationProperty();
 		Property<Byte> getTasProperty();
+		
+		Property<String> getRegistryNameProperty();
+		Property<String> getTypeDescriptionProperty();
 	}
 	
 	public interface ProjectHolderProperties {
@@ -808,6 +811,7 @@ public interface Properties {
 		Property<Byte> getDeliveryGroupedProperty();
 		Property<Byte> getDeliveryValuatedProperty();
 		Property<Integer> getAccountProperty();
+		Property<Integer> getProjectTypeProperty();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties{
@@ -1457,6 +1461,10 @@ public interface Properties {
 		Property<String> getAuthEmailProperty();
 		Property<String> getAuthDocumentProperty();
 		Property<Integer> getScopeProperty();
+		
+		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getTaskHolderDomainProperty();
+		Property<Byte> getTaskHolderActiveProperty();
 	}
 	
 	public interface CertificateProperties {

@@ -280,7 +280,8 @@ export class Invoice {
   }
 
   isExempt() {
-    return false;
+    return this.activity && this.activity.vatRegime 
+      && "EXEMPT" === this.activity.vatRegime;
   }
   
   isCcm() {
@@ -873,12 +874,12 @@ export class Invoice {
       };		
       this.finances.push(finance);
     } else if(this.finances.length === 1) {
-      this.finances[0].paymethod = this.paymethod;
+      this.finances[0].paymethod = this.finances[0].paymethod || this.paymethod;
       this.finances[0].amount = this.total; 
     } else if(this.finances.length > 1) {
       let financeTotal = 0.0;
       this.finances.forEach((finance, i) => {
-        finance.paymethod = this.paymethod;
+        finance.paymethod = finance.paymethod || this.paymethod;
         this.finances[i] = finance;
         financeTotal = financeTotal + Number(finance.amount);
       });

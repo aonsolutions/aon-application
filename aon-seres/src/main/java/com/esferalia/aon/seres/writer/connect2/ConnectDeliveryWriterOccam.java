@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
@@ -348,7 +349,12 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 	private List<SEH1B> createSEH1BList(Delivery delivery) {
 		List<SEH1B> list = new ArrayList<>();
-		createSEH1BRecord(delivery);
+		if(isEroski(delivery.getCustomer().getDocument())) {
+			for (DeliveryDetail detail : delivery.getDetails()) {
+				if(!ProductType.AUXILIARY.equals(detail.getItem().getProduct().getType()))
+						list.add(createSEH1BRecord(detail));
+			}
+		}
 		return list;
 	}
 
@@ -559,24 +565,23 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Información de lotes
 	 */
-	private SEH1B createSEH1BRecord(Delivery delivery) {
-		// TODO createSEH1BRecord
+	private SEH1B createSEH1BRecord(DeliveryDetail deliveryDetail) {
+		String date = SeresUtils.dateTimeFormat().format(deliveryDetail.getItem().getSerialDate());
 		SEH1B record = new SEH1B();
-		record.setCodigoInstrucciones(null);
+		record.setCodigoInstrucciones("10");
 		record.setMarcasDeEnvio(null);
 		record.setFechaDeCaducidad_36__102_203_(null);
 		record.setFecha_horaRecepcionDeLaMercancia_50__102_203_(null);
 		record.setConsumirAntesDeFecha_361__102_203_(null);
 		record.setCalificadorDeCantidad_11_12_(null);
 		record.setCantidad(null);
-		record.setCalificadorNumeroIdentidad(null);
-		record.setNumeroIdentidad(null);
-		record.setFechaDeEnvasadoOEmpaquetado_365__102_203_(null);
+		record.setCalificadorNumeroIdentidad("BX");
+		record.setNumeroIdentidad(deliveryDetail.getItem().getSerialNumber());
+		record.setFechaDeEnvasadoOEmpaquetado_365__102_203_(date);
 		record.setFechaProduccion_fabricacion_94__102_203_(null);
 		return record;
 	}
-	
-	
+
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////
 	/////////////////////////////////////////////////
@@ -915,6 +920,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 	private boolean isECI(String document) {
 		return "A28017895".equalsIgnoreCase(document);
+	}
+	
+	private boolean isEroski(String document) {
+		return "F20033361".equalsIgnoreCase(document);
 	}
 
 }

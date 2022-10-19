@@ -86,6 +86,8 @@ export class AonTable extends AonElement {
     this.TBODY = this.id + "TableBody";
     this.selected = [];
   }
+
+
   deselectAll() {
     document.querySelectorAll("aon-checkbox").forEach((item, i) => {
       if (item.getValue()) {
@@ -95,6 +97,9 @@ export class AonTable extends AonElement {
     });
   }
 
+  addButton(icon, fn){
+
+  }
 
   paintCheckboxHeader(){
     const idCheckBox = this.getId()+"checkboxHeader";
@@ -132,12 +137,13 @@ export class AonTable extends AonElement {
     header.appendChild(th);
   }
 
-  addColumnIcon(name, type, id, width, fn) {
+  addColumnIcon({name, title, type, id, width}, fn) {
     let header = this.getElement(this.getId() + "TableHeader");
     let th = this.createElement(TAG.TH);
     let aonIconB = new AonIconButton();
     aonIconB.id = this.getId()+"Back";
     aonIconB.icon = name;
+    aonIconB.title = title;
     aonIconB.noHover = "true";
     th.appendChild(aonIconB);
     th.style.width = width;
@@ -185,10 +191,7 @@ export class AonTable extends AonElement {
     this.columns.forEach((item, i) => {
       let td = this.createElement(TAG.TD);
       td.style.width = item.width;
-      // if("number" === item.type) {
-      //   td.style.textAlign = "right";
-      //   td.style.paddingRight = "2%";
-      // }
+
       let id = item.id;
       if ("option" === id && value[id]) {
         let aonIconB = new AonIconButton();
@@ -204,14 +207,28 @@ export class AonTable extends AonElement {
         icon.style.color = value.icon_color || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
+      } else if(item.type && item.type ==="list") {
+        let list = value[id];
+        let ulList = this.createElement(TAG.UL);
+        ulList.style.marginTop = "6px";
+        td.appendChild(ulList);
+
+        list.forEach(d => {
+          let li = this.createElement(TAG.LI);
+          li.innerHTML = d.name;
+          if(d.fn){
+            li.addEventListener(EVENT.CLICK, d.fn);
+          }
+          ulList.appendChild(li);
+        });
+      
       } else if(item.type && item.type ==="html") {
         td.appendChild(value[id])
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
-            
             let cb = this.getElement(checkBoxId + "Input");
-            if(!cb.checked){
+            if(cb && !cb.checked){
               this.deselectAll();
               cb.click();
             } 
@@ -223,9 +240,8 @@ export class AonTable extends AonElement {
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
-            
             let cb = this.getElement(checkBoxId + "Input");
-            if(!cb.checked){
+            if(cb && !cb.checked){
               this.deselectAll();
               cb.click();
             } 

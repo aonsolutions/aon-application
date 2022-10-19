@@ -6,5 +6,4 @@ public class ConsoleModuleOptions extends ModuleOptions<ConsoleModuleOptions> {
 
 	private static final long serialVersionUID = -4243132427760315542L;
 	
-	
 }

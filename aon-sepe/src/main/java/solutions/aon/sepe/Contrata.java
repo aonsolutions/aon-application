@@ -1633,7 +1633,7 @@ public class Contrata {
 			htmlPage = firstPageRemove(htmlPage);
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initC").click();
 			handleSepeExceptions(htmlPage);
-
+			
 			htmlPage = lastPageRemove(htmlPage, ide);
 			handleSepeExceptions(htmlPage);
 
@@ -1736,9 +1736,13 @@ public class Contrata {
 
 		DomNode ideEl = formDatos.querySelector("[name=\"idcomunicacion\"]");
 		if (ideEl != null) {
-			((HtmlInput) ideEl).setValueAttribute(ide);
+			String ideStr = ide1 + "-" + ide2 + "-" + ide3;
+			if (ide4Exist) {
+				ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
+			}
+			((HtmlInput) ideEl).setValueAttribute(ideStr);
 		}
-
+	
 		HtmlElement inputSubmit = formDatos.querySelector("input[value=aceptar]");
 		htmlPage = (HtmlPage) inputSubmit.click();
 		handleSepeExceptions(htmlPage);
@@ -1833,11 +1837,11 @@ public class Contrata {
 			DomNode idcontratoNode = formDatos.querySelector("[name=\"idcontrato\"]");
 			if (idcontratoNode != null) {
 				HtmlInput idcontrato = ((HtmlInput) idcontratoNode);
-				String contractStr = ide1 + "-" + ide2 + "-" + ide3;
+				String ideStr = ide1 + "-" + ide2 + "-" + ide3;
 				if (ide4Exist) {
-					contractStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
+					ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 				}
-				idcontrato.setValueAttribute(contractStr);
+				idcontrato.setValueAttribute(ideStr);
 			}
 
 		} else {
@@ -2153,17 +2157,18 @@ public class Contrata {
 			} else {
 				String body = htmlPage.asText();
 				if (body != null) {
-					Pattern pattern = Pattern.compile("certificado\\s*digital\\s*no\\s*v.lido",
-							Pattern.CASE_INSENSITIVE);
+					Pattern pattern = Pattern.compile("(?<certificate>certificado\\s*digital\\s*no\\s*v.lido)|(?<permission>no\\s*est.{1,3}\\s*autorizado)", Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(body);
 					if (matcher.find()) {
-						throw new InvalidCertificateException("Certificado digital no v\u00e1lido");
+						if(matcher.group("certificate") != null) {
+							throw new InvalidCertificateException("Certificado digital no v\u00e1lido");
+						} else if(matcher.group("permission") != null)  {
+							throw new SepeException("El usuario no est\u00e1 autorizado");
+						}
 					}
 				}
 			}
-
-		} catch (NullPointerException e) {
-		}
+		} catch (NullPointerException e) {}
 	}
 
 	private static void handleSepeAlert(List<String> list) throws SepeException {

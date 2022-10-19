@@ -95,6 +95,10 @@ public class AonAgreementsTreeToolbar extends Composite {
 		viewAgreementsButton.setEnabled(enabled);
 	}
 	
+	public void setViewAgreements(boolean viewAgreementsIn) {
+		viewAgreements = viewAgreementsIn;
+	}
+	
 	public void setVisibleLoadingButton(boolean enabled) {
 		loadingButton.setVisible(enabled);
 	}

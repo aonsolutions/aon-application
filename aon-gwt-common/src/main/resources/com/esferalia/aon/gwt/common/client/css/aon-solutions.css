@@ -5,6 +5,8 @@
 /* ICONS */
 @url iconAdd aonIconAdd;
 .aon_icon_add { background-image: iconAdd;}
+@url iconKey aonIconKey;
+.aon_icon_key { background-image: iconKey;}
 @url iconVerify aonIconVerify;
 .aon_icon_verify { background-image: iconVerify;}
 @url iconSepe aonIconSepe;
@@ -1190,8 +1192,8 @@
 }
 .aon_custom_dialog_header {
 	margin: 0px;
-	padding-top: 15px;
-	padding-left: 20px;
+	padding: 1rem;
+	padding-bottom: 0;
 	width: auto;
 	display: flex;
 	align-items: center;

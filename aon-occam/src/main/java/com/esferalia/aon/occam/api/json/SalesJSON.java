@@ -111,7 +111,7 @@ public class SalesJSON {
 			.put(IJsonNames.BIC, object.getBic())
 		
 			.put(IJsonNames.DISCOUNT, object.getDiscountExpr())
-			.put(IJsonNames.CARRIER, object.getCarrier())
+			.put(IJsonNames.CARRIER, CarrierJSON.toJSON(object.getCarrier()))
 			.put(IJsonNames.DELIVERY_DATE,  AonDateUtils.format(object.getDeliveryDate(), AonDateUtils.DATE_TIME_FORMAT))
 			
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS, object.getShippingAlternativeAddress())

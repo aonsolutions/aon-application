@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
+import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.DailyTracking;
 import com.esferalia.aon.occam.api.model.task.JobType;
@@ -223,6 +224,30 @@ public class AON_SOLUTIONS {
 	public static Stream<Auth> getAuthStream(String domainName, Integer domainId, AuthFilter filter) { 
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuthStream(ctx, filter);
+		}
+	}
+	
+	public static List<Auth> getAuthsWithDevices(AuthFilter filter) {
+		LinkedList<Auth> auth = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				auth.addAll(getAuthStreamWithDevices(domain, 0, filter).collect(Collectors.toCollection(LinkedList::new)));
+		   	}	    		
+		}
+		return auth;
+	}
+	
+	public static Stream<Auth> getAuthStreamWithDevices(String domainName, Integer domainId, AuthFilter filter) { 
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
+			return getSecurity().getAuthStream(ctx, filter).map(auth -> {
+				try (CloseableAONContext ctx2 = AONContext.getAONContext(domainName, domainId, "")){
+					List<AuthDevice> devices = getSecurity().getAuthDevices(ctx2, f -> f.getAuthProperty().eq(auth.getAuth())); 
+					AuthAttach attach = getAttachment().getAuthAttach(ctx2, f -> f.getAuthProperty().eq(auth.getAuth()), true);
+					return auth.setDevices(devices).setAttach(attach);
+				}
+			});
 		}
 	}
 	
@@ -681,20 +706,27 @@ public class AON_SOLUTIONS {
 //		return getNotificationStream(f->f.getAuthProperty().eq(auth.getAuth()).or(f.getSenderProperty().eq(auth.getAuth())), 1, 10);
 //	}
 	
-	public static Stream<Notification> getNotificationStream(NotificationFilter filter, Integer page, Integer peerPage) {
+	public static Stream<Notification> getNotificationStream(NotificationFilter filter, Integer page, Integer perPage) {
 		List<String> schemas = AONContext.getSchemas();
-		Stream<Notification> stream = new LinkedList<Notification>().stream();
+		LinkedList<Notification> list = new LinkedList<>();
+	
 		for(String schema: schemas) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {
 				try {
-					Stream <Notification> s = getNotificationStream(domain, 0, "", filter, page, peerPage); 
-					stream = Stream.concat(stream, s);
-				} catch (Exception e) {}
+					getNotificationStream(domain, 0, "", filter, page, perPage)
+					.forEach(list::add);
+					
+					if(list.size() == perPage) {
+						break;
+					}
+				} catch (Exception e) {
+					System.out.println(e);
+				}
 			}
 			
 		}
-		return stream;
+		return list.stream();
 	}
 	
 	public static Stream<Notification> getNotificationStream(String domainName, Integer domainId, String login, NotificationFilter filter, Integer page, Integer peerPage) {

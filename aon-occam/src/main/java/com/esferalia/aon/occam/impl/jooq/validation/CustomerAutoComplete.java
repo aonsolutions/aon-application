@@ -30,26 +30,29 @@ public class CustomerAutoComplete {
 	};
 
 	public static final BiConsumer<AONContext, Customer> COMPLETE_SCOPE = (ctx, customer) -> {
-		if(customer.getScope() == null ) {
-			Integer scope;
+		if(customer.getScope().isEmpty()) {
 			User user = SecurityDAO.getUser(ctx);	
-			Scope s = SecurityDAO.getUserScopeStream(ctx, user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
-			
-			if(s == null) {
-				Integer[] scopes = SecurityDAO.getUserScopes(ctx, user.getId());
-				if(scopes != null && scopes.length > 0)
-					scope = scopes[0];
-				else {
-					s = SecurityDAO.getScopeStream(ctx,  f ->
-						f.getDomainProperty().eq(customer.getDomain().getId())).findFirst().orElse(null);
-					if(s == null) {
-						s = SecurityDAO.insertScope(ctx, new Scope()
+			Scope scope = SecurityDAO.getUserScopeStream(ctx, user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(new Scope());
+			if(scope.isEmpty()) {
+				Integer[] scopes = null;
+				try {
+				    scopes = SecurityDAO.getUserScopes(ctx, user.getId());
+				} catch (Exception e) { 
+				    e.printStackTrace();
+				}
+				if(scopes != null && scopes.length > 0) {
+				    Integer sc = scopes[0];
+					scope = SecurityDAO.getScopeStream(ctx, f -> f.getIdProperty().eq(sc)).findFirst().orElse(new Scope());
+				} else {
+					scope = SecurityDAO.getScopeStream(ctx,  f ->
+						f.getDomainProperty().eq(customer.getDomain().getId())).findFirst().orElse(new Scope());
+					if(scope.isEmpty()) {
+						scope = SecurityDAO.insertScope(ctx, new Scope()
 							.setDescription("GENERAL")
 							.setDomain(customer.getDomain().getId()));
 					}
-					scope = s.getId();
 				}
-			} else scope = s.getId();
+			} 
 			customer.setScope(scope);
 		}
 	};

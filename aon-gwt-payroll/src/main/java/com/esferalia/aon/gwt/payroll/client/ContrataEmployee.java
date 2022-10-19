@@ -756,8 +756,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			separatorCertifica = addSeparator();
 
-			cetifica2 = addMenuItem("Cetifica2", new Certifica2Command(), AON.CSS.aonIconSepe(), "cetifica2");
-			cetifica2PDF = addMenuItem("Cetifica2 PDF", new Certifica2PDFCommand(), AON.CSS.aonIconPdf(), "cetifica2PDF");
+			cetifica2 = addMenuItem("Cetific\u00402", new Certifica2Command(), AON.CSS.aonIconSepe(), "cetifica2");
+			cetifica2PDF = addMenuItem("Cetific\u00402 PDF", new Certifica2PDFCommand(), AON.CSS.aonIconPdf(), "cetifica2PDF");
 
 			separatorAdds = addSeparator();
 
@@ -2001,14 +2001,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void showCertifica2PDF() {
-		showLoading("Obteniendo Certific@2...");
+		showLoading("Obteniendo Certific\u00402...");
 		contrataEmployeeObject.getCertifica2PDF(dataURI -> {
 			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
 		}, f -> {
 			showBlakPdf();
-			showError("Error Certific@2", f.getMessage());
+			showError("Error Certific\u00402", f.getMessage());
 		});
 	}
 	

@@ -4,9 +4,12 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -27,7 +30,7 @@ public class CONSOLE {
 		}
 	}
 
-	public static Stream<Domain> getDomains(DomainParams params) {
+	public static Stream<ConsoleDomain> getDomains(DomainParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().getDomains(ctx, params);
 		}
@@ -39,7 +42,7 @@ public class CONSOLE {
 			ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 				.setAONContext(ctx)
 				.setSchemaName(params.getSchema())
-				.setFullDomain(new Domain().setId(domainId));
+				.setDomain(new Domain().setId(domainId));
 			consoleParams.setFromConnection(conParams);
 			return getConsole().deleteDomain(consoleParams);
 		}
@@ -55,6 +58,34 @@ public class CONSOLE {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().changeExpirationDate(ctx,domainId,expireDate);
 		}
+	}
+
+	public static String remoteAccess(DomainParams params, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+			return getConsole().remoteAccess(ctx,domainId);
+		}
+	}
+
+	public static Boolean fix(ConsoleDomainMessage consoleMessage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(consoleMessage.getSchema())) {
+			return getConsole().fix(ctx,consoleMessage);
+		}
+	}
+
+	public static ConsoleTableRow getTableRow(ConsoleTableRow row) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().getTableRow(ctx,row);
+		}
+	}
+
+	public static ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().getTableRowMetadata(ctx,row);
+		}
+	}
+
+	public static String[] getAonTables() {
+		return getConsole().getAonTables();
 	}
 	
 	

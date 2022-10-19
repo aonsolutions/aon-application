@@ -79,7 +79,7 @@ export class AonMovementsList extends AonElement {
       this.search();
     });
 
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
       if(detail) this.getEmployeeForCcc(detail);
     });
 

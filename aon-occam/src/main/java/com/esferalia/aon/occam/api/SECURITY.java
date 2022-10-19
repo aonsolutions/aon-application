@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SECURITY {
 
@@ -38,21 +39,20 @@ public class SECURITY {
 	public static AonToken getAonToken(String token) {
 		JSONObject json = SECURITY.decodeJWT(token);
 		AonToken aonToken = AonToken.parse(json);
-		CloseableAONContext ctx = null;
-		try {
-//			ctx = AONContext.getAONContext(aonToken.getSchema());
-			ctx = AONContext.getAONContext(aonToken.getSchemaFirstDomain(), 0, "");
-			aonToken.setAuth(getSecurity().unHexUuid(ctx, aonToken.getUuid()));
-		} 
-		catch ( Exception e ) {
-			//TODO: uuid : login
-		}
-		finally {
-			if(ctx != null) {
-				ctx.close();
-			}
+		if(!AonStringUtils.isBlank(aonToken.getUuid())) {
+			aonToken.setAuth(hexStringToByteArray(aonToken.getUuid()));
 		}
 		return aonToken;
+	}
+	
+	public static byte[] hexStringToByteArray(String hex) {
+	    int l = hex.length();
+	    byte[] data = new byte[l / 2];
+	    for (int i = 0; i < l; i += 2) {
+	        data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+	                + Character.digit(hex.charAt(i + 1), 16));
+	    }
+	    return data;
 	}
 	
 	public static String getUserPassword(String domainName, int domainId, String login, Integer userId) {
@@ -62,7 +62,8 @@ public class SECURITY {
 	}
 	
 	public static JSONObject decodeJWT(String token) {
-		DecodedJWT jwt = JWT.decode(token);	
+		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+		DecodedJWT jwt = JWT.require(algorithm).build().verify(token);	
 		return new JSONObject(jwt.getSubject())
 				.put("expired", jwt.getExpiresAt() != null
 					&& jwt.getExpiresAt().before(new Date()));

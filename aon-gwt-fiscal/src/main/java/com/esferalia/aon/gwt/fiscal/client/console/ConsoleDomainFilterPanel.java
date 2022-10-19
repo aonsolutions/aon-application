@@ -16,6 +16,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -29,6 +30,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private ListBox schemaBox;
 	private AonTextBox queryBox;
 	private AonDomainBox parentBox;
+	private ListBox orphanBox;
 	private AonDomainTypeBox typeBox;
 	private ListBox activeBox;
 	private ListBox enableHeredityBox;
@@ -37,26 +39,30 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private AonDateBox toLastAccessBox;
 	private AonDateBox fromExpirationDateBox;
 	private AonDateBox toExpirationDateBox;
+	private String[] schemas;
 	
 	private AonSearchPanelButton cleanButton;
 	private AonSearchPanelButton refreshButton;
 	
 	public ConsoleDomainFilterPanel(final ConsoleModuleOptions opt) {
 		setStyleName(AON.CSS.aonSearchPanel());
-			addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMargin());
 		addStyleName(AON.CSS.aonBlockCenter());
 		
-		parentBox = new AonDomainBox(opt.getOccam(), true);
-		parentBox.addSelectionHandler(e -> fire(opt));
-		parentBox.setEnabled(false);
+		defineFields( opt );
 
-		schemaBox = new ListBox();
-
+		FlowPanel searchingPanel = new FlowPanel();
+		InlineLabel searchingLabel = new InlineLabel("Buscando esquemas, un momento por favor ....");
+		searchingPanel.add(searchingLabel);
+		setWidget(searchingPanel);
+		
+		
 		ConsoleModule.CONSOLE_SERVICE.getSchemas(opt.getOccam(), new AsyncCallback<String[]>() {
 			
 			@Override
 			public void onSuccess(String[] schemas) {
+				ConsoleDomainFilterPanel.this.schemas = schemas;
 				schemaBox.clear();
 				schemaBox.addItem(AonStringUtils.EMPTY);
 				for (String sch : schemas) {
@@ -71,15 +77,33 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 						parentBox.setSchema( schemaBox.getSelectedValue() );
 					}
 				});
+				paintFields( opt );
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("No se pueden leer los escquemas de la BD");
+				FlowPanel searchingPanel = new FlowPanel();
+				InlineLabel searchingLabel = new InlineLabel("No se pueden leer los escquemas de la BD");
+				searchingPanel.add(searchingLabel);
+				setWidget(searchingPanel);
 			}
 		});
 		
 		
+		
+	}
+
+	public String getSchema() {
+		return schemaBox != null? schemaBox.getSelectedValue() : null;
+	}
+
+
+	public String[]getSchemas() {
+		return this.schemas;
+	}
+
+	private void defineFields(ConsoleModuleOptions opt) {
+		schemaBox = new ListBox();
 		
 		queryBox = new AonTextBox();
 		queryBox.setVisibleLength(40);
@@ -88,6 +112,16 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		typeBox = new AonDomainTypeBox() ;
 		typeBox.addChangeHandler(e -> fire(opt));
 		
+		parentBox = new AonDomainBox(opt.getOccam(), true);
+		parentBox.addSelectionHandler(e -> fire(opt));
+		parentBox.setEnabled(false);
+
+		orphanBox = new ListBox();
+		orphanBox.addItem(ALL);
+		orphanBox.addItem("Con padre");
+		orphanBox.addItem("Sin padre");
+		orphanBox.addChangeHandler(e -> fire(opt));
+
 		activeBox = new ListBox();
 		activeBox.addItem(ALL);
 		activeBox.addItem("Activos");
@@ -117,7 +151,9 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		
 		toExpirationDateBox = new AonDateBox();
 		toExpirationDateBox.addValueChangeHandler(e -> fire(opt));
-		
+	}
+
+	private void paintFields(final ConsoleModuleOptions opt) {
 		FlowPanel mainTab = new FlowPanel();
 		mainTab.setStyleName( AON.CSS.aonBlockCenter());
 		mainTab.addStyleName( AON.CSS.aonWidthAlmostAll());
@@ -140,7 +176,10 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			.addCell(new Label(AON.MSG.description()),AON.CSS.aonSearchPanelLabel())
 			.addCell(queryBox)
 			.addCell(new Label("Dominio padre"),AON.CSS.aonSearchPanelLabel())
-			.addCell(parentBox);
+			.addCell(parentBox)
+			.addCell(new Label("Padre?"),AON.CSS.aonSearchPanelLabel())
+			.addCell(orphanBox)
+			;
 		mainTab.add(rowTable1);
 		
 		AonDisplayTable rowTable2 = new AonDisplayTable();
@@ -178,6 +217,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		fromExpirationDateBox.setValue(null,false);
 		toExpirationDateBox.setValue(null,false);
 		parentBox.setValue(null,false);
+		orphanBox.setSelectedIndex(0);
 		typeBox.setSelectedIndex(0);
 		activeBox.setSelectedIndex(0);
 		enableHeredityBox.setSelectedIndex(0);
@@ -206,6 +246,12 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			params.setParent(parentBox.getDomain().getId());
 		}
 		
+		if ( orphanBox.getSelectedIndex() > 0 ) {
+			params.setOrphan(orphanBox.getSelectedIndex() == 1 
+				?Boolean.valueOf(false)
+				:Boolean.valueOf(true));
+		}
+
 		if ( typeBox.getValue() != null ) {
 			params.setType(typeBox.getValue().ordinal());
 		}

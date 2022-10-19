@@ -94,15 +94,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 
 			switch (api.getPath()) {
 			case "/":
-				boolean parent = api.getData().optBoolean(IJsonNames.PARENT);
-				if(parent && !AonStringUtils.isEmpty(api.getToken())) {
-					AonToken aonToken = SECURITY.getAonToken(api.getToken());
-					save(api, aonToken);
-					response ( req, resp, getTimeControl(api, aonToken, api.getData().optInt(TASK_HOLDER)) );
-				} else {
-					save(api, api.getDomain(), api.getUser());
-					response ( req, resp, getTimeControl(api.getDomain(), api.getUser()));	
-				}
+				response ( req, resp, saveTimeControl(api));	
 				break;
 			case "/save":
 				if(AonStringUtils.isEmpty(api.getToken())) {
@@ -137,7 +129,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private Object getTimeControl(AonApiData api) {
+	private JSONObject getTimeControl(AonApiData api) {
 		boolean parent = api.getData().optBoolean(IJsonNames.PARENT);
 		if(parent && !AonStringUtils.isEmpty(api.getToken())) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
@@ -147,14 +139,14 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private Object getTimeControl(Domain domain, User user) {
+	private JSONObject getTimeControl(Domain domain, User user) {
 		TaskHolder taskHolder = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getUserIdProperty().eq(user.getId())));
 		return getTimeControl(taskHolder);
 	}
 	
-	private Object getTimeControl(AonApiData api, AonToken aonToken, Integer taskHolderId) {
+	private JSONObject getTimeControl(AonApiData api, AonToken aonToken, Integer taskHolderId) {
 		LinkedList<TaskHolder> taskHolders = AON_SOLUTIONS.getTaskHolders(aonToken);
 		
 		TaskHolder taskHolder = taskHolders.stream().filter(th -> th.getId().equals(taskHolderId) 
@@ -171,7 +163,29 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return getTimeControl(taskHolder);
 	}
 	
-	private Object getTimeControl(TaskHolder taskHolder) throws AonApiException {
+	private JSONObject saveTimeControl(AonApiData api) {
+		JSONObject json = new JSONObject();
+		JSONObject jsonSave = new JSONObject();
+		
+		boolean parent = api.getData().optBoolean(IJsonNames.PARENT);
+		
+		if(parent && !AonStringUtils.isEmpty(api.getToken())) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			jsonSave = save(api, aonToken);
+			json = getTimeControl(api, aonToken, api.getData().optInt(TASK_HOLDER));
+		} else {
+			jsonSave = save(api, api.getDomain(), api.getUser());
+			json = getTimeControl(api.getDomain(), api.getUser());	
+		}
+		
+		if(jsonSave.optInt(IJsonNames.ID)!=0) {
+			json.put(IJsonNames.ID, jsonSave.optInt(IJsonNames.ID));
+		}
+		
+		return json;
+	}
+	
+	private JSONObject getTimeControl(TaskHolder taskHolder) throws AonApiException {
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
@@ -317,7 +331,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Coordinates coordinates = new Coordinates(params.optString("coordinates"));
 	
 		Date date = !params.optString(IJsonNames.DATE).isEmpty() ?  new Date(params.optLong(IJsonNames.DATE)) : new Date();
-		
+
 		Location lc = new Location();
 		
 		if(!coordinates.isEmpty()) {

@@ -568,6 +568,7 @@ public class JooqCertifica2 {
 			// Ya has cumplido los 180 dias de registro
 			if (maxDays + salaryDaysBetween > 180) {
 				Long restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
+				if(0 == restDays) continue;
 
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
 						monthDateFormat.format(salaryStartDate), restDays.intValue(),
@@ -739,6 +740,8 @@ public class JooqCertifica2 {
 		representanteType.setCIFNIF(certifica2Info.getRepresentativeDocument());
 		representanteType.setNombre(removeAccents(certifica2Info.getRepresentativeName()));
 		representanteType.setApellido1(removeAccents(certifica2Info.getRepresentativeSurname()));
+		if(AonStringUtils.isNotBlank(certifica2Info.getRepresentativeWork()))
+			representanteType.setCargo(certifica2Info.getRepresentativeWork());
 
 		EMPRESATYPE empresaType = new EMPRESATYPE();
 		empresaType.setCIFNIF(certifica2Info.getEnterpriseDocument());
@@ -871,6 +874,7 @@ public class JooqCertifica2 {
 			.setName(certifica2Info.getRepresentativeName())
 			.setSurname(certifica2Info.getRepresentativeSurname())
 			.setLastSurname("")
+			.setCargo(certifica2Info.getRepresentativeWork())
 			.setIpf(certifica2Info.getDocument())
 			.setEmployeeName(certifica2Info.getName())
 			.setEmployeeSurname(certifica2Info.getSurname())

@@ -3720,6 +3720,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public void deletePayments(String domainName, List<Integer> paymentIds) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqAgreementTab.deletePayments(connection, domainId, paymentIds);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public String getAgreementDraftReceipt(String domain, AgreementInfo agreement, List<Variable> context, int levelId, String mime) throws IllegalArgumentException {
 		
 		try {

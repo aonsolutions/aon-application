@@ -64,25 +64,6 @@ export class AonNewsList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     
-    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      // this.search();
-    });
-    
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-      // this._list = [];
-    });
-
-    // let arrayNewFilter = PRESENCE_FILTER;
-    // arrayNewFilter.push({
-    //   type: CONSTANT.HTML_ELEMENT,
-    //   element: new AonSwitch(),
-    //   id: "aonSwitchFilter",
-    //   name:"active",
-    //   title:"Usuarios activos",
-    //   checked:true
-    // })
-    
-    // btnSearch.buildOptionsFilter(arrayNewFilter);//INPUTS
   }
 
   paintTable() {

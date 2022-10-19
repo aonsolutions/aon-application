@@ -6,23 +6,25 @@ import { AonCustomer } from './aon-customer.js';
 export class AonCustomerList extends AonRegistryList {
 
 	build(){
-		this.filter = {
-			page: 1,
-			perPage: 50		
-		}
+		this.filter = this.filter || { page: 1, perPage: 50 }
 		super.build();
 	}
 
 	getRegistries() {
-		return getCustomer(this.filter);
+		return getCustomers(this.filter);
 	}
 
-	buildRegistry(registry) {
+	getCustomerCustom(registry){
 		let data = {
 			id: registry.id,
 			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
 		};
-		getCustomer(data).then(r => {
+		return getCustomer(data);
+	}
+
+	buildRegistry(registry) {
+		this.getCustomerCustom(registry)
+		.then(r => {
 			let aonCustomer = new AonCustomer();
 			aonCustomer.id = this.getApplication().id + 'Customer';
 			aonCustomer.setCustomer(r);

@@ -452,11 +452,41 @@ public class AgreementParser {
 	    	            
 	    	            // EndDate
 	    	            Calendar endDate = Calendar.getInstance();
-	    	            endDate.set(Calendar.YEAR, year-1);
+	    	            endDate.set(Calendar.YEAR, year);
 	    	            endDate.set(Calendar.MONTH, 11);
 	    	            endDate.set(Calendar.DAY_OF_MONTH, 31);
 	    	            
-	    	            agreement.setEndDateToExistingLevelData(endDate.getTime());
+	    	            // Check if has explicit period
+	    	            if(null != elementTSI.getElementsByTagName("PERIODO")) {
+	    	            	NodeList listPeriod =  elementTSI.getElementsByTagName("PERIODO");
+	    	            	
+	    	            	for(int n=0; n<listPeriod.getLength(); n++) {
+	    	            		Node nodePeriod = listPeriod.item(n);
+	    	            		
+	    	            		 if (nodePeriod.getNodeType() == Node.ELEMENT_NODE) {
+	    	            			 Element elementPeriod = (Element) nodePeriod;
+	    	            			 
+	    	            			 String tillPeriod = elementPeriod.getElementsByTagName("DESDE_DD_MM").item(0).getTextContent();
+    		    	            	 String toPeriod = elementPeriod.getElementsByTagName("HASTA_DD_MM").item(0).getTextContent();
+    		    	            	
+    		    	            	 try {
+    		    	            		 
+    		    	            		endDate.set(Calendar.YEAR, year);
+    		    	            	
+    			    	             	startDate.set(Calendar.MONTH, Integer.parseInt(tillPeriod.split("-")[1]) - 1);
+    			 	    	            startDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tillPeriod.split("-")[0]));
+    			 	    	             
+    			 	    	            endDate.set(Calendar.MONTH,  Integer.parseInt(toPeriod.split("-")[1]) - 1);
+    			 	    	            endDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(toPeriod.split("-")[0]));
+    		 	    	            
+    		    	            	 } catch (Exception e) {
+    									System.err.println("Algo ha ido mal con los periodos");
+    								 }
+	    	            		 }
+	    	            	}
+	    	            	 
+	    	            } else
+	    	            	agreement.setEndDateToExistingLevelData(endDate.getTime());
 	    	            
 	    	            NodeList listCP = elementTSI.getElementsByTagName("CATEGORIAS_PROFESIONALES");
 	    	            
@@ -510,7 +540,10 @@ public class AgreementParser {
 						   	    	            	
 						   	    	            	String realName = getParseName(name, type);
 						   	    	            	
-						   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
+						   	    	            	if(null != elementTSI.getElementsByTagName("PERIODO"))
+						   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime(), endDate.getTime());
+						   	    	            	else
+						   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime());
 				    	     	            	}
 				   	    	            	}
 			   	    	            	}

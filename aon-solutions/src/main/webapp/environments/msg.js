@@ -39,6 +39,7 @@ export const ACTIVITY_SUMMARY = MSG.ACTIVITY_SUMMARY;
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
+export const ADD_PROJECT = "Añadir proyecto";// TODO
 export const ADD_COMPOSITION = 'Añadir Composición'; // TODO
 export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
@@ -50,6 +51,7 @@ export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_TYPE = "Añadir Tipo"; // TODO
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
+export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
 export const ADDRESS = MSG.ADDRESS;
 export const ALIAS = 'Alias';// TODO
 export const ALL_FILES = MSG.ALL_FILES;
@@ -65,6 +67,8 @@ export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = MSG.ATTACH_FILES_DRAGGING_DRO
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
 export const ASSIGN = "Asignar";// TODO
+export const ADVISER = "Asesor"; //TODO
+export const ADVISERS = "Asesores"; //TODO
 
 // ----- B
 
@@ -82,6 +86,7 @@ export const BIC_SWIFT = 'Bic / Swift';// TODO
 export const BARCODE = MSG.BARCODE;
 export const BILLING = MSG.BILLING;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
+export const BLOCKED = "Bloqueado";// TODO
 export const BOOKING = MSG.BOOKING;
 export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;

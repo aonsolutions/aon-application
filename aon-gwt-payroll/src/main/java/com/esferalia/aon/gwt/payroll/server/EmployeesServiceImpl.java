@@ -6800,6 +6800,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Remove SEPE id from DB
 			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
+			
+			// Remove CBC & CTO documents
+			JooqContractAttach.removeCopyContract(connection, employeeContractInfo.getContractInfo().getContractId());
+			JooqContractAttach.removeCopyBasic(connection, employeeContractInfo.getContractInfo().getContractId());
+			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -6823,7 +6828,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println(certificates.toString());
 
 			// Send certificates
-			byte[] certifica2PDF = Sepe.certEnterprise(new ByteArrayInputStream(certificate.getCertificate()),
+			byte[] certifica2PDF = Sepe.certEnterprise(new ByteArrayInputStream(certificate.getData()),
 					certificate.getPassword(), certificate.getType(), certificates);
 
 			if (null != certifica2PDF && certifica2PDF.length > 0)

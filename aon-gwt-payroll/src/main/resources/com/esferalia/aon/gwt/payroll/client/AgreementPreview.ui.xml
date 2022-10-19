@@ -27,6 +27,11 @@
 			padding: .5rem 2rem;
 		}
 		
+		.dateGap {
+			gap: 0px !important;
+			align-items: center;
+		}
+		
 		.discContent {
 			padding: 1rem 0 !important;
 		}
@@ -37,9 +42,9 @@
 			align-items: center;
 		}
 		
-		.flexBetween {
+		.flexTitle {
 			display: flex;
-			justify-content: space-between;
+			gap: 1rem;
 			align-items: center;
 			border-bottom: 1px solid #c1bebe;
 		}
@@ -69,13 +74,50 @@
 		
 		.message {
 			font-weight: bold;
-		}		
+		}	
+		
+		.textBox {
+			width: auto;
+			border: none;
+		}	
 				
 		/* Class AgreementPreview.Style */
+		
+		.cellWidth {
+			min-width: 120px;
+		}
 		
 		.columnBorder {
 			border: 1px solid #eee;
 			border-bottom: none;
+		}
+		
+		.dateNoSelected {
+			padding: .3rem;
+			background-color: white;
+			border: 1px solid #eee;
+			font-weight: bold;
+			cursor: pointer;
+		}
+		
+		.dateSelected {
+			background-color: #eee;
+			border: 1px solid #eee;
+		}
+		
+		.datePanel {
+			gap: .3rem !important;
+		}
+		
+		.dialogGlass {
+			z-index: 7;
+			background-color: #000;
+			opacity: 0.2;
+			filter: opacity(45%);
+		}
+		
+		.dialogZIndex {
+			z-index: 8;
 		}
 		
 		.extraCellHeight{
@@ -85,7 +127,7 @@
 		.gridCell{
 			text-transform: uppercase;
 			text-align: center;
-			width: 120px;
+			min-width: 120px;
 		}
 		
 		.gridTitle{
@@ -103,7 +145,7 @@
   			height: 1.5rem;
 			font-size: .7rem;
 			background-color: #eee;
-			max-width: 120px;
+			min-width: 120px;
 		}
 		
 		.headerFSize{
@@ -119,6 +161,10 @@
 			font-size: .7rem;
 			background-color: #eee;
 		}
+		
+		.levelDefaultValue {
+			color: #5b93dc !important;
+		}
 
 		.levelFixed {
 			position: sticky;
@@ -126,6 +172,11 @@
 			z-index: 2;
 			font-size: .7rem;
 			background-color: white;
+		}
+		
+		.modify {
+			background-color: lightyellow !important;
+    		border: 0.5px solid yellow !important;
 		}
 		
 		.oddRow {
@@ -152,18 +203,18 @@
 					<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label text="Descripción" styleName="{style.inputTitle}" />
-							<g:Label ui:field="description" />
+							<g:TextBox ui:field="description" styleName="{style.textBox} {style.widthAll}" />
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label text="Código SS" styleName="{style.inputTitle}" />
-							<g:Label ui:field="ssNumber" />
+							<g:TextBox ui:field="ssNumber" styleName="{style.textBox}" />
 							<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}" />
 						</g:HTMLPanel>
 						<g:DisclosurePanel ui:field="levelDiscPanel">
 						   <g:customHeader>
-						   	 <g:HTMLPanel styleName="{style.flexBetween}">
-						   	  	<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
+						   	 <g:HTMLPanel styleName="{style.flexTitle}">
 						   	  	<aon:AonToolbarButton ui:field="levelDiscBtn" />
+						   	  	<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="levelDiscPanelContent">
@@ -180,14 +231,14 @@
 						
 						<g:DisclosurePanel ui:field="salaryDiscPanel">
 						   <g:customHeader>
-						   	 <g:HTMLPanel styleName="{style.flexBetween}">
-						   	  	<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
+						   	 <g:HTMLPanel styleName="{style.flexTitle}">
 						   	  	<aon:AonToolbarButton ui:field="salaryDiscBtn" />
+						   	  	<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
-						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="salaryDiscPanelContent">
-						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex}" />
-								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter}">
+						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
+						   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex} {style.datePanel}" />
+								<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter} {style.heigthAll}">
 									<g:ScrollPanel ui:field="salaryScrollPanel">
 										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
 									</g:ScrollPanel>
@@ -200,9 +251,9 @@
 						  
 						  <g:DisclosurePanel ui:field="paymentDiscPanel">
 							  <g:customHeader>
-							   	 <g:HTMLPanel styleName="{style.flexBetween}">
-							   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
+							   	 <g:HTMLPanel styleName="{style.flexTitle}">
 							   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" />
+							   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
 							   	 </g:HTMLPanel>
 							   </g:customHeader>
 							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentDiscPanelContent">
@@ -216,25 +267,6 @@
 									</g:HTMLPanel>
 							   </g:HTMLPanel>
 						   </g:DisclosurePanel>
-						   
-						   <g:DisclosurePanel ui:field="extraDiscPanel">
-							   <g:customHeader>
-							   	 <g:HTMLPanel styleName="{style.flexBetween}">
-							   	  	<g:Label styleName="{style.disclouruseTitle}">Pagas extra</g:Label>
-							   	  	<aon:AonToolbarButton ui:field="extraDiscBtn" />
-							   	 </g:HTMLPanel>
-							   </g:customHeader>
-							   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">
-							   		<g:HTMLPanel ui:field="extraTable" styleName="{style.flexCenter} {style.heigthAll}">
-										<g:ScrollPanel ui:field="extraScrollPanel">
-											<g:Grid ui:field="extraGrid" styleName="{style.borderCollapse}" />
-										</g:ScrollPanel>
-									</g:HTMLPanel>
-									<g:HTMLPanel ui:field="agreementExtraMessage" styleName="{style.flexCenter}">
-										<g:Label text="NO EXISTEN EXTRAS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
-									</g:HTMLPanel>
-							   </g:HTMLPanel>
-						 </g:DisclosurePanel>
 						
 					</g:HTMLPanel>
 				</g:ScrollPanel>

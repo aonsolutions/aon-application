@@ -1,11 +1,11 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
+import { isEmptyObject, removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
 import { setAttributes} from "../../../../services/utilsComponents.js";
 import { getStatus, getPeriod, getTimeControlDetail } from "../../../../services/service.js";
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
 import { AonFilter } from "../../../../components/aon-filter.js";
 import { AonToolbar } from "../../../../components/aon-toolbar.js";
@@ -118,7 +118,7 @@ export class AonEventDetailList extends AonElement {
     const searchValueFn = ({detail})=>{
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
     this.searchValueDefault();
   }
@@ -155,7 +155,7 @@ export class AonEventDetailList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
+      aonTable.addColumnIcon({title:MSG.BACK, name:MATERIAL_ICONS.ARROW_BACK, type:"string", id:"lettersHtml", width:"6%"}, ()=>this.back());
       aonTable.addColumn(MSG.STATUS, "string", "textStatus", "10%");
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "20%");
       aonTable.addColumn(MSG.LOCATION, "string", "nameLocation", "30%");
@@ -214,7 +214,14 @@ export class AonEventDetailList extends AonElement {
           const status = getStatus(newStatus);
           const textStatus = status.name;
           const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
-          const nameLocation = resp.location && resp.location.name ? resp.location.name : `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
+    
+          let nameLocation = "";
+          if (resp.location && resp.location.name) {
+            nameLocation = resp.location.name;
+          } else if(!isEmptyObject(resp.coordinates)) {
+            let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
+            nameLocation = aib.outerHTML;
+          }
 
           data.push({
             ...resp,
@@ -224,6 +231,7 @@ export class AonEventDetailList extends AonElement {
             nameLocation,
             dateParse: AonDateUtils.setDateTimestamp(resp.date),
           });
+          
         });
       }
     } catch (error) {

@@ -28,6 +28,8 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		private Integer domain;
 		private String description;
 		private boolean deleted = false;
+		private boolean modify = false;
+		private boolean catModify = false;
 
 		@Override
 		public Integer getId() {
@@ -62,6 +64,22 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		public void setDeleted(boolean deleted) {
 			this.deleted = deleted;
 		}
+		
+		public boolean isModify() {
+			return modify;
+		}
+
+		public void setModify(boolean modify) {
+			this.modify = modify;
+		}
+		
+		public boolean isCatModify() {
+			return catModify;
+		}
+
+		public void setCatModify(boolean catModify) {
+			this.catModify = catModify;
+		}
 
 		@Override
 		public int hashCode() {
@@ -88,6 +106,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		private Date startDate;
 		private Date endDate;
 		private boolean deleted = false;
+		private boolean modify = false;
 
 		@Override
 		public Integer getId() {
@@ -145,6 +164,14 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 
 		public void setDeleted(boolean deleted) {
 			this.deleted = deleted;
+		}
+		
+		public boolean isModify() {
+			return modify;
+		}
+
+		public void setModify(boolean modify) {
+			this.modify = modify;
 		}
 
 		@Override
@@ -276,6 +303,8 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	private Set<String> allVariables = new HashSet<>();
 	private ShownVariables shownVariables = ShownVariables.VALUES;
 	
+	private Level selectedLevel;
+	
 	@Override
 	public Integer getId() {
 		return id;
@@ -379,16 +408,15 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 				break;
 		}
 		
-//		Window.alert("getVariablesByDate --> shownVariables : " + shownVariables + "\nvariables size : " + variables.size());
-		
 		if(shownVariables.equals(ShownVariables.VALUES) && variables.isEmpty()) {
 			this.shownVariables = ShownVariables.ALL;
 			getAllVariables().stream().forEach(variable -> variables.add(variable));
 		}
 		
-//		Window.alert("getVariablesByDate end --> shownVariables : " + shownVariables + "\nvariables size : " + variables.size());
+		List<String> variablesList = new ArrayList<String>(variables);
+		variablesList.sort((o1, o2) -> o1.compareTo(o2));
 		
-		return variables;
+		return new HashSet<String>(variablesList);
 	}
 	
 	private void setFilteredVariables() {
@@ -451,6 +479,18 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	public LevelData getLevelData(Integer levelId, String variable, Date date) {
 		Set<LevelData> levelDatas = getLevelDatasMap().get(levelId);
+		if(null == levelDatas) return null;
+		
+		for(LevelData levelData : levelDatas)
+			if(AonStringUtils.equalsIgnoreCase(levelData.getName(), variable) && levelData.getStartDate().equals(date))
+				return levelData;
+		return null;
+	}
+	
+	public LevelData getDefaultLevelData(String variable, Date date) {
+		Set<LevelData> levelDatas = getLevelDatasMap().get(0);
+		if(null == levelDatas) return null;
+		
 		for(LevelData levelData : levelDatas)
 			if(AonStringUtils.equalsIgnoreCase(levelData.getName(), variable) && levelData.getStartDate().equals(date))
 				return levelData;
@@ -459,6 +499,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	public void createLevelData(Integer levelId, String variable, String expression, Date selectedDate) {
 		Set<LevelData> levelDatas = getLevelDatasMap().get(levelId);
+		if(null == levelDatas) levelDatas = new HashSet<>();
 		Date endDate = getNextEndDate(selectedDate);
 		
 		Random rand = new Random();
@@ -472,6 +513,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		levelData.setStartDate(selectedDate);
 		levelData.setEndDate(endDate);
 		levelData.setDeleted(false);
+		levelData.setModify(true);
 		levelDatas.add(levelData);
 		getLevelDatasMap().put(levelId, levelDatas);
 	}
@@ -484,6 +526,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		level.setId(newLevelId);
 		level.setDomain(getDomain());
 		level.setDescription(descriptionIn);
+		level.setModify(true);
 		
 		getLevels().add(level);
 		getCategoriesMap().put(newLevelId, new HashSet<>());
@@ -511,6 +554,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 			.ifPresent(levelData -> {
 				if(AonStringUtils.isBlank(newExpression)) levelData.setDeleted(true); 
 				levelData.setExpression(newExpression);
+				levelData.setModify(true);
 			});
 	}
 	
@@ -549,7 +593,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	public void deletePayment(Payment payment) {
 		payment.setDeleted(true);
-		getActiveExtras().stream().filter(extra -> extra.getAgreementPayment().equals(payment.getId())).findFirst().ifPresent(agreementExtra -> agreementExtra.setDeleted(true));
+		getExtras().stream().filter(extra -> extra.getAgreementPayment().equals(payment.getId())).findFirst().ifPresent(agreementExtra -> agreementExtra.setDeleted(true));
 	}
 	
 	public Set<AgreementExtra> getExtras() {
@@ -567,6 +611,10 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	public void addExtra(AgreementExtra extra) {
 		this.extras.add(extra);
+		if(null != extra.getAgreementPayment()) {
+			Payment payment = getPaymentById(extra.getAgreementPayment());
+			payment.setModify(true);
+		}
 	}
 	
 	public void addExtra(Extra extra) {
@@ -674,8 +722,16 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		getVariables().remove(deleteDate);
 		getLevelDatasMap().values().forEach(levelDatas -> levelDatas.forEach(levelData -> levelData.setDeleted(levelData.getStartDate().equals(deleteDate))));
 	}
-
+	
 	// ----------------------------------------------------------------------
+
+	public Level getSelectedLevel() {
+		return selectedLevel;
+	}
+
+	public void setSelectedLevel(Level selectedLevel) {
+		this.selectedLevel = selectedLevel;
+	}
 
 	public boolean isSaved(){
 		return id > 0;
@@ -687,12 +743,83 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 
 	public void replacePayment(Payment payment) {
 		getPayments().removeIf(paymentIt -> paymentIt.getId().equals(payment.getId()));
+		payment.setModify(true);
 		getPayments().add(payment);
+	}
+	
+	public void syncPayment(Payment payment, AgreementExtra extra) {
+		if(payment.getType() == Payment.Type.CRA_0004 && (extra == null || extra.isDeleted())) {
+			getExtras().forEach(extraIt -> {
+				Payment paymentIt = getPaymentById(extraIt.getAgreementPayment());
+				if(paymentIt.getType() == Payment.Type.CRA_0004) {
+					paymentIt.setMonth(null);
+					paymentIt.setModify(true);
+					extraIt.setDeleted(true);
+				}
+			});
+		}
 	}
 
 	public void replaceExtra(AgreementExtra extra) {
 		getExtras().removeIf(extraIt -> extraIt.getId().equals(extra.getId()));
 		getExtras().add(extra);
+		getPaymentById(extra.getAgreementPayment()).setModify(true);
+	}
+	
+	public void syncExtras(AgreementExtra extra) {
+		String issueDate = extra.getIssueDate();
+		// Summer = 0 || Winter = 1
+		Byte winterSummer = AonStringUtils.containsIgnoreCase(issueDate, "12") ? (byte)1 : (byte)0;
+		String period = getExtraPeriod(extra);
+		
+		if(winterSummer == (byte)0)
+			syncWinterExtra(period);
+		else
+			syncSummerExtra(period);
+	}
+	
+	private void syncSummerExtra(String period) {
+		Optional<AgreementExtra> summerExtra = getExtras().stream()
+			.filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getEndDate(), "6") || AonStringUtils.containsIgnoreCase(extraIt.getEndDate(), "7"))
+			.findFirst();
+		
+		if(summerExtra.isPresent()) {
+			summerExtra.get().setStartDate(AonStringUtils.equalsIgnoreCase(period, "A") ? "01/07 -1" : "01/01");
+			summerExtra.get().setEndDate("30/06");
+			
+			Payment summerPayment = getPaymentById(summerExtra.get().getAgreementPayment());
+			summerPayment.setModify(true);
+		}
+	}
+
+	private void syncWinterExtra(String period) {
+		Optional<AgreementExtra> winterExtra = getExtras().stream()
+			.filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getEndDate(), "12"))
+			.findFirst();
+		
+		if(winterExtra.isPresent()) {
+			winterExtra.get().setStartDate(AonStringUtils.equalsIgnoreCase(period, "A") ? "01/01" : "01/07");
+			winterExtra.get().setEndDate("31/12");
+			
+			Payment winterPayment = getPaymentById(winterExtra.get().getAgreementPayment());
+			winterPayment.setModify(true);
+		}
+	}
+
+	private String getExtraPeriod(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
+		
+		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		
+		switch (endMonth - startMonth) {
+		case 11:
+			return "A";
+		case 5:
+			return "S";
+		default:
+			return null;
+		}
 	}
 
 }

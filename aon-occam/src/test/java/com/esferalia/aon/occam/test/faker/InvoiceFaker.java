@@ -292,7 +292,7 @@ public class InvoiceFaker {
 				invoice.setSeries(params.getConfig().getDefaultInvoiceSeries());
 				invoice.setNumber( InvoiceDAO.getNextNumber(params.getCtx(), new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 				
-				invoice.setScope(new Scope().setId( customer.getScope() ));
+				invoice.setScope(customer.getScope());
 				invoice.setTransaction( customer.getTransaction() );
 				
 				invoice.setService( AonRandom.gt(80) );
@@ -312,7 +312,7 @@ public class InvoiceFaker {
 				fillRegistryData(invoice, supplier);
 				//invoice.setReferenceCode(AonRandom.string(-1,1,15));
 				invoice.setReferenceCode(AonRandom.uuid(32));
-				invoice.setScope(new Scope().setId( supplier.getScope() ));
+				invoice.setScope(supplier.getScope());
 				invoice.setTransaction(supplier.getTransaction());
 				
 				invoice.setService( AonRandom.gt(40) );
@@ -336,7 +336,7 @@ public class InvoiceFaker {
 //					System.out.println("NULL");
 //				}
 
-				invoice.setScope(new Scope().setId( creditor.getScope() ));
+				invoice.setScope(creditor.getScope());
 				invoice.setTransaction( creditor.getTransaction() );
 				
 				invoice.setService( AonRandom.gt(50) );

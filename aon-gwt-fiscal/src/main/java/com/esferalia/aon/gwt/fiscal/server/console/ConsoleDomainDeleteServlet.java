@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -33,6 +34,7 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.log(Level.INFO, "ConsoleDomainDeleteServlet start!");
 		String domainParamsParam = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
+		resp.setContentType(MimeType.JSON.getName());
 		ConsoleParams consoleParams = new ConsoleParams()
 			.setPrinter(new PrintStream(resp.getOutputStream()));
 		DomainParams domainParams = null;
@@ -42,7 +44,7 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 					.setAONContext(ctx)
 					.setSchemaName(domainParams.getSchema())
-					.setFullDomain(new Domain().setId(domainParams.getId()));
+					.setDomain(new Domain().setId(domainParams.getId()));
 				consoleParams.setFromConnection(conParams);
 				ConsoleDeleteDomain.delete(consoleParams);
 			} catch (Exception e) {

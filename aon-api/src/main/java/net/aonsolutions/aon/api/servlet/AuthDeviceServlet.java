@@ -65,11 +65,19 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 					.setAuth(aonToken.getAuth())
 					.setDeviceType(DeviceType.safeValueOf(api.getData().optString("device_type")))
 					.setDeviceToken(api.getData().optString(TOKEN_FCM));
-			json = SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice).toJSON();
+			json = toJSON(SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice));
 		}
 		return json;
 	}
 	
+	public JSONObject toJSON(AuthDevice d) {
+		JSONObject json = new JSONObject();
+		json.put("id", d.getId());
+		json.put("auth", d.getAuth());
+		json.put("device_type", d.getDeviceType().value());
+		json.put("device_token", d.getDeviceToken());
+		return json;
+	}
 	private JSONObject delete(AonApiData api) {
 		if(!api.getData().isNull(TOKEN_FCM))
 			SECURITY.deleteAuthDevice(api.getDomain(), api.getUser().getLogin(), 

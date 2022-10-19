@@ -784,7 +784,7 @@ public class InvoiceImport {
 	
 	private static Invoice buildInvoice(Domain domain, User user, InvoiceImportClass iic) {
 		Invoice invoice = new Invoice();
-		invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+		invoice.setScope(getScope(domain, user));
 		invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
 		invoice.setTransaction(getTransaction(iic));
 		invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
@@ -895,7 +895,7 @@ public class InvoiceImport {
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 			Invoice invoice = new Invoice();
-			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+			invoice.setScope(getScope(domain, user));
 			invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
 			invoice.setTransaction(getTransaction(iic));
 			invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
@@ -1085,12 +1085,15 @@ public class InvoiceImport {
 	private static Account getAccount(Domain domain, User user, String accountCode, String accountName) {
 		Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), accountCode);
 		if(account == null) {
+			String alias = !AonStringUtils.isBlank(accountName) && accountName.length()> 32 
+				? accountName.substring(0, 32) : accountName;
+					
 			account = new Account()
 				.setCode(accountCode)
 				.setDescription(!AonStringUtils.isBlank(accountName) 
 						? accountName : "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
 				.setAlias(!AonStringUtils.isBlank(accountName) 
-						? accountName : "SIN DESCRIPCIÓN")
+						? alias : "SIN DESCRIPCIÓN")
 				.setDomain(domain.getId())
 				.setActive(true);
 			account = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
@@ -1177,7 +1180,7 @@ public class InvoiceImport {
 					.copy(reg)
 					.setStatus(RegistryStatus.ACTIVE)
 					.setTransaction( transaction )
-					.setScope(getScopeId(domain, user));
+					.setScope(getScope(domain, user));
 				customer.setDomain(domain);
 				customer.setName(reg.getName());
 				customer.setId(reg.getId());
@@ -1218,7 +1221,7 @@ public class InvoiceImport {
 						.copy(reg)
 						.setTransaction(transaction)
 						.setStatus(RegistryStatus.ACTIVE)
-						.setScope(getScopeId(domain, user))
+						.setScope(getScope(domain, user))
 						.setAccount(acc.getId());
 				if(!AonStringUtils.isBlank(iic.getRegistryAccount())) {
 					Account account = getAccount(domain, user, iic.getRegistryAccount(), reg.getName());
@@ -1258,7 +1261,7 @@ public class InvoiceImport {
 						.setAccount(acc==null?null:acc.getId())
 						.setTransaction(transaction)
 						.setStatus(RegistryStatus.ACTIVE)
-						.setScope(getScopeId(domain, user));
+						.setScope(getScope(domain, user));
 				creditor.setDomain(domain);
 				creditor.setId(reg.getId());
 				if(!AonStringUtils.isBlank(iic.getRegistryAccount())) {
@@ -1289,28 +1292,26 @@ public class InvoiceImport {
 		return null;
 	}
 
-	private static Integer getScopeId(Domain domain, User user) {
-		Integer scope = domain.getScope();
+	private static Scope getScope(Domain domain, User user) {
+		Scope scope = new Scope();
 		if(domain.getScope() == null) {
-
-			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
-					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
-			if(s == null) {
+			scope = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
+					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(new Scope());
+			if(scope.isEmpty()) {
 				Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 				if(scopes != null && scopes.length > 0)
-					scope = scopes[0];
+					scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), scopes[0]);
 				else {
-					s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),  f ->
-						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(null);
-					if(s == null) {
-						s = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
+					scope = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),  f ->
+						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
+					if(scope.isEmpty()) {
+						scope = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
 							.setDescription("GENERAL")
 							.setDomain(domain.getId()));
 					}
-					scope = s.getId();
 				}
-			} else scope = s.getId();
-		}
+			}
+		} else scope = AON.getScope(domain.getName(), domain.getId(), user.getLogin(), domain.getScope());
 		return scope;
 	}
 	

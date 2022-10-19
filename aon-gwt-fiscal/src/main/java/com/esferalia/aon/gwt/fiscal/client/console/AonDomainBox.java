@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -136,13 +137,13 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 					if (onlyParents) {
 						params.setDomainManagement(onlyParents);
 					}
-					CONSOLE_SERVICE.getDomains(params,new AsyncCallback<LinkedList<Domain>>() {
+					CONSOLE_SERVICE.getDomains(params,new AsyncCallback<LinkedList<ConsoleDomain>>() {
 		
 						public void onFailure(Throwable caught) {
 							callback.onSuggestionsReady(request, new Response());
 						}
 
-						public void onSuccess(LinkedList<Domain> result) {
+						public void onSuccess(LinkedList<ConsoleDomain> result) {
 							LinkedList<Suggestion> suggestions = new LinkedList<>();
 							if (result != null) {
 								

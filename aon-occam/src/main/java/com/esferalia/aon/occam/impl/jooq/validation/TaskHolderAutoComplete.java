@@ -15,6 +15,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskHolderAutoComplete {
+
 	private TaskHolderAutoComplete() {
 		
 	}
@@ -36,21 +37,26 @@ public class TaskHolderAutoComplete {
 	public static BiConsumer<AONContext, TaskHolder> COMPLETE_REGISTRY = (ctx, taskHolder) -> {
 		if (taskHolder.getId() == null && taskHolder.getUserId() != null) {
 			User user = SecurityDAO.getUser(ctx, taskHolder.getUserId());
-			if(user.getRegistry() != null) {
-				taskHolder.setId(user.getRegistry());
+			if(user.getRegistry() != null && user.getDomain().equals(taskHolder.getDomain().getId())) {
+				Registry registry = RegistryDAO.get(ctx, user.getRegistry());
+				taskHolder
+				.copy(registry)
+				;
 			} else if(!AonStringUtils.isBlank(taskHolder.getDocument())) {
 				Registry r = RegistryDAO.getStream(ctx, f -> 
 					f.getDomainProperty().eq(taskHolder.getDomain().getId())
 					.and(f.getDocumentProperty().eq(taskHolder.getDocument())))
 					.findFirst().orElse(new Registry());
 				if(!r.isEmpty()) taskHolder.copy(r);
-			}
+			} 
 			
 			if(taskHolder.getId() == null && AonStringUtils.isBlank(taskHolder.getDocument()) && user.getAuth() != null) {
 				Auth a = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-				taskHolder.setDocument(a.getDocument())
-						.setName(a.getName()+ " "+ a.getSurname())
-						.setAlias(a.getName());
+				if(!a.isEmpty()) {
+					taskHolder.setDocument(a.getDocument())
+					.setName(a.getName()+ " "+ a.getSurname())
+					.setAlias(a.getName());
+				}
 			}
 		}
 	};

@@ -35,6 +35,10 @@ public class DomainUserRolesController implements Serializable {
 		this.dur = dur;
 	}
 
+	public boolean isAdmin() {
+		return getDur().isAdmin();
+	}
+	
 	public boolean isAlpha() {
 		return getDur().isAlpha();
 	}
@@ -68,11 +72,16 @@ public class DomainUserRolesController implements Serializable {
 	}
 
 	public boolean isDocumental() {
-		return getDur().isDocumental();
+		return getDur().isDocumental()
+			|| getDur().isOldDocumental();
 	}
 	
 	public boolean isBank() {
 		return getDur().hasApp(AonApp.BANK);
+	}
+	
+	public boolean isAula() {
+		return getDur().hasApp(AonApp.AULA);
 	}
 	
 	public String getToken() {

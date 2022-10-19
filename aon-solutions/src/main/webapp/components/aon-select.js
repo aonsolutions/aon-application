@@ -1,6 +1,7 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
+import { AonCheckbox } from './aon-checkbox.js';
 
 export class AonSelect extends AonElement {
 
@@ -12,6 +13,7 @@ export class AonSelect extends AonElement {
   valueAlias;
   nameAlias;
   disableKeyUp = true;
+  selectable;
   static get observedAttributes() {
     return [CONSTANT.VALUE, CONSTANT.OPTIONS, CONSTANT.DISABLED];
   }
@@ -47,6 +49,15 @@ export class AonSelect extends AonElement {
   set title(title) {
     this.setAttribute(CONSTANT.TITLE, title);
   }
+
+  get multiple() {
+    return this.getAttribute("multiple");
+  }
+
+  set multiple(multiple) {
+    this.setAttribute("multiple", multiple);
+  }
+
 
   get options() {
   	return this.getAttribute(CONSTANT.OPTIONS);
@@ -148,6 +159,7 @@ export class AonSelect extends AonElement {
   initialize() {
     this.valueAlias = this.valueAlias || 'value';
     this.nameAlias = this.nameAlias || 'name';
+    this.selectable = this.selectable || [];
   }
 
   build() {
@@ -207,7 +219,9 @@ export class AonSelect extends AonElement {
        
       input.onInput(({target})=>{
         if(this.disableKeyUp) {
-          let optios = this.getOptions().filter(opt => opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()))
+          let optios = this.getOptions().filter(opt => {
+            return opt[this.nameAlias].toUpperCase().includes(target.value.toUpperCase()) || this.checkSelectable(opt);
+          })
           this.buildOptions(optios);
         }
       });
@@ -248,20 +262,9 @@ export class AonSelect extends AonElement {
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
     div.appendChild(ul);
 
+    const isMultiple = this.multiple;
     for (const option of options) {
-      let li = this.createElement(TAG.LI);
-      li.className = 'aonInputListOptionsItem'
-      li.innerHTML = option[this.nameAlias];
-      li.setAttribute(CONSTANT.VALUE, option[this.valueAlias]);
-
-      li.addEventListener(EVENT.CLICK, () => {
-        div.classList.remove('is-visible');
-        this.value = option[this.valueAlias];
-        input.value = option[this.nameAlias];
-        this._selected = option;
-        this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
-      });
-      ul.appendChild(li);
+      isMultiple ? this.buildLiMultiple(option, ul) : this.buildLi(option, ul, div);
     }
 
     
@@ -274,6 +277,89 @@ export class AonSelect extends AonElement {
         }
       }
     });
+  }
+
+  buildLi(option, ul, div){
+    let input = this.getElement(this.INPUT);
+    
+    let li = this.createElement(TAG.LI);
+    li.className = 'aonInputListOptionsItem';
+    li.innerHTML = option[this.nameAlias];
+    li.setAttribute(CONSTANT.VALUE, option[this.valueAlias]);
+    ul.appendChild(li);
+
+    li.addEventListener(EVENT.CLICK, () => {
+      div.classList.remove('is-visible');
+      this.value = option[this.valueAlias];
+      input.value = option[this.nameAlias];
+      this._selected = option;
+      this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
+    });
+
+    return li;
+  }
+
+  buildLiMultiple(option, ul){
+    const valueAlias = option[this.valueAlias];
+    let li = this.createElement(TAG.LI);
+    li.className = 'aonInputListOptionsItem';
+    li.style.display = "flex";
+    li.style.textAlign = "initial";
+    li.setAttribute(CONSTANT.VALUE, valueAlias);
+    ul.appendChild(li);
+
+    let checkbox = null;
+    
+    if(valueAlias){
+      checkbox =  new AonCheckbox();
+      checkbox.id = "checkbox"+valueAlias;
+      checkbox.name = "checkbox"+valueAlias;
+      li.appendChild(checkbox);
+      checkbox.value = this.isSelectable(option);
+
+      checkbox.addEventListener(EVENT.CHANGE, (ev)=>{
+        let check = checkbox.getValue();
+        if(check){
+          this.addSelectable(option);
+        } else {
+          this.removeSelectable(option);
+        }
+  
+        this.dispatchChange(ev);
+      });
+    }
+  
+
+    let span = this.createElement(TAG.SPAN);
+    span.innerHTML = option[this.nameAlias];
+    span.style.fontSize = "12px";
+    li.appendChild(span);
+
+    li.addEventListener(EVENT.CLICK, (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if(checkbox){
+        checkbox.value = !checkbox.getValue();
+      }
+    });
+    
+    return li;
+  }
+
+  dispatchChange(ev){
+    const selectable = this.getSelectable();
+    const length = selectable.length;
+    let input = this.getElement(this.INPUT);
+    
+    if(length){
+      input.value = selectable[0][this.nameAlias];
+      input.setLabelCount(length - 1);
+    } else {
+      input.value ="";
+    }
+
+    input.value = selectable.length ? selectable[0][this.nameAlias] : "";
+    this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: selectable}))
   }
 
   keyboardSelected({key}){
@@ -353,6 +439,29 @@ export class AonSelect extends AonElement {
     return JSON.parse(options);
   }
 
+  checkSelectable(opt){
+    try {
+      return this.getSelectable().some(select =>  opt[this.nameAlias].toUpperCase().includes(select.name.toUpperCase()));
+    } catch (error) { console.log(error); }
+    return false;
+  }
+  
+  getSelectable(){
+    return this.selectable || [];
+  }
+
+  addSelectable(option){
+    this.selectable.push(option);
+  }
+  
+  removeSelectable(option){
+    this.selectable = this.selectable.filter(opt => opt.value !=option.value);
+  }
+
+  isSelectable(option){
+    return this.selectable.some(p => p.value == option.value);
+  }
+
   setEnumOptions(options) {
     let opts = [];
     for(let key in options) {
@@ -362,6 +471,10 @@ export class AonSelect extends AonElement {
       });
     }
     this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(opts));
+  }
+
+  getValueObject() {
+    return this.getOptions().filter(f => f[this.valueAlias] == this.value)[0];
   }
 
   getDisabled(){
@@ -406,8 +519,9 @@ export class AonSelect extends AonElement {
    */
   loading(load){
     const input = this.getElement(this.INPUT);
-    if(input)
+    if(input){
       input.loading(load);
+    }
   }
 
   getDetail(){
@@ -424,8 +538,9 @@ export class AonSelect extends AonElement {
       let options = this.getOptions();
       if(options.length){
         const option = options[idx];
-        if(option)
+        if(option){
           this.value = option.value;
+        }
       }
     } else {
       this.clear();

@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 
 
 public class ConsoleParams {
@@ -21,7 +23,7 @@ public class ConsoleParams {
 	
 	private PrintStream	printer;
 	private Map<String,ScriptTable> script;
-	private List<String> errors;
+	private List<ConsoleDomainMessage> errors;
 	
 	private int totalCount;
 	private int totalProgress;
@@ -50,8 +52,8 @@ public class ConsoleParams {
 	
 	public Occam getOccam(ConsoleConnectionParams conn) {
 		return new Occam()
-			.setDomainName( conn.getFullDomain().getName())
-			.setDomain( conn.getFullDomain().getId());
+			.setDomainName( conn.getDomain().getName())
+			.setDomain( conn.getDomain().getId());
 	}
 	
 	public Occam getFromOccam() {
@@ -102,18 +104,18 @@ public class ConsoleParams {
 		return this;
 	}
 
-	public List<String> getErrors() {
+	public List<ConsoleDomainMessage> getErrors() {
 		if (errors == null) {
 			setErrors(new LinkedList<>());
 		}
 		return errors;
 	}
 
-	public ConsoleParams setErrors(List<String> errors) {
+	public ConsoleParams setErrors(List<ConsoleDomainMessage> errors) {
 		this.errors = errors;
 		return this;
 	}
-	public ConsoleParams addError(String error) {
+	public ConsoleParams addError(ConsoleDomainMessage error) {
 		getErrors().add(error);
 		return this;
 	}
@@ -172,6 +174,12 @@ public class ConsoleParams {
 	}
 	public DSLContext getToDslContext() {
 		return ensureToConnection().getAONContext().getDslContext();
+	}
+	public Domain getFromDomain() {
+		return getFromConnection() != null ? getFromConnection().getDomain() : null;
+	}
+	public Domain getToDomain() {
+		return getToConnection() != null ? getToConnection().getDomain() : null;
 	}
 	
 }

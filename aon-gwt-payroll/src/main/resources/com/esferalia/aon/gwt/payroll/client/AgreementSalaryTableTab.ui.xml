@@ -41,7 +41,7 @@
 		/* Class AgreementSalaryTableTab.Style */
 		
 		.cellWidth {
-			width: 120px;
+			min-width: 120px;
 		}
 		
 		.columnBorder {
@@ -52,6 +52,7 @@
 		.datePickerPanel{
 			border: none !important;
     		box-shadow: none !important;
+    		z-index: 6;
 		}
 		
 		.deleteFixed {
@@ -62,10 +63,21 @@
 			background-color: white;
 		}
 		
+		.dialogGlass {
+			z-index: 7;
+			background-color: #000;
+			opacity: 0.2;
+			filter: opacity(45%);
+		}
+		
+		.dialogZIndex {
+			z-index: 8;
+		}
+		
 		.gridCell{
 			text-transform: uppercase;
 			text-align: center;
-			width: 120px;
+			min-width: 120px;
 		}
 		
 		.gridTitle{
@@ -89,7 +101,7 @@
   			height: 1.5rem;
 			font-size: .7rem;
 			background-color: #eee;
-			max-width: 120px;
+			min-width: 120px;
 		}
 		
 		.headerFSize{
@@ -105,6 +117,10 @@
 			font-size: .7rem;
 			background-color: #eee;
 		}
+		
+		.levelDefaultValue {
+			color: #5b93dc !important;
+		}
 
 		.levelFixed {
 			position: sticky;
@@ -112,6 +128,11 @@
 			z-index: 2;
 			font-size: .7rem;
 			background-color: white;
+		}
+		
+		.modify {
+			background-color: lightyellow !important;
+    		border: 0.5px solid yellow !important;
 		}
 		
 		.oddRow {
