@@ -7,7 +7,6 @@ import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
-import { AonFilter } from "../../../../components/aon-filter.js";
 import { AonToolbar } from "../../../../components/aon-toolbar.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";

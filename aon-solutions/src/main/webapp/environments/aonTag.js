@@ -32,7 +32,6 @@ export const AON_CUSTOMER_SUGGESTION = 'aon-customer-suggestion';
 export const AON_DATE = 'aon-date';
 export const AON_DIALOG_MENU = 'aon-dialog-menu';
 export const AON_DIALOG = 'aon-dialog';
-export const AON_FILTER = 'aon-filter';
 export const AON_ICON_BUTTON = 'aon-icon-button';
 export const AON_ICON = 'aon-icon';
 export const AON_INPUT = 'aon-input';

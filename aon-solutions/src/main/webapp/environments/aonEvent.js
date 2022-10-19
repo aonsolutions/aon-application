@@ -28,7 +28,6 @@ export const SEND_MAIL = 'sendMail';
 export const SELECT = 'select';
 export const SELECT_REGISTRY = 'selectRegistry';
 export const SELECT_OPTION = 'selectOption';
-export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
 export const MORE = 'more';
 export const SCROLL = 'scroll';
