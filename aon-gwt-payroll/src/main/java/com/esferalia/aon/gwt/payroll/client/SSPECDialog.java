@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -21,6 +22,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.visualization.client.formatters.DateFormat;
 
 public class SSPECDialog extends AonCustomDialog {
 	
@@ -70,13 +72,18 @@ public class SSPECDialog extends AonCustomDialog {
 
 	private final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
-	public SSPECDialog(Integer contractId) {
+	public SSPECDialog(Integer contractId, Date startDate, Date endDate) {
 		
-		setCaption("Peculiaridades de Cotizaci\u00F3n (SISTEMA RED)");
+		
+		setCaption(
+		"Peculiaridades de Cotizaci\u00F3n (SISTEMA RED) " 
+		+ DATE_FORMAT.format(startDate) + "..." + ( endDate != null ? DATE_FORMAT.format(endDate) : "" ) );
 		
 		setWidget(binder.createAndBindUi(this));
 		
 		getButtonsPanel();
+		
+
 		
 		this.ssPECs = new ArrayList<>();
 		this.contractId = contractId;
@@ -93,7 +100,7 @@ public class SSPECDialog extends AonCustomDialog {
 
 		showDialog();
 		
-		impl.syncEmployeeSSPECs(this.contractId, new AsyncCallback<List<SSPECData>>() {
+		impl.syncEmployeeSSPECs(this.contractId, startDate, endDate, new AsyncCallback<List<SSPECData>>() {
 			
 			@Override
 			public void onSuccess(List<SSPECData> result) {

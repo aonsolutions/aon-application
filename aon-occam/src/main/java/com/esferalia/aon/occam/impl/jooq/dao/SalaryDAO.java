@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Cursor;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -833,14 +834,18 @@ public class SalaryDAO {
 		.select(SALARY.ID)
 		.from(SALARY)
 		.where(conditions);
-
-		ctx.getDslContext().delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(conditions).execute();
-		ctx.getDslContext().delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(conditions).execute();
-		ctx.getDslContext().delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(conditions).execute();
-		ctx.getDslContext().delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(conditions).execute();
-		ctx.getDslContext().delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(conditions).execute();
-		ctx.getDslContext().delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(conditions).execute();
-		ctx.getDslContext().delete(SALARY).where(conditions).execute();
+		
+		ctx.getDslContext().transaction( t -> {
+			DSLContext dslContext = t.dsl();				
+			dslContext.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(conditions).execute();
+			dslContext.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(conditions).execute();
+			dslContext.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(conditions).execute();
+			dslContext.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(conditions).execute();
+			dslContext.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(conditions).execute();
+			dslContext.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(conditions).execute();
+			dslContext.delete(SALARY).where(conditions).execute();
+			
+		});
 
 	}
 	
@@ -856,15 +861,19 @@ public class SalaryDAO {
 		.and(SALARY.END_DATE.ge(toSql(salary.getStartDate())))
 		.and(SALARY.TYPE.eq(value(salary.getSalaryType(), com.esferalia.aon.occam.api.model.type.SalaryType.class)))
 		.fetch(SALARY.ID);
-
-		ctx.getDslContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salaryIds)).execute();
-		ctx.getDslContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(salaryIds)).execute();
-		ctx.getDslContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salaryIds)).execute();
-		ctx.getDslContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salaryIds)).execute();
-		ctx.getDslContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salaryIds)).execute();
-		ctx.getDslContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salaryIds)).execute();
 		
-		ctx.getDslContext().delete(SALARY).where(SALARY.ID.in(salaryIds)).execute();
+		ctx.getDslContext().transaction(t -> {
+			DSLContext dslContext = t.dsl();
+			
+			dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salaryIds)).execute();
+			dslContext.delete(SALARY_COST).where(SALARY_COST.SALARY.in(salaryIds)).execute();
+			dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salaryIds)).execute();
+			dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salaryIds)).execute();
+			dslContext.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salaryIds)).execute();
+			dslContext.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salaryIds)).execute();			
+			dslContext.delete(SALARY).where(SALARY.ID.in(salaryIds)).execute();
+			
+		});
 	}
 
 	private static SalaryRecord insertSalary(AONContext ctx, Integer domainId, Salary salary ) {

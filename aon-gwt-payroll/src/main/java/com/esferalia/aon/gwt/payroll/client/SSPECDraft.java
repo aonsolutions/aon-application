@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -336,8 +337,25 @@ public class SSPECDraft extends Composite {
 		
 		AonToolbarButton syncBtn = new AonToolbarButton("Sincronizaci\u00f3n TGSS", AON.CSS.aonIconTgss());
 		syncBtn.addClickHandler(e -> {
+
+			Date startDate = null;
+			Date endDate = null;
+			if ( AonStringUtils.isNotBlank(this.yearLB.getSelectedValue())) {
+				Integer year = Integer.parseInt(this.yearLB.getSelectedValue());
+				startDate = DateUtils.getFirstDayOfYear(year - 1900);
+				endDate = DateUtils.getLastDayOfYear(year - 1900);
+				if ( AonStringUtils.isNotBlank(this.monthLB.getSelectedValue()) ) {
+					Integer month = Integer.parseInt(this.monthLB.getSelectedValue());
+					startDate.setMonth(month);
+					startDate = DateUtils.getFirstDayOfMonth(startDate);
+					endDate = DateUtils.getLastDayOfMonth(startDate);
+				} 
+			}
+			
 			showLoading("Sincronizando bonifinicaciones y peculiaridades TGSS...");
 			this.ssPECObject.syncSSPECData(
+					startDate,
+					endDate,
 					s -> {
 						showSuccess("Sincronizaci\u00f3n TGSS", "Bonificaciones y peculiaridades sincronizadas correctamente");
 						loadSSPecs();
