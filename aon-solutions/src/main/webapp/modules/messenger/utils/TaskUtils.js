@@ -176,7 +176,6 @@ const dialogTaskTags = (ev, task) => {
 
     const dialog = aonMessengerChat.getApplication().getOptionDialog();
     dialog.clear();
-    dialog.setContentTitle(MSG.TAGS);
 
     const div = setStyles(document.createElement("div"),{ margin:"5px", display:"flex", flexDirection:"column" });
 
@@ -199,8 +198,8 @@ const dialogTaskTags = (ev, task) => {
         div.appendChild(aonCheckbox);
     }
 
-    dialog.setContent(div);
-    dialog.openPosition({top, left});
+    dialog.setContent(div, top, left);
+    dialog.open();
 }
 
 /**

@@ -8,16 +8,15 @@ import { Project } from "../../models/project/Project.js";
  */
 const buildDialog = (aonOfficePanel) => {
 
-    const application = aonOfficePanel.getApplication();
-    const dialog = application.getDialog();
-
     let project = new Project();
 
+    const application = aonOfficePanel.getApplication();
+    const dialog = application.getDialog();
+    dialog.autoclose = false;
     dialog.width = '40%';
-    
     dialog.clear();
     dialog.setTitle("Asignar expediente");
-        
+
     dialog.setContent(buildFormExpediente(aonOfficePanel, project));
     
     dialog.addSendAction(async()=>{
@@ -39,7 +38,6 @@ const buildDialog = (aonOfficePanel) => {
 }   
 
 const buildFormExpediente = (aonOfficePanel, project) => {
-
 
     const idRandom = Math.floor(Math.random() * 10000000) + 1;
 

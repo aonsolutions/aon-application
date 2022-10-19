@@ -50,14 +50,6 @@ export const createBajaDialogContent = () =>{
     divAsociative.id = "divAsociative";
     div.appendChild(divAsociative);
 
-    const btnSubmit = document.createElement(TAG.BUTTON);
-    btnSubmit.id = "btnSubmitBaja";
-    btnSubmit.className =  CSS.AON_BUTTON;
-    btnSubmit.textContent = MSG.ACCEPT;
-    btnSubmit.style.padding ="0.5rem 1rem";
-    btnSubmit.style.marginBottom ="5px";
-    div.appendChild(btnSubmit);
-
     return div;
 }
 
