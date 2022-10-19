@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -807,9 +809,70 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 						if(null != extra)
 							agreement.addExtra(extra);
 						
+						checkPairExtras(payment, extra);
+						
 						setAgreementPayment(agreement);
 						setHasChange(true);
 						
+					}
+
+					private void checkPairExtras(Payment payment, Extra extra) {
+						if(payment.getType().equals(Payment.Type.CRA_0004)) {
+							Optional<Payment> searchPayment = agreement.getPayments().stream().filter(paymentIt -> !paymentIt.equals(payment) && paymentIt.getType().equals(Payment.Type.CRA_0004)).findAny();
+							if(!searchPayment.isPresent()) {
+								Payment associatedPayment = new Payment();
+								Random rand = new Random();
+								int newPaymentId = rand.nextInt(1000) * -1;
+								if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
+								associatedPayment.setId(newPaymentId);
+								associatedPayment.setDomain(payment.getDomain());
+								associatedPayment.setModify(true);
+								
+								associatedPayment.setType(Payment.Type.CRA_0004);
+								associatedPayment.setConceptId(payment.getConceptId());
+								associatedPayment.setName(payment.getName());
+								
+								associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
+								associatedPayment.setExpression(payment.getExpression());
+								associatedPayment.setIrpfExpression(payment.getIrpfExpression());
+								associatedPayment.setQuoteExpression(payment.getQuoteExpression());
+								associatedPayment.setMonth(null);
+								
+								agreement.addPayment(associatedPayment);
+								
+								if(null != extra) {
+									int newExtraId = rand.nextInt(1000) * -1;
+									AgreementExtra associatedExtra = new AgreementExtra();
+									associatedExtra.setId(newExtraId);
+									
+									associatedExtra.setDomain(payment.getDomain());
+									associatedExtra.setAgreementPayment(associatedPayment.getId());
+								
+									if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "06") || AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "07")) {
+										associatedExtra.setIssueDate("31/12");
+										if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) {
+											associatedExtra.setStartDate("01/01");
+											associatedExtra.setEndDate("31/12");
+										} else {
+											associatedExtra.setStartDate("01/07");
+											associatedExtra.setEndDate("31/12");
+										}
+									} else if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "12")) {
+										associatedExtra.setIssueDate("30/06");
+										if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "01")) {
+											associatedExtra.setStartDate("01/07 -1");
+											associatedExtra.setEndDate("30/06");
+										} else {
+											associatedExtra.setStartDate("01/01");
+											associatedExtra.setEndDate("30/06");
+										}
+									}
+									
+
+									agreement.addExtra(associatedExtra);
+								}
+							}
+						}
 					}
 
 					@Override
