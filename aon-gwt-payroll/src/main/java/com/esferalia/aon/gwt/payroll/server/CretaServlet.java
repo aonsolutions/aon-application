@@ -657,7 +657,7 @@ public class CretaServlet extends HttpServlet
 	
 	}
 
-	private static List<InputStream> generateIDCTrabajadoresYTramos(HttpServletRequest req, Part part ) throws JAXBException, IOException {
+	private static List<InputStream> generateIDCTrabajadoresYTramos(HttpServletRequest req, Part part ) throws JAXBException, IOException, SegSocialException {
 		
 		try ( CloseableAONContext ctx = getAONAonContext(req) ) {
 
@@ -685,7 +685,9 @@ public class CretaServlet extends HttpServlet
 				}
 				
 			}
-			
+			if ( trabajaresYTramosIsList.isEmpty()){		
+				throw new NullPointerException();
+			}
 			return trabajaresYTramosIsList;
 		}
 	
