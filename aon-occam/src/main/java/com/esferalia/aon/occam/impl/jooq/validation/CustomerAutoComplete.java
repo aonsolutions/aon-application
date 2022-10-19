@@ -34,10 +34,16 @@ public class CustomerAutoComplete {
 			User user = SecurityDAO.getUser(ctx);	
 			Scope scope = SecurityDAO.getUserScopeStream(ctx, user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(new Scope());
 			if(scope.isEmpty()) {
-				Integer[] scopes = SecurityDAO.getUserScopes(ctx, user.getId());
-				if(scopes != null && scopes.length > 0)
-					scope = SecurityDAO.getScopeStream(ctx, f -> f.getIdProperty().eq(scopes[0])).findFirst().orElse(new Scope());
-				else {
+				Integer[] scopes = null;
+				try {
+				    scopes = SecurityDAO.getUserScopes(ctx, user.getId());
+				} catch (Exception e) { 
+				    e.printStackTrace();
+				}
+				if(scopes != null && scopes.length > 0) {
+				    Integer sc = scopes[0];
+					scope = SecurityDAO.getScopeStream(ctx, f -> f.getIdProperty().eq(sc)).findFirst().orElse(new Scope());
+				} else {
 					scope = SecurityDAO.getScopeStream(ctx,  f ->
 						f.getDomainProperty().eq(customer.getDomain().getId())).findFirst().orElse(new Scope());
 					if(scope.isEmpty()) {

@@ -122,6 +122,7 @@ export class AonDialogMobile extends AonElement {
 	}
 
 	open() {
+		this.getElement('aonMobileMenuSidenav').style.zIndex = "-1";
 		this.setDrag(this.START_TOP);
 		this.getDialog().style.display = "block";
 		setTimeout(()=>{
@@ -133,8 +134,11 @@ export class AonDialogMobile extends AonElement {
 
 	close() {
 		this.getContent().style.bottom = ((this.HEADER_HEIGHT || 300)*-1)+"px";
-		setTimeout(()=>	this.getDialog().style.display = "none", 400);
-	}
+		setTimeout(()=>	{
+			this.getDialog().style.display = "none";
+			this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
+		}, 400);
+	}	
 
 	getDialog() {
 		return this.getElement(this.DIALOG);

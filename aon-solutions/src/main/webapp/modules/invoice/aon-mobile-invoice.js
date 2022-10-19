@@ -21,6 +21,8 @@ import { AonInvoice } from './aon-invoice.js';
 import { TaxIVAPercentage, TaxType, Transactions } from './invoiceEnums.js';
 import * as LS from '../../services/localStorageService.js';
 
+import {INVOICE} from  '../../services/app.js';
+
 export class AonMobileInvoice extends AonInvoice {
 
   	constructor () {
@@ -1040,62 +1042,82 @@ export class AonMobileInvoice extends AonInvoice {
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
 		aonInvoiceToolbar.removeButtons();
 		aonInvoice.addToolbarOption('Options', 'more_vert', () => {
-		  let button = this.getElement(aonInvoiceToolbar.TOOL_SECTION + 'OptionsButton');
-		  const top  = button.getBoundingClientRect().top;
-		  const left = button.getBoundingClientRect().left;
-	
-		  let d = document.getElementById(aonInvoice.OPTION_DIALOG);
-	
-		  let send = ACTION.SEND_INVOICE;
-		  send.fn = () => this.sendInvoice();
+			let button = this.getElement(aonInvoiceToolbar.TOOL_SECTION + 'OptionsButton');
+			const top  = button.getBoundingClientRect().top;
+			const left = button.getBoundingClientRect().left;
 
-		  let record = ACTION.RECORD_INVOICE;
-		  record.fn = () => this.recordInvoice();
-	
-		  let reject = ACTION.REJECT_INVOICE;
-		  reject.fn = () => this.rejectInvoice();
-	
-		  let restore = ACTION.RESTORE_INVOICE;
-		  restore.fn = () => this.restoreInvoice();
-	
-		  let addComment = ACTION.COMMENT;
-		  addComment.fn = () => this.addInvoiceComment();
-	
-		  let deleteInvoice = ACTION.DELETE_TO_TRASH;
-		  deleteInvoice.fn = () => this.trashInvoice();
-	
-		  let deleteForever = ACTION.DELETE_FOREVER;
-		  deleteForever.fn = () => this.removeInvoice();
-	
-		  let rectify = ACTION.RECTIFY_INVOICE;
-		  rectify.fn = () => this.rectifyInvoice();
-	
-		  let duplicate = ACTION.DUPLICATE_INVOICE;
-		  duplicate.fn = () => this.duplicateInvoice();
-	
-		  let addFile = ACTION.ADD_FILE;
-		  addFile.fn = () => this.addInvoiceFile();
-	
-		  let actions = [];
-		  if(this.invoice.isRejected()) {
-			actions = [restore, deleteInvoice];
-		  } else if(this.invoice.isDraft()) {
-			actions = [restore, deleteForever];
-		  }  else if(this.invoice.isInbox()){
-			  if(this.getDur().isAdmin() || this.getDur().isInvoiceManager()){
-				actions = [addComment, send, deleteInvoice, reject, record, duplicate];
-			  } else {
-				actions = [addComment, deleteInvoice, duplicate];
-			  }
-		  } else {
-			actions = [send, rectify, duplicate];
-		  }
-		  if(!this.invoice.file && !this.invoice.isEmitida()){
-			actions.push(addFile);
-		  }
-	
-		  d.setMenuOptions(actions, top, left);
-		  d.open();
+			let d = document.getElementById(aonInvoice.OPTION_DIALOG);
+
+			let send = ACTION.SEND_INVOICE;
+			send.permission = true;
+			send.backgroundColor = INVOICE.color;
+			send.fn = () => this.sendInvoice();
+
+			let record = ACTION.RECORD_INVOICE;
+			record.permission = false;
+			record.backgroundColor = INVOICE.color;
+			record.fn = () => this.recordInvoice();
+
+			let reject = ACTION.REJECT_INVOICE;
+			reject.permission = true;
+			reject.backgroundColor = INVOICE.color;
+			reject.fn = () => this.rejectInvoice();
+
+			let restore = ACTION.RESTORE_INVOICE;
+			restore.permission = true;
+			restore.backgroundColor = INVOICE.color;
+			restore.fn = () => this.restoreInvoice();
+
+			let addComment = ACTION.COMMENT;
+			addComment.permission = true;
+			addComment.backgroundColor = INVOICE.color;
+			addComment.fn = () => this.addInvoiceComment();
+
+			let deleteInvoice = ACTION.DELETE_TO_TRASH;
+			deleteInvoice.permission = true;
+			deleteInvoice.backgroundColor = INVOICE.color;
+			deleteInvoice.fn = () => this.trashInvoice();
+
+			let deleteForever = ACTION.DELETE_FOREVER;
+			deleteForever.permission = true;
+			deleteForever.backgroundColor = INVOICE.color;
+			deleteForever.fn = () => this.removeInvoice();
+
+			let rectify = ACTION.RECTIFY_INVOICE;
+			rectify.permission = true;
+			rectify.backgroundColor = INVOICE.color;
+			rectify.fn = () => this.rectifyInvoice();
+
+			let duplicate = ACTION.DUPLICATE_INVOICE;
+			duplicate.permission = true;
+			duplicate.backgroundColor = INVOICE.color;
+			duplicate.fn = () => this.duplicateInvoice();
+
+			let addFile = ACTION.ADD_FILE;
+			addFile.permission = true;
+			addFile.backgroundColor = INVOICE.color;
+			addFile.fn = () => this.addInvoiceFile();
+
+			let actions = [];
+			if(this.invoice.isRejected()) {
+				actions = [restore, deleteInvoice];
+			} else if(this.invoice.isDraft()) {
+				actions = [restore, deleteForever];
+			}  else if(this.invoice.isInbox()){
+				if(this.getDur().isAdmin() || this.getDur().isInvoiceManager()){
+					actions = [addComment, send, deleteInvoice, reject, record, duplicate];
+				} else {
+					actions = [addComment, deleteInvoice, duplicate];
+				}
+			} else {
+				actions = [send, rectify, duplicate];
+			}
+			if(!this.invoice.file && !this.invoice.isEmitida()){
+				actions.push(addFile);
+			}
+
+			d.setMenuOptions(actions, top, left);
+			d.open();
 		});
 	  }
 
