@@ -7,9 +7,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.DomainParams;
-import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -104,7 +103,8 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 		tab.clear();
 		ConsoleTableRow ctr = new ConsoleTableRow()
 			.setSchema( params.getSchema() )
-			.setTable( tableBox.getSelectedValue() );
+			.setTable( tableBox.getSelectedValue() )
+			.setDomain( params.getId());
 		ConsoleModule.CONSOLE_SERVICE.getTableRowMetadata(ctr, new AsyncCallback<ConsoleTableRow>() {
 
 			@Override
@@ -116,18 +116,14 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 			public void onSuccess(ConsoleTableRow meta) {
 				setRowMetadata( meta );
 				if (meta.getFields() != null) {
-					meta.getFields().keySet().stream().forEach( key -> {
-						ConsoleTableField field = getRowMetadata().getField(key);
-						AonTextBox box = new AonTextBox();
-						if ("domain".equals(field.getColumn())) {
-							box.setValue( AonNumberUtils.toString( params.getId() ));
-							box.setEnabled( false );
-							field.setValue( AonNumberUtils.toString( params.getId() ));
-						} else {
-							box.addValueChangeHandler( e -> getRowMetadata().getField(key).setValue( box.getValue()) );
-						}
-						tab.addLabelWidgetRow(key, box);
-					});
+					meta.getFields().keySet().stream()
+						.filter( key -> AonStringUtils.notEquals("domain",key))
+						.filter( key -> getRowMetadata().getField(key).getType() != ConsoleTableFieldType.BINARY)
+						.forEach( key -> {
+							AonTextBox box = new AonTextBox();
+							box.addValueChangeHandler( e -> getRowMetadata().getField(key).setQueryValue( box.getValue()) );
+							tab.addLabelWidgetRow(key, box);
+						});
 				}
 			}
 			

@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -58,12 +58,6 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void fix(ConsoleDomainMessage consoleMessage, AsyncCallback<Boolean> callback) {
-		AON.start();
-		fsa.fix(consoleMessage, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback) {
 		AON.start();
 		fsa.getTableRow(row, new AsyncCallbackWrapper<>(callback));
@@ -79,5 +73,17 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void getAonTables(AsyncCallback<String[]> callback) {
 		AON.start();
 		fsa.getAonTables(new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void update(ConsoleTableRow row, ConsoleTableField field, AsyncCallback<ConsoleTableRow> callback) {
+		AON.start();
+		fsa.update(row, field, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void delete(ConsoleTableRow row, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.delete(row, new AsyncCallbackWrapper<>(callback));
 	}
 }

@@ -12,10 +12,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageFixType;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
@@ -33,15 +31,21 @@ import com.google.gwt.user.client.ui.Widget;
 class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 	
 	public interface AonConsoleRowViewerCallback {
-		void onExit();
-	}	
-	
+		void onLink( ConsoleTableRow row );
+	}
+
 	private static final String MODIFICAR_EL_DATO_EN_BD = "Modificar el dato en BD?";
 	private static final String MODIFICACION = "MODIFICACI\u00D3n";
 	private final ConsoleTableRow tableRow;
-
+	private final AonConsoleRowViewerCallback callback;
+	
 	ConsoleRowQueryViewer(ConsoleTableRow tableRow) {
+		this(tableRow, null);
+	}
+
+	ConsoleRowQueryViewer(ConsoleTableRow tableRow,AonConsoleRowViewerCallback callback) {
 		this.tableRow = tableRow;
+		this.callback = callback;
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
@@ -49,6 +53,18 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 		FlowPanel container = new FlowPanel();
 		container.setStyleName(AON.CSS.aonMarginBottom());
 		scroll.setWidget( container );
+		
+		FlowPanel header = new FlowPanel();
+		header.setStyleName(AON.CSS.aonMarginBottom());
+		String msg = "Tabla: " + tableRow.getTable();
+		Label headerLabel = new Label(msg);
+		headerLabel.setStyleName(AON.CSS.aonBold());
+		headerLabel.addStyleName(AON.CSS.aonFontLarger());
+		headerLabel.addStyleName(AON.CSS.aonTextCenter());
+		headerLabel.addStyleName(AON.CSS.aonBorderBottom());
+		header.add(headerLabel);
+		
+		container.add(header);
 		container.add(getGrid());
 	}
 	
@@ -82,14 +98,21 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			private void change( String newValue, Consumer<String> onFailureCallback ) {
 				AonConfirmDialog.showConfirm(MODIFICACION
 						,MODIFICAR_EL_DATO_EN_BD
-						, () -> saveColumn(field.setNewValue( newValue ) , new AsyncCallback<Boolean>() {
+						, () -> ConsoleModule.CONSOLE_SERVICE.update(tableRow, field.setNewValue( newValue ) , new AsyncCallback<ConsoleTableRow>() {
 							@Override
-							public void onSuccess(Boolean result) {
-								response.addStyleName(AON.CSS.aonIconValid());
+							public void onSuccess(ConsoleTableRow result) {
+								String style;
+								if (result == null) {
+									style = AON.CSS.aonIconInvalid();
+									if (onFailureCallback != null)  onFailureCallback.accept(field.getValue());
+								} else {
+									style = AON.CSS.aonIconValid();
+								}
+								response.addStyleName(style);
 								new Timer() {
 									@Override
 									public void run() {
-										response.removeStyleName(AON.CSS.aonIconValid());
+										response.removeStyleName(style);
 									}
 								}.schedule(1000);
 							}
@@ -127,7 +150,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( AonNumberUtils.toInteger( field.getValue() ) );
-				text.addValueChangeHandler(e -> change( AonNumberUtils.toString(text.getValue()),v -> AonNumberUtils.toInteger( v )) );
+				text.addValueChangeHandler(e -> change( AonNumberUtils.toString(text.getValue()),AonNumberUtils::toInteger) );
 				return text;
 			}
 
@@ -142,7 +165,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( AonNumberUtils.toDouble( field.getValue() ) );
-				text.addValueChangeHandler(e -> change( AonNumberUtils.toString(text.getValue()),v -> AonNumberUtils.toInteger( v )) );
+				text.addValueChangeHandler(e -> change( AonNumberUtils.toString(text.getValue()),AonNumberUtils::toInteger) );
 				return text;
 			}
 
@@ -159,7 +182,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( parse(field.getValue()));
-				text.addValueChangeHandler(e -> change( format( text.getValue()),v -> parse(v)));
+				text.addValueChangeHandler(e -> change( format( text.getValue()),this::parse));
 				return text;
 			}
 
@@ -176,7 +199,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( parseDateTime(field.getValue()));
-				text.addValueChangeHandler(e -> change( formatDateTime( text.getValue()),v -> parseDateTime(v)));
+				text.addValueChangeHandler(e -> change( formatDateTime( text.getValue()),this::parseDateTime));
 				return text;
 			}
 
@@ -197,27 +220,24 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			valuePanel.add( idLabel );	
 		} 
 		if (field.isForeignKey()) {
-			final Label fkLabel = new Label();
-			fkLabel.setTitle( "Clave refenrencial: " + field.getForeignTable() + "." + field.getForeignColumn());
-			fkLabel.setStyleName(AON.CSS.aonIconLabel() );
-			fkLabel.addStyleName(AON.CSS.aonIconRedo() );
-			valuePanel.add( fkLabel );	
+			String title = "Clave refenrencial: " + field.getForeignTable() + "." + field.getForeignColumn();
+			AonTableButton fkButton = new AonTableButton(title, AON.CSS.aonIconRedo());
+			if (callback != null) {
+				fkButton.addClickHandler( e ->
+					callback.onLink( 
+						new ConsoleTableRow()
+							.setSchema( tableRow.getSchema() )
+							.setTable( field.getForeignTable() )
+							.setId( AonNumberUtils.toInteger(field.getValue() ))
+					));
+			}
+			
+			valuePanel.add( fkButton );
+			
+			
 		}
 		
 		return valuePanel;
-	}
-	
-	
-	private void saveColumn( ConsoleTableField field, AsyncCallback<Boolean> cbk) {
-		ConsoleDomainMessage cdm = new ConsoleDomainMessage()
-				.setSchema( tableRow.getSchema() )
-				.setTable(tableRow.getTable())
-				.setPkId(tableRow.getId())
-				.setFkColumn( field.getColumn() )
-				.setType(ConsoleDomainMessageType.INTEGRITY)
-				.setFixType(ConsoleDomainMessageFixType.NEW_VALUE)
-				.setField( field );
-		ConsoleModule.CONSOLE_SERVICE.fix( cdm, cbk);
 	}
 	
 }
