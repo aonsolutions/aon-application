@@ -7,8 +7,6 @@ import {
   getPeriods,
   PERIOD_FILTER,
 } from "../../services/accountingService.js";
-import "../../components/aon-filter.js";
-import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { getPeriodAccounting } from "../../services/service.js";
 import { ToolbarType } from "../../models/enums.js";
 import { AonIframe } from "../../components/aon-iframe.js";
@@ -65,7 +63,7 @@ export class AonGraphicsTrial extends AonElement {
 
     this.innerHTML = `
     <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Pérdidas y Ganancias"> </aon-toolbar>
-    <aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
+    `;
 
     this.PERIODS = await getPeriods(this.params)
     .catch((error) => {
@@ -93,22 +91,23 @@ export class AonGraphicsTrial extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () =>
-      filterEl.openFilter()
-    );
+    this.applicationEl.addSearchOption(!this.isMobile());
   }
 
   buildPyGToolbar() {
-    let toolbar = this.getElement(this.TOOLBAR);
+    const toolbar = this.getElement(this.TOOLBAR);
     toolbar.removeButtons();
     toolbar.addButton2(ACTION.BACK, null);
   }
 
   async buildFilter() {
-    let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs([...PERIOD_FILTER]);
-    aonFilter.addEventListener("applyFilter", ({ detail }) => {
+    const application = this.getApplication();
+    const btnSearch = application.getSearchButton();
+    btnSearch.disabled = true;
+
+    btnSearch.buildOptionsFilter(PERIOD_FILTER);//INPUTS
+
+    btnSearch.addEventListener(EVENT.SEARCH_NEW,({ detail }) => {
       if (detail) {
         this.filter = detail;
         this.build();
@@ -116,7 +115,7 @@ export class AonGraphicsTrial extends AonElement {
     });
 
     //------------------YEAR-----------
-    let yearEl = this.getElement("year");
+    const yearEl = this.getElement("year");
     let years = [];
 
     for (const element of this.PERIODS) {
@@ -125,13 +124,13 @@ export class AonGraphicsTrial extends AonElement {
         value: element.id,
       });
     }
-    yearEl.options = JSON.stringify(years);
+    yearEl.setOptions(years);
     //------------------SHOW-----------
-    let showEl = this.getElement("show");
-    showEl.options = JSON.stringify(getPeriodAccounting());
+    const showEl = this.getElement("show");
+    showEl.setOptions(getPeriodAccounting());
 
     //----------------DETAIL-----------
-    let detailEl = this.getElement("detail");
+    const detailEl = this.getElement("detail");
     let detailsJson = [
       {
         name: "Resumido",
@@ -146,7 +145,7 @@ export class AonGraphicsTrial extends AonElement {
         value: 9,
       },
     ];
-    detailEl.options = JSON.stringify(detailsJson);
+    detailEl.setOptions(detailsJson);
   }
 
   async draw() {
