@@ -66,20 +66,12 @@ export class AonCompanyCostsList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle(MSG.COMPANY_COSTS);
-
-    // this.style = `
-    //   display:flex;
-    //   flex-direction: column;
-    //   height: 100%;
-    // `;
   }
 
   async build() {
     this.buildToolbar();
     await this.getTable();
   }
-
- 
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
@@ -185,15 +177,13 @@ export class AonCompanyCostsList extends AonElement {
         div.style.textAlign = "center";
         main.appendChild(div);
       
-        const resp = await CompanyPieChart.paintPieChart(this, data, div, aonIframe);
+        const resp = await CompanyPieChart.paintPieChart(data, div, aonIframe);
         
         total = resp.total;
 
         workplaceText = resp.workplaceText;
 
-
         CompanyPieChart.createButton(main, aonIframe, this);
-        
       }
 
       let startDateText = AonDateUtils.getMonthYear(startDate),
