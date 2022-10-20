@@ -952,7 +952,7 @@ public class InvoiceImport {
 				Account expAccount = getAccount(domain, user, aux.getAccount(), aux.getAccountDescription());
 				
 				InvoiceVAT vat = new InvoiceVAT()
-					.setPrepayment("5600".equals(iic.getAccount().substring(0, 4)) || "5660".equals(iic.getAccount().substring(0, 4)))
+					.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(aux.getBase() != null 
 							? aux.getBase() : 0.0)
