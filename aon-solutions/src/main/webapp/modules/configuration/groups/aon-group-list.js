@@ -172,13 +172,12 @@ export class AonGroupList extends AonElement {
   }
 
   save(data) {
-    saveWorkgroup(data).then(r => {
-			this.getApplication().getToast().start({
-				type: CONSTANT.SUCCESS,
-				message: MSG.SAVED_DATA
-			});
+    saveWorkgroup(data)
+    .then(() => {
+      this.showMessage();      
       this.getTable();
-		}).catch(e => this.showError(e));
+		})
+    .catch(e => this.showError(e));
   }
 }
 if(!window.customElements.get(TAG.AON_GROUP_LIST)){
