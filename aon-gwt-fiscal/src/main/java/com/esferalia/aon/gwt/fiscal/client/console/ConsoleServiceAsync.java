@@ -20,6 +20,8 @@ public interface ConsoleServiceAsync {
 	void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback);
 	void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback);
 	void fix(ConsoleDomainMessage consoleMessage, AsyncCallback<Boolean> callback);
-	void viewRow(String schema, String tableName, Integer id, AsyncCallback<ConsoleTableRow> callback);
-
+	void getAonTables(AsyncCallback<String[]> asyncCallback);
+	void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
+	void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
+	
 }

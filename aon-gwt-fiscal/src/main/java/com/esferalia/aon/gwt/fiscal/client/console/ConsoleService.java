@@ -23,5 +23,7 @@ public interface ConsoleService extends RemoteService {
 	Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) throws AonCoreException;
 	String remoteAccess(DomainParams params, Integer domainId) throws AonCoreException;
 	Boolean fix(ConsoleDomainMessage consoleMessage) throws AonCoreException;
-	ConsoleTableRow viewRow(String schema, String tableName, Integer id) throws AonCoreException;
+	String[] getAonTables() throws AonCoreException;
+	ConsoleTableRow getTableRow(ConsoleTableRow row) throws AonCoreException;
+	ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) throws AonCoreException;
 }

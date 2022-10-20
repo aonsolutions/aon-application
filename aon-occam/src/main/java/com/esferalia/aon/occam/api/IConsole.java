@@ -20,6 +20,8 @@ public interface IConsole {
 	public Domain changeExpirationDate(CloseableAONContext ctx, Integer domainId, Date expireDate);
 	public String remoteAccess(CloseableAONContext ctx, Integer domainId);
 	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage);
-	public ConsoleTableRow viewRow(CloseableAONContext ctx, String schema, String tableName, Integer id);		
+	public String[] getAonTables();		
+	public ConsoleTableRow getTableRow(CloseableAONContext ctx, ConsoleTableRow row);
+	public ConsoleTableRow getTableRowMetadata(CloseableAONContext ctx, ConsoleTableRow row);
 	
 }

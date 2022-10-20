@@ -37,7 +37,8 @@ export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, d
 export const selfconta = (year) => post(`${API_URL}/invoice/selfconta_import`, {year});
 export const recordSelfconta = (data) => post(`${API_URL}/invoice/selfconta_record`, data);
 
-export const getPaymethods = () => get(`${API_URL}/paymethod`, {});
+export const getPaymethods = (data) => get(`${API_URL}/paymethods`, data);
+export const getPaymethod = (id) => get(`${API_URL}/paymethods/${id}`, {});
 
 export const signInvoice = (id) => put(`${API_URL}/invoice/sign`, {id});
 export const downloadFacturae = (data) => 

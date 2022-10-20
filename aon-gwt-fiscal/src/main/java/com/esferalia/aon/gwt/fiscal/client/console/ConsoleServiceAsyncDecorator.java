@@ -64,8 +64,20 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 
 	@Override
-	public void viewRow(String schema, String tableName, Integer id, AsyncCallback<ConsoleTableRow> callback) {
+	public void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback) {
 		AON.start();
-		fsa.viewRow(schema, tableName, id, new AsyncCallbackWrapper<>(callback));
+		fsa.getTableRow(row, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback) {
+		AON.start();
+		fsa.getTableRowMetadata(row, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getAonTables(AsyncCallback<String[]> callback) {
+		AON.start();
+		fsa.getAonTables(new AsyncCallbackWrapper<>(callback));
 	}
 }

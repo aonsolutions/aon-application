@@ -72,10 +72,20 @@ public class CONSOLE {
 		}
 	}
 
-	public static ConsoleTableRow viewRow(String schema,String tableName, Integer id) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
-			return getConsole().viewRow(ctx,schema,tableName, id);
+	public static ConsoleTableRow getTableRow(ConsoleTableRow row) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().getTableRow(ctx,row);
 		}
+	}
+
+	public static ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().getTableRowMetadata(ctx,row);
+		}
+	}
+
+	public static String[] getAonTables() {
+		return getConsole().getAonTables();
 	}
 	
 	

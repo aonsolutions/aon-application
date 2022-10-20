@@ -6800,6 +6800,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Remove SEPE id from DB
 			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
+			
+			// Remove CBC & CTO documents
+			JooqContractAttach.removeCopyContract(connection, employeeContractInfo.getContractInfo().getContractId());
+			JooqContractAttach.removeCopyBasic(connection, employeeContractInfo.getContractInfo().getContractId());
+			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
 
 		} catch (Exception e) {
 			e.printStackTrace();

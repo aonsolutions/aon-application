@@ -23,14 +23,7 @@ public class ConsoleModule extends MainEntryPoint {
 		CONSOLE_SERVICE = new ConsoleServiceAsyncDecorator(consoleServiceRaw); 
 	}
 
-//	private static final CommonServiceAsync COMMON_SERVICE;
-//	static {
-//		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-//		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
-//	}
-
 	private ConsoleModuleOptions options;
-//	private AonLayoutPanel aonLayout;
 
 	private ConsoleModuleOptions getOptions() {
 		if (this.options == null) {
@@ -49,85 +42,14 @@ public class ConsoleModule extends MainEntryPoint {
 		opts.setUser(getCurrentUser());
 		onModuleLoad( opts );
 	
-//		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser()
-//				, new AsyncCallback<AonConfiguration>() {
-//				
-//				@Override
-//				public void onSuccess(AonConfiguration config) {
-//					RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-//					ConsoleModuleOptions opts = new ConsoleModuleOptions();
-//					opts.setParentWidget(root);
-//					opts.setDomainName(getCurrentDomainName());
-//					opts.setDomain(getCurrentDomain());
-//					opts.setUser(getCurrentUser());
-//					opts.setConfiguration(config);
-//					onModuleLoad( opts );
-//				}
-//				
-//				@Override public void onFailure(Throwable caught) {
-//					Window.alert( "Error al cargar el module" );
-//				}
-//			});
 	}
 	
 	public void onModuleLoad(ConsoleModuleOptions options) {
 		this.options = options;
 		AON.ensureInjected();
-
 		getOptions().getParentWidget().add(new ConsoleDomainModule(options));
-		
-//		SimpleLayoutPanel content = new SimpleLayoutPanel();
-//		aonLayout = new AonLayoutPanel();
-//		aonLayout.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-//
-//		
-//		SimpleLayoutPanel sidebar = new SimpleLayoutPanel();
-//		sidebar.setStyleName(AON.CSS.aonBorderRight());
-//		ScrollPanel scrollPanel = new ScrollPanel(); 
-//		scrollPanel.setStyleName(AON.CSS.aonWidthAll());
-//		sidebar.setWidget(scrollPanel);
-//		FlowPanel sidebarMenu = new FlowPanel();
-//		scrollPanel.setWidget(sidebarMenu);
-//
-//		AonDisplayTable optionsGrid = new AonDisplayTable();
-//		sidebarMenu.add(optionsGrid);
-//		optionsGrid.addRow().addCell(new InlineLabel("UTILIDADES"), AON.CSS.aonBold(), AON.CSS.aonTextUnderline());
-//		
-//		Label opt0 = new Label(AonStringUtils.BULLET + "Gesti\u00F3n de dominios");
-//		opt0.setStyleName(AON.CSS.aonClickableBlock());
-//		opt0.addStyleName(AON.CSS.aonPadding());
-//		opt0.addClickHandler( e -> content.setWidget( new ConsoleDomainModule(options) ));
-//		optionsGrid.addRow().addCell(opt0);
-
-//		Label opt1 = new Label(AonStringUtils.BULLET + "Validaci\u00F3n de un dominio");
-//		opt1.setStyleName(AON.CSS.aonClickableBlock());
-//		opt1.addStyleName(AON.CSS.aonPadding());
-//		opt1.addClickHandler( e -> content.setWidget( new ConsoleDomainCheckIntegrity(options) ));
-//		optionsGrid.addRow().addCell(opt1);
-//
-//		Label opt2 = new Label(AonStringUtils.BULLET + "Extracci\u00F3n de un dominio");
-//		opt2.setStyleName(AON.CSS.aonClickableBlock());
-//		opt2.addStyleName(AON.CSS.aonPadding());
-//		opt2.addClickHandler( e -> content.setWidget( new ConsoleDomainIsolate(options) ));
-//		optionsGrid.addRow().addCell(opt2);
-		
-//		Label opt3 = new Label(AonStringUtils.BULLET + "Borrado de un dominio");
-//		opt3.setStyleName(AON.CSS.aonClickableBlock());
-//		opt3.addStyleName(AON.CSS.aonPadding());
-//		opt3.addClickHandler( e -> content.setWidget( new ConsoleDomainDelete(options) ));
-//		optionsGrid.addRow().addCell(opt3);
-
-//		aonLayout.addWest(sidebar, 275);
-//		aonLayout.add(content);
-		
 	}
 
-//	private AonToolbar getToolbarPanel() {
-//		AonToolbar toolbarPanel = new AonToolbar();
-//		toolbarPanel.setTitle("M\u00F3dulo CONSOLE");
-//		return toolbarPanel;
-//	}
-	
 	
 	public static void run() {
 		GWT.runAsync(ConsoleModule.class, new RunAsyncCallback() {
