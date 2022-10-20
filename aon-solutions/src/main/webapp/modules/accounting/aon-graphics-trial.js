@@ -7,7 +7,6 @@ import {
   getPeriods,
   PERIOD_FILTER,
 } from "../../services/accountingService.js";
-import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { getPeriodAccounting } from "../../services/service.js";
 import { ToolbarType } from "../../models/enums.js";
 import { AonIframe } from "../../components/aon-iframe.js";
@@ -92,7 +91,7 @@ export class AonGraphicsTrial extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    this.applicationEl.addSearchOption();
+    this.applicationEl.addSearchOption(!this.isMobile());
   }
 
   buildPyGToolbar() {
@@ -104,6 +103,7 @@ export class AonGraphicsTrial extends AonElement {
   async buildFilter() {
     const application = this.getApplication();
     const btnSearch = application.getSearchButton();
+    btnSearch.disabled = true;
 
     btnSearch.buildOptionsFilter(PERIOD_FILTER);//INPUTS
 
