@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -19,9 +19,9 @@ public interface ConsoleServiceAsync {
 	void changeActive(DomainParams params, Integer domainId, boolean active, AsyncCallback<Domain> callback);
 	void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback);
 	void remoteAccess(DomainParams params, Integer domainId, AsyncCallback<String> callback);
-	void fix(ConsoleDomainMessage consoleMessage, AsyncCallback<Boolean> callback);
 	void getAonTables(AsyncCallback<String[]> asyncCallback);
 	void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
 	void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
-	
+	void update(ConsoleTableRow row, ConsoleTableField field, AsyncCallback<ConsoleTableRow> callback);
+	void delete(ConsoleTableRow row, AsyncCallback<Boolean> callback);
 }

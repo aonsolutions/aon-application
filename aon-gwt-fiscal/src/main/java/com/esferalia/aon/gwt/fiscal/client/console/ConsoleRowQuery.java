@@ -13,16 +13,16 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 class ConsoleRowQuery extends DockLayoutPanel {
 	
-	public interface AonConsoleRowViewerCallback {
+	public interface AonConsoleRowQueryCallback {
 		void onExit();
 	}	
 	private ConsoleRowQueryFilter filterPanel;
 	
 	private final DomainParams params;
-	private final AonConsoleRowViewerCallback cbk;
+	private final AonConsoleRowQueryCallback cbk;
 	private final SimpleLayoutPanel container;
 
-	ConsoleRowQuery(DomainParams params, AonConsoleRowViewerCallback cbk) {
+	ConsoleRowQuery(DomainParams params, AonConsoleRowQueryCallback cbk) {
 		super( Unit.PX );
 		this.params = params;
 		this.cbk = cbk;
@@ -60,7 +60,7 @@ class ConsoleRowQuery extends DockLayoutPanel {
 					label.addStyleName(AON.CSS.aonTextCenter());
 					container.setWidget( label );
 				} else {
-					container.setWidget( new ConsoleRowQueryViewer(tableRow) );
+					container.setWidget( new ConsoleRowCompositeQueryViewer(tableRow) );
 				}
 			}
 

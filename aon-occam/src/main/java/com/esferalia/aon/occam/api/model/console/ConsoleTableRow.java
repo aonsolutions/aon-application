@@ -10,6 +10,7 @@ public class ConsoleTableRow implements Serializable {
 	private String schema;
 	private String table;
 	private Integer id;
+	private Integer domain;
 	private LinkedHashMap<String,ConsoleTableField> fields;
 	
 	public String getSchema() {
@@ -33,6 +34,14 @@ public class ConsoleTableRow implements Serializable {
 	}
 	public ConsoleTableRow setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public Integer getDomain() {
+		return domain;
+	}
+	public ConsoleTableRow setDomain(Integer domain) {
+		this.domain = domain;
 		return this;
 	}
 	

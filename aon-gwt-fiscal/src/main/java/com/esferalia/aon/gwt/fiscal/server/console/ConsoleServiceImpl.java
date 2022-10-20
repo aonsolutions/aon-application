@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -52,10 +52,6 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public String remoteAccess(DomainParams params, Integer domainId) {
 		return CONSOLE.remoteAccess(params, domainId);
 	}
-	@Override
-	public Boolean fix(ConsoleDomainMessage consoleMessage) throws AonCoreException {
-		return CONSOLE.fix(consoleMessage);
-	}
 	
 	@Override
 	public ConsoleTableRow getTableRow(ConsoleTableRow row) throws AonCoreException {
@@ -71,4 +67,15 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public String[] getAonTables() throws AonCoreException {
 		return CONSOLE.getAonTables();
 	}
+
+	@Override
+	public ConsoleTableRow update(ConsoleTableRow row,ConsoleTableField field) throws AonCoreException {
+		return CONSOLE.update(row, field);
+	}
+	
+	@Override
+	public Boolean delete(ConsoleTableRow row) throws AonCoreException {
+		return CONSOLE.delete(row);
+	}
+	
 }

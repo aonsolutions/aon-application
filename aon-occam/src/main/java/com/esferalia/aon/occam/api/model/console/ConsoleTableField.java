@@ -17,6 +17,8 @@ public class ConsoleTableField implements Serializable {
 	
 	private String newValue;
 	
+	private String queryValue;
+	
 	public String getColumn() {
 		return column;
 	}
@@ -81,5 +83,11 @@ public class ConsoleTableField implements Serializable {
 		return this;
 	}
 
-	
+	public String getQueryValue() {
+		return queryValue;
+	}
+	public ConsoleTableField setQueryValue(String queryValue) {
+		this.queryValue = queryValue;
+		return this;
+	}
 }
