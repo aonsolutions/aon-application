@@ -447,13 +447,16 @@ public class JooqPayrollSalaries {
 	private static void deleteSalariesDB(DSLContext dslContext, List<Integer> ids) {
 		// Delete SalaryData, SalaryBonus, SalaryCost, SalaryPayment, SalaryDeduction, SalaryEmbargo, Salary
 		for(Integer id : ids) {			
-			dslContext.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
-			dslContext.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
-			dslContext.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
-			dslContext.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
-			dslContext.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
-			dslContext.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
-			dslContext.delete(SALARY).where(SALARY.ID.eq(id)).execute();
+			dslContext.transaction( t -> {
+				DSLContext dsl = t.dsl();
+				dsl.delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+				dsl.delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+				dsl.delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+				dsl.delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+				dsl.delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+				dsl.delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(id)).execute();
+				dsl.delete(SALARY).where(SALARY.ID.eq(id)).execute();
+			});
 		}
 	}
 	

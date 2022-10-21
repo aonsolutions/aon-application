@@ -210,6 +210,15 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
+		let nameInput = new AonInput();
+		nameInput.id = 'aonConfigurationGeneralName';
+		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
+		nameInput.value = this.registry.getName();
+		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
+		table.addCell(nameInput, 3);
+
+		table.addRow();
+
 		let countryInput = new AonSelect();
 		countryInput.id = 'aonConfigurationGeneralCountry';
 		countryInput.title = MSG.COUNTRY;
@@ -242,13 +251,19 @@ export class AonReg extends AonElement {
 		td1.style.width = '55%';
 
 		table.addRow();
+		
+		let statusSelect = new AonSelect();
+		statusSelect.id = 'aonConfigurationGeneralStatus';
+		statusSelect.title = MSG.STATUS;
+		statusSelect.setOptions([
+			{ name: MSG.ACTIVE, value:"ACTIVE" },
+			{ name: MSG.INACTIVE, value:"INACTIVE" },
+			{ name: MSG.BLOCKED, value:"BLOCKED" },
+		]);
 
-		let nameInput = new AonInput();
-		nameInput.id = 'aonConfigurationGeneralName';
-		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
-		nameInput.value = this.registry.getName();
-		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
-		table.addCell(nameInput, 3);
+		statusSelect.value = this.registry.status;
+		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
+		table.addCell(statusSelect, 3);
 
 		this.buildAddresses(div);
 
@@ -803,12 +818,16 @@ export class AonReg extends AonElement {
 	buildExpedienteData() {
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
+
+		let registryId = this.registry.getId();
 		
-		let aonProjectList = new AonProjectList();
-		aonProjectList.style.width = "100%";
-		aonProjectList.registry = this.registry;
-		aonProjectList.filter = { page: 1, perPage: 500, registry:this.registry.getId() };
-		main.appendChild(aonProjectList);
+		if(registryId){
+			let aonProjectList = new AonProjectList();
+			aonProjectList.style.width = "100%";
+			aonProjectList.registry = this.registry;
+			aonProjectList.filter = { page: 1, perPage: 500, registry:registryId};
+			main.appendChild(aonProjectList);
+		}
 	}
 	
 	buildWeb(table, web, i) {

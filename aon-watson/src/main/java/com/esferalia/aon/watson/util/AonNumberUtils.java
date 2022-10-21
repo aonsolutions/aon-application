@@ -73,6 +73,13 @@ public class AonNumberUtils {
 		return null;
 	}
 
+	public static Short toShort(String value) {
+		if (!AonStringUtils.isBlank(value)) {
+			return Short.parseShort(value);
+		}
+		return null;
+	}
+
 	public static Double toDouble(Number number) {
 		if (number == null) return null; 
 		return Double.valueOf( number.doubleValue());

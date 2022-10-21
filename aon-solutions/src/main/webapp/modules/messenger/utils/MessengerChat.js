@@ -300,7 +300,7 @@ const addTextAreaChat = (wrapper, task) => {
 }
 
 const openFullComment = (aonMessengerChat, aonTextArea, task) => {
-  const dialog = aonMessengerChat.applicationEl.getDialog();
+  const dialog = aonMessengerChat.getApplication().getDialog();
   dialog.autoclose = false;
   dialog.clear();
   dialog.width = "600px";

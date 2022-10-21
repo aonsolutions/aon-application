@@ -34,6 +34,7 @@ export class Project {
             this.active = project.active || true;
             this.projectHolder = new ProjectHolder(project.projectHolder);
             this.dirty = project.dirty || false;
+            this.projectHolders = project.projectHolders || undefined;
         } else {
             this.domain = new Domain();
             this.type = new ProjectType();

@@ -1471,6 +1471,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	private static void setDeductionType(Deduction d,
 			Salary.Type type) {
 		String expression = d.getExpression();
+		if ( d.getType() == Deduction.Type.EMBARGO ) {
+			d.setExpression(expression);
+			return;
+		}
 		
 		String pattern ="\\s*\\(\\s*.*\\s*\\)\\s*\\?\\s*\\(?\\s*(.*)\\s*\\)\\s*:\\s*REMOVE\\s*\\(\\s*\\)\\s*";
 		RegExp regexp = RegExp.compile(pattern, "im");
@@ -1480,7 +1484,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		}else {
 			expression = "/*user*/"+ expression + "/**/";
 		}
-		
+
 		d.setExpression("("+type.getVariable()+")?("+ expression +"):REMOVE()");
 		
 	}

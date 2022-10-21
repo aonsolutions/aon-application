@@ -3,11 +3,11 @@ package com.esferalia.aon.gwt.fiscal.client.console;
 import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageFixType;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType.Visitor;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
@@ -196,23 +196,22 @@ class AonConsoleProgress extends DockLayoutPanel {
 							if (domainMessage.getType() == ConsoleDomainMessageType.INTEGRITY) {
 								grid.setVisible(true);
 								FlowPanel buttons = new FlowPanel();
-								AonTableButton setNullButton = new AonTableButton("Poner la columna \"" + domainMessage.getFkColumn() + "\" a NULL", AON.CSS.aonIconBlock());
-								setNullButton.addClickHandler( event -> {
-									setNullButton.setEnabled(false);
-									ConsoleModule.CONSOLE_SERVICE.fix(getConsoleDomainMessage(domainMessage
-										, ConsoleDomainMessageFixType.SET_NULL)
-										,new VisitorCallback(buttons,setNullButton));
-								});
+//								AonTableButton setNullButton = new AonTableButton("Poner la columna \"" + domainMessage.getFkColumn() + "\" a NULL", AON.CSS.aonIconBlock());
+//								setNullButton.addClickHandler( event -> {
+//									setNullButton.setEnabled(false);
+//									ConsoleModule.CONSOLE_SERVICE.update(
+//										getConsoleTableRow(domainMessage)
+//										,getConsoleTableField(domainMessage)
+//										,new VisitorCallback(buttons,setNullButton));
+//								});
 								
 								AonTableButton deleteButton = new AonTableButton("Borrar fila", AON.CSS.aonIconDelete());
 								deleteButton.addClickHandler( event -> {
 									deleteButton.setEnabled(false);
-									ConsoleModule.CONSOLE_SERVICE.fix(getConsoleDomainMessage(domainMessage
-										, ConsoleDomainMessageFixType.DELETE)
-										,new VisitorCallback(buttons,deleteButton));
+									ConsoleModule.CONSOLE_SERVICE.delete(getConsoleTableRow(domainMessage), new VisitorCallback(buttons,deleteButton));
 								});
 								
-								buttons.add(setNullButton);
+//								buttons.add(setNullButton);
 								buttons.add(deleteButton);
 								
 								FlowPanel idPanel = new FlowPanel();
@@ -247,7 +246,7 @@ class AonConsoleProgress extends DockLayoutPanel {
 									.addCell(new Label(domainMessage.getMessage()))
 								;
 								gridCount++;
-								if (gridCount >= 500) {
+			 				if (gridCount >= 500) {
 									gridDisabled = true;
 									Label messageLabel = new Label("Solo se muestran 500 mensajes");
 									messageLabel.setStyleName(AON.CSS.aonColorRed());
@@ -265,39 +264,48 @@ class AonConsoleProgress extends DockLayoutPanel {
 				}
 
 				private void showPkRow(JsConsoleDomainMessage domainMessage) {
-					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage, null);
-					showRow(cm.getSchema(), cm.getTable(),cm.getPkId());
+					showRow( getConsoleTableRow(domainMessage) );
 				}
 
 				private void showFkRow(JsConsoleDomainMessage domainMessage) {
-					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage, null);
-					showRow(cm.getSchema(), cm.getFkTable(),cm.getFkId());
+					ConsoleDomainMessage cm = getConsoleDomainMessage(domainMessage);
+					ConsoleTableRow row = new ConsoleTableRow()
+						.setSchema(cm.getSchema())
+						.setTable(cm.getFkTable())
+						.setId(cm.getFkId());
+					showRow(row);
 				}
 
-				private void showRow(String schema, String tableName, Integer id) {
-					
-					ConsoleModule.CONSOLE_SERVICE.viewRow(schema, tableName, id
-							,new AsyncCallback<ConsoleTableRow>() {
+				private void showRow(ConsoleTableRow row) {
+					ConsoleModule.CONSOLE_SERVICE.getTableRow(row ,new AsyncCallback<ConsoleTableRow>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessageDialog.error(caught.getMessage());
+						}
 
-								@Override
-								public void onFailure(Throwable caught) {
-									AonMessageDialog.error(caught.getMessage());
-								}
-
-								@Override
-								public void onSuccess(ConsoleTableRow tableRow) {
-									if (tableRow == null) {
-										AonMessageDialog.error("Fila no encontrada");	
-									} else {
-										AonConsoleProgress.this.showRow(tableRow);
-									}
-								}
-
+						@Override
+						public void onSuccess(ConsoleTableRow tableRow) {
+							if (tableRow == null) {
+								AonMessageDialog.error("Fila no encontrada");	
+							} else {
+								AonConsoleProgress.this.showRow(tableRow);
+							}
+						}
 					});
 					
 				}
+				
+				private ConsoleTableRow getConsoleTableRow(JsConsoleDomainMessage domainMessage) {
+					Integer domainId = domainMessage.getDomainId() == null? null :  AonNumberUtils.toInteger("" + domainMessage.getDomainId());
+					Integer pkId =  domainMessage.getPkId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getPkId());
+					return new ConsoleTableRow()
+						.setSchema(domainMessage.getSchema())
+						.setTable(domainMessage.getTable())
+						.setId(pkId)
+						.setDomain(domainId);
+				}
 
-				private ConsoleDomainMessage getConsoleDomainMessage(JsConsoleDomainMessage domainMessage, ConsoleDomainMessageFixType fixType) {
+				private ConsoleDomainMessage getConsoleDomainMessage(JsConsoleDomainMessage domainMessage) {
 					Integer domainId = domainMessage.getDomainId() == null? null :  AonNumberUtils.toInteger("" + domainMessage.getDomainId());
 					Integer pkId =  domainMessage.getPkId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getPkId());
 					Integer fkId =  domainMessage.getFkId() == null? null : AonNumberUtils.toInteger("" + domainMessage.getFkId());
@@ -305,7 +313,6 @@ class AonConsoleProgress extends DockLayoutPanel {
 					return new ConsoleDomainMessage()
 						.setSchema(domainMessage.getSchema())
 						.setType(domainMessage.getType())
-						.setFixType(fixType)
 						.setDomainId(domainId)
 						.setTable(domainMessage.getTable())
 						.setPkId(pkId)
@@ -375,7 +382,10 @@ class AonConsoleProgress extends DockLayoutPanel {
 	}
 	
 	private void showRow(ConsoleTableRow tableRow) {
-		AonConsoleRowViewer popup = new AonConsoleRowViewer( tableRow );
+		AonCustomPopup popup = new AonCustomPopup(true); 
+		popup.setWidth("600px");
+		popup.setHeight("600px");
+		popup.add(new ConsoleRowQueryViewer( tableRow ));
 		popup.center();
 		popup.show();
 	}

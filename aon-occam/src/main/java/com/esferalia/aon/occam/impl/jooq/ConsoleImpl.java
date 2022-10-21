@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -52,12 +52,27 @@ public class ConsoleImpl implements IConsole {
 	}
 
 	@Override
-	public Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage consoleMessage) {
-		return ConsoleDAO.fix(ctx, consoleMessage);
+	public ConsoleTableRow getTableRow(CloseableAONContext ctx, ConsoleTableRow row) {
+		return ConsoleDAO.getTableRow(ctx, row);
 	}
 	
 	@Override
-	public ConsoleTableRow viewRow(CloseableAONContext ctx, String schema, String tableName, Integer id) {
-		return ConsoleDAO.viewRow(ctx, schema, tableName, id);
+	public ConsoleTableRow getTableRowMetadata(CloseableAONContext ctx, ConsoleTableRow row) {
+		return ConsoleDAO.getTableRowMetadata(ctx, row);
+	}
+
+	@Override
+	public String[] getAonTables() {
+		return ConsoleDAO.getAonTables();
+	}
+	
+	@Override
+	public ConsoleTableRow update(CloseableAONContext ctx, ConsoleTableRow row, ConsoleTableField field) {
+		return ConsoleDAO.update(ctx, row, field);
+	}
+	
+	@Override
+	public Boolean delete(CloseableAONContext ctx, ConsoleTableRow row) {
+		return ConsoleDAO.delete(ctx, row);
 	}
 }

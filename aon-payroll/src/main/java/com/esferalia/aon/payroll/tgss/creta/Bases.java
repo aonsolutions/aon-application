@@ -2141,7 +2141,25 @@ public class Bases {
 			
 			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 		
-			put("300", new NonNegativeCCretaData(TOTAL_PAYMENT.getName()));
+			put("300", new NonNegativeCCretaData(TOTAL_PAYMENT.getName()) {
+				public Double get(Salary salary, Fecha desde, Fecha hasta) throws NoSuchVariableException ,UnMatchedVariableException {
+					try {
+						return super.get(salary, desde, hasta);
+					} catch (UnMatchedVariableException e) {
+						long workedDays = 
+						salary.getContextData().getOrDefault(WORKED_DAYS.getName(), Collections.emptyList()).stream()
+						.collect(Collectors.summingLong(v -> new Period(v.getStartDate(), v.getEndDate()).getDays()));
+						double totalPayment =
+						salary.getContextData().getOrDefault(TOTAL_PAYMENT.getName(), Collections.emptyList()).stream()
+						.collect(Collectors.summingDouble(v -> AonNumberUtils.todouble(v.getExpression()) ));
+						long days = 
+						new Period(toDate(desde), toDate(hasta)).getDays();
+						
+						return totalPayment / workedDays * days ;
+					} 
+				};
+			});
+			put("705", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 			
 			put("737", new DistributeCCretaData(SLD_C737.getName()));
 			put("06", new DistributeHCretaData(SLD_H06.getName()));

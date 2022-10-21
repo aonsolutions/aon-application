@@ -1633,7 +1633,7 @@ public class Contrata {
 			htmlPage = firstPageRemove(htmlPage);
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initC").click();
 			handleSepeExceptions(htmlPage);
-
+			
 			htmlPage = lastPageRemove(htmlPage, ide);
 			handleSepeExceptions(htmlPage);
 
@@ -1736,9 +1736,13 @@ public class Contrata {
 
 		DomNode ideEl = formDatos.querySelector("[name=\"idcomunicacion\"]");
 		if (ideEl != null) {
-			((HtmlInput) ideEl).setValueAttribute(ide);
+			String ideStr = ide1 + "-" + ide2 + "-" + ide3;
+			if (ide4Exist) {
+				ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
+			}
+			((HtmlInput) ideEl).setValueAttribute(ideStr);
 		}
-
+	
 		HtmlElement inputSubmit = formDatos.querySelector("input[value=aceptar]");
 		htmlPage = (HtmlPage) inputSubmit.click();
 		handleSepeExceptions(htmlPage);
@@ -1833,11 +1837,11 @@ public class Contrata {
 			DomNode idcontratoNode = formDatos.querySelector("[name=\"idcontrato\"]");
 			if (idcontratoNode != null) {
 				HtmlInput idcontrato = ((HtmlInput) idcontratoNode);
-				String contractStr = ide1 + "-" + ide2 + "-" + ide3;
+				String ideStr = ide1 + "-" + ide2 + "-" + ide3;
 				if (ide4Exist) {
-					contractStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
+					ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 				}
-				idcontrato.setValueAttribute(contractStr);
+				idcontrato.setValueAttribute(ideStr);
 			}
 
 		} else {

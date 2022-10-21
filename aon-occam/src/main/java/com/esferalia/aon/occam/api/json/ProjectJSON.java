@@ -66,6 +66,8 @@ public class ProjectJSON {
 				.put(IJsonNames.TAS, project.isTas())
 				.put(IJsonNames.COMMERCIAL, project.isCommercial())
 				.put(IJsonNames.RESERVATION, project.isReservation())
-				.put(IJsonNames.DIRTY, project.isDirty());
+				.put(IJsonNames.DIRTY, project.isDirty())
+				.put("projectHolders", ProjectHolderJSON.toJSON(project.getProjectHolders()))
+				;
 	}
 }
