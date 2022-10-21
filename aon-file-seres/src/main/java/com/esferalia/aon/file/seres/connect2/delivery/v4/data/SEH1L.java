@@ -83,7 +83,8 @@ public class SEH1L {
 	private String fechaDeCongelacion_91E_;
 	private String IMD_FTG_;
 	private String importeNetoLinea_203_con_descuentos_cargos;
-
+	
+	private SEH1B seh1b;
 
 	private static Pattern PATTERN_SEH1L_numeroDeLineaDelArticulo = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SEH1L_codigoEANDelArticulo = Pattern.compile("^.{12}(.{15}).*");
@@ -1602,6 +1603,14 @@ public class SEH1L {
 	public void setImporteNetoLinea_203_con_descuentos_cargos(String importeNetoLinea_203_con_descuentos_cargos) {
 		this.importeNetoLinea_203_con_descuentos_cargos = importeNetoLinea_203_con_descuentos_cargos;
 	}
+	
+	public SEH1B getSeh1b() {
+        return seh1b;
+    }
+	
+	public void setSeh1b(SEH1B seh1b) {
+        this.seh1b = seh1b;
+    }
 
 	/** 
 	 * 37 - Código de Discrepancia: El campo se corresponde con el elemento 4221. Los valores posibles son:
