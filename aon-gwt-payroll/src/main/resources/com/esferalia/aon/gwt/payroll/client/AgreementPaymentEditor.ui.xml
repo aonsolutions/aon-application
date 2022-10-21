@@ -2,7 +2,8 @@
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
     <ui:style>
     
@@ -107,7 +108,10 @@
 				<g:TextBox ui:field="paymentDescriptionTB" styleName="{style.inputHeight}"/>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
-				<g:Label styleName="{style.title}">Expresión</g:Label>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.title}">Expresión</g:Label>
+					<aon:AonToolbarSmallButton ui:field="expresssionVisibilityBtn" />
+				</g:HTMLPanel>
 				<g:TextArea ui:field="paymentExpressionTB"/>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">

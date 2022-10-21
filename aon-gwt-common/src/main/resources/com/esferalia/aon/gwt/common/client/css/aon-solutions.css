@@ -192,6 +192,8 @@
 .aon_icon_sepe_ct { background-image: iconSepeCt;}
 @url iconSepeCto aonIconSepeCto;
 .aon_icon_sepe_cto { background-image: iconSepeCto;}
+@url iconEditNote aonIconEditNote;
+.aon_icon_edit_note { background-image: iconEditNote;}
 @url iconCloudImport aonIconCloudImport;
 .aon_icon_cloud_import { background-image: iconCloudImport;}
 @url iconImport aonIconImport;

@@ -48,6 +48,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-sepe-cto.png")
 	ImageResource aonIconSepeCto();
 	
+	@Source("icons/aon-icon-edit-note.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEditNote();
+	
 	@Source("icons/aon-icon-cloud-import.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconCloudImport();
