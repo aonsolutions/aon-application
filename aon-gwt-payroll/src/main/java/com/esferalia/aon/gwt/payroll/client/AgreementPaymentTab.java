@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -30,11 +29,9 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -76,6 +73,108 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 					agreement.addPayment(payment);
 					setAgreementPayment(agreement);
 					setHasChange(true);
+				}
+
+				@Override
+				protected void onManualEdition() {
+					hide();
+					
+					new AgreementPaymentWizard(agreement.getPayments(), null) {
+						
+						@Override
+						protected void onAccept(Payment payment) {
+							payment.setModify(true);
+							agreement.addPayment(payment);
+							setAgreementPayment(agreement);
+							setHasChange(true);
+						}
+
+						@Override
+						protected void onExtraAccept(Payment payment, Extra extra) {
+							payment.setModify(true);
+							agreement.addPayment(payment);
+							
+							if(null != extra)
+								agreement.addExtra(extra);
+							
+							checkPairExtras(payment, extra);
+							
+							setAgreementPayment(agreement);
+							setHasChange(true);
+							
+						}
+
+						private void checkPairExtras(Payment payment, Extra extra) {
+							if(payment.getType().equals(Payment.Type.CRA_0004)) {
+								Optional<Payment> searchPayment = agreement.getPayments().stream().filter(paymentIt -> !paymentIt.equals(payment) && paymentIt.getType().equals(Payment.Type.CRA_0004)).findAny();
+								if(!searchPayment.isPresent()) {
+									Payment associatedPayment = new Payment();
+									Random rand = new Random();
+									int newPaymentId = rand.nextInt(1000) * -1;
+									if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
+									associatedPayment.setId(newPaymentId);
+									associatedPayment.setDomain(payment.getDomain());
+									associatedPayment.setModify(true);
+									
+									associatedPayment.setType(Payment.Type.CRA_0004);
+									associatedPayment.setConceptId(payment.getConceptId());
+									associatedPayment.setName(payment.getName());
+									
+									associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
+									associatedPayment.setExpression(payment.getExpression());
+									associatedPayment.setIrpfExpression(payment.getIrpfExpression());
+									associatedPayment.setQuoteExpression(payment.getQuoteExpression());
+									associatedPayment.setMonth(null);
+									
+									agreement.addPayment(associatedPayment);
+									
+									if(null != extra) {
+										int newExtraId = rand.nextInt(1000) * -1;
+										AgreementExtra associatedExtra = new AgreementExtra();
+										associatedExtra.setId(newExtraId);
+										
+										associatedExtra.setDomain(payment.getDomain());
+										associatedExtra.setAgreementPayment(associatedPayment.getId());
+									
+										if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "06") || AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "07")) {
+											associatedExtra.setIssueDate("31/12");
+											if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) {
+												associatedExtra.setStartDate("01/01");
+												associatedExtra.setEndDate("31/12");
+											} else {
+												associatedExtra.setStartDate("01/07");
+												associatedExtra.setEndDate("31/12");
+											}
+										} else if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "12")) {
+											associatedExtra.setIssueDate("30/06");
+											if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "01")) {
+												associatedExtra.setStartDate("01/07 -1");
+												associatedExtra.setEndDate("30/06");
+											} else {
+												associatedExtra.setStartDate("01/01");
+												associatedExtra.setEndDate("30/06");
+											}
+										}
+										
+
+										agreement.addExtra(associatedExtra);
+									}
+								}
+							}
+						}
+
+						@Override
+						protected void onGtzdoAccept(List<Payment> payments) {
+							if(!payments.isEmpty()) {
+								for(Payment payment : payments) {
+									payment.setModify(true);
+									agreement.addPayment(payment);
+								}
+							}
+							setAgreementPayment(agreement);
+							setHasChange(true);
+						}
+					};
 				}
 				
 			};
@@ -275,12 +374,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			addExtrasSalary = addItem("Pagas Extras", new AddExtrasSalaryCommand(), 
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			addExtrasSalary.ensureDebugId("addExtrasSalary");
-			
-			addSeparator();
-			
-			addAonPayment = addItem("Devengos Predefinidos", new AddAonPaymentCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			addAonPayment.ensureDebugId("addAonPayment");
 			
 		}
 	}
@@ -780,115 +873,23 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			onSaved();
 		});
 		
-		AonExpandButton addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
-			
-			@Override
-			public void onExpandClick(ClickEvent event) {
-				NativeEvent nativeEvent = event.getNativeEvent();
-				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-				contextMenu.show();
-			}
-			
-			@Override
-			public void onDefaultClick(ClickEvent evet) {
-				new AgreementPaymentWizard(agreement.getPayments(), null) {
-					
-					@Override
-					protected void onAccept(Payment payment) {
-						payment.setModify(true);
-						agreement.addPayment(payment);
-						setAgreementPayment(agreement);
-						setHasChange(true);
-					}
-
-					@Override
-					protected void onExtraAccept(Payment payment, Extra extra) {
-						payment.setModify(true);
-						agreement.addPayment(payment);
-						
-						if(null != extra)
-							agreement.addExtra(extra);
-						
-						checkPairExtras(payment, extra);
-						
-						setAgreementPayment(agreement);
-						setHasChange(true);
-						
-					}
-
-					private void checkPairExtras(Payment payment, Extra extra) {
-						if(payment.getType().equals(Payment.Type.CRA_0004)) {
-							Optional<Payment> searchPayment = agreement.getPayments().stream().filter(paymentIt -> !paymentIt.equals(payment) && paymentIt.getType().equals(Payment.Type.CRA_0004)).findAny();
-							if(!searchPayment.isPresent()) {
-								Payment associatedPayment = new Payment();
-								Random rand = new Random();
-								int newPaymentId = rand.nextInt(1000) * -1;
-								if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
-								associatedPayment.setId(newPaymentId);
-								associatedPayment.setDomain(payment.getDomain());
-								associatedPayment.setModify(true);
-								
-								associatedPayment.setType(Payment.Type.CRA_0004);
-								associatedPayment.setConceptId(payment.getConceptId());
-								associatedPayment.setName(payment.getName());
-								
-								associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
-								associatedPayment.setExpression(payment.getExpression());
-								associatedPayment.setIrpfExpression(payment.getIrpfExpression());
-								associatedPayment.setQuoteExpression(payment.getQuoteExpression());
-								associatedPayment.setMonth(null);
-								
-								agreement.addPayment(associatedPayment);
-								
-								if(null != extra) {
-									int newExtraId = rand.nextInt(1000) * -1;
-									AgreementExtra associatedExtra = new AgreementExtra();
-									associatedExtra.setId(newExtraId);
-									
-									associatedExtra.setDomain(payment.getDomain());
-									associatedExtra.setAgreementPayment(associatedPayment.getId());
-								
-									if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "06") || AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "07")) {
-										associatedExtra.setIssueDate("31/12");
-										if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) {
-											associatedExtra.setStartDate("01/01");
-											associatedExtra.setEndDate("31/12");
-										} else {
-											associatedExtra.setStartDate("01/07");
-											associatedExtra.setEndDate("31/12");
-										}
-									} else if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "12")) {
-										associatedExtra.setIssueDate("30/06");
-										if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "01")) {
-											associatedExtra.setStartDate("01/07 -1");
-											associatedExtra.setEndDate("30/06");
-										} else {
-											associatedExtra.setStartDate("01/01");
-											associatedExtra.setEndDate("30/06");
-										}
-									}
-									
-
-									agreement.addExtra(associatedExtra);
-								}
-							}
-						}
-					}
-
-					@Override
-					protected void onGtzdoAccept(List<Payment> payments) {
-						if(!payments.isEmpty()) {
-							for(Payment payment : payments) {
-								payment.setModify(true);
-								agreement.addPayment(payment);
-							}
-						}
-						setAgreementPayment(agreement);
-						setHasChange(true);
-					}
-				};
-			}
-		};
+		AonToolbarSmallButton addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
+		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
+		
+//		AonExpandButton addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
+//			
+//			@Override
+//			public void onExpandClick(ClickEvent event) {
+//				NativeEvent nativeEvent = event.getNativeEvent();
+//				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+//				contextMenu.show();
+//			}
+//			
+//			@Override
+//			public void onDefaultClick(ClickEvent evet) {
+//				new AddAonPaymentCommand().execute();
+//			}
+//		};
 		
 		toolbar.add(saveBtn);
 		toolbar.add(addPaymentButton);
