@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -39,7 +40,7 @@ public class DeliveryPackages {
 									.eq(deliveryId)), AttachType.DATA,
 					true);
 			attach.setAttachType(AttachType.DATA);
-			if(attach != null && !attach.isEmpty() && attach.getData() == null) {
+			if(attach != null && !attach.isEmpty() && attach.getData() == null && !AonStringUtils.isBlank(attach.getDriveId())) {
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));

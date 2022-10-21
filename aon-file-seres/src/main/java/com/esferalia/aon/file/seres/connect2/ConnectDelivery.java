@@ -94,10 +94,13 @@ public class ConnectDelivery extends AbstractFileFiller {
 						for (SEH1L valueL: value.seh1lList) {
 							properties.put(SEH1L, valueL);
 							createLine(SEH1L, properties);
+							if(valueL.getSeh1b() != null) {
+							    properties.put(SEH1B, valueL.getSeh1b());
+							    createLine(SEH1B, properties);
+							}
 						}
 //					}
-				}
-				
+				}		
 			}
 			
 			for (SEH1G value: rectl.seh1gList) {

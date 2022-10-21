@@ -179,7 +179,7 @@ public class MultipleDownloadServlet extends HttpServlet{
     						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
     						FileOutputStream out = new FileOutputStream(file);
     						
-    						String qrUrl = domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
+    						String qrUrl = "https://" +  domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
     								+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
     								+ "&s=" + invoice.getSeries()
     								+ "&n=" + invoice.getNumber()

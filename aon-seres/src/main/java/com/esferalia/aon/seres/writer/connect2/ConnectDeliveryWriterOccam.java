@@ -49,7 +49,6 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.seres.SeresUtils;
@@ -348,14 +347,15 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 
 	private List<SEH1B> createSEH1BList(Delivery delivery) {
-		List<SEH1B> list = new ArrayList<>();
-		if(isEroski(delivery.getCustomer().getDocument())) {
-			for (DeliveryDetail detail : delivery.getDetails()) {
-				if(!ProductType.AUXILIARY.equals(detail.getItem().getProduct().getType()))
-						list.add(createSEH1BRecord(detail));
-			}
-		}
-		return list;
+	    return new LinkedList<>();
+//		List<SEH1B> list = new ArrayList<>();
+//		if(isEroski(delivery.getCustomer().getDocument())) {
+//			for (DeliveryDetail detail : delivery.getDetails()) {
+//				if(!ProductType.AUXILIARY.equals(detail.getItem().getProduct().getType()))
+//						list.add(createSEH1BRecord(detail));
+//			}
+//		}
+//		return list;
 	}
 
 	/**
@@ -477,6 +477,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCodigoACU_ACU_(null);
 		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
 		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
+		if(isEroski(delivery.getCustomer().getDocument())) {
+            seh1l.setSeh1b(createSEH1BRecord(detail));
+		}
 		
 		double quantity = 0.0;
 		double packUnits = detail.getItem().getPackUnits();
@@ -567,19 +570,19 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 */
 	private SEH1B createSEH1BRecord(DeliveryDetail deliveryDetail) {
 		String date = SeresUtils.dateTimeFormat().format(deliveryDetail.getItem().getSerialDate());
-		SEH1B record = new SEH1B();
-		record.setCodigoInstrucciones("10");
-		record.setMarcasDeEnvio(null);
-		record.setFechaDeCaducidad_36__102_203_(null);
-		record.setFecha_horaRecepcionDeLaMercancia_50__102_203_(null);
-		record.setConsumirAntesDeFecha_361__102_203_(null);
-		record.setCalificadorDeCantidad_11_12_(null);
-		record.setCantidad(null);
-		record.setCalificadorNumeroIdentidad("BX");
-		record.setNumeroIdentidad(deliveryDetail.getItem().getSerialNumber());
-		record.setFechaDeEnvasadoOEmpaquetado_365__102_203_(date);
-		record.setFechaProduccion_fabricacion_94__102_203_(null);
-		return record;
+		SEH1B seh1b = new SEH1B();
+		seh1b.setCodigoInstrucciones("36E");
+		seh1b.setMarcasDeEnvio(null);
+		seh1b.setFechaDeCaducidad_36__102_203_(null);
+		seh1b.setFecha_horaRecepcionDeLaMercancia_50__102_203_(null);
+		seh1b.setConsumirAntesDeFecha_361__102_203_(null);
+		seh1b.setCalificadorDeCantidad_11_12_(null);
+		seh1b.setCantidad(null);
+		seh1b.setCalificadorNumeroIdentidad("BX");
+		seh1b.setNumeroIdentidad(deliveryDetail.getItem().getSerialNumber());
+		seh1b.setFechaDeEnvasadoOEmpaquetado_365__102_203_(date);
+		seh1b.setFechaProduccion_fabricacion_94__102_203_(null);
+		return seh1b;
 	}
 
 	/////////////////////////////////////////////////
