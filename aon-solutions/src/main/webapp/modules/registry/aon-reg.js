@@ -261,8 +261,8 @@ export class AonReg extends AonElement {
 			{ name: MSG.BLOCKED, value:"BLOCKED" },
 		]);
 
-		statusSelect.value = this.registry.getStatus();
-		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.setStatus(statusSelect.value));
+		statusSelect.value = this.registry.status;
+		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
 		table.addCell(statusSelect, 3);
 
 		this.buildAddresses(div);

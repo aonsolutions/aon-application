@@ -682,10 +682,10 @@ const saveFiles = async(task, textArea)=> {
 }
 
 const changeFormProcess = (task, {value,name}) => {
+    let sender;
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
     processDiv.innerHTML = "";
-    let sender;
     //CREATE CARD
     let aonCard = TaskCreationUtils.createCardMessenger("aonCardProcess", name);
     processDiv.appendChild(aonCard);
@@ -694,10 +694,13 @@ const changeFormProcess = (task, {value,name}) => {
 
     if(task.id && aonMessengerChat.getDur().isDev()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
-            let d = aonMessengerChat.applicationEl.getDialog();
+            let application = aonMessengerChat.getApplication();
+            let d = application.getDialog();
             if(d){
                 d.clear();
-                if (!aonMessengerChat.isMobile()) {
+                if (aonMessengerChat.isMobile()) {
+                  d.type  = "fullscreen";
+                } else {
                     d.width = '400px';
                 }
                 d.setTitle("JSON");

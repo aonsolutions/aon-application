@@ -106,10 +106,7 @@ export class AonAltaDirecta extends AonElement {
         toolbar.removeButtons();
 
         if(this.data && this.data.fra && this.data.contract) {
-            let aib = toolbar.addButton2(ACTION_COMUNICA.DUPLICATE, () => this.duplicateMov());
-            // let btn = aib.getButton();
-            // if(btn)
-            //     btn.classList.add(CSS.PULSE);
+            toolbar.addButton2(ACTION_COMUNICA.DUPLICATE, () => this.duplicateMov());
         }
             
         if(!this.isMobile() && this.data && this.data.fra){
@@ -718,10 +715,12 @@ export class AonAltaDirecta extends AonElement {
 
         const dialog = application.getDialog();
         dialog.clear();
-
-        if (!application.isMobile()) 
+        if(this.isMobile()){
+            dialog.type = "fullscreen";
+        } else {
             dialog.width = '40%';
-
+        }
+  
         dialog.setTitle("Datos de Baja");
     
         dialog.setContent(createBajaDialogContent());

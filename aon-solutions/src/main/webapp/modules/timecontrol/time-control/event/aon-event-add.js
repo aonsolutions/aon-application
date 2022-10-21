@@ -263,6 +263,10 @@ export class AonEventAdd extends AonElement {
     try {
       const historics = await this.getHistoric();
       let d = this.getApplication().getDialog();
+      if(this.isMobile()){
+        d.type = "fullscreen";
+      }
+
       if(d){
           const div = this.createElement("div");
           const countHistoric = historics.length;

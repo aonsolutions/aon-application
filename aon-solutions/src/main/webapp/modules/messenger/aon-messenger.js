@@ -671,9 +671,11 @@ export class AonMessenger extends AonElement {
 
 	dialogTag(tag={}, type) {
 		const isEdit = tag && tag.id;
-		let d = this.getElement(this.getApplication().DIALOG);
+		let d = this.getDialog();
 		d.clear();
-		if(!this.isMobile()) {
+		if(this.isMobile()) {
+			d.type ="fullscreen";
+		} else {
 			d.width = '400px';
 		}
 		d.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
@@ -702,7 +704,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	deleteTag(tag) {
-		let d = this.getElement(this.getApplication().DIALOG);
+		let d = this.getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE);

@@ -1,6 +1,6 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS } from '../../environments/environments.js';
-import {getUserList} from '../../services/service.js';
+import {getUserList, getUserRoles} from '../../services/service.js';
 import { AonUser } from './aon-user.js';
 
 export class AonMobileUserList extends AonMobileList {
@@ -54,7 +54,7 @@ export class AonMobileUserList extends AonMobileList {
     }
 
     aonUser(user, i) {
-        setIndex(i);
+        // setIndex(i); //TODO NOT EXIST
     	getUserRoles({user: user.id}).then(roles => {
 			user.roles = roles;
 			let aonUser = new AonUser();
