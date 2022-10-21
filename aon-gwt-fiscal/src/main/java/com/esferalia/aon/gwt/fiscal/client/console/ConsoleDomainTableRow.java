@@ -57,6 +57,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private AonTableButton remoteAccessButton;
 	private AonTableButton duplicateButton;
 	private AonTableButton editButton;
+	private Anchor dumpAnchor;
 	
 	
 	
@@ -162,8 +163,20 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		duplicateButton= new AonTableButton(AON.MSG.duplicate(), AON.CSS.aonIconCopy());		 
 		duplicateButton.addClickHandler(e -> duplicate(domain));
 
-		editButton= new AonTableButton( "Editar datos" , AON.CSS.aonIconEdit());		 
+		editButton = new AonTableButton( "Editar datos" , AON.CSS.aonIconEdit());		 
 		editButton.addClickHandler(e -> callback.onEditDomain(id, domain.getDescription()));
+		
+		
+		String url = "https://dumpDomain.com"
+			+ "?schema="+callback.getSchema()
+			+ "&domainId="+domain.getId()
+			+ "&domainName="+domain.getName();	
+		dumpAnchor = new Anchor();
+		dumpAnchor.setStyleName(AON.CSS.aonIconLabel());
+		dumpAnchor.addStyleName(AON.CSS.aonIconDownload());
+		dumpAnchor.setHref( url );
+		dumpAnchor.setTarget("_blank");
+		
 		
 		buttons.addRow()
 			.addCell(deleteButton)
@@ -192,11 +205,12 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( remoteAccessButton )
 			.addCell( editButton )
 			.addCell( duplicateButton )
+			.addCell( dumpAnchor )
 		;
 
 		
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -495,4 +509,5 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		buttons.add(deletedLabel);
 	}
 
+	
 }
