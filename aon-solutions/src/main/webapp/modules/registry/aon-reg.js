@@ -201,13 +201,21 @@ export class AonReg extends AonElement {
 		card.style.width = '50%';
 		parent.appendChild(card);
 
-		let statusDiv = document.createElement("div");
+		if(this.registry.id){
+			let statusDiv = this.createElement(TAG.DIV);
+			statusDiv.title = this.registry.status ? MSG[this.registry.status] : "";
+			statusDiv.style = `
+				width: 15px;
+				height: 15px;
+				border-radius: 50%;
+				cursor:pointer;
+			`;
+			statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(statusDiv));
+			card.addSection2(statusDiv);
+
+			this.onStatusColor(statusDiv);
+		}
 		
-		statusDiv.addEventListener(EVENT.CLICK, () => {
-			console.log("click");
-		});
-		
-		card.addSection2(statusDiv);
 
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
@@ -310,6 +318,61 @@ export class AonReg extends AonElement {
 		}
 	}
 
+	getOptionsStatus(element){
+		const top = element.getBoundingClientRect().top;
+		const left = element.getBoundingClientRect().left;
+		let d = this.getApplication().getOptionDialog();
+
+		let options = [
+			{ 
+				name: "Activar", 
+				value:"ACTIVE",
+				icon:"toggle_on", 
+				fn:()=> {
+					this.registry.status = "ACTIVE";
+					this.onStatusColor(element);
+					this.save();
+				}
+			},
+			{ 
+				name: "Desactivar", 
+				value:"INACTIVE",
+				icon:"toggle_off", 
+				fn:()=> {
+					this.registry.status = "INACTIVE";
+					this.onStatusColor(element);
+					this.save();
+				}
+			},
+			{ 
+				name: "Bloquear", 
+				value:"BLOCKED",
+				icon:"block", 
+				fn:()=> {
+					this.registry.status = "BLOCKED";
+					this.onStatusColor(element);
+					this.save();
+				}
+			}
+		];
+
+		if(this.registry.status){
+			options = options.filter(opt => opt.value!=this.registry.status );
+		}
+
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	onStatusColor(element){
+		let color = "green";
+		if(this.registry.status === "INACTIVE"){
+			color = "orange";
+		} else if(this.registry.status === "BLOCKED"){
+			color = "grey";
+		}
+		element.style.backgroundColor = color;
+	}
 
 	buildMediaCard(parent){
 		let card = new AonCard();
