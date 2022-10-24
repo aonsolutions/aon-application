@@ -9,11 +9,15 @@ import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
 
-import { EVENT, MSG, TAG } from '../../environments/environments.js'; 
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
+import { AonLoader } from "../../components/aon-loader.js";
+import { AonButton } from "../../components/aon-button.js";
+import { AonDialog } from "../../components/aon-dialog.js";
+import { AonToast } from "../../components/aon-toast.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -22,8 +26,127 @@ export class AonLogin extends AonElement {
     this.tag = 0;
   }
 
+
+  initialize() {
+
+  }
+
+  build() {
+    let div = this.createElement(TAG.DIV);
+    div.className = CSS.AON_FORM_CENTER;
+    this.appendChild(div);
+
+    let div2 = this.createElement(TAG.DIV);
+    div2.classList.add(CSS.AON_VERTICAL_CENTER);
+    div2.classList.add(CSS.AON_WIDTH_300);
+    div.appendChild(div2);
+
+    let divLogo = this.createElement(TAG.DIV);
+    divLogo.id = 'aonLoginLogoDiv';
+    div2.appendChild(divLogo);
+
+    let logo = this.createElement(TAG.IMG);
+    logo.id = 'aonLoginLogoImg';
+    logo.style.width = '250px';
+    logo.style.marginLeft = '25px';
+    divLogo.appendChild(logo);
+
+    let divContent = this.createElement(TAG.DIV);
+    divContent.style.paddingTop = '20px';
+    divContent.style.width = '300px';
+    div2.appendChild(divContent);
+
+    let divTitle = this.createElement(TAG.DIV);
+    divTitle.className = CSS.AON_COLOR_SECONDARY;
+    divTitle.style.fontWeight = 'bold';
+    divTitle.style.paddingBottom = '20px'; 
+    divTitle.innerHTML = 'INICIO DE SESIÓN';
+    divContent.appendChild(divTitle);
+
+    let aonLoader = new AonLoader();
+    aonLoader.id = 'aonLoginLoader';
+    divContent.appendChild(aonLoader);
+
+    let divError = this.createElement(TAG.DIV);
+    divError.id = 'aonLoginError';
+    divError.style.minWidth = '150px';
+    divError.style.maxWidth = '250px';
+	  divError.style.width = '100%';
+    divError.style.color = 'red';
+    divError.style.display = 'none';
+    divContent.appendChild(divError);
+
+    let span = this.createElement(TAG.SPAN);
+    span.id = 'aonLoginErrorMessage';
+    divError.appendChild(span);
+
+    let userInput = this.createAonElement(new AonInput(), 'aonLoginUser', 'Usuario');
+    userInput.filled = true;
+    divContent.appendChild(userInput);
+
+    let passwordInput = this.createAonElement(new AonInput(), 'aonLoginPassword', 'Contraseña');
+    passwordInput.type = 'password';
+    passwordInput.filled = true;
+    divContent.appendChild(passwordInput);
+
+
+    let divButtons = this.createElement(TAG.DIV);
+    divButtons.style.display = 'flex';
+    divContent.appendChild(divButtons);
+
+    let magicLink = new AonButton();
+    magicLink.id = 'aonLoginMagicLink';
+    magicLink.style.width = '100%';
+    magicLink.style.marginRight = '2px';
+    magicLink.setIcon(MATERIAL_ICONS.AUTO_FIX_NORMAL);
+    magicLink.setTitle("Magic Link");
+    magicLink.setColor("#12ccd1");
+    magicLink.addEventListener(EVENT.CLICK, () => this.aonDialogLoginMagicLink());
+    divButtons.appendChild(magicLink);
+
+    let signIn = new AonButton();
+    signIn.id = 'aonLoginSignin';
+    signIn.style.width = '100%';
+    signIn.setIcon(MATERIAL_ICONS.LOGIN);
+    signIn.setTitle("Iniciar Sesión");
+    divButtons.appendChild(signIn);
+
+
+    let divInfo = this.createElement(TAG.DIV);
+    divInfo.style.color = '#666';
+    divInfo.style.fontSize = '9px';
+    divInfo.style.borderTop = '1px solid #f0f0f0';
+    divInfo.style.marginTop = '10px';
+    divInfo.style.padding = '15px';
+    divInfo.innerHTML = `
+      <span>
+        <a target="_blank" href="http://www.aonsolutions.es">
+          aon Solutions
+        </a>
+        es una marca registrada de AON SOLUTIONS, S.L.
+      </span>
+      <div id="aonManifest"></div>`;
+    div2.appendChild(divInfo);
+
+    let divMobiles = this.createElement(TAG.DIV);
+    divMobiles.id = 'logosMobiles';
+    div2.appendChild(divMobiles);
+
+    let dialog = new AonDialog();
+    dialog.id = "aonDialogLogin";
+    this.appendChild(dialog);
+
+    let toast = new AonToast();
+    toast.id = "aonLoginToast";
+    this.appendChild(toast);
+  }
+  
   connectedCallback() {
-    this.innerHTML = `
+    if(this.isBeta()) {
+      this.initialize();
+      this.build();
+    } else {
+      this.innerHTML = `
 			<!-- Wide card with share menu button -->
 			<style>
 
@@ -113,15 +236,13 @@ export class AonLogin extends AonElement {
 			<aon-dialog id="aonDialogLogin"></aon-dialog>
 			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
-
+    }
     this.buildLogo();
     if(!webkitRequestMobile() && this.isMobile()){ // si es app
       this.buildAppLogo();
     }
 
-    if(this.isBeta()) {
-      this.aonDialogLoginMagicLink();
-    } else this.aonDialogLoginRemember();
+    if(!this.isBeta()) this.aonDialogLoginRemember();
 
     let aonManifest = this.getElement("aonManifest");
     getManifest().then(
@@ -142,7 +263,6 @@ export class AonLogin extends AonElement {
        if (!this.isMobile()) dialog.width = '400px';
        dialog.open()
     });
-
   }
 
   buildAppLogo(){
@@ -170,6 +290,7 @@ export class AonLogin extends AonElement {
 
   aonDialogLoginMagicLink() {
     let dialog = this.getElement("aonDialogLogin");
+    if (!this.isMobile()) dialog.width = '400px';
     dialog.setTitle("MAGIC LINK");
     let form = this.createElement("form");
     form.action = "#";
@@ -181,6 +302,7 @@ export class AonLogin extends AonElement {
     dialog.setContent(form);
     
     dialog.addAcceptAction(() => aonInput.value && aonInput.value.length>3 ? magicLink(aonInput.value) : null);
+    dialog.open();
   }
 
   aonDialogLoginRemember() {
@@ -201,7 +323,7 @@ export class AonLogin extends AonElement {
   buildLogo() {
     let logo = this.getElement("aonLoginLogoImg");
     const href = window.location.href;
-    let src = "assets/aon-logo.png"; 
+    let src = "assets/aon-logo2.png"; 
     if (href.includes("ayudat")) {
       src = "assets/img/ayudat-logo.png";
     } else if (href.includes("translogia") || href.includes("tedi")) {
