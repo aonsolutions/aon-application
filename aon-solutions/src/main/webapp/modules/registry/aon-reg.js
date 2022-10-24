@@ -201,6 +201,14 @@ export class AonReg extends AonElement {
 		card.style.width = '50%';
 		parent.appendChild(card);
 
+		let statusDiv = document.createElement("div");
+		
+		statusDiv.addEventListener(EVENT.CLICK, () => {
+			console.log("click");
+		});
+		
+		card.addSection2(statusDiv);
+
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
@@ -250,20 +258,20 @@ export class AonReg extends AonElement {
 		let td1 = table.addCell(aliasInput);
 		td1.style.width = '55%';
 
-		table.addRow();
+		// table.addRow();
 		
-		let statusSelect = new AonSelect();
-		statusSelect.id = 'aonConfigurationGeneralStatus';
-		statusSelect.title = MSG.STATUS;
-		statusSelect.setOptions([
-			{ name: MSG.ACTIVE, value:"ACTIVE" },
-			{ name: MSG.INACTIVE, value:"INACTIVE" },
-			{ name: MSG.BLOCKED, value:"BLOCKED" },
-		]);
+		// let statusSelect = new AonSelect();
+		// statusSelect.id = 'aonConfigurationGeneralStatus';
+		// statusSelect.title = MSG.STATUS;
+		// statusSelect.setOptions([
+		// 	{ name: MSG.ACTIVE, value:"ACTIVE" },
+		// 	{ name: MSG.INACTIVE, value:"INACTIVE" },
+		// 	{ name: MSG.BLOCKED, value:"BLOCKED" },
+		// ]);
 
-		statusSelect.value = this.registry.status;
-		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
-		table.addCell(statusSelect, 3);
+		// statusSelect.value = this.registry.status;
+		// statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
+		// table.addCell(statusSelect, 3);
 
 		this.buildAddresses(div);
 
