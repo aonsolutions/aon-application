@@ -39,12 +39,13 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 
 	}
 	
-	public static final double PERCENT1 = 4.0;
-	public static final double PERCENT2 = 10.0;
-	public static final double PERCENT3 = 21.0;
-	public static final double SURCHARGE_PERCENT1 = 0.5;
-	public static final double SURCHARGE_PERCENT2 = 1.4;
-	public static final double SURCHARGE_PERCENT3 = 5.2;
+	private static final double PERCENT1 = 4.0;
+	private static final double PERCENT11 = 5.0;
+	private static final double PERCENT2 = 10.0;
+	private static final double PERCENT3 = 21.0;
+	private static final double SURCHARGE_PERCENT1 = 0.5;
+	private static final double SURCHARGE_PERCENT2 = 1.4;
+	private static final double SURCHARGE_PERCENT3 = 5.2;
 
 	public static boolean accept(Mod303 mod) {
 		return mod.isAEAT() && mod.getYear() > 2021; 
@@ -91,10 +92,10 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 
 		// Base imponible, porcentaje y cuota al primer tipo.
 		,
-		CT_C01(Mod303Key.CT_C01, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(vat)),
+		CT_C01(Mod303Key.CT_C01, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C01, mod, vat.getBase()), null, null, null),
 		CT_C02(Mod303Key.CT_C02, null, null, (ctx, mod) -> add(Mod303Key.CT_C02, mod, PERCENT1), null, null),
-		CT_C03(Mod303Key.CT_C03, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(vat)),
+		CT_C03(Mod303Key.CT_C03, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C03, mod, vat.getQuota()), null, null, null)
 
 		// Base imponible, porcentaje y cuota al segundo tipo.
@@ -1808,8 +1809,9 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 				&& vat.isSales() && !vat.isRectification();
 	}
 
-	private static boolean hasPercent1(VatContext vat) {
-		return vat.getPercentage() == PERCENT1;
+	private static boolean hasPercent1(Mod303 mod, VatContext vat) {
+		return vat.getPercentage() == PERCENT1
+			|| (vat.getPercentage() == PERCENT11 && mod.getPeriod().isLastSemester());
 	}
 
 	private static boolean hasPercent2(VatContext vat) {
