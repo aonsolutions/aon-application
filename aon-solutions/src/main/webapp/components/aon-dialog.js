@@ -435,6 +435,8 @@ export class AonDialog extends AonElement {
 				position: "left",
 			});
 		} else {
+			btn = this.getElement(this.CANCEL);
+			if(btn) btn.remove();
 			btn = this.createElement(TAG.BUTTON);
 			btn.id = this.CANCEL;
 			btn.className = 'aonButton';
@@ -475,7 +477,9 @@ export class AonDialog extends AonElement {
 				position: "right",
 			});
 		} else {
-			btn = this.getElement(this.ACCEPT) || this.createElement(TAG.BUTTON);
+			btn = this.getElement(this.ACCEPT);
+			if(btn) btn.remove();
+			btn = this.createElement(TAG.BUTTON);
 			btn.id = this.ACCEPT;
 			btn.className = 'aonButton';
 			btn.innerHTML = title || MSG.ACCEPT;
