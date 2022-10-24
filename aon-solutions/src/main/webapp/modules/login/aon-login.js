@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
+import { login, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
 
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
@@ -119,7 +119,9 @@ export class AonLogin extends AonElement {
       this.buildAppLogo();
     }
 
-    this.aonDialogLoginRemember();
+    if(this.isBeta()) {
+      this.aonDialogLoginMagicLink();
+    } else this.aonDialogLoginRemember();
 
     let aonManifest = this.getElement("aonManifest");
     getManifest().then(
@@ -143,7 +145,6 @@ export class AonLogin extends AonElement {
 
   }
 
-
   buildAppLogo(){
     const div  = this.getElement('logosMobiles');
     div.style.textAlign = "center";
@@ -165,6 +166,21 @@ export class AonLogin extends AonElement {
     imgAppStore.style.filter = "grayscale(100%)";
     appStore.appendChild(imgAppStore);
     div.appendChild(appStore);
+  }
+
+  aonDialogLoginMagicLink() {
+    let dialog = this.getElement("aonDialogLogin");
+    dialog.setTitle("MAGIC LINK");
+    let form = this.createElement("form");
+    form.action = "#";
+    let aonInput = new AonInput();
+    aonInput.id = "aonLoginMagicLinkEmail";
+    aonInput.description = "Email";
+    aonInput.autocomplete = "on";
+    form.appendChild(aonInput);
+    dialog.setContent(form);
+    
+    dialog.addAcceptAction(() => aonInput.value && aonInput.value.length>3 ? magicLink(aonInput.value) : null);
   }
 
   aonDialogLoginRemember() {
