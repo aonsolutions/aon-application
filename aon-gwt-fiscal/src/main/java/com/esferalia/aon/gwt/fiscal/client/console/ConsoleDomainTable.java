@@ -32,6 +32,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		
 		public void showError(String message);
 		public void showInfo(String message);
+		public boolean isAdvancedMode();
 		public void onMultipleDelete();
 		public void onDelete(Integer domainId, String descrption, AsyncCallback<Boolean> cbk);
 		public void onDuplicate(DomainParams origin, DomainParams target);

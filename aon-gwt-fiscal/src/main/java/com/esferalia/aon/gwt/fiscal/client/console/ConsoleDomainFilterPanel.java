@@ -4,6 +4,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainTypeBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.DomainParams;
@@ -12,7 +14,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -39,6 +40,9 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private AonDateBox toLastAccessBox;
 	private AonDateBox fromExpirationDateBox;
 	private AonDateBox toExpirationDateBox;
+	private AonPasswordTextBox advancedModePassword;
+	private InlineLabel advancedModeLabel;
+	private boolean advancedMode;
 	private String[] schemas;
 	
 	private AonSearchPanelButton cleanButton;
@@ -151,6 +155,14 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		
 		toExpirationDateBox = new AonDateBox();
 		toExpirationDateBox.addValueChangeHandler(e -> fire(opt));
+		
+		advancedModePassword = new AonPasswordTextBox();
+		advancedModePassword.getElement().setAttribute("autocomplete","off");
+		advancedModePassword.addStyleName(AON.CSS.aonMarginLeft());
+		advancedModePassword.addValueChangeHandler(e -> checkAdvanced(opt));
+		
+		advancedModeLabel = new InlineLabel("Modo avanzado");
+		advancedModeLabel.addStyleName( AON.CSS.aonBold() );
 	}
 
 	private void paintFields(final ConsoleModuleOptions opt) {
@@ -168,6 +180,11 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
+		
+		FlowPanel advancedModelPanel = new FlowPanel();
+		advancedModelPanel.add( advancedModeLabel );
+		advancedModelPanel.add( advancedModePassword );
+		
 		
 		AonDisplayTable rowTable1 = new AonDisplayTable();
 		rowTable1.addRow()
@@ -195,6 +212,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		mainTab.add(rowTable2);
 		
 		AonDisplayTable rowTable3 = new AonDisplayTable();
+		rowTable3.addStyleName(AON.CSS.aonWidthAlmostAll());
 		rowTable3.addRow()
 			.addCell(new Label("\u00FAltimo acceso"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
 			.addCell(fromLastAccessBox)
@@ -204,7 +222,9 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			.addCell(fromExpirationDateBox)
 			.addCell(new Label(" hasta "))
 			.addCell(toExpirationDateBox)
-			.addCell(buttonsPanel);
+			.addCell(buttonsPanel)
+			.addCell(advancedModelPanel, AON.CSS.aonTextRight() , AON.CSS.aonWidthAuto())
+			;
 		mainTab.add(rowTable3);
 		
 		setWidget(mainTab);
@@ -224,10 +244,29 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		domainManagementBox.setSelectedIndex(0);
 		fire(opt);
 	}
+	
+	private void checkAdvanced(final ConsoleModuleOptions opt) {
+		advancedMode = ("40ns0lut10ns".equals(advancedModePassword.getValue()));
+		refreshAdvancedModePanel();
+		if (!AonStringUtils.isEmpty( schemaBox.getSelectedValue() ) ) {
+			fire(opt);
+		}
+	}
+
+	private void refreshAdvancedModePanel() {
+		if (advancedMode) {
+			advancedModeLabel.addStyleName( AON.CSS.aonColorGreen() );
+			advancedModeLabel.removeStyleName( AON.CSS.aonColorRed() );
+		} else {
+			advancedModeLabel.addStyleName( AON.CSS.aonColorRed() );
+			advancedModeLabel.removeStyleName( AON.CSS.aonColorGreen() );
+		}
+		
+	}
 
 	private void fire(final ConsoleModuleOptions opt) {
 		if (AonStringUtils.isEmpty( schemaBox.getSelectedValue() ) ) {
-			Window.alert("Rellene el campo \"esquema\" para realizar una b\u00FAsqueda");
+			AonMessageDialog.error("Rellene el campo \"esquema\" para realizar una b\u00FAsqueda");
 		} else {
 			ValueChangeEvent.<DomainParams>fire( ConsoleDomainFilterPanel.this, getParams( opt ) ); 
 		}
@@ -240,7 +279,8 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			.setFromLastAccess(fromLastAccessBox.getValue())
 			.setToLastAccess(toLastAccessBox.getValue())
 			.setFromExpirationDate(fromExpirationDateBox.getValue())
-			.setToExpirationDate(toExpirationDateBox.getValue());
+			.setToExpirationDate(toExpirationDateBox.getValue())
+			.setAdvancedMode(advancedMode);
 		
 		if ( parentBox.getDomain() != null) {
 			params.setParent(parentBox.getDomain().getId());
@@ -299,6 +339,10 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<DomainParams> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	public boolean isAdvancedMode() {
+		return advancedMode;
 	}
 
 }
