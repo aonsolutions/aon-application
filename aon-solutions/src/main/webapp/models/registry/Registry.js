@@ -1,10 +1,10 @@
 import { Bank } from '../../modules/registry/bank/Bank.js';
-import * as LS from '../../services/localStorageService.js';
 import { Domain } from '../Domain.js';
 import { RegistryPaymethod } from '../RegistryPaymethod.js';
 import { Address } from './Address.js';
 import { Media } from './Media.js';
 import { RecordData } from './RecordData.js';
+import { RegistrySegment } from './RegistrySegment.js';
 
 export class Registry {
     id;
@@ -25,6 +25,8 @@ export class Registry {
     banks;
     paymethod;
     record_data;
+    rsegment;
+
     constructor(registry) {
         if(registry) {
             this.id = registry.id;
@@ -50,6 +52,10 @@ export class Registry {
             this.paymethod = new RegistryPaymethod(registry.paymethod);
             this.dirty = registry.dirty;
             this.record_data = new RecordData(registry.record_data);
+
+            this.rsegment = registry.rsegment 
+                ? registry.rsegment.map(a => new RegistrySegment(a))
+                : [];
         } else {
             this.domain = new Domain();
             this.document = '';
@@ -65,6 +71,8 @@ export class Registry {
             this.banks = [];
             this.paymethod = new RegistryPaymethod();
             this.record_data = new RecordData();
+
+            this.rsegment = [];
         }
     }
 
@@ -243,5 +251,19 @@ export class Registry {
         this.record_data = recordData;
         return this;
     }
+
+    getRegistrySegment() {
+        return this.rsegment;
+    }
+
+    setRegistrySegment(rsegments) {
+        this.rsegment = rsegments;
+        return this;
+    }
+
+    addRegistrySegment(rsegment) {
+        this.getRegistrySegment().push(rsegment)
+        return this.getRegistrySegment();
+    } 
 
 } 
