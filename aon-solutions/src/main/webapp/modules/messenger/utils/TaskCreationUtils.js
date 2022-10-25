@@ -867,12 +867,14 @@ const openDialogBranch = (task)=> {
 
   const dialog = application.getDialog();
 
-  if (!application.isMobile()) 
+  if (application.isMobile()){
+    dialog.type ="fullscreen";
+  } else {
     dialog.width = '40%';
+  }
 
   dialog.clear();
   dialog.setTitle("Crear rama");
-    
 
   const div = document.createElement(TAG.DIV);
   dialog.setContent(div);
@@ -1002,7 +1004,6 @@ const createSimpleList = (title, id, parent) => {
   return simpleList;
 }
 
-// TODO
 const openDialogDailyTracking = (task)=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
@@ -1010,7 +1011,9 @@ const openDialogDailyTracking = (task)=> {
 
   const dialog = application.getDialog();
 
-  if (!application.isMobile()) {
+  if (application.isMobile()){
+    dialog.type ="fullscreen";
+  } else {
     dialog.width = '40%';
   }
 

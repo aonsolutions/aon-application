@@ -172,7 +172,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 	
-	List<SSPECData> syncEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	List<SSPECData> syncEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
@@ -377,4 +377,5 @@ public interface EnterprisesService extends RemoteService {
 
 	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
 	
+
 }

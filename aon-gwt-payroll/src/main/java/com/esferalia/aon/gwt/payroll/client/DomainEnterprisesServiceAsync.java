@@ -284,8 +284,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	
-	public void syncEmployeeSSPECs(Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback)throws IllegalArgumentException {
-		enterprisesServiceAsync.syncEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	public void syncEmployeeSSPECs(Integer contractId, Date startDate, Date endDate, AsyncCallback<List<SSPECData>> asyncCallback)throws IllegalArgumentException {
+		enterprisesServiceAsync.syncEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, startDate, endDate, asyncCallback);
 	}
 
 	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> asyncCallback) {

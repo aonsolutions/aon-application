@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.IConstants;
@@ -88,7 +89,11 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
 
-			String qrUrl = domainName + "/dip?source=" + source + "&id=" + id;  
+			String qrUrl = "https://" + domainName + "/dip?d=" + company.getRegistry().getDocument() 
+						+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
+						+ "&s=" + invoice.getSeries()
+						+ "&n=" + invoice.getNumber()
+						+ "&t=" + invoice.getTotal();  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
 			String tbaiId = "";
 			if(tbai.isActive()) {

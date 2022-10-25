@@ -3,6 +3,7 @@ import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { MONTHS } from "../../models/enums.js";
 import { Note } from "../../models/note/Note.js";
+import Apps from "../../services/app.js";
 import { deleteNote, saveNote } from "../../services/noteService.js";
 import { addZero } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
@@ -109,6 +110,8 @@ const dialogMoreVert = (ev, dialog, li, note, textAreaId) => {
             id: MATERIAL_ICONS.NOTIFICATION_ADD,
             icon: MATERIAL_ICONS.NOTIFICATION_ADD,
             name: MSG.REMINDER,
+            permission:true,
+            backgroundColor: Apps.NOTES.color,
             fn : () =>{
                 const rect = li.getBoundingClientRect();
                 reminder({target:li, clientY:(rect.y+15), clientX:(rect.right-63)}, dialog, note, textAreaId);
@@ -118,6 +121,8 @@ const dialogMoreVert = (ev, dialog, li, note, textAreaId) => {
             name: MSG.DELETE,
             icon: MATERIAL_ICONS.DELETE,
             id: MATERIAL_ICONS.DELETE,
+            permission:true,
+            backgroundColor: Apps.NOTES.color,
             fn : () =>  {
                 deleteNote(note);
                 li.remove();
@@ -197,14 +202,13 @@ const addDate = (note, dialog, textAreaId)=>{
 const reminder = (ev, dialog, note, textAreaId) => {
     const rect = ev.target.getBoundingClientRect();
     const top  = rect.top + (ev.clientY - rect.top);
-    const left = rect.left + (ev.clientX - rect.left);
+    const left = 10 + rect.left + (ev.clientX - rect.left);
     const content = dialog.getContent();
 
     const idRand =  Math.random().toString(36).substring(7);
     dialog.clear();
     content.style.width = "185px";
     content.style.borderRadius = "6px";
-    dialog.setContentTitle(MSG.REMINDER);
     const aonDate = new AonDate(); 
     aonDate.id = "date"+ idRand;
     aonDate.name = "date"+ idRand;
@@ -223,13 +227,13 @@ const reminder = (ev, dialog, note, textAreaId) => {
     divContent.style.margin = "0 10px";
     divContent.appendChild(aonDate);
 
-    dialog.setContent(divContent);
 
     if(note.getDate() && new Date(note.getDate()).isValid()) {
         aonDate.setDate(note.getDate());
     }
 
-    dialog.openPosition({top, left});
+    dialog.setContent(divContent, top, left);
+    dialog.open();
 }
 
 const dateFormat = (d) => {

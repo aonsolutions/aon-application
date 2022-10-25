@@ -209,6 +209,15 @@ public class JooqContractAttach {
 				.execute();
 	}
 	
+	public static void removeCopyContract(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		dslContext.delete(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)101))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.execute();
+	}
+	
 	// ------------------------------------------ CopyBasic
 
 	public static byte[] getCopyBasic(Connection connection, Integer contractId) {
@@ -245,6 +254,15 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.TYPE, (byte)102)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+	}
+	
+	public static void removeCopyBasic(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		dslContext.delete(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 				.execute();
 	}
 	

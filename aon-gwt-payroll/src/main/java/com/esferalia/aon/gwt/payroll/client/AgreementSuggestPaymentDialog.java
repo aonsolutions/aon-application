@@ -15,7 +15,9 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -59,7 +61,9 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	@UiField
 	MyStyle style;
 
-	interface MyStyle extends CssResource {}
+	interface MyStyle extends CssResource {
+		String button();
+	}
 
 	@UiField
 	HTMLPanel messagePanel;
@@ -76,20 +80,23 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	List<Payment> availablePaymens;
 	MultiWordSuggestOracle paymentDescriptionOracle;
 	PaymentSuggestionDisplay paymentSuggestionDisplay;
+	SuggestBox descriptionSuggest;
  	
 	private Payment payment;
 	
+	private Button manualAgreement;
 	private Button acceptBtn;
 	
 	// --------------------- Constructor
 	
 	protected AgreementSuggestPaymentDialog() {
-		setCaption("Importador devengos");
+		setCaption("Devengos Predefinidos");
 		setWidget(binder.createAndBindUi(this));
 		getButtonsPanel();
 		
 		this.showCloseButton(true);
-		acceptBtn.setEnabled(false);
+		setEnabled(acceptBtn, false);
+		setEnabled(manualAgreement, true);
 		availablePaymens = new ArrayList<>();
 		paymentDescriptionOracle = new MultiWordSuggestOracle();
 		paymentSuggestionDisplay = new PaymentSuggestionDisplay();
@@ -110,7 +117,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			}
 		});
 	}
-	
+
 	// --------------------- CreateSuggestBox
 
 	private void createSuggestBox(List<Payment> payments) {
@@ -120,7 +127,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		
-		SuggestBox descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox, paymentSuggestionDisplay);
+		descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox, paymentSuggestionDisplay);
 		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
 		
@@ -139,7 +146,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			payment.setQuoteExpression(concept.getQuoteExpression());
 			payment.setSalaryType(Salary.Type.SALARY);
 			if (concept.getExpression() != null) payment.setExpression(getExpression4Payment(concept));
-			acceptBtn.setEnabled(true);
+			setEnabled(acceptBtn, true);
+			setEnabled(manualAgreement, false);
 			
 		});
 		
@@ -149,6 +157,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			else if (event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode())
 				descriptionSuggest.showSuggestionList();
 		});
+		
+		descriptionSuggest.getElement().setPropertyString("placeholder", "Ctrl + espacio para ver sugerencias");
 		
 		suggestPanel.add(descriptionSuggest);
 	}
@@ -193,11 +203,26 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		return null;
 	}
 	
+	private void setEnabled(Button button, boolean enabled) {
+		button.setEnabled(enabled);
+		if(!enabled) {
+			button.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+			button.getElement().getStyle().setDisplay(Display.BLOCK);
+		}
+	}
+	
 	// --------------------- Accept dialog method
 	
 	private void getButtonsPanel() {
+		manualAgreement = new Button();
+		manualAgreement.setText("Modo manual");
+		manualAgreement.setStyleName(AON.CSS.aonIconEditNote());
+		manualAgreement.addStyleName(style.button());
+		manualAgreement.addClickHandler(e -> onManualEdition());
+		buttonsPanel.add(manualAgreement);
+		
 		acceptBtn = new Button();
-		acceptBtn.setText("Importar devengo");
+		acceptBtn.setText("Guardar");
 		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtn.addClickHandler(e -> {
 			hide();
@@ -213,6 +238,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		Scheduler.get().scheduleDeferred(() -> {
 			center();
 			show();
+			descriptionSuggest.setFocus(true);
 		});
 	}
 
@@ -227,5 +253,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	// --------------------- Abstract method
 	
 	protected abstract void onAccept(Payment payment);
+	protected abstract void onManualEdition();
 	
 }

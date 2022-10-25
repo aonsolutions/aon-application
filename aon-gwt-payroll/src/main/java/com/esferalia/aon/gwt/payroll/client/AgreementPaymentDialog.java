@@ -196,16 +196,19 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 	
-	public AgreementPaymentDialog(int widgetIndex) {
+	protected AgreementPaymentDialog(int widgetIndex) {
 		
 		this.widgetIndex = widgetIndex;
 		
 		setCaption(getCustomCaption());
 		setWidget(binder.createAndBindUi(this));
 		
-		this.paymentResultList = new ArrayList<Payment>();
-		this.extraResultList = new ArrayList<Extra>();
-		this.availablePaymens = new ArrayList<Payment>();
+		this.paymentResultList = new ArrayList<>();
+		this.extraResultList = new ArrayList<>();
+		this.availablePaymens = new ArrayList<>();
+		
+		if(nextDraftPaymentId > 0) nextDraftPaymentId = nextDraftPaymentId * -1;
+		if(nextDraftExtraId > 0) nextDraftExtraId = nextDraftExtraId * -1;
 		
 		initializePanelList();
 		initializeApportionButtons();
@@ -458,6 +461,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			
 			Payment newPaymentSummer = new Payment();
 			newPaymentSummer.setId(--nextDraftPaymentId);
+			newPaymentSummer.setDeleted(false);
 			
 			Payment conceptSummer = getPayment(suggestName);
 			
@@ -493,6 +497,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newExtraSummer.setPaymentDescription(newPaymentSummer.getDescription());
 				newExtraSummer.setAgreementDescription(newPaymentSummer.getDescription());
 				
+				newPaymentSummer.setHasExtra(true);
+				
 				extraResultList.add(newExtraSummer);
 			
 			}
@@ -501,6 +507,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			
 			Payment newPaymentWinter = new Payment();
 			newPaymentWinter.setId(--nextDraftPaymentId);
+			newPaymentWinter.setDeleted(false);
 			
 			Payment conceptWinter = getPayment(suggestName);
 			
@@ -536,6 +543,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newExtraWinter.setPaymentDescription(newPaymentWinter.getDescription());
 				newExtraWinter.setAgreementDescription(newPaymentWinter.getDescription());
 				
+				newPaymentWinter.setHasExtra(true);
+				
 				extraResultList.add(newExtraWinter);
 			
 			}
@@ -549,6 +558,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			
 			Payment newPaymentBenefit = new Payment();
 			newPaymentBenefit.setId(--nextDraftPaymentId);
+			newPaymentBenefit.setDeleted(false);
 			
 			Payment conceptBenefit = getPayment(suggestName);
 			
@@ -583,6 +593,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newExtraBenefits.setPaymentId(newPaymentBenefit.getId());
 				newExtraBenefits.setPaymentDescription(newPaymentBenefit.getDescription());
 				newExtraBenefits.setAgreementDescription(newPaymentBenefit.getDescription());
+				
+				newPaymentBenefit.setHasExtra(true);
 				
 				extraResultList.add(newExtraBenefits);
 				

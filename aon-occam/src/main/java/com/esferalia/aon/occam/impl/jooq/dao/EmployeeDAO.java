@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.Keys.FK_PERSON_DOMAIN;
-import static com.esferalia.aon.jooq.Keys.FK_PERSON_REGISTRY;
-import static com.esferalia.aon.jooq.Keys.FK_REGISTRY_DOMAIN;
 import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
@@ -53,7 +50,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractCostRecord;
@@ -152,7 +148,7 @@ public class EmployeeDAO {
 						r.get(CONTRACT_DATA.END_DATE)
 				});
 		
-		employeeDataMap.forEach((employee, datas) -> datas.forEach( data -> employee.addData((String)data[0], (String)data[1], (java.sql.Date)data[2], (java.sql.Date)data[3])));
+		employeeDataMap.forEach((employee, datas) -> datas.stream().filter( data -> data[0] != null ).forEach( data -> employee.addData((String)data[0], (String)data[1], (java.sql.Date)data[2], (java.sql.Date)data[3])));
 		
 		return employeeDataMap.keySet().stream();
 			

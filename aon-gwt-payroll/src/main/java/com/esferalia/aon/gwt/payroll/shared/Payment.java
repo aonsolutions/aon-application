@@ -20,6 +20,7 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment {
 	
 	boolean hasExtra;
 	boolean isDeleted = false;
+	boolean isModify = false;
 	
 	// The key provider that provides the unique ID of a contact.
     public static final ProvidesKey<Payment> KEY_PROVIDER = item -> item == null ? null : item.getId();
@@ -385,6 +386,14 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment {
 
 	public void setDeleted(boolean deleted) {
 		this.isDeleted = deleted;
+	}
+	
+	public boolean isModify() {
+		return isModify;
+	}
+
+	public void setModify(boolean isModify) {
+		this.isModify = isModify;
 	}
 	
 	@Override

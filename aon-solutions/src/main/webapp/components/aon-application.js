@@ -671,6 +671,11 @@ export class AonApplication extends AonElement {
     return toolbar.cleanSearchValue();
   }
 
+  getSearchButton() {
+    let toolbar = this.getElement(this.TOOLBAR);
+    return toolbar.getSearchButton();
+  }
+  
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
     if (toolbar) {
@@ -803,6 +808,7 @@ export class AonApplication extends AonElement {
     let d = this.getDialog();
     if(d){
       d.clear();
+      d.type = "";
       d.setContentHTML(subtitle);
       if (!this.isMobile()) d.width = '400px';
       d.setTitle(title);

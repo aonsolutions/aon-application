@@ -194,3 +194,7 @@
   border-right: 0.75rem solid transparent;
   border-bottom: 0.75rem solid white;
 }
+
+.aonBoxShadow{
+  box-shadow:rgb(0 0 0 / 20%) 0.5rem 0.5rem 2rem 0px;
+}

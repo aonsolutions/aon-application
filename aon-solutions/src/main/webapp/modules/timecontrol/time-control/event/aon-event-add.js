@@ -211,9 +211,14 @@ export class AonEventAdd extends AonElement {
     try {
       let formValues = this.getFormValues();
       const { id, date:start_date } = await saveTimeControlDetail(formValues);
-      if (id) setValueName("id", id);
+
+      if (id) {
+        setValueName("id", id);
+      }
  
-      if(start_date) this.START_DATE =  AonDateUtils.formatDateOrigin(new Date(start_date));
+      if(start_date){
+        this.START_DATE =  AonDateUtils.formatDateOrigin(new Date(start_date));
+      }
 
       this.showToast({
         message: MSG.SAVED_DATA,
@@ -258,41 +263,51 @@ export class AonEventAdd extends AonElement {
     try {
       const historics = await this.getHistoric();
       let d = this.getApplication().getDialog();
+      if(this.isMobile()){
+        d.type = "fullscreen";
+      }
+
       if(d){
           const div = this.createElement("div");
-          const length = historics.length;
+          const countHistoric = historics.length;
 
           d.clear();
-          if (!this.isMobile()) 
-              d.width = '70%';
+          if (!this.isMobile()) {
+            d.width = '70%';
+          }
+          
           d.setTitle(MSG.HISTORIC);
           d.setContent(div);
           d.addAcceptAction(() => {});
           d.open();
 
-          let table = new AonBasicTable();
-          div.appendChild(table);
+          if(countHistoric>0){
+            let table = new AonBasicTable();
+            div.appendChild(table);
 
-          if(length > 0 && historics[0] && historics[0].last_modification_date){
+            if(historics[0] && historics[0].last_modification_date){
+              table.addRow();
+              table.addCell(this.lastModification(historics[0]), 5);
+            }
+
             table.addRow();
-            table.addCell(this.lastModification(historics[0]), 5);
-          }
+            table.addCell(this.creationHeader(MSG.USER));
+            table.addCell(this.creationHeader(MSG.LAST_MODIFICATION));
+            table.addCell(this.creationHeader("F. Registro anterior"));
+            table.addCell(this.creationHeader(MSG.LOCATION));
+            table.addCell(this.creationHeader(MSG.STATUS));
 
-          table.addRow();
-          table.addCell(this.creationHeader(MSG.USER));
-          table.addCell(this.creationHeader(MSG.LAST_MODIFICATION));
-          table.addCell(this.creationHeader("F. Registro anterior"));
-          table.addCell(this.creationHeader(MSG.LOCATION));
-          table.addCell(this.creationHeader(MSG.STATUS));
-
-          for(let i = length>1 ? 1 : 0; i < length; i++){
-            const historic = historics[i];
-            table.addRow();
-            table.addCell(this.creationTd(historic.creation_user));
-            table.addCell(this.creationTd(historic.creation_date));
-            table.addCell(this.creationTd(historic.registration_date));
-            table.addCell(this.creationTd(historic.location));
-            table.addCell(this.creationTd(historic.status));
+            for(let i = countHistoric>1 ? 1 : 0; i < countHistoric; i++){
+              const historic = historics[i];
+              if(historic.registration_date){
+                table.addRow();
+                table.addCell(this.creationTd(historic.creation_user));
+                table.addCell(this.creationTd(historic.creation_date));
+                table.addCell(this.creationTd(historic.registration_date));
+                table.addCell(this.creationTd(historic.location));
+                table.addCell(this.creationTd(historic.status));
+              }
+            }
           }
       }
     } catch (error) {

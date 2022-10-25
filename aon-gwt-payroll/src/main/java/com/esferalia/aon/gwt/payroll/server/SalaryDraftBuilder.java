@@ -1643,7 +1643,7 @@ public class SalaryDraftBuilder
 			Pattern.compile("\\(\\s*\\([^)]+\\)\\s*(?<partial>/\\s*[0-9.]+\\s*\\*\\s*[0-9.]+)\\s*\\)\\s*\\*\\s*DIAS_TRABAJADOS\\s*/\\s*DIAS_MES", Pattern.CASE_INSENSITIVE)
 			.matcher(p.getExpression());
 			if ( matcher.find() ) {
-				partialExpression = matcher.group("partial");
+				partialExpression = matcher.group("partial") + " * DIAS_TRABAJADOS / DIAS_MES";
 			}
 		} catch ( Exception e ) {
 			
@@ -1651,7 +1651,7 @@ public class SalaryDraftBuilder
 		
 		partialExpression = AonStringUtils.defaultIfBlank(partialExpression, "");
 		
-		p.setExpression(p.getExpression().replaceAll("NETO\\s*\\(", String.format(Locale.ROOT,"NETO(%.2f %s * DIAS_TRABAJADOS / DIAS_MES,", totalPayment, partialExpression)));
+		p.setExpression(p.getExpression().replaceAll("NETO\\s*\\(", String.format(Locale.ROOT,"NETO(%.2f %s,", totalPayment, partialExpression)));
 	}
 
 	private static Payment.Type getPaymentType(PaymentType type) {

@@ -5,13 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -28,11 +29,9 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -51,7 +50,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.itextpdf.text.log.SysoLogger;
 
 public abstract class AgreementPaymentTab extends ResizeComposite {
 	
@@ -71,9 +69,112 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(Payment payment) {
+					payment.setModify(true);
 					agreement.addPayment(payment);
 					setAgreementPayment(agreement);
 					setHasChange(true);
+				}
+
+				@Override
+				protected void onManualEdition() {
+					hide();
+					
+					new AgreementPaymentWizard(agreement.getPayments(), null) {
+						
+						@Override
+						protected void onAccept(Payment payment) {
+							payment.setModify(true);
+							agreement.addPayment(payment);
+							setAgreementPayment(agreement);
+							setHasChange(true);
+						}
+
+						@Override
+						protected void onExtraAccept(Payment payment, Extra extra) {
+							payment.setModify(true);
+							agreement.addPayment(payment);
+							
+							if(null != extra)
+								agreement.addExtra(extra);
+							
+							checkPairExtras(payment, extra);
+							
+							setAgreementPayment(agreement);
+							setHasChange(true);
+							
+						}
+
+						private void checkPairExtras(Payment payment, Extra extra) {
+							if(payment.getType().equals(Payment.Type.CRA_0004)) {
+								Optional<Payment> searchPayment = agreement.getPayments().stream().filter(paymentIt -> !paymentIt.equals(payment) && paymentIt.getType().equals(Payment.Type.CRA_0004)).findAny();
+								if(!searchPayment.isPresent()) {
+									Payment associatedPayment = new Payment();
+									Random rand = new Random();
+									int newPaymentId = rand.nextInt(1000) * -1;
+									if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
+									associatedPayment.setId(newPaymentId);
+									associatedPayment.setDomain(payment.getDomain());
+									associatedPayment.setModify(true);
+									
+									associatedPayment.setType(Payment.Type.CRA_0004);
+									associatedPayment.setConceptId(payment.getConceptId());
+									associatedPayment.setName(payment.getName());
+									
+									associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
+									associatedPayment.setExpression(payment.getExpression());
+									associatedPayment.setIrpfExpression(payment.getIrpfExpression());
+									associatedPayment.setQuoteExpression(payment.getQuoteExpression());
+									associatedPayment.setMonth(null);
+									
+									agreement.addPayment(associatedPayment);
+									
+									if(null != extra) {
+										int newExtraId = rand.nextInt(1000) * -1;
+										AgreementExtra associatedExtra = new AgreementExtra();
+										associatedExtra.setId(newExtraId);
+										
+										associatedExtra.setDomain(payment.getDomain());
+										associatedExtra.setAgreementPayment(associatedPayment.getId());
+									
+										if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "06") || AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "07")) {
+											associatedExtra.setIssueDate("31/12");
+											if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) {
+												associatedExtra.setStartDate("01/01");
+												associatedExtra.setEndDate("31/12");
+											} else {
+												associatedExtra.setStartDate("01/07");
+												associatedExtra.setEndDate("31/12");
+											}
+										} else if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "12")) {
+											associatedExtra.setIssueDate("30/06");
+											if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "01")) {
+												associatedExtra.setStartDate("01/07 -1");
+												associatedExtra.setEndDate("30/06");
+											} else {
+												associatedExtra.setStartDate("01/01");
+												associatedExtra.setEndDate("30/06");
+											}
+										}
+										
+
+										agreement.addExtra(associatedExtra);
+									}
+								}
+							}
+						}
+
+						@Override
+						protected void onGtzdoAccept(List<Payment> payments) {
+							if(!payments.isEmpty()) {
+								for(Payment payment : payments) {
+									payment.setModify(true);
+									agreement.addPayment(payment);
+								}
+							}
+							setAgreementPayment(agreement);
+							setHasChange(true);
+						}
+					};
 				}
 				
 			};
@@ -88,8 +189,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -115,8 +218,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -142,8 +247,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -169,8 +276,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					setAgreementPayment(agreement);
 					setHasChange(true);
 				}
@@ -201,8 +310,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				
 				@Override
 				protected void onAcceptExtra(List<Payment> payments, List<Extra> extras) {
-					for(Payment payment : payments)
+					for(Payment payment : payments) {
+						payment.setModify(true);
 						agreement.addPayment(payment);
+					}
 					
 					for(Extra extra : extras)
 						agreement.addExtra(extra);
@@ -244,10 +355,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		
 		public AddPaymentContextMenu() {
 			
-			addAonPayment = addItem("Buscagor Devengos", new AddAonPaymentCommand(), 
-					AON.CSS.aonIconSearch(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			addAonPayment.ensureDebugId("addAonPayment");
-			
 			addBasicSalary = addItem("Salario Base", new AddBasicSalaryCommand(),
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			addBasicSalary.ensureDebugId("addBasicSalary");
@@ -267,6 +374,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			addExtrasSalary = addItem("Pagas Extras", new AddExtrasSalaryCommand(), 
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			addExtrasSalary.ensureDebugId("addExtrasSalary");
+			
 		}
 	}
 
@@ -277,6 +385,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String cmdBtn();
+		String modify();
 	}
 	
 	@UiField
@@ -444,6 +553,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    // Visibility column.
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
 	    	showHidePayment(payment);
+	    	payment.setModify(true);
 	    	agreementPaymentDG.redraw();
 			setHasChange(true);
 	    });
@@ -506,6 +616,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		agreementPaymentDG.setColumnWidth(deleteColumn, 5, Unit.PCT);
 		
+		agreementPaymentDG.setRowStyles((payment, rowIdx) -> {
+			if(payment.isModify()) return style.modify();
+			else return null;
+		});
+		
 	    // Add the columns.
 		agreementPaymentDG.addColumn(editColumn, "");
 		agreementPaymentDG.addColumn(codeColumn, "CRA");
@@ -521,24 +636,32 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	private void openDialog(Payment payment) {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE");
-    	AgreementPaymentEditor paymentEditor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId())) {
+    	AgreementPaymentEditor paymentEditor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
 			@Override
-			protected void onAccept(Payment updatedPayment, AgreementExtra extra) {
+			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
+//				Window.alert(null == extra ? "---- Extra NULL ----" : "---- Extra ----\nId : " + extra.getId() + "\nisDeleted : " + extra.isDeleted()
+//				 + "\nstartDate : " + extra.getStartDate() + "\nendDate : " + extra.getEndDate() + "\nissueDate : " + extra.getIssueDate() + "\nagreementPayment : " + extra.getAgreementPayment());
+//				
+//				Window.alert(null == associatedExtra ? "---- Associated Extra NULL ----" : "---- Associated Extra ----\nId : " + associatedExtra.getId() + "\nisDeleted : " + associatedExtra.isDeleted()
+//				 + "\nstartDate : " + associatedExtra.getStartDate() + "\nendDate : " + associatedExtra.getEndDate() + "\nissueDate : " + associatedExtra.getIssueDate() + "\nagreementPayment : " + associatedExtra.getAgreementPayment());
+				
 				updatePaymentExpresion(isHide, payment, updatedPayment);
-				Window.alert("onAccept");
 				agreement.replacePayment(payment);
-				Window.alert("onAccept 2");
-				agreement.syncPayment(payment, extra);
-				Window.alert("onAccept 3");
-				if(null != extra) {
-					Window.alert("onAccept 4");
-					agreement.replaceExtra(extra); 
-					Window.alert("onAccept 5");
-					agreement.syncExtras(extra);
-					Window.alert("onAccept 6");
-				}
-				agreement.getExtras().forEach(extraIt -> Window.alert("---- Extra ----\nId : " + extraIt.getId() + "\nisDeleted : " + extraIt.isDeleted()
-				 + "\nstartDate : " + extraIt.getStartDate() + "\nendDate : " + extraIt.getEndDate() + "\nissueDate : " + extraIt.getIssueDate()));
+				
+				if(null != extra && null != extra.getId() && extra.getId() > 0) agreement.replaceExtra(extra); 
+				if(null != extra && null != extra.getId()) agreement.addExtra(extra);
+				
+				if(null != associatedExtra && null != associatedExtra.getId() && associatedExtra.getId() > 0) agreement.replaceExtra(associatedExtra); 
+				
+				if(null != associatedPayment) agreement.addPayment(associatedPayment);
+				if(null != associatedExtra && (null == associatedExtra.getId() || associatedExtra.getId() < 0)) agreement.addExtra(associatedExtra);
+				
+//				agreement.getPayments().forEach(paymentIt -> Window.alert("---- Payment ----\nId : " + paymentIt.getId() + "\nisDeleted : " + paymentIt.isDeleted()
+//				 + "\ndescription : " + paymentIt.getDescription() + "\nexpression : " + paymentIt.getExpression() + "\nmonth : " + paymentIt.getMonth()));
+//				
+//				agreement.getExtras().forEach(extraIt -> Window.alert("---- Extra ----\nId : " + extraIt.getId() + "\nisDeleted : " + extraIt.isDeleted()
+//				 + "\nstartDate : " + extraIt.getStartDate() + "\nendDate : " + extraIt.getEndDate() + "\nissueDate : " + extraIt.getIssueDate()));
+				
 				setAgreementPayment(agreement);
 				setHasChange(true);
 			}
@@ -594,7 +717,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
 				payment.getType().equals(Payment.Type.CRA_0005))) return "P";
 		
-		return extra.isDeleted() ? "P" : getExtraPeriod(extra);
+		return (extra == null || extra.isDeleted()) ? "P" : getExtraPeriod(extra);
 	}
 	
 	private String getExtraPeriod(AgreementExtra extra) {
@@ -624,7 +747,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
 				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
 		
-		return extra.isDeleted() ? "Prorrateado" : getExtraPeriodTitle(extra);
+		return (extra == null || extra.isDeleted()) ? "Prorrateado" : getExtraPeriodTitle(extra);
 	}
 	
 	private String getExtraPeriodTitle(AgreementExtra extra) {
@@ -750,50 +873,23 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			onSaved();
 		});
 		
-		AonExpandButton addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
-			
-			@Override
-			public void onExpandClick(ClickEvent event) {
-				NativeEvent nativeEvent = event.getNativeEvent();
-				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-				contextMenu.show();
-			}
-			
-			@Override
-			public void onDefaultClick(ClickEvent evet) {
-				new AgreementPaymentWizard(agreement.getPayments(), null) {
-					
-					@Override
-					protected void onAccept(Payment payment) {
-						agreement.addPayment(payment);
-						setAgreementPayment(agreement);
-						setHasChange(true);
-					}
-
-					@Override
-					protected void onExtraAccept(Payment payment, Extra extra) {
-						agreement.addPayment(payment);
-						
-						if(null != extra)
-							agreement.addExtra(extra);
-						
-						setAgreementPayment(agreement);
-						setHasChange(true);
-						
-					}
-
-					@Override
-					protected void onGtzdoAccept(List<Payment> payments) {
-						if(!payments.isEmpty()) {
-							for(Payment payment : payments)
-								agreement.addPayment(payment);
-						}
-						setAgreementPayment(agreement);
-						setHasChange(true);
-					}
-				};
-			}
-		};
+		AonToolbarSmallButton addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
+		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
+		
+//		AonExpandButton addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
+//			
+//			@Override
+//			public void onExpandClick(ClickEvent event) {
+//				NativeEvent nativeEvent = event.getNativeEvent();
+//				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+//				contextMenu.show();
+//			}
+//			
+//			@Override
+//			public void onDefaultClick(ClickEvent evet) {
+//				new AddAonPaymentCommand().execute();
+//			}
+//		};
 		
 		toolbar.add(saveBtn);
 		toolbar.add(addPaymentButton);

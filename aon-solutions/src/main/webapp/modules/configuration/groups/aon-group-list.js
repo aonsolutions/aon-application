@@ -114,7 +114,7 @@ export class AonGroupList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             title: `${res.description}`,
-            subtitle: `${statusText})`,
+            subtitle: `(${res.statusText})`,
           };
           aonTable.addLi(options, idx, () => this.add(res));
         });
@@ -143,30 +143,41 @@ export class AonGroupList extends AonElement {
     return data;
   }
 
-  add() {
+  add(wg) {
+    let workgroup = new Workgroup(wg);
     let input = new AonInput();
     input.id = this.id + 'AddWorkgroup';
     input.title = MSG.NAME;
     input.description = MSG.NAME;
-    let d = this.getApplication().getDialog();
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.ADD_WORKGROUP);
-    d.setContent(input);
-		d.addAcceptAction(() => {
-      this.save(new Workgroup().setDescription(input.value));
+    let dialog = this.getApplication().getDialog();
+		dialog.clear();
+
+		if(this.isMobile()) {
+      dialog.type = 'fullscreen';
+    } else {
+      dialog.width = '400px';
+    }
+
+		dialog.setTitle(MSG.ADD_WORKGROUP);
+    dialog.setContent(input);
+
+    if(workgroup.getId()){
+      input.value = workgroup.getDescription();
+    }
+
+		dialog.addAcceptAction(() => {
+      this.save(workgroup.setDescription(input.value));
 		});
-		d.open();
+		dialog.open();
   }
 
   save(data) {
-    saveWorkgroup(data).then(r => {
-			this.getApplication().getToast().start({
-				type: CONSTANT.SUCCESS,
-				message: MSG.SAVED_DATA
-			});
-      this.getTableDesk();
-		}).catch(e => this.showError(e));
+    saveWorkgroup(data)
+    .then(() => {
+      this.showMessage();      
+      this.getTable();
+		})
+    .catch(e => this.showError(e));
   }
 }
 if(!window.customElements.get(TAG.AON_GROUP_LIST)){

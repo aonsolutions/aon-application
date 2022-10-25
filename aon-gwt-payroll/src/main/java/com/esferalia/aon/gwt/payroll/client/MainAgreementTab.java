@@ -842,7 +842,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 			@Override
 			protected void onAccept(String serviAgreementCode, List<Integer> selectedDates) {
-				AonMessagePanel.showLoading(messagePanel, "Descargando convenio desde ServiConvenios...");
+				agreementPreview.showLoading("Descargando convenio desde ServiConvenios...");
 				
 				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, selectedDates,
 						new AsyncCallback<Integer>() {
@@ -855,7 +855,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 					@Override
 					public void onSuccess(Integer importedAgreementId) {
-						AonMessagePanel.showLoading(messagePanel, "Cargando visualizaci\u00F3n convenio...");
+						agreementPreview.showLoading("Cargando visualizaci\u00F3n convenio...");
 						agreements.getAgreementsAndSelectImported(
 								importedAgreementId, 
 								s -> AonMessagePanel.hideMessage(messagePanel));

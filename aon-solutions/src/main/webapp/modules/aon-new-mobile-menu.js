@@ -2,7 +2,6 @@ import { AonElement } from "../components/AonElement.js";
 import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
-import {AonDialogMobile} from "../components/aon-dialog-mobile.js";
 import { waitEl } from "../services/utils.js";
 import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles, uploadFileDocumental } from "../services/service.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
@@ -25,6 +24,8 @@ export class AonNewMobileMenu extends AonElement {
 
   dur;
   SELECTED;
+  DIALOG_MENU;
+
   get id() {
     return this.getAttribute(CONSTANT.ID);
   }
@@ -68,6 +69,7 @@ export class AonNewMobileMenu extends AonElement {
     this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
     this.INPUT_CAMERA = this.id + 'InputCamera';
     this.SELECTED = "invoice";
+    this.DIALOG_MENU = this.id + 'DialogMenu';
   }
 
   build() {
@@ -113,10 +115,14 @@ export class AonNewMobileMenu extends AonElement {
     }
     this.appendChild(div);
     let dialogMenu = new AonDialogMenu();
-    dialogMenu.id = this.id + 'dialogMenu';
+    dialogMenu.id = this.DIALOG_MENU;
     this.appendChild(dialogMenu);
 
     this.buildMenu();
+  }
+
+  getDialogMenu() {
+    return this.getElement(this.DIALOG_MENU);
   }
 
   setMarginById(id, value){
@@ -259,11 +265,7 @@ export class AonNewMobileMenu extends AonElement {
   }
 
   newButtons() {
-    let dialogId = "menuMobile";
-    let dialog = this.getElement(dialogId) ||  new AonDialogMobile(); 
-    dialog.id = dialogId;
-    this.clearElement(dialog);
-    this.appendChild(dialog);
+    let dialog = this.getDialogMenu();
     dialog.clear();
 
     dialog.setTitle("Acceso Rápido");

@@ -32,6 +32,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		
 		public void showError(String message);
 		public void showInfo(String message);
+		public boolean isAdvancedMode();
 		public void onMultipleDelete();
 		public void onDelete(Integer domainId, String descrption, AsyncCallback<Boolean> cbk);
 		public void onDuplicate(DomainParams origin, DomainParams target);
@@ -40,6 +41,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
 		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
 		public void onRemoteAccess(Integer integer, AsyncCallback<String> cbk);
+		public void onEditDomain( Integer domainId, String descrption );
 	}
 	
 	
@@ -66,6 +68,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 			.addCell(new Label("\u00FAlt. Acceso"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 			.addCell(new Label("Expira"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 			.addCell(new Label(""),AON.CSS.aonWidth100())
+			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label(""),AON.CSS.aonWidth20())
 		;

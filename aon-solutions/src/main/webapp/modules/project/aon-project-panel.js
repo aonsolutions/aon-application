@@ -56,7 +56,6 @@ export class AonProjectPanel extends AonElement {
         this.addTypeOptions();
     }
 
-
     buildContent(filter) {
         let list = new AonProjectList();
         list.id = this.AON_PROJECT_LIST;

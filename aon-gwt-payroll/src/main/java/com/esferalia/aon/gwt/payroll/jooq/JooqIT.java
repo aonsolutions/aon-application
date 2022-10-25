@@ -1069,18 +1069,18 @@ public class JooqIT {
 //					}
 				}
 				
-//				Double baseReg = it.getRegulationBase();
-//				if(null != baseReg && 0.00 != baseReg) {
-//					dslContext.insertInto(CONTRACT_DATA)
-//					.set(CONTRACT_DATA.DOMAIN, domainId)
-//						.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
-//						.set(CONTRACT_DATA.CONTRACT, contractId)
-//						.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
-//						.set(CONTRACT_DATA.START_DATE, startDate)
-//						.set(CONTRACT_DATA.END_DATE, endDate)
-//						.execute();
-//				}
-//				
+				Double baseReg = it.getRegulationBase();
+				if(null != baseReg && 0.00 != baseReg) {
+					dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
+				}
+				
 				if(null != it.getDirectPayDate()) {
 					dslContext.insertInto(CONTRACT_DATA)
 						.set(CONTRACT_DATA.DOMAIN, domainId)
@@ -1209,18 +1209,18 @@ public class JooqIT {
 						.execute();
 				}
 				
-//				Double baseReg = it.getRegulationBase();
-//				if(null != baseReg && 0.00 != baseReg) {
-//					dslContext.insertInto(CONTRACT_DATA)
-//					.set(CONTRACT_DATA.DOMAIN, domainId)
-//						.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
-//						.set(CONTRACT_DATA.CONTRACT, contractId)
-//						.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
-//						.set(CONTRACT_DATA.START_DATE, startDate)
-//						.set(CONTRACT_DATA.END_DATE, endDate)
-//						.execute();
-//				}
-//				
+				Double baseReg = it.getRegulationBase();
+				if(null != baseReg && 0.00 != baseReg) {
+					dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
+				}
+				
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
 					
 					if(null != it.getMaternityType())

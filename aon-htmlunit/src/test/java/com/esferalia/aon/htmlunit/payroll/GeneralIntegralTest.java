@@ -894,11 +894,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("totalPaymentLabel", "100.00");
 		wait4Id("description-box-1");
 		assertValue("totalPaymentLabel", 100.00);
+		click("acceptButton");  
+		wait4Disabled("acceptButton", true);
+		assertValue("totalPaymentLabel", 100.00);
 
 		draft("BRUTO CONSTANTE, COMPLETO");
 		calculate(Calendar.OCTOBER, 2022);
 		setValue("totalPaymentLabel", "1900.00");
 		wait4Id("description-box-1");
+		assertValue("totalPaymentLabel", 1900.00);
+		click("acceptButton");  
+		wait4Disabled("acceptButton", true);
 		assertValue("totalPaymentLabel", 1900.00);
 		calculate(Calendar.NOVEMBER, 2022);
 		assertValue("totalPaymentLabel", 3000.00);
@@ -928,11 +934,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("totalLiquidLabel", "100.00");
 		wait4Id("description-box-1");
 		assertValue("totalLiquidLabel", 100.00);
+		click("acceptButton");  
+		wait4Disabled("acceptButton", true);
+		assertValue("totalLiquidLabel", 100.00);
+		
 
 		draft("NETO CONSTANTE, COMPLETO");
 		calculate(Calendar.OCTOBER, 2022);
 		setValue("totalLiquidLabel", "1900.00");
 		wait4Id("description-box-1");
+		assertValue("totalLiquidLabel", 1900.00);
+		click("acceptButton");  
+		wait4Disabled("acceptButton", true);
 		assertValue("totalLiquidLabel", 1900.00);
 		calculate(Calendar.NOVEMBER, 2022);
 		assertValue("totalLiquidLabel", 3000.00);
@@ -942,6 +955,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		//setValue("irpfPercentTexTBox", "10.00");
 		setValue("totalLiquidLabel", "950.00");
 		wait4Id("description-box-1");
+		assertValue("totalLiquidLabel", 950.00);
+		click("acceptButton");  
+		wait4Disabled("acceptButton", true);
 		assertValue("totalLiquidLabel", 950.00);
 		calculate(Calendar.NOVEMBER, 2022);
 		assertValue("totalLiquidLabel", 1500.00);

@@ -538,8 +538,8 @@ public class SistemaRED2AON {
 		.toArray(Bonus[]::new)
 		;
 		
-		Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(start, (d1,d2) -> max(d1,d2));
-		Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(end, (d1,d2) -> min(d1,d2));
+		Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(start, (d1,d2) -> min(d1,d2));
+		Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(end, (d1,d2) -> max(d1,d2));
 		
 
 		PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, startDate, endDate, bonuses);					
@@ -670,6 +670,39 @@ public class SistemaRED2AON {
 		}
 	}
 	
+	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String naf, Date startDate, Date endDate) throws IllegalArgumentException {
+	
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+		try {
+			Collection<solutions.aon.seg.social.object.Idc> idcs = 
+			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			
+			Date idcDates [] = 
+			idcs.stream()
+			.filter(idc -> startDate == null || idc.getFecha().compareTo(startDate) >= 0 )
+			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
+			.map(idc ->idc.getFecha())
+			.sorted().distinct()
+			.toArray(Date[]::new);
+			
+			if ( idcDates.length == 0 )
+				return;
+			
+			for ( int i = 0; i < idcDates.length ; i++ ) {
+				Date date = idcDates[i];
+				syncWithIdc(userLogin, domainName, domainId, userId, date, regime, ccc, naf);
+				System.out.println("IDC : " + date );
+			}
+			
+			System.out.println("\tSUCCESS: " + naf );
+		
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
 	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf, Date endDate) throws IllegalArgumentException {
 	

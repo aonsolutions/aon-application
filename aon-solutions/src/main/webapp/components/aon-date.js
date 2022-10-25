@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
@@ -207,7 +207,7 @@ export class AonDate extends AonElement {
 
     let datepicker =  this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
     datepicker.id = this.DATEPICKER;
-    datepicker.className = 'aonDatepicker';
+    datepicker.classList.add('aonDatepicker', CSS.AON_BOX_SHADOW);
     datepicker.style.width = this.width || '250px';
     span.appendChild(datepicker);
     let datepickerHeaderId =this.DATEPICKER +"Header";
@@ -515,6 +515,10 @@ export class AonDate extends AonElement {
   //       return new Date(d);
   //     }
   // }
+
+  clear(){
+    
+  }
 
 }
 if(!window.customElements.get('aon-date')){

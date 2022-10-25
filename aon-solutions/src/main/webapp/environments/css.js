@@ -269,6 +269,7 @@ export const AON_COL_LG_OFFSET_12 = 'aonCol-lg-offset-12';
 export const NOTE_BOX_SHADOW = "noteBoxShadow";
 
 // aon-css-utils
+export const AON_BOX_SHADOW = "aonBoxShadow";
 export const CENTER_FLEX = "centerFlex";
 export const FLEX_WRAP = "flexWrap";
 export const FLEX_ROW = "flexRow";

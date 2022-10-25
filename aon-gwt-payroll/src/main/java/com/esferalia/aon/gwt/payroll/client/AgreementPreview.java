@@ -70,6 +70,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String cellWidth();
 		String columnBorder();
 		String dateNoSelected();
 		String dateSelected();
@@ -86,6 +87,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		String headerLevelFixed();
 		String levelDefaultValue();
 		String levelFixed();
+		String modify();
 		String oddRow();
 		String textCenter();
 		String widthAll();
@@ -239,13 +241,17 @@ public abstract class AgreementPreview extends ResizeComposite {
 			printPreviewButton.setVisible(false);
 		
 		description.setText(agreement.getDescription());
+		description.removeStyleName(style.modify());
 		description.addValueChangeHandler(e -> {
 			agreement.setDescription(e.getValue());
+			description.addStyleName(style.modify());
 			setHasChange(true);
 		});
 		ssNumber.setText(agreement.getSSNumber());
+		ssNumber.removeStyleName(style.modify());
 		ssNumber.addValueChangeHandler(e -> {
 			agreement.setSSNumber(e.getValue());
+			ssNumber.addStyleName(style.modify());
 			setHasChange(true);
 		});
 		
@@ -348,6 +354,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
 		level.addStyleName(style.textCenter());
+		level.addStyleName(style.cellWidth());
 		level.addStyleName(style.headerFSize());
 		salaryGrid.setWidget(row, 0, level);
 		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerLevelFixed());
@@ -359,9 +366,12 @@ public abstract class AgreementPreview extends ResizeComposite {
 			Label label = new Label(variable);
 			label.addStyleName(style.gridTitle());
 			label.addStyleName(style.textCenter());
+			label.addStyleName(style.cellWidth());
 			label.addStyleName(style.headerFSize());
 			salaryGrid.setWidget(row, col, label);
-			salaryGrid.getColumnFormatter().setWidth(col, "100px");
+			
+			salaryGrid.getColumnFormatter().removeStyleName(col, style.widthAll());
+			
 			salaryGrid.getColumnFormatter().addStyleName(col, style.columnBorder());
 			salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 			
@@ -417,6 +427,17 @@ public abstract class AgreementPreview extends ResizeComposite {
 				Label cell = new Label();
 				cell.addStyleName(style.gridCell());
 				cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
+				if(row % 2 == 0 ) cell.addStyleName(style.oddRow());
+				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && cell.getText().length() > 16)
+					cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
+				else
+					cell.setWidth("100%");
+				
+				if(levelData != null && levelData.isModify())
+					cell.addStyleName(style.modify());
+				else
+					cell.removeStyleName(style.modify());
 				
 				// check if level 0 or default value
 				if(level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
@@ -424,6 +445,11 @@ public abstract class AgreementPreview extends ResizeComposite {
 					cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
 					cell.setTitle("Valor por defecto");
 					cell.addStyleName(style.levelDefaultValue());
+					
+					if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && cell.getText().length() > 20)
+						cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
+					else
+						cell.setWidth("100%");
 				}
 						
 				salaryGrid.setWidget(row, col, cell);
@@ -438,8 +464,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 	}
 
 	private void salaryTableWidth() {
-		salaryGrid.setWidth("100%");
-		salaryGrid.getColumnFormatter().setWidth(0, "100px");
+		salaryGrid.getColumnFormatter().setWidth(0, "120px");
 	}
 	
 	

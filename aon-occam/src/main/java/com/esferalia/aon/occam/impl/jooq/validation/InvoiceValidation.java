@@ -251,15 +251,17 @@ public class InvoiceValidation {
 	 * La factura ha sido utilizada para los calculos de los modelos fiscales.
 	 */
 	public static final BiConsumer<Invoice, AonConfigurationContext> ALCATRAZ = (inv,ctx) -> {
-		List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ctx.getContext(), inv.getId() );
-		if (models != null && !models.isEmpty()) {
-			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
-				models
-					.stream()
-					.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
-					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
-					.toString()
-				));
+		if (inv.getId() != null) {
+			List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ctx.getContext(), inv.getId() );
+			if (models != null && !models.isEmpty()) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
+						models
+						.stream()
+						.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+						.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+						.toString()
+						));
+			}
 		}
 	};
 
@@ -309,6 +311,7 @@ public class InvoiceValidation {
 			.andThen(OPERATIONS_DEADLINE)
 			.andThen(CHECK_TEN_YEARS)
 			.andThen(CHECK_FINANCES)
+			.andThen(ALCATRAZ)
 			.accept(inv, new AonConfigurationContext(ctx,config));
 
 	}

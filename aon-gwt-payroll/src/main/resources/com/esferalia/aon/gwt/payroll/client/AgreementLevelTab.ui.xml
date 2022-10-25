@@ -40,10 +40,6 @@
 		
 		/* Class of AgreementLevelTab.Style */
 		
-		.cellWidth {
-			width: 120px;
-		}
-		
 		.dialogGlass {
 			z-index: 7;
 			background-color: #000;
@@ -74,6 +70,11 @@
 			top: 0;
 			height: 1.5rem;
 			z-index: 5;
+		}
+		
+		.modify {
+			background-color: lightyellow !important;
+    		border: 0.5px solid yellow !important;
 		}
 		
 		.textCenter {

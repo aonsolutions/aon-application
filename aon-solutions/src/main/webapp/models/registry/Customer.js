@@ -32,6 +32,7 @@ export class Customer extends Registry {
             this.account = customer.account;
         } else {
             this.transaction = 'NAC';
+            this.status = 'ACTIVE';
             this.withholding = false;
             this.surcharge = false;
         }   
@@ -74,4 +75,21 @@ export class Customer extends Registry {
         return this;
     }
 
+    getScope() {
+        return this.scope;
+    }
+
+    setScope(scope) {
+        this.scope = scope;
+        return this;
+    }
+
+    getStatus() {
+        return this.status;
+    }
+
+    setStatus(status) {
+        this.status = status;
+        return this;
+    }
 }

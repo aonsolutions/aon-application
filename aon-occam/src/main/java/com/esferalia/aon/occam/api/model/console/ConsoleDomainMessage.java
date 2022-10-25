@@ -7,7 +7,6 @@ public class ConsoleDomainMessage implements Serializable {
 	private static final long serialVersionUID = -3303922083871181409L;
 	
 	private ConsoleDomainMessageType type;
-	private ConsoleDomainMessageFixType fixType;
 	private String schema;
 	private Integer domainId;
 	private String table;
@@ -29,14 +28,6 @@ public class ConsoleDomainMessage implements Serializable {
 		return this;
 	}
 
-	public ConsoleDomainMessageFixType getFixType() {
-		return fixType;
-	}
-	public ConsoleDomainMessage setFixType(ConsoleDomainMessageFixType fixType) {
-		this.fixType = fixType;
-		return this;
-	}
-	
 	public String getSchema() {
 		return schema;
 	}

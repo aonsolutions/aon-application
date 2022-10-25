@@ -8,6 +8,7 @@ import { Transactions } from '../../../services/transaction.js';
 import { Customer } from '../../../models/registry/Customer.js';
 import { saveCustomer } from '../../../services/registryService.js';
 import { AonCustomerList } from './aon-customer-list.js';
+import { getScopes } from '../../../services/documentalService.js';
 
 export class AonCustomer extends AonReg {
 
@@ -25,7 +26,7 @@ export class AonCustomer extends AonReg {
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
-			{ title: MSG.FISCAL_DATA, fn: () => this.buildFiscalData()},
+			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional()},
 		];
 
 		if(this.isBeta()){
@@ -33,10 +34,74 @@ export class AonCustomer extends AonReg {
 		}
 	}
 
-	buildFiscalData() {
+	buildDataAdditional(){
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
 
+		this.buildGeneralInformation(parent);
+		this.buildFiscalData(parent);
+	}
+
+	buildGeneralInformation(parent) {
+		let card = new AonCard();
+		card.id = "cardAdditionalInformation";
+		card.title = MSG.ADDITIONAL_INFORMATION;
+		card.style.width = '50%';
+		parent.appendChild(card);
+
+		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		let table = new AonBasicTable();
+		card.id = "aonTableGeneralInformation";
+		div.appendChild(table);
+
+		table.addRow();
+
+		let scope = new AonSelect()
+		scope.id = "selectScope";
+		scope.title = MSG.SCOPE;
+		scope.autocomplete = true;
+		scope.addEventListener(EVENT.SELECT, () => {
+			this.registry.setScope(scope.getDetail());
+			if(this.autosave) this.save();
+		});
+
+		table.addCell(scope, 2);
+
+		getScopes()
+		.then(scopes=>{
+			const registryScope = this.registry.getScope();
+			const scopeId = registryScope && registryScope.id ? registryScope.id : null;
+
+			scope.setOptions(scopes.map(c=> ({...c, value: c.id})) );
+
+			if(scopeId){
+				scope.value = scopeId;
+			}
+		});
+
+
+
+		// table.addRow();
+
+		// let segment = new AonSelect()
+		// segment.id = "selectSegment";
+		// segment.title = "Segmento";
+		// segment.value = this.registry.getSegment();
+		// segment.addEventListener(EVENT.SELECT, () => {
+		// 	this.registry.setSegment(segment.value);
+		// 	if(this.autosave) this.save();
+		// });
+
+		// segment.setOptions();
+
+		// table.addCell(segment, 2);
+
+		
+	}	
+
+	buildFiscalData(parent) {
 		let card = new AonCard();
 		card.id = this.FISCAL_CARD;
 		card.title = MSG.FISCAL_DATA;
@@ -76,7 +141,7 @@ export class AonCustomer extends AonReg {
 		table.addCell(surcharge, 1);
 
 		let withholding = new AonSwitch();
-		withholding.id = this.FISCAL_SURCHARGE;
+		withholding.id = this.FISCAL_WITHHOLDING;
 		withholding.title = MSG.IRPF;
 		withholding.checked = this.registry.isWithholding();
 		withholding.addEventListener(EVENT.CHANGE, () => {

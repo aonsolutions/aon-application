@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
  
@@ -66,7 +67,8 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private AonMinimizePanel footPanel;
 	private AonTabLayoutPanel tabLayout;
 	private ConsoleModuleOptions options;
-	private LinkedHashMap<Integer,ConsoleDomainTableRow> checkedList = new LinkedHashMap<>();	
+	private LinkedHashMap<Integer,ConsoleDomainTableRow> checkedList = new LinkedHashMap<>();
+	private AonTabLayoutPanel mainTabLayout;
 	private SimpleLayoutPanel container = new SimpleLayoutPanel();
 	private ConsoleDomainFilterPanel filterPanel;
 	private InlineLabel runningLabel = new InlineLabel("Ejecutando");
@@ -85,6 +87,10 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private boolean processRunning;
 
 	class ConsoleDomainTableCallbackImpl implements ConsoleDomainTableCallback {
+		@Override
+		public boolean isAdvancedMode() {
+			return ConsoleDomainModule.this.filterPanel.isAdvancedMode();
+		}
 		@Override
 		public String getSchema() {
 			return ConsoleDomainModule.this.filterPanel.getSchema();			
@@ -258,6 +264,25 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		}
 		
 		// -----------------------------------------------------------------------
+		// 												  		     [EDIT DOMAIN]
+		// -----------------------------------------------------------------------
+		@Override
+		public void onEditDomain(Integer domainId, String description) {
+			final String tabLabel = "Edit " + AonStringUtils.abbreviate(description, 20);
+			Widget w = mainTabLayout.getWidget(tabLabel);
+			if (w == null) {
+				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+				closeTab.addCloseHandler(e -> mainTabLayout.remove(tabLabel));
+				DomainParams params = filterPanel.getParams(options)
+						.setDescription( description )
+						.setId(domainId);
+				mainTabLayout.add( new ConsoleRowQuery( params , () -> mainTabLayout.remove(tabLabel) )
+					, closeTab, tabLabel);
+			} 
+			mainTabLayout.selectTab(tabLabel);
+		}
+
+		// -----------------------------------------------------------------------
 		// 												  		   	   [DUPLICATE]
 		// -----------------------------------------------------------------------
 		public void onDuplicate(DomainParams origin, DomainParams target ) {
@@ -294,6 +319,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				setRunning(false);
 				showError("No se pudo duplicar el dominio. " + e.getMessage());
 			}
+			
 		}
 		
 		private AonConsoleProgress getAonConsoleProgress(String tabLabel) {
@@ -301,7 +327,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			if (tabWidget != null) {
 				tabWidget.reset();
 			} else {
-				tabWidget = new AonConsoleProgress();
+				tabWidget = new AonConsoleProgress( filterPanel.isAdvancedMode() );
 				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
 				closeTab.addCloseHandler(e -> {if (!isRunning()) {
 					tabLayout.remove(tabLabel);
@@ -327,10 +353,13 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		this.addNorth(filterPanel, ConsoleDomainFilterPanel.HEIGTH);
 
 		splitLayoutPanel = new SplitLayoutPanel( 2 );
+		splitLayoutPanel.setStyleName(AON.CSS.aonSelector());
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		this.add(splitLayoutPanel);
 		
-		splitLayoutPanel.add(container);
+		mainTabLayout = new AonTabLayoutPanel(30, Unit.PX);
+		mainTabLayout.add(container,new AonCloseTab("Dominios", false),"Dominios");
+		splitLayoutPanel.add(mainTabLayout);
 	}
 	
 	private void disableMoreData() {

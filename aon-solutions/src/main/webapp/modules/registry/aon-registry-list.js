@@ -30,11 +30,12 @@ export class AonRegistryList extends AonElement {
 	build() {
 		this.selectabledTable();
 
-		this.TABLE.addColumn(MSG.DOCUMENT, 'string', 'document', '20%');
+		this.TABLE.addColumn(MSG.DOCUMENT, 'string', 'document', '10%');
 		this.TABLE.addColumn(MSG.NAME, 'string', 'name', '40%');
-		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '40%');
+		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '20%');
+		this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '10%');
 		this.TABLE.addEventListener(EVENT.MORE, () => {
-			if(this.more) this.loadMore()
+			if(this.more) this.loadMore();
 		});
 		this.init();
  	}
@@ -52,11 +53,17 @@ export class AonRegistryList extends AonElement {
 		this.more = false;
 		if(this.TABLE && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			this.getRegistries(this.filter).then(registries => {
+			this.getRegistries(this.filter)
+			.then(registries => {
 				if(registries.length > 0)
 					this.more = true;
 				
-				registries.forEach((registry, i) => {
+				registries.forEach((registry) => {
+
+					if(registry.status){
+						registry.statusText = MSG[registry.status];
+					} 
+
 					this.TABLE.addRow(registry, () => this.buildRegistry(registry));
 				});
 			});
@@ -66,15 +73,21 @@ export class AonRegistryList extends AonElement {
 	init() {
 		if(this.TABLE) {
 			this.TABLE.removeRows();
-			this.getRegistries(this.getFilter()).then(registries => {
+			this.getRegistries(this.getFilter())
+			 .then(registries => {
 				registries.forEach((registry) => {
+
+					if(registry.status){
+						registry.statusText = MSG[registry.status];
+					}
+
 					this.TABLE.addRow(registry, () => this.buildRegistry(registry));
 				});
 			});	
 		}
 	}
 
-	getRegistries() {
+	async getRegistries() {
 
 	}
 
@@ -99,7 +112,6 @@ export class AonRegistryList extends AonElement {
 		this.filter = filter;
 		this.init();
 	}
-
 }
 
 if(!window.customElements.get(TAG.AON_REGISTRY_LIST)) {

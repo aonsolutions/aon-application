@@ -29,6 +29,8 @@ export const closeSession = () => {
 
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
 
+export const magicLink = (email) => post(`${API_URL}/magicLink`, {email});
+
 export const getManifest = (data) => get(`${API_URL}/manifest`, data);
 
 export const getAuth = (data={}) => {

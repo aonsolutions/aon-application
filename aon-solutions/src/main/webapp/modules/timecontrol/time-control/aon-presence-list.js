@@ -10,6 +10,7 @@ import { AonTable } from "../../../components/aon-table.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import Apps from "../../../services/app.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -97,39 +98,52 @@ export class AonPresenceList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     
-    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      this.searchFilter = detail;
-      this.search();
-    });
+    let timeOut = null;
+
     btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
-      this._list = [];
-      if(detail) this.applicationParentEl.setDataFilter(detail);
+      clearTimeout(timeOut);
+      timeOut = setTimeout(() => {
+        this._list = [];
+        this.searchFilter = detail.search;
+        this.applicationParentEl.setDataFilter({
+          active: detail.active,
+          search:detail.search,
+          period: detail.period,
+          startDate: detail.startDate,
+          endDate: detail.endDate
+        });
+      });
     });
 
-    let arrayNewFilter = PRESENCE_FILTER;
-    arrayNewFilter.push({
-      type: CONSTANT.HTML_ELEMENT,
-      element: new AonSwitch(),
-      id: "aonSwitchFilter",
-      name:"active",
-      title:"Usuarios activos",
-      checked:true
-    })
-    
-    btnSearch.buildOptionsFilter(arrayNewFilter);//INPUTS
+    let inputsFilter = [
+      ...PRESENCE_FILTER,
+      {
+        type: CONSTANT.HTML_ELEMENT,
+        element: new AonSwitch(),
+        id: "aonSwitchFilter",
+        name:"active",
+        title:"Usuarios activos",
+        checked:true
+      }
+    ];
+
+    btnSearch.buildOptionsFilter(inputsFilter);//INPUTS
+
     this.searchValueDefault();
   }
 
   searchValueDefault(){
     let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(getPeriod());
-    periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-      if(detail){
-        const {startDate, endDate} = detail;
-        setValueName('startDate', startDate);
-        setValueName('endDate', endDate);
-      }
-    });
+    if(periodEl){
+      periodEl.setOptions(getPeriod());
+      periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+        if(detail){
+          const {startDate, endDate} = detail;
+          setValueName('startDate', startDate);
+          setValueName('endDate', endDate);
+        }
+      });
+    }
 
     this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
     this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
@@ -200,10 +214,14 @@ export class AonPresenceList extends AonElement {
     let options = [{
       name: "Registro de jornada",
       aonIcon: 'aon_excel',
+      permission:true,
+      backgroundColor: Apps.TIMECONTROL.color,
       fn: () => modalReport(this.applicationEl, this, "excel")
     }, {
       name: "Plantilla fichajes",
       aonIcon: 'aon_pdf',
+      permission:true,
+      backgroundColor: Apps.TIMECONTROL.color,
       fn: () => modalReport(this.applicationEl, this, "pdf")
     }];
 

@@ -1179,17 +1179,6 @@
 }
 
 
-.aonDialog>.aonDialogContent>.btn-close{
-  color: grey;
-  font-size: 30px;
-  text-decoration: none;
-  float: right;
-  margin-top: -25px;
-  margin-right: -13px;
-  cursor: pointer;
-  padding: 10px;
-}
-
 .colorGrey{
   color:grey;
 }

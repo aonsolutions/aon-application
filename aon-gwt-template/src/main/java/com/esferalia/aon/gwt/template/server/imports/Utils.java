@@ -34,6 +34,7 @@ public class Utils {
 	}
 	
 	public static String calculateAccount(String acc, Integer pos) {
+		acc = acc.replace(" ", "").replace(" ", "");
 		if(acc.length() > 9) {
 			return acc.substring(0,pos) + acc.substring((acc.length() - 9) + pos);
 		} else if(acc.length() > pos && acc.length() < 9) {
