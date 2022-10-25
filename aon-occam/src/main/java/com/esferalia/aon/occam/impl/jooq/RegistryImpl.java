@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -70,6 +71,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryNoteDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryPayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistrySegmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -245,6 +247,18 @@ public class RegistryImpl implements IRegistry{
 	public Integer[] getRSegmentStream(AONContext ctx, RegistrySegmentFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRSegmentStream(ctx, filter));
+	}
+	
+	@Override
+	public RegistrySegment saveRegistrySegment(AONContext ctx, RegistrySegment rsegment) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistrySegmentDAO.save(ctx, rsegment));
+	}
+	
+	@Override
+	public Stream<RegistrySegment> getRegistrySegmentStream(AONContext ctx, RegistrySegmentFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistrySegmentDAO.getStream(ctx, filter));
 	}
 
 	@Override

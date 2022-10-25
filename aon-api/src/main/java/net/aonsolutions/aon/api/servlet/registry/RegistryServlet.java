@@ -18,8 +18,10 @@ import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
+import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -169,6 +171,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 							AON.getRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 								f -> f.getRegistryProperty().eq(registryId))));
 				}
+				
+				if(RegistryAdditionalInfo.RSEGMENT.equals(rai)) {
+					RegistrySegmentFilter filter  = f -> f.getRegistryProperty().eq(registryId);
+					object.put(rai.name().toLowerCase(),
+						RegistrySegmentJSON.toJSON(AON.getRegistrySegmentStream(api.getDomain(), api.getUser(), filter))
+					);
+				}
 			});
 		}
 		return object;
@@ -217,6 +226,15 @@ public class RegistryServlet extends AonApiHttpServlet {
 			if(recordData.getRegistry() == null) recordData.setRegistry(registryId);
 			AON.saveRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), recordData);
 		}
+		
+		if(json.opt(RegistryAdditionalInfo.RSEGMENT.name().toLowerCase()) != null) {
+			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.RSEGMENT.name().toLowerCase());
+			RegistrySegmentJSON.fromJSON(arr)
+			.stream()
+			.forEach(rsegment -> {
+				AON.saveRegistrySegment(rsegment.getDomain(), api.getUser(), rsegment);
+			});
+		}
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
@@ -227,7 +245,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONArray getRegistryBanks(AonApiData api) {
-		Integer id = api.getData().optInt("id");
+		Integer id = api.getData().optInt(IJsonNames.ID);
 		Stream<RegistryBank> rbanks = AON.getRBankStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(api.getDomain().getId()).and(f.getRegistryProperty().eq(id)));
 		return RegistryBankJSON.toJSON(rbanks);

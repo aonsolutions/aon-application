@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -83,6 +84,8 @@ public interface IRegistry {
 
 	public Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId);
 	public Integer[] getRSegmentStream(AONContext ctx, RegistrySegmentFilter filter);
+	public Stream<RegistrySegment> getRegistrySegmentStream(AONContext ctx, RegistrySegmentFilter filter);
+	public RegistrySegment saveRegistrySegment(AONContext ctx, RegistrySegment rsegment);
 
 	public Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter registryId);
 
