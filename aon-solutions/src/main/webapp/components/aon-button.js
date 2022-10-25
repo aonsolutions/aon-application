@@ -40,12 +40,12 @@ export class AonButton extends AonElement {
     this.setAttribute('color', color);
   }
 
-  get size() {
-    return this.getAttribute('size');
+  get disabled() {
+    return this.getAttribute('disabled');
   }
 
-  set size(size) {
-    this.setAttribute('size', size);
+  set disabled(disabled) {
+    this.setAttribute('disabled', disabled);
   }
 
   constructor () {
@@ -68,6 +68,9 @@ export class AonButton extends AonElement {
     let button = this.createElement(TAG.BUTTON);
     button.id = this.BUTTON;
     button.className = CSS.AON_BUTTON;
+    button.style.width = '100%';
+    button.style.padding = '10px 20px';
+    button.disabled = this.isDisabled();
     this.appendChild(button);
 
     if(this.color) {
@@ -87,6 +90,7 @@ export class AonButton extends AonElement {
     if(this.title) {
       let text = this.createElement(TAG.SPAN);
       text.id = this.TEXT;
+      text.style.margin = 'auto';
       text.innerHTML = this.title;
       button.appendChild(text);
     }
@@ -122,6 +126,16 @@ export class AonButton extends AonElement {
 
   setColor(color) {
     this.color = color;
+  }
+
+  isDisabled() {
+    return this.disabled;
+  }
+
+  setDisabled(disabled) {
+    this.disabled = disabled;
+    let button = this.getElement(this.BUTTON);
+    if(button) button.disabled = disabled;
   }
 }
 if(!window.customElements.get(TAG.AON_BUTTON)){

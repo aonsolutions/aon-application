@@ -238,6 +238,7 @@ export const OTHER_SERVICES = 'Altres Serveis';
 // ----- P
 
 export const PAUSE = 'Pausa';
+export const PASSWORD = 'Contrasenya';
 export const PAYMETHOD = 'Forma de Pagament';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nòmina';
@@ -276,6 +277,8 @@ export const RECTIFIED = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE = 'Rectificar Factura';
 export const REFERENCE = 'Referència';
+export const REGISTERED_TRADEMARK = 'Marca Registrada';
+export const REGISTERED_TRADEMARK_AON = 'és una marca registrada de AON SOLUTIONS, S.L.';
 export const REJECT = 'Rebutjar';
 export const REJECT_INVOICE = 'Rebutjar Factura';
 export const REJECT_INVOICES = 'Rebutjar Factures';
@@ -312,6 +315,9 @@ export const SERVICES = 'Serveis';
 export const SETTING = 'Configuració';
 export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';
+export const SIGN_IN = 'Iniciar Sessió';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sessió sense Contrasenya';
+export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sessió amb Certificat';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Mida';
@@ -364,6 +370,7 @@ export const USERS = 'Usuaris';
 // ----- V
 
 export const VAT = 'IVA';
+export const VERSION = 'Versió';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -38,6 +39,7 @@ public class LoginServlet extends AonApiHttpServlet{
 		}
 		Boolean ok = false;
 		Auth auth = new Auth();
+		String token = null;
 	    if(Utils.isEmail(username)) {
 	       	List<String> schemas = AONContext.getSchemas();
 	    	if(!AonStringUtils.isBlank(login)) {
@@ -91,9 +93,29 @@ public class LoginServlet extends AonApiHttpServlet{
 	    			}
 	    		}
 	    	}
+	    	
+	    	if(!auth.isEmpty()) token = AonToken.build(auth, null);
+		} else {
+			String domainName = req.getServerName();
+			if(AonStringUtils.isNotBlank(domainName) && !"aonsolutions.org".equals(domainName) 
+					&& !"aon.solutions".equals(domainName) && !"localhost".contentEquals(domainName) ) {
+				String aux = username;
+				Domain domain = AON.getDomain(domainName, 0, aux, f -> f.getNameProperty().eq(domainName));
+				User user = AON.getUser(domain, aux, f -> f.getLoginProperty().eq(aux));
+				if(user.getId() != null) {
+					String pass = SECURITY.getUserPassword(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+					String userPass = Utils.createPasswordHash(login, password);
+					ok = pass.equals(userPass);
+				}
+				
+				if(!user.getAuth().isEmpty()) {
+					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
+					token = AonToken.build(auth, null);
+				} else token = AonToken.build(user, null, domain.getName());
+			}
 		}
     	JSONObject object = new JSONObject();
-	    if(auth.getUuid() == null) {
+	    if(auth.getUuid() == null && AonStringUtils.isBlank(token)) {
 	    	resp.setStatus(401);
 	    	object.put("message", "El Usuario No existe.");
 	    	object.put("type", "error");
@@ -102,7 +124,7 @@ public class LoginServlet extends AonApiHttpServlet{
 	    	object.put("message", "La Contraseña no coincide.");
 	    	object.put("type", "error");
     	} else {
-    		object.put("session_id", AonToken.build(auth, null));
+    		object.put("session_id", token);
 	    }
     	resp.setContentType("application/json;charset=UTF-8");
 
