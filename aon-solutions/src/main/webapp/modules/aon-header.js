@@ -177,7 +177,7 @@ export class AonHeader extends AonElement {
 						}, {
 							name: MSG.GALICIAN,
 							image: '../assets/img/aonIconGalego.png',
-							fn: () => LS.setLanguage(Language.DEUTSCH)
+							fn: () => LS.setLanguage(Language.GALICIAN)
 						} ]
 					};
 

@@ -79,6 +79,8 @@ export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
 export const CONTRACT = 'Contract';
+export const CONTRACT_PAYROLL = 'Contract';
+export const CONTRACTS = 'Contracts';
 export const COUNTRY = 'Country';
 export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
@@ -209,6 +211,7 @@ export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
 export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
+export const MY_MANAGER = 'My Manager';
 export const MY_USER = 'My User';
 
 // ----- N

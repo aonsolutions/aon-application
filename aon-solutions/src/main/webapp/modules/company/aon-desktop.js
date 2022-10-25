@@ -150,7 +150,7 @@ export class AonDesktop extends AonElement {
 		if(this.isBeta() && !this.getDur().getDomain().isOffice()) {
 			let myGestor = {
 				id: 'Gestor',
-				name: 'MI GESTOR'
+				name: MSG.MY_MANAGER
 			};
 			aonDesktop.addSidenavOptions2(myGestor, []);
 			getOfficeProjects({}).then(offices => {
