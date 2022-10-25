@@ -81,6 +81,8 @@ export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
+export const CONTRACT_PAYROLL = 'Contrato';
+export const CONTRACTS = 'Contratos';
 export const COUNTRY = 'País';
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acreedor';
@@ -212,6 +214,7 @@ export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
 export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
+export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 
 // ----- N

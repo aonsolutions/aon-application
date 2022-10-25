@@ -18,6 +18,8 @@ import { AonLoader } from "../../components/aon-loader.js";
 import { AonButton } from "../../components/aon-button.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
+import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
+import { Language } from "../../models/Language.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -33,7 +35,7 @@ export class AonLogin extends AonElement {
 
   build() {
     if(!this.isMobile()){
-      document.body.style.background = 'linear-gradient(to right, #ffff,aliceblue, #002469)';
+      document.body.style.background = 'linear-gradient(to right, aliceblue, #002469)';
     }
 
     let div = this.createElement(TAG.DIV);
@@ -54,6 +56,58 @@ export class AonLogin extends AonElement {
     }
     div.appendChild(div2);
 
+    let divLanguage = this.createElement(TAG.DIV);
+    divLanguage.id = 'aonLoginLanguageDiv';
+    divLanguage.style.display = 'flex';
+    divLanguage.style.justifyContent = 'right';
+    divLanguage.style.marginBottom = '5px';
+    div2.appendChild(divLanguage);
+
+    let spanLanguage = this.createElement(TAG.SPAN);
+    spanLanguage.style.color = 'lightgray';
+    spanLanguage.innerHTML = this.getLanguageText();
+    spanLanguage.addEventListener(EVENT.MOUSEOVER, () => {
+      const top  = spanLanguage.getBoundingClientRect().top;
+      const left = spanLanguage.getBoundingClientRect().left;
+      let d = this.getElement('aonHeaderDialogHelpOption');
+      if(!d) {
+        d = new AonDialogMenu();
+        d.id = 'aonHeaderDialogHelpOption';
+        this.appendChild(d);
+      }  
+      d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
+
+      let options = [{
+        name: MSG.SPANISH,
+        image: '../assets/img/aonIconCastellano.png',
+        fn: () => LS.setLanguage(Language.SPANISH)
+      }, {
+        name: MSG.ENGLISH,
+        image: '../assets/img/aonIconEnglish.png',
+        fn: () => LS.setLanguage(Language.ENGLISH)
+      }, {
+        name: MSG.DEUTSCH,
+        image: '../assets/img/aonIconDeutsch.png',
+        fn: () => LS.setLanguage(Language.DEUTSCH)
+      }, {
+        name: MSG.BASQUE,
+        image: '../assets/img/aonIconEuskera.png',
+        fn: () => LS.setLanguage(Language.BASQUE)
+      }, {
+        name: MSG.CATALAN,
+        image: '../assets/img/aonIconCatala.png',
+        fn: () => LS.setLanguage(Language.CATALAN)
+      }, {
+        name: MSG.GALICIAN,
+        image: '../assets/img/aonIconGalego.png',
+        fn: () => LS.setLanguage(Language.GALICIAN)
+      } ];
+
+      d.setMenuOptions(options, top, left);
+			d.open();
+    });
+    divLanguage.appendChild(spanLanguage);
+    
     let divLogo = this.createElement(TAG.DIV);
     divLogo.id = 'aonLoginLogoDiv';
     div2.appendChild(divLogo);
@@ -123,7 +177,10 @@ export class AonLogin extends AonElement {
       certificateButton.setIcon(MATERIAL_ICONS.SECURITY);
       certificateButton.setTitle(MSG.SIGN_IN_WITH_CERTIFICATE);
       certificateButton.setColor("black");
-      certificateButton.addEventListener(EVENT.CLICK, () => alert("En desarrollo"));
+      certificateButton.addEventListener(EVENT.CLICK, () =>  {
+        window.open('/fnmtoauth2', '_blank', 'width=700,height=800,scrollbars=yes');
+        return false; 
+      });
       divButtons.appendChild(certificateButton);
     }
 
@@ -171,6 +228,20 @@ export class AonLogin extends AonElement {
     });
   }
   
+  getLanguageText() {
+      if(LS.getLanguage() && Language.BASQUE === LS.getLanguage()){
+        return MSG.BASQUE;
+      } else if(LS.getLanguage() && Language.CATALAN === LS.getLanguage()){
+        return MSG.CATALAN;
+      } else if(LS.getLanguage() && Language.DEUTSCH === LS.getLanguage()){
+        return MSG.DEUTSCH;
+      } else if(LS.getLanguage() && Language.ENGLISH === LS.getLanguage()){
+        return MSG.ENGLISH;
+      } else if(LS.getLanguage() && Language.GALICIAN === LS.getLanguage()){
+        return MSG.GALICIAN;
+      } else return MSG.SPANISH;
+  }
+
   connectedCallback() {
     if(this.isBeta()) {
       this.initialize();
@@ -294,6 +365,7 @@ export class AonLogin extends AonElement {
         dialog.open()
       });
     }
+    username.focus();
   }
 
   buildAppLogo(){

@@ -80,6 +80,8 @@ export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos do Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
+export const CONTRACT_PAYROLL = 'Contrato';
+export const CONTRACTS = 'Contratos';
 export const COUNTRY = 'País'
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acredor';
@@ -211,6 +213,7 @@ export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de rendas. Resumo anual.';
 export const MOVED_TO_TRASH = 'Trasladouse ao papeleira';
 export const MY_DATA = 'Os Meus Datos';
+export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
 
 // ----- N

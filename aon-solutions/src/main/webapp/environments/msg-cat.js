@@ -77,7 +77,9 @@ export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
 export const CONTACT_DATA = 'Dades de Contacte';
 export const CONTACTS = 'Contactes';
-export const CONTRACT = 'Contractar';;
+export const CONTRACT = 'Contractar';
+export const CONTRACT_PAYROLL = 'Contracte';
+export const CONTRACTS = 'Contractes';
 export const COUNTRY = 'País';
 export const CREATE = 'Crear';
 export const CREDITOR = 'Creditor';
@@ -208,6 +210,7 @@ export const MODEL_190 = 'Model 190';
 export const MODEL_190_DESCRIPTION = `Model 190. Declaració Informativa. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de rendes. Resum anual.`;
 export const MOVED_TO_TRASH = `S'ha moguda a la paperera`;
 export const MY_DATA = 'Les Meves Dades';
+export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
 
 // ----- N

@@ -79,6 +79,8 @@ export const CONTACT = 'Kontaktua';
 export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
 export const CONTRACT = 'Kontratatu';
+export const CONTRACT_PAYROLL = 'Kontratua';
+export const CONTRACTS = 'Kontratuak';
 export const COUNTRY = 'Herrialde';
 export const CREATE = 'Sortu';
 export const CREDITOR = 'Hartzekodun';
@@ -209,6 +211,7 @@ export const MODEL_190 = '190 Eredua';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
 export const MOVED_TO_TRASH = 'Paperontzira mugitu da.';
 export const MY_DATA = 'Nire Datuak';
+export const MY_MANAGER = 'Nire Gestorea';
 export const MY_USER = 'Nire Erabiltzailea';
 
 // ----- N
