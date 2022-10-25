@@ -250,6 +250,10 @@
 			<to-view-id>/facelet/portal/timecontrol.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>portal_office</from-outcome>
+			<to-view-id>/facelet/portal/office.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>portal_messenger</from-outcome>
 			<to-view-id>/facelet/portal/messenger.xhtml</to-view-id>
 		</navigation-case>
