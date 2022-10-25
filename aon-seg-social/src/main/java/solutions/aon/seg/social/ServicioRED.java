@@ -72,7 +72,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 	 */
 	public static byte[] getIDCPOST (final InputStream certificateInputStream,final String certificatePassword,
 		final String certificateType, String affiliationNumber, String regime,String ccc, Date date) throws SegSocialException {
-			
+		
+		Date today = new Date(); 
+		date = date.after(today) ? today : date;
+		
 		SSLContext sslContext = null;
 			try {				
 				sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
