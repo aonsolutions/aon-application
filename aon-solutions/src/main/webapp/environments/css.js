@@ -38,6 +38,7 @@ export const AON_MENU_ICON = 'aonMenuIcon';
 export const AON_MENU_SIDENAV_SUBAPP_LIST_ITEM = 'aonMenuSidenavSubAppListItem';
 export const AON_MENU_LINK = 'aonMenuLink';
 export const AON_HEADER = 'aonHeader';
+export const AON_HEADER_BETA = 'aonHeaderBeta';
 export const AON_HEADER_BUTTON = 'aonHeaderButton';
 export const AON_IMG_AVATAR = 'aonImgAvatar';
 export const AON_AVATAR = 'aonAvatar';
