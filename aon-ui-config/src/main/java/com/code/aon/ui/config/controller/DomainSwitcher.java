@@ -499,6 +499,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return type == DomainType.ADMIN;
 	}
 	
+	public boolean isOfficeDomain() {
+		DomainType type = getDomainType(AonUtil.getAuthPrincipal().getDomainId());
+		return type == DomainType.OFFICE;
+	}
+	
 	public DomainUserRoles getDur() {
 		com.esferalia.aon.occam.api.model.Domain domain = new com.esferalia.aon.occam.api.model.Domain();
 		domain.setName(getCurrentDomainNameURL()).setId(getDomainId());

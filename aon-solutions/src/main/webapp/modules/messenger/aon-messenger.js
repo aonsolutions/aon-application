@@ -285,14 +285,12 @@ export class AonMessenger extends AonElement {
 			icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 			id: MATERIAL_ICONS.MOVE_TO_INBOX,
 			fn: () =>{
-				this._filter.workgroup = undefined;
 
 				if(this.TASK_HOLDER && this.TASK_HOLDER.id){
 					this._filter.sender = undefined;
 					this._filter.task_holder = this.TASK_HOLDER.id;
 				}
-				
-				this._filter.workgroups = this.getWorkgroupsStr();
+
 				this.addListFilter(this._filter);
 				this.updateStatusCount();
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
@@ -303,14 +301,12 @@ export class AonMessenger extends AonElement {
 			icon: MATERIAL_ICONS.OUTBOX,
 			id: MATERIAL_ICONS.OUTBOX,
 			fn: () =>{
-				this._filter.workgroup = undefined;
 
 				if(this.TASK_HOLDER && this.TASK_HOLDER.id){
 					this._filter.task_holder = undefined;
 					this._filter.sender = this.TASK_HOLDER.id;
 				}
-	
-				this._filter.workgroups = this.getWorkgroupsStr();
+
 				this.addListFilter(this._filter);
 				this.updateStatusCount();
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
@@ -322,8 +318,7 @@ export class AonMessenger extends AonElement {
 			fn: () =>{
 				this._filter.task_holder = undefined;
 				this._filter.sender = undefined;
-				this._filter.workgroup = undefined;
-				this._filter.workgroups = this.getWorkgroupsStr();
+
 				this.addListFilter(this._filter);
 				this.updateStatusCount();
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
@@ -369,7 +364,6 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_OPEN,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.PENDING;
-					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -378,7 +372,6 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.IN_PROGRESS;
-					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -387,7 +380,6 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.FINISHED;
-					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
@@ -396,7 +388,6 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.DELETED;
-					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
@@ -468,18 +459,17 @@ export class AonMessenger extends AonElement {
 
 						if(filter.workgroup == item.id){
 							filter.workgroup  = undefined;
+							filter.workgroups = this.getWorkgroupsStr()
 						} else {
-							filter.sender      = undefined;
-							filter.task_holder = undefined;
-							filter.workgroups  = undefined;
 							filter.workgroup   = item.id;
+							filter.workgroups  = undefined;
 						}
 
 						this.addListFilter({...filter});
 
 						this.updateStatusCount();
 
-						this.addBackgroundSidenav(filter);
+						// this.addBackgroundSidenav(filter);
 
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 					}
@@ -497,11 +487,11 @@ export class AonMessenger extends AonElement {
 						this._filter.workgroup = undefined;
 						this._filter.workgroups = this.getWorkgroupsStr(true);
 
-						this.addListFilter({...this._filter});
+						this.addListFilter(this._filter);
 
 						this.updateStatusCount();
 				
-						this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.GROUPS);
+						this.addBackgroundSidenav(MATERIAL_ICONS.GROUPS);
 
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 					}
@@ -549,9 +539,8 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.LABEL,
 				actions:[],
 				fn: () => {
-					this._filter.workgroups = this.getWorkgroupsStr();
 					this._filter.tag = this._filter.tag == item.id ? undefined : item.id;
-					this.addListFilter({...this._filter});
+					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 				}
 			};
@@ -586,9 +575,8 @@ export class AonMessenger extends AonElement {
 					icon: MATERIAL_ICONS.LABEL,
 					actions:[],
 					fn: () => {
-						this._filter.workgroups = this.getWorkgroupsStr();
 						this._filter.tag = this._filter.tag == item.id ? undefined : item.id;
-						this.addListFilter({...this._filter});
+						this.addListFilter(this._filter);
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 					}
 				};
@@ -632,17 +620,23 @@ export class AonMessenger extends AonElement {
 			application.removeBackgroundSidenavAll();
 			if(this.cau){
 				application.addBackgroundSidenav(filter.document ? MATERIAL_ICONS.ALL_INBOX: MATERIAL_ICONS.MOVE_TO_INBOX);
-			} else if(filter.workgroup){
-				application.addBackgroundSidenav(filter.workgroup);
-			} else if(filter.sender && filter.task_holder){
-				application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
-			} else if(filter.sender){
-				application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
-			} else if(filter.task_holder){
-				application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
 			} else {
-				application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+				
+				if(filter.workgroup){
+					application.addBackgroundSidenav(filter.workgroup);
+				} 
+
+				if(filter.sender && filter.task_holder){
+					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+				} else if(filter.sender){
+					application.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
+				} else if(filter.task_holder){
+					application.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
+				} else {
+					application.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+				}
 			}
+	
 
 			switch (filter.status){
 				case TASK_STATUS.IN_PROGRESS:
@@ -671,7 +665,7 @@ export class AonMessenger extends AonElement {
 
 	dialogTag(tag={}, type) {
 		const isEdit = tag && tag.id;
-		let d = this.getDialog();
+		let d = this.getApplication().getDialog();
 		d.clear();
 		if(this.isMobile()) {
 			d.type ="fullscreen";
@@ -704,7 +698,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	deleteTag(tag) {
-		let d = this.getDialog();
+		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE);

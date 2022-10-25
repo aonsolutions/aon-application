@@ -59,7 +59,17 @@
 	</script>
 
 	<aon:div id="mainMenuPortlet" styleClass="">	
-		
+		<aon:if test="#{domainSwitcher.officeDomain and domainSwitcher.snapshot}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-office-parent">
+				<aon:commandLink 
+				id="new_menu_office" 
+				immediate="true"
+				action="portal_office"
+				value="#{bundle.aon_office}"
+				styleClass="aon-button-office" />
+			</aon:div>
+		</aon:if>
+	
 		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-parent">
 				<aon:if test="#{aonRole.admin}">

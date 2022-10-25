@@ -160,7 +160,12 @@ export class AonTable extends AonElement {
     let body = this.getElement(this.getId() + "TableBody");
     if (!body) return true;
     let tr = this.createElement(TAG.TR);
+    tr.className ="aonTableTr";
     tr.style.cursor = "pointer";
+    
+    if(this.selectedColor){
+      tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#f1f1f1"));
+    }
 
     body.appendChild(tr);
     let checkBoxId = `aaa${body.children.length}`;
@@ -207,15 +212,18 @@ export class AonTable extends AonElement {
         icon.style.color = value.icon_color || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
-      } else if(item.type && item.type ==="list") {
+      } else if(item.type && item.type === "list" ) {
         let list = value[id];
         let ulList = this.createElement(TAG.UL);
         ulList.style.marginTop = "6px";
+        ulList.style.paddingLeft = "0px";
+        ulList.style.listStyleType = "none";
         td.appendChild(ulList);
+        td.addEventListener(EVENT.CLICK, fn);
 
         list.forEach(d => {
           let li = this.createElement(TAG.LI);
-          li.innerHTML = d.name;
+          li.innerHTML = `<i class="material-icons aonVerticalMiddle">${d.icon}</i>`+d.name;
           if(d.fn){
             li.addEventListener(EVENT.CLICK, d.fn);
           }
@@ -302,6 +310,19 @@ export class AonTable extends AonElement {
     td.innerHTML = message;
     td.style.fontWeight = 'bold';
     tr.appendChild(td);
+  }
+
+  addBackgroundTr(tr, color){
+    this.querySelectorAll(".aonTableTr")
+    .forEach(el => {
+      el.style.backgroundColor = "#ffffff";
+    });
+
+    console.log(tr);
+
+    if(tr){
+      tr.style.backgroundColor = color;
+    }
   }
 
 
