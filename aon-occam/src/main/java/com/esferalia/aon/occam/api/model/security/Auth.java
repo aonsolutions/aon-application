@@ -17,10 +17,12 @@ public class Auth implements Serializable {
 	String phone;
 	String schema;
 	String avatar;
+
+	@Deprecated
+	AuthAttach attach;
+	List<AuthDevice> devices;
 	
 	LinkedList<User> users;
-	List<AuthDevice> devices;
-	AuthAttach attach;
 	
 	public Auth() { }
 
@@ -124,6 +126,9 @@ public class Auth implements Serializable {
 	}
 	
 	public List<AuthDevice> getDevices() {
+		if(devices == null) {
+			devices = new LinkedList<>();
+		}
 		return devices;
 	}
 	
@@ -133,6 +138,9 @@ public class Auth implements Serializable {
 	}
 	
 	public AuthAttach getAttach() {
+		if(attach == null) {
+			attach = new AuthAttach();
+		}
 		return attach;
 	}
 	
@@ -145,7 +153,6 @@ public class Auth implements Serializable {
 		return getAuth() == null && getUuid() == null
 			&& getEmail() == null && getPassword() == null
 			&& getName() == null && getSurname() == null
-			&& getDocument() == null && getPhone() == null
-			&& getSchema() == null;
+			&& getDocument() == null && getPhone() == null;
 	}
 }

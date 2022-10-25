@@ -239,6 +239,7 @@ export const OTHER_SERVICES = 'Other Services';
 // ----- P
 
 export const PAUSE = 'Pause';
+export const PASSWORD = 'Passwort';
 export const PAYMETHOD = 'Payment Method';
 export const PAYROLL = 'Payroll';
 export const PAYSHEET = 'Paysheet';
@@ -277,6 +278,8 @@ export const RECTIFIED = 'Rectified';
 export const RECTIFY = 'Rectify';
 export const RECTIFY_INVOICE = 'Rectify Invoice';
 export const REFERENCE = 'Reference';
+export const REGISTERED_TRADEMARK = 'Eingetragene Marke';
+export const REGISTERED_TRADEMARK_AON = 'ist eine eingetragene marke von AON SOLUTIONS, S.L.';
 export const REJECT = 'Reject';
 export const REJECT_INVOICE = 'Reject Invoice';
 export const REJECT_INVOICES = 'Reject Invoices';
@@ -313,6 +316,9 @@ export const SERVICES = 'Services';
 export const SETTING = 'Einstellung';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIGN_IN = 'Einloggen';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Login ohne Passwort';
+export const SIGN_IN_WITH_CERTIFICATE = 'Mit Zertifikat Einloggen';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Size';
@@ -357,7 +363,7 @@ export const TYPES = 'Types';
 export const UPDATED_CONTRACT = "The contract has been modified successfully";
 export const UPLOAD = 'Upload';
 export const UPLOAD_FILE = 'Upload File';
-export const USER = 'User';
+export const USER = 'Nutzername';
 export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
@@ -365,6 +371,7 @@ export const USERS = 'Users';
 // ----- V
 
 export const VAT = 'VAT';
+export const VERSION = 'Version';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

@@ -292,6 +292,7 @@ export const LOCATION = MSG.LOCATION;
 
 // ----- M
 
+export const MAGIC_LINK = "Magic Link";
 export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL = "Modelo"; //TODO
 export const MODEL_111 = MSG.MODEL_111;
@@ -344,6 +345,7 @@ export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 // ----- P
 
 export const PACKAGING = 'Empaquetado';
+export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
 export const PAYROLL = "Laboral";//TODO
@@ -399,6 +401,8 @@ export const RECTIFIED = MSG.RECTIFIED;
 export const RECTIFY = MSG.RECTIFY;
 export const RECTIFY_INVOICE = MSG.RECTIFY_INVOICE;
 export const REFERENCE = MSG.REFERENCE;
+export const REGISTERED_TRADEMARK = MSG.REGISTERED_TRADEMARK;
+export const REGISTERED_TRADEMARK_AON = MSG.REGISTERED_TRADEMARK_AON;
 export const REGISTRATION_DATA = 'Datos Registrales'; // TODO
 export const REGISTRATION_DATE = 'Fecha de Registro'; // TODO
 export const REJECT = MSG.REJECT;
@@ -450,6 +454,9 @@ export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;
 export const SHEET = 'Hoja';
 export const SHOW_FILE = MSG.SHOW_FILE;
+export const SIGN_IN = MSG.SIGN_IN;
+export const SIGN_IN_WITHOUT_PASSWORD = MSG.SIGN_IN_WITHOUT_PASSWORD;
+export const SIGN_IN_WITH_CERTIFICATE = MSG.SIGN_IN_WITH_CERTIFICATE;
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
@@ -524,6 +531,7 @@ export const VAT = MSG.VAT;
 export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
 export const VAT_PANEL = 'Panel de IVA';
 export const VAT_PERCENT = '% IVA';
+export const VERSION = MSG.VERSION;
 export const VIEW_PAYROLL = "Ver nómina"; // TODO
 export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
 export const VIEW = "Ver"; // TODO

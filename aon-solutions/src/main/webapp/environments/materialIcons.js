@@ -47,6 +47,8 @@ export const ASSIGNMENT_RETURN = 'assignment_return';
 export const ASSIGNMENT_RETURNED = 'assignment_returned';
 export const ASSIGNMENT_TURNED_IN = 'assignment_turned_in';
 export const ATTACH_FILE = 'attach_file';
+export const AUTO_FIX_HIGHT = 'auto_fix_hight';
+export const AUTO_FIX_NORMAL = 'auto_fix_normal';
 export const AUTORENEW = 'autorenew';
 
 // ----- B
@@ -153,15 +155,16 @@ export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 // ----- L
 
 export const LOCAL_MALL = 'local_mall';
-export const LINK = "link";
-export const LABEL = "label";
+export const LOGIN = 'login';
+export const LINK = 'link';
+export const LABEL = 'label';
 
 // ----- M
 
 export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
-export const MOVE_TO_INBOX = "move_to_inbox";
-export const MARK_EMAIL_READ = "mark_email_read";
+export const MOVE_TO_INBOX = 'move_to_inbox';
+export const MARK_EMAIL_READ = 'mark_email_read';
 
 export const NOTIFICATIONS = "notifications";
 export const NOTIFICATION_ADD = "notification_add";
@@ -199,6 +202,7 @@ export const ROOM = 'room';
 export const SAVE = 'save';
 export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';
+export const SECURITY = 'security';
 export const SEND = 'send';
 export const SETTING = 'setting';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';

@@ -238,6 +238,7 @@ export const OTHER_SERVICES = 'Beste Zerbitzuak';
 // ----- P
 
 export const PAUSE = 'Pausa';
+export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nomina';
@@ -276,6 +277,8 @@ export const RECTIFIED = 'Zuzenketa';
 export const RECTIFY = 'Zuzendu';
 export const RECTIFY_INVOICE = 'Faktura Zuzendu';
 export const REFERENCE = 'Erreferentzia';
+export const REGISTERED_TRADEMARK = 'Marka Erregistratua';
+export const REGISTERED_TRADEMARK_AON = 'AON SOLUTIONS, S.L.-ren marka erregistratua da.';
 export const REJECT = 'Baztertu';
 export const REJECT_INVOICE = 'Faktura Baztertu';
 export const REJECT_INVOICES = 'Fakturak Baztertu'
@@ -312,6 +315,9 @@ export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
+export const SIGN_IN = 'Saioa Hasi';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Saioa Hasi Pasahitzik gabe';
+export const SIGN_IN_WITH_CERTIFICATE = 'Saioa Hasi Ziurtagiriarekin';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Neurria';
@@ -364,6 +370,7 @@ export const USERS = 'Erabiltzaileak';
 // ----- V
 
 export const VAT = 'BEZ';
+export const VERSION = 'Bertsioa';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 
