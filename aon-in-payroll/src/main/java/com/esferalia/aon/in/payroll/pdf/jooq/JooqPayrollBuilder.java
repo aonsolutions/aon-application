@@ -716,6 +716,7 @@ public class JooqPayrollBuilder {
 			
 			params.getEntries().entrySet().stream()
 			.filter(entry -> holidayList.stream()
+					.filter(d -> salaryPeriod.intersects(new Period(d, d)))
 					.map(AonDateUtils::getDay)
 					.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
 			).forEach(entry -> entry.getValue().setHoliday(true));
