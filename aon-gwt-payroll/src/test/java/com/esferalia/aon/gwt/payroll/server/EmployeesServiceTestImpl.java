@@ -956,7 +956,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) throws IllegalArgumentException {
+	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, String document, Date startDate) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}
