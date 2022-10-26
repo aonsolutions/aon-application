@@ -24,7 +24,7 @@ public interface SiiService extends RemoteService {
 	String bajaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception;
 	String altaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
 	String bajaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
-	Boolean refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
-	Boolean refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
+	Boolean refresh140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
+	Boolean refresh240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
 
 }

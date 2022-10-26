@@ -277,7 +277,7 @@ export class AonHeader extends AonElement {
 							fn: () => this.aonConfiguration()
 						}, {
 							name: MSG.CLOSE_SESSION,
-							icon: 'logout',
+							icon: MATERIAL_ICONS.LOGOUT,
 							id: 'dialogLogout',
 							fn: () => {
 								this.activeTimecontrol= false;
@@ -295,7 +295,7 @@ export class AonHeader extends AonElement {
 							fn: () => this.aonConfiguration()
 						}, {
 							name: MSG.CLOSE_SESSION,
-							icon: 'input',
+							icon: MATERIAL_ICONS.LOGOUT,
 							id: 'dialogLogout',
 							fn: () => closeSession()
 						}];
@@ -311,7 +311,7 @@ export class AonHeader extends AonElement {
 							fn: () => this.aonConfiguration()
 						}, {
 							name: MSG.CLOSE_SESSION,
-							icon: 'input',
+							icon: MATERIAL_ICONS.LOGOUT,
 							id: 'dialogLogout',
 							fn: () => closeSession()
 						}];

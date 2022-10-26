@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetRegime;
 import com.esferalia.aon.occam.api.model.InvestAssetType;
 import com.esferalia.aon.occam.api.model.Person;
@@ -21,6 +22,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Titu
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienAltaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienesAltaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DatosTipoBienType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TipoBienInmuebleType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_3_1_bienes_alta_altamodifpeticion_v1_0_1.LROEPF140BienesAltaAltaModifPeticion;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -41,27 +43,41 @@ public class LROE140_3_1 extends LROE140 {
 		BienesAltaType bienes = new BienesAltaType();
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			if(detail.getInvestAsset() != null) {
-				BienAltaType bien = new BienAltaType();
-				bien.setEpigrafe(detail.getInvestAssetData().getActivity().getEpigraph());
-				bien.setReferenciaBien(Integer.toString(detail.getInvestAssetData().getId()));
-				bien.setFechaInicioUtilizacion(AonDateUtils.format(detail.getInvestAssetData().getStartDate(), DATE_FORMAT));
-				bien.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-				bien.setMarcaBienInversionEfectosIVA(SiNoEnum.N);
-				bien.setPorcentajeAfectacion(new BigDecimal(detail.getInvestAssetData().getVatPercent()));
-				bien.setTipoBien(getTipoBien(detail.getInvestAssetData().getType()));
-				bien.setAmortizacionAcumulada31DiciEjercicioAnt("");
-				bien.setMarcaBienInversionEfectosIVA(SiNoEnum.N);
-				bien.setSistemaAmortizacion("");
-				bien.setTitulo(getTitulo(detail.getInvestAssetData().getRegime()));
-				DatosTipoBienType datos = new DatosTipoBienType();
-				bien.setDatosBien(datos);
-				bienes.getBienAlta().add(bien);
+				bienes.getBienAlta().add(buildBien(invoice, detail.getInvestAssetData()));
 			}
 		}
 
 		return bienes;
 	}
 	
+	private BienAltaType buildBien(Invoice invoice, InvestAsset investAsset) {
+		BienAltaType bien = new BienAltaType();
+		bien.setEpigrafe(investAsset.getActivity().getEpigraph());
+		bien.setReferenciaBien(investAsset.getDescription());
+		bien.setFechaInicioUtilizacion(AonDateUtils.format(investAsset.getStartDate(), DATE_FORMAT));
+		bien.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		bien.setMarcaBienInversionEfectosIVA(SiNoEnum.N);
+		bien.setPorcentajeAfectacion(new BigDecimal(investAsset.getVatPercent()));
+		bien.setTipoBien(getTipoBien(investAsset.getType()));
+		bien.setAmortizacionAcumulada31DiciEjercicioAnt("");
+		bien.setMarcaBienInversionEfectosIVA(SiNoEnum.N);
+		bien.setSistemaAmortizacion("");
+		bien.setTitulo(getTitulo(investAsset.getRegime()));
+
+		bien.setDatosBien(buildDatosTipoBien(investAsset));
+		return bien;
+	}
+	
+	private DatosTipoBienType buildDatosTipoBien(InvestAsset investAsset) {
+		DatosTipoBienType datos = new DatosTipoBienType();
+		TipoBienInmuebleType im = new TipoBienInmuebleType();
+
+		return datos;
+	}
+	
+	private void buildInmueble(InvestAsset investAsset) {
+
+	}
 	private TipoBienEnum getTipoBien(InvestAssetType type) {
 		if(InvestAssetType.PREMISES.equals(type))
 			return TipoBienEnum.A;
