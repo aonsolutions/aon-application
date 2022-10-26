@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
+import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
@@ -260,7 +261,14 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistrySegmentDAO.getStream(ctx, filter));
 	}
-
+	
+	
+	@Override
+	public Stream<Segment> getSegmentStream(AONContext ctx, SegmentFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistrySegmentDAO.getSegments(ctx, filter));
+	}
+	
 	@Override
 	public Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter filter) {
 		return 	ctx.getDslContext().transactionResult(

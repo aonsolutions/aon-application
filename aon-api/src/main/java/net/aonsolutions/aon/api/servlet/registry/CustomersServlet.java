@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.SegmentJSON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -33,6 +34,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 	public static final String CUSTOMERS = "/";
 	public static final String CUSTOMER = "/:id";
 	public static final String CUSTOMER_EMAILS = "/:id/emails";
+	public static final String SEGMENTS = "/:domainName/segments";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -58,6 +60,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 				.addRoute(CUSTOMERS, CustomersServlet::getCustomers)
 				.addRoute(CUSTOMER, CustomersServlet::getCustomer)
 				.addRoute(CUSTOMER_EMAILS, CustomersServlet::getCustomerEmails)
+				.addRoute(SEGMENTS, CustomersServlet::getSegments)
 				.apply();
 			
 			response(req, resp, object);
@@ -109,6 +112,13 @@ public class CustomersServlet extends AonApiHttpServlet {
 		return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> customerFilter(api, f), perPage * (page -1), perPage));
 	}
+	
+	private static JSONArray getSegments(AonApiData api) {
+		return SegmentJSON.toJSON( 
+			AON.getSegmentStream(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId())) 
+		);
+	}
+	
 	
 	private static Filter customerFilter(AonApiData api, CustomerProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;

@@ -111,6 +111,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
+import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
@@ -5306,6 +5307,12 @@ public class AON {
 	public static Stream<Segment> getRSegmentStream(Domain domain, User user, Integer registryId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()) ){
 			return getRegistry().getRSegmentStream(ctx, registryId);
+		}
+	}
+	
+	public static Stream<Segment> getSegmentStream(Domain domain, User user, SegmentFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()) ){
+			return getRegistry().getSegmentStream(ctx, filter);
 		}
 	}
 	

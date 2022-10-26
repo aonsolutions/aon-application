@@ -28,6 +28,8 @@ public class RegistrySegmentJSON {
 		return new RegistrySegment()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
+				.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY))
+				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED))
 				.setSegment(SegmentJSON.fromJSON(JsonUtils.getJSONObject(json, "segment")))
 				;
 	}

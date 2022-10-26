@@ -15,7 +15,9 @@ import org.jooq.SelectConditionStep;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySegmentProperties;
+import com.esferalia.aon.occam.api.model.Properties.SegmentProperties;
 import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
@@ -28,7 +30,6 @@ public class RegistrySegmentDAO {
 	
 	private static final RegistrySegmentPropertiesDAO RSEGMENT_PROPERTIES = new RegistrySegmentPropertiesDAO();
 	private static class RegistrySegmentPropertiesDAO implements RegistrySegmentProperties {
-		
 		private Condition[] getConditions(RegistrySegmentFilter filter) {
 			if (filter == null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -41,7 +42,19 @@ public class RegistrySegmentDAO {
 		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<>(RSEGMENT.SEGMENT);}
 	}
 
-
+	private static final SegmentPropertiesDAO SEGMENT_PROPERTIES = new SegmentPropertiesDAO();
+	private static class SegmentPropertiesDAO implements SegmentProperties {
+		private Condition[] getConditions(SegmentFilter filter) {
+			if (filter == null) return new Condition[0];
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SEGMENT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SEGMENT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(SEGMENT.NAME);}
+	}
+	
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, RegistrySegmentFilter filter) {
 		return ctx.getDslContext().select()
@@ -56,6 +69,19 @@ public class RegistrySegmentDAO {
 		return getStream(ctx, filter).findFirst().orElse(null);
 	}
 	
+	
+	public static Stream<Segment> getSegments(AONContext ctx, SegmentFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext().select()
+			.from(SEGMENT)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(SEGMENT.DOMAIN))
+			.where(SEGMENT_PROPERTIES.getConditions(filter))
+			.orderBy(SEGMENT.ID.desc())
+			.fetch()
+			.stream()
+			.map(new SegmentFiller());
+	}
+	
 	public static Stream<RegistrySegment> getStream(AONContext ctx, RegistrySegmentFilter filter) {
 		ctx.checkRead();
 		return select(ctx,filter)
@@ -66,22 +92,40 @@ public class RegistrySegmentDAO {
 	}
 	
 	public static RegistrySegment save(AONContext ctx, RegistrySegment rsegment){
-		return rsegment.getId() == null
-			? insert(ctx, rsegment)
-			: update(ctx, rsegment);
+		ctx.checkWrite();
+		
+		if(rsegment.isRemoved()) {
+			if(rsegment.getId() != null) {
+				delete(ctx, rsegment.getId());
+			}
+			return rsegment;
+		}
+	
+		return rsegment.getId() !=null ?
+			update(ctx, rsegment):
+			insert(ctx, rsegment);
 	}
 	
 	private static RegistrySegment insert(AONContext ctx, RegistrySegment rsegment){
-		Integer id = ctx.getDslContext().insertInto(RSEGMENT)
+		return getStream(ctx, 
+			// --------------------CHECK REPEAT-------------------
+			f-> f.getDomainProperty().eq(rsegment.getDomain().getId())
+			.and(f.getSegmentProperty().eq(rsegment.getSegment().getId()))
+			.and(f.getRegistryProperty().eq(rsegment.getRegistry()))
+		)
+		.findFirst()
+		.orElseGet(() ->{
+			Integer id = ctx.getDslContext().insertInto(RSEGMENT)
 			.set(RSEGMENT.DOMAIN, rsegment.getDomain().getId())
 			.set(RSEGMENT.SEGMENT, rsegment.getSegment().getId())
 			.set(RSEGMENT.REGISTRY, rsegment.getRegistry())
 			.returning(RSEGMENT.ID)
 			.fetchOne()
 			.getValue(RSEGMENT.ID);
-		rsegment.setId(id);
-		ctx.log().debug("INSERT REGISTRY SEGMENT DATA ( registry: {0}) id: {1}", rsegment.getRegistry(), rsegment.getId());
-		return rsegment;
+			rsegment.setId(id);
+			ctx.log().debug("INSERT REGISTRY SEGMENT DATA ( registry: {0}) id: {1}", rsegment.getRegistry(), rsegment.getId());
+			return rsegment;
+		});
 	}
 	
 	private static RegistrySegment update(AONContext ctx, RegistrySegment rsegment){
@@ -122,14 +166,21 @@ public class RegistrySegmentDAO {
 					.setId(r.getValue(RSEGMENT.ID))
 					.setRegistry(r.getValue(RSEGMENT.REGISTRY))
 					.setDomain(DomainFiller.build(r))
-					.setSegment(buildSegment(r))
+					.setSegment(SegmentFiller.build(r))
 					;
 		}
+	}
+	
+	public static class SegmentFiller implements Function<Record, Segment> {
 		
-		private Segment buildSegment(Record r) {
+		public Segment apply(Record r) {
+			return build(r);
+		}
+		
+		public static Segment build(Record r) {
 			return new Segment()
 				.setId(r.getValue(SEGMENT.ID))
-				.setDomain(r.getValue(RSEGMENT.DOMAIN))
+				.setDomain(r.getValue(SEGMENT.DOMAIN))
 				.setName(r.getValue(SEGMENT.NAME))
 			;	
 		}

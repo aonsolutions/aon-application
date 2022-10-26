@@ -25,6 +25,9 @@ public class SegmentJSON {
 	}
 	
 	public static Segment fromJSON(JSONObject json) {
+		if(json.isNull(IJsonNames.DOMAIN)) 
+			return new Segment();
+
 		return new Segment()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))

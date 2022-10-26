@@ -12,6 +12,9 @@ public class RegistrySegment implements Serializable {
 	private Domain domain;
 	private Integer registry;
 	private Segment segment;
+
+	private boolean removed;
+	
 	
 	public Integer getId() {
 		return id;
@@ -39,6 +42,8 @@ public class RegistrySegment implements Serializable {
 	}
 	
 	public Segment getSegment() {
+		if(segment==null)
+			segment = new Segment();
 		return segment;
 	}
 	
@@ -46,4 +51,14 @@ public class RegistrySegment implements Serializable {
 		this.segment = segment;
 		return this;
 	}
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public RegistrySegment setRemoved(boolean removed) {
+		this.removed = removed;
+		return this;
+	}
+	
 }
