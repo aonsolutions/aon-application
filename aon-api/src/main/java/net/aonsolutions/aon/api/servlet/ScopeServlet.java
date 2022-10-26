@@ -6,107 +6,106 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.json.ScopeJSON;
 
-import net.aonsolutions.aon.api.error.AonApiError;
-import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "AonApiScopeServlet", urlPatterns = {"/ms/api/scope/*"})
+@WebServlet(name = "AonApiScopeServlet", urlPatterns = {"/ms/api/scopes/*"})
 public class ScopeServlet extends AonApiHttpServlet {
 		
 	private static final Logger LOGGER  = Logger.getLogger(ScopeServlet.class.getName());
 	
+	public static final String SCOPES = "/";
+	public static final String SCOPE = "/:id";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API SCOPE SERVLET - GET METHOD");
-		try {
-			AonApiData api = initialize(req);
-		
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getScopes(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-		
-			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API SCOPE SERVLET - POST METHOD");
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				//response(req, resp, getResponseObject());
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-			
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		get(req, resp);
+	}
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		put(req, resp);
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API SCOPE SERVLET - DELETE METHOD");
+		delete(req, resp);
+	}
+	
+	private void get(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				//response(req, resp, getResponseObject());
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
 			
+			Object object = new AonRouting(api)
+				.addRoute(SCOPES, ScopeServlet::getScopes)
+//				.addRoute(SCOPE, ScopeServlet::getScope)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 	
-	private JSONArray getScopes(AonApiData api) {
-		JSONArray array = new JSONArray();
+	private void put(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+//				.addRoute(SCOPES, ScopeServlet::saveScope)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private void delete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+//				.addRoute(SCOPE, ScopeServlet::deleteSupplier)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	private static JSONArray getScopes(AonApiData api) {
 		if(!api.getDomain().isParent() && api.getDomain().isEnableHeredity()) {
 			if(api.getUser().getDomain().equals(api.getDomain().getId())) {
-				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), 
-						f -> f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
-					.forEach(s -> array.put(scopeToJSON(s)));
+				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), 
+						f -> f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId()))));
 			} else {
+				JSONArray array = new JSONArray();
 				AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
-					.forEach(s -> array.put(scopeToJSON(s)));
+					.forEach(s -> array.put(ScopeJSON.toJSON(s)));
 				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getParentId()))
-					.forEach(s -> array.put(scopeToJSON(s)));
+					.forEach(s -> array.put(ScopeJSON.toJSON(s)));
+				return array;
 			}
 		} else {
 			if(api.getUser().getDomain().equals(api.getDomain().getId())) {
-				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
-				.forEach(s -> array.put(scopeToJSON(s)));
+				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			} else {
-				AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
-					.forEach(s -> array.put(scopeToJSON(s)));
+				return ScopeJSON.toJSON(AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			}
 		}
-		return array;	
 	}
-	
-	public static JSONObject scopeToJSON(Scope scope){	
-		return new JSONObject()
-			.put("id",scope.getId())
-			.put("domain", scope.getDomain())
-			.put("name", scope.getDescription());
-	}
-
 }
