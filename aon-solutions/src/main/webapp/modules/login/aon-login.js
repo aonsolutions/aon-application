@@ -55,59 +55,23 @@ export class AonLogin extends AonElement {
       div2.style.boxShadow = '0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f';
     }
     div.appendChild(div2);
-
-    let divLanguage = this.createElement(TAG.DIV);
-    divLanguage.id = 'aonLoginLanguageDiv';
-    divLanguage.style.display = 'flex';
-    divLanguage.style.justifyContent = 'right';
-    divLanguage.style.marginBottom = '5px';
-    div2.appendChild(divLanguage);
-
-    let spanLanguage = this.createElement(TAG.SPAN);
-    spanLanguage.style.color = 'lightgray';
-    spanLanguage.innerHTML = this.getLanguageText();
-    spanLanguage.addEventListener(EVENT.MOUSEOVER, () => {
-      const top  = spanLanguage.getBoundingClientRect().top;
-      const left = spanLanguage.getBoundingClientRect().left;
-      let d = this.getElement('aonHeaderDialogHelpOption');
-      if(!d) {
-        d = new AonDialogMenu();
-        d.id = 'aonHeaderDialogHelpOption';
-        this.appendChild(d);
-      }  
-      d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
-
-      let options = [{
-        name: MSG.SPANISH,
-        image: '../assets/img/aonIconCastellano.png',
-        fn: () => LS.setLanguage(Language.SPANISH)
-      }, {
-        name: MSG.ENGLISH,
-        image: '../assets/img/aonIconEnglish.png',
-        fn: () => LS.setLanguage(Language.ENGLISH)
-      }, {
-        name: MSG.DEUTSCH,
-        image: '../assets/img/aonIconDeutsch.png',
-        fn: () => LS.setLanguage(Language.DEUTSCH)
-      }, {
-        name: MSG.BASQUE,
-        image: '../assets/img/aonIconEuskera.png',
-        fn: () => LS.setLanguage(Language.BASQUE)
-      }, {
-        name: MSG.CATALAN,
-        image: '../assets/img/aonIconCatala.png',
-        fn: () => LS.setLanguage(Language.CATALAN)
-      }, {
-        name: MSG.GALICIAN,
-        image: '../assets/img/aonIconGalego.png',
-        fn: () => LS.setLanguage(Language.GALICIAN)
-      } ];
-
-      d.setMenuOptions(options, top, left);
-			d.open();
-    });
-    divLanguage.appendChild(spanLanguage);
     
+    if(!this.isMobile()) {
+      let divLanguage = this.createElement(TAG.DIV);
+      divLanguage.id = 'aonLoginLanguageDiv';
+      divLanguage.style.display = 'flex';
+      divLanguage.style.justifyContent = 'right';
+      divLanguage.style.marginBottom = '5px';
+      div2.appendChild(divLanguage);
+
+      let spanLanguage = this.createElement(TAG.SPAN);
+      spanLanguage.id = 'aonLoginLanguageSpan';
+      spanLanguage.style.color = 'lightgray';
+      spanLanguage.innerHTML = this.getLanguageText();
+      spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
+      divLanguage.appendChild(spanLanguage);
+    }
+
     let divLogo = this.createElement(TAG.DIV);
     divLogo.id = 'aonLoginLogoDiv';
     div2.appendChild(divLogo);
@@ -152,7 +116,6 @@ export class AonLogin extends AonElement {
     divButtons.style.rowGap = '10px';
     divContent.appendChild(divButtons);
 
-
     let signIn = new AonButton();
     signIn.id = 'aonLoginSignin';
     signIn.style.width = '100%';
@@ -163,7 +126,7 @@ export class AonLogin extends AonElement {
     let magicLinkButton = new AonButton();
     magicLinkButton.id = 'aonLoginMagicLink';
     magicLinkButton.style.width = '100%';
-    magicLinkButton.setIcon(MATERIAL_ICONS.AUTO_FIX_NORMAL);
+    magicLinkButton.setIcon(MATERIAL_ICONS.AUTO_FIX_HIGH);
     magicLinkButton.setTitle(MSG.SIGN_IN_WITHOUT_PASSWORD);
     magicLinkButton.setDisabled(true);
     magicLinkButton.setColor("#12ccd1");
@@ -194,7 +157,7 @@ export class AonLogin extends AonElement {
     divInfo.innerHTML = `
       <span>
         <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
-          aon Solutions
+          aonSolutions
         </a> ${MSG.REGISTERED_TRADEMARK_AON}
       </span>
       <div id="aonManifest"></div>`;
@@ -228,6 +191,49 @@ export class AonLogin extends AonElement {
     });
   }
   
+
+  languageDialog() {
+    let spanLanguage = this.getElement('aonLoginLanguageSpan');
+    const top  = spanLanguage.getBoundingClientRect().top;
+    const left = spanLanguage.getBoundingClientRect().left;
+    let d = this.getElement('aonHeaderDialogHelpOption');
+    if(!d) {
+      d = new AonDialogMenu();
+      d.id = 'aonHeaderDialogHelpOption';
+      this.appendChild(d);
+    }  
+    d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
+
+    let options = [{
+      name: MSG.SPANISH,
+      image: '../assets/img/aonIconCastellano.png',
+      fn: () => LS.setLanguage(Language.SPANISH)
+    }, {
+      name: MSG.ENGLISH,
+      image: '../assets/img/aonIconEnglish.png',
+      fn: () => LS.setLanguage(Language.ENGLISH)
+    }, {
+      name: MSG.DEUTSCH,
+      image: '../assets/img/aonIconDeutsch.png',
+      fn: () => LS.setLanguage(Language.DEUTSCH)
+    }, {
+      name: MSG.BASQUE,
+      image: '../assets/img/aonIconEuskera.png',
+      fn: () => LS.setLanguage(Language.BASQUE)
+    }, {
+      name: MSG.CATALAN,
+      image: '../assets/img/aonIconCatala.png',
+      fn: () => LS.setLanguage(Language.CATALAN)
+    }, {
+      name: MSG.GALICIAN,
+      image: '../assets/img/aonIconGalego.png',
+      fn: () => LS.setLanguage(Language.GALICIAN)
+    } ];
+
+    d.setMenuOptions(options, top, left);
+    d.open();
+  }
+
   getLanguageText() {
       if(LS.getLanguage() && Language.BASQUE === LS.getLanguage()){
         return MSG.BASQUE;
@@ -365,7 +371,7 @@ export class AonLogin extends AonElement {
         dialog.open()
       });
     }
-    username.focus();
+    if(!this.isMobile()) username.focus();
   }
 
   buildAppLogo(){

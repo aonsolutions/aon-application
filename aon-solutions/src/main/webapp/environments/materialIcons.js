@@ -47,7 +47,7 @@ export const ASSIGNMENT_RETURN = 'assignment_return';
 export const ASSIGNMENT_RETURNED = 'assignment_returned';
 export const ASSIGNMENT_TURNED_IN = 'assignment_turned_in';
 export const ATTACH_FILE = 'attach_file';
-export const AUTO_FIX_HIGHT = 'auto_fix_hight';
+export const AUTO_FIX_HIGH = 'auto_fix_high';
 export const AUTO_FIX_NORMAL = 'auto_fix_normal';
 export const AUTORENEW = 'autorenew';
 
@@ -156,6 +156,7 @@ export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 
 export const LOCAL_MALL = 'local_mall';
 export const LOGIN = 'login';
+export const LOGOUT = 'logout';
 export const LINK = 'link';
 export const LABEL = 'label';
 
