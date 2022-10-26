@@ -1048,9 +1048,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- EmployeeIrpf
 
 	@Override
-	public void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
+	public void getEmployeeIrpf(String currentDomainName, String ssNumber, String document, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeIrpf(currentDomainName, ssNumber, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
+		employeesServiceAsync.getEmployeeIrpf(currentDomainName, ssNumber, document, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
 	}
 
 	@Override

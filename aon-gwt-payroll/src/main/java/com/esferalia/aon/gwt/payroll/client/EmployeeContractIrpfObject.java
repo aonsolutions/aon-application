@@ -36,7 +36,7 @@ public class EmployeeContractIrpfObject {
 	// ----------------------------------------------- DataBase.Methods
 	
 	public void getEmployeeIrpf(Date date, Consumer<List<EmployeeIrpf>> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIrpf(ssNumber, date, new AsyncCallback<List<EmployeeIrpf>>() {
+		employeesService.getEmployeeIrpf(ssNumber, document, date, new AsyncCallback<List<EmployeeIrpf>>() {
 			
 			@Override
 			public void onSuccess(List<EmployeeIrpf> employeeIrpfListDB) {
