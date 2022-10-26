@@ -19,6 +19,7 @@ import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
 import { getNextUser, getPreviousUser, getUsers, updateUser } from './UserCache.js';
 import { AonSwitch } from '../../components/aon-switch.js';
+import { AonInput } from '../../components/aon-input.js';
 
 export class AonUser extends AonElement {
 
@@ -361,17 +362,32 @@ export class AonUser extends AonElement {
 		let application = document.querySelector('aon-application');
 		let d = document.getElementById(application.DIALOG);
 		d.clear();
-		if(!this.isMobile()) d.width = '400px';
+		if(this.isMobile()) {
+            d.type = "fullscreen";
+        } else {
+            d.width = '400px';
+        }
 		d.setTitle("Cambiar Contraseña");
-		d.setContentHTML(`
-			<aon-input  id="aonConfigurationUserCardOldPassword" type="password" description="Contraseña Actual" value=""></aon-input>
-			<aon-input  id="aonConfigurationUserCardNewPassword" type="password" description="Nueva Contraseña" value=""></aon-input>
-		`);
+
+		let div = document.createElement("div");
+
+        let oldPassword = new AonInput();
+        oldPassword.id = "aonConfigurationUserCardOldPassword";
+        oldPassword.type = "password";
+        oldPassword.description = "Contraseña";
+        div.appendChild(oldPassword);
+
+        let newPassword = new AonInput();
+        newPassword.id = "aonConfigurationUserCardNewPassword";
+        newPassword.type = "password";
+        newPassword.description = "Repetir Contraseña";
+        div.appendChild(newPassword);
+
+		d.setContent(div);
+
 		d.addAcceptAction(() => {
-			let oldPassword = this.getElement('aonConfigurationUserCardOldPassword').value;
-			let newPassword = this.getElement('aonConfigurationUserCardNewPassword').value;
 			// if(newPassword && newPassword.length>5){
-				changePassword({oldPassword, newPassword}).then(()=>{
+				changePassword({oldPassword:oldPassword.value, newPassword:newPassword.value}).then(()=>{
 					this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
 				}).catch(e=>this.showError(e))
 			// } else {
