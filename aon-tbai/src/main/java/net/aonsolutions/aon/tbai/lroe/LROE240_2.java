@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,6 +54,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.F
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_altamodifpeticion_v1_0_1.LROEPJ240FacturasRecibidasAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_anulacionpeticion_v1_0_0.LROEPJ240FacturasRecibidasAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultapeticion_v1_0_0.LROEPJ240FacturasRecibidasConsultaPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultarespuesta_v1_0_0.LROEPJ240FacturasRecibidasConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -313,17 +315,13 @@ public class LROE240_2 extends LROE240 {
 		CabeceraFacturaConsultaType cabecera = new CabeceraFacturaConsultaType();
 		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
 		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
-
-		if(!AonStringUtils.isBlank(invoice.getSeries()))
-			cabecera.setSerieFactura(invoice.getSeries());
-		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
+		cabecera.setNumFactura(invoice.getReferenceCode());
 		return cabecera;
 	}
 	
-	
-	public void consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+	public boolean consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.C_00);
 			LROEPJ240FacturasRecibidasConsultaPeticion lroe = buildConsulta(company, invoice, info);
@@ -336,9 +334,21 @@ public class LROE240_2 extends LROE240 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
+
+			LROEPJ240FacturasRecibidasConsultaRespuesta resp = (LROEPJ240FacturasRecibidasConsultaRespuesta) 
+                    unmarshall(LROEPJ240FacturasRecibidasConsultaRespuesta.class, response.getResponseDataStr());
+            
+            if(SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros())) {
+                DataRequest request = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, data);
+                response.setDataRequest(request);
+                LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, response, info);
+            }
+            
+            return SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros());
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 }
