@@ -12,6 +12,8 @@ export const getCustomer = (data) => post(`${CUSTOMERS}/${data.id}`, data);
 export const getCustomerEmails = (data) => post(`${CUSTOMERS}/${data.id}/${EMAILS}`, data);
 export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
 
+export const getSegments = (data) => get(`${CUSTOMERS}/${data.domainName}/segments`, data);
+
 export const getCreditor = (data) => post(`${API_URL}/creditor`, data);
 export const saveCreditor = (data) => put(`${API_URL}/creditor`, data);
 

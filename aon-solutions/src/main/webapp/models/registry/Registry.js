@@ -252,18 +252,18 @@ export class Registry {
         return this;
     }
 
-    getRegistrySegment() {
+    getRegistrySegments() {
         return this.rsegment;
     }
 
-    setRegistrySegment(rsegments) {
+    setRegistrySegments(rsegments) {
         this.rsegment = rsegments;
         return this;
     }
 
     addRegistrySegment(rsegment) {
-        this.getRegistrySegment().push(rsegment)
-        return this.getRegistrySegment();
+        this.getRegistrySegments().push(rsegment)
+        return this.getRegistrySegments();
     } 
 
 } 

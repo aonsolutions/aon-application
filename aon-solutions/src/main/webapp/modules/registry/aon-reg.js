@@ -9,7 +9,7 @@ import { AonAddress } from '../../components/aon-address.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { Media } from '../../models/registry/Media.js';
-import { saveRegistry } from '../../services/registryService.js';
+import { getSegments, saveRegistry } from '../../services/registryService.js';
 import { Registry } from '../../models/registry/Registry.js';
 import { RegistrySegment } from '../../models/registry/RegistrySegment.js';
 import { Address } from '../../models/registry/Address.js';
@@ -36,6 +36,7 @@ export class AonReg extends AonElement {
 	logo;
 	options;
 
+	segments;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -120,6 +121,7 @@ export class AonReg extends AonElement {
 		this.webs = [];
 		this.phones = [];
 		this.oneAddress = this.oneAddress || true;
+		this.segments = [];
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -899,9 +901,11 @@ export class AonReg extends AonElement {
 
 	//SEGMENTATIONS
 	buildSegments(parent) {
-		let registrySegment = this.registry.getRegistrySegment();
+		let registrySegment = this.registry.getRegistrySegments()
+		.map(s =>  new RegistrySegment(s))
+		.filter(s => !s.isRemoved());
 
-		let table =  new AonBasicTable();
+		const table =  new AonBasicTable();
 		table.id =  "segmentTable";
 		parent.appendChild(table);
 
@@ -909,62 +913,103 @@ export class AonReg extends AonElement {
 			let registrySegment = new RegistrySegment();
 			registrySegment.setRegistry(this.registry.getId());
 			registrySegment.setDomain(this.registry.getDomain());
-			this.buildSegment(table, registrySegment);
+			this.registry.addRegistrySegment(registrySegment);
+			this.buildSegment(table, registrySegment, 0);
 		} else {
-			registrySegment.forEach( (rsegment) =>
-				this.buildSegment(table, new RegistrySegment(rsegment)));
+			this.registry.setRegistrySegments([]);
+			registrySegment.forEach( (rsegment, i) =>{
+				this.registry.addRegistrySegment(rsegment);
+				this.buildSegment(table, rsegment, i)
+			});
 		}
 	}
 
-	buildSegment(table, registrySegment) {
-		// this.registry.addRegistrySegment(registrySegment);
+	buildSegment(table, registrySegment, i) {
+		const rowNum = table.addRow();
 
-		let idRandom =  Math.floor(Math.random() * 10000000) + 1;
+		const rowCount = table.getRowsCount();
 		
-		table.addRow();
-
 		let segment = new AonSelect();
-		segment.id = "selectSegment" + idRandom;
+		segment.id = "selectSegment" + rowNum;
 		segment.title = "Segmento";
-		segment.addEventListener(EVENT.CHANGE, () => registrySegment.setSegment(segment.getDetail()));
-		let td = table.addCell(segment);
-		td.style.width = '100%';
+		segment.addEventListener(EVENT.CHANGE, () => {
+			if(segment.value){
+				registrySegment.setSegment(segment.getDetail())
+			}
+		});
+		
+		table.addCell(segment).style.width = '100%';
+	
+		this.getSegments()
+		.then(options=>{
+			segment.setOptions(options);
+			if(registrySegment.getSegment()){
+				segment.value = registrySegment.getSegment().id;
+			}
+		})
 
-		if(registrySegment.getSegment()){
-			segment.value = registrySegment.getSegment().id;
-		}
+		let removeIcon = new AonIconButton();
+		removeIcon.id = "segmentRemove" +rowNum;
+		removeIcon.title = MSG.DELETE;
+		removeIcon.icon = MATERIAL_ICONS.CLOSE;
+		removeIcon.addEventListener(EVENT.CLICK, () => {
+			const count = table.getRowsCount();
+			let childVisible = 1;
+			
+			registrySegment.remove(); //REMOVE
+
+			if(count === 1){
+				segment.clear();
+			} else {
+				table.removeRow(rowNum);
+				childVisible = count-1;
+			}
+
+			let cell = table.getCell(childVisible, 2);
+			if(cell && cell.firstChild){
+				cell.firstChild.visible = true;
+			}
+		});
+		
+		table.addCell(removeIcon);
+
+		this.querySelectorAll(`[id*='segmentAdd']`).forEach(el=>{
+			el.visible = false;
+		});
 
 		let addSegment = new AonIconButton();
-		addSegment.id = "segmentAdd" +idRandom;
-		addSegment.title = MSG.ADD;
+		addSegment.id = "segmentAdd"+rowNum;
+		addSegment.title = MSG.ADD+" Segmento";
 		addSegment.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addSegment.visible = rowCount === i+1
 		addSegment.addEventListener(EVENT.CLICK, () => {
 			addSegment.visible = false;
 			let registrySegment = new RegistrySegment();
 			registrySegment.setRegistry(this.registry.getId());
 			registrySegment.setDomain(this.registry.getDomain());
-			this.buildSegment(table, registrySegment);
+			this.registry.addRegistrySegment(registrySegment);
+			this.buildSegment(table, registrySegment, table.getRowsCount());
 		});
-		table.addCell(addSegment);
 
-		// aonInput.addIconWithRemove(MATERIAL_ICONS.MAIL, undefined, () => {
-		// 	if(table.getRowsCount() === 1) {
-		// 		aonInput.value = '';
-		// 		this.emails[i].setValue('');
-		// 	} else {
-		// 		let last = this.getElement(this.EMAIL_ADD + i).isVisible();
-		// 		this.emails[i].remove();
-		// 		table.removeRow(rowNum);
-		// 		if(last) {
-		// 			let j = 0;
-		// 			this.emails.forEach((item, h) => {
-		// 				if(!item.isRemoved())
-		// 					j = h;
-		// 			});
-		// 			this.getElement(this.EMAIL_ADD + j).visible = true;
-		// 		}
-		// 	}
-		// });
+		table.addCell(addSegment);
+	}
+
+
+	async getSegments(){
+		if(!this.segments.length){
+			try {
+				const resp = await getSegments({domainName:this.registry.getDomain().getName()});
+				this.segments = resp.map(s => ({...s, value:s.id}));
+			} catch (error) {
+				this.showError(error);
+			}
+		}
+		
+		return this.segments;
+		// return this.segments
+		// .filter((value) => 
+		// 	!( this.registry.getRegistrySegments().some(r => r.segment && r.segment.id == value.id) ) 
+		// );
 	}
 
 	//EXPEDIENTE

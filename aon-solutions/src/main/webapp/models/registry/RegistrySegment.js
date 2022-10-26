@@ -5,15 +5,17 @@ export class RegistrySegment {
     domain;
     segment;
     registry;
-
+    removed;
     constructor(rsegment) {
         if(rsegment) {
             this.id = rsegment.id;
             this.domain = new Domain(rsegment.domain);
             this.segment = rsegment.segment;
             this.registry = rsegment.registry;
+            this.removed = rsegment.removed || false;
         }else {
             this.domain = new Domain();
+            this.removed = false;
         }
     }
 
@@ -53,5 +55,17 @@ export class RegistrySegment {
         return this;
     }
 
+    isRemoved(){
+        return this.removed;
+    }
+    
+    setRemoved(remove){ 
+        this.removed = remove;
+        return this;
+    }
+
+    remove() {
+        this.setRemoved(true);
+    }
 
 }

@@ -233,6 +233,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 			.stream()
 			.filter(s-> !s.getSegment().isEmpty())
 			.forEach(rsegment -> {
+				if(rsegment.getRegistry() == null) rsegment.setRegistry(registryId);
 				AON.saveRegistrySegment(rsegment.getDomain(), api.getUser(), rsegment);
 			});
 		}
