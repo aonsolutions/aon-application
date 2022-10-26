@@ -81,6 +81,8 @@ export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
+export const CONTRACT_PAYROLL = 'Contrato';
+export const CONTRACTS = 'Contratos';
 export const COUNTRY = 'País';
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acreedor';
@@ -212,6 +214,7 @@ export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
 export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
+export const MY_MANAGER = 'Mi Gestor';
 export const MY_USER = 'Mi Usuario';
 
 // ----- N
@@ -242,6 +245,7 @@ export const OTHER_SERVICES = 'Otros Servicios';
 // ----- P
 
 export const PAUSE = 'Pausa';
+export const PASSWORD = 'Contraseña';
 export const PAYMETHOD = 'Forma de Pago';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nómina';
@@ -280,6 +284,8 @@ export const RECTIFIED = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE =  'Rectificar Factura';
 export const REFERENCE = 'Referencia';
+export const REGISTERED_TRADEMARK = 'Marca Registrada';
+export const REGISTERED_TRADEMARK_AON = 'es una marca registrada de AON SOLUTIONS, S.L.';
 export const REJECT = 'Rechazar';
 export const REJECT_INVOICE = 'Rechazar Factura';
 export const REJECT_INVOICES = 'Rechazar Facturas';
@@ -316,6 +322,9 @@ export const SERVICES = 'Servicios';
 export const SETTING =  'Configuración';
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Mostrar Fichero';
+export const SIGN_IN = 'Iniciar Sesión';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sesión sin Contraseña';
+export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Tamaño';
@@ -368,6 +377,7 @@ export const USERS = 'Usuarios';
 // ----- V
 
 export const VAT = 'IVA';
+export const VERSION = 'Versión';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

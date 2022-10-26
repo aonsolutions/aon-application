@@ -1,11 +1,18 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.StringWriter;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -13,11 +20,13 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "MagicLinkServlet", urlPatterns = {"/ms/api/magicLink/*"})
 public class MagicLinkServlet extends AonApiHttpServlet {
 
@@ -50,26 +59,40 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 		String email = JsonUtils.getString(json, IJsonNames.EMAIL);
 		if(Utils.isEmail(email)) {
 			Auth auth = AON_SOLUTIONS.getAuth(email);
-			String token = AonToken.build(auth, null);
+			if(auth.isEmpty()) {
+	             throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage());
+			}
+			Date expireDate = AonDateUtils.addDays(new Date(), 1);
+			String token = AonToken.build(auth, expireDate);
 			String magicLink = "https://" + url + "?token=" + token; 
-			sendGmail(email, magicLink);
-		}	
+			sendGmail(auth, magicLink, expireDate);
+		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage());
 	}
 	
-	public void sendGmail(String to, String magicLink) {
+	public void sendGmail(Auth auth, String magicLink, Date expireDate) {
 		SESMessage msg = new SESMessage()
-			.setTo(to)
+			.setTo(auth.getEmail())
 			.setSubject("MAGIC LINK - AON SOLUTIONS")
-			.setBody(getContent(magicLink));
+			.setBody(getContent(auth, magicLink, expireDate));
 		SES.sendEmail(msg);
 	}
 	
-	private String getContent(String magicLink) {
-		String msg = "<div style='margin-left: -30px;'>"
-				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>";
-		msg = msg + "<a href='"+ magicLink +"'> MAGIC LINK</a>";
+	private String getContent(Auth auth, String magicLink, Date expireDate) {
+        VelocityEngine engine = new VelocityEngine();
+        engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+        engine.init();
+        
+        VelocityContext context = new VelocityContext();
+        context.put("name", auth.getName());
+        context.put("expireDate", AonDateUtils.format(expireDate, "dd/MM/yyyy HH:mm"));
+        context.put("magicLink", magicLink);
+        
+        Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/magic_link.vm");
+        
+        StringWriter writer = new StringWriter();
+        template.merge(context, writer);
 
-		msg = msg + "</div> </div>";
-		return msg;
-	}
+        return writer.toString();
+    }
 }

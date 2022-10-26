@@ -290,6 +290,10 @@ class SistemaREDI {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException {
+		
+		Date today = new Date(); 
+		Date date = fecha.after(today) ? today : fecha;
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
@@ -319,7 +323,7 @@ class SistemaREDI {
 			jacadaform.getInputByName("txt_SDFCUENTA")
 					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
-			calendar.setTime(fecha);
+			calendar.setTime(date);
 			try {
 				jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
 			} catch (ElementNotFoundException enfe) {
