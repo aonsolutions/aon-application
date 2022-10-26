@@ -497,6 +497,11 @@ public interface Properties {
 		Property<Integer> getSegmentProperty();
 	}
 	
+	public interface SegmentProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+	}
 	
 	public interface RegistrySellerProperties{
 		Property<Integer> getIdProperty();

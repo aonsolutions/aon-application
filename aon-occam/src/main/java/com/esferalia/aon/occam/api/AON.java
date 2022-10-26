@@ -111,6 +111,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
+import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
@@ -229,6 +230,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -5287,7 +5289,33 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	//-------------------SEGMENT--------------------
 
+	public static RegistrySegment saveRegistrySegment(Domain domain, User user, RegistrySegment rsegment){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()) ){
+			return getRegistry().saveRegistrySegment(ctx, rsegment);
+		}
+	}
+
+	public static Stream<RegistrySegment> getRegistrySegmentStream(Domain domain, User user, RegistrySegmentFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()) ){
+			return getRegistry().getRegistrySegmentStream(ctx, filter);
+		}
+	}
+
+	public static Stream<Segment> getRSegmentStream(Domain domain, User user, Integer registryId){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()) ){
+			return getRegistry().getRSegmentStream(ctx, registryId);
+		}
+	}
+	
+	public static Stream<Segment> getSegmentStream(Domain domain, User user, SegmentFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()) ){
+			return getRegistry().getSegmentStream(ctx, filter);
+		}
+	}
+	
 	public static Stream<Segment> getRSegmentStream(String domainName, Integer domainId, String login,
 			Integer registryId){
 		CloseableAONContext ctx = null;
@@ -5311,6 +5339,19 @@ public class AON {
 		}		
 	}
 	
+
+//
+//	public static Integer[] getRSegmentStream(String domainName, Integer domainId, String login, RegistrySegmentFilter filter){
+//		CloseableAONContext ctx = null;
+//		try {
+//			ctx = AONContext.getAONContext(domainName, domainId, login);
+//			return getRegistry().getRSegmentStream(ctx, filter);
+//		} finally {
+//			if (ctx != null)
+//				ctx.close();
+//		}		
+//	}
+		
 	
 	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login, Integer registryId){
 		return getRSellerStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registryId)));
