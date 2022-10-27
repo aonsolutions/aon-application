@@ -2,25 +2,28 @@ package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+
 public class NordigenBankAccount implements Serializable {
 
 	private static final long serialVersionUID = 1175684863512830855L;
 
-	private Integer rbankId;
+	private RegistryBank rbank;
 	private NordigenAccountMetadata metadata;
 	private NordigenAccountDetails details;
 	private NordigenAccountBalance balance;
 	private NordigenRequisition requisition;
+	private NordigenInstitution institution;
 	
 	private boolean isLinked;
 	private String iban;
 	private String bankAlias;
 	
-	public Integer getRbankId() {
-		return rbankId;
+	public RegistryBank getRbank() {
+		return rbank;
 	}
-	public NordigenBankAccount setRbankId(Integer rbankId) {
-		this.rbankId = rbankId;
+	public NordigenBankAccount setRbank(RegistryBank rbank) {
+		this.rbank = rbank;
 		return this;
 	}
 	public NordigenAccountMetadata getMetadata() {
@@ -49,6 +52,13 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setRequisition(NordigenRequisition requisition) {
 		this.requisition = requisition;
+		return this;
+	}
+	public NordigenInstitution getInstitution() {
+		return institution;
+	}
+	public NordigenBankAccount setInstitution(NordigenInstitution institution) {
+		this.institution = institution;
 		return this;
 	}
 	public boolean isLinked() {

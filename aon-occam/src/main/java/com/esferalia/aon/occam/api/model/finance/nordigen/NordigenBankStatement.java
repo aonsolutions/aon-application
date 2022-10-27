@@ -7,6 +7,7 @@ public class NordigenBankStatement extends BankStatement {
 		
 		private Integer nordigenMovementId;
 		private Double currentBalance;
+		private boolean isPending;
 		
 		public Double getCurrentBalance() {
 			return this.currentBalance;
@@ -21,6 +22,14 @@ public class NordigenBankStatement extends BankStatement {
 		}
 		public NordigenBankStatement setNordigenMovementId(Integer nordigenMovementId) {
 			this.nordigenMovementId = nordigenMovementId;
+			return this;
+		}
+		
+		public boolean isPending() {
+			return isPending;
+		}
+		public NordigenBankStatement setPending(boolean isPending) {
+			this.isPending = isPending;
 			return this;
 		}
 }

@@ -1,11 +1,17 @@
 package com.esferalia.aon.gwt.finance.server;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -15,22 +21,31 @@ import org.json.JSONObject;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenService;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
-import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountTransaction;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAgreement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.bank.checkit.CheckItAPI;
 import net.aonsolutions.aon.bank.checkit.CheckItException;
 import net.aonsolutions.aon.bank.checkit.IParamNames;
+import nordigen.AonNordigen;
 
 @WebServlet(name = "Nordigen Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/nordigen" })
 public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implements NordigenService {
@@ -38,53 +53,15 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	private static final long serialVersionUID = 1249978088517559976L;
 
 	@Override
-	public CheckItConfiguration getConfiguration(String domainName, int domain, String user) throws AonCoreException {
-		List<CheckItBank> bankIds = new LinkedList<>();
-		ApplicationParameter appParam = AON.getApplicationParameter(domainName, domain, user, AppParam.CHECK_IT_ENTERPRISE_ID);
-		Integer enterpriseId = null;
-		if (appParam != null) {
-			String value = appParam.getValue();
-			try {
-				enterpriseId = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				enterpriseId = null;
-			}
-		}
-		LinkedList<CheckItBankAccount> checkitAccounts = null;
-		List<CheckitUnlinkedBankAccount> checkitUnlinkedAccounts = null;
-		try {
-			checkitAccounts =  CheckItAPI.getLinkedAccountsToDisplay(domainName, domain, user, enterpriseId);
-		} catch (CheckItException e) {
-			if (AonStringUtils.equalsIgnoreCase(e.getMessage(), CheckItException.NO_CONNECTION_MSG)) {
-				throw new AonCoreException(e.getMessage());
-			}
-		}
-		try {
-			checkitUnlinkedAccounts = CheckItAPI.getUnlinkedActive(domainName, domain, user, enterpriseId);
-		} catch (CheckItException e) {
-		}
-
-		CheckItAPI.getBanksMap().forEach((k, v) -> bankIds.add(new CheckItBank(v, k)));
-	
-		Integer empresaId = enterpriseId;
-		if (checkitAccounts != null) {
-			checkitAccounts.forEach(acc -> {
-				try {
-					List<CheckItBankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
-					acc.setPending(movs);
-				} catch (CheckItException e) {
-					throw new AonCoreException(e.getMessage());
-				}
-				
-			});
-		}
-		
-		return new CheckItConfiguration()
-			.setConfiguration( AON.getConfiguration(domainName, domain,user) )
-			.setEnterpriseId( enterpriseId )
-			.setCheItBanks(checkitAccounts)
-			.setCheckItUnlinkedBanks(checkitUnlinkedAccounts)
-			.setBankIds(bankIds)
+	public NordigenConfiguration getConfiguration(String domainName, int domain, String user) throws Exception {
+		NordigenAccessToken token = AonNordigen.getNewAccessToken();
+		Domain dmn = new Domain().setId(domain).setName(domainName);
+//		clearIncompleteRequisitions(token, domainName, domain, user);
+		List<NordigenBankAccount> accounts = AonNordigen.getAllAccounts(token, dmn, user);
+		return new NordigenConfiguration()
+			.setConfiguration(AON.getConfiguration(domainName, domain,user))
+			.setToken(token)
+			.setAccounts(accounts)
 		;
 		
 	}
@@ -191,64 +168,32 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
-	public String addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount,
-			String userID, String userPassword, String userPIN) {
-		if (checkitUnlinkedBankAccount != null) {
-			String error = null;
-			
-			boolean credentials = checkitUnlinkedBankAccount.isCredentials();
-			CheckItLoginFields login = checkitUnlinkedBankAccount.getLogin();
-			Integer bankId = checkitUnlinkedBankAccount.getBankId();
-			String iban = checkitUnlinkedBankAccount.getIban();
-			
-			if (enterpriseId == null) {
-				error = "No hay ninguna empresa seleccionada";
-			} else if (credentials && (login == null || login.isEmpty())) {
-				error = "No hay ningún tipo de login seleccionado";				
-			} else if (bankId == null) {
-				error = "No hay ningún banco seleccionado";
-			} else if (iban == null || iban.isEmpty()) {
-				error = "No hay ningún IBAN";
-			} else if (credentials){
-				if (login.getUserID() != null && !login.getUserID().isEmpty() && (userID == null || userID.isEmpty())) {
-					error = "Debe rellenar el campo '" + login.getUserID() + "'";
-				} else if (login.getUserPassword() != null && !login.getUserPassword().isEmpty() && (userPassword == null || userPassword.isEmpty())) {
-					error = "Debe rellenar el campo '" + login.getUserPassword() + "'";
-				} else if (login.getUserPIN() != null && !login.getUserPIN().isEmpty() && (userPIN == null || userPIN.isEmpty())) {
-					error = "Debe rellenar el campo '" + login.getUserPIN() + "'";					
-				}
-			}
-			
-			if (error != null) {
-				throw new IllegalArgumentException(error);
-			} else {	
-				try {
-					if (credentials)
-						CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
-					JSONObject johnson = CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
-					
-					String msg = johnson.optString("message");
-					msg += johnson.optString("result");
-					
-					if (AonStringUtils.containsIgnoreCase(msg, "campoextra")) {
-						Pattern pattern = Pattern.compile("(\\[\\{)(?:(?!\\}\\,?\\]).)+(\\}\\,?\\])$", Pattern.CASE_INSENSITIVE);
-						Matcher matcher = pattern.matcher(msg);
-						if (matcher.find()) {
-							String jsonArrStr = matcher.group();
-							return "{\"extrafield\": " + jsonArrStr + "}";
-						}
-					}
-					
-					String code = johnson.optString("code");
-					return msg + ((code != null && !code.isEmpty()) ? ", código: " + code : "");
-				} catch (Exception e) {
-					throwException(e);
-					return null;
-				}
-			}
-		} else {
-			throw new IllegalArgumentException("No hay ninguna cuenta seleccionada");
+	public NordigenRequisition addAccount(String currentDomainName, int currentDomain, String user, NordigenAccessToken token, NordigenBankAccount nordigenBankAccount) throws Exception {
+		RegistryBank rbank = nordigenBankAccount.getRbank();
+		Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
+		Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
+		StringBuilder bicBuilder = new StringBuilder();
+		if (bicMatcher.matches()) {
+			bicBuilder.append(AonStringUtils.trimToEmpty(bicMatcher.group("bic")));
 		}
+		final String bic = bicBuilder.toString();
+		
+		Optional<NordigenInstitution> optInstitution = AonNordigen.getInstitutions(token, null, null).stream().filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic)).findFirst();
+		StringBuilder instIdBuilder = new StringBuilder();
+		if (optInstitution.isPresent()) {
+			instIdBuilder.append(AonStringUtils.trimToEmpty(optInstitution.get().getId()));
+		}
+		final String institutionId = instIdBuilder.toString();
+		
+		//EN CASO DE QUE HAYA PROBLEMAS CON EL BIC:
+		NordigenInstitution inst = nordigenBankAccount.getInstitution();
+		
+		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
+		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + currentDomainName);
+		
+		AonNordigen.insertNewRequisitionId(new Domain().setName(currentDomainName).setId(currentDomain), institutionId, requisition, rbank.getId());
+		
+		return requisition;
 	}
 
 
@@ -357,10 +302,43 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 
 
 	@Override
-	public List<CheckItBankStatement> getMovements(String domainName, int domain, String user, Integer empresaId,
-			CheckItBankAccount checkItBankAccount, Date startDate, Date endDate) throws IllegalArgumentException {
+	public List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate) throws Exception {
 		try {
-			return CheckItAPI.getBankStatementsFromTo(empresaId, checkItBankAccount.getBankAccountId(), startDate, endDate);
+			NordigenAccountBalance balance = nordigenBankAccount.getBalance();
+			List<NordigenBankStatement> list = new LinkedList<>();
+			if (nordigenBankAccount != null && nordigenBankAccount.getMetadata() != null) {
+				String id = nordigenBankAccount.getMetadata().getId();
+				List<NordigenAccountTransaction> pendingTransactions = AonNordigen.getPendingAccountTransactions(token, id, endDate);
+				List<NordigenAccountTransaction> transactions = AonNordigen.getBookedAccountTransactions(token, id, endDate);
+				
+				if (transactions != null) {
+					transactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
+						bs.setPending(false);
+						list.add(bs);
+					});
+				}
+				if (pendingTransactions != null) {
+					pendingTransactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
+						bs.setPending(true);
+						list.add(bs);
+					});
+				}
+			}
+			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).sorted((bs1, bs2) -> {
+				
+				return AonNumberUtils.compare(bs2.getNordigenMovementId(), bs1.getNordigenMovementId());
+			}).collect(Collectors.toList());
+			
+			Double remaining = balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : 0;
+			
+			for(NordigenBankStatement bs : orderedList) {
+				if (!bs.isPending()) {
+					bs.setCurrentBalance(remaining);
+					remaining += (bs.getAmount() * (bs.isPayment() ? 1 : -1));
+				}				
+			}
+			
+			return orderedList;
 		} catch (Exception e) {
 			throwException(e);
 			return null;
@@ -383,5 +361,70 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 			return false;			
 		}
 	}
+
+
+	@Override
+	public List<NordigenInstitution> getNordigenInstitutions(NordigenAccessToken token, Country country) throws Exception {
+		return AonNordigen.getInstitutions(token, country, null);
+	}
+
+
+	@Override
+	public List<NordigenInstitution> getNordigenInstitutionsByBic(NordigenAccessToken token, String bic)
+			throws Exception {
+		if (AonStringUtils.isNotBlank(bic)) {
+			List<NordigenInstitution> institutions = AonNordigen.getInstitutions(token, null, null);
+			List<NordigenInstitution> matchedInstitutions = institutions.stream().filter(inst -> AonStringUtils.containsIgnoreCase(inst.getBic(), bic)).collect(Collectors.toList());
+			
+			if (matchedInstitutions != null && !matchedInstitutions.isEmpty()) {
+				return matchedInstitutions;
+			}
+			
+		}
+		throw new Exception("No available institutions");
+	}
+
+
+	@Override
+	public Integer clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain,
+			String user) throws Exception {
+		Domain domain = new Domain().setName(currentDomainName).setId(currentDomain);
+		Map<Integer, NordigenRequisition> storedReqs = AonNordigen.getStoredRequisitions(token, domain, user);
+		List<NORDIGEN_REQUISITION_STATUS> excludedList = Arrays.asList(NORDIGEN_REQUISITION_STATUS.LN, NORDIGEN_REQUISITION_STATUS.EX);
+		if (storedReqs != null) {
+			int counter = 0;
+			for (Entry<Integer, NordigenRequisition> entry : storedReqs.entrySet()) {
+				if (entry.getValue() == null || !excludedList.contains(entry.getValue().getStatus())) {
+					if (entry.getValue() != null) {
+						AonNordigen.deleteRequisitionByRbank(token, domain, user, entry.getKey());
+						counter++;
+					} else {
+						AON.deleteRegistryAddInfo(domain, user, entry.getKey());
+						counter++;
+					}
+				}
+			}
+			return counter;
+		}
+		
+		return 0;
+	}
+
+
+	@Override
+	public Boolean cancelRequisition(NordigenAccessToken token, String currentDomainName, int currentDomain,
+			String user, Integer rbankId) throws Exception {
+		AonNordigen.deleteRequisitionByRbank(token, new Domain().setName(currentDomainName).setId(currentDomain), user, rbankId);
+		return true;
+	}
+
+
+	@Override
+	public NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws Exception {
+		return AonNordigen.getRequisition(token, requisitionId);
+	}
+
+
+	
 
 }

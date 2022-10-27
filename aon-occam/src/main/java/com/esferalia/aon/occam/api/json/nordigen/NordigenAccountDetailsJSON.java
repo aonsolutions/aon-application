@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api.json.nordigen;
 
-import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterface
 import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterfaces.INordigenAccountDetailsToJSON;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_CASH_ACCOUNT_TYPE;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountDetails;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum NordigenAccountDetailsJSON {
 	RESOURCE_ID(
@@ -23,8 +21,8 @@ public enum NordigenAccountDetailsJSON {
 			(detail, json) -> json.put("iban", detail.getIban())
 	),
 	CURRENCY(
-			(detail, json) -> detail.setCurrency(AonStringUtils.isNotBlank(json.optString("currency", null)) ? Currency.getInstance(json.optString("currency")) : null),
-			(detail, json) -> json.put("currency", detail.getCurrency() != null ? detail.getCurrency().getCurrencyCode() : null)
+			(detail, json) -> detail.setCurrency(json.optString("currency", null)),
+			(detail, json) -> json.put("currency", detail.getCurrency())
 	),
 	OWNER_NAME(
 			(detail, json) -> detail.setOwnerName(json.optString("ownerName", null)),

@@ -171,14 +171,14 @@ public class NordigenAPI extends NordigenAPIAbstract {
 	}
 	
 	public static JSONObject getRequisition(String token, String id) throws NordigenException {
-		return  (JSONObject) get(REQUISITIONS_URL + "/" + id + "/", null, req -> {
+		return  (JSONObject) get(REQUISITIONS_URL + id + "/", null, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});
 	}
 	
 	public static JSONObject deleteRequisition(String token, String id) throws NordigenException {
-		return  (JSONObject) delete(REQUISITIONS_URL + "/" + id + "/", null, req -> {
+		return  (JSONObject) delete(REQUISITIONS_URL + id + "/", null, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});
@@ -189,28 +189,28 @@ public class NordigenAPI extends NordigenAPIAbstract {
 	//ACCOUNTS RELATED API METHODS
 	
 	public static JSONObject getAccount(String token, String id) throws NordigenException {
-		return  (JSONObject) get(ACCOUNTS_URL + "/" + id + "/", null, req -> {
+		return  (JSONObject) get(ACCOUNTS_URL + id + "/", null, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});
 	}
 	
 	public static JSONObject getBalances(String token, String id) throws NordigenException {
-		return  (JSONObject) get(ACCOUNTS_URL + "/" + id + "/balances/", null, req -> {
+		return  (JSONObject) get(ACCOUNTS_URL + id + "/balances/", null, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});
 	}
 	
 	public static JSONObject getDetails(String token, String id) throws NordigenException {
-		return  (JSONObject) get(ACCOUNTS_URL + "/" + id + "/details/", null, req -> {
+		return  (JSONObject) get(ACCOUNTS_URL + id + "/details/", null, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});
 	}
 	
 	public static JSONObject getTransactions(String token, String id, JSONObject params) throws NordigenException {
-		return  (JSONObject) get(ACCOUNTS_URL + "/" + id + "/transactions/", params, req -> {
+		return  (JSONObject) get(ACCOUNTS_URL + id + "/transactions/", params, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});
@@ -224,7 +224,7 @@ public class NordigenAPI extends NordigenAPIAbstract {
 		if (dateTo != null) {
 			jsonParams.putOnce(DATE_TO_PARAM, AonDateUtils.format(dateTo, SIMPLE_DATE_FORMAT4));			
 		}
-		return  (JSONObject) get(ACCOUNTS_URL + "/" + id + "/transactions/", jsonParams, req -> {
+		return  (JSONObject) get(ACCOUNTS_URL + id + "/transactions/", jsonParams, req -> {
 			req.addHeader(ACCEPT_PARAM, APPLICATION_JSON);
 			req.addHeader(AUTHORIZATION_PARAM, BEARER + token);
 		});

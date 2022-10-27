@@ -7,8 +7,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.dom.client.Element;
@@ -45,7 +44,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonNordigenBankBox extends ResizeComposite implements HasValue<String>
-	, HasDescription, Focusable, HasSelectionHandlers<CheckItBank>, HasAllFocusHandlers
+	, HasDescription, Focusable, HasSelectionHandlers<NordigenInstitution>, HasAllFocusHandlers
 	,HasAllKeyHandlers {
 	
 	private static final Logger LOGGER = Logger.getLogger(AonNordigenBankBox.class.getName());
@@ -60,7 +59,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 	private static final int MAX_CHARACTERS = 50;
 	protected static final int KEY_PLUS = 171;
 
-	private Integer id;
+	private String id;
 	private String description;
 	
 	private FlowPanel rootPanel; 
@@ -68,7 +67,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 	private TextBox accountTextBox;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
-	private List<CheckItBank> banks;
+	private List<NordigenInstitution> banks;
 	
 	
 	private AccountSuggestionDisplay suggestionDisplay;
@@ -117,15 +116,15 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 	
 	private static class AccountSuggestion extends MultiWordSuggestion {
 		
-		private CheckItBank checkItBank;
+		private NordigenInstitution institution;
 		
-		private AccountSuggestion(CheckItBank checkItBank, String replacementString, String displayString) {
+		private AccountSuggestion(NordigenInstitution institution, String replacementString, String displayString) {
 			super( replacementString, displayString );
-			this.checkItBank = checkItBank;
+			this.institution = institution;
 		}
 		
-		public CheckItBank getCheckItBank() {
-			return checkItBank;
+		public NordigenInstitution getInstitution() {
+			return institution;
 		}
 		
 	}
@@ -136,12 +135,12 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 		}
 	}
 	
-	public AonNordigenBankBox(final String domainName, final int domain,final String user, List<CheckItBank> banks, boolean isMobile) {
-		this(domainName,domain,user,banks,true, isMobile);
+	public AonNordigenBankBox(final String domainName, final int domain,final String user, List<NordigenInstitution> institutions, boolean isMobile) {
+		this(domainName,domain,user,institutions,true, isMobile);
 	}
 	
-	public AonNordigenBankBox(final String domainName, final int domain, final String user, List<CheckItBank> banks, boolean showDescription, boolean isMobile) {
-		this.banks = banks;
+	public AonNordigenBankBox(final String domainName, final int domain, final String user, List<NordigenInstitution> institutions, boolean showDescription, boolean isMobile) {
+		this.banks = institutions;
 		
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
@@ -152,8 +151,8 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 					reset();
 
 					LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
-					if (banks != null) {
-						for (final CheckItBank bank : banks) {
+					if (institutions != null) {
+						for (final NordigenInstitution bank : institutions) {
 							if (containsWords(bank.getName(), request.getQuery())) {
 								SafeHtmlBuilder bld = new SafeHtmlBuilder();
 								String ds = bank.getName();
@@ -198,7 +197,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
 				AccountSuggestion selected = (AccountSuggestion) event.getSelectedItem();
-				select( selected.getCheckItBank() );
+				select( selected.getInstitution() );
 			}
 		});
 		
@@ -252,7 +251,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 				SelectionEvent.fire(AonNordigenBankBox.this, null );
 			} else {
 				accountTextBox.removeStyleName(AON.CSS.aonInputTextError() );
-				CheckItBank result = banks.stream().filter(b -> b.getName().equals(accountCode)).findFirst().orElse(null);
+				NordigenInstitution result = banks.stream().filter(b -> b.getName().equals(accountCode)).findFirst().orElse(null);
 	
 				if (result != null) {
 					select( result );
@@ -275,7 +274,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 		
 	}
 
-	private void select(CheckItBank result) {
+	private void select(NordigenInstitution result) {
 		accountTextBox.removeStyleName(AON.CSS.aonInputTextError());
 		id = result.getId();
 		description = result.getName();
@@ -299,7 +298,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 		this.required = required;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -307,20 +306,20 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 	public String getValue() {
 		return account.getValue();
 	}
-	public void setAccount(Account account) {
-		setAccount(account, false);
-	}
-	public void setAccount(Account account,boolean fire) {
-		if (account == null ) {
-			setValue(null,null,null,fire);	
-		} else {
-			setValue(account.getId(),account.getCode(),account.getDescription(),fire);	
-		}
-	}
-	public void setValue(Integer id, String code,String description) {
+//	public void setAccount(Account account) {
+//		setAccount(account, false);
+//	}
+//	public void setAccount(Account account,boolean fire) {
+//		if (account == null ) {
+//			setValue(null,null,null,fire);	
+//		} else {
+//			setValue(account.getId(),account.getCode(),account.getDescription(),fire);	
+//		}
+//	}
+	public void setValue(String id, String code,String description) {
 		setValue(id,code,description,false);
 	}
-	public void setValue(Integer id, String code,String description, boolean fire) {
+	public void setValue(String id, String code,String description, boolean fire) {
 		this.id = id;
 		this.description = description;
 		this.descriptionLabel.setText(description);
@@ -392,7 +391,7 @@ public class AonNordigenBankBox extends ResizeComposite implements HasValue<Stri
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<CheckItBank> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<NordigenInstitution> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 

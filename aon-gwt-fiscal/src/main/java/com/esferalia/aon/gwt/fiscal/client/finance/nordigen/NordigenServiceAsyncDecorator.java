@@ -6,11 +6,14 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
@@ -22,7 +25,7 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 	
 	@Override
-	public void getConfiguration(String domainName, int domain, String user, AsyncCallback<CheckItConfiguration> callback) {
+	public void getConfiguration(String domainName, int domain, String user, AsyncCallback<NordigenConfiguration> callback) {
 		AON.start();
 		fsa.getConfiguration(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
@@ -48,10 +51,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 
 	@Override
-	public void addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount, String userID,
-			String userPassword, String userPIN, AsyncCallback<String> callback) {
+	public void addAccount(String currentDomainName, int currentDomain, String user, NordigenAccessToken token, NordigenBankAccount nordigenBankAccount, AsyncCallback<NordigenRequisition> callback) {
 		AON.start();
-		fsa.addAccount(enterpriseId, checkitUnlinkedBankAccount, userID, userPassword, userPIN, new AsyncCallbackWrapper<>(callback));
+		fsa.addAccount(currentDomainName, currentDomain, user, token, nordigenBankAccount, new AsyncCallbackWrapper<>(callback));
 		
 	}
 
@@ -74,10 +76,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 
 	@Override
-	public void getMovements(String domainName, int domain, String user, Integer empresaId, CheckItBankAccount checkItBankAccount, Date startDate,
-			Date endDate, AsyncCallback<List<CheckItBankStatement>> callback) {
+	public void getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, AsyncCallback<List<NordigenBankStatement>> callback) {
 		AON.start();
-		fsa.getMovements(domainName, domain, user, empresaId, checkItBankAccount, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+		fsa.getMovements(token, domainName, domain, user, nordigenBankAccount, endDate, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -85,5 +86,42 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 		AON.start();
 		fsa.addExtraField(enterpriseId, iban, extraField, new AsyncCallbackWrapper<>(callback));
 	}
-	
+
+	@Override
+	public void getNordigenInstitutions(NordigenAccessToken token, Country country, AsyncCallback<List<NordigenInstitution>> callback) {
+		AON.start();
+		fsa.getNordigenInstitutions(token, country, callback);
+		
+	}
+
+	@Override
+	public void getNordigenInstitutionsByBic(NordigenAccessToken token, String bic,
+			AsyncCallback<List<NordigenInstitution>> callback) {
+		AON.start();
+		fsa.getNordigenInstitutionsByBic(token, bic, callback);
+		
+	}
+
+	@Override
+	public void clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain, String user, AsyncCallback<Integer> callback) {
+		AON.start();
+		fsa.clearIncompleteRequisitions(token, currentDomainName, currentDomain, user, callback);
+		
+	}
+
+	@Override
+	public void cancelRequisition(NordigenAccessToken token, String currentDomainName, int currentDomain, String user
+			, Integer rbankId, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.cancelRequisition(token, currentDomainName, currentDomain, user, rbankId, callback);
+	}
+
+	@Override
+	public void getRequisition(NordigenAccessToken token, String requisitionId,
+			AsyncCallback<NordigenRequisition> callback) {
+		AON.start();
+		fsa.getRequisition(token, requisitionId, callback);
+	}
+
+
 }

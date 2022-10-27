@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api.json.nordigen;
 
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,7 +88,7 @@ public class NordigenJSONUtils {
 	public static NordigenAccountAmount accountAmountFromJSON(JSONObject json) {
 		if (json != null) {
 			Double amount = AonNumberUtils.todouble(json.optString("amount"));
-			Currency currency = Currency.getInstance(json.optString("currency"));
+			String currency = json.optString("currency");
 			return new NordigenAccountAmount(amount, currency);
 		}
 		return null;
@@ -99,7 +98,7 @@ public class NordigenJSONUtils {
 		if (balanceAmount != null) {
 			JSONObject json = new JSONObject();
 			json.put("amount", AonNumberUtils.toString(balanceAmount.getAmount()));
-			json.put("currency", balanceAmount.getCurrency() != null ? balanceAmount.getCurrency().getCurrencyCode() : null);
+			json.put("currency", balanceAmount.getCurrency() != null ? balanceAmount.getCurrency() : null);
 			return json;
 		}
 		return null;

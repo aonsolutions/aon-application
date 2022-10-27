@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.finance.nordigen;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 public class NordigenModuleOptions implements Serializable {
@@ -12,7 +12,7 @@ public class NordigenModuleOptions implements Serializable {
 	private String domainName;
 	private int domain;
 	private String user;
-	private CheckItConfiguration configuration;
+	private NordigenConfiguration configuration;
 
 	private HasWidgets parentWidget;
 
@@ -43,11 +43,11 @@ public class NordigenModuleOptions implements Serializable {
 		return this;
 	}
 
-	public CheckItConfiguration getConfiguration() {
+	public NordigenConfiguration getConfiguration() {
 		return configuration;
 	}
 
-	public NordigenModuleOptions setConfiguration(CheckItConfiguration configuration) {
+	public NordigenModuleOptions setConfiguration(NordigenConfiguration configuration) {
 		this.configuration = configuration;
 		return this;
 	}

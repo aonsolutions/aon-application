@@ -57,7 +57,7 @@ public class NordigenTestCase {
 	}	
 	
 	@BeforeClass
-	public static void initialize() throws NordigenException {
+	public static void initialize() throws Exception {
 		nordigenToken = AonNordigen.getNewAccessToken();
 	}
 	
@@ -72,7 +72,7 @@ public class NordigenTestCase {
 			assertNotNull("Null refresh expires", token.getRefreshExpires());
 			assertNotNull("Null creation date", token.getCreationDate());
 			assertNotNull("Null refresh date", token.getRefreshDate());
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -98,7 +98,7 @@ public class NordigenTestCase {
 			assertNotEquals(originalAccess, nordigenToken.getAccess());
 			
 			
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -108,7 +108,7 @@ public class NordigenTestCase {
 		try {
 			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutions(nordigenToken, null, null);
 			assertTrue(allInstitutions != null && allInstitutions.size() > 2000);
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -119,7 +119,7 @@ public class NordigenTestCase {
 			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutions(nordigenToken, Country.ES, null);
 			assertNotNull(allInstitutions);
 			assertTrue(allInstitutions.stream().allMatch(inst -> inst.getCountries().contains(Country.ES)));
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -135,7 +135,7 @@ public class NordigenTestCase {
 			assertNotNull("Null name", caixaBank.getName());
 			assertNotNull("Null transaction total days", caixaBank.getTransactionTotalDays());
 			assertEquals("CAIXESBB", caixaBank.getBic());
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -151,7 +151,7 @@ public class NordigenTestCase {
 			assertAgreement(agreement);
 			AonNordigen.deleteAgreement(nordigenToken, agreement);
 			
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -165,7 +165,7 @@ public class NordigenTestCase {
 			AonNordigen.getRequisition(nordigenToken, requisition.getId());
 			assertRequisition(requisition);
 			AonNordigen.deleteRequisition(nordigenToken, requisition);
-		} catch (NordigenException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}

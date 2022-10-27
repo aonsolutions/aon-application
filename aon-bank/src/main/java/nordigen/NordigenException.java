@@ -2,7 +2,7 @@ package nordigen;
 
 import org.json.JSONObject;
 
-public class NordigenException extends Exception {
+public class NordigenException extends RuntimeException {
 	
 
 	private static final long serialVersionUID = -6384010753448554063L;
@@ -12,7 +12,6 @@ public class NordigenException extends Exception {
 	private String type;
 	private String country;
 	private Integer statusCode;
-	private JSONObject json;
 
 	
 	
@@ -90,15 +89,6 @@ public class NordigenException extends Exception {
 		this.country = country;
 		return this;
 	}
-	
-	public JSONObject getJson() {
-		return json;
-	}
-	
-	public NordigenException setJson(JSONObject json) {
-		this.json = json;
-		return this;
-	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -112,8 +102,7 @@ public class NordigenException extends Exception {
 			.setDetail(message)
 			.setType(errJson.optString("type"))
 			.setCountry(errJson.optString("country"))
-			.setStatusCode(errJson.optInt("status_code"))
-			.setJson(errJson);
+			.setStatusCode(errJson.optInt("status_code"));
 		}
 		throw new NordigenException();
 	}

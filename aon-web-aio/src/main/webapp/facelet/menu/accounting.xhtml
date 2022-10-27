@@ -365,16 +365,18 @@
 													value="Agregador bancario" />
 											</aon:commandLink>
 										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_nordigen-accounting"
-												action="gwt_nordigen-accounting"
-												title="Agregador nordigen">
-												<aon:outputText
-													styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;"
-													value="Agregador nordigen" />
-											</aon:commandLink>
-										</aon:div>
+										<aon:if test="#{domainSwitcher.alphaUser}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="gwt_nordigen-accounting"
+													action="gwt_nordigen-accounting"
+													title="Agregador nordigen">
+													<aon:outputText
+														styleClass="aon-fiscal-link-label aon-icon-new-text"
+														style="margin-left: 5px; padding-left: 20px;"
+														value="Agregador nordigen" />
+												</aon:commandLink>
+											</aon:div>
+										</aon:if>
 									<!-- </aon:if> -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_finance-accounting"

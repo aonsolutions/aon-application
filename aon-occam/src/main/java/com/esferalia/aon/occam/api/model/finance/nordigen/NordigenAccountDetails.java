@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
-import java.util.Currency;
 
 public class NordigenAccountDetails implements Serializable {
 	
@@ -9,7 +8,7 @@ public class NordigenAccountDetails implements Serializable {
 	
 	private String resourceId;
 	private String iban;
-	private Currency currency;	
+	private String currency;	
 	private String ownerName;
 	private String name;
 	private NORDIGEN_CASH_ACCOUNT_TYPE cashAccountType;
@@ -33,10 +32,10 @@ public class NordigenAccountDetails implements Serializable {
 		return this;
 	}
 
-	public Currency getCurrency() {
+	public String getCurrency() {
 		return currency;
 	}
-	public NordigenAccountDetails setCurrency(Currency currency) {
+	public NordigenAccountDetails setCurrency(String currency) {
 		this.currency = currency;
 		return this;
 	}
