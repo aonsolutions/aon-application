@@ -500,7 +500,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 	
 	public boolean isOfficeDomain() {
-		DomainType type = getDomainType(AonUtil.getAuthPrincipal().getDomainId());
+		DomainType type = getDomainType(getDomainId());
 		return type == DomainType.OFFICE;
 	}
 	
