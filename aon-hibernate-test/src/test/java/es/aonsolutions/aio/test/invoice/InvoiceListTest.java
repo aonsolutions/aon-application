@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -12,11 +11,11 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.entity.IEntityAlias;
 
+import es.aonsolutions.aio.test.AonHibernateTestBasic;
 import es.aonsolutions.aio.test.util.Asserts;
 
-public class InvoiceListTest  {
+public class InvoiceListTest extends AonHibernateTestBasic {
 	
 	@Test
 	public void testListAccount() throws Exception {

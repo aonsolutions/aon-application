@@ -21,7 +21,7 @@ public class HibernateConnectionProvider implements ConnectionProvider {
 	@Override
 	public Connection getConnection() throws SQLException {
 		try {
-			return DatabaseUtil.getConnection( AonTestsConfig.getInstance().getDomainName() );	
+			return DatabaseUtil.getConnection( AonHibernateTestBasic.getDomainName() );	
 		} catch (AonConnectionException e) {
 			throw new SQLException(e.getMessage(),e);
 		}

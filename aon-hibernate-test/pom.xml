@@ -22,7 +22,11 @@
 			        <argLine>
 						--illegal-access=permit --add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED	        
 			        </argLine>
-			    </configuration>
+ 					<includes>
+ 						<include>**/AonHibernateTestSuite.class</include>
+ 					</includes>
+					<!-- <skipTests>true</skipTests> -->
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

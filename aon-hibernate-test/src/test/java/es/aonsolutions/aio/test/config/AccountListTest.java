@@ -8,9 +8,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
+import es.aonsolutions.aio.test.AonHibernateTestBasic;
 import es.aonsolutions.aio.test.util.Asserts;
 
-public class AccountListTest  {
+public class AccountListTest extends AonHibernateTestBasic {
 	
 	@Test
 	public void testListAccount() throws Exception {
