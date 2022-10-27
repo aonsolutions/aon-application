@@ -151,7 +151,7 @@ export const IOS_SHARE = 'ios_share';
 
 export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
 export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
-
+export const KEYBOARD_ARROW_DOWN = 'keyboard_arrow_down';
 // ----- L
 
 export const LOCAL_MALL = 'local_mall';
@@ -185,6 +185,7 @@ export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
 export const PEOPLE = 'people';
+export const PRIVACY_TIP = 'privacy_tip';
 
 // ----- Q
 

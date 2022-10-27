@@ -171,7 +171,9 @@ export class AonOfficePanel extends AonElement {
                             projectType: detail.projectType,
                             status: OfficeUtils.getCustomerStatus(detail)
                         });
-                        aonView.setFilter({...this.getFilterCustomers(), page:1 });
+                        let filter = {...this.getFilterCustomers(), page:1 };
+                        console.log(aonView, detail);
+                        aonView.setFilter(filter);
                     }, 300);
                 });
 

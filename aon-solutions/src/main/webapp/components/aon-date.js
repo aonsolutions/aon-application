@@ -407,17 +407,19 @@ export class AonDate extends AonElement {
 
   openDatepicker() {
     const datePicker = this.getElement(this.DATEPICKER);
-    if(!this.isReadonly()) {
-      datePicker.classList.add('is-visible');
-    }
-    if(this.isMobile()){
-      datePicker.classList.add('is-mobile');
+    if(datePicker){
+      if(!this.isReadonly()) {
+        datePicker.classList.add('is-visible');
+      }
+      if(this.isMobile()){
+        datePicker.classList.add('is-mobile');
+      }
     }
   }
 
   closeDatepicker() {
     let div = this.getElement(this.DATEPICKER);
-    if(div.classList.contains('is-visible')){
+    if(div && div.classList.contains('is-visible')){
       div.classList.remove('is-visible');
     }
   }
@@ -429,13 +431,14 @@ export class AonDate extends AonElement {
   }
 
   setDate(date) {
+    let input = this.getElement(this.INPUT);
     if(date instanceof Date) {
       this.date = date;
       this.day = this.date.getDate();
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
+      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     } else if(date){
       this.date = new Date(Date.parse(date));
@@ -443,7 +446,7 @@ export class AonDate extends AonElement {
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
+      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     }
     this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));

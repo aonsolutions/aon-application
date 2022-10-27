@@ -30,6 +30,7 @@ export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
+export const AUDIT = 'audit';
 
 // ----- B
 
