@@ -399,6 +399,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COMPLEMENTO_JEFE_DE_ESTUDIOS_MENSUAL", "COMPL_JEFE_ESTUDIOS");
 		variablesMap.put("COMPLEMENTO_JORNADA_PARTIDA_ANUAL", "COMPL_JORNADA_PARTIDA");
 		variablesMap.put("COMPLEMENTO_JORNADA_PARTIDA_B_ANUAL", "COMPL_JORNADA_PARTIDA_B");
+		variablesMap.put("COMPLEMENTO_JORNADA_MAS_15_HORAS_DIARIO", "C_JORNADA_MAS_15H_D");
 		variablesMap.put("COMPLEMENTO_JEFE_DEPARTAMENTO_MENSUAL", "COMPL_JEFE_DEPART");
 		variablesMap.put("COMPLEMENTO_LINEAL_ANUAL", "COMPL_LINEAL_A");
 		variablesMap.put("COMPLEMENTO_MANTENMIENTO_HORARIO_DIARIO", "COMPL_MANTEN_HORARIO");
@@ -940,8 +941,10 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DESPLAZAMIENTOS_DIARIO", "PLUS_DESPLAZAMIENTOS");
 		variablesMap.put("PLUS_DESPLAZAMIENTOS_HORAS", "PLUS_DESPLAZAMIENTOS");
 		variablesMap.put("PLUS_DESPLAZAMIENTOS_MENSUAL", "PLUS_DESPLAZAMIENTOS");
-		variablesMap.put("PLUS_DE_FRIO_ANUAL", "PLUS_FRIO");
-		variablesMap.put("PLUS_DE_FRIO_HORAS", "PLUS_FRIO");
+		variablesMap.put("PLUS_DE_FRIO_ANUAL", "PLUS_FRIO_A");
+		variablesMap.put("PLUS_DE_FRIO_MENSUAL", "PLUS_FRIO_M");
+		variablesMap.put("PLUS_DE_FRIO_DIARIO", "PLUS_FRIO_D");
+		variablesMap.put("PLUS_DE_FRIO_HORAS", "PLUS_FRIO_H");
 		variablesMap.put("PLUS_DE_MUDANZAS_DIARIO", "PLUS_MUDANZAS");
 		variablesMap.put("PLUS_DE_LAVADO_HORAS", "PLUS_LAVADO_H");
 		variablesMap.put("PLUS_DE_PODA_HORAS", "PLUS_PODA");
@@ -1033,6 +1036,14 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_GESTION_MENSUAL", "PLUS_GESTION");
 		variablesMap.put("PLUS_GRUA_MENSUAL", "PLUS_GRUA");
 		variablesMap.put("PLUS_GRUA_DIARIO", "PLUS_GRUA");
+		
+		variablesMap.put("PLUS_GRUA_20_TONELADAS_DIARIO", "PLUS_GRUA_20T");
+		variablesMap.put("PLUS_GRUA_30_TONELADAS_DIARIO", "PLUS_GRUA_30T");
+		variablesMap.put("PLUS_GRUA_40_TONELADAS_DIARIO", "PLUS_GRUA_40T");
+		variablesMap.put("PLUS_GRUA_60_TONELADAS_DIARIO", "PLUS_GRUA_60T");
+		variablesMap.put("PLUS_GRUA_100_TONELADAS_DIARIO", "PLUS_GRUA_100T");
+		variablesMap.put("PLUS_GRUA_150_TONELADAS_DIARIO", "PLUS_GRUA_150T");
+		
 		variablesMap.put("PLUS_HORAS_HORAS", "PLUS_HORAS");
 		variablesMap.put("PLUS_HORNERO_MENSUAL", "PLUS_HORNERO");
 		variablesMap.put("PLUS_HERRAMIENTAS_ANUAL", "PLUS_HERRAMIENTAS_A");
