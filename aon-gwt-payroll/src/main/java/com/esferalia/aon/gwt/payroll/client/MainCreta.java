@@ -410,6 +410,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		.orElse(false)
 		;
 	}
+
+	public void acceptPrevBases(Void v) {
+		run(Collections.singletonMap(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES, isAcceptPrevBases() ? "off" : "on"));
+	}
+
+	public boolean isAcceptPrevBases() {
+		return 
+		(( CretaResults ) resultsPanel.getChild())
+		.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES)
+		.map( s -> "on".equalsIgnoreCase(s))
+		.orElse(false)
+		;
+	}
+
 	// --------------------------------------------------- Enterprises.Listener
 
 	@Override
@@ -933,6 +947,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		private Consumer<Void> showProgress;
 		private Consumer<Void> onReftificativa;
 		private Consumer<Void> onSolicitudRecepcionRNT;
+		private Consumer<Void> onAceptarBasesAnteriores;
 		
 		public AbstractBaseCretaDetail(
 				DetailPanel detailPanel, 
@@ -940,6 +955,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				ProgressPanel progressPanel,
 				Consumer<Void> onReftificativa,
 				Consumer<Void> onSolicitudRecepcionRNT,
+				Consumer<Void> onAceptarBasesAnteriores,
 				Consumer<Void> showResults,
 				Consumer<Void> showProgress
 				) {
@@ -948,6 +964,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.progressPanel = progressPanel;
 			this.onReftificativa = onReftificativa;
 			this.onSolicitudRecepcionRNT = onSolicitudRecepcionRNT;
+			this.onAceptarBasesAnteriores = onAceptarBasesAnteriores;
 			this.showResults = showResults;
 			this.showProgress = showProgress;
 		}
@@ -1036,6 +1053,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						solicitudRecepcionRNT.addClickHandler(e-> onSolicitudRecepcionRNT.accept(null));
 						basesEditor.add(solicitudRecepcionRNT);
 
+						CheckBox aceptarBasesAnterioresRNT = new CheckBox("Aceptar Bases Anteriores");
+						aceptarBasesAnterioresRNT.setValue(result.isAcceptPrevBases());
+						aceptarBasesAnterioresRNT.setStyleName("aon-finding-toolbar-item");
+						aceptarBasesAnterioresRNT.addClickHandler(e-> onAceptarBasesAnteriores.accept(null));
+						basesEditor.add(aceptarBasesAnterioresRNT);
 					}
 				}
 			}
@@ -1066,6 +1088,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
 			solicitudRecepcionRNT.addClickHandler(e-> onSolicitudRecepcionRNT.accept(null));
 			mergeEditor.add(solicitudRecepcionRNT);
+			
+			CheckBox aceptarBasesAnteriores = new CheckBox("Aceptar Bases Anteriores");
+			aceptarBasesAnteriores.setValue(result.isAcceptPrevBases());
+			aceptarBasesAnteriores.setStyleName("aon-finding-toolbar-item");
+			aceptarBasesAnteriores.addClickHandler(e-> onAceptarBasesAnteriores.accept(null));
+			mergeEditor.add(aceptarBasesAnteriores);
+			
 
 		}
 		
@@ -1169,6 +1198,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				progressPanel,
 				MainCreta.this::reftification,
 				MainCreta.this::requestSendRNT,
+				MainCreta.this::acceptPrevBases,
 				MainCreta.this::showResultsPanel,
 				MainCreta.this::showProgressPanel);
 		}

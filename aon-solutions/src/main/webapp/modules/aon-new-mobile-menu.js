@@ -190,7 +190,7 @@ export class AonNewMobileMenu extends AonElement {
 
     this.addMenuButton({
       name: 'Exit',
-      icon: 'input',
+      icon: MATERIAL_ICONS.LOGOUT,
       fn: () => this.closeSession()
     });
   }

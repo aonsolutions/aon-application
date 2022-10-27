@@ -13,11 +13,13 @@ export const ACTIVITY_SUMMARY = `Resum d'Activitats`;
 export const ADD = 'Afegir';
 export const ADD_CATEGORY = 'Afegir Categoria';
 export const ADD_COMMENT = 'Afegir Comentari';
+export const ADD_COMPOSITION = 'Afegir Composició';
 export const ADD_FILE = 'Adjuntar Fitxer';
 export const ADD_INVOICE = 'Afegir Factura';
 export const ADD_REMARKS = 'Afegir Observacions';
 export const ADD_TAG = 'Afegir Etiqueta';
 export const ADD_TAX = 'Afegir Impost';
+export const ADD_TYPE = 'Afegir Tipus';
 export const ADDITIONAL_INFORMATION = 'Informació Addicional';
 export const ADDRESS = 'Dirección';
 export const ALL_FILES = 'Tots els Fitxers';
@@ -77,7 +79,9 @@ export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
 export const CONTACT_DATA = 'Dades de Contacte';
 export const CONTACTS = 'Contactes';
-export const CONTRACT = 'Contractar';;
+export const CONTRACT = 'Contractar';
+export const CONTRACT_PAYROLL = 'Contracte';
+export const CONTRACTS = 'Contractes';
 export const COUNTRY = 'País';
 export const CREATE = 'Crear';
 export const CREDITOR = 'Creditor';
@@ -208,6 +212,7 @@ export const MODEL_190 = 'Model 190';
 export const MODEL_190_DESCRIPTION = `Model 190. Declaració Informativa. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de rendes. Resum anual.`;
 export const MOVED_TO_TRASH = `S'ha moguda a la paperera`;
 export const MY_DATA = 'Les Meves Dades';
+export const MY_MANAGER = 'El meu Gestor';
 export const MY_USER = 'Mi Usuari';
 
 // ----- N
@@ -238,6 +243,7 @@ export const OTHER_SERVICES = 'Altres Serveis';
 // ----- P
 
 export const PAUSE = 'Pausa';
+export const PASSWORD = 'Contrasenya';
 export const PAYMETHOD = 'Forma de Pagament';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nòmina';
@@ -276,6 +282,8 @@ export const RECTIFIED = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE = 'Rectificar Factura';
 export const REFERENCE = 'Referència';
+export const REGISTERED_TRADEMARK = 'Marca Registrada';
+export const REGISTERED_TRADEMARK_AON = 'és una marca registrada de AON SOLUTIONS, S.L.';
 export const REJECT = 'Rebutjar';
 export const REJECT_INVOICE = 'Rebutjar Factura';
 export const REJECT_INVOICES = 'Rebutjar Factures';
@@ -312,6 +320,9 @@ export const SERVICES = 'Serveis';
 export const SETTING = 'Configuració';
 export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';
+export const SIGN_IN = 'Iniciar Sessió';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sessió sense Contrasenya';
+export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sessió amb Certificat';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Mida';
@@ -364,6 +375,7 @@ export const USERS = 'Usuaris';
 // ----- V
 
 export const VAT = 'IVA';
+export const VERSION = 'Versió';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

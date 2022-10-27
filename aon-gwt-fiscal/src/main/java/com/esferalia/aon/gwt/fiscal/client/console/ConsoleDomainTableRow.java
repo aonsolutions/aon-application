@@ -64,7 +64,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	public ConsoleDomainTableRow(ConsoleDomainTableCallback callback,JsConsoleDomain domain) {
 		this.callback = callback;
 		this.domain = domain; 
-		id = AonNumberUtils.toInteger("" + domain.getId()); 
+		id = AonNumberUtils.toInteger("" + domain.getId());
 		
 		checkBox = new CheckBox();
 		checkBox.addClickHandler(e -> callback.check(this));
@@ -205,9 +205,17 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			.addCell( remoteAccessButton )
 			.addCell( editButton )
 			.addCell( duplicateButton )
-			.addCell( dumpAnchor )
-		;
-
+			.addCell( dumpAnchor );
+			
+		
+		checkBox.setEnabled( callback.isAdvancedMode() );
+		checkBox.setVisible( callback.isAdvancedMode() );
+		editButton.setEnabled( callback.isAdvancedMode() );
+		editButton.setVisible( callback.isAdvancedMode() );
+		dumpAnchor.setEnabled( callback.isAdvancedMode() );
+		dumpAnchor.setVisible( callback.isAdvancedMode() );
+		duplicateButton.setEnabled( callback.isAdvancedMode() );
+		duplicateButton.setVisible( callback.isAdvancedMode() );
 		
 	}
 

@@ -410,6 +410,10 @@ export class AonSelect extends AonElement {
     }
   }
 
+  getInput(){
+    return this.getElement(this.INPUT);
+  }
+
   showOptions(){
     if(!this.isReadonly() && !this.isDisabled()) {
       const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];

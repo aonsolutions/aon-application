@@ -88,6 +88,7 @@ export class AonNotificationIcon extends AonElement {
     buildDialog(){
         const dialog = document.createElement(TAG.DIV);
         dialog.id = "notificationDialogE";
+        dialog.className = CSS.AON_BOX_SHADOW;
         dialog.style = `
             cursor: default;
             position: absolute;
@@ -99,7 +100,6 @@ export class AonNotificationIcon extends AonElement {
             background: white;
             box-sizing: border-box;
             border-radius: 5px;
-            box-shadow: 0.5rem 0.5rem 2rem 0 rgb(0 0 0 / 20%);
             animation-name: dropPanel;
             animation-iteration-count: 1;
             animation-timing-function: all;

@@ -38,6 +38,7 @@ export const AON_MENU_ICON = 'aonMenuIcon';
 export const AON_MENU_SIDENAV_SUBAPP_LIST_ITEM = 'aonMenuSidenavSubAppListItem';
 export const AON_MENU_LINK = 'aonMenuLink';
 export const AON_HEADER = 'aonHeader';
+export const AON_HEADER_BETA = 'aonHeaderBeta';
 export const AON_HEADER_BUTTON = 'aonHeaderButton';
 export const AON_IMG_AVATAR = 'aonImgAvatar';
 export const AON_AVATAR = 'aonAvatar';
@@ -269,6 +270,7 @@ export const AON_COL_LG_OFFSET_12 = 'aonCol-lg-offset-12';
 export const NOTE_BOX_SHADOW = "noteBoxShadow";
 
 // aon-css-utils
+export const AON_BOX_SHADOW = "aonBoxShadow";
 export const CENTER_FLEX = "centerFlex";
 export const FLEX_WRAP = "flexWrap";
 export const FLEX_ROW = "flexRow";

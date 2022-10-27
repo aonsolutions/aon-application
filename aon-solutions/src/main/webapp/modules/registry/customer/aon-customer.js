@@ -67,7 +67,13 @@ export class AonCustomer extends AonReg {
 			if(this.autosave) this.save();
 		});
 
-		table.addCell(scope, 2);
+		table.addCell(scope);
+
+		table.addRow();
+
+		let divSegment = this.createElement(TAG.DIV);
+		table.addCell(divSegment);
+		this.buildSegments(divSegment);
 
 		getScopes()
 		.then(scopes=>{

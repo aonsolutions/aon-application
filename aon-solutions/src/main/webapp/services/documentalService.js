@@ -29,8 +29,7 @@ export const deleteCategory = (data) => {
   return post(`${API_URL}/attachment/${domainName}/${user}/category/delete/${data.id}`, data);
 };
 
-
-export const getScopes = (data) => get(`${API_URL}/scope`, data);
+export const getScopes = (data) => get(`${API_URL}/scopes`, data);
 
 export const getAeatCertificates = () => {
   const data = {type: 'AEAT'}

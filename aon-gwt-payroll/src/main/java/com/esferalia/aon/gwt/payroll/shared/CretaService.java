@@ -332,6 +332,11 @@ public interface CretaService {
 		public final native boolean isRequestSendRNT() /*-{
 			return this.requestSendRNT;
 		}-*/;
+
+		public final native boolean isAcceptPrevBases() /*-{
+			return this.acceptPrevBases;
+		}-*/;
+
 	}
 
 	public static class JsProgressResult extends JavaScriptObject {

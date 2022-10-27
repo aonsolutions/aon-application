@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.EstadoRegistroConsultaEnum;
@@ -248,8 +249,9 @@ public class LROE140_1_1 extends LROE140 {
 		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-
-		cabecera.setSerieFactura(invoice.getSeries());
+		
+		if(!AonStringUtils.isBlank(invoice.getSeries()))
+		    cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
 		return cabecera;
 	}

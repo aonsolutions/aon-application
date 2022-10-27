@@ -5,7 +5,11 @@ public enum AonApiError {
 	UNAUTHORIZED("No está autorizado."),
 	EXPIRED_TOKEN("La sesión ha expirado."),
 	ROUTE_ERROR("La ruta introducida es incorrecta."),
-	EMPTY_DATA("No existen datos para la consulta");
+	EMPTY_DATA("No existen datos para la consulta."),
+	
+    INCORRECT_PASSWORD("La Contraseña no coincide."),
+    NOT_EXIST_USER("El usuario no existe."),
+    NOT_VALID_EMAIL("No es un correo electrónico válido.");
 	
 	String message;
 	

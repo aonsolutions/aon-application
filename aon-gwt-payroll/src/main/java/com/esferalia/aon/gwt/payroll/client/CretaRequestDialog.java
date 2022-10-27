@@ -191,6 +191,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	Element solicitudRecepcionRNTTR;
 
 	@UiField
+	Element aceptarBasesAnterioresTR;
+
+	@UiField
 	ListBox typeListBox;
 	
 	@UiField
@@ -204,6 +207,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 	@UiField
 	CheckBox solicitudRecepcionRNTCheckBox;
+
+	@UiField
+	CheckBox aceptarBasesAnterioresCheckBox;
 
 	@UiField
 	Element i54TR;

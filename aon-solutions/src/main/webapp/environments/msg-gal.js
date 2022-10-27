@@ -13,11 +13,13 @@ export const ACTIVITY_SUMMARY = 'Resumo da Actividades';
 export const ADD = 'Engadir';
 export const ADD_CATEGORY = 'Engadir Categoría';
 export const ADD_COMMENT = 'Engadir Comentario';
+export const ADD_COMPOSITION = 'Engadir Composición';
 export const ADD_FILE = 'Achegar Ficheiro';
 export const ADD_INVOICE = 'Engadir Factura';
 export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
+export const ADD_TYPE = 'Añadir Tipo';
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
 export const ADDRESS = 'Dirección';
 export const ALL_FILES = 'Todos os Ficheiros';
@@ -80,6 +82,8 @@ export const CONTACT = 'Contacto';
 export const CONTACT_DATA = 'Datos do Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
+export const CONTRACT_PAYROLL = 'Contrato';
+export const CONTRACTS = 'Contratos';
 export const COUNTRY = 'País'
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acredor';
@@ -211,6 +215,7 @@ export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de rendas. Resumo anual.';
 export const MOVED_TO_TRASH = 'Trasladouse ao papeleira';
 export const MY_DATA = 'Os Meus Datos';
+export const MY_MANAGER = 'O meu Xestor';
 export const MY_USER = 'O Meu Usuario';
 
 // ----- N
@@ -241,6 +246,7 @@ export const OTHER_SERVICES = 'Outros Servizos';
 // ----- P
 
 export const PAUSE = 'Pausa';
+export const PASSWORD = 'Contrasinal';
 export const PAYMETHOD = 'Forma de Pagament'
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nómina';
@@ -279,6 +285,8 @@ export const RECTIFIED = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE = 'Rectificar Factura';
 export const REFERENCE = 'Referencia';
+export const REGISTERED_TRADEMARK = 'Marca Rexistrada';
+export const REGISTERED_TRADEMARK_AON = 'é unha marca rexistrada de AON SOLUTIONS, S.L.';
 export const REJECT = 'Rexeitar';
 export const REJECT_INVOICE = 'Rexeitar Factura';
 export const REJECT_INVOICES = 'Rexeitar Factures';
@@ -315,6 +323,9 @@ export const SERVICES = 'Servizos';
 export const SETTING = 'Configuración'; 
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Ensinar Ficheiro';
+export const SIGN_IN = 'Iniciar Sesión';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Iniciar Sesión sen Contrasinal';
+export const SIGN_IN_WITH_CERTIFICATE = 'Iniciar Sesión con Certificado';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Tamaño';
@@ -367,6 +378,7 @@ export const USERS = 'Usuarios';
 // ----- V
 
 export const VAT = 'IVE';
+export const VERSION = 'Versión';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

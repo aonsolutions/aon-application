@@ -32,5 +32,9 @@ public class Segment implements Serializable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return this.getId()==null;
+	}
+	
 	
 }

@@ -13,11 +13,13 @@ export const ACTIVITY_SUMMARY = 'Activity Summary';
 export const ADD = 'Hinzufügen';
 export const ADD_CATEGORY = 'Kategorie Hinzufügen';
 export const ADD_COMMENT = 'Kommentar Hinzufügen';
+export const ADD_COMPOSITION = 'Komposition Hinzufügen';
 export const ADD_FILE = 'Datei Hinzufügen';
 export const ADD_INVOICE = 'Rechnung Hinzufügen';
 export const ADD_REMARKS = 'Beobachtungen Hinzufügen';
 export const ADD_TAG = 'Tag Hinzufügen';
 export const ADD_TAX = 'Steuern Hinzufügen';
+export const ADD_TYPE = 'Typ Hinzufügen';
 export const ADDITIONAL_INFORMATION = 'Additional Information';
 export const ADDRESS = 'Address';
 export const ALL_FILES = 'All Files';
@@ -79,6 +81,8 @@ export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
 export const CONTRACT = 'Contract';
+export const CONTRACT_PAYROLL = 'Vertrag';
+export const CONTRACTS = 'Verträge';
 export const COUNTRY = 'Country';
 export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
@@ -209,6 +213,7 @@ export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
 export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
+export const MY_MANAGER = 'Mein Manager';
 export const MY_USER = 'My User';
 
 // ----- N
@@ -239,6 +244,7 @@ export const OTHER_SERVICES = 'Other Services';
 // ----- P
 
 export const PAUSE = 'Pause';
+export const PASSWORD = 'Passwort';
 export const PAYMETHOD = 'Payment Method';
 export const PAYROLL = 'Payroll';
 export const PAYSHEET = 'Paysheet';
@@ -277,6 +283,8 @@ export const RECTIFIED = 'Rectified';
 export const RECTIFY = 'Rectify';
 export const RECTIFY_INVOICE = 'Rectify Invoice';
 export const REFERENCE = 'Reference';
+export const REGISTERED_TRADEMARK = 'Eingetragene Marke';
+export const REGISTERED_TRADEMARK_AON = 'ist eine eingetragene marke von AON SOLUTIONS, S.L.';
 export const REJECT = 'Reject';
 export const REJECT_INVOICE = 'Reject Invoice';
 export const REJECT_INVOICES = 'Reject Invoices';
@@ -313,6 +321,9 @@ export const SERVICES = 'Services';
 export const SETTING = 'Einstellung';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIGN_IN = 'Einloggen';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Login ohne Passwort';
+export const SIGN_IN_WITH_CERTIFICATE = 'Mit Zertifikat Einloggen';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Size';
@@ -357,7 +368,7 @@ export const TYPES = 'Types';
 export const UPDATED_CONTRACT = "The contract has been modified successfully";
 export const UPLOAD = 'Upload';
 export const UPLOAD_FILE = 'Upload File';
-export const USER = 'User';
+export const USER = 'Nutzername';
 export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
@@ -365,6 +376,7 @@ export const USERS = 'Users';
 // ----- V
 
 export const VAT = 'VAT';
+export const VERSION = 'Version';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

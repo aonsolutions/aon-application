@@ -1699,6 +1699,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				EmployeeTree.this.progressPanel, 
 				EmployeeTree.this::reftification,
 				EmployeeTree.this::requestSendRNT,
+				EmployeeTree.this::acceptPrevBases,
 				EmployeeTree.this::showResultsPanel,
 				EmployeeTree.this::showProgressPanel
 				);
@@ -3608,6 +3609,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		;
 	}
 	
+	private void acceptPrevBases(Void v) {
+		MainCreta.run(Collections.singletonMap(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES, 
+				isAcceptPrevBases() ? "off" : "on"), resultsPanel);
+	}
+
+	public boolean isAcceptPrevBases() {
+		return 
+		(( CretaResults ) resultsPanel.getChild())
+		.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES)
+		.map( s -> "on".equalsIgnoreCase(s))
+		.orElse(false)
+		;
+	}
 	
 	
 	private void showResultsPanel(Void v) {
@@ -3952,7 +3966,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
-			ClickHandler reftificationClickHandler, ClickHandler rntClickHandler ) {
+			ClickHandler reftificationClickHandler, ClickHandler rntClickHandler, ClickHandler prevBasesClickHandler ) {
 		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
 		mergeEditor.setMode("text/xml");
@@ -4007,6 +4021,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
 					solicitudRecepcionRNT.addClickHandler(rntClickHandler);
 					basesEditor.add(solicitudRecepcionRNT);
+
+					CheckBox aceptarBasesAnteriores = new CheckBox("Aceptar Bases Anteriores");
+					aceptarBasesAnteriores.setValue(result.isAcceptPrevBases());
+					aceptarBasesAnteriores.setStyleName("aon-finding-toolbar-item");
+					aceptarBasesAnteriores.addClickHandler(prevBasesClickHandler);
+					basesEditor.add(aceptarBasesAnteriores);
 				}
 			}
 		}
@@ -4022,7 +4042,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}),
 		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
-		}));
+		}),
+		e -> cretaCommand.reexecute(d -> {
+			d.aceptarBasesAnterioresCheckBox.setValue(!result.isAcceptPrevBases());
+		})		
+		);
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
@@ -4035,7 +4059,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}),
 		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
-		}));
+		}),
+		e -> cretaCommand.reexecute(d -> {
+			d.aceptarBasesAnterioresCheckBox.setValue(!result.isAcceptPrevBases());
+		})		
+		);
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
@@ -4048,7 +4076,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}),
 		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
-		}));
+		}),
+		e -> cretaCommand.reexecute(d -> {
+			d.aceptarBasesAnterioresCheckBox.setValue(!result.isAcceptPrevBases());
+		})		
+		);
 
 	}
 
