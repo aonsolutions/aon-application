@@ -138,7 +138,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		
 		Filter<IContractPayment> extraPaymentFilter = getExtraPaymentFilter();
 		
-		Collection<IContractPayment> contractPayments = new ContractPayments(super.getContractPayments(), extraPaymentFilter);
+		Collection<IContractPayment> contractPayments = new ContractPayments(getExtraContractPayments(), extraPaymentFilter);
 
 		return  
 		new FilterCollection<>(extraPaymentFilter, new CompositePayments<IContractPayment>(implicitPayemnts, contractPayments,getWarnPayment(monthlyQuotedPayments)));
@@ -200,6 +200,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	protected FilterCollection.Filter<IContractPayment>  getExtraPaymentFilter() {
 		Date issueDate = getIssueDate();
 		return new ExtraPaymentFilter(issueDate);
+	}
+
+	protected Collection<IContractPayment> getExtraContractPayments() throws AonException {
+		return super.getContractPayments();
 	}
 
 	// -------------------------------------------------------------------------

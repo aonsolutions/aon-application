@@ -46,6 +46,7 @@ import org.mvel2.CompileException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -340,7 +341,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				if ( !extraIssueDate.equals(issueDate) )
 					throw new ExtraException();
 				
-				if ( !extraEmited(extraIssueDate, payment, ctx)) {
+				if ( !extraEmitedAtDate(extraIssueDate, payment, ctx)) {
 					Salary extra = calculateExtra(ctx, extraPayment, extraIssueDate);
 					amount = extra.getTotalPayment();
 					payment = new SalaryExtraPayment(payment, amount);
@@ -632,8 +633,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 		SalaryType salaryType = contractPayment.getSalaryType();
 		
+		Month month  = contractPayment.getMonth(); 
+		PaymentType paymentType = contractPayment.getType();
+		
 		if ( salaryType != ctx.getSalaryType()  
-			&& salaryType == SalaryType.EXTRA ) {
+			&& salaryType == SalaryType.EXTRA ){
 			try {
 				resolveExtra(contractPayment, 
 						start, 
@@ -646,6 +650,20 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 						strikePeriods);
 				return;
 			} catch ( NotNowException | ClassCastException e ) {
+			}
+		} else if ( month == getMonth(issueDate) 
+					&& paymentType == PaymentType.CRA_0004) {
+			try {
+				if ( extraEmitedAtMonth(issueDate, contractPayment, ctx) ) {
+					// only prorrate quote, not tax , not pay
+					contractPayment = new DelegateContractPayment(contractPayment) {
+						@Override
+						public SalaryType getSalaryType() {
+							return SalaryType.EXTRA;
+						}
+					};
+				}
+			} catch ( ClassCastException e ) {
 			}
 		}
 		
@@ -1560,7 +1578,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return Optional.empty();
 	}
 
-	private static boolean extraEmited(Date issueDate, IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
+	private static boolean extraEmitedAtDate(Date issueDate, IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
 		
 		int contractId = ctx.getId();
 		
@@ -1575,6 +1593,26 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
 		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
 		.and(SALARY.ISSUE_DATE.eq(new java.sql.Date(issueDate.getTime())))) > 0;
+		
+	}
+
+	private static boolean extraEmitedAtMonth(Date issueMonth,  IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
+		
+		int contractId = ctx.getId();
+		
+		java.sql.Date firstDayOfMonth = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(issueMonth).getTime());
+		java.sql.Date lastDayOfMonth = new java.sql.Date(AonDateUtils.getLastDayOfMonth(issueMonth).getTime());
+		
+		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
+		return dslContext.fetchCount(
+		dslContext
+		.select(SALARY.ID)
+		.from(SALARY)
+		.innerJoin(SALARY_PAYMENT).onKey()
+		.where(SALARY.CONTRACT.eq(contractId))
+		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
+		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
+		.and(SALARY.ISSUE_DATE.between(firstDayOfMonth, lastDayOfMonth))) > 0;
 		
 	}
 
@@ -1677,7 +1715,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			Period extraPeriod = new Period(start, end);
 			
-			if ( !extraEmited(extraIssueDate, contractPayment, ctx)) {
+			if ( !extraEmitedAtDate(extraIssueDate, contractPayment, ctx)) {
 				Salary extra = calculateExtra(ctx, extraPayment, extraIssueDate);
 				
 				for ( SalaryPayment salaryPayment : extra.getSalaryPayments() ) {
