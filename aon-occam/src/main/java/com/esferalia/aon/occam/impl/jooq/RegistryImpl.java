@@ -555,6 +555,11 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryOldDAO.updateRegistryAddInfo(ctx, raddinfo));
 	}
 
+	@Override
+	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId) {
+		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRegistryAddInfo(ctx, raddinfoId));
+	}
+
 	
 	// -------------------- RDIRSTAFF
 

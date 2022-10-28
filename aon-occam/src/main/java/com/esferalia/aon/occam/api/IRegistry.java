@@ -184,6 +184,7 @@ public interface IRegistry {
 	public Stream<RegistryAddInfo> getRegistryAddInfoStream(AONContext ctx, RegistryAddInfoFilter filter);
 	public RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
+	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
 
 	// ------------------- RDIRSTAFF
 	

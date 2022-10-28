@@ -1693,6 +1693,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteRegistryAddInfo(Domain domain, String login, Integer raddinfoId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
+			getRegistry().deleteRegistryAddInfo(ctx, raddinfoId);
+		}
+	}
+	
 	// ------------------------------------ BRAND
 	
 	public static Brand getBrand(String domainName, Integer domainId, String login, Integer id){

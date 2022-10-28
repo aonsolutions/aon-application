@@ -33,6 +33,20 @@
 			<version>4.13-beta-1</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+	      <groupId>net.aonsolutions.core</groupId>
+	      <artifactId>pool</artifactId>
+	      <version>${project.version}</version>
+	      <scope>provided</scope>
+	    </dependency>
+	    
+		<dependency>
+	      <groupId>mysql</groupId>
+	      <artifactId>mysql-connector-java</artifactId>
+	      <version>8.0.13</version>
+	      <scope>provided</scope>
+	    </dependency>
 	</dependencies>
 
 </project>
