@@ -17,7 +17,7 @@ export class AonMobileCreditorList extends AonMobileRegistryList {
 		getCreditor(data).then(r => {
 			let aonRegistry = new AonMobileCreditor();
 			aonRegistry.id = this.getApplication().id + 'Registry';
-			aonRegistry.setRegistry(r);
+			aonRegistry.setCreditor(r);
 			this.getApplication().setContent(aonRegistry);
 		});
 	}

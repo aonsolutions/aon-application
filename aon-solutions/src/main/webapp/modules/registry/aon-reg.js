@@ -203,12 +203,11 @@ export class AonReg extends AonElement {
 		card.title = MSG.GENERAL_INFORMATION;
 		card.style.width = '50%';
 		parent.appendChild(card);
-
+		
 		if(this.registry.id && this.registry.status){
 			this.buildStatusRegistry();
 		}
 		
-
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 

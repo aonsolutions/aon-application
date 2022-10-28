@@ -34,6 +34,7 @@ export class AonRegistryList extends AonElement {
 		this.TABLE.addColumn(MSG.NAME, 'string', 'name', '40%');
 		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '15%');
 		this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '5%');
+		
 		if(this.selectable){
 			this.TABLE.addColumn("Opción", "fn", "option", "2%");
 		}
@@ -114,6 +115,10 @@ export class AonRegistryList extends AonElement {
 	setFilter(filter) {
 		this.filter = filter;
 		this.init();
+	}
+
+	buildToolbarCustom(){
+		//TODO
 	}
 }
 
