@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 @SuppressWarnings("serial")
 public class TaskHolder extends Registry implements Serializable{
@@ -13,6 +14,7 @@ public class TaskHolder extends Registry implements Serializable{
 	private Boolean active;
 	private Integer userId;
 	private Integer costProfile;
+	
 	
 	public TaskHolder() {}
 	
@@ -50,6 +52,17 @@ public class TaskHolder extends Registry implements Serializable{
 	public TaskHolder setActive(Boolean active) {
 		this.active = active;
 		return this;
+	}
+	
+	public TaskHolder setStatus(RegistryStatus status) {
+		if(status!=null) {
+			setActive(RegistryStatus.ACTIVE.equals(status));
+		}
+		return this;
+	}
+	
+	public RegistryStatus getStatus() {
+		return Boolean.TRUE.equals(isActive())  ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
 	}
 
 	public Integer getUserId() {
