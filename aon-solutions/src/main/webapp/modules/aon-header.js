@@ -10,7 +10,7 @@ import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
 import './notification/aon-notification-icon.js';
-import { MATERIAL_ICONS, MSG } from '../environments/environments.js';
+import { CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
@@ -18,6 +18,7 @@ import { AonMessenger } from './messenger/aon-messenger.js';
 import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 import * as LS from '../services/localStorageService.js';
 import { Language } from '../models/Language.js';
+import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 
 export class AonHeader extends AonElement {
 
@@ -72,8 +73,20 @@ export class AonHeader extends AonElement {
 	}
 
 	build() {
-		this.innerHTML = /*html*/`
-			<div id="aonHeaderWeb" class="aonHeader" >
+		let div = this.createElement(TAG.DIV);
+		div.id = 'aonHeaderWeb';
+		div.className = CSS.AON_HEADER; //this.isBeta() ? CSS.AON_HEADER_BETA : CSS.AON_HEADER;
+		this.appendChild(div);
+
+		let helpOption = new AonDialogMenu();
+		helpOption.id = 'aonHeaderDialogHelpOption';
+		this.appendChild(helpOption);
+
+		let userOption = new AonDialogMenu();
+		userOption.id = 'aonHeaderDialogUserOption';
+		this.appendChild(userOption);
+
+		div.innerHTML = /*html*/`
 				<span class="aonHeaderLogoSpan">
 					<img id="aonLogo" class="aonLogo"  />
 				</span>
@@ -104,10 +117,7 @@ export class AonHeader extends AonElement {
 
 				<span id="aonHeaderCompany" class="aonHeaderButton" style="display:none;top:25px;right: 220px;">
 					<span id="aonHeaderCompanyName"> </span>
-				</span>
-			</div>
-			<aon-dialog-menu id="aonHeaderDialogHelpOption" > </aon-dialog-menu>
-			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
+				</span>			
 			`;
 
 		this.buildLogo();
@@ -167,7 +177,7 @@ export class AonHeader extends AonElement {
 						}, {
 							name: MSG.GALICIAN,
 							image: '../assets/img/aonIconGalego.png',
-							fn: () => LS.setLanguage(Language.DEUTSCH)
+							fn: () => LS.setLanguage(Language.GALICIAN)
 						} ]
 					};
 
@@ -267,7 +277,7 @@ export class AonHeader extends AonElement {
 							fn: () => this.aonConfiguration()
 						}, {
 							name: MSG.CLOSE_SESSION,
-							icon: 'input',
+							icon: MATERIAL_ICONS.LOGOUT,
 							id: 'dialogLogout',
 							fn: () => {
 								this.activeTimecontrol= false;
@@ -285,7 +295,7 @@ export class AonHeader extends AonElement {
 							fn: () => this.aonConfiguration()
 						}, {
 							name: MSG.CLOSE_SESSION,
-							icon: 'input',
+							icon: MATERIAL_ICONS.LOGOUT,
 							id: 'dialogLogout',
 							fn: () => closeSession()
 						}];
@@ -301,7 +311,7 @@ export class AonHeader extends AonElement {
 							fn: () => this.aonConfiguration()
 						}, {
 							name: MSG.CLOSE_SESSION,
-							icon: 'input',
+							icon: MATERIAL_ICONS.LOGOUT,
 							id: 'dialogLogout',
 							fn: () => closeSession()
 						}];

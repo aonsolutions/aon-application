@@ -10,14 +10,23 @@ export class AonCustomerList extends AonRegistryList {
 		super.build();
 	}
 
-	getRegistries() {
-		return getCustomers(this.filter);
+	async getRegistries() {
+		let customers = await getCustomers(this.filter);
+
+		if(this.selectable){
+			customers = customers.map(customer => {
+				customer.option = this.getOptionsLink(customer);
+				return customer;
+			});
+		}
+
+		return customers;
 	}
 
 	getCustomerCustom(registry){
 		let data = {
 			id: registry.id,
-			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
+			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT']
 		};
 		return getCustomer(data);
 	}
@@ -30,6 +39,31 @@ export class AonCustomerList extends AonRegistryList {
 			aonCustomer.setCustomer(r);
 			this.getApplication().setContent(aonCustomer);
 		});
+	}
+
+
+	getOptionsLink(){
+		let option = [];
+
+		option.push({
+			name: 'Vincular dominio',
+			icon: 'link',
+			id: 'domain_link',
+			permission:true,
+			backgroundColor: "grey",
+			fn: () => this.getApplication().development()
+		});
+
+		option.push({
+			name: 'Crear empresa',
+			icon: 'apartment',
+			id: 'create_enterprise',
+			permission:true,
+			backgroundColor: "grey",
+			fn: () => this.getApplication().development()
+		});
+		
+		return option;
 	}
 }
 

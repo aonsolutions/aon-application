@@ -72,10 +72,12 @@ export class AonModule extends AonElement {
 				password: password,
 			};
 			await login(data);
+			window.location = window.location.origin;
 		}
 
 		if(token) {
 			LS.setToken(token);
+			window.location = window.location.origin;
 		}
 	} 
 

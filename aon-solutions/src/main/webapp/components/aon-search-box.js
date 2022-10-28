@@ -1,9 +1,9 @@
-// import {AonElement} from './AonElement.js';
-import { CONSTANT, MSG } from '../environments/environments.js';
+import {AonElement} from './AonElement.js';
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import './aon-icon-button.js';
+import { AonIconButton } from './aon-icon-button.js';
 
-
-export class AonSearchBox extends HTMLElement {
+export class AonSearchBox extends AonElement {
 
 	constructor () {
 		super();
@@ -44,16 +44,31 @@ export class AonSearchBox extends HTMLElement {
 	}
 
 	connectedCallback () {
-		this.innerHTML = `
-		<div id="aon-search-div" style="height: 40px;">
-			<aon-icon-button id="aon-search-button" icon="search"></aon-icon-button>
-			<input title="${MSG.SEARCH}" id="search-input"
-				autocomplete="off" placeholder="${MSG.SEARCH}" class="aonSearchBox">
-		</div>
-		`;
+		let div = this.createElement(TAG.DIV);
+		div.id = 'aon-search-div';
+		div.style.height = '40px';
+		div.style.minWidth = '400px';
+		div.style.backgroundColor = '#f0f0f0';
+		div.style.borderRadius = '10px';
+		this.appendChild(div);
+
+		let iconButton = new AonIconButton();
+		iconButton.id = 'aon-search-button';
+		iconButton.icon = MATERIAL_ICONS.SEARCH;
+		div.appendChild(iconButton);
+
+		let input = this.createElement(TAG.INPUT);
+		input.id = 'search-input';
+		input.autocomplete = 'off';
+		input.placeholder = MSG.SEARCH;
+		input.title = MSG.SEARCH;
+		input.className = 'aonSearchBox';
+		input.style.backgroundColor = '#f0f0f0';
+		input.style.width = '350px';
+		div.appendChild(input);
+
 		this.setAttribute('opened', true);
-		let div = document.getElementById('aon-search-div');
-		let input = document.getElementById('search-input');
+
 		input.addEventListener('keyup', () => {
 			this.value = input.value;
 	    	this.dispatchEvent(new Event('keyup'));

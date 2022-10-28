@@ -372,7 +372,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- EmployeeIrpf
 	
-	void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException;
+	void getEmployeeIrpf(String currentDomainName, String ssNumber, String document, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException;
 
 	void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException;
 

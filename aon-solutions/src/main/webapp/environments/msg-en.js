@@ -13,11 +13,13 @@ export const ACTIVITY_SUMMARY = 'Activity Summary';
 export const ADD = 'Add';
 export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
+export const ADD_COMPOSITION = 'Add Composition';
 export const ADD_FILE = 'Add File';
 export const ADD_INVOICE = 'Add Invoice';
 export const ADD_REMARKS = 'Add Remarks';
 export const ADD_TAG = 'Add Tag';
 export const ADD_TAX = 'Add Tax';
+export const ADD_TYPE = 'Add Type';
 export const ADDITIONAL_INFORMATION = 'Additional Information';
 export const ADDRESS = 'Address';
 export const ALL_FILES = 'All Files';
@@ -79,6 +81,8 @@ export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
 export const CONTRACT = 'Contract';
+export const CONTRACT_PAYROLL = 'Contract';
+export const CONTRACTS = 'Contracts';
 export const COUNTRY = 'Country';
 export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
@@ -209,6 +213,7 @@ export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
 export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
+export const MY_MANAGER = 'My Manager';
 export const MY_USER = 'My User';
 
 // ----- N
@@ -239,6 +244,7 @@ export const OTHER_SERVICES = 'Other Services';
 // ----- P
 
 export const PAUSE = 'Pause';
+export const PASSWORD = 'Password';
 export const PAYMETHOD = 'Payment Method';
 export const PAYROLL = 'Payroll';
 export const PAYSHEET = 'Paysheet';
@@ -277,6 +283,8 @@ export const RECTIFIED = 'Rectified';
 export const RECTIFY = 'Rectify';
 export const RECTIFY_INVOICE = 'Rectify Invoice';
 export const REFERENCE = 'Reference';
+export const REGISTERED_TRADEMARK = 'Registered Trademark';
+export const REGISTERED_TRADEMARK_AON = 'is a registered trademark of AON SOLUTIONS, S.L.';
 export const REJECT = 'Reject';
 export const REJECT_INVOICE = 'Reject Invoice';
 export const REJECT_INVOICES = 'Reject Invoices';
@@ -313,6 +321,9 @@ export const SERVICES = 'Services';
 export const SETTING = 'Setting';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
+export const SIGN_IN = 'Sign in';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Sign in without Password';
+export const SIGN_IN_WITH_CERTIFICATE = 'Sign in with Cetificate';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Size';
@@ -365,6 +376,7 @@ export const USERS = 'Users';
 // ----- V
 
 export const VAT = 'VAT';
+export const VERSION = 'Version';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

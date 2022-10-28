@@ -402,7 +402,7 @@ public class LroeModel240 extends DockLayoutPanel {
 					VerticalPanel vp = new VerticalPanel();
 					getModel240().getBreakdownPanel().setWidget(vp);
 					selectedInvoices.stream().forEach(invoice -> {
-						SII_SERVICE.refresh240(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<Boolean>() {
+						SII_SERVICE.refresh240(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<Boolean>() {
 
 							@Override
 							public void onFailure(Throwable caught) {

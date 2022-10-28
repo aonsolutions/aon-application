@@ -47,7 +47,7 @@
 		}
 		
 		.width50{
-			width: 50px;
+			width: 70px;
 			text-align: center;
 		}
 		

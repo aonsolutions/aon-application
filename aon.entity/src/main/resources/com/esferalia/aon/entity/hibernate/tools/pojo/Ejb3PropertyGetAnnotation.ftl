@@ -15,7 +15,9 @@ ${pojo.generateAnnIdGenerator()}
 	</#if>
 </#if>
 </#if>
-<#if property.getName()=="product" && pojo.getDeclarationName()=="ItemDB">	@${pojo.importType("javax.persistence.ManyToOne")}
+<#if property.getName()=="system" && pojo.getDeclarationName()=="GeoZoneDB">
+    @Column(name="`system`", nullable=false)
+<#elseif property.getName()=="product" && pojo.getDeclarationName()=="ItemDB">	@${pojo.importType("javax.persistence.ManyToOne")}
     @javax.persistence.JoinColumn(name="product", nullable=false)
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}

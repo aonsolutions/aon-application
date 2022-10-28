@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,9 +50,11 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.CabeceraGastosConsultaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaGastosConFacturaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultarespuesta_v1_0_1.LROEPF140IngresosConFacturaConSGConsultaRespuesta;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_altamodifpeticion_v1_0_2.LROEPF140GastosConFacturaAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultapeticion_v1_0_0.LROEPF140GastosConFacturaConsultaPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultarespuesta_v1_0_0.LROEPF140GastosConFacturaConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -310,12 +313,12 @@ public class LROE140_2_1 extends LROE140 {
 		CabeceraGastosConsultaType cabecera = new CabeceraGastosConsultaType();
 		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
 		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
 		
 		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
 		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		fechaRec.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaRecepcion(fechaRec);
 	
 		cabecera.setNumFactura(invoice.getReferenceCode());
@@ -323,7 +326,7 @@ public class LROE140_2_1 extends LROE140 {
 	}
 	
 	
-	public void consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+	public boolean consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.C_00);
 			LROEPF140GastosConFacturaConsultaPeticion lroe = buildConsulta(person, invoice, info);
@@ -336,9 +339,21 @@ public class LROE140_2_1 extends LROE140 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			
+			LROEPF140GastosConFacturaConsultaRespuesta resp = (LROEPF140GastosConFacturaConsultaRespuesta) 
+                    unmarshall(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());
+            
+            if(SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros())) {
+                DataRequest request = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, data);
+                response.setDataRequest(request);
+                LroeData.saveResponse(person.getDomain(), new User().setLogin(""), invoice, response, info);
+            }
+            
+            return SiNoEnum.S.equals(resp.getResultadoConsulta().getExistenRegistros());
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 }

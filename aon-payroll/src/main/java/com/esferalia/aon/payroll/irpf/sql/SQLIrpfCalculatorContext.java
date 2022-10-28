@@ -1297,7 +1297,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			if ( proration > 0.00 ) {
 				double extrasPayment = 
 				salary.getSalaryPayments().stream()
-				.filter(p -> p.getAmount() > 0.00 && p.getType() == PaymentType.CRA_0004  )				
+				//.peek( p -> System.out.println( p.getType() + "-. "+ p.getDescription() + ": " + p.getAmount() + " == " + p.getQuote() ) )
+				.filter(p -> p.getAmount() != p.getQuote() &&  p.getAmount() > 0.00 && p.getType() == PaymentType.CRA_0004  )				
 				.collect(Collectors.summingDouble(p -> p.getAmount()));		
 				irpfBase -= extrasPayment;
 			}

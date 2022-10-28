@@ -113,7 +113,12 @@ export class AonMobileProfile extends AonElement {
 	editPassword() {
 		let d = document.getElementById(this.DIALOG);
 		d.clear();
-		if(!this.isMobile()) d.width = '400px';
+		if(this.isMobile()) {
+            d.type = "fullscreen";
+        } else {
+            d.width = '400px';
+        }
+
 		d.setTitle(MSG.CHANGE_PASSWORD);
 
         let div = document.createElement("div");
@@ -121,13 +126,13 @@ export class AonMobileProfile extends AonElement {
         let oldPassword = new AonInput();
         oldPassword.id = "oldPassword";
         oldPassword.type = "password";
-        oldPassword.description = "Contraseña actual";
+        oldPassword.description = "Contraseña";
         div.appendChild(oldPassword);
 
         let newPassword = new AonInput();
         newPassword.id = "newPassword";
         newPassword.type = "password";
-        newPassword.description = "Nueva Contraseña";
+        newPassword.description = "Repetir Contraseña";
         div.appendChild(newPassword);
 
 		d.setContent(div);

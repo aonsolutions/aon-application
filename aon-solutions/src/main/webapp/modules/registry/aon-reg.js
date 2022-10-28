@@ -1,22 +1,17 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-import '../../components/aon-address.js';
-import '../../components/aon-input.js';
-
 import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
-
 import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
-
-import * as ACTION from '../actions.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonAddress } from '../../components/aon-address.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { Media } from '../../models/registry/Media.js';
-import { saveRegistry } from '../../services/registryService.js';
+import { getSegments, saveRegistry } from '../../services/registryService.js';
 import { Registry } from '../../models/registry/Registry.js';
+import { RegistrySegment } from '../../models/registry/RegistrySegment.js';
 import { Address } from '../../models/registry/Address.js';
 import { getReader } from '../../services/utils.js';
 import { deleteAttach, getAttach, uploadAttach } from '../../services/fileService.js';
@@ -28,9 +23,9 @@ import { AonIban } from '../../components/aon-iban.js';
 import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
-import * as GWT from '../../gwt/gwt.js';
 import { AonProjectList } from '../project/aon-project-list.js';
-
+import * as GWT from '../../gwt/gwt.js';
+import * as ACTION from '../actions.js';
 
 export class AonReg extends AonElement {
 
@@ -41,6 +36,7 @@ export class AonReg extends AonElement {
 	logo;
 	options;
 
+	segments;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -125,6 +121,7 @@ export class AonReg extends AonElement {
 		this.webs = [];
 		this.phones = [];
 		this.oneAddress = this.oneAddress || true;
+		this.segments = [];
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -201,6 +198,11 @@ export class AonReg extends AonElement {
 		card.style.width = '50%';
 		parent.appendChild(card);
 
+		if(this.registry.id && this.registry.status){
+			this.buildStatusRegistry();
+		}
+		
+
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
@@ -250,20 +252,20 @@ export class AonReg extends AonElement {
 		let td1 = table.addCell(aliasInput);
 		td1.style.width = '55%';
 
-		table.addRow();
+		// table.addRow();
 		
-		let statusSelect = new AonSelect();
-		statusSelect.id = 'aonConfigurationGeneralStatus';
-		statusSelect.title = MSG.STATUS;
-		statusSelect.setOptions([
-			{ name: MSG.ACTIVE, value:"ACTIVE" },
-			{ name: MSG.INACTIVE, value:"INACTIVE" },
-			{ name: MSG.BLOCKED, value:"BLOCKED" },
-		]);
+		// let statusSelect = new AonSelect();
+		// statusSelect.id = 'aonConfigurationGeneralStatus';
+		// statusSelect.title = MSG.STATUS;
+		// statusSelect.setOptions([
+		// 	{ name: MSG.ACTIVE, value:"ACTIVE" },
+		// 	{ name: MSG.INACTIVE, value:"INACTIVE" },
+		// 	{ name: MSG.BLOCKED, value:"BLOCKED" },
+		// ]);
 
-		statusSelect.value = this.registry.status;
-		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
-		table.addCell(statusSelect, 3);
+		// statusSelect.value = this.registry.status;
+		// statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
+		// table.addCell(statusSelect, 3);
 
 		this.buildAddresses(div);
 
@@ -302,6 +304,90 @@ export class AonReg extends AonElement {
 		}
 	}
 
+	buildStatusRegistry(){
+		let card = this.getElement(this.GENERAL_CARD);
+		card.cleanSection2();
+
+		const title   =  this.registry.status ? MSG[this.registry.status] : "";
+
+		let color = "#77CA83";
+		if(this.registry.status === "INACTIVE"){
+			color = "orange";
+		} else if(this.registry.status === "BLOCKED"){
+			color = "grey";
+		}
+
+		let statusDiv = this.createElement(TAG.DIV);
+		statusDiv.title = MSG.STATUS;
+		statusDiv.style.display = "flex";
+		statusDiv.style.columnGap = "5px";
+		statusDiv.style.border = "1px solid "+color;
+		statusDiv.style.borderRadius = "10px";
+		statusDiv.style.padding = "4px";
+		statusDiv.style.cursor = "pointer";
+		card.addSection2(statusDiv);
+
+		let statusText = this.createElement(TAG.DIV);
+		statusText.innerText = title;
+		statusText.style.fontSize = "14px";
+		statusText.style.color = color;
+		statusDiv.appendChild(statusText);
+
+		let statusBox = this.createElement(TAG.DIV);
+		statusBox.style.width           = "10px";
+		statusBox.style.height          = "10px";
+		statusBox.style.borderRadius    = "50%";
+		statusBox.style.marginTop       = "3px";
+		statusBox.style.backgroundColor = color;
+		statusDiv.appendChild(statusBox);
+		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(statusBox));
+	}
+
+	getOptionsStatus(element){
+		const top = element.getBoundingClientRect().top;
+		const left = element.getBoundingClientRect().left;
+		let d = this.getApplication().getOptionDialog();
+
+		let options = [
+			{ 
+				name: "Activar", 
+				value:"ACTIVE",
+				icon:"toggle_on", 
+				fn:()=> {
+					this.registry.status = "ACTIVE";
+					this.buildStatusRegistry();
+					this.save();
+				}
+			},
+			{ 
+				name: "Desactivar", 
+				value:"INACTIVE",
+				icon:"toggle_off", 
+				fn:()=> {
+					this.registry.status = "INACTIVE";
+					this.buildStatusRegistry();
+					this.save();
+				}
+			},
+			{ 
+				name: "Bloquear", 
+				value:"BLOCKED",
+				icon:"block", 
+				fn:()=> {
+					this.registry.status = "BLOCKED";
+					this.buildStatusRegistry();
+					this.save();
+				}
+			}
+		];
+
+		if(this.registry.status){
+			options = options.filter(opt => opt.value!=this.registry.status );
+		}
+
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
 
 	buildMediaCard(parent){
 		let card = new AonCard();
@@ -811,6 +897,119 @@ export class AonReg extends AonElement {
 			this.webs.forEach((web, i) => 
 				this.buildWeb(table, web, i));
 		}
+	}
+
+	//SEGMENTATIONS
+	buildSegments(parent) {
+		let registrySegment = this.registry.getRegistrySegments()
+		.map(s =>  new RegistrySegment(s))
+		.filter(s => !s.isRemoved());
+
+		const table =  new AonBasicTable();
+		table.id =  "segmentTable";
+		parent.appendChild(table);
+
+		if(!registrySegment || registrySegment.length <= 0){
+			let registrySegment = new RegistrySegment();
+			registrySegment.setRegistry(this.registry.getId());
+			registrySegment.setDomain(this.registry.getDomain());
+			this.registry.addRegistrySegment(registrySegment);
+			this.buildSegment(table, registrySegment, 0);
+		} else {
+			this.registry.setRegistrySegments([]);
+			registrySegment.forEach( (rsegment, i) =>{
+				this.registry.addRegistrySegment(rsegment);
+				this.buildSegment(table, rsegment, i)
+			});
+		}
+	}
+
+	buildSegment(table, registrySegment, i) {
+		const rowNum = table.addRow();
+
+		const rowCount = table.getRowsCount();
+		
+		let segment = new AonSelect();
+		segment.id = "selectSegment" + rowNum;
+		segment.title = "Segmento";
+		segment.addEventListener(EVENT.CHANGE, () => {
+			if(segment.value){
+				registrySegment.setSegment(segment.getDetail())
+			}
+		});
+		
+		table.addCell(segment).style.width = '100%';
+	
+		this.getSegments()
+		.then(options=>{
+			segment.setOptions(options);
+			if(registrySegment.getSegment()){
+				segment.value = registrySegment.getSegment().id;
+			}
+		})
+
+		let removeIcon = new AonIconButton();
+		removeIcon.id = "segmentRemove" +rowNum;
+		removeIcon.title = MSG.DELETE;
+		removeIcon.icon = MATERIAL_ICONS.CLOSE;
+		removeIcon.addEventListener(EVENT.CLICK, () => {
+			const count = table.getRowsCount();
+			let childVisible = 1;
+			
+			registrySegment.remove(); //REMOVE
+
+			if(count === 1){
+				segment.clear();
+			} else {
+				table.removeRow(rowNum);
+				childVisible = count-1;
+			}
+
+			let cell = table.getCell(childVisible, 2);
+			if(cell && cell.firstChild){
+				cell.firstChild.visible = true;
+			}
+		});
+		
+		table.addCell(removeIcon);
+
+		this.querySelectorAll(`[id*='segmentAdd']`).forEach(el=>{
+			el.visible = false;
+		});
+
+		let addSegment = new AonIconButton();
+		addSegment.id = "segmentAdd"+rowNum;
+		addSegment.title = MSG.ADD+" Segmento";
+		addSegment.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addSegment.visible = rowCount === i+1
+		addSegment.addEventListener(EVENT.CLICK, () => {
+			addSegment.visible = false;
+			let registrySegment = new RegistrySegment();
+			registrySegment.setRegistry(this.registry.getId());
+			registrySegment.setDomain(this.registry.getDomain());
+			this.registry.addRegistrySegment(registrySegment);
+			this.buildSegment(table, registrySegment, table.getRowsCount());
+		});
+
+		table.addCell(addSegment);
+	}
+
+
+	async getSegments(){
+		if(!this.segments.length){
+			try {
+				const resp = await getSegments({domainName:this.registry.getDomain().getName()});
+				this.segments = resp.map(s => ({...s, value:s.id}));
+			} catch (error) {
+				this.showError(error);
+			}
+		}
+		
+		return this.segments;
+		// return this.segments
+		// .filter((value) => 
+		// 	!( this.registry.getRegistrySegments().some(r => r.segment && r.segment.id == value.id) ) 
+		// );
 	}
 
 	//EXPEDIENTE

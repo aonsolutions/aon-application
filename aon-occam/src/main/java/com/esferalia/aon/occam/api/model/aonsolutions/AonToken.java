@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonToken implements Serializable{
 
@@ -93,7 +94,8 @@ public class AonToken implements Serializable{
 	}
 	
 	public static String build(Auth auth, Date expireDate) {
-		return build(auth, expireDate, AONContext.getSchemaFirstDomain(auth.getSchema()));
+		return build(auth, expireDate,	AonStringUtils.isBlank(auth.getSchema())
+				? "" :	AONContext.getSchemaFirstDomain(auth.getSchema()));
 	}
 	
 	public static String build(Auth auth, Date expireDate, String domain) {

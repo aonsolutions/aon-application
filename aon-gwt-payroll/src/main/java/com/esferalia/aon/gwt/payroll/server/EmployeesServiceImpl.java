@@ -1906,6 +1906,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			payments.addAll(employeePayments);
 			payments.addAll(enterprisePayments);
 
+			System.out.println("----- Payment Suggest -----");
+			payments.forEach(paymentIt -> System.out.println(paymentIt.getType().getCode() + " - " + paymentIt.getDescription() + " --> " + paymentIt.getExpression() + " (id : " + paymentIt.getId() + ")"));
+			
 			return payments;
 
 		} catch (SQLException e) {
@@ -7096,11 +7099,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ------------------------------------------------- EmployeeIrpf
 
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, Date startDate)
+	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, String document, Date startDate)
 			throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqEmployeeIrpf.getEmployeeIrpf(connection, domainId, ssNumber, startDate);
+			return JooqEmployeeIrpf.getEmployeeIrpf(connection, domainId, ssNumber, document, startDate);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

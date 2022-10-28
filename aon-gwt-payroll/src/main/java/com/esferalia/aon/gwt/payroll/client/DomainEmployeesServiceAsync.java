@@ -693,8 +693,8 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- EmployeeIrpf
 	
-	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), ssNumber, startDate, callback);
+	public void getEmployeeIrpf(String ssNumber, String document, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), ssNumber, document, startDate, callback);
 	}
 	
 	public void setEmployeeIrpf(Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException {

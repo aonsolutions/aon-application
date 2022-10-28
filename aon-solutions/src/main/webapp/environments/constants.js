@@ -40,6 +40,7 @@ export const BASE = 'base';
 export const BIC = 'bic';
 export const BLANK = 'blank';
 export const BADGE = 'badge';
+export const BUTTON = 'button';
 
 // ----- C
 
@@ -119,6 +120,7 @@ export const HTML_ELEMENT = 'htmlElement';
 // ----- I
 
 export const IBAN = 'iban';
+export const ICON = 'icon';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';

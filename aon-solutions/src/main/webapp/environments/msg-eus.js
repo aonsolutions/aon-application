@@ -13,11 +13,13 @@ export const ACTIVITY_SUMMARY = 'Jardueren Laburpena';
 export const ADD = 'Gehitu';
 export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
+export const ADD_COMPOSITION = 'Konposizioa Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
 export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
+export const ADD_TYPE = 'Mota Gehitu';
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const ADDRESS = 'Helbidea';
 export const ALL_FILES = 'Fitxategi Guztiak';
@@ -79,6 +81,8 @@ export const CONTACT = 'Kontaktua';
 export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
 export const CONTRACT = 'Kontratatu';
+export const CONTRACT_PAYROLL = 'Kontratua';
+export const CONTRACTS = 'Kontratuak';
 export const COUNTRY = 'Herrialde';
 export const CREATE = 'Sortu';
 export const CREDITOR = 'Hartzekodun';
@@ -209,6 +213,7 @@ export const MODEL_190 = '190 Eredua';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
 export const MOVED_TO_TRASH = 'Paperontzira mugitu da.';
 export const MY_DATA = 'Nire Datuak';
+export const MY_MANAGER = 'Nire Gestorea';
 export const MY_USER = 'Nire Erabiltzailea';
 
 // ----- N
@@ -238,6 +243,7 @@ export const OTHER_SERVICES = 'Beste Zerbitzuak';
 // ----- P
 
 export const PAUSE = 'Pausa';
+export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nomina';
@@ -276,6 +282,8 @@ export const RECTIFIED = 'Zuzenketa';
 export const RECTIFY = 'Zuzendu';
 export const RECTIFY_INVOICE = 'Faktura Zuzendu';
 export const REFERENCE = 'Erreferentzia';
+export const REGISTERED_TRADEMARK = 'Marka Erregistratua';
+export const REGISTERED_TRADEMARK_AON = 'AON SOLUTIONS, S.L.-ren marka erregistratua da.';
 export const REJECT = 'Baztertu';
 export const REJECT_INVOICE = 'Faktura Baztertu';
 export const REJECT_INVOICES = 'Fakturak Baztertu'
@@ -312,6 +320,9 @@ export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
+export const SIGN_IN = 'Saioa Hasi';
+export const SIGN_IN_WITHOUT_PASSWORD = 'Saioa Hasi Pasahitzik gabe';
+export const SIGN_IN_WITH_CERTIFICATE = 'Saioa Hasi Ziurtagiriarekin';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Neurria';
@@ -364,6 +375,7 @@ export const USERS = 'Erabiltzaileak';
 // ----- V
 
 export const VAT = 'BEZ';
+export const VERSION = 'Bertsioa';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

@@ -159,7 +159,7 @@ const buildDialogHolder = (parent, holder) => {
         dialog.width = '40%';
     }
 
-    const title = (holder && holder.id ? MSG.EDIT : MSG.ADD)+" "+MSG.ADVISER;
+    const title = holder && holder.id ? MSG.EDIT : MSG.ADD;
 
     dialog.setTitle(title);
 
