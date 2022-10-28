@@ -1,14 +1,13 @@
 package es.aonsolutions.aio.test.config;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-	AccountListTest.class,
+@SelectClasses({
+	AccountTest.class,
 })
+@Suite
 public class ConfigTestSuite {
 	
 }

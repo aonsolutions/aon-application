@@ -2,7 +2,7 @@ package es.aonsolutions.aio.test.invoice;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -15,10 +15,10 @@ import com.code.aon.ql.Criteria;
 import es.aonsolutions.aio.test.AonHibernateTestBasic;
 import es.aonsolutions.aio.test.util.Asserts;
 
-public class InvoiceListTest extends AonHibernateTestBasic {
+class InvoiceListTest extends AonHibernateTestBasic {
 	
 	@Test
-	public void testListAccount() throws Exception {
+	void testListAccount() throws Exception {
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Criteria c = new Criteria();
 		c.addEqualExpression( "Invoice.domain" , 400);

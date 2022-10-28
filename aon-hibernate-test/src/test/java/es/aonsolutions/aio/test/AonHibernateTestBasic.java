@@ -1,37 +1,26 @@
 package es.aonsolutions.aio.test;
 
-import org.junit.ClassRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import static org.mockito.Mockito.mock;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.domain.IDomainProvider;
+import com.code.aon.ui.common.listener.BeanRegisterContextListener;
 
 public class AonHibernateTestBasic {
+	private static final Object MONITOR = new Object();
+	private static boolean FRAMEWORK_LISTENERS_LOADED = false;
 	
-	private static final String DOMAIN_NAME = "inelco-mac.ecastellano.pro";  //"occamtest.aonsolutions.test";
-	private static final int    DOMAIN = 400;
+	private static final String DOMAIN_NAME = "occamtest.aonsolutions.test";
+	// "inelco-mac.ecastellano.pro";  
+	private static final int    DOMAIN = 1; // 400;
 	private static final String USER = "mac";
 	
-	@ClassRule
-	public static CustomTestWatcher classWatcher = new CustomTestWatcher();
-
-	public static class CustomTestWatcher extends TestWatcher {
-		private int testCount = 0;
-
-		@Override
-		protected void starting(Description description) {
-			++testCount;
-			System.out.print( "\n" );
-			System.out.println( testCount + " .- [START]" + AonStringUtils.repeat(AonStringUtils.HYPHEN, 30 ) + description.getClassName() );
-		}
-		
-		@Override
-		protected void finished(Description description) {
-			System.out.println( testCount + " .- [ END ]" +  AonStringUtils.repeat(AonStringUtils.HYPHEN, 30 ) + description.getClassName() + " [END]" );
-		}
-		
-	}	
-	
+	public AonHibernateTestBasic() {
+		loadListeners();
+	}
 	
 	public static String getDomainName() {
 		return DOMAIN_NAME;
@@ -43,6 +32,26 @@ public class AonHibernateTestBasic {
 		return USER;
 	}
 	
-	
+	private void loadListeners() {
+		synchronized (MONITOR) {
+			if (!FRAMEWORK_LISTENERS_LOADED) {
+				final ServletContext servletContext = mock(ServletContext.class);
+				ServletContextEvent event = new ServletContextEvent( servletContext );
+				
+				new BeanRegisterContextListener().contextInitialized( event );
+
+				// ServletContextDomainListener() 
+				DomainManager.setDomainProvider( new IDomainProvider() {
+					@Override public Integer getCurrentDomain() 			{ return DOMAIN; }
+					@Override public Integer getUserDomain() 				{ return null; }
+					@Override public boolean isDomainManagementAvailable() 	{ return false; }
+					@Override public Integer getParentDomain() 				{ return null; }
+					@Override public boolean isEnableHeredity() 			{ return false; }
+				});
+
+				FRAMEWORK_LISTENERS_LOADED = true;
+			}
+		}
+	}	
 	
 }
