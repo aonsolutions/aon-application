@@ -774,8 +774,10 @@ public class UserServlet extends AonApiHttpServlet {
 				}
 				
 				setUserAppRole(api, user);
-				saveTaskHolder(api, user);
-
+				if(api.getDomain().isChild() || api.getDomain().isStandalone()) {
+					saveTaskHolder(api, user);
+				}
+				
 				js.put("id", user.getId());
 				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
 				js.put("uuid", auth.getUuid());
