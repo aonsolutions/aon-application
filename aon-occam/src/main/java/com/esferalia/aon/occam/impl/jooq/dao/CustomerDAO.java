@@ -23,7 +23,6 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.Advertising;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -200,17 +199,14 @@ public class CustomerDAO {
 	}
 	
 	private static void saveTarget(AONContext ctx, Customer customer) {
+		//-----------TARGET
 		Target target = new Target()
-		.setId(customer.getId())
-		.setAdvertising(Advertising.ALLOWED)
+		.copy(customer)
 		.setScope(customer.getScope())
-		.setStatus(TargetStatus.safeValueOf(customer.getStatus().value()))
 		.setSurcharge(customer.isSurcharge())
 		.setTariff(customer.getTariff()!=null ? new Tariff().setId(customer.getTariff()) : null)
 		.setTransaction(customer.getTransaction())
 		.setWithholding(customer.isWithholding());
-		
-		target.setDomain(customer.getDomain());
 		
 		TargetDAO.save(ctx, target);
 	}
