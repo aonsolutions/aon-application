@@ -69,7 +69,7 @@ export const AVERAGE = "Media";// TODO
 export const ASSIGN = "Asignar";// TODO
 export const ADVISER = "Asesor"; //TODO
 export const ADVISERS = "Asesores"; //TODO
-
+export const AUDIT = "Auditoría"; //TODO
 // ----- B
 
 export const BACK = MSG.BACK;
@@ -150,7 +150,7 @@ export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 export const CONVERSATION = 'Conversación'; // TODO
 export const CONTENT = 'Contenido'; // TODO
-
+export const CREATED_BY = "Creado por"; //TODO
 
 // ----- D
 
@@ -312,7 +312,7 @@ export const MESSENGER_SERVICE = "Mensajería";//TODO
 export const MONTH = "Mes"; //TODO
 export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
-
+export const MODIFIED_BY = "Modificado por"; //TODO
 // ----- N
 
 export const NAME = MSG.NAME;

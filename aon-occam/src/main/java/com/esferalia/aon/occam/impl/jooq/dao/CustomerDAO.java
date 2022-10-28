@@ -28,11 +28,14 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
@@ -168,7 +171,8 @@ public class CustomerDAO {
 	}
 	
 	private static Customer insert(AONContext ctx, Customer customer){
-		ctx.getDslContext().insertInto(CUSTOMER)
+		ctx.getDslContext()
+		.insertInto(CUSTOMER)
 			.set(CUSTOMER.REGISTRY,customer.getId())
 			.set(CUSTOMER.DOMAIN,customer.getDomain().getId())
 			.set(CUSTOMER.TARIFF,customer.getTariff())
@@ -186,8 +190,25 @@ public class CustomerDAO {
 			.set(CUSTOMER.CREATION_USER, ctx.getUser())
 			.set(CUSTOMER.CREATION_DATE, new Timestamp(new Date().getTime()))
 			.execute();
-		ctx.log().debug("INSERT CUSTOMER id: {0}", customer.getId());		
+		
+		ctx.log().debug("INSERT CUSTOMER id: {0}", customer.getId());	
+		
+		saveTarget(ctx, customer); // SAVE POTENTIAL CLIENT
+		
 		return customer;
+	}
+	
+	private static void saveTarget(AONContext ctx, Customer customer) {
+		//-----------TARGET
+		Target target = new Target()
+		.copy(customer)
+		.setScope(customer.getScope())
+		.setSurcharge(customer.isSurcharge())
+		.setTariff(customer.getTariff()!=null ? new Tariff().setId(customer.getTariff()) : null)
+		.setTransaction(customer.getTransaction())
+		.setWithholding(customer.isWithholding());
+		
+		TargetDAO.save(ctx, target);
 	}
 
 	private static Customer update(AONContext ctx, Customer customer){

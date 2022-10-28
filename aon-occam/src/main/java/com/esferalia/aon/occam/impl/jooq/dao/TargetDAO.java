@@ -75,6 +75,7 @@ public class TargetDAO {
 			.values(target.getAdvertising().value(), target.getDomain().getId(), target.getId(), target.getScope().getId(), target.getStatus().value(),
 					AonEnumUtils.getByte(target.isSurcharge()), target.getTariff().getId(), target.getTransaction().value(), AonEnumUtils.getByte(target.isWithholding()),
 					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
+		ctx.log().debug("INSERT TARGET id "+target.getId());		
 		return target;
 	}
 	
@@ -92,6 +93,7 @@ public class TargetDAO {
 			.set(TARGET.MODIFICATION_USER, ctx.getUser())
 			.where(TARGET.REGISTRY.eq(target.getId()))
 			.execute();
+		ctx.log().debug("UPDATE TARGET id "+target.getId());		
 		return target;
 	}
 	

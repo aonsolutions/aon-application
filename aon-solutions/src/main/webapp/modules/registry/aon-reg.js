@@ -2,7 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
 import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
-import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import {COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonAddress } from '../../components/aon-address.js';
@@ -26,6 +26,7 @@ import { AonDate } from '../../components/aon-date.js';
 import { AonProjectList } from '../project/aon-project-list.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonReg extends AonElement {
 
@@ -136,9 +137,14 @@ export class AonReg extends AonElement {
 		toolbar.id = this.REGISTRY_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.registry.id ? this.registry.name : 'NUEVO REGISTRO';
+		
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
+		
+		if(this.registry.id){
+			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
+		}
 
 		this.buildTabs();
 
@@ -308,30 +314,25 @@ export class AonReg extends AonElement {
 		let card = this.getElement(this.GENERAL_CARD);
 		card.cleanSection2();
 
-		const title   =  this.registry.status ? MSG[this.registry.status] : "";
+		const title = this.registry.status ? MSG[this.registry.status] : "";
 
-		let color = "#77CA83";
+		let color = CSS.variable(COLORS.ONLINE_GREEN);
 		if(this.registry.status === "INACTIVE"){
-			color = "orange";
+			color = COLORS.ORANGE;
 		} else if(this.registry.status === "BLOCKED"){
-			color = "grey";
+			color = "#DC4D30"; //CSS.variable(COLORS.MATERIAL_RED);
 		}
 
 		let statusDiv = this.createElement(TAG.DIV);
-		statusDiv.title = MSG.STATUS;
+		statusDiv.title = "Estado del cliente";
 		statusDiv.style.display = "flex";
 		statusDiv.style.columnGap = "5px";
-		statusDiv.style.border = "1px solid "+color;
+		statusDiv.style.border = "1px solid";
+		statusDiv.style.borderColor = "lightgray";
 		statusDiv.style.borderRadius = "10px";
 		statusDiv.style.padding = "4px";
 		statusDiv.style.cursor = "pointer";
 		card.addSection2(statusDiv);
-
-		let statusText = this.createElement(TAG.DIV);
-		statusText.innerText = title;
-		statusText.style.fontSize = "14px";
-		statusText.style.color = color;
-		statusDiv.appendChild(statusText);
 
 		let statusBox = this.createElement(TAG.DIV);
 		statusBox.style.width           = "10px";
@@ -340,12 +341,26 @@ export class AonReg extends AonElement {
 		statusBox.style.marginTop       = "3px";
 		statusBox.style.backgroundColor = color;
 		statusDiv.appendChild(statusBox);
-		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(statusBox));
+
+		let statusText = this.createElement(TAG.DIV);
+		statusText.innerText = title;
+		statusText.style.fontSize = "14px";
+		statusText.style.fontWeight = "500";
+		statusText.style.color = "#5f6368";
+		statusDiv.appendChild(statusText);
+
+		let iconArrowDown = this.createElement(TAG.DIV);
+		iconArrowDown.style.fontSize  = "18px";
+		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
+		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		statusDiv.appendChild(iconArrowDown);
+
+		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
 	}
 
 	getOptionsStatus(element){
-		const top = element.getBoundingClientRect().top;
-		const left = element.getBoundingClientRect().left;
+		const top = element.getBoundingClientRect().top + 24;
+		const left = element.getBoundingClientRect().left + 3;
 		let d = this.getApplication().getOptionDialog();
 
 		let options = [
@@ -360,7 +375,7 @@ export class AonReg extends AonElement {
 				}
 			},
 			{ 
-				name: "Desactivar", 
+				name: "Inactivar", 
 				value:"INACTIVE",
 				icon:"toggle_off", 
 				fn:()=> {
@@ -932,6 +947,7 @@ export class AonReg extends AonElement {
 		let segment = new AonSelect();
 		segment.id = "selectSegment" + rowNum;
 		segment.title = "Segmento";
+		segment.autocomplete = true;
 		segment.addEventListener(EVENT.CHANGE, () => {
 			if(segment.value){
 				registrySegment.setSegment(segment.getDetail())
@@ -1098,6 +1114,42 @@ export class AonReg extends AonElement {
 		}).catch(error => {
 	 		this.showToast(error);
 	 	});
+	}
+
+	audit(){
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		dialog.setTitle(MSG.AUDIT);
+		if(this.isMobile()) {
+		  dialog.type = 'fullscreen';
+		} else {
+		  dialog.width = '400px';
+		}
+
+		let div = this.createElement(TAG.DIV);
+		div.style = `
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-top: 16px;
+		`;
+		dialog.setContent(div);
+
+
+		if(this.registry.getCreationUser && this.registry.getCreationUser() && this.registry.getCreationDate()){
+			let divCreation = this.createElement(TAG.DIV);
+			divCreation.innerHTML = `<b>${MSG.CREATED_BY}</b>: ${this.registry.getCreationUser()} (${ AonDateUtils.setDateTimestampDay(this.registry.getCreationDate())})`;
+			div.appendChild(divCreation);
+		}
+	
+		if(this.registry.getModificationUser && this.registry.getModificationUser() && this.registry.getModificationDate()){
+			let divModification = this.createElement(TAG.DIV);
+			divModification.innerHTML = `<b>${MSG.MODIFIED_BY}</b>: ${this.registry.getModificationUser()} (${ AonDateUtils.setDateTimestampDay(this.registry.getModificationDate())})`;
+			div.appendChild(divModification);
+		}
+
+		dialog.addAcceptAction(() => {});
+		dialog.open();
 	}
 
 	setRegistry(registry) {

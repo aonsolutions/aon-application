@@ -79,6 +79,7 @@ export class AonDialogMenu extends AonElement {
 		content.style.position = 'absolute';
 		content.style.width = '200px';
 	 	content.style.padding = '0px';
+		content.style.borderRadius = '5px';
 		dialog.appendChild(content);
 
 		const onClose = (ev) => ev.target === dialog ? this.close() : null;
