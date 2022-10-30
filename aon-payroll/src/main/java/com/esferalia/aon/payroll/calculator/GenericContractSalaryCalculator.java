@@ -840,7 +840,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			addVars(expressionContext, CGC_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, ADDITIONAL_BASE, CGC_BASE);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
 //			if (cgcBase != null)
 //				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
 
@@ -872,7 +872,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
-			addVars(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, ADDITIONAL_BASE, CGP_BASE);
+			addVars(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, CGP_BASE);
 			//copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
