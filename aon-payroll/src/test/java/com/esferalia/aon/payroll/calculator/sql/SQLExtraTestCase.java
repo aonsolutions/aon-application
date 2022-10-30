@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,6 +44,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -4693,6 +4695,152 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals((1100.00 + 1100.00/6 * 4), (double) salary.getTotalPayment(), 0.01);
 		
+
+	}
+
+	@Test
+	public void testExtrasAtSalaryXIV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*VERANO*/( 1111.11 * 100 ) / (100.00 - 13.43 )";
+							this.month = Month.JUNE;
+							this.start = "01/01";
+							this.end = "30/06";
+							this.issue = "30/06";
+						}
+					}, 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*NAVIDAD*/( 1111.11 * 100 ) / (100.00 - 13.43 )";
+							this.month = Month.DECEMBER;
+							this.start = "01/07";
+							this.end = "31/12";
+							this.issue = "31/12";
+						}
+					}, 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*BENEFICIOS*/( 1111.11 * 100 ) / (100.00 - 13.43 )";
+							this.month = Month.MAY;
+							this.start = "01/01 -1";
+							this.end = "31/12 -1";
+							this.issue = "15/05";
+						}
+					}, 
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "1000.00 * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "100.00 * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(YEAR, -2);
+		calendar.set(DAY_OF_MONTH, 1);
+		calendar.set(MONTH, Calendar.JANUARY);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,contractDate
+				,new String[] {} 
+				,new String[] {
+						"BASE_IRPF * 13.43 / 100.00"
+				} 
+				,category);
+		//@formatter:off
+		
+		//addPayment(aonContext, contract, contractDate, null, conceptPagaExtra, null, "REMOVE()", null, null, PaymentType.CRA_0004, (byte) Month.JUNE.ordinal());
+		
+		addPayment(aonContext, contract, contractDate, null, conceptPagaExtra, "PAGA VERANO", "( 1111.11 * 100 ) / (100.00 - 13.43 )", "_P", "_P", PaymentType.CRA_0004, (byte)Month.JUNE.ordinal());
+		addPayment(aonContext, contract, contractDate, null, conceptPagaExtra, "PAGA NAVIDAD", "( 1111.11 * 100 ) / (100.00 - 13.43 )", "_P", "_P", PaymentType.CRA_0004, (byte)Month.DECEMBER.ordinal());
+		addPayment(aonContext, contract, contractDate, null, conceptPagaExtra, "PAGA BENEFICIOS", "( 1111.11 * 100 ) / (100.00 - 13.43 )", "_P", "_P", PaymentType.CRA_0004, (byte)Month.MAY.ordinal());
+		
+		// 
+		// EXTRA 
+		//
+		calendar = Calendar.getInstance();
+		calendar.set(DAY_OF_MONTH, 31);
+		calendar.set(MONTH, Calendar.MAY);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		Date extraDate = new Date(calendar.getTimeInMillis());
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, 
+				getFirstDayOfMonth(extraDate), 
+				getLastDayOfMonth(extraDate), 
+				getLastDayOfMonth(extraDate), contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() + " : " + p.getAmount() +", " + p.getQuote() ));
+		
+		org.junit.Assert.assertEquals(1100.00 +  ( 1111.11 * 100 ) / (100.00 - 13.43 ), salary.getTotalPayment(), 0.00);
+
+		org.junit.Assert.assertEquals(( 1111.11 * 100 ) / (100.00 - 13.43 ) / 12 * 3, salary.getExtraPayProration(), 0.00);
+
+		AgreementExtraRecord agreementExtra = getExtra(aonContext, agreement.getId(), "15/05" );
+		
+		//getExtraSalaryCalculatorContext(connection, contract, agreementExtra, calendar.get(YEAR),  extraDate);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLExtraSalaryCalculatorContext extraCtx = new SQLExtraSalaryCalculatorContext(connection, agreementExtra.getId(), calendar.get(YEAR),
+				extraDate, criteria);
+		extraCtx.next();
+		
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(extraCtx);
+		jooqSalaryBuilder.execute();
+		
+		Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
+				AON.getSalaries(aonContext, p -> 
+				p.getContractProperty().eq(contract.getId())
+				.and(p.getIsExtraProperty().eq(true)));
+		salaries.forEach( s -> {
+			org.junit.Assert.assertEquals(1111.11, s.getTotalLiquid(), 0.00);
+		});
+		
+		ctx = 
+		getContractSalaryCalculatorContext(connection, 
+				getFirstDayOfMonth(extraDate), 
+				getLastDayOfMonth(extraDate), 
+				getLastDayOfMonth(extraDate), contract);
+		
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() + " : " + p.getAmount() +", " + p.getQuote() ));
+		
+		org.junit.Assert.assertEquals(1100.00, salary.getTotalPayment(), 0.00);
 
 	}
 

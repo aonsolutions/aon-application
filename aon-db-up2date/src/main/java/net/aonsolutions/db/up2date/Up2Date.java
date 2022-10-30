@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
+import net.aonsolutions.db.up2date.tgss.HomeBonus2012Update;
 import net.aonsolutions.db.up2date.payroll.DefaultPaymentConcepts;
 
 public class Up2Date {
@@ -273,7 +274,8 @@ public class Up2Date {
     		//InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
     		//HomeQuote2022Update.HOMEQUOTE2022UPDATE,
     		//ContractDocCreate.CONTRACTDOCCREATE
-    		AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
+    		//AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT
+    		HomeBonus2012Update.HOMEBONUS2012UPDATE
     		DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS
     		
     };
