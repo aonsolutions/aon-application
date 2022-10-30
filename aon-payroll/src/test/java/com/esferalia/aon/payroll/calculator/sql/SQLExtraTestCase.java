@@ -4810,9 +4810,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		AgreementExtraRecord agreementExtra = getExtra(aonContext, agreement.getId(), "15/05" );
 		
-		ISQLContractSalaryCalculatorContext extraCtx = 
-		getExtraSalaryCalculatorContext(connection, contract, agreementExtra, calendar.get(YEAR),  extraDate);
-				
+		//getExtraSalaryCalculatorContext(connection, contract, agreementExtra, calendar.get(YEAR),  extraDate);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLExtraSalaryCalculatorContext extraCtx = new SQLExtraSalaryCalculatorContext(connection, agreementExtra.getId(), calendar.get(YEAR),
+				extraDate, criteria);
+		extraCtx.next();
 		
 		
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -4824,8 +4827,6 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				p.getContractProperty().eq(contract.getId())
 				.and(p.getIsExtraProperty().eq(true)));
 		salaries.forEach( s -> {
-			//System.out.println(s.getStartDate() + ".." + s.getEndDate() + " [" + s.getIssueDate() + "] :"+  s.getTotalPayment() + ", " + s.getTotalLiquid() );
-			//s.getPayments().forEach( p -> System.out.println(p.getExpression() + " : " + p.getAmount() +", " + p.getQuote() ) );
 			org.junit.Assert.assertEquals(1111.11, s.getTotalLiquid(), 0.00);
 		});
 		
