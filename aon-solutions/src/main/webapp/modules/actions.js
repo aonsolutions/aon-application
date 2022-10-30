@@ -146,6 +146,14 @@ export const EDIT = {
     icon: MATERIAL_ICONS.EDIT
 }
 
+
+export const AUDIT = {
+    id: CONSTANT.AUDIT.initCap(),
+    name: MSG.AUDIT,
+    title: MSG.AUDIT,
+    icon: MATERIAL_ICONS.PRIVACY_TIP
+}
+
 export const EDIT_FILE = {
     id: CONSTANT.EDIT_FILE.initCap(),
     name: MSG.EDIT_FILE,

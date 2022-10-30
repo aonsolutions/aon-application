@@ -350,6 +350,14 @@
   height: 60px;
 }
 
+.aonHeaderBeta {
+  background-color: var(--aonWhite);
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #5f6368;
+  height: 60px;
+}
+
 .aonHeaderButton {
   position: absolute;
   top: 10px;
@@ -741,6 +749,8 @@
   margin: 10px;
   min-width: 250px;
   padding: 15px 22px;
+  box-shadow: rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px, rgb(0 0 0 / 12%) 0px 1px 3px;
+  background-color: white;
 }
 
 .aonCardFlex{
@@ -1178,17 +1188,6 @@
   display: block;
 }
 
-
-.aonDialog>.aonDialogContent>.btn-close{
-  color: grey;
-  font-size: 30px;
-  text-decoration: none;
-  float: right;
-  margin-top: -25px;
-  margin-right: -13px;
-  cursor: pointer;
-  padding: 10px;
-}
 
 .colorGrey{
   color:grey;

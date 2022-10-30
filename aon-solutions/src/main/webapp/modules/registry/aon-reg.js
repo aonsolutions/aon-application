@@ -1,22 +1,17 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-import '../../components/aon-address.js';
-import '../../components/aon-input.js';
-
 import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
-
-import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
-
-import * as ACTION from '../actions.js';
+import {COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonAddress } from '../../components/aon-address.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { Media } from '../../models/registry/Media.js';
-import { saveRegistry } from '../../services/registryService.js';
+import { getSegments, saveRegistry } from '../../services/registryService.js';
 import { Registry } from '../../models/registry/Registry.js';
+import { RegistrySegment } from '../../models/registry/RegistrySegment.js';
 import { Address } from '../../models/registry/Address.js';
 import { getReader } from '../../services/utils.js';
 import { deleteAttach, getAttach, uploadAttach } from '../../services/fileService.js';
@@ -28,9 +23,10 @@ import { AonIban } from '../../components/aon-iban.js';
 import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
-import * as GWT from '../../gwt/gwt.js';
 import { AonProjectList } from '../project/aon-project-list.js';
-
+import * as GWT from '../../gwt/gwt.js';
+import * as ACTION from '../actions.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonReg extends AonElement {
 
@@ -41,6 +37,7 @@ export class AonReg extends AonElement {
 	logo;
 	options;
 
+	segments;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -125,6 +122,7 @@ export class AonReg extends AonElement {
 		this.webs = [];
 		this.phones = [];
 		this.oneAddress = this.oneAddress || true;
+		this.segments = [];
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -139,9 +137,14 @@ export class AonReg extends AonElement {
 		toolbar.id = this.REGISTRY_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.registry.id ? this.registry.name : 'NUEVO REGISTRO';
+		
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
+		
+		if(this.registry.id){
+			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
+		}
 
 		this.buildTabs();
 
@@ -201,6 +204,11 @@ export class AonReg extends AonElement {
 		card.style.width = '50%';
 		parent.appendChild(card);
 
+		if(this.registry.id && this.registry.status){
+			this.buildStatusRegistry();
+		}
+		
+
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
@@ -250,20 +258,20 @@ export class AonReg extends AonElement {
 		let td1 = table.addCell(aliasInput);
 		td1.style.width = '55%';
 
-		table.addRow();
+		// table.addRow();
 		
-		let statusSelect = new AonSelect();
-		statusSelect.id = 'aonConfigurationGeneralStatus';
-		statusSelect.title = MSG.STATUS;
-		statusSelect.setOptions([
-			{ name: MSG.ACTIVE, value:"ACTIVE" },
-			{ name: MSG.INACTIVE, value:"INACTIVE" },
-			{ name: MSG.BLOCKED, value:"BLOCKED" },
-		]);
+		// let statusSelect = new AonSelect();
+		// statusSelect.id = 'aonConfigurationGeneralStatus';
+		// statusSelect.title = MSG.STATUS;
+		// statusSelect.setOptions([
+		// 	{ name: MSG.ACTIVE, value:"ACTIVE" },
+		// 	{ name: MSG.INACTIVE, value:"INACTIVE" },
+		// 	{ name: MSG.BLOCKED, value:"BLOCKED" },
+		// ]);
 
-		statusSelect.value = this.registry.getStatus();
-		statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.setStatus(statusSelect.value));
-		table.addCell(statusSelect, 3);
+		// statusSelect.value = this.registry.status;
+		// statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
+		// table.addCell(statusSelect, 3);
 
 		this.buildAddresses(div);
 
@@ -302,6 +310,99 @@ export class AonReg extends AonElement {
 		}
 	}
 
+	buildStatusRegistry(){
+		let card = this.getElement(this.GENERAL_CARD);
+		card.cleanSection2();
+
+		const title = this.registry.status ? MSG[this.registry.status] : "";
+
+		let color = CSS.variable(COLORS.ONLINE_GREEN);
+		if(this.registry.status === "INACTIVE"){
+			color = COLORS.ORANGE;
+		} else if(this.registry.status === "BLOCKED"){
+			color = "#DC4D30"; //CSS.variable(COLORS.MATERIAL_RED);
+		}
+
+		let statusDiv = this.createElement(TAG.DIV);
+		statusDiv.title = "Estado del cliente";
+		statusDiv.style.display = "flex";
+		statusDiv.style.columnGap = "5px";
+		statusDiv.style.border = "1px solid";
+		statusDiv.style.borderColor = "lightgray";
+		statusDiv.style.borderRadius = "10px";
+		statusDiv.style.padding = "4px";
+		statusDiv.style.cursor = "pointer";
+		card.addSection2(statusDiv);
+
+		let statusBox = this.createElement(TAG.DIV);
+		statusBox.style.width           = "10px";
+		statusBox.style.height          = "10px";
+		statusBox.style.borderRadius    = "50%";
+		statusBox.style.marginTop       = "3px";
+		statusBox.style.backgroundColor = color;
+		statusDiv.appendChild(statusBox);
+
+		let statusText = this.createElement(TAG.DIV);
+		statusText.innerText = title;
+		statusText.style.fontSize = "14px";
+		statusText.style.fontWeight = "500";
+		statusText.style.color = "#5f6368";
+		statusDiv.appendChild(statusText);
+
+		let iconArrowDown = this.createElement(TAG.DIV);
+		iconArrowDown.style.fontSize  = "18px";
+		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
+		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+		statusDiv.appendChild(iconArrowDown);
+
+		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
+	}
+
+	getOptionsStatus(element){
+		const top = element.getBoundingClientRect().top + 24;
+		const left = element.getBoundingClientRect().left + 3;
+		let d = this.getApplication().getOptionDialog();
+
+		let options = [
+			{ 
+				name: "Activar", 
+				value:"ACTIVE",
+				icon:"toggle_on", 
+				fn:()=> {
+					this.registry.status = "ACTIVE";
+					this.buildStatusRegistry();
+					this.save();
+				}
+			},
+			{ 
+				name: "Inactivar", 
+				value:"INACTIVE",
+				icon:"toggle_off", 
+				fn:()=> {
+					this.registry.status = "INACTIVE";
+					this.buildStatusRegistry();
+					this.save();
+				}
+			},
+			{ 
+				name: "Bloquear", 
+				value:"BLOCKED",
+				icon:"block", 
+				fn:()=> {
+					this.registry.status = "BLOCKED";
+					this.buildStatusRegistry();
+					this.save();
+				}
+			}
+		];
+
+		if(this.registry.status){
+			options = options.filter(opt => opt.value!=this.registry.status );
+		}
+
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
 
 	buildMediaCard(parent){
 		let card = new AonCard();
@@ -813,6 +914,120 @@ export class AonReg extends AonElement {
 		}
 	}
 
+	//SEGMENTATIONS
+	buildSegments(parent) {
+		let registrySegment = this.registry.getRegistrySegments()
+		.map(s =>  new RegistrySegment(s))
+		.filter(s => !s.isRemoved());
+
+		const table =  new AonBasicTable();
+		table.id =  "segmentTable";
+		parent.appendChild(table);
+
+		if(!registrySegment || registrySegment.length <= 0){
+			let registrySegment = new RegistrySegment();
+			registrySegment.setRegistry(this.registry.getId());
+			registrySegment.setDomain(this.registry.getDomain());
+			this.registry.addRegistrySegment(registrySegment);
+			this.buildSegment(table, registrySegment, 0);
+		} else {
+			this.registry.setRegistrySegments([]);
+			registrySegment.forEach( (rsegment, i) =>{
+				this.registry.addRegistrySegment(rsegment);
+				this.buildSegment(table, rsegment, i)
+			});
+		}
+	}
+
+	buildSegment(table, registrySegment, i) {
+		const rowNum = table.addRow();
+
+		const rowCount = table.getRowsCount();
+		
+		let segment = new AonSelect();
+		segment.id = "selectSegment" + rowNum;
+		segment.title = "Segmento";
+		segment.autocomplete = true;
+		segment.addEventListener(EVENT.CHANGE, () => {
+			if(segment.value){
+				registrySegment.setSegment(segment.getDetail())
+			}
+		});
+		
+		table.addCell(segment).style.width = '100%';
+	
+		this.getSegments()
+		.then(options=>{
+			segment.setOptions(options);
+			if(registrySegment.getSegment()){
+				segment.value = registrySegment.getSegment().id;
+			}
+		})
+
+		let removeIcon = new AonIconButton();
+		removeIcon.id = "segmentRemove" +rowNum;
+		removeIcon.title = MSG.DELETE;
+		removeIcon.icon = MATERIAL_ICONS.CLOSE;
+		removeIcon.addEventListener(EVENT.CLICK, () => {
+			const count = table.getRowsCount();
+			let childVisible = 1;
+			
+			registrySegment.remove(); //REMOVE
+
+			if(count === 1){
+				segment.clear();
+			} else {
+				table.removeRow(rowNum);
+				childVisible = count-1;
+			}
+
+			let cell = table.getCell(childVisible, 2);
+			if(cell && cell.firstChild){
+				cell.firstChild.visible = true;
+			}
+		});
+		
+		table.addCell(removeIcon);
+
+		this.querySelectorAll(`[id*='segmentAdd']`).forEach(el=>{
+			el.visible = false;
+		});
+
+		let addSegment = new AonIconButton();
+		addSegment.id = "segmentAdd"+rowNum;
+		addSegment.title = MSG.ADD+" Segmento";
+		addSegment.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addSegment.visible = rowCount === i+1
+		addSegment.addEventListener(EVENT.CLICK, () => {
+			addSegment.visible = false;
+			let registrySegment = new RegistrySegment();
+			registrySegment.setRegistry(this.registry.getId());
+			registrySegment.setDomain(this.registry.getDomain());
+			this.registry.addRegistrySegment(registrySegment);
+			this.buildSegment(table, registrySegment, table.getRowsCount());
+		});
+
+		table.addCell(addSegment);
+	}
+
+
+	async getSegments(){
+		if(!this.segments.length){
+			try {
+				const resp = await getSegments({domainName:this.registry.getDomain().getName()});
+				this.segments = resp.map(s => ({...s, value:s.id}));
+			} catch (error) {
+				this.showError(error);
+			}
+		}
+		
+		return this.segments;
+		// return this.segments
+		// .filter((value) => 
+		// 	!( this.registry.getRegistrySegments().some(r => r.segment && r.segment.id == value.id) ) 
+		// );
+	}
+
 	//EXPEDIENTE
 
 	buildExpedienteData() {
@@ -899,6 +1114,42 @@ export class AonReg extends AonElement {
 		}).catch(error => {
 	 		this.showToast(error);
 	 	});
+	}
+
+	audit(){
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		dialog.setTitle(MSG.AUDIT);
+		if(this.isMobile()) {
+		  dialog.type = 'fullscreen';
+		} else {
+		  dialog.width = '400px';
+		}
+
+		let div = this.createElement(TAG.DIV);
+		div.style = `
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-top: 16px;
+		`;
+		dialog.setContent(div);
+
+
+		if(this.registry.getCreationUser && this.registry.getCreationUser() && this.registry.getCreationDate()){
+			let divCreation = this.createElement(TAG.DIV);
+			divCreation.innerHTML = `<b>${MSG.CREATED_BY}</b>: ${this.registry.getCreationUser()} (${ AonDateUtils.setDateTimestampDay(this.registry.getCreationDate())})`;
+			div.appendChild(divCreation);
+		}
+	
+		if(this.registry.getModificationUser && this.registry.getModificationUser() && this.registry.getModificationDate()){
+			let divModification = this.createElement(TAG.DIV);
+			divModification.innerHTML = `<b>${MSG.MODIFIED_BY}</b>: ${this.registry.getModificationUser()} (${ AonDateUtils.setDateTimestampDay(this.registry.getModificationDate())})`;
+			div.appendChild(divModification);
+		}
+
+		dialog.addAcceptAction(() => {});
+		dialog.open();
 	}
 
 	setRegistry(registry) {

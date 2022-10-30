@@ -66,33 +66,29 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	buildDesktop() {
-		let divOne = this.createElement(TAG.DIV);
-		divOne.className = `aonDialog`;
-		divOne.id = this.DIALOG;
-		this.appendChild(divOne);
-
-		let divTwo = this.createElement(TAG.DIV);
-		divTwo.className = `aonDialogMenuContent`;
-		divTwo.id = this.CONTENT;
-		divOne.appendChild(divTwo);
-
-		let dialog = this.getElement(this.DIALOG);
-		let content = this.getElement(this.CONTENT);
-
+		let dialog = this.createElement(TAG.DIV);
+		dialog.id = this.DIALOG;
+		dialog.className = `aonDialog`;
 		dialog.style.backgroundColor = 'transparent';
 		dialog.style.paddingTop = '0px';
+		this.appendChild(dialog);
 
+		let content = this.createElement(TAG.DIV);
+		content.id = this.CONTENT;
+		content.className = `aonDialogMenuContent`;
 		content.style.position = 'absolute';
-	  	content.style.width = '200px';
-		content.style.padding = '0px';
+		content.style.width = '200px';
+	 	content.style.padding = '0px';
+		content.style.borderRadius = '5px';
+		dialog.appendChild(content);
 
-		dialog.onclick = (event) => {
-			if (event.target === dialog) this.close();
-		}
+		const onClose = (ev) => ev.target === dialog ? this.close() : null;
 
-		dialog.oncontextmenu = (event) => {
-			event.preventDefault();
-			if (event.target === dialog) this.close();
+		dialog.onclick = (ev) => onClose(ev);
+
+		dialog.oncontextmenu = (ev) => {
+			ev.preventDefault();
+			onClose(ev);
 		}
 	}
 
@@ -155,27 +151,19 @@ export class AonDialogMenu extends AonElement {
 
 
 	open(){
+		let dialog = this.getDialog();
 		if(this.isMobile()) {
 			this.getElement('aonMobileMenuSidenav').style.zIndex = "-1";
 			this.setDrag(this.START_TOP);
-			this.getDialog().style.display = "block";
+			dialog.style.display = "block";
 			setTimeout(()=>{
 				let content = this.getContent();
 				content.style.bottom = this.START_TOP;
 				this.HEADER_HEIGHT = content.getBoundingClientRect().height;
 			}, 1);
 		} else {
-	    	let dialog = this.getElement(this.DIALOG);
 			dialog.style.display = 'block';
 		}
-	}
-
-	openPosition({left,top}){
-		let dialog = this.getElement(this.DIALOG);
-		let content = this.getElement(this.CONTENT);
-  		content.style.top = top + 'px' || '90px';
-		content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px';
-		dialog.style.display = 'block';
 	}
 
 	clear() {
@@ -196,19 +184,19 @@ export class AonDialogMenu extends AonElement {
 				this.clear();
 			}, 400);
 		} else {
-			let dialog = this.getElement(this.DIALOG);
+			let dialog = this.getDialog();
 			dialog.style.display = 'none';
 			this.clear();
 		}
 	}
 
 	setContentHTML(html) {
-		let content = this.isMobile() ? this.getBody() : this.Content();
+		let content = this.isMobile() ? this.getBody() : this.getContent();
 		content.innerHTML = html;
 	}
 
 	setContent(element, top, left) {
-		let content = this.isMobile() ? this.getBody() : this.Content();
+		let content = this.isMobile() ? this.getBody() : this.getContent();
 		if(!this.isMobile() && top && left) {
 			content.innerHTML = "";
 			content.style.top = top + 'px' || '90px';
@@ -272,7 +260,7 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	setContentTitle(title){
-		let content = this.getElement(this.CONTENT);
+		let content = this.getContent();
 		let p = this.createElement('p');
 		p.innerHTML = title;
 		p.style.fontWeight = "600";
@@ -289,8 +277,8 @@ export class AonDialogMenu extends AonElement {
 		if(this.isMobile()) {
 			this.addButtons(options);
 		} else {
-			let dialog = this.getElement(this.DIALOG);
-			let content = this.getElement(this.CONTENT);
+			let dialog = this.getDialog();
+			let content = this.getContent();
 
   			content.style.top = top + 'px' || '90px';
 			content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;

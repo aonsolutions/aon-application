@@ -808,6 +808,7 @@ export class AonApplication extends AonElement {
     let d = this.getDialog();
     if(d){
       d.clear();
+      d.type = "";
       d.setContentHTML(subtitle);
       if (!this.isMobile()) d.width = '400px';
       d.setTitle(title);

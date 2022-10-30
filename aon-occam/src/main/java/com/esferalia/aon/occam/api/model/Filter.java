@@ -189,6 +189,11 @@ public interface Filter extends Serializable{
 		Filter filter(RegistrySegmentProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface SegmentFilter{
+		Filter filter(SegmentProperties properties);
+	}
+	
 	
 	@FunctionalInterface
 	public interface RegistrySellerFilter{

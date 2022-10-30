@@ -18,6 +18,14 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== NORDIGEN ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_nordigen</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/nordigen/nordigen.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 
 
 	<!-- =================== SII ============================= -->

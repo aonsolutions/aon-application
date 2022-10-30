@@ -2,12 +2,10 @@ package com.esferalia.aon.gwt.template.server.imports;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.Collator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -72,7 +70,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class InvoiceImport {
+public class InvoiceImport extends ImportUtils{
 
 	public static InvoiceImport getInstance() {
 		return new InvoiceImport();
@@ -165,13 +163,6 @@ public class InvoiceImport {
 			e.printStackTrace();
 		}
 		return new LinkedList<>();
-	}
-	
-	private boolean compare(String value1, String value2) {
-		if(value1 == null || value2 == null) return false;
-		Collator c = Collator.getInstance(new Locale("es"));
-		c.setStrength(Collator.PRIMARY);
-		return c.equals(value1, value2);
 	}
 	
 	private boolean isTipoOperacion(String value) {
@@ -952,7 +943,7 @@ public class InvoiceImport {
 				Account expAccount = getAccount(domain, user, aux.getAccount(), aux.getAccountDescription());
 				
 				InvoiceVAT vat = new InvoiceVAT()
-					.setPrepayment("5600".equals(iic.getAccount().substring(0, 4)) || "5660".equals(iic.getAccount().substring(0, 4)))
+					.setPrepayment("5600".equals(aux.getAccount().substring(0, 4)) || "5660".equals(aux.getAccount().substring(0, 4)))
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(aux.getBase() != null 
 							? aux.getBase() : 0.0)
@@ -1169,6 +1160,9 @@ public class InvoiceImport {
 				.setDocumentType(dtype)
 				.setName(name)
 				.setNationality(country);
+		}
+		if(AonStringUtils.isBlank(reg.getName())) {
+			AON.save(domain.getName(), domain.getId(), user.getLogin(), reg.setName(name));
 		}
 		
 		if(InvoiceType.SALES.equals(type)) {

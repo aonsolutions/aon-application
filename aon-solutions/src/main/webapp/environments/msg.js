@@ -40,7 +40,7 @@ export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
 export const ADD_PROJECT = "Añadir proyecto";// TODO
-export const ADD_COMPOSITION = 'Añadir Composición'; // TODO
+export const ADD_COMPOSITION = MSG.ADD_COMPOSITION;
 export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_FINANCE = MSG.ADD; // TODO
@@ -48,7 +48,7 @@ export const ADD_INVOICE = MSG.ADD_INVOICE;
 export const ADD_REMARKS = MSG.ADD_REMARKS;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
-export const ADD_TYPE = "Añadir Tipo"; // TODO
+export const ADD_TYPE = MSG.TYPE;
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
@@ -69,7 +69,7 @@ export const AVERAGE = "Media";// TODO
 export const ASSIGN = "Asignar";// TODO
 export const ADVISER = "Asesor"; //TODO
 export const ADVISERS = "Asesores"; //TODO
-
+export const AUDIT = "Auditoría"; //TODO
 // ----- B
 
 export const BACK = MSG.BACK;
@@ -136,6 +136,8 @@ export const CONTACT = MSG.CONTACT;
 export const CONTACT_DATA = MSG.CONTACT_DATA;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTRACT = MSG.CONTRACT;
+export const CONTRACT_PAYROLL = MSG.CONTRACT_PAYROLL;
+export const CONTRACTS = MSG.CONTRACTS;
 export const COUNTRY = MSG.COUNTRY;
 export const CREATE = MSG.CREATE;
 export const CREATE_SERVICE_ACCOUNT = "Crear Cuenta de Servicio"; // TODO MSG.CREATE_SERVICE_ACCOUNT;
@@ -148,7 +150,7 @@ export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 export const CONVERSATION = 'Conversación'; // TODO
 export const CONTENT = 'Contenido'; // TODO
-
+export const CREATED_BY = "Creado por"; //TODO
 
 // ----- D
 
@@ -292,6 +294,7 @@ export const LOCATION = MSG.LOCATION;
 
 // ----- M
 
+export const MAGIC_LINK = "Magic Link";
 export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL = "Modelo"; //TODO
 export const MODEL_111 = MSG.MODEL_111;
@@ -300,6 +303,7 @@ export const MODEL_190 = MSG.MODEL_190;
 export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
 export const MOVED_TO_TRASH = MSG.MOVED_TO_TRASH;
 export const MY_DATA = MSG.MY_DATA;
+export const MY_MANAGER = MSG.MY_MANAGER;
 export const MY_USER = MSG.MY_USER;
 export const MSG_SENT = "Mensaje enviado";//TODO
 export const MAXIMIZE = "Maximizar";//TODO
@@ -308,7 +312,7 @@ export const MESSENGER_SERVICE = "Mensajería";//TODO
 export const MONTH = "Mes"; //TODO
 export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
-
+export const MODIFIED_BY = "Modificado por"; //TODO
 // ----- N
 
 export const NAME = MSG.NAME;
@@ -344,6 +348,7 @@ export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 // ----- P
 
 export const PACKAGING = 'Empaquetado';
+export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
 export const PAYROLL = "Laboral";//TODO
@@ -399,6 +404,8 @@ export const RECTIFIED = MSG.RECTIFIED;
 export const RECTIFY = MSG.RECTIFY;
 export const RECTIFY_INVOICE = MSG.RECTIFY_INVOICE;
 export const REFERENCE = MSG.REFERENCE;
+export const REGISTERED_TRADEMARK = MSG.REGISTERED_TRADEMARK;
+export const REGISTERED_TRADEMARK_AON = MSG.REGISTERED_TRADEMARK_AON;
 export const REGISTRATION_DATA = 'Datos Registrales'; // TODO
 export const REGISTRATION_DATE = 'Fecha de Registro'; // TODO
 export const REJECT = MSG.REJECT;
@@ -450,6 +457,9 @@ export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;
 export const SHEET = 'Hoja';
 export const SHOW_FILE = MSG.SHOW_FILE;
+export const SIGN_IN = MSG.SIGN_IN;
+export const SIGN_IN_WITHOUT_PASSWORD = MSG.SIGN_IN_WITHOUT_PASSWORD;
+export const SIGN_IN_WITH_CERTIFICATE = MSG.SIGN_IN_WITH_CERTIFICATE;
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
@@ -524,6 +534,7 @@ export const VAT = MSG.VAT;
 export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
 export const VAT_PANEL = 'Panel de IVA';
 export const VAT_PERCENT = '% IVA';
+export const VERSION = MSG.VERSION;
 export const VIEW_PAYROLL = "Ver nómina"; // TODO
 export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
 export const VIEW = "Ver"; // TODO

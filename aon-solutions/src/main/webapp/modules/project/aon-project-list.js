@@ -41,8 +41,10 @@ export class AonProjectList extends AonElement {
 
 	build() {
 		this.TABLE = new AonTable();
-		this.TABLE.style.width = "100%";
 		this.TABLE.id = 'aoProjectListTable';
+		this.TABLE.selectedColor = true;
+
+		this.TABLE.style.width = "100%";
 
 		if(this.registry){
 			this.buildHolderTable();
@@ -76,7 +78,7 @@ export class AonProjectList extends AonElement {
 		div.appendChild(this.TABLE);
 		this.TABLE.addColumn(MSG.TYPE, 'string', 'typeName', '30%');
 		this.TABLE.addColumn(MSG.DATE, 'date', 'date', '20%');
-		this.TABLE.addColumn("Asesores", 'list', 'projectHolders', '30%');
+		this.TABLE.addColumn("Asignados", 'list', 'projectHolders', '30%');
 		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"string", width:"5%", id:"option"}, 
 		()=>{
 			let project = new Project();
@@ -102,7 +104,9 @@ export class AonProjectList extends AonElement {
 					this.more = true;
 				projects.forEach((project) => {
 					project.option  = this.getOptions(project);
-					this.TABLE.addRow(project, () => this.buildProject(project));
+					this.TABLE.addRow(project, () => 
+						this.buildProject(project)
+					);
 				});
 			});
 		}
@@ -115,7 +119,9 @@ export class AonProjectList extends AonElement {
 				this.TABLE.removeRows();
 				projects.forEach((project) => {
 					project.option  = this.getOptions(project);
-					this.TABLE.addRow(project, () => this.buildProject(project));
+					this.TABLE.addRow(project, () => 
+						this.buildProject(project)
+					);
 				});
 			});	
 		}
@@ -155,6 +161,7 @@ export class AonProjectList extends AonElement {
         const taskHolderName = holder.taskHolder && holder.taskHolder.name ? holder.taskHolder.name : undefined;
         const workgroupName  = holder.workgroup && holder.workgroup.description ? holder.workgroup.description : undefined;
         holder.name = taskHolderName || workgroupName;
+		holder.icon = taskHolderName ? MATERIAL_ICONS.PEOPLE : MATERIAL_ICONS.PERSON;
         return holder;
     }
 
@@ -168,9 +175,24 @@ export class AonProjectList extends AonElement {
         div.style.height = '50px';
 		div.style.display = 'flex';
         this.HOLDERS_DIV.appendChild(div);
+
+		let holderBack = new AonIconButton();
+        holderBack.id =  'holderBack';
+		holderBack.title = MSG.BACK;
+        holderBack.icon = MATERIAL_ICONS.ARROW_BACK;
+        holderBack.style.top = '10px';
+		holderBack.style.position = 'relative';
+		holderBack.style.right = '4px';
+		holderBack.noHover = true;
+        div.appendChild(holderBack);
+
+		holderBack.addEventListener(EVENT.CLICK, () => {
+			this.clearHolderList();
+        });
+
         
         let span = this.createElement(TAG.SPAN);
-        span.innerHTML = MSG.ADVISERS+" de "+ project.name;
+        span.innerHTML = "Asignados a "+ project.name;
         span.style.top = '5px';
         span.style.margin =  '20px';
         span.style.fontWeight = '500';
@@ -209,7 +231,10 @@ export class AonProjectList extends AonElement {
 	loadHolderList(project) {
 		const id = "holderList";
 
-		let holderList = this.getElement(id) || new AonHolderSimpleList();
+		let holderList = this.getElement(id);
+		if(holderList) holderList.remove();
+
+		holderList = new AonHolderSimpleList();
         holderList.id = id;
 		holderList.filter = {project: project.id, active:true};
 		holderList.addEventListener(EVENT.CHANGE,() => {
@@ -270,8 +295,11 @@ export class AonProjectList extends AonElement {
 			},
 			{
 				...ACTION.EDIT,
-				name:"Asesores",
-				fn: () => this.buildProject(project)
+				icon: MATERIAL_ICONS.PEOPLE,
+				name:"Operarios",
+				fn: () => {
+					this.buildProject(project)
+				}
 			},
 			{
 				...ACTION.DELETE,

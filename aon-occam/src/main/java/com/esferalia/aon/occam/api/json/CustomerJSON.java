@@ -68,7 +68,11 @@ public class CustomerJSON {
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(customer.getScope()))
 			.put(IJsonNames.TARIFF, customer.getTariff())
 			.put(IJsonNames.TRANSACTION, customer.getTransaction().getTediName())
-			.put(IJsonNames.STATUS, customer.getStatus() != null 
-				? customer.getStatus().name() : RegistryStatus.ACTIVE.name());
+			.put(IJsonNames.STATUS, customer.getStatus() != null ? customer.getStatus().name() : RegistryStatus.ACTIVE.name())
+			.put(IJsonNames.CREATION_USER, customer.getCreationUser())
+			.put(IJsonNames.CREATION_DATE, customer.getCreationDate()!=null ? customer.getCreationDate().getTime() : null)
+			.put(IJsonNames.MODIFICATION_USER, customer.getModificationUser())
+			.put(IJsonNames.MODIFICATION_DATE, customer.getModificationDate()!=null ? customer.getModificationDate().getTime() : null)
+			;
 	}
 }

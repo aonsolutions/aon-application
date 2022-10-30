@@ -21,7 +21,7 @@ export const AON_CCC = {
 };
 
 export const AON_CERT = {
-  name: 'Certificados',
+  name: MSG.CERTIFICATES,
   aonIcon: {
     icon: 'cert',
     color: 'black'
@@ -58,7 +58,7 @@ export const SEPA_FILES = {
 
 export const AON_CONTRACT = {
   id: 'contractSidenav',
-  name: 'Contratos',
+  name: MSG.CONTRACTS,
   aonIcon: {
     icon: 'contract',
     color: 'black'
@@ -70,7 +70,7 @@ export const PAYROLL_FILTER = [
       type: "select",
       id: "workplace",
       name: "workplace",
-      title: "Centro de trabajo",
+      title: MSG.WORKPLACE,
     },
     {
       type: "select",
@@ -83,7 +83,7 @@ export const PAYROLL_FILTER = [
 
 export const CONTRACT_OPTIONS = {
   CONTRACT:{
-    name: "Contrato",
+    name: MSG.CONTRACT_PAYROLL,
     aonIcon: "aon_cto",
     id:"aon_cto",
     permission:true,

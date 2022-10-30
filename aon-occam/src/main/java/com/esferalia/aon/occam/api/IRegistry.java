@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
+import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistrySegment;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -83,6 +85,9 @@ public interface IRegistry {
 
 	public Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId);
 	public Integer[] getRSegmentStream(AONContext ctx, RegistrySegmentFilter filter);
+	public Stream<RegistrySegment> getRegistrySegmentStream(AONContext ctx, RegistrySegmentFilter filter);
+	public RegistrySegment saveRegistrySegment(AONContext ctx, RegistrySegment rsegment);
+	public Stream<Segment> getSegmentStream(AONContext ctx, SegmentFilter filter);
 
 	public Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter registryId);
 
@@ -179,6 +184,7 @@ public interface IRegistry {
 	public Stream<RegistryAddInfo> getRegistryAddInfoStream(AONContext ctx, RegistryAddInfoFilter filter);
 	public RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo);
+	public void deleteRegistryAddInfo(AONContext ctx, Integer raddinfoId);
 
 	// ------------------- RDIRSTAFF
 	

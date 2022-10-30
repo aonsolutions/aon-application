@@ -18,7 +18,12 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
     const dialog = application.getDialog();
     dialog.clear();
 
-    dialog.width = '40%';
+    if(parent.isMobile()) {
+        dialog.type = "fullscreen";
+    } else  {
+        dialog.width = '40%';
+    }
+
     dialog.autoclose = false;
 
     const title = (project && project.id ? MSG.EDIT : MSG.ADD)+" expediente";
@@ -146,12 +151,15 @@ const buildDialogHolder = (parent, holder) => {
 
     const application = parent.getApplication();
     const dialog = application.getDialog();
-
-    dialog.width = '40%';
-
     dialog.clear();
 
-    const title = (holder && holder.id ? MSG.EDIT : MSG.ADD)+" "+MSG.ADVISER;
+    if(parent.isMobile()) {
+        dialog.type = "fullscreen";
+    } else  {
+        dialog.width = '40%';
+    }
+
+    const title = holder && holder.id ? MSG.EDIT : MSG.ADD;
 
     dialog.setTitle(title);
 
@@ -265,12 +273,16 @@ const buildDialogProjectType = (parent, type) => {
     let projectType = new ProjectType(type);
     const isEdit = projectType.getId();
     const application = parent.getApplication();
-    const d = application.getDialog();
-    d.clear();
-    if(!parent.isMobile()) {
-        d.width = '400px';
+    const dialog = application.getDialog();
+    dialog.clear();
+
+    if(parent.isMobile()) {
+        dialog.type = "fullscreen";
+    } else  {
+        dialog.width = '40%';
     }
-    d.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
+    
+    dialog.setTitle(isEdit ? MSG.EDIT : MSG.ADD);
 
     let aonInput = new AonInput();
     aonInput.id = "eeeInputType";
@@ -279,8 +291,8 @@ const buildDialogProjectType = (parent, type) => {
         aonInput.value = projectType.getDescription();
     }
 
-    d.setContent(aonInput);
-    d.addAcceptAction(() => {
+    dialog.setContent(aonInput);
+    dialog.addAcceptAction(() => {
         if(aonInput.value){
             projectType.setDescription(aonInput.value);
             projectType.setDirty(true);
@@ -292,7 +304,7 @@ const buildDialogProjectType = (parent, type) => {
             });
         }
     });
-    d.open();
+    dialog.open();
 }
 
 

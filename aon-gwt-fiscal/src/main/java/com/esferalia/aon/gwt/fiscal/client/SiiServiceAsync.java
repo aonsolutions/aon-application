@@ -27,7 +27,7 @@ public interface SiiServiceAsync {
 	void bajaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams,
 			AsyncCallback<String> callback);
 	
-	void refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
-	void refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
+	void refresh140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
+	void refresh240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
 
 }

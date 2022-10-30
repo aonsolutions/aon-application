@@ -6,6 +6,24 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementSuggestPaymentDialog.MyStyle">
 	
+		.button {
+			background-size: 24px !important;
+			background-attachment: scroll;
+			background-clip: border-box;
+			background-color: inherit;
+			background-position: 1px -2px;
+			background-repeat: no-repeat;
+			background-size: auto auto;
+			border: 1px solid #aaa;
+			cursor: pointer;
+			height: 24px;
+			overflow: visible;
+			padding-left: 25px;
+			text-align: left;
+			text-transform: uppercase;
+			width: auto;
+		}
+	
 		.form {
 			padding: 10px;
 			display: flex;
@@ -21,6 +39,7 @@
 			display: flex;
 			justify-content: flex-end;
 			margin-top: 10px;
+			gap: .5rem;
 		}
 		
 	</ui:style>

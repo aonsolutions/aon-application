@@ -40,7 +40,7 @@ const createStylePoint = (document, color) => {
 //   return total;
 // };
 
-const paintPieChart = async (aonCompanyCostsList, data, parent, aonIframe) => {
+const paintPieChart = async (data, parent, aonIframe) => {
   const sumEnterpriseSs = data.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
   const sumEmployeeSs = data.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
   const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 

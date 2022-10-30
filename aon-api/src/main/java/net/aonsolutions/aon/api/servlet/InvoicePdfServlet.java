@@ -89,7 +89,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
 
-			String qrUrl = domainName + "/dip?d=" + company.getRegistry().getDocument() 
+			String qrUrl = "https://" + domainName + "/dip?d=" + company.getRegistry().getDocument() 
 						+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
 						+ "&s=" + invoice.getSeries()
 						+ "&n=" + invoice.getNumber()

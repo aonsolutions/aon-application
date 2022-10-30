@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilit
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
@@ -228,6 +229,10 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== CHECKIT
 	//
 	private static final String CHECKIT_ENTRY_POINT = "CheckItModule";
+	//
+	//    ================================================================== NORDIGEN
+	//
+	private static final String NORDIGEN_ENTRY_POINT = "NordigenModule";
 
 	@Override
 	public void onModuleLoad() {
@@ -688,6 +693,21 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					CheckItModule rawdoc  = new CheckItModule();
+					rawdoc.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(NORDIGEN_ENTRY_POINT)) {
+			GWT.runAsync(NordigenModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					NordigenModule rawdoc  = new NordigenModule();
 					rawdoc.onModuleLoad();
 				}
 				

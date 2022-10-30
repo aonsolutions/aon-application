@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -157,8 +158,10 @@ public class MultipleDownloadServlet extends HttpServlet{
     			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().in(idsArray)
         				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
     			try {
-    				if(attach.getId() != null) {
-    					File file = File.createTempFile(attach.getDescription(), "." + attach.getMimeType().getExtension());
+    				if(attach != null && attach.getId() != null) {
+    					String prefix = attach.getDescription() != null || attach.getDescription().length() > 2 
+    							? attach.getDescription() : "invoice" + AonRandomStringUtils.random(5);
+    					File file = File.createTempFile(prefix, "." + attach.getMimeType().getExtension());
     					AonFileUtils.writeByteArrayToFile(file, attach.getData());
     					list.add(file);
     				
@@ -176,7 +179,7 @@ public class MultipleDownloadServlet extends HttpServlet{
     						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
     						FileOutputStream out = new FileOutputStream(file);
     						
-    						String qrUrl = domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
+    						String qrUrl = "https://" +  domain.getName() + "/dip?d=" + company.getRegistry().getDocument() 
     								+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
     								+ "&s=" + invoice.getSeries()
     								+ "&n=" + invoice.getNumber()
@@ -200,8 +203,8 @@ public class MultipleDownloadServlet extends HttpServlet{
     	} else if(!AonStringUtils.isBlank(status) && isRawdoc(status)) { 
     		AON.getRawdocFullStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().in(idsArray)).forEach(r -> {
     			JSONObject data = new JSONObject(r.getJson());
-    			String name = data.opt("reference") != null && !AonStringUtils.isBlank(data.optString("reference"))
-    					? data.optString("reference") : "invoice";
+    			String name = data.opt("reference") != null && !AonStringUtils.isBlank(data.optString("reference")) && data.optString("reference").length() > 2 
+    					? data.optString("reference") : "invoice" + AonRandomStringUtils.random(5);
 				try {
 					if(r.getData() != null) {
 						File file = File.createTempFile(name, "." + r.getMimeType().getExtension());

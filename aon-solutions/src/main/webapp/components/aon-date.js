@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
@@ -207,7 +207,7 @@ export class AonDate extends AonElement {
 
     let datepicker =  this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
     datepicker.id = this.DATEPICKER;
-    datepicker.className = 'aonDatepicker';
+    datepicker.classList.add('aonDatepicker', CSS.AON_BOX_SHADOW);
     datepicker.style.width = this.width || '250px';
     span.appendChild(datepicker);
     let datepickerHeaderId =this.DATEPICKER +"Header";
@@ -407,17 +407,19 @@ export class AonDate extends AonElement {
 
   openDatepicker() {
     const datePicker = this.getElement(this.DATEPICKER);
-    if(!this.isReadonly()) {
-      datePicker.classList.add('is-visible');
-    }
-    if(this.isMobile()){
-      datePicker.classList.add('is-mobile');
+    if(datePicker){
+      if(!this.isReadonly()) {
+        datePicker.classList.add('is-visible');
+      }
+      if(this.isMobile()){
+        datePicker.classList.add('is-mobile');
+      }
     }
   }
 
   closeDatepicker() {
     let div = this.getElement(this.DATEPICKER);
-    if(div.classList.contains('is-visible')){
+    if(div && div.classList.contains('is-visible')){
       div.classList.remove('is-visible');
     }
   }
@@ -429,13 +431,14 @@ export class AonDate extends AonElement {
   }
 
   setDate(date) {
+    let input = this.getElement(this.INPUT);
     if(date instanceof Date) {
       this.date = date;
       this.day = this.date.getDate();
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
+      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     } else if(date){
       this.date = new Date(Date.parse(date));
@@ -443,7 +446,7 @@ export class AonDate extends AonElement {
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
       this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
-      this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
+      input.value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     }
     this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));

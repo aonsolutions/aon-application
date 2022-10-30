@@ -464,6 +464,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 	private static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& !vat.isFarmerRegime()
+			&& !vat.isRectification()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
@@ -488,7 +489,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 	}
 	private static boolean rectificationDeduccionesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
+				&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}
 	
 }

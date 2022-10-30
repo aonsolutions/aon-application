@@ -247,26 +247,39 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 
 	@Override
-	public Boolean refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+	public Boolean refresh140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		Company company = AON.getCompanyForDomain(domainName, domainId, user);
 		Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		tbaiConfiguration.setCertificate(cert);
-		LROE140_1_1 lroe = new LROE140_1_1();
-		return lroe.consulta(tbaiConfiguration, person, invoice);
+		if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+		    LROE140_1_1 lroe = new LROE140_1_1();
+		    return lroe.consulta(tbaiConfiguration, person, invoice);
+		} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
+		    LROE140_2_1 lroe = new LROE140_2_1();
+            return lroe.consulta(tbaiConfiguration, person, invoice);   
+		}
+		return false;
 	}
 
 	@Override
-	public Boolean refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+	public Boolean refresh240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		Company company = AON.getCompanyForDomain(domainName, domainId, user);
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		tbaiConfiguration.setCertificate(cert);
-		LROE240_1_1 lroe = new LROE240_1_1();
-		return lroe.consulta(tbaiConfiguration, company, invoice);	
+
+		if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+		    LROE240_1_1 lroe = new LROE240_1_1();
+	        return lroe.consulta(tbaiConfiguration, company, invoice);  
+        } else if(InvoiceCommunicationType.LROE_2.equals(communicationType)) {
+            LROE240_2 lroe = new LROE240_2();
+            return lroe.consulta(tbaiConfiguration, company, invoice);   
+        }
+        return false;
 	}
 	
 

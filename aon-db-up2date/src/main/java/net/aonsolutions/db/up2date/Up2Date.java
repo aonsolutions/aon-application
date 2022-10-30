@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
 import net.aonsolutions.db.up2date.tgss.HomeBonus2012Update;
+import net.aonsolutions.db.up2date.payroll.DefaultPaymentConcepts;
 
 public class Up2Date {
 
@@ -275,6 +276,7 @@ public class Up2Date {
     		//ContractDocCreate.CONTRACTDOCCREATE
     		//AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT
     		HomeBonus2012Update.HOMEBONUS2012UPDATE
+    		DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS
     		
     };
 

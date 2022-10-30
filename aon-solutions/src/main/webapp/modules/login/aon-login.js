@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
+import { login, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
 
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
@@ -9,11 +9,17 @@ import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
 
-import { EVENT, MSG, TAG } from '../../environments/environments.js'; 
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
+import { AonLoader } from "../../components/aon-loader.js";
+import { AonButton } from "../../components/aon-button.js";
+import { AonDialog } from "../../components/aon-dialog.js";
+import { AonToast } from "../../components/aon-toast.js";
+import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
+import { Language } from "../../models/Language.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -22,8 +28,232 @@ export class AonLogin extends AonElement {
     this.tag = 0;
   }
 
+
+  initialize() {
+
+  }
+
+  build() {
+    if(!this.isMobile()){
+      document.body.style.background = 'linear-gradient(to right, aliceblue, #002469)';
+    }
+
+    let div = this.createElement(TAG.DIV);
+    div.className = CSS.AON_FORM_CENTER;
+    this.appendChild(div);
+
+
+    let div2 = this.createElement(TAG.DIV);
+    div2.classList.add(CSS.AON_VERTICAL_CENTER);
+    div2.classList.add(CSS.AON_WIDTH_300);
+    div2.style.top = '47%';
+    if(!this.isMobile()){
+      div2.style.background = 'white';
+      div2.style.padding = '20px';
+      div2.style.width = '340px';
+      div2.style.borderRadius = '10px';
+      div2.style.boxShadow = '0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f';
+    }
+    div.appendChild(div2);
+    
+    if(!this.isMobile()) {
+      let divLanguage = this.createElement(TAG.DIV);
+      divLanguage.id = 'aonLoginLanguageDiv';
+      divLanguage.style.display = 'flex';
+      divLanguage.style.justifyContent = 'right';
+      divLanguage.style.marginBottom = '5px';
+      div2.appendChild(divLanguage);
+
+      let spanLanguage = this.createElement(TAG.SPAN);
+      spanLanguage.id = 'aonLoginLanguageSpan';
+      spanLanguage.style.color = 'lightgray';
+      spanLanguage.innerHTML = this.getLanguageText();
+      spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
+      divLanguage.appendChild(spanLanguage);
+    }
+
+    let divLogo = this.createElement(TAG.DIV);
+    divLogo.id = 'aonLoginLogoDiv';
+    div2.appendChild(divLogo);
+
+    let logo = this.createElement(TAG.IMG);
+    logo.id = 'aonLoginLogoImg';
+    logo.style.width = '250px';
+    logo.style.marginLeft = '25px';
+    divLogo.appendChild(logo);
+
+    let divContent = this.createElement(TAG.DIV);
+    divContent.style.paddingTop = '20px';
+    divContent.style.width = '300px';
+    div2.appendChild(divContent);
+
+    let divTitle = this.createElement(TAG.DIV);
+    divTitle.className = CSS.AON_COLOR_SECONDARY;
+    divTitle.style.fontWeight = 'bold';
+    divTitle.style.paddingBottom = '20px'; 
+    divTitle.innerHTML = MSG.SIGN_IN.toUpperCase();
+    divContent.appendChild(divTitle);
+
+    let aonLoader = new AonLoader();
+    aonLoader.id = 'aonLoginLoader';
+    divContent.appendChild(aonLoader);
+
+    let userInput = this.createAonElement(new AonInput(), 'aonLoginUser', MSG.USER);
+
+    userInput.addEventListener(EVENT.KEYUP, () => {
+      this.getElement('aonLoginMagicLink').setDisabled(!userInput.value.includes('@')); 
+    })
+    divContent.appendChild(userInput);
+
+    let passwordInput = this.createAonElement(new AonInput(), 'aonLoginPassword', MSG.PASSWORD);
+    passwordInput.type = 'password';
+    divContent.appendChild(passwordInput);
+
+
+    let divButtons = this.createElement(TAG.DIV);
+    divButtons.style.display = 'flex';
+    divButtons.style.flexDirection = 'column';
+    divButtons.style.rowGap = '10px';
+    divContent.appendChild(divButtons);
+
+    let signIn = new AonButton();
+    signIn.id = 'aonLoginSignin';
+    signIn.style.width = '100%';
+    signIn.setIcon(MATERIAL_ICONS.LOGIN);
+    signIn.setTitle(MSG.SIGN_IN);
+    divButtons.appendChild(signIn);
+
+    let magicLinkButton = new AonButton();
+    magicLinkButton.id = 'aonLoginMagicLink';
+    magicLinkButton.style.width = '100%';
+    magicLinkButton.setIcon(MATERIAL_ICONS.AUTO_FIX_HIGH);
+    magicLinkButton.setTitle(MSG.SIGN_IN_WITHOUT_PASSWORD);
+    magicLinkButton.setDisabled(true);
+    magicLinkButton.setColor("#12ccd1");
+    magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
+    divButtons.appendChild(magicLinkButton);
+
+    if(this.isBeta()){
+      let certificateButton = new AonButton();
+      certificateButton.id = 'aonLoginCertificate';
+      certificateButton.style.width = '100%';
+      certificateButton.setIcon(MATERIAL_ICONS.SECURITY);
+      certificateButton.setTitle(MSG.SIGN_IN_WITH_CERTIFICATE);
+      certificateButton.setColor("black");
+      certificateButton.addEventListener(EVENT.CLICK, () =>  {
+        window.open('/fnmtoauth2', '_blank', 'width=700,height=800,scrollbars=yes');
+        return false; 
+      });
+      divButtons.appendChild(certificateButton);
+    }
+
+
+    let divInfo = this.createElement(TAG.DIV);
+    divInfo.style.color = '#666';
+    divInfo.style.fontSize = '9px';
+    divInfo.style.borderTop = '1px solid #ddd';
+    divInfo.style.marginTop = '10px';
+    divInfo.style.padding = '15px';
+    divInfo.innerHTML = `
+      <span>
+        <a target="_blank" class="aonLink" href="http://www.aonsolutions.es">
+          aonSolutions
+        </a> ${MSG.REGISTERED_TRADEMARK_AON}
+      </span>
+      <div id="aonManifest"></div>`;
+    div2.appendChild(divInfo);
+
+    let divMobiles = this.createElement(TAG.DIV);
+    divMobiles.id = 'logosMobiles';
+    div2.appendChild(divMobiles);
+
+    let dialog = new AonDialog();
+    dialog.id = "aonDialogLogin";
+    this.appendChild(dialog);
+
+    let toast = new AonToast();
+    toast.id = "aonLoginToast";
+    this.appendChild(toast);
+  }
+
+  magicLink(value) {
+    let loader = this.getElement("aonLoginLoader");
+    loader.start();
+    magicLink(value).then(()=> {
+      loader.stop();
+      let toast = this.getElement('aonLoginToast');
+      toast.start({type:'success', message:'El mensaje se ha enviado correctamente.'});
+    }).catch(e => {
+      loader.stop();
+      let error = JSON.parse(e);
+      let toast = this.getElement('aonLoginToast');
+      toast.start(error);
+    });
+  }
+  
+
+  languageDialog() {
+    let spanLanguage = this.getElement('aonLoginLanguageSpan');
+    const top  = spanLanguage.getBoundingClientRect().top;
+    const left = spanLanguage.getBoundingClientRect().left;
+    let d = this.getElement('aonHeaderDialogHelpOption');
+    if(!d) {
+      d = new AonDialogMenu();
+      d.id = 'aonHeaderDialogHelpOption';
+      this.appendChild(d);
+    }  
+    d.getContent().addEventListener(EVENT.MOUSELEAVE, () => d.close());
+
+    let options = [{
+      name: MSG.SPANISH,
+      image: '../assets/img/aonIconCastellano.png',
+      fn: () => LS.setLanguage(Language.SPANISH)
+    }, {
+      name: MSG.ENGLISH,
+      image: '../assets/img/aonIconEnglish.png',
+      fn: () => LS.setLanguage(Language.ENGLISH)
+    }, {
+      name: MSG.DEUTSCH,
+      image: '../assets/img/aonIconDeutsch.png',
+      fn: () => LS.setLanguage(Language.DEUTSCH)
+    }, {
+      name: MSG.BASQUE,
+      image: '../assets/img/aonIconEuskera.png',
+      fn: () => LS.setLanguage(Language.BASQUE)
+    }, {
+      name: MSG.CATALAN,
+      image: '../assets/img/aonIconCatala.png',
+      fn: () => LS.setLanguage(Language.CATALAN)
+    }, {
+      name: MSG.GALICIAN,
+      image: '../assets/img/aonIconGalego.png',
+      fn: () => LS.setLanguage(Language.GALICIAN)
+    } ];
+
+    d.setMenuOptions(options, top, left);
+    d.open();
+  }
+
+  getLanguageText() {
+      if(LS.getLanguage() && Language.BASQUE === LS.getLanguage()){
+        return MSG.BASQUE;
+      } else if(LS.getLanguage() && Language.CATALAN === LS.getLanguage()){
+        return MSG.CATALAN;
+      } else if(LS.getLanguage() && Language.DEUTSCH === LS.getLanguage()){
+        return MSG.DEUTSCH;
+      } else if(LS.getLanguage() && Language.ENGLISH === LS.getLanguage()){
+        return MSG.ENGLISH;
+      } else if(LS.getLanguage() && Language.GALICIAN === LS.getLanguage()){
+        return MSG.GALICIAN;
+      } else return MSG.SPANISH;
+  }
+
   connectedCallback() {
-    this.innerHTML = `
+    if(this.isBeta()) {
+      this.initialize();
+      this.build();
+    } else {
+      this.innerHTML = `
 			<!-- Wide card with share menu button -->
 			<style>
 
@@ -113,17 +343,17 @@ export class AonLogin extends AonElement {
 			<aon-dialog id="aonDialogLogin"></aon-dialog>
 			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
-
+    }
     this.buildLogo();
     if(!webkitRequestMobile() && this.isMobile()){ // si es app
       this.buildAppLogo();
     }
 
-    this.aonDialogLoginRemember();
+    if(!this.isBeta()) this.aonDialogLoginRemember();
 
     let aonManifest = this.getElement("aonManifest");
     getManifest().then(
-      (manifest) => (aonManifest.innerHTML = "Version: " + manifest.build_date)
+      (manifest) => (aonManifest.innerHTML = MSG.VERSION + ": " + manifest.build_date)
     );
 
     let username = this.getElement("aonLoginUser");
@@ -133,16 +363,16 @@ export class AonLogin extends AonElement {
 
     let signin = this.getElement("aonLoginSignin");
     signin.addEventListener(EVENT.CLICK, () => this.signin());
-
-    let aonLoginRemember = this.getElement("aonLoginRemember");
-    aonLoginRemember.addEventListener(EVENT.CLICK, () =>{
-       const dialog = this.getElement("aonDialogLogin");
-       if (!this.isMobile()) dialog.width = '400px';
-       dialog.open()
-    });
-
+    if(!this.isBeta()) {
+      let aonLoginRemember = this.getElement("aonLoginRemember");
+      aonLoginRemember.addEventListener(EVENT.CLICK, () =>{
+        const dialog = this.getElement("aonDialogLogin");
+        if (!this.isMobile()) dialog.width = '400px';
+        dialog.open()
+      });
+    }
+    if(!this.isMobile()) username.focus();
   }
-
 
   buildAppLogo(){
     const div  = this.getElement('logosMobiles');
@@ -167,6 +397,23 @@ export class AonLogin extends AonElement {
     div.appendChild(appStore);
   }
 
+  aonDialogLoginMagicLink() {
+    let dialog = this.getElement("aonDialogLogin");
+    if (!this.isMobile()) dialog.width = '400px';
+    dialog.setTitle("MAGIC LINK");
+    let form = this.createElement("form");
+    form.action = "#";
+    let aonInput = new AonInput();
+    aonInput.id = "aonLoginMagicLinkEmail";
+    aonInput.description = "Email";
+    aonInput.autocomplete = "on";
+    form.appendChild(aonInput);
+    dialog.setContent(form);
+    
+    dialog.addAcceptAction(() => aonInput.value && aonInput.value.length>3 ? magicLink(aonInput.value) : null);
+    dialog.open();
+  }
+
   aonDialogLoginRemember() {
     let dialog = this.getElement("aonDialogLogin");
     dialog.setTitle(MSG.RECOVER_PASSWORD);
@@ -185,7 +432,7 @@ export class AonLogin extends AonElement {
   buildLogo() {
     let logo = this.getElement("aonLoginLogoImg");
     const href = window.location.href;
-    let src = "assets/aon-logo.png"; 
+    let src = "assets/aon-logo2.png"; 
     if (href.includes("ayudat")) {
       src = "assets/img/ayudat-logo.png";
     } else if (href.includes("translogia") || href.includes("tedi")) {
@@ -220,6 +467,7 @@ export class AonLogin extends AonElement {
     loader.start();
     login(data)
       .then(() => {
+        document.body.style.background = 'transparent';
         loader.stop();
         LS.removeDomain();
         this.getModule().buildHome();
@@ -241,13 +489,13 @@ export class AonLogin extends AonElement {
         console.log(e);
         loader.stop();
         let error = JSON.parse(e);
-        let aonLoginError = this.getElement("aonLoginError");
-        aonLoginError.style.display = "block";
+        if(!this.isBeta()) {
+          let aonLoginError = this.getElement("aonLoginError");
+          aonLoginError.style.display = "block";
 
-        let aonLoginErrorMessage = this.getElement(
-          "aonLoginErrorMessage"
-        );
-        aonLoginErrorMessage.innerHTML = error.message;
+          let aonLoginErrorMessage = this.getElement("aonLoginErrorMessage");
+          aonLoginErrorMessage.innerHTML = error.message;
+        }
         let toast = this.getElement('aonLoginToast');
         toast.start(error);
       });

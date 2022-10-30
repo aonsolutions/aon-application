@@ -88,6 +88,10 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 
 	class ConsoleDomainTableCallbackImpl implements ConsoleDomainTableCallback {
 		@Override
+		public boolean isAdvancedMode() {
+			return ConsoleDomainModule.this.filterPanel.isAdvancedMode();
+		}
+		@Override
 		public String getSchema() {
 			return ConsoleDomainModule.this.filterPanel.getSchema();			
 		}
@@ -323,7 +327,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			if (tabWidget != null) {
 				tabWidget.reset();
 			} else {
-				tabWidget = new AonConsoleProgress();
+				tabWidget = new AonConsoleProgress( filterPanel.isAdvancedMode() );
 				AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
 				closeTab.addCloseHandler(e -> {if (!isRunning()) {
 					tabLayout.remove(tabLabel);

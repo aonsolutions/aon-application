@@ -203,16 +203,22 @@ const reminder = (ev, dialog, note, textAreaId) => {
     const rect = ev.target.getBoundingClientRect();
     const top  = rect.top + (ev.clientY - rect.top);
     const left = 10 + rect.left + (ev.clientX - rect.left);
+
     const content = dialog.getContent();
+    dialog.clear();
+
+    let divContent = document.createElement(TAG.DIV);
+    divContent.style.margin = "0 10px";
+    dialog.setContent(divContent, top, left);
 
     const idRand =  Math.random().toString(36).substring(7);
-    dialog.clear();
     content.style.width = "185px";
     content.style.borderRadius = "6px";
+
     const aonDate = new AonDate(); 
-    aonDate.id = "date"+ idRand;
-    aonDate.name = "date"+ idRand;
-    aonDate.title =  MSG.DATE;
+    aonDate.id    = "date"+ idRand;
+    aonDate.name  = "date"+ idRand;
+    aonDate.title = MSG.DATE;
     aonDate.width = "228px";
     aonDate.addEventListener(EVENT.CHANGE, ()=>{
         if(aonDate.value){
@@ -222,17 +228,12 @@ const reminder = (ev, dialog, note, textAreaId) => {
             dialog.close();
         }
     });
-
-    let divContent = document.createElement(TAG.DIV);
-    divContent.style.margin = "0 10px";
     divContent.appendChild(aonDate);
-
-
+   
     if(note.getDate() && new Date(note.getDate()).isValid()) {
-        aonDate.setDate(note.getDate());
+        aonDate.value = note.getDate();
     }
 
-    dialog.setContent(divContent, top, left);
     dialog.open();
 }
 

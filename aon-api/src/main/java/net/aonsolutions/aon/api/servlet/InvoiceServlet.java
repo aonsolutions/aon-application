@@ -559,7 +559,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), true);
 		CompanyFull company = AON.getCompanyFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
-		String qrUrl = api.getDomain().getName() + "/dip?d=" + company.getRegistry().getDocument() 
+		String qrUrl = "https://" +  api.getDomain().getName() + "/dip?d=" + company.getRegistry().getDocument() 
 				+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
 				+ "&s=" + invoice.getSeries()
 				+ "&n=" + invoice.getNumber()

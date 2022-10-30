@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
+import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
@@ -66,12 +66,6 @@ public class CONSOLE {
 		}
 	}
 
-	public static Boolean fix(ConsoleDomainMessage consoleMessage) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(consoleMessage.getSchema())) {
-			return getConsole().fix(ctx,consoleMessage);
-		}
-	}
-
 	public static ConsoleTableRow getTableRow(ConsoleTableRow row) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
 			return getConsole().getTableRow(ctx,row);
@@ -88,5 +82,15 @@ public class CONSOLE {
 		return getConsole().getAonTables();
 	}
 	
+	public static ConsoleTableRow update(ConsoleTableRow row, ConsoleTableField field) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().update(ctx,row,field);
+		}
+	}
 	
+	public static Boolean delete(ConsoleTableRow row) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().delete(ctx,row);
+		}
+	}
 }

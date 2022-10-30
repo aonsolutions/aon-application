@@ -22,6 +22,7 @@ public class DomainParams implements Serializable {
 	private Date toLastAccess;
 	private Date fromExpirationDate;
 	private Date toExpirationDate;
+	private boolean advancedMode;
 	
 	private boolean validate;
 	private boolean mustFlatten;
@@ -179,5 +180,14 @@ public class DomainParams implements Serializable {
 		this.offset = offset;
 		return this;
 	}
+	public boolean isAdvancedMode() {
+		return advancedMode;
+	}
+	public DomainParams setAdvancedMode(boolean advancedMode) {
+		this.advancedMode = advancedMode;
+		return this;
+	}
+	
+	
 	
 }

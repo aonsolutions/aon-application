@@ -30,6 +30,7 @@ export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
+export const AUDIT = 'audit';
 
 // ----- B
 
@@ -40,6 +41,7 @@ export const BASE = 'base';
 export const BIC = 'bic';
 export const BLANK = 'blank';
 export const BADGE = 'badge';
+export const BUTTON = 'button';
 
 // ----- C
 
@@ -119,6 +121,7 @@ export const HTML_ELEMENT = 'htmlElement';
 // ----- I
 
 export const IBAN = 'iban';
+export const ICON = 'icon';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';

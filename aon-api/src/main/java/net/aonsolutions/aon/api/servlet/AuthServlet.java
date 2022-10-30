@@ -127,12 +127,12 @@ public class AuthServlet extends AonApiHttpServlet{
 		String oldPassword = params.optString("oldPassword");
 		String newPassword = params.optString("newPassword");
 		
-		if(oldPassword.isEmpty()) {
-			throw new AonApiException("La contraseña actual requerida.");
+		if(oldPassword.isEmpty() || newPassword.isEmpty()) {
+			throw new AonApiException("Las contraseñas son requeridas.");
 		} 
 		
-		if(newPassword.isEmpty()) {
-			throw new AonApiException("La contraseña anterior requerida.");
+		if(!newPassword.equals(oldPassword)) {
+			throw new AonApiException("Las contraseñas no coinciden.");
 		} 
 		
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
@@ -141,11 +141,11 @@ public class AuthServlet extends AonApiHttpServlet{
 		
 		String email = auth.getEmail();
 		
-		String oldPass = Utils.createPasswordHash(email, oldPassword);
-		if(!oldPass.equalsIgnoreCase(auth.getPassword())) {
-			throw new AonApiException("La contraseña actual no coincide.");
-		}
-		
+//		String oldPass = Utils.createPasswordHash(email, oldPassword);
+//		if(!oldPass.equalsIgnoreCase(auth.getPassword())) {
+//			throw new AonApiException("La contraseña actual no coincide.");
+//		}
+//		
 		String newPass = Utils.createPasswordHash(email, newPassword);
 		auth.setPassword(newPass);
 		

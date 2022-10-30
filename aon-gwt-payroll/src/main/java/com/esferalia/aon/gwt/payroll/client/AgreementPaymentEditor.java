@@ -8,12 +8,14 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
@@ -55,6 +57,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	TextBox paymentDescriptionTB;
+	
+	@UiField (provided = true)
+	AonToolbarSmallButton expresssionVisibilityBtn;
 
 	@UiField
 	TextArea paymentExpressionTB;
@@ -125,6 +130,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private AgreementExtra extra;
 	private AgreementExtra associatedExtra;
 	private Payment associatedPayment;
+	
+	private boolean expresssionVisibility = false;
 
 	private TypeListBox<Payment.Type> paymentTypeLB;
 	
@@ -137,6 +144,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras) {
 		setCaption("Devengo");
+		expresssionVisibilityBtn = new AonToolbarSmallButton("Mostrar toda la expresi\u00f3n", AON.CSS.aonIconVisibility());
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
@@ -147,7 +155,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		this.allExtras = allExtras;
 		
 		initializeExtraPanel();
-		initializeExtraAssociatedPanel();
+		if(payment.getType().equals(Payment.Type.CRA_0004) || payment.getType().equals(Payment.Type.CRA_0005))
+			initializeExtraAssociatedPanel();
 		
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
 
@@ -632,11 +641,35 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentTypeLB.setSelected(this.payment.getType());
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
-		paymentExpressionTB.setValue(this.payment.getExpression());
+		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
+		expresssionVisibilityBtn.addClickHandler(e -> {
+			expresssionVisibility = !expresssionVisibility;
+			if(expresssionVisibility) {
+				paymentExpressionTB.setValue(getExpression(this.payment.getExpression()));
+				expresssionVisibilityBtn.setTitle("Ocultar parte expresi\u00f3n");
+				expresssionVisibilityBtn.removeStyleName(AON.CSS.aonIconVisibility());
+				expresssionVisibilityBtn.addStyleName(AON.CSS.aonIconVisibilityOff());
+			} else {
+				paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
+				expresssionVisibilityBtn.setTitle("Mostrar toda expresi\u00f3n");
+				expresssionVisibilityBtn.removeStyleName(AON.CSS.aonIconVisibilityOff());
+				expresssionVisibilityBtn.addStyleName(AON.CSS.aonIconVisibility());
+			}
+		});
 		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
 		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
+	}
+	
+	private String getParsedExpression(String expression) {
+		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+		return SpecialExpresion.parse(expression).getInput();
+	}
+	
+	private String getExpression(String expression) {
+		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+		return SpecialExpresion.parse(expression).getExpression();
 	}
 	
 	private void fillExtra() {

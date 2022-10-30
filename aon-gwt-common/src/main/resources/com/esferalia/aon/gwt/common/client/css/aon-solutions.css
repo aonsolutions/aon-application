@@ -192,6 +192,8 @@
 .aon_icon_sepe_ct { background-image: iconSepeCt;}
 @url iconSepeCto aonIconSepeCto;
 .aon_icon_sepe_cto { background-image: iconSepeCto;}
+@url iconEditNote aonIconEditNote;
+.aon_icon_edit_note { background-image: iconEditNote;}
 @url iconCloudImport aonIconCloudImport;
 .aon_icon_cloud_import { background-image: iconCloudImport;}
 @url iconImport aonIconImport;
@@ -1192,7 +1194,7 @@
 }
 .aon_custom_dialog_header {
 	margin: 0px;
-	padding: 1rem;
+	padding: 1em;
 	padding-bottom: 0;
 	width: auto;
 	display: flex;

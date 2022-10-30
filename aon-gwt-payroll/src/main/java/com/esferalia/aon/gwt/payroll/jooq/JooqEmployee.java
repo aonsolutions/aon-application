@@ -1235,6 +1235,13 @@ public class JooqEmployee {
 			.where(REGISTRY.ID.eq(employeeData.getEmployeeId()))
 			.execute();
 		
+		// Update salaries ssNumber and Document
+		dslContext.update(SALARY)
+			.set(SALARY.SOCIAL_SECURITY_NUMBER, employeeData.getSsNumber())
+			.set(SALARY.EMPLOYEE_DOCUMENT, employeeData.getDocument())
+			.where(SALARY.CONTRACT.eq(contractData.getContractId()))
+			.execute();
+		
 		Integer domain = employeeData.getDomain();
 		Integer registryId = employeeData.getEmployeeId();
 		
