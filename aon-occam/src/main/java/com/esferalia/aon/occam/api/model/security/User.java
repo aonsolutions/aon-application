@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 
@@ -20,17 +21,18 @@ public class User implements Serializable {
 	private String name;
 	private String login;
 	private boolean active;
+    private Registry registry;
+    private AonRole[] userRoles;
+    private Date expirationDate;
+    private UserToolbar toolbar;
+    private List<Workgroup> workgroups;
+    private Auth auth;
+    private List<TaskHolder> taskHolders;
+    
+    @Deprecated
 	private boolean shared;
-	private Integer registry;
+	@Deprecated
 	private Integer enterprise;
-	private AonRole[] userRoles;
-	private Date expirationDate;
-	UserToolbar toolbar;
-	
-	private List<Workgroup> workgroups;
-	
-	private Auth auth;
-	private List<TaskHolder> taskHolders;
 	
 	public Integer getId() {
 		return id;
@@ -88,11 +90,12 @@ public class User implements Serializable {
 	}
 	
 	public boolean isShared() {
-		return shared;
+		return shared || UserType.SHARED.equals(getType());
 	}
 	
 	public User setShared(boolean shared) {
 		this.shared = shared;
+		setType(UserType.SHARED);
 		return this;
 	}
 	
@@ -103,18 +106,24 @@ public class User implements Serializable {
 		this.userRoles = userRoles;
 		return this;
 	}
-	public Integer getRegistry() {
-		return registry;
+
+	public Registry getRegistry() {
+	    if(registry == null) {
+	        return new Registry();
+	    }
+	    return registry;
 	}
-	public User setRegistry(Integer registry) {
+	public User setRegistry(Registry registry) {
 		this.registry = registry;
 		return this;
 	}	
-	
+
+	@Deprecated
 	public Integer getEnterprise() {
 		return enterprise;
 	}
 	
+    @Deprecated
 	public User setEnterprise(Integer enterprise) {
 		this.enterprise = enterprise;
 		return this;
@@ -261,7 +270,7 @@ public class User implements Serializable {
 	}
 	
 	public boolean isPortal() {
-		return getEnterprise() != null;
+		return getEnterprise() != null || UserType.PORTAL.equals(getType());
 	}
 	
 	public boolean isEmpty() {

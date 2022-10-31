@@ -283,8 +283,8 @@ public class DocumentalServlet extends HttpServlet{
 			Company parentCp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getParentId()));
 			list.add(parentCp.getId());
 		}
-		if(user.getRegistry() != null) {
-			list.add(user.getRegistry());
+		if(user.getRegistry() != null && !user.getRegistry().isEmpty()) {
+			list.add(user.getRegistry().getId());
 		}
 		Integer[] arr = new Integer[list.size()];
 		list.toArray(arr);

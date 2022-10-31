@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -20,6 +21,7 @@ public class AonApiData implements Serializable{
 	private Domain domain;
 	private User user;
 	private JSONObject data;
+	private Options options;
 	
 	private String path;
 	private DomainUserRoles dur;
@@ -103,6 +105,14 @@ public class AonApiData implements Serializable{
 		this.dur = dur;
 		return this;
 	}
+	
+	public Options getOptions() {
+        return options;
+    }
+	
+	public void setOptions(Options options) {
+        this.options = options;
+    }
 	
 	public boolean isPredefinedToken() {
 		return "SIGd95770f269e711eb94390242ac130002".equals(getToken())

@@ -264,21 +264,20 @@ public class BidoqServlet extends AonApiHttpServlet {
 			.setToolbar(UserToolbar.GOOGLE);
 		
 		if(!AonStringUtils.isBlank(auth.getDocument()) && AonDocumentUtil.isValid(auth.getDocument())) {
-			Integer registryId = null;
+			Registry registry = new Registry();
 			Optional<Person> p = AON.getPerson(cp.getDomain().getName(), cp.getDomain().getId(), "", f -> 
 				f.getDomainProperty().eq(cp.getDomain().getId())
 				.and(f.getDocumentProperty().eq(auth.getDocument())));
 			if(p.isPresent() && p.get().getId() != null) {
-				registryId = p.get().getId();
+				registry = p.get();
 			}
 				
-			if(registryId == null) {
-				Registry r = AON.getRegistry(cp.getDomain().getName(), cp.getDomain().getId(), "", f -> 
+			if(registry == null || registry.isEmpty()) {
+				registry = AON.getRegistry(cp.getDomain().getName(), cp.getDomain().getId(), "", f -> 
 					f.getDomainProperty().eq(cp.getDomain().getId())
 					.and(f.getDocumentProperty().eq(auth.getDocument())));
-				registryId = r.getId();
 			}
-			user.setRegistry(registryId);
+			user.setRegistry(registry);
 		}
 			
 		user = AON.save(cp.getDomain().getName(), cp.getDomain().getId(), "", user);
