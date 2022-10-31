@@ -27,6 +27,7 @@ import { AonProjectList } from '../project/aon-project-list.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { Customer } from '../../models/registry/Customer.js';
 
 export class AonReg extends AonElement {
 
@@ -142,7 +143,7 @@ export class AonReg extends AonElement {
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		
-		if(this.registry.id){
+		if(this.registry.id && this.registry.getCreationUser){
 			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
 		}
 
@@ -154,12 +155,7 @@ export class AonReg extends AonElement {
 		div.style.width = "100%";
 		this.appendChild(div);
 
-		// let div2 = this.createElement(TAG.DIV);
-		// div2.style.display = "flex";
-		// div2.style.width = "100%";
-		// this.appendChild(div2);
 		this.buildGeneralData();
-		// this.buildInfoCard(div2);
 	}
 
 	buildTabs() {

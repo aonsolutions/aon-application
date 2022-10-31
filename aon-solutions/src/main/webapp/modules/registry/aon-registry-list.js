@@ -116,10 +116,6 @@ export class AonRegistryList extends AonElement {
 		this.filter = filter;
 		this.init();
 	}
-
-	buildToolbarCustom(){
-		//TODO
-	}
 }
 
 if(!window.customElements.get(TAG.AON_REGISTRY_LIST)) {

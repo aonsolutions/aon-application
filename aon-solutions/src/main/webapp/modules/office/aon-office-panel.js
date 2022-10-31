@@ -1,18 +1,16 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { OfficeEnums } from './OfficeEnums.js';
-import { EVENT, MSG } from '../../environments/environments.js';
+import { MSG } from '../../environments/environments.js';
 import { getProjectTypes, saveProject} from '../../services/projectService.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
 import { AonCustomer } from '../registry/customer/aon-customer.js';
 import { AonCustomerList } from '../registry/customer/aon-customer-list.js';
-import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { AonTaskHolder } from '../registry/taskholder/aon-taskholder.js';
 import { AonTaskHolderList } from '../registry/taskholder/aon-taskholder-list.js';
 import { OfficeUtils } from './OfficeUtils.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
-import { getScopes } from '../../services/documentalService.js';
 import { ProjectUtils } from '../project/ProjectUtils.js';
 
 export class AonOfficePanel extends AonElement {
@@ -143,83 +141,7 @@ export class AonOfficePanel extends AonElement {
         this.setCustomerSelected([]);
         this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.ADD_FOLDER);
     }
-
-    buildToobar(view){
-        const application = this.getApplication();
-        const officeViews = OfficeEnums.OfficeViews;
-        
-        if([officeViews.AON_CUSTOMER, officeViews.AON_CUSTOMER_LIST].includes(view)){
-
-            // application.removeToolbarOptions();
-
-            application.addToolbarOption2(SigninSidenav.ADD, () => this.showView(officeViews.AON_CUSTOMER) );
-
-            let btnSearch = application.getSearchButton();
-
-            if(!btnSearch && officeViews.AON_CUSTOMER_LIST === view){
-                let aonView = this.getElement(officeViews.AON_CUSTOMER_LIST);
-                let timeOut = null;
-
-                btnSearch = application.addSearchOption();
-
-                btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
-                    clearTimeout(timeOut);
-                    timeOut = setTimeout(() => {
-                        this.addFilterCustomers({
-                            value:detail.search,
-                            scope:detail.scope,
-                            projectType: detail.projectType,
-                            status: OfficeUtils.getCustomerStatus(detail)
-                        });
-                        let filter = {...this.getFilterCustomers(), page:1 };
-                        console.log(aonView, detail);
-                        aonView.setFilter(filter);
-                    }, 300);
-                });
-
-                btnSearch.buildOptionsFilter(OfficeEnums.CustomerFilter);//INPUTS
-                this.searchValueDefault();
-            }
-        }
-    }
-
-    searchValueDefault(){
-        let filter =  this.getFilterCustomers() || {};
-
-		let scopeEl = this.getElement("scope");
-        getScopes().then(scopes=>{
-            scopeEl.setOptions(scopes.map(c=> ({...c, value: c.id})) );
-
-            const value = filter.scope;
-            if(value){
-                scopeEl.value = value;
-            }
-        })
-
-        let projectTypeEl = this.getElement("projectType");
-        getProjectTypes({})
-        .then(t => {
-            let types = (t || []).map((r) => ({...r, name: r.description, value: r.id}));
-
-            projectTypeEl.setOptions(types);
-
-            const value = filter.projectType;
-            if(value){
-                projectTypeEl.value = value;
-            }
-        })
-
-
-        let active = this.getElement("active");
-        active.value = (filter.status ||  []).includes("ACTIVE");
-        
-        let inactive = this.getElement("inactive");
-        inactive.value = (filter.status ||  []).includes("INACTIVE");
-  
-        let blocked = this.getElement("blocked");
-        blocked.value = (filter.status ||  []).includes("BLOCKED");
-	}
-
+ 
     async onSaveExpedientes(project){
         let selected = this.getCustomerSelected();
         let projects = selected
@@ -273,7 +195,9 @@ export class AonOfficePanel extends AonElement {
 				break;
                 case officeViews.AON_CUSTOMER_LIST:
 					aonView = new AonCustomerList();
+
                     this.addCustomerListSelectable(aonView);
+                    
                     aonView.buildRegistry = (registry) =>{// overwrite function
                         application.startLoader();
                         aonView.getCustomerCustom(registry)
@@ -309,7 +233,10 @@ export class AonOfficePanel extends AonElement {
           
 				application.setContent(aonView);
 
-                this.buildToobar(view);
+
+                if([officeViews.AON_CUSTOMER_LIST].includes(view) && aonView.buildToolbar){
+                    aonView.buildToolbar();
+                }
 			}
 
 			resolve(aonView);
