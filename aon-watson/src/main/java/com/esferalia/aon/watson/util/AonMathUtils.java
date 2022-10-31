@@ -183,6 +183,9 @@ public class AonMathUtils {
 	public static boolean equals(double value1,double value2) {
 		return round(value1) == round(value2);
 	}
+	public static boolean notEquals(double value1,double value2) {
+		return !equals(value1,value2);
+	}
 	
 	/**
 	 * Devuelve verdadero si el valor esta comprendido en el rango indicado.

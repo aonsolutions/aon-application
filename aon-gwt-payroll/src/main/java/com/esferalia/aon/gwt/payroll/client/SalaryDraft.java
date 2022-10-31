@@ -1887,8 +1887,8 @@ public class SalaryDraft extends ResizeComposite
 			//.filter(this::intersects)
 			.findFirst().orElse(newVariable(name))
 			;
-			
-			variable.setValue(Math.round(item.getAmount()*1000.00)/1000.00);
+			double amount = AonNumberUtils.zeroIfNull(item.getAmount());
+			variable.setValue(Math.round( amount *1000.00)/1000.00);
 			
 			return variable;
 		}

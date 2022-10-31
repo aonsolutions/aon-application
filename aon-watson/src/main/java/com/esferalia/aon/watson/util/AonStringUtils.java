@@ -4693,7 +4693,11 @@ public class AonStringUtils {
 		}
 		return ret;
 	}
-
+	
+	public static String spaces(final int repeat) {
+		return repeat( SPACE, repeat);
+	}
+	
 	// Conversion
 	// -----------------------------------------------------------------------
 	// Padding

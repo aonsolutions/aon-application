@@ -1,18 +1,19 @@
 package es.aonsolutions.aio.test;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import es.aonsolutions.aio.test.config.ConfigTestSuite;
 import es.aonsolutions.aio.test.invoice.InvoiceTestSuite;
+import es.aonsolutions.aio.test.product.ProductTestSuite;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@SelectClasses({
 	ConfigTestSuite.class,
+	ProductTestSuite.class,
 	InvoiceTestSuite.class
 })
+@Suite
 public class AonHibernateTestSuite {
 
 	

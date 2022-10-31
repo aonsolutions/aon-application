@@ -642,6 +642,29 @@ public class CheckItModule extends MainEntryPoint {
 				ibanLbl.addStyleName(AON.CSS.aonTextCenter());
 				topInfo.add(logoImg);
 				topInfo.add(ibanLbl);
+				
+				Label movBalanceLabel = new Label("Saldo");
+				movBalanceLabel.addStyleName(AON.CSS.aonTextCenter());
+				movBalanceLabel.addStyleName(AON.CSS.aonMarginTop());
+				
+				
+				
+				topInfo.add(movBalanceLabel);
+				
+				
+				FlowPanel movBalancePanel = new FlowPanel();
+				InlineLabel movBalanceBox = new InlineLabel();
+				movBalanceBox.addStyleName(AON.CSS.aonFontMedium());
+				movBalanceBox.addStyleName(AON.CSS.aonBold());
+				if (AonMathUtils.isLessThanZero(checkItBankAccount.getBalance())) {
+					movBalanceBox.addStyleName(AON.CSS.aonColorRed());
+				}
+				movBalanceBox.setText( AON.FMT.format(checkItBankAccount.getBalance()) + " " + EURO);
+				movBalancePanel.addStyleName(AON.CSS.aonMarginBottom());
+				movBalancePanel.addStyleName(AON.CSS.aonTextCenter());
+				movBalancePanel.add(movBalanceBox);
+				topInfo.add(movBalancePanel);
+				
 				topInfo.addStyleName(AON.CSS.aonMarginBottom());
 				
 				movementsFlow.add(topInfo);

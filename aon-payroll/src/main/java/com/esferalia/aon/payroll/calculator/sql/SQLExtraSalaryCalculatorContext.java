@@ -2,11 +2,8 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_EXTRA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_LEVEL;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.AGREEMENT;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.END_DATE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.ISSUE_DATE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.START_DATE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,15 +13,16 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
+import java.util.Iterator;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.google.sql.SQLConstants;
-import com.esferalia.aon.jooq.tables.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
+import com.esferalia.aon.payroll.DelegateCollection;
+import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -34,6 +32,8 @@ import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -41,13 +41,21 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLExtraSalaryCalculatorContext implements
 		ISQLContractSalaryCalculatorContext {
 
-	private static final String EXTRAS_SQL_FORMAT = "SELECT * "
-		+ " FROM " + AGREEMENT_EXTRA 
-		+ " WHERE " + AgreementExtraColumns.ID + " = %d"
+	private static final String EXTRAS_SQL_FORMAT = "SELECT"
+		+ " " + AGREEMENT_EXTRA +".*"
+		+ ", " + PAYMENT_CONCEPT +"." + PaymentConceptColumns.CODE
+		+ ", " + AGREEMENT_PAYMENT +"." + AgreementPaymentColumns.TYPE
+		+ ", " + AGREEMENT_PAYMENT +"." + AgreementPaymentColumns.MONTH
+		+ ", " + AGREEMENT_PAYMENT +"." + AgreementPaymentColumns.SALARY_TYPE
+		+ " FROM " + AGREEMENT_EXTRA
+		+ " JOIN " + AGREEMENT_PAYMENT + " ON ( " + AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT_PAYMENT + " = " + AGREEMENT_PAYMENT + "."+ AgreementPaymentColumns.ID + ")"
+		+ " LEFT JOIN " + PAYMENT_CONCEPT + " ON ( " + AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.PAYMENT_CONCEPT + " = " + PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID + ")"
+		+ " WHERE " + AGREEMENT_EXTRA + "." + AgreementExtraColumns.ID + " = %d"
 		;
 	
 	private ResultSet rs;
@@ -127,9 +135,9 @@ public class SQLExtraSalaryCalculatorContext implements
 		
 
 		Date extraStartDate = 
-			AgreementExtra.parseAgreementDate(this.rs.getString(START_DATE), this.year);
-		Date extraEndDate  = AgreementExtra.parseAgreementDate(this.rs.getString(END_DATE), this.year);
-		Date extraIssueDate  = AgreementExtra.parseAgreementDate(this.rs.getString(ISSUE_DATE), this.year);
+			AgreementExtra.parseAgreementDate(this.rs.getString(AgreementExtraColumns.START_DATE), this.year);
+		Date extraEndDate  = AgreementExtra.parseAgreementDate(this.rs.getString(AgreementExtraColumns.END_DATE), this.year);
+		Date extraIssueDate  = AgreementExtra.parseAgreementDate(this.rs.getString(AgreementExtraColumns.ISSUE_DATE), this.year);
 		
 		if ( extraStartDate.after(extraEndDate)) {
 			return nextContractSalaryCalculatorContext();
@@ -138,10 +146,12 @@ public class SQLExtraSalaryCalculatorContext implements
 		Criteria agreementCriteria = new Criteria();
 		agreementCriteria.addExpression(this.criteria.getExpression());
 		agreementCriteria.addEqualExpression(
-						AGREEMENT_LEVEL + "." + AGREEMENT, 
-						rs.getInt(AGREEMENT));
+						AGREEMENT_LEVEL + "." + AgreementExtraColumns.AGREEMENT, 
+						rs.getInt(AgreementExtraColumns.AGREEMENT));
 		
-		int paymentId = rs.getInt(AGREEMENT_PAYMENT);
+		int paymentId = rs.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT);
+		String paymentName = rs.getString(PaymentConceptColumns.CODE);
+		Month paymentMonth = Month.getMonthByValue(rs.getInt(AgreementPaymentColumns.MONTH));
 		
 		this.ctx = new SQLContractExtraCalculatorContext(
 				this.connection, 
@@ -158,7 +168,41 @@ public class SQLExtraSalaryCalculatorContext implements
 			
 			@Override
 			protected Filter<IContractPayment> getExtraPaymentFilter() {
-				return  e -> e.getScope() == ExpressionScope.APPLICATION || e.getId() == paymentId;
+				return  e -> e.getScope() == ExpressionScope.APPLICATION || e.getId() == paymentId; 
+			}
+			
+			@Override
+			protected Collection<IContractPayment> getExtraContractPayments() throws AonException {
+				return new DelegateCollection<IContractPayment>(super.getExtraContractPayments()) {
+					@Override
+					public Iterator<IContractPayment> iterator() {
+						return new DelegateIterator<IContractPayment>( super.iterator()) {
+							@Override
+							public IContractPayment next() {
+								return 
+								new DelegateContractPayment(super.next()) {
+									@Override
+									public Integer getId() {
+										return isOverride() ? paymentId: super.getId();
+									}
+									
+									@Override
+									public SalaryType getSalaryType() {
+										return isOverride() ? SalaryType.EXTRA : super.getSalaryType();
+									}
+									
+									private boolean isOverride () {
+										return 
+										super.getScope() == ExpressionScope.CONTRACT
+										&& super.getMonth() == paymentMonth
+										&& AonStringUtils.equals(super.getName(), paymentName)
+										;
+									}
+								};
+							}
+						};
+					}
+				};
 			}
 		}; 
 		
