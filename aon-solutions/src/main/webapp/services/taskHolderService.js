@@ -8,7 +8,7 @@ export const getTastHolders = (data) => get(`${API_URL}/taskholder/enterprise`, 
 
 export const getTastHoldersList = (data) => get(`${API_URL}/taskholder/list`, data);
 
-export const getTaskHolderNoCache = (data) => get(`${API_URL}/taskholder`, data);
+export const getTaskHolderNoCache = (data) => post(`${API_URL}/taskholder/nocache`, data);
 
 export const getTastHoldersWorkGroup = async (data) =>{
   const resp = await get(`${API_URL}/taskholder/workgroup`, data);

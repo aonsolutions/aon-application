@@ -1,4 +1,4 @@
-import { Registry } from '../registry/Registry.js';
+import { Registry } from './Registry.js';
 
 export class TaskHolder extends Registry {
 
@@ -8,6 +8,8 @@ export class TaskHolder extends Registry {
     active;
     costProfile;
 
+    status;
+
     constructor(taskHolder) {
         super(taskHolder);
         if(taskHolder) {
@@ -16,8 +18,10 @@ export class TaskHolder extends Registry {
             this.user = taskHolder.user;
             this.active = taskHolder.active;
             this.costProfile = taskHolder.costProfile;
+            this.status = taskHolder.status;
         } else {
             this.active = true;
+            this.status = 'ACTIVE';
         }
     }
 
@@ -59,6 +63,15 @@ export class TaskHolder extends Registry {
     setActive(active){
         this.setDirty(this.active !== active);
         this.active = active;
+        return this;
+    }
+
+    getStatus() {
+        return this.status;
+    }
+
+    setStatus(status) {
+        this.status = status;
         return this;
     }
 

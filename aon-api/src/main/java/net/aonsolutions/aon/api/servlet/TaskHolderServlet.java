@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonTaskHolderServlet", urlPatterns = {"/ms/api/taskholder/*"})
@@ -70,6 +71,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, setTaskHolder(api));
+				break;
+			case "/nocache":
+				response(req, resp, getTaskHolder(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -126,13 +130,16 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskHolder(AonApiData api) {
 		Domain domain = api.getDomain();
-		return TaskHolderJSON.toJSON(
-			AON.getTaskHolder(domain.getName(), domain.getId(), api.getUser().getLogin(), 
+		TaskHolder taskholder = AON.getTaskHolder(domain.getName(), domain.getId(), api.getUser().getLogin(), 
 				f->	api.getData().opt(IJsonNames.ID)!=null ? 
 				    filter(api, f) :
 				    f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(api.getUser().getId()))
-			)
 		);
+		
+		JSONObject object = TaskHolderJSON.toJSON(taskholder);
+		
+		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), taskholder.getId(), null);
+		
 	}
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
@@ -156,14 +163,15 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 					f-> f.getDomainProperty().eq(domain.getId())
 					.and(f.getUserIdProperty().eq(th.getUserId())))
 			.findFirst();	
-
 		}
 		
 		TaskHolder taskHolder = opt.isPresent() ? opt.get().setActive(th.isActive()) : th;
+		
+		taskHolder = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), taskHolder);
+		
+		RegistryServlet.saveRegistryAdditionalInfo(api, taskHolder.getId(), taskHolder.getDomain().getId());
 
-		return TaskHolderJSON.toJSON( 
-				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), taskHolder)
-		);
+		return TaskHolderJSON.toJSON(taskHolder);
 	}
 
 	public static Filter filter(AonApiData api, TaskHolderProperties f) {
