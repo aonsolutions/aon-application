@@ -1,13 +1,14 @@
-package es.aonsolutions.aio.test.invoice;
+package es.aonsolutions.aio.test.product;
 
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @SelectClasses({
-	InvoiceTest.class,
+	ProductTest.class,
+	ItemTest.class,
 })
 @Suite
-public class InvoiceTestSuite {
+public class ProductTestSuite {
 	
 }
