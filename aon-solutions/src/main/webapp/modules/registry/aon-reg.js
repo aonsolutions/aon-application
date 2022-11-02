@@ -27,7 +27,6 @@ import { AonProjectList } from '../project/aon-project-list.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
-import { Customer } from '../../models/registry/Customer.js';
 
 export class AonReg extends AonElement {
 
@@ -911,13 +910,13 @@ export class AonReg extends AonElement {
 
 	//SEGMENTATIONS
 	buildSegments(parent) {
-		let registrySegment = this.registry.getRegistrySegments()
-		.map(s =>  new RegistrySegment(s))
-		.filter(s => !s.isRemoved());
-
 		const table =  new AonBasicTable();
 		table.id =  "segmentTable";
 		parent.appendChild(table);
+
+		let registrySegment = this.registry.getRegistrySegments()
+		.map(s =>  new RegistrySegment(s))
+		.filter(s => !s.isRemoved());
 
 		if(!registrySegment || registrySegment.length <= 0){
 			let registrySegment = new RegistrySegment();
@@ -1005,7 +1004,6 @@ export class AonReg extends AonElement {
 		table.addCell(addSegment);
 	}
 
-
 	async getSegments(){
 		if(!this.segments.length){
 			try {
@@ -1017,10 +1015,6 @@ export class AonReg extends AonElement {
 		}
 		
 		return this.segments;
-		// return this.segments
-		// .filter((value) => 
-		// 	!( this.registry.getRegistrySegments().some(r => r.segment && r.segment.id == value.id) ) 
-		// );
 	}
 
 	//EXPEDIENTE

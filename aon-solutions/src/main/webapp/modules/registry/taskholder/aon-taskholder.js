@@ -1,13 +1,19 @@
 import { AonReg } from '../aon-reg.js';
-import { MSG } from '../../../environments/environments.js'; 
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 import { AonTaskHolderList } from './aon-taskholder-list.js';
 import { saveTastHolder } from '../../../services/taskHolderService.js';
 import { TaskHolder } from '../../../models/registry/TaskHolder.js';
+import { AonCard } from '../../../components/aon-card.js';
+import { AonBasicTable } from '../../../components/aon-basic-table.js';
+import { AonSelect } from '../../../components/aon-select.js';
+import { getWorkgroups } from '../../../services/workgroupService.js';
+import { AonIconButton } from '../../../components/aon-icon-button.js';
+import { Workgroup } from '../../../models/project/Workgroup.js';
 
 export class AonTaskHolder extends AonReg {
 
 	saveBool;
-
+	workgroups;
 	connectedCallback () {
 		this.taskHolderInitialize();
 		this.initialize();
@@ -17,64 +23,150 @@ export class AonTaskHolder extends AonReg {
 	
 	taskHolderInitialize() {
 		this.saveBool = true;
-		this.options = [
+		this.options = [ 
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
-			// { title: MSG.FISCAL_DATA, fn: () => this.buildAditionalData()}
+			{ title: MSG.ADDITIONAL_INFORMATION, fn: () => this.buildDataAdditional()}
 		];
+		this.workgroups = [];
 	}
 
-	// buildAditionalData() {
-	// 	let parent = this.getElement(this.DIV);
-	// 	this.clearElement(parent);
+	buildDataAdditional(){
+		let parent = this.getElement(this.DIV);
+		this.clearElement(parent);
 
-	// 	let card = new AonCard();
-	// 	card.id = this.FISCAL_CARD;
-	// 	card.title = MSG.FISCAL_DATA;
-	// 	card.style.width = '50%';
-	// 	parent.appendChild(card);
+		this.buildGeneralInformation(parent);
+	}
 
-	// 	let div = this.createElement(TAG.DIV);
-	// 	card.setContent(div);
+	buildGeneralInformation(parent) {
+		let card = new AonCard();
+		card.id = "cardAdditionalInformation";
+		card.title = MSG.ADDITIONAL_INFORMATION;
+		card.style.width = '50%';
+		parent.appendChild(card);
 
-	// 	let table = new AonBasicTable();
-	// 	table.id = this.FISCAL_TABLE;
-	// 	div.appendChild(table);
+		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
 
-	// 	table.addRow();
+		let table = new AonBasicTable();
+		card.id = "aonTableGeneralInformation";
+		div.appendChild(table);
 
-	// 	let transaction = new AonSelect()
-	// 	transaction.id = this.FISCAL_TRANSACTION;
-	// 	transaction.title = MSG.TRANSACTION_TYPE;
-	// 	transaction.options = JSON.stringify(Transactions);
-	// 	transaction.value = this.registry.getTransaction();
-	// 	transaction.addEventListener(EVENT.SELECT, () => {
-	// 		this.registry.setTransaction(transaction.value);
-	// 		if(this.autosave) this.save();
-	// 	});
-	// 	table.addCell(transaction, 2);
+		table.addRow();
+		let divWorkgroup = this.createElement(TAG.DIV);
+		table.addCell(divWorkgroup);
+		this.buildWorkgroups(divWorkgroup);
+	}	
 
-	// 	table.addRow();
+	//WORKGROUPS
+	buildWorkgroups(parent) {
+		const table =  new AonBasicTable();
+		table.id =  "workgroupTable";
+		parent.appendChild(table);
 
-	// 	let vatAccrualPayment = new AonSwitch();
-	// 	vatAccrualPayment.id = this.FISCAL_VAT_ACCRUAL_PAYMENT;
-	// 	vatAccrualPayment.title = MSG.VAT_ACCRUAL_PAYMENT;
-	// 	vatAccrualPayment.checked = this.registry.isVatAccrualPayment();
-	// 	vatAccrualPayment.addEventListener(EVENT.CHANGE, () => {
-	// 		this.registry.setVatAccrualPayment(vatAccrualPayment.isChecked());
-	// 		if(this.autosave) this.save();
-	// 	});
-	// 	table.addCell(vatAccrualPayment, 1);
+		let workgroups = this.registry.getWorkgroups()
+		.map(w =>  new Workgroup(w))
+		.filter(w => !w.isRemoved());
 
-	// 	let withholding = new AonSwitch();
-	// 	withholding.id = this.FISCAL_WITHHOLDING;
-	// 	withholding.title = MSG.IRPF;
-	// 	withholding.checked = this.registry.isWithholding();
-	// 	withholding.addEventListener(EVENT.CHANGE, () => {
-	// 		this.registry.setWithholding(withholding.isChecked());
-	// 		if(this.autosave) this.save();
-	// 	});
-	// 	table.addCell(withholding, 1);
-	// }	
+		if(!workgroups || workgroups.length <= 0){
+			let workgroup = new Workgroup();
+			workgroup.setDomain(this.registry.getDomain().getId());
+			this.registry.addWorkgroup(workgroup);
+			this.buildWorkgroup(table, workgroup, 0);
+		} else {
+			this.registry.setWorkgroups([]);
+			workgroups.forEach( (workgroup, i) =>{
+				this.registry.addWorkgroup(workgroup);
+				this.buildWorkgroup(table, workgroup, i)
+			});
+		}
+	}
+	
+	buildWorkgroup(table, workgroup, i) {
+		const rowNum = table.addRow();
+
+		const rowCount = table.getRowsCount();
+		
+		let workgroupSelect = new AonSelect();
+		workgroupSelect.id = "selectworkgroupSelect" + rowNum;
+		workgroupSelect.title = MSG.WORKGROUP+ " "+rowNum;
+		workgroupSelect.autocomplete = true;
+		workgroupSelect.addEventListener(EVENT.CHANGE, () => {
+			if(workgroupSelect.value){
+				workgroup.setId(workgroupSelect.value)
+			}
+		});
+		
+		table.addCell(workgroupSelect).style.width = '100%';
+	
+		this.getWorkgroups()
+		.then(options=>{
+			const workgroupId = workgroup.getId();
+
+			options = options.filter(w => w.id == workgroupId || !this.registry.getWorkgroups().some(wr => wr.id== w.id && !wr.removed) );
+
+			workgroupSelect.setOptions(options);
+
+			if(workgroupId){
+				workgroupSelect.value = workgroupId;
+			}
+		})
+
+		let removeIcon = new AonIconButton();
+		removeIcon.id = "workgroupRemove" +rowNum;
+		removeIcon.title = MSG.DELETE;
+		removeIcon.icon = MATERIAL_ICONS.CLOSE;
+		removeIcon.addEventListener(EVENT.CLICK, () => {
+			const count = table.getRowsCount();
+			let childVisible = 1;
+			
+			workgroup.remove(); //REMOVE
+
+			if(count === 1){
+				workgroupSelect.clear();
+			} else {
+				table.removeRow(rowNum);
+				childVisible = count-1;
+			}
+
+			let cell = table.getCell(childVisible, 2);
+			if(cell && cell.firstChild){
+				cell.firstChild.visible = true;
+			}
+		});
+		
+		table.addCell(removeIcon);
+
+		this.querySelectorAll(`[id*='workgroupAdd']`).forEach(el=>{
+			el.visible = false;
+		});
+
+		let add = new AonIconButton();
+		add.id = "workgroupAdd"+rowNum;
+		add.title = MSG.ADD+" "+MSG.WORKGROUP;
+		add.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		add.visible = rowCount === i+1
+		add.addEventListener(EVENT.CLICK, () => {
+			add.visible = false;
+			let workgroup = new Workgroup();
+			workgroup.setDomain(this.registry.getDomain().getId());
+			this.registry.addWorkgroup(workgroup);
+			this.buildWorkgroup(table, workgroup, table.getRowsCount());
+		});
+
+		table.addCell(add);
+	}
+	
+	async getWorkgroups(){
+		if(!this.workgroups.length){
+			try {
+				let resp = await getWorkgroups();
+				this.workgroups = resp.map(res => ({...res, value:res.id, name: res.description, statusText: res.active ? MSG.ACTIVE : MSG.INACTIVE}) );
+			} catch (error) {
+				this.showError(error);
+			}
+		}
+		return this.workgroups;
+	}
 
 	back() {
 		let list = new AonTaskHolderList();
@@ -87,7 +179,7 @@ export class AonTaskHolder extends AonReg {
 			this.saveBool = false;
 			let medias = this.emails.concat(this.phones).concat(this.webs);
 			this.registry.setMedia(medias);
-	
+			
 			saveTastHolder(this.registry).then(registry => {
 				this.registry.id = registry.id;
 				this.saveBool = true;
@@ -95,10 +187,11 @@ export class AonTaskHolder extends AonReg {
 					type: 'success',
 					 message: 'Datos Guardados Correctamente'
 				 });
-			}).catch(error => {
+			})
+			.catch(error => {
 				this.saveBool = true;
 				this.showToast(error);
-			 });
+		    });
 		}
 	}
 
