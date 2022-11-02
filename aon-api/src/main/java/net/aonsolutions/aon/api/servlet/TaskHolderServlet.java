@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -198,8 +200,15 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f-> f.getIdProperty().eq(userId));
 
 		if(!workgroups.isEmpty()) {
-			user.setWorkgroups(WorkgroupJSON.fromJSON(workgroups));
-			AON.saveUserWorkgroups(api.getDomain(), api.getUser().getLogin(), user);	
+			List<Workgroup> list = WorkgroupJSON.fromJSON(workgroups)
+			    .stream()
+				.filter(w->w.getId()!=null)
+				.collect(Collectors.toList());
+			
+			if(!list.isEmpty()) {
+				user.setWorkgroups(list);
+				AON.saveUserWorkgroups(api.getDomain(), api.getUser().getLogin(), user);	
+			}
 		}
 	}
 	
