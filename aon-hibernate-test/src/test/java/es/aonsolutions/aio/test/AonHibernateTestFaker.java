@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -20,15 +21,19 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.code.aon.product.enumeration.ProductStatus;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.github.javafaker.Faker;
 
@@ -36,7 +41,18 @@ public class AonHibernateTestFaker {
 	
 	private static Faker faker = new Faker(new Locale("es"));
 
-	
+	// ***************************************
+	// 								  [ACCOUNT] 
+	// ***************************************
+	public static Account getAccount( String prefix ) throws Exception {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), (prefix + "*") );
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),Boolean.valueOf(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),Boolean.valueOf(true));
+		return (Account) accountBean.getList(criteria).stream().findFirst().orElse(null);
+	}
+
 	// ***************************************
 	// 								[CREDITOR] 
 	// ***************************************
@@ -97,6 +113,7 @@ public class AonHibernateTestFaker {
 		Date issueDate = faker.date().past(10, TimeUnit.DAYS);
 		inv.setIssueDate( issueDate );
 		inv.setTaxDate( issueDate );
+		inv.setStatus( InvoiceStatus.PENDING );
 		return inv;
 	}
 	
@@ -141,11 +158,24 @@ public class AonHibernateTestFaker {
 			InvoiceDetail detail = new InvoiceDetail();
 			detail.setInvoice(invoice);
 			detail.setWorkPlace( workplace );
-			Item item = getItem();
+			Item item = null;
+			if (invoice.isExpense() || invoice.isUndeductible()) {
+				item =  getExpenseItem();
+			} else if (AonHibernateTestRandom.gt(10)) {
+				item =  getCommercialItem();
+			} else {
+				item =  getServiceItem();
+			}
+			if (item == null) {
+				System.out.println( "NULL ITEM");
+			}
 			detail.setItem( item );
-			detail.setDescription(item.getDescription());
+			detail.setDescription(item.getFullName());
 			detail.setQuantity(AonHibernateTestRandom.getDouble(0, 10));
-
+			detail.setPrice(item.getPrice() );
+			if (AonMathUtils.isZero( detail.getPrice())) {
+				detail.setPrice(AonHibernateTestRandom.getDouble(0, 100));				
+			}
 			String discountExpression = null;
 			if ( AonHibernateTestRandom.gt(90) ) {
 				if ( AonHibernateTestRandom.gt(80)) {
@@ -159,7 +189,7 @@ public class AonHibernateTestFaker {
 				DiscountExpression de = new DiscountExpression( discountExpression ); 
 				detail.setDiscountExpression( de );
 			}
-			detail.setPrice(item.getPrice() );
+			
 	//		if ( invoice.getType() == InvoiceType.SALES) inv = getSalesInvoice();
 	//		else if ( invoice.getType() == InvoiceType.PURCHASE) inv = getPurchaseInvoice();
 	//		else if ( invoice.getType() == InvoiceType.EXPENSES) inv = getExpensesInvoice( InvoiceType.EXPENSES );
@@ -176,12 +206,19 @@ public class AonHibernateTestFaker {
 	// ***************************************
 	// 									[ITEM] 
 	// ***************************************
-	public static Item getItem( ) throws ManagerBeanException  {
-		return getItem( false );
+	public static Item getExpenseItem( ) throws ManagerBeanException  {
+		return getItem( ProductType.EXPENSE, false );
 	}
-	public static Item getItem( boolean nullable) throws ManagerBeanException  {
+	public static Item getCommercialItem() throws ManagerBeanException {
+		return getItem( ProductType.COMMERCIAL_PRODUCT, false );
+	}
+	public static Item getServiceItem() throws ManagerBeanException {
+		return getItem( ProductType.SERVICE, false );
+	}
+	public static Item getItem( ProductType type, boolean nullable) throws ManagerBeanException  {
 		IManagerBean bean = BeanManager.getManagerBean(Item.class);
 		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), type);
 		int count = bean.getCount(c);
 		if (count > 0) {
 			List<ITransferObject> items = bean.getList(c
@@ -193,14 +230,27 @@ public class AonHibernateTestFaker {
 		return null;
 	}
 	
-	public static Item getnewItem() throws ManagerBeanException {
-		Product product = getNewProduct();
+	public static Item getNewCommercialItem() throws ManagerBeanException {
+		return getNewItem(  getNewCommercialProduct() );
+	}
+
+	public static Item getNewServiceItem() throws ManagerBeanException {
+		return getNewItem(  getNewServiceProduct() );
+	}
+	
+	public static Item getNewExpenseItem() throws ManagerBeanException {
+		return getNewItem(  getNewExpenseProduct() );
+	}
+
+	private static Item getNewItem( Product product ) throws ManagerBeanException {
 		Item item = new Item();
 		item.setProduct(product);
+		item.setDescription( product.getName() );
 		item.setDetail("11");
 		item.setDetail2("22");
 		item.setDetail2("33");
 		item.setPrice(AonHibernateTestRandom.getDouble(0, 100));
+		item.setStatus( ProductStatus.ACTIVE );
 		return item;
 	}
 	
@@ -208,12 +258,31 @@ public class AonHibernateTestFaker {
 	// 								[PRODUCT] 
 	// **************************************
 	
-	public static Product getNewProduct() throws ManagerBeanException {
+	public static Product getNewCommercialProduct() throws ManagerBeanException {
+		Product p = getNewProduct();
+		p.setType(ProductType.COMMERCIAL_PRODUCT);
+		return p;
+	}
+
+	public static Product getNewServiceProduct() throws ManagerBeanException {
+		Product p = getNewProduct();
+		p.setType(ProductType.SERVICE);
+		return p;
+	}
+	
+	public static Product getNewExpenseProduct() throws ManagerBeanException {
+		Product p = getNewProduct();
+		p.setType(ProductType.EXPENSE);
+		return p;
+	}
+
+	private static Product getNewProduct() throws ManagerBeanException {
 		Product p =  new Product();
 		p.setName(faker.commerce().productName());
 		p.setCode(AonHibernateTestRandom.string(0, 1, 14));
 		p.setVat( getTax( TaxType.VAT ) );
-		p.setRetention( getTax( TaxType.RETENTION )); 
+		p.setRetention( getTax( TaxType.RETENTION ));
+		p.setStatus(ProductStatus.ACTIVE);
 		return  p;
 	}
 
