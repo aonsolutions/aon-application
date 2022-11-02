@@ -25,21 +25,38 @@ public class TestContrato {
 	private final String CERTIFICATE_TYPE = "pkcs12";
 	private final String CERTIFICATE_PATH = System.getProperty("user.home") + "/MARIA_VERA.p12";
 
+
 	@Test
 	@Ignore
 	public void sendContrato() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH)) {
 			@SuppressWarnings("deprecation")
-			Date fnac = new Date("1965/03/13");
+			Date fnac = new Date("1975/01/21");
 			@SuppressWarnings("deprecation")
-			Date fini = new Date("2022/03/01");
-			ContractBuilder bd = new ContractBuilder().setRegimen("0111").setCtaCti("28231545357")
-					.setCifEnterprise("B87812889").setIpf("16262835H").setName("MARCOS").setSurname("SÁNCHEZ")
-					.setLastSurname("HERNÁNDEZ").setDateBirth(fnac).setSex(SexType.HOMBRE).setCodNationality(724)
-					.setCodPaisDom(724).setCodMunDom("01059").setNss("010022757387").setCodContract("300")
-					.setDateIniContract(fini).setCodFormativo(59)// review
-					.setCodOccupation("1311")// review
-					.setCodPaisWork(724).setCodMunWork("01059").setOffer(OfferType.NO) // review
+			Date fini = new Date("2022/10/24");
+			ContractBuilder bd = new ContractBuilder()
+					.setCifEnterprise("B87885299")
+					.setRegimen("0111")
+					.setCtaCti("28237758613")
+					.setIpf("43817151N")
+					.setName("CONRADO")
+					.setSurname("MARRERO")
+					.setLastSurname("HERNANDEZ")
+					.setDateBirth(fnac)
+					.setSex(SexType.HOMBRE)
+					.setCodNationality(724)
+					.setCodPaisDom(724)
+					.setCodMunDom("38038")
+					.setNss("381018766116")
+					.setCodContract("150")
+					.setDateIniContract(fini)
+					.setCodFormativo(52)// review
+					.setCodOccupation("3510")// review
+					.setCodPaisWork(724)
+					.setCodMunWork("28127")
+					.setOffer(OfferType.NO) // review
+					.setBonus(true)
+					.setCollectiveType("188")
 			;
 //			bd.setInterinidad("H");
 
