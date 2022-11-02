@@ -7322,6 +7322,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			builder.setCollectiveType(employeeContractInfo.getContractSpecificData().getBonusColective());
 		} else builder.setDiscapacidad(false);
 		
+		if(employeeContractInfo.getContractSpecificData().getBonus()) {
+			builder.setBonus(true);
+			builder.setCollectiveType(employeeContractInfo.getContractSpecificData().getBonusType());
+		} else builder.setBonus(false);
+		
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setOldDateFinContract(employeeContractInfo.getContractInfo().getOriginalEndDate());
