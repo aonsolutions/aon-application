@@ -24,7 +24,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -203,6 +202,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	HTMLPanel quoteReductionsCBPanel;
 	
 	@UiField
+	HTMLPanel bonusCBPanel;
+	
+	@UiField
 	CheckBox workProgramDataCB;
 	
 	@UiField
@@ -243,6 +245,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	
 	@UiField
 	CheckBox quoteReductionsCB;
+	
+	@UiField
+	CheckBox bonusCB;
 	
 	@UiField
 	VerticalPanel workProgramDataTable;
@@ -372,6 +377,12 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	
 	@UiField
 	TextBox journeyPercentTB;
+	
+	@UiField
+	VerticalPanel bonusDataTable;
+	
+	@UiField
+	ListBox bonusLB;
 	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
@@ -792,6 +803,24 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.contractSpecificData.setQuoteReductions(event.getValue());
 	}
 	
+	@UiHandler("bonusCB")
+	void onBonusCBChange(ValueChangeEvent<Boolean> event) {
+		if(Boolean.TRUE.equals(event.getValue()))
+			showBonusDataTable();
+		else {
+			resetBonusDataTable();
+			hideBonusDataTable();
+		}
+		
+		this.contractSpecificData.setBonus(event.getValue());
+	}
+	
+	@UiHandler("bonusLB")
+	void onBonusLBChange(ChangeEvent event) {
+		String bonusColectiveValue = bonusLB.getSelectedValue();
+		this.contractSpecificData.setBonusType(bonusColectiveValue);
+	}
+	
 	@UiHandler("workProgramLB")
 	void onWorkProgramLBChange(ChangeEvent event) {
 		String workProgramValue = workProgramLB.getSelectedValue();
@@ -1199,7 +1228,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		bonusColectiveLB.addItem("DESEMPLEADOS INSCRITOS OE 6 O MAS MESES", "024");
 		bonusColectiveLB.addItem("DESEMPLEADOS MAYORES 45 Y HASTA 55 A\u00D1OS", "025");
 		bonusColectiveLB.addItem("DESEMPLEADOS MAYORES 55 Y HASTA 65 A\u00D1OS", "026");
-		bonusColectiveLB.addItem("DESEM.PERC. PREST.SUB.RESTA 1 A\u00D1O O MÁS", "027");
+		bonusColectiveLB.addItem("DESEM.PERC. PREST.SUB.RESTA 1 A\u00D1O O M\u00C1S", "027");
 		bonusColectiveLB.addItem("DESEMPL. PERCEP. RENTA ACTIVA INSERCION", "028");
 		bonusColectiveLB.addItem("MUJ.INSC.OE.12 O MAS MES EN 24 SIG. ALUMBR", "029");
 		bonusColectiveLB.addItem("DESEMPLEADOS PERCEPTORES SUBSIDIO REASS", "030");
@@ -1208,40 +1237,40 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		bonusColectiveLB.addItem("ADOPCION", "033");
 		bonusColectiveLB.addItem("ACOGIMIENTO", "034");
 		bonusColectiveLB.addItem("RIESGO DURANTE EMBARAZO", "035");
-		bonusColectiveLB.addItem("PERCEPTORES DE RENTA ACTIVA DE INSERCIÓN (MAYORES 45 HASTA 55 A\u00D1OS)", "036");
-		bonusColectiveLB.addItem("PERCEPTORES DE RENTA ACTIVA DE INSERCIÓN (MAYORES 55 HASTA 65 A\u00D1OS)", "037");
+		bonusColectiveLB.addItem("PERCEPTORES DE RENTA ACTIVA DE INSERCI\u00D3N (MAYORES 45 HASTA 55 A\u00D1OS)", "036");
+		bonusColectiveLB.addItem("PERCEPTORES DE RENTA ACTIVA DE INSERCI\u00D3N (MAYORES 55 HASTA 65 A\u00D1OS)", "037");
 		bonusColectiveLB.addItem("PERCEP.RENTA ACTIVA INS.RESTO EDADES", "038");
 		bonusColectiveLB.addItem("MUJ.CONTRATADAS 24 MESES SIGU.ALUMBRAM", "039");
 		bonusColectiveLB.addItem("MENORES INTERNOS INCLUIDOS EN LEY ORG. 5", "040");
-		bonusColectiveLB.addItem("VÍCTIMAS DE VIOLENCIA DOMÉSTICA", "041");
+		bonusColectiveLB.addItem("V\u00CDCTIMAS DE VIOLENCIA DOM\u00C9STICA", "041");
 		bonusColectiveLB.addItem("PERSONAS CON DISCAPACIDAD DESEMP.INTERINIDAD POR INC", "042");
 		bonusColectiveLB.addItem("MAYORES DE 52 A\u00D1OS BENEFICIARIOS DE SUBS", "043");
 		bonusColectiveLB.addItem("DESEMPLEADOS PERCEPTORES DE RENTA AGRARIA", "044");
 		bonusColectiveLB.addItem("MATERNIDAD O EXCEDENCIA TRANSFORMADO ANTES DE 1 A\u00D1O", "045");
 		bonusColectiveLB.addItem("EXCEDENCIA CUIDADO HIJO PERCEPTOR PRESTACIONES", "046");
 		bonusColectiveLB.addItem("EXCEDENCIA CUIDADO FAMILIAR PERCEP.PRESTACIONES", "047");
-		bonusColectiveLB.addItem("SUSTITUCIÓN VÍCTIMAS VIOLENCIA DE GÉNERO", "048");
+		bonusColectiveLB.addItem("SUSTITUCI\u00D3N V\u00CDCTIMAS VIOLENCIA DE G\u00C9NERO", "048");
 		bonusColectiveLB.addItem("MAYORES DE 60 A\u00D1OS", "049");
 		bonusColectiveLB.addItem("MUJERES REINC.2 A\u00D1OS SIGUIENTES AL PARTO", "050");
-		bonusColectiveLB.addItem("PERSONAS CON DISCAPACIDAD INTELECTUAL O PARÁLISIS CELEBRAL O ENFERMEDAD MENTAL, CON GRADO IGUAL O SUPERIOR AL 33 %", "051");
-		bonusColectiveLB.addItem("PERSONAS CON DISCAPACIDAD FÍSICA O SENSORIAL, CON GRADO IGUAL O SUPERIOR AL 65 %", "052");
+		bonusColectiveLB.addItem("PERSONAS CON DISCAPACIDAD INTELECTUAL O PAR\u00C1LISIS CELEBRAL O ENFERMEDAD MENTAL, CON GRADO IGUAL O SUPERIOR AL 33 %", "051");
+		bonusColectiveLB.addItem("PERSONAS CON DISCAPACIDAD F\u00CDSICA O SENSORIAL, CON GRADO IGUAL O SUPERIOR AL 65 %", "052");
 		bonusColectiveLB.addItem("MUJERES CON DISCAPACIDAD, CON GRADO IGUAL O SUPERIOR AL 33 %", "053");
-		bonusColectiveLB.addItem("PERSONAL INVESTIGADOR EN FORMACIÓN", "054");
-		bonusColectiveLB.addItem("MUJERES CONTRATADAS DESPUÉS DE 5 A\u00D1OS DE INACTIVIDAD LABORAL, SI ANTERIORMENTE HAN TRABAJADO 3 A\u00D1OS", "055");
-		bonusColectiveLB.addItem("JÓVENES ENTRE 16 Y 30 A\u00D1OS (AMBOS INCLUSIVE)", "056");
+		bonusColectiveLB.addItem("PERSONAL INVESTIGADOR EN FORMACI\u00D3N", "054");
+		bonusColectiveLB.addItem("MUJERES CONTRATADAS DESPU\u00C9S DE 5 A\u00D1OS DE INACTIVIDAD LABORAL, SI ANTERIORMENTE HAN TRABAJADO 3 A\u00D1OS", "055");
+		bonusColectiveLB.addItem("J\u00D3VENES ENTRE 16 Y 30 A\u00D1OS (AMBOS INCLUSIVE)", "056");
 		bonusColectiveLB.addItem("MAYORES DE 45 A\u00D1OS", "057");
 		bonusColectiveLB.addItem("MUJERES", "058");
-		bonusColectiveLB.addItem("MATERNIDAD O EXCEDENCIA TRANSFORMADO EN EL MOMENTO DE LA REINCORPORACIÓN", "059");
-		bonusColectiveLB.addItem("VÍCTIMAS DE VIOLENCIA DE GÉNERO", "060");
+		bonusColectiveLB.addItem("MATERNIDAD O EXCEDENCIA TRANSFORMADO EN EL MOMENTO DE LA REINCORPORACI\u00D3N", "059");
+		bonusColectiveLB.addItem("V\u00CDCTIMAS DE VIOLENCIA DE G\u00C9NERO", "060");
 		bonusColectiveLB.addItem("TEXTIL. MUJERES MENORES DE 45 A\u00D1OS", "061");
 		bonusColectiveLB.addItem("TEXTIL. TRABAJADORES CON DISCAPACIDAD", "062");
-		bonusColectiveLB.addItem("TEXTIL. MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NINGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "063");
-		bonusColectiveLB.addItem("TEXTIL. MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "064");
+		bonusColectiveLB.addItem("TEXTIL. MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NING\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "063");
+		bonusColectiveLB.addItem("TEXTIL. MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALG\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "064");
 		bonusColectiveLB.addItem("TEXTIL. HOMBRES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "065");
 		bonusColectiveLB.addItem("TEXTIL. MUJERES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "066");
 		bonusColectiveLB.addItem("TEXTIL. HOMBRES MAYORES DE 55 A\u00D1OS", "067");
 		bonusColectiveLB.addItem("TEXTIL. MUJERES MAYORES DE 55 A\u00D1OS", "068");
-		bonusColectiveLB.addItem("TEXTIL. TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACIÓN CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCIÓN", "069");
+		bonusColectiveLB.addItem("TEXTIL. TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACI\u00D3N CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCI\u00D3N", "069");
 		bonusColectiveLB.addItem("HOMBRE SIN DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "070");
 		bonusColectiveLB.addItem("HOMBRE SIN DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "071");
 		bonusColectiveLB.addItem("HOMBRE CON DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "072");
@@ -1261,102 +1290,102 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		bonusColectiveLB.addItem("PATERNIDAD", "086");
 		bonusColectiveLB.addItem("RIESGO DURANTE LA LACTANCIA NATURAL", "087");
 		bonusColectiveLB.addItem("PERSONAS CENTROS ALOJAMIENTO ALTERNATIVO", "088");
-		bonusColectiveLB.addItem("PERSONAS SERVICIOS PREVENCIÓN/INSERCIÓN", "089");
+		bonusColectiveLB.addItem("PERSONAS SERVICIOS PREVENCI\u00D3N/INSERCI\u00D3N", "089");
 		bonusColectiveLB.addItem("MENORES INTERNOS QUE TRABAJEN EN EL PROPIO CENTRO", "090");
 		bonusColectiveLB.addItem("DESEMPLEADOS CON CARGAS FAMILIARES", "091");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. DESEMPLEADOS INSCRITOS 6 Ó MÁS MESES", "092");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. DESEMPLEADOS INSCRITOS 6 \u00D3 M\u00C1S MESES", "092");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. MUJERES CONTRATADAS EN LOS 24 MESES SIGUIENTES AL PARTO", "093");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. MUJERES REINCORPORADAS DESPUÉS 5 A\u00D1OS INACTIVIDAD", "094");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. JÓVENES ENTRE 16 Y 30 A\u00D1OS", "095");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. MUJERES REINCORPORADAS DESPU\u00C9S 5 A\u00D1OS INACTIVIDAD", "094");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. J\u00D3VENES ENTRE 16 Y 30 A\u00D1OS", "095");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. MAYORES DE 45 A\u00D1OS", "096");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. MUJERES EN GENERAL", "097");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. VÍCTIMAS DE VIOLENCIA DOMÉSTICA", "098");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. VÍCTIMAS DE VIOLENCIA DE GÉNERO", "099");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. PERCEPTOR RENTA MÍNIMA INSERCIÓN", "100");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. PERSONAS NO PUEDEN ACCEDER A PRESTACIÓN", "101");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. JÓVENES PROCED.INSTITUCIONES PENITENCIARIAS", "102");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. PERSONAS PROBLEMAS DROGADICCIÓN Y ALCOHOL", "103");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. V\u00CDCTIMAS DE VIOLENCIA DOM\u00C9STICA", "098");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. V\u00CDCTIMAS DE VIOLENCIA DE G\u00C9NERO", "099");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. PERCEPTOR RENTA M\u00CDNIMA INSERCI\u00D3N", "100");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. PERSONAS NO PUEDEN ACCEDER A PRESTACI\u00D3N", "101");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. J\u00D3VENES PROCED.INSTITUCIONES PENITENCIARIAS", "102");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. PERSONAS PROBLEMAS DROGADICCI\u00D3N Y ALCOHOL", "103");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. INTERNOS DE CENTROS PENITENCIARIOS", "104");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. MENORES INTERNOS INCLUIDOS EN LEY ORG.5", "105");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MUJERES MENORES DE 45 A\u00D1OS", "106");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-TRABAJADORES CON DISCAPACIDAD", "107");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NINGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "108");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "109");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NING\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "108");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALG\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "109");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-HOMBRES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "110");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MUJERES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "111");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-HOMBRES MAYORES DE 55 A\u00D1OS", "112");
 		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-MUJERES MAYORES DE 55 A\u00D1OS", "113");
-		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACIÓN CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCIÓN", "114");
+		bonusColectiveLB.addItem("CARGAS FAMILIARES. TEXTIL-TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACI\u00D3N CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCI\u00D3N", "114");
 		bonusColectiveLB.addItem("CALZADO - MUJERES MENORES DE 45 A\u00D1OS", "115");
 		bonusColectiveLB.addItem("CALZADO - TRABAJADORES CON DISCAPACIDAD", "116");
-		bonusColectiveLB.addItem("CALZADO - MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NINGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "117");
-		bonusColectiveLB.addItem("CALZADO - MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "118");
+		bonusColectiveLB.addItem("CALZADO - MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NING\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "117");
+		bonusColectiveLB.addItem("CALZADO - MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALG\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "118");
 		bonusColectiveLB.addItem("CALZADO - HOMBRES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "119");
 		bonusColectiveLB.addItem("CALZADO - MUJERES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "120");
 		bonusColectiveLB.addItem("CALZADO - HOMBRES MAYORES DE 55 A\u00D1OS", "121");
 		bonusColectiveLB.addItem("CALZADO - MUJERES MAYORES DE 55 A\u00D1OS", "122");
-		bonusColectiveLB.addItem("CALZADO - TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACIÓN CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCIÓN", "123");
-		bonusColectiveLB.addItem("BENEFICIARIO DE PRESTACIÓN DURANTE AL MENOS 3 MESES", "124");
+		bonusColectiveLB.addItem("CALZADO - TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACI\u00D3N CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCI\u00D3N", "123");
+		bonusColectiveLB.addItem("BENEFICIARIO DE PRESTACI\u00D3N DURANTE AL MENOS 3 MESES", "124");
 		bonusColectiveLB.addItem("BENEFICIARIO DE SUBSIDIO POR DESEMPLEO", "125");
-		bonusColectiveLB.addItem("BENEFICIARIO DE RENTA ACTIVA DE INSERCIÓN", "126");
-		bonusColectiveLB.addItem("PRIMER ASALARIADO DE TRABAJADOR AUTÓNOMO", "127");
+		bonusColectiveLB.addItem("BENEFICIARIO DE RENTA ACTIVA DE INSERCI\u00D3N", "126");
+		bonusColectiveLB.addItem("PRIMER ASALARIADO DE TRABAJADOR AUT\u00D3NOMO", "127");
 		bonusColectiveLB.addItem("JUGUETE - MUJERES MENORES DE 45 A\u00D1OS", "128");
 		bonusColectiveLB.addItem("JUGUETE - TRABAJADORES CON DISCAPACIDAD", "129");
-		bonusColectiveLB.addItem("JUGUETE - MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NINGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "130");
-		bonusColectiveLB.addItem("JUGUETE - MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "131");
+		bonusColectiveLB.addItem("JUGUETE - MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NING\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "130");
+		bonusColectiveLB.addItem("JUGUETE - MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALG\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "131");
 		bonusColectiveLB.addItem("JUGUETE - HOMBRES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "132");
 		bonusColectiveLB.addItem("JUGUETE - MUJERES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "133");
 		bonusColectiveLB.addItem("JUGUETE - HOMBRES MAYORES DE 55 A\u00D1OS", "134");
 		bonusColectiveLB.addItem("JUGUETE - MUJERES MAYORES DE 55 A\u00D1OS", "135");
-		bonusColectiveLB.addItem("JUGUETE - TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACIÓN CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCIÓN", "136");
+		bonusColectiveLB.addItem("JUGUETE - TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACI\u00D3N CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCI\u00D3N", "136");
 		bonusColectiveLB.addItem("MUEBLE - MUJERES MENORES DE 45 A\u00D1OS", "137");
 		bonusColectiveLB.addItem("MUEBLE - TRABAJADORES CON DISCAPACIDAD", "138");
-		bonusColectiveLB.addItem("MUEBLE - MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NINGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "139");
-		bonusColectiveLB.addItem("MUEBLE - MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALGÚN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "140");
+		bonusColectiveLB.addItem("MUEBLE - MAYORES DE 30 Y MENORES DE 45 NO ACOGIDOS A NING\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "139");
+		bonusColectiveLB.addItem("MUEBLE - MAYORES DE 30 Y MENORES DE 45 ACOGIDOS A ALG\u00DAN COLECTIVO DEL PROGRAMA DE FOMENTO DE EMPLEO", "140");
 		bonusColectiveLB.addItem("MUEBLE - HOMBRES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "141");
 		bonusColectiveLB.addItem("MUEBLE - MUJERES MAYORES DE 45 Y MENORES DE 55 A\u00D1OS", "142");
 		bonusColectiveLB.addItem("MUEBLE - HOMBRES MAYORES DE 55 A\u00D1OS", "143");
 		bonusColectiveLB.addItem("MUEBLE - MUJERES MAYORES DE 55 A\u00D1OS", "144");
-		bonusColectiveLB.addItem("MUEBLE - TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACIÓN CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCIÓN", "145");
-		bonusColectiveLB.addItem("JÓVENES 16-30 A\u00D1OS, HOMBRES DESEMP.1 A\u00D1O SIN TITULACIÓN", "146");
-		bonusColectiveLB.addItem("JÓVENES 16-30 A\u00D1OS, MUJERES DESEMP.1 A\u00D1O SIN TITULACIÓN", "147");
+		bonusColectiveLB.addItem("MUEBLE - TRABAJADOR MAYOR 55 A\u00D1OS PERCEPTOR PRESTACI\u00D3N CONTRIBUTIVA AL QUE RESTE AL MENOS 1 A\u00D1O DE PERCEPCI\u00D3N", "145");
+		bonusColectiveLB.addItem("J\u00D3VENES 16-30 A\u00D1OS, HOMBRES DESEMP.1 A\u00D1O SIN TITULACI\u00D3N", "146");
+		bonusColectiveLB.addItem("J\u00D3VENES 16-30 A\u00D1OS, MUJERES DESEMP.1 A\u00D1O SIN TITULACI\u00D3N", "147");
 		bonusColectiveLB.addItem("MAYORES DE 45 A\u00D1OS, HOMBRES DESEMPLEADOS 1 A\u00D1O", "148");
 		bonusColectiveLB.addItem("MAYORES DE 45 A\u00D1OS, MUJERES DESEMPLEADAS 1 A\u00D1O", "149");
-		bonusColectiveLB.addItem("FORMACIÓN", "150");
-		bonusColectiveLB.addItem("CONVERSIÓN A INDEFINIDO, HOMBRES", "151");
-		bonusColectiveLB.addItem("CONVERSIÓN A INDEFINIDO, MUJERES", "152");
+		bonusColectiveLB.addItem("FORMACI\u00D3N", "150");
+		bonusColectiveLB.addItem("CONVERSI\u00D3N A INDEFINIDO, HOMBRES", "151");
+		bonusColectiveLB.addItem("CONVERSI\u00D3N A INDEFINIDO, MUJERES", "152");
 		bonusColectiveLB.addItem("HOMBRES 16-30 A\u00D1OS, DESEMP.12 MESES EN 18 SIN TITULACION", "153");
 		bonusColectiveLB.addItem("MUJERES 16-30 A\u00D1OS, DESEMP.12 MESES EN 18 SIN TITULACION", "154");
 		bonusColectiveLB.addItem("HOMBRES MAY. 45 A\u00D1OS DESEMPLEADOS 12 MESES EN 18", "155");
 		bonusColectiveLB.addItem("MUJERES MAY. 45 A\u00D1OS DESEMPLEADOS 12 MESES EN 18", "156");
-		bonusColectiveLB.addItem("JÓVENES 16-30 A\u00D1OS EN EMPRESAS MENOS DE 50 TRABAJ.", "157");
+		bonusColectiveLB.addItem("J\u00D3VENES 16-30 A\u00D1OS EN EMPRESAS MENOS DE 50 TRABAJ.", "157");
 		bonusColectiveLB.addItem("MUJERES 16-30 A\u00D1OS OCUP. SUBREPR. EMPRESAS < 50", "158");
 		bonusColectiveLB.addItem("MAYORES DE 45 A\u00D1OS EN EMPRESAS MENOS DE 50 TRABAJ.", "159");
 		bonusColectiveLB.addItem("MUJERES MAY. 45 A\u00D1OS OCUP. SUBREPR. EMPRESAS < 50", "160");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN EN INDEFINIDO, HOMBRES", "161");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN EN INDEFINIDO, MUJERES", "162");
-		bonusColectiveLB.addItem("VÍCTIMAS DE TERRORISMO", "163");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN INDEFINIDO, EXCLUÍDO SOCIAL", "164");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN INDEFINIDO, V. VIOLENCIA DE GÉNERO", "165");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN INDEFINIDO, V. VIOLENCIA DOMÉSTICA", "166");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN INDEFINIDO, VÍCTIMA TERRORISMO", "167");
-		bonusColectiveLB.addItem("INCORPORACIÓN COMO SOCIO DESEMPLEADO MENOR 30 A\u00D1OS", "168");
-		bonusColectiveLB.addItem("CONVERSIÓN EVENTUAL PRIMER EMPLEO JOVEN – HOMBRE", "169");
-		bonusColectiveLB.addItem("CONVERSIÓN EVENTUAL PRIMER EMPLEO JOVEN – MUJER", "170");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N EN INDEFINIDO, HOMBRES", "161");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N EN INDEFINIDO, MUJERES", "162");
+		bonusColectiveLB.addItem("V\u00CDCTIMAS DE TERRORISMO", "163");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N INDEFINIDO, EXCLU\u00CDDO SOCIAL", "164");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N INDEFINIDO, V. VIOLENCIA DE G\u00C9NERO", "165");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N INDEFINIDO, V. VIOLENCIA DOM\u00C9STICA", "166");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N INDEFINIDO, V\u00CDCTIMA TERRORISMO", "167");
+		bonusColectiveLB.addItem("INCORPORACI\u00D3N COMO SOCIO DESEMPLEADO MENOR 30 A\u00D1OS", "168");
+		bonusColectiveLB.addItem("CONVERSI\u00D3N EVENTUAL PRIMER EMPLEO JOVEN – HOMBRE", "169");
+		bonusColectiveLB.addItem("CONVERSI\u00D3N EVENTUAL PRIMER EMPLEO JOVEN – MUJER", "170");
 		bonusColectiveLB.addItem("INDEFINIDO PROCEDENTE PRIMER EMPLEO JOVEN DE ETT", "171");
-		bonusColectiveLB.addItem("INDEFINIDO PROCEDENTE CONTRATO EN PRÁCTICAS ETT", "172");
-		bonusColectiveLB.addItem("BENEFICIARIO SISTEMA NACIONAL DE GARANTÍA JUVENIL", "173");
-		bonusColectiveLB.addItem("CREACIÓN DE EMPLEO INDEFINIDO (SNGJ) RDL 1/2015", "174");
-		bonusColectiveLB.addItem("VÍCTIMAS DE TRATA DE SERES HUMANOS", "175");
-		bonusColectiveLB.addItem("CONT. FORMACIÓN SNGJ BONIF. 100% EMPRE MENOS 250 TRAB", "176");
-		bonusColectiveLB.addItem("CONT. FORMACIÓN SNGJ BONIF. 75% EMPRE 250 Ó MÁS TRAB.", "177");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN CONTRATO DE FORMACIÓN – HOMBRES SNGJ", "178");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN CONTRATO DE FORMACIÓN – MUJERES SNGJ", "179");
-		bonusColectiveLB.addItem("FAMILIAR DE TRABAJADOR AUTÓNOMO", "186");
+		bonusColectiveLB.addItem("INDEFINIDO PROCEDENTE CONTRATO EN PR\u00C1CTICAS ETT", "172");
+		bonusColectiveLB.addItem("BENEFICIARIO SISTEMA NACIONAL DE GARANT\u00CDA JUVENIL", "173");
+		bonusColectiveLB.addItem("CREACI\u00D3N DE EMPLEO INDEFINIDO (SNGJ) RDL 1/2015", "174");
+		bonusColectiveLB.addItem("V\u00CDCTIMAS DE TRATA DE SERES HUMANOS", "175");
+		bonusColectiveLB.addItem("CONT. FORMACI\u00D3N SNGJ BONIF. 100% EMPRE MENOS 250 TRAB", "176");
+		bonusColectiveLB.addItem("CONT. FORMACI\u00D3N SNGJ BONIF. 75% EMPRE 250 \u00D3 M\u00C1S TRAB.", "177");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N CONTRATO DE FORMACI\u00D3N – HOMBRES SNGJ", "178");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N CONTRATO DE FORMACI\u00D3N – MUJERES SNGJ", "179");
+		bonusColectiveLB.addItem("FAMILIAR DE TRABAJADOR AUT\u00D3NOMO", "186");
 		bonusColectiveLB.addItem("DESEMPLEADO, INSCRITO 12 MESES EN UN PERIODO DE 18, HOMBRES", "187");
 		bonusColectiveLB.addItem("DESEMPLEADO, INSCRITO 12 MESES EN UN PERIODO DE 18, MUJERES", "188");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN CONTRATO TEMPORAL AGRARIO, HOMBRES", "189");
-		bonusColectiveLB.addItem("TRANSFORMACIÓN CONTRATO TEMPORAL AGRARIO, MUJERES", "190");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N CONTRATO TEMPORAL AGRARIO, HOMBRES", "189");
+		bonusColectiveLB.addItem("TRANSFORMACI\u00D3N CONTRATO TEMPORAL AGRARIO, MUJERES", "190");
 
 		freelanceEmployeerCB.setValue(false);
 	}
@@ -1411,6 +1440,37 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		quoteReductionRB.setValue(false);
 		quoteReduction2RB.setValue(false);
 		journeyPercentTB.setText("");
+	}
+	
+	private void showBonusDataTable() {
+		bonusDataTable.getElement().getStyle().clearDisplay();
+	}
+	
+	private void hideBonusDataTable() {
+		bonusDataTable.getElement().getStyle().setDisplay(Display.NONE);
+	}
+
+	private void resetBonusDataTable() {
+		bonusLB.clear();
+		bonusLB.addItem("-", "");
+		bonusLB.addItem("PERCEPTOR DE RENTAS MINIMAS DE INSERCION", "016");
+		bonusLB.addItem("PERSONAS NO PUEDEN ACCEDER A PRESTACION", "017");
+		bonusLB.addItem("JOVENES PROCED. INSTITUC. PENITENCIARIAS", "018");
+		bonusLB.addItem("PERSONAS PROBLEM DROGADICCION Y ALCOHOL", "019");
+		bonusLB.addItem("INTERNOS DE CENTROS PENITENCIARIOS", "020");
+		bonusLB.addItem("PENADOS EN INSTITUCIONES PENITENCIARIAS", "021");
+		bonusLB.addItem("MENORES INTERNOS INCLUIDOS EN LEY ORG. 5", "040");
+		bonusLB.addItem("V\u00CDCTIMAS DE VIOLENCIA DOM\u00C9STICA", "041");
+		bonusLB.addItem("V\u00CDCTIMAS DE VIOLENCIA DE G\u00C9NERO", "060");
+		bonusLB.addItem("PERSONAS CENTROS ALOJAMIENTO ALTERNATIVO", "088");
+		bonusLB.addItem("PERSONAS SERVICIOS PREVENCI\u00D3N/INSERCI\u00D3N", "089");
+		bonusLB.addItem("V\u00CDCTIMAS DE TERRORISMO", "163");
+		bonusLB.addItem("INDEFINIDO PROCEDENTE CONTRATO EN PR\u00C1CTICAS ETT", "172");
+		bonusLB.addItem("V\u00CDCTIMAS DE TRATA DE SERES HUMANOS", "175");
+		bonusLB.addItem("FAMILIAR DE TRABAJADOR AUT\u00D3NOMO", "186");
+		bonusLB.addItem("DESEMPLEADO, INSCRITO 12 MESES EN UN PERIODO DE 18, HOMBRES", "187");
+		bonusLB.addItem("DESEMPLEADO, INSCRITO 12 MESES EN UN PERIODO DE 18, MUJERES", "188");
+		bonusLB.addItem("PERSONA CON CAPACIDAD INTELECTUAL L\u00CDMITE", "193");
 	}
 	
 	// ------------------------------------------------------ Auxiliar Methods ----------------------------------------------------
@@ -1721,6 +1781,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set130View() {
@@ -1741,6 +1802,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
@@ -1776,6 +1838,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set230and250View() {
@@ -1808,6 +1871,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set330and350View() {
@@ -1826,6 +1890,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set401View() {
@@ -1845,6 +1910,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set402View() {
@@ -1875,6 +1941,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set410View() {
@@ -1897,6 +1964,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set421View() {
@@ -1915,6 +1983,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCB.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set430View() {
@@ -1934,6 +2003,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set441View() {
@@ -1955,6 +2025,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set450View() {
@@ -1995,6 +2066,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set501View() {
@@ -2013,6 +2085,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set502View() {
@@ -2033,6 +2106,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set503View() {
@@ -2059,6 +2133,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set520View() {
@@ -2075,6 +2150,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	private void set530View() {
@@ -2094,6 +2170,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set540View() {
@@ -2115,6 +2192,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set541View() {
@@ -2137,6 +2215,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set550View() {
@@ -2203,6 +2282,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		older52CBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void set980View() {
@@ -2226,6 +2306,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		older52CBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void showHideTransformRows() {
@@ -2460,7 +2541,18 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			quoteReductionsCB.setValue(false);
 			resetQuoteReductionsDataTable();
 			hideQuoteReductionsDataTable();
-		}	
+		}
+		
+		//BonusDataTable
+		if(Boolean.TRUE.equals(this.contractSpecificData.getBonus())) {
+			showBonusDataTable();
+			bonusCB.setValue(true);
+			setSelectedValueLB(bonusLB, this.contractSpecificData.getBonusType());
+		} else {
+			bonusCB.setValue(false);
+			resetBonusDataTable();
+			hideBonusDataTable();
+		}
 	}
 	
 	public com.esferalia.aon.gwt.payroll.shared.ContractSpecificData getContractSpecificData() {
