@@ -158,6 +158,15 @@ public class Mod303DAO extends FiscalModelDAO {
 		create(ctx,mod303);
 		return mod303;
 	}
+	
+	public static Mod303 simulate(AONContext ctx,Mod303 mod303) {
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		Set<Integer> invoices = dec.createOnTheFly(ctx,mod303);
+		dec.prorrateRegularization(ctx,mod303);
+		calculate(mod303);
+		dec.specificInitialization(mod303);
+		return mod303;
+	}
 
 	public static Mod303 create(AONContext ctx,Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);

@@ -40,6 +40,37 @@ public class AgrarianIntegralTest extends BaseIntegralTestCase {
 
 	}
 
+	@Test
+	public void TestIT() throws Exception {
+
+		if (!isDisplayed("enfermedad,_comun"))
+			open("i.t");
+
+		wait4Id("enfermedad,_comun");
+
+		draft("ENFERMEDAD, COMÚN");
+		calculate(Calendar.AUGUST, 2019);
+		assertValue("cgcBaseLabel", 1350.00);
+		assertValue("cgpBaseLabel", 1350.00);
+		
+		assertValue("totalPaymentLabel", 
+		1350.00 / 31.00 * 4  
+		+ 1350.00 / 31.00 * 3 * 0.00
+		+ 1350.00 / 31.00 * 17 * 0.60
+		+ 1350.00 / 31.00 * 7  * 0.75
+		);
+
+		draft("ENFERMEDAD, PROFESIONAL");
+		calculate(Calendar.AUGUST, 2019);
+		assertValue("cgcBaseLabel", 99.69 * 31 * 0.50);
+		assertValue("cgpBaseLabel", 99.69 * 31 * 0.50);
+		
+		assertValue("totalPaymentLabel", 
+		99.69 * 28.00  * 0.50
+		+ 99.69 * 3.00 * 0.75 * 0.50
+		);
+
+	}
 
 	// -------------------------------------------------------------------------
 

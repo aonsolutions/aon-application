@@ -537,12 +537,16 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put("TC2", "'100'");
+						put("DIAS_MES", "30.00");
 						put("IMPORTE_EMBARGO", "500.00");
 						put("GRUPO_COTIZACION", "\"01\"");
 					}
 				});
 
-		Date start = getFirstDayOfMonth(getToday());
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.OCTOBER);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date start = new Date(calendar.getTimeInMillis());
 		Date end = getLastDayOfMonth(start);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -582,7 +586,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 
 		
 		
-		Calendar calendar = Calendar.getInstance();
+		calendar = Calendar.getInstance();
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, 15);
 		Date issueDate = new Date(calendar.getTimeInMillis());
@@ -696,7 +700,10 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 					}
 				});
 
-		Date start = getFirstDayOfMonth(getToday());
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.OCTOBER);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date start = new Date(calendar.getTimeInMillis());
 		Date end = getLastDayOfMonth(start);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -736,7 +743,7 @@ public class SQLEmbargoTestCase extends AbstractSQLTestCase {
 
 		
 		
-		Calendar calendar = Calendar.getInstance();
+		calendar = Calendar.getInstance();
 		calendar.set(MONTH, Calendar.DECEMBER);
 		calendar.set(DAY_OF_MONTH, 11);
 		Date settleDate = new Date(calendar.getTimeInMillis());

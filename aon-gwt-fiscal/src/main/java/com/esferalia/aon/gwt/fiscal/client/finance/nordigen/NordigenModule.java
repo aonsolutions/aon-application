@@ -320,7 +320,6 @@ public class NordigenModule extends MainEntryPoint {
 			
 			FlowPanel titlePanel = new FlowPanel();
 			titlePanel.addStyleName(AON.CSS.aonTextCenter());
-			
 			NordigenInstitution institution = nordigenBankAccount.getInstitution();
 			NordigenAccountMetadata metadata = nordigenBankAccount.getMetadata();
 			NordigenAccountBalance balance = nordigenBankAccount.getBalance();
@@ -368,7 +367,6 @@ public class NordigenModule extends MainEntryPoint {
 //			atDateBox2.setText(balance == null ? "" : " hora: " + DATE_HOURS.format(atDate));
 			
 			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
-			
 			if (atDate != null && CalendarUtil.getDaysBetween(atDate, new Date()) >= 4) {
 				atDateBox.addStyleName(AON.CSS.aonColorRed());
 				updateError = true;
@@ -403,7 +401,9 @@ public class NordigenModule extends MainEntryPoint {
 			if (balanceAmount != null && AonMathUtils.isLessThanZero(balanceAmount)) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());
 			}
-			balanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
+			if (balanceAmount != null) {				
+				balanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
+			}
 			balancePanel.addStyleName(AON.CSS.aonMarginBottom());
 			balancePanel.add(balanceBox);
 //			FlowPanel remainderLabelPanel = new FlowPanel();
@@ -430,7 +430,6 @@ public class NordigenModule extends MainEntryPoint {
 			
 //			body.add(remainderLabelPanel);
 //			body.add(remainderPanel);
-			
 			if (Window.getClientWidth() < 675) {				
 				this.getElement().getStyle().setProperty("minWidth", "100%");
 			} else {
@@ -635,7 +634,6 @@ public class NordigenModule extends MainEntryPoint {
 ////				bottomTable.setWidget(0, 0, noMovLbl);
 //				
 //			}
-			
 			getBottomCardMessage(bottomTable, msgWidget, updateError);
 			body.add(bottomTable);				
 			
