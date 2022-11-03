@@ -25,6 +25,7 @@ export class AonTaskHolderList extends AonRegistryList {
 	async buildRegistry(registry) {
 		let data = {
 			id: registry.id,
+			workgroups:true,
 			additional_info: ['ADDRESSES', 'MEDIA']
 		};
 		const r = await getTaskHolderNoCache(data);

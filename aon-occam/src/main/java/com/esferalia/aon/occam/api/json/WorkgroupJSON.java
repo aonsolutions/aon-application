@@ -25,13 +25,14 @@ public class WorkgroupJSON {
 	}
 	
 	public static Workgroup fromJSON(JSONObject json) {
-		if(json.isEmpty()) return new Workgroup();
+		if(json==null || json.isEmpty()) return new Workgroup();
 		return new Workgroup()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
-			.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY));
+			.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY))
+			.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
 	}
 	
 	public static JSONArray toJSON(List<Workgroup> workgroups) {
@@ -50,6 +51,8 @@ public class WorkgroupJSON {
 			.put(IJsonNames.DOMAIN, workgroup.getDomain())
 			.put(IJsonNames.DESCRIPTION, workgroup.getDescription())
 			.put(IJsonNames.ACTIVE, workgroup.isActive())
-			.put(IJsonNames.DIRTY, workgroup.isDirty());
+			.put(IJsonNames.DIRTY, workgroup.isDirty())
+			.put(IJsonNames.REMOVED, workgroup.isRemoved())
+			;
 	}
 }

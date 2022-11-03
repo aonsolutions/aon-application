@@ -27,13 +27,14 @@ public class TaskHolderJSON {
 	}
 	
 	public static TaskHolder fromJSON(JSONObject json) {
-		if(json.isEmpty()) return new TaskHolder();
+		if(json == null || json.isEmpty()) return new TaskHolder();
 		return new TaskHolder()
 				.copy(RegistryJSON.fromJSON(json))
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))
 				.setType(TaskHolderType.INTERNAL)
 				.setUserId(JsonUtils.getInteger(json, IJsonNames.USER))
 				.setStatus(!json.isNull(IJsonNames.STATUS) ? RegistryStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)) : null)
+				.setWorkgroups( WorkgroupJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKGROUPS)) )
 				;
 	}
 	
@@ -52,6 +53,7 @@ public class TaskHolderJSON {
 		.put(IJsonNames.ACTIVE, taskHolder.isActive())
 		.put(IJsonNames.USER, taskHolder.getUserId())
 		.put(IJsonNames.STATUS, taskHolder.getStatus().name())
+		.put(IJsonNames.WORKGROUPS, WorkgroupJSON.toJSON(taskHolder.getWorkgroups()))
 		;	
 	}
 

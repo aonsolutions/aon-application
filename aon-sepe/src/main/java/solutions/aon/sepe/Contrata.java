@@ -21,7 +21,6 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
@@ -633,7 +632,7 @@ public class Contrata {
 				if (message == null || (message != null && message.indexOf("E") >= 0)) {
 					break;
 				} else if (message.contains(RETURN_INIT)) {
-					htmlPage = sepeReturnInitPage(htmlPage, cto);
+					htmlPage = goBackContract(htmlPage, cto);
 				}
 			}
 
@@ -2149,12 +2148,12 @@ public class Contrata {
 		return msg;
 	}
 
-	private static HtmlPage sepeReturnInitPage(HtmlPage htmlPage, Contract cto)
+	private static HtmlPage goBackContract(HtmlPage htmlPage, Contract cto)
 			throws IOException, InterruptedException, SepeException {
 
 		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("#volver")).click();
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
+		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
 		form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es menor a 28
 		form.getInputByName("nass").setValueAttribute(cto.getNss());
 

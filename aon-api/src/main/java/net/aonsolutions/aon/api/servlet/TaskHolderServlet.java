@@ -1,8 +1,10 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +17,15 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.TaskHolderJSON;
+import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -130,14 +136,26 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskHolder(AonApiData api) {
 		Domain domain = api.getDomain();
+		
 		TaskHolder taskholder = AON.getTaskHolder(domain.getName(), domain.getId(), api.getUser().getLogin(), 
 				f->	api.getData().opt(IJsonNames.ID)!=null ? 
 				    filter(api, f) :
 				    f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(api.getUser().getId()))
 		);
 		
-		JSONObject object = TaskHolderJSON.toJSON(taskholder);
 		
+		JSONObject object = TaskHolderJSON.toJSON(taskholder);
+	
+		if(api.getData().optBoolean(IJsonNames.WORKGROUPS)) {
+			TaskHolderWorkgroupFilter filter  = f -> f.getTaskHolderProperty().eq(taskholder.getId());
+			object.put(IJsonNames.WORKGROUPS,
+				WorkgroupJSON.toJSON(
+					AON.getTaskHolderWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), filter)
+					.collect(Collectors.toList())
+				)
+			);
+		}
+	
 		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), taskholder.getId(), null);
 		
 	}
@@ -165,15 +183,35 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			.findFirst();	
 		}
 		
-		TaskHolder taskHolder = opt.isPresent() ? opt.get().setActive(th.isActive()) : th;
-		
-		taskHolder = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), taskHolder);
+		TaskHolder taskHolder = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),  
+				opt.isPresent() ? opt.get().setActive(th.isActive()) : th
+		);
 		
 		RegistryServlet.saveRegistryAdditionalInfo(api, taskHolder.getId(), taskHolder.getDomain().getId());
-
+		
+		saveTaskHolderWorkgroup(api, taskHolder);
+		
 		return TaskHolderJSON.toJSON(taskHolder);
 	}
 
+	private static void saveTaskHolderWorkgroup(AonApiData api, TaskHolder taskHolder) {
+		JSONArray workgroups = api.getData().optJSONArray(IJsonNames.WORKGROUPS);
+		Integer userId = taskHolder.getUserId();
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f-> f.getIdProperty().eq(userId));
+
+		if(!workgroups.isEmpty()) {
+			List<Workgroup> list = WorkgroupJSON.fromJSON(workgroups)
+			    .stream()
+				.filter(w->w.getId()!=null)
+				.collect(Collectors.toList());
+			
+			if(!list.isEmpty()) {
+				user.setWorkgroups(list);
+				AON.saveUserWorkgroups(api.getDomain(), api.getUser().getLogin(), user);	
+			}
+		}
+	}
+	
 	public static Filter filter(AonApiData api, TaskHolderProperties f) {
 		JSONObject params  = api.getData();
 

@@ -9,6 +9,7 @@ export class TaskHolder extends Registry {
     costProfile;
 
     status;
+    workgroups;
 
     constructor(taskHolder) {
         super(taskHolder);
@@ -19,9 +20,11 @@ export class TaskHolder extends Registry {
             this.active = taskHolder.active;
             this.costProfile = taskHolder.costProfile;
             this.status = taskHolder.status;
+            this.workgroups = taskHolder.workgroups || [];
         } else {
             this.active = true;
             this.status = 'ACTIVE';
+            this.workgroups = [];
         }
     }
 
@@ -75,4 +78,15 @@ export class TaskHolder extends Registry {
         return this;
     }
 
+    getWorkgroups() {
+        return this.workgroups;
+    }
+
+    setWorkgroups(workgroups) {
+        this.workgroups = workgroups;
+    }
+
+    addWorkgroup(workgroup) {
+        this.workgroups.push(workgroup);
+    }
 } 
