@@ -86,25 +86,6 @@ export class AonCustomer extends AonReg {
 				scope.value = scopeId;
 			}
 		});
-
-
-
-		// table.addRow();
-
-		// let segment = new AonSelect()
-		// segment.id = "selectSegment";
-		// segment.title = "Segmento";
-		// segment.value = this.registry.getSegment();
-		// segment.addEventListener(EVENT.SELECT, () => {
-		// 	this.registry.setSegment(segment.value);
-		// 	if(this.autosave) this.save();
-		// });
-
-		// segment.setOptions();
-
-		// table.addCell(segment, 2);
-
-		
 	}	
 
 	buildFiscalData(parent) {

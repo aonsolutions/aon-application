@@ -291,7 +291,7 @@ public class UserServlet extends AonApiHttpServlet {
 		if(params.opt("task_holder_empty") != null) {
 			Filter newFilter = f.getTaskHolderProperty().isNull()
 			.or(f.getTaskHolderActiveProperty().eq((byte)0))
-			.or(f.getTaskHolderDomainProperty().eq(api.getDomain().getParentId()));
+			.or(f.getTaskHolderDomainProperty().eq(api.getDomain().getParentId()).and(f.getTaskHolderActiveProperty().eq((byte)0)));
 			
 			filter = filter.and(newFilter);
 		}

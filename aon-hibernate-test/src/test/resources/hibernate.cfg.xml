@@ -36,7 +36,7 @@
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 
-		<!-- AON-ACCOUNTING Mapping files 
+		<!-- AON-ACCOUNTING Mapping files --> 
 		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
@@ -48,16 +48,16 @@
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		<mapping class="com.code.aon.accounting.Loan"/>
 		<mapping class="com.code.aon.accounting.Period"/>
-		-->
 		
-		<!-- AON-ACCOUNT-BRIDGE Mapping files 
+		
+		<!-- AON-ACCOUNT-BRIDGE Mapping files --> 
 		<mapping class="com.code.aon.account.bridge.AccountEntryBankStatement"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
-		-->
+		
 		
 		<!-- AON-ADMIN Mapping files 	
 		<mapping class="com.code.aon.admin.ApplicationRole"/>

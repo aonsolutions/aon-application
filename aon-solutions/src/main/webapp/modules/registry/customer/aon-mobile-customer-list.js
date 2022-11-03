@@ -17,7 +17,7 @@ export class AonMobileCustomerList extends AonMobileRegistryList {
 		getCustomer(data).then(r => {
 			let aonRegistry = new AonMobileCustomer();
 			aonRegistry.id = this.getApplication().id + 'Registry';
-			aonRegistry.setRegistry(r);
+			aonRegistry.setCustomer(r);
 			this.getApplication().setContent(aonRegistry);
 		});
 	}

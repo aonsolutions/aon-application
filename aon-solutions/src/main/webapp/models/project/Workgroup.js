@@ -7,6 +7,8 @@ export class Workgroup {
     active;
     dirty;
 
+    removed;
+
     constructor(workgroup) {
         if(workgroup) {
            this.id = workgroup.id; 
@@ -14,11 +16,14 @@ export class Workgroup {
            this.description = workgroup.description;
            this.active = workgroup.active;
            this.dirty = workgroup.dirty;
+
+           this.removed = workgroup.removed || false;
         } else {
             this.domain = LS.getDomainId();
             this.description = '';
             this.active = true;
             this.dirty = false;
+            this.removed = false;
         }
     }
 
@@ -67,5 +72,19 @@ export class Workgroup {
     setDirty(dirty) {
         this.dirty = dirty;
         return this;
+    }
+
+
+    isRemoved() {
+        return this.removed;
+    }
+
+    setRemoved(removed) {
+        this.removed = removed;
+        return this;
+    }
+
+    remove(){
+        this.setRemoved(true);
     }
 } 

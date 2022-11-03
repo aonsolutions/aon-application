@@ -13,6 +13,8 @@ public class Workgroup implements Serializable {
 	private String description;
 	private WorkgroupStatus status;
 	private boolean dirty;
+	
+	private boolean removed;
 
 	public WorkgroupStatus getStatus() {
 		return status;
@@ -56,6 +58,15 @@ public class Workgroup implements Serializable {
 	
 	public Workgroup setDirty(boolean dirty) {
 		this.dirty = dirty;
+		return this;
+	}
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public Workgroup setRemoved(boolean removed) {
+		this.removed = removed;
 		return this;
 	}
 	

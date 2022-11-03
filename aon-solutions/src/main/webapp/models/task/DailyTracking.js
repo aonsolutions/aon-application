@@ -1,6 +1,6 @@
 import { Domain } from "../Domain.js";
 import { Project } from "../project/Project.js";
-import { TaskHolder } from "../project/TaskHolder.js";
+import { TaskHolder } from "../registry/TaskHolder.js";
 import { Registry } from "../registry/Registry.js";
 
 export class DailyTracking {

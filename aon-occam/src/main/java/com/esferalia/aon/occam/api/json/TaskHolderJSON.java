@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public class TaskHolderJSON {
 	
@@ -26,12 +27,15 @@ public class TaskHolderJSON {
 	}
 	
 	public static TaskHolder fromJSON(JSONObject json) {
-		if(json.isEmpty()) return new TaskHolder();
+		if(json == null || json.isEmpty()) return new TaskHolder();
 		return new TaskHolder()
 				.copy(RegistryJSON.fromJSON(json))
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))
 				.setType(TaskHolderType.INTERNAL)
-				.setUserId(JsonUtils.getInteger(json, IJsonNames.USER));
+				.setUserId(JsonUtils.getInteger(json, IJsonNames.USER))
+				.setStatus(!json.isNull(IJsonNames.STATUS) ? RegistryStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)) : null)
+				.setWorkgroups( WorkgroupJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKGROUPS)) )
+				;
 	}
 	
 	public static JSONArray toJSON(List<TaskHolder> taskHolders) {
@@ -45,9 +49,12 @@ public class TaskHolderJSON {
 	}
 	
 	public static JSONObject toJSON(TaskHolder taskHolder) {
-		JSONObject json = RegistryJSON.toJSON(taskHolder);
-		return json.put(IJsonNames.ACTIVE, taskHolder.isActive())
-				.put(IJsonNames.USER, taskHolder.getUserId());	
+		return RegistryJSON.toJSON(taskHolder)
+		.put(IJsonNames.ACTIVE, taskHolder.isActive())
+		.put(IJsonNames.USER, taskHolder.getUserId())
+		.put(IJsonNames.STATUS, taskHolder.getStatus().name())
+		.put(IJsonNames.WORKGROUPS, WorkgroupJSON.toJSON(taskHolder.getWorkgroups()))
+		;	
 	}
 
 }

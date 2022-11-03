@@ -23,6 +23,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.UserWorkgroupValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class UserWorkgroupDAO {
 
@@ -71,10 +73,16 @@ public class UserWorkgroupDAO {
 	}
 	
 	public static UserWorkgroup save(AONContext ctx, UserWorkgroup userWorkgroup) {
+		
 		UserWorkgroupValidation.validate(ctx, userWorkgroup);
-		return insert(ctx, userWorkgroup);
+		
+		UserWorkgroup uw = UserWorkgroupDAO.get(ctx, f -> f.getUserIdProperty().eq(userWorkgroup.getUserId())
+				.and(f.getWorkgroupProperty().eq(userWorkgroup.getWorkgroup().getId())));
+		
+		return uw.isEmpty() ? insert(ctx, userWorkgroup) : uw;
 	}
 	
+
 	public static UserWorkgroup insert(AONContext ctx, UserWorkgroup userWorkgroup) {
 		Integer id =  ctx.getDslContext().insertInto(USER_WORKGROUP)
 				.set(USER_WORKGROUP.DOMAIN, userWorkgroup.getDomain())

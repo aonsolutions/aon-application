@@ -5,7 +5,10 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @SelectClasses({
-	InvoiceTest.class,
+	InvoiceInsertTest.class,
+	InvoiceListTest.class,
+	InvoiceRecordTest.class,
+	InvoiceTaxRoundedTest.class,
 })
 @Suite
 public class InvoiceTestSuite {

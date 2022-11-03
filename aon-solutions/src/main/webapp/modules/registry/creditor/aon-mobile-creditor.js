@@ -1,4 +1,5 @@
 import { TAG } from '../../../environments/environments.js'; 
+import { Creditor } from '../../../models/registry/Creditor.js';
 import { AonMobileReg } from '../aon-mobile-reg.js';
 import { AonMobileCreditorList } from './aon-mobile-creditor-list.js';
 
@@ -10,6 +11,9 @@ export class AonMobileCreditor extends AonMobileReg {
 		this.getApplication().setContent(list);
 	}
 
+	setCreditor(creditor) {
+		this.registry = new Creditor(creditor);
+	}
 }
 
 if(!window.customElements.get(TAG.AON_MOBILE_CREDITOR)){
