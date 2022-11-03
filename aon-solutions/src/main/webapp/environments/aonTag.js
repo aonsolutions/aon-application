@@ -23,6 +23,7 @@ export const CANVAS = 'canvas';
 export const BUTTON = 'button';
 export const SECTION = 'section';
 export const IFRAME = 'iframe';
+export const PRE = 'pre';
 
 // COMPONENTS
 

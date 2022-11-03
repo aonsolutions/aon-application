@@ -4,6 +4,7 @@ import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
  
 export class AonApiObject extends AonElement {
 
+  title;
   object = [];
   example = {};
 
@@ -30,29 +31,28 @@ export class AonApiObject extends AonElement {
 
   build() {
     let main = this.createElement(TAG.DIV);
-		main.style.display = 'flex';
+	main.style.display = 'flex';
 
-		let div = this.createElement(TAG.DIV);
-		div.style.margin = '20px';
-		div.style.width = '50%';
-		main.appendChild(div);
+	let div = this.createElement(TAG.DIV);
+	div.style.margin = '20px';
+	div.style.width = '50%';
+	main.appendChild(div);
 
-		let exampleDiv = this.createElement(TAG.DIV);
-		exampleDiv.style.marginTop = '100px';
-		exampleDiv.style.marginLeft = '20px';
-		exampleDiv.style.marginRight = '20px';
-		exampleDiv.style.padding = '10px';
-		exampleDiv.style.fontWeight = '400';
-		exampleDiv.style.width = '50%';
-		exampleDiv.style.backgroundColor = '#2E3336';
-		exampleDiv.style.color = 'white';
-		exampleDiv.innerHTML = JSON.stringify(this.example, null, 2);
-		alert(JSON.stringify(this.example, null, 2));
+	let exampleDiv = this.createElement(TAG.PRE);
+	exampleDiv.style.marginTop = '100px';
+	exampleDiv.style.marginLeft = '20px';
+	exampleDiv.style.marginRight = '20px';
+	exampleDiv.style.padding = '10px';
+	exampleDiv.style.fontWeight = '400';
+	exampleDiv.style.width = '50%';
+	exampleDiv.style.backgroundColor = '#2E3336';
+	exampleDiv.style.color = 'white';
+	exampleDiv.innerHTML = JSON.stringify(this.example, null, 2);
 
     main.appendChild(exampleDiv);
 
 		let h2 = this.createElement(TAG.H2);
-		h2.innerHTML = MSG.INVOICE_OBJECT;
+		h2.innerHTML = this.title;
 		div.appendChild(h2);
 
 		let divAtr = this.createElement(TAG.DIV);
@@ -105,6 +105,10 @@ export class AonApiObject extends AonElement {
 		li.appendChild(div2);
 
 		parent.appendChild(li)
+  }
+
+  setTitle(title) {
+	this.title = title;
   }
 
   setObject(object) {

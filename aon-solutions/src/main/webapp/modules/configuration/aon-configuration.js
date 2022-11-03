@@ -10,7 +10,7 @@ import "../company/aon-company-list.js";
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { AON_ICONS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
@@ -162,7 +162,7 @@ export class AonConfiguration extends AonElement {
         appOptions.push({
           name: INVOICE.title,
           aonIcon: {
-            icon: 'aon_app',
+            icon: AON_ICONS.AON_INVOICE,
             color: INVOICE.color
           },
           fn: () => this.buildInvoiceConfiguration(),

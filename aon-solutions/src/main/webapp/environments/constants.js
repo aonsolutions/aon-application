@@ -27,6 +27,7 @@ export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AON_USER_LIST = 'aonUserList';
 export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
+export const ARRAY = 'array';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
@@ -35,12 +36,13 @@ export const AUDIT = 'audit';
 // ----- B
 
 export const BACK = 'back';
+export const BADGE = 'badge';
 export const BANK = 'bank';
 export const BANK_ACCOUNT = 'bankAccount';
 export const BASE = 'base';
 export const BIC = 'bic';
 export const BLANK = 'blank';
-export const BADGE = 'badge';
+export const BOOLEAN = 'boolean';
 export const BUTTON = 'button';
 
 // ----- C
@@ -54,6 +56,7 @@ export const CHARGES_PAYMENTS = 'chargesPayments';
 export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';
+export const COMMENTS = 'comments';
 export const COMPANY = 'company';
 export const COMPOSITION = 'composition';
 export const COMUNICA = 'comunica';
@@ -61,6 +64,7 @@ export const CONCEPTS = 'concepts';
 export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
+export const CREATE_INVOICE = 'createInvoice';
 export const CREATE_INVOICE_ISSUED = 'createInvoiceIssued';
 export const CREATE_INVOICE_RECEIVED = 'createInvoiceReceived';
 export const CREATE_INVOICE_TICKET = 'createInvoiceTicket';
@@ -73,15 +77,18 @@ export const DATE = 'date';
 export const DATA = 'data';
 export const DEFAULT = 'default';
 export const DELETE = 'delete';
+export const DELETE_INVOICE = 'deleteInvoice';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
 export const DESCRIPTION = 'description';
+export const DETAILS = 'details';
 export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
 export const DIV = 'div';
 export const DRAFT = 'draft';
 export const DOCUMENT = 'document';
 export const DOCUMENTAL = 'documental';
+export const DOMAIN = 'domain';
 export const DOWNLOAD = 'download';
 export const DOWNLOAD_FILE = 'downloadFile';
 export const DOWNLOAD_INVOICE = 'downloadInvoice';
@@ -106,6 +113,7 @@ export const FARMER = 'farmer';
 export const FILE = 'file';
 export const FILLED = 'filled';
 export const FILTER = 'filter';
+export const FINANCES = 'finances';
 export const FISCAL = 'fiscal';
 export const FOOTER = 'footer';
 
@@ -143,6 +151,7 @@ export const ITEM = 'item';
 
 // ----- L
 
+export const LAST_ACCESS = 'lastAccess';
 export const LIST = 'list';
 export const LOGO = 'logo';
 
@@ -165,6 +174,7 @@ export const NUMBER = 'number';
 
 // ----- O
 
+export const OBJECT = 'object';
 export const OFFER = 'offer';
 export const OFF = 'off';
 export const ONLY_AUTH = 'onlyAuth';
@@ -201,9 +211,12 @@ export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
+export const RECEIVER = 'receiver';
 export const RECORD = 'record';
 export const RECORD_INVOICE = 'recordInvoice';
+export const RECTIFICATION_INVOICE = 'rectificationInvoice';
 export const RECTIFIED = 'rectified';
+export const RECTIFIER = 'rectifier';
 export const RECTIFY = 'rectify';
 export const RECTIFY_INVOICE = 'rectifyInvoice';
 export const REFERENCE = 'reference';
@@ -234,6 +247,7 @@ export const SAVE = 'save';
 export const SELECT = 'select';
 export const SELECTED = 'selected';
 export const SEND = 'send';
+export const SENDER = 'sender';
 export const SEARCH_BUTTON = 'searchButton';
 export const SEARCH_INPUT = 'searchInput';
 export const SEND_FILE = 'sendFile';
@@ -257,12 +271,14 @@ export const SURNAME = 'surname';
 export const TABLE = 'table';
 export const TABS = 'tabs';
 export const TAG = 'tag';
+export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
 export const TOOLBAR = 'toolbar';
 export const TOOLS = 'tools';
 export const TOTAL = 'total';
+export const TRANSACTION = 'transaction';
 export const TRANSACTION_TYPE = 'transactionType';
 export const TRANSPORT_OPERATOR = 'transportOperator';
 export const TRASH = 'trash';
@@ -272,6 +288,7 @@ export const TYPE_NAME = 'typeName';
 
 // ----- U
 
+export const UPDATE_INVOICE = 'updateInvoice';
 export const UPLOAD = 'upload';
 export const UPLOAD_FILE = 'uploadFile';
 export const USER = 'user';

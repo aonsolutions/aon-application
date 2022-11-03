@@ -98,6 +98,7 @@ export const CREDIT_CARD = 'credit_card';
 
 // ----- D
 
+export const DATA_OBJECT = 'data_object';
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DONE = 'done';
@@ -158,6 +159,7 @@ export const LOCAL_MALL = 'local_mall';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const LINK = 'link';
+export const LIST = 'list';
 export const LABEL = 'label';
 
 // ----- M
@@ -222,6 +224,7 @@ export const UNARCHIVE = 'unarchive';
 
 // ----- V
 
+export const VERIFIED = 'verified';
 export const VISIBILITY = 'visibility';
 export const VISIBILITY_OFF = 'visibility_off';
 
