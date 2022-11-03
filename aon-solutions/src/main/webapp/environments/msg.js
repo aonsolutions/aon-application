@@ -233,6 +233,8 @@ export const FORMALITIES = 'Trámites';//TODO
 export const GALICIAN = MSG.GALICIAN;
 export const GENERAL_DATA = 'Datos Generales'; //TODO
 export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
+export const GET_INVOICE = MSG.GET_INVOICE;
+export const GET_INVOICES = MSG.GET_INVOICES;
 export const GROUP_DATA = MSG.GROUP_DATA;
 export const GROUP_MANAGEMENT = MSG.GROUP_MANAGEMENT;
 export const GROUP = MSG.GROUP;
@@ -271,6 +273,7 @@ export const INVOICE_CONFIGURATION = MSG.INVOICE_CONFIGURATION;
 export const INVOICE_DATA = MSG.INVOICE_DATA;
 export const INVOICE_ISSUED = MSG.INVOICE_ISSUED;
 export const INVOICE_NUMBER = MSG.INVOICE_NUMBER;
+export const INVOICE_OBJECT = MSG.INVOICE_OBJECT;
 export const INVOICE_PRINTING = MSG.INVOICE_PRINTING;
 export const INVOICE_RECEIVED = MSG.INVOICE_RECEIVED;
 export const INVOICES = MSG.INVOICES;
@@ -294,6 +297,8 @@ export const LOCATION = MSG.LOCATION;
 
 // ----- M
 
+export const MARK_ENTRY = MSG.MARK_ENTRY;
+export const MARK_EXIT = MSG.MARK_EXIT;
 export const MAGIC_LINK = "Magic Link";
 export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL = "Modelo"; //TODO
@@ -325,9 +330,9 @@ export const NEW_INVEST_ASSET = 'Nuevo Bien Afecto'; //TODO
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
 export const NEW_REQUEST = MSG.NEW_REQUEST;
 export const NEXT = MSG.NEXT;
-export const NIF = 'NIF';//TODO
-export const NOTIFICATIONS = 'Notificaciones';//TODO
-export const NOTIFICATION = 'Notificación';//TODO
+export const NIF = MSG.NIF;
+export const NOTIFICATION = MSG.NOTIFICATION;
+export const NOTIFICATIONS = MSG.NOTIFICATIONS;
 export const NUMBER = MSG.NUMBER;
 export const NOTARY = 'Notario'; //TODO
 export const NOTES = MSG.NOTES;
@@ -441,12 +446,14 @@ export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
 export const SEARCH = MSG.SEARCH;
 export const SECTION = 'Sección'; // TODO
+export const SEE_ALL = MSG.SEE_ALL;
 export const SEND = MSG.SEND;
 export const SENT = "Enviadas"; // TODO
 export const SEND_FILE = MSG.SEND_FILE;
 export const SEND_FILES = MSG.SEND_FILES;
 export const SEND_INVOICE = MSG.SEND_INVOICE;
 export const SEND_INVOICES = MSG.SEND_INVOICES;
+export const SENDER = "Remitente";//TODO
 export const SEPA_FILES = MSG.SEPA_FILES;
 export const SERIE = MSG.SERIE;
 export const SERVICE = MSG.SERVICE;
@@ -477,8 +484,6 @@ export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
-export const SENDER = "Remitente";//TODO
-export const SEE_ALL = "Ver todas";//TODO
 
 // ----- T
 

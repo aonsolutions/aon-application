@@ -157,6 +157,8 @@ export const FOOTER = 'Pie';
 
 export const GALICIAN = 'Gallego';
 export const GENERAL_INFORMATION = 'Información General';
+export const GET_INVOICE = 'Obtener Factura';
+export const GET_INVOICES = 'Obtener Facturas';
 export const GROUP_DATA = 'Datos del Grupo';
 export const GROUP_MANAGEMENT = 'Gestión de Grupos';
 export const GROUP = 'Grupo';
@@ -188,6 +190,7 @@ export const INVOICE_CONFIGURATION = 'Configuración de Facturas';
 export const INVOICE_DATA = 'Datos Factura';
 export const INVOICE_ISSUED = 'Factura Emitida';
 export const INVOICE_NUMBER = 'Número Factura';
+export const INVOICE_OBJECT = 'Objeto de Factura';
 export const INVOICE_PRINTING = 'Impresión de Facturas';
 export const INVOICE_RECEIVED = 'Factura Recibida';
 export const INVOICES = 'Facturas';
@@ -209,6 +212,8 @@ export const LOCATION = 'Ubicación';
 
 // ----- M
 
+export const MARK_ENTRY = 'Marcar Entrada';
+export const MARK_EXIT = 'Marcar Salida';
 export const MANAGEMENT = 'Gestión';
 export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
@@ -228,6 +233,9 @@ export const NEW_EXPENSE = 'Nuevo Gasto';
 export const NEW_PRODUCT = 'Nuevo Producto';
 export const NEW_REQUEST = 'Nueva Solicitud';
 export const NEXT = 'Siguiente';
+export const NIF = 'NIF';
+export const NOTIFICATION = 'Notificación';
+export const NOTIFICATIONS = 'Notificaciones';
 export const NOTES = 'Notas';
 export const NOTE = 'Nota';
 export const NUMBER = 'Número';
@@ -312,6 +320,7 @@ export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE =  'Ámbito';
 export const SEARCH = 'Buscar';
+export const SEE_ALL = 'Ver Todas';
 export const SEND = 'Enviar';
 export const SEND_FILE = 'Enviar Fichero';
 export const SEND_FILES = 'Enviar Ficheros';

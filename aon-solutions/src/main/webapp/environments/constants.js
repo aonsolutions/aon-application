@@ -111,6 +111,9 @@ export const FOOTER = 'footer';
 
 // ----- G
 
+export const GET_INVOICE = 'getInvoice';
+export const GET_INVOICES = 'getInvoices';
+
 // ----- H
 
 export const HEADER = 'header';
@@ -129,6 +132,7 @@ export const INVEST_ASSET = 'investAsset';
 export const INVESTMENT = 'investment';
 export const INVOICE = 'invoice';
 export const INVOICE_ISSUED = 'invoiceIssued';
+export const INVOICE_OBJECT = 'invoiceObject';
 export const INVOICE_RECEIVED = 'invoiceReceived';
 export const INVOICE_TICKET = 'invoiceTicket'; 
 export const ITEM = 'item';

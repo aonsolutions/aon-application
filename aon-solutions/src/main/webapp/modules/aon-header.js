@@ -205,12 +205,17 @@ export class AonHeader extends AonElement {
 							fn: () => this.rootPanel(new AonComponentsDoc())
 						});
 						
+
+					}
+
+					if(this.dur.hasApiService()) {
 						options.push({
 							name: MSG.API_DOCUMENTATION,
 							icon: MATERIAL_ICONS.API,
 							fn: () => this.rootPanel(new AonApiDoc())
 						});
 					}
+
 					d.setMenuOptions(options, top, left);
 					d.open();
 				});
@@ -263,7 +268,7 @@ export class AonHeader extends AonElement {
 
 					let d = this.getElement('aonHeaderDialogUserOption');
 					
-					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
+					let fichajeText = r.status === 'in' ? MSG.MARK_EXIT : MSG.MARK_ENTRY;
 					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
 					let options = [{
 							name: fichajeText,
