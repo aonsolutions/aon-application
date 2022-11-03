@@ -13,6 +13,7 @@ import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
+import aon.sepe.objects.Contract.Over52Years;
 import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.CopyBasic;
@@ -55,8 +56,9 @@ public class TestContrato {
 					.setCodPaisWork(724)
 					.setCodMunWork("28127")
 					.setOffer(OfferType.NO) // review
-					.setBonus(true)
+//					.setBonus(true)
 					.setCollectiveType("188")
+					.setOver52Years(Over52Years.REASS)
 			;
 //			bd.setInterinidad("H");
 
