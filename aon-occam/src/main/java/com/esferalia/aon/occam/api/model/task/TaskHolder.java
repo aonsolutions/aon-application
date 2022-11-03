@@ -1,9 +1,13 @@
 package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 @SuppressWarnings("serial")
 public class TaskHolder extends Registry implements Serializable{
@@ -13,6 +17,9 @@ public class TaskHolder extends Registry implements Serializable{
 	private Boolean active;
 	private Integer userId;
 	private Integer costProfile;
+	
+	private List<Workgroup> workgroups;
+	
 	
 	public TaskHolder() {}
 	
@@ -51,6 +58,17 @@ public class TaskHolder extends Registry implements Serializable{
 		this.active = active;
 		return this;
 	}
+	
+	public TaskHolder setStatus(RegistryStatus status) {
+		if(status!=null) {
+			setActive(RegistryStatus.ACTIVE.equals(status));
+		}
+		return this;
+	}
+	
+	public RegistryStatus getStatus() {
+		return Boolean.TRUE.equals(isActive())  ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE;
+	}
 
 	public Integer getUserId() {
 		return userId;
@@ -69,6 +87,24 @@ public class TaskHolder extends Registry implements Serializable{
 		this.costProfile = costProfile;
 		return this;
 	}
+	
+	public List<Workgroup> getWorkgroups() {
+		if(workgroups == null) {
+			workgroups = new LinkedList<>();
+		}
+		return workgroups;
+	}
+	
+	public TaskHolder setWorkgroups(List<Workgroup> workgroups) {
+		this.workgroups = workgroups;
+		return this;
+	}
+	
+	public TaskHolder addWorkgroup(Workgroup workgroup) {
+		getWorkgroups().add(workgroup);
+		return this;
+	}
+
 	
 	public boolean isEmpty() {
 		return super.isEmpty() && getType() == null

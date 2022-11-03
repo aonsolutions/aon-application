@@ -48,6 +48,9 @@ public class Contract {
 	
 	private boolean isDiscapacidad; // ¿ Posee discapacidad ?
 	
+	private boolean isBonus; // ¿ Posee bonificacion ?
+	
+	
 	//discapacidad
 	private String discapacidadType;
 	private String collectiveType;
@@ -211,6 +214,10 @@ public class Contract {
 		return isDiscapacidad;
 	}
 	
+	public boolean isBonus() {
+		return isBonus;
+	}
+	
 	public Optional<String> getDiscapacidadType() {
 		return Optional.ofNullable(discapacidadType);
 	}
@@ -269,6 +276,8 @@ public class Contract {
 		private boolean noCertainDate; // ¿ Periodo de actividad es sin fecha cierta.?
 		
 		private boolean isDiscapacidad; // ¿ Posee discapacidad ?
+		
+		private boolean isBonus; // ¿ Posee bonificacion ?
 		
 		//discapacidad
 		private String discapacidadType;
@@ -475,6 +484,11 @@ public class Contract {
 			return this;
 		}
 		
+		public ContractBuilder setBonus(boolean isBonus) {
+			this.isBonus = isBonus;
+			return this;
+		}
+		
 		public ContractBuilder setDiscapacidadType(String discapacidadType) {
 			this.discapacidadType = discapacidadType;
 			return this;
@@ -536,6 +550,7 @@ public class Contract {
 			contract.details          = this.details;
 			contract.noCertainDate    = this.noCertainDate;
 			contract.isDiscapacidad   = this.isDiscapacidad;
+			contract.isBonus          = this.isBonus;
 			contract.discapacidadType = this.discapacidadType;
 			contract.collectiveType   = this.collectiveType;
 			return contract;
@@ -737,6 +752,7 @@ public class Contract {
 			+ ", previsible=" + previsible 
 			+ ", noCertainDate=" + noCertainDate 
 			+ ", isDiscapacidad=" + isDiscapacidad 
+			+ ", isBonus=" + isBonus 
 			+ ", discapacidadType=" + discapacidadType 
 			+ ", collectiveType=" + collectiveType 
 			+ ", details=" + details +"]";

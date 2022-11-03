@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
@@ -307,17 +309,17 @@ public class NordigenModule extends MainEntryPoint {
 		return panel;
 	}
 	
+	
+	
 	private class AonNordigenBankCard extends AonCard {
 		
 		boolean updateError;
 
 		private AonNordigenBankCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount) {
-			
 			updateError = false;
 			
 			FlowPanel titlePanel = new FlowPanel();
 			titlePanel.addStyleName(AON.CSS.aonTextCenter());
-			
 			NordigenInstitution institution = nordigenBankAccount.getInstitution();
 			NordigenAccountMetadata metadata = nordigenBankAccount.getMetadata();
 			NordigenAccountBalance balance = nordigenBankAccount.getBalance();
@@ -361,11 +363,10 @@ public class NordigenModule extends MainEntryPoint {
 			InlineLabel atDateBox = new InlineLabel();
 //			InlineLabel atDateBox2 = new InlineLabel();
 			atDateBox.addStyleName(AON.CSS.aonFontMedium());
-			atDateBox.setText(balance == null ? "----" : AON.DATE_FORMAT.format(atDate));
+			atDateBox.setText(balance == null || atDate == null ? "----" : AON.DATE_FORMAT.format(atDate));
 //			atDateBox2.setText(balance == null ? "" : " hora: " + DATE_HOURS.format(atDate));
 			
 			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
-			
 			if (atDate != null && CalendarUtil.getDaysBetween(atDate, new Date()) >= 4) {
 				atDateBox.addStyleName(AON.CSS.aonColorRed());
 				updateError = true;
@@ -400,7 +401,9 @@ public class NordigenModule extends MainEntryPoint {
 			if (balanceAmount != null && AonMathUtils.isLessThanZero(balanceAmount)) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());
 			}
-			balanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
+			if (balanceAmount != null) {				
+				balanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
+			}
 			balancePanel.addStyleName(AON.CSS.aonMarginBottom());
 			balancePanel.add(balanceBox);
 //			FlowPanel remainderLabelPanel = new FlowPanel();
@@ -427,7 +430,6 @@ public class NordigenModule extends MainEntryPoint {
 			
 //			body.add(remainderLabelPanel);
 //			body.add(remainderPanel);
-			
 			if (Window.getClientWidth() < 675) {				
 				this.getElement().getStyle().setProperty("minWidth", "100%");
 			} else {
@@ -632,7 +634,6 @@ public class NordigenModule extends MainEntryPoint {
 ////				bottomTable.setWidget(0, 0, noMovLbl);
 //				
 //			}
-			
 			getBottomCardMessage(bottomTable, msgWidget, updateError);
 			body.add(bottomTable);				
 			
@@ -1559,8 +1560,11 @@ public class NordigenModule extends MainEntryPoint {
 				LOGGER.info(caught.getMessage());
 				if (!isMobile()) {
 					Label errorLabel = new Label("Se produjo un error al obtener los movimientos " + (periodStr != null ? periodStr : ""));
+					Label errorLabel2 = new Label("    " + caught.getMessage());
 					errorLabel.addStyleName(AON.CSS.aonColorRed());
+					errorLabel2.addStyleName(AON.CSS.aonColorRed());
 					sessionLog.add(errorLabel);
+					sessionLog.add(errorLabel2);
 					openFootPanel();
 				}
 			}

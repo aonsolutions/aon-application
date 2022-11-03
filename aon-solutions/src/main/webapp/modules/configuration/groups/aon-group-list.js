@@ -130,12 +130,7 @@ export class AonGroupList extends AonElement {
 
     try {
       let resp = await getWorkgroups();
-      data = resp.map(res =>{
-        return {
-          ...res,
-          statusText: res.active ? MSG.ACTIVE : MSG.INACTIVE 
-        };
-      });
+      data = resp.map(res => ({ ...res, statusText: res.active ? MSG.ACTIVE : MSG.INACTIVE }) );
     } catch (e) {
       console.log(e);
     }

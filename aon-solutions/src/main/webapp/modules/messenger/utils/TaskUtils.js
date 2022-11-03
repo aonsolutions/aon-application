@@ -534,7 +534,6 @@ const setContentMessageChat = (task, workflowId) => {
     let textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
 
     if(content && textArea){
-        // content.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
         setDataset(textArea, { workflowId, task });
         textArea.setValueHtml(content.innerHTML);
     }

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -631,8 +633,19 @@ public class JooqContrata {
 	
 	private static void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos, ContractSpecificData contractSpecificData) {
 		if(datos != null){
-			if( datos.getCODIGOCOLECTIVOBONIF()!=null )
-				contractSpecificData.setBonusColective(datos.getCODIGOCOLECTIVOBONIF());
+			if( datos.getCODIGOCOLECTIVOBONIF()!=null ) {
+				String collectiveBonus = datos.getCODIGOCOLECTIVOBONIF();
+				if(isBonus(collectiveBonus)) {
+					contractSpecificData.setBonusType(datos.getCODIGOCOLECTIVOBONIF());
+					contractSpecificData.setBonus(true);
+					contractSpecificData.setDisabilityB(false);
+				} else {
+					contractSpecificData.setBonusColective(datos.getCODIGOCOLECTIVOBONIF());
+					contractSpecificData.setBonus(false);
+					contractSpecificData.setDisabilityB(true);
+				}
+				
+			}
 
 			if(datos.getINDICEMPLEADAUTONOMO()!=null){
 				if(datos.getINDICEMPLEADAUTONOMO().equals("1")){
@@ -643,9 +656,13 @@ public class JooqContrata {
 			}
 			
 			contractSpecificData.setEntrepreneurSupport(datos.getINDICEMPLEADAUTONOMO()!=null);
-			contractSpecificData.setDisabilityB(datos.getCODIGOCOLECTIVOBONIF()!=null);
 			
 		}
+	}
+	
+	private static boolean isBonus(String collectiveBonus) {
+		ArrayList<String> list = new ArrayList<>(List.of("016", "017", "018", "019", "020", "021", "040", "041", "060", "088", "089", "163", "172", "175", "186", "187", "188", "193"));
+		return list.contains(collectiveBonus);
 	}
 	
 	private static void completeDatosEmpresaInsercion(DATOSEMPRESAINSERCIONTYPE dato, ContractSpecificData contractSpecificData) {
@@ -1257,11 +1274,17 @@ public class JooqContrata {
 	}
 	
 	private static DATOSBONIFICACIONTYPE createDatosBonificacion(EmployeeContractInfo employeeContractInfo) {
-		if(employeeContractInfo.getContractSpecificData().getEntrepreneurSupport() || employeeContractInfo.getContractSpecificData().getDisabilityB()){
+		if(employeeContractInfo.getContractSpecificData().getEntrepreneurSupport() || employeeContractInfo.getContractSpecificData().getDisabilityB()
+				 || employeeContractInfo.getContractSpecificData().getBonus()){
 			DATOSBONIFICACIONTYPE datos = new DATOSBONIFICACIONTYPE();
 //			if( params.getIndDiscapacidad()!=TEJINDIS.TEJINDIS_C ){
-				if(employeeContractInfo.getContractSpecificData().getBonusColective()!=null){
+			
+				if(AonStringUtils.isNotBlank(employeeContractInfo.getContractSpecificData().getBonusColective())){
 					datos.setCODIGOCOLECTIVOBONIF(employeeContractInfo.getContractSpecificData().getBonusColective());
+				}
+				
+				if(AonStringUtils.isNotBlank(employeeContractInfo.getContractSpecificData().getBonusType())){
+					datos.setCODIGOCOLECTIVOBONIF(employeeContractInfo.getContractSpecificData().getBonusType());
 				}
 //			}
 			

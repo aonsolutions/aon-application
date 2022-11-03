@@ -1,5 +1,5 @@
 import * as LS from '../../services/localStorageService.js';
-import { TaskHolder } from './TaskHolder.js';
+import { TaskHolder } from '../registry/TaskHolder.js';
 import { Workgroup } from './Workgroup.js';
 
 export class ProjectHolder {

@@ -74,7 +74,11 @@ public class TaskHolderWorkgroupDAO {
 	
 	public static TaskHolderWorkgroup save(AONContext ctx, TaskHolderWorkgroup taskHolderWorkgroup) {
 		TaskHolderWorkgroupValidation.validate(ctx, taskHolderWorkgroup);
-		return insert(ctx, taskHolderWorkgroup);
+		
+		TaskHolderWorkgroup uw = TaskHolderWorkgroupDAO.get(ctx, f -> f.getTaskHolderProperty().eq(taskHolderWorkgroup.getTaskHolder())
+				.and(f.getWorkgroupProperty().eq(taskHolderWorkgroup.getWorkgroup().getId())));
+
+		return uw.isEmpty() ? insert(ctx, taskHolderWorkgroup): uw;
 	}
 	
 	public static TaskHolderWorkgroup insert(AONContext ctx, TaskHolderWorkgroup taskHolderWorkgroup) {

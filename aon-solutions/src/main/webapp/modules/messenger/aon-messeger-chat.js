@@ -14,7 +14,7 @@ import { FormTimecontrol } from "./forms/FormTimecontrol.js";
 import { FormVacation } from "./forms/FormVacation.js";
 import { getOfficeProjects } from "../../services/projectService.js";
 import { Workgroup } from "../../models/project/Workgroup.js";
-import { TaskHolder } from "../../models/project/TaskHolder.js";
+import { TaskHolder } from "../../models/registry/TaskHolder.js";
 import { getTastHoldersWorkGroup } from "../../services/taskHolderService.js";
 import {getDomainLogin} from '../../services/localStorageService.js';
 

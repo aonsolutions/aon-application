@@ -110,20 +110,24 @@ public class UserDAO {
 	}
 	
 	public static void saveUserWorkgroups(AONContext ctx, User user){
-		user.getWorkgroups().stream().forEach(workgroup -> {
-			UserWorkgroupDAO.save(ctx, new UserWorkgroup()
-					.setDomain(workgroup.getDomain())
-					.setUserId(user.getId())
-					.setWorkgroup(workgroup));
+		user.getWorkgroups().stream()
+		.forEach(workgroup -> {
+			if(workgroup.isRemoved()) {
+				deleteUserWorkgroup(ctx, user, workgroup);
+			} else {
+				UserWorkgroupDAO.save(ctx, new UserWorkgroup()
+						.setDomain(workgroup.getDomain())
+						.setUserId(user.getId())
+						.setWorkgroup(workgroup));
 
-			TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
-			if(!th.isEmpty()) {
-				TaskHolderWorkgroupDAO.save(ctx, new TaskHolderWorkgroup()
-					.setDomain(workgroup.getDomain())
-					.setTaskHolder(th.getId())
-					.setWorkgroup(workgroup));
+				TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+				if(!th.isEmpty()) {
+					TaskHolderWorkgroupDAO.save(ctx, new TaskHolderWorkgroup()
+						.setDomain(workgroup.getDomain())
+						.setTaskHolder(th.getId())
+						.setWorkgroup(workgroup));
+				}
 			}
-			
 		});
 	}
 	
