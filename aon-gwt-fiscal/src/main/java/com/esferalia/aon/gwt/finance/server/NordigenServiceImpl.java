@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
@@ -58,6 +59,12 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		Domain dmn = new Domain().setId(domain).setName(domainName);
 //		clearIncompleteRequisitions(token, domainName, domain, user);
 		List<NordigenBankAccount> accounts = AonNordigen.getAllAccounts(token, dmn, user);
+		
+//		AON.getRegistryAddInfoStream(domainName, domain, user, f -> f.getAttributeProperty().like("NORDIGEN"))
+//		.forEach(r -> {
+//			
+//		});
+		
 		return new NordigenConfiguration()
 			.setConfiguration(AON.getConfiguration(domainName, domain,user))
 			.setToken(token)
@@ -189,7 +196,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		NordigenInstitution inst = nordigenBankAccount.getInstitution();
 		
 		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
-		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + currentDomainName);
+		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + currentDomainName + "/ms/api/task-evaluation/rbank?rbank=" + rbank != null ? ""+rbank.getId() : "");
 		
 		AonNordigen.insertNewRequisitionId(new Domain().setName(currentDomainName).setId(currentDomain), institutionId, requisition, rbank.getId());
 		
@@ -304,38 +311,46 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate) throws Exception {
 		try {
-			NordigenAccountBalance balance = nordigenBankAccount.getBalance();
 			List<NordigenBankStatement> list = new LinkedList<>();
 			if (nordigenBankAccount != null && nordigenBankAccount.getMetadata() != null) {
 				String id = nordigenBankAccount.getMetadata().getId();
 				List<NordigenAccountTransaction> pendingTransactions = AonNordigen.getPendingAccountTransactions(token, id, endDate);
 				List<NordigenAccountTransaction> transactions = AonNordigen.getBookedAccountTransactions(token, id, endDate);
 				
-				if (transactions != null) {
-					transactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
-						bs.setPending(false);
-						list.add(bs);
-					});
-				}
 				if (pendingTransactions != null) {
 					pendingTransactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
 						bs.setPending(true);
 						list.add(bs);
 					});
 				}
+				if (transactions != null) {
+					transactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
+						bs.setPending(false);
+						list.add(bs);
+					});
+				}
 			}
-			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).sorted((bs1, bs2) -> {
-				
-				return AonNumberUtils.compare(bs2.getNordigenMovementId(), bs1.getNordigenMovementId());
-			}).collect(Collectors.toList());
+			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
+			
+			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
+			NordigenAccountBalance consolidado = balances.stream()
+					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+					.findFirst().orElse(null);
+
+			NordigenAccountBalance real = balances.stream()
+					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+					.findFirst().orElse(null);
+			
+			NordigenAccountBalance balance = real != null ? real : consolidado;
+			
 			
 			Double remaining = balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : 0;
 			
 			for(NordigenBankStatement bs : orderedList) {
-				if (!bs.isPending()) {
+//				if (!bs.isPending()) {
 					bs.setCurrentBalance(remaining);
 					remaining += (bs.getAmount() * (bs.isPayment() ? 1 : -1));
-				}				
+//				}				
 			}
 			
 			return orderedList;
@@ -422,6 +437,13 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws Exception {
 		return AonNordigen.getRequisition(token, requisitionId);
+	}
+
+
+	@Override
+	public NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account)
+			throws Exception {
+		return AonNordigen.setNordigenBankAccountValues(token, account);
 	}
 
 

@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
@@ -35,4 +34,5 @@ public interface NordigenServiceAsync {
 	void clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain, String user, AsyncCallback<Integer> callback);
 	void cancelRequisition (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, Integer rbankId, AsyncCallback<Boolean> callback);
 	void getRequisition(NordigenAccessToken token, String requisitionId, AsyncCallback<NordigenRequisition> callback);
+	void setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback);
 }

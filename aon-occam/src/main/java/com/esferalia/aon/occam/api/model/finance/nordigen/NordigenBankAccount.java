@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 
 public class NordigenBankAccount implements Serializable {
@@ -9,9 +12,10 @@ public class NordigenBankAccount implements Serializable {
 	private static final long serialVersionUID = 1175684863512830855L;
 
 	private RegistryBank rbank;
+	private RegistryAddInfo raddInfo;
 	private NordigenAccountMetadata metadata;
 	private NordigenAccountDetails details;
-	private NordigenAccountBalance balance;
+	private List<NordigenAccountBalance> balances;
 	private NordigenRequisition requisition;
 	private NordigenInstitution institution;
 	
@@ -38,13 +42,6 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setDetails(NordigenAccountDetails details) {
 		this.details = details;
-		return this;
-	}
-	public NordigenAccountBalance getBalance() {
-		return balance;
-	}
-	public NordigenBankAccount setBalance(NordigenAccountBalance balance) {
-		this.balance = balance;
 		return this;
 	}
 	public NordigenRequisition getRequisition() {
@@ -80,6 +77,22 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setBankAlias(String bankAlias) {
 		this.bankAlias = bankAlias;
+		return this;
+	}
+	public List<NordigenAccountBalance> getBalances() {
+		if (balances == null)
+			return Collections.emptyList();
+		return balances;
+	}
+	public NordigenBankAccount setBalances(List<NordigenAccountBalance> balances) {
+		this.balances = balances;
+		return this;
+	}
+	public RegistryAddInfo getRaddInfo() {
+		return raddInfo;
+	}
+	public NordigenBankAccount setRaddInfo(RegistryAddInfo raddInfo) {
+		this.raddInfo = raddInfo;
 		return this;
 	}
 

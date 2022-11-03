@@ -5,7 +5,7 @@ import com.esferalia.aon.occam.api.model.finance.BankStatement;
 public class NordigenBankStatement extends BankStatement {
 	private static final long serialVersionUID = 497558091818899419L;	
 		
-		private Long nordigenMovementId;
+		private String nordigenMovementId;
 		private Double currentBalance;
 		private boolean isPending;
 		
@@ -17,10 +17,10 @@ public class NordigenBankStatement extends BankStatement {
 			return this;
 		}
 		
-		public Long getNordigenMovementId() {
+		public String getNordigenMovementId() {
 			return this.nordigenMovementId;
 		}
-		public NordigenBankStatement setNordigenMovementId(Long nordigenMovementId) {
+		public NordigenBankStatement setNordigenMovementId(String nordigenMovementId) {
 			this.nordigenMovementId = nordigenMovementId;
 			return this;
 		}

@@ -123,5 +123,12 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 		fsa.getRequisition(token, requisitionId, callback);
 	}
 
+	@Override
+	public void setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account,
+			AsyncCallback<NordigenBankAccount> callback){
+		AON.start();
+		fsa.setNordigenAccountValues(token, account, callback);
+	}
+
 
 }
