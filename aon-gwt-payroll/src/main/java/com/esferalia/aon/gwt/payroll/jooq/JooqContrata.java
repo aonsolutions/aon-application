@@ -545,11 +545,10 @@ public class JooqContrata {
 				contractSpecificData.setWorkProgram(datos.getCODIGOPROGRAMAEMPLEO());
 			}
 			
-			// TODO: Mayores de 52 años (Ley 45/2002) -> Disabled currently
-//			if(datos.getOTRASLEGISLACIONES()!=null){
-//				params.setOtrasLegislaciones(THYDISLE.getEnumByValue(datos.getOTRASLEGISLACIONES()));
-//				params.setOlderThan52Data(true);
-//			}
+			if(datos.getOTRASLEGISLACIONES()!=null){
+				contractSpecificData.setOtherLegislations(datos.getOTRASLEGISLACIONES());
+				contractSpecificData.setOlderThan52(true);
+			}
 			
 			if(datos.getDATOSCAMPAÑAS()!=null){
 				contractSpecificData.setCpCampaign(datos.getDATOSCAMPAÑAS().substring(0, 2));
@@ -1099,9 +1098,9 @@ public class JooqContrata {
 			
 			datos.setMUNICIPIOCT(employeeContractInfo.getContractInfo().getWorkplaceZIP());
 			
-	//		if(params.isOlderThan52Data()){
-	//			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
-	//		}
+			if(contractSpecificData.getOlderThan52()){
+				datos.setOTRASLEGISLACIONES(contractSpecificData.getOtherLegislations());
+			}
 			
 			//TODO: MIRAR ESTO PARA 430
 	//		if( tc2.equals("430") || ( tc2.equals("530") && datos!=null && datos.getINDDISCAPACIDAD()!=null && !datos.getINDDISCAPACIDAD().equals("C") ) ){
