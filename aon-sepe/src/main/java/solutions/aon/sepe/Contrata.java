@@ -43,6 +43,7 @@ import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.ContractDetail;
 import aon.sepe.objects.Contract.DetailType;
+import aon.sepe.objects.Contract.Over52Years;
 import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.CopyBasic;
@@ -354,6 +355,8 @@ public class Contrata {
 			htmlPage = contractPage(htmlPage, contract);
 			handleSepeExceptions(htmlPage);
 			
+			Integer page = 1;
+			
 			String[] startDate = Toolkit.dateString(cto.getDateIniContract());
 			String[] now = Toolkit.dateString(new Date());
 
@@ -526,8 +529,8 @@ public class Contrata {
 				// INTERINIDAD OR SUBSTITUTION
 				Optional<String> interinidad = cto.getInterinidad();
 				if (interinidad.isPresent()) {
-
-					form.getInputByName("pagina2").setValueAttribute("2");
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkInterinidad");
 					check.click();
@@ -569,8 +572,8 @@ public class Contrata {
 				
 				//------------BONIFICACION
 				if(cto.isBonus()) {
-
-					form.getInputByName("pagina2").setValueAttribute("2");
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkBonificacion");
 					check.click();
@@ -613,12 +616,29 @@ public class Contrata {
 					}
 					
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+				}
+				
+
+//				//------------MAYORES DE 52
+				if(cto.getOver52Years().isPresent()) {
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 					
-					//form.querySelectorAll("input[name]")
-					//.forEach(el->{
-					//	DomElement domElement = (DomElement) el;
-					//	System.out.println(">>"+domElement.getAttribute("name")+":"+domElement.getAttribute("value"));
-					//});
+					Over52Years over25Years = cto.getOver52Years().get();
+
+					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkMayor52");
+					check.click();
+						
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					handleSepeAlert(alertHandler.getCollectedAlerts());
+					handleSepeExceptions(htmlPage);
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					
+					HtmlCheckBoxInput checkTwo = (HtmlCheckBoxInput) form.getInputByName(over25Years.getValue());
+					checkTwo.click();
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
 			
