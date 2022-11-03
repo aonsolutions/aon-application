@@ -305,6 +305,7 @@ import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.DiscontinuoReason;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
+import aon.sepe.objects.Contract.Over52Years;
 import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.CopyBasic;
 import net.sf.jasperreports.engine.JRParameter;
@@ -7321,6 +7322,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			builder.setDiscapacidadType(employeeContractInfo.getContractSpecificData().getDisability());
 			builder.setCollectiveType(employeeContractInfo.getContractSpecificData().getBonusColective());
 		} else builder.setDiscapacidad(false);
+		
+		if(employeeContractInfo.getContractSpecificData().getOlderThan52()) {
+			builder.setOver52Years(AonStringUtils.equalsIgnoreCase(employeeContractInfo.getContractSpecificData().getOtherLegislations(), "001") ? Over52Years.REASS : Over52Years.RESTO_SUB);
+		}
 		
 		if(employeeContractInfo.getContractSpecificData().getBonus()) {
 			builder.setBonus(true);

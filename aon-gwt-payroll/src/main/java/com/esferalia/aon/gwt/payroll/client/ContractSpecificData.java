@@ -307,6 +307,12 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	ListBox bonusColectiveDisabilityLB;
 	
 	@UiField
+	VerticalPanel older52DataTable;
+	
+	@UiField
+	ListBox older52LB;
+	
+	@UiField
 	VerticalPanel annexedDataTable;
 	
 	@UiField
@@ -717,6 +723,18 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.contractSpecificData.setDisabilityB(event.getValue());
 	}
 	
+	@UiHandler("older52CB")
+	void onOlder52CBChange(ValueChangeEvent<Boolean> event) {
+		if(Boolean.TRUE.equals(event.getValue()))
+			showOlder52DataTable();
+		else {
+			resetOlder52DataTable();
+			hideOlder52DataTable();
+		}
+		
+		this.contractSpecificData.setOlderThan52(event.getValue());
+	}
+	
 	@UiHandler("annexedCB")
 	void onAnnexedCBChange(ValueChangeEvent<Boolean> event) {
 		if(Boolean.TRUE.equals(event.getValue()))
@@ -889,6 +907,12 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	void onBonusColectiveDisabilityLBChange(ChangeEvent event) {
 		String bonusColectiveValue = bonusColectiveDisabilityLB.getSelectedValue();
 		this.contractSpecificData.setBonusColective(bonusColectiveValue);
+	}
+	
+	@UiHandler("older52LB")
+	void onOlder52LBChange(ChangeEvent event) {
+		String older52 = older52LB.getSelectedValue();
+		this.contractSpecificData.setOtherLegislations(older52);
 	}
 	
 	@UiHandler("annexedRB")
@@ -1107,6 +1131,21 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		bonusColectiveDisabilityLB.addItem("MUJER SIN DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "075");
 		bonusColectiveDisabilityLB.addItem("MUJER CON DISCAPACIDAD SEVERA < 45 A\u00D1OS CON CONTRATO INDEFINIDO", "076");
 		bonusColectiveDisabilityLB.addItem("MUJER CON DISCAPACIDAD SEVERA >=45 A\u00D1OS CON CONTRATO INDEFINIDO", "077");
+	}
+	
+	private void showOlder52DataTable() {
+		older52DataTable.getElement().getStyle().clearDisplay();
+	}
+	
+	private void hideOlder52DataTable() {
+		older52DataTable.getElement().getStyle().setDisplay(Display.NONE);
+	}
+
+	private void resetOlder52DataTable() {
+		older52LB.clear();
+		older52LB.addItem("-", "");
+		older52LB.addItem("LEY 45/2002 MAYORES DE 52 PERC.SUB.REASS", "001");
+		older52LB.addItem("LEY 45/2002 MAYORES DE 52 PERC.RESTO SUB", "002");
 	}
 	
 	private void showAnnexedDataTable() {
@@ -1541,6 +1580,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		disabilityCB.setValue(false);
 		older52CB.setValue(false);
 		annexedCB.setValue(false);
+		older52CB.setValue(false);
 		campaignsCB.setValue(false);
 		investCB.setValue(false);
 		
@@ -2450,6 +2490,17 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			disabilityCB.setValue(false);
 			resetDisabilityDataTable();
 			hideDisabilityDataTable();
+		}
+		
+		//Older52
+		if(Boolean.TRUE.equals(this.contractSpecificData.getOlderThan52())) {
+			showOlder52DataTable();
+			older52CB.setValue(true);
+			setSelectedValueLB(older52LB, this.contractSpecificData.getOtherLegislations());
+		} else {
+			older52CB.setValue(false);
+			resetOlder52DataTable();
+			hideOlder52DataTable();
 		}
 		
 		//AnnexedDataTable

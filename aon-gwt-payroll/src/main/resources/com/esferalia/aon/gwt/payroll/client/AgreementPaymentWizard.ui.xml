@@ -8,6 +8,8 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentWizard.MyStyle">
 		
+		.inputHeight { height: 1.5rem; }
+		
 		.container{
 			display: flex;
 			flex-direction: column;
@@ -99,6 +101,20 @@
 			gap: .5rem;
 		}
 		
+		.flexBetween {
+			justify-content: space-between;
+		}
+		
+		.issueBox {
+			width: 80px;
+			text-align: center;
+			height: 1.5rem;
+		}
+		
+		.listBox {
+			width: 105px;
+		}
+		
 	</ui:style>
 	
 	<g:HTMLPanel ui:field="container" styleName="{style.container}">
@@ -124,14 +140,14 @@
 							<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
 							<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu {style.w180}" />
 						</g:HTMLPanel>
-						<g:HTMLPanel ui:field="extraPayDatePanel" styleName="{style.element}">
+						<!-- g:HTMLPanel ui:field="extraPayDatePanel" styleName="{style.element}">
 							<g:Label styleName="{style.title}">Fecha cobro</g:Label>
 							<g:TextBox ui:field="extraPayDate" styleName="aon-inputText {style.tbHeight}" />
 						</g:HTMLPanel>
 						<g:HTMLPanel ui:field="extraPayCalcPanel" styleName="{style.element}">
 							<g:Label styleName="{style.title}">Cálculo</g:Label>
 							<g:ListBox ui:field="extraPayCalc" styleName="aon-selectOneMenu" />
-						</g:HTMLPanel>
+						</g:HTMLPanel  -->
 						<g:HTMLPanel ui:field="extraPayTypePanel" styleName="{style.element}">
 							<g:Label styleName="{style.title}">Tipo importe</g:Label>
 							<g:ListBox ui:field="extraPayType" styleName="aon-selectOneMenu" />
@@ -140,6 +156,39 @@
 							<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
 							<g:Button ui:field="partialityButton" />
 						</g:HTMLPanel>	
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel ui:field="extraFieldsPanel"  styleName="{style.flex} {style.flexBetween}">
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel styleName="{style.element}">
+								<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
+								<g:TextBox ui:field="extraIssueDate" styleName="{style.issueBox} {style.inputHeight}"/>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.element}">
+								<g:Label styleName="{style.title}">Cotización</g:Label>
+								<g:ListBox ui:field="extraType" styleName="{style.inputHeight}"/>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel styleName="{style.element}">
+								<g:Label styleName="{style.title}">Fecha Incio Cotización</g:Label>
+								<g:HTMLPanel styleName="{style.flex}">
+									<g:ListBox ui:field="extraStartDateMonth" styleName="{style.inputHeight}"/>
+									<g:ListBox ui:field="extraStartDateYear" styleName="{style.listBox} {style.inputHeight}"/>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.element}">
+								<g:Label styleName="{style.title}">Fecha Fin Cotización</g:Label>
+								<g:HTMLPanel styleName="{style.flex}">
+									<g:ListBox ui:field="extraEndDateMonth" styleName="{style.inputHeight}"/>
+									<g:ListBox ui:field="extraEndDateYear" styleName="{style.listBox} {style.inputHeight}"/>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element}">
+							<g:Label styleName="{style.title}">Tipo importe</g:Label>
+							<g:ListBox ui:field="extraPayType2" styleName="aon-selectOneMenu" />
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 					
 				</g:HTMLPanel>
