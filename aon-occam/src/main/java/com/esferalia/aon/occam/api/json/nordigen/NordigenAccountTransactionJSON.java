@@ -16,6 +16,10 @@ public enum NordigenAccountTransactionJSON {
 			(transaction, json) -> transaction.setTransactionId(json.optString("transactionId", null)),
 			(transaction, json) -> json.put("transactionId", transaction.getTransactionId())
 	),
+	INTERNAL_TRANSACTION_ID(
+			(transaction, json) -> transaction.setInternalTransactionId(json.optString("internalTransactionId", null)),
+			(transaction, json) -> json.put("internalTransactionId", transaction.getInternalTransactionId())
+	),
 	ENTRY_REFERENCE(
 			(transaction, json) -> transaction.setEntryReference(json.optString("entryReference", null)),
 			(transaction, json) -> json.put("entryReference", transaction.getEntryReference())

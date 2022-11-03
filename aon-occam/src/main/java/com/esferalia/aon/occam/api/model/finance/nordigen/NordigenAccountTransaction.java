@@ -9,6 +9,7 @@ public class NordigenAccountTransaction implements Serializable {
 	
 	
 	private String transactionId;
+	private String internalTransactionId;
 	private String entryReference;
 	private String checkId;
 	private Date bookingDate;
@@ -26,7 +27,14 @@ public class NordigenAccountTransaction implements Serializable {
 	public NordigenAccountTransaction setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
 		return this;
-	}	
+	}
+	public String getInternalTransactionId() {
+		return internalTransactionId;
+	}
+	public NordigenAccountTransaction setInternalTransactionId(String internalTransactionId) {
+		this.internalTransactionId = internalTransactionId;
+		return this;
+	}
 	public String getEntryReference() {
 		return entryReference;
 	}

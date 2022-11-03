@@ -21,19 +21,25 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface NordigenService extends RemoteService {
 	
 	// --------------------------------------------------------------- RAWDOC
-	NordigenConfiguration getConfiguration(String currentDomainName, int currentDomain, String user) throws Exception;
 	Integer saveEnterpriseData(String currentDomainName, int currentDomain, String user) throws AonCoreException;
 	Integer insertTransactions(String currentDomainName, int currentDomain, String user, Integer checkitEnterpriseId, CheckItBankAccount checkItBankAccount) throws AonCoreException;
 	List<CheckItLoginFields> getLogins(Integer bankId);
-	NordigenRequisition addAccount(String currentDomainName, int currentDomain, String user, NordigenAccessToken token, NordigenBankAccount nordigenBankAccount) throws Exception;
 	CheckItLoginFields getCredentials(Integer enterpriseId, Integer loginId) throws IllegalArgumentException;
 	Boolean editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields) throws IllegalArgumentException;
 	CheckItLoginFields getFields(Integer loginId) throws IllegalArgumentException;
-	List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate) throws Exception; 
 	Boolean addExtraField(Integer enterpriseId, String iban, String extraField);
+	
+	//NORDIGEN
+	NordigenConfiguration getConfiguration(String currentDomainName, int currentDomain, String user) throws Exception;
+	NordigenRequisition addAccount(String currentDomainName, int currentDomain, String user, NordigenAccessToken token, NordigenBankAccount nordigenBankAccount) throws Exception;
+	List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate) throws Exception; 
 	List<NordigenInstitution> getNordigenInstitutions(NordigenAccessToken token, Country country) throws Exception;
 	List<NordigenInstitution> getNordigenInstitutionsByBic(NordigenAccessToken token, String bic) throws Exception;
 	Integer clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain, String user) throws Exception;
 	Boolean cancelRequisition (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, Integer rbankId) throws Exception;
 	NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws Exception;
+	
+	NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account) throws Exception;
+	
+	
 }

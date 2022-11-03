@@ -2,7 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.finance.nordigen;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
@@ -21,11 +24,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModuleOptions;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountMetadata;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
@@ -98,6 +100,10 @@ public class NordigenModule extends MainEntryPoint {
 	private TabLayoutPanel tabLayout;
 	private FlowPanel sessionLog;
 	boolean minimizedByUser;
+	
+	Map<Integer, List<NordigenAccountBalance>> balancesMap;
+	InlineLabel remainderBox;
+	InlineLabel balanceBox;
 	
 	private Widget linkedBanks;
 	private Widget unlinkedBanks;
@@ -187,6 +193,7 @@ public class NordigenModule extends MainEntryPoint {
 
 
 	private Widget paintBanks(NordigenModuleOptions opt) {
+		balancesMap = new HashMap<>();
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.CSS.aonTextCenter());
 		panel.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -207,10 +214,27 @@ public class NordigenModule extends MainEntryPoint {
 			double remainderTotal = 0;
 			boolean logs = false;
 			for (NordigenBankAccount bankAccount : opt.getConfiguration().getLinkedAccounts()) {
-				double bankBalance = bankAccount.getBalance() != null &&
-						bankAccount.getBalance().getBalanceAmount() != null ?
-						bankAccount.getBalance().getBalanceAmount().getAmount() : 0;
+				
+				List<NordigenAccountBalance> balances = bankAccount.getBalances();
+				NordigenAccountBalance consolidado = balances.stream()
+						.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+						.findFirst().orElse(null);
+
+				NordigenAccountBalance real = balances.stream()
+						.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+						.findFirst().orElse(null);
+				
+				
+				double bankBalance = consolidado != null &&
+						consolidado.getBalanceAmount() != null ? consolidado.getBalanceAmount().getAmount() : 0;
+				
+				double remainder = bankBalance;
+				if (real != null && real.getBalanceAmount() != null) {
+					remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());					
+				}
+				
 				balanceTotal = balanceTotal + bankBalance;
+				remainderTotal = remainderTotal + remainder;
 				cards.addCard( new AonNordigenBankCard(opt, bankAccount) );
 				
 				if (isMobile()) {
@@ -241,7 +265,7 @@ public class NordigenModule extends MainEntryPoint {
 			balanceLabel.setStyleName(AON.CSS.aonMarginLeft());
 			balanceLabel.addStyleName(AON.CSS.aonTableLabel());
 			
-			InlineLabel balanceBox = new InlineLabel();
+			balanceBox = new InlineLabel();
 			balanceBox.setText( AON.FMT.format( balanceTotal ) + " " + EURO);
 			balanceBox.setStyleName(AON.CSS.aonMarginLeft());
 			balanceBox.addStyleName(AON.CSS.aonFontMedium());
@@ -255,7 +279,7 @@ public class NordigenModule extends MainEntryPoint {
 			remainderLabel.setStyleName(AON.CSS.aonTableLabel());
 			remainderLabel.addStyleName(AON.CSS.aonMarginLeft());
 			
-			InlineLabel remainderBox = new InlineLabel();
+			remainderBox = new InlineLabel();
 			remainderBox.setText( AON.FMT.format( remainderTotal ) + " " + EURO);
 			remainderBox.setStyleName(AON.CSS.aonMarginLeft());
 			remainderBox.addStyleName(AON.CSS.aonFontMedium());
@@ -269,8 +293,8 @@ public class NordigenModule extends MainEntryPoint {
 			table.setStyleName(AON.CSS.aonTextRight());
 			table.setWidget(0, 0, balanceLabel);
 			table.setWidget(0, 1, balanceBox);
-//			table.setWidget(1, 0, remainderLabel);
-//			table.setWidget(1, 1, remainderBox);
+			table.setWidget(1, 0, remainderLabel);
+			table.setWidget(1, 1, remainderBox);
 			
 			totals.add(accumLabel);
 			totals.add(table);
@@ -313,33 +337,25 @@ public class NordigenModule extends MainEntryPoint {
 	
 	private class AonNordigenBankCard extends AonCard {
 		
-		boolean updateError;
+		FlexTable bottomTable;
+		AonTableButton continueLinkButton;
 
 		private AonNordigenBankCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount) {
-			updateError = false;
 			
 			FlowPanel titlePanel = new FlowPanel();
 			titlePanel.addStyleName(AON.CSS.aonTextCenter());
-			NordigenInstitution institution = nordigenBankAccount.getInstitution();
-			NordigenAccountMetadata metadata = nordigenBankAccount.getMetadata();
-			NordigenAccountBalance balance = nordigenBankAccount.getBalance();
-			String logo = institution != null ? institution .getLogo() : null;
-			String bankName = institution != null ? AonStringUtils.trimToEmpty(institution.getName()) : "";
-			String iban = metadata != null ? AonStringUtils.trimToEmpty(metadata.getIban()) : "";
-			Date atDate = balance != null ? balance.getReferenceDate() : null;
-			Double balanceAmount = balance != null && balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : null;
-			if (logo != null && !logo.isEmpty()) {
-				Image logoImg = new Image(logo);
-				logoImg.setHeight("40px");
-				titlePanel.add(logoImg);
-			} else {
-				Label title = new Label();
-				title.addStyleName(AON.CSS.aonBorderNone());
-				title.setText(AonStringUtils.abbreviate(bankName, 26));
-				String bankTitle = bankName;
-				title.setTitle(bankTitle);
-				titlePanel.add(title);
-			}
+			
+			RegistryBank rbank = nordigenBankAccount.getRbank();
+			String bankName = rbank != null ? rbank.getAlias() : "";
+			String iban = rbank != null ? rbank.getBankAccount().getIban() : "";
+			
+			Label title = new Label();
+			title.addStyleName(AON.CSS.aonBorderNone());
+			title.setText(AonStringUtils.abbreviate(bankName, 26));
+			String bankTitle = bankName;
+			title.setTitle(bankTitle);
+			titlePanel.add(title);
+			
 			this.setTitle(titlePanel);
 			if (Window.getClientWidth() < 675) {				
 				this.getElement().getStyle().setProperty("marginLeft", "auto");
@@ -347,7 +363,7 @@ public class NordigenModule extends MainEntryPoint {
 			}
 			
 			FlowPanel body = new FlowPanel();
-			FlexTable bottomTable = new FlexTable();
+			bottomTable = new FlexTable();
 			FlowPanel ibanPanel = new FlowPanel();
 			InlineLabel ibanBox = new InlineLabel();
 			ibanBox.setText(formatIban(iban));
@@ -361,33 +377,10 @@ public class NordigenModule extends MainEntryPoint {
 			
 			FlowPanel atDatePanel = new FlowPanel();
 			InlineLabel atDateBox = new InlineLabel();
-//			InlineLabel atDateBox2 = new InlineLabel();
 			atDateBox.addStyleName(AON.CSS.aonFontMedium());
-			atDateBox.setText(balance == null || atDate == null ? "----" : AON.DATE_FORMAT.format(atDate));
-//			atDateBox2.setText(balance == null ? "" : " hora: " + DATE_HOURS.format(atDate));
 			
 			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
-			if (atDate != null && CalendarUtil.getDaysBetween(atDate, new Date()) >= 4) {
-				atDateBox.addStyleName(AON.CSS.aonColorRed());
-				updateError = true;
-				int noUpDays = CalendarUtil.getDaysBetween(atDate, new Date());
-				FlowPanel updateErrorPanel = new FlowPanel();
-				Label updateErrorLbl = new Label("Error de actualizaci\u00F3n en cuenta " + bankName + " - " + iban + ": la cuenta lleva " + noUpDays + " d\u00EDas sin actualizarse");
-				updateErrorLbl.addStyleName(AON.CSS.aonColorRed());
-				Label updateErrorLbl2 = new Label("Acceda a su banca online para verificar el acceso");
-				updateErrorLbl2.addStyleName(AON.CSS.aonMarginLeft());
-				updateErrorPanel.add(updateErrorLbl);
-				updateErrorPanel.add(updateErrorLbl2);
-				if (!isMobile()) {
-					sessionLog.add(updateErrorPanel);
-					openFootPanel();
-				}
-				
-			} else if (atDate != null){
-				atDateBox.addStyleName(AON.CSS.aonColorGreen());				
-			}
 			atDatePanel.add(atDateBox);
-//			atDatePanel.add(atDateBox2);
 			
 			FlowPanel balanceLabelPanel = new FlowPanel();
 			InlineLabel balanceLabel = new InlineLabel("Saldo ");
@@ -398,27 +391,8 @@ public class NordigenModule extends MainEntryPoint {
 			InlineLabel balanceBox = new InlineLabel();
 			balanceBox.addStyleName(AON.CSS.aonFontMedium());
 			balanceBox.addStyleName(AON.CSS.aonBold());
-			if (balanceAmount != null && AonMathUtils.isLessThanZero(balanceAmount)) {
-				balanceBox.addStyleName(AON.CSS.aonColorRed());
-			}
-			if (balanceAmount != null) {				
-				balanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
-			}
 			balancePanel.addStyleName(AON.CSS.aonMarginBottom());
 			balancePanel.add(balanceBox);
-//			FlowPanel remainderLabelPanel = new FlowPanel();
-//			InlineLabel remainderLabel = new InlineLabel("Disponible ");
-//			remainderLabel.setStyleName(AON.CSS.aonTableLabel());
-//			remainderLabelPanel.add(remainderLabel);
-//
-//			FlowPanel remainderPanel = new FlowPanel();
-//			InlineLabel remainderBox = new InlineLabel();
-//			if (AonMathUtils.isLessThanZero( nordigenBankAccount.getRemainder())) {
-//				balanceBox.addStyleName(AON.CSS.aonColorRed());	
-//			}
-//			remainderBox.setText( AON.FMT.format( nordigenBankAccount.getRemainder()) + " " + EURO);
-//			remainderPanel.addStyleName(AON.CSS.aonMarginBottom());
-//			remainderPanel.add(remainderBox);
 
 			body.add(ibanPanel);
 			
@@ -428,8 +402,6 @@ public class NordigenModule extends MainEntryPoint {
 			body.add(balanceLabelPanel);
 			body.add(balancePanel);
 			
-//			body.add(remainderLabelPanel);
-//			body.add(remainderPanel);
 			if (Window.getClientWidth() < 675) {				
 				this.getElement().getStyle().setProperty("minWidth", "100%");
 			} else {
@@ -437,377 +409,17 @@ public class NordigenModule extends MainEntryPoint {
 			}
 			body.addStyleName(AON.CSS.aonTextCenter());
 			
-			int pendingMovements = 0;
-			FlowPanel movText = new FlowPanel();
 			
-//			ClickHandler clickHandler = event -> {
-//				FlowPanel panel = new FlowPanel();
-//				panel.getElement().getStyle().setProperty("minWidth", "230px");
-//				
-//				FlowPanel movFlow = null;
-//				CustomDialog dialog = null;
-//				
-//				if (isMobile()) {
-//					AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
-//					toolbar.setTitle("MOVIMIENTOS");
-//					toolbar.add(back);
-//					centerPanel.clear();
-//					back.addClickHandler(h -> {
-//						toolbar.remove(back);
-//						centerPanel.clear();
-//						loadModule(opt, true);
-//					});
-//					
-//					
-//					movFlow = new FlowPanel();
-//					centerPanel.add(movFlow);
-//				} else {					
-//					dialog = new CustomDialog();
-//					dialog.setAutoHideEnabled(true);
-//					
-//					dialog.setCaption("MOVIMIENTOS PENDIENTES");
-//				}
-//				
-//				
-//				HorizontalPanel closeImport = new HorizontalPanel();
-//				closeImport.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-//				closeImport.addStyleName(AON.CSS.aonPaddingTop());
-//				closeImport.addStyleName(AON.CSS.aonBlockCenter());
-//				closeImport.addStyleName(AON.CSS.aonPaddingBottom());
-//				
-//				
-////				Button close = new Button(AON.MSG.close());
-////				close.setStyleName(AON.CSS.aonMarginRight());
-////				close.addClickHandler(e -> dialog.hide());
-//				Button importBtn = aonImportButton();
-//				
-//				
-//				CustomDialog dial = dialog;
-//				importBtn.addClickHandler(e ->
-//					NORDIGEN_SERVICE.insertTransactions(
-//							opt.getDomainName()
-//							, opt.getDomain()
-//							, opt.getUser()
-//							, opt.getConfiguration().getEnterpriseId()
-//							, nordigenBankAccount
-//							, new AsyncCallback<Integer>() {
-//								@Override
-//								public void onSuccess(Integer result) {
-//									String singPlur = (result != 1) ? " nuevos movimientos insertados en " : " nuevo movimiento insertado en ";
-//									
-//									Label label = new Label(result + singPlur + nordigenBankAccount.getBank() + " - " + formatIban(nordigenBankAccount.getCcc()));
-//									label.addStyleName(AON.CSS.aonColorGreen());
-//									sessionLog.add(label);
-//									openFootPanel();										
-//									
-//									if (result != null && result != 0) {
-//										getBottomCardMessage(bottomTable
-//												, new Label("No hay movimientos pendientes")
-//												, updateError
-//												, areLogs);
-//										nordigenBankAccount.setPending(Collections.emptyList());
-//									}
-//									if (!isMobile())
-//										dial.hide();
-//								}
-//								
-//								@Override
-//								public void onFailure(Throwable caught) {
-//									Label errLabel = new Label(caught.getMessage());
-//									errLabel.setStyleName(AON.CSS.aonColorRed());
-//									sessionLog.add(errLabel);
-//									openFootPanel();
-//									if (!isMobile())
-//										dial.hide();
-//								}	
-//						}));
-//				
-////				closeImport.add(close);
-//				
-//				if (nordigenBankAccount.getPending() != null && !nordigenBankAccount.getPending().isEmpty())
-//					closeImport.add(importBtn);
-//				
-//				FlowPanel movementsFlow = new FlowPanel();
-//				movementsFlow.setWidth(isMobile() ? "100%" : "90%");
-//				movementsFlow.setStyleName(AON.CSS.aonBlockCenter());
-//				
-//				FlowPanel topInfo = new FlowPanel();
-//				topInfo.setWidth("100%");
-//				
-//				Image logoImg = new Image(nordigenBankAccount.getLogo());
-//				logoImg.setHeight("40px");
-//				logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
-//				logoImg.addStyleName(AON.CSS.aonBlockCenter());
-//				Label ibanLbl = new Label(formatIban(nordigenBankAccount.getCcc()));
-//				ibanLbl.addStyleName(AON.CSS.aonTextCenter());
-//				topInfo.add(logoImg);
-//				topInfo.add(ibanLbl);
-//				topInfo.addStyleName(AON.CSS.aonMarginBottom());
-//				
-//				movementsFlow.add(topInfo);
-//				
-//				if (isMobile() || (nordigenBankAccount.getPending() != null && !nordigenBankAccount.getPending().isEmpty())) {
-//					FlowPanel periodMovContainer = new FlowPanel();
-//					if (isMobile())
-//						buildCustomMovementsPanel(periodMovContainer, opt, nordigenBankAccount);
-//					else
-//						periodMovContainer.add(getMovements(nordigenBankAccount));
-//					movementsFlow.add(periodMovContainer);
-////					movementsFlow.add(getMovements(checkItBankAccount, isMobile()));
-//				} else {
-//					Label noMovLbl = new Label("No hay movimientos pendientes");
-//					noMovLbl.setWidth("100%");
-//					noMovLbl.setStyleName(AON.CSS.aonTextCenter());
-//					movementsFlow.add(noMovLbl);
-//						
-//				}
-//				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
-//				movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
-//				if (isMobile()) {
-//					movementsPanel.setWidth("100%");
-//				} else {
-//					
-//					movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
-//					movementsPanel.addStyleName(AON.CSS.aonMarginTop());
-//					movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
-//				}
-//				panel.add(movementsPanel);
-//				if (isMobile()) {
-//					movFlow.add(panel);
-//					centerPanel.getElement().getStyle().setPadding(5, Unit.PX);
-//				} else {					
-//					panel.add(closeImport);
-//					dialog.add(panel);
-//					dialog.center();
-//					dialog.show();
-//				}
-//			};
-			
-			
-			
-			
-//			if (!isMobile())
-//			body.addDomHandler(clickHandler, ClickEvent.getType());
-//			title.addDomHandler(clickHandler, ClickEvent.getType());
 			
 			bottomTable.addStyleName(AON.CSS.aonBlockCenter());
 			
-			Widget msgWidget = null;
-			NordigenRequisition requisition = nordigenBankAccount.getRequisition();
-			if (requisition != null) {
-				NORDIGEN_REQUISITION_STATUS requisitionStatus = requisition.getStatus();
-				if (!NORDIGEN_REQUISITION_STATUS.LN.equals(requisitionStatus)) {
-					Label errLabel = new Label();
-					msgWidget = errLabel;
-					errLabel.addStyleName(AON.CSS.aonColorRed());
-					if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisitionStatus)) {
-						errLabel.setText("Las credenciales expiraron, debe volver a vincular la cuenta");
-					} else if (NORDIGEN_REQUISITION_STATUS.RJ.equals(requisitionStatus)) {
-						errLabel.setText("El proceso de vinclaci\u00F3n fall\u00F3");
-					} else {
-						errLabel.setText("La vinculaci\u00F3n no se ha completado a\u00FAn");
-					}
-				}
-			}
-//			if (!isMobile() && pendingMovements > 0) {
-//				
-//				String singPlur = pendingMovements != 1 ? " nuevos movimientos" : " nuevo movimiento";
-//				
-//				InlineLabel pending1Label = new InlineLabel("Hay ");
-//				InlineLabel pending2Label = new InlineLabel(AonNumberUtils.toString(pendingMovements));
-//				pending2Label.setStyleName(AON.CSS.aonBold());
-//				InlineLabel pending3Label = new InlineLabel(singPlur);
-//				
-//				
-//				movText.add(pending1Label);
-//				movText.add(pending2Label);
-//				movText.add(pending3Label);
-//				
-//				movText.addStyleName(AON.CSS.aonTextCenter());
-//				movText.addStyleName(AON.CSS.aonColorGreen());
-//				msgWidget = movText;
-////				bottomTable.setWidget(0, 0, movText);
-//			} else if (!isMobile()) {
-//				Label noMovLbl = new Label("No hay movimientos pendientes");
-//				msgWidget = noMovLbl;
-//				
-////				bottomTable.setWidget(0, 0, noMovLbl);
-//				
-//			}
-			getBottomCardMessage(bottomTable, msgWidget, updateError);
-			body.add(bottomTable);				
+			body.add(bottomTable);
 			
 			
 			this.setBody(body);
 			
 			AonTableButton saveButton = new AonTableButton(AON.MSG.importAction(), AON.CSS.aonIconImport());
 			saveButton.setTabIndex(-2);
-//			saveButton.addClickHandler(event ->
-//				NORDIGEN_SERVICE.insertTransactions(
-//						opt.getDomainName()
-//						, opt.getDomain()
-//						, opt.getUser()
-//						, opt.getConfiguration().getEnterpriseId()
-//						, nordigenBankAccount
-//						, new AsyncCallback<Integer>() {
-//							@Override
-//							public void onSuccess(Integer result) {
-//									String singPlur = (result != 1) ? " nuevos movimientos insertados en " : " nuevo movimiento insertado en ";
-//									
-//									Label label = new Label(result + singPlur + nordigenBankAccount.getBank() + " - " + formatIban(nordigenBankAccount.getCcc()));
-//									label.addStyleName(AON.CSS.aonColorGreen());
-//									sessionLog.add(label);
-//									openFootPanel();
-//								
-//								if (result != null && result != 0) {
-//									getBottomCardMessage(bottomTable
-//											, new Label("No hay movimientos pendientes")
-//											, updateError
-//											, areLogs);
-////									if (!updateError) {
-////										body.remove(bottomTable);
-////										body.add(new Label("No hay movimientos pendientes"));										
-////									}
-//									nordigenBankAccount.setPending(Collections.emptyList());
-//								}
-//								
-//							}
-//							
-//							@Override
-//							public void onFailure(Throwable caught) {
-//								Label errLabel = new Label(caught.getMessage());
-//								errLabel.setStyleName(AON.CSS.aonColorRed());
-//								sessionLog.add(errLabel);
-//								openFootPanel();
-//							}	
-//					}));
-			
-
-			
-			AonTableButton allMovementsButton = new AonTableButton("Todos los movimientos", AON.CSS.aonIconList());
-			allMovementsButton.setTabIndex(-3);
-			
-			allMovementsButton.addClickHandler(event -> {
-				FlowPanel panel = new FlowPanel();
-				panel.getElement().getStyle().setProperty("minWidth", "230px");
-				
-				FlowPanel movFlow = null;
-				CustomDialog dialog = new CustomDialog();
-				dialog.setAutoHideEnabled(true);
-				
-				dialog.setCaption("MOVIMIENTOS");
-				
-				
-				HorizontalPanel closeImport = new HorizontalPanel();
-				closeImport.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				closeImport.addStyleName(AON.CSS.aonPaddingTop());
-				closeImport.addStyleName(AON.CSS.aonBlockCenter());
-				closeImport.addStyleName(AON.CSS.aonPaddingBottom());
-				
-				
-				Button importBtn = aonImportButton();
-				
-				CustomDialog dial = dialog;
-//				importBtn.addClickHandler(e ->
-//					NORDIGEN_SERVICE.insertTransactions(
-//							opt.getDomainName()
-//							, opt.getDomain()
-//							, opt.getUser()
-//							, opt.getConfiguration().getEnterpriseId()
-//							, nordigenBankAccount
-//							, new AsyncCallback<Integer>() {
-//								@Override
-//								public void onSuccess(Integer result) {
-//									String singPlur = (result != 1) ? " nuevos movimientos insertados en " : " nuevo movimiento insertado en ";
-//									
-//									Label label = new Label(result + singPlur + nordigenBankAccount.getBank() + " - " + formatIban(nordigenBankAccount.getCcc()));
-//									label.addStyleName(AON.CSS.aonColorGreen());
-//									sessionLog.add(label);
-//									openFootPanel();										
-//									
-//									if (result != null && result != 0) {
-//										getBottomCardMessage(bottomTable
-//												, new Label("No hay movimientos pendientes")
-//												, updateError);
-//										nordigenBankAccount.setPending(Collections.emptyList());
-//									}
-//									dial.hide();
-//								}
-//								
-//								@Override
-//								public void onFailure(Throwable caught) {
-//									Label errLabel = new Label(caught.getMessage());
-//									errLabel.setStyleName(AON.CSS.aonColorRed());
-//									sessionLog.add(errLabel);
-//									openFootPanel();
-//										dial.hide();
-//								}	
-//						}));
-				
-				
-				FlowPanel movementsFlow = new FlowPanel();
-				movementsFlow.setWidth(isMobile() ? "100%" : "90%");
-				movementsFlow.setStyleName(AON.CSS.aonBlockCenter());
-				
-				FlowPanel topInfo = new FlowPanel();
-				topInfo.setWidth("100%");
-				
-				Image logoImg = new Image(logo);
-				logoImg.setHeight("40px");
-				logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
-				logoImg.addStyleName(AON.CSS.aonBlockCenter());
-				Label ibanLbl = new Label(formatIban(iban));
-				ibanLbl.addStyleName(AON.CSS.aonTextCenter());
-				topInfo.add(logoImg);
-				topInfo.add(ibanLbl);
-				
-				Label movBalanceLabel = new Label("Saldo");
-				movBalanceLabel.addStyleName(AON.CSS.aonTextCenter());
-				movBalanceLabel.addStyleName(AON.CSS.aonMarginTop());
-				
-				
-				
-				topInfo.add(movBalanceLabel);
-				
-				
-				FlowPanel movBalancePanel = new FlowPanel();
-				InlineLabel movBalanceBox = new InlineLabel();
-				movBalanceBox.addStyleName(AON.CSS.aonFontMedium());
-				movBalanceBox.addStyleName(AON.CSS.aonBold());
-				if (balanceAmount != null && AonMathUtils.isLessThanZero(balanceAmount)) {
-					movBalanceBox.addStyleName(AON.CSS.aonColorRed());
-				}
-				movBalanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
-				movBalancePanel.addStyleName(AON.CSS.aonMarginBottom());
-				movBalancePanel.addStyleName(AON.CSS.aonTextCenter());
-				movBalancePanel.add(movBalanceBox);
-				topInfo.add(movBalancePanel);
-				
-				topInfo.addStyleName(AON.CSS.aonMarginBottom());
-				
-				movementsFlow.add(topInfo);
-				
-				
-				/**Filtros de fecha**/
-				
-				FlowPanel periodMovContainer = new FlowPanel();
-				
-				buildCustomMovementsPanel(periodMovContainer, opt, nordigenBankAccount, dialog);
-				
-				
-				movementsFlow.add(periodMovContainer);
-				
-				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
-				movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
-				movementsPanel.addStyleName(AON.CSS.aonMarginTop());
-				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
-				movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
-				
-				panel.add(movementsPanel);
-				dialog.add(panel);
-				dialog.center();
-				dialog.show();
-			});
 			
 			AonTableButton unlinkButton = new AonTableButton("Desvincular", AON.CSS.aonIconDelete());
 			unlinkButton.setTabIndex(-4);
@@ -820,7 +432,6 @@ public class NordigenModule extends MainEntryPoint {
 				HorizontalPanel hp = new HorizontalPanel();
 				hp.addStyleName(AON.CSS.aonBlockCenter());
 				Button hai = new Button(AON.MSG.accept());
-				RegistryBank rbank = nordigenBankAccount.getRbank();
 				
 				hai.addClickHandler((event) -> {
 					NORDIGEN_SERVICE.cancelRequisition(opt.getConfiguration().getToken(),
@@ -868,10 +479,280 @@ public class NordigenModule extends MainEntryPoint {
 				dialog.show();
 				
 			});
+			
+			
+			AonTableButton allMovementsButton = new AonTableButton("Todos los movimientos", AON.CSS.aonIconList());
+			allMovementsButton.setTabIndex(-3);
+			
+			
+			allMovementsButton.addClickHandler(event -> {
+				showAllMovements(opt, nordigenBankAccount, iban);
+			});
+			
+			getMenuPanel().add(unlinkButton);
+			
+			
+			
+			AonTableButton updateButton = new AonTableButton("Actualizar", AON.CSS.aonIconRefresh());
+			updateButton.setTabIndex(-5);
+			updateButton.addClickHandler((ev) -> {
+				refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton);
+			});
+			getMenuPanel().add(updateButton);
+			
+			refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton);
+		}
+
+		private void showBottomMessage(String message) {
+			this.bottomTable.clear();
+			this.bottomTable.addStyleName(AON.CSS.aonBlockCenter());
+			Label errLabel = new Label(message);
+			errLabel.addStyleName(AON.CSS.aonColorRed());
+			this.bottomTable.setWidget(0, 0, errLabel);
+		}
+		
+		private void clearBottomMessage() {
+			this.bottomTable.clear();
+		}
+		
+		private void showAllMovements(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, String iban) {
+			FlowPanel panel = new FlowPanel();
+			panel.getElement().getStyle().setProperty("minWidth", "230px");
+			
+			
+			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
+			Double balanceAmount = 0d;
+			NordigenAccountBalance consolidado = balances.stream()
+					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+					.findFirst().orElse(null);
+
+			NordigenAccountBalance real = balances.stream()
+					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+					.findFirst().orElse(null);
+			
+			if (real != null && real.getBalanceAmount() != null) {
+				balanceAmount = real.getBalanceAmount().getAmount();
+			} else if (consolidado != null && consolidado.getBalanceAmount() != null) {
+				balanceAmount = consolidado.getBalanceAmount().getAmount();
+			}
+			
+			String logo = nordigenBankAccount.getInstitution() != null ? nordigenBankAccount.getInstitution().getLogo() : "";
+			Image logoImg = new Image(logo);
+			logoImg.setHeight("40px");
+			logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
+			logoImg.addStyleName(AON.CSS.aonBlockCenter());
+			
+			FlowPanel movFlow = null;
+			CustomDialog dialog = new CustomDialog();
+			dialog.setAutoHideEnabled(true);
+			
+			dialog.setCaption("MOVIMIENTOS");
+			
+			
+			HorizontalPanel closeImport = new HorizontalPanel();
+			closeImport.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			closeImport.addStyleName(AON.CSS.aonPaddingTop());
+			closeImport.addStyleName(AON.CSS.aonBlockCenter());
+			closeImport.addStyleName(AON.CSS.aonPaddingBottom());
+			
+			
+			Button importBtn = aonImportButton();
+			
+			CustomDialog dial = dialog;
+			
+			
+			FlowPanel movementsFlow = new FlowPanel();
+			movementsFlow.setWidth(isMobile() ? "100%" : "90%");
+			movementsFlow.setStyleName(AON.CSS.aonBlockCenter());
+			
+			FlowPanel topInfo = new FlowPanel();
+			topInfo.setWidth("100%");
+			
+			Label ibanLbl = new Label(formatIban(iban));
+			ibanLbl.addStyleName(AON.CSS.aonTextCenter());
+			topInfo.add(logoImg);
+			topInfo.add(ibanLbl);
+			
+			Label movBalanceLabel = new Label("Saldo");
+			movBalanceLabel.addStyleName(AON.CSS.aonTextCenter());
+			movBalanceLabel.addStyleName(AON.CSS.aonMarginTop());
+			
+			topInfo.add(movBalanceLabel);
+			
+			
+			FlowPanel movBalancePanel = new FlowPanel();
+			InlineLabel movBalanceBox = new InlineLabel();
+			movBalanceBox.addStyleName(AON.CSS.aonFontMedium());
+			movBalanceBox.addStyleName(AON.CSS.aonBold());
+			
+			movBalancePanel.addStyleName(AON.CSS.aonMarginBottom());
+			movBalancePanel.addStyleName(AON.CSS.aonTextCenter());
+			movBalancePanel.add(movBalanceBox);
+			
+			if (AonMathUtils.isLessThanZero(balanceAmount)) {
+				movBalanceBox.addStyleName(AON.CSS.aonColorRed());
+			}
+			if (balanceAmount != null) {				
+				movBalanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
+			}
+			
+			topInfo.add(movBalancePanel);
+			
+			topInfo.addStyleName(AON.CSS.aonMarginBottom());
+			
+			movementsFlow.add(topInfo);
+			
+			
+			/**Filtros de fecha**/
+			
+			FlowPanel periodMovContainer = new FlowPanel();
+			
+			buildCustomMovementsPanel(periodMovContainer, opt, nordigenBankAccount, dialog);
+			
+			
+			movementsFlow.add(periodMovContainer);
+			
+			ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
+			movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
+			movementsPanel.addStyleName(AON.CSS.aonMarginTop());
+			movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
+			movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
+			
+			panel.add(movementsPanel);
+			dialog.add(panel);
+			dialog.center();
+			dialog.show();
+		}
+
+		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
+				InlineLabel atDateBox, InlineLabel balanceBox, Label title, FlowPanel titlePanel, AonTableButton allMovementsButton) {
+			allMovementsButton.setVisible(false);
+			showBottomMessage("CARGANDO...");
+			NORDIGEN_SERVICE.setNordigenAccountValues(opt.getConfiguration().getToken(), nordigenBankAccount, new AsyncCallback<NordigenBankAccount>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					LOGGER.info(caught.getMessage());
+					showBottomMessage(caught.getMessage());					
+				}
+
+				@Override
+				public void onSuccess(NordigenBankAccount result) {
+					copyBankAccount(nordigenBankAccount, result);
+					allMovementsButton.setVisible(true);
+					updateCard(opt, result, atDateBox, balanceBox, title, titlePanel, allMovementsButton);
+					clearBottomMessage();
+				}
+			
+			
+			});
+		}
+		
+		private void copyBankAccount(NordigenBankAccount original, NordigenBankAccount updated) {
+			original.setBalances(updated.getBalances());
+			original.setBankAlias(updated.getBankAlias());
+			original.setDetails(updated.getDetails());
+			original.setIban(updated.getIban());
+			original.setInstitution(updated.getInstitution());
+			original.setLinked(updated.isLinked());
+			original.setMetadata(updated.getMetadata());
+			original.setRaddInfo(updated.getRaddInfo());
+			original.setRbank(updated.getRbank());
+			original.setRequisition(updated.getRequisition());
+		}
+		
+		private void updateBalances() {
+			if (balancesMap != null && balanceBox != null && remainderBox != null) {
+				double balance = 0;
+				double remainder = 0;
+				for (Entry<Integer, List<NordigenAccountBalance>> entry : balancesMap.entrySet()) {
+					List<NordigenAccountBalance> balances = entry.getValue();
+					NordigenAccountBalance consolidado = balances.stream()
+							.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+							.findFirst().orElse(null);
+
+					NordigenAccountBalance real = balances.stream()
+							.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+							.findFirst().orElse(null);
+					
+					
+					
+					if (consolidado != null && consolidado.getBalanceAmount() != null) {
+						balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
+					}
+					if (real == null || real.getBalanceAmount() == null) {
+						real = consolidado;
+					}
+					
+					if (real != null && real.getBalanceAmount() != null) {
+						remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
+					}
+				}
+				balanceBox.setText( AON.FMT.format(balance) + " " + EURO);
+				remainderBox.setText( AON.FMT.format(remainder) + " " + EURO);
+				
+			}
+		}
+
+		private void updateCard(NordigenModuleOptions opt, NordigenBankAccount result, InlineLabel atDateBox, 
+				InlineLabel balanceBox, Label title, FlowPanel titlePanel, AonTableButton allMovementsButton) {
+			
+			String logo = result.getInstitution() != null ? result.getInstitution().getLogo() : "";
+			titlePanel.clear();
+			
+			if (AonStringUtils.isNotBlank(logo)) {
+				Image logoImg = new Image(logo);
+				logoImg.setHeight("40px");
+				logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
+				logoImg.addStyleName(AON.CSS.aonBlockCenter());
+				titlePanel.add(logoImg);
+			} else {
+				titlePanel.add(title);
+			}
+			
+			List<NordigenAccountBalance> balances = result.getBalances();
+			NordigenAccountBalance consolidado = balances.stream()
+					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+					.findFirst().orElse(null);
+
+			NordigenAccountBalance real = balances.stream()
+					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+					.findFirst().orElse(null);
+			
+			if (result.getRbank() != null) {
+				balancesMap.put(result.getRbank().getId(), balances);
+				updateBalances();
+			}
+			
+			NordigenAccountBalance balance = real != null ? real : consolidado;
+			Date atDate = balance != null ? balance.getReferenceDate() : null;
+			Double balanceAmount = balance != null && balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : null;
+			atDateBox.setText(balance == null || atDate == null ? "----" : AON.DATE_FORMAT.format(atDate));
+			if (balanceAmount != null && AonMathUtils.isLessThanZero(balanceAmount)) {
+				balanceBox.addStyleName(AON.CSS.aonColorRed());
+			}
+			if (balanceAmount != null) {				
+				balanceBox.setText( AON.FMT.format(balanceAmount) + " " + EURO);
+			}
+			
+			NordigenRequisition requisition = result.getRequisition();
 			if (requisition != null) {
+				
+				NORDIGEN_REQUISITION_STATUS requisitionStatus = requisition.getStatus();
+				if (!NORDIGEN_REQUISITION_STATUS.LN.equals(requisitionStatus)) {
+					
+					if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisitionStatus)) {
+						showBottomMessage("Las credenciales expiraron, debe volver a vincular la cuenta");
+					} else if (NORDIGEN_REQUISITION_STATUS.RJ.equals(requisitionStatus)) {
+						showBottomMessage("El proceso de vinclaci\u00F3n fall\u00F3");
+					} else {
+						showBottomMessage("La vinculaci\u00F3n no se ha completado a\u00FAn");
+					}
+				}
+				
+				
 				if (NORDIGEN_REQUISITION_STATUS.LN.equals(requisition.getStatus())) {
 					if (!isMobile()) {					
-//						getMenuPanel().add(saveButton);
 						getMenuPanel().add(allMovementsButton);
 					}
 				} else if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisition.getStatus())) {
@@ -879,28 +760,29 @@ public class NordigenModule extends MainEntryPoint {
 				} else if (NORDIGEN_REQUISITION_STATUS.RJ.equals(requisition.getStatus())) {
 					//TODO					
 				} else {
-					AonTableButton continueLinkButton = new AonTableButton("Continuar la vinculaci\u00F3n", AON.CSS.aonIconRestore());
-					continueLinkButton.setTabIndex(-5);
-					continueLinkButton.addClickHandler((ev) -> {
-						FlexTable flexTable = new FlexTable();
-						AonDialog dialog = new AonDialog("Continuar vinculaci\u00F3n", flexTable);
-						drawShit(opt, dialog, nordigenBankAccount, requisition, flexTable);
-						dialog.setAutoHideEnabled(false);
-						dialog.center();
-						dialog.show();
+					if (continueLinkButton == null) {
+						continueLinkButton = new AonTableButton("Continuar la vinculaci\u00F3n", AON.CSS.aonIconRestore());
+						continueLinkButton.setTabIndex(-5);
+						continueLinkButton.addClickHandler((ev) -> {
+							FlexTable flexTable = new FlexTable();
+							AonDialog dialog = new AonDialog("Continuar vinculaci\u00F3n", flexTable);
+							drawShit(opt, dialog, result, requisition, flexTable);
+							dialog.setAutoHideEnabled(false);
+							dialog.center();
+							dialog.show();
+							
+							Window.open(requisition.getLink(), "REGISTRO DE CUENTA", "_blank");
+						});
 						
-						Window.open(requisition.getLink(), "REGISTRO DE CUENTA", "_blank");
-					});
-					
-					getMenuPanel().add(continueLinkButton);
+						getMenuPanel().add(continueLinkButton);
+					}
 					
 				}
 				
 			}
-			getMenuPanel().add(unlinkButton);
 			
 		}
-
+		
 		private Button aonImportButton() {
 			Button importBtn = new Button("Importar");
 //			importBtn.setStyleName(AON.CSS.aonMarginLeft());
@@ -1486,24 +1368,6 @@ public class NordigenModule extends MainEntryPoint {
 		style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
 	}
 	
-	private FlexTable getBottomCardMessage(FlexTable bottomTable, Widget message, boolean updateError) {
-		bottomTable.clear();
-		if (updateError) {
-			FlexTable updateTable = new FlexTable();
-			Label updateErrorLabel = new Label("Error de actualizaci\u00F3n");
-			updateErrorLabel.addStyleName(AON.CSS.aonColorRed());
-			updateTable.setWidget(1, 1, updateErrorLabel);
-			Label errorIcon = new Label();
-			errorIcon.addStyleName(AON.CSS.aonIconLabel());
-			errorIcon.addStyleName(AON.CSS.aonIconInvalid());
-			updateTable.setWidget(1, 0, errorIcon);
-			bottomTable.setWidget(1, 0, updateTable);
-		}
-		bottomTable.setWidget(0, 0, message);
-		bottomTable.addStyleName(AON.CSS.aonBlockCenter());
-		return bottomTable;
-	}
-	
 	
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
@@ -1616,7 +1480,6 @@ public class NordigenModule extends MainEntryPoint {
 						return pen == null && dte == null;
 					}
 				})
-				.sorted((o1, o2) -> o1.getNordigenMovementId().compareTo(o2.getNordigenMovementId()))
 				.collect(Collectors.toList());
 				
 				for (int i=0; i< st.size(); i++) {
@@ -1657,8 +1520,10 @@ public class NordigenModule extends MainEntryPoint {
 		
 		FlowPanel amountsFlow = new FlowPanel();
 		
-		
-		Label amountLabel = new Label(AON.FMT.format(amount) + " " + EURO);
+		Label amountLabel = new Label();
+		if (amount != null) {
+			amountLabel.setText(AON.FMT.format(amount) + " " + EURO);
+		}
 		amountLabel.addStyleName(AON.CSS.aonFontMedium());
 		amountLabel.addStyleName(AON.CSS.aonBold());
 		amountLabel.addStyleName(AON.CSS.aonTextRight());
@@ -1677,11 +1542,11 @@ public class NordigenModule extends MainEntryPoint {
 		amountsFlow.add(amountLabel);
 		Label balanceLabel = new Label();
 		if (balance != null) {
-			if (!bankStatement.isPending()) {
+//			if (!bankStatement.isPending()) {
 				balanceLabel.setText(AON.FMT.format(balance) + " " + EURO);				
-			} else {
-				balanceLabel.setText("No consolidado");
-			}
+//			} else {
+//				balanceLabel.setText("No consolidado");
+//			}
 			amountsFlow.add(balanceLabel);
 			balanceLabel.addStyleName(AON.CSS.aonFontLarger());
 			balanceLabel.addStyleName(AON.CSS.aonTextRight());
