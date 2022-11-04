@@ -47,6 +47,7 @@ public final class IJsonNames {
 	public static final String ATTACH_MODULE = "attachModule";
 	public static final String ATTACH_TYPE = "attachType";
 	public static final String AUTH = "auth";
+	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
 	
 	// ---------------------------------------------------------------------------------------------	[B] 
@@ -235,6 +236,7 @@ public final class IJsonNames {
 	public static final String IN_PERIOD_OPENING_DEBIT = "inPeriodOpeningDebit";
 	public static final String IN_PERIOD_OPENING_CREDIT = "inPeriodOpeningCredit"; 
 	public static final String INACTIVE = "inactive";
+	public static final String INCLUDE_DATE = "includeDate";
 	public static final String INCREASE_PERCENT = "increasePercent";
 	public static final String INGENET = "ingenet";
 	public static final String INIT_ACTION = "initAction";
@@ -420,6 +422,7 @@ public final class IJsonNames {
 	public static final String REG_CONTABLE_DATE = "regContableDate";
 	public static final String REGIME = "regime";
 	public static final String REGISTRATION = "registration";
+	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
 	public static final String REGISTRY_DOCUMENT_COUNTRY = "registryDocumentCountry";
