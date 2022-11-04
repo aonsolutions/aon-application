@@ -256,12 +256,14 @@ public class AonNordigen {
 		try {
 			RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
 			RegistryAddInfo raddInfo = NordigenDAO.getRaddInfoByRaddressId(domain, login, rbankId);
+			Date lastMovementDate = getLastMovementDate(domain, login, rbankId);
 			return new NordigenBankAccount()
 					.setRbank(rbank)
 					.setRaddInfo(raddInfo)
 					.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
 					.setBankAlias(rbank != null ? rbank.getAlias() : null)
-					.setLinked(raddInfo != null && AonStringUtils.isNotBlank(raddInfo.getValue()));
+					.setLinked(raddInfo != null && AonStringUtils.isNotBlank(raddInfo.getValue()))
+					.setLastMovementDate(lastMovementDate);
 		} catch (NordigenException e) {
 			throw new Exception(e.getMessage());
 		}
@@ -565,6 +567,9 @@ public class AonNordigen {
 		return null;
 	}
 	
+	public static Date getLastMovementDate(Domain domain, String login, Integer rbankId) {
+		return NordigenDAO.getLastMovementDate(domain, login, rbankId);
+	}
 	
 	public static void main(String[] args) throws Exception {
 		Integer rbank = 142;
