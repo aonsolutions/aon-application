@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -22,6 +23,7 @@ public class NordigenBankAccount implements Serializable {
 	private boolean isLinked;
 	private String iban;
 	private String bankAlias;
+	private Date lastMovementDate;
 	
 	public RegistryBank getRbank() {
 		return rbank;
@@ -93,6 +95,13 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setRaddInfo(RegistryAddInfo raddInfo) {
 		this.raddInfo = raddInfo;
+		return this;
+	}
+	public Date getLastMovementDate() {
+		return lastMovementDate;
+	}
+	public NordigenBankAccount setLastMovementDate(Date lastMovementDate) {
+		this.lastMovementDate = lastMovementDate;
 		return this;
 	}
 

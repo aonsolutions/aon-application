@@ -70,6 +70,21 @@ public class NordigenDAO {
 		.collect(Collectors.toList());
 	}
 	
+	public static Date getLastMovementDate(Domain domain, String login, Integer rbankId) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, login)) {
+			java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
+			.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("maxdate"))
+			.from(BANK_STATEMENT)
+			.where(BANK_STATEMENT.RBANK.eq(rbankId))
+			.fetchSingle()
+			.get("maxdate");
+			if (date != null) {
+				return new Date(date.getTime());
+			}
+		}
+		return null;
+	}
+	
 	public static Pair<String, Date> getMaxMovementIdAndDate(Domain domain, String login, Integer rbankId) {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, login)) {
 			RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
