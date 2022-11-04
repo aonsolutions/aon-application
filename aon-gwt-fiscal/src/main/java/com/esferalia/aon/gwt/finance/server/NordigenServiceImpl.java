@@ -196,8 +196,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		NordigenInstitution inst = nordigenBankAccount.getInstitution();
 		
 		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
-		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + currentDomainName + "/ms/api/task-evaluation/rbank?rbank=" + rbank != null ? ""+rbank.getId() : "");
-		
+		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + currentDomainName + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : ""));
 		AonNordigen.insertNewRequisitionId(new Domain().setName(currentDomainName).setId(currentDomain), institutionId, requisition, rbank.getId());
 		
 		return requisition;
