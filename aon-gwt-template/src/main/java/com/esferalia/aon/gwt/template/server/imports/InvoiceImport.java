@@ -815,7 +815,7 @@ public class InvoiceImport extends ImportUtils{
 				.setZip(iic.getZip() != null && iic.getZip().length() < 5 
 					? "0" + iic.getZip() : iic.getZip());
 
-		if(iic.getProvince() != null) {
+		if(iic.getProvince() != null || iic.getZip() != null ) {
 			GeoZone prgz = null;
 			GeoZone crgz = null;
 			Provinces pr = Provinces.getProvince(iic.getProvince());

@@ -23,9 +23,11 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -103,9 +105,18 @@ public class AonApiHttpServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 		if(check) checkAuthorization(api);
+		api.setOptions(getOptions(api));
 		return api;
 	}
 	
+    private Options getOptions(AonApiData api) {
+        Options options = new Options();
+        options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
+        options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
+        options.setFull(JsonUtils.getboolean(api.getData(), IJsonNames.FULL));
+        return options;
+    }
+    
 	private Domain getDomain(HttpServletRequest req, AonApiData api) {
 		String domainAux = api.getData().has("domainName") ?  api.getData().getString("domainName") : req.getServerName();
 		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))

@@ -33,6 +33,7 @@ public final class IJsonNames {
 	public static final String ADMINISTRATION = "administration";
 	public static final String ADMINISTRATIVE = "administrative";
 	public static final String ALIAS = "alias";
+	public static final String ALLOW_CONCURRENT = "allowConcurrent";
 	public static final String AMORTIZATION_DESCRIPTION = "amortizationDescription";
 	public static final String AMORTIZATION_PERCENT = "amortizationPercent";
 	public static final String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";
@@ -46,6 +47,7 @@ public final class IJsonNames {
 	public static final String ATTACH_MODULE = "attachModule";
 	public static final String ATTACH_TYPE = "attachType";
 	public static final String AUTH = "auth";
+	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
 	
 	// ---------------------------------------------------------------------------------------------	[B] 
@@ -185,6 +187,7 @@ public final class IJsonNames {
 	public static final String EXPENSES_PERCENT = "expensesPercent";
 	public static final String EXPENSES_RATIO = "expensesRatio";
 	public static final String EXPIRATION_DATE = "expirationDate";
+	public static final String EXPIRE = "expire";
 	public static final String EXPRESSION = "expression";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FARMER_REGIME = "farmerRegime";
@@ -233,8 +236,10 @@ public final class IJsonNames {
 	public static final String IN_PERIOD_OPENING_DEBIT = "inPeriodOpeningDebit";
 	public static final String IN_PERIOD_OPENING_CREDIT = "inPeriodOpeningCredit"; 
 	public static final String INACTIVE = "inactive";
+	public static final String INCLUDE_DATE = "includeDate";
 	public static final String INCREASE_PERCENT = "increasePercent";
 	public static final String INGENET = "ingenet";
+	public static final String INIT_ACTION = "initAction";
 	public static final String INITIATION_DATE = "initiationDate";
 	public static final String INSIDE_PERIOD = "insidePeriod";
 	public static final String INTE = "inte";
@@ -270,6 +275,7 @@ public final class IJsonNames {
 	public static final String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	public static final String LANGUAGE = "language";
+    public static final String LAST_ACCESS = "lastAccess";
 	public static final String LAST_ACCESS_DATE = "lastAccessDate";
 	public static final String LAST_ACCESS_USER = "lastAccessUser";
 	public static final String LEDGER_ACCOUNT = "ledgerAccount";
@@ -280,6 +286,8 @@ public final class IJsonNames {
 	public static final String LEVEL = "level";
 	public static final String LIMIT = "limit";
 	public static final String LINE = "line";
+	public static final String LINES_PAGE_LIMIT = "linesPageLimit";
+	public static final String LOCALE = "locale";
 	public static final String LOGIN = "login";
 	public static final String LOGO = "logo";
 	public static final String LOTABLE = "lotable";
@@ -343,6 +351,7 @@ public final class IJsonNames {
 	public static final String PACK_UNITS = "packUnits";
 	public static final String PACK_UNITS_TAG = "packUnitsTag";
 	public static final String PAGE = "page";
+	public static final String PAGE_LIMIT = "pageLimit";
 	public static final String PAGE_OFFSET = "pageOffset";
 	public static final String PAGE_OFFSET_TEXT = "pageOffsetText";
 	public static final String PAID = "paid";
@@ -413,6 +422,7 @@ public final class IJsonNames {
 	public static final String REG_CONTABLE_DATE = "regContableDate";
 	public static final String REGIME = "regime";
 	public static final String REGISTRATION = "registration";
+	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
 	public static final String REGISTRY_DOCUMENT_COUNTRY = "registryDocumentCountry";
@@ -440,6 +450,7 @@ public final class IJsonNames {
 	public static final String SALES_DETAIL = "salesDetail";
 	public static final String SALES_RATIO = "salesRatio";
 	public static final String SCHEMA = "schema";
+	public static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	public static final String SCOPE = "scope";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
@@ -499,6 +510,7 @@ public final class IJsonNames {
 	public static final String TAS = "tas";
 	public static final String TASK = "task";
 	public static final String TASK_HOLDER = "task_holder";
+	public static final String TASK_HOLDERS = "taskHolders";
 	public static final String TAXES = "taxes";
 	public static final String TAX = "tax";
 	public static final String TAG = "tag";
@@ -514,6 +526,7 @@ public final class IJsonNames {
 	public static final String TO_DATE = "toDate";
 	public static final String TO_DUE_DATE = "toDueDate";
 	public static final String TO_NUMBER = "toNumber";
+	public static final String TOOLBAR = "toolbar";
 	public static final String TOTAL = "total";
 	public static final String TOTAL_BALANCE = "totalBalance";
 	public static final String TOTAL_PACKAGES = "totalPackages";

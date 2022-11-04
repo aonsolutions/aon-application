@@ -154,6 +154,8 @@ export const FOOTER = 'Footer';
 
 export const GALICIAN = 'Galician';
 export const GENERAL_INFORMATION = 'General Information';
+export const GET_INVOICE = 'Rechnung Bekommen';
+export const GET_INVOICES = 'Rechnungen Bekommen';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
@@ -185,6 +187,7 @@ export const INVOICE_CONFIGURATION = 'Rechnungskonfiguration';
 export const INVOICE_DATA = 'Invoice Data';
 export const INVOICE_ISSUED = 'Invoice Issued';
 export const INVOICE_NUMBER = 'Invoice Number';
+export const INVOICE_OBJECT = 'Rechnungsobjekt';
 export const INVOICE_PRINTING = 'Rechnungsdruck';
 export const INVOICE_RECEIVED = 'Invoice Received';
 export const INVOICES = 'Rechnungen';
@@ -206,6 +209,8 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MARK_ENTRY = 'Eintrag markieren';
+export const MARK_EXIT = 'Ausgang markieren';
 export const MANAGEMENT = 'Verwaltung';
 export const MODEL_111 = 'Form 111';
 export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
@@ -225,6 +230,9 @@ export const NEW_EXPENSE = 'New Expense';
 export const NEW_PRODUCT = 'New Product';
 export const NEW_REQUEST = 'New Request';
 export const NEXT = 'Next';
+export const NIF = 'NIF';
+export const NOTIFICATION = 'Benachrichtigung';
+export const NOTIFICATIONS = 'Benachrichtigungen';
 export const NOTES = 'Notes';
 export const NOTE = 'Note';
 export const NUMBER = 'Number';
@@ -309,6 +317,7 @@ export const SAVE = 'Save';
 export const SAVED_DATA = "The data has been saved successfully";
 export const SCOPE = 'Scope';
 export const SEARCH = 'Suchen Nach';
+export const SEE_ALL = 'Alles Sehen';
 export const SEND = 'Send';
 export const SEND_FILE = 'Send File';
 export const SEND_FILES = 'Send Files';
