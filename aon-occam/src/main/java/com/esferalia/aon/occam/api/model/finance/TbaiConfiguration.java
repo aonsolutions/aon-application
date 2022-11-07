@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
@@ -10,6 +12,8 @@ public class TbaiConfiguration {
 	private boolean test;
 	private Integer defaultCertificate;
 	private Certificate certificate;
+	private Date includeDate;
+	private String registryDate;
 
 	public boolean isActive() {
 		return active;
@@ -67,4 +71,27 @@ public class TbaiConfiguration {
 		this.certificate = certificate;
 		return this;
 	}
+	
+	public Date getIncludeDate() {
+		return includeDate;
+	}
+	
+	public TbaiConfiguration setIncludeDate(Date includeDate) {
+		this.includeDate = includeDate;
+		return this;
+	}
+	
+	public String getRegistryDate() {
+		return registryDate;
+	}
+	
+	public TbaiConfiguration setRegistryDate(String registryDate) {
+		this.registryDate = registryDate;
+		return this;
+	}
+	
+	public boolean isRegistryTaxDate() {
+		return "tax".equalsIgnoreCase(getRegistryDate());
+	}
+	
 }

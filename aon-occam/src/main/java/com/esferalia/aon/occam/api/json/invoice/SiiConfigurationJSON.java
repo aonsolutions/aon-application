@@ -18,9 +18,9 @@ public class SiiConfigurationJSON {
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 //				.setAdministration(Administration.safeValueOf(JsonUtils.getString(json, IJsonNames.ADMINISTRATION)))
 				.setTest(JsonUtils.getboolean(json, IJsonNames.TEST))
-				.setAutosend(JsonUtils.getboolean(json, "autosend"))
-				.setIncludeDate(JsonUtils.getDate(json, "includeDate"))
-				.setRegistryDate(JsonUtils.getString(json, "registryDate"));
+				.setAutosend(JsonUtils.getboolean(json, IJsonNames.AUTOSEND))
+				.setIncludeDate(JsonUtils.getDate(json, IJsonNames.INCLUDE_DATE))
+				.setRegistryDate(JsonUtils.getString(json, IJsonNames.REGISTRY_DATE));
 	}
 	
 	public static JSONObject toJSON(SiiConfiguration config) {
@@ -28,9 +28,9 @@ public class SiiConfigurationJSON {
 				.put(IJsonNames.ACTIVE, config.isActive())
 				.put(IJsonNames.ADMINISTRATION, config.getAdministration().name())
 				.put(IJsonNames.TEST, config.isTest())
-				.put("autosend", config.isAutosend())
-				.put("includeDate", AonDateUtils.format(config.getIncludeDate(), "yyyy-MM-dd"))
-				.put("registryDate", config.getRegistryDate());
+				.put(IJsonNames.AUTOSEND, config.isAutosend())
+				.put(IJsonNames.INCLUDE_DATE, AonDateUtils.format(config.getIncludeDate(), "yyyy-MM-dd"))
+				.put(IJsonNames.REGISTRY_DATE, config.getRegistryDate());
 	}
 	
 }

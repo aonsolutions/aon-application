@@ -196,7 +196,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		JSONArray arr = new JSONArray();
 		String document = auth.getDocument(); 
 		if(document==null) {
-			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry())).getDocument();
+			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry().getId())).getDocument();
 		}
 			
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){

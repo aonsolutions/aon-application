@@ -66,22 +66,22 @@ public class LROE140_2_1 extends LROE140 {
 	private static final String CAPITULO = "2";
 	private static final String SUBCAPITULO = "2.1";
 	
-	private LROEPF140GastosConFacturaAltaModifPeticion build(Person person, List<Invoice> invoices, LROEInfo info) {
+	private LROEPF140GastosConFacturaAltaModifPeticion build(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices, LROEInfo info) {
 		LROEPF140GastosConFacturaAltaModifPeticion lroe =  new LROEPF140GastosConFacturaAltaModifPeticion();
 		lroe.setCabecera(buildCabecera(person, info));
 
 		GastosConFacturaType gastos = new GastosConFacturaType();
 		invoices.stream().forEach(invoice -> {
-			gastos.getGasto().add(buildGasto(invoice));
+			gastos.getGasto().add(buildGasto(tbaiConfiguration, invoice));
 		});
 		lroe.setGastos(gastos);
 		return lroe;
 	}
 		
-	private GastoConFacturaType buildGasto(Invoice invoice) {
+	private GastoConFacturaType buildGasto(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
 		GastoConFacturaType gasto = new GastoConFacturaType();
 		gasto.setEmisorFacturaRecibida(buildEmisor(invoice));
-		gasto.setCabeceraFactura(buildInvoiceCabecera(invoice));
+		gasto.setCabeceraFactura(buildInvoiceCabecera(tbaiConfiguration, invoice));
 		gasto.setDatosFactura(buildFactura(invoice));
 		gasto.setRentaIVA(buildRenta(invoice));
 		return gasto;
@@ -113,12 +113,14 @@ public class LROE140_2_1 extends LROE140 {
 		return emisor;
 	}
 	
-	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(Invoice invoice) {
+	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
 		cabecera.setNumFactura(invoice.getReferenceCode());
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		cabecera.setFechaRecepcion(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		cabecera.setFechaRecepcion(tbaiConfiguration.isRegistryTaxDate() 
+				? AonDateUtils.format(invoice.getTaxDate(), DATE_FORMAT)
+				: AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 		if(invoice.isRectified()) {
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
@@ -211,7 +213,7 @@ public class LROE140_2_1 extends LROE140 {
 		try {
 			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, 
 					mod ? OperacionEnum.M_00 : OperacionEnum.A_00);
-			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(person, invoices, info); 
+			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(tbaiConfiguration, person, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
 
@@ -317,7 +319,8 @@ public class LROE140_2_1 extends LROE140 {
 		cabecera.setFechaExpedicionFactura(fecha);
 		
 		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
-		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		boolean tax = invoice.getTaxDate().before(invoice.getCreationDate());
+		fechaRec.setDesde(AonDateUtils.format(tax ? invoice.getTaxDate() : invoice.getCreationDate(), DATE_FORMAT));
 		fechaRec.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaRecepcion(fechaRec);
 	

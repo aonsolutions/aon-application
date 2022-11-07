@@ -810,15 +810,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return RawdocStatus.safeValueOf(status);
 	}
 	
-	
-//	private static String getRawdocStatus(RawdocStatus status) {
-//		if(RawdocStatus.REJECTED.equals(status)) {
-//			return "refused";
-//		} else if(RawdocStatus.DRAFT.equals(status)) {
-//			return "trash";
-//		} else return "inbox";
-//	}
-	
 	private static boolean isRawdoc(String status) {
 		return getRawdocStatus(status) != null;
 	}

@@ -55,10 +55,10 @@ public class CertificateServlet extends AonApiHttpServlet {
     	
 		if(api.getUser().getRegistry() != null && api.getDomain().getParentId() != null) {
 			Company parentCompany = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin());
-			Integer[] registries = {api.getUser().getRegistry(), company.getId(), parentCompany.getId()};
+			Integer[] registries = {api.getUser().getRegistry().getId(), company.getId(), parentCompany.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
 		} else if(api.getUser().getRegistry() != null) {
-			Integer[] registries = {api.getUser().getRegistry(), company.getId()};
+			Integer[] registries = {api.getUser().getRegistry().getId(), company.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
 		} else if(api.getDomain().getParentId() != null) {
 			Company parentCompany = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin());

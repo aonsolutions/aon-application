@@ -725,6 +725,28 @@
 					</table>
 				</g:HTMLPanel>
 			</g:VerticalPanel>
+			<g:VerticalPanel ui:field="older52DataTable" styleName="{style.styleBorder}"> 
+		    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Mayores de 52 años (Ley 45/2002)</g:Label>
+		    	<g:HTMLPanel>
+					<table debugId="annexedDataTable"
+						style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+						<tbody>
+						    <tr>
+						        <td></td>
+						        <td></td>
+						    </tr>
+						    <tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Mayores de 52 años</g:Label>
+								</td>
+								<td>
+								    <g:ListBox ui:field="older52LB" styleName='{style.maxWidthLB}'></g:ListBox>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</g:HTMLPanel>
+			</g:VerticalPanel>
 			<g:VerticalPanel ui:field="annexedDataTable" styleName="{style.styleBorder}"> 
 		    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Anexo gestión colect. de contrataciones en origen</g:Label>
 		    	<g:HTMLPanel>

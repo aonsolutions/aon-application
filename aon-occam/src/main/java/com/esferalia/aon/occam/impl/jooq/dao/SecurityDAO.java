@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
-import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
 import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -27,19 +26,19 @@ import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Session.SESSION;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Session.SESSION;
 import static com.esferalia.aon.occam.api.model.attachment.DataAttachSource.SISTEMA_RED;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,6 +94,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -366,7 +366,7 @@ public class SecurityDAO {
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
-			user.setRegistry(record.getValue(USER.REGISTRY));
+			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		return user;
@@ -606,15 +606,18 @@ public class SecurityDAO {
 				.fetch().stream().map(new UserFiller());
 	}
 	
+	@Deprecated
 	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
 		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
 				.fetch().stream().map(new UserFiller());
 	}
-	
+
+	@Deprecated
 	public static User getUser(AONContext ctx, UserFilter filter) {
 		return getUserStream(ctx, filter).findFirst().orElse(new User());
 	}
 	
+	@Deprecated
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
 		Record6<Integer, Integer, String, String, Byte, Integer> record = 
@@ -652,7 +655,7 @@ public class SecurityDAO {
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
-			user.setRegistry(record.getValue(USER.REGISTRY));
+			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		return user;
@@ -666,7 +669,7 @@ public class SecurityDAO {
 	}
 	
 	public static AonRole[] getUserRoles(AONContext ctx, Integer userId) {
-		final List<AonRole> list = new ArrayList<AonRole>();
+		final List<AonRole> list = new ArrayList<>();
 		ctx.getDslContext()
 			.selectDistinct(ROLE.NAME)
 			.from(USER)
@@ -1198,10 +1201,14 @@ public class SecurityDAO {
 				: new Integer[]{domain,parentDomain};
 	}
 
-	public static Stream<Module> getDomainModules(AONContext ctx){
+	public static Stream<Module> getDomainModules(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().select().from(DOMAIN_APPLICATION_MODULE)
-				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(ctx.getDomainId())).fetchInto(DOMAIN_APPLICATION_MODULE)
+				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(domainId)).fetchInto(DOMAIN_APPLICATION_MODULE)
 				.stream().map(r -> Module.safeValueOf(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE).intValue()));
+	}
+	
+	public static Stream<Module> getDomainModules(AONContext ctx){
+		return getDomainModules(ctx, ctx.getDomainId());
 	}
 	
 	public static Integer getDomainApplicationModule(AONContext ctx, Module module){
