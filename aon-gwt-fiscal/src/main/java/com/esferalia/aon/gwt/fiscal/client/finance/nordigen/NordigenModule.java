@@ -192,6 +192,33 @@ public class NordigenModule extends MainEntryPoint {
 		return panel;
 	}
 
+	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance consolidado = null;
+		
+		consolidado = balances.stream()
+				.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.findFirst().orElse(null);
+		
+		if (consolidado == null && balances.size() > 0) {
+			return balances.get(0);
+		}
+		
+		return consolidado;
+	}
+	
+	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance real = null;
+		
+		real = balances.stream()
+				.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+				.findFirst().orElse(null);
+		
+		if (real == null) {
+			return filterConsolidado(balances);
+		}
+		
+		return real;
+	}
 
 	private Widget paintBanks(NordigenModuleOptions opt) {
 		balancesMap = new HashMap<>();
@@ -217,22 +244,28 @@ public class NordigenModule extends MainEntryPoint {
 			for (NordigenBankAccount bankAccount : opt.getConfiguration().getLinkedAccounts()) {
 				
 				List<NordigenAccountBalance> balances = bankAccount.getBalances();
-				NordigenAccountBalance consolidado = balances.stream()
-						.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
-						.findFirst().orElse(null);
-
-				NordigenAccountBalance real = balances.stream()
-						.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
-						.findFirst().orElse(null);
 				
+				NordigenAccountBalance consolidado = filterConsolidado(balances);
+				NordigenAccountBalance real = filterReal(balances);
 				
-				double bankBalance = consolidado != null &&
-						consolidado.getBalanceAmount() != null ? consolidado.getBalanceAmount().getAmount() : 0;
+				double bankBalance = 0;
+				double remainder = 0;
 				
-				double remainder = bankBalance;
-				if (real != null && real.getBalanceAmount() != null) {
-					remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());					
+				if (bankAccount.getBalances() != null && bankAccount.getBalances().size() == 1) {
+					NordigenAccountBalance bal = bankAccount.getBalances().get(0);
+					bankBalance = bal.getBalanceAmount().getAmount();
+					remainder = bal.getBalanceAmount().getAmount();
+				} else {
+					bankBalance = consolidado != null &&
+							consolidado.getBalanceAmount() != null ? consolidado.getBalanceAmount().getAmount() : 0;
+					
+					remainder = bankBalance;
+					if (real != null && real.getBalanceAmount() != null) {
+						remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());					
+					}					
 				}
+				
+				
 				
 				balanceTotal = balanceTotal + bankBalance;
 				remainderTotal = remainderTotal + remainder;
@@ -506,13 +539,22 @@ public class NordigenModule extends MainEntryPoint {
 
 		private void showBottomMessage(String message) {
 			this.bottomTable.clear();
+			this.bottomTable.removeStyleName(AON.CSS.aonLoader());
 			this.bottomTable.addStyleName(AON.CSS.aonBlockCenter());
-			Label errLabel = new Label(message);
+			Label errLabel = new Label();
+			
+			if (AonStringUtils.equals(AON.CSS.aonLoader(), message)) {
+				this.bottomTable.addStyleName(AON.CSS.aonLoader());				
+			} else {
+				errLabel.setText(message);
+			}
+			
 			errLabel.addStyleName(AON.CSS.aonColorRed());
 			this.bottomTable.setWidget(0, 0, errLabel);
 		}
 		
 		private void clearBottomMessage() {
+			this.bottomTable.removeStyleName(AON.CSS.aonLoader());
 			this.bottomTable.clear();
 		}
 		
@@ -523,13 +565,9 @@ public class NordigenModule extends MainEntryPoint {
 			
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
 			Double balanceAmount = 0d;
-			NordigenAccountBalance consolidado = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
-
-			NordigenAccountBalance real = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
+			
+			NordigenAccountBalance consolidado = filterConsolidado(balances);
+			NordigenAccountBalance real = filterReal(balances);
 			
 			if (real != null && real.getBalanceAmount() != null) {
 				balanceAmount = real.getBalanceAmount().getAmount();
@@ -548,6 +586,7 @@ public class NordigenModule extends MainEntryPoint {
 			dialog.setAutoHideEnabled(true);
 			
 			dialog.setCaption("MOVIMIENTOS");
+			dialog.getElement().getStyle().setProperty("maxWidth", "90%");
 			
 			
 			HorizontalPanel closeImport = new HorizontalPanel();
@@ -628,7 +667,7 @@ public class NordigenModule extends MainEntryPoint {
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
 				InlineLabel atDateBox, InlineLabel balanceBox, Label title, FlowPanel titlePanel, AonTableButton allMovementsButton) {
 			allMovementsButton.setVisible(false);
-			showBottomMessage("CARGANDO...");
+			showBottomMessage(AON.CSS.aonLoader());
 			NORDIGEN_SERVICE.setNordigenAccountValues(opt.getConfiguration().getToken(), nordigenBankAccount, new AsyncCallback<NordigenBankAccount>() {
 
 				@Override
@@ -669,15 +708,9 @@ public class NordigenModule extends MainEntryPoint {
 				double remainder = 0;
 				for (Entry<Integer, List<NordigenAccountBalance>> entry : balancesMap.entrySet()) {
 					List<NordigenAccountBalance> balances = entry.getValue();
-					NordigenAccountBalance consolidado = balances.stream()
-							.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
-							.findFirst().orElse(null);
-
-					NordigenAccountBalance real = balances.stream()
-							.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
-							.findFirst().orElse(null);
 					
-					
+					NordigenAccountBalance consolidado = filterConsolidado(balances);
+					NordigenAccountBalance real = filterReal(balances);
 					
 					if (consolidado != null && consolidado.getBalanceAmount() != null) {
 						balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
@@ -713,13 +746,9 @@ public class NordigenModule extends MainEntryPoint {
 			}
 			
 			List<NordigenAccountBalance> balances = result.getBalances();
-			NordigenAccountBalance consolidado = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
 
-			NordigenAccountBalance real = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
+			NordigenAccountBalance consolidado = filterConsolidado(balances);
+			NordigenAccountBalance real = filterReal(balances);
 			
 			if (result.getRbank() != null) {
 				balancesMap.put(result.getRbank().getId(), balances);
@@ -783,6 +812,14 @@ public class NordigenModule extends MainEntryPoint {
 				
 			}
 			
+			
+			for (String log : result.getLogs()) {
+				Label label = new Label(result.getIban() + " : " + log);
+				label.addStyleName(AON.CSS.aonColorRed());
+				sessionLog.add(label);
+				openFootPanel();
+			}
+			
 		}
 		
 		private Button aonImportButton() {
@@ -828,6 +865,7 @@ public class NordigenModule extends MainEntryPoint {
 	private void buildCustomMovementsPanel(FlowPanel container, NordigenModuleOptions opt, NordigenBankAccount noridgenankAccount, CustomDialog ...dialog) {
 		int firstYear = 2020;
 		
+		Date lastMovDate = noridgenankAccount.getLastMovementDate();
 		
 		FlowPanel perTopFlow = new FlowPanel();
 		Label perLbl = new InlineLabel("PER\u00CDODO: ");
@@ -836,6 +874,14 @@ public class NordigenModule extends MainEntryPoint {
 		perLbl.getElement().getStyle().setColor(AON_BLUE);
 		perTopFlow.add(perLbl);
 		ListBox periodSelector = new ListBox();
+		
+		if (lastMovDate != null) {
+			long diffGap = new Date().getTime() - lastMovDate.getTime();
+			long diffDays = diffGap / (24 * 60 * 60 * 1000);
+			periodSelector.addItem("Movimientos pendientes", "" + diffDays);
+			
+		}
+		
 		periodSelector.addItem("\u00DAltimos 10 d\u00EDas", "10");
 		periodSelector.addItem("\u00DAltimos 30 d\u00EDas", "30");
 		periodSelector.addItem("\u00DAltimos 60 d\u00EDas", "60");
@@ -1440,10 +1486,13 @@ public class NordigenModule extends MainEntryPoint {
 	
 	private void onLoadingMovs(FlexTable tab, Label loadingLabel, boolean loading) {
 		tab.removeAllRows();
+		loadingLabel.removeStyleName(AON.CSS.aonLoader());
 		loadingLabel.setText("");
-		loadingLabel.setWidth("100%");
+//		loadingLabel.setWidth("100%");
 		if (loading) {
-			loadingLabel.setText("CARGANDO...");
+			loadingLabel.addStyleName(AON.CSS.aonMarginTop());
+			loadingLabel.addStyleName(AON.CSS.aonMarginBottom());
+			loadingLabel.addStyleName(AON.CSS.aonLoader());
 			loadingLabel.addStyleName(AON.CSS.aonTextCenter());
 			loadingLabel.addStyleName(AON.CSS.aonBlockCenter());
 		}
@@ -1582,7 +1631,7 @@ public class NordigenModule extends MainEntryPoint {
 		Label balanceLabel = new Label();
 		if (balance != null) {
 //			if (!bankStatement.isPending()) {
-				balanceLabel.setText(AON.FMT.format(balance) + " " + EURO);				
+				balanceLabel.setText(AON.FMT.format(balance) + " " + EURO);
 //			} else {
 //				balanceLabel.setText("No consolidado");
 //			}
@@ -1596,6 +1645,9 @@ public class NordigenModule extends MainEntryPoint {
 		
 		
 		Label descriptionLabel = new Label(description);
+		if (bankStatement.isPending()) {
+			descriptionLabel.addStyleName(AON.CSS.aonColorOrange());
+		}
 		descriptionLabel.setStyleName(AON.CSS.aonFontLarger());
 		descriptionLabel.setWidth("100%");
 		descriptionLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
