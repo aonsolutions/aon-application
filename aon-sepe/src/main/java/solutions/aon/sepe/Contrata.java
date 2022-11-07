@@ -549,22 +549,33 @@ public class Contrata {
 				
 				//------------DISCAPACIDAD
 				if(cto.isDiscapacidad()) {
-					DomNode checkDiscapacidad = form.querySelector("[name=\"checkDiscapacidad\"]");
-					if(checkDiscapacidad!=null) {
-						htmlPage = ((HtmlCheckBoxInput) checkDiscapacidad).click();
-						handleSepeAlert(alertHandler.getCollectedAlerts());
-						handleSepeExceptions(htmlPage);
-						
-						Optional<String> discapacidadType = cto.getDiscapacidadType();
-						if(discapacidadType.isPresent()) {
-							htmlPage = ((HtmlSelect) htmlPage.querySelector("select[name=\"coddiscapacidad\"]")).setSelectedAttribute(discapacidadType.get(), true);
-						}
-						
-						Optional<String> collectiveType = cto.getCollectiveType();
-						if(collectiveType.isPresent()) {							
-							htmlPage = ((HtmlSelect) htmlPage.querySelector("select[name=\"codbonificaciondisca\"]")).setSelectedAttribute(collectiveType.get(), true);
-						}
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 					
+					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkDiscapacidad");
+					check.click();
+				
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					handleSepeAlert(alertHandler.getCollectedAlerts());
+					handleSepeExceptions(htmlPage);
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					
+					Optional<String> discapacidadType = cto.getDiscapacidadType();
+					if(discapacidadType.isPresent()) {
+						((HtmlSelect) form.querySelector("select[name=\"coddiscapacidad\"]")).setSelectedAttribute(discapacidadType.get(), true);
+					}
+					
+					Optional<String> collectiveType = cto.getCollectiveType();
+					if(collectiveType.isPresent()) {			
+						String type = Integer.parseInt(collectiveType.get())+"";
+						HtmlSelect codbonificaciondisca = (HtmlSelect) form.querySelector("select[name=\"codbonificaciondisca\"]");
+						codbonificaciondisca.removeAttribute("disabled");
+						codbonificaciondisca.setSelectedAttribute(type, true);
+						
+						htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+						handleSepeAlert(alertHandler.getCollectedAlerts());
+		
 						form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					}
 				}
@@ -581,7 +592,6 @@ public class Contrata {
 					handleSepeAlert(alertHandler.getCollectedAlerts());
 					handleSepeExceptions(htmlPage);
 					
-
 					Optional<String> collectiveType = cto.getCollectiveType();
 					if(collectiveType.isPresent()) {		
 						String collective = collectiveType.get();
@@ -643,9 +653,8 @@ public class Contrata {
 			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			handleSepeAlert(alertHandler.getCollectedAlerts());
-			 
+			
 			String message = null;
-
 			for (int i = 0; i < 3; i++) {
 				message = getSuccessMessage(htmlPage);
 				if (message == null || (message != null && message.indexOf("E") >= 0)) {
