@@ -26,11 +26,14 @@ export class AonInvoiceCommunication extends AonElement {
         this.FACTURAE = this.CARD_TABLE + 'Facturae';
         this.TBAI_ACTIVE = this.CARD_TABLE + 'TbaiActive';
         this.TBAI_TEST = this.CARD_TABLE + 'TbaiTest';
+        this.TBAI_REGISTRY_DATE = this.CARD_TABLE + 'TbaiRegistryDate';
+        this.TBAI_INCLUDE_DATE = this.CARD_TABLE + 'TbaiIncludeDate';
         this.SII_ACTIVE = this.CARD_TABLE + 'SiiActive';
         this.SII_TEST = this.CARD_TABLE + 'SiiTest';
         this.SII_REGISTRY_DATE = this.CARD_TABLE + 'SiiRegistryDate';
         this.SII_INCLUDE_DATE = this.CARD_TABLE + 'SiiIncludeDate';
         this.SII_AUTOSEND = this.CARD_TABLE + 'SiiAutosend';
+        
 
     }
 
@@ -137,7 +140,37 @@ export class AonInvoiceCommunication extends AonElement {
 		});
         table.addCell(test, 1).style.height = '50px';
     
+        table.addRow();
 
+        const options = [
+            {value: 'tax', name: 'Fecha IVA'},
+            {value: 'audit', name: 'Fecha Auditoria'}
+        ];
+
+        let tbaiRegistryDate = this.createAonElement(new AonSelect(), this.TBAI_REGISTRY_DATE, 'Fecha Registro (TBAI)');
+        tbaiRegistryDate.setOptions(options);
+        tbaiRegistryDate.value = this.configuration.tbai.registryDate;
+        if(!this.configuration.tbai.active) {
+            tbaiRegistryDate.classList.add(CSS.AON_NONE);
+        }
+        tbaiRegistryDate.onChange(() => {
+            this.configuration.tbai.registryDate = tbaiRegistryDate.value;
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+        });
+        table.addCell(tbaiRegistryDate, 1).style.height = '50px';
+
+        let tbaiIncludeDate = this.createAonElement(new AonDate(), this.TBAI_INCLUDE_DATE, 'Fecha Inclusión TBAI');
+        if(!this.configuration.tbai.active) {
+            tbaiIncludeDate.classList.add(CSS.AON_NONE);
+        }
+        tbaiIncludeDate.onChange(() => {
+            this.configuration.tbai.includeDate = tbaiIncludeDate.value;
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+        });
+        table.addCell(tbaiIncludeDate, 1).style.height = '50px';
+        if(this.configuration.tbai.includeDate) {
+            tbaiIncludeDate.value = this.configuration.tbai.includeDate;
+        }
         table.addRow();
 
         // SII
@@ -179,11 +212,6 @@ export class AonInvoiceCommunication extends AonElement {
         table.addCell(siiTest, 1).style.height = '50px';
 
         table.addRow();
-
-        const options = [
-            {value: 'tax', name: 'Fecha IVA'},
-            {value: 'audit', name: 'Fecha Auditoria'}
-        ];
 
         let siiRegistryDate = this.createAonElement(new AonSelect(), this.SII_REGISTRY_DATE, 'Fecha Registro (SII)');
         siiRegistryDate.setOptions(options);

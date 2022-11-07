@@ -44,14 +44,15 @@ public interface ISecurity {
 	
 	public DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId);
 	
-	public User getUser(AONContext ctx, UserFilter filter);
+	public User getUser(AONContext ctx, UserFilter filter, Options...options);
+	public Stream<User> getUserStream(AONContext ctx, UserFilter filter, Options...options);
+
 	public User save(AONContext ctx, User user);
 	public User insertUser(AONContext ctx, User user);
 	public User delete(AONContext ctx, User user);
 	public Stream<User> getDomainUserStream(AONContext ctx);
 	public Stream<User> getDomainUserStream(AONContext ctx, UserFilter filter);
 	public Stream<User> getDomainUserStream(AONContext ctx, Integer page, Integer perPage, UserFilter filter);
-	public Stream<User> getUserStream(AONContext ctx, UserFilter filter);
 	public User getUser(AONContext ctx, String login);
 	public LinkedList<User> getUsersByEmail(AONContext ctx, String email);
 	public LinkedList<User> getUsersByScope(AONContext ctx, Integer scope);

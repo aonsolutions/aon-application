@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoFacturaGastosEnum;
@@ -65,22 +64,22 @@ public class LROE240_2 extends LROE240 {
 	
 	private static final String CAPITULO = "2";
 	
-	private LROEPJ240FacturasRecibidasAltaModifPeticion build(Company company, List<Invoice> invoices, LROEInfo info) {
+	private LROEPJ240FacturasRecibidasAltaModifPeticion build(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices, LROEInfo info) {
 		LROEPJ240FacturasRecibidasAltaModifPeticion lroe =  new LROEPJ240FacturasRecibidasAltaModifPeticion();
 		lroe.setCabecera(buildCabecera(company, info));
 
 		FacturasRecibidasType facturas = new FacturasRecibidasType();
 		invoices.stream().forEach(invoice -> {
-			facturas.getFacturaRecibida().add(buildFacturaRecibida(invoice));
+			facturas.getFacturaRecibida().add(buildFacturaRecibida(tbaiConfiguration, invoice));
 		});
 		lroe.setFacturasRecibidas(facturas);
 		return lroe;
 	}
 	
-	private FacturaRecibidaType buildFacturaRecibida(Invoice invoice) {
+	private FacturaRecibidaType buildFacturaRecibida(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
 		FacturaRecibidaType facturaRecibida = new FacturaRecibidaType();
 		facturaRecibida.setEmisorFacturaRecibida(buildEmisor(invoice));
-		facturaRecibida.setCabeceraFactura(buildInvoiceCabecera(invoice));
+		facturaRecibida.setCabeceraFactura(buildInvoiceCabecera(tbaiConfiguration, invoice));
 		facturaRecibida.setDatosFactura(buildFactura(invoice));
 		facturaRecibida.setIVA(buildIVA(invoice));
 		// TODO facturaRecibida.setOtraInformacionTrascendenciaTributaria(buildOtraInformacion(invoice));
@@ -138,12 +137,14 @@ public class LROE240_2 extends LROE240 {
 		return emisor;
 	}
 	
-	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(Invoice invoice) {
+	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
 		cabecera.setNumFactura(invoice.getReferenceCode());
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		cabecera.setFechaRecepcion(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		cabecera.setFechaRecepcion(tbaiConfiguration.isRegistryTaxDate()
+				? AonDateUtils.format(invoice.getTaxDate(), DATE_FORMAT)
+				: AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 		if(invoice.isRectified()) {
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
@@ -238,7 +239,7 @@ public class LROE240_2 extends LROE240 {
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices, boolean mod) {
 		try {
 			LROEInfo info = buildInfo(mod ? OperacionEnum.M_00 : OperacionEnum.A_00);
-			final LROEPJ240FacturasRecibidasAltaModifPeticion p240 = build(company, invoices, info); 
+			final LROEPJ240FacturasRecibidasAltaModifPeticion p240 = build(tbaiConfiguration, company, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasRecibidasAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
 

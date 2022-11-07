@@ -2676,6 +2676,10 @@ public class AON {
 	// ****************************** GWT-OFFICE **
 	// ********************************************
 
+	public static User getUser(Domain domain, User user, UserFilter filter) {
+	    return getUser(domain, user.getLogin(), filter);
+    }
+	
 	public static User getUser(Domain domain, String login, UserFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)){
 			return getSecurity().getUser(ctx, filter);
@@ -2690,10 +2694,17 @@ public class AON {
 			String userName, Integer userId) {
 		return getUserStream(domainName, domainId, userName, f -> f.getIdProperty().eq(userId)).findFirst().orElse(new User());
 	}
-
-	public static Stream<User> getUserStream(String domainName, Integer domainId, String userName, UserFilter filter) {
+	
+	public static Stream<User> getUserStream(Domain domain, User user, UserFilter filter, Options... options) {
+        return getUserStream(domain.getName(), domain.getId(), user.getLogin(), filter, options);
+    }
+	
+    public static Stream<User> getUserStream(Domain domain, String login, UserFilter filter, Options... options) {
+        return getUserStream(domain.getName(), domain.getId(), login, filter, options);
+    }
+	public static Stream<User> getUserStream(String domainName, Integer domainId, String userName, UserFilter filter, Options... options) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
-			return getSecurity().getUserStream(ctx, filter);
+			return getSecurity().getUserStream(ctx, filter, options);
 		} 
 	}
 	

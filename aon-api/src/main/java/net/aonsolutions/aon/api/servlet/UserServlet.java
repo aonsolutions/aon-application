@@ -596,7 +596,7 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
 		if(user != null && th != null && th.getId() != null) {
-			user.setRegistry(th.getId());
+			user.setRegistry(new Registry().setId(th.getId()));
 			user = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
 		}
 		return UserJSON.toJSON(user);
@@ -858,7 +858,7 @@ public class UserServlet extends AonApiHttpServlet {
 						.and(f.getDocumentProperty().eq(document)));
 					registryId = r.getId();
 				}
-				user.setRegistry(registryId);
+				user.setRegistry(new Registry().setId(registryId));
 			}
 		}	
 		user = AON.save(domain.getName(), domain.getId(), "", user);
