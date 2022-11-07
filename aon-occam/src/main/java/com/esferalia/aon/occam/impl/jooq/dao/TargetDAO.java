@@ -69,7 +69,7 @@ public class TargetDAO {
 	}
 	
 	private static Target insert(AONContext ctx, Target target){
-		Integer id = ctx.getDslContext()
+		ctx.getDslContext()
 			.insertInto(TARGET)
 			.set(TARGET.ADVERTISING, target.getAdvertising().value())
 			.set(TARGET.DOMAIN, target.getDomain().getId()) 
@@ -84,11 +84,12 @@ public class TargetDAO {
 			.set(TARGET.CREATION_USER, ctx.getUser())
 			.set(TARGET.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
 			.set(TARGET.MODIFICATION_USER,  ctx.getUser())
-			.returning(TARGET.REGISTRY).fetchOne().getRegistry();
-	
-		ctx.log().debug("INSERT TARGET id "+ id);
+			.execute();
 		
-		return target.setId(id);
+
+		ctx.log().debug("INSERT TARGET id "+ target.getId());
+		
+		return target;
 	}
 	
 	private static Target update(AONContext ctx, Target target){

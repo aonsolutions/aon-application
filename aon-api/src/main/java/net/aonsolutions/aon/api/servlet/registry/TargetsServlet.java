@@ -41,7 +41,18 @@ public class TargetsServlet extends AonApiHttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		get(req, resp);
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(TARGETS, TargetsServlet::saveTarget)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
 	}
 	
 	@Override
