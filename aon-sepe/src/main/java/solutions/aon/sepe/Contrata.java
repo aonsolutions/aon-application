@@ -596,7 +596,7 @@ public class Contrata {
 					if(collectiveType.isPresent()) {		
 						String collective = collectiveType.get();
 						
-						outerloop:
+						outerLoop:
 						for (final DomNode element : htmlPage.querySelectorAll(".fila")) {
 							DomNode radioNode = element.querySelector("[type=radio]");
 							
@@ -613,7 +613,7 @@ public class Contrata {
 												((HtmlRadioButtonInput) radioNode).click();
 												
 												select.setSelectedAttribute(collective, true);
-												break outerloop;
+												break outerLoop;
 											} catch (IOException e) { 
 												e.printStackTrace();
 											}
