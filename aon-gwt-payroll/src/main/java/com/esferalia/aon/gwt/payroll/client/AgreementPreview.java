@@ -41,14 +41,16 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
@@ -56,7 +58,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public abstract class AgreementPreview extends ResizeComposite {
+public abstract class AgreementPreview extends Composite {
 	
 	// ------------------------------------------ UiBinder 
 
@@ -196,6 +198,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 	
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementUpdateButton;
+	private AonToolbarButton agreementInfoButton;
 	
 	private boolean hasChange = false;
 	private AonToolbarSmallButton saveBtn;
@@ -427,6 +430,8 @@ public abstract class AgreementPreview extends ResizeComposite {
 				Label cell = new Label();
 				cell.addStyleName(style.gridCell());
 				cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
+				cell.setTitle("Valor nivel retributivo");
+				
 				if(row % 2 == 0 ) cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && cell.getText().length() > 16)
@@ -794,7 +799,7 @@ public abstract class AgreementPreview extends ResizeComposite {
 		
 		toolbar.add(saveBtn);
 		
-		AonToolbarButton agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
+		agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
 		agreementInfoButton.addClickHandler(e -> 
 			impl.getAgreementUsedInfo(agreement.getId(), agreement.getDescription(), new AsyncCallback<String>() {
 				
@@ -1021,6 +1026,63 @@ public abstract class AgreementPreview extends ResizeComposite {
 		}
 	}
 	
+	// ------------------------------------------ setSelectedLevel
+	
+	public void setSelectedLevel(Integer levelId) {
+		description.setEnabled(false);
+		ssNumber.setEnabled(false);
+		description.getElement().getStyle().setBackgroundColor("transparent");
+		ssNumber.getElement().getStyle().setBackgroundColor("transparent");
+		
+		saveBtn.setVisible(false);
+		serviAgreementUpdateButton.setVisible(false);
+		printPreviewButton.setVisible(false);
+		agreementInfoButton.setVisible(false);
+		
+		setSelectedValueLB(levelLB, null == levelId ? "" : String.valueOf(levelId));
+		filterSelectedLevel();
+		salaryGrid.removeRow(1);
+		
+		createAgreementGoToBtn();
+	}
+
+	public void payrollPreview() {
+		description.setEnabled(false);
+		ssNumber.setEnabled(false);
+		description.getElement().getStyle().setBackgroundColor("transparent");
+		ssNumber.getElement().getStyle().setBackgroundColor("transparent");
+		
+		saveBtn.setVisible(false);
+		serviAgreementUpdateButton.setVisible(false);
+		printPreviewButton.setVisible(false);
+		agreementInfoButton.setVisible(false);
+		
+		createAgreementGoToBtn();
+	}
+	
+	private void createAgreementGoToBtn() {
+		FlowPanel toolbarButtons = toolbar.getButtonContainer();
+		if(toolbarButtons.getWidgetCount() > 4)
+			toolbarButtons.remove(toolbarButtons.getWidgetCount() - 1);
+		
+		AonToolbarButton goToAgreementBtn = new AonToolbarButton("(En desarrollo) Ir al convenio " + agreement.getDescription(), AON.CSS.aonIconOpenInNew());
+		goToAgreementBtn.addClickHandler(e -> goToAgreement(agreement.getId()));
+		// TODO: quitar esta linea cuando este implementado
+		goToAgreementBtn.setVisible(false);
+		toolbar.add(goToAgreementBtn);
+	}
+	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title);
+	}
+	
+	private void goToAgreement(Integer agreementId) {
+		// TODO: Aqui iria la navegacion a los convenios
+//		MainAgreementTab mainAgreementTab = new MainAgreementTab();
+//		mainAgreementTab.onModuleLoad();
+//		mainAgreementTab.agreements.getAgreementsAndSelectImported(agreementId, s -> {});
+	}
+
 	// ------------------------------------------ HasChange
 	
 	public boolean hasChange() {

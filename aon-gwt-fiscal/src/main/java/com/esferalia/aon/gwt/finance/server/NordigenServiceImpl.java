@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.bank.checkit.CheckItAPI;
@@ -332,13 +331,10 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
 			
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
-			NordigenAccountBalance consolidado = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
-
-			NordigenAccountBalance real = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
+			
+			NordigenAccountBalance consolidado = filterConsolidado(balances);
+			NordigenAccountBalance real = filterReal(balances);
+			
 			
 			NordigenAccountBalance balance = real != null ? real : consolidado;
 			
@@ -358,6 +354,35 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 			return null;
 		}
 	}
+	
+	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance consolidado = null;
+		
+		consolidado = balances.stream()
+				.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.findFirst().orElse(null);
+		
+		if (consolidado == null && balances.size() > 0) {
+			return balances.get(0);
+		}
+		
+		return consolidado;
+	}
+	
+	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance real = null;
+		
+		real = balances.stream()
+				.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+				.findFirst().orElse(null);
+		
+		if (real == null) {
+			return filterConsolidado(balances);
+		}
+		
+		return real;
+	}
+	
 
 
 	@Override

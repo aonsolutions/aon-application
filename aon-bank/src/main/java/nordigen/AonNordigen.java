@@ -293,6 +293,7 @@ public class AonNordigen {
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
+							account.addLog(e.getMessage());
 						}
 						System.out.println("THREAD 3 termina");
 					});
@@ -309,6 +310,7 @@ public class AonNordigen {
 								account.setDetails(getAccountDetails(token, accountId));
 							} catch (Exception e) {
 								e.printStackTrace();
+								account.addLog(e.getMessage());
 							}
 							System.out.println("THREAD 1 termina");
 						});
@@ -318,6 +320,7 @@ public class AonNordigen {
 								account.setBalances(getAccountBalances(token, accountId));
 							} catch (Exception e) {
 								e.printStackTrace();
+								account.addLog(e.getMessage());
 							}
 							System.out.println("THREAD 2 termina");
 						});
@@ -543,12 +546,19 @@ public class AonNordigen {
 			Double amount = transaction.getTransactionAmount() != null ? transaction.getTransactionAmount().getAmount() : 0;
 			boolean bpayment = amount < 0;
 			
+			String description = "";
+			if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationUnstructured())) {
+				description = transaction.getRemittanceInformationUnstructured();
+			} else if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationStructured())) {				
+				description = transaction.getRemittanceInformationStructured();
+			}
+			
 			statement
 			.setOperationDate(transaction.getValueDate())
 			.setCommonConcept(StatementConcept.UNKNOWN)
 			.setPayment(bpayment)
 			.setAmount(Math.abs(amount))
-			.setDescription(transaction.getRemittanceInformationUnstructured())
+			.setDescription(description)
 			.setStatus(StatementStatus.PENDING)
 			.setReference1("NORDIGEN")
 			.setReference2(AonStringUtils.leftPad(transaction.getTransactionId(), 16, '0'));
@@ -572,11 +582,11 @@ public class AonNordigen {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		Integer rbank = 142;
-		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3NTU1ODg2LCJqdGkiOiJmOWUxZWIyMzg0OWU0M2ViOGUzMzE1NmQ2ZDgxMWQwOSIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.B3cC85_GEsLmmb_ga78790pQWqUqHSf0nUTQlDJAjIw";
+		Integer rbank = 6740;
+		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3ODkyNzE0LCJqdGkiOiI2NDM3ZWRjYjg3Njk0ZGQwOWM0YjE2NjQ2YmJmMGRkMyIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.PetO8cMVsxHu_jRz-jSpS4leK8JbMBRl8WoySoQBVXA";
 		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
 		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
-		String reqId = "9f75f152-4d3d-4101-83a1-14b73eecd585";
+		String reqId = "62f2c9b4-533f-47fa-8a16-b5f53b4e47c3";
 		insertNewRequisitionId(domain, "", getRequisition(token, reqId), rbank);
 //		List<NordigenAccountTransaction> newTr = getNewTransactions(token, domain, "", rbank);
 //		List<NordigenBankAccount> allAccounts = getAllAccounts(token, domain, "");

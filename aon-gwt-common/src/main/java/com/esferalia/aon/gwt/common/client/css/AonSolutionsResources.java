@@ -48,6 +48,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-sepe-cto.png")
 	ImageResource aonIconSepeCto();
 	
+	@Source("icons/aon-icon-arrow-right-modify.png")
+	ImageResource aonIconArrowRightModify();
+	
 	@Source("icons/aon-icon-edit-note.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconEditNote();
@@ -607,6 +610,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-model-reopen.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconModelReopen();
+	
+	@Source("icons/aon-icon-open-in-new.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconOpenInNew();
 	
 	@Source("icons/aon-icon-id.svg")
 	@MimeType("image/svg+xml")

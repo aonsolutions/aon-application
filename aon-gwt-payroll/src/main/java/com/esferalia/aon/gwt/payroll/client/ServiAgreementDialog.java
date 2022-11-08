@@ -252,6 +252,7 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 		Scheduler.get().scheduleDeferred(() -> {
 			center();
 			show();
+			serviAgreementsSB.setFocus(true);
 		});
 	}
 

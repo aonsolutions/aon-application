@@ -171,6 +171,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 					setSelectedValueLB(extraType, getExtraType(extra));
 					DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraType);
 				}
+
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraAssociated);	
 				showDialog();
 			}
 
@@ -698,7 +700,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 	
 	private void chekExtraAssociated() {
-		
 		String issueDate = extra.getIssueDate();
 		if(AonStringUtils.isBlank(issueDate) || extra.isDeleted()) extraAssociated.setSelectedIndex(0);
 		else {
@@ -712,8 +713,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				else setSelectedValueLB(extraAssociated, null == summerExtra ? null : summerExtra.getId().toString());
 			}
 		}
-		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraAssociated);	
 	}
 
 	private AgreementExtra findSummerExtra() {
@@ -757,6 +756,13 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private void getFooterButtons() {
 		buttonsPanel.clear();
 
+		Button closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.addClickHandler(e -> hide());
+		
+		buttonsPanel.add(closeBtnDialog);
+
 		acceptDialog = new Button();
 		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptDialog.setText(AON.MSG.accept());
@@ -771,10 +777,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		});
 
 		buttonsPanel.add(acceptDialog);
-	}
-
-	public void setSaveButton() {
-		acceptDialog.setText("Grabar");
 	}
 	
 	private void createPayment() {

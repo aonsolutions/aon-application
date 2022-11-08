@@ -44,6 +44,10 @@ public enum NordigenAccountTransactionJSON {
 			(transaction, json) -> transaction.setRemittanceInformationUnstructured(json.optString("remittanceInformationUnstructured", null)),
 			(transaction, json) -> json.put("remittanceInformationUnstructured", transaction.getRemittanceInformationUnstructured())
 	),
+	REMITTANCE_INFORMATION_STRUCTURED(
+			(transaction, json) -> transaction.setRemittanceInformationStructured(json.optString("remittanceInformationStructured", null)),
+			(transaction, json) -> json.put("remittanceInformationStructured", transaction.getRemittanceInformationStructured())
+			),
 	PURPOSE_CODE(
 			(transaction, json) -> transaction.setPurposeCode(json.optString("purposeCode", null)),
 			(transaction, json) -> json.put("purposeCode", transaction.getPurposeCode())
