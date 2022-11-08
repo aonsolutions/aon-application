@@ -87,6 +87,10 @@ public class AonToolbar extends FlowPanel {
 		return messagePanel;
 	}
 	
+	public FlowPanel getButtonContainer() {
+		return buttonContainer;
+	}
+	
 	@Override
 	public void setTitle(String name) {
 		titlePanel.clear();

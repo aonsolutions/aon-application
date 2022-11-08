@@ -1532,7 +1532,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private AonToolbar getToolbarPDFViewerPanel() {
 
-		closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconClose());
+		closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
 		closePDF.addClickHandler(e -> onClosePDF());
 		toolbarPDFViewer.add(closePDF);
 		

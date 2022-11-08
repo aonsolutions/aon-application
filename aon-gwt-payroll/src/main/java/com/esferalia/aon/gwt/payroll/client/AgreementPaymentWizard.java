@@ -1180,6 +1180,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			paymentExpression.setEnabled(true);
 			normalFieldsPanel.getElement().getStyle().setDisplay(Display.NONE);
 			extraFieldsPanel.getElement().getStyle().clearDisplay();
+
+			extraType.setSelectedIndex(2);
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraType);
 		} else {
 			paymentTypeListBox.setSelected(Payment.Type.CRA_0001);
 			setExtraPayFieldsVisible(false);
@@ -1251,6 +1254,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 				extraLabel.setText("Descripci\u00F3n paga extra");
 
 			extraPanel.getElement().getStyle().clearDisplay();
+			extraName.setFocus(true);
 		}
 	}
 
@@ -1646,7 +1650,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText(AON.MSG.cancelAction());
-		closeBtnDialog.setAccessKey('C');
 		closeBtnDialog.addClickHandler(e -> hide());
 
 		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
@@ -1656,7 +1659,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText(AON.MSG.accept());
-		acceptBtnDialog.setAccessKey('A');
 		acceptBtnDialog.addClickHandler(e -> {
 			if (AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "PAGA_EXTRA")) {
 				createExtraPayment();
