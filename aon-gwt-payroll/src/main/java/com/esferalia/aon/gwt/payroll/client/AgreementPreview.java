@@ -1067,7 +1067,8 @@ public abstract class AgreementPreview extends Composite {
 		
 		AonToolbarButton goToAgreementBtn = new AonToolbarButton("(En desarrollo) Ir al convenio " + agreement.getDescription(), AON.CSS.aonIconOpenInNew());
 		goToAgreementBtn.addClickHandler(e -> goToAgreement(agreement.getId()));
-		goToAgreementBtn.setEnabled(false);
+		// TODO: quitar esta linea cuando este implementado
+		goToAgreementBtn.setVisible(false);
 		toolbar.add(goToAgreementBtn);
 	}
 	
