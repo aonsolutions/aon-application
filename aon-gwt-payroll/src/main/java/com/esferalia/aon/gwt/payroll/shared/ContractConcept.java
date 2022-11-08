@@ -55,5 +55,11 @@ public class ContractConcept implements Serializable{
 		this.expression = expression;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return "ContractConcept [id=" + id + ", code=" + code + ", type=" + type + ", description=" + description
+				+ ", expression=" + expression + "]";
+	}
 	
 }
