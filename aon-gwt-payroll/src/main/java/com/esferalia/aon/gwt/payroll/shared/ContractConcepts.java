@@ -10,6 +10,7 @@ public class ContractConcepts implements Serializable {
 	private Set<ContractConcept> paymentConcepts;
 	private Set<ContractConcept> deductionConcepts;
 	private Set<ContractConcept> bonusConcepts;
+	private Set<ContractConcept> costConcepts;
 	
 	public ContractConcepts() {
 		super();
@@ -40,6 +41,14 @@ public class ContractConcepts implements Serializable {
 	public ContractConcepts setBonusConcepts(Set<ContractConcept> bonusConcepts) {
 		this.bonusConcepts = bonusConcepts;
 		return this;
+	}
+
+	public Set<ContractConcept> getCostConcepts() {
+		return costConcepts;
+	}
+
+	public void setCostConcepts(Set<ContractConcept> costConcepts) {
+		this.costConcepts = costConcepts;
 	}
 	
 }
