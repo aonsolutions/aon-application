@@ -59,7 +59,7 @@ public class SiltraRattachOldDelete implements Update {
 				dslContext
 	//			.createIndex("IDX_ATTACH_DATE")
 	//			.on(RATTACH, RATTACH.ATTACH_DATE)
-				.execute("CREATE INDEX `IDX_ATTACH_DATE_4_DELETE` ON `rattach` (`attach_date`)");
+				.execute("CREATE INDEX `IDX_ATTACH_DATE_4_DELETE` ON `rattach` (`type`, `attach_date`)");
 			} catch ( DataAccessException e ) {
 				System.err.println(e.getMessage());
 			}
