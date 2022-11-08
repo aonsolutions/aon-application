@@ -20,8 +20,8 @@ public interface NordigenServiceAsync {
 
 	void saveEnterpriseData(String currentDomainName, int currentDomain, String user,
 			AsyncCallback<Integer> callback);
-	void insertTransactions(String currentDomainName, int currentDomain, String user, Integer checkitEnterpriseId
-			, CheckItBankAccount checkItBankAccount, AsyncCallback<Integer> callback);
+	void insertTransactions(String currentDomainName, int currentDomain, String user, NordigenBankAccount nordigenBankAccount,
+		AsyncCallback<Integer> callback);
 	void getLogins(Integer bankId, AsyncCallback<List<CheckItLoginFields>> callback);
 	void addAccount(String currentDomainName, int currentDomain, String user, NordigenAccessToken token, NordigenBankAccount nordigenBankAccount, AsyncCallback<NordigenRequisition> callback);
 	void getCredentials(Integer enterpriseId, Integer loginId, AsyncCallback<CheckItLoginFields> callback);
@@ -34,5 +34,6 @@ public interface NordigenServiceAsync {
 	void clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain, String user, AsyncCallback<Integer> callback);
 	void cancelRequisition (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, Integer rbankId, AsyncCallback<Boolean> callback);
 	void getRequisition(NordigenAccessToken token, String requisitionId, AsyncCallback<NordigenRequisition> callback);
-	void setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback);
+	void setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback);
+	void getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, AsyncCallback<List<NordigenBankStatement>> callback);
 }
