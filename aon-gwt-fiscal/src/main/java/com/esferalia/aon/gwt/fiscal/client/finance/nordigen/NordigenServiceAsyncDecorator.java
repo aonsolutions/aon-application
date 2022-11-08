@@ -37,10 +37,10 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 
 	@Override
-	public void insertTransactions(String currentDomainName, int currentDomain, String user, Integer checkitEnterpriseId,
-			CheckItBankAccount checkItBankAccount, AsyncCallback<Integer> callback) {
+	public void insertTransactions(String currentDomainName, int currentDomain, String user, NordigenBankAccount nordigenBankAccount,
+			AsyncCallback<Integer> callback) {
 		AON.start();
-		fsa.insertTransactions(currentDomainName, currentDomain, user, checkitEnterpriseId, checkItBankAccount, new AsyncCallbackWrapper<>(callback));	
+		fsa.insertTransactions(currentDomainName, currentDomain, user, nordigenBankAccount, new AsyncCallbackWrapper<>(callback));	
 	}
 
 	@Override
@@ -124,11 +124,19 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 
 	@Override
-	public void setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account,
-			AsyncCallback<NordigenBankAccount> callback){
+	public void setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user,
+			NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback) {
 		AON.start();
-		fsa.setNordigenAccountValues(token, account, callback);
+		fsa.setNordigenAccountValues(token, domainName, domain, user, account, callback);
 	}
+
+	@Override
+	public void getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain, String user,
+			NordigenBankAccount nordigenBankAccount, AsyncCallback<List<NordigenBankStatement>> callback) {
+		AON.start();
+		fsa.getNotInsertedMovements(token, domainName, domain, user, nordigenBankAccount, callback);
+	}
+
 
 
 }
