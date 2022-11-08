@@ -68,23 +68,23 @@
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_tab_agreement"
+											action="gwt_main_tab_agreement"
+											title="#{bundle.payroll_agreement_module}"
+											target="gwt">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.payroll_agreement_module}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_agreement"
 											action="gwt_main_agreement"
-											value="#{bundle.payroll_agreement_module}" target="gwt">
+											title="#{bundle.payroll_agreement_module} (Antiguo)"
+											value="#{bundle.payroll_agreement_module} (Antiguo)" target="gwt">
 										</aon:commandLink>
 									</aon:div>	
-									<aon:if test="#{domainSwitcher.alphaUser}">	
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_tab_agreement"
-												action="gwt_main_tab_agreement"
-												title="#{bundle.payroll_agreement_module} (Tabs)"
-												target="gwt">
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="#{bundle.payroll_agreement_module} (Tabs)" />
-											</aon:commandLink>
-										</aon:div>	
-									</aon:if>
+										
 									<aon:if test="#{!domainSwitcher.domainManagementAvailable}">		
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_calculator"
@@ -198,23 +198,22 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_agreement2"
-											action="gwt_main_agreement"
-											value="#{bundle.payroll_agreement_module}" target="gwt">
+										<aon:commandLink id="gwt_tab_agreement"
+											action="gwt_main_tab_agreement"
+											title="#{bundle.payroll_agreement_module}"
+											target="gwt">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.payroll_agreement_module}" />
 										</aon:commandLink>
 									</aon:div>
-									<aon:if test="#{domainSwitcher.alphaUser}">	
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_tab_agreement"
-												action="gwt_main_tab_agreement"
-												title="#{bundle.payroll_agreement_module} (Tabs)"
-												target="gwt">
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="#{bundle.payroll_agreement_module} (Tabs)" />
-											</aon:commandLink>
-										</aon:div>	
-									</aon:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_agreement2"
+											action="gwt_main_agreement"
+											title="#{bundle.payroll_agreement_module} (Antiguo)"
+											value="#{bundle.payroll_agreement_module} (Antiguo)" target="gwt">
+										</aon:commandLink>
+									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contractMode-payroll2"
 											action="contractOption_list-payroll"
