@@ -280,6 +280,8 @@
 .aon_icon_up { background-image: iconUp;}
 @url iconRight aonIconRight;
 .aon_icon_right { background-image: iconRight;}
+@url iconArrowRightModify aonIconArrowRightModify;
+.aon_icon_arrow_right_modify { background-image: iconArrowRightModify;}
 @url iconDown aonIconDown;
 .aon_icon_down { background-image: iconDown;}
 @url iconLeft aonIconLeft;
@@ -320,6 +322,8 @@
 .aon_icon_model_sent { background-image: iconModelSent;}
 @url iconModelReopen aonIconModelReopen;
 .aon_icon_model_reopen { background-image: iconModelReopen;}
+@url iconOpenInNew aonIconOpenInNew;
+.aon_icon_open_in_new { background-image: iconOpenInNew;}
 @url iconAd aonIconAd;
 .aon_icon_ad { background-image: iconAd;}
 @url iconId aonIconId;

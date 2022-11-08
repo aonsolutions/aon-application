@@ -992,6 +992,7 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TRANSFORM_DATE")) {
 				try {
 					contractData.setTransformDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+					if(null != contractData.getTransformDate()) contractData.setOriginalEndDate(DateUtils.addDays2Date(contractData.getTransformDate(), -1));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
