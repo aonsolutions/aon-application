@@ -39,6 +39,8 @@ import com.esferalia.aon.dsi.nominas.model.Banco;
 import com.esferalia.aon.dsi.nominas.model.Calendario;
 import com.esferalia.aon.dsi.nominas.model.Centro;
 import com.esferalia.aon.dsi.nominas.model.Empresa;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -49,23 +51,20 @@ public class TraspasoEmpresas {
 	private static int domain;
 	private static int registry;
 	
-	public static void execute(Connection dsiConn, DSLContext aonContext) throws SQLException {
-		
-		ctx = aonContext;
+	public static void execute(Connection dsiConn, String domainName, int parentDom, String user) throws SQLException {
 		
 		// Leemos las empresas de Nóminas Omega (solo las que no tienen fecha de baja)
 		LinkedList<Empresa> empresas = EmpresaDAO.select(dsiConn);
-		
+
 		// Leemos todas las empresas de Omega (cuentas de cotizacion), ordenadas por cif + ccc_principal
 		// Para cada cif distinto, se comprueba si ese cif existe como dominio y si no existe
 		// se crea el dominio añadiendo los registros en las tablas necesarias
 		// Si el dominio ya existe, se borran los datos de laboral, y se actualizan el resto de datos
 		String cifEmpresa = null; 
 		int totalEmp = 0;
+// for (int z=1;z<=6;z++)  // PRUEBA PARA PROVOCAR ERROR EN LOCAL
+	
 		for (Empresa empresa : empresas) {
-			
-			// PRUEBA TRASPASAR POCAS EMPRESAS
-//			if (totalEmp == 5) break;
 			
 			totalEmp++;
 			Traspaso.info(empresa.toString());	
@@ -74,61 +73,72 @@ public class TraspasoEmpresas {
 			String cif = AonStringUtils.left(empresa.getNif(), 9);
 			
 			// Comprobar si cambia el CIF
-			if (cifEmpresa == null || !cifEmpresa.equals(cif)) {
-				// Añadir el dominio, si no existe (segun el cif) 
-				addDomain(empresa);
-				
-				// Entidad AT 
-			    addAppParam("PAY_ss_mutual_PAY", empresa.getEntiat());
-
-			    // Cuentas Contables			    
-		     	addAppParam("ACC_DEFAULT_COMPANY_SOC_INS_ACC", AonNumberUtils.toString(addAccount(empresa.getCtasegs(), "SEGURIDAD SOCIAL A CARGO DE LA EMPRESA")));		    
-		     	addAppParam("ACC_DEFAULT_SOCIAL_INSURANCE_ACC", AonNumberUtils.toString(addAccount(empresa.getCtassac(), "SEGURIDAD SOCIAL ACREEDORES")));		    
-		     	addAppParam("ACC_SALARY_CHARGED_RET_ACC", AonNumberUtils.toString(addAccount(empresa.getCtahacp(), "HACIENDA PUBLICA, ACREEDOR POR RETENCIONES")));
-		     	addAppParam("ACC_DEFAULT_CASH_ACC", AonNumberUtils.toString(addAccount(empresa.getCtacaja(), "CAJA")));
-		     	addAppParam("ACC_DEFAULT_SALARY_ACC", AonNumberUtils.toString(addAccount(empresa.getCtasuel(), "SUELDOS Y SALARIOS")));
-		     	addAppParam("ACC_SALARY_DED_ADV_PAYMENT_ACC", AonNumberUtils.toString(addAccount(empresa.getCtaanti(), "ANTICIPOS DE REMUNERACIONES")));
-		     	addAppParam("ACC_DEFAULT_PENDING_SALARY_ACC", AonNumberUtils.toString(addAccount(empresa.getCtapend(), "REMUNERACIONES PENDIENTES DE PAGO")));			    
-
-				// Guardar CIF para la siguiente iteracion
-		     	cifEmpresa = cif;
+			boolean cambio = (cifEmpresa == null || !cifEmpresa.equals(cif));
+			
+			// Guardar CIF para la siguiente iteracion
+	     	cifEmpresa = cif;
+			
+			try (CloseableAONContext aonCtx = AONContext.getAONContext(domainName, parentDom, user)) {
+			
+				ctx = aonCtx.getDslContext();	
+						
+				aonCtx.transaction( configuration -> {
+						
+					if (cambio) {
+						// Añadir el dominio, si no existe (segun el cif) 
+						addDomain(empresa);
+						
+						// Entidad AT 
+					    addAppParam("PAY_ss_mutual_PAY", empresa.getEntiat());
+		
+					    // Cuentas Contables			    
+				     	addAppParam("ACC_DEFAULT_COMPANY_SOC_INS_ACC", AonNumberUtils.toString(addAccount(empresa.getCtasegs(), "SEGURIDAD SOCIAL A CARGO DE LA EMPRESA")));		    
+				     	addAppParam("ACC_DEFAULT_SOCIAL_INSURANCE_ACC", AonNumberUtils.toString(addAccount(empresa.getCtassac(), "SEGURIDAD SOCIAL ACREEDORES")));		    
+				     	addAppParam("ACC_SALARY_CHARGED_RET_ACC", AonNumberUtils.toString(addAccount(empresa.getCtahacp(), "HACIENDA PUBLICA, ACREEDOR POR RETENCIONES")));
+				     	addAppParam("ACC_DEFAULT_CASH_ACC", AonNumberUtils.toString(addAccount(empresa.getCtacaja(), "CAJA")));
+				     	addAppParam("ACC_DEFAULT_SALARY_ACC", AonNumberUtils.toString(addAccount(empresa.getCtasuel(), "SUELDOS Y SALARIOS")));
+				     	addAppParam("ACC_SALARY_DED_ADV_PAYMENT_ACC", AonNumberUtils.toString(addAccount(empresa.getCtaanti(), "ANTICIPOS DE REMUNERACIONES")));
+				     	addAppParam("ACC_DEFAULT_PENDING_SALARY_ACC", AonNumberUtils.toString(addAccount(empresa.getCtapend(), "REMUNERACIONES PENDIENTES DE PAGO")));			    
+		
+					}
+		
+					// Añadir Direccion y Teléfono de la empresa 
+					int address = addAddress(empresa);
+					
+					// Añadir Representante Laboral y Representante Fiscal (si son iguales en Omega, se añade un solo registro en AON)
+					if (AonStringUtils.equals(empresa.getNomlab(), empresa.getNomfis()) && AonStringUtils.equals(empresa.getNiflab(), empresa.getNiffis())) {
+						addStaff((byte) 1, (byte) 1, empresa.getNiflab(), empresa.getNomlab());
+					} else {
+						addStaff((byte) 0, (byte) 1, empresa.getNiflab(), empresa.getNomlab()); // Añadir Representante Laboral
+						addStaff((byte) 1, (byte) 0, empresa.getNiffis(), empresa.getNomfis()); // Añadir Representante Fiscal
+					}
+					
+					// Añadir Actividad y CCC
+					addActivityAndCCC(empresa);
+					
+					// Añadir Centros de Trabajo. Se añade un centro de trabajo por el registro de la 
+					// empresa de Omega y ademas los centros de trabajo que haya en la empresa de Omega
+					String nombre = AonStringUtils.trimToEmpty(empresa.getDomicil()).toUpperCase();			
+					if (nombre.isEmpty())
+						nombre = "CENTRO";
+					empresa.setWorkplace(addWorkplace(nombre, address, empresa));
+					
+					for (Centro centro : empresa.getCentros()) {
+						nombre = AonStringUtils.trimToEmpty(centro.getSituacion()).toUpperCase();				
+						centro.setWorkplace(addWorkplace(nombre, addAddress(centro), empresa));				
+					}
+					
+					// Bancos
+					for (Banco banco : empresa.getBancos()) {
+						addBank(banco);
+					}
+					
+					// Trabajadores
+					TraspasoTrabajadores.execute(dsiConn, aonCtx, empresa, domain);
+				});
 			}
-
-			// Añadir Direccion y Teléfono de la empresa 
-			int address = addAddress(empresa);
-			
-			// Añadir Representante Laboral y Representante Fiscal (si son iguales en Omega, se añade un solo registro en AON)
-			if (AonStringUtils.equals(empresa.getNomlab(), empresa.getNomfis()) && AonStringUtils.equals(empresa.getNiflab(), empresa.getNiffis())) {
-				addStaff((byte) 1, (byte) 1, empresa.getNiflab(), empresa.getNomlab());
-			} else {
-				addStaff((byte) 0, (byte) 1, empresa.getNiflab(), empresa.getNomlab()); // Añadir Representante Laboral
-				addStaff((byte) 1, (byte) 0, empresa.getNiffis(), empresa.getNomfis()); // Añadir Representante Fiscal
-			}
-			
-			// Añadir Actividad y CCC
-			addActivityAndCCC(empresa);
-			
-			// Añadir Centros de Trabajo. Se añade un centro de trabajo por el registro de la 
-			// empresa de Omega y ademas los centros de trabajo que haya en la empresa de Omega
-			String nombre = AonStringUtils.trimToEmpty(empresa.getDomicil()).toUpperCase();			
-			if (nombre.isEmpty())
-				nombre = "CENTRO";
-			empresa.setWorkplace(addWorkplace(nombre, address, empresa));
-			
-			for (Centro centro : empresa.getCentros()) {
-				nombre = AonStringUtils.trimToEmpty(centro.getSituacion()).toUpperCase();				
-				centro.setWorkplace(addWorkplace(nombre, addAddress(centro), empresa));				
-			}
-			
-			// Bancos
-			for (Banco banco : empresa.getBancos()) {
-				addBank(banco);
-			}
-			
-			// Trabajadores
-			TraspasoTrabajadores.execute(dsiConn, aonContext, empresa, domain);
-			
 		}
+
 		Traspaso.info("TOTAL EMPRESAS = "+totalEmp);
 		
 	}	
@@ -304,7 +314,7 @@ public class TraspasoEmpresas {
 					.set(RADDRESS.NUMBER, empresa.getNumero())
 					.set(RADDRESS.ZIP, empresa.getCp())
 					.set(RADDRESS.CITY, empresa.getPoblaci())
-					.set(RADDRESS.GEOZONE, getGeozone(empresa.getCp(), empresa.getProvin()))
+					.set(RADDRESS.GEOZONE, getGeozone(ctx, empresa.getCp(), empresa.getProvin()))
 					.set(RADDRESS.MUNICIPALITY_CODE, getMunicipalityCode(empresa.getPoblaci(), empresa.getCp()))
 					.returning(RADDRESS.ID)
 					.fetchOne()
@@ -453,7 +463,7 @@ public class TraspasoEmpresas {
 								.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpriseActivity)
 								.set(ENTERPRISE_CCC.CCC, empresa.getAonCCC())
 								.set(ENTERPRISE_CCC.TYPE, getCCCType(empresa.getTipo()))
-								.set(ENTERPRISE_CCC.GEOZONE, getGeozone(empresa.getSscod(), empresa.getProvin()))
+								.set(ENTERPRISE_CCC.GEOZONE, getGeozone(ctx, empresa.getSscod(), empresa.getProvin()))
 								.returning(ENTERPRISE_CCC.ID)
 								.fetchOne()
 								.getId();

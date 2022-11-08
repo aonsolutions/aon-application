@@ -26,6 +26,7 @@ import com.esferalia.aon.dsi.nominas.model.Complemento;
 import com.esferalia.aon.dsi.nominas.model.Concepto;
 import com.esferalia.aon.dsi.nominas.model.Convenio;
 import com.esferalia.aon.dsi.nominas.model.Paga;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -45,9 +46,9 @@ public class TraspasoConvenios {
 	// Lista de las expresiones de la antiguedad de Omega, se las distintas categorias
 	private static ArrayList<String> listaExpresionesAntig = new ArrayList<String>();
 
-	public static void execute(Connection dsiConn, DSLContext aonContext) throws SQLException {
+	public static void execute(Connection dsiConn, AONContext aonContext) throws SQLException {
 		
-		ctx = aonContext;
+		ctx = aonContext.getDslContext();
 
 		convenios = ConvenioDAO.select(dsiConn);
 
@@ -338,7 +339,7 @@ public class TraspasoConvenios {
 	private static void addAgreementPayment(int agreement, Convenio convenio, Categoria categoria, Concepto concepto, Date startDate, byte salaryType) {
 
 		// Buscar o añadir el concepto a payment_concept
-		int paymentConcept = Traspaso.getPaymentConcept(concepto);
+		int paymentConcept = Traspaso.getPaymentConcept(ctx, concepto);
 		
 		// Expresion que se usa para el concepto
 		String expression = concepto.getAonExpression();
@@ -398,7 +399,7 @@ public class TraspasoConvenios {
 	private static void addAgreementPayment(int agreement, Paga paga, Date startDate, boolean pagaDistinta) {
 
 		// Buscar o añadir el concepto a payment_concept
-		int paymentConcept = Traspaso.getPaymentConcept(paga);
+		int paymentConcept = Traspaso.getPaymentConcept(ctx, paga);
 
 		// Añadir el concepto a agreement_payment, si no existe previamente
 		Integer id = ctx.select(AGREEMENT_PAYMENT.ID)
@@ -445,7 +446,7 @@ public class TraspasoConvenios {
 	private static void addAgreementPayment(int agreement, Complemento complemento, Date startDate) {
 
 		// Buscar o añadir el concepto a payment_concept
-		int paymentConcept = Traspaso.getPaymentConcept(complemento);
+		int paymentConcept = Traspaso.getPaymentConcept(ctx, complemento);
 
 		// Añadir el concepto a agreement_payment, si no existe previamente
 		Integer id = ctx.select(AGREEMENT_PAYMENT.ID)
