@@ -1301,13 +1301,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			addWorkplaceEventsItem(workplaceItem, eventsDraftObject);
 		}
 
-		Agreement agreement = workplace.getAgreement();
-
-		if (extended && (agreement != null)) {
-
-			addWorkplaceAgreementItem(workplaceItem, enterprise, agreement);
-
-		} 
+		// TODO: comento convenio antiguo
+//		Agreement agreement = workplace.getAgreement();
+		
+//		if (extended && (agreement != null)) {
+//
+//			addWorkplaceAgreementItem(workplaceItem, enterprise, agreement);
+//
+//		} 
 		
 		if ( workplaceItem.getChildCount() == 0 ) {
 			workplaceItem.addItem(new SafeHtmlBuilder().appendEscaped("fake").toSafeHtml());
