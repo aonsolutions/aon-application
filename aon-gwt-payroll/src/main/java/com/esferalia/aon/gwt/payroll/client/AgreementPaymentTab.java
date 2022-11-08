@@ -460,7 +460,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
 				if(null != payment) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+					if(payment.isModify())
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_arrow_right_modify\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+					else
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
 				}
 			}
 		};
@@ -636,7 +639,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	private void openDialog(Payment payment) {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE");
-    	AgreementPaymentEditor paymentEditor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
+    	new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
 //				Window.alert(null == extra ? "---- Extra NULL ----" : "---- Extra ----\nId : " + extra.getId() + "\nisDeleted : " + extra.isDeleted()
@@ -674,7 +677,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 
 		};
 		
-		paymentEditor.setSaveButton();
 	}
 
 	private String getParsedExpression(String expression) {
