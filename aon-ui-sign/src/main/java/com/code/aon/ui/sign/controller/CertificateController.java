@@ -338,12 +338,12 @@ public class CertificateController implements Serializable {
 			filter = f.getDomainProperty().in(domains);
 		} else filter = f.getDomainProperty().eq(domain.getId());
     	
-		if(user.getRegistry() != null && domain.getParentId() != null) {
+		if(!user.getRegistry().isEmpty() && domain.getParentId() != null) {
 			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
-			Integer[] registries = {user.getRegistry(), company.getId(), parentCompany.getId()};
+			Integer[] registries = {user.getRegistry().getId(), company.getId(), parentCompany.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
-		} else if(user.getRegistry() != null) {
-			Integer[] registries = {user.getRegistry(), company.getId()};
+		} else if(!user.getRegistry().isEmpty()) {
+			Integer[] registries = {user.getRegistry().getId(), company.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
 		} else if(domain.getParentId() != null) {
 			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());

@@ -43,7 +43,7 @@ public class Asserts {
 	}
 	public static void assertNotEmptyCollection(String msg,Collection<?> actual) {
 		Assertions.assertNotNull(actual,msg);		
-		Assertions.assertTrue(!actual.isEmpty(),msg);
+		Assertions.assertFalse(actual.isEmpty(),msg);
 	}
 	
 	public static void assertEqualsCollection(String msg,Collection<?> expected, Collection<?> actual) {

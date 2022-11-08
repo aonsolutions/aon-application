@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISecurity;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -111,14 +112,14 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
+	public Stream<User> getUserStream(AONContext ctx, UserFilter filter, Options... options) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getUserStream(ctx, filter));
+				configuration -> UserDAO.getStream(ctx, filter, options));
 	}
 	
 	@Override
-	public User getUser(AONContext ctx, UserFilter filter) {
-		return SecurityDAO.getUser(ctx, filter);
+	public User getUser(AONContext ctx, UserFilter filter, Options...options) {
+		return UserDAO.get(ctx, filter, options);
 	}
 	
 	@Override

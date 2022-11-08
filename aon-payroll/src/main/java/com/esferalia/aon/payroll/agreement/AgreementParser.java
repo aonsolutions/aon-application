@@ -535,15 +535,22 @@ public class AgreementParser {
 				    	     	            		Element elementCPTO = (Element) nodeCPTO;
 				    	     	            		
 				    	     	            		String name = elementCPTO.getElementsByTagName("NOMBRE").item(0).getTextContent();
-						   	    	            	String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
 						   	    	            	String type = elementCPTO.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
 						   	    	            	
 						   	    	            	String realName = getParseName(name, type);
 						   	    	            	
-						   	    	            	if(null != elementTSI.getElementsByTagName("PERIODO"))
-						   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime(), endDate.getTime());
-						   	    	            	else
-						   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime());
+						   	    	            	try {
+						   	    	            		String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
+						   	    	            		
+						   	    	            		if(null != elementTSI.getElementsByTagName("PERIODO"))
+							   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime(), endDate.getTime());
+							   	    	            	else
+							   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime());
+							   	    	            	
+						   	    	            	} catch (NullPointerException e) {
+														System.err.println("------- ERROR ------\nName : " + name + "\nType : " + type + "\nRealName : " + realName + "\nDate : " + startDate.getTime());
+													}
+						   	    	         
 				    	     	            	}
 				   	    	            	}
 			   	    	            	}

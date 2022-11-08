@@ -62,8 +62,12 @@ public class RegistryDAO {
 		public Registry apply(Record r) {
 			return build(r, null);
 		}
+
+	    public static Registry build(Record r) {
+	        return build(r, REGISTRY);
+	    }
 		
-		public static Registry build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
+	    public static Registry build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) 
 				registry = REGISTRY;
 			return new Registry() 

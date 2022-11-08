@@ -172,8 +172,11 @@ public class AccountStatementDAO {
 				}
 			);
 	}
-
 	public static Stream<AccountStatement> balance(AONContext ctx , final AccountingReportParams params ) {
+		return balance(ctx , params , false);
+	}
+
+	public static Stream<AccountStatement> balance(AONContext ctx , final AccountingReportParams params , boolean applyDateFilterIfNeeded ) {
 		ctx.checkRead();
 		AccountPeriod ap = (params.getPeriod() == null)?null: AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
 		if (params.getPeriod() == null) {
@@ -190,12 +193,11 @@ public class AccountStatementDAO {
 		final MutableDouble sunpaidBalance = new MutableDouble(0.0);
 		
 		EnumMap<AccountStatementPeriod,AccountStatement> map = new EnumMap<AccountStatementPeriod,AccountStatement>(AccountStatementPeriod.class);
-		
 		ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT)
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.where(getBalanceCondition(ctx, params, false))
+				.where(getBalanceCondition(ctx, params, applyDateFilterIfNeeded))
 				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE)
 				.fetch()
 				.stream()

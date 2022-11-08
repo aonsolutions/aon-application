@@ -153,6 +153,8 @@ export const FOOTER = 'Peu';
 
 export const GALICIAN = 'Gallec';
 export const GENERAL_INFORMATION = 'Informació General';
+export const GET_INVOICE = 'Obtenir Factura';
+export const GET_INVOICES = 'Obtenir Factures';
 export const GROUP_DATA = 'Dades de el Grup';
 export const GROUP_MANAGEMENT = `Gestió d'Grups`;
 export const GROUP = 'Grup';
@@ -184,6 +186,7 @@ export const INVOICE_CONFIGURATION = 'Configuració de Factures';
 export const INVOICE_DATA = 'Dades Factura';
 export const INVOICE_ISSUED = 'Factura Emesa';
 export const INVOICE_NUMBER = 'Número Factura';
+export const INVOICE_OBJECT = 'Objecte de Factura';
 export const INVOICE_PRINTING = 'Impressió de Factures';
 export const INVOICE_RECEIVED = 'Factura Rebuda';
 export const INVOICES = 'Factures';
@@ -205,6 +208,8 @@ export const LOCATION = 'Ubicació';
 
 // ----- M
 
+export const MARK_ENTRY = 'Marcar Entrada';
+export const MARK_EXIT = 'Marcar Sortida';
 export const MANAGEMENT = 'Gestió';
 export const MODEL_111 = 'Model 111';
 export const MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
@@ -224,6 +229,9 @@ export const NEW_EXPENSE = 'Nova Despesa';
 export const NEW_PRODUCT = 'Nou Producte';
 export const NEW_REQUEST = 'Nova Sol·licitud';
 export const NEXT = 'Següent';
+export const NIF = 'NIF';
+export const NOTIFICATION = 'Notificació';
+export const NOTIFICATIONS = 'Notificacions';
 export const NOTES = 'Notes';
 export const NOTE = 'Nota';
 export const NUMBER = 'Nombre';
@@ -308,6 +316,7 @@ export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE = 'Àmbit';
 export const SEARCH = 'Buscar';
+export const SEE_ALL = 'Veure Totes';
 export const SEND = 'Enviar';
 export const SEND_FILE = 'Enviar Fitxer';
 export const SEND_FILES = 'Enviar Fitxers';

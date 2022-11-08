@@ -291,7 +291,7 @@ public class UserServlet extends AonApiHttpServlet {
 		if(params.opt("task_holder_empty") != null) {
 			Filter newFilter = f.getTaskHolderProperty().isNull()
 			.or(f.getTaskHolderActiveProperty().eq((byte)0))
-			.or(f.getTaskHolderDomainProperty().eq(api.getDomain().getParentId()));
+			.or(f.getTaskHolderDomainProperty().eq(api.getDomain().getParentId()).and(f.getTaskHolderActiveProperty().eq((byte)0)));
 			
 			filter = filter.and(newFilter);
 		}
@@ -596,7 +596,7 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
 		if(user != null && th != null && th.getId() != null) {
-			user.setRegistry(th.getId());
+			user.setRegistry(new Registry().setId(th.getId()));
 			user = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
 		}
 		return UserJSON.toJSON(user);
@@ -858,7 +858,7 @@ public class UserServlet extends AonApiHttpServlet {
 						.and(f.getDocumentProperty().eq(document)));
 					registryId = r.getId();
 				}
-				user.setRegistry(registryId);
+				user.setRegistry(new Registry().setId(registryId));
 			}
 		}	
 		user = AON.save(domain.getName(), domain.getId(), "", user);

@@ -128,6 +128,11 @@ public class CustomersServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getScopeProperty().eq(JsonUtils.getInt(api.getData(), IJsonNames.SCOPE)));
 		}
 		
+		int projectType = api.getData().optInt("projectType");
+		if(projectType!=0) {
+			filter = filter.and(f.getProjectTypeProperty().eq(projectType));
+		}
+		
 		if(api.getData().opt(IJsonNames.STATUS) != null) {
 			ArrayList<String> list = new ArrayList<>();
 			

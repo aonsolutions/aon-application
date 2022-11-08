@@ -42,6 +42,7 @@ import com.esferalia.aon.dsi.nominas.model.Descendiente;
 import com.esferalia.aon.dsi.nominas.model.Empresa;
 import com.esferalia.aon.dsi.nominas.model.Paga;
 import com.esferalia.aon.dsi.nominas.model.Trabajador;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -52,9 +53,9 @@ public class TraspasoTrabajadores {
 	
 	private static DSLContext ctx;
 	
-	public static void execute(Connection dsiConn, DSLContext aonContext, Empresa empresa, int domain) throws SQLException {
+	public static void execute(Connection dsiConn, AONContext aonContext, Empresa empresa, int domain) throws SQLException {
 		
-		ctx = aonContext;
+		ctx = aonContext.getDslContext();
 		
 		// Para cada empresa se leen sus trabajadores (sin fecha de baja o fecha de baja >= 01/01/2021)
 		LinkedList<Trabajador> trabajadores = TrabajadorDAO.select(dsiConn, empresa.getSscod(), empresa.getSsnum());
@@ -372,7 +373,7 @@ public class TraspasoTrabajadores {
 						.set(RADDRESS.ADDRESS2, address2)
 						.set(RADDRESS.ZIP, trabajador.getCp())
 						.set(RADDRESS.CITY, trabajador.getPoblaci())
-						.set(RADDRESS.GEOZONE, getGeozone(trabajador.getCp(), trabajador.getProvin()))
+						.set(RADDRESS.GEOZONE, getGeozone(ctx, trabajador.getCp(), trabajador.getProvin()))
 						.set(RADDRESS.MUNICIPALITY_CODE, getMunicipalityCode(trabajador.getPoblaci(), trabajador.getCp()))
 						.returning(RADDRESS.ID)
 						.fetchOne()
@@ -385,7 +386,7 @@ public class TraspasoTrabajadores {
 				.set(RADDRESS.ADDRESS2, address2)
 				.set(RADDRESS.ZIP, trabajador.getCp())
 				.set(RADDRESS.CITY, trabajador.getPoblaci())
-				.set(RADDRESS.GEOZONE, getGeozone(trabajador.getCp(), trabajador.getProvin()))
+				.set(RADDRESS.GEOZONE, getGeozone(ctx, trabajador.getCp(), trabajador.getProvin()))
 				.set(RADDRESS.MUNICIPALITY_CODE, getMunicipalityCode(trabajador.getPoblaci(), trabajador.getCp()))
 				.where(RADDRESS.REGISTRY.eq(registry))
 				.execute();
@@ -1138,7 +1139,7 @@ public class TraspasoTrabajadores {
 	private static void addContractPayment(int domain, int contract, Trabajador trabajador, Concepto concepto) {
 
 		// Buscar o añadir el concepto a payment_concept
-		int paymentConcept = Traspaso.getPaymentConcept(concepto);
+		int paymentConcept = Traspaso.getPaymentConcept(ctx, concepto);
 		
 		// Expresion que se usa para el concepto
 		String expression = concepto.getAonExpression();
@@ -1168,7 +1169,7 @@ public class TraspasoTrabajadores {
 	private static void addContractPayment(int domain, int contract, Trabajador trabajador, Paga paga, String conceptosPagas) {
 		
 		// Buscar o añadir el concepto a payment_concept
-		int paymentConcept = Traspaso.getPaymentConcept(paga);
+		int paymentConcept = Traspaso.getPaymentConcept(ctx, paga);
 		
 		// Añadir concepto a contract_payment
 		ctx.insertInto(CONTRACT_PAYMENT)
@@ -1192,7 +1193,7 @@ public class TraspasoTrabajadores {
 	private static void addContractPayment(int domain, int contract, Trabajador trabajador, Complemento complemento, String conceptosEnf, String conceptosAcc) {
 
 		// Buscar o añadir el concepto a payment_concept
-		int paymentConcept = Traspaso.getPaymentConcept(complemento);
+		int paymentConcept = Traspaso.getPaymentConcept(ctx, complemento);
 		
 		// Añadir concepto a contract_payment
 		ctx.insertInto(CONTRACT_PAYMENT)

@@ -142,7 +142,7 @@ export class AonReg extends AonElement {
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 		
-		if(this.registry.id){
+		if(this.registry.id && this.registry.getCreationUser){
 			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
 		}
 
@@ -154,12 +154,7 @@ export class AonReg extends AonElement {
 		div.style.width = "100%";
 		this.appendChild(div);
 
-		// let div2 = this.createElement(TAG.DIV);
-		// div2.style.display = "flex";
-		// div2.style.width = "100%";
-		// this.appendChild(div2);
 		this.buildGeneralData();
-		// this.buildInfoCard(div2);
 	}
 
 	buildTabs() {
@@ -203,12 +198,11 @@ export class AonReg extends AonElement {
 		card.title = MSG.GENERAL_INFORMATION;
 		card.style.width = '50%';
 		parent.appendChild(card);
-
+		
 		if(this.registry.id && this.registry.status){
 			this.buildStatusRegistry();
 		}
 		
-
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
@@ -916,13 +910,13 @@ export class AonReg extends AonElement {
 
 	//SEGMENTATIONS
 	buildSegments(parent) {
-		let registrySegment = this.registry.getRegistrySegments()
-		.map(s =>  new RegistrySegment(s))
-		.filter(s => !s.isRemoved());
-
 		const table =  new AonBasicTable();
 		table.id =  "segmentTable";
 		parent.appendChild(table);
+
+		let registrySegment = this.registry.getRegistrySegments()
+		.map(s =>  new RegistrySegment(s))
+		.filter(s => !s.isRemoved());
 
 		if(!registrySegment || registrySegment.length <= 0){
 			let registrySegment = new RegistrySegment();
@@ -1010,7 +1004,6 @@ export class AonReg extends AonElement {
 		table.addCell(addSegment);
 	}
 
-
 	async getSegments(){
 		if(!this.segments.length){
 			try {
@@ -1022,10 +1015,6 @@ export class AonReg extends AonElement {
 		}
 		
 		return this.segments;
-		// return this.segments
-		// .filter((value) => 
-		// 	!( this.registry.getRegistrySegments().some(r => r.segment && r.segment.id == value.id) ) 
-		// );
 	}
 
 	//EXPEDIENTE

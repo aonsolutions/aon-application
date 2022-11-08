@@ -9,12 +9,14 @@ public class NordigenAccountTransaction implements Serializable {
 	
 	
 	private String transactionId;
+	private String internalTransactionId;
 	private String entryReference;
 	private String checkId;
 	private Date bookingDate;
 	private Date valueDate;
 	private NordigenAccountAmount transactionAmount;
 	private String remittanceInformationUnstructured;
+	private String remittanceInformationStructured;
 	private String purposeCode;
 	private String bankTransactionCode;
 	private String proprietaryBankTransactionCode;
@@ -26,7 +28,14 @@ public class NordigenAccountTransaction implements Serializable {
 	public NordigenAccountTransaction setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
 		return this;
-	}	
+	}
+	public String getInternalTransactionId() {
+		return internalTransactionId;
+	}
+	public NordigenAccountTransaction setInternalTransactionId(String internalTransactionId) {
+		this.internalTransactionId = internalTransactionId;
+		return this;
+	}
 	public String getEntryReference() {
 		return entryReference;
 	}
@@ -67,6 +76,13 @@ public class NordigenAccountTransaction implements Serializable {
 	}
 	public NordigenAccountTransaction setRemittanceInformationUnstructured(String remittanceInformationUnstructured) {
 		this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+		return this;
+	}
+	public String getRemittanceInformationStructured() {
+		return remittanceInformationStructured;
+	}
+	public NordigenAccountTransaction setRemittanceInformationStructured(String remittanceInformationStructured) {
+		this.remittanceInformationStructured = remittanceInformationStructured;
 		return this;
 	}
 	public String getPurposeCode() {

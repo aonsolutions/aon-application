@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.api.model.registry;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class RegistryAddInfo {
+public class RegistryAddInfo implements Serializable{
 
+	private static final long serialVersionUID = 3060775131092037556L;
+	
 	private Integer id;
 	private Integer domain;
 	private Integer registry;

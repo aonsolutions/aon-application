@@ -48,6 +48,11 @@ public class Contract {
 	
 	private boolean isDiscapacidad; // ¿ Posee discapacidad ?
 	
+	private boolean isBonus; // ¿ Posee bonificacion ?
+	
+	private Over52Years over52Years; // ¿ Mayores de 25 años ?
+	
+	
 	//discapacidad
 	private String discapacidadType;
 	private String collectiveType;
@@ -211,6 +216,14 @@ public class Contract {
 		return isDiscapacidad;
 	}
 	
+	public boolean isBonus() {
+		return isBonus;
+	}
+	
+	public Optional<Over52Years> getOver52Years() {
+		return Optional.ofNullable(over52Years);
+	}
+	
 	public Optional<String> getDiscapacidadType() {
 		return Optional.ofNullable(discapacidadType);
 	}
@@ -269,6 +282,10 @@ public class Contract {
 		private boolean noCertainDate; // ¿ Periodo de actividad es sin fecha cierta.?
 		
 		private boolean isDiscapacidad; // ¿ Posee discapacidad ?
+		
+		private boolean isBonus; // ¿ Posee bonificacion ?
+		
+		private Over52Years over52Years; // ¿ Mayores de 52 años ?
 		
 		//discapacidad
 		private String discapacidadType;
@@ -475,6 +492,16 @@ public class Contract {
 			return this;
 		}
 		
+		public ContractBuilder setBonus(boolean isBonus) {
+			this.isBonus = isBonus;
+			return this;
+		}
+		
+		public ContractBuilder setOver52Years(Over52Years over52Years) {
+			this.over52Years = over52Years;
+			return this;
+		}
+		
 		public ContractBuilder setDiscapacidadType(String discapacidadType) {
 			this.discapacidadType = discapacidadType;
 			return this;
@@ -536,8 +563,10 @@ public class Contract {
 			contract.details          = this.details;
 			contract.noCertainDate    = this.noCertainDate;
 			contract.isDiscapacidad   = this.isDiscapacidad;
+			contract.isBonus          = this.isBonus;
 			contract.discapacidadType = this.discapacidadType;
 			contract.collectiveType   = this.collectiveType;
+			contract.over52Years      = this.over52Years;
 			return contract;
 		}
 	}
@@ -618,6 +647,30 @@ public class Contract {
 	 */
 	public enum DetailType {
 		CONTRATO,TRANSFORMACION,PRORROGA;
+	}
+	
+	/**
+	 * MAYORES DE 52 AÑOS
+	 */
+	public enum Over52Years {
+		REASS("Subsidio del REASS", "reass"), 
+		RESTO_SUB("Resto de subsidios de desempleo","restosub");
+
+		private String name;
+		private String value;
+
+		private Over52Years(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		public String getName() {
+			return name;
+		}
+		
+		public String getValue() {
+			return value;
+		}
 	}
 
 
@@ -737,6 +790,7 @@ public class Contract {
 			+ ", previsible=" + previsible 
 			+ ", noCertainDate=" + noCertainDate 
 			+ ", isDiscapacidad=" + isDiscapacidad 
+			+ ", isBonus=" + isBonus 
 			+ ", discapacidadType=" + discapacidadType 
 			+ ", collectiveType=" + collectiveType 
 			+ ", details=" + details +"]";

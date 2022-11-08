@@ -1,4 +1,4 @@
-import { Registry } from '../registry/Registry.js';
+import { Registry } from './Registry.js';
 
 export class TaskHolder extends Registry {
 
@@ -8,6 +8,9 @@ export class TaskHolder extends Registry {
     active;
     costProfile;
 
+    status;
+    workgroups;
+
     constructor(taskHolder) {
         super(taskHolder);
         if(taskHolder) {
@@ -16,8 +19,12 @@ export class TaskHolder extends Registry {
             this.user = taskHolder.user;
             this.active = taskHolder.active;
             this.costProfile = taskHolder.costProfile;
+            this.status = taskHolder.status;
+            this.workgroups = taskHolder.workgroups || [];
         } else {
             this.active = true;
+            this.status = 'ACTIVE';
+            this.workgroups = [];
         }
     }
 
@@ -62,4 +69,24 @@ export class TaskHolder extends Registry {
         return this;
     }
 
+    getStatus() {
+        return this.status;
+    }
+
+    setStatus(status) {
+        this.status = status;
+        return this;
+    }
+
+    getWorkgroups() {
+        return this.workgroups;
+    }
+
+    setWorkgroups(workgroups) {
+        this.workgroups = workgroups;
+    }
+
+    addWorkgroup(workgroup) {
+        this.workgroups.push(workgroup);
+    }
 } 

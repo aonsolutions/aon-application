@@ -320,9 +320,18 @@ public class EmployeeContractPayments extends Composite {
 	    // Expression column.
 	    Column<ContractConceptCalc, String> expressionColumn = new Column<ContractConceptCalc, String>(new TextCell()) {
 	    	@Override
-	        public String getValue(ContractConceptCalc contractConceptCalc) {
-	    		return getParsedExpression(contractConceptCalc.getExpression());
-	        }
+			public String getValue(ContractConceptCalc contractPayment) {
+	    		String parsedExpression = getParsedExpression(contractPayment.getExpression());
+				return AonStringUtils.isNotBlank(parsedExpression) && parsedExpression.length() > 200 ? parsedExpression.substring(0, 199) : parsedExpression;
+			}
+			
+			@Override
+			public void render(Context context, ContractConceptCalc contractConceptCalc, SafeHtmlBuilder sb) {
+				if(null != contractConceptCalc) {
+					String parsedExpression = getParsedExpression(contractConceptCalc.getExpression());
+					sb.appendHtmlConstant("<div style=\"outline-style:none;\" title=\"" + parsedExpression + "\">" + (AonStringUtils.isNotBlank(parsedExpression) && parsedExpression.length() > 80 ? parsedExpression.substring(0, 79) + "..." : parsedExpression)  + "</div>");
+				}
+			}
 		};
 
 	    expressionColumn.setSortable(true);
@@ -339,7 +348,7 @@ public class EmployeeContractPayments extends Composite {
 		startDateColumn.setFieldUpdater((index, contractConceptCalc, startDate) -> {
 			contractConceptCalc.setStartDate(startDate);
 	    	contractConceptCalc.setHasChange(true);
-	    	contractConceptCalcDG.redrawRow(index);
+	    	onSave();
 		});
 
 	    startDateColumn.setSortable(true);
@@ -357,7 +366,7 @@ public class EmployeeContractPayments extends Composite {
 		endDateColumn.setFieldUpdater((index, contractConceptCalc, endDate) -> {
 			contractConceptCalc.setEndDate(endDate);
 	    	contractConceptCalc.setHasChange(true);
-	    	contractConceptCalcDG.redrawRow(index);
+	    	onSave();
 		});
 
 	    endDateColumn.setSortable(true);
@@ -448,20 +457,20 @@ public class EmployeeContractPayments extends Composite {
 			@Override
 			protected void onAccept(ContractConceptCalc updatedPayment) {
 				switch (updatedPayment.getContractConceptCalcType()) {
-				case PAYMENT:
-					updatePayment(isHide, selectedPayment, updatedPayment);
-					break;
-				case DEDUCTION:
-					updateDeduction(isHide, selectedPayment, updatedPayment);
-					break;
-				case COST:
-					updateCost(isHide, selectedPayment, updatedPayment);
-					break;
-				case BONUS:
-					updateBonus(isHide, selectedPayment, updatedPayment);
-					break;
-				default:
-					break;
+					case PAYMENT:
+						updatePayment(isHide, selectedPayment, updatedPayment);
+						break;
+					case DEDUCTION:
+						updateDeduction(isHide, selectedPayment, updatedPayment);
+						break;
+					case COST:
+						updateCost(isHide, selectedPayment, updatedPayment);
+						break;
+					case BONUS:
+						updateBonus(isHide, selectedPayment, updatedPayment);
+						break;
+					default:
+						break;
 				}
 			}
 

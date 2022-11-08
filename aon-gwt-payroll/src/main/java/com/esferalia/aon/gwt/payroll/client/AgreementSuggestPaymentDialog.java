@@ -222,7 +222,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		buttonsPanel.add(manualAgreement);
 		
 		acceptBtn = new Button();
-		acceptBtn.setText("Guardar");
+		acceptBtn.setText("Aceptar");
 		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtn.addClickHandler(e -> {
 			hide();

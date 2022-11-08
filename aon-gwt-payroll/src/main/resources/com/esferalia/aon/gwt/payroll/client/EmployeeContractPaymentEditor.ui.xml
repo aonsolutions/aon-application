@@ -103,7 +103,7 @@
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.flex}">
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:HTMLPanel styleName="{style.element} {style.widthAll}" ui:field="paymentMonthPanel">
 						<g:Label styleName="{style.title}">Mes Cobro</g:Label>
 						<g:ListBox ui:field="paymentMonthLB"/>
 					</g:HTMLPanel>
@@ -139,10 +139,6 @@
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.flex}">
 					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-						<g:Label styleName="{style.title}">Mes Cobro</g:Label>
-						<g:ListBox ui:field="deductionMonthLB"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
 						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
 						<c:DateBoxEx ui:field="deductionStartDateBx" styleName="{style.date}"/>
 					</g:HTMLPanel>
@@ -162,7 +158,7 @@
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.element}">
 					<g:Label styleName="{style.title}">Código</g:Label>
-					<g:TextBox ui:field="costCodeTB" maxLength="10"/>
+					<g:SuggestBox ui:field="costCodeSB"/>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.element}">
 					<g:Label styleName="{style.title}">Descripción</g:Label>

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.function.Function;
@@ -10,8 +11,10 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -20,6 +23,7 @@ import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.AuthFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -35,20 +39,34 @@ public class UserDAO {
 		return ctx.getDslContext().select()
 			.from(USER)
 			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
 			.where(USER_PROPERTIES.getConditions(filter));
 	}
 	
-	public static User get(AONContext ctx, UserFilter filter) {
+	public static User get(AONContext ctx, UserFilter filter, Options...options) {
 		User user = select(ctx, filter).limit(1).fetch()
 			.stream().map(new UserFiller()).findFirst().orElse(new User());
 		user.setTaskHolders(TaskHolderDAO.getList(ctx, f -> f.getUserIdProperty().eq(user.getId())));
 		return user;
 	}
 	
-	public static Stream<User> getStream(AONContext ctx, UserFilter filter) {
-		return select(ctx, filter).limit(1).fetch()
-				.stream().map(new UserFiller());
+	public static Stream<User> getStream(AONContext ctx, UserFilter filter, Options...options) {
+		return options.length > 0 
+		    ? getStream(ctx, filter, options[0])
+		    : select(ctx, filter).fetch().stream().map(new UserFiller());
 	}
+	   
+    public static Stream<User> getStream(AONContext ctx, UserFilter filter, Integer page, Integer perPage){
+        return select(ctx, filter)
+            .limit(perPage).offset(perPage * (page -1))
+            .fetch().stream().map(new UserFiller());
+    }
+    
+    private static Stream<User> getStream(AONContext ctx, UserFilter filter, Options options){
+        if(options.isPagination())
+            return getStream(ctx, filter, options.getPage(), options.getPerPage());
+        else return getStream(ctx, filter);
+    }
 	
 	public static User save(AONContext ctx, User user) {
 		user = user.getId() != null 
@@ -92,20 +110,24 @@ public class UserDAO {
 	}
 	
 	public static void saveUserWorkgroups(AONContext ctx, User user){
-		user.getWorkgroups().stream().forEach(workgroup -> {
-			UserWorkgroupDAO.save(ctx, new UserWorkgroup()
-					.setDomain(workgroup.getDomain())
-					.setUserId(user.getId())
-					.setWorkgroup(workgroup));
+		user.getWorkgroups().stream()
+		.forEach(workgroup -> {
+			if(workgroup.isRemoved()) {
+				deleteUserWorkgroup(ctx, user, workgroup);
+			} else {
+				UserWorkgroupDAO.save(ctx, new UserWorkgroup()
+						.setDomain(workgroup.getDomain())
+						.setUserId(user.getId())
+						.setWorkgroup(workgroup));
 
-			TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
-			if(!th.isEmpty()) {
-				TaskHolderWorkgroupDAO.save(ctx, new TaskHolderWorkgroup()
-					.setDomain(workgroup.getDomain())
-					.setTaskHolder(th.getId())
-					.setWorkgroup(workgroup));
+				TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+				if(!th.isEmpty()) {
+					TaskHolderWorkgroupDAO.save(ctx, new TaskHolderWorkgroup()
+						.setDomain(workgroup.getDomain())
+						.setTaskHolder(th.getId())
+						.setWorkgroup(workgroup));
+				}
 			}
-			
 		});
 	}
 	
@@ -134,7 +156,9 @@ public class UserDAO {
 				.setName(r.getValue(USER.NAME))
 				.setLogin(r.getValue(USER.LOGIN))
 				.setActive(AonEnumUtils.getBoolean(r.getValue(USER.ACTIVE)))
-				.setRegistry(r.getValue(USER.REGISTRY))
+				.setRegistry(checkField(r, REGISTRY.ID)
+				        ? RegistryFiller.build(r)
+				        : new Registry().setId(r.getValue(USER.REGISTRY)))
 				.setAuth(checkField(r, AUTH.ID) && getValue(r, AUTH.ID) != null
 						? AuthFiller.build(r)
 						: new Auth().setAuth(r.getValue(USER.AUTH)))

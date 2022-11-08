@@ -2,25 +2,52 @@ package es.aonsolutions.aio.test;
 
 import static org.mockito.Mockito.mock;
 
+import java.sql.SQLException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainProvider;
 import com.code.aon.ui.common.listener.BeanRegisterContextListener;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Occam;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AonHibernateTestBasic {
 	private static final Object MONITOR = new Object();
 	private static boolean FRAMEWORK_LISTENERS_LOADED = false;
 	
+	
 	private static final String DOMAIN_NAME = "occamtest.aonsolutions.test";
-	// "inelco-mac.ecastellano.pro";  
 	private static final int    DOMAIN = 1; // 400;
-	private static final String USER = "mac";
+	private static final String USER = "admin";
+	protected static CloseableAONContext ctx;
 	
 	public AonHibernateTestBasic() {
 		loadListeners();
 	}
+
+	
+	@BeforeEach
+	public void beforeClass() {
+		synchronized (MONITOR) {
+			if ( ctx == null) {
+				ctx = AONContext.getAONContext(getOccam());
+			}
+		}
+	}
+	
+	@AfterEach
+	public void afterClass() {
+		if (ctx != null) ctx.close();
+	}
+	
 	
 	public static String getDomainName() {
 		return DOMAIN_NAME;
@@ -28,10 +55,16 @@ public class AonHibernateTestBasic {
 	public static int getDomain() {
 		return DOMAIN;
 	}
-	public static String getUser() {
+	protected static String getUser() {
 		return USER;
 	}
-	
+	protected static Occam getOccam() {
+		return new Occam()
+				.setDomainName(DOMAIN_NAME)
+				.setDomain(DOMAIN)
+				.setUser(USER);
+	}
+
 	private void loadListeners() {
 		synchronized (MONITOR) {
 			if (!FRAMEWORK_LISTENERS_LOADED) {

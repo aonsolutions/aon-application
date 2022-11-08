@@ -43,6 +43,7 @@ import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.ContractDetail;
 import aon.sepe.objects.Contract.DetailType;
+import aon.sepe.objects.Contract.Over52Years;
 import aon.sepe.objects.Contract.SexType;
 import aon.sepe.objects.ContractExtension;
 import aon.sepe.objects.CopyBasic;
@@ -353,6 +354,11 @@ public class Contrata {
 
 			htmlPage = contractPage(htmlPage, contract);
 			handleSepeExceptions(htmlPage);
+			
+			Integer page = 1;
+			
+			String[] startDate = Toolkit.dateString(cto.getDateIniContract());
+			String[] now = Toolkit.dateString(new Date());
 
 			try {
 				HtmlSelect codContract = ((HtmlSelect) htmlPage.querySelector("select[name=codcontrato]"));
@@ -372,13 +378,21 @@ public class Contrata {
 			}
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+			
+			form.getInputByName("hoy").setValueAttribute(now[0]+"/"+now[1]+"/"+now[2]);
+			form.getInputByName("DIA").setValueAttribute(now[0]);
+			form.getInputByName("MES").setValueAttribute(now[1]);
+			form.getInputByName("ANYO").setValueAttribute(now[2]);
 
 			{// -------------------------DATA ENTERPRISE----------------------------
 				String ctaCti = cto.getCtaCti();
 				String regimen = cto.getRegimen();
-
-				if (cto.getCifEnterprise() != null) {
-					form.getInputByName("cifnif").setValueAttribute(cto.getCifEnterprise());
+				String cif = cto.getCifEnterprise();
+				
+				if (cif!= null) {
+					form.getInputByName("cifnif").setValueAttribute(cif);
+					
+					((HtmlSelect) form.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(cif), true);
 				}
 
 				form.getInputByName("regimen").setValueAttribute(regimen);
@@ -389,10 +403,7 @@ public class Contrata {
 			}
 
 			{// ---------------------------DATA EMPLOYEE-------------------------
-				String tipodoc = "D";
-				if (Toolkit.getIdentityType(cto.getIpf()).equals("6")) {
-					tipodoc = "E"; // NIE
-				}
+				String tipodoc = Toolkit.getIdentityType(cto.getIpf()).equals("6") ? "E" : "D"; //NIE OR DNI
 
 				String nss = cto.getNss();
 				((HtmlSelect) form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
@@ -417,6 +428,7 @@ public class Contrata {
 					form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
 					form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
 					form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
+					form.getInputByName("fechanacimiento").setValueAttribute(dateBirth[0]+"/"+dateBirth[1]+"/"+dateBirth[2]);
 				}
 
 				((HtmlSelect) form.querySelector("select[name=nacionalidad]"))
@@ -433,25 +445,22 @@ public class Contrata {
 				form.getInputByName("nass2").setValueAttribute(nss.substring(2, 10));
 
 				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
+				
+				form.getInputByName("nass").setValueAttribute(nss);
 			}
 
 			{// ----------------------DATA CONTRACT--------------------
-				form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es
-																				// menor a 28
+				form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es menor a 28
+				form.getInputByName("fechainicio").setValueAttribute(startDate[0]+"/"+startDate[1]+"/"+startDate[2]);
+				form.getInputByName("diafechaini").setValueAttribute(startDate[0]);
+				form.getInputByName("mesfechaini").setValueAttribute(startDate[1]);
+				form.getInputByName("anniofechaini").setValueAttribute(startDate[2]);
 
-				if (cto.getDateIniContract() != null) {
-					String[] dateInitContract = Toolkit.dateString(cto.getDateIniContract());
-
-					form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
-					form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
-					form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
-
-					// NIVEL FORMATIVO
-					if (cto.getCodFormativo() != null && cto.getCodFormativo() > 0) {
-						htmlPage = ((HtmlSelect) form.querySelector("select[name=codnivelformativo]"))
-								.setSelectedAttribute(cto.getCodFormativo().toString(), true);
-						form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-					}
+				// NIVEL FORMATIVO
+				if (cto.getCodFormativo() != null && cto.getCodFormativo() > 0) {
+					htmlPage = ((HtmlSelect) form.querySelector("select[name=codnivelformativo]"))
+							.setSelectedAttribute(cto.getCodFormativo().toString(), true);
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 
 				setOccupation(cto, form);
@@ -519,8 +528,8 @@ public class Contrata {
 				// INTERINIDAD OR SUBSTITUTION
 				Optional<String> interinidad = cto.getInterinidad();
 				if (interinidad.isPresent()) {
-
-					form.getInputByName("pagina2").setValueAttribute("2");
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkInterinidad");
 					check.click();
@@ -538,39 +547,120 @@ public class Contrata {
 			
 			{//------------------DATA CONTRACT SPECIFIC -----------------
 				
+				//------------DISCAPACIDAD
 				if(cto.isDiscapacidad()) {
-					DomNode checkDiscapacidad = form.querySelector("[name=\"checkDiscapacidad\"]");
-					if(checkDiscapacidad!=null) {
-						htmlPage = ((HtmlCheckBoxInput) checkDiscapacidad).click();
-						handleSepeAlert(alertHandler.getCollectedAlerts());
-						handleSepeExceptions(htmlPage);
-						
-						Optional<String> discapacidadType = cto.getDiscapacidadType();
-						if(discapacidadType.isPresent()) {
-							htmlPage = ((HtmlSelect) htmlPage.querySelector("select[name=\"coddiscapacidad\"]")).setSelectedAttribute(discapacidadType.get(), true);
-						}
-						
-						Optional<String> collectiveType = cto.getCollectiveType();
-						if(collectiveType.isPresent()) {							
-							htmlPage = ((HtmlSelect) htmlPage.querySelector("select[name=\"codbonificaciondisca\"]")).setSelectedAttribute(collectiveType.get(), true);
-						}
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 					
+					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkDiscapacidad");
+					check.click();
+				
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					handleSepeAlert(alertHandler.getCollectedAlerts());
+					handleSepeExceptions(htmlPage);
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					
+					Optional<String> discapacidadType = cto.getDiscapacidadType();
+					if(discapacidadType.isPresent()) {
+						((HtmlSelect) form.querySelector("select[name=\"coddiscapacidad\"]")).setSelectedAttribute(discapacidadType.get(), true);
+					}
+					
+					Optional<String> collectiveType = cto.getCollectiveType();
+					if(collectiveType.isPresent()) {			
+						String type = Integer.parseInt(collectiveType.get())+"";
+						HtmlSelect codbonificaciondisca = (HtmlSelect) form.querySelector("select[name=\"codbonificaciondisca\"]");
+						codbonificaciondisca.removeAttribute("disabled");
+						codbonificaciondisca.setSelectedAttribute(type, true);
+						
+						htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+						handleSepeAlert(alertHandler.getCollectedAlerts());
+		
 						form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 					}
 				}
-			}
+				
+				//------------BONIFICACION
+				if(cto.isBonus()) {
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 
+					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkBonificacion");
+					check.click();
+						
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					handleSepeAlert(alertHandler.getCollectedAlerts());
+					handleSepeExceptions(htmlPage);
+					
+					Optional<String> collectiveType = cto.getCollectiveType();
+					if(collectiveType.isPresent()) {		
+						String collective = collectiveType.get();
+						
+						outerloop:
+						for (final DomNode element : htmlPage.querySelectorAll(".fila")) {
+							DomNode radioNode = element.querySelector("[type=radio]");
+							
+							if(radioNode!=null) {
+								DomNode selectNode = element.querySelector("select");
+								
+								if(selectNode!=null) {
+									HtmlSelect select = (HtmlSelect) selectNode;
+									
+									for (final HtmlOption option : select.getOptions()) {
+										
+										if(option.getValueAttribute().equals(collective)) {
+											try { 
+												((HtmlRadioButtonInput) radioNode).click();
+												
+												select.setSelectedAttribute(collective, true);
+												break outerloop;
+											} catch (IOException e) { 
+												e.printStackTrace();
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+				}
+				
+
+//				//------------MAYORES DE 52
+				if(cto.getOver52Years().isPresent()) {
+					page++;
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
+					
+					Over52Years over25Years = cto.getOver52Years().get();
+
+					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkMayor52");
+					check.click();
+						
+					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+					handleSepeAlert(alertHandler.getCollectedAlerts());
+					handleSepeExceptions(htmlPage);
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					
+					HtmlCheckBoxInput checkTwo = (HtmlCheckBoxInput) form.getInputByName(over25Years.getValue());
+					checkTwo.click();
+					
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+				}
+			}
+			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			handleSepeAlert(alertHandler.getCollectedAlerts());
-
+			
 			String message = null;
-
 			for (int i = 0; i < 3; i++) {
 				message = getSuccessMessage(htmlPage);
 				if (message == null || (message != null && message.indexOf("E") >= 0)) {
 					break;
 				} else if (message.contains(RETURN_INIT)) {
-					htmlPage = sepeReturnInitPage(htmlPage, cto);
+					htmlPage = goBackContract(htmlPage, cto);
 				}
 			}
 
@@ -775,20 +865,16 @@ public class Contrata {
 
 			{// DATA ENTERPRISE
 
+				String cif = cto.getCifEnterprise();
+				
 				HtmlRadioButtonInput forNif = (HtmlRadioButtonInput) form.querySelector("[name=tipoacceso][value='2']");
 				forNif.click();
 
 				form.getInputByName("tipoacceso").setValueAttribute("2");
 
-				String tipodocEnterprise = " "; // CIF
-				if (Toolkit.getIdentityType(cto.getCifEnterprise()).equals("1"))
-					tipodocEnterprise = "D"; // NIF
-
-				((HtmlSelect) form.querySelector("select[name=tipodocumentoaux]"))
-						.setSelectedAttribute(tipodocEnterprise, true);
-
-				if (cto.getCifEnterprise() != null) {
-					form.getInputByName("cifnifnie").setValueAttribute(cto.getCifEnterprise());
+				if (cif != null) {
+					form.getInputByName("cifnifnie").setValueAttribute(cif);
+					((HtmlSelect) form.querySelector("select[name=tipodocumentoaux]")).setSelectedAttribute(getCifType(cif), true);
 				}
 			}
 
@@ -1082,17 +1168,7 @@ public class Contrata {
 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletProrrogas?pagina=inicio").click();
 			handleSepeExceptions(htmlPage);
-
-			String cifTypeStr = Toolkit.getIdentityType(contractExtension.getCif());
-
-			Integer cifType = 0;
-
-			if (cifTypeStr.equals("1")) {
-				cifType = 1;
-			} else if (cifTypeStr.equals("6")) {
-				cifType = 2;
-			}
-
+			
 			Optional<String> sepeId = contractExtension.getSepeId();
 
 			HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
@@ -1119,11 +1195,10 @@ public class Contrata {
 
 			String cifValue = form.getInputByName("cifnifempresapro").getValueAttribute();
 			if (cifValue != null && cifValue.isEmpty()) {
-				HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=tipodocumento]>option")
-						.get(cifType);// " " cif, "D" NIF, "E" NIE
-				option.click();
-
-				form.getInputByName("cifnifempresapro").setValueAttribute(contractExtension.getCif());
+				String cif = contractExtension.getCif();
+				
+				((HtmlSelect) form.querySelector("select[name=tipodocumento]")).setSelectedAttribute(getCifType(cif), true);
+				form.getInputByName("cifnifempresapro").setValueAttribute(cif);
 			}
 
 			HtmlInput ccc1 = form.getInputByName("cuentacotizacion2pro");
@@ -1314,27 +1389,16 @@ public class Contrata {
 				((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
 
 				// ENTERPRISE
-				String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
-
-				if (cifValue != null && cifValue.isEmpty() && cif != null) {
-					String cifTypeStr = Toolkit.getIdentityType(cif);
-					Integer cifType = 0;
-					if (cifTypeStr.equals("1"))
-						cifType = 1;
-					else if (cifTypeStr.equals("6"))
-						cifType = 2;
-
-					HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodocumentoaux]>option")
-							.get(cifType);// " " cif, "D" NIF, "E" NIE
-					option.click();
-
+				if (cif != null) {
+					((HtmlSelect) formDatos.querySelector("select[name=tipodocumentoaux]")).setSelectedAttribute(getCifType(cif), true);
+					
 					formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
 				}
+				
 				String ipf = copyBasic.getIpf().get();
 				// EMPLOYEE
 				Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; // 1 NIE, 0 NIF
-				HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodocumento]>option")
-						.get(ident);
+				HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);
 				option.click();
 
 				formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
@@ -2086,12 +2150,12 @@ public class Contrata {
 		return msg;
 	}
 
-	private static HtmlPage sepeReturnInitPage(HtmlPage htmlPage, Contract cto)
+	private static HtmlPage goBackContract(HtmlPage htmlPage, Contract cto)
 			throws IOException, InterruptedException, SepeException {
 
 		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("#volver")).click();
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
+		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
 		form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es menor a 28
 		form.getInputByName("nass").setValueAttribute(cto.getNss());
 
@@ -2216,5 +2280,15 @@ public class Contrata {
 			if (expiryDate.compareTo(cal.getTime()) < 0)
 				throw new Exception("El certificado ha expirado");
 		}
+	}
+	
+	private static String getCifType(String cif) {
+		String cifTypeStr = Toolkit.getIdentityType(cif);
+		if (cifTypeStr.equals("1")) {
+			return "D"; //NIF
+		} else if (cifTypeStr.equals("6")) {
+			return "E"; //NIE
+		}
+		return " "; //CIF
 	}
 }

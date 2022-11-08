@@ -228,7 +228,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				.setLogin(company.getDocument())
 				.setName(company.getName())
 				.setEnterprise(company.getId())
-				.setRegistry(company.getId())
+				.setRegistry(company)
 				.setShared(false)
 				.setToolbar(UserToolbar.GOOGLE);
 			user = AON.save(domain.getName(), domain.getId(), "", user);

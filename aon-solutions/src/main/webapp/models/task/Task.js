@@ -2,7 +2,7 @@ import { TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "../../module
 import * as LS from '../../services/localStorageService.js';
 import { Domain } from "../Domain.js";
 import { Project } from "../project/Project.js";
-import { TaskHolder } from "../project/TaskHolder.js";
+import { TaskHolder } from "../registry/TaskHolder.js";
 import { Workgroup } from "../project/Workgroup.js";
 import { Registry } from "../registry/Registry.js";
 

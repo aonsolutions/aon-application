@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 
 public class NordigenConfiguration implements Serializable {
 
@@ -15,6 +16,7 @@ public class NordigenConfiguration implements Serializable {
 	private NordigenAccessToken token;
 	private List<NordigenBankAccount> accounts;
 	private List<NordigenInstitution> institutions;
+	private List<RegistryAddInfo> raddinfos;
 
 	public AonConfiguration getConfiguration() {
 		return configuration;
@@ -58,6 +60,13 @@ public class NordigenConfiguration implements Serializable {
 			return accounts.stream().filter(acc -> acc != null && !acc.isLinked()).collect(Collectors.toList());
 		}
 		return Collections.emptyList();
+	}
+	public List<RegistryAddInfo> getRaddinfos() {
+		return raddinfos;
+	}
+	public NordigenConfiguration setRaddinfos(List<RegistryAddInfo> raddinfos) {
+		this.raddinfos = raddinfos;
+		return this;
 	}
 	
 }

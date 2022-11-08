@@ -6,9 +6,11 @@ import org.junit.platform.suite.api.Suite;
 
 import es.aonsolutions.aio.test.config.ConfigTestSuite;
 import es.aonsolutions.aio.test.invoice.InvoiceTestSuite;
+import es.aonsolutions.aio.test.product.ProductTestSuite;
 
 @SelectClasses({
 	ConfigTestSuite.class,
+	ProductTestSuite.class,
 	InvoiceTestSuite.class
 })
 @Suite

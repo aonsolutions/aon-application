@@ -6,6 +6,8 @@ import org.junit.platform.suite.api.Suite;
 
 @SelectClasses({
 	AccountTest.class,
+	TaxTest.class,
+	AppParamTest.class,
 })
 @Suite
 public class ConfigTestSuite {

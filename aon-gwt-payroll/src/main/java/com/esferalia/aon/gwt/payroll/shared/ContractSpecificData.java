@@ -76,6 +76,11 @@ public class ContractSpecificData implements Serializable {
 	private String reductionColective;
 	private Boolean quoteReduction;
 	private String journeyPercent;
+	private Boolean bonus;
+	private String bonusType;
+	
+	private Boolean olderThan52;
+	private String otherLegislations;
 	
 	private Boolean disc;
 	private String discReason;
@@ -609,6 +614,38 @@ public class ContractSpecificData implements Serializable {
 
 	public void setJourneyPercent(String journeyPercentTB) {
 		this.journeyPercent = journeyPercentTB;
+	}
+	
+	public Boolean getOlderThan52() {
+		return null == olderThan52 ? Boolean.FALSE : olderThan52;
+	}
+
+	public void setOlderThan52(Boolean olderThan52) {
+		this.olderThan52 = olderThan52;
+	}
+
+	public String getOtherLegislations() {
+		return null == otherLegislations ? "" : otherLegislations;
+	}
+
+	public void setOtherLegislations(String otherLegislations) {
+		this.otherLegislations = otherLegislations;
+	}
+	
+	public Boolean getBonus() {
+		return null == bonus ? Boolean.FALSE : bonus;
+	}
+
+	public void setBonus(Boolean bonus) {
+		this.bonus = bonus;
+	}
+
+	public String getBonusType() {
+		return null == bonusType ? "" : bonusType;
+	}
+
+	public void setBonusType(String bonusType) {
+		this.bonusType = bonusType;
 	}
 
 	public Boolean getDisc() {

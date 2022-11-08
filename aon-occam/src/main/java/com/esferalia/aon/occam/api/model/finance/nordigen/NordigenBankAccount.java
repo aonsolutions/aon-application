@@ -1,23 +1,34 @@
 package com.esferalia.aon.occam.api.model.finance.nordigen;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NordigenBankAccount implements Serializable {
 
 	private static final long serialVersionUID = 1175684863512830855L;
 
 	private RegistryBank rbank;
+	private RegistryAddInfo raddInfo;
 	private NordigenAccountMetadata metadata;
 	private NordigenAccountDetails details;
-	private NordigenAccountBalance balance;
+	private List<NordigenAccountBalance> balances;
 	private NordigenRequisition requisition;
 	private NordigenInstitution institution;
 	
 	private boolean isLinked;
 	private String iban;
 	private String bankAlias;
+	private Date lastMovementDate;
+	private Set<String> logs;
+	
 	
 	public RegistryBank getRbank() {
 		return rbank;
@@ -38,13 +49,6 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setDetails(NordigenAccountDetails details) {
 		this.details = details;
-		return this;
-	}
-	public NordigenAccountBalance getBalance() {
-		return balance;
-	}
-	public NordigenBankAccount setBalance(NordigenAccountBalance balance) {
-		this.balance = balance;
 		return this;
 	}
 	public NordigenRequisition getRequisition() {
@@ -80,6 +84,50 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setBankAlias(String bankAlias) {
 		this.bankAlias = bankAlias;
+		return this;
+	}
+	public List<NordigenAccountBalance> getBalances() {
+		if (balances == null)
+			return Collections.emptyList();
+		return balances;
+	}
+	public NordigenBankAccount setBalances(List<NordigenAccountBalance> balances) {
+		this.balances = balances;
+		return this;
+	}
+	public RegistryAddInfo getRaddInfo() {
+		return raddInfo;
+	}
+	public NordigenBankAccount setRaddInfo(RegistryAddInfo raddInfo) {
+		this.raddInfo = raddInfo;
+		return this;
+	}
+	public Date getLastMovementDate() {
+		return lastMovementDate;
+	}
+	public NordigenBankAccount setLastMovementDate(Date lastMovementDate) {
+		this.lastMovementDate = lastMovementDate;
+		return this;
+	}
+	public Set<String> getLogs() {
+		if (logs == null) {
+			logs = new LinkedHashSet<>();
+		}
+		return logs;
+	}
+	public Set<String> addLog(String log) {
+		if (logs == null) {
+			logs = new LinkedHashSet<>();
+		}
+		if (AonStringUtils.isNotBlank(log)) {
+			logs.add(log);
+		}
+		return logs;
+	}
+	public NordigenBankAccount setLogs(Set<String> logs) {
+		if (logs != null) {			
+			this.logs = logs;
+		}
 		return this;
 	}
 

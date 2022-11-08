@@ -25,18 +25,18 @@ public class UserWorkgroupValidation {
 			throw new AonCoreException(AonError.EMPTY_DATA.format("workgroup"));
 	};
 	
-	public static BiConsumer<AONContext, UserWorkgroup> EXIST_USER_WORKGROUP = (ctx, userWorkgroup) -> {
-		UserWorkgroup uw = UserWorkgroupDAO.get(ctx, f -> f.getUserIdProperty().eq(userWorkgroup.getUserId())
-				.and(f.getWorkgroupProperty().eq(userWorkgroup.getWorkgroup().getId())));
-		if(!uw.isEmpty()) 
-			throw new AonCoreException(AonError.EXIST_USER_WORKGROUP.getMessage());
-	};
-	
+//	public static BiConsumer<AONContext, UserWorkgroup> EXIST_USER_WORKGROUP = (ctx, userWorkgroup) -> {
+//		UserWorkgroup uw = UserWorkgroupDAO.get(ctx, f -> f.getUserIdProperty().eq(userWorkgroup.getUserId())
+//				.and(f.getWorkgroupProperty().eq(userWorkgroup.getWorkgroup().getId())));
+//		if(!uw.isEmpty()) 
+//			throw new AonCoreException(AonError.EXIST_USER_WORKGROUP.getMessage());
+//	};
+//	
 	public static void validate(AONContext ctx, UserWorkgroup userWorkgroup) throws AonCoreException{
 		EMPTY_DOMAIN
 		.andThen(EMPTY_USER)
 		.andThen(EMPTY_WORKGROUP)
-		.andThen(EXIST_USER_WORKGROUP)
+//		.andThen(EXIST_USER_WORKGROUP)
 		.accept(ctx, userWorkgroup);
 	}
 	

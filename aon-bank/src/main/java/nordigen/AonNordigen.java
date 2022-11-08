@@ -46,7 +46,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 
 import nordigen.NordigenAPIAbstract.CreateRequisitionParams;
 
@@ -253,46 +252,89 @@ public class AonNordigen {
 		}
 	}
 	
-	
-	
-	
-	public static NordigenBankAccount getAccountByRbank(NordigenAccessToken token, Domain domain, String login, Integer rbankId) throws Exception {
+	public static NordigenBankAccount getAccountByRbank(Domain domain, String login, Integer rbankId) throws Exception {
 		try {
 			RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
 			RegistryAddInfo raddInfo = NordigenDAO.getRaddInfoByRaddressId(domain, login, rbankId);
-			boolean linked = false;
-			NordigenAccountMetadata metadata = null;
-			NordigenAccountDetails details = null;
-			NordigenAccountBalance balance = null;
-			NordigenRequisition requisition = null;
-			NordigenInstitution institution = null;
+			Date lastMovementDate = getLastMovementDate(domain, login, rbankId);
+			return new NordigenBankAccount()
+					.setRbank(rbank)
+					.setRaddInfo(raddInfo)
+					.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
+					.setBankAlias(rbank != null ? rbank.getAlias() : null)
+					.setLinked(raddInfo != null && AonStringUtils.isNotBlank(raddInfo.getValue()))
+					.setLastMovementDate(lastMovementDate);
+		} catch (NordigenException e) {
+			throw new Exception(e.getMessage());
+		}
+	}
+	
+	
+	public static NordigenBankAccount setNordigenBankAccountValues(NordigenAccessToken token, NordigenBankAccount account) throws Exception {
+		try {
+			RegistryBank rbank = account.getRbank();
+			RegistryAddInfo raddInfo = account.getRaddInfo();
 			if (raddInfo != null) {
 				String reqId = raddInfo.getValue();
 				if (AonStringUtils.isNotBlank(reqId)) {
-					linked = true;
-					requisition = getRequisition(token, reqId);
-					String accountId = getRbankNordigenAccountId(token, domain, login, requisition, rbankId);
-					if (accountId != null && NORDIGEN_REQUISITION_STATUS.LN.equals(requisition.getStatus())) {
-						metadata = getAccountMetadata(token, accountId);
-						details = getAccountDetails(token, accountId);
-						balance = NordigenUtils.getLastAccountBalance(getAccountBalances(token, accountId));
+					account.setLinked(true);
+					System.out.println("req");
+					account.setRequisition(getRequisition(token, reqId));
+					System.out.println("meta");
+					account.setMetadata(getRbankNordigenAccountId(token, account.getRequisition(), rbank));
+					System.out.println("ACC_ID");
+					String accountId = account.getMetadata() != null ? account.getMetadata().getId() : null;
+					
+					Thread thread3 = new Thread(() -> {
+						System.out.println("THREAD 3 - " + account.getBankAlias());
+						try {
+							if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
+								account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							account.addLog(e.getMessage());
+						}
+						System.out.println("THREAD 3 termina");
+					});
+					thread3.start();
+					
+					if (account.getMetadata() != null
+						&& AonStringUtils.isNotBlank(accountId)
+						&& NORDIGEN_REQUISITION_STATUS.LN.equals(account.getRequisition().getStatus())
+					) {
 						
+						Thread thread1 = new Thread(() -> {
+							System.out.println("THREAD 1");
+							try {
+								account.setDetails(getAccountDetails(token, accountId));
+							} catch (Exception e) {
+								e.printStackTrace();
+								account.addLog(e.getMessage());
+							}
+							System.out.println("THREAD 1 termina");
+						});
+						Thread thread2 = new Thread(() -> {
+							System.out.println("THREAD 2");
+							try {
+								account.setBalances(getAccountBalances(token, accountId));
+							} catch (Exception e) {
+								e.printStackTrace();
+								account.addLog(e.getMessage());
+							}
+							System.out.println("THREAD 2 termina");
+						});
+						
+						thread1.start();
+						thread2.start();
+						thread1.join();
+						thread2.join();
 					}
-					if (requisition != null && requisition.getInstitutionId() != null) {
-						institution = getInstitution(token, requisition.getInstitutionId());
-					}
+					thread3.join();
+					
 				}
 			}
-			return new NordigenBankAccount()
-					.setMetadata(metadata)
-					.setDetails(details)
-					.setBalance(balance)
-					.setRbank(rbank)
-					.setRequisition(requisition)
-					.setInstitution(institution)
-					.setLinked(linked)
-					.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
-					.setBankAlias(rbank != null ? rbank.getAlias() : null);
+			return account;
 		} catch (NordigenException e) {
 			throw new Exception(e.getMessage());
 		}
@@ -306,7 +348,7 @@ public class AonNordigen {
 				.and(f.getRegistryProperty().eq(company.getId()))
 		).map(rbank -> {
 			try {
-				return getAccountByRbank(token, domain, login, rbank.getId());
+				return getAccountByRbank(domain, login, rbank.getId());
 			} catch (Exception e) {
 				return null;
 			}
@@ -432,8 +474,7 @@ public class AonNordigen {
 		});
 	}
 	
-	public static String getRbankNordigenAccountId(NordigenAccessToken token, Domain domain, String login, NordigenRequisition requisition, Integer rbankId) {
-		RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
+	public static NordigenAccountMetadata getRbankNordigenAccountId(NordigenAccessToken token, NordigenRequisition requisition, RegistryBank rbank) {
 		if (requisition != null && rbank != null && rbank.getBankAccount() != null) {
 			String iban = rbank.getBankAccount().getIban();
 			if (AonStringUtils.isBlank(iban)) {
@@ -441,16 +482,19 @@ public class AonNordigen {
 			}
 			List<String> accs = requisition.getAccounts();
 			if (accs != null) {
-				return accs.stream().filter(accId -> {
+				
+				for (String accId : accs) {
+					System.out.println("cuenta: " + accId);
 					try {
+						System.out.println("cuenta - metadata empieza");
 						NordigenAccountMetadata metadata = getAccountMetadata(token, accId);
-						if (metadata != null) {
-							return AonStringUtils.equalsIgnoreCase(iban, metadata.getIban());
+						System.out.println("cuenta - metadata termina");
+						if (metadata != null && AonStringUtils.equalsIgnoreCase(iban, metadata.getIban())) {
+							return metadata;
 						}
 					} catch (Exception e) {
 					}
-					return false;
-				}).findFirst().orElse(null);
+				}
 			}
 		}
 		return null;
@@ -466,35 +510,35 @@ public class AonNordigen {
 		return nonValid;
 	}
 	
-	public static List<NordigenAccountTransaction> getNewTransactions(NordigenAccessToken token, Domain domain, String login, Integer rbankId) {
-		String lastTransactionId = null;
-		Date lastTransactionDate = null;
-		Pair<String, Date> lastIdAndDate = NordigenDAO.getMaxMovementIdAndDate(domain, login, rbankId);
-		if (lastIdAndDate != null) {			
-			lastTransactionId = lastIdAndDate.getKey();
-			lastTransactionDate = lastIdAndDate.getValue();
-		}
-		lastTransactionDate = lastTransactionDate != null ? lastTransactionDate : NordigenDAO.getLastOperationDateDB(domain, login, rbankId);
-		
-		NordigenRequisition requisition = getRequisitionByRbank(token, domain, login, rbankId);
-		String nordigenAccountId = getRbankNordigenAccountId(token, domain, login, requisition, rbankId);
-		
-		if (AonStringUtils.isNotBlank(nordigenAccountId)) {
-			List<NordigenAccountTransaction> transactions = Collections.emptyList();
-			try {
-				transactions = getBookedAccountTransactions(token, nordigenAccountId, lastTransactionDate);
-			} catch (Exception e) {
-			}
-			if (AonStringUtils.isNotBlank(lastTransactionId)) {
-				Integer lastTransactionIdInt = AonNumberUtils.toInteger(lastTransactionId);
-				return transactions.stream().filter(tr -> AonNumberUtils.toInteger(tr.getTransactionId()) > lastTransactionIdInt).collect(Collectors.toList());
-			}
-			return transactions;
-		}
-		
-		return Collections.emptyList();
-		
-	}
+//	public static List<NordigenAccountTransaction> getNewTransactions(NordigenAccessToken token, Domain domain, String login, Integer rbankId) {
+//		String lastTransactionId = null;
+//		Date lastTransactionDate = null;
+//		Pair<String, Date> lastIdAndDate = NordigenDAO.getMaxMovementIdAndDate(domain, login, rbankId);
+//		if (lastIdAndDate != null) {			
+//			lastTransactionId = lastIdAndDate.getKey();
+//			lastTransactionDate = lastIdAndDate.getValue();
+//		}
+//		lastTransactionDate = lastTransactionDate != null ? lastTransactionDate : NordigenDAO.getLastOperationDateDB(domain, login, rbankId);
+//		
+//		NordigenRequisition requisition = getRequisitionByRbank(token, domain, login, rbankId);
+//		String nordigenAccountId = getRbankNordigenAccountId(token, domain, login, requisition, rbankId);
+//		
+//		if (AonStringUtils.isNotBlank(nordigenAccountId)) {
+//			List<NordigenAccountTransaction> transactions = Collections.emptyList();
+//			try {
+//				transactions = getBookedAccountTransactions(token, nordigenAccountId, lastTransactionDate);
+//			} catch (Exception e) {
+//			}
+//			if (AonStringUtils.isNotBlank(lastTransactionId)) {
+//				Integer lastTransactionIdInt = AonNumberUtils.toInteger(lastTransactionId);
+//				return transactions.stream().filter(tr -> AonNumberUtils.toInteger(tr.getTransactionId()) > lastTransactionIdInt).collect(Collectors.toList());
+//			}
+//			return transactions;
+//		}
+//		
+//		return Collections.emptyList();
+//		
+//	}
 	
 	public static NordigenBankStatement nordigenToBankStatement(NordigenAccountTransaction transaction) {
 		if (transaction != null) {
@@ -502,28 +546,47 @@ public class AonNordigen {
 			Double amount = transaction.getTransactionAmount() != null ? transaction.getTransactionAmount().getAmount() : 0;
 			boolean bpayment = amount < 0;
 			
+			String description = "";
+			if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationUnstructured())) {
+				description = transaction.getRemittanceInformationUnstructured();
+			} else if (AonStringUtils.isNotBlank(transaction.getRemittanceInformationStructured())) {				
+				description = transaction.getRemittanceInformationStructured();
+			}
+			
 			statement
 			.setOperationDate(transaction.getValueDate())
 			.setCommonConcept(StatementConcept.UNKNOWN)
 			.setPayment(bpayment)
 			.setAmount(Math.abs(amount))
-			.setDescription(transaction.getRemittanceInformationUnstructured())
+			.setDescription(description)
 			.setStatus(StatementStatus.PENDING)
 			.setReference1("NORDIGEN")
 			.setReference2(AonStringUtils.leftPad(transaction.getTransactionId(), 16, '0'));
-			statement.setNordigenMovementId(AonNumberUtils.toInteger(transaction.getTransactionId()));
+			
+			String id = null;
+			
+			if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
+				id = transaction.getTransactionId();
+			} else if (AonStringUtils.isNotBlank(transaction.getInternalTransactionId())) {
+				id = transaction.getInternalTransactionId();
+			}
+			
+			statement.setNordigenMovementId(id);
 			return statement;
 		}
 		return null;
 	}
 	
+	public static Date getLastMovementDate(Domain domain, String login, Integer rbankId) {
+		return NordigenDAO.getLastMovementDate(domain, login, rbankId);
+	}
 	
 	public static void main(String[] args) throws Exception {
-		Integer rbank = 139;
-		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY2MjUwODQ2LCJqdGkiOiI2MGIwODRkM2VlMDA0NTM2YTU0ZDk5OGMyZDJjYjQxYiIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.OdAi1xJKUzrDlv1RkcNILn4gSVv6azIYCxE2mOGxzeY";
+		Integer rbank = 6740;
+		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY3ODkyNzE0LCJqdGkiOiI2NDM3ZWRjYjg3Njk0ZGQwOWM0YjE2NjQ2YmJmMGRkMyIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.PetO8cMVsxHu_jRz-jSpS4leK8JbMBRl8WoySoQBVXA";
 		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
 		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
-		String reqId = "25c34836-764d-4328-ac70-6b786c9c6fef";
+		String reqId = "62f2c9b4-533f-47fa-8a16-b5f53b4e47c3";
 		insertNewRequisitionId(domain, "", getRequisition(token, reqId), rbank);
 //		List<NordigenAccountTransaction> newTr = getNewTransactions(token, domain, "", rbank);
 //		List<NordigenBankAccount> allAccounts = getAllAccounts(token, domain, "");

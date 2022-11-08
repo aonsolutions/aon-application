@@ -154,6 +154,8 @@ export const FOOTER = 'Oina';
 
 export const GALICIAN = 'Galiziera';
 export const GENERAL_INFORMATION = 'Informazio Generala';
+export const GET_INVOICE = 'Faktura Lortu';
+export const GET_INVOICES = 'Fakturak Lortu';
 export const GROUP_DATA = 'Taldeko Datuak';
 export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
 export const GROUP = 'Taldea';
@@ -185,6 +187,7 @@ export const INVOICE_CONFIGURATION = 'Fakturaren Konfigurazioa';
 export const INVOICE_DATA = 'Fakturaren Datuak';
 export const INVOICE_ISSUED = 'Igorritako Faktura';
 export const INVOICE_NUMBER = 'Faktura Zenbakia';
+export const INVOICE_OBJECT = 'Fakturaren Objektua';
 export const INVOICE_PRINTING = 'Fakturen Inprimazioa';
 export const INVOICE_RECEIVED = 'Jasotako Faktura';
 export const INVOICES = 'Fakturak';
@@ -206,6 +209,8 @@ export const LOCATION = 'Kokapena';
 
 // ----- M
 
+export const MARK_ENTRY = 'Sarrera Markatu';
+export const MARK_EXIT = 'Irteera Markatu';
 export const MANAGEMENT = 'Kudeaketa';
 export const MODEL_111 = '111 Eredua';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
@@ -225,6 +230,9 @@ export const NEW_EXPENSE = 'Gastu Berria';
 export const NEW_PRODUCT = 'Produktu Berria';
 export const NEW_REQUEST = 'Eskaera Berria';
 export const NEXT = 'Hurrengoa';
+export const NIF = 'IFZ';
+export const NOTIFICATION = 'Jakinarazpena';
+export const NOTIFICATIONS = 'Jakinarazpenak';
 export const NOTES = 'Oharrak';
 export const NOTE = 'Oharra';
 export const NUMBER = 'Zenbakia';
@@ -308,6 +316,7 @@ export const SAVE = 'Gorde';
 export const SAVED_DATA = 'Datuak zuzen gorde dira';
 export const SCOPE = 'Esparrua';
 export const SEARCH = 'Bilatu';
+export const SEE_ALL = 'Guztiak Ikusi';
 export const SEND = 'Bidali';
 export const SEND_FILE = 'Fitxategia Bidali';
 export const SEND_FILES = 'Fitxategiak Bidali';

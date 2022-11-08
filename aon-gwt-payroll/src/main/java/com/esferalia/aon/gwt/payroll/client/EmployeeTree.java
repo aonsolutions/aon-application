@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
@@ -2212,7 +2213,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			add("Peculiaridades", getEmployeeSSPEC(), this::onSSPECSelected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
-			add("Convenio", getCategoryDraft(), this::onAgreementSelected);
+//			add("Convenio", getCategoryDraft(), this::onAgreementSelected);
+			add("Convenio", getAgreementPreview(), this::onAgreementTabSelected);
 			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
 			add("Variables de C\u00e1lculo", getEmployeeContractVariables(), this::onVariablesSelected);
 		}
@@ -2281,11 +2283,32 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			});	
 		}
 		
-		void onAgreementSelected(){
-			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-			CategoryDraftObject categoryDraftObject = 
-					contractCategoriesMap.computeIfAbsent(salaryDraft.getEmployeeId(), id -> newCategoryDraftObject(salaryDraft.getEmployee()));
-			getCategoryDraft().setCategoryDraftObject(categoryDraftObject);
+//		void onAgreementSelected(){
+//			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+//			CategoryDraftObject categoryDraftObject = 
+//					contractCategoriesMap.computeIfAbsent(salaryDraft.getEmployeeId(), id -> newCategoryDraftObject(salaryDraft.getEmployee()));
+//			getCategoryDraft().setCategoryDraftObject(categoryDraftObject);
+//		}
+		
+		void onAgreementTabSelected(){
+			Integer agreementId = salaryDraft.getEmployee().getCategory().getAgreement().getId();
+			Integer levelId = salaryDraft.getEmployee().getCategory().getLevelId();
+			
+			DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+			impl.getAgreementInfo(agreementId, new AsyncCallback<AgreementInfo>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					agreementPreview.showError("Error carga convenio", caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(AgreementInfo agreementInfo) {
+					getAgreementPreview().setAgreementPreview(agreementInfo);
+					getAgreementPreview().setSelectedLevel(levelId);
+				}
+			});
+			
 		}
 
 		public void setSalaryDraft(SalaryDraftObject salaryDraft) {
@@ -2298,37 +2321,41 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getEmployeeContractPayments().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			getEmployeeContractVariables().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 
-			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-			setVisibleWidget(getCategoryDraft(), salaryDraft.getEmployee().getCategory() != null );
+			getAgreementPreview().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			setVisibleWidget(getAgreementPreview(), salaryDraft.getEmployee().getCategory() != null );
+			
+			// TODO: comento el convenio antiguo
+//			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+//			setVisibleWidget(getCategoryDraft(), salaryDraft.getEmployee().getCategory() != null );
 		}
 		
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
 			return new EmployeeContractVariablesObject(contractId, salaryDraft.getEmployee().getStartDate(), salaryDraft.getEmployee().getEndDate());
 		}
 		
-		private CategoryDraftObject newCategoryDraftObject(Employee employee) {
-			
-			Category category = employee.getCategory();
-			Agreement agreement = category.getAgreement(); 
-			
-			com.esferalia.aon.gwt.payroll.shared.CategoryDraft categoryDraft = 
-			new com.esferalia.aon.gwt.payroll.shared.CategoryDraft();
-			categoryDraft.setId(agreement.getId());
-			categoryDraft.setDomain(agreement.getDomain());
-			categoryDraft.setLevelId(category.getLevelId());
-			categoryDraft.setDescription(agreement.getDescription());
-			categoryDraft.setSSNumber(agreement.getSSNumber());
-			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-			
-			return 
-			new CategoryDraftObject(
-					enterprise.getDomain(),
-					Wnd.getCurrentDomainNameURL(),
-					Wnd.getCurrentUser(),
-					categoryDraft, 
-					DomainEmployeesServiceAsync.newInstance());			
-		}
+//		private CategoryDraftObject newCategoryDraftObject(Employee employee) {
+//			
+//			Category category = employee.getCategory();
+//			Agreement agreement = category.getAgreement(); 
+//			
+//			com.esferalia.aon.gwt.payroll.shared.CategoryDraft categoryDraft = 
+//			new com.esferalia.aon.gwt.payroll.shared.CategoryDraft();
+//			categoryDraft.setId(agreement.getId());
+//			categoryDraft.setDomain(agreement.getDomain());
+//			categoryDraft.setLevelId(category.getLevelId());
+//			categoryDraft.setDescription(agreement.getDescription());
+//			categoryDraft.setSSNumber(agreement.getSSNumber());
+//			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+//			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+//			
+//			return 
+//			new CategoryDraftObject(
+//					enterprise.getDomain(),
+//					Wnd.getCurrentDomainNameURL(),
+//					Wnd.getCurrentUser(),
+//					categoryDraft, 
+//					DomainEmployeesServiceAsync.newInstance());			
+//		}
 		
 		private String getTitle(Employee employee) {
 			return employee.getFullname();
@@ -2380,8 +2407,34 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			// NOOP
 		}
 		
+		void checkWorkplaceAgreements() {
+			if(null == this.workplace || null == this.workplace.getAgreement()) return;
+			add("Convenio", getAgreementPreview(), this::onAgreementTabSelected);
+		}
+		
+		void onAgreementTabSelected(){
+			Integer agreementId = workplace.getAgreement().getId();
+			
+			DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+			impl.getAgreementInfo(agreementId, new AsyncCallback<AgreementInfo>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					agreementPreview.showError("Error carga convenio", caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(AgreementInfo agreementInfo) {
+					getAgreementPreview().setAgreementPreview(agreementInfo);
+					getAgreementPreview().payrollPreview();
+				}
+			});
+			
+		}
+		
 		public void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
+			checkWorkplaceAgreements();
 		}
 	}
 
@@ -2477,6 +2530,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeContractVariables employeeContractVariables; 
 	private EmployeeSalary employeeSalary;
 	private com.esferalia.aon.gwt.payroll.client.CategoryDraft categoryDraft;
+	private AgreementPreview agreementPreview;
 	private AgreementDraft agreementDraft;
 	private BonusEditor bonusEditor;
 	private PaymentEditor paymentEditor;
@@ -2853,7 +2907,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getWorkplacePanel().setWorkplace(workplace);
 		getWorkplacePanel().selectWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
-
 		this.workplace = workplace;
 	}
 
@@ -3491,6 +3544,23 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (categoryDraft == null)
 			categoryDraft = new com.esferalia.aon.gwt.payroll.client.CategoryDraft();
 		return categoryDraft;
+	}
+	
+	private AgreementPreview getAgreementPreview() {
+		if (agreementPreview == null)
+			agreementPreview = new AgreementPreview() {
+
+				@Override
+				protected void reloadAgreement() {
+					// TODO Auto-generated method stub
+				}
+
+				@Override
+				public void onSaved() {
+					// TODO Auto-generated method stub
+				}};
+		
+		return agreementPreview;
 	}
 
 	private CalendarDraft getCalendarDraft() {

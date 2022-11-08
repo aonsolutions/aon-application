@@ -2,6 +2,11 @@
 export const A = 'a';
 export const BR = 'br';
 export const DIV = 'div';
+export const H1 = 'h1';
+export const H2 = 'h2';
+export const H3 = 'h3';
+export const H4 = 'h4';
+export const H5 = 'h5';
 export const IMG = 'img';
 export const I = 'i';
 export const INPUT = 'input';
@@ -18,6 +23,7 @@ export const CANVAS = 'canvas';
 export const BUTTON = 'button';
 export const SECTION = 'section';
 export const IFRAME = 'iframe';
+export const PRE = 'pre';
 
 // COMPONENTS
 

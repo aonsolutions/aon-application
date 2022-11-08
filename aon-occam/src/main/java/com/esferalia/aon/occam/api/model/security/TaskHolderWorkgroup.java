@@ -11,6 +11,8 @@ public class TaskHolderWorkgroup implements Serializable {
 	Integer domain;
 	Integer taskHolder;
 	Workgroup workgroup;
+	
+	private boolean removed;
 
 	public Integer getDomain() {
 		return domain;
@@ -51,10 +53,19 @@ public class TaskHolderWorkgroup implements Serializable {
 		return this;
 	}
 	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public TaskHolderWorkgroup setRemoved(boolean removed) {
+		this.removed = removed;
+		return this;
+	}
+	
+	
 	public boolean isEmpty() {
 		return getId() == null && getDomain() == null
 			&& getTaskHolder() == null && getWorkgroup().isEmpty();
 	}
-	
 	
 }
