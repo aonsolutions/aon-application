@@ -112,11 +112,15 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		List<Company> companies = getCompanies(api);
 		
 		Integer[] registryCompanies = companies.stream().map(Company::getId).toArray(Integer[]::new);
-		
+
 		AON_SOLUTIONS.getRegistryRelationship(api.getDomain(), api.getUser(), 
 			f-> f.getRegistryProperty().eq(registry)
-			.and(f.getRelatedRegistryProperty().in(registryCompanies))
 			.and(f.getRelationshipProperty().eq(-1))
+			.and(
+				companies.isEmpty() ? 
+				f.getDomainProperty().eq(api.getDomain().getId()) :
+				f.getRelatedRegistryProperty().in(registryCompanies)
+			)
 		)
 		.ifPresent(relation->
 			json.put("rrelationship", RegistryRelationshipJSON.toJSON(relation))
@@ -137,8 +141,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 	
 	
 	public static JSONObject saveRelationship(AonApiData api) {
-		 JSONObject params = api.getData();
-		 
+
 		 RegistryRelationship rrelationship = RegistryRelationshipJSON.fromJSON(api.getData());
 		 
 		 return RegistryRelationshipJSON.toJSON( 
@@ -146,6 +149,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		 );
 				 
 // ------------- SAVE IN COMPANY
+//		 JSONObject params = api.getData();
 //		 RegistryRelationship rrelationshipCompany = new RegistryRelationship()
 //		 .setDomain(company.getDomain())
 //		 .setRegistry(0)

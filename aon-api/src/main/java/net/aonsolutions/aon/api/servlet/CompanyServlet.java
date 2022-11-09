@@ -31,18 +31,12 @@ import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.security.UserScope;
-import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.type.DomainType;
-import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -144,36 +138,43 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveCompany(AonApiData api) throws Exception {
 		Company company = CompanyJSON.fromJSON(api.getData());
-		checkCompany(api, company);
-		company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
 		if(company.getId() == null) {
-			String domainName = company.getDocument() + "-" + api.getDomain().getName();
+			company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
+			checkCompany(api, company);
+			
+			Domain parent = api.getDomain().isParent() ? 
+					api.getDomain() : 
+					AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getIdProperty().eq(api.getDomain().getParentId()));
+					
+			String domainName = company.getDocument() + "-" + parent.getName();
 			Domain d = new Domain()
 				.setName(domainName.toLowerCase())
 				.setDescription(company.getName())
 				.setOwner(api.getDomain().getOwner())
-				.setParentId(api.getDomain().getId())
+				.setParentId(parent.getId())
 				.setActive(true)
 				.setDomainType(DomainType.ENTERPRISE)
 				.setEnableHeredity(true)
 				.setDomainManagement(false);
+			
 			Domain domain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), d, company);
 			Company c = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-			RegistryServlet.saveRegistryAdditionalInfo(api, c.getId(), c.getDomain().getId());
-			String mail = AON.getRegistryMedia(domain, api.getUser(), f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).getValue();
-			Auth auth = createAuth(c, mail);
-			User user = createUser(domain, auth, c);
-			createUserScopes(api, domain, user);
-			createUserRoles(api, domain, user, false);
+			RegistryServlet.saveRegistryAdditionalInfo(api, c.getId(), domain.getId());
 			
-			RegistryAddress address = AON.getMain(domain, user, c.getId());
-			Workplace workplace = new Workplace()
+			RegistryAddress raddress = AON.getRegistryAddress(domain, new User(), f-> f.getDomainProperty().eq(domain.getId()).and(f.getTypeProperty().eq((byte)0)));
+			
+			if(raddress!=null && raddress.getId()!=null) {
+				
+				Workplace workplace = new Workplace()
 					.setActive(true)
-					.setAddress(address.getId())
 					.setDescription("PRINCIPAL")
 					.setDomain(domain.getId())
-					.setEnterprise(c.getId());
-			AON.saveWorkplace(domain, user, workplace);
+					.setEnterprise(c.getId())
+					.setAddress(raddress.getId());
+				
+				AON.saveWorkplace(domain, new User(), workplace);
+			}
+			
 			return CompanyJSON.toJSON(c);
 		} else {	
 			RegistryServlet.saveRegistry(api);
@@ -199,107 +200,42 @@ public class CompanyServlet extends AonApiHttpServlet{
 			throw new AonApiException("Ya existe una empresa con el mismo documento");
 		}
 	}
-	
-	private Auth createAuth(Company company, String mail) {
-		mail = mail != null && Utils.isEmail(mail) 
-			? mail : company.getDocument() + "@aon.solutions";
-		Auth auth = AON_SOLUTIONS.getAuth(mail);
-		if(auth.getUuid() == null) {
-    		String pass = Utils.createPasswordHash(mail, company.getDocument());
-			auth = new Auth()
-					.setDocument(company.getDocument())
-					.setEmail(mail)
-					.setName(company.getName())
-					.setPassword(pass);
-			auth = AON_SOLUTIONS.insertAuth(company.getDomain().getName(), company.getDomain().getId(), auth);
-		} 
-		return auth;
-	}
-	
-	
-	private User createUser(Domain domain, Auth auth, Company company) {
-		User user = AON_SOLUTIONS.getUserUuid(domain, auth.getUuid());
-		if(user.getId() == null) {
-			String pass = Utils.createPasswordHash(auth.getEmail(), company.getDocument());
-			user = new User()
-				.setAuth(auth)
-				.setActive(true)
-				.setDomain(domain.getId())
-				.setLogin(company.getDocument())
-				.setName(company.getName())
-				.setEnterprise(company.getId())
-				.setRegistry(company)
-				.setShared(false)
-				.setToolbar(UserToolbar.GOOGLE);
-			user = AON.save(domain.getName(), domain.getId(), "", user);
-			AON.updateUserPassword(domain.getName(), domain.getId(), "", user.getId(), pass);
-		}
-		return user;
-	}
-	
-	private void createUserScopes(AonApiData api, Domain domain, User user) {
-		AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
-			f.getDomainProperty().eq(domain.getId())
-			.or(f.getDomainProperty().eq(domain.getParentId())))
-		.forEach(s ->
-			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
-					.setDomain(domain.getId())
-					.setScope(s.getId())
-					.setUserId(user.getId()))
-		);
-	}
-	
-	private void createUserRoles(AonApiData api, Domain domain, User user, boolean bidoq) {
-		createUserRole(api, domain, user, AonRole.ENTERPRISE);
-		createUserRole(api, domain, user, AonRole.ACCOUNTING);
-		createUserRole(api, domain, user, AonRole.FISCAL);
-		createUserRole(api, domain, user, AonRole.PAYROLL);
-		createUserRole(api, domain, user, AonRole.PAYROLL_PORTAL);
-		createUserRole(api, domain, user, AonRole.COMUNICA);
-		createUserRole(api, domain, user, AonRole.COMUNICA_PORTAL);
-		createUserRole(api, domain, user, AonRole.DOCUMENTAL);
-		createUserRole(api, domain, user, AonRole.DOCUMENTAL_PORTAL);
-		createUserRole(api, domain, user, AonRole.TIMECONTROL);
-		createUserRole(api, domain, user, AonRole.TIMECONTROL_PORTAL);
-		createUserRole(api, domain, user, AonRole.INVOICE);
-		createUserRole(api, domain, user, AonRole.INVOICE_PORTAL);
-		createUserRole(api, domain, user, AonRole.MESSENGER);
-		createUserRole(api, domain, user, AonRole.OCR);
-		createUserRole(api, domain, user, AonRole.AIO);
-		
-		if(bidoq) createUserRole(api, domain, user, AonRole.BIDOQ);
-	}
-	
-	private void createUserRole(AonApiData api, Domain domain, User user, AonRole role) {
-		AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), new UserAppRole()
-				.setDomain(domain.getId())
-				.setRole(role)
-				.setUser(user.getId()));
-	}
-	
+
 	private JSONArray getCompanies(AonApiData api) {
-		JSONArray jsArray = new JSONArray();
 		if((JsonUtils.has(api.getData(), IJsonNames.PARENT) && JsonUtils.getboolean(api.getData(), IJsonNames.PARENT))
-				|| JsonUtils.has(api.getData(), IJsonNames.DOCUMENT)) {
-			AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> companyFilter(api, f),
-				api.getData().optInt(IJsonNames.PAGE), api.getData().optInt(IJsonNames.PER_PAGE))
-			.forEach(c -> jsArray.put(CompanyJSON.toJSON(c)));
+				|| JsonUtils.has(api.getData(), IJsonNames.DOCUMENT) || JsonUtils.has(api.getData(), IJsonNames.PARENT_ID)) {
+			
+			if(!api.getData().isNull(IJsonNames.PAGE)) {
+				return CompanyJSON.toJSON(
+					AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> companyFilter(api, f),
+					api.getData().optInt(IJsonNames.PAGE), api.getData().optInt(IJsonNames.PER_PAGE))
+				);
+			} else {
+				return CompanyJSON.toJSON(
+					AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> companyFilter(api, f))
+				);
+			}
+			
 		} else {
+			
+			JSONArray jsArray = new JSONArray();
+			
 			List<String> schemas = AONContext.getSchemas();
 		
 			for(String schema : schemas) {
 				LinkedList<Integer> ds = new LinkedList<>();	
 				AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, null, null)
-				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
-						ac -> {
-							if(!ds.contains(ac.getDomain().getId())){
-								jsArray.put(ac.toJSON());
-								ds.add(ac.getDomain().getId());
-							}
-						});
+				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
+				.forEach(
+					ac -> {
+					if(!ds.contains(ac.getDomain().getId())){
+						jsArray.put(ac.toJSON());
+						ds.add(ac.getDomain().getId());
+					}
+				});
 			}
+			return jsArray;
 		}
-		return jsArray;
 	}
 	
 	private JSONArray getDomainCompanies(AonApiData api) {
@@ -320,15 +256,18 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private Filter companyFilter(AonApiData api, CompanyProperties f) {
 		JSONObject json = api.getData();
-		Filter filter = null;
+		Filter filter = f.getIdProperty().isNotNull();
 
 		if(JsonUtils.has(json, IJsonNames.PARENT) && JsonUtils.getboolean(json, IJsonNames.PARENT)) {
 			filter = f.getDomainParentProperty().eq(api.getDomain().getId());
 		}
 
 		if(JsonUtils.has(json, IJsonNames.DOCUMENT) && AonStringUtils.isNotBlank(JsonUtils.getString(json, IJsonNames.DOCUMENT))) {
-			Filter aux = f.getDocumentProperty().eq(JsonUtils.getString(json, IJsonNames.DOCUMENT));
-			filter = filter != null ? filter.and(aux) : aux;
+			filter =  filter.and(f.getDocumentProperty().eq(JsonUtils.getString(json, IJsonNames.DOCUMENT))) ;
+		}
+		
+		if(!json.isNull(IJsonNames.PARENT_ID)) {
+			filter =  filter.and(f.getDomainParentProperty().eq(json.optInt(IJsonNames.PARENT_ID)));
 		}
 		
 		return filter;

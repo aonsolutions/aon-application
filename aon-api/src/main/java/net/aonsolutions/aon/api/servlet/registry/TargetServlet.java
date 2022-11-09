@@ -26,10 +26,10 @@ import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "AonApiTargetsServlet", urlPatterns = {"/ms/api/targets/*"})
-public class TargetsServlet extends AonApiHttpServlet {
+@WebServlet(name = "AonApiTargetServlet", urlPatterns = {"/ms/api/target/*"})
+public class TargetServlet extends AonApiHttpServlet {
 		
-	private static final Logger LOGGER  = Logger.getLogger(TargetsServlet.class.getName());
+	private static final Logger LOGGER  = Logger.getLogger(TargetServlet.class.getName());
 	
 	public static final String TARGETS = "/";
 	public static final String TARGET = "/:id";
@@ -46,7 +46,7 @@ public class TargetsServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-				.addRoute(TARGETS, TargetsServlet::saveTarget)
+				.addRoute(TARGETS, TargetServlet::saveTarget)
 				.apply();
 			
 			response(req, resp, object);
@@ -66,8 +66,8 @@ public class TargetsServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-				.addRoute(TARGETS, TargetsServlet::getTargets)
-				.addRoute(TARGET, TargetsServlet::getTarget)
+				.addRoute(TARGETS, TargetServlet::getTargets)
+				.addRoute(TARGET, TargetServlet::getTarget)
 				.apply();
 			
 			response(req, resp, object);
@@ -82,7 +82,7 @@ public class TargetsServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-				.addRoute(TARGET, TargetsServlet::saveTarget)
+				.addRoute(TARGET, TargetServlet::saveTarget)
 				.apply();
 			
 			response(req, resp, object);
