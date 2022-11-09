@@ -147,6 +147,10 @@ public class JooqAgreementTab {
 	private static void getAgreementLevelCategory(DSLContext dslContext, AgreementInfo agreement) {
 		Map<Integer, Set<String>> categories = new TreeMap<Integer, Set<String>>();
 		
+		Set<String> levelZeroCat = new HashSet<String>();
+		levelZeroCat.add("Por defecto");
+		categories.put(0, levelZeroCat);
+		
 		for(Level level : agreement.getLevels()) {
 			List<String> categoryList = dslContext.select(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION).from(AGREEMENT_LEVEL_CATEGORY)
 					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(level.getId()))
