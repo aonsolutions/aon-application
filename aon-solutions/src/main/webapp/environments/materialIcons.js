@@ -159,6 +159,7 @@ export const LOCAL_MALL = 'local_mall';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const LINK = 'link';
+export const LINK_OFF = 'link_off';
 export const LIST = 'list';
 export const LABEL = 'label';
 

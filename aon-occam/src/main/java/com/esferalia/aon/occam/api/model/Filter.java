@@ -190,6 +190,16 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface RRelationshipFilter{
+		Filter filter(RRelationshipProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RelationshipFilter{
+		Filter filter(RelationshipProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface SegmentFilter{
 		Filter filter(SegmentProperties properties);
 	}

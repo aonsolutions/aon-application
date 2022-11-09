@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
+import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -465,7 +466,7 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_DEDUCTION.DESCRIPTION, contractConceptCalc.getDescription())
 			.set(CONTRACT_DEDUCTION.EXPRESSION, contractConceptCalc.getExpression())
 			.set(CONTRACT_DEDUCTION.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
-			.set(CONTRACT_DEDUCTION.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
+			.set(CONTRACT_DEDUCTION.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_DEDUCTION.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.execute();
 	}
@@ -478,7 +479,7 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_COST.CODE, parseCode(contractConceptCalc.getName()))
 			.set(CONTRACT_COST.DESCRIPTION, contractConceptCalc.getDescription())
 			.set(CONTRACT_COST.EXPRESSION, contractConceptCalc.getExpression())
-			.set(CONTRACT_COST.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
+			.set(CONTRACT_COST.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_COST.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.execute();		
 	}
@@ -490,7 +491,7 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_BONUS.BONUS_CONCEPT, contractConceptCalc.getConceptId())
 			.set(CONTRACT_BONUS.DESCRIPTION, contractConceptCalc.getDescription())
 			.set(CONTRACT_BONUS.EXPRESSION, contractConceptCalc.getExpression())
-			.set(CONTRACT_BONUS.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
+			.set(CONTRACT_BONUS.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_BONUS.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.execute();	
 	}
@@ -500,13 +501,14 @@ public class JooqEmployeeContractPayments {
 		contractConcept.setPaymentConcepts(getPaymentConcepts(dslContext, domainId));
 		contractConcept.setDeductionConcepts(getDeductionConcepts(dslContext, domainId));
 		contractConcept.setBonusConcepts(getBonusConcepts(dslContext, domainId));
+		contractConcept.setCostConcepts(getCostConcepts(dslContext, domainId));
 		return contractConcept;
 	}
 
 	private static Set<ContractConcept> getPaymentConcepts(DSLContext dslContext, Integer domainId) {
 		Set<ContractConcept> paymentConcepts = new HashSet<>();
 		
-		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.DOMAIN.eq(0).or(PAYMENT_CONCEPT.DOMAIN.eq(domainId))).fetch();
+		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.DOMAIN.eq(0)).fetch();
 		
 		for(Record paymentConceptRecord : paymentConceptRecords) {
 			ContractConcept contractConcept = new ContractConcept();
@@ -524,7 +526,7 @@ public class JooqEmployeeContractPayments {
 	private static Set<ContractConcept> getDeductionConcepts(DSLContext dslContext, Integer domainId) {
 		Set<ContractConcept> deductionConcepts = new HashSet<>();
 		
-		Result<Record> deductionConceptRecords = dslContext.select().from(DEDUCTION_CONCEPT).where(DEDUCTION_CONCEPT.DOMAIN.eq(0).or(DEDUCTION_CONCEPT.DOMAIN.eq(domainId))).fetch();
+		Result<Record> deductionConceptRecords = dslContext.select().from(DEDUCTION_CONCEPT).where(DEDUCTION_CONCEPT.DOMAIN.eq(0)).fetch();
 		
 		for(Record deductionConceptRecord : deductionConceptRecords) {
 			ContractConcept contractConcept = new ContractConcept();
@@ -542,7 +544,7 @@ public class JooqEmployeeContractPayments {
 	private static Set<ContractConcept> getBonusConcepts(DSLContext dslContext, Integer domainId) {
 		Set<ContractConcept> bonusConcepts = new HashSet<>();
 		
-		Result<Record> bonusConceptRecords = dslContext.select().from(BONUS_CONCEPT).where(BONUS_CONCEPT.DOMAIN.eq(0).or(BONUS_CONCEPT.DOMAIN.eq(domainId))).fetch();
+		Result<Record> bonusConceptRecords = dslContext.select().from(BONUS_CONCEPT).where(BONUS_CONCEPT.DOMAIN.eq(0)).fetch();
 		
 		for(Record bonusConceptRecord : bonusConceptRecords) {
 			ContractConcept contractConcept = new ContractConcept();
@@ -554,6 +556,24 @@ public class JooqEmployeeContractPayments {
 		}
 		
 		return bonusConcepts;
+	}
+	
+	private static Set<ContractConcept> getCostConcepts(DSLContext dslContext, Integer domainId) {
+		Set<ContractConcept> costConcepts = new HashSet<>();
+		
+		Result<Record> costConceptRecords = dslContext.select().from(SYSTEM_COST).where(SYSTEM_COST.DOMAIN.eq(0)).fetch();
+		
+		for(Record costConceptRecord : costConceptRecords) {
+			ContractConcept contractConcept = new ContractConcept();
+			contractConcept.setId(costConceptRecord.get(SYSTEM_COST.ID))
+							.setCode(costConceptRecord.get(SYSTEM_COST.CODE))
+							.setType(costConceptRecord.get(SYSTEM_COST.TYPE))
+							.setDescription(costConceptRecord.get(SYSTEM_COST.DESCRIPTION))
+							.setExpression(costConceptRecord.get(SYSTEM_COST.EXPRESSION));
+			costConcepts.add(contractConcept);
+		}
+		
+		return costConcepts;
 	}
 
 }

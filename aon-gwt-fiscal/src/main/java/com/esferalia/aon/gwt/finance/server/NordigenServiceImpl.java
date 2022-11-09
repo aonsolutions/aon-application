@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.bank.checkit.CheckItAPI;
@@ -123,13 +122,8 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 
 	@Override
 	public Integer insertTransactions(String currentDomainName, int currentDomain, String user,
-			Integer checkitEnterpriseId, CheckItBankAccount checkItBankAccount) throws AonCoreException {
-		String iban = checkItBankAccount.getCcc();
-		try {
-			return CheckItAPI.insertTransactions(currentDomainName, currentDomain, user, checkitEnterpriseId, iban);
-		} catch (CheckItException e) {
-			throw new AonCoreException(e.getMessage());
-		}
+			NordigenBankAccount nordigenBankAccount) throws AonCoreException {
+		return AonNordigen.insertStatements(new Domain().setName(currentDomainName).setId(currentDomain), user, nordigenBankAccount);
 	}
 
 
@@ -317,13 +311,13 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 				List<NordigenAccountTransaction> transactions = AonNordigen.getBookedAccountTransactions(token, id, endDate);
 				
 				if (pendingTransactions != null) {
-					pendingTransactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
+					pendingTransactions.stream().map(tr -> AonNordigen.nordigenToBankStatement(nordigenBankAccount, tr)).forEach(bs -> {
 						bs.setPending(true);
 						list.add(bs);
 					});
 				}
 				if (transactions != null) {
-					transactions.stream().map(AonNordigen::nordigenToBankStatement).forEach(bs -> {
+					transactions.stream().map(tr -> AonNordigen.nordigenToBankStatement(nordigenBankAccount, tr)).forEach(bs -> {
 						bs.setPending(false);
 						list.add(bs);
 					});
@@ -332,13 +326,10 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
 			
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
-			NordigenAccountBalance consolidado = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
-
-			NordigenAccountBalance real = balances.stream()
-					.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
-					.findFirst().orElse(null);
+			
+			NordigenAccountBalance consolidado = filterConsolidado(balances);
+			NordigenAccountBalance real = filterReal(balances);
+			
 			
 			NordigenAccountBalance balance = real != null ? real : consolidado;
 			
@@ -358,6 +349,35 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 			return null;
 		}
 	}
+	
+	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance consolidado = null;
+		
+		consolidado = balances.stream()
+				.filter(bal -> NORDIGEN_BALANCE_TYPE.CLOSING_BOOKED.equals(bal.getBalanceType()))
+				.findFirst().orElse(null);
+		
+		if (consolidado == null && balances.size() > 0) {
+			return balances.get(0);
+		}
+		
+		return consolidado;
+	}
+	
+	private static NordigenAccountBalance filterReal(List<NordigenAccountBalance> balances) {
+		NordigenAccountBalance real = null;
+		
+		real = balances.stream()
+				.filter(bal -> NORDIGEN_BALANCE_TYPE.OPENING_BOOKED.equals(bal.getBalanceType()))
+				.findFirst().orElse(null);
+		
+		if (real == null) {
+			return filterConsolidado(balances);
+		}
+		
+		return real;
+	}
+	
 
 
 	@Override
@@ -440,12 +460,17 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 
 
 	@Override
-	public NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account)
+	public NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount account)
 			throws Exception {
-		return AonNordigen.setNordigenBankAccountValues(token, account);
+		Domain d = new Domain().setName(domainName).setId(domain);
+		return AonNordigen.setNordigenBankAccountValues(d, user, token, account);
 	}
 
 
-	
+	@Override
+	public List<NordigenBankStatement> getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain,
+			String user, NordigenBankAccount nordigenBankAccount) throws Exception {
+		return AonNordigen.getNotInsertedTransactions(token, new Domain().setName(domainName).setId(domain), user, nordigenBankAccount);
+	}
 
 }

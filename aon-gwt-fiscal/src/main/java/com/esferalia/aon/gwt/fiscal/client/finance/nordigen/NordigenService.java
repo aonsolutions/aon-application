@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_REQUISITION_STATUS;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
@@ -22,7 +21,6 @@ public interface NordigenService extends RemoteService {
 	
 	// --------------------------------------------------------------- RAWDOC
 	Integer saveEnterpriseData(String currentDomainName, int currentDomain, String user) throws AonCoreException;
-	Integer insertTransactions(String currentDomainName, int currentDomain, String user, Integer checkitEnterpriseId, CheckItBankAccount checkItBankAccount) throws AonCoreException;
 	List<CheckItLoginFields> getLogins(Integer bankId);
 	CheckItLoginFields getCredentials(Integer enterpriseId, Integer loginId) throws IllegalArgumentException;
 	Boolean editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields) throws IllegalArgumentException;
@@ -38,8 +36,10 @@ public interface NordigenService extends RemoteService {
 	Integer clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain, String user) throws Exception;
 	Boolean cancelRequisition (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, Integer rbankId) throws Exception;
 	NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws Exception;
+	Integer insertTransactions(String currentDomainName, int currentDomain, String user, NordigenBankAccount nordigenBankAccount) throws AonCoreException;
 	
-	NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, NordigenBankAccount account) throws Exception;
+	NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount account) throws Exception;
+	List<NordigenBankStatement> getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount) throws Exception;
 	
 	
 }

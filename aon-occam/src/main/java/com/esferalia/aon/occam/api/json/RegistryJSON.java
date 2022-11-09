@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 
 public class RegistryJSON {
 
-
 	public static Registry fromJSON(JSONObject json) {
 		if(json == null) {
 			return new Registry();

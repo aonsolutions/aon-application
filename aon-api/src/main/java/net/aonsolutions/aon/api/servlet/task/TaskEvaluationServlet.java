@@ -8,11 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskEvaluation;
@@ -114,19 +112,38 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 	
 	
 	private String saveRBank(AonApiData api) {
-		Domain domain     = api.getDomain();
 		JSONObject params = api.getData();
-		Integer id  = params.optInt("rbank");
+//		Domain domain     = api.getDomain();
+//		Integer id  = params.optInt("rbank");
+		
+		String details  = params.optString("details");
+		String error  = params.optString("error");
 
-		String message = "Parametros requeridos";
+		String message =  "Proceso finalizado";
+		String detailsHtml = "";
 		
-		if(id!=0) {
-			RegistryBank rbank = AON.getRegistryBank(domain, "", f-> f.getIdProperty().eq(id));
-			if(rbank.getId()==null) {
-				throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
-			}
+//		
+//		if(id!=0) {
+//			RegistryBank rbank = AON.getRegistryBank(domain, "", f-> f.getIdProperty().eq(id));
+//			if(rbank.getId()==null) {
+//				throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
+//			}
+//		
+//			message  = "Proceso finalizado";
+//		}
 		
-			message  = "Banco vinculado!";
+		if(!error.isEmpty()) {
+			String h3 = "<h3 style='color:darkred;'>";
+			h3 += error;
+			h3 += "</h3>";
+			detailsHtml += h3;
+		}
+		
+		if(!details.isEmpty()) {
+			String h4 = "<h4 style='color:darkred;'>";
+			h4 += details;
+			h4 += "</h4>";
+			detailsHtml += h4;
 		}
 		
 		return "<div style='font-family: Arial;background-color: #e3f2fd; width: 100%; height: 100%; position: absolute; right: 0; top: 0; left: 0; bottom: 0;'>\n" + 
@@ -134,27 +151,11 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 				"        <div>\n" + 
 				"            <h1>"+message+"</h1>\n" + 
 				"        </div>\n" + 
-				"        <div>\n" + 
-				"            <h6>"+params.toString()+"</h6>\n" + 
+				"        <div style='text-align:center;'>\n" + 
+				"            <div>"+detailsHtml+"</div>\n" + 
 				"        </div>\n" + 
 				"        <div>\n" + 
-				"          <!-- back button-->\n" + 
-				"            <button style='\n" + 
-				"                background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%);\n" + 
-				"                margin: 10px;\n" + 
-				"                padding: 15px 45px;\n" + 
-				"                text-align: center;\n" + 
-				"                text-transform: uppercase;\n" + 
-				"                transition: 0.5s;\n" + 
-				"                background-size: 200% auto;\n" + 
-				"                color: white;            \n" + 
-				"                box-shadow: 0 0 20px #eee;\n" + 
-				"                border-radius: 10px;\n" + 
-				"                display: block;\n" + 
-				"                border:none;\n" + 
-				"                cursor: pointer;\n" + 
-				"                font-weight: bold;\n" + 
-				"             ' onclick=\"window.close();window.opener.parent.postMessage(\"exit\", \"*\");\">Cerrar</button>\n" + 
+				"            <h6>"+params.toString()+"</h6>\n" + 
 				"        </div>\n" + 
 				"    </div>\n" + 
 				"</div>         ";

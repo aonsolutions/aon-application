@@ -3,10 +3,13 @@ package com.esferalia.aon.occam.api.model.finance.nordigen;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NordigenBankAccount implements Serializable {
 
@@ -24,6 +27,9 @@ public class NordigenBankAccount implements Serializable {
 	private String iban;
 	private String bankAlias;
 	private Date lastMovementDate;
+	private Set<String> logs;
+	
+	private List<NordigenBankStatement> notInsertedMovements;
 	
 	public RegistryBank getRbank() {
 		return rbank;
@@ -102,6 +108,34 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setLastMovementDate(Date lastMovementDate) {
 		this.lastMovementDate = lastMovementDate;
+		return this;
+	}
+	public Set<String> getLogs() {
+		if (logs == null) {
+			logs = new LinkedHashSet<>();
+		}
+		return logs;
+	}
+	public Set<String> addLog(String log) {
+		if (logs == null) {
+			logs = new LinkedHashSet<>();
+		}
+		if (AonStringUtils.isNotBlank(log)) {
+			logs.add(log);
+		}
+		return logs;
+	}
+	public NordigenBankAccount setLogs(Set<String> logs) {
+		if (logs != null) {			
+			this.logs = logs;
+		}
+		return this;
+	}
+	public List<NordigenBankStatement> getNotInsertedMovements() {
+		return notInsertedMovements;
+	}
+	public NordigenBankAccount setNotInsertedMovements(List<NordigenBankStatement> notInsertedMovements) {
+		this.notInsertedMovements = notInsertedMovements;
 		return this;
 	}
 

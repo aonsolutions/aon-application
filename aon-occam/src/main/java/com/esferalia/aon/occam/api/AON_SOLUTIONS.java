@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Filter.NewsFilter;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -54,6 +55,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
@@ -76,6 +78,7 @@ import com.esferalia.aon.occam.impl.jooq.NoteImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
+import com.esferalia.aon.occam.impl.jooq.RelationshipImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.Task2Impl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
@@ -138,6 +141,10 @@ public class AON_SOLUTIONS {
 	
 	private static INews getNews() {
 		return new NewsImpl();
+	}
+	
+	private static IRelationship getRelationship() {
+		return new RelationshipImpl();
 	}
 
 	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
@@ -1064,4 +1071,28 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	//------ RELATIONSHIP -------
+	public static Optional<RegistryRelationship> getRegistryRelationship(Domain domain, User user, RRelationshipFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRelationship().getRegistryRelationship(ctx, filter);
+		}
+	}
+	
+	public static Stream<RegistryRelationship> getRegistryRelationshipStream(Domain domain, User user, RRelationshipFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRelationship().getRegistryRelationshipStream(ctx, filter);
+		}
+	}
+
+	public static RegistryRelationship saveRegistryRelationship(Domain domain, User user, RegistryRelationship rrelationship) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRelationship().saveRegistryRelationship(ctx, rrelationship);
+		}
+	}
+	
+	public static void deleteRegistryRelationship(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
+			getRelationship().deletetRegistryRelationship(ctx, id);
+		}
+	}
 }

@@ -49,6 +49,8 @@ public final class IJsonNames {
 	public static final String AUTH = "auth";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
+	public static final String ADVERTISING = "advertising";
+	
 	
 	// ---------------------------------------------------------------------------------------------	[B] 
 	public static final String BACKGROUND = "background";

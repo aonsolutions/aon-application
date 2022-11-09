@@ -52,6 +52,7 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.DomainData;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonZipLoaderController.HTMLLogger;
@@ -383,20 +384,22 @@ public class ZippedMultiLoad {
 	private void readPayrollFile(Path destinationFolder, ILogger log) throws AonException {
 		Integer parentDomain = DomainManager.getCurrentDomain();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		Connection connection = null;
+//		Connection connection = null;
 		try {
 			String domainName = AonUtil.getDomainName();
-			connection = DatabaseUtil.getConnection(domainName);
-			log.info("PARENT_DOMAIN_NAME = " + domainName);
-			log.info("PARENT_DOMAIN_ID = " + parentDomain);
-			Traspaso.execute(destinationFolder.toString(), connection, parentDomain, log);
+			String user = UserUtils.getInstance().getLoggedUser().getLogin();
+//			connection = DatabaseUtil.getConnection(domainName);
+//			log.info("PARENT_DOMAIN_NAME = " + domainName);
+//			log.info("PARENT_DOMAIN_ID = " + parentDomain);
+//			Traspaso.execute(destinationFolder.toString(), connection, parentDomain, log);
+			Traspaso.execute(destinationFolder.toString(), domainName, parentDomain, user, log);
 		} catch (Exception e) {
 			log.error(MessageFormat.format("Error durante la carga de datos. {0}",e.getMessage()));
 		} finally {
 			ds.onUpperDomain(null); // Cambiar al dominio padre (para que se actualice la lista de empresas/dominios)
-			if (connection != null) {
-				DatabaseUtil.closeQuietly(connection);
-			}
+//			if (connection != null) {
+//				DatabaseUtil.closeQuietly(connection);
+//			}
 			ds.setModel(null);
 		}
 	}

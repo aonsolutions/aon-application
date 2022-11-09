@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -675,14 +677,27 @@ public class SistemaRED2AON {
 	
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
-			Collection<solutions.aon.seg.social.object.Idc> idcs = 
-			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			solutions.aon.seg.social.object.Idc [] idcs = 
+			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+			.stream()
+			.sorted((idc1, idc2) -> AonDateUtils.compare(idc1.getFecha(), idc2.getFecha()))
+			.toArray(solutions.aon.seg.social.object.Idc[]::new);
+			
+			List<com.esferalia.aon.salary.expression.Period> periods = new ArrayList<>();
+			for (int i = 1; i < idcs.length; i+=2) {
+				periods.add(new com.esferalia.aon.salary.expression.Period(idcs[i-1].getFecha(), idcs[i].getFecha()));
+			}
+			if ( idcs.length % 2 != 0 ) {
+				periods.add(new com.esferalia.aon.salary.expression.Period(idcs[idcs.length -1 ].getFecha(), null));
+			}
+			
+			com.esferalia.aon.salary.expression.Period period = 
+			new com.esferalia.aon.salary.expression.Period(startDate, endDate);
 			
 			Date idcDates [] = 
-			idcs.stream()
-			.filter(idc -> startDate == null || idc.getFecha().compareTo(startDate) >= 0 )
-			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
-			.map(idc ->idc.getFecha())
+			periods.stream()
+			.filter(p -> period.intersects(p) )
+			.map(p -> p.getStart() )
 			.sorted().distinct()
 			.toArray(Date[]::new);
 			
