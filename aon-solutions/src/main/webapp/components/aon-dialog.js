@@ -408,10 +408,11 @@ export class AonDialog extends AonElement {
 	 */
 	addAction({id, title, icon, aonIcon, position}, fn){
 		let btnMain = position === "left" ? this.getButtonLeft() : this.getButtonRight();
-		if(btnMain) {
-			let btn = this.getElement(id);
-			if(btn) btn.remove();
 
+		let btn = this.getElement(id);
+		if(btn) btn.remove();
+
+		if(btnMain) {
 			btn = new AonIconButton();
 			btn.id = id;
 			btn.icon = icon || aonIcon; 
@@ -422,6 +423,14 @@ export class AonDialog extends AonElement {
 			}
 			btnMain.appendChild(btn);
 			return btn;
+		} else {
+			btn = this.createElement(TAG.BUTTON);
+			btn.id = id;
+			btn.className = 'aonButton';
+			btn.style.marginRight = "10px";
+			btn.innerHTML = title;
+			this.getElement(this.ACTION).appendChild(btn);
+			btn.addEventListener(EVENT.CLICK, fn);
 		}
 	}
 
@@ -458,7 +467,7 @@ export class AonDialog extends AonElement {
 	}
 
 	addAcceptAction(fn) {
-		let accept = this.buttonAccept();
+		let accept = this.createButtonAccept();
 		if(accept){
 			accept.addEventListener(EVENT.CLICK, (ev) => {
 				fn(ev);
@@ -467,7 +476,7 @@ export class AonDialog extends AonElement {
 		}
 	}
 	
-	buttonAccept(title=undefined){
+	createButtonAccept(title=undefined){
 		let btn = undefined;
 		if(this.isTypeFullScreen()){
 			btn = this.addAction({
@@ -495,7 +504,7 @@ export class AonDialog extends AonElement {
 	}
 
 	addSendAction(fn, title) {
-		let button = this.buttonAccept(title);
+		let button = this.createButtonAccept(title);
 		if(button){
 			button.classList.add('buttonload')
 			button.addEventListener('click', (ev) => {

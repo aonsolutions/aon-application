@@ -6,9 +6,10 @@ import { AonSwitch } from '../../../components/aon-switch.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { Transactions } from '../../../services/transaction.js';
 import { Customer } from '../../../models/registry/Customer.js';
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } from '../../../services/registryService.js';
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomers } from '../../../services/registryService.js';
 import { AonCustomerList } from './aon-customer-list.js';
 import { getScopes } from '../../../services/documentalService.js';
+import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
 
 export class AonCustomer extends AonReg {
 
@@ -143,6 +144,7 @@ export class AonCustomer extends AonReg {
 		const card = this.getElement(this.GENERAL_CARD);
 		
 		let divOne = this.getElement(this.entepriseLinked);
+
 		if(!divOne){
 			divOne =  this.createElement(TAG.DIV);
 			divOne.id = this.entepriseLinked;
@@ -154,25 +156,24 @@ export class AonCustomer extends AonReg {
 			this.buildEnterpriseLinkedView(resp);
 		})
 		.catch((err)=>{
-			console.log(err);
 			this.showError(err);
 		});
 	}
 
 	buildEnterpriseLinkedView(resp){
 		const entepriseLinked = this.getElement(this.entepriseLinked);
-		const {rrelationship, companies} = resp;
-		
+		entepriseLinked.innerHTML = "";
+
 		console.log(resp);
 
+		const {rrelationship, companies} = resp;
+		
 		const link = rrelationship && rrelationship.id;
 
 		const color = link ? CSS.variable(COLORS.ONLINE_GREEN) : COLORS.ORANGE;
-
-		entepriseLinked.innerHTML = "";
 	
 		let main = this.createElement(TAG.DIV);
-		main.title = link ? rrelationship.comments : "Sin vinculo";
+		main.title = "Vinculo con empresa " + (link ? `(${rrelationship.comments})` : "(No existe)");
 		main.style.display = "flex";
 		main.style.columnGap = "5px";
 		main.style.border = "1px solid";
@@ -197,7 +198,21 @@ export class AonCustomer extends AonReg {
 		statusText.style.color = "#5f6368";
 		main.appendChild(statusText);
 
-		if(!link){
+		let iconArrowDown = this.createElement(TAG.DIV);
+		iconArrowDown.style.fontSize = "18px";
+		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
+		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+
+		if(link || !companies.length){
+			main.appendChild(iconArrowDown);
+		}
+
+		if(link){
+			main.addEventListener(EVENT.CLICK, () => {
+				this.getOptionsLinked(iconArrowDown, rrelationship);
+			});	
+		} 
+		else {
 			statusText.style.marginRight = "5px";
 			main.addEventListener(EVENT.CLICK, () => {
 				const countCompany = companies.length;
@@ -207,46 +222,34 @@ export class AonCustomer extends AonReg {
 				} else if(countCompany > 1){
 					this.openDialogCompany(companies);
 				} else {
-					this.showError({
-						type: CONSTANT.ERROR,
-						message: "Empresa no encontrada!"
-					});
+					this.getOptionsLinked(iconArrowDown);
 				}
 			});
-		} else {
-			let iconArrowDown = this.createElement(TAG.DIV);
-			iconArrowDown.style.fontSize = "18px";
-			iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
-			iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
-			main.appendChild(iconArrowDown);
-	
-			main.addEventListener(EVENT.CLICK, () => {
-				this.getOptionsLinked(iconArrowDown, rrelationship);
-			});	
 		}
 	}
 
-	getOptionsLinked(element, rrelationship){
-		const application = this.getApplication();
-		const top = element.getBoundingClientRect().top + 24;
-		const left = element.getBoundingClientRect().left + 3;
-		let d = application.getOptionDialog();
+	getOptionsLinked(element, rrelationship=undefined){
+		let options = [];
 
-		let options = [
-			{ 
+		if(rrelationship){
+			options.push({ 
 				name: "Abrir", 
 				value:"OPEN",
-				icon:"open_in_new", 
+				icon:  MATERIAL_ICONS.OPEN_IN_NEW, 
 				fn:()=> {
-					window.open("https:"+ rrelationship.comments);
+					if(rrelationship.comments){
+						window.open("https://"+ rrelationship.comments);
+					}
 				}
 			},
 			{ 
 				name: "Desvincular", 
-				value:"UNLINK",
-				icon:"link_off", 
+				value: "UNLINK",
+				icon: MATERIAL_ICONS.LINK_OFF, 
 				fn:()=> {
-					application.startLoading();
+
+					this.getApplication().startLoading();
+
 					removeRelationShip(rrelationship)
 					.then(()=> {
 						this.showMessage();
@@ -254,20 +257,49 @@ export class AonCustomer extends AonReg {
 					})
 					.catch((err)=> this.showError(err))
 					.finally(()=>{
-						application.stopLoading();
+						this.getApplication().stopLoading();
 					});
 				}
+			});
+		} else {
+			options.push({ 
+				name: "Vincular con una existente", 
+				value: "LINK",
+				icon:  MATERIAL_ICONS.LINK, 
+				fn:()=> {
+					this.openDialogCompany();
+				}
 			},
-		];
+			{ 
+				name: "Crear nueva empresa", 
+				value: "ENTERPRISE_NEW",
+				icon: MATERIAL_ICONS.OPEN_IN_NEW, 
+				fn:()=> {
+					this.getApplication().startLoading();
+					saveCompany({...this.registry, id:null})
+					.then((company)=>{
+						console.log("company", company);
+						this.saveRegistryRelationship(company);
+					})
+					.catch(err=>{
+						this.showError(err);
+					})
+					.finally(()=>{
+						this.getApplication().stopLoading();	
+					});
+				}
+			});
+		}
 
-
+		const top = element.getBoundingClientRect().top + 24;
+		const left = element.getBoundingClientRect().left + 3;
+		let d = this.getApplication().getOptionDialog();
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
 
-	openDialogCompany(companies){
-		const application = this.getApplication();
-		const dialog = application.getDialog();
+	openDialogCompany(companies=[]){
+		const dialog = this.getApplication().getDialog();
 		dialog.clear();
 	
 		if(this.isMobile()) {
@@ -276,7 +308,7 @@ export class AonCustomer extends AonReg {
 			dialog.width = "30%";
 		}
 	
-		dialog.setTitle("Sugerencias para el vinculo");
+		dialog.setTitle(companies.length ? "Sugerencias para el vinculo": MSG.ENTERPRISE);
 	
 		let div = document.createElement(TAG.DIV);
 		div.style.display = "flex";
@@ -288,9 +320,39 @@ export class AonCustomer extends AonReg {
 		selectCompany.id    = "selectCompany";
 		selectCompany.title = MSG.COMPANY;
 		selectCompany.autocomplete = true;
-		selectCompany.setOptions(companies.map(c=> ({...c, value:c.id})));
-
 		div.appendChild(selectCompany);
+
+		if(companies.length){
+			let timeOut = null;
+			let isChange = false;
+
+			selectCompany.setOptions(companies.map(c=> ({...c, value:c.id})));
+			
+			selectCompany.addEventListener(EVENT.INPUT, async({target})=>{
+				if(!isChange){
+					clearTimeout(timeOut);
+					const value = target.value;
+					if(value.length > 2 ){
+						timeOut = setTimeout(async() =>{
+							selectCompany.loading(true);
+							const cs = await getCompanies(params);
+							selectCompany.setOptions(cs);
+							selectCompany.loading(false);
+							isChange = true
+						}, 300);
+					}
+				}
+			});
+		} else {
+			selectCompany.loading(true);
+			this.getCompanies()
+			.then(companies=>{
+				selectCompany.setOptions( companies);
+			})
+			.finally(()=>{
+				selectCompany.loading(false);
+			})
+		}
 
 		dialog.addSendAction(()=>{
 			if(selectCompany.value){
@@ -298,9 +360,14 @@ export class AonCustomer extends AonReg {
 				dialog.close();
 			}
 		}, MSG.LINK);
-	
+
 		dialog.open();
 	}   
+
+	async getCompanies(){
+		let result = await getDomainCompanies({parentId: this.registry.getDomain().getParentId()});
+		return result.map( c=> ({...c, value: c.id}));
+	}
 
 	saveRegistryRelationship(company){
 		this.getApplication().startLoading();
