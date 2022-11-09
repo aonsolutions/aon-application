@@ -2408,7 +2408,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void checkWorkplaceAgreements() {
-			if(null == this.workplace || null == this.workplace.getAgreement()) return;
+			if(null == this.workplace || null == this.workplace.getAgreement() || this.getTabCount() > 6) return;
 			add("Convenio", getAgreementPreview(), this::onAgreementTabSelected);
 		}
 		
