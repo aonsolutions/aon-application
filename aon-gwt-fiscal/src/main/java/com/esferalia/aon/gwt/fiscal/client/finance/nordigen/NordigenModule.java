@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.nordigen;
 
+import java.awt.Dialog;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -522,6 +524,34 @@ public class NordigenModule extends MainEntryPoint {
 			allMovementsButton.addClickHandler(event -> {
 				showAllMovements(opt, nordigenBankAccount, iban);
 			});
+
+			AonTableButton insertMovementsButton = new AonTableButton("Instertar movimientos", AON.CSS.aonIconSave());
+			insertMovementsButton.setTabIndex(-6);
+			
+			insertMovementsButton.addClickHandler(event -> {
+//				showBottomMessage(AON.CSS.aonLoader());
+				NORDIGEN_SERVICE.insertTransactions(opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, new AsyncCallback<Integer>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Label label = new Label(caught.getMessage());
+						label.addStyleName(AON.CSS.aonColorRed());
+						sessionLog.add(label);
+						openFootPanel();
+						refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+					}
+
+					@Override
+					public void onSuccess(Integer result) {
+						Label label = new Label(result + " movimientos insertados");
+						label.addStyleName(AON.CSS.aonColorGreen());
+						sessionLog.add(label);
+						openFootPanel();
+						refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+					}
+				});
+			});
+			
 			
 			getMenuPanel().add(unlinkButton);
 			
@@ -530,11 +560,11 @@ public class NordigenModule extends MainEntryPoint {
 			AonTableButton updateButton = new AonTableButton("Actualizar", AON.CSS.aonIconRefresh());
 			updateButton.setTabIndex(-5);
 			updateButton.addClickHandler((ev) -> {
-				refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton);
+				refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton, insertMovementsButton);
 			});
 			getMenuPanel().add(updateButton);
 			
-			refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton);
+			refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, title, titlePanel, allMovementsButton, insertMovementsButton);
 		}
 
 		private void showBottomMessage(String message) {
@@ -555,7 +585,7 @@ public class NordigenModule extends MainEntryPoint {
 		
 		private void clearBottomMessage() {
 			this.bottomTable.removeStyleName(AON.CSS.aonLoader());
-			this.bottomTable.clear();
+//			this.bottomTable.clear();
 		}
 		
 		private void showAllMovements(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, String iban) {
@@ -665,10 +695,12 @@ public class NordigenModule extends MainEntryPoint {
 		}
 
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
-				InlineLabel atDateBox, InlineLabel balanceBox, Label title, FlowPanel titlePanel, AonTableButton allMovementsButton) {
+				InlineLabel atDateBox, InlineLabel balanceBox, Label title, FlowPanel titlePanel,
+				AonTableButton allMovementsButton, AonTableButton insertMovementsButton) {
 			allMovementsButton.setVisible(false);
+			insertMovementsButton.setVisible(false);
 			showBottomMessage(AON.CSS.aonLoader());
-			NORDIGEN_SERVICE.setNordigenAccountValues(opt.getConfiguration().getToken(), nordigenBankAccount, new AsyncCallback<NordigenBankAccount>() {
+			NORDIGEN_SERVICE.setNordigenAccountValues(opt.getConfiguration().getToken(), opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, new AsyncCallback<NordigenBankAccount>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -680,7 +712,7 @@ public class NordigenModule extends MainEntryPoint {
 				public void onSuccess(NordigenBankAccount result) {
 					copyBankAccount(nordigenBankAccount, result);
 					allMovementsButton.setVisible(true);
-					updateCard(opt, result, atDateBox, balanceBox, title, titlePanel, allMovementsButton);
+					updateCard(opt, result, atDateBox, balanceBox, title, titlePanel, allMovementsButton, insertMovementsButton);
 					clearBottomMessage();
 				}
 			
@@ -700,6 +732,7 @@ public class NordigenModule extends MainEntryPoint {
 			original.setRbank(updated.getRbank());
 			original.setRequisition(updated.getRequisition());
 			original.setLastMovementDate(updated.getLastMovementDate());
+			original.setNotInsertedMovements(updated.getNotInsertedMovements());
 		}
 		
 		private void updateBalances() {
@@ -730,7 +763,8 @@ public class NordigenModule extends MainEntryPoint {
 		}
 
 		private void updateCard(NordigenModuleOptions opt, NordigenBankAccount result, InlineLabel atDateBox, 
-				InlineLabel balanceBox, Label title, FlowPanel titlePanel, AonTableButton allMovementsButton) {
+				InlineLabel balanceBox, Label title, FlowPanel titlePanel,
+				AonTableButton allMovementsButton, AonTableButton insertMovementsButton) {
 			
 			String logo = result.getInstitution() != null ? result.getInstitution().getLogo() : "";
 			titlePanel.clear();
@@ -769,28 +803,29 @@ public class NordigenModule extends MainEntryPoint {
 			NordigenRequisition requisition = result.getRequisition();
 			if (requisition != null) {
 				
-				NORDIGEN_REQUISITION_STATUS requisitionStatus = requisition.getStatus();
-				if (!NORDIGEN_REQUISITION_STATUS.LN.equals(requisitionStatus)) {
-					
-					if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisitionStatus)) {
-						showBottomMessage("Las credenciales expiraron, debe volver a vincular la cuenta");
-					} else if (NORDIGEN_REQUISITION_STATUS.RJ.equals(requisitionStatus)) {
-						showBottomMessage("El proceso de vinclaci\u00F3n fall\u00F3");
-					} else {
-						showBottomMessage("La vinculaci\u00F3n no se ha completado a\u00FAn");
-					}
-				}
-				
-				
 				if (NORDIGEN_REQUISITION_STATUS.LN.equals(requisition.getStatus())) {
-					if (!isMobile()) {					
+					List<NordigenBankStatement> movs = result.getNotInsertedMovements();
+					long movCount = movs.stream().filter(m -> m != null && !m.isPending()).count();
+					long pendingMovCount = movs.stream().filter(m -> m != null && m.isPending()).count();
+					if (!result.getNotInsertedMovements().isEmpty()) {
+						String pendingString = " y " + pendingMovCount + " no consolidados";
+						showBottomMessage("Hay " + movCount + " movimientos pendientes" +  (pendingMovCount > 0 ? pendingString : ""));
+					}
+					if (!isMobile()) {
 						getMenuPanel().add(allMovementsButton);
+						if (movCount > 0) {
+							getMenuPanel().add(insertMovementsButton);
+							insertMovementsButton.setVisible(true);
+						} else {
+							insertMovementsButton.setVisible(false);
+						}
 					}
 				} else if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisition.getStatus())) {
-					//TODO
+					showBottomMessage("Las credenciales expiraron, debe volver a vincular la cuenta");
 				} else if (NORDIGEN_REQUISITION_STATUS.RJ.equals(requisition.getStatus())) {
-					//TODO					
+					showBottomMessage("El proceso de vinclaci\u00F3n fall\u00F3");
 				} else {
+					showBottomMessage("La vinculaci\u00F3n no se ha completado a\u00FAn");
 					if (continueLinkButton == null) {
 						continueLinkButton = new AonTableButton("Continuar la vinculaci\u00F3n", AON.CSS.aonIconRestore());
 						continueLinkButton.setTabIndex(-5);

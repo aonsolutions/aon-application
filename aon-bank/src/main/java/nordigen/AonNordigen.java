@@ -5,6 +5,7 @@ import static nordigen.NordigenUtils.isRequisitionLinked;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -270,7 +272,7 @@ public class AonNordigen {
 	}
 	
 	
-	public static NordigenBankAccount setNordigenBankAccountValues(NordigenAccessToken token, NordigenBankAccount account) throws Exception {
+	public static NordigenBankAccount setNordigenBankAccountValues(Domain domain, String user, NordigenAccessToken token, NordigenBankAccount account) throws Exception {
 		try {
 			RegistryBank rbank = account.getRbank();
 			RegistryAddInfo raddInfo = account.getRaddInfo();
@@ -284,6 +286,8 @@ public class AonNordigen {
 					account.setMetadata(getRbankNordigenAccountId(token, account.getRequisition(), rbank));
 					System.out.println("ACC_ID");
 					String accountId = account.getMetadata() != null ? account.getMetadata().getId() : null;
+					Date lastMovementDate = getLastMovementDate(domain, user, account.getRbank().getId());
+					account.setLastMovementDate(lastMovementDate);
 					
 					Thread thread3 = new Thread(() -> {
 						System.out.println("THREAD 3 - " + account.getBankAlias());
@@ -324,11 +328,23 @@ public class AonNordigen {
 							}
 							System.out.println("THREAD 2 termina");
 						});
+						Thread thread4 = new Thread(() -> {
+							System.out.println("THREAD 4");
+							try {
+								account.setNotInsertedMovements(getNotInsertedTransactions(token, domain , user, account));
+							} catch (Exception e) {
+								e.printStackTrace();
+								account.addLog(e.getMessage());
+							}
+							System.out.println("THREAD 4 termina");
+						});
 						
 						thread1.start();
 						thread2.start();
+						thread4.start();
 						thread1.join();
 						thread2.join();
+						thread4.join();
 					}
 					thread3.join();
 					
@@ -540,7 +556,7 @@ public class AonNordigen {
 //		
 //	}
 	
-	public static NordigenBankStatement nordigenToBankStatement(NordigenAccountTransaction transaction) {
+	public static NordigenBankStatement nordigenToBankStatement(NordigenBankAccount account, NordigenAccountTransaction transaction) {
 		if (transaction != null) {
 			NordigenBankStatement statement = new NordigenBankStatement();
 			Double amount = transaction.getTransactionAmount() != null ? transaction.getTransactionAmount().getAmount() : 0;
@@ -553,7 +569,16 @@ public class AonNordigen {
 				description = transaction.getRemittanceInformationStructured();
 			}
 			
+			StringBuilder sb = new StringBuilder();
+			
+			if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
+				sb.append(transaction.getTransactionId());
+			} else if (AonStringUtils.isNotBlank(transaction.getInternalTransactionId())) {
+				sb.append(transaction.getInternalTransactionId());				
+			}
 			statement
+			.setDomain(account.getRbank().getDomain())
+			.setRegistryBank(account.getRbank())
 			.setOperationDate(transaction.getValueDate())
 			.setCommonConcept(StatementConcept.UNKNOWN)
 			.setPayment(bpayment)
@@ -561,8 +586,7 @@ public class AonNordigen {
 			.setDescription(description)
 			.setStatus(StatementStatus.PENDING)
 			.setReference1("NORDIGEN")
-			.setReference2(AonStringUtils.leftPad(transaction.getTransactionId(), 16, '0'));
-			
+			.setReference2(AonStringUtils.trimToNull(AonStringUtils.substring(sb.toString(), 0, 64)));
 			String id = null;
 			
 			if (AonStringUtils.isNotBlank(transaction.getTransactionId())) {
@@ -579,6 +603,72 @@ public class AonNordigen {
 	
 	public static Date getLastMovementDate(Domain domain, String login, Integer rbankId) {
 		return NordigenDAO.getLastMovementDate(domain, login, rbankId);
+	}
+	
+	public static List<NordigenBankStatement> getNotInsertedTransactions(NordigenAccessToken token, Domain domain, String login, NordigenBankAccount account) throws Exception {
+		if (account != null) {
+			NordigenAccountMetadata metadata = account.getMetadata();
+			String accId = metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null;
+			Date lastMovDate = account.getLastMovementDate();
+			Date today = new Date();
+			Date dateFrom = null;
+			if (lastMovDate != null) {
+				dateFrom = AonDateUtils.addDays(lastMovDate, 1);
+			} else {
+				NordigenInstitution institution = account.getInstitution();
+				if (institution != null && institution.getTransactionTotalDays() != null) {
+					Integer days = institution.getTransactionTotalDays();
+					dateFrom = AonDateUtils.addDays(today, -days);		
+				}
+			}
+			if (!AonDateUtils.isSameDay(today, dateFrom)) {
+				List<NordigenBankStatement> stList = new LinkedList<>();
+				List<NordigenBankStatement> pendingStatements = new LinkedList<>();
+				List<NordigenBankStatement> bookedStatements = new LinkedList<>();
+				final Date from = dateFrom;
+				StringBuilder exceptionMessage = new StringBuilder();
+				Thread thread1 = new Thread(() -> {
+					try {
+						List<NordigenAccountTransaction> ptr = getPendingAccountTransactions(token, accId, from);
+						for (NordigenAccountTransaction t : ptr) {
+							NordigenBankStatement st = nordigenToBankStatement(account, t);
+							st.setPending(true);
+							pendingStatements.add(st);
+						}
+					} catch (Exception e) {
+						exceptionMessage.append(e.getMessage());
+					}
+				});
+				Thread thread2 = new Thread(() -> {
+					try {
+						List<NordigenAccountTransaction> ptr = getBookedAccountTransactions(token, accId, from);
+						for (NordigenAccountTransaction t : ptr) {
+							NordigenBankStatement st = nordigenToBankStatement(account, t);
+							bookedStatements.add(st);
+						}
+					} catch (Exception e) {
+						exceptionMessage.append(e.getMessage());
+					}
+				});
+				thread1.start();
+				thread2.start();
+				thread1.join();
+				thread2.join();
+				
+				if (!exceptionMessage.isEmpty()) {
+					throw new Exception(exceptionMessage.toString());
+				}
+				
+				stList.addAll(pendingStatements);
+				stList.addAll(bookedStatements);
+				return stList;
+			}
+		}
+		return Collections.emptyList();
+	}
+	
+	public static int insertStatements(Domain domain, String login, NordigenBankAccount account) {
+		return NordigenDAO.insertStatements(domain, login, account);
 	}
 	
 	public static void main(String[] args) throws Exception {

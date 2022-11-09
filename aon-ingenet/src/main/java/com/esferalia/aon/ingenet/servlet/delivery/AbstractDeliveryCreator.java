@@ -697,7 +697,10 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						.eq(ctx.getDomainId())
 						.and(f.getCodeProperty().eq(
 								productoelaborado.getCODIGO())))
-				.findFirst().orElse(new OldProduct());
+				.findFirst().orElse(AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+		                f -> f.getDomainProperty().eq(ctx.getDomainId())
+		                .and(f.getBarcodeProperty().eq(productoelaborado.getCODIGOBARRAS())))
+				        .getFirst().getProduct());
 		List<OldItem> itemList = AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getProductProperty().eq(product.getId())
@@ -719,7 +722,10 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						.eq(ctx.getDomainId())
 						.and(f.getCodeProperty().eq(
 								producto.getCODIGO())))
-				.findFirst().orElse(new OldProduct());
+				.findFirst().orElse(AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+                        f -> f.getDomainProperty().eq(ctx.getDomainId())
+                        .and(f.getBarcodeProperty().eq(producto.getCODIGOBARRAS())))
+                        .getFirst().getProduct());
 		OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getProductProperty().eq(product.getId())

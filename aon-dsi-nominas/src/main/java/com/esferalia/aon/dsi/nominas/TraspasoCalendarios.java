@@ -14,6 +14,7 @@ import org.jooq.DSLContext;
 
 import com.esferalia.aon.dsi.nominas.dao.CalendarioDAO;
 import com.esferalia.aon.dsi.nominas.model.Calendario;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TraspasoCalendarios {
@@ -21,9 +22,9 @@ public class TraspasoCalendarios {
 	private static DSLContext ctx;
 	private static LinkedList<Calendario> calendarios; 
 	
-	public static void execute(Connection dsiConn, DSLContext aonContext) throws SQLException {
+	public static void execute(Connection dsiConn, AONContext aonContext) throws SQLException {
 		
-		ctx = aonContext;
+		ctx = aonContext.getDslContext();
 		
 		// Leemos los calendarios de Nominas Omega
 		calendarios = CalendarioDAO.select(dsiConn);

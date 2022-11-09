@@ -40,7 +40,7 @@ public class MainTestFelix {
 
 	@Test
 	public void testTraspaso() throws Exception {
-		Traspaso.execute(OMEGA_DIRECTORIO, aonConn, parentDomain, null);
+//		Traspaso.execute(OMEGA_DIRECTORIO, aonConn, parentDomain, null);
 	}
 	
 	private static Connection getAonConnection(String url, String user,

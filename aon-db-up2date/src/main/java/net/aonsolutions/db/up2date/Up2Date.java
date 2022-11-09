@@ -19,6 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AlterSalaryAddIndexSocialSecurityNumber;
+import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
+import net.aonsolutions.db.up2date.accounting.AlterBankStatementReference2;
+import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
+import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.DefaultPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.AgriculturalITRemove;
 import net.aonsolutions.db.up2date.tgss.HomeBonus2012Update;
@@ -263,7 +268,7 @@ public class Up2Date {
     		//AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
     		//ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
     		//IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
-    		//AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER
+    		AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER,
     		//MaxEmbargableFix.MAXEMBARGABLEFIX,
     		//ContractExtraCreation.CONTRACTEXTRACREATION,
     		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
@@ -277,8 +282,13 @@ public class Up2Date {
     		//AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT
     		//HomeBonus2012Update.HOMEBONUS2012UPDATE,
     		//DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS
-    		AgriculturalITRemove.AGRICULTURALITREMOVE
-    		
+    		//AgriculturalITRemove.AGRICULTURALITREMOVE
+    		AlterBankStatementReference2.ALTER_BANK_STATEMENT_REFERENCE_2,
+    		AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
+    		AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
+
+        // Important, not remove
+    		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     };
 
     

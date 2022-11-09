@@ -6,91 +6,87 @@ import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-//import org.apache.commons.lang.StringUtils;
-import org.jooq.Configuration;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.TransactionalRunnable;
-import org.jooq.conf.Settings;
-import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultConfiguration;
 
 import com.code.aon.common.ILogger;
 import com.esferalia.aon.dsi.nominas.model.Complemento;
 import com.esferalia.aon.dsi.nominas.model.Concepto;
 import com.esferalia.aon.dsi.nominas.model.Paga;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Traspaso {
 	
 	private static ILogger log; 
-	private static DSLContext aonContext;
 	private static int parentDomain; 
 	
 	public static int getParentDomain() {
 		return parentDomain;
 	}
-
-	public static void execute(String paradoxDirectory, Connection aonConn, int parentDom, ILogger iloguer) throws Exception {
+	
+	public static void execute(String paradoxDirectory, String domainName, int parentDom, String user, ILogger iloguer) throws Exception {
 		
 		// Logger
 		log = iloguer;
-		
-		// Dominio padre 
+
+		// Dominio padre
 		parentDomain = parentDom;
-		
+
 		info("[INICIO DEL TRASPASO]");
+		info("PARENT_DOMAIN_NAME = " + domainName);
+		info("PARENT_DOMAIN_ID = " + parentDomain);
 		
+		Date date1 = new Date();
+		info("HORA INICIO = " + date1);
+						
 		try (Connection dsiConn = getDsiConnection("jdbc:paradox:" + paradoxDirectory)) {
-		
-			// Contexto para el acceso a las tablas de AON
-			Settings settings = new Settings();
-			settings.setRenderSchema(false);
-			
-			Configuration configuration = 
-					new DefaultConfiguration()
-					.set(aonConn)
-					.set(settings)
-					.set(SQLDialect.MYSQL);
-				
-			aonContext = DSL.using(configuration);
 
-			aonContext.transaction(new TransactionalRunnable() {
-
-				@Override
-				public void run(Configuration configuration) throws Exception {
-					
+			try (CloseableAONContext ctx = AONContext.getAONContext(domainName, parentDom, user)) {
+								
+				ctx.transaction(configuration -> {
 					// Convenios y Categorías
-					TraspasoConvenios.execute(dsiConn, aonContext);
-					
-					// Calendarios
-					TraspasoCalendarios.execute(dsiConn, aonContext);
-					
-					// Empresas, Trabajadores y Absentismo
-					TraspasoEmpresas.execute(dsiConn, aonContext);
-					
-					info("[FIN DEL TRASPASO]");
-					
-				}
+					TraspasoConvenios.execute(dsiConn, ctx);
 
-			});
+					// Calendarios
+					TraspasoCalendarios.execute(dsiConn, ctx);
+
+				});
+
+			}
+			
+			TraspasoEmpresas.execute(dsiConn, domainName, parentDom, user);
+			
+			Date date2 = new Date();
+			info("HORA FIN = " + date2);
+			long diff = date2.getTime() - date1.getTime();
+			info("DURACION DEL TRASPASO = " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.");
+			info("[FIN DEL TRASPASO]");
+
 		} catch (Exception e) {
 			try {
 				error("ERROR:");
 				error(e.getClass().getSimpleName() + ": " + e.getMessage());
-				error("[EL TRASPASO HA SIDO CANCELADO]");
+				
+				Date date2 = new Date();
+				info("HORA FIN = " + date2);
+				long diff = date2.getTime() - date1.getTime();
+				info("DURACION DEL TRASPASO = " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.");
+				error("[EL TRASPASO NO SE HA COMPLETADO]");
 				throw e.getCause();
 			} catch (Throwable throwable) {
 				throw e;
 			}
 		}
-				
+		
+
 	}
-	
+
 	public static Connection getDsiConnection(String url) throws SQLException {
 		Properties info = new Properties();
 		Driver driver = new com.googlecode.paradox.Driver();
@@ -112,13 +108,13 @@ public class Traspaso {
 	}
 	
 	// Busco geozone en dominio 0 o dominio padre, según cp o según provincia
-	public static Integer getGeozone(String cp, String provincia) {
+	public static Integer getGeozone(DSLContext ctx, String cp, String provincia) {
 		
 		Integer id = null;
 		if (AonStringUtils.isNotBlank(cp)) {
 			// Buscar geozone por provincia del codigo postal
 			cp = AonStringUtils.left(cp, 2);
-			id = aonContext.select(GEOZONE.ID)
+			id = ctx.select(GEOZONE.ID)
 						.from(GEOZONE)
 						.where(GEOZONE.DOMAIN.eq(0).or(GEOZONE.DOMAIN.eq(parentDomain)))
 						.and(GEOZONE.CODE.eq(cp))
@@ -127,7 +123,7 @@ public class Traspaso {
 		} 
 		if (id == null && AonStringUtils.isNotBlank(provincia)) {
 			// Buscar geozone por nombre de provincia
-			id = aonContext.select(GEOZONE.ID)
+			id = ctx.select(GEOZONE.ID)
 						.from(GEOZONE)
 						.where(GEOZONE.DOMAIN.eq(0).or(GEOZONE.DOMAIN.eq(parentDomain)))
 						.and(GEOZONE.NAME.equalIgnoreCase(provincia))
@@ -149,14 +145,14 @@ public class Traspaso {
 	}
 	
 	// Obtener paymentConcept, según concepto Omega que se le pasa. Si no existe, se crea
-	public static int getPaymentConcept(Concepto concepto) {
+	public static int getPaymentConcept(DSLContext ctx, Concepto concepto) {
 
 		// En payment_concept la expresión siempre es "IMP_"+getAonCode()
 		// excepto el concepto de antiguedad, que siempre es IMPORTE_ANTIGUEDAD 
 		String expression = "02".equals(concepto.getClave()) ? "IMPORTE_ANTIGUEDAD" : "IMP_"+concepto.getAonCode();
 		
 		// Localizar si ya existe un concepto igual en payment_concept
-		Integer id = aonContext.select(PAYMENT_CONCEPT.ID)
+		Integer id = ctx.select(PAYMENT_CONCEPT.ID)
 							.from(PAYMENT_CONCEPT)
 							.where(PAYMENT_CONCEPT.DOMAIN.equal(parentDomain)
 							.and(PAYMENT_CONCEPT.CODE.equal(concepto.getAonCode())
@@ -168,7 +164,7 @@ public class Traspaso {
 
 		// Si no se encuentra un concepto igual, entonces se añade el concepto a payment_concept
 		if (id == null) {
-			id = aonContext.insertInto(PAYMENT_CONCEPT)
+			id = ctx.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, parentDomain)
 						.set(PAYMENT_CONCEPT.CODE, concepto.getAonCode())
 						.set(PAYMENT_CONCEPT.DESCRIPTION, concepto.getNombre())
@@ -185,10 +181,10 @@ public class Traspaso {
 	}
 	
 	// Obtener paymentConcept, según paga extra Omega que se le pasa. Si no existe, se crea
-	public static int getPaymentConcept(Paga paga) {
+	public static int getPaymentConcept(DSLContext ctx, Paga paga) {
 
 		// Localizar si ya existe un concepto igual (según code) en payment_concept
-		Integer id = aonContext.select(PAYMENT_CONCEPT.ID)
+		Integer id = ctx.select(PAYMENT_CONCEPT.ID)
 							.from(PAYMENT_CONCEPT)
 							.where(PAYMENT_CONCEPT.DOMAIN.equal(parentDomain)
 							.and(PAYMENT_CONCEPT.CODE.equal(paga.getAonCode())))
@@ -196,7 +192,7 @@ public class Traspaso {
 
 		// Si no se encuentra un concepto igual, entonces se añade el concepto a payment_concept
 		if (id == null) {
-			id = aonContext.insertInto(PAYMENT_CONCEPT)
+			id = ctx.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, parentDomain)
 						.set(PAYMENT_CONCEPT.CODE, paga.getAonCode())
 						.set(PAYMENT_CONCEPT.DESCRIPTION, "PAGA EXTRA")
@@ -213,13 +209,13 @@ public class Traspaso {
 	}
 	
 	// Obtener paymentConcept, según complemento e/a Omega que se le pasa. Si no existe, se crea
-	public static int getPaymentConcept(Complemento complemento) {
+	public static int getPaymentConcept(DSLContext ctx, Complemento complemento) {
 
 		// Descripción que se usa para grabar los complementos e/a en payment_concept
 		String description = "MEJORAS PREST.SS.INCAPACIDAD TEMPORAL";
 		
 		// Localizar si ya existe un concepto igual en payment_concept
-		Integer id = aonContext.select(PAYMENT_CONCEPT.ID)
+		Integer id = ctx.select(PAYMENT_CONCEPT.ID)
 							.from(PAYMENT_CONCEPT)
 							.where(PAYMENT_CONCEPT.DOMAIN.equal(parentDomain)
 							.and(PAYMENT_CONCEPT.CODE.equal(complemento.getAonCode())
@@ -230,7 +226,7 @@ public class Traspaso {
 
 		// Si no se encuentra un concepto igual, entonces se añade el concepto a payment_concept
 		if (id == null) {
-			id = aonContext.insertInto(PAYMENT_CONCEPT)
+			id = ctx.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, parentDomain)
 						.set(PAYMENT_CONCEPT.CODE, complemento.getAonCode())
 						.set(PAYMENT_CONCEPT.DESCRIPTION, description)

@@ -76,6 +76,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	TextBox paymentQuoteExpression;
+	
+	@UiField
+	HTMLPanel paymentMonthPanel;
 
 	@UiField
 	ListBox paymentMonthLB;
@@ -104,9 +107,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	TextArea deductionExpressionTB;
 
 	@UiField
-	ListBox deductionMonthLB;
-
-	@UiField
 	DateBoxEx deductionStartDateBx;
 
 	@UiField
@@ -121,7 +121,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	ListBox costTypeLB;
 
 	@UiField
-	TextBox costCodeTB;
+	SuggestBox costCodeSB;
 
 	@UiField
 	TextBox costDescriptionTB;
@@ -275,6 +275,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		initializeTaxed();
 		initializeQuote();
 		initializeMonth(paymentMonthLB);
+		paymentMonthPanel.setVisible(false);
 	}
 
 	private void initializePaymentType() {
@@ -282,6 +283,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		paymentTypeLB.setSelected(Payment.Type.DEFAULT);
 		paymentTypeLB.addStyleName("aon-selectOneMenu");
 		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentTypeLB.addChangeHandler(e -> {
+			paymentMonthPanel.setVisible(paymentTypeLB.getSelected().equals(Payment.Type.CRA_0004) || paymentTypeLB.getSelected().equals(Payment.Type.CRA_0005));
+		});
 		paymentTypePanel.clear();
 		paymentTypePanel.add(paymentTypeLB);
 	}
@@ -374,7 +378,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	private void providedDeduction() {
 		initializeDeductionType();
 		initializeSB(deductionConceptSB, deductionDescriptionTB, deductionExpressionTB);
-		initializeMonth(deductionMonthLB);
 	}
 
 	private void initializeDeductionType() {
@@ -388,6 +391,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private void providedCost() {
 		initializeCostType();
+		initializeSB(costCodeSB, costDescriptionTB, costExpressionTB);
 	}
 
 	private void initializeCostType() {
@@ -401,7 +405,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private void providedBonus() {
 		initializeBonusType();
-		initializeSB(bonusDescriptionSB, bonusExpressionTB);
+		initializeSB(bonusDescriptionSB, (TextBox) bonusDescriptionSB.getValueBox(), bonusExpressionTB);
 	}
 
 	private void initializeBonusType() {
@@ -433,29 +437,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- SuggestBox
 
-	private void initializeSB(SuggestBox suggestBox, TextArea expressionTB) {
-		List<String> conceptsSuggest = new ArrayList<>();
-		for (ContractConcept contractConcept : getConcepts()) {
-			String suggestDisplay = AonStringUtils.isBlank(contractConcept.getCode()) ? ""
-					: contractConcept.getCode() + " - ";
-			suggestDisplay += contractConcept.getDescription();
-			conceptsSuggest.add(suggestDisplay);
-		}
-
-		MultiWordSuggestOracle orclConcepts = (MultiWordSuggestOracle) suggestBox.getSuggestOracle();
-		orclConcepts.clear();
-		orclConcepts.addAll(conceptsSuggest);
-		suggestBox.setAutoSelectEnabled(false);
-		suggestBox.addValueChangeHandler(value -> {
-			selectedConcept = getConcept(suggestBox);
-
-			if (null != selectedConcept) {
-				suggestBox.setValue(selectedConcept.getDescription());
-				expressionTB.setValue(selectedConcept.getExpression());
-			}
-		});
-	}
-
 	private void initializeSB(SuggestBox suggestBox, TextBox descriptionTB, TextArea expressionTB) {
 		List<String> conceptsSuggest = new ArrayList<>();
 		for (ContractConcept contractConcept : getConcepts()) {
@@ -469,10 +450,16 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		orclConcepts.clear();
 		orclConcepts.addAll(conceptsSuggest);
 		suggestBox.setAutoSelectEnabled(false);
-		suggestBox.addValueChangeHandler(value -> {
+		
+		suggestBox.addSelectionHandler(e -> {
 			selectedConcept = getConcept(suggestBox);
+			
+//			Window.alert("suggestBox : " + suggestBox.getValue() + "\nselectedConcept : " + selectedConcept);
 
 			if (null != selectedConcept) {
+				ListBox typeLB = getTypeListBox();
+				if(null != selectedConcept.getType()) setSelectedValueLB(typeLB, selectedConcept.getType().toString());
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), typeLB);
 				descriptionTB.setValue(selectedConcept.getDescription());
 				expressionTB.setValue(selectedConcept.getExpression());
 			}
@@ -484,7 +471,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		String code = null;
 		String description = null;
 
-		if (suggestBox.getValue().contains(" - ")) {
+		if (suggestBox.getValue().contains(" - ") && !this.paymentType.equals(ContractConceptCalcType.BONUS)) {
 			code = suggestBox.getValue().split(" - ")[0];
 			description = suggestBox.getValue().split(" - ")[1];
 
@@ -522,11 +509,26 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		case DEDUCTION:
 			return contractConcepts.getDeductionConcepts();
 		case COST:
-			return new HashSet<>();
+			return contractConcepts.getCostConcepts();
 		case BONUS:
 			return contractConcepts.getBonusConcepts();
 		default:
 			return new HashSet<>();
+		}
+	}
+	
+	private ListBox getTypeListBox() {
+		switch (this.paymentType) {
+		case PAYMENT:
+			return paymentTypeLB;
+		case DEDUCTION:
+			return deductionTypeLB;
+		case COST:
+			return costTypeLB;
+		case BONUS:
+			return bonusTypeLB;
+		default:
+			return null;
 		}
 	}
 
@@ -560,7 +562,12 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
 		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
-		setSelectedValueLB(paymentMonthLB, this.payment.getMonth() + "");
+		if(this.payment.getType() != null && (this.payment.getType().equals(Payment.Type.CRA_0004) || this.payment.getType().equals(Payment.Type.CRA_0005))) {
+			paymentMonthPanel.setVisible(true);
+			setSelectedValueLB(paymentMonthLB, this.payment.getMonth() + "");
+		} else
+			paymentMonthPanel.setVisible(false);
+		
 		paymentStartDateBx.setValue(this.payment.getStartDate());
 		paymentEndDateBx.setValue(this.payment.getEndDate());
 	}
@@ -570,14 +577,13 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		deductionConceptSB.setValue(this.payment.getName());
 		deductionDescriptionTB.setValue(this.payment.getDescription());
 		deductionExpressionTB.setValue(this.payment.getExpression());
-		setSelectedValueLB(deductionMonthLB, this.payment.getMonth() + "");
 		deductionStartDateBx.setValue(this.payment.getStartDate());
 		deductionEndDateBx.setValue(this.payment.getEndDate());
 	}
 
 	private void fillCost() {
 		setSelectedValueLB(costTypeLB, this.payment.getCodeType());
-		costCodeTB.setValue(this.payment.getName());
+		costCodeSB.setValue(this.payment.getName());
 		costDescriptionTB.setValue(this.payment.getDescription());
 		costExpressionTB.setValue(this.payment.getExpression());
 		costStartDateBx.setValue(this.payment.getStartDate());
@@ -674,8 +680,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		
 		payment.setDescription(deductionDescriptionTB.getValue());
 		payment.setExpression(deductionExpressionTB.getValue());
-		payment.setMonth(AonStringUtils.isBlank(deductionMonthLB.getSelectedValue()) ? null
-				: Short.parseShort(deductionMonthLB.getSelectedValue()));
 		payment.setStartDate(deductionStartDateBx.getValue());
 		payment.setEndDate(deductionEndDateBx.getValue());
 		payment.setContractConceptCalcType(ContractConceptCalcType.DEDUCTION);
@@ -688,7 +692,12 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			this.payment = new ContractConceptCalc();
 
 		payment.setCodeType(costTypeLB.getSelectedValue());
-		payment.setName(costCodeTB.getValue());
+		if (null != selectedConcept) {
+			payment.setConceptId(selectedConcept.getId());
+			payment.setName(selectedConcept.getCode());
+		} else
+			payment.setName(costCodeSB.getValue());
+		
 		payment.setDescription(costDescriptionTB.getValue());
 		payment.setExpression(costExpressionTB.getValue());
 		payment.setStartDate(costStartDateBx.getValue());

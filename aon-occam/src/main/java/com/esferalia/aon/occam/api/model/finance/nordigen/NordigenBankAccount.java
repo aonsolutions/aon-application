@@ -29,6 +29,7 @@ public class NordigenBankAccount implements Serializable {
 	private Date lastMovementDate;
 	private Set<String> logs;
 	
+	private List<NordigenBankStatement> notInsertedMovements;
 	
 	public RegistryBank getRbank() {
 		return rbank;
@@ -128,6 +129,13 @@ public class NordigenBankAccount implements Serializable {
 		if (logs != null) {			
 			this.logs = logs;
 		}
+		return this;
+	}
+	public List<NordigenBankStatement> getNotInsertedMovements() {
+		return notInsertedMovements;
+	}
+	public NordigenBankAccount setNotInsertedMovements(List<NordigenBankStatement> notInsertedMovements) {
+		this.notInsertedMovements = notInsertedMovements;
 		return this;
 	}
 
