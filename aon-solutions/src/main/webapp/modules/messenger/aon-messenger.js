@@ -215,7 +215,6 @@ export class AonMessenger extends AonElement {
 		this.tagNavBar();
 	}
 
-
 	buildToolbarSearch(){
 		const opened = !this.isMobile();
 
@@ -258,7 +257,7 @@ export class AonMessenger extends AonElement {
 		});
 
 		let timeOut = null;
-		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+		registryEl.addEventListener(EVENT.INPUT, async({target})=>{
 			clearTimeout(timeOut);
 			const value = target.value;
 			if(value.length > 2){

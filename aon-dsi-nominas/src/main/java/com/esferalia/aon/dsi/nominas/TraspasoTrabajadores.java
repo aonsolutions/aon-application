@@ -42,7 +42,6 @@ import com.esferalia.aon.dsi.nominas.model.Descendiente;
 import com.esferalia.aon.dsi.nominas.model.Empresa;
 import com.esferalia.aon.dsi.nominas.model.Paga;
 import com.esferalia.aon.dsi.nominas.model.Trabajador;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -53,9 +52,9 @@ public class TraspasoTrabajadores {
 	
 	private static DSLContext ctx;
 	
-	public static void execute(Connection dsiConn, AONContext aonContext, Empresa empresa, int domain) throws SQLException {
+	public static void execute(Connection dsiConn, DSLContext dslContext, Empresa empresa, int domain) throws SQLException {
 		
-		ctx = aonContext.getDslContext();
+		ctx = dslContext; 
 		
 		// Para cada empresa se leen sus trabajadores (sin fecha de baja o fecha de baja >= 01/01/2021)
 		LinkedList<Trabajador> trabajadores = TrabajadorDAO.select(dsiConn, empresa.getSscod(), empresa.getSsnum());
