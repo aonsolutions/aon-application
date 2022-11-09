@@ -198,11 +198,17 @@ export class AonReg extends AonElement {
 		card.title = MSG.GENERAL_INFORMATION;
 		card.style.width = '50%';
 		parent.appendChild(card);
-		
-		if(this.registry.id && this.registry.status){
-			this.buildStatusRegistry();
+
+		if(this.registry.id){
+			if(this.isCustomer() && (this.isBeta() || this.isSig())){
+				this.buildEnterpriseLinked();
+			}
+
+			if(this.registry.status){
+				this.buildStatusRegistry();
+			}
 		}
-		
+
 		let div = this.createElement(TAG.DIV);
 		card.setContent(div);
 
@@ -252,21 +258,6 @@ export class AonReg extends AonElement {
 		let td1 = table.addCell(aliasInput);
 		td1.style.width = '55%';
 
-		// table.addRow();
-		
-		// let statusSelect = new AonSelect();
-		// statusSelect.id = 'aonConfigurationGeneralStatus';
-		// statusSelect.title = MSG.STATUS;
-		// statusSelect.setOptions([
-		// 	{ name: MSG.ACTIVE, value:"ACTIVE" },
-		// 	{ name: MSG.INACTIVE, value:"INACTIVE" },
-		// 	{ name: MSG.BLOCKED, value:"BLOCKED" },
-		// ]);
-
-		// statusSelect.value = this.registry.status;
-		// statusSelect.addEventListener(EVENT.CHANGE, () => this.registry.status = statusSelect.value);
-		// table.addCell(statusSelect, 3);
-
 		this.buildAddresses(div);
 
 		if(this.showLogo && this.registry.getId()) {
@@ -306,7 +297,10 @@ export class AonReg extends AonElement {
 
 	buildStatusRegistry(){
 		let card = this.getElement(this.GENERAL_CARD);
-		card.cleanSection2();
+		const id = "statusDiv";
+
+		let statusDiv = this.getElement(id);
+		if(statusDiv) statusDiv.remove();
 
 		const title = this.registry.status ? MSG[this.registry.status] : "";
 
@@ -317,7 +311,8 @@ export class AonReg extends AonElement {
 			color = "#DC4D30"; //CSS.variable(COLORS.MATERIAL_RED);
 		}
 
-		let statusDiv = this.createElement(TAG.DIV);
+		statusDiv = this.createElement(TAG.DIV);
+		statusDiv.id = id;
 		statusDiv.title = "Estado del cliente";
 		statusDiv.style.display = "flex";
 		statusDiv.style.columnGap = "5px";

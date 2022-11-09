@@ -117,8 +117,8 @@ public class SegmentServlet extends AonApiHttpServlet {
 	}
 
 	private static JSONObject deleteSegment(AonApiData api) {
-		JSONObject json = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);	
-		Integer id = JsonUtils.getInteger(json, IJsonNames.ID);
+//		JSONObject json = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);	
+//		Integer id = JsonUtils.getInteger(json, IJsonNames.ID);
 		// TODO AON.deleteSegment(api.getDomain(), api.getUser(), id);
 		return new JSONObject();
 	}

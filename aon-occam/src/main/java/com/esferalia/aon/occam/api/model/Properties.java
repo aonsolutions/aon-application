@@ -280,6 +280,21 @@ public interface Properties {
 		Property<Date> getValueDate();
 	}
 	
+	public interface RRelationshipProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getRelatedRegistryProperty();
+		Property<Integer> getRelationshipProperty();
+		Property<String> getCommentsProperty();
+	}
+	
+	public interface RelationshipProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+	}
+	
 	public interface RDirStaffProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

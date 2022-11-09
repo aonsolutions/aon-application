@@ -8,11 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskEvaluation;
@@ -114,25 +112,25 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 	
 	
 	private String saveRBank(AonApiData api) {
-		Domain domain     = api.getDomain();
 		JSONObject params = api.getData();
-		Integer id  = params.optInt("rbank");
+//		Domain domain     = api.getDomain();
+//		Integer id  = params.optInt("rbank");
 		
 		String details  = params.optString("details");
 		String error  = params.optString("error");
 
-		String message = "Parametros requeridos";
+		String message =  "Proceso finalizado";
 		String detailsHtml = "";
 		
-		
-		if(id!=0) {
-			RegistryBank rbank = AON.getRegistryBank(domain, "", f-> f.getIdProperty().eq(id));
-			if(rbank.getId()==null) {
-				throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
-			}
-		
-			message  = "Proceso finalizado";
-		}
+//		
+//		if(id!=0) {
+//			RegistryBank rbank = AON.getRegistryBank(domain, "", f-> f.getIdProperty().eq(id));
+//			if(rbank.getId()==null) {
+//				throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
+//			}
+//		
+//			message  = "Proceso finalizado";
+//		}
 		
 		if(!error.isEmpty()) {
 			String h3 = "<h3 style='color:darkred;'>";

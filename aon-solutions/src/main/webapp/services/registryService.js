@@ -1,8 +1,9 @@
-import { get, post, put } from "./request.js";
+import { get, post, put, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 const CUSTOMERS = `${API_URL}/customers`;
 const SEGMENTS = `${API_URL}/segments`;
+const RELATIONSHIP = `${API_URL}/relationship`;
 const EMAILS = `emails`;
 
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
@@ -30,3 +31,9 @@ export const getRegistryBanks = (id) => get(`${API_URL}/registry/banks`, {id});
 export const getRegistryPaymethod = (data) => get(`${API_URL}/registry/paymethod`, data);
 
 export const getGlobalRegistries = (data) => get(`${API_URL}/global/registry`, data);
+
+// REGISTRY RELATIONSHIP
+export const getRelationShips = (data) => get(RELATIONSHIP, data);
+export const getRelationShip = (data) => get(`${RELATIONSHIP}/${data.registry}`, data);
+export const saveRelationShip = (data) => put(`${RELATIONSHIP}/${data.registry}`, data);
+export const removeRelationShip = (data) => remove(`${RELATIONSHIP}/${data.registry}`, data);

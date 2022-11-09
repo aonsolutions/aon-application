@@ -22,6 +22,7 @@ export class AonTaskHolder extends AonReg {
   	}
 	
 	taskHolderInitialize() {
+		this.type = "taskholder";
 		this.saveBool = true;
 		this.options = [ 
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},

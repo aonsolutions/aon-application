@@ -69,13 +69,26 @@ public class TargetDAO {
 	}
 	
 	private static Target insert(AONContext ctx, Target target){
-		ctx.getDslContext().insertInto(TARGET, TARGET.ADVERTISING, TARGET.DOMAIN, TARGET.REGISTRY, TARGET.SCOPE,
-				TARGET.STATUS, TARGET.SURCHARGE, TARGET.TARIFF, TARGET.TRANSACTION, TARGET.WITHHOLDING,
-				TARGET.CREATION_DATE, TARGET.CREATION_USER, TARGET.MODIFICATION_DATE, TARGET.MODIFICATION_USER)
-			.values(target.getAdvertising().value(), target.getDomain().getId(), target.getId(), target.getScope().getId(), target.getStatus().value(),
-					AonEnumUtils.getByte(target.isSurcharge()), target.getTariff().getId(), target.getTransaction().value(), AonEnumUtils.getByte(target.isWithholding()),
-					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
-		ctx.log().debug("INSERT TARGET id "+target.getId());		
+		ctx.getDslContext()
+			.insertInto(TARGET)
+			.set(TARGET.ADVERTISING, target.getAdvertising().value())
+			.set(TARGET.DOMAIN, target.getDomain().getId()) 
+			.set(TARGET.REGISTRY, target.getId()) 
+			.set(TARGET.SCOPE, target.getScope().getId())
+			.set(TARGET.STATUS, target.getStatus().value())
+			.set(TARGET.SURCHARGE, AonEnumUtils.getByte(target.isSurcharge()))
+			.set(TARGET.TARIFF, target.getTariff().getId())
+			.set(TARGET.TRANSACTION, target.getTransaction().value())
+			.set(TARGET.WITHHOLDING, AonEnumUtils.getByte(target.isWithholding()))
+			.set(TARGET.CREATION_DATE, new Timestamp(new Date().getTime()))
+			.set(TARGET.CREATION_USER, ctx.getUser())
+			.set(TARGET.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+			.set(TARGET.MODIFICATION_USER,  ctx.getUser())
+			.execute();
+		
+
+		ctx.log().debug("INSERT TARGET id "+ target.getId());
+		
 		return target;
 	}
 	
