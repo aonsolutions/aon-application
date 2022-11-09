@@ -507,7 +507,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		
 		deckPanel.setAnimationEnabled(true);
 		mainDeckPanel.setAnimationEnabled(true);
-		mainDeckPanel.setHeight((Window.getClientHeight() - 200) + "px");
+		mainDeckPanel.setHeight((Window.getClientHeight() - 185) + "px");
 		showAgreements();
 		
 		agreements.addStyleName(style.borderR());
