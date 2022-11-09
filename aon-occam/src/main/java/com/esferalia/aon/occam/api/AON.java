@@ -4200,11 +4200,6 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<Target> getTargetList(String domainName, Integer domainId, String login, TargetFilter filter) {
-		return getTargetStream(domainName, domainId, login, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, TargetFilter filter) {
 		return getTargetStream(domainName, domainId, login, filter)
 				.findFirst();

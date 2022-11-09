@@ -27,7 +27,7 @@ public class WorkplaceAutoComplete {
 			Scope s = SecurityDAO.getUserScopeStream(ctx, user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
 			
 			if(s == null) {
-				Integer[] scopes = SecurityDAO.getUserScopes(ctx, user.getId());
+				Integer[] scopes = user!=null && user.getId()!=null ? SecurityDAO.getUserScopes(ctx, user.getId()) : null;
 				if(scopes != null && scopes.length > 0)
 					scope = scopes[0];
 				else {
