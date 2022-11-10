@@ -70,7 +70,7 @@ public class TraspasoEmpresas {
 		int totalEmp = 0;
 
 		try {
-//		  for (int z=1;z<=7;z++)  // PRUEBA PARA INTENTAR PROVOCAR ERROR EN LOCAL
+//		  for (int z=1;z<=15;z++)  // PRUEBA PARA INTENTAR PROVOCAR ERROR EN LOCAL
 			for (Empresa empresa : empresas) {
 		
 				totalEmp++;
