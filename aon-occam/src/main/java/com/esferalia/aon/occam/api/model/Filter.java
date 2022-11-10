@@ -456,6 +456,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface ContractDocFilter{
+		Filter filter(ContractDocProperties properties);
+	}
+
+	@FunctionalInterface
 	public interface ContractDataFilter{
 		Filter filter(ContractDataProperties properties);
 	}

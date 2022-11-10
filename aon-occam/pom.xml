@@ -124,6 +124,12 @@
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.storage</artifactId>
+			<version>${project.version}</version>
+			<scope>copmpile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20180813</version>

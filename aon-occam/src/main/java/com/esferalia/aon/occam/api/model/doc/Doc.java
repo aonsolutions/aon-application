@@ -2,16 +2,49 @@ package com.esferalia.aon.occam.api.model.doc;
 
 import java.net.URL;
 
-public interface IDoc<T extends Enum<?>>  {
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
-	public T getType();
+public abstract class Doc<T extends Enum<?>>  {
 	
-	public URL getDownloadURL();
-
-	public String getDescription();
-
-	public URL getDownloadURL(String contentDisposition);
+	private T type;
+	private MimeType mimeType;
+	private String description;
 	
-	public <M extends Enum<?>> M getMimeType(Class<M> enumClass);
+	public T getType() {
+		return type;
+	}
+	
+	public Doc<T> setType(T type) {
+		this.type = type;
+		return this;
+	}
+
+	public Doc<T> setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+	
+	public Doc<T> setMimeType(MimeType mimeType) {
+		this.mimeType = mimeType;
+		return this;
+	}
+	
+	public Doc<T> setMimeType(Byte mimeType) {
+		this.mimeType = MimeType.safeValueOf(mimeType);
+		return this;
+	}
+	
+	
+	public abstract URL getDownloadURL();
+
+	public abstract  URL getDownloadURL(String contentDisposition);
 	
 }
