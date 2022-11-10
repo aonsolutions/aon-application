@@ -519,6 +519,13 @@ public class ConsoleDAO {
 	}
 	
 	private static <T> Condition getCondition(Field<T> field, Object value ) {
+		if (field.getDataType().isString()) {
+			String q = value.toString();
+			q = AonStringUtils.replace(q, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+			if (AonStringUtils.contains(q, AonStringUtils.PERCENT)) {
+				return field.like( q );		
+			}
+		}
 		return field.eq( field.getType().cast( value ) );
 	}
 
