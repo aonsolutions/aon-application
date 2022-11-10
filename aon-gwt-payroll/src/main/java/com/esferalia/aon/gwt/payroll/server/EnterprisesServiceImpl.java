@@ -133,6 +133,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -144,8 +145,7 @@ import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.doc.DOC;
-import com.esferalia.aon.occam.api.model.doc.IDoc;
+import com.esferalia.aon.occam.api.model.doc.Doc;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -2365,8 +2365,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
-			try ( CloseableAONContext aonCtx = AONContext.getAONContext(domainName, login) ) {
-				Optional<IDoc<?>> doc = DOC.getContratDoc(aonCtx.getDslContext(), attachId);
+			try  {
+				Optional<Doc<?>> doc = DOC.getContratDoc(domainName, login, p -> p.getIdProperty().eq(attachId));
 				if ( doc.isPresent()  ) {
 					return doc.get().getDownloadURL().toString();
 				}
