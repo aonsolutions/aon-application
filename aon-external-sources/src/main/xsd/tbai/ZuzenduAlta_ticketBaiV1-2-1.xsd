@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:TB="urn:ticketbai:emision" xmlns:T="urn:ticketbai:zuzendu-alta" targetNamespace="urn:ticketbai:zuzendu-alta">
 
-	<import namespace="urn:ticketbai:emision" schemaLocation="ticketBaiV1-2.xsd"/>
+	<import namespace="urn:ticketbai:emision" schemaLocation="ticketBaiV1-2-1.xsd"/>
 
 	<element name="SubsanacionModificacionTicketBAI">
 		<complexType>
@@ -9,9 +9,9 @@
 				<element name="Cabecera" type="T:Cabecera"/>
 				<element name="Sujetos" type="TB:Sujetos"/>
 				<element name="Factura" type="TB:Factura"/>
-				<!-- Misma huella de factura original -->
+				<!-- Jatorrizko fakturaren aztarna bera - Misma huella de factura original -->
 				<element name="HuellaTBAI" type="TB:HuellaTBAI"/>
-				<!-- Obtenido de la firma de la factura que se solicita subsanar o modificar -->
+				<!-- Konpontzeko edo aldatzeko eskatzen den fakturaren sinaduratik lortua - Obtenido de la firma de la factura que se solicita subsanar o modificar -->
 				<element name="SignatureValueFirmaFactura" type="TB:TextMax100Type"/>
 			</sequence>
 		</complexType>
@@ -34,12 +34,12 @@
 		<restriction base="string">
 			<enumeration value="SUBSANAR">
 				<annotation>
-					<documentation>Envío de una factura rechazada en un intento anterior</documentation>
+					<documentation>Aurreko ahalegin batean atzera botatako faktura bidaltzea - Envío de una factura rechazada en un intento anterior</documentation>
 				</annotation>
 			</enumeration>
 			<enumeration value="MODIFICAR">
 				<annotation>
-					<documentation>Envío de una factura que fué recibida en hacienda pero necesita modificación</documentation>
+					<documentation>Ogasunean jasota dagoen, baina aldaketa behar duen, faktura bat bidaltzea - Envío de una factura que fué recibida en hacienda pero necesita modificación</documentation>
 				</annotation>
 			</enumeration>
 		</restriction>

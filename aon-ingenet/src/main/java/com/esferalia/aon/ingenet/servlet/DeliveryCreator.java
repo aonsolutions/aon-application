@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,8 +28,8 @@ import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAENVASETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ELABORACIONORIGENTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
-import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
+import com.esferalia.aon.ingenet.util.ProductUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -49,10 +48,8 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.product.ProductKind;
-import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
@@ -73,7 +70,6 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
@@ -87,7 +83,6 @@ import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -486,10 +481,9 @@ public class DeliveryCreator implements Serializable {
 			lineasAlbaran.stream()
 			.forEach(
 					linea -> {
-						OldItem item;
+						Item item;
 						try {
-							item = obtainItem(ctx,
-									linea.getPRODUCTO(), test);
+							item = ProductUtils.obtainItem(ctx, linea.getPRODUCTO());
 							Elaboration elaboration = obtainElaboration(
 									ctx, linea.getDATOSELABORACIONORIGEN());
 							RegistryItem customerRItem = obtainCustomerItem(item.getProduct().getId(), delivery.getCustomer().getId());
@@ -497,7 +491,7 @@ public class DeliveryCreator implements Serializable {
 							detail.setDomain(ctx.getDomainId());
 							detail.setDelivery(delivery);
 							detail.setLine(Short.valueOf(linea.getLINEA()));
-							detail.setItem(item.toNewItem());
+							detail.setItem(item);
 							String description = item.getProduct().getName();
 							description += " #" + item.getSerialNumber();
 							detail.setDescription(description);
@@ -546,17 +540,15 @@ public class DeliveryCreator implements Serializable {
 							linea2.getLINEA())).collect(Collectors.toList());
 			Integer linesCount = detailList.size();
 			for(DATOSLINEAENVASETYPE linea: lineas){
-				OldItem item = null;
+				Item item = null;
 				try {
-					item = obtainItem(ctx,
-							linea.getPRODUCTO(), test);
+					item = ProductUtils.obtainItem(ctx, linea.getPRODUCTO());
 				} catch (Exception e) {
 					warningList.add("[ENVASES] " + e.getMessage());
 				}
 				if(item==null || item.getId()==null){
 					try {
-						item = createPackage(ctx,
-								linea.getPRODUCTO(), test);
+						item = ProductUtils.createPackage(ctx, linea.getPRODUCTO());
 						warningList.add("Nuevo envase creado " + linea.getPRODUCTO().getCODIGO());
 					} catch (AonException e) {
 						addError(albaran, "[ENVASES] " + e.getMessage());
@@ -568,7 +560,7 @@ public class DeliveryCreator implements Serializable {
 						detail.setDomain(ctx.getDomainId());
 						detail.setDelivery(delivery);
 						detail.setLine(Integer.valueOf(linesCount+Integer.valueOf(linea.getLINEA())).shortValue());
-						detail.setItem(item.toNewItem());
+						detail.setItem(item);
 						String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
 						detail.setDescription(description);
 						detail.setWarehouse(warehouse.getId());
@@ -608,8 +600,7 @@ public class DeliveryCreator implements Serializable {
 				elaborationDetail.setDomain(ctx.getDomainId());
 				elaborationDetail.setElaboration(elaboration);
 				elaborationDetail.setDate(new Date());
-				elaborationDetail
-						.setItem(obtainItem(ctx, linea.getPRODUCTO(), test).toNewItem());
+				elaborationDetail.setItem(ProductUtils.obtainItem(ctx, linea.getPRODUCTO()));
 				elaborationDetail.setQuantity(Double.valueOf(linea.getCANTIDAD()));
 				elaborationDetail.setWarehouse(null);
 				elaborationDetail.setAddInfo("");
@@ -623,15 +614,14 @@ public class DeliveryCreator implements Serializable {
 					.forEach(
 							lineaComposicion -> {
 								try {
-									OldItem compositionItem = createItem(ctx,
-											lineaComposicion.getPRODUCTO(), test);
+									Item compositionItem = ProductUtils.obtainItem(ctx, lineaComposicion.getPRODUCTO());
 									ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
 									elaborationDetailComposition.setDomain(ctx
 											.getDomainId());
 									elaborationDetailComposition
 									.setElaborationDetail(elaborationDetail);
 									elaborationDetailComposition
-									.setItem(compositionItem.toNewItem());
+									.setItem(compositionItem);
 									elaborationDetailComposition.setQuantity(Double
 											.valueOf(lineaComposicion.getCANTIDAD()));
 									elaborationDetailComposition.setWarehouse(null);
@@ -692,110 +682,6 @@ public class DeliveryCreator implements Serializable {
 		return null;
 	}
 	
-	
-	/**
-	 * 
-	 * ITEMS
-	 * 
-	 */
-	private OldItem obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
-		OldProduct product = ProductOldDAO
-				.getProductStream(
-						ctx,
-						f -> f.getDomainProperty()
-						.eq(ctx.getDomainId())
-						.and(f.getCodeProperty().eq(
-								productoelaborado.getCODIGO())))
-				.findFirst().orElse(null);
-		List<OldItem> itemList = AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-				f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getProductProperty().eq(product.getId())
-								.and(StringUtils.isNotBlank(productoelaborado.getNUMEROLOTESERIE())
-										? f.getSerialNumberProperty().eq(productoelaborado.getNUMEROLOTESERIE())
-										: f.getSerialNumberProperty().isNull())));
-		OldItem item = itemList == null || itemList.isEmpty() ? null : itemList.get(0);
-		if (item == null || item.getId() == null) {
-			item = createItem(ctx, productoelaborado, test);
-		}
-		return item;
-	}
-	
-	private OldItem createItem(AONContext ctx, PRODUCTOTYPE producto, boolean test) throws AonException {
-		OldProduct product = ProductOldDAO
-				.getProductStream(
-						ctx,
-						f -> f.getDomainProperty()
-						.eq(ctx.getDomainId())
-						.and(f.getCodeProperty().eq(
-								producto.getCODIGO())))
-				.findFirst().orElse(null);
-		OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-				f -> f.getDomainProperty().eq(ctx.getDomainId())
-						.and(f.getProductProperty().eq(product.getId())
-								.and(StringUtils.isNotBlank(producto.getNUMEROLOTESERIE())
-										? f.getSerialNumberProperty().eq(producto.getNUMEROLOTESERIE().trim())
-										: f.getSerialNumberProperty().isNull())));
-		if (item == null || item.getId() == null) {
-			createItem(ctx, product, producto);
-			item = AON
-					.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-							f -> f.getDomainProperty().eq(ctx.getDomainId())
-									.and(f.getProductProperty().eq(product.getId())
-											.and(f.getSerialNumberProperty().eq(producto.getNUMEROLOTESERIE()))))
-					.getFirst();
-		}
-		return item;
-	}
-	
-	private void createItem(AONContext ctx, OldProduct product, PRODUCTOTYPE producttype) throws AonException {
-		OldItem baseItem = AON
-				.getItem(
-						ctx.getDomainName(),
-						ctx.getDomainId(),
-						ctx.getUser(),
-						f -> f.getDomainProperty()
-								.eq(ctx.getDomainId())
-								.and(f.getProductProperty().eq(
-										product.getId()))
-								.and(f.getSerialDateProperty().isNull())
-								.and(f.getSerialNumberProperty()
-										.isNull()));
-		OldItem item = new OldItem();
-		item.setDomain(ctx.getDomainId());
-		item.setProductId(product.getId());
-		item.setActive(false);
-		item.setCode(producttype.getCODIGO());
-		item.setName(producttype.getNOMBRE());
-		item.setDescription(producttype.getDESCRIPCION());
-		item.setDetail(producttype.getDETALLE());
-		item.setDetail2(producttype.getDETALLE2());
-		item.setDetail3(producttype.getDETALLE3());
-		item.setPackFormatTag(baseItem.getPackFormatTag());
-		item.setPackMeasurement(baseItem.getPackMeasurement());
-		item.setPackMeasurementTag(baseItem.getPackMeasurementTag());
-		item.setPackUnits(baseItem.getPackUnits());
-		item.setPackUnitsTag(baseItem.getPackUnitsTag());
-		item.setStockUnitTag(baseItem.getStockUnitTag());
-		if(producttype.getFECHALOTESERIE()!=null){
-			Date serialDate = null;
-			try {
-				serialDate = getDateFormatter().parse(
-						producttype.getFECHALOTESERIE());
-			} catch (ParseException e) {
-				serialDate = new Date();
-			}
-			item.setSerialDate(new java.sql.Date(serialDate.getTime()));
-		}
-		if(producttype.getNUMEROLOTESERIE()!=null){
-			item.setSerialNumber(producttype.getNUMEROLOTESERIE());
-		}
-		item.setActive(false);
-		item.setStatus((byte)1);
-		item.setCreationUser(ctx.getUser());
-		item.setCreationDate(new Timestamp(new Date().getTime()));
-		ProductOldDAO.insertItem(ctx, item);
-	}
-	
 	private RegistryItem obtainCustomerItem(Integer productId, Integer customerId) {
 		OldItem baseItem = AON.getItem(
 				getDomain(),
@@ -825,59 +711,7 @@ public class DeliveryCreator implements Serializable {
 		}
 		return null;
 	}
-	
-	/**
-	 * 
-	 * PACKAGES
-	 * 
-	 */
-	private OldItem createPackage(AONContext ctx, PRODUCTOTYPE productotype, boolean test) throws AonException {
-		OldProduct product = ProductOldDAO
-				.getProductStream(
-						ctx,
-						f -> f.getDomainProperty()
-								.eq(ctx.getDomainId())
-								.and(f.getCodeProperty().eq(
-										productotype.getCODIGO())))
-				.findFirst().orElse(null);
-		if (product == null || product.getId() == null) {
-			product = new OldProduct();
-			product.setDomain(ctx.getDomainId());
-			product.setStatus(ProductStatus.ACTIVE.value());
-			product.setLotable(Boolean.FALSE);
-			product.setSerializable(Boolean.FALSE);
-			product.setPackaged(Boolean.FALSE);
-			product.setInventoriable(Boolean.TRUE);
-			product.setCode(productotype.getCODIGO());
-			product.setName("ENVASE AUTOGENERADO ("+productotype.getCODIGO()+")");
-			product.setType(ProductType.AUXILIARY.value());
-			product.setKind(ProductKind.SALE_PURCHASE.value());
-			product.setVat(obtainDefaultVat(ctx));
-			product.setCreationUser(ctx.getUser());
-			product.setCreationDate(new Date());
-			ProductOldDAO.insertProduct(ctx, product);
-			product = ProductOldDAO
-					.getProductStream(
-							ctx,
-							f -> f.getDomainProperty()
-									.eq(ctx.getDomainId())
-									.and(f.getCodeProperty().eq(
-											productotype.getCODIGO())))
-					.findFirst().orElse(null);
-		}
-		
-		createItem(ctx, product, productotype);
-		Integer productId = product.getId();
-		OldItem item = AON.getItemList(
-				ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-				f -> f.getDomainProperty()
-				.eq(ctx.getDomainId())
-				.and(f.getProductProperty()
-						.eq(productId)))
-				.getFirst();
-		return item;
-	}
-	
+    
 	private Attach fillAttach(AONContext ctx, ALBARANTYPE albaran,
 			Delivery delivery, List<DeliveryDetail> detailList, Attach attach,
 			boolean test) {
