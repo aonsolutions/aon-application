@@ -32,8 +32,12 @@ class AppParamTest extends AonHibernateTestBasic {
 		ApplicationParameter param = checkIfExistAccountParam( "472", AppParam.ACC_DEF_DUA_VAT_ACC );
 		assertNotNull( "Parámetro null" , param );
 	}
+	@Test
+	void testAccVatNegativeAdjustAcc() throws Exception {
+		ApplicationParameter param = checkIfExistAccountParam( "633", AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC );
+		assertNotNull( "Parámetro null" , param );
+	}
 	
-
 	private ApplicationParameter checkIfExistAccountParam(String prefix, AppParam parameter) throws Exception {
 		ApplicationParameter param = AppParamUtil.getParameter( parameter );
 		if ( param == null) {

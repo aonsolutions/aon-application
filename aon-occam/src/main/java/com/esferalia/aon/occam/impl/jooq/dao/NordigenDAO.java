@@ -176,24 +176,27 @@ public class NordigenDAO {
 				
 				int lotNumber = getNextLotNumber(aonContext, domain.getId(), account.getRbank());
 				
-				for (BankStatement bankStatement : bankStatements) {
-					bankStatement.setLotNumber(lotNumber);
-					// BankStatement Validation
-					BankStatementValidator.validate(aonContext, bankStatement);
+				for (NordigenBankStatement bankStatement : bankStatements) {
+					if (!bankStatement.isPending()) {						
+						bankStatement.setLotNumber(lotNumber);
+						// BankStatement Validation
+						BankStatementValidator.validate(aonContext, bankStatement);
+						
+						query = query.values(
+								bankStatement.getDomain()
+								, bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
+										, bankStatement.getLotNumber()
+										, bankStatement.getOperationDate() != null ? new java.sql.Date(bankStatement.getOperationDate().getTime()) : null
+												, bankStatement.getCommonConcept().value()
+												, AonEnumUtils.getByte(bankStatement.isPayment())
+												, bankStatement.getAmount()
+												, bankStatement.getDescription()
+												, bankStatement.getStatus().value()
+												, bankStatement.getReference1()
+												, bankStatement.getReference2()
+								);
+					}
 					
-					query = query.values(
-							bankStatement.getDomain()
-							, bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
-									, bankStatement.getLotNumber()
-									, bankStatement.getOperationDate() != null ? new java.sql.Date(bankStatement.getOperationDate().getTime()) : null
-											, bankStatement.getCommonConcept().value()
-											, AonEnumUtils.getByte(bankStatement.isPayment())
-											, bankStatement.getAmount()
-											, bankStatement.getDescription()
-											, bankStatement.getStatus().value()
-											, bankStatement.getReference1()
-											, bankStatement.getReference2()
-							);
 				}
 			}
 			final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
