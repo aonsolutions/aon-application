@@ -55,6 +55,8 @@ import ticketbai.emision.Sujetos;
 import ticketbai.emision.TicketBai;
 import ticketbai.emision.TipoDesgloseType;
 import ticketbai.emision.TipoOperacionSujetaNoExentaType;
+import ticketbai.zuzendu_alta.AccionType;
+import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
 public class Invoice2tbai {
 
@@ -62,7 +64,7 @@ public class Invoice2tbai {
 	
 	}
 	
-	private static final String TBAI_VERSION = "1.2";
+	private static final String TBAI_VERSION = "1.2.1";
 	private static final String DEVICE_NUMBER = "TBAIGI447FC22512252C";
 	private static final String DEVICE_NUMBER_GIPUZKOA_TEST = "TBAIGIPRE00000000131";
 	private static final String DEVICE_NUMBER_ARABA_TEST = "TBAIARbjlCHFMFK00416";
@@ -91,6 +93,15 @@ public class Invoice2tbai {
 		return tbai;
 	}
 	
+	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TbaiBlockchain blockchain) {
+		SubsanacionModificacionTicketBAI tbai = new SubsanacionModificacionTicketBAI();
+		tbai.setCabecera(buildCabeceraZuzendu(AccionType.MODIFICAR));
+		tbai.setSujetos(getSujetos(company, invoice, config));
+		tbai.setFactura(getFactura(invoice));
+		tbai.setHuellaTBAI(getHuella(config, blockchain));
+		return tbai;
+	}
+	
 	public static AnulaTicketBai buildBaja(Company company, Invoice invoice, TbaiConfiguration config) {
 		AnulaTicketBai tbai = new AnulaTicketBai();
 		tbai.setCabecera(getCabeceraAnulacion());
@@ -105,6 +116,13 @@ public class Invoice2tbai {
 		return c; 
 	}
 	
+	private static ticketbai.zuzendu_alta.Cabecera buildCabeceraZuzendu(AccionType actionType) { 
+		final ticketbai.zuzendu_alta.Cabecera c = new ticketbai.zuzendu_alta.Cabecera();
+		c.setIDVersion(TBAI_VERSION);
+		c.setAccion(actionType != null ? actionType : AccionType.MODIFICAR);
+		return c; 
+	}
+		
 	private static ticketbai.anulacion.Cabecera getCabeceraAnulacion() { 
 		final ticketbai.anulacion.Cabecera c = new ticketbai.anulacion.Cabecera();
 		c.setIDVersionTBAI(TBAI_VERSION);
@@ -269,7 +287,7 @@ public class Invoice2tbai {
 		DetallesFacturaType detalles = new DetallesFacturaType();
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
 			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
-			detalle.setCantidad(Double.toString(AonMathUtils.round(detail.getQuantity())));
+			detalle.setCantidad(Double.toString(detail.getQuantity()));
 			String description = detail.getDescription().replace("\n", " ");
 			if(description.length() > 249) {
 				description = description.substring(0, 249);

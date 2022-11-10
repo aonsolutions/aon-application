@@ -53,6 +53,10 @@ public class InvoiceInfo implements Serializable {
 	public boolean isAcceptedWithErrors() {
 		return InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(getStatus());
 	}
+
+	public boolean isWrong() {
+		return getStatus().isWrong();
+	}
 	
 	public boolean isAnnuled() {
 		return InvoiceCommunicationStatus.ANNULLED.equals(getStatus());
