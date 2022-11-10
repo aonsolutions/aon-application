@@ -14,11 +14,12 @@ import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -26,7 +27,7 @@ import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
@@ -172,7 +173,7 @@ public class IngenetDeliveryManager {
 			OldItem ingenetItem = obtainIngenetItem(ctx.getDomainName(),
 					ctx.getUser(), detail.getItem().getId());
 			SalesDetail aonSalesDetail = null;
-			OldItem item = null;
+			Item item = null;
 			if (isPackageItem(ingenetItem)) {
 				item = obtainAonItem(ctx.getDomainName(), ctx.getUser(),
 						ctx.getDomainId(), ingenetItem.getProduct().getCode());
@@ -196,7 +197,7 @@ public class IngenetDeliveryManager {
 				detail.setWarehouse(warehouseId);
 				detail.setSalesDetail(aonSalesDetail != null ? aonSalesDetail
 						.getId() : null);
-				detail.setItem(item.toNewItem());
+				detail.setItem(item);
 				detail.setDescription(item.getProduct().getName());
 				detail.setDiscountExpression(aonSalesDetail != null ? aonSalesDetail
 						.getDiscountExpression() : "0");
@@ -224,27 +225,17 @@ public class IngenetDeliveryManager {
 				&& item.getSerialDate() == null;
 	}
 
-	private OldItem createNewItem(AONContext ctx, int domainId, Integer itemId,
+	private Item createNewItem(AONContext ctx, int domainId, Integer itemId,
 			String serialNumber, Date serialDate) {
 		if (serialNumber != null && serialDate != null) {
-			OldItem newItem = AON.getItem(ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(), itemId);
+			Item newItem = ItemDAO.get(ctx, itemId);
 			newItem.setId(null);
 			newItem.setBarcode(null);
 			newItem.setSerialNumber(serialNumber);
 			newItem.setSerialDate(serialDate != null ? new java.sql.Date(
 					serialDate.getTime()) : null);
-			newItem.setActive(false);
-			newItem.setStatus(Integer.valueOf(
-					ProductStatus.DISCONTINUED.ordinal()).byteValue());
-			ProductOldDAO.insert(ctx, newItem);
-			return AON.getItem(
-					ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(),
-					o -> o.getDomainProperty()
-							.eq(domainId)
-							.and(o.getSerialNumberProperty().eq(
-									newItem.getSerialNumber()))
-							.and(o.getSerialDateProperty().eq(
-									newItem.getSerialDate())));
+			newItem.setStatus(ProductStatus.DISCONTINUED);
+			return ItemDAO.save(ctx, newItem);
 		}
 		return null;
 	}
@@ -290,22 +281,10 @@ public class IngenetDeliveryManager {
 		}
 	}
 
-	private OldItem obtainAonItem(String domainName, String user,
-			Integer currentDomainId, String productCode) {
-		try (  CloseableAONContext ctx = AONContext.getAONContext(domainName, currentDomainId,user) ) {
-			OldProduct product = ProductOldDAO
-					.getProductStream(
-							ctx,
-							o -> o.getCodeProperty().eq(productCode)
-									.and(o.getDomainProperty().eq(currentDomainId)))
-					.findFirst().orElse(null);
-			if(product!=null && product.getId()!=null){
-				return AON.getItem(domainName, currentDomainId, user,
-						o -> o.getProductProperty().eq(product.getId())
-						.and(o.getDomainProperty().eq(currentDomainId)));
-			}
-			return null;
-		}
+	private Item obtainAonItem(String domainName, String user, Integer currentDomainId, String productCode) {
+	    return AON.getItem(new Domain().setName(domainName).setId(currentDomainId), user, f -> 
+	        f.getDomainProperty().eq(currentDomainId)
+	        .and(f.getProductCodeProperty().eq(productCode)));
 	}
 
 	private SalesDetail obtainAonSalesDetail(String domainName, String user,

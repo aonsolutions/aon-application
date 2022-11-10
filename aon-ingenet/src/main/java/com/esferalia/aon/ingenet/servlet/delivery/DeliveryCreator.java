@@ -12,6 +12,7 @@ import com.code.aon.common.AonException;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ELABORACIONORIGENTYPE;
+import com.esferalia.aon.ingenet.util.ProductUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -19,7 +20,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
@@ -131,7 +132,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 				elaborationDetail.setDomain(ctx.getDomainId());
 				elaborationDetail.setElaboration(elaboration);
 				elaborationDetail.setDate(new Date());
-				elaborationDetail.setItem(obtainItem(ctx, linea.getPRODUCTO(), test).toNewItem());
+				elaborationDetail.setItem(ProductUtils.obtainItem(ctx, linea.getPRODUCTO()));
 				elaborationDetail.setQuantity(Double.valueOf(linea.getCANTIDAD()));
 				elaborationDetail.setWarehouse(null);
 				elaborationDetail.setAddInfo("");
@@ -145,15 +146,14 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 					.forEach(
 							lineaComposicion -> {
 								try {
-									OldItem compositionItem = createItem(ctx,
-											lineaComposicion.getPRODUCTO(), test);
+									Item compositionItem = ProductUtils.obtainItem(ctx, lineaComposicion.getPRODUCTO());
 									ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
 									elaborationDetailComposition.setDomain(ctx
 											.getDomainId());
 									elaborationDetailComposition
 									.setElaborationDetail(elaborationDetail);
 									elaborationDetailComposition
-									.setItem(compositionItem.toNewItem());
+									.setItem(compositionItem);
 									elaborationDetailComposition.setQuantity(Double
 											.valueOf(lineaComposicion.getCANTIDAD()));
 									elaborationDetailComposition.setWarehouse(null);
