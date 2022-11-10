@@ -243,7 +243,7 @@ public interface EnterprisesServiceAsync {
 	
 	// --------------------------- Agreements Tabs (New)
 	
-	void getAgreementInfo(String currentDomainName, Integer agreementId, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException;
+	void getAgreementInfo(String currentDomainName, Integer agreementId, boolean withContracts, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException;
 	
 	void setAgreementInfo(String currentDomainName, AgreementInfo agreementInfo, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	

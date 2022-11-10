@@ -598,10 +598,10 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		this.agreement = agreement;		
 		this.contextMenu.setVisibleCopyItem(agreement.getId());		
 		
-		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
-				parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
-		
-		this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
+		if(null != agreement.getDomain()) {
+			this.contextMenu.setVisibleMoveItem( (parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
+			this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
+		}
 		
 		agreementPreview.showLoading("Cargando convenio...");
 		getAgreement(agreement.getId(), agreeementInfo -> {
@@ -897,7 +897,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	}
 	
 	private void getAgreement(Integer agreementId, Consumer<AgreementInfo> success) {
-		impl.getAgreementInfo(agreementId, new AsyncCallback<AgreementInfo>() {
+		impl.getAgreementInfo(agreementId, false, new AsyncCallback<AgreementInfo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

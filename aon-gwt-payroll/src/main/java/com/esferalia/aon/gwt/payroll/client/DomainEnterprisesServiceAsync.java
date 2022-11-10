@@ -636,8 +636,8 @@ public class DomainEnterprisesServiceAsync {
 	
 	// ------------------------------------------------ Agreements Tabs (New)
 	
-	public void getAgreementInfo(Integer agreementId, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getAgreementInfo(getCurrentDomainName(), agreementId, asyncCallback);
+	public void getAgreementInfo(Integer agreementId, boolean withContracts, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getAgreementInfo(getCurrentDomainName(), agreementId, withContracts, asyncCallback);
 	}
 	
 	public void setAgreementInfo(AgreementInfo agreementInfo, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {

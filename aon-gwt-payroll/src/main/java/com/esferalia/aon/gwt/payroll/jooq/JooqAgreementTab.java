@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_D
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,6 +23,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
@@ -51,8 +53,7 @@ public class JooqAgreementTab {
 	}
 
 	private static Settings settings = null;
-	private static Map<java.util.Date, Set<String>> variables = new TreeMap<java.util.Date, Set<String>>();
-	private static final Date DEFAULT_START_DATE = new Date(100, 0, 1);
+	private static Map<java.util.Date, Set<String>> variables = new TreeMap<>();
 	
 	protected static Settings getDefaultSettings() {
 		if (settings == null) {
@@ -64,7 +65,7 @@ public class JooqAgreementTab {
 	
 	// ------------------------------- getAgreementInfo
 
-	public static AgreementInfo getAgreementInfo(Connection conn, Integer agreementId, Integer parentDomainId) throws Exception {
+	public static AgreementInfo getAgreementInfo(Connection conn, Integer agreementId, boolean withContracts, Integer domainId, Integer parentDomainId) throws Exception {
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 		AgreementInfo agreement = new AgreementInfo();
 		variables.clear();
@@ -73,6 +74,7 @@ public class JooqAgreementTab {
 		getAgreementLevel(dslContext, agreement, agreementId);
 		getAgreementHasContracts(dslContext, agreement);
 		getAgreementLevelCategory(dslContext, agreement);
+		if(withContracts) getAgreementLevelContract(dslContext, agreement, domainId);
 		getAgreementData(dslContext, agreement);
 		getAgreementLevelData(dslContext, agreement);
 		getAgreementPayments(dslContext, agreement);
@@ -106,7 +108,7 @@ public class JooqAgreementTab {
 				.orderBy(AGREEMENT_LEVEL.DESCRIPTION)
 				.fetch();
 		
-		Set<Level> levels = new HashSet<Level>();
+		Set<Level> levels = new HashSet<>();
 		
 		// Create Level 0 (Agreement Data)
 		Level levelZero = new Level();
@@ -128,7 +130,7 @@ public class JooqAgreementTab {
 	}
 	
 	private static Set<Level> sortLevelSet(Set<Level> levelsSetIn) {
-		Set<Level> levelsSet = new LinkedHashSet<Level>();
+		Set<Level> levelsSet = new LinkedHashSet<>();
 		
 		ArrayList<Level> levelArray = new ArrayList<>(levelsSetIn);
 		levelArray.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
@@ -145,9 +147,9 @@ public class JooqAgreementTab {
 	}
 
 	private static void getAgreementLevelCategory(DSLContext dslContext, AgreementInfo agreement) {
-		Map<Integer, Set<String>> categories = new TreeMap<Integer, Set<String>>();
+		Map<Integer, Set<String>> categories = new TreeMap<>();
 		
-		Set<String> levelZeroCat = new HashSet<String>();
+		Set<String> levelZeroCat = new HashSet<>();
 		levelZeroCat.add("Por defecto");
 		categories.put(0, levelZeroCat);
 		
@@ -156,10 +158,44 @@ public class JooqAgreementTab {
 					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(level.getId()))
 					.fetch(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION);
 			
-			categories.put(level.getId(),  new HashSet<String>(categoryList));
+			categories.put(level.getId(),  new HashSet<>(categoryList));
 		}
 		
 		agreement.setCategoriesMap(categories);
+	}
+	
+	private static void getAgreementLevelContract(DSLContext dslContext, AgreementInfo agreement, Integer domainId) {
+		Map<Integer, Set<String>> contracts = new TreeMap<>();
+		
+		for(Level level : agreement.getLevels()) {
+			
+			Result<Record> levelContracts = dslContext.select().from(PERSON)
+					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+					.where(CONTRACT.AGREEMENT_LEVEL.eq(level.getId()))
+					.and(CONTRACT.DOMAIN.eq(domainId))
+					.fetch();
+			
+			Set<String> contractList = new HashSet<>();
+			
+			for(Record levelContract : levelContracts) {
+				String name = levelContract.get(PERSON.NAME);
+				String firstSurname = levelContract.get(PERSON.FIRST_SURNAME);
+				String secondSurname = levelContract.get(PERSON.SECOND_SURNAME);
+				
+				String fullName = name;
+				fullName = AonStringUtils.isBlank(fullName) ? firstSurname : fullName + " " + firstSurname;
+				fullName = fullName.trim();
+				
+				fullName = AonStringUtils.isBlank(fullName) ? secondSurname : fullName + " " + secondSurname;
+				fullName = fullName.trim();
+				
+				contractList.add(fullName);
+			}
+			
+			contracts.put(level.getId(),  contractList);
+		}
+		
+		agreement.setContractsMap(contracts);
 	}
 	
 	private static void getAgreementData(DSLContext dslContext, AgreementInfo agreement) {
@@ -167,7 +203,7 @@ public class JooqAgreementTab {
 				.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
 				.fetch();
 		
-		Map<Integer, Set<LevelData>> levelDatas = new TreeMap<Integer, Set<LevelData>>();
+		Map<Integer, Set<LevelData>> levelDatas = new TreeMap<>();
 		
 		if(agreementDataRecords.isEmpty())
 			levelDatas.put(0, new HashSet<>());
@@ -215,11 +251,11 @@ public class JooqAgreementTab {
 			String variable = levelDataRecord.getName();			
 			java.util.Date startDate = parseToJavaDate(levelDataRecord.getStartDate());
 			
-			Set<String> variableSet = variables.getOrDefault(startDate, new HashSet<String>());
+			Set<String> variableSet = variables.getOrDefault(startDate, new HashSet<>());
 			variableSet.add(variable);
 			variables.put(startDate, variableSet);
 			
-			Set<LevelData> levelDataSet = levelDatas.getOrDefault(levelDataRecord.getAgreementLevel(), new HashSet<LevelData>());
+			Set<LevelData> levelDataSet = levelDatas.getOrDefault(levelDataRecord.getAgreementLevel(), new HashSet<>());
 			
 			LevelData levelData = new LevelData();
 			levelData.setId(levelDataRecord.getId());
@@ -245,7 +281,7 @@ public class JooqAgreementTab {
 				.orderBy(AGREEMENT_PAYMENT.DESCRIPTION)
 				.fetch();
 		
-		Set<Payment> paymentsSet = new LinkedHashSet<Payment>();
+		Set<Payment> paymentsSet = new LinkedHashSet<>();
 		
 		for(AgreementPaymentRecord agreementPaymentRecord : agreementPaymentRecords) {
 			Integer conceptId = agreementPaymentRecord.getPaymentConcept();
@@ -273,7 +309,7 @@ public class JooqAgreementTab {
 	}
 	
 	private static Set<Payment> sortPaymentSet(Set<Payment> paymentsSetIn) {
-		Set<Payment> paymentsSet = new LinkedHashSet<Payment>();
+		Set<Payment> paymentsSet = new LinkedHashSet<>();
 		
 		ArrayList<Payment> paymentArray = new ArrayList<>(paymentsSetIn);
 		paymentArray.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
@@ -288,7 +324,7 @@ public class JooqAgreementTab {
 				.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement.getId()))
 				.fetch();
 		
-		Set<AgreementExtra> agreementExtraSet = new HashSet<AgreementExtra>();
+		Set<AgreementExtra> agreementExtraSet = new HashSet<>();
 		
 		for(AgreementExtraRecord agreementExtraRecord : agreementExtraRecords) {
 			AgreementExtra extra = new AgreementExtra();
@@ -316,7 +352,7 @@ public class JooqAgreementTab {
 				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.in(agreementLevels))
 				.fetch(AGREEMENT_LEVEL_DATA.START_DATE);
 		
-		Set<java.util.Date> dateSet = new HashSet<java.util.Date>();
+		Set<java.util.Date> dateSet = new HashSet<>();
 		
 		for(Date agreementDataDate : agreementDataDates)
 			dateSet.add(parseToJavaDate(agreementDataDate));
