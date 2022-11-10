@@ -2,13 +2,12 @@ package es.aonsolutions.aio.test;
 
 import static org.mockito.Mockito.mock;
 
-import java.sql.SQLException;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainProvider;
@@ -16,8 +15,6 @@ import com.code.aon.ui.common.listener.BeanRegisterContextListener;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
-
-import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AonHibernateTestBasic {
 	private static final Object MONITOR = new Object();
@@ -35,7 +32,8 @@ public class AonHibernateTestBasic {
 
 	
 	@BeforeEach
-	public void beforeClass() {
+	public void beforeEach( TestInfo info) {
+//		System.out.println( "beforeEach " + info.getTestMethod() );
 		synchronized (MONITOR) {
 			if ( ctx == null) {
 				ctx = AONContext.getAONContext(getOccam());
@@ -44,8 +42,11 @@ public class AonHibernateTestBasic {
 	}
 	
 	@AfterEach
-	public void afterClass() {
-		if (ctx != null) ctx.close();
+	public void afterEach(TestInfo info) {
+//		System.out.println( "afterEach" + info.getTestMethod() );
+		synchronized (MONITOR) {
+			if (ctx != null) ctx.close();
+		}
 	}
 	
 	

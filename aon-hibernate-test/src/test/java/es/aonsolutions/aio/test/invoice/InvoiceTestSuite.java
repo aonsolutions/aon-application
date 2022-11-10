@@ -8,7 +8,7 @@ import org.junit.platform.suite.api.Suite;
 	InvoiceInsertTest.class,
 	InvoiceListTest.class,
 	InvoiceRecordTest.class,
-	InvoiceTaxRoundedTest.class,
+//	InvoiceTaxRoundedTest.class,
 })
 @Suite
 public class InvoiceTestSuite {
