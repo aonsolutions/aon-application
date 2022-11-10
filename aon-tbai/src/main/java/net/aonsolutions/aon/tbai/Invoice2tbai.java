@@ -64,7 +64,7 @@ public class Invoice2tbai {
 	
 	}
 	
-	private static final String TBAI_VERSION = "1.2.1";
+	private static final String TBAI_VERSION = "1.2";
 	private static final String DEVICE_NUMBER = "TBAIGI447FC22512252C";
 	private static final String DEVICE_NUMBER_GIPUZKOA_TEST = "TBAIGIPRE00000000131";
 	private static final String DEVICE_NUMBER_ARABA_TEST = "TBAIARbjlCHFMFK00416";
@@ -113,6 +113,7 @@ public class Invoice2tbai {
 	private static Cabecera getCabecera() { 
 		final Cabecera c = new Cabecera();
 		c.setIDVersionTBAI(TBAI_VERSION);
+		
 		return c; 
 	}
 	
