@@ -302,26 +302,34 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 
 
 	@Override
-	public List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate) throws Exception {
+	public List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, boolean online) throws Exception {
 		try {
 			List<NordigenBankStatement> list = new LinkedList<>();
 			if (nordigenBankAccount != null && nordigenBankAccount.getMetadata() != null) {
 				String id = nordigenBankAccount.getMetadata().getId();
-				List<NordigenAccountTransaction> pendingTransactions = AonNordigen.getPendingAccountTransactions(token, id, endDate);
-				List<NordigenAccountTransaction> transactions = AonNordigen.getBookedAccountTransactions(token, id, endDate);
 				
-				if (pendingTransactions != null) {
-					pendingTransactions.stream().map(tr -> AonNordigen.nordigenToBankStatement(nordigenBankAccount, tr)).forEach(bs -> {
-						bs.setPending(true);
-						list.add(bs);
-					});
+				if (online) {
+					List<NordigenAccountTransaction> pendingTransactions = AonNordigen.getPendingAccountTransactions(token, id, endDate);
+					List<NordigenAccountTransaction> transactions = AonNordigen.getBookedAccountTransactions(token, id, endDate);
+					
+					if (pendingTransactions != null) {
+						pendingTransactions.stream().map(tr -> AonNordigen.nordigenToBankStatement(nordigenBankAccount, tr)).forEach(bs -> {
+							bs.setPending(true);
+							list.add(bs);
+						});
+					}
+					if (transactions != null) {
+						transactions.stream().map(tr -> AonNordigen.nordigenToBankStatement(nordigenBankAccount, tr)).forEach(bs -> {
+							bs.setPending(false);
+							list.add(bs);
+						});
+					}
+					
+				} else {
+					list.addAll(nordigenBankAccount.getNotInsertedMovements());
+					list.addAll(AonNordigen.getStoredBankStatements(new Domain().setName(domainName).setId(domain), user, nordigenBankAccount.getRbank(), endDate));
 				}
-				if (transactions != null) {
-					transactions.stream().map(tr -> AonNordigen.nordigenToBankStatement(nordigenBankAccount, tr)).forEach(bs -> {
-						bs.setPending(false);
-						list.add(bs);
-					});
-				}
+				
 			}
 			List<NordigenBankStatement> orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
 			
