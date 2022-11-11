@@ -51,7 +51,7 @@ export class AonOfficePanel extends AonElement {
 	connectedCallback () {
 		this.initialize();
     	this.build();
- 	}
+    }
 
 	initialize(){
 		this.id = this.id || OfficeEnums.OfficeViews.AON_OFFICE_PANEL;
@@ -67,7 +67,7 @@ export class AonOfficePanel extends AonElement {
         });
 	}
 
- 	build() {
+    build() {
         this.createApplication(this.id, MSG.OFFICE, new AonApplication());
         this.buildSidenav();
 
@@ -78,7 +78,7 @@ export class AonOfficePanel extends AonElement {
         const application = this.getApplication();
 
         const {OfficeViews, OfficeOptions} = OfficeEnums;
- 
+
         let options = [];
 
         let customer = OfficeOptions.AON_CUSTOMER;
@@ -107,18 +107,18 @@ export class AonOfficePanel extends AonElement {
                     icon: 'label',
                     fn: () => {}, 
                     actions: [{
-                      id: 'Delete',
-                      icon: 'delete',
-                      action: () => ProjectUtils.projectTypeDelete(this, item)
+                        id: 'Delete',
+                        icon: 'delete',
+                        action: () => ProjectUtils.projectTypeDelete(this, item)
                     },{
-                      id: 'Edit',
-                      icon: 'edit',
-                      action: () => ProjectUtils.buildDialogProjectType(this, item)
+                        id: 'Edit',
+                        icon: 'edit',
+                        action: () => ProjectUtils.buildDialogProjectType(this, item)
                     }]
                 };
                 this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.TYPES, option);
-           });
-       });
+            });
+        });
     }
 
     addCustomerListSelectable(view){
@@ -141,7 +141,7 @@ export class AonOfficePanel extends AonElement {
         this.setCustomerSelected([]);
         this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.ADD_FOLDER);
     }
- 
+
     async onSaveExpedientes(project){
         let selected = this.getCustomerSelected();
         let projects = selected
@@ -230,7 +230,7 @@ export class AonOfficePanel extends AonElement {
                         aonView.data = data;
                     }
                 }
-          
+
 				application.setContent(aonView);
 
 

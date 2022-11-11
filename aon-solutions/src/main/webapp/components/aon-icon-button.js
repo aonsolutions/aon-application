@@ -1,7 +1,7 @@
 import { AonElement } from "./AonElement.js";
 
-import "./aon-icon.js";
 import { CONSTANT } from "../environments/environments.js";
+import { AonIcon } from "./aon-icon.js";
 
 export class AonIconButton extends AonElement {
   BUTTON;
@@ -225,8 +225,17 @@ export class AonIconButton extends AonElement {
       image.src = this.getAttribute("image");
       button.appendChild(image);
     }
+
     if (this.hasAttribute("aonIcon")) {
-      button.innerHTML = `<aon-icon id="${this.AON_ICON}" icon="${this.aonIcon}"></aon-icon>`;
+      button.innerHTML = "";
+      let aonIcon = new AonIcon();
+      aonIcon.id = this.AON_ICON;
+      aonIcon.icon = this.aonIcon;
+      button.appendChild(aonIcon);
+      
+      if(this.hasAttribute("color")){
+        aonIcon.color = this.getAttribute("color")
+      }
     }
     this.appendChild(button);
   }
