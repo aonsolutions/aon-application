@@ -27,7 +27,7 @@ public interface NordigenServiceAsync {
 	void getCredentials(Integer enterpriseId, Integer loginId, AsyncCallback<CheckItLoginFields> callback);
 	void editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields, AsyncCallback<Boolean> callback);
 	void getFields(Integer loginId, AsyncCallback<CheckItLoginFields> callback);
-	void getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, AsyncCallback<List<NordigenBankStatement>> callback);
+	void getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, boolean online, AsyncCallback<List<NordigenBankStatement>> callback);
 	void addExtraField(Integer enterpriseId, String iban, String extraField, AsyncCallback<Boolean> callback);
 	void getNordigenInstitutions(NordigenAccessToken token, Country country, AsyncCallback<List<NordigenInstitution>> callback);
 	void getNordigenInstitutionsByBic(NordigenAccessToken token, String bic, AsyncCallback<List<NordigenInstitution>> callback);

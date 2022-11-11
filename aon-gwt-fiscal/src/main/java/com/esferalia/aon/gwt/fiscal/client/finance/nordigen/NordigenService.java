@@ -30,7 +30,7 @@ public interface NordigenService extends RemoteService {
 	//NORDIGEN
 	NordigenConfiguration getConfiguration(String currentDomainName, int currentDomain, String user) throws Exception;
 	NordigenRequisition addAccount(String currentDomainName, int currentDomain, String user, NordigenAccessToken token, NordigenBankAccount nordigenBankAccount) throws Exception;
-	List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate) throws Exception; 
+	List<NordigenBankStatement> getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, boolean online) throws Exception; 
 	List<NordigenInstitution> getNordigenInstitutions(NordigenAccessToken token, Country country) throws Exception;
 	List<NordigenInstitution> getNordigenInstitutionsByBic(NordigenAccessToken token, String bic) throws Exception;
 	Integer clearIncompleteRequisitions(NordigenAccessToken token, String currentDomainName, int currentDomain, String user) throws Exception;

@@ -255,6 +255,10 @@ public class AonNordigen {
 		}
 	}
 	
+	public static List<NordigenBankStatement> getStoredBankStatements(Domain domain, String user, RegistryBank rbank, Date dateFrom) {
+		return NordigenDAO.getBankStatements(domain, user, rbank, dateFrom, new Date());
+	}
+	
 	public static NordigenBankAccount getAccountByRbank(Domain domain, String login, Integer rbankId) throws Exception {
 		try {
 			RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));

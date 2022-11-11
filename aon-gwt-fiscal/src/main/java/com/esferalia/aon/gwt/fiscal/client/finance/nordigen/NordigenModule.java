@@ -60,6 +60,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -1014,6 +1015,8 @@ public class NordigenModule extends MainEntryPoint {
 		perLbl.addStyleName(AON.CSS.aonBold());
 		perLbl.getElement().getStyle().setColor(AON_BLUE);
 		perTopFlow.add(perLbl);
+		
+		
 		ListBox periodSelector = new ListBox();
 		
 		if (lastMovDate != null && !noridgenankAccount.getNotInsertedMovements().isEmpty()) {
@@ -1035,6 +1038,13 @@ public class NordigenModule extends MainEntryPoint {
 		perTopFlow.addStyleName(AON.AON_CSS.aonBlockCenter());
 		perTopFlow.addStyleName(AON.AON_CSS.aonTextCenter());
 		
+		FlowPanel onlinePanel = new FlowPanel();
+		CheckBox onlineCheckbox = new CheckBox();
+		Label onlineCheckboxLabel = new InlineLabel("Consulta online");
+		onlinePanel.add(onlineCheckbox);
+		onlinePanel.add(onlineCheckboxLabel);
+
+		perTopFlow.add(onlinePanel);
 		
 		int currentYear = AonDateUtils.getCurrentYear();
 		String[] monthNames = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -1093,20 +1103,15 @@ public class NordigenModule extends MainEntryPoint {
 		periodFlow.add(perTopFlow);
 		
 		periodSelector.addChangeHandler(ev -> {
-			if (periodSelector.getSelectedIndex() == periodSelector.getItemCount() - 1) {
-				periodFlow.add(customPeriod);				
-				customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, dialog);
-			} else {
-				if (periodFlow.getWidgetCount() > 1)
-					periodFlow.remove(1);
-				int days = Integer.parseInt(periodSelector.getSelectedValue());
-				Date from = new Date();
-				CalendarUtil.addDaysToDate(from, -days);
-				
-				String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
-				
-				getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, dialog);
-			}
+			movsChangeHandler(opt, noridgenankAccount, firstYear, periodSelector, onlineCheckbox, monthNames,
+					listBoxYearFrom, listBoxYearTo, listBoxMonthFrom, listBoxMonthTo, loadingLabel, movementContainer,
+					customPeriod, periodFlow, dialog);
+		});
+		
+		onlineCheckbox.addValueChangeHandler(ev -> {
+			movsChangeHandler(opt, noridgenankAccount, firstYear, periodSelector, onlineCheckbox, monthNames,
+					listBoxYearFrom, listBoxYearTo, listBoxMonthFrom, listBoxMonthTo, loadingLabel, movementContainer,
+					customPeriod, periodFlow, dialog);
 		});
 		
 		
@@ -1114,9 +1119,9 @@ public class NordigenModule extends MainEntryPoint {
 		Date from = new Date();
 		CalendarUtil.addDaysToDate(from, -days);
 		String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
-		getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, dialog);
+		getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, onlineCheckbox.getValue(), dialog);
 		
-		ChangeHandler onDateChange = ev -> customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, dialog);
+		ChangeHandler onDateChange = ev -> customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, onlineCheckbox.getValue(), dialog);
 		listBoxMonthFrom.addChangeHandler(onDateChange);
 		listBoxYearFrom.addChangeHandler(onDateChange);
 		listBoxMonthTo.addChangeHandler(onDateChange);
@@ -1134,9 +1139,29 @@ public class NordigenModule extends MainEntryPoint {
 		container.add(loadingLabel);
 		container.add(movementContainer);
 	}
+
+	private void movsChangeHandler(NordigenModuleOptions opt, NordigenBankAccount noridgenankAccount, int firstYear,
+			ListBox periodSelector, CheckBox onlineCheckbox, String[] monthNames, ListBox listBoxYearFrom,
+			ListBox listBoxYearTo, ListBox listBoxMonthFrom, ListBox listBoxMonthTo, Label loadingLabel,
+			FlexTable movementContainer, FlexTable customPeriod, FlowPanel periodFlow, CustomDialog... dialog) {
+		if (periodSelector.getSelectedIndex() == periodSelector.getItemCount() - 1) {
+			periodFlow.add(customPeriod);				
+			customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, onlineCheckbox.getValue(), dialog);
+		} else {
+			if (periodFlow.getWidgetCount() > 1)
+				periodFlow.remove(1);
+			int days = Integer.parseInt(periodSelector.getSelectedValue());
+			Date from = new Date();
+			CalendarUtil.addDaysToDate(from, -days);
+			
+			String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
+			
+			getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, onlineCheckbox.getValue(), dialog);
+		}
+	}
 	
 	
-	private void customMovChange(Label loadingLabel, FlexTable movementContainer, NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, ListBox listBoxMonthFrom, ListBox listBoxYearFrom, ListBox listBoxMonthTo, ListBox listBoxYearTo, int firstYear, String[] monthNames, CustomDialog ...dialog) {
+	private void customMovChange(Label loadingLabel, FlexTable movementContainer, NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, ListBox listBoxMonthFrom, ListBox listBoxYearFrom, ListBox listBoxMonthTo, ListBox listBoxYearTo, int firstYear, String[] monthNames, boolean online, CustomDialog ...dialog) {
 		int fromMonth = Integer.parseInt(listBoxMonthFrom.getSelectedValue());
 		int fromYear = Integer.parseInt(listBoxYearFrom.getSelectedValue());
 		
@@ -1177,7 +1202,7 @@ public class NordigenModule extends MainEntryPoint {
 		
 		String periodStr = "del " + dtf.format(dateFrom) + " al " + dtf.format(dateTo);
 		
-		getMovements(loadingLabel, movementContainer, opt, nordigenBankAccount, dateFrom, dateTo, periodStr, dialog);
+		getMovements(loadingLabel, movementContainer, opt, nordigenBankAccount, dateFrom, dateTo, periodStr, online, dialog);
 	}
 	
 	
@@ -1639,7 +1664,7 @@ public class NordigenModule extends MainEntryPoint {
 		}
 	}
 	
-	private void getMovements(Label loadingLabel, FlexTable tab, NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, Date startDate, Date endDate, String periodStr, CustomDialog ...dialog) {
+	private void getMovements(Label loadingLabel, FlexTable tab, NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, Date startDate, Date endDate, String periodStr, boolean online, CustomDialog ...dialog) {
 		NordigenConfiguration conf = opt.getConfiguration();
 		NordigenAccessToken token = conf != null ? conf.getToken() : null;
 		onLoadingMovs(tab, loadingLabel, true);
@@ -1650,7 +1675,7 @@ public class NordigenModule extends MainEntryPoint {
 			if (CalendarUtil.isSameDate(startDate, lmd)) {
 				onLoadingMovs(tab, loadingLabel, false);
 				tab.removeAllRows();
-				completeMovementsTable(tab, nordigenBankAccount.getNotInsertedMovements(), periodStr);
+				completeMovementsTable(tab, nordigenBankAccount.getNotInsertedMovements(), periodStr, nordigenBankAccount);
 				if (dialog != null && dialog.length > 0) {
 					for (CustomDialog dial : dialog) {
 						dial.center();
@@ -1660,7 +1685,7 @@ public class NordigenModule extends MainEntryPoint {
 			}
 		}
 		
-		NORDIGEN_SERVICE.getMovements(token, opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, startDate, new AsyncCallback<List<NordigenBankStatement>>() {
+		NORDIGEN_SERVICE.getMovements(token, opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, startDate, online, new AsyncCallback<List<NordigenBankStatement>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1681,7 +1706,7 @@ public class NordigenModule extends MainEntryPoint {
 			public void onSuccess(List<NordigenBankStatement> result) {
 				onLoadingMovs(tab, loadingLabel, false);
 				tab.removeAllRows();
-				completeMovementsTable(tab, result, periodStr);
+				completeMovementsTable(tab, result, periodStr, nordigenBankAccount);
 				if (dialog != null && dialog.length > 0) {
 					for (CustomDialog dial : dialog) {
 						dial.center();
@@ -1692,7 +1717,7 @@ public class NordigenModule extends MainEntryPoint {
 		});
 	}
 	
-	private void completeMovementsTable(FlexTable tab, List<NordigenBankStatement> statements, String periodStr) {
+	private void completeMovementsTable(FlexTable tab, List<NordigenBankStatement> statements, String periodStr, NordigenBankAccount nordigenBankAccount) {
 		periodStr = periodStr != null ? periodStr : "";
 		if (statements != null && !statements.isEmpty()) {
 			DateTimeFormat dtf = DateTimeFormat.getFormat("d MMM | EEEE");
@@ -1730,7 +1755,7 @@ public class NordigenModule extends MainEntryPoint {
 				
 				for (int i=0; i< st.size(); i++) {
 					NordigenBankStatement mov = st.get(i);
-					getPendingMovementTag(tab, mov, i == st.size() - 1);
+					getPendingMovementTag(tab, mov, i == st.size() - 1, nordigenBankAccount);
 				}
 			});
 			
@@ -1758,7 +1783,7 @@ public class NordigenModule extends MainEntryPoint {
 //		return tab;
 //	}
 	
-	private void getPendingMovementTag(FlexTable table, NordigenBankStatement bankStatement, boolean last) {
+	private void getPendingMovementTag(FlexTable table, NordigenBankStatement bankStatement, boolean last, NordigenBankAccount nordigenBankAccount) {
 		
 		String description = bankStatement.getDescription();
 		Double amount = !bankStatement.isPayment() ? bankStatement.getAmount() : bankStatement.getAmount() * (-1);
@@ -1803,8 +1828,11 @@ public class NordigenModule extends MainEntryPoint {
 		
 		
 		Label descriptionLabel = new Label(description);
+		Date lastOp = nordigenBankAccount.getLastMovementDate();
+		if (lastOp != null && lastOp.compareTo(bankStatement.getOperationDate()) < 1) {
+			descriptionLabel.getElement().getStyle().setColor("green");			
+		}
 		if (bankStatement.isPending()) {
-			LOGGER.info("NO CONSOLIDADO");
 			descriptionLabel.getElement().getStyle().setColor("darkOrange");
 		}
 		descriptionLabel.setStyleName(AON.CSS.aonFontLarger());
