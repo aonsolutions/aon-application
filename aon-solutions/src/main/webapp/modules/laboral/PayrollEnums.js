@@ -84,6 +84,7 @@ export const PAYROLL_FILTER = [
 export const CONTRACT_OPTIONS = {
   CONTRACT:{
     name: MSG.CONTRACT_PAYROLL,
+    title: MSG.CONTRACT_PAYROLL,
     aonIcon: "aon_cto",
     id:"aon_cto",
     permission:true,
@@ -91,21 +92,24 @@ export const CONTRACT_OPTIONS = {
   },
   TA:{
     name: "Obtener TA",
+    title: "Obtener TA",
     aonIcon: "aon_ta",
     id: 'Ta',
     permission:true,
     backgroundColor: Apps.PAYROLL.color
   },
   IDC:{
-    name: 'Obtener IDC',
+    name: "Obtener IDC",
+    title: "Obtener IDC",
     aonIcon: 'aon_idc',
     id: 'Idc',
     permission:true,
     backgroundColor: Apps.PAYROLL.color
   },
   DELETE:{
+    name: "Anuales",
+    title: "Anuales",
     id: 'Delete',
-    name: 'Anular',
     icon: 'delete_forever',
     permission:true,
     backgroundColor: Apps.PAYROLL.color
