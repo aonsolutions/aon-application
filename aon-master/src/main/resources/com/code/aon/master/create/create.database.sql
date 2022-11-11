@@ -945,7 +945,7 @@ CREATE TABLE `bank_statement` (
   `amount` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT 'Importe',
   `document` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento',
   `reference1` varchar(12) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia 1',
-  `reference2` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia 2',
+  `reference2` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia 2',
   `description` varchar(80) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `reliability` tinyint DEFAULT '0' COMMENT 'Fiabilidad del punteo',
   `security_level` tinyint DEFAULT '0' COMMENT 'Nivel de seguridad',
@@ -1830,8 +1830,8 @@ CREATE TABLE `contract_bonus` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int NOT NULL COMMENT 'Contrato',
-  `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
-  `expression` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Fórmula',
+  `description` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
+  `expression` varchar(1024) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Fórmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `bonus_concept` int DEFAULT NULL COMMENT 'Concepto de bonificacion',
@@ -7592,6 +7592,7 @@ CREATE TABLE `salary` (
   PRIMARY KEY (`id`),
   KEY `IDX_SALARY_CONTRACT` (`contract`),
   KEY `IDX_SALARY_DOMAIN` (`domain`),
+  KEY `IDX_SALARY_SOCIAL_SECURITY_NUMBER` (`social_security_number`),
   CONSTRAINT `FK_SALARY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_SALARY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
