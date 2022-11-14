@@ -32,6 +32,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
+import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -46,6 +47,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -279,99 +281,6 @@ public class ConsoleDAO {
 		
 	}
 
-//	public static Boolean fix(CloseableAONContext ctx, ConsoleDomainMessage cm) {
-//		try {
-//			return cm != null
-//				&& cm.getType() != null 
-//				&& cm.getType().visit( new ConsoleDomainMessageVisitor(ctx, cm) );
-//		} catch (Exception e) {
-//			throw new AonCoreException( e );	
-//		}
-//	}
-	
-//	private static class ConsoleDomainMessageVisitor implements ConsoleDomainMessageType.Visitor<Boolean> {
-//		private CloseableAONContext ctx;
-//		private ConsoleDomainMessage cm;
-//		
-//		private ConsoleDomainMessageVisitor( CloseableAONContext ctx, ConsoleDomainMessage cm) {
-//			this.ctx = ctx;
-//			this.cm = cm;
-//		}
-//		@Override
-//		public Boolean visitIntegrity() {
-//			return cm.getFixType().visit(new ConsoleDomainMessageFixType.Visitor<Boolean>() {
-//				
-//				@Override
-//				public Boolean visitSetNull() {
-//					Table<?> table = AON_MASTER.getTable(cm.getTable());
-//					TableField<?, Integer> pkField = getPkField(cm.getTable());
-//					Field<?> fkField = table.field( cm.getFkColumn() );
-//					int count = ctx.getDslContext()
-//						.update(table)
-//						.setNull( fkField )
-//						.where(pkField.eq(cm.getPkId()))
-//						.execute();
-//					return (count>0);
-//				}
-//				
-//				@Override
-//				public Boolean visitNewValue() {
-//					System.out.println( "visitNewValue()" );
-//					Table<?> table = AON_MASTER.getTable(cm.getTable());
-//					TableField<?, Integer> pkField = getPkField(cm.getTable());
-//					Field<?> fkField = table.field( cm.getFkColumn() );
-//					try {
-//						System.out.println(
-//							updateField( ctx.getDslContext().update(table) 
-//								, fkField
-//								, fromString( cm.getField().getType(), cm.getField().getNewValue()))
-//								.where(pkField.eq(cm.getPkId()))
-//								.getSQL(ParamType.INLINED) 
-//						);
-//						int count = updateField( ctx.getDslContext().update(table) 
-//								, fkField
-//								, fromString( cm.getField().getType(), cm.getField().getNewValue()))
-//								.where(pkField.eq(cm.getPkId()))
-//								.execute();
-//						return (count>0);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						throw e;
-//					}
-//				}
-				
-//				private <T> UpdateSetMoreStep<?> updateField(UpdateSetFirstStep<?> update, Field<T> field, Object value) {
-//				    return update.set(field, field.getType().cast(value));
-//				}	
-//				
-//				@Override
-//				public Boolean visitDelete() {
-//					Table<?> table = AON_MASTER.getTable(cm.getTable());
-//					@SuppressWarnings("unchecked")
-//					TableField<?, Integer> pkField = (TableField<?, Integer>) table.getPrimaryKey().getFields().get(0);
-//					int count = ctx.getDslContext().delete(table)
-//						.where(pkField.eq(cm.getPkId()))
-//						.execute();
-//					return (count>0);
-//				}
-//				
-//				
-//			});
-//		}
-//		
-//		@Override
-//		public Boolean visitProduct() {
-////			return setValue( ctx, cm.getTable(), cm.getPkId(), PRODUCT.CODE.getName(), cm.getNewValue() );
-//			return false;
-//		}
-//		
-//		@Override
-//		public Boolean visitAgreement() {
-//			return false;
-//		}
-//			
-//	}
-	
 	@SuppressWarnings("unchecked")
 	private static TableField<?, Integer> getPkField(String tableName) {
 		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).getPrimaryKey().getFields().get(0);
@@ -391,17 +300,6 @@ public class ConsoleDAO {
 				.stream()
 				.filter( f -> f.getType() != ConsoleTableFieldType.BINARY)
 				.forEach( f -> selectedFields.add(table.field( f.getColumn() ) ));
-			System.out.println( 
-					
-					ctx.getDslContext().select( selectedFields )
-					.from(table)
-					.where( getConditions(params))
-					.limit(1)
-					.getSQL(ParamType.INLINED)
-					);
-			
-			
-			
 			Optional<Record> rec = ctx.getDslContext().select( selectedFields )
 				.from(table)
 				.where( getConditions(params))
@@ -518,33 +416,21 @@ public class ConsoleDAO {
 		return left == null ? right : left.and(right);
 	}
 	
-	private static <T> Condition getCondition(Field<T> field, Object value ) {
-		if (field.getDataType().isString()) {
-			String q = value.toString();
-			q = AonStringUtils.replace(q, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
-			if (AonStringUtils.contains(q, AonStringUtils.PERCENT)) {
-				return field.like( q );		
-			}
-		}
-		return field.eq( field.getType().cast( value ) );
-	}
-
 	private static Condition getConditions(ConsoleTableRow params) {
 		
 		Condition c = null;
 		
 		if (params.getFields() != null && !params.getFields().isEmpty() ) {
-			LinkedList<Condition> conditions =  params.getFields().values()
+			JOOQRenderer renderer = new JOOQRenderer();
+			params.getFields().values()
 				.stream()
 				.filter( f -> AonStringUtils.isNotEmpty( f.getQueryValue() ))
-				.map( f -> getCondition(
-					AON_MASTER.getTable(params.getTable()).field( f.getColumn() )
-					,fromString(f.getType(), f.getQueryValue())))
-				.collect(Collectors.toCollection(LinkedList::new));
-			if (conditions != null && !conditions.isEmpty()) {
-				for (Condition cc : conditions) {
-					c = add(c,cc);
-				}
+				.forEach( f -> renderer.put(AON_MASTER.getTable(params.getTable()).field( f.getColumn() ), f.getQueryValue() ) );
+			;
+			try {
+				c = renderer.getCondition();
+			} catch (ExpressionException e) {
+				throw new AonCoreException("Error en la evaluaación de los parámetros. [" + e.getMessage() + "]");	
 			}
 		}
 		

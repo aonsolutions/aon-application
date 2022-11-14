@@ -133,7 +133,6 @@ public class JOOQRenderer implements CriterionVisitor {
 
 	public void visitConstantExpression(ConstantExpression expression) {
 		data = expression.getData()!=null?expression.getData().toString():null;
-		System.out.println( "data ..: " + data);
 	}
 
 	public void visitRelationalExpression(RelationalExpression expression) {
