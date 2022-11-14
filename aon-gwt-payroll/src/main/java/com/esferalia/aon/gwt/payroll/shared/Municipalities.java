@@ -332,6 +332,7 @@ public class Municipalities {
 		municipalities.put("50287","VILLALENGUA"); 
 		municipalities.put("15901","CARI" + String.valueOf("\u00D1") + "O"); 
 		municipalities.put("19027","ALUSTANTE"); 
+		municipalities.put("50903","VILLAMAYOR DE GALLEGO"); 
 		municipalities.put("50288","VILLANUEVA DE GALLEGO"); 
 		municipalities.put("50289","VILLANUEVA DE JILOCA"); 
 		municipalities.put("31100","EULATE"); 
