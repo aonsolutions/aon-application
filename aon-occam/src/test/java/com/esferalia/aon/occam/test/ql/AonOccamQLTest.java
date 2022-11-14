@@ -7,6 +7,7 @@ import org.jooq.conf.ParamType;
 import org.junit.Test;
 
 import com.code.aon.ql.util.ExpressionException;
+import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 
 public class AonOccamQLTest extends AbstractOccamTest {

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.test.ql;
+package com.esferalia.aon.occam.impl.jooq.ql;
 
 import static com.esferalia.aon.jooq.AonMaster.AON_MASTER;
 
