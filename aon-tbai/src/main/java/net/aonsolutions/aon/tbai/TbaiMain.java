@@ -155,7 +155,7 @@ public class TbaiMain {
 			} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 				LROEResponse lroeResponse = null;
 				LROEInfo info = null;
-				if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+				if(!isPersonaFisica(company.getDocument())) {
 					LROE240_1_1 lroe240 = new LROE240_1_1();
 					info = lroe240.buildInfo(OperacionEnum.A_00);
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
@@ -181,6 +181,11 @@ public class TbaiMain {
 				HandleLroeResponse(lroeResponse);
 			}
 		}
+	}
+	
+	public boolean isPersonaFisica(String document) {
+		return !AonDocumentUtil.isValidCIF(document) || AonDocumentUtil.isAssetCommunity(document)
+			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
 	}
 	
 	public void createAnulacionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
