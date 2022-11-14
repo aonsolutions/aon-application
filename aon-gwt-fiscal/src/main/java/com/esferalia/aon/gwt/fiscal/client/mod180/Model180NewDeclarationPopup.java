@@ -168,6 +168,7 @@ public class Model180NewDeclarationPopup extends AonCustomDialog {
 		acceptButton.setText( AON.MSG.accept());
 		
 		acceptButton.addClickHandler(event -> {
+			acceptButton.setEnabled(false);
 			hide();
 			callback.onAccept(mod180);
 		});
