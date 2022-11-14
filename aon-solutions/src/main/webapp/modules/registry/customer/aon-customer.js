@@ -19,7 +19,7 @@ export class AonCustomer extends AonReg {
 		this.customerInitialize();
 		this.initialize();
 		this.build();
-  	}
+	}
 	
 	customerInitialize() {
 		this.type = "customer";
@@ -275,7 +275,7 @@ export class AonCustomer extends AonReg {
 				value: "ENTERPRISE_NEW",
 				icon: MATERIAL_ICONS.OPEN_IN_NEW, 
 				fn:()=> {
-					this.getApplication().confirmDialog(MSG.REGISTER, `Desea registrar la empresa ?`, () => {
+					this.getApplication().confirmDialog(MSG.REGISTER, `Desea registrar y vincular a ${this.registry.getName()} ?`, () => {
 						this.getApplication().startLoading();
 						saveCompany({...this.registry, id:null})
 						.then((company)=>{
@@ -410,12 +410,13 @@ export class AonCustomer extends AonReg {
 				this.saveBool = true;
 				this.showToast({
 					type: 'success',
-					 message: 'Datos Guardados Correctamente'
-				 });
-			}).catch(error => {
+					message: 'Datos Guardados Correctamente'
+				});
+			})
+			.catch(error => {
 				this.saveBool = true;
 				this.showToast(error);
-			 });
+			});
 		}
 
 	}
