@@ -477,6 +477,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	
 	private void search(DomainParams params) {
 		container.clear();
+		count = 0;
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
 		container.setWidget(scrollPanel);
@@ -548,7 +549,6 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 				LOGGER.info("onReadyStateChange (enableSearch)");
 			}
 		});
-		count = 0;
 		StringBuilder requestData = new StringBuilder();
 		params.setOffset(offset.getValue());
 		requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert( params ) );

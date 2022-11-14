@@ -93,6 +93,10 @@ public class ItemDAO {
 			.fetch().stream().map(new ItemFiller()).findFirst().orElse(new Item());
 	}
 	
+	public static Item get(AONContext ctx, Integer id){
+        return get(ctx, f -> f.getIdProperty().eq(id));
+    }
+	
 	public static Stream<Item> getStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext()
 			.select()

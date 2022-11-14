@@ -17,13 +17,6 @@ export class AonCustomerList extends AonRegistryList {
 	async getRegistries() {
 		let customers = await getCustomers(this.filter);
 
-		if(this.selectable){
-			customers = customers.map(customer => {
-				customer.option = this.getOptionsLink(customer);
-				return customer;
-			});
-		}
-
 		return customers;
 	}
 
@@ -48,31 +41,7 @@ export class AonCustomerList extends AonRegistryList {
 			this.getApplication().setContent(aonCustomer);
 		});
 	}
-
-	getOptionsLink(){
-		let option = [];
-
-		option.push({
-			name: 'Vincular dominio',
-			icon: 'link',
-			id: 'domain_link',
-			permission:true,
-			backgroundColor: "grey",
-			fn: () => this.getApplication().development()
-		});
-
-		option.push({
-			name: 'Crear empresa',
-			icon: 'apartment',
-			id: 'create_enterprise',
-			permission:true,
-			backgroundColor: "grey",
-			fn: () => this.getApplication().development()
-		});
-		
-		return option;
-	}
-
+	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
 		this.getApplication().addToolbarOption2(ACTION.ADD, () => this.buildRegistry());

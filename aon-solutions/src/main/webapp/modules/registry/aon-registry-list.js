@@ -35,14 +35,11 @@ export class AonRegistryList extends AonElement {
 		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '15%');
 		this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '5%');
 		
-		if(this.selectable){
-			this.TABLE.addColumn("Opción", "fn", "option", "2%");
-		}
 		this.TABLE.addEventListener(EVENT.MORE, () => {
 			if(this.more) this.loadMore();
 		});
 		this.init();
- 	}
+	}
 
 	selectabledTable(){
 		if(this.selectable){

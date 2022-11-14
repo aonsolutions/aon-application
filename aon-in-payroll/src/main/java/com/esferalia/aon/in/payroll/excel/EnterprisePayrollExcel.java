@@ -387,7 +387,6 @@ public class EnterprisePayrollExcel {
 			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
 			manageContractDatas(rawPayrollList, contractDataByWorkplace);
 			
-			
 			rawPayrollList.stream().map(EnterprisePayroll.class::cast)
 				.filter(p -> filteredPersons.isEmpty() || filteredPersons.contains(p.getEmployeeId()))
 				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeId() != null)
@@ -423,13 +422,13 @@ public class EnterprisePayrollExcel {
 	
 	public static void enterprisePayrollGeneratorByPeriod (EnterprisePayrollExcelParams params, Date startDate, Date endDate, SalaryType[] salaryFilter, Person ...persons) {
 		
-		List<String> filteredNafs = new LinkedList<>();
+		List<Integer> filteredPersons = new LinkedList<>();
 		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
 		
 		if (persons != null) {
 			for (Person person : persons) {
-				if (person != null && person.getSocialSecurityNumber() != null)
-					filteredNafs.add(person.getSocialSecurityNumber());
+				if (person != null && person.getId() != null)
+					filteredPersons.add(person.getId());
 			}
 		}
 		
@@ -448,13 +447,13 @@ public class EnterprisePayrollExcel {
 			
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
-			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).collect(Collectors.toList());
+			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).map(IEnterprisePayroll.class::cast).collect(Collectors.toList());
 			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
 			manageContractDatas(rawPayrolls, contractDataByWorkplace);
-			
+
 			rawPayrolls.stream().map(EnterprisePayroll.class::cast)
-				.filter(p -> filteredNafs.isEmpty() || filteredNafs.contains(p.getEmployeeNaf()))
-				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeNaf() != null)
+				.filter(p -> filteredPersons.isEmpty() || filteredPersons.contains(p.getEmployeeId()))
+				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeId() != null)
 				.forEach(p -> {
 					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> {
 						String nameKey = EnterprisePayrollExcelUtils.getMonthYearName(p.getEndDate());
@@ -2195,6 +2194,13 @@ public class EnterprisePayrollExcel {
 
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
+		
+		List<Salary> sl = AON.getSalaries(aonContext,
+				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()]))).toList();
+		
+		for (Salary sal : sl) {
+			System.out.println(sal.getEmployeeName() + " - " + sal.getTotalIrpf());
+		}
 		
 		return salaries.filter(s -> s.getSalaryType() != null).map(s -> {
 			

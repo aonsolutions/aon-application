@@ -461,10 +461,13 @@ public class InvoiceAutoComplete {
 						.or(f.getProductCodeProperty().eq(detail.getAccountCode()))
 						.or(f.getProductNameProperty().eq(detail.getDescription()))));
 				if(i.getId() == null) {
+					String name = detail.getDescription().length() > 63
+							? detail.getDescription().substring(0, 63) 
+							: detail.getDescription();
 					Product p = new Product();
 					p.setDomain(new Domain().setId(detail.getDomain()));
 					p.setCode(detail.getAccountCode());
-					p.setName(detail.getDescription());
+					p.setName(name);
 					p.setVat(new Tax()
 						.setName("IVA " + it.getPercentage())
 						.setDomain(detail.getDomain())

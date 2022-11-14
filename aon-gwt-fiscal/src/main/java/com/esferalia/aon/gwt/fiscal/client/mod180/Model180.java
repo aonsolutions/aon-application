@@ -79,7 +79,7 @@ public class Model180 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {
-			newModel(getOptions(), 2021);
+			newModel(getOptions(), 2022);
 		}
 		
 		@Override

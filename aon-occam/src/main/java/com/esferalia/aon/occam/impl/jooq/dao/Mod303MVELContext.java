@@ -25,6 +25,9 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	public boolean isLastPeriod() {
 		return this.mod303.getPeriod() == Period.T4 || this.mod303.getPeriod() == Period.M12;
 	}
+	public boolean isDevReg() {
+		return this.mod303.isDevReg();
+	}
 	public boolean isToCompensate() {
 		return this.mod303.isToCompensate();
 	}
@@ -227,7 +230,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		if (c78 > c110)
 			c78 = c110;
 		double c66_77 = AonMathUtils.round(c66+c77);
-		if (!isLastPeriod())  {
+		if (!isLastPeriod() && !isDevReg())  {
 			// No puede ser mayor que el resultado del modelo hasta ahora (casillas 66 y 77)
 			if (c78 > (c66_77))
 				c78 = (c66_77);

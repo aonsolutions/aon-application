@@ -26,11 +26,17 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.StatementConcept;
+import com.esferalia.aon.occam.api.model.type.StatementReliability;
+import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 public class NordigenDAO {
@@ -202,6 +208,43 @@ public class NordigenDAO {
 			final InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> finalQuery = query;
 			return aonContext.getDslContext().transactionResult(cnf -> finalQuery.execute());
 		}
+	}
+	
+	public static List<NordigenBankStatement> getBankStatements(Domain domain, String user, RegistryBank rbank, Date dateFrom, Date dateTo) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
+			return aonContext.getDslContext()
+			.select()
+			.from(BANK_STATEMENT)
+			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+			.and(BANK_STATEMENT.OPERATION_DATE.ge(AonDateUtils.toSql(dateFrom)))
+			.and(BANK_STATEMENT.OPERATION_DATE.le(AonDateUtils.toSql(dateTo)))
+			.orderBy(BANK_STATEMENT.OPERATION_DATE.desc(), BANK_STATEMENT.ID.desc())
+			.fetchStreamInto(BANK_STATEMENT)
+			.map(bs -> dbToNordigenBankStatement(bs, rbank))
+			.collect(Collectors.toList());
+		}
+	}
+	
+	private static NordigenBankStatement dbToNordigenBankStatement(BankStatementRecord record, RegistryBank rbank) {
+		NordigenBankStatement bs = new NordigenBankStatement();
+		bs.setAmount(record.getAmount());
+		bs.setComments(record.getComments());
+		bs.setCommonConcept(AonEnumUtils.enumValue(StatementConcept.class, record.getCommonConcept()));
+		bs.setDescription(record.getDescription());
+		bs.setDocument(record.getDocument());
+		bs.setDomain(record.getDomain());
+		bs.setId(record.getId());
+		bs.setLotNumber(record.getLotNumber());
+		bs.setOperationDate(record.getOperationDate());
+		bs.setOwnConcept(record.getOwnConcept());
+		bs.setPayment(AonEnumUtils.getBoolean(record.getPayment()));
+		bs.setReference1(record.getReference1());
+		bs.setReference2(record.getReference2());
+		bs.setRegistryBank(rbank);
+		bs.setReliability(AonEnumUtils.enumValue(StatementReliability.class, record.getReliability()));
+		bs.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, record.getSecurityLevel()));
+		bs.setStatus(AonEnumUtils.enumValue(StatementStatus.class, record.getStatus()));
+		return bs;
 	}
 	
 	private static Date cleanDate(int day, int month, int year) {

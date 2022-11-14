@@ -6,7 +6,7 @@ import { AonSwitch } from '../../../components/aon-switch.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { Transactions } from '../../../services/transaction.js';
 import { Customer } from '../../../models/registry/Customer.js';
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomers } from '../../../services/registryService.js';
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } from '../../../services/registryService.js';
 import { AonCustomerList } from './aon-customer-list.js';
 import { getScopes } from '../../../services/documentalService.js';
 import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
@@ -275,17 +275,19 @@ export class AonCustomer extends AonReg {
 				value: "ENTERPRISE_NEW",
 				icon: MATERIAL_ICONS.OPEN_IN_NEW, 
 				fn:()=> {
-					this.getApplication().startLoading();
-					saveCompany({...this.registry, id:null})
-					.then((company)=>{
-						console.log("company", company);
-						this.saveRegistryRelationship(company);
-					})
-					.catch(err=>{
-						this.showError(err);
-					})
-					.finally(()=>{
-						this.getApplication().stopLoading();	
+					this.getApplication().confirmDialog(MSG.REGISTER, `Desea registrar la empresa ?`, () => {
+						this.getApplication().startLoading();
+						saveCompany({...this.registry, id:null})
+						.then((company)=>{
+							console.log("company", company);
+							this.saveRegistryRelationship(company);
+						})
+						.catch(err=>{
+							this.showError(err);
+						})
+						.finally(()=>{
+							this.getApplication().stopLoading();	
+						});
 					});
 				}
 			});
@@ -366,7 +368,9 @@ export class AonCustomer extends AonReg {
 
 	async getCompanies(){
 		let result = await getDomainCompanies({parentId: this.registry.getDomain().getParentId()});
-		return result.map( c=> ({...c, value: c.id}));
+
+		return result.filter(company => company && company.domain && company.domain.id!=this.registry.getDomain().getId())
+		.map( c=> ({...c, value: c.id}));
 	}
 
 	saveRegistryRelationship(company){

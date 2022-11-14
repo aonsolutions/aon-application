@@ -76,9 +76,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 
 	@Override
-	public void getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, AsyncCallback<List<NordigenBankStatement>> callback) {
+	public void getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, boolean online, AsyncCallback<List<NordigenBankStatement>> callback) {
 		AON.start();
-		fsa.getMovements(token, domainName, domain, user, nordigenBankAccount, endDate, new AsyncCallbackWrapper<>(callback));
+		fsa.getMovements(token, domainName, domain, user, nordigenBankAccount, endDate, online, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
