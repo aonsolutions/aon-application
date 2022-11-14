@@ -148,6 +148,15 @@ public class CustomersServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getStatusProperty().in(status));
 		}
 		
+		if(api.getData().opt("rrelationship") != null) {
+			boolean rrelationship = api.getData().optBoolean("rrelationship");
+			filter = filter.and(
+					rrelationship ? 
+					f.getRegistryRelationProperty().isNotNull() : 
+					f.getRegistryRelationProperty().isNull()
+			);
+		}
+		
 		if(api.getData().opt(IJsonNames.VALUE) != null) {
 			String value = api.getData().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getNameProperty().like("%" + value + "%")

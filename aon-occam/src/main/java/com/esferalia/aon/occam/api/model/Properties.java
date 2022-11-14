@@ -832,6 +832,8 @@ public interface Properties {
 		Property<Byte> getDeliveryValuatedProperty();
 		Property<Integer> getAccountProperty();
 		Property<Integer> getProjectTypeProperty();
+		
+		Property<Integer> getRegistryRelationProperty();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties{

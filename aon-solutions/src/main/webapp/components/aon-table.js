@@ -7,6 +7,7 @@ import { AonDialogMenu } from "./aon-dialog-menu.js";
 export class AonTable extends AonElement {
   columns;
   selected;
+  selectedAll;
 
   THEADER;
   TBODY;
@@ -85,6 +86,7 @@ export class AonTable extends AonElement {
     this.THEADER = this.id + "TableHeader";
     this.TBODY = this.id + "TableBody";
     this.selected = [];
+    this.selectedAll = false;
   }
 
 
@@ -108,14 +110,19 @@ export class AonTable extends AonElement {
       let th = this.createElement(TAG.TH);
       th.id = idCheckBox;
       th.style.width = "5%";
+      header.appendChild(th);
+      
       let aonCheckbox = new AonCheckbox();
       aonCheckbox.id = "aonTableAllSelection";
       th.appendChild(aonCheckbox);
-      header.appendChild(th);
-      let ch = this.getElement("aonTableAllSelection");
-      ch.addEventListener(EVENT.CHANGE, () => {
-        document.querySelectorAll("aon-checkbox").forEach((item, i) => {
-          if (item.value != ch.value) {
+
+      aonCheckbox.addEventListener(EVENT.CHANGE, () => {
+        const checked = aonCheckbox.isChecked();
+        this.selectedAll = checked;
+
+        document.querySelectorAll("aon-checkbox")
+        .forEach((item) => {
+          if (item.isChecked() != checked) {
             let it = this.getElement(item.id + "Input");
             it.click();
           }
@@ -160,6 +167,7 @@ export class AonTable extends AonElement {
     let body = this.getElement(this.getId() + "TableBody");
     if (!body) return true;
     let tr = this.createElement(TAG.TR);
+    // tr.id = Math.random().toString(36).substring(7);
     tr.className ="aonTableTr";
     tr.style.cursor = "pointer";
     
@@ -173,12 +181,11 @@ export class AonTable extends AonElement {
       let tdCheckBox = this.createElement(TAG.TD);
       tdCheckBox.style.width = "5%";
       let aonCheckbox = new AonCheckbox();
-      aonCheckbox.id = "aaa"+body.children.length;
+      aonCheckbox.id = checkBoxId;
       tdCheckBox.appendChild(aonCheckbox);
       tr.appendChild(tdCheckBox);
-      let checkbox = this.getElement(`aaa${body.children.length}`);
-      checkbox.addEventListener(EVENT.CHANGE, () => {
-        if (checkbox.getValue()) {
+      aonCheckbox.addEventListener(EVENT.CHANGE, () => {
+        if (aonCheckbox.isChecked()) {
           this.selected.push(value);
           tr.style.backgroundColor = "aliceblue";
         } else {
@@ -198,6 +205,7 @@ export class AonTable extends AonElement {
       td.style.width = item.width;
 
       let id = item.id;
+      
       if ("option" === id && value[id]) {
         let aonIconB = new AonIconButton();
         aonIconB.id = this.getId()+"IconOption";
@@ -305,7 +313,7 @@ export class AonTable extends AonElement {
     let tr = this.createElement(TAG.TR);
     tr.style.textAlign = 'center';
     body.appendChild(tr);
-   
+
     let td = this.createElement(TAG.TD);
     td.innerHTML = message;
     td.style.fontWeight = 'bold';
@@ -338,7 +346,7 @@ export class AonTable extends AonElement {
       tr.style.top       = '-14px';
       tr.style.border    = 'none';
       body.appendChild(tr);
-     
+
       let load = this.createElement(TAG.DIV);
       load.classList.add(CSS.AON_ICON_CONTAINER);
       load.style.right     = "0";

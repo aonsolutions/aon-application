@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.PayMethodJSON;
 import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
@@ -18,7 +19,9 @@ import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
+import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
+import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
@@ -176,6 +179,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 					RegistrySegmentFilter filter  = f -> f.getRegistryProperty().eq(registryId);
 					object.put(rai.name().toLowerCase(),
 						RegistrySegmentJSON.toJSON(AON.getRegistrySegmentStream(api.getDomain(), api.getUser(), filter))
+					);
+				}
+				
+				if(RegistryAdditionalInfo.RRELATIONSHIP.equals(rai)) {
+					RRelationshipFilter filter  = f -> f.getRegistryProperty().eq(registryId).and(f.getRelationshipProperty().eq(-1));
+					object.put(rai.name().toLowerCase(),
+						RegistryRelationshipJSON.toJSON(AON_SOLUTIONS.getRegistryRelationshipStream(api.getDomain(), api.getUser(), filter))
 					);
 				}
 			});

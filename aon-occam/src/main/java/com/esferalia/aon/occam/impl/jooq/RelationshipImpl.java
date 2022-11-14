@@ -28,8 +28,8 @@ public class RelationshipImpl implements IRelationship{
 	}
 
 	@Override
-	public void deletetRegistryRelationship(AONContext ctx, Integer id) {
-		ctx.getDslContext().transaction(configuration -> RegistryRelationshipDAO.delete(ctx, id));
+	public void deletetRegistryRelationship(AONContext ctx, RRelationshipFilter filter) {
+		ctx.getDslContext().transaction(configuration -> RegistryRelationshipDAO.delete(ctx, filter));
 	}
 
 }
