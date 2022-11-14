@@ -609,6 +609,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 			showAgreementContainer();
 			selectAgreementTab();
 		});
+		
 	}
 	
 	public void addEditionOptions(EditionListener2 listener) {

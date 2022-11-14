@@ -806,10 +806,14 @@ public abstract class AgreementPreview extends Composite {
 	private String getExtraPeriod(AgreementExtra extra) {
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return " (Anual)";
 		
-		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			return endMonth - startMonth > 6 ? " (Anual)" : " (Semestral)";
+		} catch (Exception e) {
+			return "Revisar esta extra!!";
+		}
 		
-		return endMonth - startMonth > 6 ? " (Anual)" : " (Semestral)";
 	}
 
 	private String getExtraTitle(Payment payment) {
