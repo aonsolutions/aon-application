@@ -292,6 +292,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	private Set<Level> levels;
 	private Map<Date, Set<String>> variables;
 	private Map<Integer, Set<String>> categories;
+	private Map<Integer, Set<String>> contracts;
 	private Map<Integer, Set<LevelData>> levelDatas;
 	
 	private Set<Payment> payments;
@@ -467,6 +468,14 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		if(null == levelCategories) levelCategories = new HashSet<>();
 		levelCategories.add(category);
 		this.categories.put(levelId, levelCategories);
+	}
+	
+	public Map<Integer, Set<String>> getContractsMap() {
+		return contracts != null ? contracts : new HashMap<Integer, Set<String>>();
+	}
+
+	public void setContractsMap(Map<Integer, Set<String>> contracts) {
+		this.contracts = contracts;
 	}
 	
 	public Map<Integer, Set<LevelData>> getLevelDatasMap() {

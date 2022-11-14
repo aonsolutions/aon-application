@@ -250,6 +250,9 @@ public abstract class ContractOtherData extends ResizeComposite {
 	TextBox timeDistributionTempTB;
 	
 	@UiField
+	Button complementaryHoursTempB;
+	
+	@UiField
 	TextBox endContractTempTB;
 	
 	@UiField
@@ -991,6 +994,17 @@ public abstract class ContractOtherData extends ResizeComposite {
 		setContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB", value);
 	}
 	
+	@UiHandler("complementaryHoursTempB")
+	void onComplementaryHoursTempBClick(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(complementaryHoursTempB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(complementaryHoursTempB, value);
+		if(Boolean.TRUE.equals(value))
+			setContractOtherData("T_COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_YES");
+		else
+			setContractOtherData("T_COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_NO");
+	}
+	
 	@UiHandler("endContractTempTB")
 	void onEndContractTempTBChange(ValueChangeEvent<String> event) {
 		String value = endContractTempTB.getValue();
@@ -1627,6 +1641,7 @@ public abstract class ContractOtherData extends ResizeComposite {
 		this.endJourneyTCTempTB.setValue("");
 		this.lowJourneyTempTB.setValue("");
 		this.timeDistributionTempTB.setValue("");
+		getEnableDisableButton(this.complementaryHoursTempB, false);
 		this.endContractTempTB.setValue("");
 		this.trialPeriodTempTB.setValue("");
 		getEnableDisableButton(this.permitedHighDurationTempB, false);
@@ -1984,6 +1999,7 @@ public abstract class ContractOtherData extends ResizeComposite {
 		endJourneyTCTempTB.setValue(getContractOtherData("T_FULL_TIME_END_TIME"));
 		lowJourneyTempTB.setValue(getContractOtherData("T_PARTIALLY_TIME_JOB_LOWER_THAN"));
 		timeDistributionTempTB.setValue(getContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB"));
+		getEnableDisableButton(complementaryHoursTempB, getContractOtherDataCB("T_COMPLEMENTARY_HOURS"));
 		endContractTempTB.setValue(getContractOtherData("T_END_DATE_TEXT"));
 		trialPeriodTempTB.setValue(getContractOtherData("T_TRIAL_DURATION"));
 		getEnableDisableButton(permitedHighDurationTempB, getContractOtherDataCB("T_GREATER_DURATION_AGREEMENT_COL"));

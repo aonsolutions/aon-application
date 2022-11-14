@@ -3674,10 +3674,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ------------------------------------------------ Agreement Tab (New)
 	
 	@Override
-	public AgreementInfo getAgreementInfo(String domainName, Integer agreementId) throws IllegalArgumentException {
+	public AgreementInfo getAgreementInfo(String domainName, Integer agreementId, boolean withContracts) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			return JooqAgreementTab.getAgreementInfo(connection, agreementId, parentDomainId);
+			return JooqAgreementTab.getAgreementInfo(connection, agreementId, withContracts, domainId, parentDomainId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);

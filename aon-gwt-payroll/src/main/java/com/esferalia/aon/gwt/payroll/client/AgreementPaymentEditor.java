@@ -246,7 +246,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			
 		}
 		
-		if(null != associatedExtra) {
+		if(null != associatedExtra && !AonStringUtils.equalsIgnoreCase(extraType.getSelectedValue(), "Prorrateada")) {
 			String startMonth = associatedExtra.getStartDate();
 			if(AonStringUtils.isNotBlank(startMonth) && AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
 			if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
@@ -868,6 +868,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				associatedPayment.setMonth(month);
 			} else
 				associatedPayment.setMonth(null);
+			
 		} else if(!AonStringUtils.isBlank(extraAssociatedValue)) {
 			if(null == associatedExtra.getId()) {
 				Random rand = new Random();
@@ -876,13 +877,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			}
 			
 			String extraTypeValue = extraType.getSelectedValue();
-			if(null == associatedExtra.getAgreementPayment()) {
-				int extraAssociatedId = Integer.parseInt(extraAssociated.getSelectedValue());
-				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> paymentIt.getId().equals(extraAssociatedId)).findFirst();
-				
-				associatedExtra.setAgreementPayment(paymentAux.isPresent() ? paymentAux.get().getId() : null);
-			}
 			associatedExtra.setDeleted(AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada"));
+			
 			if(!associatedExtra.isDeleted()) {
 				String startMonth = extraStartDateMonthAssociated.getSelectedValue();
 				if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
@@ -894,6 +890,23 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
 				associatedExtra.setEndDate(endMonth + extraEndDateYearAssociated.getSelectedValue());
 				associatedExtra.setIssueDate(extraIssueDateAssociated.getValue());
+			}
+			
+			if(null == associatedExtra.getAgreementPayment()) {
+				int extraAssociatedId = Integer.parseInt(extraAssociated.getSelectedValue());
+				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> paymentIt.getId().equals(extraAssociatedId)).findFirst();
+				
+				if(paymentAux.isPresent()) {
+					associatedExtra.setAgreementPayment(paymentAux.isPresent() ? paymentAux.get().getId() : null);
+					
+					if(!AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada")) {
+						String issueDate = extraIssueDateAssociated.getValue();
+						Short month = Short.parseShort(issueDate.split("/")[1]);
+						month--;
+						paymentAux.get().setMonth(month);
+					} else
+						paymentAux.get().setMonth(null);
+				}
 			}
 		}
 	}

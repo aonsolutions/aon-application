@@ -992,9 +992,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	// ------------------------------------------------ Agreement Tab (New)
 
 	@Override
-	public void getAgreementInfo(String domainName, Integer agreementId, AsyncCallback<AgreementInfo> callback) throws IllegalArgumentException {
+	public void getAgreementInfo(String domainName, Integer agreementId, boolean withContracts, AsyncCallback<AgreementInfo> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getAgreementInfo(domainName, agreementId, callback);
+		enterprisesServiceAsync.getAgreementInfo(domainName, agreementId, withContracts, callback);
 	}
 
 	@Override

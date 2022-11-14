@@ -365,7 +365,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	// --------------------------- Agreements Tabs (New)
 	
-	AgreementInfo getAgreementInfo(String currentDomainName, Integer agreementId) throws IllegalArgumentException;
+	AgreementInfo getAgreementInfo(String currentDomainName, Integer agreementId, boolean withContracts);
 
 	void setAgreementInfo(String currentDomainName, AgreementInfo agreementInfo) throws IllegalArgumentException;
 

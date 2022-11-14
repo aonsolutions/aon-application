@@ -725,16 +725,20 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	private String getExtraPeriod(AgreementExtra extra) {
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
 		
-		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
 		
-		switch (endMonth - startMonth) {
-		case 11:
-			return "A";
-		case 5:
-			return "S";
-		default:
-			return (endMonth - startMonth) + "";
+			switch (endMonth - startMonth) {
+			case 11:
+				return "A";
+			case 5:
+				return "S";
+			default:
+				return (endMonth - startMonth) + "";
+			}
+		} catch (Exception e) {
+			return "Revisar esta extra!!";
 		}
 	}
 	
@@ -755,16 +759,20 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	private String getExtraPeriodTitle(AgreementExtra extra) {
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
 		
-		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
-		
-		switch (endMonth - startMonth) {
-		case 11:
-			return "Anual";
-		case 5:
-			return "Semestral";
-		default:
-			return (endMonth - startMonth) + " meses";
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+			case 11:
+				return "Anual";
+			case 5:
+				return "Semestral";
+			default:
+				return (endMonth - startMonth) + " meses";
+			}
+		} catch (Exception e) {
+			return "Revisar esta extra!!";
 		}
 	}
 
