@@ -96,7 +96,6 @@ public class CustomerDAO {
 		}
 		
 		public static Customer buildCustomer(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
-			System.out.println(r.getValue(RRELATIONSHIP.ID));
 			return new Customer()
 					.copy(RegistryFiller.build(r, registry))
 					.setAccount(getValue(r, CUSTOMER.ACCOUNT))
@@ -124,6 +123,7 @@ public class CustomerDAO {
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
+	            .select(RRELATIONSHIP.ID)
 	        .from(CUSTOMER)
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))

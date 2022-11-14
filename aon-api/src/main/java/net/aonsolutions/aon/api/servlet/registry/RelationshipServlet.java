@@ -164,57 +164,62 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		 List<Customer> customers = CustomerJSON.fromJSON(params.optJSONArray("customers"));
 		 
 		 if(!customers.isEmpty()) {
-			 
-			 Integer[] parentIds = customers.stream().map(c-> c.getDomain().getParentId()).toArray(Integer[]::new);
-			 String[] documents  = customers.stream().map(Customer::getDocument).toArray(String[]::new);
-			 
-			 List<Company> companyAll = AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-					f-> f.getDomainParentProperty().in(parentIds)
-					.and(f.getDocumentProperty().in(documents))
-			).collect(Collectors.toList());
-			 
-			 for(Customer customer : customers) {
-				 JSONObject json = new JSONObject();
-				 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
-				 json.put("success", false);
-				 
-				 if(isAdd) {
-					 
-					List<Company> companies = companyAll.stream().filter(c-> 
-						c.getDocument().equals(customer.getDocument()) && 
-						c.getDomain().getParentId().equals(customer.getDomain().getParentId())
-					).collect(Collectors.toList());
-					
-					if(companies.isEmpty()) {
-						 json.put(IJsonNames.MESSAGE, "No existe empresa");
-					} else if(companies.size()>1) {
-						 json.put(IJsonNames.MESSAGE, "Existe mas de una empresa");
-						 json.put("companies", CompanyJSON.toJSON(companies));
-					} else if(companies.size()==1) {
-						
-						RegistryRelationship rrelationship = new RegistryRelationship()
-						.setRegistry(customer.getId())
-						.setRelatedRegistry(companies.get(0).getId())
-						.setComments(companies.get(0).getDomain().getName());
-						
-						 saveRelationship(api, rrelationship);
-						 
-						 json.put("success", true);
-					}
-
-				 } else {
-					 
-					 AON_SOLUTIONS.deleteRegistryRelationship(api.getDomain(), api.getUser(), f-> 
-						f.getDomainProperty().eq(api.getDomain().getId())
-						.and(f.getRegistryProperty().eq(customer.getId()))
-						.and(f.getRelationshipProperty().eq(-1))
-					);
-					 
-					json.put("success", true);
-				 }
 			
-				 arr.put(json); 
-			 } 
+			 Integer[] registryId = customers.stream().map(Customer::getId).toArray(Integer[]::new);
+			 
+			 if(isAdd) {
+				 Integer[] parentIds = customers.stream().map(c-> c.getDomain().getParentId()).toArray(Integer[]::new);
+				 String[] documents  = customers.stream().map(Customer::getDocument).toArray(String[]::new);
+				 
+				 List<Company> companyAll = AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+						f-> f.getDomainParentProperty().in(parentIds)
+						.and(f.getDocumentProperty().in(documents))
+				).collect(Collectors.toList());
+				 
+				 for(Customer customer : customers) {
+					 JSONObject json = new JSONObject();
+					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
+					 json.put("success", false);
+						 
+						List<Company> companies = companyAll.stream().filter(c-> 
+							c.getDocument().equals(customer.getDocument()) && 
+							c.getDomain().getParentId().equals(customer.getDomain().getParentId())
+						).collect(Collectors.toList());
+						
+						if(companies.isEmpty()) {
+							 json.put(IJsonNames.MESSAGE, "No existe empresa");
+						} else if(companies.size()>1) {
+							 json.put(IJsonNames.MESSAGE, "Existe mas de una empresa");
+							 json.put("companies", CompanyJSON.toJSON(companies));
+						} else if(companies.size()==1) {
+							
+							RegistryRelationship rrelationship = new RegistryRelationship()
+							.setDomain(api.getDomain())
+							.setRegistry(customer.getId())
+							.setRelatedRegistry(companies.get(0).getId())
+							.setComments(companies.get(0).getDomain().getName());
+							
+							 saveRelationship(api, rrelationship);
+							 
+							 json.put(IJsonNames.MESSAGE, "Empresa vinculada");
+							 json.put("success", true);
+						}
+				
+					 arr.put(json); 
+				 } 
+			 } else {
+				AON_SOLUTIONS.deleteRegistryRelationship(api.getDomain(), api.getUser(), f-> 
+					f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().in(registryId))
+					.and(f.getRelationshipProperty().eq(-1))
+				);
+				customers.forEach(customer->{
+					 JSONObject json = new JSONObject();
+					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
+					 json.put("success", true);
+					 arr.put(json); 
+				});
+			 }
 		 }
 
 		return arr;

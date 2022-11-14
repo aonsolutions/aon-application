@@ -151,9 +151,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 		if(api.getData().opt("rrelationship") != null) {
 			boolean rrelationship = api.getData().optBoolean("rrelationship");
 			filter = filter.and(
-					rrelationship ? 
-					f.getRegistryRelationProperty().isNotNull() : 
-					f.getRegistryRelationProperty().isNull()
+				rrelationship ? 
+				f.getRegistryRelationProperty().isNotNull() : 
+				f.getRegistryRelationProperty().isNull()
 			);
 		}
 		
