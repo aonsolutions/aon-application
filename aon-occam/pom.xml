@@ -117,6 +117,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ql</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.watson</artifactId>
 			<version>${project.version}</version>
@@ -235,19 +241,22 @@
 			<version>3.17</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.13</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- 
+
+<!--
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 			<version>2.4.2</version>
 			<scope>test</scope>
 		</dependency>
+
         <dependency>
             <groupId>com.sun.activation</groupId>
             <artifactId>jakarta.activation</artifactId>
