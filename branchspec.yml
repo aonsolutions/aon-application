@@ -11,44 +11,43 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+      #- echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
+      #- $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      #- REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
   build:
     commands:
       - echo Entered the build phase...
       - echo Building $TAG version...
       - echo Build started on `date`
       - mvn --fail-fast -DbuildNumber=666 -Dgwt.working=true clean install
-      #- mvn --fail-fast -DbuildNumber=666 -Dgwt.working=true -DskipTests=true clean install
-      - echo Building $TAG Docker images...
-      - docker build --no-cache -t aonsolutions/aon-application:$TAG .
-      - docker build --no-cache -t aonsolutions/aon-db-up2date:$TAG ./aon-db-up2date
-      - docker build --no-cache -t aonsolutions/aon-solutions:$TAG -f ./aon-solutions/Dockerfile .
-      - docker tag aonsolutions/aon-db-up2date:$TAG $REPOSITORY_URI/aon-db-up2date:$TAG
-      - docker tag aonsolutions/aon-application:$TAG $REPOSITORY_URI/aon-application:$TAG
-      - docker tag aonsolutions/aon-solutions:$TAG $REPOSITORY_URI/aon-solutions:$TAG
+      #- echo Building $TAG Docker images...
+      #- docker build --no-cache -t aonsolutions/aon-application:$TAG .
+      #- docker build --no-cache -t aonsolutions/aon-db-up2date:$TAG ./aon-db-up2date
+      #- docker build --no-cache -t aonsolutions/aon-solutions:$TAG -f ./aon-solutions/Dockerfile .
+      #- docker tag aonsolutions/aon-db-up2date:$TAG $REPOSITORY_URI/aon-db-up2date:$TAG
+      #- docker tag aonsolutions/aon-application:$TAG $REPOSITORY_URI/aon-application:$TAG
+      #- docker tag aonsolutions/aon-solutions:$TAG $REPOSITORY_URI/aon-solutions:$TAG
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
-  post_build:
-    commands:
-      - echo Entered the post_build phase...
-      - echo Build completed on `date`
-      - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI/aon-db-up2date:$TAG
-      - docker push $REPOSITORY_URI/aon-application:$TAG
-      - docker push $REPOSITORY_URI/aon-solutions:$TAG
-      - |
-        printf '[
-        {"name":"SNAPSH0T","imageUri":"%s/aon-application:%s"}
-        ]' $REPOSITORY_URI $TAG > snapshotimgdef.json
-      - cat snapshotimgdef.json
-      - |
-        printf '[
-        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
-        ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
-      - cat snapshotsolutionsimgdef.json
-artifacts:
-  files:
-    - snapshotimgdef.json
-    - snapshotsolutionsimgdef.json
+  # post_build:
+    # commands:
+      #- echo Entered the post_build phase...
+      #- echo Build completed on `date`
+      #- echo Pushing the Docker images...
+      #- docker push $REPOSITORY_URI/aon-db-up2date:$TAG
+      #- docker push $REPOSITORY_URI/aon-application:$TAG
+      #- docker push $REPOSITORY_URI/aon-solutions:$TAG
+      #- |
+      #  printf '[
+      #  {"name":"SNAPSH0T","imageUri":"%s/aon-application:%s"}
+      #  ]' $REPOSITORY_URI $TAG > snapshotimgdef.json
+      #- cat snapshotimgdef.json
+      #- |
+      #  printf '[
+      #  {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+      #  ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
+      #- cat snapshotsolutionsimgdef.json
+# artifacts:
+  # files:
+    # - snapshotimgdef.json
+    # - snapshotsolutionsimgdef.json
     # - location

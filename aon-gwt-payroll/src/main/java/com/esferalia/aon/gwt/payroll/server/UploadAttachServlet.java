@@ -20,11 +20,11 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.doc.DOC;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -209,11 +209,11 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		// Get currentUser
 		Integer attachId = Integer.parseInt(req.getParameter("attachId"));
 		
-		try ( CloseableAONContext aonCtx = AONContext.getAONContext(domainName, login) ) {
-			DOC.getContratDoc(aonCtx.getDslContext(), attachId)
+		try {
+			DOC.getContratDoc(domainName, login, p -> p.getIdProperty().eq(attachId))
 			.ifPresent( doc -> {
 				try {
-					resp.sendRedirect(doc.getDownloadURL( "attachment; filename=\"" + doc.getDescription() + "." + doc.getMimeType(MimeType.class).getExtension() +"\";").toString());
+					resp.sendRedirect(doc.getDownloadURL( "attachment; filename=\"" + doc.getDescription() + "." + doc.getMimeType().getExtension() +"\";").toString());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -166,12 +166,14 @@ class PECListener  implements IdcParserListener {
 		{
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
-			put("16",  String.format(Locale.ROOT,"MIN(%%s, MIN(%%2$.2f, (%s == %s) ? %%2$.2f : ROUND(%%2$.2f/30.00, 2)*%s))", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
+			put("16",  String.format(Locale.ROOT,"TOTAL_BONF_SEPE=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE : 0.00); BONF_SEPE=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_BONF_SEPE, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_BONF_SEPE', TOTAL_BONF_SEPE + BONF_SEPE ) ; BONF_SEPE", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
+			//put("16",  String.format(Locale.ROOT,"MIN(%%s, MIN(%%2$.2f, (%s == %s) ? %%2$.2f : ROUND(%%2$.2f/30.00, 2)*%s))", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
 			put("15", String.format(Locale.ROOT,"(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
 			put("37", "( %s ) * %.2f / 100.00");
 			put("41", "( %s ) * %.2f / 100.00");
 
-			put("42",  "MIN(%s, %.2f)"); 																	// 
+			put("42",  String.format(Locale.ROOT,"TOTAL_RED_CUOTA_SS=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_RED_CUOTA_SS : 0.00); RED_CUOTA_SS=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_RED_CUOTA_SS, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_RED_CUOTA_SS', TOTAL_RED_CUOTA_SS + RED_CUOTA_SS ) ; RED_CUOTA_SS", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
+			//put("42",  "MIN(%s, %.2f)"); 																	// 
 
 			put("51",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
 
@@ -182,6 +184,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_DESCRIPTION_MAP = new HashMap<String, String>() {
 		{
 			put("16", "%s (%.2f)"); 															// 
+			put("42", "%s (%.2f)"); 															// 
 		}
 	};
 	
