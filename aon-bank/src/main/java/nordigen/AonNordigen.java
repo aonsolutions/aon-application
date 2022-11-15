@@ -658,9 +658,9 @@ public class AonNordigen {
 				stList.addAll(pendingStatements);
 				stList.addAll(bookedStatements);
 				
-				NordigenAccountBalance realBalance = filterReal(account.getBalances());
-				if (realBalance != null && realBalance.getBalanceAmount() != null) {
-					double amount = realBalance.getBalanceAmount().getAmount();
+				NordigenAccountBalance consBalance = filterConsolidado(account.getBalances());
+				if (consBalance != null && consBalance.getBalanceAmount() != null) {
+					double amount = consBalance.getBalanceAmount().getAmount();
 					for (NordigenBankStatement statement : stList) {
 						statement.setCurrentBalance(amount);
 						amount -= statement.getAmount() * (statement.isPayment() ? (-1) : 1);
