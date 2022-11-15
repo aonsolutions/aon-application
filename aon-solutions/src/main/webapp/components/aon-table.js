@@ -278,9 +278,13 @@ export class AonTable extends AonElement {
 
   removeColumns() {
     this.columns = [];
-    this.selected = [];
+    this.clearSelected();
     let body = this.getElement(this.getId() + "TableHeader");
     if (body) body.innerHTML = "";
+  }
+
+  clearSelected(){
+    this.selected = [];
   }
 
   getId() {

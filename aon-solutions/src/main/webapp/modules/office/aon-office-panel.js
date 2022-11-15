@@ -169,7 +169,6 @@ export class AonOfficePanel extends AonElement {
             this.showMessage();
         }
     }
-
     
 	onSaveRelationByCustomers(add){
         const aonView = this.getElement(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST);
@@ -180,10 +179,17 @@ export class AonOfficePanel extends AonElement {
             saveRelationShip({ add, customers: this.getCustomerSelected() })
             .then((resp)=> {
                 if(resp.length){
-                    alert(JSON.stringify(resp));
+                    this.openDialogRelationship(resp);
+                } else {
+                    this.showMessage(); 
                 }
-                this.showMessage();
-                aonView.setFilter({...this.getFilterCustomers(), page:1 })
+        
+                const table = aonView.TABLE;
+                if(table){
+                    table.clearSelected();
+                    aonView.setFilter({...this.getFilterCustomers(), page:1 });
+                    this.setCustomerSelected([]);
+                }
             })
             .catch((err)=> this.showError(err))
             .finally(()=>{
@@ -192,6 +198,9 @@ export class AonOfficePanel extends AonElement {
         }
 	}
 
+    openDialogRelationship(data){
+        OfficeUtils.builDialogRelationship(this, data)
+    }
 
     async getProjectTypes(){
         return this.projectTypes;
