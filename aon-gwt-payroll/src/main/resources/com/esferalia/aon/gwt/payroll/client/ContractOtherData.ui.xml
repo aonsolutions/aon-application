@@ -611,6 +611,14 @@
 						</tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas complementarias</g:Label>
+							</td>
+							<td>
+							    <g:Button ui:field="complementaryHoursTempB"></g:Button>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
 								<g:Label styleName='{style.firstColumnTextStyle}'>Texto fin de contrato</g:Label>
 							</td>
 							<td>

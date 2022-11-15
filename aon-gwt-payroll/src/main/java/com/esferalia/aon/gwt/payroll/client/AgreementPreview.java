@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -207,6 +208,7 @@ public abstract class AgreementPreview extends Composite {
 	private AonToolbarButton agreementInfoButton;
 	
 	private boolean hasChange = false;
+	private boolean workplaceView = false;
 	private AonToolbarSmallButton saveBtn;
 	
 	private ListBox tc2ListBox;
@@ -523,7 +525,9 @@ public abstract class AgreementPreview extends Composite {
 		for(Level levelIT : agreement.getLevels()) {
 			if(levelIT.getId() == 0) continue;
 			Set<String> levelCategories = agreement.getCategoriesMap().get(levelIT.getId());
-			if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(category, levelIT.getId()));
+			Set<String> levelContracts = agreement.getContractsMap().get(levelIT.getId());
+			if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getDescription() + " - " + levelContract, levelIT.getId()));
+			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(category, levelIT.getId()));
 			else if(levelCategories.size() == 1) {
 				String category = (String)levelCategories.toArray()[0];
 				RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
@@ -543,12 +547,20 @@ public abstract class AgreementPreview extends Composite {
 
 	private void salaryTableWidth() {
 		salaryGrid.getColumnFormatter().setWidth(0, "120px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 45) + "px");
 	}
 	
 	private String getLevelCategories(Level level) {
 		StringBuilder categoriesBuilder = new StringBuilder();
-		if(agreement.getCategoriesMap().get(level.getId()).size() > 1) {
+		Set<String> levelContracts = agreement.getContractsMap().get(level.getId());
+		if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) {
+			for(String levelContract : levelContracts){
+				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
+					categoriesBuilder.append(levelContract);
+				else
+					categoriesBuilder.append(", " + levelContract);
+			}
+			return level.getDescription() + " - " + categoriesBuilder.toString();
+		} else if(agreement.getCategoriesMap().get(level.getId()).size() > 1) {
 			for(String category : agreement.getCategoriesMap().get(level.getId())){
 				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
 					categoriesBuilder.append(category);
@@ -568,7 +580,27 @@ public abstract class AgreementPreview extends Composite {
 	
 	private String getLevelCategoriesTitle(Level level) {
 		StringBuilder categoriesBuilder = new StringBuilder();
-		if(agreement.getCategoriesMap().get(level.getId()).size() > 1) {
+		Set<String> levelContracts = agreement.getContractsMap().get(level.getId());
+		if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) {
+			
+			StringBuilder contractsBuilder = new StringBuilder();
+			for(String levelContract : levelContracts){
+				if(AonStringUtils.isBlank(contractsBuilder.toString()))
+					contractsBuilder.append(levelContract);
+				else
+					contractsBuilder.append(", " + levelContract);
+			}
+			
+			for(String category : agreement.getCategoriesMap().get(level.getId())){
+				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
+					categoriesBuilder.append(category);
+				else
+					categoriesBuilder.append(", " + category);
+			}
+			
+			return  "Nivel : " + level.getDescription() + "\nContratos : " + contractsBuilder.toString() + "\nCategorias : " + categoriesBuilder.toString();
+			
+		} if(agreement.getCategoriesMap().get(level.getId()).size() > 1) {
 			for(String category : agreement.getCategoriesMap().get(level.getId())){
 				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
 					categoriesBuilder.append(category);
@@ -671,7 +703,6 @@ public abstract class AgreementPreview extends Composite {
 		levelGrid.setWidth("100%");
 		levelGrid.getColumnFormatter().setWidth(0, "20%");
 		levelGrid.getColumnFormatter().setWidth(1, "80%");
-		levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 25) + "px");
 	}
 	
 	// ------------------------------------------ paymentTable
@@ -755,7 +786,6 @@ public abstract class AgreementPreview extends Composite {
 		paymentGrid.getColumnFormatter().setWidth(1, "40%");
 		paymentGrid.getColumnFormatter().setWidth(2, "10%");
 		paymentGrid.getColumnFormatter().setWidth(3, "40%");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 25) + "px");
 	}
 
 	private String getExtraMessage(Payment payment) {
@@ -776,10 +806,14 @@ public abstract class AgreementPreview extends Composite {
 	private String getExtraPeriod(AgreementExtra extra) {
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return " (Anual)";
 		
-		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			return endMonth - startMonth > 6 ? " (Anual)" : " (Semestral)";
+		} catch (Exception e) {
+			return "Revisar esta extra!!";
+		}
 		
-		return endMonth - startMonth > 6 ? " (Anual)" : " (Semestral)";
 	}
 
 	private String getExtraTitle(Payment payment) {
@@ -806,10 +840,16 @@ public abstract class AgreementPreview extends Composite {
 	// ------------------------------------------ tables widht
 	
 	public void setTablesWidth() {
-		levelScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-		salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
-		salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-		paymentScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+		Scheduler.get().scheduleDeferred(() -> {
+			levelScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
+			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			paymentScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			
+			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 20) + "px");
+			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 40) + "px");
+			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 20) + "px");
+		});
 	}
 	
 	public void setTablesWidthCollapseMenu() {
@@ -1178,12 +1218,13 @@ public abstract class AgreementPreview extends Composite {
 	
 	// ------------------------------------------ setSelectedLevel
 	
-	public void setSelectedLevel(Integer levelId) {
+	public void setSelectedLevel(Integer levelId, String toolbarTitle) {
 		blockElements();
 		hideToolbarButtons();
 		hideLevelDiscPanel();
 		filterLevel(levelId);
-		calcDiscPanelHeights();
+		toolbar.setTitle(toolbarTitle);
+		calcDiscPanelHeightsEmployee();
 		createAgreementGoToBtn();
 	}
 
@@ -1197,7 +1238,9 @@ public abstract class AgreementPreview extends Composite {
 		blockElements();
 		hideToolbarButtons();
 		hideLevelDiscPanel();
-		calcDiscPanelHeights();
+		workplaceView = true;
+		createSalaryTable();
+		calcDiscPanelHeightsPayroll();
 		createAgreementGoToBtn();
 	}
 	
@@ -1219,7 +1262,29 @@ public abstract class AgreementPreview extends Composite {
 		levelDiscPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
-	private void calcDiscPanelHeights() {
+	private void calcDiscPanelHeightsEmployee() {
+		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
+		
+		salaryDiscPanelContent.setHeight(salaryHeight + "px");
+		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 45) + "px");
+		
+		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
+		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 340 - salaryHeight);
+		
+		paymentDiscPanelContent.setHeight(paymentHeight + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 25) + "px");
+		
+		salaryOpenHandler.removeHandler();
+		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
+		
+		paymentOpenHandler.removeHandler();
+		paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
+		
+		salaryDiscPanel.setOpen(true);
+		paymentDiscPanel.setOpen(true);
+	}
+	
+	private void calcDiscPanelHeightsPayroll() {
 		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
 		salaryHeight = (Window.getClientHeight() - 340) > salaryHeight ? salaryHeight : (Window.getClientHeight() - 340);
 		
@@ -1237,7 +1302,7 @@ public abstract class AgreementPreview extends Composite {
 			salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 			
 			paymentOpenHandler.removeHandler();
-			paymentDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
+			paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
 			
 			salaryDiscPanel.setOpen(true);
 			paymentDiscPanel.setOpen(true);

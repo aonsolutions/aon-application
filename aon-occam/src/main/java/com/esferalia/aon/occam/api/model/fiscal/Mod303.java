@@ -31,6 +31,10 @@ public class Mod303 extends FiscalModel implements Serializable {
 				&& (isComplementary() || isReplacement()); 
 	}
 	
+	public boolean isDevReg() {
+		return getAmount(Mod303Key.CM_002) == 1;
+	}
+	
 	public boolean isManualDeclaration() {
 		return getAmount(Mod303Key.CM_000) == 1;
 	}
