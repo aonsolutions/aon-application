@@ -177,34 +177,38 @@ public class RelationshipServlet extends AonApiHttpServlet {
 				).collect(Collectors.toList());
 				 
 				 for(Customer customer : customers) {
+					
 					 JSONObject json = new JSONObject();
-					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
-					 json.put("success", false);
-						 
-						List<Company> companies = companyAll.stream().filter(c-> 
-							c.getDocument().equals(customer.getDocument()) && 
-							c.getDomain().getParentId().equals(customer.getDomain().getParentId())
-						).collect(Collectors.toList());
-						
-						if(companies.isEmpty()) {
-							 json.put(IJsonNames.MESSAGE, "No existe empresa");
-						} else if(companies.size()>1) {
-							 json.put(IJsonNames.MESSAGE, "Existe mas de una empresa");
-							 json.put("companies", CompanyJSON.toJSON(companies));
-						} else if(companies.size()==1) {
-							
-							RegistryRelationship rrelationship = new RegistryRelationship()
+					 String message = "";
+					 boolean success = false;
+
+					List<Company> companies = companyAll.stream().filter(c-> 
+						c.getDocument().equals(customer.getDocument()) && 
+						c.getDomain().getParentId().equals(customer.getDomain().getParentId())
+					).collect(Collectors.toList());
+					
+					if(companies.isEmpty()) {
+						 message = "No existe empresa.";
+					} else if(companies.size()>1) {
+						 message = "Existe mas de una empresa.";
+						 json.put("companies", CompanyJSON.toJSON(companies));
+					} else if(companies.size()==1) {
+					
+						 saveRelationship(api, 
+						 	new RegistryRelationship()
 							.setDomain(api.getDomain())
 							.setRegistry(customer.getId())
 							.setRelatedRegistry(companies.get(0).getId())
-							.setComments(companies.get(0).getDomain().getName());
-							
-							 saveRelationship(api, rrelationship);
-							 
-							 json.put(IJsonNames.MESSAGE, "Empresa vinculada");
-							 json.put("success", true);
-						}
-				
+							.setComments(companies.get(0).getDomain().getName())
+						 );
+						 
+						 success = true;
+						 message = "Empresa vinculada.";
+					 }
+					
+					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
+					 json.put(IJsonNames.MESSAGE, message);
+					 json.put("success", success);
 					 arr.put(json); 
 				 } 
 			 } else {
@@ -216,6 +220,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 				customers.forEach(customer->{
 					 JSONObject json = new JSONObject();
 					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
+					 json.put(IJsonNames.MESSAGE, "Empresa desvinculada");
 					 json.put("success", true);
 					 arr.put(json); 
 				});
