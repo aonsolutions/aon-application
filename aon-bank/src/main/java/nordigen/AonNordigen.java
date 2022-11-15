@@ -616,7 +616,8 @@ public class AonNordigen {
 					dateFrom = AonDateUtils.addDays(today, -days);		
 				}
 			}
-			if (!AonDateUtils.isSameDay(today, dateFrom)) {
+			
+			if (dateFrom != null && (AonDateUtils.isSameDay(today, dateFrom) || today.compareTo(dateFrom) >= 0)) {
 				List<NordigenBankStatement> stList = new LinkedList<>();
 				List<NordigenBankStatement> pendingStatements = new LinkedList<>();
 				List<NordigenBankStatement> bookedStatements = new LinkedList<>();
@@ -705,11 +706,11 @@ public class AonNordigen {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		Integer rbank = 139;
-		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4MDcyMTA5LCJqdGkiOiJiNDU5MjEzMGVkM2I0M2Q1OTNiYjkxNGExOGQ3M2M2NiIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.DqLdxWEaJvVRD2RNC680_JhtUuiqHtxfjIeeHJhu_mA";
+		Integer rbank = 6740;
+		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4NTI3ODIwLCJqdGkiOiI5NjBiZDY3ZWYyMGE0MzhmOTZkMTNlODI3YWY5ZDYyMyIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.Ctdo0hiMv4auBvbegqy6avUhm-4X9P91CvavMJ_EkgQ";
 		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
 		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
-		String reqId = "d5ef489a-ab1c-403c-aa91-df4e2aaf28e5";
+		String reqId = "4a7c2d29-6ab0-4afe-99bd-84c7ad7f76d7";
 		insertNewRequisitionId(domain, "", getRequisition(token, reqId), rbank);
 //		List<NordigenAccountTransaction> newTr = getNewTransactions(token, domain, "", rbank);
 //		List<NordigenBankAccount> allAccounts = getAllAccounts(token, domain, "");

@@ -10,6 +10,7 @@ public class NordigenAccountBalance implements Serializable {
 	private NORDIGEN_BALANCE_TYPE balanceType;
 	private NordigenAccountAmount balanceAmount;
 	private Date referenceDate;
+	private String originalJson;
 	
 	public NordigenAccountBalance() {
 		super();
@@ -44,6 +45,15 @@ public class NordigenAccountBalance implements Serializable {
 
 	public NordigenAccountBalance setReferenceDate(Date referenceDate) {
 		this.referenceDate = referenceDate;
+		return this;
+	}
+	
+	public String getOriginalJson() {
+		return originalJson;
+	}
+	
+	public NordigenAccountBalance setOriginalJson(String originalJson) {
+		this.originalJson = originalJson;
 		return this;
 	}
 	
