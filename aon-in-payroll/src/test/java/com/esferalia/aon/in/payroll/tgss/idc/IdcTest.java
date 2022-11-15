@@ -4195,6 +4195,17 @@ public class IdcTest extends AbstractSQLTestCase {
 		return 4;
 	}
 
+	private static int assertTramoTiempoParcial(Tramo tramo) {
+		assertTramoActivoNormal(tramo);
+		
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertDatosSolicitado(datoSolicitados, "H", "01", "B");
+		assertDatosSolicitado(datoSolicitados, "H", "02", "P");
+		
+
+		return 4;
+	}
+
 	private static int assertTramoMaternidadTiempoCompleto(Tramo tramo) {
 		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
 
@@ -4471,6 +4482,124 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(costs - 141.15, salary.getTotalEnterprise(), DELTA);
 			// assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
 
+		}
+	}
+
+	@Test
+	public void testIdcplnssTrabajadoresTramosXIX()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssXIX.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is,
+					new TrabajadoresTramosCallback() {
+						@Override
+						public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+							return true;
+						}
+			});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134362691", liquidacion.getCcc().getNumero());
+	
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2022", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2022", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2022", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+	
+				assertEquals("410161125294", trabajador.getNaf());
+	
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+	
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("09", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("20", tramo.getFechaDesde().getDia());
+				assertEquals("10", tramo.getFechaDesde().getMes());
+				assertEquals("2022", tramo.getFechaDesde().getAnho());
+				assertEquals("31", tramo.getFechaHasta().getDia());
+				assertEquals("10", tramo.getFechaHasta().getMes());
+				assertEquals("2022", tramo.getFechaHasta().getAnho());
+				assertTramoTiempoParcial(tramo);	
+			}
+	
+		}
+	}
+
+	@Test
+	public void testIdcTrabajadoresTramosXXVI()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVI.pdf")) {
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.OCTOBER);
+			
+			Date startDate = calendar.getTime();
+			calendar.set(Calendar.MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+			Date endDate = calendar.getTime();
+
+			TrabajadoresTramos trabajadoresTramos = Idc.getTrabajadoresTramos(is, startDate, endDate );
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134362691", liquidacion.getCcc().getNumero());
+	
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2022", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2022", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2022", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+	
+				assertEquals("410161125294", trabajador.getNaf());
+	
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+	
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("09", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("20", tramo.getFechaDesde().getDia());
+				assertEquals("10", tramo.getFechaDesde().getMes());
+				assertEquals("2022", tramo.getFechaDesde().getAnho());
+				assertEquals("31", tramo.getFechaHasta().getDia());
+				assertEquals("10", tramo.getFechaHasta().getMes());
+				assertEquals("2022", tramo.getFechaHasta().getAnho());
+				assertTramoTiempoParcial(tramo);	
+			}
+	
 		}
 	}
 

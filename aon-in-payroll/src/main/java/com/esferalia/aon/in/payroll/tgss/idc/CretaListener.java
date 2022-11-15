@@ -159,7 +159,7 @@ public class CretaListener implements IdcParserListener {
 
 	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, TramoBuilder b) {
 		if ( isPartTimeEmployee(ssNum, ccc, start, end ))
-			;
+			addTiempoParcialNormal(b);
 		else if ( isScholarEmployee(ssNum, ccc, start, end))
 			addBecariosNormal(b);
 		else if ( isTraining421Employee(ssNum, ccc, start, end))
@@ -340,7 +340,7 @@ public class CretaListener implements IdcParserListener {
 		
 	}
 	
-	private static void visitTiempoParcialNormal(TramoBuilder tramoBuilder) {
+	private static void addTiempoParcialNormal(TramoBuilder tramoBuilder) {
 		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
 
 		// 2.1 Situación de activo "normal" 
