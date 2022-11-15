@@ -43,6 +43,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -65,6 +66,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -641,8 +643,23 @@ public class NordigenModule extends MainEntryPoint {
 		private void showBalancesJson(NordigenBankAccount nordigenBankAccount) {
 			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
 			if (balances != null) {
-				
-				//TODO
+				Label lbl1 = new Label("[");
+				sessionLog.add(lbl1);
+				balances.forEach(bal -> {
+					String raw = bal.getOriginalJson();
+					if (raw != null) {
+						String[] spl = raw.split("\n");
+						for (String line : spl) {
+							Label lbl = new Label(line);
+							sessionLog.add(lbl);
+						}
+					}
+					Label lbl2 = new Label(",");
+					sessionLog.add(lbl2);
+				});
+				Label lbl3 = new Label("]");
+				sessionLog.add(lbl3);
+				openFootPanel();
 			}
 		}
 		
@@ -733,29 +750,29 @@ public class NordigenModule extends MainEntryPoint {
 			
 			topInfo.add(movBalancePanel);
 			
-			Label avBalanceLabel = new Label("Disponible");
-			avBalanceLabel.addStyleName(AON.CSS.aonTextCenter());
-			avBalanceLabel.addStyleName(AON.CSS.aonMarginTop());
-			
-			topInfo.add(avBalanceLabel);
-			
-			FlowPanel avBalancePanel = new FlowPanel();
-			InlineLabel avBalanceBox = new InlineLabel();
-			avBalanceBox.addStyleName(AON.CSS.aonFontMedium());
-			avBalanceBox.addStyleName(AON.CSS.aonBold());
-			
-			avBalancePanel.addStyleName(AON.CSS.aonMarginBottom());
-			avBalancePanel.addStyleName(AON.CSS.aonTextCenter());
-			avBalancePanel.add(avBalanceBox);
-			
-			if (AonMathUtils.isLessThanZero(availableAmount)) {
-				avBalanceBox.addStyleName(AON.CSS.aonColorRed());
-			}
-			if (availableAmount != null) {				
-				avBalanceBox.setText( AON.FMT.format(availableAmount) + " " + EURO);
-			}
-			
-			topInfo.add(avBalancePanel);
+//			Label avBalanceLabel = new Label("Disponible");
+//			avBalanceLabel.addStyleName(AON.CSS.aonTextCenter());
+//			avBalanceLabel.addStyleName(AON.CSS.aonMarginTop());
+//			
+//			topInfo.add(avBalanceLabel);
+//			
+//			FlowPanel avBalancePanel = new FlowPanel();
+//			InlineLabel avBalanceBox = new InlineLabel();
+//			avBalanceBox.addStyleName(AON.CSS.aonFontMedium());
+//			avBalanceBox.addStyleName(AON.CSS.aonBold());
+//			
+//			avBalancePanel.addStyleName(AON.CSS.aonMarginBottom());
+//			avBalancePanel.addStyleName(AON.CSS.aonTextCenter());
+//			avBalancePanel.add(avBalanceBox);
+//			
+//			if (AonMathUtils.isLessThanZero(availableAmount)) {
+//				avBalanceBox.addStyleName(AON.CSS.aonColorRed());
+//			}
+//			if (availableAmount != null) {				
+//				avBalanceBox.setText( AON.FMT.format(availableAmount) + " " + EURO);
+//			}
+//			
+//			topInfo.add(avBalancePanel);
 			
 			
 			topInfo.addStyleName(AON.CSS.aonMarginBottom());
@@ -942,7 +959,8 @@ public class NordigenModule extends MainEntryPoint {
 						} else {
 							insertMovementsButton.setVisible(false);
 						}
-
+						getMenuPanel().add(balanceJsonButton);
+						balanceJsonButton.setVisible(true);
 					}
 				} else if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisition.getStatus())) {
 					showBottomMessage("red", "Las credenciales expiraron, debe volver a vincular la cuenta");
@@ -1049,19 +1067,54 @@ public class NordigenModule extends MainEntryPoint {
 		periodSelector.addItem("Personalizado", "0");
 		periodSelector.setSelectedIndex(0);
 		periodDropdownStyle(periodSelector);
+		periodSelector.setWidth("100%");
 		
-		perTopFlow.add(periodSelector);
+		
+		FlexTable ft = new FlexTable();
+		ColumnFormatter ftf = ft.getColumnFormatter();
+		ftf.setWidth(0, "32.5%");
+		ftf.setWidth(1, "35%");
+		ftf.setWidth(2, "32.5%");
+		
+//		perTopFlow.add(periodSelector);
 		perTopFlow.addStyleName(AON.AON_CSS.aonDisplayBlock());
 		perTopFlow.addStyleName(AON.AON_CSS.aonBlockCenter());
 		perTopFlow.addStyleName(AON.AON_CSS.aonTextCenter());
 		
 		FlowPanel onlinePanel = new FlowPanel();
-		CheckBox onlineCheckbox = new CheckBox();
-		Label onlineCheckboxLabel = new InlineLabel("Consulta online");
-		onlinePanel.add(onlineCheckbox);
+		
+		Label toggle = new Label();
+		toggle.addStyleName(AON.CSS.aonIconToggleOff());
+		toggle.setHeight("1em");
+		toggle.setWidth("2em");
+		toggle.getElement().getStyle().setProperty("backgroundRepeat", "no-repeat");
+		toggle.getElement().getStyle().setProperty("backgroundPosition", "center");
+		toggle.getElement().getStyle().setProperty("cursor", "pointer");
+//		toggle.addClickHandler(ev -> {
+//			if (toggle.getStyleName().contains(AON.CSS.aonIconToggleOff())) {
+//				toggle.removeStyleName(AON.CSS.aonIconToggleOff());
+//				toggle.addStyleName(AON.CSS.aonIconToggleOn());
+//			} else {
+//				toggle.removeStyleName(AON.CSS.aonIconToggleOn());
+//				toggle.addStyleName(AON.CSS.aonIconToggleOff());
+//			}
+//		});
+		
+//		CheckBox onlineCheckbox = new CheckBox();
+//		onlineCheckbox.addStyleName(AON.CSS.aonIconToggleOff());
+		Label onlineCheckboxLabel = new Label("Consulta online");
+		onlineCheckboxLabel.setWidth("90px");
+		onlinePanel.setWidth("100%");
+		onlinePanel.getElement().getStyle().setProperty("alignItems", "center");
+		onlinePanel.addStyleName(AON.CSS.aonDisplayFlex());
+		onlinePanel.add(toggle);
 		onlinePanel.add(onlineCheckboxLabel);
 
-		perTopFlow.add(onlinePanel);
+		ft.setWidget(0, 1, periodSelector);
+		ft.setWidget(0, 2, onlinePanel);
+		ft.setWidth("100%");
+		
+		perTopFlow.add(ft);
 		
 		int currentYear = AonDateUtils.getCurrentYear();
 		String[] monthNames = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -1120,25 +1173,31 @@ public class NordigenModule extends MainEntryPoint {
 		periodFlow.add(perTopFlow);
 		
 		periodSelector.addChangeHandler(ev -> {
-			movsChangeHandler(opt, noridgenankAccount, firstYear, periodSelector, onlineCheckbox, monthNames,
+			movsChangeHandler(opt, noridgenankAccount, firstYear, periodSelector, toggle, monthNames,
 					listBoxYearFrom, listBoxYearTo, listBoxMonthFrom, listBoxMonthTo, loadingLabel, movementContainer,
 					customPeriod, periodFlow, dialog);
 		});
 		
-		onlineCheckbox.addValueChangeHandler(ev -> {
-			movsChangeHandler(opt, noridgenankAccount, firstYear, periodSelector, onlineCheckbox, monthNames,
+		toggle.addClickHandler(ev -> {
+			if (toggle.getStyleName().contains(AON.CSS.aonIconToggleOff())) {
+				toggle.removeStyleName(AON.CSS.aonIconToggleOff());
+				toggle.addStyleName(AON.CSS.aonIconToggleOn());
+			} else {
+				toggle.removeStyleName(AON.CSS.aonIconToggleOn());
+				toggle.addStyleName(AON.CSS.aonIconToggleOff());
+			}
+			movsChangeHandler(opt, noridgenankAccount, firstYear, periodSelector, toggle, monthNames,
 					listBoxYearFrom, listBoxYearTo, listBoxMonthFrom, listBoxMonthTo, loadingLabel, movementContainer,
 					customPeriod, periodFlow, dialog);
 		});
-		
 		
 		int days = Integer.parseInt(periodSelector.getSelectedValue());
 		Date from = new Date();
 		CalendarUtil.addDaysToDate(from, -days);
 		String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
-		getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, onlineCheckbox.getValue(), dialog);
+		getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, toggle.getStyleName().contains(AON.CSS.aonIconToggleOn()), dialog);
 		
-		ChangeHandler onDateChange = ev -> customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, onlineCheckbox.getValue(), dialog);
+		ChangeHandler onDateChange = ev -> customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, toggle.getStyleName().contains(AON.CSS.aonIconToggleOn()), dialog);
 		listBoxMonthFrom.addChangeHandler(onDateChange);
 		listBoxYearFrom.addChangeHandler(onDateChange);
 		listBoxMonthTo.addChangeHandler(onDateChange);
@@ -1158,12 +1217,12 @@ public class NordigenModule extends MainEntryPoint {
 	}
 
 	private void movsChangeHandler(NordigenModuleOptions opt, NordigenBankAccount noridgenankAccount, int firstYear,
-			ListBox periodSelector, CheckBox onlineCheckbox, String[] monthNames, ListBox listBoxYearFrom,
+			ListBox periodSelector, Label onlineToggle, String[] monthNames, ListBox listBoxYearFrom,
 			ListBox listBoxYearTo, ListBox listBoxMonthFrom, ListBox listBoxMonthTo, Label loadingLabel,
 			FlexTable movementContainer, FlexTable customPeriod, FlowPanel periodFlow, CustomDialog... dialog) {
 		if (periodSelector.getSelectedIndex() == periodSelector.getItemCount() - 1) {
 			periodFlow.add(customPeriod);				
-			customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, onlineCheckbox.getValue(), dialog);
+			customMovChange(loadingLabel, movementContainer, opt, noridgenankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, onlineToggle.getStyleName().contains(AON.CSS.aonIconToggleOn()), dialog);
 		} else {
 			if (periodFlow.getWidgetCount() > 1)
 				periodFlow.remove(1);
@@ -1173,7 +1232,7 @@ public class NordigenModule extends MainEntryPoint {
 			
 			String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
 			
-			getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, onlineCheckbox.getValue(), dialog);
+			getMovements(loadingLabel, movementContainer, opt, noridgenankAccount, from, new Date(), periodStr, onlineToggle.getStyleName().contains(AON.CSS.aonIconToggleOn()), dialog);
 		}
 	}
 	
