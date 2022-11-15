@@ -339,7 +339,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 			NordigenAccountBalance real = AonNordigen.filterReal(balances);
 			
 			
-			NordigenAccountBalance balance = real != null ? real : consolidado;
+			NordigenAccountBalance balance = consolidado != null ? consolidado : real;
 			
 			
 			Double remaining = balance.getBalanceAmount() != null ? balance.getBalanceAmount().getAmount() : 0;
