@@ -45,6 +45,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -543,6 +544,14 @@ public class NordigenModule extends MainEntryPoint {
 			AonTableButton insertMovementsButton = new AonTableButton("Instertar movimientos", AON.CSS.aonIconSave());
 			insertMovementsButton.setTabIndex(-6);
 			
+			AonTableButton balanceJsonButton = new AonTableButton("JSON de los saldos", AON.CSS.aonIconInfo());
+			balanceJsonButton.setTabIndex(-7);
+			
+			
+			balanceJsonButton.addClickHandler(event -> {
+				showBalancesJson(nordigenBankAccount);
+			});
+			
 			insertMovementsButton.addClickHandler(event -> {
 //				showBottomMessage(AON.CSS.aonLoader());
 				NORDIGEN_SERVICE.insertTransactions(opt.getDomainName(), opt.getDomain(), opt.getUser(), nordigenBankAccount, new AsyncCallback<Integer>() {
@@ -553,7 +562,7 @@ public class NordigenModule extends MainEntryPoint {
 						label.addStyleName(AON.CSS.aonColorRed());
 						sessionLog.add(label);
 						openFootPanel();
-						refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+						refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton, balanceJsonButton);
 					}
 
 					@Override
@@ -562,24 +571,22 @@ public class NordigenModule extends MainEntryPoint {
 						label.addStyleName(AON.CSS.aonColorGreen());
 						sessionLog.add(label);
 						openFootPanel();
-						refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+						refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton, balanceJsonButton);
 					}
 				});
 			});
 			
 			
 			getMenuPanel().add(unlinkButton);
-			
-			
-			
+
 			AonTableButton updateButton = new AonTableButton("Actualizar", AON.CSS.aonIconRefresh());
 			updateButton.setTabIndex(-5);
 			updateButton.addClickHandler((ev) -> {
-				refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+				refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton, balanceJsonButton);
 			});
 			getMenuPanel().add(updateButton);
 			
-			refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+			refreshCard(opt, nordigenBankAccount, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton, balanceJsonButton);
 		}
 
 		private void showBottomMessage(Label... labels) {
@@ -629,6 +636,14 @@ public class NordigenModule extends MainEntryPoint {
 			this.bottomTable.removeStyleName(AON.CSS.aonLoader());
 			this.bottomTable.getElement().getStyle().clearColor();
 //			this.bottomTable.clear();
+		}
+		
+		private void showBalancesJson(NordigenBankAccount nordigenBankAccount) {
+			List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
+			if (balances != null) {
+				
+				//TODO
+			}
 		}
 		
 		private void showAllMovements(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, String iban) {
@@ -771,7 +786,8 @@ public class NordigenModule extends MainEntryPoint {
 
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
 				InlineLabel atDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-				AonTableButton allMovementsButton, AonTableButton insertMovementsButton) {
+				AonTableButton allMovementsButton, AonTableButton insertMovementsButton, AonTableButton balanceJsonButton) {
+			balanceJsonButton.setVisible(false);
 			allMovementsButton.setVisible(false);
 			insertMovementsButton.setVisible(false);
 			showBottomMessage("red", AON.CSS.aonLoader());
@@ -787,7 +803,7 @@ public class NordigenModule extends MainEntryPoint {
 				public void onSuccess(NordigenBankAccount result) {
 					copyBankAccount(nordigenBankAccount, result);
 					allMovementsButton.setVisible(true);
-					updateCard(opt, result, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton);
+					updateCard(opt, result, atDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton, balanceJsonButton);
 					clearBottomMessage();
 				}
 			
@@ -852,7 +868,7 @@ public class NordigenModule extends MainEntryPoint {
 
 		private void updateCard(NordigenModuleOptions opt, NordigenBankAccount result, InlineLabel atDateBox, 
 				InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-				AonTableButton allMovementsButton, AonTableButton insertMovementsButton) {
+				AonTableButton allMovementsButton, AonTableButton insertMovementsButton, AonTableButton balanceJsonButton) {
 			
 			String logo = result.getInstitution() != null ? result.getInstitution().getLogo() : "";
 			titlePanel.clear();
@@ -926,6 +942,7 @@ public class NordigenModule extends MainEntryPoint {
 						} else {
 							insertMovementsButton.setVisible(false);
 						}
+
 					}
 				} else if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisition.getStatus())) {
 					showBottomMessage("red", "Las credenciales expiraron, debe volver a vincular la cuenta");
@@ -1616,6 +1633,7 @@ public class NordigenModule extends MainEntryPoint {
 		tabLayout.setWidth("100%");
 		
 		sessionLog = new FlowPanel();
+		sessionLog.getElement().getStyle().setOverflowY(Overflow.SCROLL);
 		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
 		
 		tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information(), AON.CSS.aonIconHistory()));
@@ -1829,7 +1847,10 @@ public class NordigenModule extends MainEntryPoint {
 		
 		Label descriptionLabel = new Label(description);
 		Date lastOp = nordigenBankAccount.getLastMovementDate();
-		if (lastOp != null && lastOp.compareTo(bankStatement.getOperationDate()) < 1) {
+		if (lastOp != null &&
+			!CalendarUtil.isSameDate(lastOp, bankStatement.getOperationDate()) &&
+			lastOp.compareTo(bankStatement.getOperationDate()) < 1
+		) {
 			descriptionLabel.getElement().getStyle().setColor("green");			
 		}
 		if (bankStatement.isPending()) {
