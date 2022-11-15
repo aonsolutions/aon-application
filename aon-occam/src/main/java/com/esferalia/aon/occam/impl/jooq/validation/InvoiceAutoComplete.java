@@ -434,8 +434,9 @@ public class InvoiceAutoComplete {
 					it = detail.getInvoiceTaxes().get(i);
 			}
 			
-			if(detail.getWorkPlace() == null && ctx.getConfiguration().getWorkplaces() != null) {
-				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
+			if(detail.getWorkPlace() == null && ctx.getConfiguration().getWorkplaces() != null
+					&& !ctx.getConfiguration().getWorkplaces().isEmpty()) {
+				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().get(0).getId());
 			}
 			
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
