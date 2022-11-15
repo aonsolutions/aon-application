@@ -28,8 +28,8 @@ phases:
       #- docker tag aonsolutions/aon-application:$TAG $REPOSITORY_URI/aon-application:$TAG
       #- docker tag aonsolutions/aon-solutions:$TAG $REPOSITORY_URI/aon-solutions:$TAG
       - mvn --fail-fast -DbuildNumber=666 -Daws.lambda=true -pl aon-in-payroll clean install
-  post_build:
-    commands:
+  # post_build:
+    # commands:
       #- echo Entered the post_build phase...
       #- echo Build completed on `date`
       #- echo Pushing the Docker images...
@@ -46,8 +46,8 @@ phases:
       #  {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
       #  ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
       #- cat snapshotsolutionsimgdef.json
-artifacts:
-  files:
+# artifacts:
+  # files:
     # - snapshotimgdef.json
     # - snapshotsolutionsimgdef.json
     # - location
