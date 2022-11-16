@@ -850,8 +850,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 					@Override
 					public void onFailure(Throwable caught) {
-						AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
-						dialog.warning();
+						agreementPreview.showError("Error importaci\u00f3n", caught.getMessage());
 					}
 
 					@Override
