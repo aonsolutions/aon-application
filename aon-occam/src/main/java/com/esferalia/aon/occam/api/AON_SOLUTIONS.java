@@ -1090,9 +1090,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteRegistryRelationship(Domain domain, User user, Integer id) {
+	public static void deleteRegistryRelationship(Domain domain, User user, RRelationshipFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
-			getRelationship().deletetRegistryRelationship(ctx, id);
+			getRelationship().deletetRegistryRelationship(ctx, filter);
 		}
 	}
 }

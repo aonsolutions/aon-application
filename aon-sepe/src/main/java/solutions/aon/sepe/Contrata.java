@@ -478,6 +478,11 @@ public class Contrata {
 				if (ofertaEmpleo != null) {
 					((HtmlSelect) ofertaEmpleo).setSelectedAttribute(cto.getOffer().getValue(), true);
 				}
+				
+				DomNode planRecovery = form.querySelector("select[name=preguntaAcogePRTR]");
+				if (planRecovery != null && cto.getPlanRecovery()!=null) {
+					((HtmlSelect) planRecovery).setSelectedAttribute(cto.getPlanRecovery().getValue(), true);
+				}
 			}
 
 			{// --------------------OTHERS DATA CONTRACT (OPTIONAL)-----------------
@@ -627,8 +632,7 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 				
-
-//				//------------MAYORES DE 52
+				//------------MAYORES DE 52
 				if(cto.getOver52Years().isPresent()) {
 					page++;
 					form.getInputByName("pagina2").setValueAttribute(page.toString());
@@ -650,6 +654,7 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
+			
 			
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			handleSepeAlert(alertHandler.getCollectedAlerts());

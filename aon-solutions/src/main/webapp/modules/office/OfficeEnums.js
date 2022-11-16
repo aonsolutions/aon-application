@@ -7,13 +7,13 @@ const AON_CUSTOMER = {
     name: MSG.CUSTOMERS,
     icon: MATERIAL_ICONS.CONTACT_PAGE
 }
-  
+
 const AON_TASK_HOLDER = {
     id: 'sideNavTaskHolder',
     name: "Operarios",
     icon: MATERIAL_ICONS.PEOPLE
 }
-  
+
 
 const OfficeViews = {
     AON_CUSTOMER: "aonCustomerOffice",
@@ -24,11 +24,16 @@ const OfficeViews = {
 }
 
 const OfficeSidenav = {
-    ADD_FOLDER: {
-        name: "Agregar expediente",
-        icon: "create_new_folder",
-        id: "create_new_folder",
-    },
+    MORE_VERT:{
+        name: MSG.OPTIONS,
+        icon: MATERIAL_ICONS.MORE_VERT,
+        id: "new_options", 
+    }
+    // ADD_FOLDER: {
+    //     name: "Agregar expediente",
+    //     icon: "create_new_folder",
+    //     id: "create_new_folder",
+    // },
 }
 
 
@@ -69,13 +74,13 @@ const getButtonsStatus = () => {
 
 const CustomerFilter = [
     {
-      type: CONSTANT.SELECT,
-      id: "scope",
-      name: "scope",
-      title: MSG.SCOPE,
-      autocomplete: true,
-      default:true,
-      emptyclear:true
+        type: CONSTANT.SELECT,
+        id: "scope",
+        name: "scope",
+        title: MSG.SCOPE,
+        autocomplete: true,
+        default:true,
+        emptyclear:true
     },
     {
         type:CONSTANT.SELECT,
@@ -83,6 +88,14 @@ const CustomerFilter = [
         name: "projectType",
         title: "Tipo de expediente",
         autocomplete: true,
+        default:true,
+        emptyclear:true
+    },
+    {
+        type:CONSTANT.SELECT,
+        id: "rrelationship",
+        name: "rrelationship",
+        title: "Vinculo",
         default:true,
         emptyclear:true
     },

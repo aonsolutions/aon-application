@@ -23,6 +23,7 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	private boolean projectGrouped;
 	private boolean deliveryGrouped;
 	private boolean deliveryValuated;
+	private boolean isRelationship;
 	private Integer account;
 	
 	private Date creationDate;
@@ -36,6 +37,7 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 		projectGrouped = true;
 		deliveryGrouped = true;
 		deliveryValuated = true;
+		isRelationship = false;
 	}
 	
 	public Customer copy(Registry registry) {
@@ -135,6 +137,16 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	public boolean isDeliveryValuated() {
 		return deliveryValuated;
 	}
+	
+	public Customer setRelationship(boolean isRelationship) {
+		this.isRelationship = isRelationship;
+		return this;
+	}
+	
+	public boolean isRelationship() {
+		return isRelationship;
+	}
+	
 	public Customer setDeliveryValuated(boolean deliveryValuated) {
 		this.deliveryValuated = deliveryValuated;
 		return this;

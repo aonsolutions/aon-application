@@ -13,8 +13,10 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 
@@ -140,30 +142,104 @@ public class RelationshipServlet extends AonApiHttpServlet {
 	}
 	
 	
-	public static JSONObject saveRelationship(AonApiData api) {
+	public static Object saveRelationship(AonApiData api) {
 
-		 RegistryRelationship rrelationship = RegistryRelationshipJSON.fromJSON(api.getData());
+		 boolean isCustomers = !api.getData().isNull("customers");
+		 if(isCustomers) {
+			 return saveRelationshipAll(api);
+		 } else {
+			 return RegistryRelationshipJSON.toJSON( 
+					 saveRelationship(api, RegistryRelationshipJSON.fromJSON(api.getData())) 
+			);
+		 }
+	}
+	
+	private static Object saveRelationshipAll(AonApiData api) {
+		 JSONObject params = api.getData();
 		 
-		 return RegistryRelationshipJSON.toJSON( 
-			 AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship)
-		 );
+		 JSONArray arr = new JSONArray();
+		 
+		 boolean isAdd = params.optBoolean("add");
+		 
+		 List<Customer> customers = CustomerJSON.fromJSON(params.optJSONArray("customers"));
+		 
+		 if(!customers.isEmpty()) {
+			
+			 Integer[] registryId = customers.stream().map(Customer::getId).toArray(Integer[]::new);
+			 
+			 if(isAdd) {
+				 Integer[] parentIds = customers.stream().map(c-> c.getDomain().getParentId()).toArray(Integer[]::new);
+				 String[] documents  = customers.stream().map(Customer::getDocument).toArray(String[]::new);
 				 
-// ------------- SAVE IN COMPANY
-//		 JSONObject params = api.getData();
-//		 RegistryRelationship rrelationshipCompany = new RegistryRelationship()
-//		 .setDomain(company.getDomain())
-//		 .setRegistry(0)
-//		 .setRelatedRegistry(company.getId())
-//		 .setComments(api.getDomain().getName())
-//		 ;
-//		 AON_SOLUTIONS.saveRegistryRelationship(company.getDomain(), api.getUser(), rrelationshipCompany);
-//				
-//		throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
+				 List<Company> companyAll = AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+						f-> f.getDomainParentProperty().in(parentIds)
+						.and(f.getDocumentProperty().in(documents))
+				).collect(Collectors.toList());
+				 
+				 for(Customer customer : customers) {
+					
+					 JSONObject json = new JSONObject();
+					 String message = "";
+					 boolean success = false;
+
+					List<Company> companies = companyAll.stream().filter(c-> 
+						c.getDocument().equals(customer.getDocument()) && 
+						c.getDomain().getParentId().equals(customer.getDomain().getParentId())
+					).collect(Collectors.toList());
+					
+					if(companies.isEmpty()) {
+						 message = "No existe empresa.";
+					} else if(companies.size()>1) {
+						 message = "Existe mas de una empresa.";
+						 json.put("companies", CompanyJSON.toJSON(companies));
+					} else if(companies.size()==1) {
+					
+						 saveRelationship(api, 
+						 	new RegistryRelationship()
+							.setDomain(api.getDomain())
+							.setRegistry(customer.getId())
+							.setRelatedRegistry(companies.get(0).getId())
+							.setComments(companies.get(0).getDomain().getName())
+						 );
+						 
+						 success = true;
+						 message = "Empresa vinculada.";
+					 }
+					
+					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
+					 json.put(IJsonNames.MESSAGE, message);
+					 json.put("success", success);
+					 arr.put(json); 
+				 } 
+			 } else {
+				AON_SOLUTIONS.deleteRegistryRelationship(api.getDomain(), api.getUser(), f-> 
+					f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().in(registryId))
+					.and(f.getRelationshipProperty().eq(-1))
+				);
+				customers.forEach(customer->{
+					 JSONObject json = new JSONObject();
+					 json.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(customer));
+					 json.put(IJsonNames.MESSAGE, "Empresa desvinculada");
+					 json.put("success", true);
+					 arr.put(json); 
+				});
+			 }
+		 }
+
+		return arr;
 	}
 
+	private static RegistryRelationship saveRelationship(AonApiData api, RegistryRelationship rrelationship) {
+		return AON_SOLUTIONS.saveRegistryRelationship( api.getDomain(), api.getUser(), rrelationship);
+	}
+	
 	private static JSONObject deleteRelationship(AonApiData api) {
 		Integer id = api.getData().optInt(IJsonNames.ID);
-		AON_SOLUTIONS.deleteRegistryRelationship(api.getDomain(), api.getUser(), id);
+		AON_SOLUTIONS.deleteRegistryRelationship(api.getDomain(), api.getUser(), f-> 
+			f.getDomainProperty().eq(api.getDomain().getId())
+			.and(f.getIdProperty().eq(id))
+		);
 		return new JSONObject();
 	}
 }

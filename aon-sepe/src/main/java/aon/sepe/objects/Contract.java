@@ -29,6 +29,7 @@ public class Contract {
 	private Date dateBirth;
 	private Date dateComContract;
 	private OfferType offer;
+	private PlanRecovery planRecovery;
 	private JndType jndType;
 	private String durationTypeJndHour;
 	private String durationTypeJndMin;
@@ -167,6 +168,10 @@ public class Contract {
 	public OfferType getOffer() {
 		return offer;
 	}
+	
+	public PlanRecovery getPlanRecovery() {
+		return planRecovery;
+	}
 
 	public JndType getJndType() {
 		return jndType;
@@ -264,6 +269,7 @@ public class Contract {
 		private Date dateBirth;
 		private Date dateComContract;
 		private OfferType offer;
+		private PlanRecovery planRecovery;
 		private JndType jndType;
 		private DiscontinuoReason discontinuoReason;
 		private String durationTypeJndHour;
@@ -431,7 +437,12 @@ public class Contract {
 			this.offer = offer;
 			return this;
 		}
-
+		
+		public ContractBuilder setPlanRecovery(PlanRecovery planRecovery) {
+			this.planRecovery = planRecovery;
+			return this;
+		}
+		
 		public ContractBuilder setJndType(JndType jndType) {
 			this.jndType = jndType;
 			return this;
@@ -546,6 +557,7 @@ public class Contract {
 			contract.dateFinContract = this.dateFinContract;
 			contract.codContract = this.codContract;
 			contract.offer = this.offer;
+			contract.planRecovery = this.planRecovery;
 			contract.jndType = this.jndType;
 			contract.discontinuoReason = this.discontinuoReason;
 			contract.durationTypeJndHour = this.durationTypeJndHour;
@@ -634,6 +646,23 @@ public class Contract {
 		private String value;
 
 		private OfferType(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+	
+	/**
+	 * SE ACOGE AL PLAN DE TRANSFORMACION, RECUPERACION Y RESILIENCIA?
+	 */
+	public enum PlanRecovery  {
+		SI("S"), NO("N");
+
+		private String value;
+
+		private PlanRecovery(String value) {
 			this.value = value;
 		}
 
@@ -778,6 +807,7 @@ public class Contract {
 			+ ", dateBirth=" + dateBirth 
 			+ ", dateComContract=" + dateComContract 
 			+ ", offer=" + offer
+			+ ", planRecovery=" + planRecovery
 			+ ", jndType=" + jndType 
 			+ ", discontinuoReason=" + discontinuoReason 
 			+ ", durationTypeJndHour="+ durationTypeJndHour 

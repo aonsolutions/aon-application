@@ -99,12 +99,14 @@ export class AonCheckbox extends AonElement {
 			input.setAttribute('checked', 'checked');
 		}
 		
-		if(this.checked) 	
+		if(this.checked) 	{
 			input.checked = 'checked';
+		}
 
 		if(this.hasAttribute(CONSTANT.DISABLED)){
 			input.setAttribute(CONSTANT.DISABLED, CONSTANT.DISABLED);
 		}
+
 		input.addEventListener(EVENT.CHANGE, () => {
 			this.setAttribute(CONSTANT.VALUE, this.getElement(input.getAttribute(CONSTANT.ID)).checked);
 		});
@@ -129,7 +131,11 @@ export class AonCheckbox extends AonElement {
 	}
 
 	getValue() {
-		return this.value && this.value === 'true';
+		return this.value && this.value == 'true';
+	}
+
+	isChecked(){
+		return this.getValue();
 	}
 
 	clear(){
