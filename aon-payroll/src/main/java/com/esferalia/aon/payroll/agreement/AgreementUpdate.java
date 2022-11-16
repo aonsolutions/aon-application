@@ -251,7 +251,9 @@ public class AgreementUpdate {
 	    	        	Element elementCI = (Element) nodeCI;
 	    	        	
 	    	        	String name = elementCI.getElementsByTagName("NOMBRE").item(0).getTextContent();
-	    	            String type = elementCI.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
+	    	            String type = (null == elementCI.getElementsByTagName("TIPO_AMDH") || null == elementCI.getElementsByTagName("TIPO_AMDH").item(0))
+			    	            		? null 
+			    	            		: elementCI.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
 	    	            
 	    	            String realName = getParseName(name, type);
 	    	            
@@ -384,13 +386,19 @@ public class AgreementUpdate {
 				    	     	            	if (nodeCPTO.getNodeType() == Node.ELEMENT_NODE) {
 				    	     	            		Element elementCPTO = (Element) nodeCPTO;
 				    	     	            		
-				    	     	            		String name = elementCPTO.getElementsByTagName("NOMBRE").item(0).getTextContent();
-						   	    	            	String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
-						   	    	            	String type = elementCPTO.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
-						   	    	            	
-						   	    	            	String realName = getParseName(name, type);
-						   	    	            	
-						   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
+				    	     	            		if(null != elementCPTO.getElementsByTagName("IMPORTE") && null != elementCPTO.getElementsByTagName("IMPORTE").item(0)) {
+				    	     	            		
+					    	     	            		String name = elementCPTO.getElementsByTagName("NOMBRE").item(0).getTextContent();
+							   	    	            	String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
+							   	    	            	String type = (null == elementCPTO.getElementsByTagName("TIPO_AMDH") || null == elementCPTO.getElementsByTagName("TIPO_AMDH").item(0))
+									    	            		? null 
+									    	            		: elementCPTO.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
+							    	           
+							   	    	            	String realName = getParseName(name, type);
+							   	    	            	
+							   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
+							   	    	            	
+				    	     	            		}
 				    	     	            	}
 				   	    	            	}
 			   	    	            	}
@@ -912,23 +920,24 @@ public class AgreementUpdate {
 		name = name.replaceAll(":", "_");
 		name = name.replaceAll("º", "");
 		
-		switch (type) {
-		case "A":
-			realName = name + "_" + "ANUAL";
-			break;
-		case "M":
-			realName = name + "_" + "MENSUAL";
-			break;
-		case "D":
-			realName = name + "_" + "DIARIO";
-			break;
-		case "H":
-			realName = name + "_" + "HORAS";
-			break;
-		default:
-			realName = name + "_" + "ANUAL";
-			break;
-		}
+		if(null != type)
+			switch (type) {
+				case "A":
+					realName = name + "_" + "ANUAL";
+					break;
+				case "M":
+					realName = name + "_" + "MENSUAL";
+					break;
+				case "D":
+					realName = name + "_" + "DIARIO";
+					break;
+				case "H":
+					realName = name + "_" + "HORAS";
+					break;
+				default:
+					realName = name + "_" + "ANUAL";
+					break;
+			}
 		
 		return realName;
 	}
