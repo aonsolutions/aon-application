@@ -131,7 +131,6 @@ public class CretaListener implements IdcParserListener {
 	
 	@Override
 	public void onEmployeeQuoteGroup(String group) {
-		onEmployeeQuoteGroup(group, false);
 	}
 	
 	@Override

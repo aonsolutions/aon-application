@@ -135,7 +135,7 @@ public class IdcplcccParser {
 			Date endDate = simpleDateFormat.parse(matcher.group("end"));
 			onEmployeePeriod(listener, enterpriseCCC, employeeeNss, startDate, endDate);
 			String group = matcher.group("group");
-			//onEmployeeQuoteGroup(listener, group);
+			onEmployeeQuoteGroup(listener, group);
 			boolean monthly = matcher.group("monthly") != null;
 			onEmployeeQuoteGroup(listener, group, monthly);
 			parseEmployeePeriodPECs(reader, listener, employeeeNss, enterpriseCCC, startDate, endDate);
@@ -257,6 +257,11 @@ public class IdcplcccParser {
 				quota,
 				startDate,
 				endDate);
+	}
+
+	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group) {
+		group = trim(group);
+		listener.onEmployeeQuoteGroup(group);
 	}
 
 	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group, boolean monthly) {
