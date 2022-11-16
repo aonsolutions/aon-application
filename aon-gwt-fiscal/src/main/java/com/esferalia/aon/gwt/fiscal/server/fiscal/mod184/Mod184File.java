@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL184;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod184Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod184.Mod184Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod184 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model184File" })

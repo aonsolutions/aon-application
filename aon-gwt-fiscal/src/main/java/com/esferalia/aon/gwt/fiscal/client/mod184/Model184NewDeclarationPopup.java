@@ -3,15 +3,14 @@ package com.esferalia.aon.gwt.fiscal.client.mod184;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184.Model184Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 
 class Model184NewDeclarationPopup extends AonCustomDialog {
@@ -28,7 +27,8 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 	}
 	
 	public Model184NewDeclarationPopup(final Mod184 mod184, final boolean duplicate, final boolean reset, final Model184Callback callback) {
-
+		setWidth("450px");
+		
 		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
 		// complementaria y sustitutiva están desmarcados
 		int oldYear = mod184.getYear();
@@ -44,8 +44,6 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
-		FlexTable tab = new FlexTable();
-		
 		admonList.setSelectedIndex( mod184.getAdministration().ordinal());
 		yearBox.setValue(mod184.getYear());
 		complementary.setValue(mod184.isComplementary());
@@ -53,31 +51,11 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 		replacedReceiptBox.setValue(mod184.getReplacedReceipt());
 
 		FlowPanel rootPanel = new FlowPanel(); 
-		tab.setCellPadding(0);
-		tab.setCellSpacing(0);
-		tab.setStyleName(AON.CSS.aonMarginTop());
-		tab.addStyleName(AON.CSS.aonMarginBottom());
-		tab.addStyleName(AON.CSS.aonDisplayTable());
-		ColumnFormatter cf = tab.getColumnFormatter();
-		cf.setWidth(0, "130px");
-		cf.addStyleName(0, AON.CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.CSS.aonPaddingRight() );
-		cf.setWidth(1, "250px");
-		cf.addStyleName(0, AON.CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.CSS.aonPaddingRight() );
 
 		// ADMINISTRATION
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
-		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		admonList.setEnabled(!reset && !duplicate);
 		admonList.addChangeHandler( event -> mod184.setAdministration( admonList.getValue() ));
-		tab.setWidget(row, 1, admonList);
-		row++;
 
-		// YEAR
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
-		tab.setWidget(row, 0, new Label(AON.MSG.year()));
-		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
 		yearBox.setEnabled(!reset);
@@ -95,8 +73,6 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 				}
 			}
 		});
-		tab.setWidget(row, 1,yearBox);
-		row++;
 		
 		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
@@ -113,10 +89,7 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 				replacedReceiptBox.setValue("",true);
 			}				
 		});
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.setWidget(row, 0, complementary);
-		row++;
-		
+
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
 		replacement.setEnabled(!reset && !duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
@@ -130,31 +103,43 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 				replacedReceiptBox.setValue("",true);					
 			}			
 		});
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.setWidget(row, 0, replacement);
-		row++;
 		
 		// NUMERO DE DECLARACION ANTERIOR
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
-		tab.setWidget(row, 0, new Label(AON.MSG.previousDeclaration()));
-		
 		replacedReceiptBox.setMaxLength(13);
 		replacedReceiptBox.setVisibleLength(13);
 		replacedReceiptBox.setEnabled(false);  // Por defecto deshabilitado porque complementaria y sustitutiva están desmarcados
 		replacedReceiptBox.addValueChangeHandler(event -> mod184.setReplacedReceipt(replacedReceiptBox.getValue()));
-		tab.setWidget(row, 1, replacedReceiptBox);
-		row++;
+
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonMarginTop());
+		tab.addStyleName(AON.CSS.aonMarginBottom());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		
+		tab.addRow()
+			.addCell( new Label( AON.MSG.administration()), AON.CSS. aonTableLabel(),AON.CSS.aonWidth120())
+			.addCell( admonList);
+		tab.addRow()
+			.addCell( new Label( AON.MSG.year()), AON.CSS. aonTableLabel())
+			.addCell( yearBox );
+		tab.addRow( )
+			.addCell( new Label(), AON.CSS. aonTableLabel())
+			.addCell( complementary);
+		tab.addRow( )
+			.addCell( new Label(), AON.CSS. aonTableLabel())
+			.addCell( replacement);
+		tab.addRow( )	
+			.addCell( new Label( AON.MSG.previousDeclaration()), AON.CSS. aonTableLabel())
+			.addCell(replacedReceiptBox);
+		
+		rootPanel.add(tab);
 		
 		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
 		if (reset) {
 			Label labelReset = new Label(AON.MSG.resetWarning());
 			labelReset.addStyleName(AON.CSS.aonMarginTop());
 			labelReset.addStyleName(AON.CSS.aonColorRed());
-			tab.setWidget(row, 0, labelReset);
-			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			rootPanel.add(labelReset);
 		}
-		
-		rootPanel.add(tab);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.CSS.aonPadding());
@@ -165,6 +150,7 @@ class Model184NewDeclarationPopup extends AonCustomDialog {
 		acceptButton.setText( AON.MSG.accept());
 		
 		acceptButton.addClickHandler(event -> {
+			acceptButton.setEnabled(false);
 			hide();
 			callback.onAccept(mod184);
 		});
