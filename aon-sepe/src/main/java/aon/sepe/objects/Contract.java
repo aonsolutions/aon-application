@@ -29,7 +29,6 @@ public class Contract {
 	private Date dateBirth;
 	private Date dateComContract;
 	private OfferType offer;
-	private PlanRecovery planRecovery;
 	private JndType jndType;
 	private String durationTypeJndHour;
 	private String durationTypeJndMin;
@@ -50,6 +49,8 @@ public class Contract {
 	private boolean isDiscapacidad; // ¿ Posee discapacidad ?
 	
 	private boolean isBonus; // ¿ Posee bonificacion ?
+	
+	private boolean planRecovery;  // SE ACOGE AL PLAN DE TRANSFORMACION, RECUPERACION Y RESILIENCIA?
 	
 	private Over52Years over52Years; // ¿ Mayores de 25 años ?
 	
@@ -169,7 +170,7 @@ public class Contract {
 		return offer;
 	}
 	
-	public PlanRecovery getPlanRecovery() {
+	public boolean getPlanRecovery() {
 		return planRecovery;
 	}
 
@@ -269,7 +270,6 @@ public class Contract {
 		private Date dateBirth;
 		private Date dateComContract;
 		private OfferType offer;
-		private PlanRecovery planRecovery;
 		private JndType jndType;
 		private DiscontinuoReason discontinuoReason;
 		private String durationTypeJndHour;
@@ -290,6 +290,8 @@ public class Contract {
 		private boolean isDiscapacidad; // ¿ Posee discapacidad ?
 		
 		private boolean isBonus; // ¿ Posee bonificacion ?
+		
+		private boolean planRecovery;
 		
 		private Over52Years over52Years; // ¿ Mayores de 52 años ?
 		
@@ -438,7 +440,7 @@ public class Contract {
 			return this;
 		}
 		
-		public ContractBuilder setPlanRecovery(PlanRecovery planRecovery) {
+		public ContractBuilder setPlanRecovery(boolean planRecovery) {
 			this.planRecovery = planRecovery;
 			return this;
 		}
@@ -646,23 +648,6 @@ public class Contract {
 		private String value;
 
 		private OfferType(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-	
-	/**
-	 * SE ACOGE AL PLAN DE TRANSFORMACION, RECUPERACION Y RESILIENCIA?
-	 */
-	public enum PlanRecovery  {
-		SI("S"), NO("N");
-
-		private String value;
-
-		private PlanRecovery(String value) {
 			this.value = value;
 		}
 

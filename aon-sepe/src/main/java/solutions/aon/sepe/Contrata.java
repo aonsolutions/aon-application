@@ -480,8 +480,8 @@ public class Contrata {
 				}
 				
 				DomNode planRecovery = form.querySelector("select[name=preguntaAcogePRTR]");
-				if (planRecovery != null && cto.getPlanRecovery()!=null) {
-					((HtmlSelect) planRecovery).setSelectedAttribute(cto.getPlanRecovery().getValue(), true);
+				if (planRecovery != null) {
+					((HtmlSelect) planRecovery).setSelectedAttribute(cto.getPlanRecovery() ? "S": "N", true);
 				}
 			}
 
