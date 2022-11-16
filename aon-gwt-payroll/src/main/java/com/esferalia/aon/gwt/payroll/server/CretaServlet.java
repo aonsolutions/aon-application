@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +36,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,6 +64,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Province;
+import com.esferalia.aon.in.payroll.tgss.idc.Idcplccc;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.in.payroll.tgss.idc.TrabajadoresTramosCallback;
 import com.esferalia.aon.jooq.Keys;
@@ -76,7 +75,6 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
-import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -136,6 +134,65 @@ import solutions.aon.seg.social.exception.SegSocialException;
 )
 public class CretaServlet extends HttpServlet
 		implements CretaService.File.Visitor<HttpServletRequest, HttpServletResponse, Exception> {
+
+	private static final class EmployeesCallback implements TrabajadoresTramosCallback {
+		private final Map<String, List<Employee>> employees;
+
+		private EmployeesCallback(Map<String, List<Employee>> employees) {
+			this.employees = employees;
+		}
+
+		@Override
+		public String getIpf(String naf) {
+			return getEmployee(naf).map(Employee::getDni).orElse(TrabajadoresTramosCallback.super.getIpf(naf));
+		}
+
+		@Override
+		public TipoIpf getTipoIpf(String naf) {
+			// TODO Auto-generated method stub
+			return TrabajadoresTramosCallback.super.getTipoIpf(naf);
+		}
+
+		@Override
+		public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
+			return 
+			getEmployee(naf, start)
+			.map( e -> isPartialTime(e, start) || is3XX(e, start))
+			.orElse(TrabajadoresTramosCallback.super.isPartTimeEmployee(naf, ccc, start, end))
+			;
+		}
+
+		@Override
+		public boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+			// TODO Auto-generated method stub
+			return TrabajadoresTramosCallback.super.isScholarEmployee(ssNum, ccc, start, end);
+		}
+
+		@Override
+		public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+			// TODO Auto-generated method stub
+			return TrabajadoresTramosCallback.super.isTraining421Employee(ssNum, ccc, start, end);
+		}
+
+		private Optional<Employee> getEmployee(String naf) {
+			return employees.getOrDefault(naf, Collections.emptyList()).stream().findAny();
+		}
+
+		private Optional<Employee> getEmployee(String naf, Date date) {
+			return employees.getOrDefault(naf, Collections.emptyList()).stream()
+			.filter( e -> new Period(e.getStartDate(), e.getEndDate().orElse(null)).contains(date))
+			.findAny()
+			;
+		}
+
+		private boolean is3XX(Employee employee, Date date) {
+			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "3")).orElse(false);
+		}
+
+		private boolean isPartialTime(Employee employee, Date date) {
+			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor < 1.00  ).orElse(false);
+		}
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -693,6 +750,22 @@ public class CretaServlet extends HttpServlet
 		return is;
 	}
 	
+	private static Stream<byte[]> getIdcplccc(Certificate certificate, Date date, String ccc, String [] nafs) throws SegSocialException {
+
+		String regime = ccc.substring(0,4);
+		String number = ccc.substring(4);
+		
+		byte [] idc = SistemaRED.getIDCCCC(
+			certificate.getCertificate(), 
+			certificate.getPassword(), 
+			certificate.getType(), 
+			regime, 
+			number, 
+			date);
+		
+		return Stream.of(idc);
+	}
+
 	private static Stream<byte[]> getIdcplnss(Certificate certificate, Date date, String ccc, String [] nafs) throws SegSocialException {
 
 		String regime = ccc.substring(0,4);
@@ -708,13 +781,6 @@ public class CretaServlet extends HttpServlet
 				number, 
 				naf, 
 				date);
-			
-//			try ( OutputStream os = new FileOutputStream(java.io.File.createTempFile("idcplnss", "pdf")) ) {
-//				os.write(idc);
-//			} catch ( IOException e ) {
-//				
-//			}
-			
 			list.add(idc);
 		}
 		
@@ -750,73 +816,43 @@ public class CretaServlet extends HttpServlet
 		
 	}
 
-	private static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos(AONContext ctx, byte[] idcplnss, Map<String, List<Employee>> employees) {
-		try {
-			TrabajadoresTramosCallback cb = new TrabajadoresTramosCallback() {
-				@Override
-				public String getIpf(String naf) {
-					return getEmployee(naf).map(Employee::getDni).orElse(TrabajadoresTramosCallback.super.getIpf(naf));
-				}
-				
-				@Override
-				public TipoIpf getTipoIpf(String naf) {
-					// TODO Auto-generated method stub
-					return TrabajadoresTramosCallback.super.getTipoIpf(naf);
-				}
-				
-				@Override
-				public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
-					
-					return getEmployee(naf, start)
-							.map( e -> e.getFactor().orElse(1.00) < 1.00 
-									|| e.getContractType().map( tc2 -> AonStringUtils.startsWith(tc2, "3")).orElse(false))
-							.orElse(TrabajadoresTramosCallback.super.isPartTimeEmployee(naf, ccc, start, end));
-				}
-				
-				@Override
-				public boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
-					// TODO Auto-generated method stub
-					return TrabajadoresTramosCallback.super.isScholarEmployee(ssNum, ccc, start, end);
-				}
-				
-				@Override
-				public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
-					// TODO Auto-generated method stub
-					return TrabajadoresTramosCallback.super.isTraining421Employee(ssNum, ccc, start, end);
-				}
-				
-				private Optional<Employee> getEmployee(String naf) {
-					return employees.getOrDefault(naf, Collections.emptyList()).stream().findAny();
-				}
-
-				private Optional<Employee> getEmployee(String naf, Date date) {
-					return employees.getOrDefault(naf, Collections.emptyList()).stream()
-					.filter( e -> new Period(e.getStartDate(), e.getEndDate().orElse(null)).contains(date))
-					.findAny()
-					;
-				}
-			};
-			return Idcplnss.getTrabajadoresTramos(idcplnss, cb);
-		} catch (Exception e) {
-		//catch (IOException | UnknownPDFException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-
 	private static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos(AONContext ctx, Certificate certificate, Date date, String ccc, String [] nafs) throws SegSocialException{
 		Map <String, List<Employee>> employees = getEmployees(ctx, date, ccc, nafs); 
-		return getIdcplnss(certificate, date, ccc, nafs)
-		.map(idcplnss -> getTrabajadoresTramos(ctx, idcplnss, employees))
-		.reduce((tyt1,tyt2) -> {
+		TrabajadoresTramosCallback employeesCallback = new EmployeesCallback(employees);
+		
+		
+		Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> tyt ;
+		try {
+			tyt = getIdcplccc(certificate, date, ccc, nafs)
+			.map(idcplnss -> {
+				try {
+					return Idcplccc.getTrabajadoresTramos(idcplnss, employeesCallback);				
+				} catch ( Exception e ) {
+					throw new RuntimeException(e);
+				}
+			})
+			.filter(Objects::nonNull);
+		} catch ( Exception e ) {
+			tyt = getIdcplnss(certificate, date, ccc, nafs)
+			.map(idcplnss -> {
+				try {
+					return Idcplnss.getTrabajadoresTramos(idcplnss, employeesCallback);				
+				} catch ( Exception ex ) {
+					return null;
+				}
+			})
+			.filter(Objects::nonNull);
+		}
+
+		
+		return tyt.reduce((tyt1,tyt2) -> {
 			List<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador> trabajadores1 = tyt1.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador();
 			List<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador> trabajadores2 = tyt2.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador();
 			trabajadores1.addAll(trabajadores2);
 			return tyt1;
 		})
 		.orElseThrow(SegSocialException::new);
-		
+				
 	}
 	
 	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
