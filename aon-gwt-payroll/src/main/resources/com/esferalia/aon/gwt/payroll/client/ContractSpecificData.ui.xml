@@ -434,6 +434,15 @@
 									<g:CheckBox ui:field="trueDateCB"/>
 								</td>
 							</tr>
+							<!-- LINEA 18 -->
+							<tr>
+								<td style="background-color: #eaeaea; width: 400px;">
+									<g:Label styleName='{style.firstColumnTextStyle}'>Acoge el Plan de Transformación, Recuperación y Resiliencia</g:Label>
+								</td>
+								<td>
+									<g:CheckBox ui:field="planRecoveryCB"/>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</g:HTMLPanel>
