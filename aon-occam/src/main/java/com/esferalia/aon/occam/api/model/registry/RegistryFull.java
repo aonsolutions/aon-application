@@ -74,6 +74,16 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	public boolean hasMedias() {
 		return this.medias != null && !this.medias.isEmpty();
 	}
+	public List<RegistryMedia> getEmailMedias() {
+		return (hasMedias()) 
+			?this.medias.stream().filter(med -> med.isEmail()).collect(Collectors.toCollection(LinkedList::new))
+			:null;
+	}
+	public List<RegistryMedia> getPhoneMedias() {
+		return (hasMedias()) 
+			?this.medias.stream().filter(med -> med.isPhone()).collect(Collectors.toCollection(LinkedList::new))
+			:null;
+	}
 	
 	
 	// ------------------------------------------ RECORD DATA
@@ -99,11 +109,6 @@ public class RegistryFull<R extends Registry> implements Serializable {
 //		ensureMedias().add(new RegistryMedia().setMedia(MediaType.FAX));
 //		ensureMedias().add(new RegistryMedia().setMedia(MediaType.EMAIL));
 //		ensureMedias().add(new RegistryMedia().setMedia(MediaType.WEB));
-	}
-	public List<RegistryMedia> getEmailMedias() {
-		return (hasMedias()) 
-			?this.medias.stream().filter(med -> med.isEmail()).collect(Collectors.toCollection(LinkedList::new))
-			:null;
 	}
 	
 }

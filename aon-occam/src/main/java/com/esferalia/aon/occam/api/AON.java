@@ -1103,6 +1103,12 @@ public class AON {
 		}
 	}
 
+	public static CompanyFull getCompanyFull(Occam occam){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRegistry().getCompanyFull(ctx, occam.getDomain());
+		}
+
+	}
 	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyFull(ctx, domainId);
