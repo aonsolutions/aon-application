@@ -136,6 +136,8 @@ public class IdcplcccParser {
 			onEmployeePeriod(listener, enterpriseCCC, employeeeNss, startDate, endDate);
 			String group = matcher.group("group");
 			onEmployeeQuoteGroup(listener, group);
+			boolean monthly = matcher.group("monthly") != null;
+			onEmployeeQuoteGroup(listener, group, monthly);
 			parseEmployeePeriodPECs(reader, listener, employeeeNss, enterpriseCCC, startDate, endDate);
 			optional = attempt(reader, EMPLOYEE_PERIOD_QUOTE);
 		}
@@ -262,6 +264,11 @@ public class IdcplcccParser {
 		listener.onEmployeeQuoteGroup(group);
 	}
 
+	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group, boolean monthly) {
+		group = trim(group);
+		listener.onEmployeeQuoteGroup(group, monthly);
+	}
+
 	private static void onEmployeePeriod(IdcParserListener listener, String enterpriseCCC, String employeeeNss,
 			Date startDate, Date endDate) {
 		listener.onEmployeePerido(employeeeNss, enterpriseCCC, startDate, endDate);
@@ -368,7 +375,7 @@ public class IdcplcccParser {
 	
 	private static final Pattern EMPLOYEE_PERIOD_QUOTE = 
 	Pattern.compile(
-	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+).*$"
+	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+)(/(?<monthly>S))?.*$"
 	, Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern EMPLOYEE_QUOTE_PEC = 
