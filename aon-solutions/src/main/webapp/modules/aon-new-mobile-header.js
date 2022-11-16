@@ -114,8 +114,10 @@ export class AonNewMobileHeader extends AonElement {
 		companyListButton.icon = MATERIAL_ICONS.BUSINESS;
 		companyListButton.noHover = true;
 		companyListButton.addEventListener(EVENT.CLICK, () => {
-			this.companyOut();
-			this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+			if(!companyListButton.isDisabled()) {
+				this.companyOut();
+				this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+			}
 		});
 		if(!this.isParent()) companyListButton.color = 'white';
 		spanCompanyList.appendChild(companyListButton);
@@ -214,7 +216,7 @@ export class AonNewMobileHeader extends AonElement {
 		let companyListButton = this.getElement(this.COMPANY_LIST_BUTTON);
 		companyListButton.color = 'white';
 		if(onlyOne) {
-			this.getElement(this.COMPANY_LIST).style.display = 'none';
+			this.getElement(this.COMPANY_LIST_BUTTON).style.display = 'none';
 		}
 	}
 

@@ -56,4 +56,11 @@ public class Warehouse implements Serializable {
 		this.workplace = workplace;
 		return this;
 	}
+	
+	public boolean isEmpty() {
+	    return getId() == null && getName() == null
+	            && getDepartment() == null && getDomain() == null
+	            && getWorkplace() == null;
+	            
+    }
 }

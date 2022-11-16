@@ -249,107 +249,13 @@ export class AonLogin extends AonElement {
   }
 
   connectedCallback() {
-    if(this.isBeta()) {
-      this.initialize();
-      this.build();
-    } else {
-      this.innerHTML = `
-			<!-- Wide card with share menu button -->
-			<style>
-
-				.aon-login-form {
-				  padding-top: 20px;
-				}
-
-				.logo {
-				  width: 250px;
-					margin-left: 25px;
-				}
-
-				.aon-login-info2 {
-				  color: #666;
-				  font-size: 10px;
-				  border-top: 1px solid #ccc;
-				  margin-top: 10px;
-				  font-size: 9px;
-				  font-weight: normal;
-				  padding: 15px;
-				}
-
-				.aonErrorPanel {
-				  min-width: 150px;
-				  max-width: 250px;
-				  width: 100%;
-				  color: red;
-				}
-
-			</style>
-			<div class="aonFormCenter">
-		  	<div class="aonVerticalCenter aonWidth300">
-			  	<div id="aonLoginLogoDiv">
-						<img id="aonLoginLogoImg" class="logo"/>
-					</div>
-						<div class="aon-login-form" style="width:300px;">
-          
-            
-              <div class="aonColorSecondary" style="font-weight: bold;padding-bottom: 20px;">
-								INICIO DE SESIÓN
-							</div>
-
-							<aon-loader id="aonLoginLoader"></aon-loader>
-
-							<div id="aonLoginError" class="aonErrorPanel" style="display:none;">
-			          <span id="aonLoginErrorMessage">errorMsg</span>
-			        </div>
-
-							<div>
-								<aon-input id="aonLoginUser" description="Usuario" filled="true"></aon-input>
-							</div>
-
-							<div>
-								<aon-input id="aonLoginPassword" description="Contraseña" type="password" filled="true"></aon-input>
-							</div>
-
-							<div style="padding-bottom: 10px;">
-								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonLink aonColorSecondary">click aquí</a>
-							</div>
-
-              <!--<div style="padding-bottom: 20px;">
-                Si no tienes cuenta <a id="aonBtnRegister" class="aonLink aonColorSecondary"> Registrate </a>
-              </div>-->
-
-							<div style="position:relative;">
-								<button class="aonButton" id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
-							</div>
-        
-
-						</div>
-			    <div class="aon-login-info2">
-    				<span>
-							<a target="_blank" href="http://www.aonsolutions.es">
-			        	aon Solutions
-			      	</a>
-			        es una marca registrada de AON SOLUTIONS, S.L.
-			      </span>
-			      <div id="aonManifest">
-			      </div>
-			    </div>
-
-          <div id="logosMobiles"></div>
-
-				</div>
-			</div>
-
-			<aon-dialog id="aonDialogLogin"></aon-dialog>
-			<aon-toast id="aonLoginToast"></aon-toast>
-			`;
-    }
+    this.initialize();
+    this.build();
+    
     this.buildLogo();
     if(!webkitRequestMobile() && this.isMobile()){ // si es app
       this.buildAppLogo();
     }
-
-    if(!this.isBeta()) this.aonDialogLoginRemember();
 
     let aonManifest = this.getElement("aonManifest");
     getManifest().then(
@@ -363,14 +269,7 @@ export class AonLogin extends AonElement {
 
     let signin = this.getElement("aonLoginSignin");
     signin.addEventListener(EVENT.CLICK, () => this.signin());
-    if(!this.isBeta()) {
-      let aonLoginRemember = this.getElement("aonLoginRemember");
-      aonLoginRemember.addEventListener(EVENT.CLICK, () =>{
-        const dialog = this.getElement("aonDialogLogin");
-        if (!this.isMobile()) dialog.width = '400px';
-        dialog.open()
-      });
-    }
+    
     if(!this.isMobile()) username.focus();
   }
 
@@ -471,7 +370,9 @@ export class AonLogin extends AonElement {
         loader.stop();
         LS.removeDomain();
         this.getModule().buildHome();
+        this.getModule().startLoading();
         getCompanies().then(companies => {
+          this.getModule().stopLoading();
           if(companies.length === 1){
             this.companySelection(companies[0], true);
           } else {
@@ -489,13 +390,6 @@ export class AonLogin extends AonElement {
         console.log(e);
         loader.stop();
         let error = JSON.parse(e);
-        if(!this.isBeta()) {
-          let aonLoginError = this.getElement("aonLoginError");
-          aonLoginError.style.display = "block";
-
-          let aonLoginErrorMessage = this.getElement("aonLoginErrorMessage");
-          aonLoginErrorMessage.innerHTML = error.message;
-        }
         let toast = this.getElement('aonLoginToast');
         toast.start(error);
       });

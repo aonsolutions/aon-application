@@ -440,25 +440,24 @@ public class InvoiceDAO {
 				InvoiceDetail detail = invoice.getDetails().get(i);
 				
 				if(InvoiceSource.PURCHASE.equals(detail.getSource())) {
+				    // TODO PurchaseDetailDAO.get(ctx, detail.getSourceId());
 					PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 						.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new PurchaseDetail());
 					invoice.getDetails().get(i).setPurchaseDetail(d);
 				} else if(InvoiceSource.SALES.equals(detail.getSource())) {
-					SalesDetail d = SalesDAO.getSalesDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new SalesDetail());
-					invoice.getDetails().get(i).setSalesDetail(d);
+					invoice.getDetails().get(i).setSalesDetail(
+					        SalesDetailDAO.get(ctx, detail.getSourceId()));
 				} else if(InvoiceSource.DELIVERY.equals(detail.getSource())) {
-					DeliveryDetail d = DeliveryDAO.getDeliveryDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new DeliveryDetail());
-					invoice.getDetails().get(i).setDeliveryDetail(d);
+				    invoice.getDetails().get(i).setDeliveryDetail(
+				            DeliveryDetailDAO.get(ctx, detail.getSourceId()));
 				} else if(InvoiceSource.INCOME.equals(detail.getSource())) {
+                    // TODO IncomeDetailDAO.get(ctx, detail.getSourceId());
 					IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
 					invoice.getDetails().get(i).setIncomeDetail(d);
 				} else if(InvoiceSource.OFFER.equals(detail.getSource())) {
-					OfferDetail d = OfferDetailDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId())));
-					invoice.getDetails().get(i).setOfferDetail(d);
+					invoice.getDetails().get(i).setOfferDetail(
+					        OfferDetailDAO.get(ctx, detail.getSourceId()));
 				}
 				
 				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, detail.getId())

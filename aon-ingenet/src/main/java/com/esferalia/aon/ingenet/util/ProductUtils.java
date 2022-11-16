@@ -6,22 +6,29 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.AonException;
+import com.esferalia.aon.ingenet.api.albaranes.DATOSDIRECCIONTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProductUtils {
 
@@ -130,5 +137,23 @@ public class ProductUtils {
                     .findFirst().orElse(new Tax());
             return tax.getId();
         }
+    }
+    
+    public static RegistryAddress obtainAddress(AONContext ctx, Customer customer, DATOSDIRECCIONTYPE datosdireccionentrega) {
+        return RegistryAddressDAO.get(ctx, f -> addressFilter(ctx, customer, datosdireccionentrega, f));
+    }
+    
+    private static Filter addressFilter(AONContext ctx, Customer customer, DATOSDIRECCIONTYPE datosdireccionentrega, RegistryAddressProperties f) {
+        Filter filter = f.getDomainProperty().eq(ctx.getDomainId())
+                .and(f.getRegistryProperty().eq(customer.getId()));
+        
+        if(!AonStringUtils.isBlank(datosdireccionentrega.getCIUDAD())) {
+            filter = filter.and(f.getCityProperty().eq(datosdireccionentrega.getCIUDAD()));
+        }
+        
+        if(!AonStringUtils.isBlank(datosdireccionentrega.getCODIGOPOSTAL())) {
+            filter = filter.and(f.getZipProperty().eq(datosdireccionentrega.getCODIGOPOSTAL()));
+        }
+        return filter;
     }
 }
