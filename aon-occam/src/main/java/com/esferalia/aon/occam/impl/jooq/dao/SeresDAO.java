@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
@@ -38,6 +39,20 @@ public class SeresDAO {
 
 	}
 
+	public static EdiCodes getEdiCodes(AONContext ctx, Invoice invoice) {
+	    Integer customerId = invoice.getRegistry();
+        Integer addressId = invoice.getAddress().getId();
+        Map<String, String> ediCodes = obtainEdiCodes(ctx, customerId, addressId);  
+        
+        return new EdiCodes()
+                .setDepartment(ediCodes.get(IEdiSupport.DEPARTMENT))
+                .setCustomerEdiHeader(ediCodes.get(IEdiSupport.CABECERA))
+                .setCustomerEdiInvoice(ediCodes.get(IEdiSupport.FACTURA))
+                .setCustomerEdiPoint(ediCodes.get(IEdiSupport.PTO_ENTREGA))
+                .setCustomerPackage(obtainPackingTag(ctx, customerId, addressId))
+                .setCompanyEdiCode(obtainEdiCompanyCode(ctx));
+	}
+	
 	public static EdiCodes getEdiCodes(AONContext ctx, Delivery delivery) {
 		Integer customerId = delivery.getCustomer().getId();
 		Integer addressId = delivery.getAddress().getId();

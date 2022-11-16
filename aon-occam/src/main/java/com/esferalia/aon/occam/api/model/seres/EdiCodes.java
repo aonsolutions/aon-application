@@ -8,6 +8,10 @@ public class EdiCodes {
 	String customerPackage;
 	String companyEdiCode;
 	
+	String customerEdiHeader;
+	String customerEdiPoint;
+	String customerEdiInvoice;
+	
 	String mscode;
 	String mrcode;
 	String sucode;
@@ -63,6 +67,34 @@ public class EdiCodes {
 		return this;
 	}
 
+	public String getCustomerEdiHeader() {
+        return customerEdiHeader;
+    }
+	
+	public EdiCodes setCustomerEdiHeader(String customerEdiHeader) {
+        this.customerEdiHeader = customerEdiHeader;
+        return this;
+    }
+	
+	public String getCustomerEdiPoint() {
+        return customerEdiPoint;
+    }
+	
+	public EdiCodes setCustomerEdiPoint(String customerEdiPoint) {
+        this.customerEdiPoint = customerEdiPoint;
+        return this;
+    }
+	
+	public String getCustomerEdiInvoice() {
+        return customerEdiInvoice;
+    }
+	
+	public EdiCodes setCustomerEdiInvoice(String customerEdiInvoice) {
+        this.customerEdiInvoice = customerEdiInvoice;
+        return this;
+    }
+	
+	
 	public String getMscode() {
 		if(mscode == null) {
 			mscode = getCompanyEdiCode();

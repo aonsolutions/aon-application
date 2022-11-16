@@ -43,10 +43,11 @@ import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.SERES;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.seres.ftp.FtpException;
@@ -126,7 +127,7 @@ public class SeresFtpServlet extends HttpServlet {
 			List<ITransferObject> list = getInvoiceList(idList);
 			if (list != null && list.size() > 0) {
 				new FtpSaleInvoiceUploaderHandler(domain, loggedUser)
-						.onEdiFtpTransfer(list.stream().map(o -> (Invoice) o).collect(Collectors.toList()));
+						.onEdiFtpTransfer(domain, list.stream().map(o -> (Invoice) o).collect(Collectors.toList()));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -297,7 +298,7 @@ public class SeresFtpServlet extends HttpServlet {
 			}
 		}
 		
-		public void onEdiFtpTransfer(List<Invoice> invoiceList) {
+		public void onEdiFtpTransfer(Domain domain, List<Invoice> invoiceList) {
 			initContext();
 			checkValidLogin();
 			
@@ -307,7 +308,7 @@ public class SeresFtpServlet extends HttpServlet {
 				
 				for(Invoice invoice: invoiceList) {
 					String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
-					FileOutput output = exportEdiFile(invoice);
+					FileOutput output = exportEdiFile(domain, invoice);
 					if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
 						for(Exception e: output.getErrors()){
 							Fd0Exception fd0 = (Fd0Exception) e;
@@ -329,7 +330,7 @@ public class SeresFtpServlet extends HttpServlet {
 			}
 		}
 		
-		public FileOutput exportEdiFile(Invoice invoice){
+		public FileOutput exportEdiFile(Domain domain, Invoice invoice){
 			FileOutput output = null;
 			try {
 				RegistryAddress raddress = invoice.getRegistryAddress();
@@ -346,29 +347,15 @@ public class SeresFtpServlet extends HttpServlet {
 					}
 					
 					if(ediSupport.isEnabled()){
-						Map<String, String> ediCodes =  ediSupport.getEdiCodes(
-								invoice.getRegistry(), invoice.getRegistryAddress());
-						
-						String customerEdiCabeceraCode = ediCodes.get(IEdiSupport.CABECERA);
-						String customerEdiPtoEntregaCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
-						String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
-						
 						Tag packingTag = ediSupport.obtainPackingTagInvoice(
 								invoice.getRegistry(),
 								invoice.getRegistryAddress());
 						if(packingTag!=null && packingTag.getId()!=null){
-							String customerPackage = packingTag.getName();
-							
-							ApplicationParameter param = AppParamUtil.getParameter(AppParam.EDI_COMPANY_CODE);
-							String companyEdiCode = param!=null?param.getValue():null;
-							
 							// writer file
 							ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
 							Company company = getCompany(invoice.getDomain());
-							
-							output = writer.createFile(invoice, company, isInvoicingMainAddress, companyEdiCode,
-									customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode,
-									customerPackage);
+							EdiCodes codes = getEdiCodes(domain, invoice);
+							output = writer.createFile(invoice, company, isInvoicingMainAddress, codes);
 						} else {
 							throw new AonCoreException("No se ha definido el envase para 'mensajería EDI'");
 						}
@@ -383,6 +370,14 @@ public class SeresFtpServlet extends HttpServlet {
 				throw new AonCoreException(e.getMessage(), e);
 			}
 		}
+		
+		private EdiCodes getEdiCodes(Domain domain, Invoice invoice) {
+	        com.esferalia.aon.occam.api.model.finance.Invoice inv = new com.esferalia.aon.occam.api.model.finance.Invoice()
+	                .setId(invoice.getId())
+	                .setRegistry(invoice.getRegistry().getId())
+	                .setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(invoice.getRegistryAddress().getId()));
+	        return SERES.getEdiCodes(domain.getName(), domain.getId(), "", inv);
+	    }
 		
 		private Company getCompany(Integer domainId) {
 			try {
