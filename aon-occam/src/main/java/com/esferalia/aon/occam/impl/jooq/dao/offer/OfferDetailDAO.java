@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.offer;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -73,6 +74,7 @@ public class OfferDetailDAO {
 				.select()
 				.from(OFFER_DETAIL)
 				.join(OFFER).on(OFFER_DETAIL.OFFER.eq(OFFER.ID))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(OFFER.PROJECT))
 				.where(OFFER_DETAIL_PROPERTIES.getConditions(filter));
 	}
 	
@@ -94,6 +96,10 @@ public class OfferDetailDAO {
 	public static List<OfferDetail> getList(AONContext ctx, OfferDetailFilter filter, Integer page, Integer perPage){	
 		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	public static OfferDetail get(AONContext ctx, Integer id) {
+        return get(ctx, f -> f.getIdProperty().eq(id));
+    }
 	
 	public static OfferDetail get(AONContext ctx, OfferDetailFilter filter) {
 		return selectWithOffer(ctx, filter).limit(1)
