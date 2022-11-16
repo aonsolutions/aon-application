@@ -17,7 +17,7 @@ export class AonRegistryList extends AonElement {
 		this.TABLE.id = 'aonRegistryTable';
 		this.appendChild(this.TABLE);
 		this.build();
- 	}
+	}
 
 	initialize() {
 		this.more = true;
@@ -31,9 +31,13 @@ export class AonRegistryList extends AonElement {
 		this.selectabledTable();
 
 		this.TABLE.addColumn(MSG.DOCUMENT, 'string', 'document', '10%');
-		this.TABLE.addColumn(MSG.NAME, 'string', 'name', '40%');
+		this.TABLE.addColumn(MSG.NAME, 'string', 'name', '30%');
 		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '15%');
 		this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '5%');
+		
+		if(this.selectable){
+			this.TABLE.addColumn('Vinculado', 'string', 'link', '2%');
+		}
 		
 		this.TABLE.addEventListener(EVENT.MORE, () => {
 			if(this.more) this.loadMore();
@@ -45,7 +49,7 @@ export class AonRegistryList extends AonElement {
 		if(this.selectable){
 			this.TABLE.selectable = true;
 			this.TABLE.addEventListener(EVENT.SELECT, () => {
-				this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: {parent:this, table:this.TABLE}}));
+				this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: {table:this.TABLE}}));
 			});
 		}
 	}
@@ -75,11 +79,15 @@ export class AonRegistryList extends AonElement {
 		if(this.TABLE) {
 			this.TABLE.removeRows();
 			this.getRegistries(this.getFilter())
-			 .then(registries => {
+			.then(registries => {
 				registries.forEach((registry) => {
 
 					if(registry.status){
 						registry.statusText = MSG[registry.status];
+					}
+
+					if(registry.isRelationship!=null){
+						registry.link = registry.isRelationship ? "Si" : "No";
 					}
 
 					this.TABLE.addRow(registry, () => this.buildRegistry(registry));

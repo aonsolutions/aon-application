@@ -14,6 +14,6 @@ public interface IRelationship {
 	
 	public RegistryRelationship saveRegistryRelationship(AONContext ctx, RegistryRelationship rrelationship);
 	
-	public void deletetRegistryRelationship(AONContext ctx, Integer id);
+	public void deletetRegistryRelationship(AONContext ctx, RRelationshipFilter filter);
 
 }

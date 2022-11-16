@@ -7304,6 +7304,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Boolean trueDate = employeeContractInfo.getContractSpecificData().getTrueDate();
 		builder.setNoCertainDate(null != trueDate && trueDate);
 		
+		if(contractType == 420)
+			builder.setPlanRecovery(employeeContractInfo.getContractSpecificData().getPlanRecovery());
+		
 		ContractTypeRecord contractTypeRecord = null;
 		try {
 			ContractType contractTypeC = new ContractType();

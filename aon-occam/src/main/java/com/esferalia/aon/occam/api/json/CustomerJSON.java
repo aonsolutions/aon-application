@@ -73,6 +73,7 @@ public class CustomerJSON {
 			.put(IJsonNames.CREATION_DATE, customer.getCreationDate()!=null ? customer.getCreationDate().getTime() : null)
 			.put(IJsonNames.MODIFICATION_USER, customer.getModificationUser())
 			.put(IJsonNames.MODIFICATION_DATE, customer.getModificationDate()!=null ? customer.getModificationDate().getTime() : null)
+			.put("isRelationship", customer.isRelationship())
 			;
 	}
 }

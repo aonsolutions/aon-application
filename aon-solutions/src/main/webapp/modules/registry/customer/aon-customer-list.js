@@ -61,6 +61,7 @@ export class AonCustomerList extends AonRegistryList {
 					value:detail.search,
 					scope:detail.scope,
 					projectType: detail.projectType,
+					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
 					page:1
 				}
@@ -96,12 +97,23 @@ export class AonCustomerList extends AonRegistryList {
             }
         })
 
+        const rrelationshipEl = this.getElement("rrelationship");
+        rrelationshipEl.setOptions([
+			{name:'Con empresa', value:true},
+			{name:'Sin empresa', value:false}
+		]);
+
+		const rrelationship = this.filter.rrelationship;
+		if(rrelationship!=null){
+			rrelationshipEl.value = rrelationship;
+		}
+
         let active = this.getElement("active");
         active.value = (this.filter.status ||  []).includes("ACTIVE");
         
         let inactive = this.getElement("inactive");
         inactive.value = (this.filter.status ||  []).includes("INACTIVE");
-  
+
         let blocked = this.getElement("blocked");
         blocked.value = (this.filter.status ||  []).includes("BLOCKED");
 	}

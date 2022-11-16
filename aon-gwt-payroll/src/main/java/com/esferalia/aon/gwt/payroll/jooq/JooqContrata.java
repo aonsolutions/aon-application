@@ -557,6 +557,10 @@ public class JooqContrata {
 				contractSpecificData.setCampaigns(true);
 			}
 			
+			// Plan de Transformación, Recuperación y Resiliencia
+			if(datos.getPROYECTOEMPLEOFORMACION() != null)
+				contractSpecificData.setPlanRecovery(AonStringUtils.equalsIgnoreCase(datos.getPROYECTOEMPLEOFORMACION(), "S") ? true : false);
+			
 		}
 	}
 
@@ -1126,6 +1130,11 @@ public class JooqContrata {
 			if(tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")){
 				datos.setINDEMPRESAAAPPUNIVERSIDAD("N");
 			}
+			
+			// Plan de Transformación, Recuperación y Resiliencia
+			if(tc2.equals("420"))
+				datos.setPROYECTOEMPLEOFORMACION(contractSpecificData.getPlanRecovery() ? "S" : "N");
+					
 			return datos;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());

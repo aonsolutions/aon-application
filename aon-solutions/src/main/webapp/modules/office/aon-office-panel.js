@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { OfficeEnums } from './OfficeEnums.js';
-import { MSG } from '../../environments/environments.js';
+import { EVENT, MSG } from '../../environments/environments.js';
 import { getProjectTypes, saveProject} from '../../services/projectService.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
 import { AonCustomer } from '../registry/customer/aon-customer.js';
@@ -12,12 +12,14 @@ import { OfficeUtils } from './OfficeUtils.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { ProjectUtils } from '../project/ProjectUtils.js';
+import { saveRelationShip } from '../../services/registryService.js';
 
 export class AonOfficePanel extends AonElement {
     projectTypes;
     workgroups;
     taskHolders;
     customerSelected;
+    customerSelectedAll;
 
     filterCustomers;
     
@@ -26,10 +28,17 @@ export class AonOfficePanel extends AonElement {
     }
 
     getCustomerSelected(){
-        return this.customerSelected
-        .filter((value,index) => // remove repeated customersSelected
+        return this.customerSelected.filter((value,index) => // remove repeated customersSelected
             this.customerSelected.findIndex((m) => m.id === value.id) === index 
         ) 
+    }
+
+    setCustomerSelectedAll(customerSelectedAll){
+        this.customerSelectedAll = customerSelectedAll;
+    }
+
+    getCustomerSelectedAll(){
+        return this.customerSelectedAll;
     }
 
     addFilterCustomers(filter){
@@ -50,7 +59,7 @@ export class AonOfficePanel extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-    	this.build();
+        this.build();
     }
 
 	initialize(){
@@ -63,7 +72,7 @@ export class AonOfficePanel extends AonElement {
         this.setFilterCustomers({
             page: 1,
             perPage:50,
-            status:["ACTIVE", "BLOCKED"]
+            status:["ACTIVE", "BLOCKED"],
         });
 	}
 
@@ -124,13 +133,16 @@ export class AonOfficePanel extends AonElement {
     addCustomerListSelectable(view){
         const application = this.getApplication();
         view.selectable = true;
-        view.addEventListener("select", ({detail}) => {
-            let {table:{selected}} = detail;
+        view.addEventListener(EVENT.SELECT, ({detail}) => {
+            let {table:{selected, selectedAll}} = detail;
 
             this.setCustomerSelected(selected);
+            this.setCustomerSelectedAll(selectedAll);
 
             if(selected.length > 0 ) {
-                application.addToolbarOption2(OfficeEnums.OfficeSidenav.ADD_FOLDER, () => OfficeUtils.buildDialog(this));
+                application.addToolbarOption2(OfficeEnums.OfficeSidenav.MORE_VERT, ({target}) => {
+                    OfficeUtils.buildDialogMenu(this, target);
+                });
 			} else {
                 this.removeActionFolder();
 			}   
@@ -139,7 +151,8 @@ export class AonOfficePanel extends AonElement {
 
     removeActionFolder(){
         this.setCustomerSelected([]);
-        this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.ADD_FOLDER);
+        this.setCustomerSelectedAll(false);
+        this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.MORE_VERT);
     }
 
     async onSaveExpedientes(project){
@@ -155,6 +168,38 @@ export class AonOfficePanel extends AonElement {
 
             this.showMessage();
         }
+    }
+    
+	onSaveRelationByCustomers(add){
+        const aonView = this.getElement(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST);
+
+        if(aonView){
+            this.getApplication().startLoading();
+    
+            saveRelationShip({ add, customers: this.getCustomerSelected() })
+            .then((resp)=> {
+                if(resp.length){
+                    this.openDialogRelationship(resp);
+                } else {
+                    this.showMessage(); 
+                }
+        
+                const table = aonView.TABLE;
+                if(table){
+                    table.clearSelected();
+                    aonView.setFilter({...this.getFilterCustomers(), page:1 });
+                    this.setCustomerSelected([]);
+                }
+            })
+            .catch((err)=> this.showError(err))
+            .finally(()=>{
+                this.getApplication().stopLoading();
+            });
+        }
+	}
+
+    openDialogRelationship(data){
+        OfficeUtils.builDialogRelationship(this, data)
     }
 
     async getProjectTypes(){

@@ -123,6 +123,7 @@ public final class IJsonNames {
 	public static final String CREATION_USER = "creation_user";
 	public static final String CREDIT = "credit";
 	public static final String CUSTOMER = "customer";
+	public static final String CUSTOMERS = "customers";
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
 	
 	// ---------------------------------------------------------------------------------------------	[D] 
