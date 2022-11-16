@@ -116,7 +116,8 @@ export class AonMobileParent extends AonElement {
   		let i = this.createElement(TAG.I);
   		i.className = 'material-icons aonAvatar';
 
-  		if(company.parent) i.innerHTML = 'apartment';
+		if(company.type === 'OFFICE') i.innerHTML = 'work';
+		else if(company.parent) i.innerHTML = 'apartment';
   		else if(company.shared) i.innerHTML = 'share';
   		else if(!company.active) i.innerHTML = 'domain_disabled';
   		else i.innerHTML = 'business';
