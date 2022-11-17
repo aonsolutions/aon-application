@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -90,7 +91,8 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			String serialNumber = toParChar(item.getSerialNumber());
 			String ean128 = "(02)" + barcode + "(37)" + boxQ + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + serialNumber ;
 			String sscc = container.getSerialNumber();
-			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, boxQuantity, ean128, sscc);
+				
+			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, AonMathUtils.round(boxQuantity), ean128, sscc);
 
 			responseFile(resp, "packaging", MimeType.PDF);
 		} catch (IOException e) {
