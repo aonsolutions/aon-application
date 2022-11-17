@@ -4820,6 +4820,66 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcplcccTrabajadoresTramosIX()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		
+		
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccIX.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+				@Override
+				public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+					return "411087630408".equals(ssNum);
+				}
+			});
+	
+			//marshall(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134362691", liquidacion.getCcc().getNumero());
+	
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2022", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2022", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2022", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			
+			
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				marshal(trabajador, System.out);
+				if ("411043162473".equals(trabajador.getNaf())) {
+					marshal(trabajador, System.out);
+					assertEquals(1, trabajador.getTramos().getTramo().size());
+
+					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					Assert.assertEquals((double)24.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
+				}
+				else if ("411087630408".equals(trabajador.getNaf())) {
+					marshal(trabajador, System.out);
+					assertEquals(1, trabajador.getTramos().getTramo().size());
+
+					Assert.assertEquals((double)1.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaDesde().getDia()), 0.00);
+					Assert.assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(0).getFechaHasta().getDia()), 0.00);
+					assertTramoTiempoParcial(trabajador.getTramos().getTramo().get(0));
+				}
+				
+			}
+			
+	
+		}
+	}
+
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
